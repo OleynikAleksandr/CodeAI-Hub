@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
+import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import {
   createInitialSnapshot,
@@ -40,6 +41,9 @@ export const useProjectManagerDialogSessionController = (
   const [tokenDebugSummaryOverride, setTokenDebugSummaryOverride] = useState<
     string | undefined
   >(undefined);
+  const latestWorkspaceSnapshotRef = useRef<WorkspaceSnapshotPushPayload | null>(
+    null
+  );
 
   const loadedDialogIdsRef = useRef(new Set<string>());
   const dialogCursorRef = useRef(new Map<string, number>());
@@ -118,6 +122,7 @@ export const useProjectManagerDialogSessionController = (
     setSession(null);
     setSnapshots({});
     setTokenDebugSummaryOverride(undefined);
+    latestWorkspaceSnapshotRef.current = null;
 
     if (!intent) {
       return;
@@ -178,7 +183,7 @@ export const useProjectManagerDialogSessionController = (
           const carriedTodos = previous[current.id]?.todos ?? [];
           const labelsForCreated = buildProviderLabels(created.providerIds[0] ?? null);
           const base = createInitialSnapshot(created, labelsForCreated, settingsRef.current);
-          return {
+          let next: SessionSnapshots = {
             ...previous,
             [created.id]: {
               ...base,
@@ -186,6 +191,11 @@ export const useProjectManagerDialogSessionController = (
               todos: carriedTodos,
             },
           };
+          const latest = latestWorkspaceSnapshotRef.current;
+          if (latest && latest.workspaceRoot === created.workspacePath) {
+            next = applyWorkspaceSnapshotToSnapshots(next, latest);
+          }
+          return next;
         });
 
         return created;
@@ -206,6 +216,10 @@ export const useProjectManagerDialogSessionController = (
       );
     },
     onWorkspaceSnapshot: (payload) => {
+      const intent = pendingIntentRef.current;
+      if (intent && payload.workspaceRoot === intent.workspacePath) {
+        latestWorkspaceSnapshotRef.current = payload;
+      }
       setSnapshots((previous) => applyWorkspaceSnapshotToSnapshots(previous, payload));
     },
   });
@@ -215,6 +229,7 @@ export const useProjectManagerDialogSessionController = (
   useProjectManagerDialogCoreEvents({
     requestDialogList,
     requestDialogHistory,
+    latestWorkspaceSnapshotRef,
     settingsRef,
     sessionRef,
     pendingIntentRef,

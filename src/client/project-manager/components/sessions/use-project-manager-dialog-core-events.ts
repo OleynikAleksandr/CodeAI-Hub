@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
+import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import {
   createInitialSnapshot,
@@ -23,6 +24,7 @@ import {
   type DialogIndexEntry,
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
+import { applyWorkspaceSnapshotToSnapshots } from "./session-stream";
 
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
@@ -37,6 +39,7 @@ type RequestDialogHistory = (
 export const useProjectManagerDialogCoreEvents = (options: {
   readonly requestDialogList: RequestDialogList;
   readonly requestDialogHistory: RequestDialogHistory;
+  readonly latestWorkspaceSnapshotRef: MutableRefObject<WorkspaceSnapshotPushPayload | null>;
   readonly settingsRef: MutableRefObject<Settings | null>;
   readonly sessionRef: MutableRefObject<SessionRecord | null>;
   readonly pendingIntentRef: MutableRefObject<DialogOpenIntent | null>;
@@ -99,7 +102,12 @@ export const useProjectManagerDialogCoreEvents = (options: {
             labelsForSnapshot,
             options.settingsRef.current
           );
-          return { ...previous, [nextSession.id]: base };
+          let next: SessionSnapshots = { ...previous, [nextSession.id]: base };
+          const latest = options.latestWorkspaceSnapshotRef.current;
+          if (latest && latest.workspaceRoot === nextSession.workspacePath) {
+            next = applyWorkspaceSnapshotToSnapshots(next, latest);
+          }
+          return next;
         });
         options.requestDialogHistory(intent, match.dialogId);
         return;
