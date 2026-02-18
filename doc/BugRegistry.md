@@ -26,6 +26,7 @@
 | BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
 | BUG-2026-02-18-03 | OPEN | Claude/Auth | macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic, не блокирует) | TBD |
 | BUG-2026-02-18-04 | FIXED | Core/UI | Reviewer input не разблокируется после turn completion | TBD |
+| BUG-2026-02-18-05 | FIXED | PM/UI | Dialog Reviewer: input остаётся locked до workspace switch / reload (гонка snapshot vs hydration) | 1.1.635 |
 
 ---
 
@@ -398,3 +399,38 @@
 **Guards (smoke):**
 - Запустить workflow Description → Reviewer → Reviewer задаёт вопросы → input должен автоматически разблокироваться → пользователь вводит ответ → Reviewer продолжает.
 
+---
+
+## BUG-2026-02-18-05 — Dialog Reviewer: input остаётся locked из-за гонки `workspace:snapshot` vs hydration
+
+**Status:** FIXED
+
+**Severity:** High — пользователь видит финальный ответ/ready‑сигнал, но не может продолжить без ручного форс-анлока.
+
+**Symptom:** В dialog‑сессиях (Workflow Tree → Reviewer) поле ввода могло оставаться заблокированным после:
+- открытия уже idle‑сессии (последний ответ давно был);
+- rollover по контекстному окну (появляется “Новая сессия”, агент пишет `Ready to continue working.`, но input остаётся locked).
+
+Разблокировка иногда происходила только после переключения workspace, перезагрузки Project Manager или спустя время.
+
+**Root cause (PM/UI):**
+- Dialog UI создаёт локальный `SessionSnapshot` через `createInitialSnapshot()` с `connectionState="running"` (workflow‑сессии стартуют с core‑submit → input должен быть locked сразу).
+- Итоговый lock state является snapshot‑first и приходит через `workspace:snapshot`.
+- `workspace:snapshot` мог прийти **раньше**, чем `dialog:list:result` создаст локальный `SessionSnapshot` (или раньше `session:created` при rollover).
+- `applyWorkspaceSnapshotToSnapshots()` обновляет только уже существующие `sessionId` в `snapshots`; ранний snapshot для ещё “неизвестного” sessionId игнорируется.
+- Если после этого Core не пушит новый snapshot (например, сессия уже `idle` и нет изменений), UI остаётся в `connectionState="running"` → input locked до следующего snapshot.
+
+**Fix:**
+- Dialog session controller кэширует последний `workspace:snapshot` и пере‑применяет его при:
+  - создании базового snapshot по `dialog:list:result`;
+  - создании rollover child по `session:created`.
+
+**Commits:**
+- `b0436f04 fix(pm): replay latest workspace snapshot for dialog unlock`
+- `c77fa041 feat(release): v1.1.635 - dialog unlock snapshot replay`
+
+**Release:** `1.1.635`
+
+**Guards:**
+- Static guard: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+- Smoke: открыть Reviewer dialog (idle) → input должен стать unlocked без перезагрузки; довести Reviewer до rollover → после bootstrap (`resume_ready`) input unlock.
