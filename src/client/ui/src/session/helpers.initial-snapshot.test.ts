@@ -33,10 +33,24 @@ test("createInitialSnapshot locks description collector sessions immediately", (
   assert.equal(snapshot.status.connectionState, "running");
 });
 
-test("createInitialSnapshot keeps reviewer sessions idle by default", () => {
+test("createInitialSnapshot locks reviewer sessions immediately", () => {
   const session = createSessionRecord({
     stage: "description",
     sessionKind: "reviewer",
+  });
+  const snapshot = createInitialSnapshot(
+    session,
+    new Map<ProviderStackId, string>([["codexCli", "Codex"]]),
+    null
+  );
+
+  assert.equal(snapshot.status.connectionState, "running");
+});
+
+test("createInitialSnapshot keeps non-workflow sessions idle", () => {
+  const session = createSessionRecord({
+    stage: null,
+    sessionKind: null,
   });
   const snapshot = createInitialSnapshot(
     session,
