@@ -32,6 +32,8 @@
 
 Стрим‑события (`session:stream`) допускаются как “live‑ускорители” UI, но не должны ломать snapshot‑инварианты.
 
+**Важно (гонка гидрации):** `workspace:snapshot` может прийти **раньше**, чем UI успеет создать локальный `SessionSnapshot` по `dialog:list:result` или обработать `session:created` (rollover). UI обязан сохранять последний `workspace:snapshot` и **пере‑применять** его после создания/переключения `sessionId`, иначе возможен “stuck lock” до следующего snapshot/перезагрузки.
+
 ### 2.2 История диалога vs live статус
 - **DialogPanel (история)** живёт по `dialogId` (в том числе при смене `sessionId`).
 - **InputPanel / StatusPanel / SessionIdBar (статусы/лимиты/токены/ID)** должны следовать **активному live `sessionId`**.
@@ -133,4 +135,3 @@ Continuity делит долгий диалог на runtime‑сегменты 
 
 5) **Статусные панели не “подвисают” на старом сегменте**
    - После rollover SessionIdBar/StatusPanel отображают данные активного сегмента (актуальный `sessionId`/`providerSessionId`).
-
