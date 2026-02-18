@@ -94,7 +94,7 @@
 ### Stream 2: UI — вернуть вторую надпись блокировки при смене сессии
 1. [DONE] UI: при `binding.status=pending` и `connectionState=running` показывать placeholder “resuming session…”, а не “agent working…”.
    Scope: `src/client/ui/src/session/session-view.tsx` (1 файл); ожидаемый commit message: `fix(ui): show resuming copy during session binding`
-2. [TODO] Git Commit: `fix(ui): show resuming copy during session binding` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): show resuming copy during session binding` (hash: b23d2d45)
 
 ### Stream 3: Release
 1. [TODO] `./scripts/build-all.sh` → next version; собрать tarball’ы и обновить манифесты.
