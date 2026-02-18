@@ -75,4 +75,11 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
     base64:
       "JSUgRmFjYWRlcyBHcmFwaCBUZW1wbGF0ZQpmbG93Y2hhcnQgVEQKICAlJSBGYWNhZGVzCiAgbW9kdWxlLWFbIm1vZHVsZS1hIGZhY2FkZSJdCiAgbW9kdWxlLWJbIm1vZHVsZS1iIGZhY2FkZSJdCiAgbW9kdWxlLWNbIm1vZHVsZS1jIGZhY2FkZSJdCgogICUlIENvbnRyYWN0IExpbmtzCiAgbW9kdWxlLWEgLS0+fGh0dHAgL2FwaS92MS9leGFtcGxlfCBtb2R1bGUtYgogIG1vZHVsZS1iIC0tPnxldmVudCBNb2R1bGVVcGRhdGVkfCBtb2R1bGUtYwo=",
   },
+  {
+    id: "description-reviewer-template",
+    destinationRelativePath:
+      ".codeai-hub/templates/description/reviewer-template.md",
+    base64:
+      "IyBGaW5hbCBEZXNjcmlwdGlvbgoKIyMgR29hbAotIC4uLgoKIyMgQ29udGV4dAotIC4uLgoKIyMgTW9kdWxlcwotIGA8bW9kdWxlLXNsdWc+YAogIC0gUmVzcG9uc2liaWxpdHk6IC4uLgogIC0gRmFjYWRlOiAuLi4KCiMjIERlcGVuZGVuY2llcwotIGA8bW9kdWxlLWE+YCAtPiBgPG1vZHVsZS1iPmA6IC4uLgoKIyMgT3BlbiBRdWVzdGlvbnMKLSAuLi4K",
+  },
 ] as const;

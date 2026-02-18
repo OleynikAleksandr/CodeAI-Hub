@@ -70,6 +70,20 @@ const resolveReviewerPromptPath = (): string | null => {
   );
 };
 
+const resolveReviewerTemplatePath = (): string | null => {
+  const home = homedir();
+  if (!home) {
+    return null;
+  }
+  return path.join(
+    home,
+    WORKSPACE_ROOT_DIR,
+    "templates",
+    "description",
+    "reviewer-template.md"
+  );
+};
+
 const readReviewerPrompt = async (): Promise<string> => {
   const promptPath = resolveReviewerPromptPath();
   if (!promptPath) {
@@ -100,6 +114,18 @@ const buildReviewerPromptPack = async (params: {
     `Questionnaire (relative): \`${questionnaireRelativePath}\``,
     `Questionnaire (absolute): \`${joinWorkspacePath(params.workspaceRoot, questionnaireRelativePath)}\``,
   ];
+
+  const reviewerTemplatePath = resolveReviewerTemplatePath();
+  if (reviewerTemplatePath) {
+    try {
+      await fs.access(reviewerTemplatePath);
+      instructionLines.push(
+        `Reviewer template (absolute): \`${reviewerTemplatePath}\``
+      );
+    } catch {
+      // Template is optional; omit if missing.
+    }
+  }
 
   return [prompt, instructionLines.join("\n")].join("\n\n");
 };
