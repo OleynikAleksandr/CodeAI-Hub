@@ -8185,7 +8185,13 @@
         active: false,
         updatedAt: now
       },
-      connectionState: session.stage === "description" && session.sessionKind === "collector" ? "running" : "idle",
+      // All workflow sessions (stage + sessionKind set) start with a Core-initiated
+      // prompt, so input must be locked immediately to prevent user interference
+      // before the first turn completes.
+      // NOTE: If future implementation/planning stages require a different initial
+      // state (e.g., user-initiated first message), add explicit exceptions here
+      // by checking session.stage or session.runSlug.
+      connectionState: session.stage != null && session.sessionKind != null ? "running" : "idle",
       updatedAt: now
     };
     return {
