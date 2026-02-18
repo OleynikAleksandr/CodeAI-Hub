@@ -24,6 +24,7 @@
 | BUG-2026-02-17-06 | OPEN | Core/Provider | Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working | TBD |
 | BUG-2026-02-18-01 | OPEN | Session UI | workflow-сессия открывается с unlocked input до первого snapshot от Core | TBD |
 | BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
+| BUG-2026-02-18-03 | OPEN | Claude/Auth | macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic, не блокирует) | TBD |
 
 ---
 
@@ -329,4 +330,40 @@
 
 **Guards (smoke):**
 - Открыть VSCode из терминала с активным Claude Code CLI → Claude должен быть ДОСТУПЕН.
+
+
+---
+
+## BUG-2026-02-18-03 — macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic)
+
+**Status:** OPEN
+
+**Severity:** Cosmetic — не блокирует работу, Claude работает корректно.
+
+**Symptom:** При запуске VSCode (или после рестарта Core) появляется системный macOS диалог:
+> "Keychain Not Found. A keychain cannot be found to store 'oleksandroliinyk.'"
+> Кнопки: Cancel / Reset To Defaults.
+Правильное действие пользователя — нажать **Cancel**. После этого Claude работает нормально.
+
+**Root cause:**
+- Auth probe запускает Claude CLI как subprocess VSCode Extension Host с `HOME=~/.codeai-hub/providers/claude/home`.
+- Claude читает OAuth токен из системного Keychain (работает) и успешно проходит auth.
+- После успешного auth Claude пытается **записать** обновлённый токен обратно в Keychain.
+- Subprocess Extension Host не имеет доступа к login keychain macOS для записи в данном контексте.
+- macOS Keychain API показывает диалог вместо тихого fail.
+
+**Impact:**
+- Появляется один раз при каждом старте Core (не при каждом запросе).
+- Сбивает пользователя с толку — выглядит как ошибка, хотя это не так.
+- Нажатие "Cancel" — правильное действие; "Reset To Defaults" трогать не нужно.
+
+**Fix (planned):**
+Варианты для исследования:
+1. Записывать credentials в `~/.codeai-hub/providers/claude/home/.claude/.credentials.json`
+   после успешного auth probe — тогда Claude при следующем запуске найдёт файл и не полезет в Keychain за записью.
+2. Найти env var Claude CLI который подавляет запись в Keychain (если существует).
+3. Сделать `.credentials.json` в provider-home симлинком на `~/.claude/.credentials.json` —
+   тогда Claude пишет в нативный home и Keychain dialog не нужен.
+
+**Release:** TBD
 
