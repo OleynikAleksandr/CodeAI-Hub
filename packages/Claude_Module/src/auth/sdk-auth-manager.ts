@@ -155,7 +155,13 @@ export class SDKAuthManager {
   }
 
   getAuthEnvironment(): NodeJS.ProcessEnv {
-    const { ANTHROPIC_API_KEY: _anthropicApiKey, ...processEnv } = process.env;
+    // Strip ANTHROPIC_API_KEY (force CLI auth) and CLAUDECODE (prevent nested
+    // session detection when Core is launched from a Claude Code CLI context).
+    const {
+      ANTHROPIC_API_KEY: _anthropicApiKey,
+      CLAUDECODE: _claudeCode,
+      ...processEnv
+    } = process.env;
     const baseEnv: NodeJS.ProcessEnv = {
       ...processEnv,
       HOME: resolveClaudeProviderHome(),
