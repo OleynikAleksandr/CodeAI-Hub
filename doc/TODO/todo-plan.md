@@ -98,5 +98,5 @@
 
 ### Stream 3: Release
 1. [DONE] `./scripts/build-all.sh` → next version; собрать tarball’ы и обновить манифесты.
-2. [TODO] Git Commit: `feat(release): v<next> - reviewer ux placeholder` (hash: TBD)
+2. [DONE] Git Commit: `feat(release): v1.1.638 - reviewer ux placeholder` (hash: 23f9c093)
 3. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX.
