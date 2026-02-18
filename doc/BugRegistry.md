@@ -464,3 +464,5 @@
 **Guards (smoke):**
 - Убедиться, что файл существует: `~/.codeai-hub/templates/description/reviewer-template.md`.
 - Открыть reviewer‑сессию → в первой инструкции должна быть строка `Reviewer template (absolute): ...` и агент не должен писать “template not found”.
+
+**Verified (manual):** 2026-02-18 — подтверждено: при старте reviewer‑сессии агент видит `reviewer-template.md` (перечисляет его среди доступных файлов) и не сообщает “template not found”.
