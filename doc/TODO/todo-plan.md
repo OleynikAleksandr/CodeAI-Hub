@@ -19,48 +19,36 @@
 
 ## Phase 214 — Session UI: Lock workflow sessions immediately on open (owner: Oleksandr+Claude, updated: 2026-02-18)
 
-**Проблема (BUG-2026-02-18-01):** Reviewer-сессия (и все будущие workflow-узлы документации)
-открывается с `connectionState="idle"`, хотя Core сразу шлёт первый промпт и начинается turn.
-Пользователь может вводить текст в этот промежуток до первого workspace snapshot.
+**Проблема (BUG-2026-02-18-01):** Reviewer-сессия открывается с `connectionState="idle"`.
+Пользователь мог вводить текст до первого workspace snapshot от Core.
 
-**Root cause:** `createInitialSnapshot()` выставляет `connectionState="running"` только для
-`stage="description" && sessionKind="collector"`. Все остальные workflow-сессии стартуют с `"idle"`.
-
-**Goal:** Любая workflow-сессия (stage != null && sessionKind != null) открывается с
-`connectionState="running"` — блокировка мгновенная.
-Для будущих стадий (имплементация, планирование), где пользователь инициирует первый turn,
-добавлять явное исключение в этом же месте (с комментарием).
-
-**Затронутые файлы:**
-- `src/client/ui/src/session/helpers.ts` — `createInitialSnapshot()`
-- `src/client/ui/src/session/helpers.initial-snapshot.test.ts` — обновить тест для reviewer
+**Goal:** Любая workflow-сессия (stage != null && sessionKind != null) открывается с `connectionState="running"`.
 
 ---
 
 ### Stream 1: Фикс — мгновенная блокировка для всех workflow-сессий
 
-1. [TODO] В `helpers.ts` обновить `createInitialSnapshot()`:
-   Заменить условие `stage === "description" && sessionKind === "collector"`
-   на `stage != null && sessionKind != null`.
-   Добавить комментарий об исключениях для будущих implementation/planning стадий.
-   Обновить тест в `helpers.initial-snapshot.test.ts`:
-   `"keeps reviewer sessions idle"` → `"locks reviewer sessions immediately"` (ожидание: `"running"`).
-   Scope: `src/client/ui/src/session/helpers.ts` + `helpers.initial-snapshot.test.ts` (2 файла).
+1. [DONE] В `helpers.ts` обновлён `createInitialSnapshot()`:
+   Условие `stage === "description" && sessionKind === "collector"` заменено на
+   `stage != null && sessionKind != null`.
+   Добавлен комментарий об исключениях для будущих implementation/planning стадий.
+   Тест `helpers.initial-snapshot.test.ts` обновлён: reviewer → `"running"`;
+   добавлен тест для non-workflow сессий → `"idle"`.
+   Scope: `helpers.ts` + `helpers.initial-snapshot.test.ts` (2 файла).
 
-2. [TODO] Git Commit: `fix(ui): lock all workflow sessions immediately on open` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): lock all workflow sessions immediately on open` (hash: 63ab37d1)
 
 ---
 
 ### Stream 2: Таргетная сборка + Release
 
-1. [TODO] `npm run build:webview` + `npm run typecheck:webview`.
-   Устранить ошибки сборки.
+1. [DONE] `npm run build:webview` + `npm run typecheck:webview` — зелёные.
 
-2. [TODO] Git Commit: `chore(build): verify webview after workflow session lock fix` (hash: TBD)
+2. [DONE] Git Commit: `chore(build): verify webview after workflow session lock fix` (hash: 262fd87e)
 
-3. [TODO] `./scripts/build-all.sh` — полный релизный build.
-   Переложить tarballs в `doc/tmp/releases/`.
-   Создать `doc/Sessions/Session079.md`.
+3. [DONE] `./scripts/build-all.sh` — v1.1.629. Session079.md создан.
 
-4. [TODO] Git Commit: `feat(release): vX.X.XXX - lock workflow sessions immediately` (hash: TBD)
+4. [DONE] Git Commit: `feat(release): v1.1.629 - lock workflow sessions immediately` (hash: cb7b33cc)
+
+**Phase 214 COMPLETED — 2026-02-18**
 
