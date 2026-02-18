@@ -17,72 +17,50 @@
 
 ---
 
-## Phase 213 — Session UI: Force Unlock Button UX Fixes (owner: Oleksandr+Claude, updated: 2026-02-17)
+## Phase 214 — Session UI: Lock workflow sessions immediately on open (owner: Oleksandr+Claude, updated: 2026-02-18)
 
-**Контекст:** Phase 212 реализовала кнопку 🔓 (v1.1.627). После тестирования выявлены дефекты.
+**Проблема (BUG-2026-02-18-01):** Reviewer-сессия (и все будущие workflow-узлы документации)
+открывается с `connectionState="idle"`, хотя Core сразу шлёт первый промпт и начинается turn.
+Пользователь может вводить текст в этот промежуток до первого workspace snapshot.
 
-**Проблемы:**
-1. Кнопка появляется в one-shot (Description) сессии — не должна.
-2. Placeholder `Agent is working… Please wait.` не меняется при forceUnlocked=true.
-3. Кнопка исчезает после разблокировки — нельзя вернуть блокировку вручную.
-4. Расположение кнопки неудобно (над плашкой ввода).
+**Root cause:** `createInitialSnapshot()` выставляет `connectionState="running"` только для
+`stage="description" && sessionKind="collector"`. Все остальные workflow-сессии стартуют с `"idle"`.
 
-**Goal:**
-- Кнопка переезжает ВНУТРЬ `InputPanel` — в footer, прижата вправо.
-- Footer всегда видим (не скрывается при блокировке).
-- Два состояния кнопки: 🔒 (ввод заблокирован) → клик разблокирует; 🔓 (forceUnlocked) → клик возвращает блокировку.
-- При forceUnlocked=true placeholder показывает стандартный текст.
-- В collector (Description) и terminal_no_resume сессиях кнопка не показывается.
-- Убрать `ForceUnlockButton` из `session-view.tsx`.
+**Goal:** Любая workflow-сессия (stage != null && sessionKind != null) открывается с
+`connectionState="running"` — блокировка мгновенная.
+Для будущих стадий (имплементация, планирование), где пользователь инициирует первый turn,
+добавлять явное исключение в этом же месте (с комментарием).
 
----
-
-### Stream 1: Fix — кнопка не должна появляться в one-shot (Description) сессии
-
-1. [DONE] Диагностировать: почему `terminalNoResume` не срабатывает для Description сессии.
-   Root cause: `terminalNoResume` выставляется только ПОСЛЕ turn. Fix: не передавать `onForceUnlock`/`onRelock` когда `sessionKind === "collector"`.
-   Удалить `ForceUnlockButton` компонент и его JSX из `session-view.tsx`.
-   Scope: `src/client/ui/src/session/session-view.tsx` + `input-panel.tsx` + `session-view.css` (3 файла).
-
-2. [DONE] Git Commit: `fix(ui): move lock toggle to InputPanel footer, fix collector session` (hash: 27cfc688)
+**Затронутые файлы:**
+- `src/client/ui/src/session/helpers.ts` — `createInitialSnapshot()`
+- `src/client/ui/src/session/helpers.initial-snapshot.test.ts` — обновить тест для reviewer
 
 ---
 
-### Stream 2: Редизайн — кнопка 🔒/🔓 внутри InputPanel footer (справа)
+### Stream 1: Фикс — мгновенная блокировка для всех workflow-сессий
 
-1. [DONE] Добавлены `onForceUnlock?: () => void` и `onRelock?: () => void` в `InputPanelProps`.
-   `resolvePlaceholder()` вынесена в pure helper; при `forceUnlocked=true` — стандартный placeholder.
-   Footer: `visibility: hidden` только на hint-тексте, кнопка всегда видна.
-   `showLockToggle = !terminalNoResume && (inputLocked || forceUnlocked) && (onForceUnlock != null || onRelock != null)`.
-   Scope: `src/client/ui/src/session/input-panel.tsx` (1 файл).
+1. [TODO] В `helpers.ts` обновить `createInitialSnapshot()`:
+   Заменить условие `stage === "description" && sessionKind === "collector"`
+   на `stage != null && sessionKind != null`.
+   Добавить комментарий об исключениях для будущих implementation/planning стадий.
+   Обновить тест в `helpers.initial-snapshot.test.ts`:
+   `"keeps reviewer sessions idle"` → `"locks reviewer sessions immediately"` (ожидание: `"running"`).
+   Scope: `src/client/ui/src/session/helpers.ts` + `helpers.initial-snapshot.test.ts` (2 файла).
 
-2. [DONE] Git Commit: `fix(ui): move lock toggle to InputPanel footer, fix collector session` (hash: 27cfc688)
-
----
-
-### Stream 3: Подключение callbacks в SessionView + CSS
-
-1. [DONE] В `session-view.tsx`: `handleRelock = () => setForceUnlocked(false)`.
-   `onForceUnlock={isCollectorSession ? undefined : handleForceUnlock}` — collector сессии без кнопки.
-   В `media/session-view.css`: удалены стили `.session-app__force-unlock`; footer → `justify-content: space-between`; добавлен `.session-input__lock-toggle`.
-   Scope: `src/client/ui/src/session/session-view.tsx` + `media/session-view.css` (2 файла).
-
-2. [DONE] Git Commit: `fix(ui): move lock toggle to InputPanel footer, fix collector session` (hash: 27cfc688)
+2. [TODO] Git Commit: `fix(ui): lock all workflow sessions immediately on open` (hash: TBD)
 
 ---
 
-### Stream 4: Таргетная сборка + Release
+### Stream 2: Таргетная сборка + Release
 
-1. [DONE] `npm run build:webview` + `npm run typecheck:webview` — зелёные.
-   Scope: webview build.
+1. [TODO] `npm run build:webview` + `npm run typecheck:webview`.
+   Устранить ошибки сборки.
 
-2. [DONE] Git Commit: `chore(build): verify webview after force-unlock ux fixes` (hash: 9daf6408)
+2. [TODO] Git Commit: `chore(build): verify webview after workflow session lock fix` (hash: TBD)
 
-3. [DONE] `./scripts/build-all.sh` — v1.1.628. Tarballs в `~/.codeai-hub/releases/`.
-   Session078.md создан.
+3. [TODO] `./scripts/build-all.sh` — полный релизный build.
+   Переложить tarballs в `doc/tmp/releases/`.
+   Создать `doc/Sessions/Session079.md`.
 
-4. [DONE] Git Commit: `feat(release): v1.1.628 - force unlock ux fixes` (hash: 0c575c29)
-   Git Commit: `docs(release): record v1.1.628 build` (hash: 6d743bb5)
-
-**Phase 213 COMPLETED — 2026-02-17**
+4. [TODO] Git Commit: `feat(release): vX.X.XXX - lock workflow sessions immediately` (hash: TBD)
 
