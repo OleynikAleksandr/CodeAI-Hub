@@ -168,9 +168,15 @@ export class SDKAuthManager {
       CLAUDE_USE_CLI_AUTH: "true",
       CLAUDE_SUBSCRIPTION_MODE: "true",
     };
-    const oauthToken = this.resolveOAuthTokenFromCacheOrEnvironment();
-    if (oauthToken) {
-      baseEnv[CLAUDE_OAUTH_ENV_KEY] = oauthToken;
+    // Only forward CLAUDE_CODE_OAUTH_TOKEN when the user explicitly provided it
+    // in the environment. Do NOT forward tokens bootstrapped from the platform
+    // Keychain: Claude CLI reads the Keychain natively (system-wide, HOME-
+    // independent) and handles token refresh automatically. Pre-reading and
+    // forwarding a stale Keychain access token bypasses the refresh flow and
+    // causes 401 errors when the token has expired.
+    const userProvidedToken = process.env[CLAUDE_OAUTH_ENV_KEY]?.trim();
+    if (userProvidedToken) {
+      baseEnv[CLAUDE_OAUTH_ENV_KEY] = userProvidedToken;
       return baseEnv;
     }
     const { [CLAUDE_OAUTH_ENV_KEY]: _oauthToken, ...withoutOauthToken } =
@@ -263,18 +269,6 @@ export class SDKAuthManager {
     } catch {
       // ignore migration errors; ensureSubscriptionAuth will surface missing auth later
     }
-  }
-
-  private resolveOAuthTokenFromCacheOrEnvironment(): string | null {
-    if (this.cachedOAuthToken?.trim()) {
-      return this.cachedOAuthToken;
-    }
-    const tokenFromEnv = process.env[CLAUDE_OAUTH_ENV_KEY]?.trim();
-    if (tokenFromEnv) {
-      this.cachedOAuthToken = tokenFromEnv;
-      return tokenFromEnv;
-    }
-    return null;
   }
 
   private async bootstrapOAuthToken(options?: {
