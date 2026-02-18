@@ -87,6 +87,10 @@ const SessionViewBody = ({
 
   const connectionState: ConnectionState =
     activeSession?.status.connectionState ?? "idle";
+  const inputConnectionState: ConnectionState =
+    connectionState === "running" && activeSession?.binding.status === "pending"
+      ? "blocked"
+      : connectionState;
   const terminalNoResume =
     activeSession?.status.continuityLock?.reason === "terminal_no_resume";
   const continuityLockActive =
@@ -180,7 +184,7 @@ const SessionViewBody = ({
             </div>
           ) : null}
           <InputPanel
-            connectionState={connectionState}
+            connectionState={inputConnectionState}
             continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
             draft={activeSession.draft}
