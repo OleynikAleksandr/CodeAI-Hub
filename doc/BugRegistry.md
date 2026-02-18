@@ -23,6 +23,7 @@
 | BUG-2026-02-17-05 | OPEN | PM/UI | после Core restart агент отвечает, но input остаётся разблокированным во время turn | TBD |
 | BUG-2026-02-17-06 | OPEN | Core/Provider | Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working | TBD |
 | BUG-2026-02-18-01 | OPEN | Session UI | workflow-сессия открывается с unlocked input до первого snapshot от Core | TBD |
+| BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
 
 ---
 
@@ -272,6 +273,7 @@
 ---
 
 ## BUG-2026-02-18-01 — Session UI: workflow-сессия открывается с unlocked input до первого snapshot
+| BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
 
 **Status:** OPEN
 
@@ -295,4 +297,36 @@
 - Обновить тест `helpers.initial-snapshot.test.ts` (reviewer → ожидание `"running"`).
 
 **Release:** TBD (Phase 214)
+
+
+---
+
+## BUG-2026-02-18-02 — Claude: auth probe fails with "nested session" when VSCode launched from Claude Code CLI terminal
+
+**Status:** FIXED
+
+**Symptom:** После установки нового релиза Claude показывается как НЕДОСТУПЕН.
+Ошибка: "Claude provider-home authentication required. Run HOME=...".
+
+**Root cause (confirmed):**
+- `getAuthEnvironment()` в `sdk-auth-manager.ts` делает `...process.env` — распространяет ВСЕ
+  переменные окружения родительского процесса, включая `CLAUDECODE`.
+- Если VSCode открыт из терминала где запущен Claude Code CLI, `CLAUDECODE` env var
+  попадает в Core → в auth probe.
+- Claude Code CLI видит `CLAUDECODE` → отказывает с ошибкой: 
+  "Claude Code cannot be launched inside another Claude Code session."
+- Auth probe падает → пользователь видит "НЕДОСТУПЕН".
+
+**Fix:**
+- В `getAuthEnvironment()` добавлен destructuring `CLAUDECODE: _claudeCode` — убирает переменную
+  из окружения probe так же, как уже убирался `ANTHROPIC_API_KEY`.
+- Комментарий в коде объясняет причину обоих исключений.
+
+**Commits:**
+- `3ffdf560 fix(claude): strip CLAUDECODE from auth env to prevent nested session error`
+
+**Release:** TBD (следующий релиз после тестирования)
+
+**Guards (smoke):**
+- Открыть VSCode из терминала с активным Claude Code CLI → Claude должен быть ДОСТУПЕН.
 
