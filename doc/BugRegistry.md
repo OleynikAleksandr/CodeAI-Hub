@@ -22,6 +22,7 @@
 | BUG-2026-02-17-04 | OPEN | PM/UI | input остаётся заблокированным после Claude 401 (нет recovery UI) | TBD |
 | BUG-2026-02-17-05 | OPEN | PM/UI | после Core restart агент отвечает, но input остаётся разблокированным во время turn | TBD |
 | BUG-2026-02-17-06 | OPEN | Core/Provider | Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working | TBD |
+| BUG-2026-02-18-01 | OPEN | Session UI | workflow-сессия открывается с unlocked input до первого snapshot от Core | TBD |
 
 ---
 
@@ -267,3 +268,31 @@
 **Fix (planned):** гарантировать корректный failure lifecycle в Core/Claude adapter при `authentication_error`.
 
 **Release:** TBD
+
+---
+
+## BUG-2026-02-18-01 — Session UI: workflow-сессия открывается с unlocked input до первого snapshot
+
+**Status:** OPEN
+
+**Symptom:** Reviewer-сессия (и потенциально все будущие workflow-узлы документации) открывается
+с `connectionState="idle"`. Пользователь может вводить текст до прихода первого workspace snapshot
+от Core, хотя Core сразу шлёт первый промпт и turn уже выполняется.
+
+**Expected:** любая workflow-сессия, где первый turn инициируется Core, должна открываться
+с `connectionState="running"` (input заблокирован мгновенно).
+
+**Root cause (confirmed):**
+- `createInitialSnapshot()` в `helpers.ts` выставляет `connectionState="running"` только для
+  `stage="description" && sessionKind="collector"` (фикс BUG-2026-02-16-03).
+- Reviewer (`sessionKind="reviewer"`) и все остальные workflow-сессии стартуют с `"idle"`,
+  даже если Core немедленно начинает первый turn.
+
+**Fix (planned):**
+- В `createInitialSnapshot()`: расширить условие до `stage != null && sessionKind != null`.
+- Добавить комментарий: для implementation/planning стадий, где пользователь инициирует
+  первый turn, добавлять явное исключение по `session.stage` или `session.runSlug`.
+- Обновить тест `helpers.initial-snapshot.test.ts` (reviewer → ожидание `"running"`).
+
+**Release:** TBD (Phase 214)
+
