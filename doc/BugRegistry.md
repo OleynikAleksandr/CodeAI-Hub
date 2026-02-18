@@ -27,6 +27,7 @@
 | BUG-2026-02-18-03 | OPEN | Claude/Auth | macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic, не блокирует) | TBD |
 | BUG-2026-02-18-04 | FIXED | Core/UI | Reviewer input не разблокируется после turn completion | TBD |
 | BUG-2026-02-18-05 | FIXED | PM/UI | Dialog Reviewer: input остаётся locked до workspace switch / reload (гонка snapshot vs hydration) | 1.1.635 |
+| BUG-2026-02-18-06 | FIXED | Core/Templates | Reviewer prompt упоминает `reviewer-template.md`, но файл/путь не доступен → агент тратит время на поиск | 1.1.637 |
 
 ---
 
@@ -436,3 +437,30 @@
 - Smoke: открыть Reviewer dialog (idle) → input должен стать unlocked без перезагрузки; довести Reviewer до rollover → после bootstrap (`resume_ready`) input unlock.
 
 **Verified (manual):** 2026-02-18 — подтверждено в PM: idle Reviewer dialog открывается с unlocked input; rollover по контекстному окну разблокирует ввод после bootstrap; переключение между двумя workspace не вызывает “вечный lock”.
+
+---
+
+## BUG-2026-02-18-06 — Reviewer prompt упоминает `reviewer-template.md`, но шаблон не доступен агенту
+
+**Status:** FIXED
+
+**Symptom:** В Reviewer‑сессии агент пишет, что `reviewer-template.md` не найден, и тратит время/контекст на поиск шаблона, хотя это просто опциональный helper.
+
+**Root cause:**
+- В system prompt для reviewer есть строка “Шаблон `reviewer-template.md` (если дан путь и файл доступен для чтения)”.
+- При этом Core синхронизировал только `reviewer-prompt.md` в `~/.codeai-hub/templates/description/`, но не ставил `reviewer-template.md`.
+- В стартовом сообщении reviewer‑сессии Core не передавал явный путь к шаблону → агент пытался “угадывать” расположение.
+
+**Fix:**
+- Core/Templates: добавлен bundled‑template `reviewer-template.md` в TemplateSync → устанавливается в `~/.codeai-hub/templates/description/reviewer-template.md`.
+- Core/Workflow runtime: при старте reviewer‑сессии добавляется строка с абсолютным путём к шаблону, если файл существует (чтобы агент читал его напрямую).
+
+**Commits:**
+- `e6db4e57 fix(templates): bundle reviewer-template and pass path`
+- `1827a8d9 feat(release): v1.1.637 - reviewer template sync`
+
+**Release:** `1.1.637`
+
+**Guards (smoke):**
+- Убедиться, что файл существует: `~/.codeai-hub/templates/description/reviewer-template.md`.
+- Открыть reviewer‑сессию → в первой инструкции должна быть строка `Reviewer template (absolute): ...` и агент не должен писать “template not found”.
