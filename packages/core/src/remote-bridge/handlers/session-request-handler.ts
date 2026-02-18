@@ -2606,6 +2606,9 @@ export class SessionRequestHandler {
 
     const usage = extractTokenUsage(event);
     if (!usage) {
+      // No token usage data in event - cannot evaluate rollover threshold.
+      // Safe fallback: treat as no-rollover so the turn completion unlocks the UI.
+      this.registerPostTurnNoRolloverDecision(sessionId);
       return;
     }
     this.flowNodeTokenUsageSnapshots.set(sessionId, usage);

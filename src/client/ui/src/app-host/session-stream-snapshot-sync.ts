@@ -54,8 +54,14 @@ const applyTurnStateStreamDataToSnapshot = (
     return snapshot;
   }
 
+  // Allow turn_state:idle to unblock the UI unless continuityLock is still
+  // actively held (e.g. during rollover bootstrap). If the lock has already
+  // been released in the snapshot, the turn_state event should take effect.
   const nextConnectionState =
-    snapshot.status.connectionState === "blocked" ? "blocked" : state;
+    snapshot.status.connectionState === "blocked" &&
+    snapshot.status.continuityLock?.active === true
+      ? "blocked"
+      : state;
 
   return {
     ...snapshot,
