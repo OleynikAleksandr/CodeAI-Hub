@@ -238,6 +238,35 @@ test("WorkspaceRuntimeFacade publishes lock transition metadata in snapshot", as
   facade.dispose();
 });
 
+test("WorkspaceRuntimeFacade does not clear lock fields when updating resumeMode", () => {
+  const facade = new WorkspaceRuntimeFacade();
+  const sessionKey = createSessionKey(workspaceA, "session-resume-patch");
+
+  facade.notifySessionCreated(sessionKey, { providerId: "claudeCodeCli" });
+  facade.notifyLockChanged(sessionKey, {
+    active: false,
+    reason: "resume_ready",
+    transition: null,
+  });
+
+  const before = facade.getSnapshot(workspaceA).sessions[sessionKey.sessionId];
+  assert.ok(before);
+  assert.equal(before.turnState, "idle");
+  assert.equal(before.continuityLockActive, false);
+  assert.equal(before.continuityLockReason, "resume_ready");
+
+  facade.notifySessionCreated(sessionKey, { resumeMode: "resume_in_place" });
+
+  const after = facade.getSnapshot(workspaceA).sessions[sessionKey.sessionId];
+  assert.ok(after);
+  assert.equal(after.resumeMode, "resume_in_place");
+  assert.equal(after.turnState, "idle");
+  assert.equal(after.continuityLockActive, false);
+  assert.equal(after.continuityLockReason, "resume_ready");
+
+  facade.dispose();
+});
+
 test("WorkspaceRuntimeFacade keeps continuity lock active for resume timeout", async () => {
   const events: WorkspaceSnapshotPush[] = [];
   const facade = new WorkspaceRuntimeFacade({

@@ -59,6 +59,10 @@ type NotifySessionPatch = Partial<
   >
 >;
 
+type SessionSnapshotPatch = Partial<{
+  -readonly [Key in keyof SessionSnapshot]: SessionSnapshot[Key];
+}>;
+
 const DEFAULT_SNAPSHOT_DEBOUNCE_MS = 50;
 
 const fallbackSelectionIdFactory = (): string => {
@@ -254,20 +258,45 @@ export class WorkspaceRuntimeFacade {
     sessionKey: SessionKey,
     patch: NotifySessionPatch = {}
   ): void {
-    this.store.updateSession(sessionKey, {
+    const hasOwn = (key: keyof NotifySessionPatch): boolean =>
+      Object.hasOwn(patch, key);
+    const update: SessionSnapshotPatch = {
       nodeId: patch.nodeId ?? sessionKey.nodeId,
-      providerId: patch.providerId,
-      providerSessionId: patch.providerSessionId,
-      bindingStatus: patch.bindingStatus,
-      turnState: patch.turnState,
-      continuityLockActive: patch.continuityLockActive,
-      continuityLockReason: patch.continuityLockReason,
-      continuityLockTransition: patch.continuityLockTransition,
-      resumeMode: patch.resumeMode,
-      finalTurnCompleted: patch.finalTurnCompleted,
-      terminalLockReason: patch.terminalLockReason,
-      lastHeartbeatAt: patch.lastHeartbeatAt,
-    });
+    };
+    if (hasOwn("providerId")) {
+      update.providerId = patch.providerId;
+    }
+    if (hasOwn("providerSessionId")) {
+      update.providerSessionId = patch.providerSessionId;
+    }
+    if (hasOwn("bindingStatus")) {
+      update.bindingStatus = patch.bindingStatus;
+    }
+    if (hasOwn("turnState")) {
+      update.turnState = patch.turnState;
+    }
+    if (hasOwn("continuityLockActive")) {
+      update.continuityLockActive = patch.continuityLockActive;
+    }
+    if (hasOwn("continuityLockReason")) {
+      update.continuityLockReason = patch.continuityLockReason;
+    }
+    if (hasOwn("continuityLockTransition")) {
+      update.continuityLockTransition = patch.continuityLockTransition;
+    }
+    if (hasOwn("resumeMode")) {
+      update.resumeMode = patch.resumeMode;
+    }
+    if (hasOwn("finalTurnCompleted")) {
+      update.finalTurnCompleted = patch.finalTurnCompleted;
+    }
+    if (hasOwn("terminalLockReason")) {
+      update.terminalLockReason = patch.terminalLockReason;
+    }
+    if (hasOwn("lastHeartbeatAt")) {
+      update.lastHeartbeatAt = patch.lastHeartbeatAt;
+    }
+    this.store.updateSession(sessionKey, update);
     this.scheduleSnapshot(sessionKey.workspaceRoot, false);
   }
 
@@ -279,12 +308,17 @@ export class WorkspaceRuntimeFacade {
       readonly providerId?: string;
     }
   ): void {
-    this.store.updateSession(sessionKey, {
-      nodeId: sessionKey.nodeId,
-      providerSessionId: patch.providerSessionId ?? undefined,
-      bindingStatus: patch.bindingStatus,
-      providerId: patch.providerId,
-    });
+    const update: SessionSnapshotPatch = { nodeId: sessionKey.nodeId };
+    if (Object.hasOwn(patch, "providerSessionId")) {
+      update.providerSessionId = patch.providerSessionId ?? undefined;
+    }
+    if (Object.hasOwn(patch, "bindingStatus")) {
+      update.bindingStatus = patch.bindingStatus;
+    }
+    if (Object.hasOwn(patch, "providerId")) {
+      update.providerId = patch.providerId;
+    }
+    this.store.updateSession(sessionKey, update);
     this.scheduleSnapshot(sessionKey.workspaceRoot, false);
   }
 
