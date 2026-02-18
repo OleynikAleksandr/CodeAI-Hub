@@ -434,3 +434,5 @@
 **Guards:**
 - Static guard: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
 - Smoke: открыть Reviewer dialog (idle) → input должен стать unlocked без перезагрузки; довести Reviewer до rollover → после bootstrap (`resume_ready`) input unlock.
+
+**Verified (manual):** 2026-02-18 — подтверждено в PM: idle Reviewer dialog открывается с unlocked input; rollover по контекстному окну разблокирует ввод после bootstrap; переключение между двумя workspace не вызывает “вечный lock”.
