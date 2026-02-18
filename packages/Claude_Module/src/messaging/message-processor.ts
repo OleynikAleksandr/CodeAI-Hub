@@ -76,6 +76,43 @@ const appendQuestionsToSuggestedResponse = (
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const readFiniteNumber = (value: unknown): number | null =>
+  typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? Math.round(value)
+    : null;
+
+// Fallback: extract token usage directly from the SDK result message when the
+// /context probe is unavailable (e.g. five-hour rate limit). modelUsage contains
+// contextWindow (limit) and cumulative token counts for the session.
+const extractTokenUsageFromResultMessage = (
+  message: ClaudeStreamMessage
+): TokenUsageSnapshot | null => {
+  const modelUsage = message.modelUsage;
+  if (!isRecord(modelUsage)) {
+    return null;
+  }
+  for (const model of Object.values(modelUsage)) {
+    if (!isRecord(model)) {
+      continue;
+    }
+    const contextWindow = readFiniteNumber(model.contextWindow);
+    if (!contextWindow || contextWindow <= 0) {
+      continue;
+    }
+    const tokens = [
+      readFiniteNumber(model.inputTokens),
+      readFiniteNumber(model.outputTokens),
+      readFiniteNumber(model.cacheCreationInputTokens),
+      readFiniteNumber(model.cacheReadInputTokens),
+    ].filter((n): n is number => n !== null);
+    if (tokens.length > 0) {
+      const used = tokens.reduce((sum, n) => sum + n, 0);
+      return { used, limit: contextWindow };
+    }
+  }
+  return null;
+};
+
 type ContextUsageReaderConfig = {
   readonly executablePath: string;
   readonly env: NodeJS.ProcessEnv;
@@ -410,13 +447,18 @@ export class SDKMessageProcessor {
       message.session_id,
       { force: true }
     );
+    // If the /context probe failed (e.g. five-hour rate limit), fall back to the
+    // token counts embedded in the SDK result message itself. modelUsage contains
+    // contextWindow (limit) and cumulative input/output/cache token counts.
+    const resolvedTokenUsage =
+      tokenUsage ?? extractTokenUsageFromResultMessage(message);
     const usageLimits = await this.refreshUsageLimitsFromUsage(
       session,
       message.session_id,
       { force: true }
     );
     this.maybeEmitTurnCompleted(session, message.session_id, {
-      tokenUsage,
+      tokenUsage: resolvedTokenUsage,
       usageLimits,
     });
   }
