@@ -247,3 +247,52 @@ test("SDKMessageProcessor filters content_block_delta from sdk logger and keeps 
     true
   );
 });
+
+test("SDKMessageProcessor does not derive tokenUsage from modelUsage fallback", async () => {
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-no-model-usage-fallback",
+    NOOP_LOGGER
+  );
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-no-model-usage-fallback",
+  });
+  const events = collectMessageEvents(session);
+
+  processor.enqueueTurn(
+    tempId,
+    { content: "trigger", internal: false, enqueuedAt: Date.now() },
+    {
+      createIterator: () =>
+        createIterator([
+          {
+            type: "assistant",
+            session_id: "real-session-no-fallback",
+            message: { content: [{ type: "text", text: "ok" }] },
+          },
+          {
+            type: "result",
+            session_id: "real-session-no-fallback",
+            modelUsage: {
+              "claude-sonnet-4-6": {
+                contextWindow: 200_000,
+                inputTokens: 6,
+                outputTokens: 15_572,
+                cacheReadInputTokens: 116_451,
+                cacheCreationInputTokens: 41_536,
+              },
+            },
+          },
+        ]),
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  const completed = events.find((event) => event.type === "turn_completed");
+  assert.equal(Boolean(completed), true);
+  assert.equal(Boolean(completed && "tokenUsage" in completed), false);
+});
