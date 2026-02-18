@@ -89,7 +89,7 @@
 ### Stream 1: Docs — зафиксировать manual verify для BUG-2026-02-18-06
 1. [DONE] Обновить `doc/BugRegistry.md`: добавить `Verified (manual)` для `BUG-2026-02-18-06`.
    Scope: `doc/BugRegistry.md` (1 файл); ожидаемый commit message: `docs(bug-registry): verify reviewer template sync`
-2. [TODO] Git Commit: `docs(bug-registry): verify reviewer template sync` (hash: TBD)
+2. [DONE] Git Commit: `docs(bug-registry): verify reviewer template sync` (hash: 0b4687a6)
 
 ### Stream 2: UI — вернуть вторую надпись блокировки при смене сессии
 1. [TODO] UI: при `binding.status=pending` и `connectionState=running` показывать placeholder “resuming session…”, а не “agent working…”.
