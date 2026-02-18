@@ -82,3 +82,21 @@
 
 **Phase 215 IN PROGRESS — 2026-02-18**
 
+---
+
+## Phase 216 — Reviewer UX: placeholder при смене/привязке сессии + manual verify template (owner: Oleksandr+Codex, updated: 2026-02-18)
+
+### Stream 1: Docs — зафиксировать manual verify для BUG-2026-02-18-06
+1. [DONE] Обновить `doc/BugRegistry.md`: добавить `Verified (manual)` для `BUG-2026-02-18-06`.
+   Scope: `doc/BugRegistry.md` (1 файл); ожидаемый commit message: `docs(bug-registry): verify reviewer template sync`
+2. [TODO] Git Commit: `docs(bug-registry): verify reviewer template sync` (hash: TBD)
+
+### Stream 2: UI — вернуть вторую надпись блокировки при смене сессии
+1. [TODO] UI: при `binding.status=pending` и `connectionState=running` показывать placeholder “resuming session…”, а не “agent working…”.
+   Scope: `src/client/ui/src/session/session-view.tsx` (1 файл); ожидаемый commit message: `fix(ui): show resuming copy during session binding`
+2. [TODO] Git Commit: `fix(ui): show resuming copy during session binding` (hash: TBD)
+
+### Stream 3: Release
+1. [TODO] `./scripts/build-all.sh` → next version; собрать tarball’ы и обновить манифесты.
+2. [TODO] Git Commit: `feat(release): v<next> - reviewer ux placeholder` (hash: TBD)
+3. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX.
