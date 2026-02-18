@@ -26514,7 +26514,7 @@ ${replacement}
     if (state !== "idle" && state !== "running") {
       return snapshot;
     }
-    const nextConnectionState = snapshot.status.connectionState === "blocked" ? "blocked" : state;
+    const nextConnectionState = snapshot.status.connectionState === "blocked" && snapshot.status.continuityLock?.active === true ? "blocked" : state;
     return {
       ...snapshot,
       status: {
