@@ -23825,6 +23825,7 @@ ${path2}` : path2;
       }
     );
     const connectionState = activeSession?.status.connectionState ?? "idle";
+    const inputConnectionState = connectionState === "running" && activeSession?.binding.status === "pending" ? "blocked" : connectionState;
     const terminalNoResume = activeSession?.status.continuityLock?.reason === "terminal_no_resume";
     const continuityLockActive = activeSession?.status.continuityLock?.active === true || connectionState === "blocked" || terminalNoResume;
     const effectiveContinuityLockActive = continuityLockActive;
@@ -23896,7 +23897,7 @@ ${path2}` : path2;
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             input_panel_default,
             {
-              connectionState,
+              connectionState: inputConnectionState,
               continuityErrorCopy,
               continuityLockActive: effectiveContinuityLockActive,
               draft: activeSession.draft,
