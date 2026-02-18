@@ -97,6 +97,6 @@
 2. [DONE] Git Commit: `fix(ui): show resuming copy during session binding` (hash: b23d2d45)
 
 ### Stream 3: Release
-1. [TODO] `./scripts/build-all.sh` → next version; собрать tarball’ы и обновить манифесты.
+1. [DONE] `./scripts/build-all.sh` → next version; собрать tarball’ы и обновить манифесты.
 2. [TODO] Git Commit: `feat(release): v<next> - reviewer ux placeholder` (hash: TBD)
 3. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX.
