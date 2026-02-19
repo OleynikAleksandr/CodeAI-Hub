@@ -551,7 +551,7 @@
 
 **Commits:**
 - `87f5d0b9 fix(core): prevent duplicate codex continuity rollover`
-- TBD
+- `04372a76 feat(release): v1.1.641 - codex rollover stability`
 
 **Release:** `1.1.641`
 
