@@ -23781,6 +23781,24 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-view.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var RESUMING_LOCK_REASONS = /* @__PURE__ */ new Set([
+    "context_check_pending",
+    "threshold_reached",
+    "report_in_progress",
+    "resume_bootstrap"
+  ]);
+  var resolveInputConnectionState = (options) => {
+    if (options.connectionState !== "running") {
+      return options.connectionState;
+    }
+    if (options.bindingStatus === "pending") {
+      return "blocked";
+    }
+    if (options.continuityLockActive && options.continuityLockReason && RESUMING_LOCK_REASONS.has(options.continuityLockReason)) {
+      return "blocked";
+    }
+    return options.connectionState;
+  };
   var resolveContinuityErrorCopy = (activeSession) => {
     if (activeSession?.status.rollover?.phase !== "failed") {
       return null;
@@ -23825,9 +23843,15 @@ ${path2}` : path2;
       }
     );
     const connectionState = activeSession?.status.connectionState ?? "idle";
-    const inputConnectionState = connectionState === "running" && activeSession?.binding.status === "pending" ? "blocked" : connectionState;
-    const terminalNoResume = activeSession?.status.continuityLock?.reason === "terminal_no_resume";
+    const continuityLockReason = activeSession?.status.continuityLock?.reason;
+    const terminalNoResume = continuityLockReason === "terminal_no_resume";
     const continuityLockActive = activeSession?.status.continuityLock?.active === true || connectionState === "blocked" || terminalNoResume;
+    const inputConnectionState = resolveInputConnectionState({
+      connectionState,
+      bindingStatus: activeSession?.binding.status ?? null,
+      continuityLockActive,
+      continuityLockReason
+    });
     const effectiveContinuityLockActive = continuityLockActive;
     const queueConnectionState = effectiveContinuityLockActive && connectionState !== "running" ? "blocked" : connectionState;
     const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
