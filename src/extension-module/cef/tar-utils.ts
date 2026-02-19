@@ -4,6 +4,7 @@ export type TarExtractOptions = {
   readonly archivePath: string;
   readonly destination: string;
   readonly label: string;
+  readonly stripComponents?: number;
   readonly onProgress?: (message: string) => void;
 };
 
@@ -21,10 +22,15 @@ export const extractArchiveWithTar = async ({
   archivePath,
   destination,
   label,
+  stripComponents,
   onProgress,
 }: TarExtractOptions): Promise<void> => {
   onProgress?.(`Extracting ${label}…`);
-  const args = [...resolveTarArgs(archivePath), "-C", destination];
+  const args = [...resolveTarArgs(archivePath)];
+  if (typeof stripComponents === "number" && stripComponents > 0) {
+    args.push("--strip-components", String(stripComponents));
+  }
+  args.push("-C", destination);
   await new Promise<void>((resolve, reject) => {
     execFile("tar", args, (error) => {
       if (error) {
