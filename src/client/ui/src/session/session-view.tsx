@@ -22,6 +22,35 @@ import {
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 
+const RESUMING_LOCK_REASONS = new Set([
+  "context_check_pending",
+  "threshold_reached",
+  "report_in_progress",
+  "resume_bootstrap",
+] as const);
+
+const resolveInputConnectionState = (options: {
+  readonly connectionState: ConnectionState;
+  readonly bindingStatus: "pending" | "ready" | "failed" | null;
+  readonly continuityLockActive: boolean;
+  readonly continuityLockReason: string | undefined;
+}): ConnectionState => {
+  if (options.connectionState !== "running") {
+    return options.connectionState;
+  }
+  if (options.bindingStatus === "pending") {
+    return "blocked";
+  }
+  if (
+    options.continuityLockActive &&
+    options.continuityLockReason &&
+    RESUMING_LOCK_REASONS.has(options.continuityLockReason as never)
+  ) {
+    return "blocked";
+  }
+  return options.connectionState;
+};
+
 type SessionViewProps = {
   readonly allSessions?: readonly SessionRecord[];
   readonly sessions: readonly SessionRecord[];
@@ -87,16 +116,18 @@ const SessionViewBody = ({
 
   const connectionState: ConnectionState =
     activeSession?.status.connectionState ?? "idle";
-  const inputConnectionState: ConnectionState =
-    connectionState === "running" && activeSession?.binding.status === "pending"
-      ? "blocked"
-      : connectionState;
-  const terminalNoResume =
-    activeSession?.status.continuityLock?.reason === "terminal_no_resume";
+  const continuityLockReason = activeSession?.status.continuityLock?.reason;
+  const terminalNoResume = continuityLockReason === "terminal_no_resume";
   const continuityLockActive =
     activeSession?.status.continuityLock?.active === true ||
     connectionState === "blocked" ||
     terminalNoResume;
+  const inputConnectionState = resolveInputConnectionState({
+    connectionState,
+    bindingStatus: activeSession?.binding.status ?? null,
+    continuityLockActive,
+    continuityLockReason,
+  });
   const effectiveContinuityLockActive = continuityLockActive;
   const queueConnectionState: ConnectionState =
     effectiveContinuityLockActive && connectionState !== "running"

@@ -482,5 +482,13 @@
 **Expected:**
 - В фазе смены/привязки сессии (handoff/hydration/binding pending) UI должен показывать `resuming`-copy, а не `working`-copy.
 
+**Root cause (confirmed):**
+- В PM snapshot-first маппинге `connectionState` выставляется в `"running"` при `turnState="running"` даже когда continuity-lock уже активен (rollover/report/bootstrap).
+- Session UI выбирает wait-copy по `connectionState`, поэтому при `"running"` остаётся “Agent is working…”, хотя по смыслу это уже “resuming/switching”.
+
+**Fix (implemented, needs manual verify):**
+- Session UI: при `connectionState="running"` и continuity lock reason из {`context_check_pending`, `threshold_reached`, `report_in_progress`, `resume_bootstrap`} форсировать wait-copy как `resuming` (через `InputPanel` connectionState override).
+  - Code: `src/client/ui/src/session/session-view.tsx`.
+
 **Next step:**
-- Завтра провести root-cause анализ порядка snapshot/stream/binding событий в Session UI и восстановить корректный критерий для отображения `resuming`-placeholder.
+- Manual verify в PM: во время rollover/switch сессии placeholder должен переключаться на `resuming` и не залипать на `working`.
