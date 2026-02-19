@@ -19,8 +19,12 @@ const sleep = (ms: number): Promise<void> =>
     setTimeout(resolve, ms);
   });
 
-const toSafeMs = (value: number, fallback: number): number =>
-  Number.isFinite(value) && value > 0 ? Math.floor(value) : fallback;
+const toSafeMs = (value: number, fallback: number): number => {
+  if (value === Number.POSITIVE_INFINITY) {
+    return value;
+  }
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : fallback;
+};
 
 export class ContinuityReportWaiter {
   readonly #clock: () => number;

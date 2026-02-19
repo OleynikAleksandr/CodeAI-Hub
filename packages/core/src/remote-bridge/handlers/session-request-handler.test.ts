@@ -64,7 +64,7 @@ const createHarness = (): HandlerHarness => {
     flowNodeRolloverStarted: new Set(),
     flowNodeTokenUsageSnapshots: new Map(),
     flowNodeContinuityLockContexts: new Map(),
-    flowNodeContinuityLockTimeouts: new Map(),
+    flowNodeContinuityCreateReportRequests: new Map(),
     postTurnContextDecisionPendingSessions: new Set(),
     postTurnContextDecisionBySessionId: new Map(),
     sessionStorage: {
@@ -364,7 +364,7 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
   );
 });
 
-test("SessionRequestHandler unlocks continuity lock only after bootstrap assistant message", async () => {
+test("SessionRequestHandler unlocks continuity lock after bootstrap turn completion", async () => {
   const harness = createHarness();
   const sourceSession = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -412,7 +412,7 @@ test("SessionRequestHandler unlocks continuity lock only after bootstrap assista
     type: "turn_completed",
   });
   await flushAsyncWork();
-  let continuityLockEvents = harness.events.filter(
+  const continuityLockEvents = harness.events.filter(
     (event) =>
       event.type === "session:stream" &&
       (
@@ -421,24 +421,6 @@ test("SessionRequestHandler unlocks continuity lock only after bootstrap assista
         }
       )?.event?.data?.kind === "continuity_lock"
   );
-  assert.equal(continuityLockEvents.length, 1);
-
-  (harness.handler as any).handleProviderEvent(targetSession.id, {
-    type: "assistant",
-    payload: "bootstrap complete",
-  });
-  await flushAsyncWork();
-
-  continuityLockEvents = harness.events.filter(
-    (event) =>
-      event.type === "session:stream" &&
-      (
-        event.payload as {
-          readonly event?: { readonly data?: { readonly kind?: string } };
-        }
-      )?.event?.data?.kind === "continuity_lock"
-  );
-
   assert.equal(continuityLockEvents.length, 3);
 
   const unlockEvents = continuityLockEvents.slice(1).map((event) => {
@@ -578,8 +560,7 @@ test("SessionRequestHandler normalizes target lifecycle after resume_ready and a
     async () => 30;
 
   (harness.handler as any).handleProviderEvent(targetSession.id, {
-    type: "assistant",
-    payload: "bootstrap complete",
+    type: "turn_completed",
   });
   await flushAsyncWork();
 
@@ -956,7 +937,7 @@ test("SessionRequestHandler emits no-rollover unlock decision for resume_in_plac
   assert.ok(decisionEvent);
 });
 
-test("SessionRequestHandler keeps lock active for resume_failed and resume_timeout", async () => {
+test("SessionRequestHandler unlocks on resume_failed and resume_timeout", async () => {
   const harness = createHarness();
   const sourceSession = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -1007,7 +988,7 @@ test("SessionRequestHandler keeps lock active for resume_failed and resume_timeo
     };
     return (
       payload.event?.data?.kind === "continuity_lock" &&
-      payload.event.data.state === "locked" &&
+      payload.event.data.state === "unlocked" &&
       payload.event.data.reason === "resume_failed"
     );
   });
@@ -1045,7 +1026,7 @@ test("SessionRequestHandler keeps lock active for resume_failed and resume_timeo
     };
     return (
       payload.event?.data?.kind === "continuity_lock" &&
-      payload.event.data.state === "locked" &&
+      payload.event.data.state === "unlocked" &&
       payload.event.data.reason === "resume_timeout"
     );
   });

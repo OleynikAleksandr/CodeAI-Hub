@@ -198,7 +198,6 @@ type FlowNodeRolloverNotification = {
 };
 
 type FlowNodeContinuityCreateReportRequestStage =
-  | "waiting_for_ack"
   | "waiting_for_report"
   | "completed"
   | "failed";
@@ -211,12 +210,6 @@ type FlowNodeContinuityCreateReportRequestState = {
   readonly tmpReportPath: string;
   readonly createdAtIso: string;
   readonly updatedAtIso: string;
-};
-
-type FlowNodeContinuityAckWaiter = {
-  readonly requestId: string;
-  readonly timeoutId: NodeJS.Timeout;
-  readonly resolve: (acked: boolean) => void;
 };
 
 type ContinuityLockState = "locked" | "unlocked";
@@ -281,8 +274,6 @@ const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
-const FLOW_NODE_CONTINUITY_RESUME_TIMEOUT_MS = 90_000;
-
 const clampNumber = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
@@ -426,17 +417,9 @@ export class SessionRequestHandler {
     string,
     FlowNodeContinuityLockContext
   >();
-  private readonly flowNodeContinuityLockTimeouts = new Map<
-    string,
-    NodeJS.Timeout
-  >();
   private readonly flowNodeContinuityCreateReportRequests = new Map<
     string,
     FlowNodeContinuityCreateReportRequestState
-  >();
-  private readonly flowNodeContinuityCreateReportAckWaiters = new Map<
-    string,
-    FlowNodeContinuityAckWaiter
   >();
   private readonly sessionResumeLifecycleStates = new Map<
     string,
@@ -722,7 +705,7 @@ export class SessionRequestHandler {
     readonly providerId: string | null;
     readonly providerSessionId: string | null;
     readonly request: FlowNodeContinuityCreateReportRequestState;
-    readonly reason: "ack_timeout" | "report_timeout" | "unknown";
+    readonly reason: "report_timeout" | "unknown";
     readonly errorMessage: string;
   }): void {
     this.broadcaster({
@@ -751,39 +734,6 @@ export class SessionRequestHandler {
           timestamp: new Date().toISOString(),
         },
       },
-    });
-  }
-
-  private waitForFlowNodeContinuityCreateReportAck(options: {
-    readonly sessionId: string;
-    readonly requestId: string;
-    readonly timeoutMs: number;
-  }): Promise<boolean> {
-    const existing = this.flowNodeContinuityCreateReportAckWaiters.get(
-      options.sessionId
-    );
-    if (existing) {
-      clearTimeout(existing.timeoutId);
-      existing.resolve(false);
-      this.flowNodeContinuityCreateReportAckWaiters.delete(options.sessionId);
-    }
-
-    return new Promise((resolve) => {
-      const timeoutId = setTimeout(
-        () => {
-          this.flowNodeContinuityCreateReportAckWaiters.delete(
-            options.sessionId
-          );
-          resolve(false);
-        },
-        Math.max(250, Math.floor(options.timeoutMs))
-      );
-
-      this.flowNodeContinuityCreateReportAckWaiters.set(options.sessionId, {
-        requestId: options.requestId,
-        timeoutId,
-        resolve,
-      });
     });
   }
 
@@ -862,67 +812,29 @@ export class SessionRequestHandler {
     readonly startAttempt?: number;
     readonly maxAttempts?: number;
   }): Promise<number> {
-    const ackTimeoutMs = 15_000;
     const startAttempt = Math.max(1, Math.floor(options.startAttempt ?? 1));
-    const maxAttempts = Math.max(
-      startAttempt,
-      Math.floor(options.maxAttempts ?? 2)
-    );
+    const attempt = startAttempt;
 
-    for (let attempt = startAttempt; attempt <= maxAttempts; attempt += 1) {
-      this.patchFlowNodeContinuityCreateReportRequest({
-        sessionId: options.sessionId,
-        requestId: options.requestId,
-        patch: { attempt, stage: "waiting_for_ack" },
+    this.patchFlowNodeContinuityCreateReportRequest({
+      sessionId: options.sessionId,
+      requestId: options.requestId,
+      patch: { attempt, stage: "waiting_for_report" },
+    });
+
+    await this.sendInternalMessage(options.sessionId, options.prompt);
+
+    if (!options.silent) {
+      this.emitFlowNodeRolloverNotification(options.sessionId, {
+        ...options.notificationBase,
+        phase: "waiting_for_report",
+        continuityRequestId: options.requestId,
+        continuityAttempt: attempt,
+        reportPath: options.reportPath,
+        tmpReportPath: options.tmpReportPath,
       });
-
-      const ackPromise = this.waitForFlowNodeContinuityCreateReportAck({
-        sessionId: options.sessionId,
-        requestId: options.requestId,
-        timeoutMs: ackTimeoutMs,
-      });
-
-      await this.sendInternalMessage(options.sessionId, options.prompt);
-
-      if (!options.silent) {
-        this.emitFlowNodeRolloverNotification(options.sessionId, {
-          ...options.notificationBase,
-          phase: "waiting_for_report_ack",
-          continuityRequestId: options.requestId,
-          continuityAttempt: attempt,
-          reportPath: options.reportPath,
-          tmpReportPath: options.tmpReportPath,
-        });
-      }
-
-      const didAck = await ackPromise;
-      if (!didAck) {
-        continue;
-      }
-
-      this.patchFlowNodeContinuityCreateReportRequest({
-        sessionId: options.sessionId,
-        requestId: options.requestId,
-        patch: { attempt, stage: "waiting_for_report" },
-      });
-
-      if (!options.silent) {
-        this.emitFlowNodeRolloverNotification(options.sessionId, {
-          ...options.notificationBase,
-          phase: "waiting_for_report",
-          continuityRequestId: options.requestId,
-          continuityAttempt: attempt,
-          reportPath: options.reportPath,
-          tmpReportPath: options.tmpReportPath,
-        });
-      }
-
-      return attempt;
     }
 
-    throw new Error(
-      `Timed out waiting for continuity create-report ack (requestId=${options.requestId})`
-    );
+    return attempt;
   }
 
   private async waitForFlowNodeContinuityReportWithRetry(options: {
@@ -943,58 +855,12 @@ export class SessionRequestHandler {
     readonly silent: boolean;
     readonly attempt: number;
   }): Promise<number> {
-    try {
-      await this.flowNodeContinuity.waitForReport({
-        reportPath: options.reportPath,
-        timeoutMs: 60_000,
-        pollIntervalMs: 250,
-      });
-      return options.attempt;
-    } catch (error) {
-      if (options.attempt >= 2 || !this.isContinuityReportTimeoutError(error)) {
-        throw error;
-      }
-
-      const retryAttempt =
-        await this.dispatchFlowNodeContinuityCreateReportWithAck({
-          sessionId: options.sessionId,
-          requestId: options.requestId,
-          prompt: options.prompt,
-          notificationBase: options.notificationBase,
-          reportPath: options.reportPath,
-          tmpReportPath: options.tmpReportPath,
-          silent: options.silent,
-          startAttempt: options.attempt + 1,
-          maxAttempts: 2,
-        });
-
-      await this.flowNodeContinuity.waitForReport({
-        reportPath: options.reportPath,
-        timeoutMs: 60_000,
-        pollIntervalMs: 250,
-      });
-
-      return retryAttempt;
-    }
-  }
-
-  private ackFlowNodeContinuityCreateReportIfPending(sessionId: string): void {
-    const waiter = this.flowNodeContinuityCreateReportAckWaiters.get(sessionId);
-    if (!waiter) {
-      return;
-    }
-
-    const request = this.flowNodeContinuityCreateReportRequests.get(sessionId);
-    if (!(request && request.stage === "waiting_for_ack")) {
-      return;
-    }
-    if (request.requestId !== waiter.requestId) {
-      return;
-    }
-
-    clearTimeout(waiter.timeoutId);
-    this.flowNodeContinuityCreateReportAckWaiters.delete(sessionId);
-    waiter.resolve(true);
+    await this.flowNodeContinuity.waitForReport({
+      reportPath: options.reportPath,
+      timeoutMs: Number.POSITIVE_INFINITY,
+      pollIntervalMs: 250,
+    });
+    return options.attempt;
   }
 
   private emitContinuityLockEvent(options: {
@@ -1099,41 +965,6 @@ export class SessionRequestHandler {
     return context;
   }
 
-  private clearFlowNodeContinuityLockTimeout(rolloverId: string): void {
-    const timeout = this.flowNodeContinuityLockTimeouts.get(rolloverId);
-    if (!timeout) {
-      return;
-    }
-    clearTimeout(timeout);
-    this.flowNodeContinuityLockTimeouts.delete(rolloverId);
-  }
-
-  private scheduleFlowNodeContinuityLockTimeout(
-    context: FlowNodeContinuityLockContext
-  ): void {
-    const targetSessionId = context.targetSessionId;
-    if (!(targetSessionId && context.awaitingBootstrapTurn)) {
-      return;
-    }
-    this.clearFlowNodeContinuityLockTimeout(context.rolloverId);
-    const timeout = setTimeout(() => {
-      this.logger.warn("Flow node continuity lock timeout reached", {
-        rolloverId: context.rolloverId,
-        sourceSessionId: context.sourceSessionId,
-        targetSessionId,
-        stageId: context.stageId,
-        runSlug: context.runSlug,
-        timeoutMs: FLOW_NODE_CONTINUITY_RESUME_TIMEOUT_MS,
-      });
-      this.finalizeFlowNodeContinuityLock({
-        sessionId: targetSessionId,
-        reason: "resume_timeout",
-      });
-      this.emitTurnStateEvent({ sessionId: targetSessionId, state: "idle" });
-    }, FLOW_NODE_CONTINUITY_RESUME_TIMEOUT_MS);
-    this.flowNodeContinuityLockTimeouts.set(context.rolloverId, timeout);
-  }
-
   private finalizeFlowNodeContinuityLock(options: {
     readonly sessionId: string;
     readonly reason: Extract<
@@ -1172,7 +1003,6 @@ export class SessionRequestHandler {
         ...payloadBase,
       });
     }
-    this.clearFlowNodeContinuityLockTimeout(context.rolloverId);
     this.flowNodeContinuityLockContexts.delete(context.sourceSessionId);
     if (context.targetSessionId) {
       this.flowNodeContinuityLockContexts.delete(context.targetSessionId);
@@ -2555,6 +2385,30 @@ export class SessionRequestHandler {
     });
   }
 
+  private isStaleFlowNodeContinuitySegment(session: Session): boolean {
+    if (!session.stage) {
+      return false;
+    }
+
+    const stage = session.stage;
+    const runSlug = session.runSlug ?? null;
+    const initiativeSlug = session.initiativeSlug ?? null;
+    const workspacePath = session.workspacePath;
+
+    for (const candidate of this.sessionManager.listSessions()) {
+      if (
+        candidate.continuationParentId === session.id &&
+        candidate.workspacePath === workspacePath &&
+        (candidate.initiativeSlug ?? null) === initiativeSlug &&
+        candidate.stage === stage &&
+        (candidate.runSlug ?? null) === runSlug
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private handleTurnCompletedWithFlowNodeArbitration(
     sessionId: string,
     flowNodeContinuityTask: Promise<void>
@@ -2596,11 +2450,36 @@ export class SessionRequestHandler {
       return;
     }
 
+    const shouldDeferPostTurnCompletion =
+      isRecord(event) &&
+      (event as ProviderEventEnvelope).type === "turn_completed";
+
+    const recordNoRolloverDecision = () => {
+      if (shouldDeferPostTurnCompletion) {
+        this.recordPostTurnContextDecision(sessionId, "no_rollover");
+        return;
+      }
+      this.registerPostTurnNoRolloverDecision(sessionId);
+    };
+
+    const recordRolloverRequiredDecision = () => {
+      if (shouldDeferPostTurnCompletion) {
+        this.recordPostTurnContextDecision(sessionId, "rollover_required");
+        return;
+      }
+      this.registerPostTurnRolloverRequiredDecision(sessionId);
+    };
+
     if (
       this.flowNodeRolloverStarted.has(sessionId) ||
       this.flowNodeRolloverInFlight.has(sessionId)
     ) {
-      this.registerPostTurnRolloverRequiredDecision(sessionId);
+      recordRolloverRequiredDecision();
+      return;
+    }
+
+    if (this.isStaleFlowNodeContinuitySegment(session)) {
+      recordNoRolloverDecision();
       return;
     }
 
@@ -2608,13 +2487,13 @@ export class SessionRequestHandler {
     if (!usage) {
       // No token usage data in event - cannot evaluate rollover threshold.
       // Safe fallback: treat as no-rollover so the turn completion unlocks the UI.
-      this.registerPostTurnNoRolloverDecision(sessionId);
+      recordNoRolloverDecision();
       return;
     }
     this.flowNodeTokenUsageSnapshots.set(sessionId, usage);
 
     if (!(session.initiativeSlug && session.stage)) {
-      this.registerPostTurnNoRolloverDecision(sessionId);
+      recordNoRolloverDecision();
       return;
     }
 
@@ -2623,19 +2502,19 @@ export class SessionRequestHandler {
       runSlug: session.runSlug,
     });
     if (!eligibleForRollover) {
-      this.registerPostTurnNoRolloverDecision(sessionId);
+      recordNoRolloverDecision();
       return;
     }
 
     const remainingPercentThreshold =
       await this.resolveLiveContinuityRemainingPercentThreshold(session);
     if (!isBelowRemainingPercentThreshold(usage, remainingPercentThreshold)) {
-      this.registerPostTurnNoRolloverDecision(sessionId);
+      recordNoRolloverDecision();
       return;
     }
 
     if (this.flowNodeRolloverInFlight.has(sessionId)) {
-      this.registerPostTurnRolloverRequiredDecision(sessionId);
+      recordRolloverRequiredDecision();
       return;
     }
 
@@ -2704,20 +2583,10 @@ export class SessionRequestHandler {
         null;
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      const reason: "ack_timeout" | "report_timeout" | "unknown" = (() => {
-        if (
-          typeof errorMessage === "string" &&
-          errorMessage.startsWith(
-            "Timed out waiting for continuity create-report ack"
-          )
-        ) {
-          return "ack_timeout";
-        }
-        if (this.isContinuityReportTimeoutError(error)) {
-          return "report_timeout";
-        }
-        return "unknown";
-      })();
+      const reason: "report_timeout" | "unknown" =
+        this.isContinuityReportTimeoutError(error)
+          ? "report_timeout"
+          : "unknown";
 
       this.finalizeFlowNodeContinuityLock({
         sessionId: options.sessionId,
@@ -2741,14 +2610,6 @@ export class SessionRequestHandler {
         });
       }
       this.flowNodeContinuityCreateReportRequests.delete(options.sessionId);
-      const ackWaiter = this.flowNodeContinuityCreateReportAckWaiters.get(
-        options.sessionId
-      );
-      if (ackWaiter) {
-        clearTimeout(ackWaiter.timeoutId);
-        ackWaiter.resolve(false);
-        this.flowNodeContinuityCreateReportAckWaiters.delete(options.sessionId);
-      }
       this.flowNodeRolloverStarted.delete(options.sessionId);
       this.emitFlowNodeRolloverNotification(options.sessionId, {
         kind: "flow_node_rollover",
@@ -3007,7 +2868,7 @@ export class SessionRequestHandler {
     this.flowNodeContinuityCreateReportRequests.set(session.id, {
       requestId,
       attempt: requestAttempt,
-      stage: "waiting_for_ack",
+      stage: "waiting_for_report",
       reportPath: reportPaths.reportPath,
       tmpReportPath: reportPaths.tmpReportPath,
       createdAtIso: requestTimestampIso,
@@ -3191,7 +3052,6 @@ export class SessionRequestHandler {
 
     const resumePromptTrimmed = resumePrompt.trim();
     await this.sendInternalMessage(nextSession.id, resumePromptTrimmed);
-    this.scheduleFlowNodeContinuityLockTimeout(targetLockContext);
 
     if (!options?.silent) {
       this.emitFlowNodeRolloverNotification(nextSession.id, {
@@ -3368,9 +3228,6 @@ export class SessionRequestHandler {
     sessionId: string,
     event: ProviderEventEnvelope
   ): void {
-    if (event.type !== "sessionIdChanged" && event.type !== "realSessionId") {
-      this.ackFlowNodeContinuityCreateReportIfPending(sessionId);
-    }
     switch (event.type) {
       case "sessionIdChanged":
         this.handleSessionIdChangedEvent(sessionId, event.payload);
