@@ -490,5 +490,11 @@
 - Session UI: при `connectionState="running"` и continuity lock reason из {`context_check_pending`, `threshold_reached`, `report_in_progress`, `resume_bootstrap`} форсировать wait-copy как `resuming` (через `InputPanel` connectionState override).
   - Code: `src/client/ui/src/session/session-view.tsx`.
 
+**Commits:**
+- `894de347 fix(ui): show resuming copy during rollover lock`
+- `4400c8c0 feat(release): v1.1.639 - session rollover wait-copy`
+
+**Release:** `1.1.639`
+
 **Next step:**
 - Manual verify в PM: во время rollover/switch сессии placeholder должен переключаться на `resuming` и не залипать на `working`.
