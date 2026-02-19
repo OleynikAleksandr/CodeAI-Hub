@@ -29,6 +29,7 @@
 | BUG-2026-02-18-05 | FIXED | PM/UI | Dialog Reviewer: input остаётся locked до workspace switch / reload (гонка snapshot vs hydration) | 1.1.635 |
 | BUG-2026-02-18-06 | FIXED | Core/Templates | Reviewer prompt упоминает `reviewer-template.md`, но файл/путь не доступен → агент тратит время на поиск | 1.1.637 |
 | BUG-2026-02-18-07 | OPEN | Session UI | При смене/привязке workflow-сессии не показывается wait-copy “resuming…”, остаётся “Agent is working…” | TBD |
+| BUG-2026-02-19-01 | FIXED | Extension/UI | UI не загружается: `ERR_FILE_NOT_FOUND` для `~/.codeai-hub/packages/ui/*/current/*` после установки релиза | 1.1.640 |
 
 ---
 
@@ -498,3 +499,32 @@
 
 **Next step:**
 - Manual verify в PM: во время rollover/switch сессии placeholder должен переключаться на `resuming` и не залипать на `working`.
+
+---
+
+## BUG-2026-02-19-01 — UI bundles распакованы с лишней верхней папкой → `ERR_FILE_NOT_FOUND`
+
+**Status:** FIXED
+
+**Symptom:** после установки релиза VS Code/Launcher не может загрузить UI. Ошибка вида:
+`Failed to load URL .../.codeai-hub/packages/ui/project-manager/current/index.html (ERR_FILE_NOT_FOUND)`.
+
+**Root cause (confirmed):**
+- `UIBundleInstaller` распаковывал `project-manager-<ver>.tar.bz2` и `vscode-webview-<ver>.tar.bz2` в
+  `~/.codeai-hub/packages/ui/<bundleId>/<ver>/` без `--strip-components=1`.
+- Архивы содержат верхнюю директорию (`project-manager-<ver>/...`) → `index.html`/`react-chat.js`
+  оказывались на уровень глубже, чем ожидает `resolveUIBundlePath()` (`.../current/index.html`).
+
+**Fix:**
+- `extractArchiveWithTar`: добавлен опциональный `stripComponents`.
+- `UIBundleInstaller`: чистый reinstall в `<bundleId>/<ver>/`, распаковка с `stripComponents: 1`,
+  и проверка required-file в `hasRequiredLayouts()` (`index.html`/`react-chat.js`).
+
+**Commits:**
+- `5feb54c9 fix(ui): extract ui bundles without nested dir`
+- `9bc31775 feat(release): v1.1.640 - fix ui bundle install`
+
+**Release:** `1.1.640`
+
+**Workaround (для 1.1.639):**
+- Перепривязать symlink `current` на вложенную папку (`.../1.1.639/project-manager-1.1.639` и `.../1.1.639/vscode-webview-1.1.639`), либо переустановить UI bundles в `~/.codeai-hub/packages/ui/`.
