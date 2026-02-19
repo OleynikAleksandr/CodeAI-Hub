@@ -107,6 +107,9 @@ export class UIBundleInstaller {
 
     try {
       await access(packagesCurrent);
+      const requiredFile =
+        bundleId === "project-manager" ? "index.html" : "react-chat.js";
+      await access(join(packagesCurrent, requiredFile));
       return true;
     } catch {
       return false;
@@ -125,6 +128,7 @@ export class UIBundleInstaller {
     const packagesInstallDir = join(packagesBaseDir, bundleId, bundle.version);
 
     // Create installation directory
+    await rm(packagesInstallDir, { force: true, recursive: true });
     await mkdir(packagesInstallDir, { recursive: true });
 
     // Extract to canonical packages layout
@@ -132,6 +136,7 @@ export class UIBundleInstaller {
       archivePath,
       destination: packagesInstallDir,
       label: `UI bundle ${bundleId}`,
+      stripComponents: 1,
     });
 
     // Create 'current' symlink in packages layout
