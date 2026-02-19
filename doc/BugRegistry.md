@@ -28,7 +28,7 @@
 | BUG-2026-02-18-04 | FIXED | Core/UI | Reviewer input не разблокируется после turn completion | TBD |
 | BUG-2026-02-18-05 | FIXED | PM/UI | Dialog Reviewer: input остаётся locked до workspace switch / reload (гонка snapshot vs hydration) | 1.1.635 |
 | BUG-2026-02-18-06 | FIXED | Core/Templates | Reviewer prompt упоминает `reviewer-template.md`, но файл/путь не доступен → агент тратит время на поиск | 1.1.637 |
-| BUG-2026-02-18-07 | OPEN | Session UI | При смене/привязке workflow-сессии не показывается wait-copy “resuming…”, остаётся “Agent is working…” | TBD |
+| BUG-2026-02-18-07 | FIXED | Session UI | При смене/привязке workflow-сессии не показывается wait-copy “resuming…”, остаётся “Agent is working…” | 1.1.639 |
 | BUG-2026-02-19-01 | FIXED | Extension/UI | UI не загружается: `ERR_FILE_NOT_FOUND` для `~/.codeai-hub/packages/ui/*/current/*` после установки релиза | 1.1.640 |
 
 ---
@@ -473,7 +473,7 @@
 
 ## BUG-2026-02-18-07 — При смене сессии не появляется wait-copy “resuming…”
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:** Во время смены/привязки workflow-сессии поле ввода остаётся заблокированным, но placeholder не переключается на “Agent is resuming your session… Please wait.” и продолжает показывать “Agent is working… Please wait.” Это визуально выглядит как зависание.
 
@@ -487,7 +487,7 @@
 - В PM snapshot-first маппинге `connectionState` выставляется в `"running"` при `turnState="running"` даже когда continuity-lock уже активен (rollover/report/bootstrap).
 - Session UI выбирает wait-copy по `connectionState`, поэтому при `"running"` остаётся “Agent is working…”, хотя по смыслу это уже “resuming/switching”.
 
-**Fix (implemented, needs manual verify):**
+**Fix:**
 - Session UI: при `connectionState="running"` и continuity lock reason из {`context_check_pending`, `threshold_reached`, `report_in_progress`, `resume_bootstrap`} форсировать wait-copy как `resuming` (через `InputPanel` connectionState override).
   - Code: `src/client/ui/src/session/session-view.tsx`.
 
@@ -497,8 +497,11 @@
 
 **Release:** `1.1.639`
 
-**Next step:**
-- Manual verify в PM: во время rollover/switch сессии placeholder должен переключаться на `resuming` и не залипать на `working`.
+**Verified (manual):** 2026-02-19 — подтверждено пользователем в релизе `1.1.640`: во время rollover/switch появляется “Agent is resuming your session… Please wait.” (не залипает на “working”).
+
+**Guards (smoke):**
+- Во время rollover/switch (continuity lock active + reason в {`context_check_pending`, `threshold_reached`, `report_in_progress`, `resume_bootstrap`}) placeholder должен быть “resuming…”, даже если `connectionState="running"`.
+- Во время нормальной работы агента без continuity‑lock placeholder должен оставаться “working…”.
 
 ---
 
