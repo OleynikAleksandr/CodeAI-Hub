@@ -30,6 +30,7 @@
 | BUG-2026-02-18-06 | FIXED | Core/Templates | Reviewer prompt упоминает `reviewer-template.md`, но файл/путь не доступен → агент тратит время на поиск | 1.1.637 |
 | BUG-2026-02-18-07 | FIXED | Session UI | При смене/привязке workflow-сессии не показывается wait-copy “resuming…”, остаётся “Agent is working…” | 1.1.639 |
 | BUG-2026-02-19-01 | FIXED | Extension/UI | UI не загружается: `ERR_FILE_NOT_FOUND` для `~/.codeai-hub/packages/ui/*/current/*` после установки релиза | 1.1.640 |
+| BUG-2026-02-19-02 | FIXED | Core/Codex | Codex: двойной rollover / два разделителя сессии при триггере контекстного окна | 1.1.641 |
 
 ---
 
@@ -531,3 +532,32 @@
 
 **Workaround (для 1.1.639):**
 - Перепривязать symlink `current` на вложенную папку (`.../1.1.639/project-manager-1.1.639` и `.../1.1.639/vscode-webview-1.1.639`), либо переустановить UI bundles в `~/.codeai-hub/packages/ui/`.
+
+---
+
+## BUG-2026-02-19-02 — Codex: двойной rollover / два разделителя сессии при триггере контекстного окна
+
+**Status:** FIXED
+
+**Symptom:** при пороге rollover (например, 80% remaining) на провайдере Codex вместо одного разделителя сессий появлялись два подряд. В инфо-панели usage отображалось как `#1 (76%) | #2 (94%) | #3 (—)` (вторая смена сессии происходила, хотя remaining был выше порога).
+
+**Root cause:**
+- Core использовал тайм-аут ожидания `continuity report` как часть happy-path. Когда Codex писал отчёт дольше, rollover lifecycle становился нестабильным.
+- События от “устаревшего” continuity-сегмента (у которого уже создан continuation child) могли повторно инициировать rollover.
+
+**Fix:**
+- Убран тайм-аут ожидания `continuity report` и связанные retry/resend в happy-path.
+- Добавлен guard: rollover нельзя инициировать из `stale` continuity-сегмента (если у сегмента уже есть continuation-child для того же workflow node).
+
+**Commits:**
+- `87f5d0b9 fix(core): prevent duplicate codex continuity rollover`
+- TBD
+
+**Release:** `1.1.641`
+
+**Verified (manual):** 2026-02-19 — подтверждено пользователем (Codex: больше нет двойного разделителя; Claude не регресснул).
+
+**Guards:**
+- `npm test --workspace @codeai-hub/core`
+- `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
+

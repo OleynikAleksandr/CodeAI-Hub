@@ -2,18 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-- SolidWorks-Flow docs index: `doc/SolidWorks-Flow/System/Docs_Index.md`
-- System SSOT: `doc/SolidWorks-Flow/System/SystemArchitecture.md`
+- SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
+- System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.626
-- PM workflow handoff: when `Description` completes and `Reviewer` is auto-started, PM auto-opens the reviewer dialog in Session UI (same behavior as clicking `Reviewer …` in the workflow tree).
-- Session UI: keeps spinner in the left session area while a workflow session is being created (replaces stale `Create your first session…` empty card).
-- One-shot `description` collector: input remains locked for the entire run and keeps correct wait copy (`Agent is working… Please wait.`).
-- Session UI: token usage refreshes reliably after each completed turn (including dialog sessions).
-- SolidWorks-Flow docs: bug registry + TODO/session reports updated for Phase 209 reviewer auto-handoff.
+## Current Release — v1.1.641
+- Codex Session Continuity: prevents duplicate rollovers / double session separators when report generation is slow (no timeout-based retries; ignores rollover triggers from stale continuity segments).
+- Session UI: shows “resuming session…” placeholder during continuity rollover locks (avoids misleading “agent working” copy while switching/bootstraping a new workflow session).
+- Extension / UI: fixes UI bundle installation so VS Code Settings and Launcher UI can load from `~/.codeai-hub/packages/ui/*/current/*` without `ERR_FILE_NOT_FOUND`.
 
-Previous releases (summary): the `1.1.57x–1.1.62x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, and continuity/resume reliability across providers. For the full history, use `git log` / tags.
+Previous releases (summary): the `1.1.57x–1.1.64x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, and workflow handoff UX in Project Manager.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
@@ -29,7 +27,7 @@ cd CodeAI-Hub
 npm install
 ```
 
-Перед запуском прочитайте `doc/SolidWorks-Flow/knowledge/guides/ProviderSetupGuide.md` и установите/аутентифицируйте необходимые CLI под своей учётной записью.
+Перед запуском прочитайте `doc/SolidWorks-WorkFlow/Docs_Index.md` и следуйте SSOT-контрактам из `doc/SolidWorks-WorkFlow/Contracts/` (в частности `Contracts/Workflow_CLI.md`) для настройки провайдерных CLI/SDK.
 
 ## Development Workflow
 1. Install dependencies
