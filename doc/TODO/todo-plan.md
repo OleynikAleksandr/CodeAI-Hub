@@ -102,3 +102,20 @@
 3. [DONE] `./scripts/build-release.sh --use-current-version` → VSIX.
 
 **Phase 216 COMPLETED — 2026-02-18**
+
+---
+
+## Phase 217 — Release maintenance rebuild v1.1.642 (owner: Oleksandr+Codex, updated: 2026-02-20)
+
+### Stream 1: Docs sync for target release version
+1. [DONE] Обновить `README.md` (Current Release) и `CHANGELOG.md` под `v1.1.642` перед релизной пересборкой.
+   Scope: `README.md` + `CHANGELOG.md` (2 файла); ожидаемый commit message: `docs(release): prepare notes for v1.1.642`
+2. [DONE] Git Commit: `docs(release): prepare notes for v1.1.642` (hash: 9887f339)
+
+### Stream 2: Unified rebuild + VSIX
+1. [DONE] Выполнить `./scripts/build-all.sh` (auto version bump, provider/core/ui/launcher tarballs, manifests) и собрать `./scripts/build-release.sh --use-current-version`.
+   Scope: `assets/**/manifest.json` + `package*.json` + `packages/*/package.json` (≤ 3 package groups внутри одного релизного шага); ожидаемый commit message: `feat(release): v1.1.642 - maintenance rebuild`
+2. [DONE] Git Commit: `feat(release): v1.1.642 - maintenance rebuild` (hash: 4b4d6def)
+3. [DONE] VSIX: `codeai-hub-1.1.642.vsix` собран локально в корне репозитория.
+
+**Phase 217 COMPLETED — 2026-02-20**
