@@ -6,7 +6,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.641
+## Current Release — v1.1.642
+- Release maintenance rebuild: regenerated unified local artifacts (providers/core/UI/launcher) and VSIX for stable installation validation.
 - Codex Session Continuity: prevents duplicate rollovers / double session separators when report generation is slow (no timeout-based retries; ignores rollover triggers from stale continuity segments).
 - Session UI: shows “resuming session…” placeholder during continuity rollover locks (avoids misleading “agent working” copy while switching/bootstraping a new workflow session).
 - Extension / UI: fixes UI bundle installation so VS Code Settings and Launcher UI can load from `~/.codeai-hub/packages/ui/*/current/*` without `ERR_FILE_NOT_FOUND`.
