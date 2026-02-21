@@ -24,9 +24,9 @@ import type { ModuleReporter } from "../types";
 const execFileAsync = promisify(execFile);
 
 const CLAUDE_LOGIN_HINT =
-  "Claude CLI authentication required. Run `claude login` in a terminal session.";
+  "Claude CLI authentication required. Run `claude /login` in a terminal session.";
 const CLAUDE_PROVIDER_HOME_LOGIN_HINT =
-  "Claude provider-home authentication required. Run `HOME=~/.codeai-hub/providers/claude/home claude login`, then restart Core.";
+  "Claude provider-home authentication required. Run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core.";
 
 const isWindows = process.platform === "win32";
 const LEGACY_CLAUDE_DIR = path.join(homedir(), ".claude");
