@@ -119,3 +119,20 @@
 3. [DONE] VSIX: `codeai-hub-1.1.642.vsix` собран локально в корне репозитория.
 
 **Phase 217 COMPLETED — 2026-02-20**
+
+---
+
+## Phase 218 — Claude recovery hint + release v1.1.643 (owner: Oleksandr+Codex, updated: 2026-02-21)
+
+### Stream 1: Fix provider-home recovery command hint
+1. [DONE] Обновить user-facing recovery hints для Claude на корректный синтаксис `claude /login` и зарегистрировать баг в реестре.
+   Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts` + `packages/core/src/provider-registry/index.ts` + `doc/BugRegistry.md` (3 файла); ожидаемый commit message: `fix(claude): use /login in provider-home recovery hints`
+2. [DONE] Git Commit: `fix(claude): use /login in provider-home recovery hints` (hash: ade0e76f)
+
+### Stream 2: Release rebuild 1.1.643
+1. [DONE] Обновить release docs (`README.md`, `CHANGELOG.md`), выполнить `npm install`, затем `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`.
+   Scope: `README.md` + `CHANGELOG.md` + release manifests/version files; ожидаемый commit message: `feat(release): v1.1.643 - claude recovery hint update`
+2. [DONE] Git Commit: `feat(release): v1.1.643 - claude recovery hint update` (hash: bdb2f51b)
+3. [DONE] VSIX: `codeai-hub-1.1.643.vsix` собран локально в корне репозитория.
+
+**Phase 218 COMPLETED — 2026-02-21**
