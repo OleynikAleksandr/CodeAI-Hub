@@ -26,9 +26,10 @@ const execFileAsync = promisify(execFile);
 const CLAUDE_LOGIN_HINT =
   "Claude CLI authentication required. Run `claude /login` in a terminal session.";
 const CLAUDE_PROVIDER_HOME_LOGIN_HINT =
-  "Claude provider-home authentication required. Run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core.";
+  "Claude provider-home authentication required. Run `claude /login`, then restart Core. If it still fails, run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core.";
 
 const isWindows = process.platform === "win32";
+const isMacOS = process.platform === "darwin";
 const LEGACY_CLAUDE_DIR = path.join(homedir(), ".claude");
 const CREDENTIALS_FILENAME = ".credentials.json";
 const CLAUDE_STATE_FILENAME = ".claude.json";
@@ -113,6 +114,7 @@ export class SDKAuthManager {
   }
 
   async ensureSubscriptionAuth(): Promise<void> {
+    await this.ensureMacOSProviderHomeKeychainBridgeIfNeeded();
     await this.linkLegacyCliStateIfNeeded();
     await this.migrateLegacyCredentialsIfNeeded();
     await this.bootstrapOAuthToken();
@@ -128,6 +130,8 @@ export class SDKAuthManager {
     if (this.providerHomeBootstrapReady) {
       return;
     }
+
+    await this.ensureMacOSProviderHomeKeychainBridgeIfNeeded();
 
     // Best-effort: reuse existing auth without forcing users to re-login
     // after we sandbox HOME for provider execution.
@@ -170,10 +174,10 @@ export class SDKAuthManager {
     };
     // Only forward CLAUDE_CODE_OAUTH_TOKEN when the user explicitly provided it
     // in the environment. Do NOT forward tokens bootstrapped from the platform
-    // Keychain: Claude CLI reads the Keychain natively (system-wide, HOME-
-    // independent) and handles token refresh automatically. Pre-reading and
-    // forwarding a stale Keychain access token bypasses the refresh flow and
-    // causes 401 errors when the token has expired.
+    // Keychain: Claude CLI reads the Keychain natively and handles token refresh
+    // automatically. On macOS, Keychain lives under ~/Library/Keychains, so when
+    // we sandbox HOME for provider execution we must bridge that directory into
+    // the provider-home to keep Keychain auth working.
     const userProvidedToken = process.env[CLAUDE_OAUTH_ENV_KEY]?.trim();
     if (userProvidedToken) {
       baseEnv[CLAUDE_OAUTH_ENV_KEY] = userProvidedToken;
@@ -182,6 +186,69 @@ export class SDKAuthManager {
     const { [CLAUDE_OAUTH_ENV_KEY]: _oauthToken, ...withoutOauthToken } =
       baseEnv;
     return withoutOauthToken;
+  }
+
+  private async ensureMacOSProviderHomeKeychainBridgeIfNeeded(): Promise<void> {
+    if (!isMacOS) {
+      return;
+    }
+
+    const providerHome = resolveClaudeProviderHome();
+    const realHome = homedir();
+    if (path.resolve(providerHome) === path.resolve(realHome)) {
+      return;
+    }
+
+    const sourceKeychainsDir = path.join(realHome, "Library", "Keychains");
+    const providerLibraryDir = path.join(providerHome, "Library");
+    const providerKeychainsDir = path.join(providerLibraryDir, "Keychains");
+
+    try {
+      await access(sourceKeychainsDir);
+    } catch {
+      // If the user's Keychains dir is missing (unexpected on macOS), don't block.
+      return;
+    }
+
+    try {
+      await mkdir(providerLibraryDir, { recursive: true });
+
+      try {
+        const stats = await lstat(providerKeychainsDir);
+        if (stats.isSymbolicLink()) {
+          const target = await readlink(providerKeychainsDir);
+          const resolvedTarget = path.resolve(
+            path.dirname(providerKeychainsDir),
+            target
+          );
+          if (
+            path.resolve(resolvedTarget) === path.resolve(sourceKeychainsDir)
+          ) {
+            return;
+          }
+
+          await unlink(providerKeychainsDir);
+        } else {
+          // Avoid destructive changes: if something else already occupies the path,
+          // skip creating a bridge and rely on alternative auth methods.
+          this.reporter?.warn?.(
+            "Claude provider-home Keychains bridge path exists and is not a symlink; skipping"
+          );
+          return;
+        }
+      } catch {
+        // does not exist; create below
+      }
+
+      await symlink(sourceKeychainsDir, providerKeychainsDir);
+    } catch (error) {
+      // Non-fatal: if it fails, auth-probe will surface the problem.
+      this.reporter?.warn?.(
+        `Claude provider-home Keychains bridge failed: ${serializeExecFailure(
+          error
+        )}`
+      );
+    }
   }
 
   private async linkLegacyCliStateIfNeeded(): Promise<void> {
