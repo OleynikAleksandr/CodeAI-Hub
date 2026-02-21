@@ -134,13 +134,16 @@ const SessionViewBody = ({
       ? "blocked"
       : connectionState;
   const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
-  const { isQueued, submitMessage, clearQueuedMessage } = useQueuedSend({
-    activeSessionId,
-    connectionState: queueConnectionState,
-    onSendMessage,
-  });
 
   const [forceUnlocked, setForceUnlocked] = useState(false);
+  const queuedSendConnectionState: ConnectionState = forceUnlocked
+    ? "idle"
+    : queueConnectionState;
+  const { isQueued, submitMessage, clearQueuedMessage } = useQueuedSend({
+    activeSessionId,
+    connectionState: queuedSendConnectionState,
+    onSendMessage,
+  });
   const prevConnectionStateRef = useRef<ConnectionState>(connectionState);
 
   useEffect(() => {
