@@ -23855,12 +23855,13 @@ ${path2}` : path2;
     const effectiveContinuityLockActive = continuityLockActive;
     const queueConnectionState = effectiveContinuityLockActive && connectionState !== "running" ? "blocked" : connectionState;
     const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
+    const [forceUnlocked, setForceUnlocked] = (0, import_react10.useState)(false);
+    const queuedSendConnectionState = forceUnlocked ? "idle" : queueConnectionState;
     const { isQueued, submitMessage, clearQueuedMessage } = useQueuedSend({
       activeSessionId,
-      connectionState: queueConnectionState,
+      connectionState: queuedSendConnectionState,
       onSendMessage
     });
-    const [forceUnlocked, setForceUnlocked] = (0, import_react10.useState)(false);
     const prevConnectionStateRef = (0, import_react10.useRef)(connectionState);
     (0, import_react10.useEffect)(() => {
       const prev = prevConnectionStateRef.current;
