@@ -51,8 +51,8 @@
 **Goal:** Собрать тестовый релиз `v1.1.649` с исправленным поведением task timers (total/turn) и без force unlock.
 
 ### Stream 0: Release notes
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.649` (task timers: `00h 00m 00s`, total всегда виден, turn сбрасывается, удалить lock toggle) (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.649 notes`).
-2. [TODO] Git Commit: `docs(release): v1.1.649 notes` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.649` (task timers: `00h 00m 00s`, total всегда виден, turn сбрасывается, удалить lock toggle) (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.649 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.649 notes` (hash: `7088ef93`)
 
 ### Stream 1: Build-all (unified artifacts)
 1. [TODO] Запустить `./scripts/build-all.sh` (поднимет версии до `1.1.649`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.649`).
