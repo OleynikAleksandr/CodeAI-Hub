@@ -16,7 +16,14 @@
 - Удалён legacy UI-замок (manual force unlock), т.к. больше не нужен после фиксов continuity lock/resume.
 - Собран тестовый релиз: `build-all` + `build-release` → `codeai-hub-1.1.649.vsix`.
 
+## Build / verification
+- `npm run typecheck:webview` + `npm run build:webview`: ✅ success.
+- `./scripts/build-all.sh`: ✅ success; version bump до `1.1.649`; артефакты в `~/.codeai-hub/releases/` и копия в `doc/tmp/releases/`.
+- `./scripts/build-release.sh --use-current-version`: ✅ success; produced `codeai-hub-1.1.649.vsix`.
+- VSIX path (local): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.649.vsix`
+
 ## Git commits
+(ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `dd382b8c docs(todo): archive phase223 plan and start phase224`
 - `6596c983 docs(contracts): update session task timer semantics`
 - `8fe06909 feat(ui): switch task timers to text format`
@@ -24,7 +31,7 @@
 - `446184b2 chore(build): rebuild webview after timer semantics fix`
 - `7088ef93 docs(release): v1.1.649 notes`
 - `e8423b40 chore(release): build-all v1.1.649`
-- `chore(release): package vsix v1.1.649` (hash: TBD)
+- `ca3615df chore(release): package vsix v1.1.649`
 
 ---
 
