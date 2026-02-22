@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
@@ -161,33 +160,11 @@ const SessionViewBody = ({
       : connectionState;
   const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
 
-  const [forceUnlocked, setForceUnlocked] = useState(false);
-  const queuedSendConnectionState: ConnectionState = forceUnlocked
-    ? "idle"
-    : queueConnectionState;
-  const { isQueued, submitMessage, clearQueuedMessage } = useQueuedSend({
+  const { isQueued, submitMessage } = useQueuedSend({
     activeSessionId,
-    connectionState: queuedSendConnectionState,
+    connectionState: queueConnectionState,
     onSendMessage,
   });
-  const prevConnectionStateRef = useRef<ConnectionState>(connectionState);
-
-  useEffect(() => {
-    const prev = prevConnectionStateRef.current;
-    if (connectionState === "running" && prev !== "running") {
-      setForceUnlocked(false);
-    }
-    prevConnectionStateRef.current = connectionState;
-  }, [connectionState]);
-
-  const handleForceUnlock = useCallback(() => {
-    setForceUnlocked(true);
-    clearQueuedMessage();
-  }, [clearQueuedMessage]);
-
-  const handleRelock = useCallback(() => {
-    setForceUnlocked(false);
-  }, []);
 
   const continuationChain = resolveContinuationChainOrEmpty({
     sessions: allSessions,
@@ -219,9 +196,6 @@ const SessionViewBody = ({
     buildTokenDebugSummaryFromMessages(virtualConversationMessages) ??
     undefined;
 
-  // Collector sessions (one-shot description) do not expose the lock toggle.
-  const isCollectorSession = activeRecord?.sessionKind === "collector";
-
   return (
     <div className="session-app" data-session-style-source="canonical">
       {header}
@@ -249,10 +223,7 @@ const SessionViewBody = ({
             continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
             draft={activeSession.draft}
-            forceUnlocked={forceUnlocked}
             isQueued={isQueued}
-            onForceUnlock={isCollectorSession ? undefined : handleForceUnlock}
-            onRelock={isCollectorSession ? undefined : handleRelock}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
             terminalNoResume={terminalNoResume}

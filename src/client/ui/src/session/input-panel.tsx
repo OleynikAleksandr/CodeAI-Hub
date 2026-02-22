@@ -12,10 +12,7 @@ type InputPanelProps = {
   readonly isQueued?: boolean;
   readonly providerTheme?: ProviderTheme | null;
   readonly terminalNoResume?: boolean;
-  readonly forceUnlocked?: boolean;
   readonly agentTimerKey?: string | null;
-  readonly onForceUnlock?: () => void;
-  readonly onRelock?: () => void;
   readonly onSubmit: (text: string) => void;
 };
 
@@ -24,7 +21,6 @@ const MAX_TEXTAREA_HEIGHT = 200;
 const resolvePlaceholder = (options: {
   readonly isQueued: boolean;
   readonly terminalNoResume: boolean;
-  readonly forceUnlocked: boolean;
   readonly connectionState: string;
   readonly continuityLockActive: boolean;
   readonly continuityErrorCopy: string | null;
@@ -34,9 +30,6 @@ const resolvePlaceholder = (options: {
   }
   if (options.terminalNoResume) {
     return "This session is complete and read-only.";
-  }
-  if (options.forceUnlocked) {
-    return "Type your request or drag files with Shift held...";
   }
   if (options.connectionState === "running") {
     return "Agent is working… Please wait.";
@@ -50,22 +43,6 @@ const resolvePlaceholder = (options: {
   return "Type your request or drag files with Shift held...";
 };
 
-type LockToggleConfig = {
-  readonly handler?: (() => void) | undefined;
-  readonly title: string;
-  readonly icon: string;
-};
-
-const resolveLockToggleConfig = (options: {
-  readonly forceUnlocked: boolean;
-  readonly onForceUnlock?: () => void;
-  readonly onRelock?: () => void;
-}): LockToggleConfig => ({
-  handler: options.forceUnlocked ? options.onRelock : options.onForceUnlock,
-  title: options.forceUnlocked ? "Re-lock input" : "Force unlock input",
-  icon: options.forceUnlocked ? "🔓" : "🔒",
-});
-
 const InputPanel = ({
   draft,
   connectionState = "idle",
@@ -74,15 +51,11 @@ const InputPanel = ({
   isQueued = false,
   providerTheme = null,
   terminalNoResume = false,
-  forceUnlocked = false,
   agentTimerKey = null,
-  onForceUnlock,
-  onRelock,
   onSubmit,
 }: InputPanelProps) => {
   const inputLocked =
-    !forceUnlocked &&
-    (connectionState !== "idle" || continuityLockActive || isQueued);
+    connectionState !== "idle" || continuityLockActive || isQueued;
   const agentBusy =
     !terminalNoResume &&
     (connectionState !== "idle" || continuityLockActive || isQueued);
@@ -92,24 +65,13 @@ const InputPanel = ({
   const placeholder = resolvePlaceholder({
     isQueued,
     terminalNoResume,
-    forceUnlocked,
     connectionState,
     continuityLockActive,
     continuityErrorCopy,
   });
 
-  const showLockToggle =
-    !terminalNoResume &&
-    (inputLocked || forceUnlocked) &&
-    (onForceUnlock != null || onRelock != null);
-
   const [value, setValue] = useState(draft);
   const formRef = useRef<HTMLFormElement | null>(null);
-  const lockToggleConfig = resolveLockToggleConfig({
-    forceUnlocked,
-    onForceUnlock,
-    onRelock,
-  });
 
   useEffect(() => {
     setValue(draft);
@@ -160,49 +122,34 @@ const InputPanel = ({
   );
 
   const renderOverlayTimer = () => {
-    if (!(inputLocked && agentTimerKey)) {
+    if (!(inputLocked && agentBusy)) {
       return null;
     }
 
     return (
       <TaskTimer
         active={agentBusy}
+        mode="turn"
         placement="overlay"
-        storageKey={agentTimerKey}
+        storageKey={null}
         theme={providerTheme}
       />
     );
   };
 
-  const renderFooterTimer = () => {
-    if (inputLocked || !agentTimerKey) {
+  const renderFooterTotal = () => {
+    if (!agentTimerKey) {
       return null;
     }
 
     return (
       <TaskTimer
         active={agentBusy}
+        mode="total"
         placement="footer"
         storageKey={agentTimerKey}
         theme={providerTheme}
       />
-    );
-  };
-
-  const renderLockToggle = () => {
-    if (!(showLockToggle && lockToggleConfig.handler)) {
-      return null;
-    }
-
-    return (
-      <button
-        className="session-input__lock-toggle"
-        onClick={lockToggleConfig.handler}
-        title={lockToggleConfig.title}
-        type="button"
-      >
-        {lockToggleConfig.icon}
-      </button>
     );
   };
 
@@ -241,10 +188,7 @@ const InputPanel = ({
         >
           Press Enter to send, Shift+Enter for a new line
         </span>
-        <div className="session-input__footer-right">
-          {renderLockToggle()}
-          {renderFooterTimer()}
-        </div>
+        <div className="session-input__footer-right">{renderFooterTotal()}</div>
       </div>
     </form>
   );
