@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { DEFAULT_DRAG_OVERLAY_LABEL, useInputDragDrop } from "./input-dnd";
 import { createClipboardHandlers } from "./input-panel-clipboard";
 
@@ -18,6 +25,7 @@ type InputTextareaProps = {
   readonly rows?: number;
   readonly maxHeight?: number;
   readonly overlayLabel?: string;
+  readonly overlaySlot?: ReactNode;
   readonly classes?: Partial<InputTextareaClasses>;
 };
 
@@ -66,6 +74,7 @@ export const InputTextarea = ({
   rows = 1,
   maxHeight,
   overlayLabel = DEFAULT_DRAG_OVERLAY_LABEL,
+  overlaySlot,
   classes,
 }: InputTextareaProps) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -209,6 +218,8 @@ export const InputTextarea = ({
         rows={rows}
         value={value}
       />
+
+      {overlaySlot}
 
       {isDragging && (
         <output className={resolvedClasses.overlay}>{overlayLabel}</output>
