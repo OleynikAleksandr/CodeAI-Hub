@@ -1,10 +1,11 @@
 # Session Continuity — Contract (SSOT)
 
-## Важно (переходный период миграции)
+## Legacy snapshot (outdated)
 
-- Контракт будет приведён к новой структуре `doc/SolidWorks-WorkFlow/`.
-- Ниже временно включён legacy‑контент “as-is” из старого пути.
-- Все новые изменения по continuity фиксируем **в этом файле**.
+- Ниже сохранён legacy‑контент “as-is” для форензики.
+- Текущий SSOT по Session Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`.
+- Input lock/unlock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
+- Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
 
 ---
 
