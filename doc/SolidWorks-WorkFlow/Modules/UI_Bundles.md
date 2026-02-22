@@ -10,6 +10,3 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 
 ## Установка
 - `~/.codeai-hub/packages/ui/<bundleId>/<version>/` + symlink `current`
-
-## Legacy snapshot
-- `doc/SolidWorks-WorkFlow/Archive/legacy/UI_Bundles-legacy-2026-02-17.md`
