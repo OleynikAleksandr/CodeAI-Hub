@@ -55,8 +55,8 @@
 2. [DONE] Git Commit: `docs(release): v1.1.649 notes` (hash: `7088ef93`)
 
 ### Stream 1: Build-all (unified artifacts)
-1. [TODO] Запустить `./scripts/build-all.sh` (поднимет версии до `1.1.649`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.649`).
-2. [TODO] Git Commit: `chore(release): build-all v1.1.649` (hash: TBD)
+1. [DONE] Запустить `./scripts/build-all.sh` (поднимет версии до `1.1.649`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.649`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.649` (hash: `e8423b40`)
 
 ### Stream 2: VSIX packaging + session report
 1. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; оформить `doc/Sessions/Session004.md` (scope: `doc/Sessions/Session004.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.649`).
