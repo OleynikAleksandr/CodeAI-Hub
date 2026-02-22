@@ -8,9 +8,11 @@
 2) `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
 3) `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 4) `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-5) `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-6) `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-7) Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+5) `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
+6) `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
+7) `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+8) `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+9) Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -31,7 +33,7 @@
 ## 3) Глобальные инварианты (must-not-break)
 
 1) **Snapshot-first lock contract**: состояние input определяется только snapshot‑сигналами (`turnState`, continuity lock flags и т.п.).
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
 2) **Dialogs vs status split**: история/диалог (dialogId) независим от live status/usage (sessionId); routing обязателен после restart/reconnect.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
 3) **Session continuity**: rollover/handoff обязаны быть надёжны и не залипать UI в working.

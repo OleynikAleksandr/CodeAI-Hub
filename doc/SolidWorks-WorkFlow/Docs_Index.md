@@ -29,6 +29,8 @@
 - `Contracts/DescriptionNode_ReviewSession.md` — контракт шага `Description → Reviewer`.
 - `Contracts/SessionContinuity.md` — continuity handoff/rollover contract.
 - `Contracts/WorkspaceRuntime.md` — multi-workspace + snapshot-first + lock contract.
+- `Contracts/SessionUI_Behavior.md` — Session UI laws (happy path) + lock/unlock rules.
+- `Contracts/SessionInputLock_SSOT_StateMachine.md` — SSOT/state machine для input lock/unlock (cold start + crash/restart + continuity).
 - `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — session-home isolation + resume-first recovery contract.
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
 - `Contracts/Workflow_CLI.md` — CLI steps + watcher contract.
