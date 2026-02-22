@@ -12,6 +12,10 @@ const CORE_EVENTS_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts"
 );
+const RUNTIME_RESOLVER_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/dialog-runtime-session-resolver.ts"
+);
 
 test("dialog session controller caches workspace snapshots for replay", async () => {
   const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
@@ -37,6 +41,7 @@ test("dialog session controller caches workspace snapshots for replay", async ()
 
 test("dialog core events replay workspace snapshot after creating base snapshot", async () => {
   const source = await readFile(CORE_EVENTS_SOURCE_PATH, "utf8");
+  const resolverSource = await readFile(RUNTIME_RESOLVER_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes("options.latestWorkspaceSnapshotRef.current"),
@@ -48,5 +53,14 @@ test("dialog core events replay workspace snapshot after creating base snapshot"
     true,
     "dialog core events must replay lock state from workspace snapshot"
   );
+  assert.equal(
+    source.includes("resolveRuntimeSessionIdFromWorkspaceSnapshot"),
+    true,
+    "dialog core events must resolve runtime sessionId against latest workspace snapshot"
+  );
+  assert.equal(
+    resolverSource.includes("session.providerSessionId === options.providerSessionId"),
+    true,
+    "runtime session fallback must support providerSessionId identity when session ids drift"
+  );
 });
-
