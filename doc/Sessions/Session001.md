@@ -1,4 +1,4 @@
-# Session 100 — Docs sweep: SSOT input lock/unlock (v1.1.646)
+# Session 001 — Docs sweep: SSOT input lock/unlock (v1.1.646)
 
 **Date:** 2026-02-22 11:03 (CET)
 **Branch:** main
@@ -62,7 +62,7 @@
 7. `doc/BugRegistry.md`
 8. `README.md`
 9. `CHANGELOG.md`
-10. `doc/Sessions/Session100.md` (THIS REPORT)
+10. `doc/Sessions/Session001.md` (THIS REPORT)
 
 ## Plans for next session
 - Если всё ок по release-notes и документации, стартовать новый Phase в `doc/TODO/todo-plan.md` под следующую функциональность/рефакторинг.
