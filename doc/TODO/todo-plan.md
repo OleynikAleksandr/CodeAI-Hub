@@ -53,8 +53,8 @@
 
 ### Stream 2: Core — сделать unlock reason явным (минимальный SSOT этап)
 1. [DONE] Нормализовать snapshot: для `resume_in_place` idle‑сессий гарантировать явный unlock‑reason (например `no_rollover_needed`) вместо `undefined`, чтобы UI не зависел от отсутствующих полей (scope: `packages/core/src/workspace-runtime/workspace-snapshot-builder.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): emit explicit unlock reason for idle sessions`).
-2. [IN_PROGRESS] Git Commit: `fix(core): emit explicit unlock reason for idle sessions` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): emit explicit unlock reason for idle sessions` (hash: `de402c33`)
 
 ### Stream 3: Release + manual matrix
-1. [TODO] Собрать релиз и вручную прогнать матрицу сценариев из контракта (normal / rollover / crash mid-turn / cold start / one-shot) (scope: `scripts/build-all.sh`, `scripts/build-release.sh`; expected commit: `feat(release): v<version> - fix session input unlock on cold start`).
-2. [TODO] Git Commit: `feat(release): v<version> - fix session input unlock on cold start` (hash: TBD)
+1. [IN_PROGRESS] Собрать релиз и вручную прогнать матрицу сценариев из контракта (normal / rollover / crash mid-turn / cold start / one-shot) (scope: `scripts/build-all.sh`, `scripts/build-release.sh`; expected commit: `feat(release): v<version> - fix session input unlock on cold start`).
+2. [IN_PROGRESS] Git Commit: `feat(release): v<version> - fix session input unlock on cold start` (hash: TBD)
