@@ -11,6 +11,3 @@
 - Workspace runtime: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Session UI laws: `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 - Input lock SSOT/state machine: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
-
-## Legacy snapshot
-- `doc/SolidWorks-WorkFlow/Archive/legacy/Workflow_CLI-legacy-2026-02-17.md`
