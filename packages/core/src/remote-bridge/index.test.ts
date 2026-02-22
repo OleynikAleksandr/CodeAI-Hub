@@ -91,3 +91,15 @@ test("RemoteBridge binds workflow watcher on session:create with workspace conte
     "session:create path must log workflow watcher bind failures without breaking create"
   );
 });
+
+test("RemoteBridge dialog:list wires runtime sessions for latestSessionId reconciliation", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes(
+      "runtimeSessions: this.sessionManager.getSessionsByWorkspacePath("
+    ),
+    true,
+    "dialog:list must pass workspace runtime sessions to dialog-list-service reconciliation"
+  );
+});
