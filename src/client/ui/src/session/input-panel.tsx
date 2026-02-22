@@ -143,13 +143,18 @@ const InputPanel = ({
     }
 
     return (
-      <TaskTimer
-        active={agentBusy}
-        mode="total"
-        placement="footer"
-        storageKey={agentTimerKey}
-        theme={providerTheme}
-      />
+      <div className="session-input__total">
+        <span className="session-input__total-label">
+          {"total:\u00a0\u00a0"}
+        </span>
+        <TaskTimer
+          active={agentBusy}
+          mode="total"
+          placement="footer"
+          storageKey={agentTimerKey}
+          theme={providerTheme}
+        />
+      </div>
     );
   };
 

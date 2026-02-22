@@ -23079,18 +23079,18 @@ ${path2}` : path2;
       });
     }, [active, mode, storageKey]);
     (0, import_react7.useEffect)(() => {
+      if (mode !== "turn") {
+        turnStartedAtRef.current = null;
+        return;
+      }
       if (!active) {
-        if (mode === "turn") {
-          turnStartedAtRef.current = null;
-        }
+        turnStartedAtRef.current = null;
         return;
       }
       if (typeof window === "undefined") {
         return;
       }
-      if (mode === "turn") {
-        turnStartedAtRef.current = getNowSec();
-      }
+      turnStartedAtRef.current = getNowSec();
       setNowSec(getNowSec());
       const timer = window.setInterval(() => {
         setNowSec(getNowSec());
@@ -23098,20 +23098,17 @@ ${path2}` : path2;
       return () => window.clearInterval(timer);
     }, [active, mode]);
     const activeTurnSeconds = (0, import_react7.useMemo)(() => {
-      if (!active) {
+      if (!active || mode !== "turn") {
         return 0;
       }
-      if (mode === "turn") {
-        const startedAt = turnStartedAtRef.current;
-        return startedAt === null ? 0 : Math.max(0, nowSec - startedAt);
-      }
-      if (stored.runningSinceSec === null) {
-        return 0;
-      }
-      return Math.max(0, nowSec - stored.runningSinceSec);
-    }, [active, mode, nowSec, stored.runningSinceSec]);
-    const totalSeconds = mode === "total" ? Math.max(0, stored.totalSeconds) + activeTurnSeconds : activeTurnSeconds;
-    const formatted = (0, import_react7.useMemo)(() => formatHmsShort(totalSeconds), [totalSeconds]);
+      const startedAt = turnStartedAtRef.current;
+      return startedAt === null ? 0 : Math.max(0, nowSec - startedAt);
+    }, [active, mode, nowSec]);
+    const displaySeconds = mode === "total" ? Math.max(0, stored.totalSeconds) : activeTurnSeconds;
+    const formatted = (0, import_react7.useMemo)(
+      () => formatHmsShort(displaySeconds),
+      [displaySeconds]
+    );
     const rootClasses = [
       "task-timer",
       active ? "task-timer--active" : "",
@@ -23227,16 +23224,19 @@ ${path2}` : path2;
       if (!agentTimerKey) {
         return null;
       }
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-        TaskTimer,
-        {
-          active: agentBusy,
-          mode: "total",
-          placement: "footer",
-          storageKey: agentTimerKey,
-          theme: providerTheme
-        }
-      );
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-input__total", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-input__total-label", children: "total:\xA0\xA0" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          TaskTimer,
+          {
+            active: agentBusy,
+            mode: "total",
+            placement: "footer",
+            storageKey: agentTimerKey,
+            theme: providerTheme
+          }
+        )
+      ] });
     };
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
       "form",

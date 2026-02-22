@@ -2,6 +2,11 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.650] - 2026-02-22
+### Changed
+- Session UI: total timer in footer is now static during lock/working state (always gray), then updates by jump when the turn completes; footer copy now shows `total:  00h 00m 00s`.
+- Session UI: live turn timer in the input area is shown without background badge/pill (plain overlay text on the input field).
+
 ## [1.1.649] - 2026-02-22
 ### Fixed
 - Session UI: task timers now match the contract semantics — total is always visible in the footer while input is locked; per-turn timer resets each new turn.

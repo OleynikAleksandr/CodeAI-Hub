@@ -195,19 +195,19 @@ export const TaskTimer = ({
   }, [active, mode, storageKey]);
 
   useEffect(() => {
+    if (mode !== "turn") {
+      turnStartedAtRef.current = null;
+      return;
+    }
     if (!active) {
-      if (mode === "turn") {
-        turnStartedAtRef.current = null;
-      }
+      turnStartedAtRef.current = null;
       return;
     }
     if (typeof window === "undefined") {
       return;
     }
 
-    if (mode === "turn") {
-      turnStartedAtRef.current = getNowSec();
-    }
+    turnStartedAtRef.current = getNowSec();
 
     setNowSec(getNowSec());
     const timer = window.setInterval(() => {
@@ -218,25 +218,19 @@ export const TaskTimer = ({
   }, [active, mode]);
 
   const activeTurnSeconds = useMemo(() => {
-    if (!active) {
+    if (!active || mode !== "turn") {
       return 0;
     }
-    if (mode === "turn") {
-      const startedAt = turnStartedAtRef.current;
-      return startedAt === null ? 0 : Math.max(0, nowSec - startedAt);
-    }
+    const startedAt = turnStartedAtRef.current;
+    return startedAt === null ? 0 : Math.max(0, nowSec - startedAt);
+  }, [active, mode, nowSec]);
 
-    if (stored.runningSinceSec === null) {
-      return 0;
-    }
-    return Math.max(0, nowSec - stored.runningSinceSec);
-  }, [active, mode, nowSec, stored.runningSinceSec]);
-
-  const totalSeconds =
-    mode === "total"
-      ? Math.max(0, stored.totalSeconds) + activeTurnSeconds
-      : activeTurnSeconds;
-  const formatted = useMemo(() => formatHmsShort(totalSeconds), [totalSeconds]);
+  const displaySeconds =
+    mode === "total" ? Math.max(0, stored.totalSeconds) : activeTurnSeconds;
+  const formatted = useMemo(
+    () => formatHmsShort(displaySeconds),
+    [displaySeconds]
+  );
 
   const rootClasses = [
     "task-timer",
