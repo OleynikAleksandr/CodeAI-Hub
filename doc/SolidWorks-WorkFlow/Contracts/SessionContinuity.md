@@ -16,6 +16,3 @@
 - Workspace runtime/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Input lock SSOT/state machine: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-
-## Legacy snapshot
-- `doc/SolidWorks-WorkFlow/Archive/legacy/SessionContinuity-legacy-2026-02-17.md`
