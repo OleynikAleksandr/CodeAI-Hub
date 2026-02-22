@@ -22939,77 +22939,6 @@ ${path2}` : path2;
   var import_react7 = __toESM(require_react());
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
   var TICK_MS = 1e3;
-  var getNowSec = () => Math.floor(Date.now() / 1e3);
-  var clampPositiveInteger = (value) => {
-    if (typeof value !== "number" || !Number.isFinite(value)) {
-      return null;
-    }
-    if (value < 0) {
-      return null;
-    }
-    return Math.floor(value);
-  };
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var getLocalStorage3 = () => {
-    try {
-      return "localStorage" in globalThis ? globalThis.localStorage : null;
-    } catch {
-      return null;
-    }
-  };
-  var parseStoredTaskTimerState = (raw) => {
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      return null;
-    }
-    if (!isRecord5(parsed)) {
-      return null;
-    }
-    const totalSeconds = clampPositiveInteger(parsed.totalSeconds);
-    const updatedAtMs = clampPositiveInteger(parsed.updatedAtMs);
-    if (totalSeconds === null || updatedAtMs === null) {
-      return null;
-    }
-    const runningSinceCandidate = parsed.runningSinceSec;
-    const runningSinceSec = runningSinceCandidate === null ? null : clampPositiveInteger(runningSinceCandidate);
-    return {
-      totalSeconds,
-      runningSinceSec: runningSinceSec ?? null,
-      updatedAtMs
-    };
-  };
-  var readStoredTaskTimerState = (storageKey) => {
-    const storage = getLocalStorage3();
-    if (!storage) {
-      return { totalSeconds: 0, runningSinceSec: null, updatedAtMs: 0 };
-    }
-    const raw = storage.getItem(storageKey);
-    if (!raw) {
-      return { totalSeconds: 0, runningSinceSec: null, updatedAtMs: 0 };
-    }
-    return parseStoredTaskTimerState(raw) ?? {
-      totalSeconds: 0,
-      runningSinceSec: null,
-      updatedAtMs: 0
-    };
-  };
-  var writeStoredTaskTimerState = (storageKey, state) => {
-    const storage = getLocalStorage3();
-    if (!storage) {
-      return;
-    }
-    const payload = {
-      totalSeconds: Math.max(0, Math.floor(state.totalSeconds)),
-      runningSinceSec: state.runningSinceSec === null ? null : Math.max(0, Math.floor(state.runningSinceSec)),
-      updatedAtMs: Date.now()
-    };
-    try {
-      storage.setItem(storageKey, JSON.stringify(payload));
-    } catch {
-    }
-  };
   var pad2 = (value) => String(value).padStart(2, "0");
   var formatHmsShort = (totalSeconds) => {
     const clamped = Math.max(0, Math.floor(totalSeconds));
@@ -23020,91 +22949,36 @@ ${path2}` : path2;
     return `${hoursText}h ${pad2(minutes)}m ${pad2(seconds)}s`;
   };
   var TaskTimer = ({
-    storageKey,
+    timer,
     active,
     placement,
     mode = "total",
     theme = null
   }) => {
-    const [stored, setStored] = (0, import_react7.useState)(() => {
-      if (!storageKey) {
-        return { totalSeconds: 0, runningSinceSec: null, updatedAtMs: 0 };
-      }
-      return readStoredTaskTimerState(storageKey);
-    });
-    const [nowSec, setNowSec] = (0, import_react7.useState)(getNowSec);
-    const turnStartedAtRef = (0, import_react7.useRef)(null);
+    const [nowMs, setNowMs] = (0, import_react7.useState)(() => Date.now());
+    const runningSinceMs = timer?.runningSinceMs ?? null;
     (0, import_react7.useEffect)(() => {
-      if (mode !== "total") {
-        return;
-      }
-      if (!storageKey) {
-        setStored({ totalSeconds: 0, runningSinceSec: null, updatedAtMs: 0 });
-        return;
-      }
-      setStored(readStoredTaskTimerState(storageKey));
-    }, [mode, storageKey]);
-    (0, import_react7.useEffect)(() => {
-      if (mode !== "total") {
-        return;
-      }
-      if (!storageKey) {
-        return;
-      }
-      setStored((previous3) => {
-        const now = getNowSec();
-        if (active) {
-          if (previous3.runningSinceSec !== null) {
-            return previous3;
-          }
-          const next2 = {
-            totalSeconds: previous3.totalSeconds,
-            runningSinceSec: now,
-            updatedAtMs: Date.now()
-          };
-          writeStoredTaskTimerState(storageKey, next2);
-          return next2;
-        }
-        if (previous3.runningSinceSec === null) {
-          return previous3;
-        }
-        const delta = Math.max(0, now - previous3.runningSinceSec);
-        const next = {
-          totalSeconds: previous3.totalSeconds + delta,
-          runningSinceSec: null,
-          updatedAtMs: Date.now()
-        };
-        writeStoredTaskTimerState(storageKey, next);
-        return next;
-      });
-    }, [active, mode, storageKey]);
-    (0, import_react7.useEffect)(() => {
-      if (mode !== "turn") {
-        turnStartedAtRef.current = null;
-        return;
-      }
-      if (!active) {
-        turnStartedAtRef.current = null;
+      if (mode !== "turn" || !active || runningSinceMs === null) {
         return;
       }
       if (typeof window === "undefined") {
         return;
       }
-      turnStartedAtRef.current = getNowSec();
-      setNowSec(getNowSec());
-      const timer = window.setInterval(() => {
-        setNowSec(getNowSec());
+      setNowMs(Date.now());
+      const intervalId = window.setInterval(() => {
+        setNowMs(Date.now());
       }, TICK_MS);
-      return () => window.clearInterval(timer);
-    }, [active, mode]);
-    const activeTurnSeconds = (0, import_react7.useMemo)(() => {
-      if (!active || mode !== "turn") {
+      return () => window.clearInterval(intervalId);
+    }, [active, mode, runningSinceMs]);
+    const displaySeconds = (0, import_react7.useMemo)(() => {
+      if (mode === "total") {
+        return Math.max(0, Math.floor(timer?.totalSeconds ?? 0));
+      }
+      if (!active || runningSinceMs === null) {
         return 0;
       }
-      const startedAt = turnStartedAtRef.current;
-      return startedAt === null ? 0 : Math.max(0, nowSec - startedAt);
-    }, [active, mode, nowSec]);
-    const displaySeconds = mode === "total" ? Math.max(0, stored.totalSeconds) : activeTurnSeconds;
+      return Math.max(0, Math.floor((nowMs - runningSinceMs) / 1e3));
+    }, [active, mode, nowMs, runningSinceMs, timer?.totalSeconds]);
     const formatted = (0, import_react7.useMemo)(
       () => formatHmsShort(displaySeconds),
       [displaySeconds]
@@ -23147,7 +23021,7 @@ ${path2}` : path2;
     isQueued = false,
     providerTheme = null,
     terminalNoResume = false,
-    agentTimerKey = null,
+    taskTimer = null,
     onSubmit
   }) => {
     const inputLocked = connectionState !== "idle" || continuityLockActive || isQueued;
@@ -23209,35 +23083,33 @@ ${path2}` : path2;
       if (!(inputLocked && agentBusy)) {
         return null;
       }
+      if (taskTimer?.runningSinceMs == null) {
+        return null;
+      }
       return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         TaskTimer,
         {
           active: agentBusy,
           mode: "turn",
           placement: "overlay",
-          storageKey: null,
-          theme: providerTheme
+          theme: providerTheme,
+          timer: taskTimer
         }
       );
     };
-    const renderFooterTotal = () => {
-      if (!agentTimerKey) {
-        return null;
-      }
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-input__total", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-input__total-label", children: "total:\xA0\xA0" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-          TaskTimer,
-          {
-            active: agentBusy,
-            mode: "total",
-            placement: "footer",
-            storageKey: agentTimerKey,
-            theme: providerTheme
-          }
-        )
-      ] });
-    };
+    const renderFooterTotal = () => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-input__total", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-input__total-label", children: "total:\xA0\xA0" }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+        TaskTimer,
+        {
+          active: agentBusy,
+          mode: "total",
+          placement: "footer",
+          theme: providerTheme,
+          timer: taskTimer
+        }
+      )
+    ] });
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
       "form",
       {
@@ -23985,23 +23857,6 @@ ${path2}` : path2;
     "report_in_progress",
     "resume_bootstrap"
   ]);
-  var TASK_TIMER_STORAGE_PREFIX = "codeaihub:taskTimer:v1:";
-  var normalizeTimerKeyPart = (value) => {
-    const trimmed = typeof value === "string" ? value.trim() : "";
-    return trimmed ? trimmed : "none";
-  };
-  var buildAgentTaskTimerKey = (record) => {
-    const providerKey = record.providerIds.length > 0 ? record.providerIds.join(",") : "none";
-    const payload = [
-      record.workspacePath,
-      normalizeTimerKeyPart(record.runSlug),
-      normalizeTimerKeyPart(record.stage),
-      normalizeTimerKeyPart(record.sessionKind),
-      normalizeTimerKeyPart(record.initiativeSlug),
-      providerKey
-    ].map((part) => encodeURIComponent(part)).join("|");
-    return `${TASK_TIMER_STORAGE_PREFIX}${payload}`;
-  };
   var resolveInputConnectionState = (options) => {
     if (options.connectionState !== "running") {
       return options.connectionState;
@@ -24041,7 +23896,6 @@ ${path2}` : path2;
     const activeRecord = allSessions.find(
       (session) => session.id === activeSessionId
     );
-    const agentTimerKey = activeRecord ? buildAgentTaskTimerKey(activeRecord) : null;
     const primaryProviderId = activeRecord?.providerIds[0] ?? null;
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = resolveProviderDisplayLabel({
@@ -24120,7 +23974,6 @@ ${path2}` : path2;
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             input_panel_default,
             {
-              agentTimerKey,
               connectionState: inputConnectionState,
               continuityErrorCopy,
               continuityLockActive: effectiveContinuityLockActive,
@@ -24128,6 +23981,7 @@ ${path2}` : path2;
               isQueued,
               onSubmit: submitMessage,
               providerTheme,
+              taskTimer: activeSession.status.taskTimer ?? null,
               terminalNoResume
             }
           ),
@@ -24746,7 +24600,7 @@ ${path2}` : path2;
   ] });
 
   // src/client/ui/src/services/idea-collector-artifact.ts
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
   var readNextAction = (data) => {
     let nextAction = null;
@@ -24779,7 +24633,7 @@ ${path2}` : path2;
     }
     const artifacts = [];
     for (const entry of data.artifacts) {
-      if (!isRecord6(entry)) {
+      if (!isRecord5(entry)) {
         return null;
       }
       const slot = readStringField(entry, "slot");
@@ -24792,11 +24646,11 @@ ${path2}` : path2;
     return artifacts;
   };
   var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord6(event)) {
+    if (!isRecord5(event)) {
       return null;
     }
     const data = event.data;
-    if (!isRecord6(data) || data.kind !== "structured_output") {
+    if (!isRecord5(data) || data.kind !== "structured_output") {
       return null;
     }
     const suggestedResponse = readSuggestedResponse(data);
@@ -24809,7 +24663,7 @@ ${path2}` : path2;
       return null;
     }
     const artifact = data.artifact;
-    if (!isRecord6(artifact)) {
+    if (!isRecord5(artifact)) {
       return null;
     }
     const { ideaMarkdown, virtualSimulationMarkdown } = readArtifactPayload(artifact);
@@ -24865,7 +24719,7 @@ ${path2}` : path2;
 
   // src/client/ui/src/services/idea-artifact-persistence.ts
   var ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var persistIdeaArtifacts = async (params) => {
     const payload = {
       sessionId: params.sessionId,
@@ -24896,7 +24750,7 @@ ${path2}` : path2;
   var tryReadCoreErrorDetails = async (response) => {
     try {
       const payload = await response.json();
-      if (isRecord7(payload) && typeof payload.error === "string") {
+      if (isRecord6(payload) && typeof payload.error === "string") {
         return payload.error;
       }
       return null;
@@ -24905,12 +24759,12 @@ ${path2}` : path2;
     }
   };
   var parseSavedArtifactUpserts = (payload) => {
-    if (!(isRecord7(payload) && Array.isArray(payload.saved))) {
+    if (!(isRecord6(payload) && Array.isArray(payload.saved))) {
       return null;
     }
     const saved = [];
     for (const entry of payload.saved) {
-      if (!isRecord7(entry)) {
+      if (!isRecord6(entry)) {
         return null;
       }
       if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
@@ -25063,11 +24917,11 @@ ${path2}` : path2;
   );
 
   // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var strictifyProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord8(properties)) {
+    if (!isRecord7(properties)) {
       return;
     }
     schema.required = Object.keys(properties);
@@ -25075,7 +24929,7 @@ ${path2}` : path2;
       schema.additionalProperties = false;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord8(value)) {
+      if (isRecord7(value)) {
         strictifySchema(value);
       }
     }
@@ -25084,23 +24938,23 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord8(item)) {
+        if (isRecord7(item)) {
           strictifySchema(item);
         }
       }
       return;
     }
-    if (isRecord8(items)) {
+    if (isRecord7(items)) {
       strictifySchema(items);
     }
   };
   var removeCombinatorsFromProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord8(properties)) {
+    if (!isRecord7(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord8(value)) {
+      if (isRecord7(value)) {
         removeCombinators(value);
       }
     }
@@ -25109,13 +24963,13 @@ ${path2}` : path2;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord8(item)) {
+        if (isRecord7(item)) {
           removeCombinators(item);
         }
       }
       return;
     }
-    if (isRecord8(items)) {
+    if (isRecord7(items)) {
       removeCombinators(items);
     }
   };
@@ -25128,7 +24982,7 @@ ${path2}` : path2;
         continue;
       }
       for (const entry of entries) {
-        if (isRecord8(entry)) {
+        if (isRecord7(entry)) {
           removeCombinators(entry);
         }
       }
@@ -25145,19 +24999,19 @@ ${path2}` : path2;
       return schema;
     }
     const properties = schema.properties;
-    if (!isRecord8(properties)) {
+    if (!isRecord7(properties)) {
       return schema;
     }
     const artifact = properties.artifact;
-    if (!isRecord8(artifact)) {
+    if (!isRecord7(artifact)) {
       return schema;
     }
     const artifactProperties = artifact.properties;
-    if (!isRecord8(artifactProperties)) {
+    if (!isRecord7(artifactProperties)) {
       return schema;
     }
     const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord8(ideaMarkdown)) {
+    if (!isRecord7(ideaMarkdown)) {
       return schema;
     }
     const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
@@ -25184,11 +25038,11 @@ ${template}`;
   };
   var sanitizeSchemaProperties = (schema) => {
     const properties = schema.properties;
-    if (!isRecord8(properties)) {
+    if (!isRecord7(properties)) {
       return;
     }
     for (const value of Object.values(properties)) {
-      if (isRecord8(value)) {
+      if (isRecord7(value)) {
         sanitizeSchemaKeywords(value);
       }
     }
@@ -25197,13 +25051,13 @@ ${template}`;
     const items = schema.items;
     if (Array.isArray(items)) {
       for (const item of items) {
-        if (isRecord8(item)) {
+        if (isRecord7(item)) {
           sanitizeSchemaKeywords(item);
         }
       }
       return;
     }
-    if (isRecord8(items)) {
+    if (isRecord7(items)) {
       sanitizeSchemaKeywords(items);
     }
   };
@@ -25226,12 +25080,12 @@ ${template}`;
     idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/description.md",
     virtualSimulation: ".codeai-hub/unknown-workspace/virtual_simulation/runs/000-unknown/virtual-simulation.md"
   };
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkflowContractPayload = (value) => {
-    if (!isRecord9(value)) {
+    if (!isRecord8(value)) {
       return false;
     }
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord9(value.schema);
+    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord8(value.schema);
   };
   var parseVersion = (payload) => typeof payload.version === "string" && payload.version.trim().length > 0 ? payload.version : null;
   var fetchWorkflowContract = async (endpoint) => {
@@ -25283,18 +25137,18 @@ ${template}`;
 
   // src/client/ui/src/services/idea-collector-finalize-utils.ts
   var FINALIZE_TRIGGER_PATTERN = /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var cloneSchema2 = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
   var enforceArtifactsRequired = (schema) => {
     const next = cloneSchema2(schema);
     const properties = next.properties;
-    if (isRecord10(properties)) {
+    if (isRecord9(properties)) {
       const artifacts = properties.artifacts;
-      if (isRecord10(artifacts)) {
+      if (isRecord9(artifacts)) {
         artifacts.minItems = 1;
       }
       const questions = properties.questions;
-      if (isRecord10(questions)) {
+      if (isRecord9(questions)) {
         questions.maxItems = 0;
       }
     }
@@ -25396,9 +25250,9 @@ ${template}`;
     const remainingMessage = lines.slice(1).join("\n").trim();
     return { paths, remainingMessage };
   };
-  var isRecord11 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse = (value) => {
-    if (!isRecord11(value)) {
+    if (!isRecord10(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -25995,9 +25849,9 @@ ${replacement}
   // src/client/ui/src/services/workspace-file-service.ts
   var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
   var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var isRecord12 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord11 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord12(value)) {
+    if (!isRecord11(value)) {
       return false;
     }
     return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
@@ -26532,7 +26386,7 @@ ${replacement}
   var import_react15 = __toESM(require_react());
 
   // src/client/ui/src/app-host/session-stream-usage-sync.ts
-  var isRecord13 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord12 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var readNumber3 = (value) => {
     if (typeof value === "number" && Number.isFinite(value)) {
       return value;
@@ -26549,7 +26403,7 @@ ${replacement}
   var readString2 = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
   var clampPercent3 = (value) => Math.max(0, Math.min(100, value));
   var readTokenUsage = (value) => {
-    if (!isRecord13(value)) {
+    if (!isRecord12(value)) {
       return null;
     }
     const used = readNumber3(value.used);
@@ -26563,14 +26417,14 @@ ${replacement}
     return { used: Math.round(used), limit: Math.round(limit) };
   };
   var extractTokenUsage = (event) => {
-    if (!isRecord13(event)) {
+    if (!isRecord12(event)) {
       return null;
     }
     const direct = readTokenUsage(event.tokenUsage);
     if (direct) {
       return { tokenUsage: direct, threadId: readString2(event.threadId) };
     }
-    const data = isRecord13(event.data) ? event.data : null;
+    const data = isRecord12(event.data) ? event.data : null;
     if (!data || data.kind !== "token_usage") {
       return null;
     }
@@ -26584,7 +26438,7 @@ ${replacement}
     if (value === null) {
       return null;
     }
-    if (!isRecord13(value)) {
+    if (!isRecord12(value)) {
       return null;
     }
     const percentUsed = readNumber3(value.percentUsed);
@@ -26597,17 +26451,17 @@ ${replacement}
     };
   };
   var extractUsageLimits = (event) => {
-    if (!isRecord13(event)) {
+    if (!isRecord12(event)) {
       return null;
     }
     let root4 = null;
-    if (isRecord13(event.usageLimits)) {
+    if (isRecord12(event.usageLimits)) {
       root4 = event.usageLimits;
-    } else if (isRecord13(event.data)) {
+    } else if (isRecord12(event.data)) {
       root4 = event.data;
     }
-    const candidate = isRecord13(root4) && isRecord13(root4.usageLimits) ? root4.usageLimits : root4;
-    if (!isRecord13(candidate)) {
+    const candidate = isRecord12(root4) && isRecord12(root4.usageLimits) ? root4.usageLimits : root4;
+    if (!isRecord12(candidate)) {
       return null;
     }
     const currentSession = readUsageLimitBucket(candidate.currentSession);
@@ -26703,7 +26557,7 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/session-stream-snapshot-sync.ts
-  var isRecord14 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord13 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp2 = (value) => {
     const parsed = typeof value === "string" ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
@@ -26790,7 +26644,7 @@ ${replacement}
       return snapshot;
     }
     const data = event.data;
-    if (!isRecord14(data) || typeof data.kind !== "string") {
+    if (!isRecord13(data) || typeof data.kind !== "string") {
       return snapshot;
     }
     const updatedAt = toNumberTimestamp2(event.timestamp ?? data.timestamp);
@@ -26810,7 +26664,7 @@ ${replacement}
     }
   };
   var applyStreamEventToSnapshot = (snapshot, event) => {
-    if (!isRecord14(event)) {
+    if (!isRecord13(event)) {
       return snapshot;
     }
     if (event.kind === "flow_node_rollover") {
@@ -26824,7 +26678,7 @@ ${replacement}
       return snapshots;
     }
     const updatedAt = toNumberTimestamp2(
-      isRecord14(payload.event) ? payload.event.timestamp : null
+      isRecord13(payload.event) ? payload.event.timestamp : null
     );
     let nextSnapshots = snapshots;
     let snapshot = baseSnapshot;
@@ -26854,12 +26708,12 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/use-session-stream-status-sync.ts
-  var isRecord15 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord14 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var useSessionStreamStatusSync = (setSnapshots) => {
     (0, import_react15.useEffect)(() => {
       const handleIncoming = (event) => {
         const candidate = event.data;
-        if (candidate.type !== "session:stream" || !isRecord15(candidate.payload)) {
+        if (candidate.type !== "session:stream" || !isRecord14(candidate.payload)) {
           return;
         }
         const sessionId = candidate.payload.sessionId;
@@ -29569,7 +29423,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord16 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord15 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var clampContinuityRemainingPercentThreshold = (value) => Math.min(
     MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -29580,7 +29434,7 @@ ${replacement}
     Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
   );
   var mapGeminiSessionContinuitySettings = (value) => {
-    if (!isRecord16(value)) {
+    if (!isRecord15(value)) {
       return {
         contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
         remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
@@ -29596,7 +29450,7 @@ ${replacement}
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord16(value)) {
+    if (!isRecord15(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -29641,7 +29495,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord17 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord16 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -29659,7 +29513,7 @@ ${replacement}
   });
   var mapContinuity = (value) => {
     const numericValue = Number(
-      isRecord17(value) ? value.remainingPercentThreshold : void 0
+      isRecord16(value) ? value.remainingPercentThreshold : void 0
     );
     const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
       MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -29686,7 +29540,7 @@ ${replacement}
   };
   var mapCodexReasoningByModel = (value) => {
     const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
-    if (!isRecord17(value)) {
+    if (!isRecord16(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -30731,15 +30585,15 @@ ${replacement}
 
   // src/client/ui/src/api/orchestrator/initiatives-client.ts
   var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord18 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord17 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isInitiativeSummary = (value) => {
-    if (!isRecord18(value)) {
+    if (!isRecord17(value)) {
       return false;
     }
     return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
   };
   var parseInitiatives = (value) => {
-    if (!isRecord18(value)) {
+    if (!isRecord17(value)) {
       return [];
     }
     const raw = value.initiatives;
@@ -30761,7 +30615,7 @@ ${replacement}
     return initiatives;
   };
   var parseCreatedInitiative = (value) => {
-    if (!isRecord18(value)) {
+    if (!isRecord17(value)) {
       return null;
     }
     const initiative = value.initiative;
