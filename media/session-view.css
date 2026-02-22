@@ -981,6 +981,20 @@
   flex: 0 0 auto;
 }
 
+.session-input__total {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 19px;
+  color: var(--session-hint-color);
+}
+
+.session-input__total-label {
+  color: inherit;
+  opacity: 0.92;
+  white-space: pre;
+}
+
 .session-input__lock-toggle {
   background: none;
   border: none;
@@ -1022,22 +1036,29 @@
 }
 
 .task-timer--footer {
+  color: var(--session-hint-color);
+  opacity: 0.92;
+}
+
+.task-timer--footer.task-timer--active {
+  color: var(--session-hint-color);
   opacity: 0.92;
 }
 
 .task-timer--overlay {
   position: absolute;
-  top: 10px;
+  top: 50%;
   right: 12px;
+  transform: translateY(-50%);
   z-index: 2;
   pointer-events: none;
-  padding: 4px 6px;
-  border-radius: 6px;
-  background: rgba(12, 12, 12, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .session-status__row {
