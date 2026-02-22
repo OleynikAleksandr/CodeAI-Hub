@@ -41,5 +41,5 @@
 2. [DONE] Git Commit: `feat(ui): fix timer placement and remove force unlock` (hash: `253860d3`)
 
 ### Stream 3: Verification (webview build)
-1. [TODO] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after timer semantics fix`).
-2. [TODO] Git Commit: `chore(build): rebuild webview after timer semantics fix` (hash: TBD)
+1. [DONE] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after timer semantics fix`).
+2. [DONE] Git Commit: `chore(build): rebuild webview after timer semantics fix` (hash: `446184b2`)
