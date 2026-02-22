@@ -907,6 +907,7 @@
   gap: 6px;
   width: 100%;
   box-sizing: border-box;
+  --session-timer-right: 12px;
 }
 
 .session-input__container {
@@ -985,13 +986,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  margin-right: 19px;
+  margin-right: var(--session-timer-right);
   color: var(--session-hint-color);
+  font-variant-numeric: tabular-nums;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .session-input__total-label {
-  color: inherit;
+  color: var(--session-hint-color);
   opacity: 0.92;
+  font-variant-numeric: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   white-space: pre;
 }
 
@@ -1048,7 +1060,7 @@
 .task-timer--overlay {
   position: absolute;
   top: 50%;
-  right: 12px;
+  right: var(--session-timer-right);
   transform: translateY(-50%);
   z-index: 2;
   pointer-events: none;
