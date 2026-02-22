@@ -33,7 +33,7 @@
 | BUG-2026-02-19-02 | FIXED | Core/Codex | Codex: двойной rollover / два разделителя сессии при триггере контекстного окна | 1.1.641 |
 | BUG-2026-02-20-01 | OPEN | Claude/Auth | В чистом `~/.codeai-hub` Claude остаётся НЕДОСТУПЕН: provider-home auth bootstrap не поднимает авторизацию | TBD |
 | BUG-2026-02-21-01 | FIXED | Session UI | После падения/рестарта Core в середине turn: force-unlock + повторный submit не отправлял queued message в resume-сессию | 1.1.644 |
-| BUG-2026-02-22-01 | OPEN | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | TBD |
+| BUG-2026-02-22-01 | FIXED | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | 1.1.646 |
 
 ---
 
@@ -627,7 +627,7 @@
 
 ## BUG-2026-02-22-01 — PM/UI + Core Runtime: вечный `Agent is working...` после cold start на завершённом Reviewer dialog
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom (repro on 2026-02-22):**
 - После перезагрузки компьютера и Core открыть PM и workspace `CodeAI-Hub-claude`.
@@ -665,9 +665,23 @@
 
 См. архитектурный контракт SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
 
-**Fix direction (planned):**
+**Fix direction (implemented):**
 1. **PM/UI:** доверять snapshot-истине: если `workspace:snapshot` сообщает `idle + lock=false` и нет bootstrap-transition — разрешать переход в `idle/unlocked` даже когда `continuityLockReason` отсутствует.
 2. **Core (минимальный SSOT этап):** гарантировать явный unlock-reason для idle resume‑сессий (например `no_rollover_needed`), чтобы UI не зависел от отсутствующих полей.
-3. **Дальше (целевой SSOT):** вынести input lock в явное поле/state machine (см. контракт) и персистить это состояние для корректного восстановления после рестарта.
 
-**Release:** TBD
+**Follow-ups (planned):**
+- Целевой SSOT: вынести input lock в явное поле/state machine (см. контракт) и персистить это состояние для корректного восстановления после рестарта.
+
+**Fix:**
+- PM: если snapshot явно сообщает `turnState="idle"` и `continuityLockActive=false`, UI снимает блокировку даже если `continuityLockReason` отсутствует.
+- Core: для `resume_in_place` idle/unlocked-сессий snapshot нормализуется и всегда содержит явный unlock-reason (`no_rollover_needed`).
+
+**Commits:**
+- `a066be90 test(pm): reproduce resuming stuck when lock reason missing`
+- `ca728192 fix(pm): unlock input on cold-start idle snapshot`
+- `de402c33 fix(core): emit explicit unlock reason for idle sessions`
+- `71a20e11 feat(release): v1.1.646 - fix session input unlock on cold start`
+
+**Release:** `1.1.646`
+
+**Verified (manual):** 2026-02-22 — после cold start reviewer‑диалог открывается в `idle/unlocked`; при рестарте Core в середине turn ввод разблокируется автоматически; сообщение “Продолжай” продолжает прерванный turn.
