@@ -37,11 +37,11 @@
 
 ### Stream 0: Design contract
 1. [DONE] Зафиксировать контракт поведения таймера (старт/стоп, ключ накопления, persist, placement) (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): define session task timer behavior`).
-2. [IN_PROGRESS] Git Commit: `docs(contracts): define session task timer behavior` (hash: TBD)
+2. [DONE] Git Commit: `docs(contracts): define session task timer behavior` (hash: `528d4c78`)
 
 ### Stream 1: UI implementation (flip timer + persist)
-1. [TODO] Реализовать `TaskTimer` (storage: localStorage; формат `HH:MM:SS`; 3D flip digits) (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`; expected commit: `feat(ui): add persistent task timer with flip digits`).
-2. [TODO] Git Commit: `feat(ui): add persistent task timer with flip digits` (hash: TBD)
+1. [DONE] Реализовать `TaskTimer` (storage: localStorage; формат `HH:MM:SS`; 3D flip digits) (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`; expected commit: `feat(ui): add persistent task timer with flip digits`).
+2. [DONE] Git Commit: `feat(ui): add persistent task timer with flip digits` (hash: `d4f6a8b4`)
 
 3. [TODO] Встроить таймер в `InputPanel` (overlay при lock + footer при idle; таймер не скрывать) (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`; expected commit: `feat(ui): render task timer in session input`).
 4. [TODO] Git Commit: `feat(ui): render task timer in session input` (hash: TBD)
