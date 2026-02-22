@@ -43,11 +43,11 @@
 1. [DONE] Реализовать `TaskTimer` (storage: localStorage; формат `HH:MM:SS`; 3D flip digits) (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`; expected commit: `feat(ui): add persistent task timer with flip digits`).
 2. [DONE] Git Commit: `feat(ui): add persistent task timer with flip digits` (hash: `d4f6a8b4`)
 
-3. [TODO] Встроить таймер в `InputPanel` (overlay при lock + footer при idle; таймер не скрывать) (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`; expected commit: `feat(ui): render task timer in session input`).
-4. [TODO] Git Commit: `feat(ui): render task timer in session input` (hash: TBD)
+3. [DONE] Встроить таймер в `InputPanel` (overlay при lock + footer при idle; таймер не скрывать) (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`; expected commit: `feat(ui): render task timer in session input`).
+4. [DONE] Git Commit: `feat(ui): render task timer in session input` (hash: `94727fd3`)
 
-5. [TODO] Добавить стабильный ключ накопления (stage+kind+runSlug+workspace) и пробросить в `InputPanel` (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): accumulate task timer per workflow agent`).
-6. [TODO] Git Commit: `feat(ui): accumulate task timer per workflow agent` (hash: TBD)
+5. [IN_PROGRESS] Добавить стабильный ключ накопления (stage+kind+runSlug+workspace) и пробросить в `InputPanel` (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): accumulate task timer per workflow agent`).
+6. [IN_PROGRESS] Git Commit: `feat(ui): accumulate task timer per workflow agent` (hash: TBD)
 
 ### Stream 2: Verification (target builds)
 1. [TODO] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after task timer`).
