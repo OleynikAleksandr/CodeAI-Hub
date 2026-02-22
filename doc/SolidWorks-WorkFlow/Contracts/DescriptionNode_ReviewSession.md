@@ -15,6 +15,3 @@
 ## Связанные контракты
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Workspace runtime/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-
-## Legacy snapshot
-- `doc/SolidWorks-WorkFlow/Archive/legacy/DescriptionNode_ReviewSession-legacy-2026-02-17.md`
