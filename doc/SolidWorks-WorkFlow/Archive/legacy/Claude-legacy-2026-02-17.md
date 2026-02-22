@@ -1,8 +1,8 @@
 # Claude Provider Module — Module (SSOT)
 
-## Важно (переходный период миграции)
+## Legacy snapshot (outdated)
 
-Ниже временно включён legacy‑контент “as-is”. Любые новые изменения по Claude фиксируем **в этом файле**.
+Ниже сохранён legacy‑контент “as-is” для форензики. Текущий SSOT по Claude: `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
 
 ---
 
