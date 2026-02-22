@@ -49,11 +49,11 @@
 1. [DONE] Добавить регрессионный тест: если `workspace:snapshot` сообщает `turnState=idle` и `continuityLockActive=false`, UI обязан снять блокировку даже когда `continuityLockReason` отсутствует (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(pm): reproduce resuming stuck when lock reason missing`).
 2. [DONE] Git Commit: `test(pm): reproduce resuming stuck when lock reason missing` (hash: `a066be90`)
 3. [DONE] Исправить `applyWorkspaceSnapshotToSnapshots`: доверять snapshot-истине и разрешать переход в `idle/unlocked` при отсутствии bootstrap/lock, без требования “разрешающего” lockReason (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `fix(pm): unlock input on cold-start idle snapshot`).
-4. [IN_PROGRESS] Git Commit: `fix(pm): unlock input on cold-start idle snapshot` (hash: TBD)
+4. [DONE] Git Commit: `fix(pm): unlock input on cold-start idle snapshot` (hash: `ca728192`)
 
 ### Stream 2: Core — сделать unlock reason явным (минимальный SSOT этап)
-1. [TODO] Нормализовать snapshot: для `resume_in_place` idle‑сессий гарантировать явный unlock‑reason (например `no_rollover_needed`) вместо `undefined`, чтобы UI не зависел от отсутствующих полей (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/workspace-runtime/workspace-runtime-types.ts`, `packages/core/src/workspace-runtime/workspace-snapshot-builder.ts`; expected commit: `fix(core): emit explicit unlock reason for idle sessions`).
-2. [TODO] Git Commit: `fix(core): emit explicit unlock reason for idle sessions` (hash: TBD)
+1. [DONE] Нормализовать snapshot: для `resume_in_place` idle‑сессий гарантировать явный unlock‑reason (например `no_rollover_needed`) вместо `undefined`, чтобы UI не зависел от отсутствующих полей (scope: `packages/core/src/workspace-runtime/workspace-snapshot-builder.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): emit explicit unlock reason for idle sessions`).
+2. [IN_PROGRESS] Git Commit: `fix(core): emit explicit unlock reason for idle sessions` (hash: TBD)
 
 ### Stream 3: Release + manual matrix
 1. [TODO] Собрать релиз и вручную прогнать матрицу сценариев из контракта (normal / rollover / crash mid-turn / cold start / one-shot) (scope: `scripts/build-all.sh`, `scripts/build-release.sh`; expected commit: `feat(release): v<version> - fix session input unlock on cold start`).

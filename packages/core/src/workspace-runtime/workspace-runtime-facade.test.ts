@@ -267,6 +267,30 @@ test("WorkspaceRuntimeFacade does not clear lock fields when updating resumeMode
   facade.dispose();
 });
 
+test("WorkspaceRuntimeFacade emits explicit unlock reason for idle resume_in_place sessions", () => {
+  const facade = new WorkspaceRuntimeFacade();
+  const sessionKey = createSessionKey(
+    workspaceA,
+    "session-idle-resume-in-place"
+  );
+
+  facade.notifySessionCreated(sessionKey, {
+    providerId: "claudeCodeCli",
+    resumeMode: "resume_in_place",
+    turnState: "idle",
+    continuityLockActive: false,
+  });
+
+  const snapshot =
+    facade.getSnapshot(workspaceA).sessions[sessionKey.sessionId];
+  assert.ok(snapshot);
+  assert.equal(snapshot.continuityLockActive, false);
+  assert.equal(snapshot.turnState, "idle");
+  assert.equal(snapshot.continuityLockReason, "no_rollover_needed");
+
+  facade.dispose();
+});
+
 test("WorkspaceRuntimeFacade keeps continuity lock active for resume timeout", async () => {
   const events: WorkspaceSnapshotPush[] = [];
   const facade = new WorkspaceRuntimeFacade({

@@ -16,6 +16,27 @@ const toReadonlyRecord = <T>(
   return Object.freeze(result);
 };
 
+const normalizeSessionSnapshot = (
+  session: SessionSnapshot
+): SessionSnapshot => {
+  if (session.continuityLockReason !== undefined) {
+    return session;
+  }
+  if (session.turnState !== "idle") {
+    return session;
+  }
+  if (session.continuityLockActive) {
+    return session;
+  }
+  if (session.resumeMode !== "resume_in_place") {
+    return session;
+  }
+  return {
+    ...session,
+    continuityLockReason: "no_rollover_needed",
+  };
+};
+
 const toArtifactsRecord = (
   artifactsByNode: WorkspaceState["artifactsByNode"]
 ): Readonly<Record<string, Readonly<Record<string, ArtifactPointer>>>> => {
@@ -36,7 +57,12 @@ export const buildSnapshot = (
   workflow: {
     nodes: toReadonlyRecord<NodeSnapshot>(state.nodes.entries()),
   },
-  sessions: toReadonlyRecord<SessionSnapshot>(state.sessions.entries()),
+  sessions: toReadonlyRecord<SessionSnapshot>(
+    Array.from(state.sessions.entries(), ([sessionId, session]) => [
+      sessionId,
+      normalizeSessionSnapshot(session),
+    ])
+  ),
   artifacts: {
     currentByNodeId: toArtifactsRecord(state.artifactsByNode),
   },
