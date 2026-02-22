@@ -51,4 +51,4 @@
 
 ### Stream 2: Verification (target builds)
 1. [DONE] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after task timer`).
-2. [IN_PROGRESS] Git Commit: `chore(build): rebuild webview after task timer` (hash: TBD)
+2. [DONE] Git Commit: `chore(build): rebuild webview after task timer` (hash: `b8a21e51`)
