@@ -8,7 +8,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
   - `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session001.md`
+  - `doc/Sessions/Session002.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -25,35 +25,29 @@
 
 ---
 
-## Phase 221 — BUG-2026-02-22-01: SSOT input lock (cold start + crash/restart) (owner: Codex, updated: 2026-02-22)
+## Phase 222 — Session UI: task execution timer (owner: Codex, updated: 2026-02-22)
 
-**Goal:** Перестать ловить “вечные” блокировки ввода. Зафиксировать и реализовать один источник правды (SSOT) для lock/unlock, устойчивый к cold start и авариям.
+**Goal:** Добавить в UI сессий счётчик времени выполнения задач агентом:
+- Во время работы агента: показывать анимированный таймер рядом с lock/wait UX (чтобы было видно, что что-то происходит).
+- После завершения turn: показывать накопленное время рядом с подсказкой ввода (и не скрывать его во время следующей работы агента).
+- Накопление: суммировать время всех turn’ов в рамках одного workflow-агента (stage + kind) даже при смене сессий (continuity/rollover).
+- Persist: счётчик не должен пропадать при перезагрузке ядра.
+- Формат: только `HH:MM:SS` (без миллисекунд).
 
-**SSOT/Design:**
-- `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md` (новый контракт)
-- `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
-- `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-- `doc/BugRegistry.md` (`BUG-2026-02-22-01`)
+### Stream 0: Design contract
+1. [TODO] Зафиксировать контракт поведения таймера (старт/стоп, ключ накопления, persist, placement) (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): define session task timer behavior`).
+2. [TODO] Git Commit: `docs(contracts): define session task timer behavior` (hash: TBD)
 
-**Note:** предыдущий план Phase 220 (attempt: sessionId reconciliation) заархивирован как не закрывший проблему:
-- `doc/TODO/Archive/todo-plan-phase220-bug-2026-02-22-01-cold-start-mismatch-2026-02-22.md`
+### Stream 1: UI implementation (flip timer + persist)
+1. [TODO] Реализовать `TaskTimer` (storage: localStorage; формат `HH:MM:SS`; 3D flip digits) (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`; expected commit: `feat(ui): add persistent task timer with flip digits`).
+2. [TODO] Git Commit: `feat(ui): add persistent task timer with flip digits` (hash: TBD)
 
----
+3. [TODO] Встроить таймер в `InputPanel` (overlay при lock + footer при idle; таймер не скрывать) (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`; expected commit: `feat(ui): render task timer in session input`).
+4. [TODO] Git Commit: `feat(ui): render task timer in session input` (hash: TBD)
 
-### Stream 0: Design contract (SSOT)
-1. [DONE] Зафиксировать архитектурный контракт SSOT/state machine для input lock/unlock (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`; expected commit: `docs(contracts): define session input lock SSOT state machine`).
-2. [DONE] Git Commit: `docs(contracts): define session input lock SSOT state machine` (hash: `db78b570`)
+5. [TODO] Добавить стабильный ключ накопления (stage+kind+runSlug+workspace) и пробросить в `InputPanel` (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): accumulate task timer per workflow agent`).
+6. [TODO] Git Commit: `feat(ui): accumulate task timer per workflow agent` (hash: TBD)
 
-### Stream 1: PM — устранить “resuming…” stuck при idle snapshot (cold start)
-1. [DONE] Добавить регрессионный тест: если `workspace:snapshot` сообщает `turnState=idle` и `continuityLockActive=false`, UI обязан снять блокировку даже когда `continuityLockReason` отсутствует (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(pm): reproduce resuming stuck when lock reason missing`).
-2. [DONE] Git Commit: `test(pm): reproduce resuming stuck when lock reason missing` (hash: `a066be90`)
-3. [DONE] Исправить `applyWorkspaceSnapshotToSnapshots`: доверять snapshot-истине и разрешать переход в `idle/unlocked` при отсутствии bootstrap/lock, без требования “разрешающего” lockReason (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `fix(pm): unlock input on cold-start idle snapshot`).
-4. [DONE] Git Commit: `fix(pm): unlock input on cold-start idle snapshot` (hash: `ca728192`)
-
-### Stream 2: Core — сделать unlock reason явным (минимальный SSOT этап)
-1. [DONE] Нормализовать snapshot: для `resume_in_place` idle‑сессий гарантировать явный unlock‑reason (например `no_rollover_needed`) вместо `undefined`, чтобы UI не зависел от отсутствующих полей (scope: `packages/core/src/workspace-runtime/workspace-snapshot-builder.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): emit explicit unlock reason for idle sessions`).
-2. [DONE] Git Commit: `fix(core): emit explicit unlock reason for idle sessions` (hash: `de402c33`)
-
-### Stream 3: Release + manual matrix
-1. [DONE] Собрать релиз и вручную прогнать матрицу сценариев из контракта (normal / rollover / crash mid-turn / cold start / one-shot) (scope: `scripts/build-all.sh`, `scripts/build-release.sh`; expected commit: `feat(release): v<version> - fix session input unlock on cold start`; verified: 2026-02-22, release `1.1.646`).
-2. [DONE] Git Commit: `feat(release): v<version> - fix session input unlock on cold start` (hash: `71a20e11`)
+### Stream 2: Verification (target builds)
+1. [TODO] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after task timer`).
+2. [TODO] Git Commit: `chore(build): rebuild webview after task timer` (hash: TBD)
