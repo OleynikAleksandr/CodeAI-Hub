@@ -33,8 +33,8 @@
 2. [DONE] Git Commit: `docs(contracts): update session task timer semantics` (hash: `6596c983`)
 
 ### Stream 1: Timer components (text format)
-1. [TODO] Убрать flip-анимацию и перейти на текстовый формат `00h 00m 00s`; подготовить total/turn таймеры (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`, `src/client/ui/src/session/task-timer-flip-clock.tsx`; expected commit: `feat(ui): switch task timers to text format`).
-2. [TODO] Git Commit: `feat(ui): switch task timers to text format` (hash: TBD)
+1. [DONE] Убрать flip-анимацию и перейти на текстовый формат `00h 00m 00s`; подготовить total/turn таймеры (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`, `src/client/ui/src/session/task-timer-flip-clock.tsx`; expected commit: `feat(ui): switch task timers to text format`).
+2. [DONE] Git Commit: `feat(ui): switch task timers to text format` (hash: `8fe06909`)
 
 ### Stream 2: Integration + remove force unlock toggle
 1. [TODO] Встроить total в футер (всегда виден) и turn в overlay; удалить force unlock toggle из UI и связанный state (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): fix timer placement and remove force unlock`).
