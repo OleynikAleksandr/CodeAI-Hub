@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ProviderTheme } from "./helpers";
-import { FlipClock } from "./task-timer-flip-clock";
 
 type TaskTimerPlacement = "overlay" | "footer";
+type TaskTimerMode = "total" | "turn";
 
 type TaskTimerProps = {
   readonly storageKey: string | null;
   readonly active: boolean;
   readonly placement: TaskTimerPlacement;
+  readonly mode?: TaskTimerMode;
   readonly theme?: ProviderTheme | null;
 };
 
@@ -17,7 +18,7 @@ type StoredTaskTimerState = {
   readonly updatedAtMs: number;
 };
 
-const FLIP_TICK_MS = 250;
+const TICK_MS = 1000;
 
 const getNowSec = (): number => Math.floor(Date.now() / 1000);
 
@@ -119,20 +120,21 @@ const writeStoredTaskTimerState = (
 
 const pad2 = (value: number): string => String(value).padStart(2, "0");
 
-const formatHms = (totalSeconds: number): string => {
+const formatHmsShort = (totalSeconds: number): string => {
   const clamped = Math.max(0, Math.floor(totalSeconds));
   const hours = Math.floor(clamped / 3600);
   const minutes = Math.floor((clamped % 3600) / 60);
   const seconds = clamped % 60;
 
   const hoursText = hours < 100 ? pad2(hours) : String(hours);
-  return `${hoursText}:${pad2(minutes)}:${pad2(seconds)}`;
+  return `${hoursText}h ${pad2(minutes)}m ${pad2(seconds)}s`;
 };
 
 export const TaskTimer = ({
   storageKey,
   active,
   placement,
+  mode = "total",
   theme = null,
 }: TaskTimerProps) => {
   const [stored, setStored] = useState<StoredTaskTimerState>(() => {
@@ -142,16 +144,23 @@ export const TaskTimer = ({
     return readStoredTaskTimerState(storageKey);
   });
   const [nowSec, setNowSec] = useState(getNowSec);
+  const turnStartedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
+    if (mode !== "total") {
+      return;
+    }
     if (!storageKey) {
       setStored({ totalSeconds: 0, runningSinceSec: null, updatedAtMs: 0 });
       return;
     }
     setStored(readStoredTaskTimerState(storageKey));
-  }, [storageKey]);
+  }, [mode, storageKey]);
 
   useEffect(() => {
+    if (mode !== "total") {
+      return;
+    }
     if (!storageKey) {
       return;
     }
@@ -183,30 +192,51 @@ export const TaskTimer = ({
       writeStoredTaskTimerState(storageKey, next);
       return next;
     });
-  }, [active, storageKey]);
+  }, [active, mode, storageKey]);
 
   useEffect(() => {
     if (!active) {
+      if (mode === "turn") {
+        turnStartedAtRef.current = null;
+      }
       return;
     }
     if (typeof window === "undefined") {
       return;
     }
 
+    if (mode === "turn") {
+      turnStartedAtRef.current = getNowSec();
+    }
+
     setNowSec(getNowSec());
     const timer = window.setInterval(() => {
       setNowSec(getNowSec());
-    }, FLIP_TICK_MS);
+    }, TICK_MS);
 
     return () => window.clearInterval(timer);
-  }, [active]);
+  }, [active, mode]);
 
-  const elapsedSeconds =
-    active && stored.runningSinceSec !== null
-      ? Math.max(0, nowSec - stored.runningSinceSec)
-      : 0;
-  const totalSeconds = Math.max(0, stored.totalSeconds) + elapsedSeconds;
-  const formatted = useMemo(() => formatHms(totalSeconds), [totalSeconds]);
+  const activeTurnSeconds = useMemo(() => {
+    if (!active) {
+      return 0;
+    }
+    if (mode === "turn") {
+      const startedAt = turnStartedAtRef.current;
+      return startedAt === null ? 0 : Math.max(0, nowSec - startedAt);
+    }
+
+    if (stored.runningSinceSec === null) {
+      return 0;
+    }
+    return Math.max(0, nowSec - stored.runningSinceSec);
+  }, [active, mode, nowSec, stored.runningSinceSec]);
+
+  const totalSeconds =
+    mode === "total"
+      ? Math.max(0, stored.totalSeconds) + activeTurnSeconds
+      : activeTurnSeconds;
+  const formatted = useMemo(() => formatHmsShort(totalSeconds), [totalSeconds]);
 
   const rootClasses = [
     "task-timer",
@@ -217,15 +247,5 @@ export const TaskTimer = ({
     .filter(Boolean)
     .join(" ");
 
-  const digitHeightPx = placement === "overlay" ? 18 : 14;
-
-  return (
-    <output className={rootClasses}>
-      <FlipClock
-        active={active}
-        digitHeightPx={digitHeightPx}
-        value={formatted}
-      />
-    </output>
-  );
+  return <output className={rootClasses}>{formatted}</output>;
 };
