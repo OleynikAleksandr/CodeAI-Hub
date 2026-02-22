@@ -2,6 +2,11 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.651] - 2026-02-22
+### Changed
+- Session UI: aligned footer `total:` label typography with timer digits (same font-size/family) for consistent visual weight.
+- Session UI: aligned turn/total timers to a shared right anchor so upper and lower values are horizontally aligned.
+
 ## [1.1.650] - 2026-02-22
 ### Changed
 - Session UI: total timer in footer is now static during lock/working state (always gray), then updates by jump when the turn completes; footer copy now shows `total:  00h 00m 00s`.
