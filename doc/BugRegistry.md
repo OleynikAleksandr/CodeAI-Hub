@@ -32,6 +32,8 @@
 | BUG-2026-02-19-01 | FIXED | Extension/UI | UI не загружается: `ERR_FILE_NOT_FOUND` для `~/.codeai-hub/packages/ui/*/current/*` после установки релиза | 1.1.640 |
 | BUG-2026-02-19-02 | FIXED | Core/Codex | Codex: двойной rollover / два разделителя сессии при триггере контекстного окна | 1.1.641 |
 | BUG-2026-02-20-01 | OPEN | Claude/Auth | В чистом `~/.codeai-hub` Claude остаётся НЕДОСТУПЕН: provider-home auth bootstrap не поднимает авторизацию | TBD |
+| BUG-2026-02-21-01 | FIXED | Session UI | После падения/рестарта Core в середине turn: force-unlock + повторный submit не отправлял queued message в resume-сессию | 1.1.644 |
+| BUG-2026-02-22-01 | OPEN | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | TBD |
 
 ---
 
@@ -588,5 +590,84 @@
 **Workaround (current):**
 - Выполнить вручную: `HOME=~/.codeai-hub/providers/claude/home claude /login`
 - Затем: `Settings → General → Restart Core`.
+
+**Release:** TBD
+
+---
+
+## BUG-2026-02-21-01 — Session UI: force-unlock не отправлял queued message после рестарта Core в середине turn
+
+**Status:** FIXED
+
+**Symptom:** когда active turn прерывался из-за рестарта/падения Core, input оставался locked. После ручного force-unlock и повторного submit сообщение не уходило в resume-сессию: оставалось в queued-состоянии, а диалог визуально “умирал”.
+
+**Expected:** force-unlock должен позволять немедленно отправить повторное сообщение в активную сессию (resume path), без ожидания перехода `connectionState` в `idle`.
+
+**Root cause (confirmed):**
+- Хук `useQueuedSend` отправляет queued message только при `connectionState === "idle"`.
+- `SessionView` передавал в `useQueuedSend` `queueConnectionState`, вычисленный из lock/runtime state, даже когда пользователь уже включил `forceUnlocked=true`.
+- В результате force-unlock снимал блокировку ввода в UI, но не снимал блокировку для очереди отправки: повторное сообщение не отправлялось.
+
+**Fix:**
+- В `SessionView` добавлен `queuedSendConnectionState`: при `forceUnlocked=true` принудительно передаётся `"idle"` в `useQueuedSend`, иначе используется исходный `queueConnectionState`.
+- Это позволяет повторному submit после force-unlock отправиться сразу в текущую сессию и продолжить resume-flow.
+
+**Commits:**
+- `7b6168e2 fix(ui): send queued message when force-unlocked`
+- `fca104e3 chore: bump version to 1.1.644`
+
+**Release:** `1.1.644`
+
+**Verified (manual):** 2026-02-21 — после рестарта Core и ручной разблокировки ввода отправка “Продолжай” корректно продолжает сессию (e2e-проверка в Session096).
+
+**Guards:**
+- Manual smoke: запустить turn, перезапустить Core в середине выполнения, нажать force-unlock, отправить повторное сообщение; ожидаемо сообщение уходит в активную resume-сессию.
+
+---
+
+## BUG-2026-02-22-01 — PM/UI + Core Runtime: вечный `Agent is working...` после cold start на завершённом Reviewer dialog
+
+**Status:** OPEN
+
+**Symptom (repro on 2026-02-22):**
+- После перезагрузки компьютера и Core открыть PM и workspace `CodeAI-Hub-claude`.
+- Открывается корректная история бесконечной reviewer-сессии (`description/reviewer`, 3 сегмента), но input остаётся locked с copy `Agent is working... Please wait.`.
+- Воспроизведение подтверждено скриншотом: `/Users/oleksandroliinyk/Desktop/Screenshot 2026-02-22 at 08.09.42.png`.
+
+**Update (repro on 2026-02-22, release `1.1.645`):**
+- После внедрения reconciliation/fallback (см. `Session097`) залипание “working” ушло, но input всё равно остаётся **вечно locked**.
+- Copy переключается на: `Agent is resuming your session... Please wait.`.
+- Воспроизведение подтверждено скриншотом: `/Users/oleksandroliinyk/Desktop/Screenshot 2026-02-22 at 09.12.35.png`.
+
+**Expected:**
+- Для завершённой reviewer-сессии после cold start input должен быть `idle/unlocked` (или явный recoverable state), не `working`.
+
+**Observed artifacts (forensics):**
+- Continuity index/chain указывают актуальный dialog + latest segment:
+  - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-claude/.codeai-hub/codeai-hub-claude/continuity/index.json`
+  - `dialogId`: `claude-437305b1-db1f-4713-8a04-654fa1db86ca-reviewer`
+  - `latestSessionId`: `b77388d6-7f89-442a-bc5d-94eab93377f6`
+  - `providerSessionId`: `6b4b0d25-24b4-406e-8294-522fa69ae00f`
+- Core `/api/v1/status` после cold start показывает другой runtime session id для того же provider session:
+  - `id`: `bb059183-205c-4634-b6ff-ca2d78d214f3`
+  - `providerSessionId`: `6b4b0d25-24b4-406e-8294-522fa69ae00f`
+- Прямой `workspace:snapshot:request` для `workspaceRoot=/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-claude` возвращает только runtime id `bb059183-205c-4634-b6ff-ca2d78d214f3` (и не содержит `b773...`), при этом состояние у runtime id корректное:
+  - `turnState: "idle"`, `continuityLockActive: false`, `continuityLockReason: null`.
+- UI dialog controller инициализирует snapshot по `latestSessionId` из `dialog:list` через `createInitialSnapshot()` (workflow session => `connectionState="running"`), а обновление по `workspace:snapshot` применяется только по совпадению `sessionId`.
+
+**Root cause (updated / confirmed):**
+- Первичная причина “вечного working” была в mismatch `latestSessionId` (dialog-layer) vs runtime `sessionId` (Core). Это исправлялось reconciliation/fallback.
+- Текущая причина “вечного resuming” — **вторая точка истины в PM/UI**:
+  - `workspace:snapshot` на cold start может корректно сообщать `turnState="idle"` и `continuityLockActive=false`, но при этом `continuityLockReason` отсутствует (`undefined`).
+  - В `applyWorkspaceSnapshotToSnapshots()` есть guard: переход из `running/blocked` → `idle` запрещён, если нет “разрешающего” lockReason (`allowIdleUnlock=false`).
+  - На cold start `allowIdleUnlock` остаётся `false` → PM принудительно удерживает `connectionState="blocked"` и `continuityLock.active=true`.
+  - Итог: UI остаётся locked с copy `Agent is resuming...` бесконечно, несмотря на корректный server snapshot.
+
+См. архитектурный контракт SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
+
+**Fix direction (planned):**
+1. **PM/UI:** доверять snapshot-истине: если `workspace:snapshot` сообщает `idle + lock=false` и нет bootstrap-transition — разрешать переход в `idle/unlocked` даже когда `continuityLockReason` отсутствует.
+2. **Core (минимальный SSOT этап):** гарантировать явный unlock-reason для idle resume‑сессий (например `no_rollover_needed`), чтобы UI не зависел от отсутствующих полей.
+3. **Дальше (целевой SSOT):** вынести input lock в явное поле/state machine (см. контракт) и персистить это состояние для корректного восстановления после рестарта.
 
 **Release:** TBD
