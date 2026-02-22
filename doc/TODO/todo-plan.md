@@ -31,8 +31,8 @@
 2. [DONE] Git Commit: `docs(release): prepare v1.1.648 notes` (hash: `fa93955b`)
 
 ### Stream 1: Build unified artefacts (version bump + tarballs)
-1. [TODO] Прогнать `./scripts/build-all.sh` и проверить артефакты в `~/.codeai-hub/releases/` и `doc/tmp/releases/` (scope: `scripts/build-all.sh`; expected commit: `chore(release): build-all v1.1.648`).
-2. [TODO] Git Commit: `chore(release): build-all v1.1.648` (hash: TBD)
+1. [DONE] Прогнать `./scripts/build-all.sh` и проверить артефакты в `~/.codeai-hub/releases/` и `doc/tmp/releases/` (scope: `scripts/build-all.sh`; expected commit: `chore(release): build-all v1.1.648`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.648` (hash: `52256542`)
 
 ### Stream 2: Build VSIX (packaging)
 1. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.648.vsix` (scope: `scripts/build-release.sh`; expected commit: `chore(release): package vsix v1.1.648`).
