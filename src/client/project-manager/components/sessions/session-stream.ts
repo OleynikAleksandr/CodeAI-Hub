@@ -30,6 +30,36 @@ type SessionHistoryUpdate = {
   readonly sessionId: string;
   readonly messages: readonly unknown[];
 };
+
+const readProviderSessionId = (
+  session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
+): string | null => {
+  const providerSessionId = session.providerSessionId;
+  if (typeof providerSessionId !== "string") {
+    return null;
+  }
+  const normalized = providerSessionId.trim();
+  return normalized.length > 0 ? normalized : null;
+};
+
+const resolveTargetSnapshotId = (options: {
+  readonly snapshots: SessionSnapshots;
+  readonly runtimeSessionId: string;
+  readonly workspaceSession: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string];
+}): string | null => {
+  if (options.snapshots[options.runtimeSessionId]) {
+    return options.runtimeSessionId;
+  }
+  const providerSessionId = readProviderSessionId(options.workspaceSession);
+  if (!providerSessionId) {
+    return null;
+  }
+  const fallback = Object.entries(options.snapshots).find(
+    ([, snapshot]) => snapshot.binding.providerSessionId === providerSessionId
+  );
+  return fallback?.[0] ?? null;
+};
+
 export const applyWorkspaceSnapshotToSnapshots = (
   snapshots: SessionSnapshots,
   payload: WorkspaceSnapshotPushPayload
@@ -48,13 +78,23 @@ export const applyWorkspaceSnapshotToSnapshots = (
     }
   }
   for (const [sessionId, session] of Object.entries(payload.snapshot.sessions)) {
-    const current = snapshots[sessionId];
+    const targetSnapshotId = resolveTargetSnapshotId({
+      snapshots,
+      runtimeSessionId: sessionId,
+      workspaceSession: session,
+    });
+    if (!targetSnapshotId) {
+      continue;
+    }
+    const current = snapshots[targetSnapshotId];
     if (!current) {
       continue;
     }
     const awaitingBootstrapTurn =
       session.continuityLockTransition?.awaitingBootstrapTurn === true;
-    const graphHeldReason = heldLockReasonBySessionId.get(sessionId);
+    const graphHeldReason =
+      heldLockReasonBySessionId.get(sessionId) ??
+      heldLockReasonBySessionId.get(targetSnapshotId);
     const nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
     const contextDecisionPending = isContextDecisionPending(session, nextLockReason);
     const rolloverPending = isRolloverPendingAfterTerminalTurn(
@@ -102,7 +142,7 @@ export const applyWorkspaceSnapshotToSnapshots = (
     }
     changed = true;
     const now = Date.now();
-    nextSnapshots[sessionId] = {
+    nextSnapshots[targetSnapshotId] = {
       ...current,
       status: {
         ...current.status,
