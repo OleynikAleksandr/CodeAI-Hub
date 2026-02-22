@@ -46,8 +46,8 @@
 2. [DONE] Git Commit: `docs(contracts): define session input lock SSOT state machine` (hash: `db78b570`)
 
 ### Stream 1: PM — устранить “resuming…” stuck при idle snapshot (cold start)
-1. [TODO] Добавить регрессионный тест: если `workspace:snapshot` сообщает `turnState=idle` и `continuityLockActive=false`, UI обязан снять блокировку даже когда `continuityLockReason` отсутствует (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(pm): reproduce resuming stuck when lock reason missing`).
-2. [TODO] Git Commit: `test(pm): reproduce resuming stuck when lock reason missing` (hash: TBD)
+1. [DONE] Добавить регрессионный тест: если `workspace:snapshot` сообщает `turnState=idle` и `continuityLockActive=false`, UI обязан снять блокировку даже когда `continuityLockReason` отсутствует (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(pm): reproduce resuming stuck when lock reason missing`).
+2. [IN_PROGRESS] Git Commit: `test(pm): reproduce resuming stuck when lock reason missing` (hash: TBD)
 3. [TODO] Исправить `applyWorkspaceSnapshotToSnapshots`: доверять snapshot-истине и разрешать переход в `idle/unlocked` при отсутствии bootstrap/lock, без требования “разрешающего” lockReason (scope: `src/client/project-manager/components/sessions/session-stream.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `fix(pm): unlock input on cold-start idle snapshot`).
 4. [TODO] Git Commit: `fix(pm): unlock input on cold-start idle snapshot` (hash: TBD)
 
