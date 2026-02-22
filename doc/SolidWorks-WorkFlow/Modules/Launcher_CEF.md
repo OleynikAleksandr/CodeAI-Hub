@@ -12,6 +12,3 @@
 
 ## Связанные документы
 - UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
-
-## Legacy snapshot
-- `doc/SolidWorks-WorkFlow/Archive/legacy/Launcher_CEF-legacy-2026-02-17.md`
