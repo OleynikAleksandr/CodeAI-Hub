@@ -10,7 +10,7 @@
 - Во время выполнения задачи агентом показать “живой” индикатор прогресса (таймер текущего turn).
 - Всегда показывать накопленное время ожидания по данному workflow‑агенту (total), чтобы пользователь видел суммарные затраты времени.
 - Накопление total не сбрасывается при continuity/rollover (смена `sessionId`).
-- Накопление total не теряется при перезагрузке Core.
+- Накопление total не теряется при смене workspace/перезагрузке Project Manager (SSOT находится в Core).
 
 ---
 
@@ -47,26 +47,28 @@
 
 ## 3) Накопление (per workflow-agent)
 
-Total накапливается не “по sessionId”, а по workflow‑агенту.
+Total накапливается не “по sessionId”, а по workflow‑узлу (`nodeId`) в рамках workspace.
 
 **Key (concept):**
-- `workspacePath`
-- `runSlug`
-- `stage`
-- `sessionKind`
-- (опционально) `initiativeSlug` и provider id
+- `workspaceRoot`
+- `nodeId`
 
 **Инвариант:** при continuity/rollover новый `sessionId` должен продолжать тот же total.
 
 ---
 
-## 4) Persist
+## 4) SSOT и доставка в UI
 
-Total хранится в `localStorage` webview.
+SSOT таймера находится в Core: UI **не хранит** и **не считает** total самостоятельно, а только отображает данные из Core.
 
-Требования:
-- total не пропадает при перезагрузке Core.
-- поведение устойчиво к отсутствию `localStorage` (SSR/tests).
+Доставка:
+- Core добавляет `taskTimer` в `SessionSnapshot` внутри `workspace:snapshot`.
+- UI читает `taskTimer.totalSeconds` и `taskTimer.runningSinceMs` из snapshot и отображает:
+  - total = `totalSeconds` (статично во время lock),
+  - turn = `now - runningSinceMs` (живая цифра overlay).
+
+Persist (текущее):
+- В текущей реализации таймер хранится в памяти Core и может сброситься при перезапуске Core.
 
 ---
 
