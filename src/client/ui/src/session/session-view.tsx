@@ -28,29 +28,6 @@ const RESUMING_LOCK_REASONS = new Set([
   "resume_bootstrap",
 ] as const);
 
-const TASK_TIMER_STORAGE_PREFIX = "codeaihub:taskTimer:v1:";
-
-const normalizeTimerKeyPart = (value: string | null | undefined): string => {
-  const trimmed = typeof value === "string" ? value.trim() : "";
-  return trimmed ? trimmed : "none";
-};
-
-const buildAgentTaskTimerKey = (record: SessionRecord): string => {
-  const providerKey =
-    record.providerIds.length > 0 ? record.providerIds.join(",") : "none";
-  const payload = [
-    record.workspacePath,
-    normalizeTimerKeyPart(record.runSlug),
-    normalizeTimerKeyPart(record.stage),
-    normalizeTimerKeyPart(record.sessionKind),
-    normalizeTimerKeyPart(record.initiativeSlug),
-    providerKey,
-  ]
-    .map((part) => encodeURIComponent(part))
-    .join("|");
-  return `${TASK_TIMER_STORAGE_PREFIX}${payload}`;
-};
-
 const resolveInputConnectionState = (options: {
   readonly connectionState: ConnectionState;
   readonly bindingStatus: "pending" | "ready" | "failed" | null;
@@ -119,9 +96,6 @@ const SessionViewBody = ({
   const activeRecord = allSessions.find(
     (session) => session.id === activeSessionId
   );
-  const agentTimerKey = activeRecord
-    ? buildAgentTaskTimerKey(activeRecord)
-    : null;
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
   const providerTheme = mapProviderTheme(primaryProviderId);
   const providerDisplayLabel = resolveProviderDisplayLabel({
@@ -218,7 +192,6 @@ const SessionViewBody = ({
             </div>
           ) : null}
           <InputPanel
-            agentTimerKey={agentTimerKey}
             connectionState={inputConnectionState}
             continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
@@ -226,6 +199,7 @@ const SessionViewBody = ({
             isQueued={isQueued}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
+            taskTimer={activeSession.status.taskTimer ?? null}
             terminalNoResume={terminalNoResume}
           />
           <StatusPanel
