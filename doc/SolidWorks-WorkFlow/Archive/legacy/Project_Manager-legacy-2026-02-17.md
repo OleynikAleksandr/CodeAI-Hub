@@ -1,3 +1,16 @@
+# Project Manager (CEF UI) — Cluster (SSOT)
+
+## Legacy snapshot (outdated)
+
+- Ниже сохранён legacy‑контент “as-is” для форензики.
+- Текущий SSOT по Project Manager: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`.
+- Input lock/unlock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
+- Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
+
+---
+
+## Legacy content (migrated as-is; will be trimmed)
+
 # Project Manager (CEF UI) — Architecture & Contracts
 
 **Status:** Active
