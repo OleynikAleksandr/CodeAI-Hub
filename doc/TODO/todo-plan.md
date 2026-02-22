@@ -27,8 +27,8 @@
 - Затем собрать артефакты (`./scripts/build-all.sh`) и VSIX (`./scripts/build-release.sh --use-current-version`).
 
 ### Stream 0: Release notes (docs)
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.648` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare v1.1.648 notes`).
-2. [TODO] Git Commit: `docs(release): prepare v1.1.648 notes` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.648` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare v1.1.648 notes`).
+2. [DONE] Git Commit: `docs(release): prepare v1.1.648 notes` (hash: `fa93955b`)
 
 ### Stream 1: Build unified artefacts (version bump + tarballs)
 1. [TODO] Прогнать `./scripts/build-all.sh` и проверить артефакты в `~/.codeai-hub/releases/` и `doc/tmp/releases/` (scope: `scripts/build-all.sh`; expected commit: `chore(release): build-all v1.1.648`).
