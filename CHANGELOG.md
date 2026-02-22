@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.647] - 2026-02-22
+### Changed
+- Docs: update release notes (`README.md`, `CHANGELOG.md`) before packaging.
+
 ## [1.1.646] - 2026-02-22
 ### Fixed
 - Project Manager / Session UI (BUG-2026-02-22-01): avoid stuck “resuming/blocked” on cold start — unlock input when `workspace:snapshot` reports `turnState=idle` and `continuityLockActive=false`, even if `continuityLockReason` is missing.
