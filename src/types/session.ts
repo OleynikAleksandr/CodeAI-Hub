@@ -55,6 +55,17 @@ export type SessionStatusInfo = {
     readonly used: number;
     readonly limit: number;
   };
+  readonly taskTimer?: {
+    /**
+     * Accumulated busy/wait time in whole seconds for the workflow agent.
+     * Does not include the currently-running busy segment (if any).
+     */
+    readonly totalSeconds: number;
+    /**
+     * Epoch time in ms when the current busy segment started, or null if idle.
+     */
+    readonly runningSinceMs: number | null;
+  };
   readonly connectionState: "idle" | "running" | "blocked";
   readonly updatedAt: number;
 };
