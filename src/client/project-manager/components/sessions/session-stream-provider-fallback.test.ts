@@ -82,6 +82,30 @@ const createWorkspaceSnapshotPayload = (): WorkspaceSnapshotPushPayload => ({
   },
 });
 
+const createWorkspaceSnapshotPayloadWithoutLockReason =
+  (): WorkspaceSnapshotPushPayload => ({
+    workspaceRoot: "/workspace",
+    selectionId: "selection-1",
+    sequence: 41,
+    generatedAt: "2026-01-01T00:00:00.000Z",
+    snapshot: {
+      workspaceRoot: "/workspace",
+      loadState: "ready",
+      workflow: { nodes: {} },
+      sessions: {
+        runtime: {
+          nodeId: "node-1",
+          turnState: "idle",
+          continuityLockActive: false,
+          resumeMode: "resume_in_place",
+          finalTurnCompleted: true,
+          providerSessionId: "provider-session-1",
+        },
+      },
+      artifacts: { currentByNodeId: {} },
+    },
+  });
+
 test("applyWorkspaceSnapshotToSnapshots falls back to providerSessionId when runtime sessionId drifts", async () => {
   const applyWorkspaceSnapshotToSnapshots = await loadApplyWorkspaceSnapshotToSnapshots();
   const base: SessionSnapshots = {
@@ -100,4 +124,19 @@ test("applyWorkspaceSnapshotToSnapshots falls back to providerSessionId when run
     Object.prototype.hasOwnProperty.call(next, "runtime"),
     false
   );
+});
+
+test("applyWorkspaceSnapshotToSnapshots unlocks idle snapshot when lock reason is missing", async () => {
+  const applyWorkspaceSnapshotToSnapshots = await loadApplyWorkspaceSnapshotToSnapshots();
+  const base: SessionSnapshots = {
+    dialog: createSnapshot(),
+  };
+
+  const next = applyWorkspaceSnapshotToSnapshots(
+    base,
+    createWorkspaceSnapshotPayloadWithoutLockReason()
+  );
+
+  assert.equal(next.dialog.status.connectionState, "idle");
+  assert.equal(next.dialog.status.continuityLock?.active, false);
 });
