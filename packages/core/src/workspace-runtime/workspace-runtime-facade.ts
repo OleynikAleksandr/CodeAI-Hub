@@ -8,6 +8,7 @@ import type {
   SessionContinuityLockTransition,
   SessionKey,
   SessionSnapshot,
+  SessionTaskTimerSnapshot,
   SessionTurnState,
   WorkspaceSnapshot,
 } from "./workspace-runtime-types";
@@ -39,6 +40,11 @@ type ClientSelection = {
   workspaceRoot: string | null;
   selectionId: string | null;
   sequence: number;
+};
+
+type MutableTaskTimerState = {
+  totalSeconds: number;
+  runningSinceMs: number | null;
 };
 
 type NotifySessionPatch = Partial<
@@ -73,6 +79,22 @@ const fallbackSelectionIdFactory = (): string => {
   }
 };
 
+const isSessionBusyForTimer = (session: SessionSnapshot): boolean => {
+  if (session.resumeMode === "no_resume") {
+    return false;
+  }
+  if (session.terminalLockReason === "terminal_no_resume") {
+    return false;
+  }
+  if (session.turnState === "running") {
+    return true;
+  }
+  if (session.continuityLockActive) {
+    return true;
+  }
+  return session.continuityLockTransition?.awaitingBootstrapTurn === true;
+};
+
 export class WorkspaceRuntimeFacade {
   private readonly store: WorkspaceStore;
   private readonly sessionRuntime: SessionRuntime;
@@ -86,6 +108,10 @@ export class WorkspaceRuntimeFacade {
     (message: WorkspaceSnapshotPush) => void
   >();
   private readonly snapshotTimers = new Map<string, NodeJS.Timeout>();
+  private readonly taskTimersByWorkspaceRoot = new Map<
+    string,
+    Map<string, MutableTaskTimerState>
+  >();
 
   constructor(deps: WorkspaceRuntimeFacadeDeps = {}) {
     this.store = deps.store ?? new WorkspaceStore();
@@ -113,6 +139,7 @@ export class WorkspaceRuntimeFacade {
                 ? undefined
                 : new Date(snapshot.lastHeartbeatAt).toISOString(),
           });
+          this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
           const priority =
             field === "turnState" ||
             field === "continuityLockActive" ||
@@ -205,7 +232,11 @@ export class WorkspaceRuntimeFacade {
 
   getSnapshot(workspaceRoot: string): WorkspaceSnapshot {
     const state = this.store.getOrCreate(workspaceRoot);
-    return buildSnapshot(workspaceRoot, state);
+    return buildSnapshot(
+      workspaceRoot,
+      state,
+      this.readTaskTimers(workspaceRoot)
+    );
   }
 
   subscribe(
@@ -297,6 +328,7 @@ export class WorkspaceRuntimeFacade {
       update.lastHeartbeatAt = patch.lastHeartbeatAt;
     }
     this.store.updateSession(sessionKey, update);
+    this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
     this.scheduleSnapshot(sessionKey.workspaceRoot, false);
   }
 
@@ -319,11 +351,13 @@ export class WorkspaceRuntimeFacade {
       update.providerId = patch.providerId;
     }
     this.store.updateSession(sessionKey, update);
+    this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
     this.scheduleSnapshot(sessionKey.workspaceRoot, false);
   }
 
   notifySessionDeleted(sessionKey: SessionKey): void {
     this.store.removeSession(sessionKey);
+    this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
     this.scheduleSnapshot(sessionKey.workspaceRoot, false);
   }
 
@@ -346,7 +380,11 @@ export class WorkspaceRuntimeFacade {
       return null;
     }
     const state = this.store.getOrCreate(selection.workspaceRoot);
-    const snapshot = buildSnapshot(selection.workspaceRoot, state);
+    const snapshot = buildSnapshot(
+      selection.workspaceRoot,
+      state,
+      this.readTaskTimers(selection.workspaceRoot)
+    );
     selection.sequence += 1;
     return {
       type: "workspace:snapshot",
@@ -400,7 +438,11 @@ export class WorkspaceRuntimeFacade {
     }
 
     const state = this.store.getOrCreate(workspaceRoot);
-    const snapshot = buildSnapshot(workspaceRoot, state);
+    const snapshot = buildSnapshot(
+      workspaceRoot,
+      state,
+      this.readTaskTimers(workspaceRoot)
+    );
 
     for (const [clientId, selection] of this.selectionByClientId.entries()) {
       if (selection.workspaceRoot !== workspaceRoot || !selection.selectionId) {
@@ -423,5 +465,52 @@ export class WorkspaceRuntimeFacade {
         payload,
       });
     }
+  }
+
+  private readTaskTimers(
+    workspaceRoot: string
+  ): ReadonlyMap<string, SessionTaskTimerSnapshot> {
+    const timers = this.taskTimersByWorkspaceRoot.get(workspaceRoot);
+    return timers ?? new Map<string, SessionTaskTimerSnapshot>();
+  }
+
+  private updateTaskTimer(workspaceRoot: string, nodeId: string): void {
+    const state = this.store.getOrCreate(workspaceRoot);
+    const timers =
+      this.taskTimersByWorkspaceRoot.get(workspaceRoot) ??
+      new Map<string, MutableTaskTimerState>();
+    if (!this.taskTimersByWorkspaceRoot.has(workspaceRoot)) {
+      this.taskTimersByWorkspaceRoot.set(workspaceRoot, timers);
+    }
+
+    const busy = Array.from(state.sessions.values()).some(
+      (session) => session.nodeId === nodeId && isSessionBusyForTimer(session)
+    );
+
+    const timer = timers.get(nodeId) ?? {
+      totalSeconds: 0,
+      runningSinceMs: null,
+    };
+    if (busy) {
+      if (timer.runningSinceMs === null) {
+        timer.runningSinceMs = Date.now();
+        timers.set(nodeId, timer);
+      }
+      return;
+    }
+
+    if (timer.runningSinceMs === null) {
+      timers.set(nodeId, timer);
+      return;
+    }
+
+    const deltaSeconds = Math.max(
+      0,
+      Math.floor((Date.now() - timer.runningSinceMs) / 1000)
+    );
+    timer.totalSeconds =
+      Math.max(0, Math.floor(timer.totalSeconds)) + deltaSeconds;
+    timer.runningSinceMs = null;
+    timers.set(nodeId, timer);
   }
 }

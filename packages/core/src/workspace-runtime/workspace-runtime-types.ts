@@ -38,6 +38,18 @@ export type SessionResumeMode =
 
 export type SessionTerminalLockReason = "terminal_no_resume";
 
+export type SessionTaskTimerSnapshot = {
+  /**
+   * Accumulated busy/wait time in whole seconds for the workflow node.
+   * Does not include the currently-running busy segment (if any).
+   */
+  readonly totalSeconds: number;
+  /**
+   * Epoch time in ms when the current busy segment started, or null if idle.
+   */
+  readonly runningSinceMs: number | null;
+};
+
 export type SessionContinuityLockReason =
   | "context_check_pending"
   | "threshold_reached"
@@ -77,6 +89,7 @@ export type SessionSnapshot = {
   readonly providerId?: string;
   readonly providerSessionId?: string;
   readonly bindingStatus?: SessionBindingStatus;
+  readonly taskTimer?: SessionTaskTimerSnapshot;
 };
 
 export type ArtifactPointer = {
