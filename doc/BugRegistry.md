@@ -19,10 +19,10 @@
 | BUG-2026-02-17-01 | FIXED | PM/UI | пустой EmptyState без спиннера при создании сессии ("Create your first session…") | 1.1.622 |
 | BUG-2026-02-17-02 | FIXED | PM/UI | description→reviewer: reviewer auto-started but not auto-focused in live UI | 1.1.625 |
 | BUG-2026-02-17-03 | FIXED | PM/UI | token usage не обновляется после turn completion (до смены workspace) | 1.1.626 |
-| BUG-2026-02-17-04 | OPEN | PM/UI | input остаётся заблокированным после Claude 401 (нет recovery UI) | TBD |
-| BUG-2026-02-17-05 | OPEN | PM/UI | после Core restart агент отвечает, но input остаётся разблокированным во время turn | TBD |
-| BUG-2026-02-17-06 | OPEN | Core/Provider | Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working | TBD |
-| BUG-2026-02-18-01 | OPEN | Session UI | workflow-сессия открывается с unlocked input до первого snapshot от Core | TBD |
+| BUG-2026-02-17-04 | FIXED | PM/UI | input остаётся заблокированным после Claude 401 (нет recovery UI) | 1.1.646 |
+| BUG-2026-02-17-05 | FIXED | PM/UI | после Core restart агент отвечает, но input остаётся разблокированным во время turn | 1.1.646 |
+| BUG-2026-02-17-06 | FIXED | Core/Provider | Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working | 1.1.646 |
+| BUG-2026-02-18-01 | FIXED | Session UI | workflow-сессия открывается с unlocked input до первого snapshot от Core | 1.1.629 |
 | BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
 | BUG-2026-02-18-03 | OPEN | Claude/Auth | macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic, не блокирует) | TBD |
 | BUG-2026-02-18-04 | FIXED | Core/UI | Reviewer input не разблокируется после turn completion | TBD |
@@ -236,78 +236,83 @@
 
 ## BUG-2026-02-17-04 — PM/UI: input остаётся заблокированным после Claude 401 (нет recovery UI)
 
-**Status:** OPEN
+**Status:** FIXED
 
-**Symptom:** при ошибке Claude `401 authentication_error` UI показывает ошибку, но поле ввода остаётся в состоянии `Agent is working… Please wait.` (input locked). Пользователь не может повторить отправку/продолжить без ручных действий.
+**Symptom (pre-1.1.646):** при ошибке Claude `401 authentication_error` UI показывал ошибку, но поле ввода могло остаться в состоянии `Agent is working… Please wait.` (input locked). Пользователь не мог повторить отправку/продолжить без ручных действий.
 
-**Expected:** UI переходит в recoverable состояние: input unlocked (или явный режим retry), показан понятный recovery hint и действия.
+**Root cause (reframed / confirmed):** на ошибках/рестартах `workspace:snapshot` мог уже быть `turnState="idle"` + `continuityLockActive=false`, но PM/UI удерживал блокировку из-за локального guard’а (зависимость от отсутствующего `continuityLockReason`). Это тот же класс проблемы, что и `BUG-2026-02-22-01`.
 
-**Workaround (current):** выполнить login в provider-home и перезапустить Core, затем повторить сообщение.
+**Fix (implemented):**
+- PM/UI: если snapshot явно сообщает `turnState="idle"` и `continuityLockActive=false`, ввод разблокируется даже когда `continuityLockReason` отсутствует.
+- Core: для `resume_in_place` idle‑сессий snapshot нормализуется и всегда содержит явный unlock‑reason (`no_rollover_needed`) — defence‑in‑depth.
 
-**Fix (planned):**
-- Добавить recovery действия прямо в Project Manager: `Restart Core` + `Retry/Reconnect`.
-- При `Core unavailable` не оставлять UI в бесконечном `working` без возможности восстановиться.
+**Note:** отдельные “Recovery actions” (`Restart Core`, `Retry/Reconnect`) остаются UX‑улучшением; если понадобится — заведём отдельную фичу/баг.
 
-**Release:** TBD
+**Commits:** см. `BUG-2026-02-22-01` (те же изменения lock/unlock SSOT).
+
+**Release:** `1.1.646`
+
+**Verified (manual):** 2026-02-22 — “вечные” блокировки ввода не воспроизводятся (cold start + crash/restart mid‑turn; “Продолжай” продолжает turn).
 
 ---
 
 ## BUG-2026-02-17-05 — PM/UI: после Core restart агент отвечает, но input остаётся разблокированным во время turn
 
-**Status:** OPEN
+**Status:** FIXED
 
-**Symptom:** после recovery (restart Core) и повторной отправки сообщения агент начинает отвечать, но input остаётся разблокированным (можно отправлять новые сообщения), хотя turn явно выполняется.
+**Symptom (pre-1.1.646):** после recovery (restart Core) и повторной отправки сообщения агент начинал отвечать, но input мог остаться разблокированным (можно отправлять новые сообщения), хотя turn явно выполнялся.
 
-**Expected:** input должен быть locked на весь период выполнения turn (`turn_state=running`) и разблокироваться только после `turn_completed`/явного fail.
+**Fix (covered):** закрыто как часть работ по SSOT lock/unlock и crash/restart continuity (см. `BUG-2026-02-22-01`).
 
-**Root cause (suspected):** рассинхрон активного `sessionId`/snapshot hydration и локального состояния UI после Core restart (история диалога восстановилась, но turn/lock сигналы применяются к другой/неактивной сессии).
+**Commits:** см. `BUG-2026-02-22-01`.
 
-**Fix (planned):** optimistic lock на submit (локально) + ресинхронизация lock/active-session mapping после Core restart/rehydration.
+**Release:** `1.1.646`
 
-**Release:** TBD
+**Verified (manual):** 2026-02-22 — после Core restart mid‑turn ввод ведёт себя корректно (нет состояния “unlocked во время running”; “Продолжай” продолжает turn).
 
 ---
 
 ## BUG-2026-02-17-06 — Core/Provider: Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working
 
-**Status:** OPEN
+**Status:** FIXED
 
-**Symptom:** Claude возвращает `401 OAuth token has expired`, после чего UI может остаться в `working/blocked` состоянии (turn не завершён корректно для UI).
+**Symptom (pre-1.1.646):** при Claude `401` UI мог залипать в `working/blocked` (turn выглядел “не завершённым” для UI).
 
-**Expected:** любой auth/transport failure должен завершать turn: `turn_failed` + rollback `turn_state=idle` + user-facing hint (без вечного `Agent is working…`).
+**Root cause (reframed):** проблема проявлялась как “не завершённый turn”, но на практике ключевой блокер был в PM/UI: удержание lock при корректном server snapshot `idle/unlocked` из-за локального guard’а (см. `BUG-2026-02-22-01`).
 
-**Fix (planned):** гарантировать корректный failure lifecycle в Core/Claude adapter при `authentication_error`.
+**Fix (implemented):** закрыто в рамках SSOT lock/unlock исправлений (см. `BUG-2026-02-22-01`).
 
-**Release:** TBD
+**Commits:** см. `BUG-2026-02-22-01`.
+
+**Release:** `1.1.646`
+
+**Verified (manual):** 2026-02-22 — после ошибок/рестартов UI не остаётся в вечном `working/blocked`.
 
 ---
 
 ## BUG-2026-02-18-01 — Session UI: workflow-сессия открывается с unlocked input до первого snapshot
-| BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
+**Status:** FIXED
 
-**Status:** OPEN
-
-**Symptom:** Reviewer-сессия (и потенциально все будущие workflow-узлы документации) открывается
-с `connectionState="idle"`. Пользователь может вводить текст до прихода первого workspace snapshot
-от Core, хотя Core сразу шлёт первый промпт и turn уже выполняется.
+**Symptom (pre-1.1.629):** workflow‑сессия могла открываться с `connectionState="idle"`, поэтому пользователь мог вводить текст до прихода первого workspace snapshot, хотя Core уже инициировал первый turn.
 
 **Expected:** любая workflow-сессия, где первый turn инициируется Core, должна открываться
 с `connectionState="running"` (input заблокирован мгновенно).
 
-**Root cause (confirmed):**
-- `createInitialSnapshot()` в `helpers.ts` выставляет `connectionState="running"` только для
-  `stage="description" && sessionKind="collector"` (фикс BUG-2026-02-16-03).
-- Reviewer (`sessionKind="reviewer"`) и все остальные workflow-сессии стартуют с `"idle"`,
-  даже если Core немедленно начинает первый turn.
+**Root cause (confirmed):** `createInitialSnapshot()` не отличал workflow‑сессии от обычных сессий и мог выбирать `connectionState="idle"` по умолчанию, до прихода первого snapshot.
 
-**Fix (planned):**
-- В `createInitialSnapshot()`: расширить условие до `stage != null && sessionKind != null`.
-- Добавить комментарий: для implementation/planning стадий, где пользователь инициирует
-  первый turn, добавлять явное исключение по `session.stage` или `session.runSlug`.
-- Обновить тест `helpers.initial-snapshot.test.ts` (reviewer → ожидание `"running"`).
+**Fix (implemented):**
+- `createInitialSnapshot()`: все workflow‑сессии (`stage != null && sessionKind != null`) открываются как `connectionState="running"`.
+- Добавлены регрессионные тесты (collector + reviewer + non‑workflow).
 
-**Release:** TBD (Phase 214)
+**Commits:**
+- `63ab37d1 fix(ui): lock all workflow sessions immediately on open`
+- `262fd87e chore(build): verify webview after workflow session lock fix`
+- `cb7b33cc feat(release): v1.1.629 - lock workflow sessions immediately`
 
+**Release:** `1.1.629`
+
+**Guards:**
+- `node --test --import tsx src/client/ui/src/session/helpers.initial-snapshot.test.ts`
 
 ---
 
