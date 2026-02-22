@@ -124,10 +124,15 @@ export const applyWorkspaceSnapshotToSnapshots = (
       nextLockReason === "resume_timeout" ||
       (nextLockReason === "no_rollover_needed" &&
         session.resumeMode !== "resume_via_rollover");
+    const snapshotSignalsIdleUnlocked =
+      session.turnState === "idle" &&
+      session.continuityLockActive === false &&
+      !awaitingBootstrapTurn;
     if (
       (current.status.connectionState === "blocked" ||
         current.status.connectionState === "running") &&
       nextConnectionState === "idle" &&
+      !snapshotSignalsIdleUnlocked &&
       (!allowIdleUnlock || awaitingBootstrapTurn)
     ) {
       nextLockActive = true;
