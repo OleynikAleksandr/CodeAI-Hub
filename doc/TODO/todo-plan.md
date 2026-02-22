@@ -60,4 +60,4 @@
 
 ### Stream 2: VSIX packaging + session report
 1. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; оформить `doc/Sessions/Session004.md` (scope: `doc/Sessions/Session004.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.649`).
-2. [IN_PROGRESS] Git Commit: `chore(release): package vsix v1.1.649` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): package vsix v1.1.649` (hash: `ca3615df`)
