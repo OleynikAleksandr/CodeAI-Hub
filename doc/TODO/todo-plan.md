@@ -5,10 +5,10 @@
   - `doc/SolidWorks-WorkFlow/README.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/BugRegistry.md`
-  - `README.md`
-  - `CHANGELOG.md`
+  - `doc/Sessions/Session003.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -20,20 +20,26 @@
 
 ---
 
-## Phase 223 — Release v1.1.648 (test build) (owner: Codex, updated: 2026-02-22)
+## Phase 224 — Session UI: task timer semantics + remove force unlock (owner: Codex, updated: 2026-02-22)
 
-**Goal:** Собрать новый релиз для тестов по чек-листу релиза:
-- Сначала актуализировать `README.md` и `CHANGELOG.md` под `v1.1.648`.
-- Затем собрать артефакты (`./scripts/build-all.sh`) и VSIX (`./scripts/build-release.sh --use-current-version`).
+**Goal:** Исправить поведение таймеров в UI сессий:
+- **Total (накопительный):** показывается справа в футере (напротив `Press Enter...`) и **виден всегда**, даже когда ввод заблокирован.
+- **Turn (текущий turn):** показывается в поле ввода (overlay) и **обнуляется при каждом начале нового turn**.
+- **Format:** без анимации, текстом: `00h 00m 00s`.
+- Удалить/отключить UI-кнопку force unlock (🔒/🔓), т.к. больше не нужна.
 
-### Stream 0: Release notes (docs)
-1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.648` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare v1.1.648 notes`).
-2. [DONE] Git Commit: `docs(release): prepare v1.1.648 notes` (hash: `fa93955b`)
+### Stream 0: Update contract
+1. [TODO] Обновить контракт `SessionTaskTimer_UI.md` под новое поведение (total vs turn, placement, format) (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): update session task timer semantics`).
+2. [TODO] Git Commit: `docs(contracts): update session task timer semantics` (hash: TBD)
 
-### Stream 1: Build unified artefacts (version bump + tarballs)
-1. [DONE] Прогнать `./scripts/build-all.sh` и проверить артефакты в `~/.codeai-hub/releases/` и `doc/tmp/releases/` (scope: `scripts/build-all.sh`; expected commit: `chore(release): build-all v1.1.648`).
-2. [DONE] Git Commit: `chore(release): build-all v1.1.648` (hash: `52256542`)
+### Stream 1: Timer components (text format)
+1. [TODO] Убрать flip-анимацию и перейти на текстовый формат `00h 00m 00s`; подготовить total/turn таймеры (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`, `src/client/ui/src/session/task-timer-flip-clock.tsx`; expected commit: `feat(ui): switch task timers to text format`).
+2. [TODO] Git Commit: `feat(ui): switch task timers to text format` (hash: TBD)
 
-### Stream 2: Build VSIX (packaging)
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.648.vsix` (scope: `scripts/build-release.sh`; expected commit: `chore(release): package vsix v1.1.648`).
-2. [DONE] Git Commit: `chore(release): package vsix v1.1.648` (hash: `166a346b`)
+### Stream 2: Integration + remove force unlock toggle
+1. [TODO] Встроить total в футер (всегда виден) и turn в overlay; удалить force unlock toggle из UI и связанный state (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): fix timer placement and remove force unlock`).
+2. [TODO] Git Commit: `feat(ui): fix timer placement and remove force unlock` (hash: TBD)
+
+### Stream 3: Verification (webview build)
+1. [TODO] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after timer semantics fix`).
+2. [TODO] Git Commit: `chore(build): rebuild webview after timer semantics fix` (hash: TBD)
