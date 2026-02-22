@@ -44,6 +44,17 @@
 
 ---
 
+## 3.1 Инкрементальный этап (реализовано в release `1.1.646`)
+
+Пока целевой `inputLock.*` SSOT не внедрён, зафиксирован промежуточный этап защиты от “вечных” блокировок:
+
+1) **PM/UI:** если `workspace:snapshot` сообщает `turnState="idle"` и `continuityLockActive=false`, ввод обязан разблокироваться **даже когда** `continuityLockReason` отсутствует.
+2) **Core:** для `resume_in_place` idle/unlocked-сессий snapshot нормализуется и всегда содержит явный unlock-reason: `continuityLockReason="no_rollover_needed"`.
+
+Важно: это defence-in-depth. UI не должен зависеть от наличия `continuityLockReason`, а Core не должен эмитить “пустые” причины в idle-состоянии.
+
+---
+
 ## 4) Новый контракт: SSOT только в Core snapshot
 
 ### 4.1 SSOT поле
@@ -126,8 +137,8 @@ Placeholder/copy — только по `inputLock.reason`.
 - На старте Core ре‑гидратит этот state и продолжает state machine.
 
 Если персистентность сейчас делать слишком дорого, допустим промежуточный этап:
-- Core на старте обязан “нормализовать” snapshot так, чтобы для idle‑сессий reason был явным (`idle_ready`).
-  Тогда UI не будет держать lock из-за отсутствия reason.
+- Core на старте обязан “нормализовать” snapshot так, чтобы для idle resume-сессий reason был явным (минимум: `no_rollover_needed` для `resume_in_place`).
+  Тогда UI не будет держать lock из-за отсутствия reason, но при этом UI всё равно остаётся snapshot-first и не зависит от reason как от условия unlock.
 
 ---
 
@@ -141,7 +152,7 @@ Placeholder/copy — только по `inputLock.reason`.
 
 3) **Crash mid‑turn + manual unlock**
 - после рестарта Core/PM: не должно быть вечного lock.
-- `recovery_required` допускается, но ввод должен быть доступен.
+- `recovery_required` допускается, но ввод должен быть доступен (manual force-unlock остаётся только как аварийный fallback).
 
 4) **Cold start (комп/ядро)**
 - открыть workspace с уже завершённой reviewer‑сессией → `idle_ready` сразу, без “залипания”.

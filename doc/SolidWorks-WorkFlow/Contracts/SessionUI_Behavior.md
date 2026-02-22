@@ -32,6 +32,8 @@
 
 Стрим‑события (`session:stream`) допускаются как “live‑ускорители” UI, но не должны ломать snapshot‑инварианты.
 
+**Критично (SSOT):** `continuityLockReason` — это только UX-hint (copy/placeholder) и может отсутствовать. UI **не имеет права** удерживать `blocked` при `turnState="idle"` и `continuityLockActive=false` только потому, что причина lock отсутствует.
+
 **Важно (гонка гидрации):** `workspace:snapshot` может прийти **раньше**, чем UI успеет создать локальный `SessionSnapshot` по `dialog:list:result` или обработать `session:created` (rollover). UI обязан сохранять последний `workspace:snapshot` и **пере‑применять** его после создания/переключения `sessionId`, иначе возможен “stuck lock” до следующего snapshot/перезагрузки.
 
 ### 2.2 История диалога vs live статус
@@ -58,7 +60,7 @@
 ### 4.1 Глобальный инвариант (что считается “можно вводить”)
 В нормальном режиме (без ручного замочка) ввод доступен тогда и только тогда, когда одновременно:
 - текущая сессия **не** terminal/read‑only;
-- нет active continuity lock;
+- `continuityLockActive === false`;
 - `turnState === "idle"` (в UI это соответствует `connectionState === "idle"`);
 - нет очереди отправки (queued message).
 
@@ -135,3 +137,8 @@ Continuity делит долгий диалог на runtime‑сегменты 
 
 5) **Статусные панели не “подвисают” на старом сегменте**
    - После rollover SessionIdBar/StatusPanel отображают данные активного сегмента (актуальный `sessionId`/`providerSessionId`).
+
+6) **Cold start: idle snapshot без lock reason не должен блокировать ввод**
+   - Открыть workspace с завершённой resume-сессией.
+   - `workspace:snapshot` сообщает `turnState="idle"` и `continuityLockActive=false`, но `continuityLockReason` отсутствует.
+   - Ввод доступен (no stuck `resuming...`).
