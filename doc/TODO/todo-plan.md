@@ -7,6 +7,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
   - `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
   - `doc/BugRegistry.md`
   - `doc/Sessions/Session002.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
@@ -35,8 +36,8 @@
 - Формат: только `HH:MM:SS` (без миллисекунд).
 
 ### Stream 0: Design contract
-1. [TODO] Зафиксировать контракт поведения таймера (старт/стоп, ключ накопления, persist, placement) (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): define session task timer behavior`).
-2. [TODO] Git Commit: `docs(contracts): define session task timer behavior` (hash: TBD)
+1. [DONE] Зафиксировать контракт поведения таймера (старт/стоп, ключ накопления, persist, placement) (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): define session task timer behavior`).
+2. [IN_PROGRESS] Git Commit: `docs(contracts): define session task timer behavior` (hash: TBD)
 
 ### Stream 1: UI implementation (flip timer + persist)
 1. [TODO] Реализовать `TaskTimer` (storage: localStorage; формат `HH:MM:SS`; 3D flip digits) (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`; expected commit: `feat(ui): add persistent task timer with flip digits`).
