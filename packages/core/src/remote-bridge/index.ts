@@ -428,6 +428,8 @@ export class RemoteBridge {
     const dialogs = await this.dialogListService.listDialogs({
       workspaceRoot,
       workspaceSlug,
+      runtimeSessions:
+        this.sessionManager.getSessionsByWorkspacePath(workspaceRoot),
     });
     wsManager.sendToClient(clientId, {
       type: "dialog:list:result",
