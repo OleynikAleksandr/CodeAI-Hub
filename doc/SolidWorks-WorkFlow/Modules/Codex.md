@@ -18,6 +18,3 @@
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-
-## Legacy snapshot
-- `doc/SolidWorks-WorkFlow/Archive/legacy/Codex-legacy-2026-02-17.md`

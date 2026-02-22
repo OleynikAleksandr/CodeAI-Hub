@@ -13,6 +13,3 @@
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-
-## Legacy snapshot
-- `doc/SolidWorks-WorkFlow/Archive/legacy/Gemini-legacy-2026-02-17.md`
