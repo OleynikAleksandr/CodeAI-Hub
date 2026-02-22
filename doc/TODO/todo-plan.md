@@ -46,9 +46,9 @@
 3. [DONE] Встроить таймер в `InputPanel` (overlay при lock + footer при idle; таймер не скрывать) (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-textarea.tsx`; expected commit: `feat(ui): render task timer in session input`).
 4. [DONE] Git Commit: `feat(ui): render task timer in session input` (hash: `94727fd3`)
 
-5. [IN_PROGRESS] Добавить стабильный ключ накопления (stage+kind+runSlug+workspace) и пробросить в `InputPanel` (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): accumulate task timer per workflow agent`).
-6. [IN_PROGRESS] Git Commit: `feat(ui): accumulate task timer per workflow agent` (hash: TBD)
+5. [DONE] Добавить стабильный ключ накопления (stage+kind+runSlug+workspace) и пробросить в `InputPanel` (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): accumulate task timer per workflow agent`).
+6. [DONE] Git Commit: `feat(ui): accumulate task timer per workflow agent` (hash: `a6f5b017`)
 
 ### Stream 2: Verification (target builds)
-1. [TODO] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after task timer`).
-2. [TODO] Git Commit: `chore(build): rebuild webview after task timer` (hash: TBD)
+1. [DONE] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after task timer`).
+2. [IN_PROGRESS] Git Commit: `chore(build): rebuild webview after task timer` (hash: TBD)
