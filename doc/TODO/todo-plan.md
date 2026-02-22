@@ -36,4 +36,4 @@
 
 ### Stream 2: Build VSIX (packaging)
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.648.vsix` (scope: `scripts/build-release.sh`; expected commit: `chore(release): package vsix v1.1.648`).
-2. [IN_PROGRESS] Git Commit: `chore(release): package vsix v1.1.648` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): package vsix v1.1.648` (hash: `166a346b`)
