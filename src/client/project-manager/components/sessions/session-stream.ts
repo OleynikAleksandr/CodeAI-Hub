@@ -118,6 +118,11 @@ export const applyWorkspaceSnapshotToSnapshots = (
     }
     const currentLockActive = current.status.continuityLock?.active === true;
     const currentLockReason = current.status.continuityLock?.reason;
+    const currentTimerTotalSeconds = current.status.taskTimer?.totalSeconds ?? 0;
+    const currentTimerRunningSinceMs =
+      current.status.taskTimer?.runningSinceMs ?? null;
+    const nextTimerTotalSeconds = session.taskTimer?.totalSeconds ?? 0;
+    const nextTimerRunningSinceMs = session.taskTimer?.runningSinceMs ?? null;
     const allowIdleUnlock =
       nextLockReason === "resume_ready" ||
       nextLockReason === "resume_failed" ||
@@ -141,7 +146,9 @@ export const applyWorkspaceSnapshotToSnapshots = (
     if (
       current.status.connectionState === nextConnectionState &&
       currentLockActive === nextLockActive &&
-      currentLockReason === nextLockReason
+      currentLockReason === nextLockReason &&
+      currentTimerTotalSeconds === nextTimerTotalSeconds &&
+      currentTimerRunningSinceMs === nextTimerRunningSinceMs
     ) {
       continue;
     }
@@ -157,6 +164,10 @@ export const applyWorkspaceSnapshotToSnapshots = (
           active: nextLockActive,
           ...(nextLockReason ? { reason: nextLockReason } : {}),
           updatedAt: now,
+        },
+        taskTimer: {
+          totalSeconds: nextTimerTotalSeconds,
+          runningSinceMs: nextTimerRunningSinceMs,
         },
         updatedAt: now,
       },

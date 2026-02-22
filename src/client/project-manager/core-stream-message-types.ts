@@ -87,6 +87,10 @@ export type WorkspaceSnapshot = {
         readonly providerId?: string;
         readonly providerSessionId?: string;
         readonly bindingStatus?: "pending" | "ready" | "failed";
+        readonly taskTimer?: {
+          readonly totalSeconds: number;
+          readonly runningSinceMs: number | null;
+        };
       }
     >
   >;
