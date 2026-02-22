@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderTheme } from "./helpers";
 import { resolveProviderWaitColor } from "./helpers";
 import { InputTextarea } from "./input-textarea";
+import type { TaskTimerSnapshot } from "./task-timer";
 import { TaskTimer } from "./task-timer";
 
 type InputPanelProps = {
@@ -12,7 +13,7 @@ type InputPanelProps = {
   readonly isQueued?: boolean;
   readonly providerTheme?: ProviderTheme | null;
   readonly terminalNoResume?: boolean;
-  readonly agentTimerKey?: string | null;
+  readonly taskTimer?: TaskTimerSnapshot | null;
   readonly onSubmit: (text: string) => void;
 };
 
@@ -51,7 +52,7 @@ const InputPanel = ({
   isQueued = false,
   providerTheme = null,
   terminalNoResume = false,
-  agentTimerKey = null,
+  taskTimer = null,
   onSubmit,
 }: InputPanelProps) => {
   const inputLocked =
@@ -125,38 +126,33 @@ const InputPanel = ({
     if (!(inputLocked && agentBusy)) {
       return null;
     }
+    if (taskTimer?.runningSinceMs == null) {
+      return null;
+    }
 
     return (
       <TaskTimer
         active={agentBusy}
         mode="turn"
         placement="overlay"
-        storageKey={null}
         theme={providerTheme}
+        timer={taskTimer}
       />
     );
   };
 
-  const renderFooterTotal = () => {
-    if (!agentTimerKey) {
-      return null;
-    }
-
-    return (
-      <div className="session-input__total">
-        <span className="session-input__total-label">
-          {"total:\u00a0\u00a0"}
-        </span>
-        <TaskTimer
-          active={agentBusy}
-          mode="total"
-          placement="footer"
-          storageKey={agentTimerKey}
-          theme={providerTheme}
-        />
-      </div>
-    );
-  };
+  const renderFooterTotal = () => (
+    <div className="session-input__total">
+      <span className="session-input__total-label">{"total:\u00a0\u00a0"}</span>
+      <TaskTimer
+        active={agentBusy}
+        mode="total"
+        placement="footer"
+        theme={providerTheme}
+        timer={taskTimer}
+      />
+    </div>
+  );
 
   return (
     <form
