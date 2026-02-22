@@ -7,8 +7,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.648
-- Session UI: adds a persistent task execution timer (HH:MM:SS) with 3D flip digits — shows live time while the agent is working and keeps an accumulated total per workflow-agent across continuity rollovers and Core restarts.
+## Current Release — v1.1.649
+- Session UI: task execution timers are now text-based (`00h 00m 00s`, no flip animation). Total time is always visible in the footer and persists across continuity rollovers/Core restarts; per-turn time resets each turn and shows in the input overlay. Manual force unlock toggle was removed.
 - Session UI (BUG-2026-02-22-01): fixes “stuck locked/resuming” states on cold start and after Core restarts mid-turn — input unlocks snapshot-first (`turnState=idle` + `continuityLockActive=false`) even if `continuityLockReason` is missing; no manual unlock needed, and “Продолжай” continues the interrupted turn.
 - Project Manager: adds regression coverage + aligns snapshot application so missing `continuityLockReason` cannot keep input blocked when the snapshot is already `idle/unlocked`.
 - Core / Workspace snapshots: normalizes idle resume-in-place sessions to emit an explicit unlock hint `continuityLockReason="no_rollover_needed"` (defense-in-depth; reason is never a hard unlock gate).
