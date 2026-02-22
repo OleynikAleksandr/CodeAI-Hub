@@ -56,5 +56,5 @@
 2. [DONE] Git Commit: `fix(core): emit explicit unlock reason for idle sessions` (hash: `de402c33`)
 
 ### Stream 3: Release + manual matrix
-1. [IN_PROGRESS] Собрать релиз и вручную прогнать матрицу сценариев из контракта (normal / rollover / crash mid-turn / cold start / one-shot) (scope: `scripts/build-all.sh`, `scripts/build-release.sh`; expected commit: `feat(release): v<version> - fix session input unlock on cold start`).
-2. [IN_PROGRESS] Git Commit: `feat(release): v<version> - fix session input unlock on cold start` (hash: TBD)
+1. [BLOCKED] Собрать релиз и вручную прогнать матрицу сценариев из контракта (normal / rollover / crash mid-turn / cold start / one-shot) (scope: `scripts/build-all.sh`, `scripts/build-release.sh`; expected commit: `feat(release): v<version> - fix session input unlock on cold start`; note: release build выполнен, ручная матрица остаётся на проверку в UI).
+2. [DONE] Git Commit: `feat(release): v<version> - fix session input unlock on cold start` (hash: `71a20e11`)
