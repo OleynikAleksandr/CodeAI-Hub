@@ -11,7 +11,7 @@
 ## Work summary
 - Пользователь вручную подтвердил, что релиз `1.1.646` полностью устраняет “вечные” блокировки ввода: после рестарта Core в середине turn поле ввода разблокируется автоматически, а запрос “Продолжай” корректно продолжает прерванный turn.
 - Синхронизированы SSOT контракты и связанные документы по lock/unlock (snapshot-first; `continuityLockReason` не является условием unlock) и добавлены ссылки в системной навигации.
-- Все legacy-документы в `doc/SolidWorks-WorkFlow/Archive/legacy/` приведены к безопасному виду: помечены как **Legacy snapshot (outdated)** и явно ссылаются на текущие SSOT-документы, включая SSOT по блокировкам/разблокировкам ввода.
+- Legacy-архив `doc/SolidWorks-WorkFlow/Archive/legacy/` удалён (после миграции на SSOT). Историю legacy-версий при необходимости смотреть через `git log`/`git show`.
 - Обновлены `README.md` и `CHANGELOG.md` под релиз `1.1.646` с подробным описанием ключевого достижения.
 
 ## Build / verification
@@ -21,7 +21,6 @@
 - SSOT/contracts: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`.
 - System navigation/index: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`.
 - Recovery/continuity alignment: `doc/SolidWorks-WorkFlow/Contracts/ProviderSessionHome_IsolationAndRecovery.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/CodeAI-Hub_Manual_Retry_RFC.md`.
-- Legacy redirect sweep: `doc/SolidWorks-WorkFlow/Archive/legacy/*.md`.
 - Release notes: `README.md`, `CHANGELOG.md`.
 
 ## Git commits
@@ -37,6 +36,17 @@
 - `d2002f31 docs(legacy): redirect runtime/continuity/dialogs ssot`
 - `e577c263 docs(legacy): redirect description ssot`
 - `027a0e05 docs: update release notes for v1.1.646`
+- `6b0ef421 docs(session): add Session100 report`
+- `93670f2c docs(modules): drop legacy snapshot links (providers)`
+- `f41c0df6 docs(modules): drop legacy snapshot links (ui bundles)`
+- `80d7c39c docs: drop legacy snapshot links (system/clusters)`
+- `2753f286 docs(contracts): drop legacy snapshot links`
+- `6f65d00a docs(contracts): drop legacy snapshot links (workflow/description)`
+- `c0df3f8c docs: remove legacy provider docs`
+- `06df9938 docs: remove legacy system/cluster docs`
+- `44d282cc docs: remove legacy ui/workflow docs`
+- `34860cb3 docs: remove legacy runtime/continuity docs`
+- `fb459da1 docs: remove legacy description doc`
 
 ---
 
