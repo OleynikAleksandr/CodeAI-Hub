@@ -973,6 +973,14 @@
   align-items: center;
 }
 
+.session-input__footer-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
 .session-input__lock-toggle {
   background: none;
   border: none;
@@ -993,6 +1001,110 @@
   line-height: var(--session-hint-line-height);
   color: var(--session-hint-color);
   font-weight: var(--session-hint-font-weight);
+}
+
+.task-timer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+  color: var(--session-hint-color);
+}
+
+.task-timer--active {
+  color: var(--session-input-wait-color, var(--session-hint-color));
+}
+
+.task-timer--overlay {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 2;
+  pointer-events: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(12, 12, 12, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.task-timer__clock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.task-timer__sep {
+  display: inline-block;
+  width: 6px;
+  text-align: center;
+  opacity: 0.92;
+}
+
+.task-timer__clock--active .task-timer__sep {
+  animation: task-timer-sep-pulse 1.2s ease-in-out infinite;
+}
+
+.task-timer__digit {
+  position: relative;
+  display: inline-block;
+  height: var(--task-timer-digit-height, 14px);
+  width: calc(var(--task-timer-digit-height, 14px) * 0.68);
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(22, 22, 22, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  perspective: 620px;
+  transform: translateZ(0);
+}
+
+.task-timer__wheel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 340ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  will-change: transform;
+}
+
+.task-timer__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--task-timer-digit-height, 14px) * 0.78);
+  font-weight: 650;
+  line-height: 1;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.32);
+}
+
+@keyframes task-timer-sep-pulse {
+  0% {
+    opacity: 0.28;
+  }
+  50% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 0.28;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task-timer__wheel {
+    transition: none;
+  }
+
+  .task-timer__clock--active .task-timer__sep {
+    animation: none;
+  }
 }
 
 .session-status__row {
