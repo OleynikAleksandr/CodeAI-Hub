@@ -29,8 +29,8 @@
 - Удалить/отключить UI-кнопку force unlock (🔒/🔓), т.к. больше не нужна.
 
 ### Stream 0: Update contract
-1. [TODO] Обновить контракт `SessionTaskTimer_UI.md` под новое поведение (total vs turn, placement, format) (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): update session task timer semantics`).
-2. [TODO] Git Commit: `docs(contracts): update session task timer semantics` (hash: TBD)
+1. [DONE] Обновить контракт `SessionTaskTimer_UI.md` под новое поведение (total vs turn, placement, format) (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): update session task timer semantics`).
+2. [DONE] Git Commit: `docs(contracts): update session task timer semantics` (hash: `6596c983`)
 
 ### Stream 1: Timer components (text format)
 1. [TODO] Убрать flip-анимацию и перейти на текстовый формат `00h 00m 00s`; подготовить total/turn таймеры (scope: `src/client/ui/src/session/task-timer.tsx`, `media/session-view.css`, `src/client/ui/src/session/task-timer-flip-clock.tsx`; expected commit: `feat(ui): switch task timers to text format`).
