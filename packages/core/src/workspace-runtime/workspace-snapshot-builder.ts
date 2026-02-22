@@ -2,6 +2,7 @@ import type {
   ArtifactPointer,
   NodeSnapshot,
   SessionSnapshot,
+  SessionTaskTimerSnapshot,
   WorkspaceSnapshot,
 } from "./workspace-runtime-types";
 import type { WorkspaceState } from "./workspace-store";
@@ -49,7 +50,8 @@ const toArtifactsRecord = (
 
 export const buildSnapshot = (
   workspaceRoot: string,
-  state: WorkspaceState
+  state: WorkspaceState,
+  taskTimersByNodeId?: ReadonlyMap<string, SessionTaskTimerSnapshot>
 ): WorkspaceSnapshot => ({
   workspaceRoot,
   loadState: state.loadState,
@@ -60,7 +62,15 @@ export const buildSnapshot = (
   sessions: toReadonlyRecord<SessionSnapshot>(
     Array.from(state.sessions.entries(), ([sessionId, session]) => [
       sessionId,
-      normalizeSessionSnapshot(session),
+      normalizeSessionSnapshot({
+        ...session,
+        taskTimer: {
+          totalSeconds:
+            taskTimersByNodeId?.get(session.nodeId)?.totalSeconds ?? 0,
+          runningSinceMs:
+            taskTimersByNodeId?.get(session.nodeId)?.runningSinceMs ?? null,
+        },
+      }),
     ])
   ),
   artifacts: {
