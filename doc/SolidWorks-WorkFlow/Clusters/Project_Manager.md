@@ -4,6 +4,8 @@
 
 - System: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Workspace Runtime (wire + lock): `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+- Session UI laws (lock/unlock): `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
+- Input lock SSOT/state machine: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Dialog routing (messages vs status): `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Description → Reviewer: `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 - Session Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
