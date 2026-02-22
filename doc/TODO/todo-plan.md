@@ -47,4 +47,4 @@
 3. [DONE] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.652`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.652`).
 4. [DONE] Git Commit: `chore(release): build-all v1.1.652` (hash: `b57157ec`)
 5. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.652.vsix` (scope: `doc/Sessions/Session005.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.652`).
-6. [TODO] Git Commit: `chore(release): package vsix v1.1.652` (hash: TBD)
+6. [DONE] Git Commit: `chore(release): package vsix v1.1.652` (hash: `c650d372`)
