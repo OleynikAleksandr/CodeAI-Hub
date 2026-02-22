@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.652] - 2026-02-22
+### Changed
+- Session timers: moved SSOT to Core and deliver via workspace snapshots so totals stay consistent across multi-workspace/multi-tab Project Manager usage and Project Manager reloads.
+
 ## [1.1.651] - 2026-02-22
 ### Changed
 - Session UI: aligned footer `total:` label typography with timer digits (same font-size/family) for consistent visual weight.
