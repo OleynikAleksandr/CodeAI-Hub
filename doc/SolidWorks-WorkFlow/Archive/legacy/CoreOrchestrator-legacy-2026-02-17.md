@@ -1,3 +1,16 @@
+# Core Orchestrator — Cluster (SSOT)
+
+## Legacy snapshot (outdated)
+
+- Ниже сохранён legacy‑контент “as-is” для форензики.
+- Текущий SSOT по Core Orchestrator: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`.
+- Input lock/unlock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
+- Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
+
+---
+
+## Legacy content (migrated as-is; will be trimmed)
+
 # Core Orchestrator Module
 
 **Status:** Active (reference)

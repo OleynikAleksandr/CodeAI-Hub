@@ -1,3 +1,16 @@
+# System Architecture — System (SSOT)
+
+## Legacy snapshot (outdated)
+
+- Ниже сохранён legacy‑контент “as-is” для форензики.
+- Текущий SSOT по системной архитектуре: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`.
+- Input lock/unlock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
+- Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
+
+---
+
+## Legacy content (migrated as-is; will be trimmed)
+
 # CodeAI-Hub System Architecture
 
 **Version:** 1.1.622
