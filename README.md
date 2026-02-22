@@ -4,14 +4,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.643
-- Claude recovery UX: fixed provider-home login hint syntax to `HOME=~/.codeai-hub/providers/claude/home claude /login` in Core/provider error messages.
-- Release maintenance rebuild: regenerated unified local artifacts (providers/core/UI/launcher) and VSIX for stable installation validation.
-- Codex Session Continuity: prevents duplicate rollovers / double session separators when report generation is slow (no timeout-based retries; ignores rollover triggers from stale continuity segments).
-- Session UI: shows “resuming session…” placeholder during continuity rollover locks (avoids misleading “agent working” copy while switching/bootstraping a new workflow session).
-- Extension / UI: fixes UI bundle installation so VS Code Settings and Launcher UI can load from `~/.codeai-hub/packages/ui/*/current/*` without `ERR_FILE_NOT_FOUND`.
+## Current Release — v1.1.646
+- Session UI (BUG-2026-02-22-01): fixes “stuck locked/resuming” states on cold start and after Core restarts mid-turn — input unlocks snapshot-first (`turnState=idle` + `continuityLockActive=false`) even if `continuityLockReason` is missing; no manual unlock needed, and “Продолжай” continues the interrupted turn.
+- Project Manager: adds regression coverage + aligns snapshot application so missing `continuityLockReason` cannot keep input blocked when the snapshot is already `idle/unlocked`.
+- Core / Workspace snapshots: normalizes idle resume-in-place sessions to emit an explicit unlock hint `continuityLockReason="no_rollover_needed"` (defense-in-depth; reason is never a hard unlock gate).
 
 Previous releases (summary): the `1.1.57x–1.1.64x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, and workflow handoff UX in Project Manager.
 
