@@ -4,6 +4,7 @@
 
 - System: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Workspace Runtime (keys + snapshot-first + lock): `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+- Input lock SSOT/state machine: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Dialog routing (dialogId vs sessionId): `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Session Continuity (handoff/rollover): `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - Workflow CLI/Watcher: `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
@@ -26,8 +27,8 @@ Core Orchestrator — автономное ядро, которое:
 
 ## 3) Ключевые инварианты (коротко)
 
-- **Никогда не оставлять UI в stuck working**: любой provider/core failure обязан завершать turn (fail + rollback `turn_state=idle`).
-- **Немедленный lock на submit**: Core обязан эмитить `turn_state=running` до реального provider send.
+- **Никогда не оставлять UI в stuck working/resuming**: любой provider/core failure обязан завершать turn (fail + rollback `turnState="idle"`), иначе UI может остаться locked навсегда.
+- **Немедленный lock на submit**: Core обязан эмитить `turnState="running"` до реального provider send.
 - **dialogId ≠ sessionId**: история диалога стабильна, live статус/usage привязан к текущему сегменту.
 - **Continuity**: handoff создаётся надёжно (delivery/ack/retry), иначе UI получает явный failure, а не вечный lock.
 
