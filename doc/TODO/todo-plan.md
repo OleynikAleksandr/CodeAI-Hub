@@ -37,8 +37,8 @@
 2. [DONE] Git Commit: `feat(ui): switch task timers to text format` (hash: `8fe06909`)
 
 ### Stream 2: Integration + remove force unlock toggle
-1. [TODO] Встроить total в футер (всегда виден) и turn в overlay; удалить force unlock toggle из UI и связанный state (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): fix timer placement and remove force unlock`).
-2. [TODO] Git Commit: `feat(ui): fix timer placement and remove force unlock` (hash: TBD)
+1. [DONE] Встроить total в футер (всегда виден) и turn в overlay; удалить force unlock toggle из UI и связанный state (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): fix timer placement and remove force unlock`).
+2. [DONE] Git Commit: `feat(ui): fix timer placement and remove force unlock` (hash: `253860d3`)
 
 ### Stream 3: Verification (webview build)
 1. [TODO] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after timer semantics fix`).
