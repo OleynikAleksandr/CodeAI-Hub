@@ -1,10 +1,10 @@
 # Workflow CLI Steps & Watcher — Contract (SSOT)
 
-## Важно (переходный период миграции)
+## Legacy snapshot (outdated)
 
-- Контракт будет приведён к новой структуре `doc/SolidWorks-WorkFlow/`.
-- Ниже временно включён legacy‑контент “as-is” из старого пути.
-- Все новые изменения по workflow CLI/Watcher фиксируем **в этом файле**.
+- Ниже сохранён legacy‑контент “as-is” для форензики.
+- Текущий SSOT по workflow CLI/Watcher: `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`.
+- Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
 
 ---
 

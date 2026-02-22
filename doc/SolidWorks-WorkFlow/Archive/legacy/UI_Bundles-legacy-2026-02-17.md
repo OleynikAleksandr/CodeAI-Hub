@@ -1,8 +1,8 @@
 # UI Bundles (Webview + Project Manager) — Module (SSOT)
 
-## Важно (переходный период миграции)
+## Legacy snapshot (outdated)
 
-Ниже временно включён legacy‑контент “as-is”. Любые новые изменения по UI bundles фиксируем **в этом файле**.
+Ниже сохранён legacy‑контент “as-is” для форензики. Текущий SSOT по UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`. Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
 
 ---
 

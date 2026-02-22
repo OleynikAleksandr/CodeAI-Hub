@@ -1,8 +1,8 @@
 # CEF Launcher — Module (SSOT)
 
-## Важно (переходный период миграции)
+## Legacy snapshot (outdated)
 
-Ниже временно включён legacy‑контент “as-is”. Любые новые изменения по CEF Launcher фиксируем **в этом файле**.
+Ниже сохранён legacy‑контент “as-is” для форензики. Текущий SSOT по CEF Launcher: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`. Новые изменения фиксируем только в SSOT-документах (не в `Archive/legacy`).
 
 ---
 
