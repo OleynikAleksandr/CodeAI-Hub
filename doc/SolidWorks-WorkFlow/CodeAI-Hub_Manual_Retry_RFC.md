@@ -6,6 +6,8 @@
 **Author:** CodeAI-Hub Core\
 **Date:** 2026-02-21
 
+**NOTE:** This RFC does not define the global input lock/unlock SSOT. The canonical contract is `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
+
 ------------------------------------------------------------------------
 
 # 1. Scope
@@ -16,7 +18,7 @@ mechanism** for one-turn sessions in CodeAI-Hub.
 The system currently executes all agents in a strict one-turn model
 (request → response).\
 If a provider turn hangs or fails without emitting a terminal event, the
-UI becomes blocked and recovery requires manual file cleanup.
+UI can become blocked or inconsistent.
 
 This RFC introduces a deterministic and safe retry mechanism that:
 
@@ -35,9 +37,9 @@ Current behavior:
 -   A turn is started.
 -   Provider begins execution.
 -   Provider hangs or never emits terminal `turn_completed`.
--   UI remains locked.
+-   UI may remain locked (or require a manual recovery action).
 -   Resume cannot occur because provider JSONL is corrupted/incomplete.
--   Manual filesystem cleanup required.
+-   Manual filesystem cleanup is an unacceptable recovery requirement.
 
 This is unacceptable for production workflow.
 
@@ -140,7 +142,7 @@ UI behavior:
 -   On Retry click:
     -   Status changes to "Retrying..."
     -   Input remains locked.
--   Unlock only after terminal event.
+-   Unlock only after terminal event (or after Core transitions the session into an explicit recovery-ready idle state).
 
 No intermediate unlock allowed.
 

@@ -44,8 +44,8 @@
 - Перед отправкой turn фиксируется replay payload (`queued`).
 - После фактической отправки turn переходит в `sent`.
 - Завершение turn (`completed_success`/`completed_failed`) фиксируется явно; после restart dangling `sent` обязателен к обработке.
-- **Новый user turn запрещен, пока предыдущий turn не завершен как `completed_success`.**
-- Если turn завершился `completed_failed` (или завис), Core обязан запустить recovery (resume/restore/replay policy), а input остается locked до консистентного исхода.
+- **Новый user turn запрещен, пока предыдущий turn не завершен**, кроме явного recovery сценария (resume/restore/replay), когда Core перевёл runtime в безопасное состояние.
+- Если turn завершился `completed_failed` (или завис), Core обязан запустить recovery (resume/restore/replay policy) и гарантировать отсутствие “вечного lock” в UI (см. lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`).
 - Любой restore должен быть idempotent и воспроизводим.
 
 ## Recovery policy (канон)
@@ -94,3 +94,4 @@
 - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+- `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
