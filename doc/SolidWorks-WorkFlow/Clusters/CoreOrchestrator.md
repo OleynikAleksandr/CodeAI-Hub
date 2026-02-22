@@ -33,8 +33,3 @@ Core Orchestrator — автономное ядро, которое:
 - **Continuity**: handoff создаётся надёжно (delivery/ack/retry), иначе UI получает явный failure, а не вечный lock.
 
 Канон: `doc/SolidWorks-WorkFlow/Contracts/*`.
-
-## 4) Legacy snapshot (для форензики)
-
-Полный исторический документ “as-is” сохранён здесь:
-- `doc/SolidWorks-WorkFlow/Archive/legacy/CoreOrchestrator-legacy-2026-02-17.md`

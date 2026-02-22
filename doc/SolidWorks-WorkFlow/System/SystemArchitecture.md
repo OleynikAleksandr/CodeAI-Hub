@@ -48,8 +48,3 @@
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
-
-## 5) Legacy snapshot (для форензики)
-
-Полный исторический SystemArchitecture “as-is” сохранён здесь:
-- `doc/SolidWorks-WorkFlow/Archive/legacy/SystemArchitecture-legacy-2026-02-17.md`

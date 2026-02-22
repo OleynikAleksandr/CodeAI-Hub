@@ -42,8 +42,3 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - `Restart Core` (hard)
 - `Retry/Reconnect`
 - (опционально) `Retry last message` для явных provider auth failures
-
-## 5) Legacy snapshot (для форензики)
-
-Полный исторический документ “as-is” сохранён здесь:
-- `doc/SolidWorks-WorkFlow/Archive/legacy/Project_Manager-legacy-2026-02-17.md`
