@@ -2,6 +2,14 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.649] - 2026-02-22
+### Fixed
+- Session UI: task timers now match the contract semantics — total is always visible in the footer while input is locked; per-turn timer resets each new turn.
+- Session UI: removed legacy manual force unlock toggle (no longer needed after continuity lock fixes).
+
+### Changed
+- Session UI: timer display format is now text-only `00h 00m 00s` (no flip animation).
+
 ## [1.1.648] - 2026-02-22
 ### Added
 - Session UI: persistent task execution timer (HH:MM:SS) with 3D flip digits — shows live time while the agent is working and keeps an accumulated total per workflow-agent across continuity rollovers and Core restarts.

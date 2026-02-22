@@ -43,3 +43,21 @@
 ### Stream 3: Verification (webview build)
 1. [DONE] Прогнать `npm run typecheck:webview` и `npm run build:webview` (scope: `scripts/build-webview.js`; expected commit: `chore(build): rebuild webview after timer semantics fix`).
 2. [DONE] Git Commit: `chore(build): rebuild webview after timer semantics fix` (hash: `446184b2`)
+
+---
+
+## Phase 225 — Release build for timer fixes (owner: Codex, updated: 2026-02-22)
+
+**Goal:** Собрать тестовый релиз `v1.1.649` с исправленным поведением task timers (total/turn) и без force unlock.
+
+### Stream 0: Release notes
+1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.649` (task timers: `00h 00m 00s`, total всегда виден, turn сбрасывается, удалить lock toggle) (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.649 notes`).
+2. [TODO] Git Commit: `docs(release): v1.1.649 notes` (hash: TBD)
+
+### Stream 1: Build-all (unified artifacts)
+1. [TODO] Запустить `./scripts/build-all.sh` (поднимет версии до `1.1.649`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.649`).
+2. [TODO] Git Commit: `chore(release): build-all v1.1.649` (hash: TBD)
+
+### Stream 2: VSIX packaging + session report
+1. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; оформить `doc/Sessions/Session004.md` (scope: `doc/Sessions/Session004.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.649`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.649` (hash: TBD)
