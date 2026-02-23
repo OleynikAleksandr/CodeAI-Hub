@@ -317,8 +317,8 @@
 **Goal:** Уменьшить белый прямоугольник (■) в кнопке Stop на ~10% (визуально аккуратнее) и пересобрать релиз `v1.1.663`.
 
 ### Stream 0: UI stop icon size
-1. [TODO] Уменьшить ■ на 10% (20px → 18px) поверх красного фона, не меняя семантику кнопки (scope: `media/session-view.css`; expected commit: `fix(ui): shrink stop icon by 10%`).
-2. [TODO] Git Commit: `fix(ui): shrink stop icon by 10%` (hash: TBD)
+1. [DONE] Уменьшить ■ на 10% (20px → 18px) поверх красного фона, не меняя семантику кнопки (scope: `media/session-view.css`; expected commit: `fix(ui): shrink stop icon by 10%`).
+2. [DONE] Git Commit: `fix(ui): shrink stop icon by 10%` (hash: `2245e189`)
 
 ### Stream 1: Release notes v1.1.663
 1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.663` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.663 notes`).
