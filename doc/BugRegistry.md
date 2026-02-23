@@ -24,14 +24,14 @@
 | BUG-2026-02-17-06 | FIXED | Core/Provider | Claude 401 должен завершать turn (turn_failed + turn_state=idle), иначе UI залипает в working | 1.1.646 |
 | BUG-2026-02-18-01 | FIXED | Session UI | workflow-сессия открывается с unlocked input до первого snapshot от Core | 1.1.629 |
 | BUG-2026-02-18-02 | FIXED | Claude/Auth | auth probe "nested session" когда VSCode запущен из Claude Code CLI терминала | TBD |
-| BUG-2026-02-18-03 | OPEN | Claude/Auth | macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic, не блокирует) | TBD |
+| BUG-2026-02-18-03 | FIXED | Claude/Auth | macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic, не блокирует) | 1.1.644 |
 | BUG-2026-02-18-04 | FIXED | Core/UI | Reviewer input не разблокируется после turn completion | TBD |
 | BUG-2026-02-18-05 | FIXED | PM/UI | Dialog Reviewer: input остаётся locked до workspace switch / reload (гонка snapshot vs hydration) | 1.1.635 |
 | BUG-2026-02-18-06 | FIXED | Core/Templates | Reviewer prompt упоминает `reviewer-template.md`, но файл/путь не доступен → агент тратит время на поиск | 1.1.637 |
 | BUG-2026-02-18-07 | FIXED | Session UI | При смене/привязке workflow-сессии не показывается wait-copy “resuming…”, остаётся “Agent is working…” | 1.1.639 |
 | BUG-2026-02-19-01 | FIXED | Extension/UI | UI не загружается: `ERR_FILE_NOT_FOUND` для `~/.codeai-hub/packages/ui/*/current/*` после установки релиза | 1.1.640 |
 | BUG-2026-02-19-02 | FIXED | Core/Codex | Codex: двойной rollover / два разделителя сессии при триггере контекстного окна | 1.1.641 |
-| BUG-2026-02-20-01 | OPEN | Claude/Auth | В чистом `~/.codeai-hub` Claude остаётся НЕДОСТУПЕН: provider-home auth bootstrap не поднимает авторизацию | TBD |
+| BUG-2026-02-20-01 | FIXED | Claude/Auth | В чистом `~/.codeai-hub` Claude остаётся НЕДОСТУПЕН: provider-home auth bootstrap не поднимает авторизацию | 1.1.644 |
 | BUG-2026-02-21-01 | FIXED | Session UI | После падения/рестарта Core в середине turn: force-unlock + повторный submit не отправлял queued message в resume-сессию | 1.1.644 |
 | BUG-2026-02-22-01 | FIXED | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | 1.1.646 |
 
@@ -350,7 +350,7 @@
 
 ## BUG-2026-02-18-03 — macOS диалог "Keychain Not Found" при запуске VSCode (cosmetic)
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Severity:** Cosmetic — не блокирует работу, Claude работает корректно.
 
@@ -371,15 +371,15 @@
 - Сбивает пользователя с толку — выглядит как ошибка, хотя это не так.
 - Нажатие "Cancel" — правильное действие; "Reset To Defaults" трогать не нужно.
 
-**Fix (planned):**
-Варианты для исследования:
-1. Записывать credentials в `~/.codeai-hub/providers/claude/home/.claude/.credentials.json`
-   после успешного auth probe — тогда Claude при следующем запуске найдёт файл и не полезет в Keychain за записью.
-2. Найти env var Claude CLI который подавляет запись в Keychain (если существует).
-3. Сделать `.credentials.json` в provider-home симлинком на `~/.claude/.credentials.json` —
-   тогда Claude пишет в нативный home и Keychain dialog не нужен.
+**Fix:**
+- macOS: bridge Keychain storage into provider-home by creating `~/.codeai-hub/providers/claude/home/Library/Keychains` as a symlink to the real `~/Library/Keychains` (best-effort).
 
-**Release:** TBD
+**Commits:**
+- `d345e8b6 fix: claude provider-home auth on macOS`
+
+**Release:** `1.1.644`
+
+**Verified (manual):** 2026-02-23 — confirmed by user.
 
 
 ## BUG-2026-02-18-04 — Reviewer input не разблокируется после turn completion
@@ -573,7 +573,7 @@
 
 ## BUG-2026-02-20-01 — Claude provider-home bootstrap не авторизует чистый runtime home
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:** после установки `1.1.642` в чистом `~/.codeai-hub/` провайдер Claude показывает `НЕДОСТУПЕН` с recovery-hint `HOME=~/.codeai-hub/providers/claude/home claude /login`, несмотря на сообщение bootstrap. Папка `~/.codeai-hub/providers/claude/home` создаётся, но валидная provider-home auth не поднимается автоматически.
 
@@ -587,16 +587,16 @@
 - Передача bootstrap access token в env ранее отключена (из-за регресса со stale token/401), поэтому автоматически “подхватить” логин в чистом provider-home теперь нечем.
 - В результате fallback всегда упирается в ручной интерактивный `claude /login` для provider-home.
 
-**Fix (planned):**
-1. Реализовать детерминированный bridge auth state в provider-home (не raw access token env): переносить/синхронизировать тот формат credentials, который Claude CLI действительно использует для refresh в изолированном HOME.
-2. Оставить запрет на слепую подстановку устаревшего access token через `CLAUDE_CODE_OAUTH_TOKEN`.
-3. Улучшить диагностику preflight: логировать классификацию причины (`not_logged_in` vs `invalid_bearer` vs `transport`) без утечки секретов.
+**Fix:**
+- macOS: bridge `~/Library/Keychains` into provider-home before auth probes so Claude CLI can read/refresh Keychain auth under sandboxed `HOME`.
+- Improve recovery hint: try `claude /login` first; fall back to `HOME=~/.codeai-hub/providers/claude/home claude /login` only if needed.
 
-**Workaround (current):**
-- Выполнить вручную: `HOME=~/.codeai-hub/providers/claude/home claude /login`
-- Затем: `Settings → General → Restart Core`.
+**Commits:**
+- `d345e8b6 fix: claude provider-home auth on macOS`
 
-**Release:** TBD
+**Release:** `1.1.644`
+
+**Verified (manual):** 2026-02-23 — confirmed by user.
 
 ---
 
