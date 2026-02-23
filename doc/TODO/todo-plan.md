@@ -307,5 +307,5 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.662` (hash: `ccceaac0`)
 
 ### Stream 4: Package VSIX v1.1.662
-1. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.662.vsix` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.662`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.662.vsix` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.662`).
 2. [TODO] Git Commit: `chore(release): package vsix v1.1.662` (hash: TBD)
