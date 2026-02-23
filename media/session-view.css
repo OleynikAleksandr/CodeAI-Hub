@@ -951,7 +951,7 @@
   }
 
   50% {
-    opacity: 0.8;
+    opacity: 0.5;
   }
 
   100% {
@@ -971,10 +971,10 @@
     --session-input-wait-solid-color,
     var(--session-input-wait-color, var(--session-hint-color))
   );
-  opacity: 0.8;
+  opacity: 0.5;
   font-size: 13px;
   line-height: 20px;
-  animation: session-input-wait-copy-pulse 500ms ease-in-out infinite;
+  animation: session-input-wait-copy-pulse 1000ms ease-in-out infinite;
   will-change: opacity;
 }
 
