@@ -291,8 +291,8 @@
 **Goal:** После ручного stop (■ → `POST /api/v1/shutdown`) Enter/▶ должны запускать Core и только потом отправлять новое сообщение **в Standalone Project Manager (CEF)** (где нет `acquireVsCodeApi`), без ручного запуска ядра через внешние скрипты; собрать релиз `v1.1.662`.
 
 ### Stream 0: Launcher core-start bridge + UI fallback
-1. [IN_PROGRESS] Добавить bridge `window.codeaiLauncher.ensureCoreRunning()` и обработчик `codeai://core-start` в CEF Launcher; UI должен использовать этот bridge как fallback, если нет VS Code API (scope: `packages/cef-launcher/src/launcher_handler.cc`, `src/client/ui/src/core-bridge/supervisor-requests.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `fix(launcher): start core via launcher bridge`).
-2. [TODO] Git Commit: `fix(launcher): start core via launcher bridge` (hash: TBD)
+1. [DONE] Добавить bridge `window.codeaiLauncher.ensureCoreRunning()` и обработчик `codeai://core-start` в CEF Launcher; UI должен использовать этот bridge как fallback, если нет VS Code API (scope: `packages/cef-launcher/src/launcher_handler.cc`, `src/client/ui/src/core-bridge/supervisor-requests.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `fix(launcher): start core via launcher bridge`).
+2. [DONE] Git Commit: `fix(launcher): start core via launcher bridge` (hash: `27cc43f1`)
 
 ### Stream 1: Webview rebuild
 1. [TODO] Пересобрать webview bundle после изменений UI bridge (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after launcher core start bridge`).
