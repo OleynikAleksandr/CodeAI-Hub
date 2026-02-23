@@ -295,8 +295,8 @@
 2. [DONE] Git Commit: `fix(launcher): start core via launcher bridge` (hash: `27cc43f1`)
 
 ### Stream 1: Webview rebuild
-1. [TODO] Пересобрать webview bundle после изменений UI bridge (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after launcher core start bridge`).
-2. [TODO] Git Commit: `chore(build): rebuild webview after launcher core start bridge` (hash: TBD)
+1. [DONE] Пересобрать webview bundle после изменений UI bridge (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after launcher core start bridge`).
+2. [DONE] Git Commit: `chore(build): rebuild webview after launcher core start bridge` (hash: `26303a23`)
 
 ### Stream 2: Release notes v1.1.662
 1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.662` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.662 notes`).
