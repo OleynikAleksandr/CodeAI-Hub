@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.663] - 2026-02-23
+### Fixed
+- Session UI: Stop (■) icon is now ~10% smaller for better visual balance.
+
 ## [1.1.662] - 2026-02-23
 ### Fixed
 - Standalone Project Manager (CEF): after Stop (■), the next Enter/▶ now starts Core again via the Launcher bridge (instead of getting stuck with Core stopped).
