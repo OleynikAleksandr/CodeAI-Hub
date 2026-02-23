@@ -8254,17 +8254,21 @@
         return null;
     }
   };
-  var resolveProviderWaitColor = (providerTheme) => {
-    switch (providerTheme) {
-      case "claude":
-        return "rgba(255, 145, 5, 0.70)";
-      case "codex":
-        return "rgba(1, 240, 216, 0.70)";
-      case "gemini":
-        return "rgba(171, 52, 203, 0.70)";
-      default:
-        return "rgba(127, 140, 141, 0.70)";
-    }
+  var resolveProviderWaitColor = (providerTheme, alpha = 0.7) => {
+    const clampedAlpha = Math.max(0, Math.min(1, alpha));
+    const [r, g, b] = (() => {
+      switch (providerTheme) {
+        case "claude":
+          return [255, 145, 5];
+        case "codex":
+          return [1, 240, 216];
+        case "gemini":
+          return [171, 52, 203];
+        default:
+          return [127, 140, 141];
+      }
+    })();
+    return `rgba(${r}, ${g}, ${b}, ${clampedAlpha})`;
   };
 
   // src/client/ui/src/core-bridge/constants.ts
@@ -23026,9 +23030,14 @@ ${path2}` : path2;
   }) => {
     const inputLocked = connectionState !== "idle" || continuityLockActive || isQueued;
     const agentBusy = !terminalNoResume && (connectionState !== "idle" || continuityLockActive || isQueued);
-    const waitCopyActive = inputLocked && !isQueued;
-    const waitCopyColor = resolveProviderWaitColor(providerTheme);
-    const formClassName = "session-input session-panel";
+    const waitCopyActive = inputLocked && !isQueued && !terminalNoResume;
+    const waitCopyColor = resolveProviderWaitColor(providerTheme, 0.7);
+    const waitCopySolidColor = resolveProviderWaitColor(providerTheme, 1);
+    const formClassName = [
+      "session-input",
+      "session-panel",
+      waitCopyActive ? "session-input--wait-copy" : ""
+    ].filter(Boolean).join(" ");
     const placeholder = resolvePlaceholder({
       isQueued,
       terminalNoResume,
@@ -23047,6 +23056,10 @@ ${path2}` : path2;
         return;
       }
       form.style.setProperty("--session-input-wait-color", waitCopyColor);
+      form.style.setProperty(
+        "--session-input-wait-solid-color",
+        waitCopySolidColor
+      );
       const textarea = form.querySelector(
         ".session-input__textarea"
       );
@@ -23060,7 +23073,7 @@ ${path2}` : path2;
       }
       textarea.style.setProperty("color", waitCopyColor);
       textarea.style.setProperty("caret-color", waitCopyColor);
-    }, [waitCopyActive, waitCopyColor]);
+    }, [waitCopyActive, waitCopyColor, waitCopySolidColor]);
     const sendMessage = (0, import_react8.useCallback)(() => {
       if (inputLocked) {
         return;
