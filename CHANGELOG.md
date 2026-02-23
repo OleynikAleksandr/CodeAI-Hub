@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.656] - 2026-02-23
+### Fixed
+- Session UI: locked input “please wait” placeholders now actually pulse opacity from 5% to 80% every 500ms (provider color).
+
 ## [1.1.655] - 2026-02-23
 ### Changed
 - Session UI: locked input “please wait” placeholders now pulse opacity from 5% to 80% every 500ms (provider color).
