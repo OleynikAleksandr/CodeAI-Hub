@@ -947,15 +947,15 @@
 
 @keyframes session-input-wait-copy-pulse {
   0% {
-    opacity: 0.05;
+    opacity: 0.2;
   }
 
   50% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 
   100% {
-    opacity: 0.05;
+    opacity: 0.2;
   }
 }
 
@@ -971,7 +971,7 @@
     --session-input-wait-solid-color,
     var(--session-input-wait-color, var(--session-hint-color))
   );
-  opacity: 0.5;
+  opacity: 0.4;
   font-size: 13px;
   line-height: 20px;
   animation: session-input-wait-copy-pulse 1000ms ease-in-out infinite;
