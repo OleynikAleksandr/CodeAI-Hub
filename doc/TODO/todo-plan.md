@@ -273,8 +273,8 @@
 2. [DONE] Git Commit: `chore(build): rebuild webview after core shutdown stop` (hash: `2d6d519b`)
 
 ### Stream 2: Release notes v1.1.661
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.661` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.661 notes`).
-2. [TODO] Git Commit: `docs(release): v1.1.661 notes` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.661` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.661 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.661 notes` (hash: `541f9c8d`)
 
 ### Stream 3: Release build-all v1.1.661
 1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.661`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.661`).
