@@ -3,6 +3,7 @@ import type {
   ProviderStackId,
 } from "../../../../types/provider";
 import { DEFAULT_CONFIG, FALLBACK_PROVIDERS } from "./constants";
+import { scheduleCoreBridgeReconnect } from "./core-bridge-reconnect";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
 import {
@@ -42,7 +43,9 @@ const notifyWindow = (message: Record<string, unknown>): void =>
 let initialized = false;
 let hasSuccessfulConnection = false;
 let websocket: WebSocket | null = null;
-let reconnectTimer: number | undefined;
+const reconnectTimerRef: { current: number | undefined } = {
+  current: undefined,
+};
 let cachedProviders: ProviderStackDescriptor[] = [...FALLBACK_PROVIDERS];
 const pendingMessages: string[] = [];
 let currentConnectionStatus: CoreConnectionStatus | "idle" = "idle";
@@ -83,22 +86,15 @@ const enqueueMessage = (payload: unknown): void => {
   flushPendingMessages();
 };
 const scheduleReconnect = (config: CoreBridgeConfig): void => {
-  if (reconnectTimer) {
-    return;
-  }
-  notifyConnectionStatus(
-    "connecting",
-    hasSuccessfulConnection
-      ? "Reconnecting to CodeAI Hub core…"
-      : "Starting CodeAI Hub core via Supervisor…"
-  );
-  requestCoreFromSupervisor(
-    hasSuccessfulConnection ? "ensure-started" : "restart"
-  );
-  reconnectTimer = window.setTimeout(() => {
-    reconnectTimer = undefined;
-    connectWebSocket(config);
-  }, RECONNECT_DELAY_MS);
+  scheduleCoreBridgeReconnect({
+    config,
+    connectWebSocket,
+    hasSuccessfulConnection,
+    notifyConnectionStatus,
+    reconnectDelayMs: RECONNECT_DELAY_MS,
+    reconnectTimerRef,
+    requestCoreFromSupervisor,
+  });
 };
 const connectWebSocket = (config: CoreBridgeConfig): void => {
   if (websocket) {
