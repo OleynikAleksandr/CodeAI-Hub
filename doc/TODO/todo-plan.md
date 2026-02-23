@@ -256,4 +256,4 @@
 
 ### Stream 7: Package VSIX v1.1.660
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.660.vsix` (scope: `doc/Sessions/Session013.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.660`).
-2. [TODO] Git Commit: `chore(release): package vsix v1.1.660` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): package vsix v1.1.660` (hash: `e16b31f8`)
