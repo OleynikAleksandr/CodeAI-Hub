@@ -8905,15 +8905,15 @@
     if (cachedApi) {
       return cachedApi;
     }
-    const globalScope2 = window;
-    if (globalScope2.vscode) {
-      cachedApi = globalScope2.vscode;
+    const globalScope3 = window;
+    if (globalScope3.vscode) {
+      cachedApi = globalScope3.vscode;
       return cachedApi;
     }
-    if (typeof globalScope2.acquireVsCodeApi === "function") {
+    if (typeof globalScope3.acquireVsCodeApi === "function") {
       try {
-        cachedApi = globalScope2.acquireVsCodeApi();
-        globalScope2.vscode = cachedApi;
+        cachedApi = globalScope3.acquireVsCodeApi();
+        globalScope3.vscode = cachedApi;
         return cachedApi;
       } catch (_error) {
         return cachedApi;
@@ -22020,6 +22020,20 @@ ${message.content}`
   // src/client/ui/src/session/input-panel.tsx
   var import_react9 = __toESM(require_react());
 
+  // src/client/ui/src/core-bridge/core-shutdown.ts
+  var globalScope2 = window;
+  var requestCoreShutdown = async () => {
+    const httpUrl = typeof globalScope2.__CODEAI_CORE_CONFIG?.httpUrl === "string" ? globalScope2.__CODEAI_CORE_CONFIG.httpUrl : DEFAULT_CONFIG.httpUrl;
+    try {
+      const response = await fetch(`${httpUrl}/api/v1/shutdown`, {
+        method: "POST"
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  };
+
   // src/client/ui/src/session/input-panel-placeholders.ts
   var resolveInputPlaceholder = (options) => {
     if (options.isQueued) {
@@ -22311,8 +22325,8 @@ ${formattedPaths}`;
 
   // src/client/ui/src/modules/drag-drop-module/launcher-file-drop-bridge.ts
   var resolveLauncherBridge = () => {
-    const globalScope2 = window;
-    return globalScope2.codeaiLauncher ?? null;
+    const globalScope3 = window;
+    return globalScope3.codeaiLauncher ?? null;
   };
   var requestLauncherFileDrop = (logger) => {
     const bridge = resolveLauncherBridge();
@@ -22335,20 +22349,20 @@ ${formattedPaths}`;
   var CAPTURE_RETRY_DELAY_MS = 120;
   var isRecord4 = (value) => typeof value === "object" && value !== null;
   var resolveCoreHttpUrl = () => {
-    const globalScope2 = window;
-    const primaryUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
+    const globalScope3 = window;
+    const primaryUrl = globalScope3.__CODEAI_CORE_CONFIG?.httpUrl;
     if (typeof primaryUrl === "string" && primaryUrl.length > 0) {
       return primaryUrl;
     }
-    const fallbackUrl = globalScope2.codeaiBridgeConfig?.httpUrl;
+    const fallbackUrl = globalScope3.codeaiBridgeConfig?.httpUrl;
     if (typeof fallbackUrl === "string" && fallbackUrl.length > 0) {
       return fallbackUrl;
     }
     return null;
   };
   var hasLauncherBridgeHttpConfig = () => {
-    const globalScope2 = window;
-    return typeof globalScope2.codeaiBridgeConfig?.httpUrl === "string" && globalScope2.codeaiBridgeConfig.httpUrl.length > 0;
+    const globalScope3 = window;
+    return typeof globalScope3.codeaiBridgeConfig?.httpUrl === "string" && globalScope3.codeaiBridgeConfig.httpUrl.length > 0;
   };
   var joinUrl = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
   var MessageHandler = class {
@@ -23103,7 +23117,7 @@ ${path2}` : path2;
       "session-panel",
       waitCopyActive ? "session-input--wait-copy" : ""
     ].filter(Boolean).join(" ");
-    const placeholder = resolveInputPlaceholder({
+    const placeholder = forceUnlocked ? "Core stopped. Type message and press Enter/\u25B6 to restart and send." : resolveInputPlaceholder({
       isQueued,
       terminalNoResume,
       connectionState,
@@ -23237,6 +23251,7 @@ ${path2}` : path2;
     const handleActionClick = (0, import_react9.useCallback)(() => {
       if (stopActive) {
         requestCoreFromSupervisor("stop");
+        requestCoreShutdown().catch(() => false);
         setForceUnlocked(true);
         setOptimisticStopActive(false);
         return;
@@ -24842,8 +24857,8 @@ ${path2}` : path2;
     return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   };
   var resolveCoreHttpUrl2 = () => {
-    const globalScope2 = window;
-    const httpUrl = globalScope2.__CODEAI_CORE_CONFIG?.httpUrl;
+    const globalScope3 = window;
+    const httpUrl = globalScope3.__CODEAI_CORE_CONFIG?.httpUrl;
     if (typeof httpUrl !== "string" || httpUrl.length === 0) {
       return null;
     }
@@ -30833,8 +30848,8 @@ ${replacement}
 
   // src/client/ui/src/components/action-bar/use-initiative-context.ts
   var resolveWorkspacePath = () => {
-    const globalScope2 = window;
-    const workspacePath = globalScope2.__CODEAI_CORE_CONFIG?.workspacePath;
+    const globalScope3 = window;
+    const workspacePath = globalScope3.__CODEAI_CORE_CONFIG?.workspacePath;
     if (typeof workspacePath !== "string" || workspacePath.length === 0) {
       return null;
     }
