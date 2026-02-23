@@ -76,6 +76,17 @@ export class HomeViewMessageRouter {
       return;
     }
 
+    // Stop core (no auto restart)
+    if (
+      typeof message === "object" &&
+      message !== null &&
+      "type" in message &&
+      message.type === "core:stop-request"
+    ) {
+      this.handleCoreStopRequest();
+      return;
+    }
+
     if (
       typeof message === "object" &&
       message !== null &&
@@ -145,6 +156,17 @@ export class HomeViewMessageRouter {
     this.coreProcessManager.ensureStarted(undefined).catch((error) => {
       const reason = error instanceof Error ? error.message : String(error);
       window.showErrorMessage(`Failed to start core: ${reason}`);
+    });
+  }
+
+  private handleCoreStopRequest(): void {
+    if (!this.coreProcessManager) {
+      return;
+    }
+
+    this.coreProcessManager.stop().catch((error) => {
+      const reason = error instanceof Error ? error.message : String(error);
+      window.showErrorMessage(`Failed to stop core: ${reason}`);
     });
   }
 

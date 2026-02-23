@@ -95,6 +95,21 @@ export class CoreProcessManager {
       );
     }
   }
+
+  async stop(): Promise<void> {
+    const running = await this.portManager.detectRunning(
+      undefined,
+      this.currentPort
+    );
+    if (!running) {
+      this.channel.appendLine("CodeAI Hub core is already stopped.");
+      return;
+    }
+
+    this.updateConnectionInfo(running.port);
+    await this.stopViaSupervisor(running.port);
+  }
+
   setDeclaredVersion(version: string): void {
     this.declaredVersion = version;
   }
