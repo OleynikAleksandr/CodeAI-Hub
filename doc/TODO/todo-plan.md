@@ -269,8 +269,8 @@
 2. [DONE] Git Commit: `fix(ui): stop button shuts down core` (hash: `90ac41e6`)
 
 ### Stream 1: Webview rebuild
-1. [TODO] Пересобрать webview bundle после UI изменений (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after core shutdown stop`).
-2. [TODO] Git Commit: `chore(build): rebuild webview after core shutdown stop` (hash: TBD)
+1. [DONE] Пересобрать webview bundle после UI изменений (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after core shutdown stop`).
+2. [DONE] Git Commit: `chore(build): rebuild webview after core shutdown stop` (hash: `2d6d519b`)
 
 ### Stream 2: Release notes v1.1.661
 1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.661` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.661 notes`).
