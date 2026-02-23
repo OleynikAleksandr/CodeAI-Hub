@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.659] - 2026-02-23
+### Added
+- Session UI: added a Play/Stop button next to the input (▶ sends like Enter; ■ restarts Core to abort the active turn and immediately unlock input for a new request).
+
 ## [1.1.658] - 2026-02-23
 ### Changed
 - Session UI: locked input “please wait” placeholders now pulse opacity from 20% to 40% every 1000ms (provider color).
