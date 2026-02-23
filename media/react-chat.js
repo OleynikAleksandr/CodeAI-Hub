@@ -23047,6 +23047,7 @@ ${path2}` : path2;
     });
     const [value, setValue] = (0, import_react8.useState)(draft);
     const formRef = (0, import_react8.useRef)(null);
+    const waitCopyOverlayActive = waitCopyActive && value.length === 0;
     (0, import_react8.useEffect)(() => {
       setValue(draft);
     }, [draft]);
@@ -23110,6 +23111,12 @@ ${path2}` : path2;
         }
       );
     };
+    const renderWaitCopyOverlay = () => {
+      if (!waitCopyOverlayActive) {
+        return null;
+      }
+      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("output", { "aria-hidden": "true", className: "session-input__wait-copy-overlay", children: placeholder });
+    };
     const renderFooterTotal = () => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "session-input__total", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: "session-input__total-label", children: "total:\xA0\xA0" }),
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
@@ -23149,7 +23156,10 @@ ${path2}` : path2;
                   maxHeight: MAX_TEXTAREA_HEIGHT,
                   onSubmit: sendMessage,
                   onValueChange: setValue,
-                  overlaySlot: renderOverlayTimer(),
+                  overlaySlot: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
+                    renderOverlayTimer(),
+                    renderWaitCopyOverlay()
+                  ] }),
                   placeholder,
                   value
                 }
