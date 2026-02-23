@@ -60,9 +60,16 @@ const InputPanel = ({
   const agentBusy =
     !terminalNoResume &&
     (connectionState !== "idle" || continuityLockActive || isQueued);
-  const waitCopyActive = inputLocked && !isQueued;
-  const waitCopyColor = resolveProviderWaitColor(providerTheme);
-  const formClassName = "session-input session-panel";
+  const waitCopyActive = inputLocked && !isQueued && !terminalNoResume;
+  const waitCopyColor = resolveProviderWaitColor(providerTheme, 0.7);
+  const waitCopySolidColor = resolveProviderWaitColor(providerTheme, 1);
+  const formClassName = [
+    "session-input",
+    "session-panel",
+    waitCopyActive ? "session-input--wait-copy" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   const placeholder = resolvePlaceholder({
     isQueued,
     terminalNoResume,
@@ -85,6 +92,10 @@ const InputPanel = ({
     }
 
     form.style.setProperty("--session-input-wait-color", waitCopyColor);
+    form.style.setProperty(
+      "--session-input-wait-solid-color",
+      waitCopySolidColor
+    );
     const textarea = form.querySelector<HTMLTextAreaElement>(
       ".session-input__textarea"
     );
@@ -100,7 +111,7 @@ const InputPanel = ({
 
     textarea.style.setProperty("color", waitCopyColor);
     textarea.style.setProperty("caret-color", waitCopyColor);
-  }, [waitCopyActive, waitCopyColor]);
+  }, [waitCopyActive, waitCopyColor, waitCopySolidColor]);
 
   const sendMessage = useCallback(() => {
     if (inputLocked) {
