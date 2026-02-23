@@ -2,6 +2,11 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.660] - 2026-02-23
+### Changed
+- Session UI: the input Play/Stop button now stops Core on ■ (instead of a quick restart), then resumes on the next send (▶ / Enter starts Core and submits after reconnect).
+- Session UI: refined the Stop icon visuals (larger ■, clearer red background, better vertical alignment).
+
 ## [1.1.659] - 2026-02-23
 ### Added
 - Session UI: added a Play/Stop button next to the input (▶ sends like Enter; ■ restarts Core to abort the active turn and immediately unlock input for a new request).
