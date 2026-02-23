@@ -200,16 +200,23 @@ export const mapProviderTheme = (
 };
 
 export const resolveProviderWaitColor = (
-  providerTheme: ProviderTheme | null
+  providerTheme: ProviderTheme | null,
+  alpha = 0.7
 ): string => {
-  switch (providerTheme) {
-    case "claude":
-      return "rgba(255, 145, 5, 0.70)";
-    case "codex":
-      return "rgba(1, 240, 216, 0.70)";
-    case "gemini":
-      return "rgba(171, 52, 203, 0.70)";
-    default:
-      return "rgba(127, 140, 141, 0.70)";
-  }
+  const clampedAlpha = Math.max(0, Math.min(1, alpha));
+
+  const [r, g, b] = (() => {
+    switch (providerTheme) {
+      case "claude":
+        return [255, 145, 5] as const;
+      case "codex":
+        return [1, 240, 216] as const;
+      case "gemini":
+        return [171, 52, 203] as const;
+      default:
+        return [127, 140, 141] as const;
+    }
+  })();
+
+  return `rgba(${r}, ${g}, ${b}, ${clampedAlpha})`;
 };
