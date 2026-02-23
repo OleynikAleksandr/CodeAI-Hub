@@ -192,3 +192,28 @@
 ### Stream 3: Package VSIX v1.1.658
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.658.vsix` (scope: `doc/Sessions/Session011.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.658`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.658` (hash: `0c5b3f02`)
+---
+
+## Phase 233 — Session input Play/Stop button + Release v1.1.659 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** Добавить в Session UI одну toggle-кнопку рядом с input: Play (дублирует Enter) → Stop (принудительный restart Core, чтобы прервать turn) и обязательная разблокировка input; собрать релиз `v1.1.659`.
+
+### Stream 0: UI Play/Stop button
+1. [DONE] Добавить toggle-кнопку (▶/■) справа от поля ввода: ▶ отправляет как Enter, ■ делает `Restart Core` и форс-разблокирует input (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-play-stop-button.tsx`, `media/session-view.css`; expected commit: `feat(ui): add play/stop session input button`).
+2. [DONE] Git Commit: `feat(ui): add play/stop session input button` (hash: `6b81a1a9`)
+
+### Stream 1: Webview rebuild
+1. [DONE] Пересобрать webview bundle после UI изменений (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after input play/stop`).
+2. [DONE] Git Commit: `chore(build): rebuild webview after input play/stop` (hash: `7d7bccb3`)
+
+### Stream 2: Release notes v1.1.659
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.659` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.659 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.659 notes` (hash: `39fb2edf`)
+
+### Stream 3: Release build-all v1.1.659
+1. [DONE] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.659`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.659`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.659` (hash: `2ac01bf7`)
+
+### Stream 4: Package VSIX v1.1.659
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.659.vsix` (scope: `doc/Sessions/Session012.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.659`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.659` (hash: TBD)
