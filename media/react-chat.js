@@ -8288,6 +8288,49 @@
     connected: true
   }));
 
+  // src/client/ui/src/core-bridge/supervisor-requests.ts
+  var SUPERVISOR_REQUEST_TYPES = {
+    "ensure-started": "core:ensure-started",
+    restart: "core:restart-request",
+    stop: "core:stop-request"
+  };
+  var coreStopRequestedByUser = false;
+  var isCoreStopRequestedByUser = () => coreStopRequestedByUser;
+  var requestCoreFromSupervisor = (mode) => {
+    coreStopRequestedByUser = mode === "stop";
+    try {
+      window.acquireVsCodeApi?.().postMessage({
+        type: SUPERVISOR_REQUEST_TYPES[mode]
+      });
+    } catch {
+    }
+  };
+
+  // src/client/ui/src/core-bridge/core-bridge-reconnect.ts
+  var scheduleCoreBridgeReconnect = (options) => {
+    if (options.reconnectTimerRef.current) {
+      return;
+    }
+    if (isCoreStopRequestedByUser()) {
+      options.notifyConnectionStatus(
+        "error",
+        "Core stopped. Press \u25B6 or Enter to start it again."
+      );
+    } else {
+      options.notifyConnectionStatus(
+        "connecting",
+        options.hasSuccessfulConnection ? "Reconnecting to CodeAI Hub core\u2026" : "Starting CodeAI Hub core via Supervisor\u2026"
+      );
+      options.requestCoreFromSupervisor(
+        options.hasSuccessfulConnection ? "ensure-started" : "restart"
+      );
+    }
+    options.reconnectTimerRef.current = window.setTimeout(() => {
+      options.reconnectTimerRef.current = void 0;
+      options.connectWebSocket(options.config);
+    }, options.reconnectDelayMs);
+  };
+
   // src/client/ui/src/core-bridge/normalizers.ts
   var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp = (value) => {
@@ -8604,16 +8647,6 @@
     );
   };
 
-  // src/client/ui/src/core-bridge/supervisor-requests.ts
-  var requestCoreFromSupervisor = (mode) => {
-    try {
-      window.acquireVsCodeApi?.().postMessage({
-        type: mode === "restart" ? "core:restart-request" : "core:ensure-started"
-      });
-    } catch {
-    }
-  };
-
   // src/client/ui/src/core-bridge/core-bridge.ts
   var RECONNECT_DELAY_MS = 2e3;
   var globalScope = window;
@@ -8635,7 +8668,9 @@
   var initialized = false;
   var hasSuccessfulConnection = false;
   var websocket = null;
-  var reconnectTimer;
+  var reconnectTimerRef = {
+    current: void 0
+  };
   var cachedProviders = [...FALLBACK_PROVIDERS];
   var pendingMessages = [];
   var currentConnectionStatus = "idle";
@@ -8670,20 +8705,15 @@
     flushPendingMessages();
   };
   var scheduleReconnect = (config) => {
-    if (reconnectTimer) {
-      return;
-    }
-    notifyConnectionStatus(
-      "connecting",
-      hasSuccessfulConnection ? "Reconnecting to CodeAI Hub core\u2026" : "Starting CodeAI Hub core via Supervisor\u2026"
-    );
-    requestCoreFromSupervisor(
-      hasSuccessfulConnection ? "ensure-started" : "restart"
-    );
-    reconnectTimer = window.setTimeout(() => {
-      reconnectTimer = void 0;
-      connectWebSocket(config);
-    }, RECONNECT_DELAY_MS);
+    scheduleCoreBridgeReconnect({
+      config,
+      connectWebSocket,
+      hasSuccessfulConnection,
+      notifyConnectionStatus,
+      reconnectDelayMs: RECONNECT_DELAY_MS,
+      reconnectTimerRef,
+      requestCoreFromSupervisor
+    });
   };
   var connectWebSocket = (config) => {
     if (websocket) {
@@ -21990,6 +22020,26 @@ ${message.content}`
   // src/client/ui/src/session/input-panel.tsx
   var import_react9 = __toESM(require_react());
 
+  // src/client/ui/src/session/input-panel-placeholders.ts
+  var resolveInputPlaceholder = (options) => {
+    if (options.isQueued) {
+      return "Message queued. Sending as soon as it is ready\u2026";
+    }
+    if (options.terminalNoResume) {
+      return "This session is complete and read-only.";
+    }
+    if (options.connectionState === "running") {
+      return "Agent is working\u2026 Please wait.";
+    }
+    if (options.continuityLockActive || options.connectionState === "blocked") {
+      return "Agent is resuming your session\u2026 Please wait.";
+    }
+    if (options.continuityErrorCopy) {
+      return `Continuity failed: ${options.continuityErrorCopy}`;
+    }
+    return "Type your request or drag files with Shift held...";
+  };
+
   // src/client/ui/src/session/input-play-stop-button.tsx
   var import_react5 = __toESM(require_react());
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
@@ -21997,7 +22047,11 @@ ${message.content}`
     stopActive,
     onClick
   }) => {
-    const label = stopActive ? "Stop (restart core)" : "Send message (Enter)";
+    const label = stopActive ? "Stop (stop core)" : "Send message (Enter)";
+    const iconClassName = [
+      "session-input__action-icon",
+      stopActive ? "session-input__action-icon--stop" : "session-input__action-icon--play"
+    ].filter(Boolean).join(" ");
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-input__action", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "button",
       {
@@ -22009,7 +22063,7 @@ ${message.content}`
         onClick,
         title: label,
         type: "button",
-        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", className: "session-input__action-icon", children: stopActive ? "\u25A0" : "\u25B6" })
+        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", className: iconClassName, children: stopActive ? null : "\u25B6" })
       }
     ) });
   };
@@ -23024,24 +23078,7 @@ ${path2}` : path2;
   // src/client/ui/src/session/input-panel.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime());
   var MAX_TEXTAREA_HEIGHT = 200;
-  var resolvePlaceholder = (options) => {
-    if (options.isQueued) {
-      return "Message queued. Sending as soon as it is ready\u2026";
-    }
-    if (options.terminalNoResume) {
-      return "This session is complete and read-only.";
-    }
-    if (options.connectionState === "running") {
-      return "Agent is working\u2026 Please wait.";
-    }
-    if (options.continuityLockActive || options.connectionState === "blocked") {
-      return "Agent is resuming your session\u2026 Please wait.";
-    }
-    if (options.continuityErrorCopy) {
-      return `Continuity failed: ${options.continuityErrorCopy}`;
-    }
-    return "Type your request or drag files with Shift held...";
-  };
+  var CORE_START_DELAY_MS = 2e3;
   var InputPanel = ({
     draft,
     connectionState = "idle",
@@ -23055,6 +23092,7 @@ ${path2}` : path2;
   }) => {
     const [forceUnlocked, setForceUnlocked] = (0, import_react9.useState)(false);
     const [optimisticStopActive, setOptimisticStopActive] = (0, import_react9.useState)(false);
+    const stopStartTimerRef = (0, import_react9.useRef)(null);
     const inputLocked = (connectionState !== "idle" || continuityLockActive || isQueued || terminalNoResume) && !forceUnlocked;
     const agentBusy = !terminalNoResume && (connectionState !== "idle" || continuityLockActive || isQueued);
     const waitCopyActive = inputLocked && !isQueued && !terminalNoResume;
@@ -23065,7 +23103,7 @@ ${path2}` : path2;
       "session-panel",
       waitCopyActive ? "session-input--wait-copy" : ""
     ].filter(Boolean).join(" ");
-    const placeholder = resolvePlaceholder({
+    const placeholder = resolveInputPlaceholder({
       isQueued,
       terminalNoResume,
       connectionState,
@@ -23075,6 +23113,15 @@ ${path2}` : path2;
     const [value, setValue] = (0, import_react9.useState)(draft);
     const formRef = (0, import_react9.useRef)(null);
     const waitCopyOverlayActive = waitCopyActive && value.length === 0;
+    (0, import_react9.useEffect)(
+      () => () => {
+        const timer = stopStartTimerRef.current;
+        if (timer !== null) {
+          window.clearTimeout(timer);
+        }
+      },
+      []
+    );
     (0, import_react9.useEffect)(() => {
       setValue(draft);
     }, [draft]);
@@ -23125,10 +23172,22 @@ ${path2}` : path2;
       if (!trimmed) {
         return;
       }
+      if (stopStartTimerRef.current !== null) {
+        window.clearTimeout(stopStartTimerRef.current);
+        stopStartTimerRef.current = null;
+      }
       setForceUnlocked(false);
       setOptimisticStopActive(true);
-      onSubmit(trimmed);
       setValue("");
+      if (isCoreStopRequestedByUser()) {
+        requestCoreFromSupervisor("ensure-started");
+        stopStartTimerRef.current = window.setTimeout(() => {
+          stopStartTimerRef.current = null;
+          onSubmit(trimmed);
+        }, CORE_START_DELAY_MS);
+        return;
+      }
+      onSubmit(trimmed);
     }, [inputLocked, onSubmit, value]);
     const handleSubmit = (0, import_react9.useCallback)(
       (event) => {
@@ -23177,7 +23236,7 @@ ${path2}` : path2;
     const stopActive = (agentBusy || optimisticStopActive) && !forceUnlocked;
     const handleActionClick = (0, import_react9.useCallback)(() => {
       if (stopActive) {
-        requestCoreFromSupervisor("restart");
+        requestCoreFromSupervisor("stop");
         setForceUnlocked(true);
         setOptimisticStopActive(false);
         return;
