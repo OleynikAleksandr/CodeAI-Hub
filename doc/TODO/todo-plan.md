@@ -309,3 +309,25 @@
 ### Stream 4: Package VSIX v1.1.662
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.662.vsix` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.662`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.662` (hash: `558ffae5`)
+
+---
+
+## Phase 237 — Shrink Stop ■ icon 10% + Release v1.1.663 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** Уменьшить белый прямоугольник (■) в кнопке Stop на ~10% (визуально аккуратнее) и пересобрать релиз `v1.1.663`.
+
+### Stream 0: UI stop icon size
+1. [TODO] Уменьшить ■ на 10% (20px → 18px) поверх красного фона, не меняя семантику кнопки (scope: `media/session-view.css`; expected commit: `fix(ui): shrink stop icon by 10%`).
+2. [TODO] Git Commit: `fix(ui): shrink stop icon by 10%` (hash: TBD)
+
+### Stream 1: Release notes v1.1.663
+1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.663` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.663 notes`).
+2. [TODO] Git Commit: `docs(release): v1.1.663 notes` (hash: TBD)
+
+### Stream 2: Release build-all v1.1.663
+1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.663`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.663`).
+2. [TODO] Git Commit: `chore(release): build-all v1.1.663` (hash: TBD)
+
+### Stream 3: Package VSIX v1.1.663
+1. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.663.vsix` (scope: `doc/Sessions/Session016.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.663`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.663` (hash: TBD)
