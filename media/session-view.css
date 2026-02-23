@@ -941,13 +941,8 @@
 }
 
 .session-input--wait-copy .session-input__textarea::placeholder {
-  color: var(
-    --session-input-wait-solid-color,
-    var(--session-input-wait-color, var(--session-hint-color))
-  );
-  opacity: 0.8;
-  animation: session-input-wait-copy-pulse 500ms ease-in-out infinite;
-  will-change: opacity;
+  color: transparent;
+  opacity: 0;
 }
 
 @keyframes session-input-wait-copy-pulse {
@@ -964,11 +959,23 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .session-input--wait-copy .session-input__textarea::placeholder {
-    animation: none;
-    opacity: 0.8;
-  }
+.session-input__wait-copy-overlay {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  pointer-events: none;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(
+    --session-input-wait-solid-color,
+    var(--session-input-wait-color, var(--session-hint-color))
+  );
+  opacity: 0.8;
+  font-size: 13px;
+  line-height: 20px;
+  animation: session-input-wait-copy-pulse 500ms ease-in-out infinite;
+  will-change: opacity;
 }
 
 .session-input__textarea--focused {

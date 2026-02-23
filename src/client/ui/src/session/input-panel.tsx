@@ -81,6 +81,8 @@ const InputPanel = ({
   const [value, setValue] = useState(draft);
   const formRef = useRef<HTMLFormElement | null>(null);
 
+  const waitCopyOverlayActive = waitCopyActive && value.length === 0;
+
   useEffect(() => {
     setValue(draft);
   }, [draft]);
@@ -152,6 +154,18 @@ const InputPanel = ({
     );
   };
 
+  const renderWaitCopyOverlay = () => {
+    if (!waitCopyOverlayActive) {
+      return null;
+    }
+
+    return (
+      <output aria-hidden="true" className="session-input__wait-copy-overlay">
+        {placeholder}
+      </output>
+    );
+  };
+
   const renderFooterTotal = () => (
     <div className="session-input__total">
       <span className="session-input__total-label">{"total:\u00a0\u00a0"}</span>
@@ -187,7 +201,12 @@ const InputPanel = ({
           maxHeight={MAX_TEXTAREA_HEIGHT}
           onSubmit={sendMessage}
           onValueChange={setValue}
-          overlaySlot={renderOverlayTimer()}
+          overlaySlot={
+            <>
+              {renderOverlayTimer()}
+              {renderWaitCopyOverlay()}
+            </>
+          }
           placeholder={placeholder}
           value={value}
         />
