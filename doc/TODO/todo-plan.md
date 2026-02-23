@@ -321,8 +321,8 @@
 2. [DONE] Git Commit: `fix(ui): shrink stop icon by 10%` (hash: `2245e189`)
 
 ### Stream 1: Release notes v1.1.663
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.663` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.663 notes`).
-2. [TODO] Git Commit: `docs(release): v1.1.663 notes` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.663` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.663 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.663 notes` (hash: `a1941c86`)
 
 ### Stream 2: Release build-all v1.1.663
 1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.663`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.663`).
