@@ -7,7 +7,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.653
+## Current Release — v1.1.654
+- Session UI: locked input “please wait” placeholders now use the provider wait color (matching the live turn timer) at 80% opacity.
 - Session timers: one-shot Description sessions (`resumeMode="no_resume"`) now show the live turn timer while running, without accumulating total time.
 - Session timers: SSOT moved to Core and delivered via workspace snapshots, so total/turn counters stay consistent across multi-workspace/multi-tab Project Manager usage and Project Manager reloads.
 - Session UI: `total:` label typography now matches timer digits (same size/family), so the footer indicator reads as a single aligned string.
