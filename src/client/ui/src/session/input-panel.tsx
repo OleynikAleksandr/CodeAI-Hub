@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { requestCoreShutdown } from "../core-bridge/core-shutdown";
 import {
   isCoreStopRequestedByUser,
   requestCoreFromSupervisor,
@@ -39,9 +40,7 @@ const InputPanel = ({
 }: InputPanelProps) => {
   const [forceUnlocked, setForceUnlocked] = useState(false);
   const [optimisticStopActive, setOptimisticStopActive] = useState(false);
-
   const stopStartTimerRef = useRef<number | null>(null);
-
   const inputLocked =
     (connectionState !== "idle" ||
       continuityLockActive ||
@@ -61,14 +60,15 @@ const InputPanel = ({
   ]
     .filter(Boolean)
     .join(" ");
-  const placeholder = resolveInputPlaceholder({
-    isQueued,
-    terminalNoResume,
-    connectionState,
-    continuityLockActive,
-    continuityErrorCopy,
-  });
-
+  const placeholder = forceUnlocked
+    ? "Core stopped. Type message and press Enter/▶ to restart and send."
+    : resolveInputPlaceholder({
+        isQueued,
+        terminalNoResume,
+        connectionState,
+        continuityLockActive,
+        continuityErrorCopy,
+      });
   const [value, setValue] = useState(draft);
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -225,6 +225,7 @@ const InputPanel = ({
   const handleActionClick = useCallback(() => {
     if (stopActive) {
       requestCoreFromSupervisor("stop");
+      requestCoreShutdown().catch(() => false);
       setForceUnlocked(true);
       setOptimisticStopActive(false);
       return;
