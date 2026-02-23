@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { requestCoreFromSupervisor } from "../core-bridge/supervisor-requests";
+import {
+  isCoreStopRequestedByUser,
+  requestCoreFromSupervisor,
+} from "../core-bridge/supervisor-requests";
 import type { ProviderTheme } from "./helpers";
 import { resolveProviderWaitColor } from "./helpers";
+import { resolveInputPlaceholder } from "./input-panel-placeholders";
 import InputPlayStopButton from "./input-play-stop-button";
 import { InputTextarea } from "./input-textarea";
 import type { TaskTimerSnapshot } from "./task-timer";
@@ -20,31 +24,7 @@ type InputPanelProps = {
 };
 
 const MAX_TEXTAREA_HEIGHT = 200;
-
-const resolvePlaceholder = (options: {
-  readonly isQueued: boolean;
-  readonly terminalNoResume: boolean;
-  readonly connectionState: string;
-  readonly continuityLockActive: boolean;
-  readonly continuityErrorCopy: string | null;
-}): string => {
-  if (options.isQueued) {
-    return "Message queued. Sending as soon as it is ready…";
-  }
-  if (options.terminalNoResume) {
-    return "This session is complete and read-only.";
-  }
-  if (options.connectionState === "running") {
-    return "Agent is working… Please wait.";
-  }
-  if (options.continuityLockActive || options.connectionState === "blocked") {
-    return "Agent is resuming your session… Please wait.";
-  }
-  if (options.continuityErrorCopy) {
-    return `Continuity failed: ${options.continuityErrorCopy}`;
-  }
-  return "Type your request or drag files with Shift held...";
-};
+const CORE_START_DELAY_MS = 2000;
 
 const InputPanel = ({
   draft,
@@ -59,6 +39,8 @@ const InputPanel = ({
 }: InputPanelProps) => {
   const [forceUnlocked, setForceUnlocked] = useState(false);
   const [optimisticStopActive, setOptimisticStopActive] = useState(false);
+
+  const stopStartTimerRef = useRef<number | null>(null);
 
   const inputLocked =
     (connectionState !== "idle" ||
@@ -79,7 +61,7 @@ const InputPanel = ({
   ]
     .filter(Boolean)
     .join(" ");
-  const placeholder = resolvePlaceholder({
+  const placeholder = resolveInputPlaceholder({
     isQueued,
     terminalNoResume,
     connectionState,
@@ -91,6 +73,16 @@ const InputPanel = ({
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const waitCopyOverlayActive = waitCopyActive && value.length === 0;
+
+  useEffect(
+    () => () => {
+      const timer = stopStartTimerRef.current;
+      if (timer !== null) {
+        window.clearTimeout(timer);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     setValue(draft);
@@ -154,10 +146,26 @@ const InputPanel = ({
     if (!trimmed) {
       return;
     }
+
+    if (stopStartTimerRef.current !== null) {
+      window.clearTimeout(stopStartTimerRef.current);
+      stopStartTimerRef.current = null;
+    }
+
     setForceUnlocked(false);
     setOptimisticStopActive(true);
-    onSubmit(trimmed);
     setValue("");
+
+    if (isCoreStopRequestedByUser()) {
+      requestCoreFromSupervisor("ensure-started");
+      stopStartTimerRef.current = window.setTimeout(() => {
+        stopStartTimerRef.current = null;
+        onSubmit(trimmed);
+      }, CORE_START_DELAY_MS);
+      return;
+    }
+
+    onSubmit(trimmed);
   }, [inputLocked, onSubmit, value]);
 
   const handleSubmit = useCallback(
@@ -216,7 +224,7 @@ const InputPanel = ({
 
   const handleActionClick = useCallback(() => {
     if (stopActive) {
-      requestCoreFromSupervisor("restart");
+      requestCoreFromSupervisor("stop");
       setForceUnlocked(true);
       setOptimisticStopActive(false);
       return;
