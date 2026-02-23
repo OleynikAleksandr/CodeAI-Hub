@@ -7,7 +7,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session008.md`
+  - `doc/Sessions/Session009.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -122,3 +122,29 @@
 ### Stream 3: Package VSIX v1.1.655
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.655.vsix` (scope: `doc/Sessions/Session008.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.655`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.655` (hash: `95ba3c7a`)
+
+---
+
+## Phase 230 — Wait copy overlay pulse fix + Release v1.1.656 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** Починить пульсацию locked wait copy в input: анимация `textarea::placeholder` не отрабатывала в Webview, поэтому переносим текст в overlay-элемент и анимируем opacity; собрать релиз `v1.1.656`.
+
+### Stream 0: UI overlay pulse
+1. [DONE] Перенести locked wait copy из `textarea::placeholder` в overlay-элемент поверх textarea + скрыть placeholder в wait-copy режиме (scope: `src/client/ui/src/session/input-panel.tsx`, `media/session-view.css`; expected commit: `fix(ui): pulse locked wait copy overlay`).
+2. [DONE] Git Commit: `fix(ui): pulse locked wait copy overlay` (hash: `c30698ea`)
+
+### Stream 1: Webview rebuild
+1. [DONE] Пересобрать webview bundle после UI изменений (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after wait copy overlay`).
+2. [DONE] Git Commit: `chore(build): rebuild webview after wait copy overlay` (hash: `d92e3fae`)
+
+### Stream 2: Release notes v1.1.656
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.656` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.656 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.656 notes` (hash: `85f37683`)
+
+### Stream 3: Release build-all v1.1.656
+1. [DONE] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.656`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.656`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.656` (hash: `45d9d9bb`)
+
+### Stream 4: Package VSIX v1.1.656
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.656.vsix` (scope: `doc/Sessions/Session009.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.656`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.656` (hash: TBD)
