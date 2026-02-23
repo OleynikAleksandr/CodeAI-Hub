@@ -7,7 +7,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session004.md`
+  - `doc/Sessions/Session006.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -48,3 +48,29 @@
 4. [DONE] Git Commit: `chore(release): build-all v1.1.652` (hash: `b57157ec`)
 5. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.652.vsix` (scope: `doc/Sessions/Session005.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.652`).
 6. [DONE] Git Commit: `chore(release): package vsix v1.1.652` (hash: `c650d372`)
+
+---
+
+## Phase 227 — One-shot Description turn timer + Release v1.1.653 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** Для one-shot сессий (resumeMode `no_resume`) показывать динамический turn timer во время выполнения, но не накапливать `totalSeconds`; собрать релиз `v1.1.653`.
+
+### Stream 0: Core one-shot turn timer
+1. [DONE] Поправить Core task timer: `no_resume` участвует в `runningSinceMs` (turn timer) пока сессия busy, но не добавляет в `totalSeconds` (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `fix(core): show turn timer for no_resume sessions`).
+2. [DONE] Git Commit: `fix(core): show turn timer for no_resume sessions` (hash: `2fb0920f`)
+
+### Stream 1: Contract update
+1. [DONE] Уточнить контракт: one-shot сессии показывают turn timer во время выполнения, total не накапливается (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`; expected commit: `docs(contracts): clarify one-shot turn timer`).
+2. [DONE] Git Commit: `docs(contracts): clarify one-shot turn timer` (hash: `ef5d269c`)
+
+### Stream 2: Release notes v1.1.653
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.653` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.653 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.653 notes` (hash: `c6eabbb2`)
+
+### Stream 3: Release build-all v1.1.653
+1. [DONE] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.653`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.653`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.653` (hash: `c9690093`)
+
+### Stream 4: Package VSIX v1.1.653
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.653.vsix` (scope: `doc/Sessions/Session006.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.653`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.653` (hash: TBD)
