@@ -8296,14 +8296,40 @@
   };
   var coreStopRequestedByUser = false;
   var isCoreStopRequestedByUser = () => coreStopRequestedByUser;
+  var tryRequestCoreFromVsCode = (type) => {
+    const api = window.acquireVsCodeApi?.();
+    if (!api) {
+      return false;
+    }
+    try {
+      api.postMessage({ type });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  var tryRequestCoreFromLauncher = () => {
+    const launcher = window.codeaiLauncher;
+    if (!launcher || typeof launcher.ensureCoreRunning !== "function") {
+      return false;
+    }
+    try {
+      launcher.ensureCoreRunning();
+      return true;
+    } catch {
+      return false;
+    }
+  };
   var requestCoreFromSupervisor = (mode) => {
     coreStopRequestedByUser = mode === "stop";
-    try {
-      window.acquireVsCodeApi?.().postMessage({
-        type: SUPERVISOR_REQUEST_TYPES[mode]
-      });
-    } catch {
+    const requestType = SUPERVISOR_REQUEST_TYPES[mode];
+    if (tryRequestCoreFromVsCode(requestType)) {
+      return;
     }
+    if (mode === "stop") {
+      return;
+    }
+    tryRequestCoreFromLauncher();
   };
 
   // src/client/ui/src/core-bridge/core-bridge-reconnect.ts
