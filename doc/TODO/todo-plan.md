@@ -299,8 +299,8 @@
 2. [DONE] Git Commit: `chore(build): rebuild webview after launcher core start bridge` (hash: `26303a23`)
 
 ### Stream 2: Release notes v1.1.662
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.662` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.662 notes`).
-2. [TODO] Git Commit: `docs(release): v1.1.662 notes` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.662` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.662 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.662 notes` (hash: `fc8a5e56`)
 
 ### Stream 3: Release build-all v1.1.662
 1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.662`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.662`).
