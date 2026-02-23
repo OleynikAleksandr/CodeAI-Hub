@@ -283,3 +283,29 @@
 ### Stream 4: Package VSIX v1.1.661
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.661.vsix` (scope: `doc/Sessions/Session014.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.661`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.661` (hash: `57f9f68d`)
+
+---
+
+## Phase 236 — Enter/▶ must start Core after Stop (CEF) + Release v1.1.662 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** После ручного stop (■ → `POST /api/v1/shutdown`) Enter/▶ должны запускать Core и только потом отправлять новое сообщение **в Standalone Project Manager (CEF)** (где нет `acquireVsCodeApi`), без ручного запуска ядра через внешние скрипты; собрать релиз `v1.1.662`.
+
+### Stream 0: Launcher core-start bridge + UI fallback
+1. [IN_PROGRESS] Добавить bridge `window.codeaiLauncher.ensureCoreRunning()` и обработчик `codeai://core-start` в CEF Launcher; UI должен использовать этот bridge как fallback, если нет VS Code API (scope: `packages/cef-launcher/src/launcher_handler.cc`, `src/client/ui/src/core-bridge/supervisor-requests.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `fix(launcher): start core via launcher bridge`).
+2. [TODO] Git Commit: `fix(launcher): start core via launcher bridge` (hash: TBD)
+
+### Stream 1: Webview rebuild
+1. [TODO] Пересобрать webview bundle после изменений UI bridge (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after launcher core start bridge`).
+2. [TODO] Git Commit: `chore(build): rebuild webview after launcher core start bridge` (hash: TBD)
+
+### Stream 2: Release notes v1.1.662
+1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.662` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.662 notes`).
+2. [TODO] Git Commit: `docs(release): v1.1.662 notes` (hash: TBD)
+
+### Stream 3: Release build-all v1.1.662
+1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.662`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.662`).
+2. [TODO] Git Commit: `chore(release): build-all v1.1.662` (hash: TBD)
+
+### Stream 4: Package VSIX v1.1.662
+1. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.662.vsix` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.662`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.662` (hash: TBD)
