@@ -257,3 +257,29 @@
 ### Stream 7: Package VSIX v1.1.660
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.660.vsix` (scope: `doc/Sessions/Session013.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.660`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.660` (hash: `e16b31f8`)
+
+---
+
+## Phase 235 — Stop ■ must actually stop Core + Release v1.1.661 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** Исправить поведение ■: кнопка должна реально останавливать Core (как `POST /api/v1/shutdown` из `codeai-core-control.js`), а UI не должен оставлять placeholder “Agent is working…” после stop; собрать релиз `v1.1.661`.
+
+### Stream 0: Stop core via shutdown endpoint
+1. [TODO] Stop: при нажатии ■ отправлять `POST /api/v1/shutdown` в Core (и только потом разблокировать UX), чтобы текущий turn реально прерывался; placeholder после stop должен отражать остановку (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/core-bridge/core-shutdown.ts` (new), `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `fix(ui): stop button shuts down core`).
+2. [TODO] Git Commit: `fix(ui): stop button shuts down core` (hash: TBD)
+
+### Stream 1: Webview rebuild
+1. [TODO] Пересобрать webview bundle после UI изменений (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after core shutdown stop`).
+2. [TODO] Git Commit: `chore(build): rebuild webview after core shutdown stop` (hash: TBD)
+
+### Stream 2: Release notes v1.1.661
+1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.661` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.661 notes`).
+2. [TODO] Git Commit: `docs(release): v1.1.661 notes` (hash: TBD)
+
+### Stream 3: Release build-all v1.1.661
+1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.661`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.661`).
+2. [TODO] Git Commit: `chore(release): build-all v1.1.661` (hash: TBD)
+
+### Stream 4: Package VSIX v1.1.661
+1. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.661.vsix` (scope: `doc/Sessions/Session014.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.661`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.661` (hash: TBD)
