@@ -7,7 +7,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session010.md`
+  - `doc/Sessions/Session011.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -170,3 +170,25 @@
 ### Stream 3: Package VSIX v1.1.657
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.657.vsix` (scope: `doc/Sessions/Session010.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.657`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.657` (hash: `d631911c`)
+
+---
+
+## Phase 232 — Tune wait copy pulse range + Release v1.1.658 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** Подстроить диапазон пульсации locked wait copy в input до opacity 20% → 40% (период 1000ms); собрать релиз `v1.1.658`.
+
+### Stream 0: UI pulse range
+1. [DONE] Изменить диапазон opacity пульсации (scope: `media/session-view.css`; expected commit: `fix(ui): tune locked wait copy pulse range`).
+2. [DONE] Git Commit: `fix(ui): tune locked wait copy pulse range` (hash: `5415ba47`)
+
+### Stream 1: Release notes v1.1.658
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под `v1.1.658` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.658 notes`).
+2. [DONE] Git Commit: `docs(release): v1.1.658 notes` (hash: `80521560`)
+
+### Stream 2: Release build-all v1.1.658
+1. [DONE] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.658`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.658`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.658` (hash: `394319a6`)
+
+### Stream 3: Package VSIX v1.1.658
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.658.vsix` (scope: `doc/Sessions/Session011.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.658`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.658` (hash: TBD)
