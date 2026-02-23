@@ -325,8 +325,8 @@
 2. [DONE] Git Commit: `docs(release): v1.1.663 notes` (hash: `a1941c86`)
 
 ### Stream 2: Release build-all v1.1.663
-1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.663`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.663`).
-2. [TODO] Git Commit: `chore(release): build-all v1.1.663` (hash: TBD)
+1. [DONE] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.663`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.663`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.663` (hash: `a3189069`)
 
 ### Stream 3: Package VSIX v1.1.663
 1. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.663.vsix` (scope: `doc/Sessions/Session016.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.663`).
