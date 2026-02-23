@@ -946,6 +946,29 @@
     var(--session-input-wait-color, var(--session-hint-color))
   );
   opacity: 0.8;
+  animation: session-input-wait-copy-pulse 500ms ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes session-input-wait-copy-pulse {
+  0% {
+    opacity: 0.05;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0.05;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-input--wait-copy .session-input__textarea::placeholder {
+    animation: none;
+    opacity: 0.8;
+  }
 }
 
 .session-input__textarea--focused {
