@@ -119,7 +119,9 @@ Continuity делит долгий диалог на runtime‑сегменты 
 **Поведение:**
 - ▶ — отправляет сообщение как Enter.
 - ■ — останавливает Core (через `POST /api/v1/shutdown`, без авто‑рестарта) и форс‑разблокирует input, чтобы пользователь мог подготовить новый запрос (placeholder “Agent is working…” не должен оставаться после stop).
-- Следующая отправка (Enter/▶) сначала запускает Core, затем отправляет новое сообщение после восстановления соединения.
+- Следующая отправка (Enter/▶) сначала запускает Core, затем отправляет новое сообщение после восстановления соединения:
+  - VS Code webview: через Supervisor (`acquireVsCodeApi().postMessage(...)`).
+  - Standalone Project Manager (CEF): через Launcher bridge `window.codeaiLauncher.ensureCoreRunning()` → `codeai://core-start`.
 
 ---
 

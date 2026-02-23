@@ -24,6 +24,7 @@ LauncherHandler* g_handler_instance = nullptr;
 constexpr char kLauncherScheme[] = "codeai";
 constexpr char kLauncherPickFolderHost[] = "pick-folder";
 constexpr char kLauncherFileDropHost[] = "file-drop";
+constexpr char kLauncherCoreStartHost[] = "core-start";
 
 std::string ToDataUri(const std::string& data, const std::string& mime_type) {
   return "data:" + mime_type + ";base64," +
@@ -65,6 +66,23 @@ bool IsFileDropRequest(const std::string& url) {
   return path == std::string("/") + kLauncherFileDropHost;
 }
 
+bool IsCoreStartRequest(const std::string& url) {
+  CefURLParts parts;
+  if (!CefParseURL(url, parts)) {
+    return false;
+  }
+  const std::string scheme = CefString(&parts.scheme);
+  if (scheme != kLauncherScheme) {
+    return false;
+  }
+  const std::string host = CefString(&parts.host);
+  if (host == kLauncherCoreStartHost) {
+    return true;
+  }
+  const std::string path = CefString(&parts.path);
+  return path == std::string("/") + kLauncherCoreStartHost;
+}
+
 void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
   if (!frame) {
     return;
@@ -88,6 +106,13 @@ void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
 	      return true;
 	    };
 	  }
+
+  if (typeof window.codeaiLauncher.ensureCoreRunning !== "function") {
+    window.codeaiLauncher.ensureCoreRunning = () => {
+      window.location.href = "codeai://core-start";
+      return true;
+    };
+  }
 })()
 )JS";
   frame->ExecuteJavaScript(script, frame->GetURL(), 0);
@@ -306,6 +331,15 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
     return false;
   }
   const std::string url = request->GetURL();
+
+  if (IsCoreStartRequest(url)) {
+    CefPostTask(
+      TID_FILE_BACKGROUND,
+      base::BindOnce([]() {
+        static_cast<void>(codeai::launcher::EnsureCoreProcessRunning());
+      }));
+    return true;
+  }
 
   if (IsFileDropRequest(url)) {
     SendDroppedFiles(browser, last_drag_file_paths_);
