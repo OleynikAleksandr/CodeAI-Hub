@@ -910,6 +910,66 @@
   --session-timer-right: 12px;
 }
 
+.session-input__row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+}
+
+.session-input__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.session-input__action-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(30, 30, 30, 1);
+  color: rgba(220, 220, 220, 1);
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.session-input__action-button:hover {
+  background-color: rgba(40, 40, 40, 1);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.session-input__action-button:focus-visible {
+  outline: 2px solid rgba(59, 117, 207, 0.6);
+  outline-offset: 2px;
+}
+
+.session-input__action-button--stop {
+  background-color: rgba(220, 61, 61, 0.14);
+  border-color: rgba(220, 61, 61, 0.32);
+  color: rgba(255, 190, 190, 1);
+}
+
+.session-input__action-button--stop:hover {
+  background-color: rgba(220, 61, 61, 0.2);
+  border-color: rgba(220, 61, 61, 0.45);
+}
+
+.session-input__action-icon {
+  display: block;
+  font-size: 14px;
+  line-height: 1;
+}
+
 .session-input__container {
   position: relative;
   width: 100%;

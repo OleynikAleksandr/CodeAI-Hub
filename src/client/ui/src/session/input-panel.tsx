@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { requestCoreFromSupervisor } from "../core-bridge/supervisor-requests";
 import type { ProviderTheme } from "./helpers";
 import { resolveProviderWaitColor } from "./helpers";
+import InputPlayStopButton from "./input-play-stop-button";
 import { InputTextarea } from "./input-textarea";
 import type { TaskTimerSnapshot } from "./task-timer";
 import { TaskTimer } from "./task-timer";
@@ -55,8 +57,15 @@ const InputPanel = ({
   taskTimer = null,
   onSubmit,
 }: InputPanelProps) => {
+  const [forceUnlocked, setForceUnlocked] = useState(false);
+  const [optimisticStopActive, setOptimisticStopActive] = useState(false);
+
   const inputLocked =
-    connectionState !== "idle" || continuityLockActive || isQueued;
+    (connectionState !== "idle" ||
+      continuityLockActive ||
+      isQueued ||
+      terminalNoResume) &&
+    !forceUnlocked;
   const agentBusy =
     !terminalNoResume &&
     (connectionState !== "idle" || continuityLockActive || isQueued);
@@ -86,6 +95,28 @@ const InputPanel = ({
   useEffect(() => {
     setValue(draft);
   }, [draft]);
+
+  useEffect(() => {
+    if (optimisticStopActive && agentBusy) {
+      setOptimisticStopActive(false);
+      return;
+    }
+
+    if (
+      optimisticStopActive &&
+      connectionState === "idle" &&
+      !continuityLockActive &&
+      !isQueued
+    ) {
+      setOptimisticStopActive(false);
+    }
+  }, [
+    agentBusy,
+    connectionState,
+    continuityLockActive,
+    isQueued,
+    optimisticStopActive,
+  ]);
 
   useEffect(() => {
     const form = formRef.current;
@@ -123,6 +154,8 @@ const InputPanel = ({
     if (!trimmed) {
       return;
     }
+    setForceUnlocked(false);
+    setOptimisticStopActive(true);
     onSubmit(trimmed);
     setValue("");
   }, [inputLocked, onSubmit, value]);
@@ -179,6 +212,19 @@ const InputPanel = ({
     </div>
   );
 
+  const stopActive = (agentBusy || optimisticStopActive) && !forceUnlocked;
+
+  const handleActionClick = useCallback(() => {
+    if (stopActive) {
+      requestCoreFromSupervisor("restart");
+      setForceUnlocked(true);
+      setOptimisticStopActive(false);
+      return;
+    }
+
+    sendMessage();
+  }, [sendMessage, stopActive]);
+
   return (
     <form
       aria-label="Message input"
@@ -186,31 +232,44 @@ const InputPanel = ({
       onSubmit={handleSubmit}
       ref={formRef}
     >
-      <fieldset
-        disabled={inputLocked}
-        style={{ border: 0, padding: 0, margin: 0 }}
-      >
-        <InputTextarea
-          classes={{
-            container: "session-input__container",
-            containerDragging: "session-input__container--dragging",
-            textarea: "session-input__textarea",
-            textareaFocused: "session-input__textarea--focused",
-            overlay: "session-input__overlay",
+      <div className="session-input__row">
+        <fieldset
+          disabled={inputLocked}
+          style={{
+            border: 0,
+            padding: 0,
+            margin: 0,
+            flex: "1 1 auto",
+            minWidth: 0,
           }}
-          maxHeight={MAX_TEXTAREA_HEIGHT}
-          onSubmit={sendMessage}
-          onValueChange={setValue}
-          overlaySlot={
-            <>
-              {renderOverlayTimer()}
-              {renderWaitCopyOverlay()}
-            </>
-          }
-          placeholder={placeholder}
-          value={value}
+        >
+          <InputTextarea
+            classes={{
+              container: "session-input__container",
+              containerDragging: "session-input__container--dragging",
+              textarea: "session-input__textarea",
+              textareaFocused: "session-input__textarea--focused",
+              overlay: "session-input__overlay",
+            }}
+            maxHeight={MAX_TEXTAREA_HEIGHT}
+            onSubmit={sendMessage}
+            onValueChange={setValue}
+            overlaySlot={
+              <>
+                {renderOverlayTimer()}
+                {renderWaitCopyOverlay()}
+              </>
+            }
+            placeholder={placeholder}
+            value={value}
+          />
+        </fieldset>
+
+        <InputPlayStopButton
+          onClick={handleActionClick}
+          stopActive={stopActive}
         />
-      </fieldset>
+      </div>
 
       <div className="session-input__footer">
         <span
