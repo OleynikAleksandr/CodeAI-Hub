@@ -265,8 +265,8 @@
 **Goal:** Исправить поведение ■: кнопка должна реально останавливать Core (как `POST /api/v1/shutdown` из `codeai-core-control.js`), а UI не должен оставлять placeholder “Agent is working…” после stop; собрать релиз `v1.1.661`.
 
 ### Stream 0: Stop core via shutdown endpoint
-1. [TODO] Stop: при нажатии ■ отправлять `POST /api/v1/shutdown` в Core (и только потом разблокировать UX), чтобы текущий turn реально прерывался; placeholder после stop должен отражать остановку (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/core-bridge/core-shutdown.ts` (new), `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `fix(ui): stop button shuts down core`).
-2. [TODO] Git Commit: `fix(ui): stop button shuts down core` (hash: TBD)
+1. [DONE] Stop: при нажатии ■ отправлять `POST /api/v1/shutdown` в Core (и только потом разблокировать UX), чтобы текущий turn реально прерывался; placeholder после stop должен отражать остановку (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/core-bridge/core-shutdown.ts` (new), `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `fix(ui): stop button shuts down core`).
+2. [DONE] Git Commit: `fix(ui): stop button shuts down core` (hash: `90ac41e6`)
 
 ### Stream 1: Webview rebuild
 1. [TODO] Пересобрать webview bundle после UI изменений (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after core shutdown stop`).
