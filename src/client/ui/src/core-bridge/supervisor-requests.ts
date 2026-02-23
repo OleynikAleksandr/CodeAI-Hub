@@ -1,7 +1,12 @@
 type SupervisorRequestMode = "ensure-started" | "restart" | "stop";
 
-type VsCodeWindow = typeof window & {
+type LauncherBridge = {
+  readonly ensureCoreRunning?: () => unknown;
+};
+
+type BridgeWindow = typeof window & {
   acquireVsCodeApi?: () => { postMessage: (m: unknown) => void };
+  codeaiLauncher?: LauncherBridge;
 };
 
 const SUPERVISOR_REQUEST_TYPES = {
@@ -18,15 +23,46 @@ export const clearCoreStopRequestedByUser = (): void => {
   coreStopRequestedByUser = false;
 };
 
+const tryRequestCoreFromVsCode = (type: string): boolean => {
+  const api = (window as BridgeWindow).acquireVsCodeApi?.();
+  if (!api) {
+    return false;
+  }
+
+  try {
+    api.postMessage({ type });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const tryRequestCoreFromLauncher = (): boolean => {
+  const launcher = (window as BridgeWindow).codeaiLauncher;
+  if (!launcher || typeof launcher.ensureCoreRunning !== "function") {
+    return false;
+  }
+
+  try {
+    launcher.ensureCoreRunning();
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const requestCoreFromSupervisor = (
   mode: SupervisorRequestMode
 ): void => {
   coreStopRequestedByUser = mode === "stop";
-  try {
-    (window as VsCodeWindow).acquireVsCodeApi?.().postMessage({
-      type: SUPERVISOR_REQUEST_TYPES[mode],
-    });
-  } catch {
-    /* noop */
+  const requestType = SUPERVISOR_REQUEST_TYPES[mode];
+  if (tryRequestCoreFromVsCode(requestType)) {
+    return;
   }
+
+  if (mode === "stop") {
+    return;
+  }
+
+  tryRequestCoreFromLauncher();
 };
