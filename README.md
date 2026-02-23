@@ -7,8 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.661
-- Session UI: ■ now reliably stops Core via the shutdown endpoint (`POST /api/v1/shutdown`) and clears the confusing “Agent is working…” placeholder; next ▶ / Enter starts Core and sends after reconnect.
+## Current Release — v1.1.662
+- Session UI (Standalone Project Manager / CEF): after Stop (■), the next ▶ / Enter now reliably starts Core again (via Launcher bridge) and then sends the message.
+- Session UI: ■ reliably stops Core via the shutdown endpoint (`POST /api/v1/shutdown`) and clears the confusing “Agent is working…” placeholder.
 - Session UI: locked input “please wait” placeholders now pulse opacity from 20% to 40% every 1000ms (provider color).
 - Session UI: locked input “please wait” placeholders now use the provider wait color (matching the live turn timer).
 - Session timers: one-shot Description sessions (`resumeMode="no_resume"`) now show the live turn timer while running, without accumulating total time.

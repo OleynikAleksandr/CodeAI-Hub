@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.662] - 2026-02-23
+### Fixed
+- Standalone Project Manager (CEF): after Stop (■), the next Enter/▶ now starts Core again via the Launcher bridge (instead of getting stuck with Core stopped).
+
 ## [1.1.661] - 2026-02-23
 ### Fixed
 - Session UI: ■ now reliably stops Core by calling the shutdown endpoint (`POST /api/v1/shutdown`) and no longer leaves the “Agent is working…” placeholder visible after Stop.
