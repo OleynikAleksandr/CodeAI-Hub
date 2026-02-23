@@ -45,6 +45,7 @@ type ClientSelection = {
 type MutableTaskTimerState = {
   totalSeconds: number;
   runningSinceMs: number | null;
+  runningAccumulates: boolean;
 };
 
 type NotifySessionPatch = Partial<
@@ -80,9 +81,6 @@ const fallbackSelectionIdFactory = (): string => {
 };
 
 const isSessionBusyForTimer = (session: SessionSnapshot): boolean => {
-  if (session.resumeMode === "no_resume") {
-    return false;
-  }
   if (session.terminalLockReason === "terminal_no_resume") {
     return false;
   }
@@ -93,6 +91,13 @@ const isSessionBusyForTimer = (session: SessionSnapshot): boolean => {
     return true;
   }
   return session.continuityLockTransition?.awaitingBootstrapTurn === true;
+};
+
+const isSessionAccumulativeForTimer = (session: SessionSnapshot): boolean => {
+  if (session.resumeMode === "no_resume") {
+    return false;
+  }
+  return session.terminalLockReason !== "terminal_no_resume";
 };
 
 export class WorkspaceRuntimeFacade {
@@ -483,23 +488,32 @@ export class WorkspaceRuntimeFacade {
       this.taskTimersByWorkspaceRoot.set(workspaceRoot, timers);
     }
 
-    const busy = Array.from(state.sessions.values()).some(
-      (session) => session.nodeId === nodeId && isSessionBusyForTimer(session)
+    const nodeSessions = Array.from(state.sessions.values()).filter(
+      (session) => session.nodeId === nodeId
     );
+    const busySessions = nodeSessions.filter(isSessionBusyForTimer);
+    const busy = busySessions.length > 0;
+    const accumulative = busySessions.some(isSessionAccumulativeForTimer);
 
     const timer = timers.get(nodeId) ?? {
       totalSeconds: 0,
       runningSinceMs: null,
+      runningAccumulates: false,
     };
     if (busy) {
       if (timer.runningSinceMs === null) {
         timer.runningSinceMs = Date.now();
+        timer.runningAccumulates = accumulative;
+        timers.set(nodeId, timer);
+      } else if (accumulative && !timer.runningAccumulates) {
+        timer.runningAccumulates = true;
         timers.set(nodeId, timer);
       }
       return;
     }
 
     if (timer.runningSinceMs === null) {
+      timer.runningAccumulates = false;
       timers.set(nodeId, timer);
       return;
     }
@@ -508,9 +522,12 @@ export class WorkspaceRuntimeFacade {
       0,
       Math.floor((Date.now() - timer.runningSinceMs) / 1000)
     );
-    timer.totalSeconds =
-      Math.max(0, Math.floor(timer.totalSeconds)) + deltaSeconds;
+    if (timer.runningAccumulates) {
+      timer.totalSeconds =
+        Math.max(0, Math.floor(timer.totalSeconds)) + deltaSeconds;
+    }
     timer.runningSinceMs = null;
+    timer.runningAccumulates = false;
     timers.set(nodeId, timer);
   }
 }
