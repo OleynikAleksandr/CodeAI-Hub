@@ -217,3 +217,43 @@
 ### Stream 4: Package VSIX v1.1.659
 1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.659.vsix` (scope: `doc/Sessions/Session012.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.659`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.659` (hash: `2abf61d1`)
+
+---
+
+## Phase 234 — Stop Core on ■ + Resume-on-send + Release v1.1.660 (owner: Codex, updated: 2026-02-23)
+
+**Goal:** Заменить поведение ■: вместо быстрого restart Core делать остановку Core, а следующая отправка (Enter/▶) должна сначала запускать Core, затем отправлять сообщение пользователя после восстановления соединения; улучшить выравнивание/иконку и собрать релиз `v1.1.660`.
+
+### Stream 0: Core stop request (Supervisor)
+1. [DONE] Добавить webview message `core:stop-request` и публичный `CoreProcessManager.stop()` (scope: `src/extension-module/home-view-message-router.ts`, `src/extension-module/core/core-process-manager.ts`, `src/client/ui/src/core-bridge/supervisor-requests.ts`; expected commit: `feat(core): add core stop request`).
+2. [DONE] Git Commit: `feat(core): add core stop request` (hash: `b0e9f24a`)
+
+### Stream 1: UI stop semantics (no auto-start)
+1. [DONE] Core bridge: при ручной остановке Core не вызывать Supervisor auto-start, пока пользователь не отправит сообщение (scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/core-bridge/core-bridge-reconnect.ts`; expected commit: `fix(ui): pause auto-start after core stop`).
+2. [DONE] Git Commit: `fix(ui): pause auto-start after core stop` (hash: `6ed0518b`)
+3. [DONE] Session UI: ■ останавливает Core и форс-разблокирует input; следующая отправка запускает Core и отправляет сообщение после задержки (scope: `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-panel-placeholders.ts`; expected commit: `fix(ui): stop button stops core`).
+4. [DONE] Git Commit: `fix(ui): stop button stops core` (hash: `51f7482b`)
+
+### Stream 2: UI visuals
+1. [DONE] Подправить выравнивание кнопки и визуал ■ (больше, поверх красного фона) (scope: `media/session-view.css`, `src/client/ui/src/session/input-play-stop-button.tsx`; expected commit: `fix(ui): tune stop button visuals`).
+2. [DONE] Git Commit: `fix(ui): tune stop button visuals` (hash: `fb9e5607`)
+
+### Stream 3: Contract update
+1. [TODO] Обновить контракт Session UI под новое поведение кнопки ■ (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `docs(contracts): document stop-core button behavior`).
+2. [TODO] Git Commit: `docs(contracts): document stop-core button behavior` (hash: TBD)
+
+### Stream 4: Webview rebuild
+1. [TODO] Пересобрать webview bundle после UI изменений (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview after stop-core button`).
+2. [TODO] Git Commit: `chore(build): rebuild webview after stop-core button` (hash: TBD)
+
+### Stream 5: Release notes v1.1.660
+1. [TODO] Обновить `README.md` и `CHANGELOG.md` под `v1.1.660` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): v1.1.660 notes`).
+2. [TODO] Git Commit: `docs(release): v1.1.660 notes` (hash: TBD)
+
+### Stream 6: Release build-all v1.1.660
+1. [TODO] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.660`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.660`).
+2. [TODO] Git Commit: `chore(release): build-all v1.1.660` (hash: TBD)
+
+### Stream 7: Package VSIX v1.1.660
+1. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.660.vsix` (scope: `doc/Sessions/Session013.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.660`).
+2. [TODO] Git Commit: `chore(release): package vsix v1.1.660` (hash: TBD)
