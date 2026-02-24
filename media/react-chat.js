@@ -22085,25 +22085,70 @@ ${message.content}`
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
   var InputPlayStopButton = ({
     stopActive,
-    onClick
+    onClick,
+    descriptionRestartAttempt = null
   }) => {
-    const label = stopActive ? "Stop (stop core)" : "Send message (Enter)";
-    const iconClassName = [
-      "session-input__action-icon",
-      stopActive ? "session-input__action-icon--stop" : "session-input__action-icon--play"
-    ].filter(Boolean).join(" ");
+    const [restartInFlight, setRestartInFlight] = (0, import_react5.useState)(false);
+    const restartTimerRef = (0, import_react5.useRef)(null);
+    const restartAttemptActive = descriptionRestartAttempt != null && descriptionRestartAttempt.workspacePath.trim().length > 0 && descriptionRestartAttempt.workspaceSlug.trim().length > 0;
+    const showStop = stopActive && !restartAttemptActive;
+    let label = "Send message (Enter)";
+    if (restartAttemptActive) {
+      label = "\u21BB Restart attempt";
+    } else if (showStop) {
+      label = "Stop (stop core)";
+    }
+    let iconModifierClass = "session-input__action-icon--play";
+    if (showStop) {
+      iconModifierClass = "session-input__action-icon--stop";
+    }
+    const iconClassName = ["session-input__action-icon", iconModifierClass].filter(Boolean).join(" ");
+    let iconContent = "\u25B6";
+    if (restartAttemptActive) {
+      iconContent = "\u21BB";
+    } else if (showStop) {
+      iconContent = null;
+    }
+    (0, import_react5.useEffect)(
+      () => () => {
+        if (restartTimerRef.current !== null) {
+          window.clearTimeout(restartTimerRef.current);
+        }
+      },
+      []
+    );
+    const handleClick = () => {
+      if (restartAttemptActive) {
+        if (restartInFlight) {
+          return;
+        }
+        setRestartInFlight(true);
+        window.dispatchEvent(
+          new CustomEvent("pm:description:restart-attempt", {
+            detail: descriptionRestartAttempt
+          })
+        );
+        restartTimerRef.current = window.setTimeout(() => {
+          restartTimerRef.current = null;
+          setRestartInFlight(false);
+        }, 15e3);
+        return;
+      }
+      onClick();
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-input__action", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "button",
       {
         "aria-label": label,
         className: [
           "session-input__action-button",
-          stopActive ? "session-input__action-button--stop" : ""
+          showStop || restartAttemptActive ? "session-input__action-button--stop" : ""
         ].filter(Boolean).join(" "),
-        onClick,
+        disabled: restartAttemptActive && restartInFlight,
+        onClick: handleClick,
         title: label,
         type: "button",
-        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", className: iconClassName, children: stopActive ? null : "\u25B6" })
+        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", className: iconClassName, children: iconContent })
       }
     ) });
   };
@@ -23126,6 +23171,7 @@ ${path2}` : path2;
     continuityErrorCopy = null,
     isQueued = false,
     providerTheme = null,
+    descriptionRestartAttempt = null,
     terminalNoResume = false,
     taskTimer = null,
     onSubmit
@@ -23330,6 +23376,7 @@ ${path2}` : path2;
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               input_play_stop_button_default,
               {
+                descriptionRestartAttempt,
                 onClick: handleActionClick,
                 stopActive
               }
@@ -24089,6 +24136,11 @@ ${path2}` : path2;
       (session) => session.id === activeSessionId
     );
     const primaryProviderId = activeRecord?.providerIds[0] ?? null;
+    const descriptionRestartAttempt = activeRecord?.stage === "description" && activeRecord.runSlug !== "reviewer" && activeRecord.initiativeSlug ? {
+      workspacePath: activeRecord.workspacePath,
+      workspaceSlug: activeRecord.initiativeSlug,
+      providerId: primaryProviderId
+    } : null;
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = resolveProviderDisplayLabel({
       providerId: primaryProviderId,
@@ -24169,6 +24221,7 @@ ${path2}` : path2;
               connectionState: inputConnectionState,
               continuityErrorCopy,
               continuityLockActive: effectiveContinuityLockActive,
+              descriptionRestartAttempt,
               draft: activeSession.draft,
               isQueued,
               onSubmit: submitMessage,
