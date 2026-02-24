@@ -36,6 +36,7 @@
 | BUG-2026-02-22-01 | FIXED | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | 1.1.646 |
 | BUG-2026-02-24-01 | FIXED | PM/UI + Core Runtime | one-shot `description`: завис mid-turn → нет аварийного recovery без рестарта Core | 1.1.664 |
 | BUG-2026-02-24-02 | FIXED | Launcher/CEF | Standalone PM (CEF): crash on ↻ Restart attempt confirm | 1.1.665 |
+| BUG-2026-02-24-03 | OPEN | PM/UI | ↻ Restart attempt создаёт новую сессию, но PM остаётся на старой («resuming…») | TBD |
 
 ---
 
@@ -112,6 +113,29 @@
 **Guards (smoke):**
 - Standalone PM → one-shot `Description` → клик ↻ (arm) → второй клик → restart attempt; приложение не падает.
 - `questionnaire.md` header ↻: аналогично.
+
+---
+
+## BUG-2026-02-24-03 — PM/UI: ↻ Restart attempt creates a new session, but PM stays on the old one
+
+**Status:** OPEN
+
+**Symptom:**
+- После ↻ Restart attempt (one-shot `Description`) новая сессия создаётся и появляется в дереве.
+- Но в Project Manager продолжает висеть старая оборванная сессия; в input остаётся wait‑copy вида “Agent is resuming your session…”.
+- Если кликнуть на новую сессию в дереве — открывается корректная новая сессия.
+
+**Root cause (hypothesis):**
+- Restart attempt создаёт новую сессию, но **не сообщает PM, что нужно сфокусироваться на `sessionId` новой попытки** (нет explicit focus / preferred session intent).
+- После аварии (Core stop/start) окно “workspace in-scope” может быть неактивным/не до конца гидратированным в момент `session:created`, из‑за чего runtime view не авто‑выбирает новую сессию.
+
+**Fix (target):**
+- При restart attempt (и из Session UI, и из `questionnaire.md` header) после `session:created`:
+  - авто‑сфокусировать новую сессию в main session panel;
+  - убрать артефакт “resuming…” от старой оборванной сессии (потому что она больше не “активная”).
+
+**Guards (smoke):**
+- Standalone PM → Description one-shot → сымитировать Core stop/start mid-turn → ↻ Restart attempt → новая сессия автоматически открывается без кликов в дереве.
 
 ---
 
