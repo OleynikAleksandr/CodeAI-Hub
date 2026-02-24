@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.668] - 2026-02-24
+### Fixed
+- Project Manager (one-shot Description): after ↻ Restart attempt, auto-focus the newly created session (no manual click in the tree) (BUG-2026-02-24-03).
+
 ## [1.1.667] - 2026-02-24
 ### Changed
 - Rebuild of `1.1.666` to avoid the `666` version number; no functional differences.
