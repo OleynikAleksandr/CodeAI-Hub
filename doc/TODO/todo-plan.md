@@ -32,4 +32,31 @@
 
 ### Stream 2: TODO bookkeeping
 1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить пункты как DONE и вписать hash коммитов Phase 240 (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 240 complete`).
-2. [DONE] Git Commit: `docs(todo): mark Phase 240 complete` (hash: TBD)
+2. [DONE] Git Commit: `docs(todo): mark Phase 240 complete` (hash: `7fec6921`)
+
+---
+
+## Phase 241 — Release 1.1.666: Restart attempt confirm UX (owner: Codex, updated: 2026-02-24)
+
+### Stream 0: Restart attempt confirm UX
+1. [DONE] Session UI: заменить 2-step arm/confirm на явную плашку Apply/Cancel для ↻ Restart attempt (scope: `src/client/ui/src/session/input-play-stop-button.tsx`, `media/session-view.css`; expected commit: `fix(ui): add apply/cancel confirm for description restart`).
+2. [DONE] Git Commit: `fix(ui): add apply/cancel confirm for description restart` (hash: `79f23933`)
+3. [DONE] PM `questionnaire.md` header: Apply/Cancel confirm (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`; expected commit: `fix(pm/ui): confirm restart attempt with apply/cancel`).
+4. [DONE] Git Commit: `fix(pm/ui): confirm restart attempt with apply/cancel` (hash: `a5b66487`)
+5. [DONE] Rebuild webview bundle (scope: `media/react-chat.js`; expected commit: `chore(build): rebuild webview for restart confirm bar`).
+6. [DONE] Git Commit: `chore(build): rebuild webview for restart confirm bar` (hash: `b837584b`)
+
+### Stream 1: Release build
+1. [DONE] `./scripts/build-all.sh` → `1.1.666` (scope: manifests + package versions; expected commit: `chore(release): build-all v1.1.666`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.666` (hash: `30cc64a6`)
+3. [DONE] Update release notes (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): update release notes for v1.1.666`).
+4. [DONE] Git Commit: `docs(release): update release notes for v1.1.666` (hash: `a252061c`)
+5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.666.vsix` (sha256: `d6b168f62233dde6a57317effb1c3c8c1222aebcd1442a8c191459dfaae15786`) (scope: none; no git commit).
+
+### Stream 2: Session report
+1. [TODO] Создать `doc/Sessions/Session021.md` по релизу `1.1.666` (scope: `doc/Sessions/Session021.md`; expected commit: `docs: session 021 report`).
+2. [TODO] Git Commit: `docs: session 021 report` (hash: TBD)
+
+### Stream 3: TODO bookkeeping
+1. [TODO] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Stream 2/3 Phase 241 и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 241 complete`).
+2. [TODO] Git Commit: `docs(todo): mark Phase 241 complete` (hash: TBD)
