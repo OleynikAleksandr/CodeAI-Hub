@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
+import { TaskTimerStorage } from "./task-timer-storage";
 import { WorkspaceRuntimeFacade } from "./workspace-runtime-facade";
 import type { SessionKey } from "./workspace-runtime-types";
 import type { WorkspaceSnapshotPush } from "./workspace-wire-types";
@@ -363,4 +367,64 @@ test("WorkspaceRuntimeFacade publishes finalTurnCompleted flag in snapshot", asy
   assert.equal(finalTurnSnapshot.finalTurnCompleted, true);
 
   facade.dispose();
+});
+
+test("WorkspaceRuntimeFacade preserves task timer totals across Stop/Play restarts", () => {
+  const stateDirectory = mkdtempSync(join(tmpdir(), "codeai-task-timers-"));
+  const storage = new TaskTimerStorage({ stateDirectory });
+
+  const originalNow = Date.now;
+  let nowMs = 1_000_000;
+
+  const sessionKey: SessionKey = {
+    workspaceRoot: workspaceA,
+    nodeId: "reviewer",
+    sessionId: "timer-session",
+  };
+
+  try {
+    Date.now = () => nowMs;
+
+    const facade = new WorkspaceRuntimeFacade({
+      taskTimerStorage: storage,
+    });
+
+    facade.notifySessionCreated(sessionKey, {
+      providerId: "claudeCodeCli",
+      resumeMode: "resume_in_place",
+    });
+    facade.notifyTurnStateChanged(sessionKey, "running");
+    nowMs += 5000;
+    facade.dispose();
+  } finally {
+    Date.now = originalNow;
+  }
+
+  try {
+    const restoredFacade = new WorkspaceRuntimeFacade({
+      taskTimerStorage: storage,
+    });
+
+    restoredFacade.select({
+      clientId: "client-restore",
+      request: {
+        requestId: "req-restore",
+        workspaceRoot: workspaceA,
+        reason: "workspace_selected",
+      },
+    });
+    restoredFacade.notifySessionCreated(sessionKey, {
+      providerId: "claudeCodeCli",
+      resumeMode: "resume_in_place",
+    });
+
+    const snapshot = restoredFacade.getSnapshot(workspaceA);
+    const sessionSnapshot = snapshot.sessions[sessionKey.sessionId];
+    assert.ok(sessionSnapshot);
+    assert.equal(sessionSnapshot.taskTimer?.totalSeconds, 5);
+
+    restoredFacade.dispose();
+  } finally {
+    rmSync(stateDirectory, { recursive: true, force: true });
+  }
 });
