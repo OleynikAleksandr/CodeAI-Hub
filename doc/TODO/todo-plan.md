@@ -79,3 +79,19 @@
 ### Stream 2: TODO bookkeeping
 1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Phase 242 (Stream 1/2) и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 242 complete`).
 2. [DONE] Git Commit: `docs(todo): mark Phase 242 complete` (hash: `b71dfc0a`)
+
+---
+
+## Phase 243 — BUG-2026-02-24-03: Description restart attempt must auto-focus new session (owner: Codex, updated: 2026-02-24)
+
+### Stream 0: Bug registry + planning
+1. [DONE] Занести баг `BUG-2026-02-24-03` в `doc/BugRegistry.md` и подготовить Phase 243 (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(bug): add BUG-2026-02-24-03 (description restart refresh)`).
+2. [TODO] Git Commit: `docs(bug): add BUG-2026-02-24-03 (description restart refresh)` (hash: TBD)
+
+### Stream 1: PM/UI auto-focus after restart attempt
+1. [TODO] Auto-focus новую сессию после ↻ Restart attempt (и из Session UI, и из `questionnaire.md` header) (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit: `fix(pm/ui): auto-focus description session after restart attempt`).
+2. [TODO] Git Commit: `fix(pm/ui): auto-focus description session after restart attempt` (hash: TBD)
+
+### Stream 2: Guards + bug closeout
+1. [TODO] Smoke guard + закрыть `BUG-2026-02-24-03` в `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close BUG-2026-02-24-03`).
+2. [TODO] Git Commit: `docs(bug): close BUG-2026-02-24-03` (hash: TBD)
