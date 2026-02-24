@@ -128,7 +128,7 @@
 2. [DONE] Git Commit: `fix(core): preserve task timer total on stop` (hash: `a203d3f0`)
 
 ### Stream 2: Guards + bug closeout
-1. [TODO] Add regression test for Stop→message→Play timer behavior (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts` or `src/client/ui/src/session/*`; expected commit: `test: prevent task timer total reset on stop/play`).
-2. [TODO] Git Commit: `test: prevent task timer total reset on stop/play` (hash: TBD)
+1. [DONE] Add regression test for Stop→message→Play timer behavior (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `test: prevent task timer total reset on stop/play`).
+2. [DONE] Git Commit: `test: prevent task timer total reset on stop/play` (hash: `5fe2f19f`)
 3. [TODO] Close `BUG-2026-02-24-04` in `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close BUG-2026-02-24-04`).
 4. [TODO] Git Commit: `docs(bug): close BUG-2026-02-24-04` (hash: TBD)
