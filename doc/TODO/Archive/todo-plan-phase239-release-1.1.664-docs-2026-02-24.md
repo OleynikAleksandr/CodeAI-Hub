@@ -20,16 +20,12 @@
 
 ---
 
-## Phase 240 — Release notes + docs sync (owner: Codex, updated: 2026-02-24)
+## Phase 239 — Release 1.1.664: docs + report (owner: Codex, updated: 2026-02-24)
 
-### Stream 0: Release notes
-1. [TODO] Обновить `README.md` (Current Release) до `v1.1.665` + кратко описать hotfix ↻ Restart attempt; обновить `CHANGELOG.md` (добавить `1.1.664` и `1.1.665`) (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): update README + CHANGELOG for v1.1.665`).
-2. [TODO] Git Commit: `docs(release): update README + CHANGELOG for v1.1.665` (hash: TBD)
+### Stream 0: Release docs
+1. [DONE] Обновить `doc/BugRegistry.md`: BUG-2026-02-24-01 → Release `1.1.664` + указать commits; создать `doc/Sessions/Session018.md` (scope: `doc/BugRegistry.md`, `doc/Sessions/Session018.md`; expected commit: `chore(release): package vsix v1.1.664`).
+2. [DONE] Git Commit: `chore(release): package vsix v1.1.664` (hash: `a4e52890`)
 
-### Stream 1: Session report
-1. [TODO] Создать `doc/Sessions/Session020.md` с итогами док-букинга после хотфикса `1.1.665` (scope: `doc/Sessions/Session020.md`; expected commit: `docs: session 020 report`).
-2. [TODO] Git Commit: `docs: session 020 report` (hash: TBD)
-
-### Stream 2: TODO bookkeeping
-1. [TODO] Обновить `doc/TODO/todo-plan.md`: отметить пункты как DONE и вписать hash коммитов Phase 240 (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 240 complete`).
-2. [TODO] Git Commit: `docs(todo): mark Phase 240 complete` (hash: TBD)
+### Stream 1: TODO bookkeeping
+1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE и прописать hash коммита упаковки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark vsix packaged v1.1.664`).
+2. [DONE] Git Commit: `docs(todo): mark vsix packaged v1.1.664` (hash: `dc904f52`)
