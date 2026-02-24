@@ -29,6 +29,7 @@ const createHarness = (options: {
     { readonly resumeSession?: unknown } | undefined
   >;
   readonly preferredProviderId: string;
+  readonly draftPath?: string;
 }): RuntimeHarness => {
   const createdSessions: CreatedWorkflowSession[] = [];
   const handledMessages: Array<{
@@ -92,7 +93,9 @@ const createHarness = (options: {
         workspaceSlug,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        draftPath: `.codeai-hub/${workspaceSlug}/description/description.md`,
+        draftPath:
+          options.draftPath ??
+          `.codeai-hub/${workspaceSlug}/description/description.md`,
         sessionKind: "collector",
         session: {
           providerId: options.preferredProviderId,
@@ -142,6 +145,36 @@ test("WorkflowRuntime keeps reviewer on preferred gemini provider when resume is
   assert.equal(harness.warnings.length, 0);
 });
 
+test("WorkflowRuntime reviewer prompt uses run-scoped draft path when provided", async () => {
+  const workspaceSlug = "workspace-runs";
+  const draftPath = `.codeai-hub/${workspaceSlug}/description/runs/attempt-123/description.md`;
+
+  const harness = createHarness({
+    preferredProviderId: "claudeCodeCli",
+    draftPath,
+    adapters: {
+      claudeCodeCli: {
+        resumeSession: () => Promise.resolve("claude-resumed-id"),
+      },
+    },
+  });
+
+  await (
+    harness.runtime as unknown as {
+      maybeAutoStartReviewer: (params: {
+        readonly workspaceRoot: string;
+        readonly workspaceSlug: string;
+      }) => Promise<void>;
+    }
+  ).maybeAutoStartReviewer({
+    workspaceRoot: "/tmp/workspace-runs",
+    workspaceSlug,
+  });
+
+  assert.equal(harness.handledMessages.length, 1);
+  assert.equal(harness.handledMessages[0]?.prompt.includes(draftPath), true);
+});
+
 test("WorkflowRuntime falls back to claude reviewer when preferred gemini lacks resume support", async () => {
   const harness = createHarness({
     preferredProviderId: "geminiCli",
@@ -175,4 +208,91 @@ test("WorkflowRuntime falls back to claude reviewer when preferred gemini lacks 
     ),
     true
   );
+});
+
+test("WorkflowRuntime ignores stale description draft runs when collector attempt changes", async () => {
+  const runtime = new WorkflowRuntime({
+    logger: {
+      info: () => {
+        // noop
+      },
+      warn: () => {
+        // noop
+      },
+      error: () => {
+        // noop
+      },
+      debug: () => {
+        // noop
+      },
+    } as never,
+    providerRegistry: {
+      getAdapter: () => null,
+    } as never,
+    sessionHandler: {
+      createSessionForWorkflow: () => Promise.resolve(null),
+      handleMessage: () => Promise.resolve(),
+    } as never,
+  });
+
+  (
+    runtime as unknown as {
+      descriptionStepStore: {
+        read: () => Promise<{
+          workspaceSlug: string;
+          workspacePath: string;
+          createdAt: string;
+          updatedAt: string;
+          sessionKind: "collector";
+          collectorSession: {
+            dialogSessionId: string;
+            providerSessionId: string;
+          };
+        }>;
+      };
+      lastActiveStore: {
+        upsert: () => Promise<void>;
+      };
+    }
+  ).descriptionStepStore = {
+    read: () =>
+      Promise.resolve({
+        workspaceSlug: "workspace-stale-run",
+        workspacePath: "/tmp/workspace-stale-run",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        sessionKind: "collector",
+        collectorSession: {
+          dialogSessionId: "attempt-new",
+          providerSessionId: "provider-new",
+        },
+      }),
+  };
+
+  (
+    runtime as unknown as {
+      lastActiveStore: { upsert: () => Promise<void> };
+    }
+  ).lastActiveStore = {
+    upsert: () => {
+      throw new Error("Unexpected lastActiveStore.upsert call");
+    },
+  };
+
+  const shouldRecord = await (
+    runtime as unknown as {
+      handleWorkflowEvent: (
+        workspaceRoot: string,
+        event: unknown
+      ) => Promise<boolean>;
+    }
+  ).handleWorkflowEvent("/tmp/workspace-stale-run", {
+    type: "workflow.artifact.written",
+    timestamp: new Date().toISOString(),
+    workspaceSlug: "workspace-stale-run",
+    stage: "description",
+    filePath: "description/runs/attempt-old/description.md",
+  });
+
+  assert.equal(shouldRecord, false);
 });

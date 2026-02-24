@@ -5,6 +5,7 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { SessionRequestHandler } from "../../remote-bridge/handlers/session-request-handler";
 import type { Logger } from "../../telemetry/logger";
 import { DescriptionStepStore } from "../description/description-step-store";
+import type { DescriptionStepSnapshot } from "../description/description-step-types";
 import { WorkflowLastActiveStore } from "../state/workflow-last-active-store";
 import type { WorkflowWatcherEvent } from "../watcher/watcher-types";
 import { WorkflowWatcher } from "../watcher/workflow-watcher";
@@ -14,6 +15,8 @@ const WORKSPACE_ROOT_DIR = ".codeai-hub";
 
 const BACKSLASH_RE = /\\/g;
 const LEADING_DOT_SLASH_RE = /^\.?\//;
+const DESCRIPTION_DRAFT_RUN_SLUG_RE =
+  /^description\/runs\/([^/]+)\/description\.md$/;
 
 const normalizeRelativePath = (value: string): string =>
   value.replace(BACKSLASH_RE, "/").replace(LEADING_DOT_SLASH_RE, "");
@@ -54,6 +57,32 @@ const resolvePreferredReviewerProviderId = (
   }
 
   return null;
+};
+
+const parseDescriptionDraftRunSlug = (relativePath: string): string | null => {
+  const match = DESCRIPTION_DRAFT_RUN_SLUG_RE.exec(relativePath);
+  return match?.[1] ?? null;
+};
+
+const resolveCollectorAttemptId = (
+  snapshot: DescriptionStepSnapshot | null
+): string | null => {
+  const ref =
+    snapshot?.collectorSession ??
+    (snapshot?.sessionKind === "collector" ? snapshot.session : undefined);
+  return ref?.dialogSessionId ?? ref?.providerSessionId ?? null;
+};
+
+const shouldAcceptDescriptionDraftArtifact = (
+  snapshot: DescriptionStepSnapshot | null,
+  relativePath: string
+): boolean => {
+  const collectorAttemptId = resolveCollectorAttemptId(snapshot);
+  const runSlug = parseDescriptionDraftRunSlug(relativePath);
+  if (runSlug) {
+    return !collectorAttemptId || runSlug === collectorAttemptId;
+  }
+  return !collectorAttemptId;
 };
 
 const resolveReviewerPromptPath = (): string | null => {
@@ -99,20 +128,20 @@ const readReviewerPrompt = async (): Promise<string> => {
 const buildReviewerPromptPack = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
+  readonly draftRelativePath: string;
+  readonly questionnaireRelativePath: string;
 }): Promise<string> => {
   const prompt = (await readReviewerPrompt()).trim();
-  const draftRelativePath = `.codeai-hub/${params.workspaceSlug}/description/description.md`;
   const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
-  const questionnaireRelativePath = `.codeai-hub/${params.workspaceSlug}/description/questionnaire.md`;
 
   const instructionLines = [
     "Этап: Description Reviewer.",
-    `Draft (relative): \`${draftRelativePath}\``,
-    `Draft (absolute): \`${joinWorkspacePath(params.workspaceRoot, draftRelativePath)}\``,
+    `Draft (relative): \`${params.draftRelativePath}\``,
+    `Draft (absolute): \`${joinWorkspacePath(params.workspaceRoot, params.draftRelativePath)}\``,
     `Final target (relative): \`${finalRelativePath}\``,
     `Final target (absolute): \`${joinWorkspacePath(params.workspaceRoot, finalRelativePath)}\``,
-    `Questionnaire (relative): \`${questionnaireRelativePath}\``,
-    `Questionnaire (absolute): \`${joinWorkspacePath(params.workspaceRoot, questionnaireRelativePath)}\``,
+    `Questionnaire (relative): \`${params.questionnaireRelativePath}\``,
+    `Questionnaire (absolute): \`${joinWorkspacePath(params.workspaceRoot, params.questionnaireRelativePath)}\``,
   ];
 
   const reviewerTemplatePath = resolveReviewerTemplatePath();
@@ -189,13 +218,19 @@ export class WorkflowRuntime {
     });
 
     watcher.subscribe((event) => {
-      this.onWatcherEvent?.(event);
-      this.handleWorkflowEvent(params.workspaceRoot, event).catch((error) => {
-        this.logger.warn("Workflow runtime handler failed", {
-          workspaceSlug: params.workspaceSlug,
-          error: error instanceof Error ? error.message : String(error),
+      this.handleWorkflowEvent(params.workspaceRoot, event)
+        .then((shouldRecord) => {
+          if (shouldRecord) {
+            this.onWatcherEvent?.(event);
+          }
+        })
+        .catch((error) => {
+          this.logger.warn("Workflow runtime handler failed", {
+            workspaceSlug: params.workspaceSlug,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          this.onWatcherEvent?.(event);
         });
-      });
     });
 
     watcher.start();
@@ -205,13 +240,13 @@ export class WorkflowRuntime {
   private async handleWorkflowEvent(
     workspaceRoot: string,
     event: WorkflowWatcherEvent
-  ): Promise<void> {
+  ): Promise<boolean> {
     if (event.type !== "workflow.artifact.written") {
-      return;
+      return true;
     }
 
     if (event.stage !== "description") {
-      return;
+      return true;
     }
 
     const relativePath = normalizeRelativePath(event.filePath);
@@ -219,7 +254,7 @@ export class WorkflowRuntime {
       relativePath === "description/description-step.json" ||
       relativePath.endsWith("/description-step.json")
     ) {
-      return;
+      return true;
     }
 
     if (relativePath === "description/questionnaire.md") {
@@ -240,7 +275,7 @@ export class WorkflowRuntime {
           relativePath
         ),
       });
-      return;
+      return true;
     }
 
     if (
@@ -264,14 +299,22 @@ export class WorkflowRuntime {
           relativePath
         ),
       });
-      return;
+      return true;
     }
 
     const isDraft =
       relativePath === "description/description.md" ||
       relativePath.endsWith("/description.md");
     if (!isDraft) {
-      return;
+      return true;
+    }
+
+    const snapshot = await this.descriptionStepStore.read(
+      workspaceRoot,
+      event.workspaceSlug
+    );
+    if (!shouldAcceptDescriptionDraftArtifact(snapshot, relativePath)) {
+      return false;
     }
 
     await this.descriptionStepStore.upsert(workspaceRoot, event.workspaceSlug, {
@@ -289,6 +332,8 @@ export class WorkflowRuntime {
       workspaceRoot,
       workspaceSlug: event.workspaceSlug,
     });
+
+    return true;
   }
 
   private async maybeAutoStartReviewer(params: {
@@ -359,7 +404,13 @@ export class WorkflowRuntime {
         return;
       }
 
-      const promptPack = await buildReviewerPromptPack(params);
+      const promptPack = await buildReviewerPromptPack({
+        ...params,
+        draftRelativePath: snapshot.draftPath,
+        questionnaireRelativePath:
+          snapshot.questionnairePath ??
+          `.codeai-hub/${params.workspaceSlug}/description/questionnaire.md`,
+      });
       await this.sessionHandler.handleMessage(session.id, promptPack);
     } finally {
       this.startingReviewer.delete(params.workspaceSlug);
