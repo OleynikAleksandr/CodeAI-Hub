@@ -124,8 +124,8 @@
 2. [DONE] Git Commit: `docs(bug): add BUG-2026-02-24-04 (reviewer stop/play total timer)` (hash: `d7443574`)
 
 ### Stream 1: Core timer accounting on Stop
-1. [TODO] Core: when Stop ends a busy segment, commit delta into `taskTimer.totalSeconds` (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `fix(core): preserve task timer total on stop`).
-2. [TODO] Git Commit: `fix(core): preserve task timer total on stop` (hash: TBD)
+1. [DONE] Core: when Stop ends a busy segment, commit delta into `taskTimer.totalSeconds` (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/workspace-runtime/task-timer-storage.ts`; expected commit: `fix(core): preserve task timer total on stop`).
+2. [DONE] Git Commit: `fix(core): preserve task timer total on stop` (hash: `a203d3f0`)
 
 ### Stream 2: Guards + bug closeout
 1. [TODO] Add regression test for Stop→message→Play timer behavior (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts` or `src/client/ui/src/session/*`; expected commit: `test: prevent task timer total reset on stop/play`).
