@@ -114,3 +114,21 @@
 ### Stream 2: TODO bookkeeping
 1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Phase 244 (Stream 1/2) и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 244 complete`).
 2. [DONE] Git Commit: `docs(todo): mark Phase 244 complete` (hash: `2c7d5451`)
+
+---
+
+## Phase 245 — BUG-2026-02-24-04: Reviewer Stop/Play must preserve task timer total (owner: Codex, updated: 2026-02-24)
+
+### Stream 0: Bug registry + contract
+1. [DONE] Register `BUG-2026-02-24-04` + update `SessionTaskTimer_UI` contract for Stop semantics (scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(bug): add BUG-2026-02-24-04 (reviewer stop/play total timer)`).
+2. [DONE] Git Commit: `docs(bug): add BUG-2026-02-24-04 (reviewer stop/play total timer)` (hash: TBD)
+
+### Stream 1: Core timer accounting on Stop
+1. [TODO] Core: when Stop ends a busy segment, commit delta into `taskTimer.totalSeconds` (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `fix(core): preserve task timer total on stop`).
+2. [TODO] Git Commit: `fix(core): preserve task timer total on stop` (hash: TBD)
+
+### Stream 2: Guards + bug closeout
+1. [TODO] Add regression test for Stop→message→Play timer behavior (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts` or `src/client/ui/src/session/*`; expected commit: `test: prevent task timer total reset on stop/play`).
+2. [TODO] Git Commit: `test: prevent task timer total reset on stop/play` (hash: TBD)
+3. [TODO] Close `BUG-2026-02-24-04` in `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close BUG-2026-02-24-04`).
+4. [TODO] Git Commit: `docs(bug): close BUG-2026-02-24-04` (hash: TBD)
