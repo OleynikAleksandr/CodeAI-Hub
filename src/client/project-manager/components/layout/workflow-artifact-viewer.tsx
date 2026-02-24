@@ -1,6 +1,8 @@
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
+import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
 
 export const WorkflowArtifactViewer: React.FC<{
@@ -13,6 +15,9 @@ export const WorkflowArtifactViewer: React.FC<{
 }> = (props) => {
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [restartError, setRestartError] = useState<string | null>(null);
+  const [restartInFlight, setRestartInFlight] = useState(false);
+  const submitServiceRef = useRef(new IdeaCollectorSubmitService());
 
   useEffect(() => {
     let cancelled = false;
@@ -71,6 +76,53 @@ export const WorkflowArtifactViewer: React.FC<{
     props.label !== "Final_Description.md" &&
     props.label !== "questionnaire.md";
 
+  const canRestartAttempt = props.label === "questionnaire.md";
+
+  const handleRestartAttempt = async () => {
+    if (!canRestartAttempt || restartInFlight) {
+      return;
+    }
+    setRestartError(null);
+    const confirmed = window.confirm(
+      "Перезапустить попытку Description?\n\nТекущая попытка будет отменена, и будет создана новая сессия."
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setRestartInFlight(true);
+    try {
+      const state = await api.getWorkflowState(
+        props.workspaceSlug,
+        props.workspacePath
+      );
+      const providerId =
+        state?.description?.collectorSession?.providerId ??
+        state?.description?.session?.providerId ??
+        api.getIdeaCollectorProviders().at(0)?.id ??
+        null;
+
+      if (!providerId) {
+        setRestartError("Не удалось определить провайдера для перезапуска.");
+        return;
+      }
+
+      await submitServiceRef.current.submitQuestionnaire({
+        workspacePath: props.workspacePath,
+        workspaceSlug: props.workspaceSlug,
+        questionnairePath: props.path,
+        stage: "description",
+        providerId: providerId as ProviderStackId,
+      });
+    } catch (submitError: unknown) {
+      setRestartError(
+        submitError instanceof Error ? submitError.message : String(submitError)
+      );
+    } finally {
+      setRestartInFlight(false);
+    }
+  };
+
   return (
     <div className="pm-details">
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
@@ -80,7 +132,36 @@ export const WorkflowArtifactViewer: React.FC<{
           </button>
         ) : null}
         <strong title={props.path}>{props.label}</strong>
+        {canRestartAttempt ? (
+          <button
+            aria-label="Restart attempt"
+            disabled={restartInFlight}
+            onClick={() => {
+              void handleRestartAttempt();
+            }}
+            style={{
+              width: 36,
+              height: 32,
+              padding: 0,
+              borderRadius: 6,
+              border: "1px solid rgba(255,255,255,0.18)",
+              background: restartInFlight
+                ? "rgba(255,255,255,0.06)"
+                : "rgba(255,255,255,0.1)",
+              color: "rgba(255,255,255,0.92)",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: restartInFlight ? "not-allowed" : "pointer",
+            }}
+            title="↻ Restart attempt"
+            type="button"
+          >
+            ↻
+          </button>
+        ) : null}
       </div>
+      {restartError ? <div className="pm-placeholder">{restartError}</div> : null}
       {error ? <div className="pm-placeholder">{error}</div> : null}
       {!error && content === null ? (
         <div className="pm-placeholder">Загружаем артефакт...</div>
