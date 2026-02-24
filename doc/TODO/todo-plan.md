@@ -89,8 +89,8 @@
 2. [DONE] Git Commit: `docs(bug): add BUG-2026-02-24-03 (description restart refresh)` (hash: `b9f49704`)
 
 ### Stream 1: PM/UI auto-focus after restart attempt
-1. [TODO] Auto-focus новую сессию после ↻ Restart attempt (и из Session UI, и из `questionnaire.md` header) (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit: `fix(pm/ui): auto-focus description session after restart attempt`).
-2. [TODO] Git Commit: `fix(pm/ui): auto-focus description session after restart attempt` (hash: TBD)
+1. [DONE] Auto-focus новую сессию после ↻ Restart attempt (и из Session UI, и из `questionnaire.md` header) (scope: `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit: `fix(pm/ui): auto-focus description session after restart attempt`).
+2. [DONE] Git Commit: `fix(pm/ui): auto-focus description session after restart attempt` (hash: `3ec74197`)
 
 ### Stream 2: Guards + bug closeout
 1. [TODO] Smoke guard + закрыть `BUG-2026-02-24-03` в `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close BUG-2026-02-24-03`).
