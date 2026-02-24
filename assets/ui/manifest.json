@@ -5,14 +5,14 @@
     "vscode-webview": {
       "version": "1.1.665",
       "package": "vscode-webview-1.1.665.tar.bz2",
-      "size": 180080,
-      "sha1": "5f02a179db404a473212d7bce53ebe6819837090"
+      "size": 180057,
+      "sha1": "84073166b73012830e2f1cc7f54a5fdaba6114f7"
     },
     "project-manager": {
       "version": "1.1.665",
       "package": "project-manager-1.1.665.tar.bz2",
-      "size": 177112,
-      "sha1": "ff62ed5953ed41aafc88c4b7f5e7df2cb87f3643"
+      "size": 177014,
+      "sha1": "853784dad061d6a09e4e7675c96a40d9252f4650"
     }
   }
 }
