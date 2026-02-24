@@ -54,9 +54,9 @@
 5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.666.vsix` (sha256: `d6b168f62233dde6a57317effb1c3c8c1222aebcd1442a8c191459dfaae15786`) (scope: none; no git commit).
 
 ### Stream 2: Session report
-1. [TODO] Создать `doc/Sessions/Session021.md` по релизу `1.1.666` (scope: `doc/Sessions/Session021.md`; expected commit: `docs: session 021 report`).
-2. [TODO] Git Commit: `docs: session 021 report` (hash: TBD)
+1. [DONE] Создать `doc/Sessions/Session021.md` по релизу `1.1.666` (scope: `doc/Sessions/Session021.md`; expected commit: `docs: session 021 report`).
+2. [DONE] Git Commit: `docs: session 021 report` (hash: `0ce475aa`)
 
 ### Stream 3: TODO bookkeeping
-1. [TODO] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Stream 2/3 Phase 241 и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 241 complete`).
-2. [TODO] Git Commit: `docs(todo): mark Phase 241 complete` (hash: TBD)
+1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Stream 2/3 Phase 241 и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 241 complete`).
+2. [DONE] Git Commit: `docs(todo): mark Phase 241 complete` (hash: TBD)
