@@ -82,6 +82,7 @@ Persist (текущее):
 
 ## 6) Edge cases
 
+- Stop (user-interrupted running turn): when Stop ends a busy segment, the elapsed `now - runningSinceMs` must be committed into `totalSeconds` (if the session is accumulative), and the next Play/Send must not reset `totalSeconds`.
 - `terminal_no_resume`: таймеры не должны “накручиваться” в read-only сессии, но total может отображаться.
 - `resumeMode="no_resume"` (one-shot): total не накапливается, но turn-таймер должен показываться во время выполнения turn.
 - Если подсказка `Press Enter...` скрывается во время ожидания (lock), total всё равно остаётся видимым.
