@@ -34,6 +34,7 @@
 | BUG-2026-02-20-01 | FIXED | Claude/Auth | В чистом `~/.codeai-hub` Claude остаётся НЕДОСТУПЕН: provider-home auth bootstrap не поднимает авторизацию | 1.1.644 |
 | BUG-2026-02-21-01 | FIXED | Session UI | После падения/рестарта Core в середине turn: force-unlock + повторный submit не отправлял queued message в resume-сессию | 1.1.644 |
 | BUG-2026-02-22-01 | FIXED | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | 1.1.646 |
+| BUG-2026-02-24-01 | OPEN | PM/UI + Core Runtime | one-shot `description`: завис mid-turn → нет аварийного recovery без рестарта Core | TBD |
 
 ---
 
@@ -61,6 +62,22 @@
 **Guards:**
 - `node --test --import tsx src/client/project-manager/components/sessions/session-stream.test.ts`
 - `node --test --import tsx src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`
+
+---
+
+## BUG-2026-02-24-01 — one-shot `description`: hang mid-turn has no recovery without Core restart
+
+**Status:** OPEN
+
+**Symptom:** если `Description` завис/упал mid-turn (или live-сессия не создалась после превращения анкеты в `Questionary.md`), пользователь не может безопасно восстановиться: Play/Stop не применим к one-shot/no-resume и рестарт Core недопустим (может снести другие активные сессии).
+
+**Fix (target contract):**
+- Добавить **↻ Restart attempt** (с подтверждением) для `Description` в двух местах: Session UI (если сессия есть) + `Questionary.md` header (если сессии нет).
+- Реализовать `attemptId` gating: принимать артефакты/сигналы только от текущей попытки; late results от старых попыток игнорировать.
+
+**Commits:** TBD
+
+**Release:** TBD
 
 ---
 

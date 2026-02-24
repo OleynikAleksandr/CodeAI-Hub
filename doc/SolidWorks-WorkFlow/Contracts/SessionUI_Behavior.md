@@ -48,6 +48,7 @@
 - Пользователь не может продолжать диалог после финального ответа.
 - UI должен быть read‑only (блокировка ввода “от начала и до конца”).
 - Ручной “замочек” (force unlock) не показывается.
+- Для `Description` one-shot recovery используется **↻ Restart attempt** (см. 6.2), а не Play/Stop и не “доп. сообщение”.
 
 ### 3.2 Resume‑сессии (“бесконечные”, напр. Reviewer)
 - После каждого завершённого turn, когда агент ждёт пользователя, ввод **обязан** стать доступным.
@@ -122,6 +123,21 @@ Continuity делит долгий диалог на runtime‑сегменты 
 - Следующая отправка (Enter/▶) сначала запускает Core, затем отправляет новое сообщение после восстановления соединения:
   - VS Code webview: через Supervisor (`acquireVsCodeApi().postMessage(...)`).
   - Standalone Project Manager (CEF): через Launcher bridge `window.codeaiLauncher.ensureCoreRunning()` → `codeai://core-start`.
+
+**Scope:** Play/Stop относится к resume‑сессиям. Для one‑shot `Description` этот механизм не подходит (нельзя продолжить диалог; остановка Core может снести другие активные сессии).
+
+### 6.2 One‑shot Description — ↻ Restart attempt (re-run)
+
+**Goal:** аварийный recovery, когда `Description` завис/упал mid‑turn или workflow не смог создать live‑сессию после превращения анкеты в `Questionary.md` артефакт.
+
+**UI:**
+- В `Description` one‑shot сессии заменить Play/Stop на одну кнопку **↻ Restart attempt** (white icon, same size as Stop), с подтверждением.
+- В `Questionary.md` artifact header показывать тот же ↻ (с подтверждением), чтобы пользователь мог перезапустить попытку даже если live‑сессия не создалась.
+
+**Behavior (contract):**
+- ↻ НЕ перезапускает Core (другие активные сессии не должны падать).
+- ↻ запускает новую попытку `Description` из `Questionary.md` (new provider session / new turn).
+- Late results от предыдущих попыток должны игнорироваться: Core/PM принимает артефакты/сигналы только для текущего `attemptId`.
 
 ---
 
