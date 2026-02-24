@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
 import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
+import type { DialogOpenIntent } from "../sessions/project-manager-dialog-session-view";
 
 const RESTART_CONFIRM_TIMEOUT_MS = 10_000;
 
@@ -118,6 +119,21 @@ export const QuestionnaireRestartAttemptControl = ({
         stage: "description",
         providerId: providerId as ProviderStackId,
       });
+      const dialogIntent: DialogOpenIntent = {
+        providerId,
+        providerSessionId: null,
+        workspacePath,
+        workspaceSlug,
+        initiativeSlug: workspaceSlug,
+        stage: "description",
+        sessionKind: "collector",
+        runSlug: null,
+      };
+      window.dispatchEvent(
+        new CustomEvent("pm:dialog:open", {
+          detail: dialogIntent,
+        })
+      );
     } catch (submitError: unknown) {
       onError(submitError instanceof Error ? submitError.message : String(submitError));
     } finally {
@@ -244,4 +260,3 @@ export const QuestionnaireRestartAttemptControl = ({
     </div>
   );
 };
-

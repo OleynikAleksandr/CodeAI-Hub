@@ -191,6 +191,22 @@ export const ProjectManagerSessionView = ({
             stage: "description",
             providerId,
           });
+
+          const dialogIntent: DialogOpenIntent = {
+            providerId,
+            providerSessionId: null,
+            workspacePath: detail.workspacePath,
+            workspaceSlug: detail.workspaceSlug,
+            initiativeSlug: detail.workspaceSlug,
+            stage: "description",
+            sessionKind: "collector",
+            runSlug: null,
+          };
+          window.dispatchEvent(
+            new CustomEvent("pm:dialog:open", {
+              detail: dialogIntent,
+            })
+          );
         } catch {
           // ignore: restart attempt is best-effort
         } finally {
