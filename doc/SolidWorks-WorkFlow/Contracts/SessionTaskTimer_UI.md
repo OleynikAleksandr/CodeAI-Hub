@@ -68,7 +68,8 @@ SSOT таймера находится в Core: UI **не хранит** и **н
   - turn = `now - runningSinceMs` (живая цифра overlay).
 
 Persist (текущее):
-- В текущей реализации таймер хранится в памяти Core и может сброситься при перезапуске Core.
+- `totalSeconds` сохраняется на graceful shutdown Core (включая Stop/Play) в `~/.codeai-hub/state/task-timers.json` и восстанавливается при старте Core.
+- Если Core был принудительно убит/упал, можно потерять незакоммиченный running‑segment (текущий turn), но total сохраняется на момент последнего graceful shutdown.
 
 ---
 

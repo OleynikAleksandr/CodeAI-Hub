@@ -37,7 +37,7 @@
 | BUG-2026-02-24-01 | FIXED | PM/UI + Core Runtime | one-shot `description`: завис mid-turn → нет аварийного recovery без рестарта Core | 1.1.664 |
 | BUG-2026-02-24-02 | FIXED | Launcher/CEF | Standalone PM (CEF): crash on ↻ Restart attempt confirm | 1.1.665 |
 | BUG-2026-02-24-03 | FIXED | PM/UI | ↻ Restart attempt создаёт новую сессию, но PM остаётся на старой («resuming…») | 1.1.668 |
-| BUG-2026-02-24-04 | OPEN | Session UI | reviewer: Stop→message→Play resets task timer total | TBD |
+| BUG-2026-02-24-04 | FIXED | Session UI | reviewer: Stop→message→Play resets task timer total | TBD |
 
 ---
 
@@ -145,7 +145,7 @@
 
 ## BUG-2026-02-24-04 — Session UI: reviewer Stop/Play resets task timer total
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - In a reviewer (resume-capable) agent session: click Stop mid-turn, enter additional context, then click Play/Send.
@@ -155,14 +155,26 @@
 - When Stop is pressed, the elapsed time of the interrupted busy segment must be accounted into `taskTimer.totalSeconds`.
 - After the next Play/Send starts a new turn, `taskTimer.totalSeconds` must be monotonic (no reset).
 
-**Root cause:** TBD
+**Root cause:**
+- `Stop` in Session UI shuts down the Core process (via supervisor + `/api/v1/shutdown`).
+- Task timers were kept in Core memory only, so after Core restart the timer map was empty and `totalSeconds` fell back to `0`.
+- The running busy segment was not committed into `totalSeconds` on shutdown, so the interrupted turn delta was lost.
 
-**Fix (target):**
-- Core: treat Stop as a terminal boundary for the currently-running busy segment (commit the `runningSinceMs` delta into `totalSeconds` before clearing it).
-- Add a regression guard for Stop→message→Play.
+**Fix:**
+- Core: persist per-workspace per-node task timer totals to `~/.codeai-hub/state/task-timers.json` on shutdown.
+- Core: on shutdown, commit the current running segment (`now - runningSinceMs`) into `totalSeconds` when it is accumulative, then clear `runningSinceMs`.
+- Core: seed task timers from persisted totals when a workspace is selected (so the first snapshot after restart already contains the restored total).
+- Added a regression test for Stop→Play flow.
+
+**Commits:**
+- `a203d3f0 fix(core): preserve task timer total on stop`
+- `5fe2f19f test: prevent task timer total reset on stop/play`
+
+**Release:** TBD
 
 **Guards (smoke):**
 - Reviewer session → start a turn → wait 5s → Stop → add message → Play → total >= 5s and continues to grow after future turns.
+- `node --test --import tsx packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`
 
 ---
 
