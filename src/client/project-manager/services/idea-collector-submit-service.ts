@@ -11,7 +11,7 @@ import {
   resolveWorkspaceName,
   toWorkspaceSlug,
 } from "./description-questionnaire-utils";
-import { buildWorkflowPromptPack } from "./prompt-pack-builder";
+import { buildDescriptionCollectorRunSlug, buildWorkflowPromptPack } from "./prompt-pack-builder";
 import { waitForSessionProviderBinding } from "./session-binding-waiter";
 
 const SESSION_CREATE_TIMEOUT_MS = 15000;
@@ -278,6 +278,7 @@ export class IdeaCollectorSubmitService {
         stage,
         workspacePath: params.workspacePath,
         workspaceSlug: resolvedInitiativeSlug,
+        runSlug: stage === "description" && params.providerId ? buildDescriptionCollectorRunSlug(params.providerId, session.id) : undefined,
         prompt: contract.prompt,
         templatePath: contract.paths.template,
         questionnairePath: params.questionnairePath,
