@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 export type DescriptionRestartAttemptContext = {
   readonly workspacePath: string;
@@ -12,8 +12,8 @@ type InputPlayStopButtonProps = {
   readonly descriptionRestartAttempt?: DescriptionRestartAttemptContext | null;
 };
 
-const RESTART_ARM_TIMEOUT_MS = 4000;
 const RESTART_RESET_TIMEOUT_MS = 15_000;
+const RESTART_CONFIRM_TIMEOUT_MS = 10_000;
 
 const RestartAttemptButton = ({
   context,
@@ -21,54 +21,99 @@ const RestartAttemptButton = ({
   readonly context: DescriptionRestartAttemptContext;
 }) => {
   const [restartInFlight, setRestartInFlight] = useState(false);
-  const [restartArmed, setRestartArmed] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const restartTimerRef = useRef<number | null>(null);
-  const restartArmTimerRef = useRef<number | null>(null);
+  const confirmTimerRef = useRef<number | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(
     () => () => {
       if (restartTimerRef.current !== null) {
         window.clearTimeout(restartTimerRef.current);
       }
-      if (restartArmTimerRef.current !== null) {
-        window.clearTimeout(restartArmTimerRef.current);
+      if (confirmTimerRef.current !== null) {
+        window.clearTimeout(confirmTimerRef.current);
       }
     },
     []
   );
 
-  let label = "↻ Restart attempt";
-  if (restartInFlight) {
-    label = "↻ Restarting...";
-  } else if (restartArmed) {
-    label = "↻ Confirm restart";
-  }
+  const clearConfirmTimer = useCallback(() => {
+    if (confirmTimerRef.current === null) {
+      return;
+    }
+    window.clearTimeout(confirmTimerRef.current);
+    confirmTimerRef.current = null;
+  }, []);
 
-  let title = label;
-  if (!(restartInFlight || restartArmed)) {
-    title = "↻ Restart attempt (click again to confirm)";
-  }
+  const closeConfirm = useCallback(() => {
+    setConfirmOpen(false);
+    clearConfirmTimer();
+  }, [clearConfirmTimer]);
+
+  const openConfirm = useCallback(() => {
+    if (restartInFlight) {
+      return;
+    }
+    setConfirmOpen(true);
+    clearConfirmTimer();
+    confirmTimerRef.current = window.setTimeout(() => {
+      confirmTimerRef.current = null;
+      setConfirmOpen(false);
+    }, RESTART_CONFIRM_TIMEOUT_MS);
+  }, [clearConfirmTimer, restartInFlight]);
+
+  useEffect(() => {
+    if (!confirmOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeConfirm();
+      }
+    };
+
+    const handlePointerDown = (event: MouseEvent) => {
+      const root = rootRef.current;
+      if (!root) {
+        return;
+      }
+      const target = event.target;
+      if (!(target instanceof Node)) {
+        return;
+      }
+      if (!root.contains(target)) {
+        closeConfirm();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, [closeConfirm, confirmOpen]);
+
+  const label = restartInFlight ? "↻ Restarting..." : "↻ Restart attempt";
 
   const handleClick = () => {
     if (restartInFlight) {
       return;
     }
-    if (!restartArmed) {
-      setRestartArmed(true);
-      if (restartArmTimerRef.current !== null) {
-        window.clearTimeout(restartArmTimerRef.current);
-      }
-      restartArmTimerRef.current = window.setTimeout(() => {
-        restartArmTimerRef.current = null;
-        setRestartArmed(false);
-      }, RESTART_ARM_TIMEOUT_MS);
+    if (confirmOpen) {
+      closeConfirm();
       return;
     }
-    setRestartArmed(false);
-    if (restartArmTimerRef.current !== null) {
-      window.clearTimeout(restartArmTimerRef.current);
-      restartArmTimerRef.current = null;
+    openConfirm();
+  };
+
+  const handleApply = () => {
+    if (restartInFlight) {
+      return;
     }
+    closeConfirm();
     setRestartInFlight(true);
     window.dispatchEvent(
       new CustomEvent("pm:description:restart-attempt", {
@@ -82,7 +127,36 @@ const RestartAttemptButton = ({
   };
 
   return (
-    <div className="session-input__action">
+    <div className="session-input__action" ref={rootRef}>
+      {confirmOpen && !restartInFlight ? (
+        <div
+          aria-label="Confirm restart attempt"
+          className="session-input__confirm-popover"
+          role="dialog"
+        >
+          <span className="session-input__confirm-text">Restart attempt?</span>
+          <button
+            className={[
+              "session-input__confirm-button",
+              "session-input__confirm-button--apply",
+            ].join(" ")}
+            onClick={handleApply}
+            type="button"
+          >
+            Apply
+          </button>
+          <button
+            className={[
+              "session-input__confirm-button",
+              "session-input__confirm-button--cancel",
+            ].join(" ")}
+            onClick={closeConfirm}
+            type="button"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : null}
       <button
         aria-label={label}
         className={[
@@ -91,7 +165,7 @@ const RestartAttemptButton = ({
         ].join(" ")}
         disabled={restartInFlight}
         onClick={handleClick}
-        title={title}
+        title={label}
         type="button"
       >
         <span
