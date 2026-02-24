@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { SessionRuntime } from "./session-runtime";
+import { TaskTimerStorage } from "./task-timer-storage";
 import type {
   ArtifactPointer,
   NodeKey,
@@ -27,6 +28,7 @@ type WorkspaceRuntimeFacadeDeps = {
   readonly nowIso?: () => string;
   readonly store?: WorkspaceStore;
   readonly sessionRuntime?: SessionRuntime;
+  readonly taskTimerStorage?: TaskTimerStorage;
   readonly hydrateWorkspaceSessions?: (workspaceRoot: string) => readonly {
     sessionId: string;
     nodeId: string;
@@ -103,6 +105,7 @@ const isSessionAccumulativeForTimer = (session: SessionSnapshot): boolean => {
 export class WorkspaceRuntimeFacade {
   private readonly store: WorkspaceStore;
   private readonly sessionRuntime: SessionRuntime;
+  private readonly taskTimerStorage: TaskTimerStorage;
   private readonly snapshotDebounceMs: number;
   private readonly selectionIdFactory: () => string;
   private readonly nowIso: () => string;
@@ -120,6 +123,7 @@ export class WorkspaceRuntimeFacade {
 
   constructor(deps: WorkspaceRuntimeFacadeDeps = {}) {
     this.store = deps.store ?? new WorkspaceStore();
+    this.taskTimerStorage = deps.taskTimerStorage ?? new TaskTimerStorage();
     this.snapshotDebounceMs =
       deps.snapshotDebounceMs ?? DEFAULT_SNAPSHOT_DEBOUNCE_MS;
     this.selectionIdFactory =
@@ -218,6 +222,7 @@ export class WorkspaceRuntimeFacade {
         }
       );
     }
+    this.seedTaskTimers(workspaceRoot);
     this.selectionByClientId.set(clientId, {
       workspaceRoot,
       selectionId,
@@ -404,11 +409,101 @@ export class WorkspaceRuntimeFacade {
   }
 
   dispose(): void {
+    this.persistTaskTimers();
     this.sessionRuntime.dispose();
     for (const timer of this.snapshotTimers.values()) {
       clearTimeout(timer);
     }
     this.snapshotTimers.clear();
+  }
+
+  private seedTaskTimers(workspaceRoot: string): void {
+    if (this.taskTimersByWorkspaceRoot.has(workspaceRoot)) {
+      return;
+    }
+
+    const totals = this.taskTimerStorage.load().workspaces[workspaceRoot];
+    if (!totals) {
+      return;
+    }
+
+    const timers = new Map<string, MutableTaskTimerState>();
+    for (const [nodeId, totalSeconds] of Object.entries(totals)) {
+      if (typeof totalSeconds !== "number" || !Number.isFinite(totalSeconds)) {
+        continue;
+      }
+      const clamped = Math.max(0, Math.floor(totalSeconds));
+      if (clamped <= 0) {
+        continue;
+      }
+      timers.set(nodeId, {
+        totalSeconds: clamped,
+        runningSinceMs: null,
+        runningAccumulates: false,
+      });
+    }
+
+    if (timers.size > 0) {
+      this.taskTimersByWorkspaceRoot.set(workspaceRoot, timers);
+    }
+  }
+
+  private persistTaskTimers(): void {
+    if (this.taskTimersByWorkspaceRoot.size === 0) {
+      return;
+    }
+
+    const state = this.taskTimerStorage.load();
+    const nextWorkspaces = {
+      ...(state.workspaces as Record<string, Readonly<Record<string, number>>>),
+    } as Record<string, Record<string, number>>;
+
+    for (const [workspaceRoot, timers] of this.taskTimersByWorkspaceRoot) {
+      const totals = this.serializeTaskTimerTotals(timers);
+      if (Object.keys(totals).length === 0) {
+        delete nextWorkspaces[workspaceRoot];
+        continue;
+      }
+      nextWorkspaces[workspaceRoot] = totals;
+    }
+
+    this.taskTimerStorage.save({
+      schemaVersion: 1,
+      workspaces: nextWorkspaces,
+    });
+  }
+
+  private serializeTaskTimerTotals(
+    timers: Map<string, MutableTaskTimerState>
+  ): Record<string, number> {
+    const totals: Record<string, number> = {};
+
+    for (const [nodeId, timer] of timers) {
+      this.commitRunningTaskTimer(timer);
+      const normalizedTotal = Math.max(0, Math.floor(timer.totalSeconds));
+      if (normalizedTotal > 0) {
+        totals[nodeId] = normalizedTotal;
+      }
+    }
+
+    return totals;
+  }
+
+  private commitRunningTaskTimer(timer: MutableTaskTimerState): void {
+    if (timer.runningSinceMs === null) {
+      return;
+    }
+
+    const deltaSeconds = Math.max(
+      0,
+      Math.floor((Date.now() - timer.runningSinceMs) / 1000)
+    );
+    if (timer.runningAccumulates) {
+      timer.totalSeconds =
+        Math.max(0, Math.floor(timer.totalSeconds)) + deltaSeconds;
+    }
+    timer.runningSinceMs = null;
+    timer.runningAccumulates = false;
   }
 
   private scheduleSnapshot(workspaceRoot: string, priority: boolean): void {
