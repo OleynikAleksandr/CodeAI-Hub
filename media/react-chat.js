@@ -22162,7 +22162,7 @@ ${message.content}`
             "aria-hidden": "true",
             className: [
               "session-input__action-icon",
-              "session-input__action-icon--play"
+              "session-input__action-icon--restart"
             ].join(" "),
             children: "\u21BB"
           }
