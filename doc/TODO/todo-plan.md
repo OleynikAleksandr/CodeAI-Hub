@@ -95,3 +95,22 @@
 ### Stream 2: Guards + bug closeout
 1. [DONE] Smoke guard + закрыть `BUG-2026-02-24-03` в `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close BUG-2026-02-24-03`).
 2. [DONE] Git Commit: `docs(bug): close BUG-2026-02-24-03` (hash: `3b32b09a`)
+
+---
+
+## Phase 244 — Release 1.1.668: BUG-2026-02-24-03 (owner: Codex, updated: 2026-02-24)
+
+### Stream 0: Release build
+1. [TODO] `./scripts/build-all.sh` → `1.1.668` (scope: manifests + package versions; expected commit: `chore(release): build-all v1.1.668`).
+2. [TODO] Git Commit: `chore(release): build-all v1.1.668` (hash: TBD)
+3. [TODO] Update release notes + `doc/BugRegistry.md` fixed-in (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`; expected commit: `docs(release): update release notes for v1.1.668`).
+4. [TODO] Git Commit: `docs(release): update release notes for v1.1.668` (hash: TBD)
+5. [TODO] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.668.vsix` (sha256: TBD) (scope: none; no git commit).
+
+### Stream 1: Session report
+1. [TODO] Создать `doc/Sessions/Session024.md` по релизу `1.1.668` (scope: `doc/Sessions/Session024.md`; expected commit: `docs: session 024 report`).
+2. [TODO] Git Commit: `docs: session 024 report` (hash: TBD)
+
+### Stream 2: TODO bookkeeping
+1. [TODO] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Phase 244 (Stream 1/2) и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 244 complete`).
+2. [TODO] Git Commit: `docs(todo): mark Phase 244 complete` (hash: TBD)
