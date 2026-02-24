@@ -922,6 +922,7 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+  position: relative;
 }
 
 .session-input__action-button {
@@ -987,6 +988,65 @@
   border-radius: 3px;
   background-color: currentColor;
   display: block;
+}
+
+.session-input__confirm-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background-color: rgba(30, 30, 30, 0.98);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  z-index: 30;
+}
+
+.session-input__confirm-text {
+  font-size: 12px;
+  color: rgba(240, 240, 240, 0.92);
+  white-space: nowrap;
+}
+
+.session-input__confirm-button {
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 1;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.session-input__confirm-button:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+
+.session-input__confirm-button:focus-visible {
+  outline: 2px solid rgba(59, 117, 207, 0.6);
+  outline-offset: 2px;
+}
+
+.session-input__confirm-button--apply {
+  background-color: rgba(220, 61, 61, 0.28);
+  border-color: rgba(220, 61, 61, 0.45);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.session-input__confirm-button--apply:hover {
+  background-color: rgba(220, 61, 61, 0.35);
+  border-color: rgba(220, 61, 61, 0.55);
 }
 
 .session-input__container {
