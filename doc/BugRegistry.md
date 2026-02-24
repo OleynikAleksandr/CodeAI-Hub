@@ -34,7 +34,7 @@
 | BUG-2026-02-20-01 | FIXED | Claude/Auth | В чистом `~/.codeai-hub` Claude остаётся НЕДОСТУПЕН: provider-home auth bootstrap не поднимает авторизацию | 1.1.644 |
 | BUG-2026-02-21-01 | FIXED | Session UI | После падения/рестарта Core в середине turn: force-unlock + повторный submit не отправлял queued message в resume-сессию | 1.1.644 |
 | BUG-2026-02-22-01 | FIXED | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | 1.1.646 |
-| BUG-2026-02-24-01 | OPEN | PM/UI + Core Runtime | one-shot `description`: завис mid-turn → нет аварийного recovery без рестарта Core | TBD |
+| BUG-2026-02-24-01 | FIXED | PM/UI + Core Runtime | one-shot `description`: завис mid-turn → нет аварийного recovery без рестарта Core | TBD |
 
 ---
 
@@ -67,7 +67,7 @@
 
 ## BUG-2026-02-24-01 — one-shot `description`: hang mid-turn has no recovery without Core restart
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:** если `Description` завис/упал mid-turn (или live-сессия не создалась после превращения анкеты в `Questionary.md`), пользователь не может безопасно восстановиться: Play/Stop не применим к one-shot/no-resume и рестарт Core недопустим (может снести другие активные сессии).
 
@@ -75,7 +75,14 @@
 - Добавить **↻ Restart attempt** (с подтверждением) для `Description` в двух местах: Session UI (если сессия есть) + `Questionary.md` header (если сессии нет).
 - Реализовать `attemptId` gating: принимать артефакты/сигналы только от текущей попытки; late results от старых попыток игнорировать.
 
-**Commits:** TBD
+**Commits:**
+- `0f11f66a docs(contracts): description restart attempt contract`
+- `00fce612 feat(core): gate description by attemptId`
+- `19629d9e feat(pm): write description draft to runs`
+- `b0735af5 feat(pm): restart description attempt from questionnaire artifact`
+- `835aedea feat(ui): restart attempt control for description`
+- `f3d2021e feat(pm): restart description attempt from session UI`
+- `3e8cd3e0 chore(build): rebuild webview after description restart attempt`
 
 **Release:** TBD
 
