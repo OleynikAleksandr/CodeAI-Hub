@@ -59,4 +59,23 @@
 
 ### Stream 3: TODO bookkeeping
 1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Stream 2/3 Phase 241 и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 241 complete`).
-2. [DONE] Git Commit: `docs(todo): mark Phase 241 complete` (hash: TBD)
+2. [DONE] Git Commit: `docs(todo): mark Phase 241 complete` (hash: `ab3208f6`)
+
+---
+
+## Phase 242 — Release 1.1.667: rebuild to avoid 666 (owner: Codex, updated: 2026-02-24)
+
+### Stream 0: Release build
+1. [DONE] `./scripts/build-all.sh` → `1.1.667` (scope: manifests + package versions; expected commit: `chore(release): build-all v1.1.667`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.667` (hash: `c81dd129`)
+3. [DONE] Update release notes (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): update release notes for v1.1.667`).
+4. [DONE] Git Commit: `docs(release): update release notes for v1.1.667` (hash: `722cb591`)
+5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.667.vsix` (sha256: `8a93b1c68c7e3eb922e999986ef5d07c9381e2b0d94329761ca0b0864f85c406`) (scope: none; no git commit).
+
+### Stream 1: Session report
+1. [TODO] Создать `doc/Sessions/Session022.md` по релизу `1.1.667` (scope: `doc/Sessions/Session022.md`; expected commit: `docs: session 022 report`).
+2. [TODO] Git Commit: `docs: session 022 report` (hash: TBD)
+
+### Stream 2: TODO bookkeeping
+1. [TODO] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Phase 242 (Stream 1/2) и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 242 complete`).
+2. [TODO] Git Commit: `docs(todo): mark Phase 242 complete` (hash: TBD)
