@@ -121,7 +121,7 @@
 
 ### Stream 0: Bug registry + contract
 1. [DONE] Register `BUG-2026-02-24-04` + update `SessionTaskTimer_UI` contract for Stop semantics (scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(bug): add BUG-2026-02-24-04 (reviewer stop/play total timer)`).
-2. [DONE] Git Commit: `docs(bug): add BUG-2026-02-24-04 (reviewer stop/play total timer)` (hash: TBD)
+2. [DONE] Git Commit: `docs(bug): add BUG-2026-02-24-04 (reviewer stop/play total timer)` (hash: `d7443574`)
 
 ### Stream 1: Core timer accounting on Stop
 1. [TODO] Core: when Stop ends a busy segment, commit delta into `taskTimer.totalSeconds` (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `fix(core): preserve task timer total on stop`).
