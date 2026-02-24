@@ -22083,59 +22083,107 @@ ${message.content}`
   // src/client/ui/src/session/input-play-stop-button.tsx
   var import_react5 = __toESM(require_react());
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var InputPlayStopButton = ({
-    stopActive,
-    onClick,
-    descriptionRestartAttempt = null
+  var RESTART_ARM_TIMEOUT_MS = 4e3;
+  var RESTART_RESET_TIMEOUT_MS = 15e3;
+  var RestartAttemptButton = ({
+    context
   }) => {
     const [restartInFlight, setRestartInFlight] = (0, import_react5.useState)(false);
+    const [restartArmed, setRestartArmed] = (0, import_react5.useState)(false);
     const restartTimerRef = (0, import_react5.useRef)(null);
-    const restartAttemptActive = descriptionRestartAttempt != null && descriptionRestartAttempt.workspacePath.trim().length > 0 && descriptionRestartAttempt.workspaceSlug.trim().length > 0;
-    const showStop = stopActive && !restartAttemptActive;
-    let label = "Send message (Enter)";
-    if (restartAttemptActive) {
-      label = "\u21BB Restart attempt";
-    } else if (showStop) {
-      label = "Stop (stop core)";
-    }
-    let iconModifierClass = "session-input__action-icon--play";
-    if (showStop) {
-      iconModifierClass = "session-input__action-icon--stop";
-    }
-    const iconClassName = ["session-input__action-icon", iconModifierClass].filter(Boolean).join(" ");
-    let iconContent = "\u25B6";
-    if (restartAttemptActive) {
-      iconContent = "\u21BB";
-    } else if (showStop) {
-      iconContent = null;
-    }
+    const restartArmTimerRef = (0, import_react5.useRef)(null);
     (0, import_react5.useEffect)(
       () => () => {
         if (restartTimerRef.current !== null) {
           window.clearTimeout(restartTimerRef.current);
         }
+        if (restartArmTimerRef.current !== null) {
+          window.clearTimeout(restartArmTimerRef.current);
+        }
       },
       []
     );
+    let label = "\u21BB Restart attempt";
+    if (restartInFlight) {
+      label = "\u21BB Restarting...";
+    } else if (restartArmed) {
+      label = "\u21BB Confirm restart";
+    }
+    let title = label;
+    if (!(restartInFlight || restartArmed)) {
+      title = "\u21BB Restart attempt (click again to confirm)";
+    }
     const handleClick = () => {
-      if (restartAttemptActive) {
-        if (restartInFlight) {
-          return;
-        }
-        setRestartInFlight(true);
-        window.dispatchEvent(
-          new CustomEvent("pm:description:restart-attempt", {
-            detail: descriptionRestartAttempt
-          })
-        );
-        restartTimerRef.current = window.setTimeout(() => {
-          restartTimerRef.current = null;
-          setRestartInFlight(false);
-        }, 15e3);
+      if (restartInFlight) {
         return;
       }
-      onClick();
+      if (!restartArmed) {
+        setRestartArmed(true);
+        if (restartArmTimerRef.current !== null) {
+          window.clearTimeout(restartArmTimerRef.current);
+        }
+        restartArmTimerRef.current = window.setTimeout(() => {
+          restartArmTimerRef.current = null;
+          setRestartArmed(false);
+        }, RESTART_ARM_TIMEOUT_MS);
+        return;
+      }
+      setRestartArmed(false);
+      if (restartArmTimerRef.current !== null) {
+        window.clearTimeout(restartArmTimerRef.current);
+        restartArmTimerRef.current = null;
+      }
+      setRestartInFlight(true);
+      window.dispatchEvent(
+        new CustomEvent("pm:description:restart-attempt", {
+          detail: context
+        })
+      );
+      restartTimerRef.current = window.setTimeout(() => {
+        restartTimerRef.current = null;
+        setRestartInFlight(false);
+      }, RESTART_RESET_TIMEOUT_MS);
     };
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-input__action", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      "button",
+      {
+        "aria-label": label,
+        className: [
+          "session-input__action-button",
+          "session-input__action-button--stop"
+        ].join(" "),
+        disabled: restartInFlight,
+        onClick: handleClick,
+        title,
+        type: "button",
+        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+          "span",
+          {
+            "aria-hidden": "true",
+            className: [
+              "session-input__action-icon",
+              "session-input__action-icon--play"
+            ].join(" "),
+            children: "\u21BB"
+          }
+        )
+      }
+    ) });
+  };
+  var InputPlayStopButton = ({
+    stopActive,
+    onClick,
+    descriptionRestartAttempt = null
+  }) => {
+    const restartAttemptActive = descriptionRestartAttempt != null && descriptionRestartAttempt.workspacePath.trim().length > 0 && descriptionRestartAttempt.workspaceSlug.trim().length > 0;
+    if (restartAttemptActive) {
+      return descriptionRestartAttempt ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(RestartAttemptButton, { context: descriptionRestartAttempt }) : null;
+    }
+    const showStop = stopActive;
+    const label = showStop ? "Stop (stop core)" : "Send message (Enter)";
+    const iconModifierClass = showStop ? "session-input__action-icon--stop" : "session-input__action-icon--play";
+    const iconClassName = ["session-input__action-icon", iconModifierClass].filter(Boolean).join(" ");
+    const iconContent = showStop ? null : "\u25B6";
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-input__action", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
       "button",
       {
@@ -22144,8 +22192,7 @@ ${message.content}`
           "session-input__action-button",
           showStop || restartAttemptActive ? "session-input__action-button--stop" : ""
         ].filter(Boolean).join(" "),
-        disabled: restartAttemptActive && restartInFlight,
-        onClick: handleClick,
+        onClick,
         title: label,
         type: "button",
         children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", className: iconClassName, children: iconContent })
