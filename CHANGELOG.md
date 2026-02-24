@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.667] - 2026-02-24
+### Changed
+- Rebuild of `1.1.666` to avoid the `666` version number; no functional differences.
+
 ## [1.1.666] - 2026-02-24
 ### Changed
 - One-shot Description: ↻ Restart attempt confirmation now uses an inline Apply/Cancel bar (Session UI + `questionnaire.md` header), instead of a 2-step arm/confirm click.
