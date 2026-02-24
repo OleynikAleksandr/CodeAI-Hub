@@ -37,7 +37,7 @@
 | BUG-2026-02-24-01 | FIXED | PM/UI + Core Runtime | one-shot `description`: завис mid-turn → нет аварийного recovery без рестарта Core | 1.1.664 |
 | BUG-2026-02-24-02 | FIXED | Launcher/CEF | Standalone PM (CEF): crash on ↻ Restart attempt confirm | 1.1.665 |
 | BUG-2026-02-24-03 | FIXED | PM/UI | ↻ Restart attempt создаёт новую сессию, но PM остаётся на старой («resuming…») | 1.1.668 |
-| BUG-2026-02-24-04 | FIXED | Session UI | reviewer: Stop→message→Play resets task timer total | TBD |
+| BUG-2026-02-24-04 | FIXED | Session UI | reviewer: Stop→message→Play resets task timer total | 1.1.669 |
 
 ---
 
@@ -170,7 +170,7 @@
 - `a203d3f0 fix(core): preserve task timer total on stop`
 - `5fe2f19f test: prevent task timer total reset on stop/play`
 
-**Release:** TBD
+**Release:** `1.1.669`
 
 **Guards (smoke):**
 - Reviewer session → start a turn → wait 5s → Stop → add message → Play → total >= 5s and continues to grow after future turns.
