@@ -10712,11 +10712,11 @@ ${message.content}`
       }
     }
   }
-  function productionCreate(_, jsx46, jsxs41) {
+  function productionCreate(_, jsx46, jsxs42) {
     return create2;
     function create2(_2, type, props, key) {
       const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs41 : jsx46;
+      const fn = isStaticChildren ? jsxs42 : jsx46;
       return key ? fn(type, props, key) : fn(type, props);
     }
   }
@@ -22083,56 +22083,94 @@ ${message.content}`
   // src/client/ui/src/session/input-play-stop-button.tsx
   var import_react5 = __toESM(require_react());
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var RESTART_ARM_TIMEOUT_MS = 4e3;
   var RESTART_RESET_TIMEOUT_MS = 15e3;
+  var RESTART_CONFIRM_TIMEOUT_MS = 1e4;
   var RestartAttemptButton = ({
     context
   }) => {
     const [restartInFlight, setRestartInFlight] = (0, import_react5.useState)(false);
-    const [restartArmed, setRestartArmed] = (0, import_react5.useState)(false);
+    const [confirmOpen, setConfirmOpen] = (0, import_react5.useState)(false);
     const restartTimerRef = (0, import_react5.useRef)(null);
-    const restartArmTimerRef = (0, import_react5.useRef)(null);
+    const confirmTimerRef = (0, import_react5.useRef)(null);
+    const rootRef = (0, import_react5.useRef)(null);
     (0, import_react5.useEffect)(
       () => () => {
         if (restartTimerRef.current !== null) {
           window.clearTimeout(restartTimerRef.current);
         }
-        if (restartArmTimerRef.current !== null) {
-          window.clearTimeout(restartArmTimerRef.current);
+        if (confirmTimerRef.current !== null) {
+          window.clearTimeout(confirmTimerRef.current);
         }
       },
       []
     );
-    let label = "\u21BB Restart attempt";
-    if (restartInFlight) {
-      label = "\u21BB Restarting...";
-    } else if (restartArmed) {
-      label = "\u21BB Confirm restart";
-    }
-    let title = label;
-    if (!(restartInFlight || restartArmed)) {
-      title = "\u21BB Restart attempt (click again to confirm)";
-    }
+    const clearConfirmTimer = (0, import_react5.useCallback)(() => {
+      if (confirmTimerRef.current === null) {
+        return;
+      }
+      window.clearTimeout(confirmTimerRef.current);
+      confirmTimerRef.current = null;
+    }, []);
+    const closeConfirm = (0, import_react5.useCallback)(() => {
+      setConfirmOpen(false);
+      clearConfirmTimer();
+    }, [clearConfirmTimer]);
+    const openConfirm = (0, import_react5.useCallback)(() => {
+      if (restartInFlight) {
+        return;
+      }
+      setConfirmOpen(true);
+      clearConfirmTimer();
+      confirmTimerRef.current = window.setTimeout(() => {
+        confirmTimerRef.current = null;
+        setConfirmOpen(false);
+      }, RESTART_CONFIRM_TIMEOUT_MS);
+    }, [clearConfirmTimer, restartInFlight]);
+    (0, import_react5.useEffect)(() => {
+      if (!confirmOpen) {
+        return;
+      }
+      const handleKeyDown = (event) => {
+        if (event.key === "Escape") {
+          closeConfirm();
+        }
+      };
+      const handlePointerDown = (event) => {
+        const root4 = rootRef.current;
+        if (!root4) {
+          return;
+        }
+        const target = event.target;
+        if (!(target instanceof Node)) {
+          return;
+        }
+        if (!root4.contains(target)) {
+          closeConfirm();
+        }
+      };
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("mousedown", handlePointerDown);
+      return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("mousedown", handlePointerDown);
+      };
+    }, [closeConfirm, confirmOpen]);
+    const label = restartInFlight ? "\u21BB Restarting..." : "\u21BB Restart attempt";
     const handleClick = () => {
       if (restartInFlight) {
         return;
       }
-      if (!restartArmed) {
-        setRestartArmed(true);
-        if (restartArmTimerRef.current !== null) {
-          window.clearTimeout(restartArmTimerRef.current);
-        }
-        restartArmTimerRef.current = window.setTimeout(() => {
-          restartArmTimerRef.current = null;
-          setRestartArmed(false);
-        }, RESTART_ARM_TIMEOUT_MS);
+      if (confirmOpen) {
+        closeConfirm();
         return;
       }
-      setRestartArmed(false);
-      if (restartArmTimerRef.current !== null) {
-        window.clearTimeout(restartArmTimerRef.current);
-        restartArmTimerRef.current = null;
+      openConfirm();
+    };
+    const handleApply = () => {
+      if (restartInFlight) {
+        return;
       }
+      closeConfirm();
       setRestartInFlight(true);
       window.dispatchEvent(
         new CustomEvent("pm:description:restart-attempt", {
@@ -22144,31 +22182,68 @@ ${message.content}`
         setRestartInFlight(false);
       }, RESTART_RESET_TIMEOUT_MS);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-input__action", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-      "button",
-      {
-        "aria-label": label,
-        className: [
-          "session-input__action-button",
-          "session-input__action-button--stop"
-        ].join(" "),
-        disabled: restartInFlight,
-        onClick: handleClick,
-        title,
-        type: "button",
-        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-          "span",
-          {
-            "aria-hidden": "true",
-            className: [
-              "session-input__action-icon",
-              "session-input__action-icon--restart"
-            ].join(" "),
-            children: "\u21BB"
-          }
-        )
-      }
-    ) });
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "session-input__action", ref: rootRef, children: [
+      confirmOpen && !restartInFlight ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+        "div",
+        {
+          "aria-label": "Confirm restart attempt",
+          className: "session-input__confirm-popover",
+          role: "dialog",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-input__confirm-text", children: "Restart attempt?" }),
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+              "button",
+              {
+                className: [
+                  "session-input__confirm-button",
+                  "session-input__confirm-button--apply"
+                ].join(" "),
+                onClick: handleApply,
+                type: "button",
+                children: "Apply"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+              "button",
+              {
+                className: [
+                  "session-input__confirm-button",
+                  "session-input__confirm-button--cancel"
+                ].join(" "),
+                onClick: closeConfirm,
+                type: "button",
+                children: "Cancel"
+              }
+            )
+          ]
+        }
+      ) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+        "button",
+        {
+          "aria-label": label,
+          className: [
+            "session-input__action-button",
+            "session-input__action-button--stop"
+          ].join(" "),
+          disabled: restartInFlight,
+          onClick: handleClick,
+          title: label,
+          type: "button",
+          children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            "span",
+            {
+              "aria-hidden": "true",
+              className: [
+                "session-input__action-icon",
+                "session-input__action-icon--restart"
+              ].join(" "),
+              children: "\u21BB"
+            }
+          )
+        }
+      )
+    ] });
   };
   var InputPlayStopButton = ({
     stopActive,
