@@ -179,6 +179,8 @@ export const WorkflowArtifactViewer: React.FC<{
                   ? "rgba(255,255,255,0.18)"
                   : "rgba(255,255,255,0.1)",
               color: "rgba(255,255,255,0.92)",
+              fontSize: 22.4,
+              lineHeight: 1,
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",

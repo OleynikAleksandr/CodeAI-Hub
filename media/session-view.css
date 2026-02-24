@@ -976,6 +976,10 @@
   font-size: 14px;
 }
 
+.session-input__action-icon--restart {
+  font-size: 22.4px;
+}
+
 .session-input__action-icon--stop::before {
   content: "";
   width: 18px;
