@@ -23,6 +23,7 @@ VSIX sha256: `bbcdec4215221cea8ebf4510b2c1ce32999beeaee5c05bced0f9d75cda15f2fb`
 - `3ec74197 fix(pm/ui): auto-focus description session after restart attempt`
 - `3b30ffd7 chore(release): build-all v1.1.668`
 - `239a093d docs(release): update release notes for v1.1.668`
+- `2c7d5451 docs(todo): mark Phase 244 complete`
 
 ---
 
