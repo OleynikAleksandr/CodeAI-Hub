@@ -35,6 +35,7 @@
 | BUG-2026-02-21-01 | FIXED | Session UI | После падения/рестарта Core в середине turn: force-unlock + повторный submit не отправлял queued message в resume-сессию | 1.1.644 |
 | BUG-2026-02-22-01 | FIXED | PM/UI + Core Runtime | После cold start: Reviewer dialog в `codeai-hub-claude` показывает вечный lock `Agent is working...` при завершённой сессии | 1.1.646 |
 | BUG-2026-02-24-01 | FIXED | PM/UI + Core Runtime | one-shot `description`: завис mid-turn → нет аварийного recovery без рестарта Core | 1.1.664 |
+| BUG-2026-02-24-02 | FIXED | Launcher/CEF | Standalone PM (CEF): crash on ↻ Restart attempt confirm | 1.1.665 |
 
 ---
 
@@ -86,6 +87,31 @@
 - `a52fde37 fix(pm): typecheck restart attempt providerId`
 
 **Release:** `1.1.664`
+
+---
+
+## BUG-2026-02-24-02 — Standalone PM (CEF): crash on ↻ Restart attempt confirm
+
+**Status:** FIXED
+
+**Symptom:** в Standalone Project Manager (CEF) на macOS при нажатии ↻ Restart attempt (one-shot `Description`) приложение `CodeAIHubLauncher` может падать с macOS crash report (SIGSEGV / EXC_BAD_ACCESS).
+
+**Root cause (most likely):**
+- Использование native JS dialogs (`window.confirm`) в CEF UI контуре.
+
+**Fix:**
+- Убраны `window.confirm` из Project Manager UI.
+- Подтверждение реализовано как 2‑шаговый UX: 1‑й клик “arm” на 4s, 2‑й клик подтверждает и запускает новую попытку.
+
+**Commits:**
+- `94abfd82 fix(pm/ui): avoid native confirm for description restart`
+- `50daf9f4 chore(ui): rebuild ui bundles v1.1.665`
+
+**Release:** `1.1.665`
+
+**Guards (smoke):**
+- Standalone PM → one-shot `Description` → клик ↻ (arm) → второй клик → restart attempt; приложение не падает.
+- `questionnaire.md` header ↻: аналогично.
 
 ---
 
