@@ -101,16 +101,16 @@
 ## Phase 244 — Release 1.1.668: BUG-2026-02-24-03 (owner: Codex, updated: 2026-02-24)
 
 ### Stream 0: Release build
-1. [TODO] `./scripts/build-all.sh` → `1.1.668` (scope: manifests + package versions; expected commit: `chore(release): build-all v1.1.668`).
-2. [TODO] Git Commit: `chore(release): build-all v1.1.668` (hash: TBD)
-3. [TODO] Update release notes + `doc/BugRegistry.md` fixed-in (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`; expected commit: `docs(release): update release notes for v1.1.668`).
-4. [TODO] Git Commit: `docs(release): update release notes for v1.1.668` (hash: TBD)
-5. [TODO] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.668.vsix` (sha256: TBD) (scope: none; no git commit).
+1. [DONE] `./scripts/build-all.sh` → `1.1.668` (scope: manifests + package versions; expected commit: `chore(release): build-all v1.1.668`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.668` (hash: `3b30ffd7`)
+3. [DONE] Update release notes + `doc/BugRegistry.md` fixed-in (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`; expected commit: `docs(release): update release notes for v1.1.668`).
+4. [DONE] Git Commit: `docs(release): update release notes for v1.1.668` (hash: `239a093d`)
+5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.668.vsix` (sha256: `bbcdec4215221cea8ebf4510b2c1ce32999beeaee5c05bced0f9d75cda15f2fb`) (scope: none; no git commit).
 
 ### Stream 1: Session report
-1. [TODO] Создать `doc/Sessions/Session024.md` по релизу `1.1.668` (scope: `doc/Sessions/Session024.md`; expected commit: `docs: session 024 report`).
-2. [TODO] Git Commit: `docs: session 024 report` (hash: TBD)
+1. [DONE] Создать `doc/Sessions/Session024.md` по релизу `1.1.668` (scope: `doc/Sessions/Session024.md`; expected commit: `docs: session 024 report`).
+2. [DONE] Git Commit: `docs: session 024 report` (hash: `794cb0f4`)
 
 ### Stream 2: TODO bookkeeping
-1. [TODO] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Phase 244 (Stream 1/2) и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 244 complete`).
-2. [TODO] Git Commit: `docs(todo): mark Phase 244 complete` (hash: TBD)
+1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Phase 244 (Stream 1/2) и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 244 complete`).
+2. [DONE] Git Commit: `docs(todo): mark Phase 244 complete` (hash: TBD)
