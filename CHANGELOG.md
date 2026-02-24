@@ -2,6 +2,17 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.665] - 2026-02-24
+### Fixed
+- Standalone Project Manager (CEF): avoid crash when confirming ↻ Restart attempt in one-shot Description (replaced native `window.confirm` with a 2-step arm/confirm UX).
+
+### Changed
+- Session UI: ↻ Restart icon is now 1.6× larger.
+
+## [1.1.664] - 2026-02-24
+### Added
+- One-shot Description: ↻ Restart attempt recovery to re-submit the questionnaire and start a fresh attempt when the original attempt hangs mid-turn.
+
 ## [1.1.663] - 2026-02-23
 ### Fixed
 - Session UI: Stop (■) icon is now ~10% smaller for better visual balance.

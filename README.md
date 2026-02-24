@@ -7,21 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.663
-- Session UI: Stop ■ icon is now ~10% smaller (cleaner proportions).
-- Session UI (Standalone Project Manager / CEF): after Stop (■), the next ▶ / Enter now reliably starts Core again (via Launcher bridge) and then sends the message.
-- Session UI: ■ reliably stops Core via the shutdown endpoint (`POST /api/v1/shutdown`) and clears the confusing “Agent is working…” placeholder.
-- Session UI: locked input “please wait” placeholders now pulse opacity from 20% to 40% every 1000ms (provider color).
-- Session UI: locked input “please wait” placeholders now use the provider wait color (matching the live turn timer).
-- Session timers: one-shot Description sessions (`resumeMode="no_resume"`) now show the live turn timer while running, without accumulating total time.
-- Session timers: SSOT moved to Core and delivered via workspace snapshots, so total/turn counters stay consistent across multi-workspace/multi-tab Project Manager usage and Project Manager reloads.
-- Session UI: `total:` label typography now matches timer digits (same size/family), so the footer indicator reads as a single aligned string.
-- Session UI: top (turn) and bottom (total) timers now share the same right anchor for horizontal alignment.
-- Session UI: total timer remains static while the agent is running (always gray, always visible in footer) and updates by jump only when a turn completes; label format is `total:  00h 00m 00s`.
-- Session UI (BUG-2026-02-22-01): fixes “stuck locked/resuming” states on cold start and after Core restarts mid-turn — input unlocks snapshot-first (`turnState=idle` + `continuityLockActive=false`) even if `continuityLockReason` is missing; no manual unlock needed, and “Продолжай” continues the interrupted turn.
-- Project Manager: adds regression coverage + aligns snapshot application so missing `continuityLockReason` cannot keep input blocked when the snapshot is already `idle/unlocked`.
-- Core / Workspace snapshots: normalizes idle resume-in-place sessions to emit an explicit unlock hint `continuityLockReason="no_rollover_needed"` (defense-in-depth; reason is never a hard unlock gate).
-- Docs: recut release build with up-to-date `README.md` + `CHANGELOG.md` (release notes are updated before packaging).
+## Current Release — v1.1.665
+- One-shot `Description`: adds ↻ Restart attempt recovery (Session UI + `questionnaire.md` header) to re-run questionnaire submission if an attempt hangs mid-turn.
+- Standalone Project Manager (CEF): replaces native confirm dialogs with a 2-step “arm → confirm” restart UX to avoid macOS crashes.
+- Session UI: ↻ Restart icon is now 1.6× larger (better proportions / matches Stop button sizing).
 
 Previous releases (summary): the `1.1.57x–1.1.64x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, and workflow handoff UX in Project Manager.
 
