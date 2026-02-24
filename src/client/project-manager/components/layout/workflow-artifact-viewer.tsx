@@ -5,6 +5,8 @@ import { api } from "../../api";
 import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
 
+const RESTART_ARM_TIMEOUT_MS = 4_000;
+
 export const WorkflowArtifactViewer: React.FC<{
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -16,8 +18,10 @@ export const WorkflowArtifactViewer: React.FC<{
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [restartError, setRestartError] = useState<string | null>(null);
+  const [restartArmed, setRestartArmed] = useState(false);
   const [restartInFlight, setRestartInFlight] = useState(false);
   const submitServiceRef = useRef(new IdeaCollectorSubmitService());
+  const restartArmTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,6 +75,15 @@ export const WorkflowArtifactViewer: React.FC<{
     };
   }, [props.path, props.refreshKey, props.workspacePath, props.workspaceSlug]);
 
+  useEffect(
+    () => () => {
+      if (restartArmTimerRef.current !== null) {
+        window.clearTimeout(restartArmTimerRef.current);
+      }
+    },
+    []
+  );
+
   const showBackButton =
     props.label !== "description.md" &&
     props.label !== "Final_Description.md" &&
@@ -78,17 +91,11 @@ export const WorkflowArtifactViewer: React.FC<{
 
   const canRestartAttempt = props.label === "questionnaire.md";
 
-  const handleRestartAttempt = async () => {
+  const handleRestartAttempt = async (): Promise<void> => {
     if (!canRestartAttempt || restartInFlight) {
       return;
     }
     setRestartError(null);
-    const confirmed = window.confirm(
-      "Перезапустить попытку Description?\n\nТекущая попытка будет отменена, и будет создана новая сессия."
-    );
-    if (!confirmed) {
-      return;
-    }
 
     setRestartInFlight(true);
     try {
@@ -123,6 +130,29 @@ export const WorkflowArtifactViewer: React.FC<{
     }
   };
 
+  const handleRestartClick = () => {
+    if (!canRestartAttempt || restartInFlight) {
+      return;
+    }
+    if (!restartArmed) {
+      setRestartArmed(true);
+      if (restartArmTimerRef.current !== null) {
+        window.clearTimeout(restartArmTimerRef.current);
+      }
+      restartArmTimerRef.current = window.setTimeout(() => {
+        restartArmTimerRef.current = null;
+        setRestartArmed(false);
+      }, RESTART_ARM_TIMEOUT_MS);
+      return;
+    }
+    setRestartArmed(false);
+    if (restartArmTimerRef.current !== null) {
+      window.clearTimeout(restartArmTimerRef.current);
+      restartArmTimerRef.current = null;
+    }
+    void handleRestartAttempt();
+  };
+
   return (
     <div className="pm-details">
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
@@ -134,11 +164,9 @@ export const WorkflowArtifactViewer: React.FC<{
         <strong title={props.path}>{props.label}</strong>
         {canRestartAttempt ? (
           <button
-            aria-label="Restart attempt"
+            aria-label={restartArmed ? "Confirm restart attempt" : "Restart attempt"}
             disabled={restartInFlight}
-            onClick={() => {
-              void handleRestartAttempt();
-            }}
+            onClick={handleRestartClick}
             style={{
               width: 36,
               height: 32,
@@ -147,14 +175,22 @@ export const WorkflowArtifactViewer: React.FC<{
               border: "1px solid rgba(255,255,255,0.18)",
               background: restartInFlight
                 ? "rgba(255,255,255,0.06)"
-                : "rgba(255,255,255,0.1)",
+                : restartArmed
+                  ? "rgba(255,255,255,0.18)"
+                  : "rgba(255,255,255,0.1)",
               color: "rgba(255,255,255,0.92)",
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: restartInFlight ? "not-allowed" : "pointer",
             }}
-            title="↻ Restart attempt"
+            title={
+              restartInFlight
+                ? "↻ Restarting..."
+                : restartArmed
+                  ? "↻ Confirm restart (click again)"
+                  : "↻ Restart attempt"
+            }
             type="button"
           >
             ↻

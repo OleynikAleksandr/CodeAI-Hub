@@ -153,12 +153,6 @@ export const ProjectManagerSessionView = ({
       if (restartAttemptInFlightRef.current) {
         return;
       }
-      const confirmed = window.confirm(
-        "Перезапустить попытку Description?\n\nТекущая попытка будет отменена, и будет создана новая сессия."
-      );
-      if (!confirmed) {
-        return;
-      }
       restartAttemptInFlightRef.current = true;
 
       void (async () => {
