@@ -1,11 +1,8 @@
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
-import type { ProviderStackId } from "../../../../types/provider";
+import { useEffect, useState } from "react";
 import { api } from "../../api";
-import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
-
-const RESTART_ARM_TIMEOUT_MS = 4_000;
+import { QuestionnaireRestartAttemptControl } from "./questionnaire-restart-attempt-control";
 
 export const WorkflowArtifactViewer: React.FC<{
   readonly workspacePath: string;
@@ -18,10 +15,6 @@ export const WorkflowArtifactViewer: React.FC<{
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [restartError, setRestartError] = useState<string | null>(null);
-  const [restartArmed, setRestartArmed] = useState(false);
-  const [restartInFlight, setRestartInFlight] = useState(false);
-  const submitServiceRef = useRef(new IdeaCollectorSubmitService());
-  const restartArmTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -75,83 +68,12 @@ export const WorkflowArtifactViewer: React.FC<{
     };
   }, [props.path, props.refreshKey, props.workspacePath, props.workspaceSlug]);
 
-  useEffect(
-    () => () => {
-      if (restartArmTimerRef.current !== null) {
-        window.clearTimeout(restartArmTimerRef.current);
-      }
-    },
-    []
-  );
-
   const showBackButton =
     props.label !== "description.md" &&
     props.label !== "Final_Description.md" &&
     props.label !== "questionnaire.md";
 
   const canRestartAttempt = props.label === "questionnaire.md";
-
-  const handleRestartAttempt = async (): Promise<void> => {
-    if (!canRestartAttempt || restartInFlight) {
-      return;
-    }
-    setRestartError(null);
-
-    setRestartInFlight(true);
-    try {
-      const state = await api.getWorkflowState(
-        props.workspaceSlug,
-        props.workspacePath
-      );
-      const providerId =
-        state?.description?.collectorSession?.providerId ??
-        state?.description?.session?.providerId ??
-        api.getIdeaCollectorProviders().at(0)?.id ??
-        null;
-
-      if (!providerId) {
-        setRestartError("Не удалось определить провайдера для перезапуска.");
-        return;
-      }
-
-      await submitServiceRef.current.submitQuestionnaire({
-        workspacePath: props.workspacePath,
-        workspaceSlug: props.workspaceSlug,
-        questionnairePath: props.path,
-        stage: "description",
-        providerId: providerId as ProviderStackId,
-      });
-    } catch (submitError: unknown) {
-      setRestartError(
-        submitError instanceof Error ? submitError.message : String(submitError)
-      );
-    } finally {
-      setRestartInFlight(false);
-    }
-  };
-
-  const handleRestartClick = () => {
-    if (!canRestartAttempt || restartInFlight) {
-      return;
-    }
-    if (!restartArmed) {
-      setRestartArmed(true);
-      if (restartArmTimerRef.current !== null) {
-        window.clearTimeout(restartArmTimerRef.current);
-      }
-      restartArmTimerRef.current = window.setTimeout(() => {
-        restartArmTimerRef.current = null;
-        setRestartArmed(false);
-      }, RESTART_ARM_TIMEOUT_MS);
-      return;
-    }
-    setRestartArmed(false);
-    if (restartArmTimerRef.current !== null) {
-      window.clearTimeout(restartArmTimerRef.current);
-      restartArmTimerRef.current = null;
-    }
-    void handleRestartAttempt();
-  };
 
   return (
     <div className="pm-details">
@@ -163,40 +85,12 @@ export const WorkflowArtifactViewer: React.FC<{
         ) : null}
         <strong title={props.path}>{props.label}</strong>
         {canRestartAttempt ? (
-          <button
-            aria-label={restartArmed ? "Confirm restart attempt" : "Restart attempt"}
-            disabled={restartInFlight}
-            onClick={handleRestartClick}
-            style={{
-              width: 36,
-              height: 32,
-              padding: 0,
-              borderRadius: 6,
-              border: "1px solid rgba(255,255,255,0.18)",
-              background: restartInFlight
-                ? "rgba(255,255,255,0.06)"
-                : restartArmed
-                  ? "rgba(255,255,255,0.18)"
-                  : "rgba(255,255,255,0.1)",
-              color: "rgba(255,255,255,0.92)",
-              fontSize: 22.4,
-              lineHeight: 1,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: restartInFlight ? "not-allowed" : "pointer",
-            }}
-            title={
-              restartInFlight
-                ? "↻ Restarting..."
-                : restartArmed
-                  ? "↻ Confirm restart (click again)"
-                  : "↻ Restart attempt"
-            }
-            type="button"
-          >
-            ↻
-          </button>
+          <QuestionnaireRestartAttemptControl
+            onError={setRestartError}
+            questionnairePath={props.path}
+            workspacePath={props.workspacePath}
+            workspaceSlug={props.workspaceSlug}
+          />
         ) : null}
       </div>
       {restartError ? <div className="pm-placeholder">{restartError}</div> : null}
