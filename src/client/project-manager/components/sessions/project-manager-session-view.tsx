@@ -174,7 +174,7 @@ export const ProjectManagerSessionView = ({
               ? questionnairePathCandidate.trim()
               : `.codeai-hub/${detail.workspaceSlug}/description/questionnaire.md`;
 
-          const providerId =
+          const providerIdCandidate =
             isProviderStackId(detail.providerId)
               ? detail.providerId
               : state?.description?.collectorSession?.providerId ??
@@ -182,7 +182,11 @@ export const ProjectManagerSessionView = ({
                 api.getIdeaCollectorProviders().at(0)?.id ??
                 null;
 
-          if (!providerId) {
+          const providerId = isProviderStackId(providerIdCandidate)
+            ? providerIdCandidate
+            : null;
+
+          if (providerId === null) {
             return;
           }
 
