@@ -93,5 +93,5 @@
 2. [DONE] Git Commit: `fix(pm/ui): auto-focus description session after restart attempt` (hash: `3ec74197`)
 
 ### Stream 2: Guards + bug closeout
-1. [TODO] Smoke guard + закрыть `BUG-2026-02-24-03` в `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close BUG-2026-02-24-03`).
-2. [TODO] Git Commit: `docs(bug): close BUG-2026-02-24-03` (hash: TBD)
+1. [DONE] Smoke guard + закрыть `BUG-2026-02-24-03` в `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close BUG-2026-02-24-03`).
+2. [DONE] Git Commit: `docs(bug): close BUG-2026-02-24-03` (hash: `3b32b09a`)
