@@ -78,4 +78,4 @@
 
 ### Stream 2: TODO bookkeeping
 1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE для Phase 242 (Stream 1/2) и вписать hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark Phase 242 complete`).
-2. [DONE] Git Commit: `docs(todo): mark Phase 242 complete` (hash: TBD)
+2. [DONE] Git Commit: `docs(todo): mark Phase 242 complete` (hash: `b71dfc0a`)
