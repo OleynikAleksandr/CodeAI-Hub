@@ -24,8 +24,8 @@
 
 ### Stream 0: Release docs
 1. [DONE] Обновить `doc/BugRegistry.md`: BUG-2026-02-24-01 → Release `1.1.664` + указать commits; создать `doc/Sessions/Session018.md` (scope: `doc/BugRegistry.md`, `doc/Sessions/Session018.md`; expected commit: `chore(release): package vsix v1.1.664`).
-2. [TODO] Git Commit: `chore(release): package vsix v1.1.664` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): package vsix v1.1.664` (hash: `a4e52890`)
 
 ### Stream 1: TODO bookkeeping
-1. [TODO] Обновить `doc/TODO/todo-plan.md`: отметить DONE и прописать hash коммита упаковки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark vsix packaged v1.1.664`).
-2. [TODO] Git Commit: `docs(todo): mark vsix packaged v1.1.664` (hash: TBD)
+1. [DONE] Обновить `doc/TODO/todo-plan.md`: отметить DONE и прописать hash коммита упаковки (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): mark vsix packaged v1.1.664`).
+2. [DONE] Git Commit: `docs(todo): mark vsix packaged v1.1.664` (hash: TBD)
