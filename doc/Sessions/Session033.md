@@ -24,6 +24,7 @@
 ## Git commits
 - `fab3d7a4 fix(pm/ui): remove Back from artifact viewer`
 - `e76065d1 chore(release): build-all`
+- `91902bea chore(release): package vsix`
 
 ---
 
