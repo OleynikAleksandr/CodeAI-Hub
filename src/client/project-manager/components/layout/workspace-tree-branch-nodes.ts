@@ -96,6 +96,7 @@ export const buildVirtualSimulationBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly workspaceSlug: string | null;
   readonly workspacePath?: string;
+  readonly selectArtifact: (artifactPath: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
 }): readonly TreeNode[] => {
   const workflowState = options.workflowState;
@@ -120,7 +121,16 @@ export const buildVirtualSimulationBranchNodes = (options: {
   }
 
   const providerTitle = resolveProviderTitle(last.providerId);
+  const artifactPath = `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`;
   return [
+    {
+      id: "workflow:virtual_simulation:artifact",
+      label: "virtual-simulation.md",
+      title: artifactPath,
+      status: "active",
+      visualDepth: 2,
+      onSelect: () => options.selectArtifact(artifactPath, "virtual-simulation.md"),
+    },
     {
       id: `workflow:virtual_simulation:session:${chain.rootSessionId}`,
       label: `Virtual Simulation ${providerTitle}`,
@@ -134,7 +144,7 @@ export const buildVirtualSimulationBranchNodes = (options: {
           workspaceSlug,
           initiativeSlug: workspaceSlug,
           stage: "virtual_simulation",
-          sessionKind: "reviewer",
+          sessionKind: "collector",
           runSlug: null,
         });
       },

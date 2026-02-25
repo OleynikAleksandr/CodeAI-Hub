@@ -150,6 +150,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
                 workflowState,
                 workspaceSlug,
                 workspacePath,
+                selectArtifact,
                 dispatchDialogOpenIntent,
               })
             : [];
