@@ -53,8 +53,8 @@
 ## Phase 249 — PM UI: manual tool + right-side hint + infinite agent session (owner: Oleksandr, updated: 2026-02-25)
 
 ### Stream 0: Manual start wiring (кнопка → stage)
-1. [TODO] PM: по нажатию кнопки `VIRTUAL SIMULATION` в верхнем тулбаре стартовать шаг `virtual_simulation` (create/resume session + отправка prompt-pack); без hint/валидаторов (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat(pm): start virtual simulation step from toolbar`).
-2. [TODO] Git Commit: `feat(pm): start virtual simulation step from toolbar` (hash: TBD)
+1. [DONE] PM: по нажатию кнопки `VIRTUAL SIMULATION` в верхнем тулбаре стартовать шаг `virtual_simulation` (create/resume session + отправка prompt-pack); без hint/валидаторов (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat(pm): start virtual simulation step from toolbar`).
+2. [DONE] Git Commit: `feat(pm): start virtual simulation step from toolbar` (hash: `a9fe916c`)
 
 ### Stream 1: Right-side hint (до появления артефакта)
 1. [TODO] PM UI: показывать информационный блок справа от UI сессии, пока `virtual-simulation.md` отсутствует; блок не должен блокировать старт сессии (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm/ui): show virtual simulation hint panel`).
