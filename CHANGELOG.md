@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.675] - 2026-02-25
+### Fixed
+- Project Manager: remove the confusing Back button from the artifact viewer.
+
 ## [1.1.674] - 2026-02-25
 ### Fixed
 - Project Manager: show `virtual-simulation.md` in the Workspace tree only after the artifact exists (avoids 404 when clicking).

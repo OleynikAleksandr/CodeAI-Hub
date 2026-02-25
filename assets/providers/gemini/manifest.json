@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "1.1.674",
-    "package": "gemini-module-1.1.674.tar.bz2",
-    "size": 19994,
-    "sha1": "f6b518190b9fbd05707b7afa56ba3c323ec3fd3e"
+    "version": "1.1.675",
+    "package": "gemini-module-1.1.675.tar.bz2",
+    "size": 19982,
+    "sha1": "3be3953ca743d48ddff53eb2dd8c44b2138c56fc"
   }
 }
