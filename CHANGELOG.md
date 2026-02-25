@@ -2,6 +2,12 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.673] - 2026-02-25
+### Fixed
+- Project Manager: Virtual Simulation reuses the provider selected for Description (prevents accidental provider switches).
+- Session UI: workflow tabs use stage labels for non-description stages (e.g., `Virtual Simulation`) instead of showing `Reviewer`.
+- Project Manager: Workspace tree now shows the `virtual-simulation.md` artifact as a child node under Virtual Simulation.
+
 ## [1.1.672] - 2026-02-25
 ### Fixed
 - Project Manager: Virtual Simulation now immediately switches the Sessions panel into a pending state and auto-opens the stage dialog once it becomes available.

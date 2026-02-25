@@ -23758,18 +23758,28 @@ ${path2}` : path2;
 
   // src/client/ui/src/session/session-tabs.tsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var formatWorkflowStageLabel = (stage) => {
+    const normalized = stage.replace(/[-_]+/g, " ").trim();
+    if (!normalized) {
+      return stage;
+    }
+    return normalized.split(" ").filter(Boolean).map((token) => token.charAt(0).toUpperCase() + token.slice(1)).join(" ");
+  };
   var getAgentLabel = (sessionKind, stage, runSlug) => {
-    if (sessionKind === "reviewer") {
-      return "Reviewer";
+    if (stage && stage !== "description") {
+      return formatWorkflowStageLabel(stage);
     }
     if (stage === "description") {
-      return runSlug === "reviewer" ? "Reviewer" : "Description";
+      return sessionKind === "reviewer" || runSlug === "reviewer" ? "Reviewer" : "Description";
+    }
+    if (sessionKind === "reviewer") {
+      return "Reviewer";
     }
     if (sessionKind === "collector") {
       return "Agent";
     }
     if (stage) {
-      return stage.charAt(0).toUpperCase() + stage.slice(1);
+      return formatWorkflowStageLabel(stage);
     }
     return null;
   };
