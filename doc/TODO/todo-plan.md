@@ -69,8 +69,8 @@
 ## Phase 250 — Watcher events + OUTDATED propagation (owner: Oleksandr, updated: 2026-02-25)
 
 ### Stream 0: Watcher events (FS → workflow.events)
-1. [TODO] Добавить/проверить watcher-события для `Final_Description.md` и `virtual-simulation.md` (written/changed) как триггеры пересчёта статусов (scope: `packages/core/src/remote-bridge/handlers/workflow-events-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-artifact-http-handler.ts`; expected commit: `feat(workflow): emit events for virtual simulation artifacts`).
-2. [TODO] Git Commit: `feat(workflow): emit events for virtual simulation artifacts` (hash: TBD)
+1. [DONE] Подключить watcher‑события (в т.ч. `Final_Description.md` и `virtual-simulation.md`) к `workflow-state` (чтобы статусы/OUTDATED вычислялись детерминированно по событиям) (scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `feat(workflow): record watcher events in workflow state`).
+2. [DONE] Git Commit: `feat(workflow): record watcher events in workflow state` (hash: `5548d6cf`)
 
 ### Stream 1: Backend gating + OUTDATED
 1. [TODO] Реализовать gating/статусы: Virtual Simulation доступен только после `Final_Description.md`; изменение upstream → `OUTDATED`; изменение `virtual-simulation.md` → downstream (Diagram Modules/Facades) `OUTDATED`/`BLOCKED` (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat(workflow): virtual simulation gating and outdated`).
