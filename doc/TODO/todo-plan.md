@@ -105,4 +105,4 @@
 
 ### Stream 1: Build Release (VSIX)
 1. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/SessionXXX.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/SessionXXX.md`; expected commit: `chore(release): package vsix`).
-2. [TODO] Git Commit: `chore(release): package vsix` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): package vsix` (hash: `96f1cc5d`)
