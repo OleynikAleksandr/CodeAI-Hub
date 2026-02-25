@@ -57,8 +57,8 @@
 2. [DONE] Git Commit: `feat(pm): start virtual simulation step from toolbar` (hash: `a9fe916c`)
 
 ### Stream 1: Right-side hint (до появления артефакта)
-1. [TODO] PM UI: показывать информационный блок справа от UI сессии, пока `virtual-simulation.md` отсутствует; блок не должен блокировать старт сессии (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm/ui): show virtual simulation hint panel`).
-2. [TODO] Git Commit: `feat(pm/ui): show virtual simulation hint panel` (hash: TBD)
+1. [DONE] PM UI: показывать информационный блок справа от UI сессии, пока `virtual-simulation.md` отсутствует; блок не должен блокировать старт сессии (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm/ui): show virtual simulation hint panel`).
+2. [DONE] Git Commit: `feat(pm/ui): show virtual simulation hint panel` (hash: `d0d9ddb4`)
 
 ### Stream 2: Infinite session semantics (как Reviewer)
 1. [TODO] PM/Core wiring: обеспечить «бесконечную» сессию Virtual Simulation (возврат в диалог, повторный upsert артефакта, без одноразового закрытия шага) (scope: `src/client/project-manager/services/workflow-step-start-service.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/continuity-types.ts`; expected commit: `feat(workflow): make virtual simulation session infinite`).
