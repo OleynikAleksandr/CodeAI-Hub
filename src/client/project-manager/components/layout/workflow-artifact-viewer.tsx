@@ -68,21 +68,11 @@ export const WorkflowArtifactViewer: React.FC<{
     };
   }, [props.path, props.refreshKey, props.workspacePath, props.workspaceSlug]);
 
-  const showBackButton =
-    props.label !== "description.md" &&
-    props.label !== "Final_Description.md" &&
-    props.label !== "questionnaire.md";
-
   const canRestartAttempt = props.label === "questionnaire.md";
 
   return (
     <div className="pm-details">
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-        {showBackButton ? (
-          <button onClick={props.onClose} type="button">
-            Back
-          </button>
-        ) : null}
         <strong title={props.path}>{props.label}</strong>
         {canRestartAttempt ? (
           <QuestionnaireRestartAttemptControl
