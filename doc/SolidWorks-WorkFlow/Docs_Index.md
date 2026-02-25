@@ -34,6 +34,7 @@
 - `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — session-home isolation + resume-first recovery contract.
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
 - `Contracts/Workflow_CLI.md` — CLI steps + watcher contract.
+- `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation` (manual start, артефакт, DoD, OUTDATED, bundled templates).
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ## 2) Текущие источники до завершения миграции (legacy)

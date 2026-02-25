@@ -13,6 +13,8 @@
 7) `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 8) `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 9) Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+10) Workflow steps + watcher: `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+11) Virtual Simulation step: `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
