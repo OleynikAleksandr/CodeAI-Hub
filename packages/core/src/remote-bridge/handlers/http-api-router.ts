@@ -20,7 +20,7 @@ import type {
 } from "./system-request-handler";
 import { handleWorkflowArtifactRead } from "./workflow-artifact-http-handler";
 import type { WorkflowEventsService } from "./workflow-events-service";
-import { WorkflowStateService } from "./workflow-state-service";
+import type { WorkflowStateService } from "./workflow-state-service";
 import { handleWorkspaceActivate } from "./workspace-activate-service";
 import {
   handleWorkspaceFileRead,
@@ -74,6 +74,7 @@ export type RouterDependencies = {
   readonly sessionStorage: UnifiedSessionStorage;
   readonly logger: Logger;
   readonly workflowEventsService: WorkflowEventsService;
+  readonly workflowStateService: WorkflowStateService;
   readonly onWorkspaceSessionCreated?: (
     workspacePath: string,
     workspaceSlug: string
@@ -91,10 +92,7 @@ export class HttpApiRouter {
   registerRoutes(): void {
     const { app, systemHandler, fileDropService } = this.deps;
     const initiativesHandler = new InitiativesHttpHandler(this.deps.logger);
-    const workflowStateService = new WorkflowStateService({
-      logger: this.deps.logger,
-      sessionManager: this.deps.sessionManager,
-    });
+    const workflowStateService = this.deps.workflowStateService;
     const workflowEventsService = this.deps.workflowEventsService;
 
     app.get("/api/v1/health", (req: Request, res: Response) => {
