@@ -10,7 +10,10 @@ import {
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
-import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
+import type {
+  WorkflowStageId,
+  WorkflowWatcherEvent,
+} from "../../workflow/watcher/watcher-types";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
@@ -93,7 +96,16 @@ export class WorkflowStateService {
         const description = descriptionSnapshot
           ? buildDescriptionBranchSnapshot(descriptionSnapshot)
           : null;
-        res.json({ state, continuity: { chains }, description, lastActive });
+        const gating = {
+          blocked: resolveWorkflowBlockedStages({ state, description }),
+        };
+        res.json({
+          state,
+          continuity: { chains },
+          description,
+          lastActive,
+          gating,
+        });
       })
       .catch((error) => {
         this.logger.warn("Failed to read workflow metadata", {
@@ -187,3 +199,54 @@ export class WorkflowStateService {
     return session?.workspacePath ?? null;
   }
 }
+
+const normalizeArtifactPath = (value: string): string =>
+  value.replace(/\\/g, "/").trim();
+
+const stageHasArtifact = (params: {
+  readonly state: WorkflowState;
+  readonly stage: WorkflowStageId;
+  readonly fileName: string;
+}): boolean =>
+  params.state.stages[params.stage].artifacts.some((artifact) =>
+    normalizeArtifactPath(artifact.path).endsWith(`/${params.fileName}`)
+  );
+
+const isStageDone = (params: {
+  readonly state: WorkflowState;
+  readonly stage: WorkflowStageId;
+  readonly fileName: string;
+}): boolean => {
+  const stageState = params.state.stages[params.stage];
+  if (stageState.status === "outdated" || stageState.status === "invalid") {
+    return false;
+  }
+  return stageHasArtifact(params);
+};
+
+const resolveWorkflowBlockedStages = (params: {
+  readonly state: WorkflowState;
+  readonly description: { readonly finalPath?: string } | null;
+}): Record<WorkflowStageId, boolean> => {
+  const descriptionDone = Boolean(params.description?.finalPath);
+  const virtualSimulationDone =
+    descriptionDone &&
+    isStageDone({
+      state: params.state,
+      stage: "virtual_simulation",
+      fileName: "virtual-simulation.md",
+    });
+  const diagramModulesDone = isStageDone({
+    state: params.state,
+    stage: "diagram_modules",
+    fileName: "modules-diagram.mmd",
+  });
+  const diagramModulesSatisfied = virtualSimulationDone && diagramModulesDone;
+
+  return {
+    description: false,
+    virtual_simulation: !descriptionDone,
+    diagram_modules: !virtualSimulationDone,
+    diagram_facades: !diagramModulesSatisfied,
+  };
+};
