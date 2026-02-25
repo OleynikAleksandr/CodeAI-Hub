@@ -1,6 +1,5 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { getDefaultProviderTitle } from "../../../../types/provider";
 import { api } from "../../api";
 import {
   WORKFLOW_STAGE_ORDER,
@@ -9,6 +8,7 @@ import {
   type WorkflowStageStatus,
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
+import { buildDescriptionBranchNodes, buildVirtualSimulationBranchNodes } from "./workspace-tree-branch-nodes";
 import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
@@ -122,69 +122,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         : status === "completed" || status === "in_progress"
           ? "active"
           : "todo";
-  const resolveDescriptionBranchNodes = (): readonly TreeNode[] => {
-    const branch = workflowState?.description;
-    if (!branch) {
-      return [];
-    }
-    const session = branch.session;
-    const nodes: TreeNode[] = [];
-    const artifactPath =
-      branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
-    const artifactLabel = branch.finalPath
-      ? "Final_Description.md"
-      : branch.draftPath
-        ? "description.md"
-        : "questionnaire.md";
-    const artifactStatus = branch.finalPath ? "active" : "draft";
-    if (artifactPath) {
-      nodes.push({
-        id: "workflow:description:artifact",
-        label: artifactLabel,
-        title: artifactPath,
-        status: artifactStatus,
-        visualDepth: 2,
-        onSelect: () => selectArtifact(artifactPath, artifactLabel),
-      });
-    }
-    if (session) {
-      const isReviewerSession =
-        branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
-      const isTerminalCollector = !isReviewerSession && Boolean(branch.draftPath);
-      const providerTitle =
-        session.providerId === "claudeCodeCli" ||
-        session.providerId === "codexCli" ||
-        session.providerId === "geminiCli"
-          ? getDefaultProviderTitle(session.providerId)
-          : session.providerId;
-      const label = isReviewerSession
-        ? `Reviewer ${providerTitle}`
-        : `Description ${providerTitle}${isTerminalCollector ? " (read-only)" : ""}`;
-      const runSlug = isReviewerSession ? "reviewer" : null;
-      nodes.push({
-        id: "workflow:description:session",
-        label,
-        status: isTerminalCollector ? "blocked" : "active",
-        visualDepth: 2,
-        onSelect: isTerminalCollector ? undefined : () => {
-          if (!(workspaceSlug && workspacePath)) {
-            return;
-          }
-          dispatchDialogOpenIntent({
-            providerId: session.providerId,
-            providerSessionId: session.providerSessionId,
-            workspacePath,
-            workspaceSlug,
-            initiativeSlug: workspaceSlug,
-            stage: "description",
-            sessionKind: isReviewerSession ? "reviewer" : "collector",
-            runSlug,
-          });
-        },
-      });
-    }
-    return nodes;
-  };
 
   const resolveStageNodes = (): readonly TreeNode[] => {
     if (!workflowState) {
@@ -199,16 +136,31 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     return WORKFLOW_STAGE_ORDER.map((stage) => {
       const status = workflowState.stages[stage] ?? "idle";
       const blocked = workflowState.gating.blocked[stage] ?? false;
-      const descriptionNodes =
-        stage === "description" ? resolveDescriptionBranchNodes() : [];
+      const children =
+        stage === "description"
+          ? buildDescriptionBranchNodes({
+              workflowState,
+              workspaceSlug,
+              workspacePath,
+              selectArtifact,
+              dispatchDialogOpenIntent,
+            })
+          : stage === "virtual_simulation"
+            ? buildVirtualSimulationBranchNodes({
+                workflowState,
+                workspaceSlug,
+                workspacePath,
+                dispatchDialogOpenIntent,
+              })
+            : [];
       return {
         id: `workflow:${stage}`,
         label: WORKFLOW_LABELS[stage],
         title: status === "outdated" ? WORKFLOW_STAGE_OUTDATED_TITLE : blocked ? WORKFLOW_STAGE_BLOCKED_TITLES[stage] : undefined,
         status: resolveTreeStatus(status, blocked),
         visualDepth: 1,
-        isCollapsible: descriptionNodes.length > 0,
-        children: descriptionNodes.length > 0 ? descriptionNodes : undefined,
+        isCollapsible: children.length > 0,
+        children: children.length > 0 ? children : undefined,
       };
     });
   };
