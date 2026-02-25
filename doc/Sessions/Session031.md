@@ -28,6 +28,7 @@
 - `7f41dcba fix(ui): label workflow sessions by stage`
 - `b16bb466 fix(pm/ui): show virtual simulation artifact in tree`
 - `2190a699 chore(release): build-all`
+- `b84bd4e0 chore(release): package vsix`
 
 ---
 
@@ -48,4 +49,3 @@
   - В дереве Workspace: Virtual Simulation раскрывается и показывает `virtual-simulation.md` + сессию `Virtual Simulation Codex`.
   - В табе Sessions: label `Virtual Simulation Codex` (не `Reviewer Codex`).
 - Продолжить разбор остальных багов из тестирования релизов.
-
