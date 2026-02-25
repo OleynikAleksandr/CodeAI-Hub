@@ -85,8 +85,8 @@
 ## Phase 251 — DoD validation + ERROR UX (owner: Oleksandr, updated: 2026-02-25)
 
 ### Stream 0: Детерминированная валидация артефакта
-1. [TODO] Добавить минимальную детерминированную валидацию `virtual-simulation.md` (заголовок + базовые секции) для вычисления `DONE/ERROR` (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `feat(workflow): validate virtual simulation artifact`).
-2. [TODO] Git Commit: `feat(workflow): validate virtual simulation artifact` (hash: TBD)
+1. [DONE] Добавить минимальную детерминированную валидацию `virtual-simulation.md` (заголовок + 2–4 сценария) для вычисления `DONE/ERROR` и корректного `BLOCKED` downstream (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/workflow/validation/virtual-simulation-validator.ts`; expected commit: `feat(workflow): validate virtual simulation artifact`).
+2. [DONE] Git Commit: `feat(workflow): validate virtual simulation artifact` (hash: `01c3937b`)
 
 ### Stream 1: ERROR UI + CTA «Исправить с агентом»
 1. [TODO] PM UI: если шаг `virtual_simulation` в `ERROR`, показать CTA «Исправить с агентом» (открывает/возобновляет бесконечную сессию шага) (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat(pm/ui): add fix-with-agent CTA for virtual simulation`).
