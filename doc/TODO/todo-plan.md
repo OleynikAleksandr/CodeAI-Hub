@@ -73,12 +73,12 @@
 2. [DONE] Git Commit: `feat(workflow): record watcher events in workflow state` (hash: `5548d6cf`)
 
 ### Stream 1: Backend gating + OUTDATED
-1. [TODO] Реализовать gating/статусы: Virtual Simulation доступен только после `Final_Description.md`; изменение upstream → `OUTDATED`; изменение `virtual-simulation.md` → downstream (Diagram Modules/Facades) `OUTDATED`/`BLOCKED` (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat(workflow): virtual simulation gating and outdated`).
-2. [TODO] Git Commit: `feat(workflow): virtual simulation gating and outdated` (hash: TBD)
+1. [DONE] Реализовать gating/статусы: Virtual Simulation доступен только после `Final_Description.md`; downstream BLOCKED вычисляется детерминированно и отдаётся в `workflow-state` (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-gating-client.ts`, `src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat(workflow): virtual simulation gating and outdated`).
+2. [DONE] Git Commit: `feat(workflow): virtual simulation gating and outdated` (hash: `b04e1981`)
 
 ### Stream 2: UI отображение OUTDATED/BLOCKED
-1. [TODO] UI: отобразить `OUTDATED`/`BLOCKED` статусы в Workflow Tree (badge/tooltip), чтобы пользователь понимал причину и следующий шаг (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `feat(pm/ui): show workflow outdated and blocked statuses`).
-2. [TODO] Git Commit: `feat(pm/ui): show workflow outdated and blocked statuses` (hash: TBD)
+1. [DONE] UI: отобразить `OUTDATED`/`BLOCKED` статусы в Workflow Tree (badge/tooltip), чтобы пользователь понимал причину и следующий шаг (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `feat(pm/ui): show workflow outdated and blocked statuses`).
+2. [DONE] Git Commit: `feat(pm/ui): show workflow outdated and blocked statuses` (hash: `8304c9e0`)
 
 ---
 
