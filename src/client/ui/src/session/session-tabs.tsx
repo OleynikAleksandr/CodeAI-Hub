@@ -3,6 +3,18 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionKind, SessionRecord } from "../../../../types/session";
 import { mapProviderTheme } from "./helpers";
 
+const formatWorkflowStageLabel = (stage: string): string => {
+  const normalized = stage.replace(/[-_]+/g, " ").trim();
+  if (!normalized) {
+    return stage;
+  }
+  return normalized
+    .split(" ")
+    .filter(Boolean)
+    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
+    .join(" ");
+};
+
 /**
  * Get display label for session agent based on sessionKind.
  * Falls back to stage/runSlug heuristics for backward compatibility.
@@ -12,18 +24,22 @@ const getAgentLabel = (
   stage: string | null | undefined,
   runSlug: string | null | undefined
 ): string | null => {
-  if (sessionKind === "reviewer") {
-    return "Reviewer";
+  if (stage && stage !== "description") {
+    return formatWorkflowStageLabel(stage);
   }
   if (stage === "description") {
-    return runSlug === "reviewer" ? "Reviewer" : "Description";
+    return sessionKind === "reviewer" || runSlug === "reviewer"
+      ? "Reviewer"
+      : "Description";
+  }
+  if (sessionKind === "reviewer") {
+    return "Reviewer";
   }
   if (sessionKind === "collector") {
     return "Agent";
   }
-  // Fallback to stage name for other workflow stages.
   if (stage) {
-    return stage.charAt(0).toUpperCase() + stage.slice(1);
+    return formatWorkflowStageLabel(stage);
   }
   return null;
 };
