@@ -156,3 +156,17 @@
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `2190a699`)
 3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session031.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session031.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `b84bd4e0`)
+
+---
+
+## Phase 256 — Virtual Simulation tree artifact gating + Release build v1.1.674 (owner: Oleksandr, updated: 2026-02-25)
+
+### Stream 0: PM UX fix (tree artifact only when exists)
+1. [DONE] PM UI: показывать `virtual-simulation.md` в Workspace Tree только после того, как артефакт реально существует (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/use-virtual-simulation-artifact-availability.ts`; expected commit: `fix(pm/ui): show virtual-simulation.md only when available`).
+2. [DONE] Git Commit: `fix(pm/ui): show virtual-simulation.md only when available` (hash: `901684b2`)
+
+### Stream 1: Release build (versions + VSIX)
+1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
+2. [DONE] Git Commit: `chore(release): build-all` (hash: `4848cfbe`)
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session032.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session032.md`; expected commit: `chore(release): package vsix`).
+4. [TODO] Git Commit: `chore(release): package vsix` (hash: `TBD`)
