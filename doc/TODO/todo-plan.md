@@ -138,3 +138,21 @@
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `0df30b55`)
 3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session030.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session030.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `22f4923b`)
+
+---
+
+## Phase 255 — Virtual Simulation provider continuity + Release build v1.1.673 (owner: Oleksandr, updated: 2026-02-25)
+
+### Stream 0: PM UX fixes (provider + labels + tree)
+1. [DONE] PM UI: выбирать provider для `virtual_simulation` из Description (и использовать его также в “Fix with agent”) (scope: `src/client/project-manager/components/layout/use-workflow-tool-select.ts`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `fix(pm): keep workflow provider consistent`).
+2. [DONE] Git Commit: `fix(pm): keep workflow provider consistent` (hash: `7ff46546`)
+3. [DONE] Session UI: workflow tabs должны показывать label по stage для non-description (e.g. `Virtual Simulation`) (scope: `src/client/ui/src/session/session-tabs.tsx`; expected commit: `fix(ui): label workflow sessions by stage`).
+4. [DONE] Git Commit: `fix(ui): label workflow sessions by stage` (hash: `7f41dcba`)
+5. [DONE] PM UI: Virtual Simulation должен показывать `virtual-simulation.md` как саб-узел в Workspace Tree (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit: `fix(pm/ui): show virtual simulation artifact in tree`).
+6. [DONE] Git Commit: `fix(pm/ui): show virtual simulation artifact in tree` (hash: `b16bb466`)
+
+### Stream 1: Release build (versions + VSIX)
+1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
+2. [DONE] Git Commit: `chore(release): build-all` (hash: `2190a699`)
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session031.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session031.md`; expected commit: `chore(release): package vsix`).
+4. [TODO] Git Commit: `chore(release): package vsix` (hash: `TBD`)
