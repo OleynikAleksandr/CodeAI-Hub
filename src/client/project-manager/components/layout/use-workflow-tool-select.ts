@@ -75,6 +75,12 @@ export const useWorkflowToolSelect = (
         runSlug: null,
       };
 
+      window.dispatchEvent(
+        new CustomEvent("pm:dialog:open", {
+          detail: dialogIntent,
+        })
+      );
+
       void workflowStepStartServiceRef.current
         .startVirtualSimulation({
           workspaceName: activeWorkspace.name,
@@ -82,13 +88,6 @@ export const useWorkflowToolSelect = (
           workspaceSlug,
           providerId: provider.id,
           onSessionCreated: setPreferredSessionId,
-        })
-        .then(() => {
-          window.dispatchEvent(
-            new CustomEvent("pm:dialog:open", {
-              detail: dialogIntent,
-            })
-          );
         })
         .catch((error: unknown) => {
           // keep best-effort; surface in console for now (avoids dead-click UX)

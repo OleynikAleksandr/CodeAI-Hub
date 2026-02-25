@@ -138,6 +138,29 @@ export const useProjectManagerDialogSessionController = (
     requestDialogList(intent);
   }, [intent, requestDialogList]);
 
+  useEffect(() => {
+    if (!intent) {
+      return;
+    }
+    if (session) {
+      return;
+    }
+
+    let attempts = 0;
+    const maxAttempts = 30;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      requestDialogList(intent);
+      if (attempts >= maxAttempts) {
+        window.clearInterval(timer);
+      }
+    }, 1_000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [intent, requestDialogList, session]);
+
   useProjectManagerSessionStream({
     onSessionBinding: (payload) => {
       setSnapshots((previous) => {

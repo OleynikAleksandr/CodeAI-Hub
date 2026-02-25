@@ -12,6 +12,7 @@ export const ProjectManagerDialogSessionView = (props: {
     useProjectManagerDialogSessionController(props.intent);
 
   if (!session) {
+    const shouldShowPending = props.emptyStatePending === true || Boolean(props.intent);
     return (
       <SessionView
         activeSessionId={null}
@@ -21,7 +22,7 @@ export const ProjectManagerDialogSessionView = (props: {
         onCloseSession={() => props.onExit()}
         onSelectSession={() => {}}
         onSendMessage={() => {}}
-        emptyStatePending={props.emptyStatePending === true}
+        emptyStatePending={shouldShowPending}
         providerLabels={new Map()}
         sessions={[]}
         showEmptyState={true}
