@@ -4,6 +4,7 @@ import {
   resolveIdeaCollectorProviders,
   type ProviderSnapshot,
 } from "./services/provider-snapshot";
+import { resolveBridgeConfig, type ApiConfig } from "./services/bridge-config";
 import {
   fetchWorkflowState,
   type WorkflowStateSnapshot,
@@ -24,10 +25,6 @@ import {
 } from "./services/pm-bridges";
 import { createDialogApi, type DialogApi } from "./services/dialog-api";
 
-type ApiConfig = {
-  readonly wsUrl: string;
-  readonly httpUrl: string;
-};
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 type CoreEventListener = (message: IncomingMessage) => void;
 
@@ -44,11 +41,7 @@ export class ProjectManagerApi {
   readonly dialogs: DialogApi;
 
   constructor() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.config = (window as any).codeaiBridgeConfig || {
-      wsUrl: "ws://127.0.0.1:8080",
-      httpUrl: "http://127.0.0.1:8080",
-    };
+    this.config = resolveBridgeConfig();
 
     window.addEventListener("message", (event) => {
       const message = event.data;
