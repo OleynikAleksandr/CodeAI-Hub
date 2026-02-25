@@ -24,6 +24,7 @@
 ## Git commits
 - `901684b2 fix(pm/ui): show virtual-simulation.md only when available`
 - `4848cfbe chore(release): build-all`
+- `72319c37 chore(release): package vsix`
 
 ---
 
@@ -43,4 +44,3 @@
   - до появления артефакта `virtual-simulation.md` в дереве есть только узел сессии `Virtual Simulation <Provider>`;
   - после записи `virtual-simulation.md` агентом появляется саб‑узел артефакта; клик открывает показ справа без ошибок.
 - Продолжить разбор остальных багов из тестирования релизов.
-
