@@ -14,6 +14,10 @@ import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
+import {
+  VIRTUAL_SIMULATION_TOOL_LABEL,
+  useWorkflowToolSelect,
+} from "./use-workflow-tool-select";
 
 interface MainAreaProps {
   sizes: [number, number];
@@ -31,7 +35,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   activeWorkspace,
 }) => {
   const tools: readonly string[] = activeWorkspace
-    ? ["Description", "Virtual Simulation", "Diagram Modules", "Diagram Facades"]
+    ? ["Description", VIRTUAL_SIMULATION_TOOL_LABEL, "Diagram Modules", "Diagram Facades"]
     : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [preferredSessionId, setPreferredSessionId] = useState<string | null>(
@@ -61,6 +65,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [pendingSessionCreate, setPendingSessionCreate] = useState<{
     readonly providerTitle: string;
   } | null>(null);
+  const handleToolSelect = useWorkflowToolSelect({
+    activeWorkspace,
+    setActiveTool,
+    setPendingSessionCreate,
+    setPreferredSessionId,
+  });
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -217,13 +227,17 @@ export const MainArea: React.FC<MainAreaProps> = ({
     !showArtifactViewer &&
     (shouldShowQuestionnaireEditor ||
       (descriptionDocument === null && questionnaireDocument === null));
-  const showVirtualSimulation = activeTool === "Virtual Simulation";
+  const showVirtualSimulation = activeTool === VIRTUAL_SIMULATION_TOOL_LABEL;
   const showDiagramModules = activeTool === "Diagram Modules";
   const showDiagramFacades = activeTool === "Diagram Facades";
 
   return (
     <main className="pm-main-area">
-      <Toolbar activeTool={activeTool ?? undefined} onToolSelect={setActiveTool} tools={tools} />
+      <Toolbar
+        activeTool={activeTool ?? undefined}
+        onToolSelect={handleToolSelect}
+        tools={tools}
+      />
       <PanelContainer
         artifactContent={
           showArtifactViewer && selectedArtifact ? (
