@@ -100,9 +100,9 @@
 > Это единственное запланированное исключение из правила «≤ 3 файлов» — изменения детерминированы и создаются скриптом.
 
 ### Stream 0: Build All (versions + tarballs)
-1. [TODO] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
-2. [TODO] Git Commit: `chore(release): build-all` (hash: TBD)
+1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
+2. [DONE] Git Commit: `chore(release): build-all` (hash: `bda88859`)
 
 ### Stream 1: Build Release (VSIX)
-1. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/SessionXXX.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/SessionXXX.md`; expected commit: `chore(release): package vsix`).
+1. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/SessionXXX.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/SessionXXX.md`; expected commit: `chore(release): package vsix`).
 2. [TODO] Git Commit: `chore(release): package vsix` (hash: TBD)
