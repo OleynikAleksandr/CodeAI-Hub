@@ -19,3 +19,13 @@ export const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
   diagram_modules: "Diagram Modules",
   diagram_facades: "Diagram Facades",
 };
+
+export const WORKFLOW_STAGE_OUTDATED_TITLE =
+  "OUTDATED: upstream input changed; resync recommended.";
+
+export const WORKFLOW_STAGE_BLOCKED_TITLES: Record<WorkflowStageId, string> = {
+  description: "READY",
+  virtual_simulation: "BLOCKED: requires Final_Description.md",
+  diagram_modules: "BLOCKED: requires virtual-simulation.md (DONE)",
+  diagram_facades: "BLOCKED: requires modules-diagram.mmd (DONE)",
+};

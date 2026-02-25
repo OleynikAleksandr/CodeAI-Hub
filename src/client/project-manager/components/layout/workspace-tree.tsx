@@ -13,7 +13,7 @@ import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
-import { WORKFLOW_LABELS, type TreeNode, type TreeStatus } from "./workspace-tree-model";
+import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED_TITLE, type TreeNode, type TreeStatus } from "./workspace-tree-model";
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -196,17 +196,15 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       }));
     }
 
-    return WORKFLOW_STAGE_ORDER.map((stage, index) => {
+    return WORKFLOW_STAGE_ORDER.map((stage) => {
       const status = workflowState.stages[stage] ?? "idle";
-      const previousStage = index > 0 ? WORKFLOW_STAGE_ORDER[index - 1] : null;
-      const blocked =
-        previousStage !== null &&
-        workflowState.stages[previousStage] !== "completed";
+      const blocked = workflowState.gating.blocked[stage] ?? false;
       const descriptionNodes =
         stage === "description" ? resolveDescriptionBranchNodes() : [];
       return {
         id: `workflow:${stage}`,
         label: WORKFLOW_LABELS[stage],
+        title: status === "outdated" ? WORKFLOW_STAGE_OUTDATED_TITLE : blocked ? WORKFLOW_STAGE_BLOCKED_TITLES[stage] : undefined,
         status: resolveTreeStatus(status, blocked),
         visualDepth: 1,
         isCollapsible: descriptionNodes.length > 0,
