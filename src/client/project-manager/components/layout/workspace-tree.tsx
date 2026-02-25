@@ -14,6 +14,7 @@ import {
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
 import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED_TITLE, type TreeNode, type TreeStatus } from "./workspace-tree-model";
+import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -36,6 +37,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     (workspaceName && workspaceName.trim().length > 0
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
+
+  const virtualSimulationArtifactAvailable =
+    useVirtualSimulationArtifactAvailability({
+      enabled: Boolean(selectedWorkspaceId),
+      workspacePath,
+      workspaceSlug,
+    });
 
   const selectArtifact = useCallback(
     (artifactPath: string, label: string) => {
@@ -82,7 +90,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     setExpandedNodes({
       workspace: true,
     });
-  }, [markWorkspaceChanged, resetPendingSelection, selectedWorkspaceId, workspacePath, workspaceSlug]);
+  }, [
+    markWorkspaceChanged,
+    resetPendingSelection,
+    selectedWorkspaceId,
+    workspacePath,
+    workspaceSlug,
+  ]);
+
   useEffect(() => {
     if (!selectedWorkspaceId || !workspaceSlug) {
       setWorkflowState(null);
@@ -148,6 +163,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           : stage === "virtual_simulation"
             ? buildVirtualSimulationBranchNodes({
                 workflowState,
+                virtualSimulationArtifactAvailable,
                 workspaceSlug,
                 workspacePath,
                 selectArtifact,

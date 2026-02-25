@@ -94,6 +94,7 @@ const resolveLatestStageChain = (
 
 export const buildVirtualSimulationBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
+  readonly virtualSimulationArtifactAvailable: boolean;
   readonly workspaceSlug: string | null;
   readonly workspacePath?: string;
   readonly selectArtifact: (artifactPath: string, label: string) => void;
@@ -107,31 +108,36 @@ export const buildVirtualSimulationBranchNodes = (options: {
     return [];
   }
 
-  const chain = resolveLatestStageChain(
-    workflowState.continuity.chains,
-    "virtual_simulation"
-  );
-  if (!chain) {
-    return [];
-  }
+  const nodes: TreeNode[] = [];
 
-  const last = chain.segments.at(-1);
-  if (!last) {
-    return [];
-  }
-
-  const providerTitle = resolveProviderTitle(last.providerId);
-  const artifactPath = `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`;
-  return [
-    {
+  if (options.virtualSimulationArtifactAvailable) {
+    const artifactPath = `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`;
+    nodes.push({
       id: "workflow:virtual_simulation:artifact",
       label: "virtual-simulation.md",
       title: artifactPath,
       status: "active",
       visualDepth: 2,
-      onSelect: () => options.selectArtifact(artifactPath, "virtual-simulation.md"),
-    },
-    {
+      onSelect: () =>
+        options.selectArtifact(artifactPath, "virtual-simulation.md"),
+    });
+  }
+
+  const chain = resolveLatestStageChain(
+    workflowState.continuity.chains,
+    "virtual_simulation"
+  );
+  if (!chain) {
+    return nodes;
+  }
+
+  const last = chain.segments.at(-1);
+  if (!last) {
+    return nodes;
+  }
+
+  const providerTitle = resolveProviderTitle(last.providerId);
+  nodes.push({
       id: `workflow:virtual_simulation:session:${chain.rootSessionId}`,
       label: `Virtual Simulation ${providerTitle}`,
       status: "active",
@@ -148,6 +154,6 @@ export const buildVirtualSimulationBranchNodes = (options: {
           runSlug: null,
         });
       },
-    },
-  ];
+    });
+  return nodes;
 };
