@@ -1,6 +1,9 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { WorkflowState } from "../state/workflow-state-types";
+import type {
+  WorkflowGateState,
+  WorkflowState,
+} from "../state/workflow-state-types";
 
 const normalizeArtifactPath = (value: string): string =>
   value.replace(/\\/g, "/").trim();
@@ -94,9 +97,9 @@ export const applyVirtualSimulationValidation = async (params: {
   }
 
   const stageState = params.state.stages[stage];
-  const validationGate = {
+  const validationGate: WorkflowGateState = {
     gateId: "virtual-simulation.validation",
-    status: "failed" as const,
+    status: "failed",
     updatedAt: new Date().toISOString(),
     stage,
     detail: validationError,
