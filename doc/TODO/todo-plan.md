@@ -106,3 +106,19 @@
 ### Stream 1: Build Release (VSIX)
 1. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/SessionXXX.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/SessionXXX.md`; expected commit: `chore(release): package vsix`).
 2. [DONE] Git Commit: `chore(release): package vsix` (hash: `96f1cc5d`)
+
+---
+
+## Phase 253 — Virtual Simulation toolbar hotfix + Release build v1.1.671 (owner: Oleksandr, updated: 2026-02-25)
+
+### Stream 0: PM hotfix (Virtual Simulation start)
+1. [DONE] PM: нормализовать bridge config URLs (`wsUrl`/`httpUrl`) для корректного HTTP доступа к workflow endpoints (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/bridge-config.ts`; expected commit: `fix(pm): normalize bridge config urls`).
+2. [DONE] Git Commit: `fix(pm): normalize bridge config urls` (hash: `64f7d363`)
+3. [DONE] PM UI: при клике `VIRTUAL SIMULATION` открыть диалог агента стадии + показать hint справа (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`; expected commit: `fix(pm/ui): open Virtual Simulation session from toolbar`).
+4. [DONE] Git Commit: `fix(pm/ui): open Virtual Simulation session from toolbar` (hash: `aa465255`)
+
+### Stream 1: Release build (versions + VSIX)
+1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
+2. [DONE] Git Commit: `chore(release): build-all` (hash: `1726e5a9`)
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session029.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session029.md`; expected commit: `chore(release): package vsix`).
+4. [TODO] Git Commit: `chore(release): package vsix` (hash: TBD)
