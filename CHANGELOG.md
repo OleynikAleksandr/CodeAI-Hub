@@ -2,6 +2,11 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.672] - 2026-02-25
+### Fixed
+- Project Manager: Virtual Simulation now immediately switches the Sessions panel into a pending state and auto-opens the stage dialog once it becomes available.
+- Project Manager: Workspace tree shows the Virtual Simulation session (collapsible stage node with a session child).
+
 ## [1.1.671] - 2026-02-25
 ### Fixed
 - Project Manager: Virtual Simulation toolbar now opens the stage session (and reveals the hint panel) instead of acting like a dead click.
