@@ -10,6 +10,7 @@ import {
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
+import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
 import type {
   WorkflowStageId,
   WorkflowWatcherEvent,
@@ -96,15 +97,24 @@ export class WorkflowStateService {
         const description = descriptionSnapshot
           ? buildDescriptionBranchSnapshot(descriptionSnapshot)
           : null;
-        const gating = {
-          blocked: resolveWorkflowBlockedStages({ state, description }),
-        };
-        res.json({
+        return applyVirtualSimulationValidation({
           state,
-          continuity: { chains },
-          description,
-          lastActive,
-          gating,
+          workspaceRoot,
+          workspaceSlug: workspaceSlugResult.value,
+        }).then((validatedState) => {
+          const gating = {
+            blocked: resolveWorkflowBlockedStages({
+              state: validatedState,
+              description,
+            }),
+          };
+          res.json({
+            state: validatedState,
+            continuity: { chains },
+            description,
+            lastActive,
+            gating,
+          });
         });
       })
       .catch((error) => {

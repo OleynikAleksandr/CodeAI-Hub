@@ -1026,6 +1026,7 @@ const HEADING_RE = /^(#{1,6})\s+(.*)$/;
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const IDEA_TITLE_RE = /^#\s+Idea:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
+const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 const MERMAID_FLOWCHART_RE = /^\s*flowchart\s+/m;
 
 const parsePatchList = (patchValue: unknown): PatchParseResult => {
@@ -1391,6 +1392,14 @@ const validateVirtualSimulationMarkdown = (
   }
   if (!VIRTUAL_SIMULATION_TITLE_RE.test(content)) {
     return "virtual-simulation markdown is missing '# Virtual Simulation' header";
+  }
+  const scenarioMatches = content.match(VIRTUAL_SIMULATION_SCENARIO_RE);
+  const scenarioCount = scenarioMatches?.length ?? 0;
+  if (scenarioCount < 2) {
+    return "virtual-simulation markdown must include at least 2 scenarios (## Сценарий N)";
+  }
+  if (scenarioCount > 4) {
+    return "virtual-simulation markdown must include at most 4 scenarios";
   }
   return null;
 };
