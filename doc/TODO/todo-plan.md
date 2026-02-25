@@ -170,3 +170,17 @@
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `4848cfbe`)
 3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session032.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session032.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `72319c37`)
+
+---
+
+## Phase 257 — Artifact viewer UX cleanup + Release build v1.1.675 (owner: Oleksandr, updated: 2026-02-25)
+
+### Stream 0: PM UI fix (remove confusing Back button)
+1. [DONE] PM UI: убрать кнопку `Back` из просмотра артефактов (она неочевидна и выглядит как “ничего не делает”) (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`; expected commit: `fix(pm/ui): remove Back from artifact viewer`).
+2. [DONE] Git Commit: `fix(pm/ui): remove Back from artifact viewer` (hash: `fab3d7a4`)
+
+### Stream 1: Release build (versions + VSIX)
+1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
+2. [DONE] Git Commit: `chore(release): build-all` (hash: `e76065d1`)
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session033.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session033.md`; expected commit: `chore(release): package vsix`).
+4. [TODO] Git Commit: `chore(release): package vsix` (hash: `TBD`)
