@@ -11,6 +11,7 @@
 ## Work summary
 - PM UI: при выборе `VIRTUAL SIMULATION` слева сразу показывается pending-state «Creating session…», и диалог автоматически открывается как только появляется в Core (dialog:list ретраится).
 - PM UI: в дереве Workspace стадия `Virtual Simulation` стала раскрываемой и показывает дочерний узел сессии агента.
+- Docs: обновлены `README.md`/`CHANGELOG.md` под `v1.1.672`.
 - Phase 254 (release build):
   - `./scripts/build-all.sh` → unified artefacts `1.1.672` (providers/core/ui/launcher) + копия в `doc/tmp/releases/`.
   - `./scripts/build-release.sh --use-current-version` → VSIX `codeai-hub-1.1.672.vsix` + копия в `doc/tmp/releases/`.
@@ -26,6 +27,8 @@
 - `67dd0381 fix(pm/ui): pending dialog during workflow start`
 - `11f96501 fix(pm/ui): show Virtual Simulation session in tree`
 - `0df30b55 chore(release): build-all`
+- `22f4923b chore(release): package vsix`
+- `dba4ae42 docs(todo): record Phase 254 hashes`
 
 ---
 
@@ -41,5 +44,5 @@
 7. `doc/Sessions/Session030.md` (THIS REPORT)
 
 ## Plans for next session
-- Поставить `doc/tmp/releases/codeai-hub-1.1.672.vsix` и перепроверить happy-path: клик `VIRTUAL SIMULATION` после появления `Final_Description.md` → справа hint-панель, слева pending-copy → затем UI сессии; Virtual Simulation узел в дереве становится раскрываемым и показывает сессию.
+- Установить `doc/tmp/releases/codeai-hub-1.1.672.vsix` и перепроверить happy-path: клик `VIRTUAL SIMULATION` после появления `Final_Description.md` → справа hint-панель, слева pending-copy → затем UI сессии; Virtual Simulation узел в дереве становится раскрываемым и показывает сессию.
 - Продолжить разбор остальных багов из тестирования релиза.
