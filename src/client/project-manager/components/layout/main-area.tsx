@@ -66,12 +66,19 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [pendingSessionCreate, setPendingSessionCreate] = useState<{
     readonly providerTitle: string;
   } | null>(null);
-  const handleToolSelect = useWorkflowToolSelect({
+  const handleToolSelectBase = useWorkflowToolSelect({
     activeWorkspace,
     setActiveTool,
     setPendingSessionCreate,
     setPreferredSessionId,
   });
+  const handleToolSelect = useCallback(
+    (tool: string) => {
+      if (tool === VIRTUAL_SIMULATION_TOOL_LABEL) setSelectedArtifact(null);
+      handleToolSelectBase(tool);
+    },
+    [handleToolSelectBase]
+  );
 
   useEffect(() => {
     const handler = (event: Event) => {

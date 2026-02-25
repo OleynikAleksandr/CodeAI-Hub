@@ -8,6 +8,17 @@ export const VIRTUAL_SIMULATION_TOOL_LABEL = "VIRTUAL SIMULATION" as const;
 
 type PendingSessionCreate = { readonly providerTitle: string } | null;
 
+type DialogOpenIntent = {
+  readonly providerId: string;
+  readonly providerSessionId: string | null;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+  readonly initiativeSlug: string | null;
+  readonly stage: string | null;
+  readonly sessionKind: "collector" | "reviewer" | null;
+  readonly runSlug: string | null;
+};
+
 type UseWorkflowToolSelectParams = {
   readonly activeWorkspace?: WorkspaceProject;
   readonly setActiveTool: (value: string) => void;
@@ -52,6 +63,18 @@ export const useWorkflowToolSelect = (
       setPendingSessionCreate({
         providerTitle: provider.title ?? provider.id,
       });
+
+      const dialogIntent: DialogOpenIntent = {
+        providerId: provider.id,
+        providerSessionId: null,
+        workspacePath: activeWorkspace.path,
+        workspaceSlug,
+        initiativeSlug: workspaceSlug,
+        stage: "virtual_simulation",
+        sessionKind: "reviewer",
+        runSlug: null,
+      };
+
       void workflowStepStartServiceRef.current
         .startVirtualSimulation({
           workspaceName: activeWorkspace.name,
@@ -60,8 +83,19 @@ export const useWorkflowToolSelect = (
           providerId: provider.id,
           onSessionCreated: setPreferredSessionId,
         })
-        .catch(() => {
-          // ignore: the step start will be best-effort until hint/error UX is added
+        .then(() => {
+          window.dispatchEvent(
+            new CustomEvent("pm:dialog:open", {
+              detail: dialogIntent,
+            })
+          );
+        })
+        .catch((error: unknown) => {
+          // keep best-effort; surface in console for now (avoids dead-click UX)
+          console.warn(
+            "[PM] Failed to start Virtual Simulation workflow step",
+            error
+          );
         })
         .finally(() => {
           virtualSimulationStartInFlightRef.current = false;
