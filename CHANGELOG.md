@@ -2,6 +2,11 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.671] - 2026-02-25
+### Fixed
+- Project Manager: Virtual Simulation toolbar now opens the stage session (and reveals the hint panel) instead of acting like a dead click.
+- Project Manager: bridge config derives missing `httpUrl` from `wsUrl` (prevents workflow API calls from silently failing).
+
 ## [1.1.670] - 2026-02-25
 ### Added
 - Workflow: new `Virtual Simulation` step with bundled prompt+template (file-first from `Final_Description.md`).
