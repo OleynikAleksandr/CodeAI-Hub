@@ -34,15 +34,15 @@
 1. [DONE] Заархивировать предыдущий `doc/TODO/todo-plan.md` и создать новый план (scope: `doc/TODO/Archive/todo-plan-up-to-phase246-2026-02-25.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(todo): reset todo plan after Phase 246`).
 2. [DONE] Git Commit: `docs(todo): reset todo plan after Phase 246` (hash: `fe24a48d`)
 3. [DONE] После док‑коммитов Stream 0: обновить `doc/TODO/todo-plan.md` (Phase 247) — отметить `DONE` + проставить hash (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): record Phase 247 hashes`).
-4. [TODO] Git Commit: `docs(todo): record Phase 247 hashes` (hash: TBD)
+4. [DONE] Git Commit: `docs(todo): record Phase 247 hashes` (hash: `b5f26ba9`)
 
 ---
 
 ## Phase 248 — Virtual Simulation templates + prompt-pack inputs (owner: Oleksandr, updated: 2026-02-25)
 
 ### Stream 0: Bundled templates (Core)
-1. [TODO] Обновить bundled templates для `virtual_simulation`: prompt+template должны требовать чтение `Final_Description.md`, задавать до 3 вопросов и поддерживать «бесконечную» сессию (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit: `feat(core): add virtual simulation bundled templates`).
-2. [TODO] Git Commit: `feat(core): add virtual simulation bundled templates` (hash: TBD)
+1. [DONE] Обновить bundled templates для `virtual_simulation`: prompt+template должны требовать чтение `Final_Description.md`, задавать до 3 вопросов и поддерживать «бесконечную» сессию (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit: `feat(core): add virtual simulation bundled templates`).
+2. [DONE] Git Commit: `feat(core): add virtual simulation bundled templates` (hash: `7f2644aa`)
 
 ### Stream 1: Prompt-pack builder (PM → Agent)
 1. [TODO] Расширить `buildWorkflowPromptPack`: для шага `virtual_simulation` инструкции должны включать input `Final_Description.md` (relative+absolute) как обязательный вход (а не `questionnaire.md`) (scope: `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `feat(pm): support Final_Description input for virtual simulation`).
