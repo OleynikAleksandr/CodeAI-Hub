@@ -89,8 +89,8 @@
 2. [DONE] Git Commit: `feat(workflow): validate virtual simulation artifact` (hash: `01c3937b`)
 
 ### Stream 1: ERROR UI + CTA «Исправить с агентом»
-1. [TODO] PM UI: если шаг `virtual_simulation` в `ERROR`, показать CTA «Исправить с агентом» (открывает/возобновляет бесконечную сессию шага) (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat(pm/ui): add fix-with-agent CTA for virtual simulation`).
-2. [TODO] Git Commit: `feat(pm/ui): add fix-with-agent CTA for virtual simulation` (hash: TBD)
+1. [DONE] PM UI: если `virtual-simulation.md` не проходит минимальную валидацию, показать CTA «Исправить с агентом» (возобновляет бесконечную сессию шага) (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat(pm/ui): add fix-with-agent CTA for virtual simulation`).
+2. [DONE] Git Commit: `feat(pm/ui): add fix-with-agent CTA for virtual simulation` (hash: `5f74344f`)
 
 ---
 
