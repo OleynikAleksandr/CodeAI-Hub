@@ -47,7 +47,10 @@ export class WorkflowStepStartService {
       return existingSessionId;
     }
 
-    const finalDescriptionPath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
+    const finalDescriptionPath = state?.description?.finalPath;
+    if (!finalDescriptionPath) {
+      throw new Error("Missing Final_Description.md. Complete Description step first.");
+    }
     return this.submitService.submitQuestionnaire({
       workspaceName: params.workspaceName,
       workspaceSlug: params.workspaceSlug,

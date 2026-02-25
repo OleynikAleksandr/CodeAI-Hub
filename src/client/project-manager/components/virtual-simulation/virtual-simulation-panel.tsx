@@ -1,9 +1,32 @@
 import type React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../../api";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
+import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 
 type LoadStatus = "loading" | "missing" | "ready" | "error";
+
+const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
+const VIRTUAL_SIMULATION_SCENARIO_RE =
+  /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
+
+const validateVirtualSimulationMarkdown = (content: string): string | null => {
+  if (content.trim().length === 0) {
+    return "Файл пустой.";
+  }
+  if (!VIRTUAL_SIMULATION_TITLE_RE.test(content)) {
+    return "Нет заголовка `# Virtual Simulation:`.";
+  }
+  const scenarioMatches = content.match(VIRTUAL_SIMULATION_SCENARIO_RE);
+  const scenarioCount = scenarioMatches?.length ?? 0;
+  if (scenarioCount < 2) {
+    return "Нужно минимум 2 сценария: `## Сценарий N`.";
+  }
+  if (scenarioCount > 4) {
+    return "Нужно максимум 4 сценария: `## Сценарий N`.";
+  }
+  return null;
+};
 
 export const VirtualSimulationPanel: React.FC<{
   readonly workspacePath: string;
@@ -17,6 +40,14 @@ export const VirtualSimulationPanel: React.FC<{
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pollTick, setPollTick] = useState(0);
+  const [fixInFlight, setFixInFlight] = useState(false);
+  const [fixError, setFixError] = useState<string | null>(null);
+  const startServiceRef = useRef(new WorkflowStepStartService());
+
+  const validationError = useMemo(
+    () => (content ? validateVirtualSimulationMarkdown(content) : null),
+    [content]
+  );
 
   useEffect(() => {
     if (status !== "missing") {
@@ -97,6 +128,51 @@ export const VirtualSimulationPanel: React.FC<{
     };
   }, [artifactPath, pollTick, props.workspacePath, props.workspaceSlug]);
 
+  if (status === "ready" && content !== null && validationError) {
+    const provider = api.getIdeaCollectorProviders().at(0);
+    return (
+      <div className="pm-details">
+        <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+          <strong title={artifactPath}>virtual-simulation.md</strong>
+        </div>
+        <div className="pm-placeholder" style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 10 }}>
+            <strong>ERROR:</strong> {validationError}
+          </div>
+          <button
+            className="pm-provider-picker__button pm-provider-picker__button--primary"
+            disabled={fixInFlight || !provider}
+            onClick={() => {
+              if (!provider || fixInFlight) {
+                return;
+              }
+              setFixInFlight(true);
+              setFixError(null);
+              void startServiceRef.current
+                .startVirtualSimulation({
+                  workspacePath: props.workspacePath,
+                  workspaceSlug: props.workspaceSlug,
+                  providerId: provider.id,
+                })
+                .catch((startError: unknown) => {
+                  setFixError(startError instanceof Error ? startError.message : String(startError));
+                })
+                .finally(() => {
+                  setFixInFlight(false);
+                });
+            }}
+            type="button"
+          >
+            {fixInFlight ? "Открываю сессию…" : "Исправить с агентом"}
+          </button>
+          {fixError ? <div style={{ marginTop: 10 }}>{fixError}</div> : null}
+          {!provider ? <div style={{ marginTop: 10 }}>Нет доступного провайдера для агента.</div> : null}
+        </div>
+        <MarkdownContent className="pm-artifact-markdown" content={content} />
+      </div>
+    );
+  }
+
   if (status === "ready" && content !== null) {
     return (
       <div className="pm-details">
@@ -139,4 +215,3 @@ export const VirtualSimulationPanel: React.FC<{
     </div>
   );
 };
-
