@@ -45,8 +45,8 @@
 2. [DONE] Git Commit: `feat(core): add virtual simulation bundled templates` (hash: `7f2644aa`)
 
 ### Stream 1: Prompt-pack builder (PM → Agent)
-1. [TODO] Расширить `buildWorkflowPromptPack`: для шага `virtual_simulation` инструкции должны включать input `Final_Description.md` (relative+absolute) как обязательный вход (а не `questionnaire.md`) (scope: `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `feat(pm): support Final_Description input for virtual simulation`).
-2. [TODO] Git Commit: `feat(pm): support Final_Description input for virtual simulation` (hash: TBD)
+1. [DONE] Расширить `buildWorkflowPromptPack`: для шага `virtual_simulation` инструкции должны включать input `Final_Description.md` (relative+absolute) как обязательный вход (а не `questionnaire.md`) (scope: `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `feat(pm): support Final_Description input for virtual simulation`).
+2. [DONE] Git Commit: `feat(pm): support Final_Description input for virtual simulation` (hash: `16f8a909`)
 
 ---
 
