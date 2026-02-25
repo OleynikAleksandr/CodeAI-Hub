@@ -7,8 +7,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.673
-- Project Manager: Virtual Simulation reuses the provider selected for Description, shows the correct stage label in session tabs, and appears under Workspace with both the session and `virtual-simulation.md` artifact nodes.
+## Current Release — v1.1.674
+- Project Manager: Virtual Simulation reuses the provider selected for Description, shows the correct stage label in session tabs, and appears under Workspace with the session node (the `virtual-simulation.md` artifact node shows up only after the agent creates the file).
 - Workflow: manual `Virtual Simulation` step (Description → Virtual Simulation → diagrams) with deterministic gating and `OUTDATED` propagation.
 - Core: bundled templates for `virtual_simulation` (file-first; reads `Final_Description.md`, asks up to 3 clarifying questions, supports infinite resume semantics).
 
