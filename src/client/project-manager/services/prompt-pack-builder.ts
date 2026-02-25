@@ -148,19 +148,40 @@ export const buildWorkflowPromptPack = (
     workspaceSlug: params.workspaceSlug,
     runSlug: params.runSlug,
   });
-  const prompt = params.prompt.trim().length
-    ? params.prompt.trim()
-    : "Собери артефакт на основе анкеты и шаблона.";
-  const questionnaireAbsolutePath = joinPath(
-    params.workspacePath,
-    normalizeRelativePath(params.questionnairePath)
-  );
+  const defaultPrompt =
+    params.stage === "virtual_simulation"
+      ? "Собери артефакт на основе `Final_Description.md` и шаблона."
+      : "Собери артефакт на основе анкеты и шаблона.";
+  const prompt = params.prompt.trim().length ? params.prompt.trim() : defaultPrompt;
+
+  const primaryInputLines =
+    params.stage === "virtual_simulation"
+      ? (() => {
+          const finalRelativePath = normalizeRelativePath(
+            `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`
+          );
+          const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
+          return [
+            `Final_Description.md (relative): \`${finalRelativePath}\``,
+            `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
+          ];
+        })()
+      : (() => {
+          const questionnaireRelativePath = normalizeRelativePath(params.questionnairePath);
+          const questionnaireAbsolutePath = joinPath(
+            params.workspacePath,
+            questionnaireRelativePath
+          );
+          return [
+            `Анкета (relative): \`${questionnaireRelativePath}\``,
+            `Анкета (absolute): \`${questionnaireAbsolutePath}\``,
+          ];
+        })();
   const instructionLines = [
     `Этап: ${WORKFLOW_STAGE_LABELS[params.stage]}.`,
     `Целевой путь (relative): \`${relativePath}\``,
     `Целевой путь (absolute): \`${absolutePath}\``,
-    `Анкета (relative): \`${normalizeRelativePath(params.questionnairePath)}\``,
-    `Анкета (absolute): \`${questionnaireAbsolutePath}\``,
+    ...primaryInputLines,
     params.templatePath
       ? `Шаблон (absolute): \`${params.templatePath}\``
       : null,
