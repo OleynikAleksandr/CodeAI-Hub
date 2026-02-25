@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../../api";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
 
 type LoadStatus = "loading" | "missing" | "ready" | "error";
 
@@ -129,7 +130,8 @@ export const VirtualSimulationPanel: React.FC<{
   }, [artifactPath, pollTick, props.workspacePath, props.workspaceSlug]);
 
   if (status === "ready" && content !== null && validationError) {
-    const provider = api.getIdeaCollectorProviders().at(0);
+    const providers = api.getIdeaCollectorProviders();
+    const hasProviders = providers.length > 0;
     return (
       <div className="pm-details">
         <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
@@ -141,21 +143,38 @@ export const VirtualSimulationPanel: React.FC<{
           </div>
           <button
             className="pm-provider-picker__button pm-provider-picker__button--primary"
-            disabled={fixInFlight || !provider}
+            disabled={fixInFlight || !hasProviders}
             onClick={() => {
-              if (!provider || fixInFlight) {
+              if (!hasProviders || fixInFlight) {
                 return;
               }
               setFixInFlight(true);
               setFixError(null);
-              void startServiceRef.current
-                .startVirtualSimulation({
+              void (async () => {
+                const workflowState = await api.getWorkflowState(
+                  props.workspaceSlug,
+                  props.workspacePath
+                );
+                const providerId =
+                  resolvePreferredWorkflowProviderId({
+                    workflowState,
+                    providers,
+                  }) ?? providers.at(0)?.id;
+
+                if (!providerId) {
+                  throw new Error("Нет доступного провайдера для агента.");
+                }
+
+                await startServiceRef.current.startVirtualSimulation({
                   workspacePath: props.workspacePath,
                   workspaceSlug: props.workspaceSlug,
-                  providerId: provider.id,
-                })
+                  providerId,
+                });
+              })()
                 .catch((startError: unknown) => {
-                  setFixError(startError instanceof Error ? startError.message : String(startError));
+                  setFixError(
+                    startError instanceof Error ? startError.message : String(startError)
+                  );
                 })
                 .finally(() => {
                   setFixInFlight(false);
@@ -166,7 +185,9 @@ export const VirtualSimulationPanel: React.FC<{
             {fixInFlight ? "Открываю сессию…" : "Исправить с агентом"}
           </button>
           {fixError ? <div style={{ marginTop: 10 }}>{fixError}</div> : null}
-          {!provider ? <div style={{ marginTop: 10 }}>Нет доступного провайдера для агента.</div> : null}
+          {!hasProviders ? (
+            <div style={{ marginTop: 10 }}>Нет доступного провайдера для агента.</div>
+          ) : null}
         </div>
         <MarkdownContent className="pm-artifact-markdown" content={content} />
       </div>

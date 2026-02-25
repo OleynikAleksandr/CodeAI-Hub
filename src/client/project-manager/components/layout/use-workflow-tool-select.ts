@@ -2,6 +2,7 @@ import { useCallback, useRef } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
 import { resolveWorkspaceSlug } from "./main-area-utils";
 
 export const VIRTUAL_SIMULATION_TOOL_LABEL = "VIRTUAL SIMULATION" as const;
@@ -52,43 +53,60 @@ export const useWorkflowToolSelect = (
       if (!workspaceSlug) {
         return;
       }
-      const provider = api.getIdeaCollectorProviders().at(0);
-      if (!provider) {
-        return;
-      }
       if (virtualSimulationStartInFlightRef.current) {
         return;
       }
       virtualSimulationStartInFlightRef.current = true;
+
+      const providers = api.getIdeaCollectorProviders();
+      const fallbackProvider = providers.at(0) ?? null;
+      if (!fallbackProvider) {
+        virtualSimulationStartInFlightRef.current = false;
+        return;
+      }
       setPendingSessionCreate({
-        providerTitle: provider.title ?? provider.id,
+        providerTitle: fallbackProvider.title ?? fallbackProvider.id,
       });
 
-      const dialogIntent: DialogOpenIntent = {
-        providerId: provider.id,
-        providerSessionId: null,
-        workspacePath: activeWorkspace.path,
-        workspaceSlug,
-        initiativeSlug: workspaceSlug,
-        stage: "virtual_simulation",
-        sessionKind: "reviewer",
-        runSlug: null,
-      };
+      void (async () => {
+        const workflowState = await api.getWorkflowState(
+          workspaceSlug,
+          activeWorkspace.path
+        );
+        const preferredProviderId =
+          resolvePreferredWorkflowProviderId({
+            workflowState,
+            providers,
+          }) ?? fallbackProvider.id;
+        const provider =
+          providers.find((candidate) => candidate.id === preferredProviderId) ??
+          fallbackProvider;
 
-      window.dispatchEvent(
-        new CustomEvent("pm:dialog:open", {
-          detail: dialogIntent,
-        })
-      );
+        const dialogIntent: DialogOpenIntent = {
+          providerId: provider.id,
+          providerSessionId: null,
+          workspacePath: activeWorkspace.path,
+          workspaceSlug,
+          initiativeSlug: workspaceSlug,
+          stage: "virtual_simulation",
+          sessionKind: "collector",
+          runSlug: null,
+        };
 
-      void workflowStepStartServiceRef.current
-        .startVirtualSimulation({
+        window.dispatchEvent(
+          new CustomEvent("pm:dialog:open", {
+            detail: dialogIntent,
+          })
+        );
+
+        await workflowStepStartServiceRef.current.startVirtualSimulation({
           workspaceName: activeWorkspace.name,
           workspacePath: activeWorkspace.path,
           workspaceSlug,
           providerId: provider.id,
           onSessionCreated: setPreferredSessionId,
-        })
+        });
+      })()
         .catch((error: unknown) => {
           // keep best-effort; surface in console for now (avoids dead-click UX)
           console.warn(
