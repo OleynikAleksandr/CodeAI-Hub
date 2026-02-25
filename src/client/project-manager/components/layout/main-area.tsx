@@ -7,6 +7,7 @@ import {
   type WorkflowEvent,
 } from "../../services/workflow-events-client";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
+import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { resolveWorkspaceSlug } from "./main-area-utils";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
@@ -259,7 +260,14 @@ export const MainArea: React.FC<MainAreaProps> = ({
               workspaceSlug={activeWorkspace?.slug}
             />
           ) : showVirtualSimulation ? (
-            <div className="pm-placeholder">Шаг Virtual Simulation пока не подключен.</div>
+            activeWorkspace?.path && activeWorkspaceSlug ? (
+              <VirtualSimulationPanel
+                workspacePath={activeWorkspace.path}
+                workspaceSlug={activeWorkspaceSlug}
+              />
+            ) : (
+              <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>
+            )
           ) : showDiagramModules ? (
             <div className="pm-placeholder">Шаг Diagram Modules пока не подключен.</div>
           ) : showDiagramFacades ? (
