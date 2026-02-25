@@ -2,6 +2,14 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.670] - 2026-02-25
+### Added
+- Workflow: new `Virtual Simulation` step with bundled prompt+template (file-first from `Final_Description.md`).
+- Project Manager: start Virtual Simulation from the toolbar, show a hint panel until the artifact exists, and offer “Fix with agent” when validation fails.
+
+### Changed
+- Workflow state: record watcher events and compute deterministic gating + `OUTDATED` propagation.
+
 ## [1.1.669] - 2026-02-24
 ### Fixed
 - Reviewer sessions: Stop → Play no longer resets task timer total (BUG-2026-02-24-04).

@@ -7,12 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.669
-- Reviewer sessions: Stop/Play now preserves the `total` task timer across Core restarts (BUG-2026-02-24-04).
-- One-shot `Description`: adds ↻ Restart attempt recovery (Session UI + `questionnaire.md` header) to re-run questionnaire submission if an attempt hangs mid-turn.
-- Restart attempt confirmation: now uses an inline Apply/Cancel bar (no double-click), and avoids native dialogs for CEF stability.
-- Project Manager: after ↻ Restart attempt, auto-opens the newly created session (no manual click in the tree).
-- Session UI: ↻ Restart icon is now 1.6× larger (better proportions / matches Stop button sizing).
+## Current Release — v1.1.670
+- Workflow: adds a manual `Virtual Simulation` step (Description → Virtual Simulation → diagrams) with deterministic gating and `OUTDATED` propagation.
+- Core: ships bundled templates for `virtual_simulation` (file-first; reads `Final_Description.md`, asks up to 3 clarifying questions, supports infinite resume semantics).
+- Project Manager: toolbar action **VIRTUAL SIMULATION**, right-side hint panel, `OUTDATED/BLOCKED` badges in the workflow tree, and a “Fix with agent” CTA for invalid `virtual-simulation.md`.
 
 Previous releases (summary): the `1.1.57x–1.1.64x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, and workflow handoff UX in Project Manager.
 
