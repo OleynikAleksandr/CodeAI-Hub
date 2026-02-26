@@ -7,7 +7,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.682
+## Current Release — v1.1.683
 - Project Manager: new **Diagram Modules** and **Diagram Facades** workflow steps — toolbar clicks launch agent sessions, artifact panels display `.mmd` diagrams, and the Workspace tree shows branch nodes (identical UX pattern to Virtual Simulation).
 - Project Manager: artifact availability polling for `modules-diagram.mmd` and `facades-graph.mmd` with gated progression (Diagram Modules requires completed VS; Diagram Facades requires completed Diagram Modules).
 - Project Manager: "Fix with agent" button in diagram panels to re-run the stage when validation fails.
