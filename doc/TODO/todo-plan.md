@@ -32,29 +32,29 @@
 ---
 
 ### Stream 0: Contract sign-off (Design Phase gate)
-1. [TODO] Подтвердить контракт `ProjectManager_VirtualSimulation_ColdStartRecovery.md` (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_VirtualSimulation_ColdStartRecovery.md`; expected commit: `docs(vs): approve cold start recovery contract`).
-2. [TODO] Git Commit: `docs(vs): approve cold start recovery contract` (hash: TBD)
+1. [DONE] Подтвердить контракт `ProjectManager_VirtualSimulation_ColdStartRecovery.md` (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_VirtualSimulation_ColdStartRecovery.md`; expected commit: `docs(vs): approve cold start recovery contract`).
+2. [DONE] Git Commit: `docs(vs): approve cold start recovery contract` (hash: `328be048`)
 
 ### Stream 1: Repro snapshot + regression test (stuck lock)
-1. [TODO] Добавить regression test: после рестарта/cold start “stale running” не должен удерживать `turnState/connectionState` в `running`, если нет живого inflight-turn; ожидание пользователя должно приводить к `idle` (scope: `packages/core/src/workspace-runtime/*` test + минимальная фиксация; expected commit: `test(core): cover stale-running recovery on cold start`).
-2. [TODO] Git Commit: `test(core): cover stale-running recovery on cold start` (hash: TBD)
+1. [DONE] Добавить regression test: после рестарта/cold start “stale running” не должен удерживать `turnState/connectionState` в `running`, если нет живого inflight-turn; ожидание пользователя должно приводить к `idle` (scope: `packages/core/src/workspace-runtime/*` test + минимальная фиксация; expected commit: `test(core): cover stale-running recovery on cold start`).
+2. [DONE] Git Commit: `test(core): cover stale-running recovery on cold start` (hash: `a33a620d`)
 
 ### Stream 2: Core fix — stale running recovery
-1. [TODO] Реализовать нормализацию на гидрации/старте: “устаревший running” переводится в `idle` (или `recovery_required`, но с разблокированным вводом), без необходимости ручного Stop (scope: `packages/core/src/workspace-runtime/*`; expected commit: `fix(core): recover stale running sessions on cold start`).
-2. [TODO] Git Commit: `fix(core): recover stale running sessions on cold start` (hash: TBD)
+1. [DONE] Реализовать нормализацию на гидрации/старте: “устаревший running” переводится в `idle` (или `recovery_required`, но с разблокированным вводом), без необходимости ручного Stop (scope: `packages/core/src/workspace-runtime/*`; expected commit: `fix(core): recover stale running sessions on cold start`).
+2. [DONE] Git Commit: `fix(core): recover stale running sessions on cold start` (hash: `c7c4c408`)
 
 ### Stream 3: Regression test + fix (task timers / total)
-1. [TODO] Добавить regression test: при наличии persisted totals `.codeai-hub/state/task-timers.json` snapshot обязан содержать корректный `status.taskTimer.totalSeconds` после рестарта (scope: `packages/core/src/*` timers + test; expected commit: `test(core): restore taskTimer totals on cold start`).
-2. [TODO] Git Commit: `test(core): restore taskTimer totals on cold start` (hash: TBD)
-3. [TODO] Починить восстановление `taskTimer.totalSeconds` из persisted state и прокидывание в `workspace:snapshot` (scope: `packages/core/src/*`; expected commit: `fix(core): restore task timer totals from persisted workspace state`).
-4. [TODO] Git Commit: `fix(core): restore task timer totals from persisted workspace state` (hash: TBD)
+1. [DONE] Добавить regression test: при наличии persisted totals `.codeai-hub/state/task-timers.json` snapshot обязан содержать корректный `status.taskTimer.totalSeconds` после рестарта (scope: `packages/core/src/*` timers + test; expected commit: `test(core): restore taskTimer totals on cold start`).
+2. [DONE] Git Commit: `test(core): restore taskTimer totals on cold start` (hash: `89a0e59a`)
+3. [DONE] Починить восстановление `taskTimer.totalSeconds` из persisted state и прокидывание в `workspace:snapshot` (scope: `packages/core/src/*`; expected commit: `fix(core): restore task timer totals from persisted workspace state`).
+4. [DONE] Git Commit: `fix(core): restore task timer totals from persisted workspace state` (hash: `da275518`)
 
 ### Stream 4: PM/UI smoke + docs sync
-1. [TODO] Выполнить PM UI smoke по критериям приемки (reopen после вопросов → input unlocked; total non-zero). При необходимости обновить SSOT-доки (`SessionTaskTimer_UI.md`, `SessionInputLock_SSOT_StateMachine.md`) без изменения смысла контракта (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`; expected commit: `docs(vs): sync cold start recovery behavior notes`).
-2. [TODO] Git Commit: `docs(vs): sync cold start recovery behavior notes` (hash: TBD)
+1. [DONE] Выполнить PM UI smoke по критериям приемки (reopen после вопросов → input unlocked; total non-zero). При необходимости обновить SSOT-доки (`SessionTaskTimer_UI.md`, `SessionInputLock_SSOT_StateMachine.md`) без изменения смысла контракта (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`; expected commit: `docs(vs): sync cold start recovery behavior notes`).
+2. [DONE] Git Commit: `docs(vs): sync cold start recovery behavior notes` (hash: `1ad91d6d`)
 
 ### Stream 5: Optional release build (после фикса)
-1. [BLOCKED] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [BLOCKED] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
-3. [BLOCKED] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session041.md` итогами релизной сборки (scope: `doc/Sessions/Session041.md`; expected commit: `docs(session): record phase261 release build results`).
-4. [BLOCKED] Git Commit: `docs(session): record phase261 release build results` (hash: TBD)
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `6bf1681a`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session041.md` итогами релизной сборки (scope: `doc/Sessions/Session041.md`; expected commit: `docs(session): record phase261 release build results`).
+4. [DONE] Git Commit: `docs(session): record phase261 release build results` (hash: TBD)
