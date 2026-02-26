@@ -74,10 +74,6 @@ export const useWorkflowToolSelect = (
           diagramStartInFlightRef.current = false;
           return;
         }
-        setPendingSessionCreate({
-          providerTitle: fallbackProvider.title ?? fallbackProvider.id,
-        });
-
         const { stage, startMethod } = DIAGRAM_STAGE_MAP[tool];
 
         void (async () => {
@@ -85,12 +81,21 @@ export const useWorkflowToolSelect = (
             workspaceSlug,
             activeWorkspace.path
           );
+          const blocked = workflowState?.gating?.blocked?.[stage] ?? true;
+          if (blocked) {
+            return;
+          }
+
           const preferredProviderId =
             resolvePreferredWorkflowProviderId({ workflowState, providers }) ??
             fallbackProvider.id;
           const provider =
             providers.find((c) => c.id === preferredProviderId) ??
             fallbackProvider;
+
+          setPendingSessionCreate({
+            providerTitle: provider.title ?? provider.id,
+          });
 
           const dialogIntent: DialogOpenIntent = {
             providerId: provider.id,
