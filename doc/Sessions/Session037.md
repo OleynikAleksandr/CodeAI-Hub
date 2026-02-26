@@ -1,8 +1,8 @@
-# Session 37 — Diagram Modules & Diagram Facades workflow steps
+# Session 37 — Diagram Modules & Diagram Facades workflow steps + bugfix
 
-**Date:** 2026-02-26 11:15 (CET)
+**Date:** 2026-02-26 11:15–12:10 (CET)
 **Branch:** main
-**Version:** 1.1.682
+**Version:** 1.1.685
 
 ---
 
@@ -17,12 +17,24 @@
 - Обновлены `README.md` и `CHANGELOG.md` для v1.1.682 — описаны новые diagram steps
 - Собран финальный VSIX `codeai-hub-1.1.682.vsix` (doc-synced release)
 - Обновлён `doc/TODO/todo-plan.md` — все streams 0-9 отмечены как DONE
+- **Bugfix v1.1.683–685**: исправлен ложный спиннер "Creating session…":
+  - v1.1.683: moved `setPendingSessionCreate` inside async (diagram handlers only) — не помогло
+  - v1.1.684: moved ALL side-effects (`setActiveTool`, `setPendingSessionCreate`, `dispatchStageActivated`, `pm:dialog:open`) inside async after gating check for VS + diagram handlers — частично помогло
+  - v1.1.685: **корень бага** — `shouldShowPending` в `ProjectManagerDialogSessionView` использовал `Boolean(props.intent)`, из-за чего stale dialog intent из localStorage вызывал ложный спиннер; исправлено на `props.emptyStatePending === true`
 
 ## Git commits
 - `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 - `e00f8283 chore(release): build-all v1.1.681`
 - `7ba57489 docs: update README and CHANGELOG for v1.1.682 diagram steps`
 - `a471600a chore(release): build-all v1.1.682`
+- `cdc28b9e docs: finalize todo-plan and session report for v1.1.682`
+- `12224766 fix(pm): suppress "Creating session" spinner when diagram stage is blocked`
+- `159c86bb docs: update README and CHANGELOG for v1.1.683`
+- `9989de8a chore(release): build-all v1.1.683`
+- `4a3cec20 fix(pm): block all side-effects for gated workflow toolbar buttons`
+- `2e18550f chore(release): build-all v1.1.684`
+- `9e834c7e fix(pm): remove false "Creating session" spinner from stale dialog intents`
+- `c1234031 chore(release): build-all v1.1.685`
 
 ---
 
@@ -36,10 +48,10 @@
 5. `doc/Sessions/Session037.md` (THIS REPORT)
 
 ## Plans for next session
-- **Phase 259 завершена полностью** (все streams 0-9 DONE)
-- **Тестирование:** Проверить в UI: клик на Diagram Modules/Facades в toolbar → открытие сессии агента, появление артефакта, отображение branch nodes в дереве
+- **Phase 259 завершена полностью** (все streams 0-9 DONE, bugfix v1.1.685 протестирован)
+- **Архивация:** Архивировать `todo-plan.md` как `todo-plan-phase259.md`, создать новый план
 - **Возможные баги:** Валидация mermaid-контента в панелях (`%% Modules Diagram`, `%% Facades Graph`) — может потребоваться адаптация regex под реальный формат шаблонов
-- **Следующая фаза:** Архивировать `todo-plan.md` как `todo-plan-phase259.md`, создать новый план
+- **Stale localStorage intents:** При открытии workspace с stale dialog intent (без реальной сессии) — dialog controller всё ещё поллит 30 секунд; можно оптимизировать при необходимости
 
 ## Files created in this session
 | File | Lines | Purpose |
@@ -56,9 +68,10 @@
 | File | Lines | Changes |
 |---|---|---|
 | `services/workflow-step-start-service.ts` | 120 | Added startDiagramModules(), startDiagramFacades() |
-| `components/layout/use-workflow-tool-select.ts` | 206 | Handle Diagram toolbar clicks via DIAGRAM_STAGE_MAP |
-| `components/layout/main-area.tsx` | 294 | Import+render diagram panels, renderStagePanel() helper |
+| `components/layout/use-workflow-tool-select.ts` | 208 | Handle Diagram toolbar clicks via DIAGRAM_STAGE_MAP; all side-effects gated behind async check |
+| `components/layout/main-area.tsx` | 288 | Import+render diagram panels, renderStagePanel() helper, onStageActivated callback |
 | `components/layout/workspace-tree.tsx` | 289 | Wire availability hooks + resolveStageChildren() |
 | `components/layout/workspace-tree-branch-nodes.ts` | 285 | Facade: re-export diagram builders, delegate sync payload |
 | `components/layout/workspace-tree-model.ts` | 43 | Added resolveTreeStatus() |
 | `components/layout/use-stage-panel-sync.ts` | 63 | Pass diagram availability to resolveStageSyncPayload |
+| `components/sessions/project-manager-dialog-session-view.tsx` | 51 | Fix: shouldShowPending driven solely by emptyStatePending |
