@@ -137,6 +137,7 @@ export class WorkspaceRuntimeFacade {
     string,
     Map<string, MutableTaskTimerState>
   >();
+  private readonly seededTaskTimersByWorkspaceRoot = new Set<string>();
   private readonly taskTimerStoragesByWorkspaceRoot = new Map<
     string,
     TaskTimerStorage
@@ -451,23 +452,27 @@ export class WorkspaceRuntimeFacade {
   }
 
   private seedTaskTimers(workspaceRoot: string): void {
-    if (this.taskTimersByWorkspaceRoot.has(workspaceRoot)) {
+    if (this.seededTaskTimersByWorkspaceRoot.has(workspaceRoot)) {
       return;
     }
 
     const totals = this.getOrCreateStorage(workspaceRoot).load();
     const entries = Object.entries(totals);
-    if (entries.length === 0) {
-      return;
-    }
-
-    const timers = new Map<string, MutableTaskTimerState>();
+    const timers =
+      this.taskTimersByWorkspaceRoot.get(workspaceRoot) ??
+      new Map<string, MutableTaskTimerState>();
     for (const [nodeId, totalSeconds] of entries) {
       if (typeof totalSeconds !== "number" || !Number.isFinite(totalSeconds)) {
         continue;
       }
       const clamped = Math.max(0, Math.floor(totalSeconds));
       if (clamped <= 0) {
+        continue;
+      }
+      const existing = timers.get(nodeId);
+      if (existing) {
+        existing.totalSeconds =
+          Math.max(0, Math.floor(existing.totalSeconds)) + clamped;
         continue;
       }
       timers.set(nodeId, {
@@ -480,6 +485,7 @@ export class WorkspaceRuntimeFacade {
     if (timers.size > 0) {
       this.taskTimersByWorkspaceRoot.set(workspaceRoot, timers);
     }
+    this.seededTaskTimersByWorkspaceRoot.add(workspaceRoot);
   }
 
   private normalizeStaleRunningSessions(workspaceRoot: string): void {
