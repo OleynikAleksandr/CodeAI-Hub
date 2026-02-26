@@ -72,7 +72,7 @@
 2. [DONE] Git Commit: `fix(pm): persist workspace snapshot for late virtual simulation mount` (hash: `dbf21568`)
 
 ### Stream 1: Release build for retest
-1. [IN_PROGRESS] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session042.md`; expected commit: `docs(session): record phase262 release build results`).
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `8d28e4a7`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session042.md`; expected commit: `docs(session): record phase262 release build results`).
 4. [TODO] Git Commit: `docs(session): record phase262 release build results` (hash: TBD)
