@@ -2,6 +2,18 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.680] - 2026-02-26
+### Added
+- Project Manager: every click that says "I want stage X" (toolbar buttons, tree parent labels, tree child nodes) now syncs both artifact and session panels together via `resolveStageSyncPayload()` and the `pm:stage:activated` event.
+- Project Manager: auto-select the latest workflow step (Virtual Simulation or Description) when opening a workspace.
+
+### Fixed
+- Project Manager: clear stale artifact when the VS session has no artifact file yet.
+
+## [1.1.676] - 2026-02-26
+### Changed
+- Core: task timer storage is now per-workspace (stored in `<workspaceRoot>/.codeai-hub/state/task-timers.json`); legacy global file is cleaned up on startup.
+
 ## [1.1.675] - 2026-02-25
 ### Fixed
 - Project Manager: remove the confusing Back button from the artifact viewer.

@@ -7,13 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.675
-- Project Manager: Artifact viewer no longer shows the confusing `Back` button for non-description artifacts.
-- Project Manager: Virtual Simulation reuses the provider selected for Description, shows the correct stage label in session tabs, and appears under Workspace with the session node (the `virtual-simulation.md` artifact node shows up only after the agent creates the file).
-- Workflow: manual `Virtual Simulation` step (Description → Virtual Simulation → diagrams) with deterministic gating and `OUTDATED` propagation.
-- Core: bundled templates for `virtual_simulation` (file-first; reads `Final_Description.md`, asks up to 3 clarifying questions, supports infinite resume semantics).
+## Current Release — v1.1.680
+- Project Manager: clicking any entry point (toolbar button, tree parent label, or tree child node) now syncs **both** artifact and session panels together.
+- Project Manager: auto-selects the latest workflow step (VS or Description) when opening a workspace.
+- Core: task timer storage is now per-workspace (`.codeai-hub/state/task-timers.json` inside each workspace root).
 
-Previous releases (summary): the `1.1.57x–1.1.64x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, and workflow handoff UX in Project Manager.
+Previous releases (summary): the `1.1.57x–1.1.67x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, and workflow handoff UX in Project Manager.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
