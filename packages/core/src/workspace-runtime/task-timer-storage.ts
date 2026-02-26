@@ -1,28 +1,38 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
 type TaskTimerTotals = Readonly<Record<string, number>>;
 
 export type PersistedTaskTimerState = {
-  readonly schemaVersion: 1;
-  readonly workspaces: Readonly<Record<string, TaskTimerTotals>>;
+  readonly schemaVersion: 2;
+  readonly totals: TaskTimerTotals;
 };
 
-const STATE_DIR = ".codeai-hub/state";
+const STATE_SUBDIR = ".codeai-hub/state";
 const STORAGE_FILE = "task-timers.json";
 
-const emptyState = (): PersistedTaskTimerState => ({
-  schemaVersion: 1,
-  workspaces: {},
-});
+const LEGACY_STORAGE_PATH = join(
+  homedir(),
+  ".codeai-hub",
+  "state",
+  STORAGE_FILE
+);
+
+const emptyTotals = (): TaskTimerTotals => ({});
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const normalizeTotals = (value: unknown): Record<string, number> => {
+const normalizeTotals = (value: unknown): TaskTimerTotals => {
   if (!isRecord(value)) {
-    return {};
+    return emptyTotals();
   }
   const result: Record<string, number> = {};
   for (const [nodeId, rawTotal] of Object.entries(value)) {
@@ -38,31 +48,12 @@ const normalizeTotals = (value: unknown): Record<string, number> => {
 };
 
 const normalizeState = (value: unknown): PersistedTaskTimerState => {
-  if (!isRecord(value)) {
-    return emptyState();
+  if (!isRecord(value) || value.schemaVersion !== 2) {
+    return { schemaVersion: 2, totals: emptyTotals() };
   }
-
-  const schemaVersion = value.schemaVersion;
-  if (schemaVersion !== 1) {
-    return emptyState();
-  }
-
-  const workspacesRaw = value.workspaces;
-  if (!isRecord(workspacesRaw)) {
-    return emptyState();
-  }
-
-  const workspaces: Record<string, TaskTimerTotals> = {};
-  for (const [workspaceRoot, totalsRaw] of Object.entries(workspacesRaw)) {
-    const normalized = normalizeTotals(totalsRaw);
-    if (Object.keys(normalized).length > 0) {
-      workspaces[workspaceRoot] = normalized;
-    }
-  }
-
   return {
-    schemaVersion: 1,
-    workspaces,
+    schemaVersion: 2,
+    totals: normalizeTotals(value.totals),
   };
 };
 
@@ -70,29 +61,39 @@ export class TaskTimerStorage {
   private readonly stateDirectory: string;
   private readonly storagePath: string;
 
-  constructor(options?: { readonly stateDirectory?: string }) {
-    const home = homedir();
-    this.stateDirectory = options?.stateDirectory ?? join(home, STATE_DIR);
+  constructor(workspaceRoot: string) {
+    this.stateDirectory = join(workspaceRoot, STATE_SUBDIR);
     this.storagePath = join(this.stateDirectory, STORAGE_FILE);
   }
 
-  load(): PersistedTaskTimerState {
+  load(): TaskTimerTotals {
     if (!existsSync(this.storagePath)) {
-      return emptyState();
+      return emptyTotals();
     }
     try {
       const content = readFileSync(this.storagePath, "utf-8");
-      return normalizeState(JSON.parse(content) as unknown);
+      return normalizeState(JSON.parse(content) as unknown).totals;
     } catch {
-      return emptyState();
+      return emptyTotals();
     }
   }
 
-  save(state: PersistedTaskTimerState): void {
+  save(totals: TaskTimerTotals): void {
     if (!existsSync(this.stateDirectory)) {
       mkdirSync(this.stateDirectory, { recursive: true });
     }
-
+    const state: PersistedTaskTimerState = { schemaVersion: 2, totals };
     writeFileSync(this.storagePath, JSON.stringify(state, null, 2), "utf-8");
+  }
+
+  /** One-time best-effort removal of the legacy global task-timers.json. */
+  static cleanupLegacy(): void {
+    try {
+      if (existsSync(LEGACY_STORAGE_PATH)) {
+        rmSync(LEGACY_STORAGE_PATH);
+      }
+    } catch {
+      // ignore — non-critical cleanup
+    }
   }
 }
