@@ -64,4 +64,9 @@ test("project-manager-runtime-session-view applies workspace snapshot lock state
     true,
     "workspace snapshot must remain authoritative when applying lock state"
   );
+  assert.equal(
+    source.includes("workspaceSnapshotStore.getState()"),
+    true,
+    "hydration must reapply latest stored workspace snapshot to avoid stale default running lock"
+  );
 });

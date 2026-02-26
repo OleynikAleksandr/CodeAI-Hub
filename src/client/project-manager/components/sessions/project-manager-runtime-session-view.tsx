@@ -71,7 +71,7 @@ export const ProjectManagerRuntimeSessionView = ({
             settings
           );
         }
-        setSnapshots(nextSnapshots);
+        setSnapshots(() => { const snapshotState = workspaceSnapshotStore.getState(); if (workspacePath && snapshotState.activeWorkspaceRoot === workspacePath && snapshotState.currentSnapshot?.workspaceRoot === workspacePath) { return applyWorkspaceSnapshotToSnapshots(nextSnapshots, { workspaceRoot: snapshotState.currentSnapshot.workspaceRoot, selectionId: snapshotState.activeSelectionId ?? "__rehydrate__", sequence: snapshotState.lastAppliedSequence > 0 ? snapshotState.lastAppliedSequence : 1, generatedAt: new Date().toISOString(), snapshot: snapshotState.currentSnapshot }); } return nextSnapshots; });
         setActiveSessionId(
           (currentActive) =>
             currentActive ??
@@ -83,7 +83,7 @@ export const ProjectManagerRuntimeSessionView = ({
         return merged;
       });
     },
-    [settings, syncSessionsRef]
+    [settings, syncSessionsRef, workspacePath]
   );
   const handleSessionHistory = useCallback(
     (payload: { readonly sessionId: string; readonly messages: readonly unknown[] }) => {
