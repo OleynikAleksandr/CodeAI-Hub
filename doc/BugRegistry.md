@@ -268,6 +268,7 @@
 - Добавлен отдельный флаг `emptyStatePending` в `SessionView` и прокинут в `EmptyState pending`.
 - `EmptyState` при `pending=true` рисует спиннер + статус создания сессии (вместо текста `Create your first session…`).
 - Источник `emptyStatePending` связан с workflow‑действием `Send` анкеты (PM‑контур) и действует именно в момент, когда `sessions.length === 0`.
+- UX copy alignment (2026-02-26): EmptyState теперь явно объясняет questionnaire-first старт (`Artifacts` справа → `Submit questionnaire` → выбор провайдера), CTA кнопки переведены на EN (`Submit questionnaire`, `Close`).
 
 **Docs / Reference:**
 - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md` (раздел «Реальный пример: спиннер загрузки UI Сессии»)

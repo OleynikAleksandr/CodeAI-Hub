@@ -36,11 +36,15 @@
 
 ### Stream 2: Questionnaire CTA english labels
 1. [DONE] Заменить `Отправить анкету` → `Submit questionnaire` и `Закрыть` → `Close` в Description questionnaire UI и shared copy, сохранив текущую логику submit/cancel (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/app-host/session-region-questionnaire-copy.ts`; expected commit: `fix(pm): switch description questionnaire CTA labels to english`).
-2. [IN_PROGRESS] Git Commit: `fix(pm): switch description questionnaire CTA labels to english` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): switch description questionnaire CTA labels to english` (hash: 7f9bbc5a)
+
+### Stream 2.1: Typecheck blocker after stage-panel refactor
+1. [DONE] Согласовать типы callback `handleFixStart` в `virtual-simulation`, `diagram-modules`, `diagram-facades` панелях с контрактом `WorkflowStepStartService` (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`; expected commit: `fix(pm): align stage panel fix callback types with workflow start service`).
+2. [DONE] Git Commit: `fix(pm): align stage panel fix callback types with workflow start service` (hash: add13b6e)
 
 ### Stream 3: Verification and docs sync
-1. [TODO] Проверить UI smoke (EmptyState + Description questionnaire submit path) и выполнить таргетную проверку `npm run typecheck:webview`; при изменении поведенческого контракта синхронно обновить релевантные doc-файлы (scope: `doc/BugRegistry.md` и/или `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` при необходимости, плюс затронутые UI-файлы; expected commit: `docs(pm): sync description entry copy behavior notes`).
-2. [TODO] Git Commit: `docs(pm): sync description entry copy behavior notes` (hash: TBD)
+1. [DONE] Проверить UI smoke (EmptyState + Description questionnaire submit path) и выполнить таргетную проверку `npm run typecheck:webview`; при изменении поведенческого контракта синхронно обновить релевантные doc-файлы (scope: `doc/BugRegistry.md` и/или `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` при необходимости, плюс затронутые UI-файлы; expected commit: `docs(pm): sync description entry copy behavior notes`).
+2. [IN_PROGRESS] Git Commit: `docs(pm): sync description entry copy behavior notes` (hash: TBD)
 
 ### Stream 4: Release notes sync
 1. [TODO] Обновить `README.md` и `CHANGELOG.md` под новый релиз с описанием copy/CTA правок (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: update README and CHANGELOG for description entry copy refactor release`).
