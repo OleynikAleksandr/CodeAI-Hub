@@ -64,3 +64,23 @@ test("dialog core events replay workspace snapshot after creating base snapshot"
     "runtime session fallback must support providerSessionId identity when session ids drift"
   );
 });
+
+test("dialog core events ensure resumed dialogs have a runtime session for snapshots", async () => {
+  const source = await readFile(CORE_EVENTS_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("api.createSession({"),
+    true,
+    "dialog open must request runtime session creation so lock/timers hydrate after cold start"
+  );
+  assert.equal(
+    source.includes("match.latestSessionId"),
+    true,
+    "dialog open should gate runtime session creation on latestSessionId availability"
+  );
+  assert.equal(
+    source.includes("match.providerSessionId"),
+    true,
+    "dialog open must resume provider sessions using providerSessionId identity"
+  );
+});

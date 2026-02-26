@@ -101,6 +101,17 @@ export const useProjectManagerDialogCoreEvents = (options: {
           providerSessionId: match.providerSessionId,
           intent,
         });
+        if (!match.latestSessionId && match.providerSessionId) {
+          api.createSession({
+            providerId: match.providerId ?? intent.providerId,
+            providerSessionId: match.providerSessionId,
+            workspacePath: intent.workspacePath,
+            initiativeSlug: intent.initiativeSlug ?? intent.workspaceSlug,
+            stage: intent.stage ?? match.stage,
+            sessionKind: intent.sessionKind,
+            runSlug: intent.runSlug,
+          });
+        }
 
         options.dialogIdRef.current = match.dialogId;
         options.setSession(nextSession);
