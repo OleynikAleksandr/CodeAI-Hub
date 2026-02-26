@@ -44,11 +44,11 @@
 
 ### Stream 3: Verification and docs sync
 1. [DONE] Проверить UI smoke (EmptyState + Description questionnaire submit path) и выполнить таргетную проверку `npm run typecheck:webview`; при изменении поведенческого контракта синхронно обновить релевантные doc-файлы (scope: `doc/BugRegistry.md` и/или `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` при необходимости, плюс затронутые UI-файлы; expected commit: `docs(pm): sync description entry copy behavior notes`).
-2. [IN_PROGRESS] Git Commit: `docs(pm): sync description entry copy behavior notes` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): sync description entry copy behavior notes` (hash: 4bae771c)
 
 ### Stream 4: Release notes sync
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под новый релиз с описанием copy/CTA правок (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: update README and CHANGELOG for description entry copy refactor release`).
-2. [TODO] Git Commit: `docs: update README and CHANGELOG for description entry copy refactor release` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под новый релиз с описанием copy/CTA правок (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: update README and CHANGELOG for description entry copy refactor release`).
+2. [IN_PROGRESS] Git Commit: `docs: update README and CHANGELOG for description entry copy refactor release` (hash: TBD)
 
 ### Stream 5: Mandatory release build (final)
 1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
