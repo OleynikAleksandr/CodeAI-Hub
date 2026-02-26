@@ -69,13 +69,13 @@
 
 ### Stream 8: Build & verify
 1. [DONE] `npm run typecheck:webview` — passed. `npm run build:webview` — passed. `npx ultracite check` — 0 issues.
-2. [TODO] Обновить документацию: `README.md`, `CHANGELOG.md` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: update README and CHANGELOG for diagram steps`).
-3. [TODO] Git Commit: `docs: update README and CHANGELOG for diagram steps` (hash: TBD)
+2. [DONE] Обновить документацию: `README.md`, `CHANGELOG.md` (scope: `README.md`, `CHANGELOG.md`).
+3. [DONE] Git Commit: `docs: update README and CHANGELOG for v1.1.682 diagram steps` (hash: TBD)
 
 ### Stream 9: Release build
-1. [TODO] `./scripts/build-all.sh` на чистом дереве (scope: scripts (run); expected commit: `chore(release): build-all`).
-2. [TODO] Git Commit: `chore(release): build-all` (hash: TBD)
-3. [TODO] `./scripts/build-release.sh --use-current-version`; VSIX в `doc/tmp/releases/` (scope: scripts (run); expected commit: none).
+1. [DONE] `./scripts/build-all.sh` на чистом дереве (scope: scripts (run)).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.682` (hash: TBD)
+3. [DONE] `./scripts/build-release.sh --use-current-version`; VSIX в `doc/tmp/releases/`.
 
 ---
 
