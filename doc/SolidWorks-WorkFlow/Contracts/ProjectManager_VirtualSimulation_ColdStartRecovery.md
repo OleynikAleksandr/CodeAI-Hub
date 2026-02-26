@@ -1,5 +1,7 @@
 # Project Manager — Virtual Simulation (Cloud) Cold Start Recovery (Contract)
 
+Status: Approved for implementation (2026-02-26).
+
 ## 1. Проблема
 
 В workflow-узле **Virtual Simulation (Cloud)** (stage: `virtual_simulation`) возможен некорректный recovery после перезапуска Project Manager и/или Core:
