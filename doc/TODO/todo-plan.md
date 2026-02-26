@@ -27,20 +27,20 @@
 **Решение:** Перенести хранение `task-timers.json` из глобального `~/.codeai-hub/state/` в каталог каждого workspace (`<workspace>/.codeai-hub/state/task-timers.json`). При удалении `.codeai-hub/` в workspace Total обнуляется вместе со всеми артефактами.
 
 ### Stream 0: Refactor TaskTimerStorage (workspace-scoped path)
-1. [TODO] Рефакторинг `TaskTimerStorage`: убрать глобальный `~/.codeai-hub/state/` путь; конструктор принимает `workspaceRoot` и формирует путь `<workspaceRoot>/.codeai-hub/state/task-timers.json`; упростить формат — убрать вложенность `workspaces{}`, хранить flat `{ schemaVersion, totals: { nodeId: seconds } }` (scope: `packages/core/src/workspace-runtime/task-timer-storage.ts`; expected commit: `refactor(core): make task timer storage workspace-scoped`).
-2. [TODO] Git Commit: `refactor(core): make task timer storage workspace-scoped` (hash: TBD)
+1. [DONE] Рефакторинг `TaskTimerStorage`: убрать глобальный `~/.codeai-hub/state/` путь; конструктор принимает `workspaceRoot` и формирует путь `<workspaceRoot>/.codeai-hub/state/task-timers.json`; упростить формат — убрать вложенность `workspaces{}`, хранить flat `{ schemaVersion, totals: { nodeId: seconds } }` (scope: `packages/core/src/workspace-runtime/task-timer-storage.ts`; expected commit: `refactor(core): make task timer storage workspace-scoped`).
+2. [DONE] Git Commit: `refactor(core): make task timer storage workspace-scoped` (hash: `51dfb42e`)
 
 ### Stream 1: Adapt WorkspaceRuntimeFacade (per-workspace storage lifecycle)
-1. [TODO] Адаптировать `WorkspaceRuntimeFacade`: вместо одного глобального `TaskTimerStorage` создавать/кешировать инстанс per workspace в `seedTaskTimers()`; `persistTaskTimers()` сохраняет каждый workspace в свой файл; `dispose()` персистит все (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `refactor(core): use per-workspace task timer storage`).
-2. [TODO] Git Commit: `refactor(core): use per-workspace task timer storage` (hash: TBD)
+1. [DONE] Адаптировать `WorkspaceRuntimeFacade`: вместо одного глобального `TaskTimerStorage` создавать/кешировать инстанс per workspace в `seedTaskTimers()`; `persistTaskTimers()` сохраняет каждый workspace в свой файл; `dispose()` персистит все (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `refactor(core): use per-workspace task timer storage`).
+2. [DONE] Git Commit: `refactor(core): use per-workspace task timer storage` (hash: `d7a5861d`)
 
 ### Stream 2: Update tests
-1. [TODO] Обновить тест `preserves task timer totals across Stop/Play restarts`: создавать `TaskTimerStorage` с `workspaceRoot` вместо глобального `stateDirectory`; проверить что файл создаётся внутри workspace tmp dir (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `test(core): adapt task timer tests for workspace-scoped storage`).
-2. [TODO] Git Commit: `test(core): adapt task timer tests for workspace-scoped storage` (hash: TBD)
+1. [DONE] Обновить тест `preserves task timer totals across Stop/Play restarts`: создавать `TaskTimerStorage` с `workspaceRoot` вместо глобального `stateDirectory`; проверить что файл создаётся внутри workspace tmp dir (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `test(core): adapt task timer tests for workspace-scoped storage`).
+2. [DONE] Git Commit: `test(core): adapt task timer tests for workspace-scoped storage` (hash: `fc260f6a`)
 
 ### Stream 3: Cleanup + migration
-1. [TODO] Удалить старый файл `~/.codeai-hub/state/task-timers.json` (если существует) при инициализации или документировать ручное удаление; убедиться что `~/.codeai-hub/state/` не содержит других файлов (если пуста — удалить) (scope: `packages/core/src/workspace-runtime/task-timer-storage.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `chore(core): remove legacy global task-timers.json`).
-2. [TODO] Git Commit: `chore(core): remove legacy global task-timers.json` (hash: TBD)
+1. [DONE] Реализовано в Stream 0/1: `TaskTimerStorage.cleanupLegacy()` удаляет `~/.codeai-hub/state/task-timers.json` при старте; вызывается в конструкторе `WorkspaceRuntimeFacade` (scope: `packages/core/src/workspace-runtime/task-timer-storage.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `chore(core): remove legacy global task-timers.json`).
+2. [DONE] Git Commit: включён в `refactor(core): make task timer storage workspace-scoped` (hash: `51dfb42e`)
 
 ### Stream 4: Release build
 1. [TODO] Release: выполнить `./scripts/build-all.sh` на чистом дереве (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
