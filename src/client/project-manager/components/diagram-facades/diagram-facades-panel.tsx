@@ -1,5 +1,6 @@
 import type React from "react";
 import { useCallback, useMemo } from "react";
+import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
 import { StageArtifactContentView } from "../shared/stage-artifact-content-view";
@@ -45,8 +46,17 @@ export const DiagramFacadesPanel: React.FC<{
   );
 
   const handleFixStart = useCallback(
-    (p: { readonly workspacePath: string; readonly workspaceSlug: string; readonly providerId: string }) =>
-      startService.startDiagramFacades(p),
+    async (p: {
+      readonly workspacePath: string;
+      readonly workspaceSlug: string;
+      readonly providerId: string;
+    }): Promise<void> => {
+      await startService.startDiagramFacades({
+        workspacePath: p.workspacePath,
+        workspaceSlug: p.workspaceSlug,
+        providerId: p.providerId as ProviderStackId,
+      });
+    },
     []
   );
 
