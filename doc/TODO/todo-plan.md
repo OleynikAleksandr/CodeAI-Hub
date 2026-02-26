@@ -81,7 +81,7 @@
 
 ## Phase 263 — Dialog open ensures runtime session (stuck lock + total after Core restart) (owner: Oleksandr, updated: 2026-02-26)
 
-**Проблема:** stage tabs (включая `virtual_simulation`) открываются через dialog/continuity chain. После рестарта Core runtime sessions отсутствуют (in-memory), `dialog:list` возвращает `latestSessionId=null`, и `workspace:snapshot` не содержит stage-session → UI остаётся в default `running` (`Agent is working...`) и `total` = `00h 00m 00s`.
+**Проблема:** stage tabs (включая `virtual_simulation`) открываются через dialog/continuity chain. После рестарта Core runtime sessions отсутствуют (in-memory). `dialog:list` возвращает `latestSessionId` из continuity (обычно НЕ `null`), но этот sessionId отсутствует в runtime snapshot → `workspace:snapshot` не содержит stage-session → UI остаётся в default `running` (`Agent is working...`) и `total` = `00h 00m 00s`.
 
 **Цель:** при открытии dialog с известным `providerSessionId` PM должен инициировать resume runtime session (`session:create`), чтобы Core начал эмитить `workspace:snapshot` для stage-session и UI восстановил lock/timer состояние.
 
@@ -94,3 +94,21 @@
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `7b058a72`)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session043.md`; expected commit: `docs(session): record phase263 release build results`).
 4. [DONE] Git Commit: `docs(session): record phase263 release build results` (hash: `c768cf75`)
+
+---
+
+## Phase 264 — Dialog open resumes when workspace snapshot lacks runtime session (owner: Oleksandr, updated: 2026-02-26)
+
+**Проблема:** Phase 263 была недостаточной: условие по `latestSessionId` почти никогда не срабатывает, потому что `latestSessionId` берётся из continuity index/chain и обычно заполнен даже после рестарта Core. Реальный сигнал отсутствия runtime session — отсутствие matching session в `workspace:snapshot` (по `sessionId` и/или `providerSessionId`).
+
+**Цель:** при открытии dialog с `providerSessionId` PM должен инициировать `session:create`, если `workspace:snapshot` не содержит runtime session для этого dialog → UI получает корректный lock/timer state и разблокирует ввод.
+
+### Stream 0: Fix gating on workspace snapshot presence
+1. [DONE] В `dialog:list:result`: если есть `providerSessionId`, но `workspace:snapshot` не содержит runtime session для этого dialog — отправлять `session:create` (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/dialog-runtime-session-resolver.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `fix(pm): resume dialog when runtime session missing`).
+2. [DONE] Git Commit: `fix(pm): resume dialog when runtime session missing` (hash: `3b347d82`)
+
+### Stream 1: Release build for retest
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.692`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.692` (hash: `dc4681e4`)
+3. [DONE] Зафиксировать итоги сборки в `doc/Sessions/Session044.md` (scope: `doc/Sessions/Session044.md`; expected commit: `docs(session): record release v1.1.692`).
+4. [DONE] Git Commit: `docs(session): record release v1.1.692` (hash: `70e14de0`)
