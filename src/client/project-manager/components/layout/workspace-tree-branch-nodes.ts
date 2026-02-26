@@ -92,7 +92,7 @@ export const buildDescriptionBranchNodes = (options: {
   return nodes;
 };
 
-const resolveLatestStageChain = (
+export const resolveLatestStageChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
   stage: "virtual_simulation"
 ) => {

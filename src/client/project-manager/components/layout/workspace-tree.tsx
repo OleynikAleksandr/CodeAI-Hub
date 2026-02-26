@@ -86,8 +86,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       selectedWorkspaceId,
       workspacePath,
       workspaceSlug,
+      virtualSimulationArtifactAvailable,
       onSelectArtifact: selectArtifact,
       onResumeSession: dispatchDialogOpenIntent,
+      onClearArtifactWithTool: clearArtifactWithTool,
     });
 
   useEffect(() => {
