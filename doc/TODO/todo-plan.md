@@ -68,8 +68,8 @@
 **Цель:** snapshot должен фиксироваться в store независимо от монтирования runtime view, чтобы при открытии вкладки после reload состояние lock/timer восстанавливалось из Core snapshot.
 
 ### Stream 0: PM snapshot store sync вне runtime view
-1. [IN_PROGRESS] Добавить глобальный приём `workspace:snapshot` в `workspace-scope-sync` с валидацией payload и записью в `workspaceSnapshotStore`; добавить regression test на layout-уровень, чтобы не терять lock/timer state при позднем монтировании вкладки (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.test.ts`; expected commit: `fix(pm): persist workspace snapshot for late virtual simulation mount`).
-2. [TODO] Git Commit: `fix(pm): persist workspace snapshot for late virtual simulation mount` (hash: TBD)
+1. [DONE] Добавить глобальный приём `workspace:snapshot` в `workspace-scope-sync` с валидацией payload и записью в `workspaceSnapshotStore`; добавить regression test на layout-уровень, чтобы не терять lock/timer state при позднем монтировании вкладки (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.test.ts`; expected commit: `fix(pm): persist workspace snapshot for late virtual simulation mount`).
+2. [DONE] Git Commit: `fix(pm): persist workspace snapshot for late virtual simulation mount` (hash: `dbf21568`)
 
 ### Stream 1: Release build for retest
 1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
