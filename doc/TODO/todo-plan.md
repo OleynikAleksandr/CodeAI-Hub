@@ -6,8 +6,13 @@
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_VirtualSimulation_ColdStartRecovery.md`
   - `doc/BugRegistry.md`
+- **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream — подзадачи.
 - **Ограничение:** каждая подзадача должна затрагивать **≤ 3 файлов**.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -18,40 +23,38 @@
 
 ---
 
-## Phase 260 — Project Manager Description entry-copy alignment (owner: Oleksandr, updated: 2026-02-26)
+## Phase 261 — Virtual Simulation cold start recovery (stuck lock + total timer) (owner: Oleksandr, updated: 2026-02-26)
 
-**Проблема:** EmptyState слева в Session-регионе содержит legacy-инструкцию про запуск через кнопки сверху и не объясняет реальный `Description` flow через анкету в правой панели артефактов. Дополнительно CTA `Отправить анкету` и `Закрыть` остались на русском.
+**Проблема:** после перезапуска Project Manager/Core в workflow-узле `virtual_simulation` ввод может “залипать” в состоянии ожидания (как будто агент работает), хотя в истории уже есть вопросы и ожидается ответ пользователя. Дополнительно `total` в input footer может сбрасываться в `00h 00m 00s` при наличии persisted timers.
 
-**Решение:** Привести entry-copy и CTA к актуальному UX-контракту: пользователь сначала заполняет анкету справа, затем нажимает `Submit questionnaire`, выбирает провайдера и запускает первую сессию.
+**Цель:** восстановление после cold start должно быть корректным: если turn завершён и ожидается пользователь — input разблокирован; `total` не теряется и соответствует persisted totals (SSOT в Core).
 
 ---
 
 ### Stream 0: Contract sign-off (Design Phase gate)
-1. [DONE] Подтвердить с пользователем контракт `ProjectManager_DescriptionEntry_CopyRefactor.md` и финальные формулировки EN-copy (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md`; expected commit: `docs(pm): approve description entry copy contract`).
-2. [DONE] Git Commit: `docs(pm): approve description entry copy contract` (hash: 4333706b)
+1. [TODO] Подтвердить контракт `ProjectManager_VirtualSimulation_ColdStartRecovery.md` (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_VirtualSimulation_ColdStartRecovery.md`; expected commit: `docs(vs): approve cold start recovery contract`).
+2. [TODO] Git Commit: `docs(vs): approve cold start recovery contract` (hash: TBD)
 
-### Stream 1: Session EmptyState copy update
-1. [DONE] Обновить текст в `src/client/ui/src/session/empty-state.tsx`: явная инструкция про заполнение анкеты в правой панели `Artifacts`, затем `Submit questionnaire`, затем выбор провайдера (scope: `src/client/ui/src/session/empty-state.tsx`; expected commit: `fix(pm): align empty-state copy with description questionnaire flow`).
-2. [DONE] Git Commit: `fix(pm): align empty-state copy with description questionnaire flow` (hash: 8a04604c)
+### Stream 1: Repro snapshot + regression test (stuck lock)
+1. [TODO] Добавить regression test: после рестарта/cold start “stale running” не должен удерживать `turnState/connectionState` в `running`, если нет живого inflight-turn; ожидание пользователя должно приводить к `idle` (scope: `packages/core/src/workspace-runtime/*` test + минимальная фиксация; expected commit: `test(core): cover stale-running recovery on cold start`).
+2. [TODO] Git Commit: `test(core): cover stale-running recovery on cold start` (hash: TBD)
 
-### Stream 2: Questionnaire CTA english labels
-1. [DONE] Заменить `Отправить анкету` → `Submit questionnaire` и `Закрыть` → `Close` в Description questionnaire UI и shared copy, сохранив текущую логику submit/cancel (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/app-host/session-region-questionnaire-copy.ts`; expected commit: `fix(pm): switch description questionnaire CTA labels to english`).
-2. [DONE] Git Commit: `fix(pm): switch description questionnaire CTA labels to english` (hash: 7f9bbc5a)
+### Stream 2: Core fix — stale running recovery
+1. [TODO] Реализовать нормализацию на гидрации/старте: “устаревший running” переводится в `idle` (или `recovery_required`, но с разблокированным вводом), без необходимости ручного Stop (scope: `packages/core/src/workspace-runtime/*`; expected commit: `fix(core): recover stale running sessions on cold start`).
+2. [TODO] Git Commit: `fix(core): recover stale running sessions on cold start` (hash: TBD)
 
-### Stream 2.1: Typecheck blocker after stage-panel refactor
-1. [DONE] Согласовать типы callback `handleFixStart` в `virtual-simulation`, `diagram-modules`, `diagram-facades` панелях с контрактом `WorkflowStepStartService` (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`; expected commit: `fix(pm): align stage panel fix callback types with workflow start service`).
-2. [DONE] Git Commit: `fix(pm): align stage panel fix callback types with workflow start service` (hash: add13b6e)
+### Stream 3: Regression test + fix (task timers / total)
+1. [TODO] Добавить regression test: при наличии persisted totals `.codeai-hub/state/task-timers.json` snapshot обязан содержать корректный `status.taskTimer.totalSeconds` после рестарта (scope: `packages/core/src/*` timers + test; expected commit: `test(core): restore taskTimer totals on cold start`).
+2. [TODO] Git Commit: `test(core): restore taskTimer totals on cold start` (hash: TBD)
+3. [TODO] Починить восстановление `taskTimer.totalSeconds` из persisted state и прокидывание в `workspace:snapshot` (scope: `packages/core/src/*`; expected commit: `fix(core): restore task timer totals from persisted workspace state`).
+4. [TODO] Git Commit: `fix(core): restore task timer totals from persisted workspace state` (hash: TBD)
 
-### Stream 3: Verification and docs sync
-1. [DONE] Проверить UI smoke (EmptyState + Description questionnaire submit path) и выполнить таргетную проверку `npm run typecheck:webview`; при изменении поведенческого контракта синхронно обновить релевантные doc-файлы (scope: `doc/BugRegistry.md` и/или `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` при необходимости, плюс затронутые UI-файлы; expected commit: `docs(pm): sync description entry copy behavior notes`).
-2. [DONE] Git Commit: `docs(pm): sync description entry copy behavior notes` (hash: 4bae771c)
+### Stream 4: PM/UI smoke + docs sync
+1. [TODO] Выполнить PM UI smoke по критериям приемки (reopen после вопросов → input unlocked; total non-zero). При необходимости обновить SSOT-доки (`SessionTaskTimer_UI.md`, `SessionInputLock_SSOT_StateMachine.md`) без изменения смысла контракта (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`; expected commit: `docs(vs): sync cold start recovery behavior notes`).
+2. [TODO] Git Commit: `docs(vs): sync cold start recovery behavior notes` (hash: TBD)
 
-### Stream 4: Release notes sync
-1. [DONE] Обновить `README.md` и `CHANGELOG.md` под новый релиз с описанием copy/CTA правок (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: update README and CHANGELOG for description entry copy refactor release`).
-2. [DONE] Git Commit: `docs: update README and CHANGELOG for description entry copy refactor release` (hash: 3a018f4e)
-
-### Stream 5: Mandatory release build (final)
-1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [DONE] Git Commit: `chore(release): build-all v1.1.687` (hash: 844a8af5)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session039.md` итогами релизной сборки (scope: `doc/Sessions/Session039.md`; expected commit: `docs(session): record phase260 release build results`).
-4. [IN_PROGRESS] Git Commit: `docs(session): record phase260 release build results` (hash: TBD)
+### Stream 5: Optional release build (после фикса)
+1. [BLOCKED] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [BLOCKED] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+3. [BLOCKED] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session041.md` итогами релизной сборки (scope: `doc/Sessions/Session041.md`; expected commit: `docs(session): record phase261 release build results`).
+4. [BLOCKED] Git Commit: `docs(session): record phase261 release build results` (hash: TBD)
