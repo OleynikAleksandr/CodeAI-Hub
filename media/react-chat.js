@@ -22037,8 +22037,8 @@ ${message.content}`
       ] });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Create your first session" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "Use the buttons above to start a session. Select one provider in the picker to begin." })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Start with the questionnaire" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: 'In Artifacts on the right, complete the Description questionnaire and click "Submit questionnaire". Then select one provider in the picker to start your first session.' })
     ] });
   };
   var empty_state_default = EmptyState;
@@ -26473,8 +26473,8 @@ ${replacement}
   var IDEA_QUESTIONNAIRE_COPY = {
     title: "\u0410\u043D\u043A\u0435\u0442\u0430 \u0438\u0434\u0435\u0438",
     description: "\u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443, \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0438 \u043D\u0430 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0443.",
-    submitLabel: "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443",
-    cancelLabel: "\u041E\u0442\u043C\u0435\u043D\u0430",
+    submitLabel: "Submit questionnaire",
+    cancelLabel: "Close",
     resumeLabel: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443",
     resumeNote: "\u0415\u0441\u0442\u044C \u043D\u0435\u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043D\u0430\u044F \u0430\u043D\u043A\u0435\u0442\u0430 \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438. \u041C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435."
   };

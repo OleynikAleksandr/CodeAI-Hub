@@ -51,7 +51,7 @@
 2. [DONE] Git Commit: `docs: update README and CHANGELOG for description entry copy refactor release` (hash: 3a018f4e)
 
 ### Stream 5: Mandatory release build (final)
-1. [IN_PROGRESS] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [IN_PROGRESS] Git Commit: `chore(release): build-all v1.1.687` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session039.md` итогами релизной сборки (scope: `doc/Sessions/Session039.md`; expected commit: `docs(session): record phase260 release build results`).
 4. [TODO] Git Commit: `docs(session): record phase260 release build results` (hash: TBD)
