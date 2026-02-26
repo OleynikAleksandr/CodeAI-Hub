@@ -111,6 +111,79 @@ export const resolveLatestStageChain = (
   return best;
 };
 
+export type StageSyncPayload = {
+  readonly artifact: { readonly path: string; readonly label: string } | null;
+  readonly clearTool: string | null;
+  readonly session: SessionResumeIntent | null;
+};
+
+export const resolveStageSyncPayload = (options: {
+  readonly stage: string;
+  readonly workflowState: WorkflowStateSnapshot;
+  readonly workspaceSlug: string;
+  readonly workspacePath: string;
+  readonly virtualSimulationArtifactAvailable: boolean;
+}): StageSyncPayload => {
+  const { stage, workflowState, workspaceSlug, workspacePath } = options;
+
+  if (stage === "description") {
+    const branch = workflowState.description;
+    if (!branch) return { artifact: null, clearTool: null, session: null };
+    const artifactPath = branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
+    const artifactLabel = branch.finalPath
+      ? "Final_Description.md"
+      : branch.draftPath
+        ? "description.md"
+        : "questionnaire.md";
+    const isReviewerSession = branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
+    const isTerminalCollector = !isReviewerSession && Boolean(branch.draftPath);
+    const session = branch.session;
+    return {
+      artifact: artifactPath ? { path: artifactPath, label: artifactLabel } : null,
+      clearTool: null,
+      session:
+        session && !isTerminalCollector
+          ? {
+              providerId: session.providerId,
+              providerSessionId: session.providerSessionId,
+              workspacePath,
+              workspaceSlug,
+              initiativeSlug: workspaceSlug,
+              stage: "description",
+              sessionKind: isReviewerSession ? "reviewer" : "collector",
+              runSlug: isReviewerSession ? "reviewer" : null,
+            }
+          : null,
+    };
+  }
+
+  if (stage === "virtual_simulation") {
+    const chain = resolveLatestStageChain(workflowState.continuity.chains, "virtual_simulation");
+    const last = chain?.segments.at(-1) ?? null;
+    const vsArtifactPath = `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`;
+    return {
+      artifact: options.virtualSimulationArtifactAvailable
+        ? { path: vsArtifactPath, label: "virtual-simulation.md" }
+        : null,
+      clearTool: options.virtualSimulationArtifactAvailable ? null : "VIRTUAL SIMULATION",
+      session: last
+        ? {
+            providerId: last.providerId,
+            providerSessionId: last.providerSessionId,
+            workspacePath,
+            workspaceSlug,
+            initiativeSlug: workspaceSlug,
+            stage: "virtual_simulation",
+            sessionKind: "collector",
+            runSlug: null,
+          }
+        : null,
+    };
+  }
+
+  return { artifact: null, clearTool: null, session: null };
+};
+
 export const buildVirtualSimulationBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly virtualSimulationArtifactAvailable: boolean;

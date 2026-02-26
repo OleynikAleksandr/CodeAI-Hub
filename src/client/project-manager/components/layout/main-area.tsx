@@ -9,7 +9,7 @@ import {
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
-import { resolveWorkspaceSlug } from "./main-area-utils";
+import { dispatchStageActivated, resolveWorkspaceSlug } from "./main-area-utils";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
 import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
@@ -74,8 +74,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   });
   const handleToolSelect = useCallback(
     (tool: string) => {
-      if (tool === VIRTUAL_SIMULATION_TOOL_LABEL) setSelectedArtifact(null);
       handleToolSelectBase(tool);
+      dispatchStageActivated(tool);
     },
     [handleToolSelectBase]
   );

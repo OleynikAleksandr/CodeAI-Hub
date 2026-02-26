@@ -9,6 +9,7 @@ import {
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
 import { buildDescriptionBranchNodes, buildVirtualSimulationBranchNodes } from "./workspace-tree-branch-nodes";
+import { useStagePanelSync } from "./use-stage-panel-sync";
 import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
@@ -81,6 +82,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     []
   );
 
+  const syncPanelsToStage = useStagePanelSync({
+    workflowState,
+    workspaceSlug,
+    workspacePath,
+    virtualSimulationArtifactAvailable,
+    selectArtifact,
+    dispatchDialogOpenIntent,
+    clearArtifactWithTool,
+  });
+
   const { handleStateUpdate, markWorkspaceChanged, resetPendingSelection } =
     useWorkspaceTreeAutoSelect({
       selectedWorkspaceId,
@@ -139,6 +150,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       window.clearInterval(timer);
     };
   }, [handleStateUpdate, selectedWorkspaceId, workspacePath, workspaceSlug]);
+
   const resolveTreeStatus = (
     status: WorkflowStageStatus,
     blocked: boolean
@@ -192,6 +204,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         visualDepth: 1,
         isCollapsible: children.length > 0,
         children: children.length > 0 ? children : undefined,
+        onSelect: children.length > 0 ? () => syncPanelsToStage(stage) : undefined,
       };
     });
   };
