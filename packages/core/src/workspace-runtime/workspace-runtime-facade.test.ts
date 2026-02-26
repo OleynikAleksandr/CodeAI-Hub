@@ -335,6 +335,40 @@ test("WorkspaceRuntimeFacade keeps continuity lock active for resume timeout", a
   facade.dispose();
 });
 
+test("WorkspaceRuntimeFacade normalizes stale running sessions on workspace select", () => {
+  const facade = new WorkspaceRuntimeFacade();
+  const sessionKey = createSessionKey(workspaceA, "session-stale-running");
+
+  facade.notifySessionCreated(sessionKey, {
+    providerId: "claudeCodeCli",
+    resumeMode: "resume_in_place",
+    turnState: "running",
+    continuityLockActive: false,
+    finalTurnCompleted: true,
+  });
+
+  const before = facade.getSnapshot(workspaceA).sessions[sessionKey.sessionId];
+  assert.ok(before);
+  assert.equal(before.turnState, "running");
+
+  facade.select({
+    clientId: "client-recover",
+    request: {
+      requestId: "req-recover",
+      workspaceRoot: workspaceA,
+      reason: "workspace_selected",
+    },
+  });
+
+  const after = facade.getSnapshot(workspaceA).sessions[sessionKey.sessionId];
+  assert.ok(after);
+  assert.equal(after.turnState, "idle");
+  assert.equal(after.continuityLockActive, false);
+  assert.equal(after.continuityLockReason, "no_rollover_needed");
+
+  facade.dispose();
+});
+
 test("WorkspaceRuntimeFacade publishes finalTurnCompleted flag in snapshot", async () => {
   const events: WorkspaceSnapshotPush[] = [];
   const facade = new WorkspaceRuntimeFacade({
