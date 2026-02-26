@@ -259,13 +259,13 @@ export const DescriptionQuestionnairePanel: React.FC<
       ) : null}
       <IdeaQuestionnaireView
         answers={answers}
-        cancelLabel="Закрыть"
-        description="Анкета сохраняется автоматически. Нажмите «Отправить анкету», выберите провайдера и дождитесь запуска Description. Агент сформирует draft-артефакт и запишет его в .codeai-hub/<workspace>/description/runs/<attemptId>/description.md. После ревью будет создан Final_Description.md."
+        cancelLabel="Close"
+        description="Анкета сохраняется автоматически. Нажмите «Submit questionnaire», выберите провайдера и дождитесь запуска Description. Агент сформирует draft-артефакт и запишет его в .codeai-hub/<workspace>/description/runs/<attemptId>/description.md. После ревью будет создан Final_Description.md."
         onAnswerChange={handleAnswerChange}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         questions={panelState.questions}
-        submitLabel="Отправить анкету"
+        submitLabel="Submit questionnaire"
         title={title}
       />
       <IdeaCollectorProviderPicker

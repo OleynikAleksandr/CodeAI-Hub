@@ -32,11 +32,11 @@
 
 ### Stream 1: Session EmptyState copy update
 1. [DONE] Обновить текст в `src/client/ui/src/session/empty-state.tsx`: явная инструкция про заполнение анкеты в правой панели `Artifacts`, затем `Submit questionnaire`, затем выбор провайдера (scope: `src/client/ui/src/session/empty-state.tsx`; expected commit: `fix(pm): align empty-state copy with description questionnaire flow`).
-2. [IN_PROGRESS] Git Commit: `fix(pm): align empty-state copy with description questionnaire flow` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): align empty-state copy with description questionnaire flow` (hash: 8a04604c)
 
 ### Stream 2: Questionnaire CTA english labels
-1. [TODO] Заменить `Отправить анкету` → `Submit questionnaire` и `Закрыть` → `Close` в Description questionnaire UI и shared copy, сохранив текущую логику submit/cancel (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/app-host/session-region-questionnaire-copy.ts`; expected commit: `fix(pm): switch description questionnaire CTA labels to english`).
-2. [TODO] Git Commit: `fix(pm): switch description questionnaire CTA labels to english` (hash: TBD)
+1. [DONE] Заменить `Отправить анкету` → `Submit questionnaire` и `Закрыть` → `Close` в Description questionnaire UI и shared copy, сохранив текущую логику submit/cancel (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/app-host/session-region-questionnaire-copy.ts`; expected commit: `fix(pm): switch description questionnaire CTA labels to english`).
+2. [IN_PROGRESS] Git Commit: `fix(pm): switch description questionnaire CTA labels to english` (hash: TBD)
 
 ### Stream 3: Verification and docs sync
 1. [TODO] Проверить UI smoke (EmptyState + Description questionnaire submit path) и выполнить таргетную проверку `npm run typecheck:webview`; при изменении поведенческого контракта синхронно обновить релевантные doc-файлы (scope: `doc/BugRegistry.md` и/или `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` при необходимости, плюс затронутые UI-файлы; expected commit: `docs(pm): sync description entry copy behavior notes`).
