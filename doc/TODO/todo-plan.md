@@ -20,30 +20,71 @@
 
 ---
 
-## Phase 258 — Workspace-scoped task timer storage (owner: Oleksandr, updated: 2026-02-26)
+## Phase 259 — Diagram Modules & Diagram Facades workflow steps (owner: Oleksandr, updated: 2026-02-26)
 
-**Проблема:** `task-timers.json` хранится глобально в `~/.codeai-hub/state/`, из-за чего Total-счётчик суммирует время всех попыток (включая тестовые) и не сбрасывается при очистке workspace-артефактов.
+**Проблема:** Кнопки Diagram Modules и Diagram Facades в тулбаре Project Manager не работают — нет UI-панелей, нет запуска сессий, нет отображения артефактов в дереве.
 
-**Решение:** Перенести хранение `task-timers.json` из глобального `~/.codeai-hub/state/` в каталог каждого workspace (`<workspace>/.codeai-hub/state/task-timers.json`). При удалении `.codeai-hub/` в workspace Total обнуляется вместе со всеми артефактами.
+**Решение:** Реализовать client-side активацию по образу и подобию Virtual Simulation. Core-side полностью готов (типы, гейтинг, шаблоны, контракты, HTTP-роуты, watcher, continuity).
 
-### Stream 0: Refactor TaskTimerStorage (workspace-scoped path)
-1. [DONE] Рефакторинг `TaskTimerStorage`: убрать глобальный `~/.codeai-hub/state/` путь; конструктор принимает `workspaceRoot` и формирует путь `<workspaceRoot>/.codeai-hub/state/task-timers.json`; упростить формат — убрать вложенность `workspaces{}`, хранить flat `{ schemaVersion, totals: { nodeId: seconds } }` (scope: `packages/core/src/workspace-runtime/task-timer-storage.ts`; expected commit: `refactor(core): make task timer storage workspace-scoped`).
-2. [DONE] Git Commit: `refactor(core): make task timer storage workspace-scoped` (hash: `51dfb42e`)
+**Ключевые контракты (Core — уже реализовано, НЕ трогаем):**
+- Artifact: `.codeai-hub/{slug}/diagram_modules/modules-diagram.mmd`
+- Artifact: `.codeai-hub/{slug}/diagram_facades/facades-graph.mmd`
+- Gating: diagram_modules blocked пока нет `virtual-simulation.md` (DONE); diagram_facades blocked пока нет `modules-diagram.mmd` (DONE)
+- Контракты: `buildDiagramModulesContract()`, `buildDiagramFacadesContract()` в `idea-contract-service.ts`
+- HTTP: `GET /api/v1/orchestrator/diagram-modules-contract`, `GET /api/v1/orchestrator/diagram-facades-contract`
 
-### Stream 1: Adapt WorkspaceRuntimeFacade (per-workspace storage lifecycle)
-1. [DONE] Адаптировать `WorkspaceRuntimeFacade`: вместо одного глобального `TaskTimerStorage` создавать/кешировать инстанс per workspace в `seedTaskTimers()`; `persistTaskTimers()` сохраняет каждый workspace в свой файл; `dispose()` персистит все (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `refactor(core): use per-workspace task timer storage`).
-2. [DONE] Git Commit: `refactor(core): use per-workspace task timer storage` (hash: `d7a5861d`)
+---
 
-### Stream 2: Update tests
-1. [DONE] Обновить тест `preserves task timer totals across Stop/Play restarts`: создавать `TaskTimerStorage` с `workspaceRoot` вместо глобального `stateDirectory`; проверить что файл создаётся внутри workspace tmp dir (scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `test(core): adapt task timer tests for workspace-scoped storage`).
-2. [DONE] Git Commit: `test(core): adapt task timer tests for workspace-scoped storage` (hash: `fc260f6a`)
+### Stream 0: WorkflowStepStartService — methods for diagram steps
+1. [DONE] Добавить `startDiagramModules()` и `startDiagramFacades()` в `WorkflowStepStartService`. Расширен `resolveMostRecentContinuitySessionId` — union `ContinuityStageId`. Тип параметров обобщён в `StartWorkflowStepParams`. (scope: `workflow-step-start-service.ts`, 120 строк)
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
 
-### Stream 3: Cleanup + migration
-1. [DONE] Реализовано в Stream 0/1: `TaskTimerStorage.cleanupLegacy()` удаляет `~/.codeai-hub/state/task-timers.json` при старте; вызывается в конструкторе `WorkspaceRuntimeFacade` (scope: `packages/core/src/workspace-runtime/task-timer-storage.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`; expected commit: `chore(core): remove legacy global task-timers.json`).
-2. [DONE] Git Commit: включён в `refactor(core): make task timer storage workspace-scoped` (hash: `51dfb42e`)
+### Stream 1: Toolbar handler — handle Diagram tool clicks
+1. [DONE] В `use-workflow-tool-select.ts`: добавлены `DIAGRAM_MODULES_TOOL_LABEL`, `DIAGRAM_FACADES_TOOL_LABEL`, `DIAGRAM_STAGE_MAP`, `diagramStartInFlightRef`. Общая логика через table-driven `DIAGRAM_STAGE_MAP` вместо дублирования. (scope: `use-workflow-tool-select.ts`, 206 строк)
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
 
-### Stream 4: Release build
-1. [TODO] Release: выполнить `./scripts/build-all.sh` на чистом дереве (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
+### Stream 2: Artifact availability hooks
+1. [DONE] Созданы `use-diagram-modules-artifact-availability.ts` (68 строк) и `use-diagram-facades-artifact-availability.ts` (68 строк). Паттерн идентичен VS hook.
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+
+### Stream 3: DiagramModulesPanel component
+1. [DONE] Создан `diagram-modules/diagram-modules-panel.tsx` (227 строк). Validation: `%% Modules Diagram` title + ≥1 subgraph. Кнопка "Fix with agent" вызывает `startDiagramModules()`.
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+
+### Stream 4: DiagramFacadesPanel component
+1. [DONE] Создан `diagram-facades/diagram-facades-panel.tsx` (227 строк). Validation: `%% Facades Graph` title + ≥1 edge. Кнопка "Fix with agent" вызывает `startDiagramFacades()`.
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+
+### Stream 5: main-area.tsx — route to diagram panels
+1. [DONE] Импортированы `DiagramModulesPanel` и `DiagramFacadesPanel`. Placeholder'ы заменены на `renderStagePanel()` helper. (scope: `main-area.tsx`, 294 строки)
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+
+### Stream 6: Workspace tree — availability hooks + branch nodes
+1. [DONE] В `workspace-tree.tsx`: подключены оба availability hooks, stage→builder маппинг вынесен в `resolveStageChildren()` (новый файл `workspace-tree-stage-children.ts`). `resolveTreeStatus` перенесён в `workspace-tree-model.ts`. (scope: `workspace-tree.tsx` 289 строк, `workspace-tree-stage-children.ts` 70 строк, `workspace-tree-model.ts` 42 строки)
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+
+### Stream 7: Workspace tree branch nodes — builders + sync payload
+1. [DONE] Diagram builders вынесены в отдельный модуль `workspace-tree-diagram-branch-nodes.ts` (252 строки) для соблюдения лимита ≤300 строк. Фасад `workspace-tree-branch-nodes.ts` (285 строк) ре-экспортирует builders и делегирует diagram sync payload. `resolveStageSyncPayload()` расширен: `diagramModulesArtifactAvailable`, `diagramFacadesArtifactAvailable`. `use-stage-panel-sync.ts` расширен аналогично.
+2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+
+### Stream 8: Build & verify
+1. [DONE] `npm run typecheck:webview` — passed. `npm run build:webview` — passed. `npx ultracite check` — 0 issues.
+2. [TODO] Обновить документацию: `README.md`, `CHANGELOG.md` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: update README and CHANGELOG for diagram steps`).
+3. [TODO] Git Commit: `docs: update README and CHANGELOG for diagram steps` (hash: TBD)
+
+### Stream 9: Release build
+1. [TODO] `./scripts/build-all.sh` на чистом дереве (scope: scripts (run); expected commit: `chore(release): build-all`).
 2. [TODO] Git Commit: `chore(release): build-all` (hash: TBD)
-3. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`; зафиксировать результаты в `doc/Sessions/Session035.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session035.md`; expected commit: `chore(release): package vsix`).
-4. [TODO] Git Commit: `chore(release): package vsix` (hash: TBD)
+3. [TODO] `./scripts/build-release.sh --use-current-version`; VSIX в `doc/tmp/releases/` (scope: scripts (run); expected commit: none).
+
+---
+
+**Архитектурные решения (отклонения от исходного плана):**
+- `workspace-tree-branch-nodes.ts` разбит на 2 файла (фасад + `workspace-tree-diagram-branch-nodes.ts`) — иначе 485 строк (лимит ≤300).
+- `workspace-tree.tsx` рефакторинг: `resolveStageChildren()` вынесен в `workspace-tree-stage-children.ts`, `resolveTreeStatus()` перенесён в `workspace-tree-model.ts` — иначе 330 строк (лимит ≤300).
+- `main-area.tsx` рефакторинг: введён `renderStagePanel()` helper для устранения дублирования 3× workspace-check pattern — 294 строки.
+- `use-stage-panel-sync.ts` модифицирован (добавлены `diagramModulesArtifactAvailable`, `diagramFacadesArtifactAvailable`) — необходимое следствие расширения `resolveStageSyncPayload`.
+
+**Итого новых файлов:** 7 (4 по плану + 3 из-за рефакторинга ≤300)
+**Итого модифицированных файлов:** 7 (5 по плану + 2 из-за рефакторинга)
+**Все файлы ≤300 строк:** подтверждено.

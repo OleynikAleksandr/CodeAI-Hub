@@ -8,6 +8,8 @@ import {
 } from "../../services/workflow-events-client";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
+import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
+import { DiagramFacadesPanel } from "../diagram-facades/diagram-facades-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { dispatchStageActivated, resolveWorkspaceSlug } from "./main-area-utils";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
@@ -234,6 +236,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const showDiagramModules = activeTool === "Diagram Modules";
   const showDiagramFacades = activeTool === "Diagram Facades";
 
+  const renderStagePanel = (Panel: React.FC<{ readonly workspacePath: string; readonly workspaceSlug: string }>) =>
+    activeWorkspace?.path && activeWorkspaceSlug
+      ? <Panel workspacePath={activeWorkspace.path} workspaceSlug={activeWorkspaceSlug} />
+      : <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>;
+
   return (
     <main className="pm-main-area">
       <Toolbar
@@ -262,18 +269,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
               workspaceSlug={activeWorkspace?.slug}
             />
           ) : showVirtualSimulation ? (
-            activeWorkspace?.path && activeWorkspaceSlug ? (
-              <VirtualSimulationPanel
-                workspacePath={activeWorkspace.path}
-                workspaceSlug={activeWorkspaceSlug}
-              />
-            ) : (
-              <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>
-            )
+            renderStagePanel(VirtualSimulationPanel)
           ) : showDiagramModules ? (
-            <div className="pm-placeholder">Шаг Diagram Modules пока не подключен.</div>
+            renderStagePanel(DiagramModulesPanel)
           ) : showDiagramFacades ? (
-            <div className="pm-placeholder">Шаг Diagram Facades пока не подключен.</div>
+            renderStagePanel(DiagramFacadesPanel)
           ) : (
             <div className="pm-placeholder">Artifacts will appear here.</div>
           )

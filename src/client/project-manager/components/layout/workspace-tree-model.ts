@@ -1,4 +1,4 @@
-import type { WorkflowStageId } from "../../services/workflow-state-client";
+import type { WorkflowStageId, WorkflowStageStatus } from "../../services/workflow-state-client";
 
 export type TreeStatus = "active" | "todo" | "blocked" | "draft" | "outdated";
 
@@ -29,3 +29,15 @@ export const WORKFLOW_STAGE_BLOCKED_TITLES: Record<WorkflowStageId, string> = {
   diagram_modules: "BLOCKED: requires virtual-simulation.md (DONE)",
   diagram_facades: "BLOCKED: requires modules-diagram.mmd (DONE)",
 };
+
+export const resolveTreeStatus = (
+  status: WorkflowStageStatus,
+  blocked: boolean
+): TreeStatus =>
+  status === "outdated"
+    ? "outdated"
+    : blocked || status === "invalid"
+      ? "blocked"
+      : status === "completed" || status === "in_progress"
+        ? "active"
+        : "todo";

@@ -4,18 +4,18 @@ import { api } from "../../api";
 import {
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
-  type WorkflowStageId,
-  type WorkflowStageStatus,
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
-import { buildDescriptionBranchNodes, buildVirtualSimulationBranchNodes } from "./workspace-tree-branch-nodes";
+import { resolveStageChildren } from "./workspace-tree-stage-children";
 import { useStagePanelSync } from "./use-stage-panel-sync";
 import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
-import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED_TITLE, type TreeNode, type TreeStatus } from "./workspace-tree-model";
+import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED_TITLE, resolveTreeStatus, type TreeNode } from "./workspace-tree-model";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
+import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
+import { useDiagramFacadesArtifactAvailability } from "./use-diagram-facades-artifact-availability";
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -41,6 +41,20 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
 
   const virtualSimulationArtifactAvailable =
     useVirtualSimulationArtifactAvailability({
+      enabled: Boolean(selectedWorkspaceId),
+      workspacePath,
+      workspaceSlug,
+    });
+
+  const diagramModulesArtifactAvailable =
+    useDiagramModulesArtifactAvailability({
+      enabled: Boolean(selectedWorkspaceId),
+      workspacePath,
+      workspaceSlug,
+    });
+
+  const diagramFacadesArtifactAvailable =
+    useDiagramFacadesArtifactAvailability({
       enabled: Boolean(selectedWorkspaceId),
       workspacePath,
       workspaceSlug,
@@ -87,6 +101,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     workspaceSlug,
     workspacePath,
     virtualSimulationArtifactAvailable,
+    diagramModulesArtifactAvailable,
+    diagramFacadesArtifactAvailable,
     selectArtifact,
     dispatchDialogOpenIntent,
     clearArtifactWithTool,
@@ -151,18 +167,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     };
   }, [handleStateUpdate, selectedWorkspaceId, workspacePath, workspaceSlug]);
 
-  const resolveTreeStatus = (
-    status: WorkflowStageStatus,
-    blocked: boolean
-  ): TreeStatus =>
-    status === "outdated"
-      ? "outdated"
-      : blocked || status === "invalid"
-        ? "blocked"
-        : status === "completed" || status === "in_progress"
-          ? "active"
-          : "todo";
-
   const resolveStageNodes = (): readonly TreeNode[] => {
     if (!workflowState) {
       return WORKFLOW_STAGE_ORDER.map((stage) => ({
@@ -173,29 +177,22 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       }));
     }
 
+    const stageCtx = {
+      workflowState,
+      workspaceSlug,
+      workspacePath,
+      virtualSimulationArtifactAvailable,
+      diagramModulesArtifactAvailable,
+      diagramFacadesArtifactAvailable,
+      selectArtifact,
+      dispatchDialogOpenIntent,
+      clearArtifactWithTool,
+    };
+
     return WORKFLOW_STAGE_ORDER.map((stage) => {
       const status = workflowState.stages[stage] ?? "idle";
       const blocked = workflowState.gating.blocked[stage] ?? false;
-      const children =
-        stage === "description"
-          ? buildDescriptionBranchNodes({
-              workflowState,
-              workspaceSlug,
-              workspacePath,
-              selectArtifact,
-              dispatchDialogOpenIntent,
-            })
-          : stage === "virtual_simulation"
-            ? buildVirtualSimulationBranchNodes({
-                workflowState,
-                virtualSimulationArtifactAvailable,
-                workspaceSlug,
-                workspacePath,
-                selectArtifact,
-                dispatchDialogOpenIntent,
-                clearArtifactWithTool,
-              })
-            : [];
+      const children = resolveStageChildren(stage, stageCtx);
       return {
         id: `workflow:${stage}`,
         label: WORKFLOW_LABELS[stage],
