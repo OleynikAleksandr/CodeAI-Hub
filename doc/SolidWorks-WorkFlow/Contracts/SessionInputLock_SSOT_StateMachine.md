@@ -53,6 +53,18 @@
 
 Важно: это defence-in-depth. UI не должен зависеть от наличия `continuityLockReason`, а Core не должен эмитить “пустые” причины в idle-состоянии.
 
+## 3.2 Инкрементальный этап (реализовано в release `1.1.687`)
+
+Зафиксирована дополнительная защита cold-start recovery от stale-running состояния:
+
+1) **Core (WorkspaceRuntimeFacade):** при `workspace select` выполняется нормализация “устаревшего running”:
+   - `turnState === "running"`
+   - `finalTurnCompleted === true`
+   - `continuityLockActive === false`
+   - `continuityLockTransition.awaitingBootstrapTurn !== true`
+2) При выполнении условий выше session snapshot переводится в `turnState="idle"` до публикации snapshot в PM/UI.
+3) Цель: исключить вечный lock в кейсе “живого inflight-turn уже нет, но состояние осталось running”.
+
 ---
 
 ## 4) Новый контракт: SSOT только в Core snapshot
