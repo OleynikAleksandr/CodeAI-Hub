@@ -370,8 +370,8 @@ test("WorkspaceRuntimeFacade publishes finalTurnCompleted flag in snapshot", asy
 });
 
 test("WorkspaceRuntimeFacade preserves task timer totals across Stop/Play restarts", () => {
-  const stateDirectory = mkdtempSync(join(tmpdir(), "codeai-task-timers-"));
-  const storage = new TaskTimerStorage({ stateDirectory });
+  const fakeWorkspaceRoot = mkdtempSync(join(tmpdir(), "codeai-workspace-"));
+  const storage = new TaskTimerStorage(fakeWorkspaceRoot);
 
   const originalNow = Date.now;
   let nowMs = 1_000_000;
@@ -382,11 +382,14 @@ test("WorkspaceRuntimeFacade preserves task timer totals across Stop/Play restar
     sessionId: "timer-session",
   };
 
+  const storageFactory = (root: string) =>
+    root === workspaceA ? storage : new TaskTimerStorage(root);
+
   try {
     Date.now = () => nowMs;
 
     const facade = new WorkspaceRuntimeFacade({
-      taskTimerStorage: storage,
+      taskTimerStorageFactory: storageFactory,
     });
 
     facade.notifySessionCreated(sessionKey, {
@@ -402,7 +405,7 @@ test("WorkspaceRuntimeFacade preserves task timer totals across Stop/Play restar
 
   try {
     const restoredFacade = new WorkspaceRuntimeFacade({
-      taskTimerStorage: storage,
+      taskTimerStorageFactory: storageFactory,
     });
 
     restoredFacade.select({
@@ -425,6 +428,6 @@ test("WorkspaceRuntimeFacade preserves task timer totals across Stop/Play restar
 
     restoredFacade.dispose();
   } finally {
-    rmSync(stateDirectory, { recursive: true, force: true });
+    rmSync(fakeWorkspaceRoot, { recursive: true, force: true });
   }
 });
