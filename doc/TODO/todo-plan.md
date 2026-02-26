@@ -76,3 +76,21 @@
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `8d28e4a7`)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session042.md`; expected commit: `docs(session): record phase262 release build results`).
 4. [DONE] Git Commit: `docs(session): record phase262 release build results` (hash: `3e142971`)
+
+---
+
+## Phase 263 — Dialog open ensures runtime session (stuck lock + total after Core restart) (owner: Oleksandr, updated: 2026-02-26)
+
+**Проблема:** stage tabs (включая `virtual_simulation`) открываются через dialog/continuity chain. После рестарта Core runtime sessions отсутствуют (in-memory), `dialog:list` возвращает `latestSessionId=null`, и `workspace:snapshot` не содержит stage-session → UI остаётся в default `running` (`Agent is working...`) и `total` = `00h 00m 00s`.
+
+**Цель:** при открытии dialog с известным `providerSessionId` PM должен инициировать resume runtime session (`session:create`), чтобы Core начал эмитить `workspace:snapshot` для stage-session и UI восстановил lock/timer состояние.
+
+### Stream 0: Resume runtime session on dialog open
+1. [DONE] В `dialog:list:result`: если `latestSessionId` отсутствует и `providerSessionId` задан — отправлять `session:create` с контекстом stage/runSlug, чтобы восстановить workspace snapshot lock/timer после cold start (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `fix(pm): resume dialog runtime session on open`).
+2. [DONE] Git Commit: `fix(pm): resume dialog runtime session on open` (hash: `a092ee57`)
+
+### Stream 1: Release build for retest
+1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session043.md`; expected commit: `docs(session): record phase263 release build results`).
+4. [TODO] Git Commit: `docs(session): record phase263 release build results` (hash: TBD)
