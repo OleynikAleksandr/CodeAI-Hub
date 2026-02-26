@@ -13,10 +13,11 @@ const EmptyState = (props: { readonly pending: boolean }) => {
 
   return (
     <div className="session-empty">
-      <h2 className="session-empty__title">Create your first session</h2>
+      <h2 className="session-empty__title">Start with the questionnaire</h2>
       <p className="session-empty__description">
-        Use the buttons above to start a session. Select one provider in the
-        picker to begin.
+        In Artifacts on the right, complete the Description questionnaire and
+        click "Submit questionnaire". Then select one provider in the picker to
+        start your first session.
       </p>
     </div>
   );

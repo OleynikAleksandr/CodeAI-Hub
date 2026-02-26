@@ -28,11 +28,11 @@
 
 ### Stream 0: Contract sign-off (Design Phase gate)
 1. [DONE] Подтвердить с пользователем контракт `ProjectManager_DescriptionEntry_CopyRefactor.md` и финальные формулировки EN-copy (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md`; expected commit: `docs(pm): approve description entry copy contract`).
-2. [TODO] Git Commit: `docs(pm): approve description entry copy contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): approve description entry copy contract` (hash: 4333706b)
 
 ### Stream 1: Session EmptyState copy update
-1. [TODO] Обновить текст в `src/client/ui/src/session/empty-state.tsx`: явная инструкция про заполнение анкеты в правой панели `Artifacts`, затем `Submit questionnaire`, затем выбор провайдера (scope: `src/client/ui/src/session/empty-state.tsx`; expected commit: `fix(pm): align empty-state copy with description questionnaire flow`).
-2. [TODO] Git Commit: `fix(pm): align empty-state copy with description questionnaire flow` (hash: TBD)
+1. [DONE] Обновить текст в `src/client/ui/src/session/empty-state.tsx`: явная инструкция про заполнение анкеты в правой панели `Artifacts`, затем `Submit questionnaire`, затем выбор провайдера (scope: `src/client/ui/src/session/empty-state.tsx`; expected commit: `fix(pm): align empty-state copy with description questionnaire flow`).
+2. [IN_PROGRESS] Git Commit: `fix(pm): align empty-state copy with description questionnaire flow` (hash: TBD)
 
 ### Stream 2: Questionnaire CTA english labels
 1. [TODO] Заменить `Отправить анкету` → `Submit questionnaire` и `Закрыть` → `Close` в Description questionnaire UI и shared copy, сохранив текущую логику submit/cancel (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/app-host/session-region-questionnaire-copy.ts`; expected commit: `fix(pm): switch description questionnaire CTA labels to english`).
