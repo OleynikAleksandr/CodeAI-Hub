@@ -2,6 +2,14 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.685] - 2026-02-26
+### Fixed
+- Project Manager: false "Creating session…" spinner no longer appears when a stale dialog intent is restored from `localStorage` (e.g. on the Description tab in a fresh workspace). The pending indicator is now driven exclusively by the `pendingSessionCreate` flag (`emptyStatePending`), not by the mere presence of a dialog intent.
+
+## [1.1.684] - 2026-02-26
+### Fixed
+- Project Manager: all side-effects for gated toolbar buttons (Virtual Simulation, Diagram Modules, Diagram Facades) — `setActiveTool`, `setPendingSessionCreate`, `dispatchStageActivated`, `pm:dialog:open` — are now deferred until the async gating check passes. Clicking these buttons when the upstream artifact is missing produces zero UI changes.
+
 ## [1.1.683] - 2026-02-26
 ### Added
 - Project Manager: new **Diagram Modules** workflow step — toolbar click launches an agent session that produces `modules-diagram.mmd`; artifact panel with mermaid validation (`%% Modules Diagram` header + `subgraph`) and "Fix with agent" recovery.
@@ -9,9 +17,6 @@ This project evolves quickly during active FLOW development. We keep the changel
 - Project Manager: artifact availability polling hooks for both diagram stages (10 s interval, `maxBytes: "1"` probe).
 - Project Manager: Workspace tree branch nodes for Diagram Modules / Facades (session child + artifact child), with gated progression (Diagram Modules requires VS done; Diagram Facades requires Diagram Modules done).
 - Project Manager: table-driven toolbar handler (`DIAGRAM_STAGE_MAP`) for diagram clicks; `renderStagePanel()` helper eliminates duplicate workspace-check pattern in `main-area.tsx`.
-
-### Fixed
-- Project Manager: clicking Virtual Simulation / Diagram Modules / Diagram Facades toolbar buttons when the upstream artifact is missing now does nothing (no panel switch, no spinner, no dialog) instead of showing a false "Creating session…" placeholder.
 
 ## [1.1.681] - 2026-02-26
 ### Added

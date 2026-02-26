@@ -7,12 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.683
-- Project Manager: new **Diagram Modules** and **Diagram Facades** workflow steps — toolbar clicks launch agent sessions, artifact panels display `.mmd` diagrams, and the Workspace tree shows branch nodes (identical UX pattern to Virtual Simulation).
-- Project Manager: artifact availability polling for `modules-diagram.mmd` and `facades-graph.mmd` with gated progression (Diagram Modules requires completed VS; Diagram Facades requires completed Diagram Modules).
-- Project Manager: "Fix with agent" button in diagram panels to re-run the stage when validation fails.
+## Current Release — v1.1.685
+- Project Manager: fix false "Creating session…" spinner — stale dialog intents restored from localStorage no longer trigger the spinner; the pending indicator is now driven exclusively by the explicit `pendingSessionCreate` flag.
+- Project Manager: gated toolbar buttons (Virtual Simulation, Diagram Modules, Diagram Facades) produce no side-effects when the upstream artifact is missing.
 
-Previous releases (summary): the `1.1.57x–1.1.68x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, workflow handoff UX, and panel sync in Project Manager.
+Previous releases (summary): the `1.1.57x–1.1.68x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, and panel sync in Project Manager.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
