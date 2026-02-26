@@ -104,6 +104,19 @@ const isSessionAccumulativeForTimer = (session: SessionSnapshot): boolean => {
   return session.terminalLockReason !== "terminal_no_resume";
 };
 
+const isStaleRunningSession = (session: SessionSnapshot): boolean => {
+  if (session.turnState !== "running") {
+    return false;
+  }
+  if (session.finalTurnCompleted !== true) {
+    return false;
+  }
+  if (session.continuityLockActive) {
+    return false;
+  }
+  return session.continuityLockTransition?.awaitingBootstrapTurn !== true;
+};
+
 export class WorkspaceRuntimeFacade {
   private readonly store: WorkspaceStore;
   private readonly sessionRuntime: SessionRuntime;
@@ -232,6 +245,7 @@ export class WorkspaceRuntimeFacade {
         }
       );
     }
+    this.normalizeStaleRunningSessions(workspaceRoot);
     this.seedTaskTimers(workspaceRoot);
     this.selectionByClientId.set(clientId, {
       workspaceRoot,
@@ -465,6 +479,29 @@ export class WorkspaceRuntimeFacade {
 
     if (timers.size > 0) {
       this.taskTimersByWorkspaceRoot.set(workspaceRoot, timers);
+    }
+  }
+
+  private normalizeStaleRunningSessions(workspaceRoot: string): void {
+    const state = this.store.get(workspaceRoot);
+    if (!state) {
+      return;
+    }
+
+    for (const [sessionId, session] of state.sessions) {
+      if (!isStaleRunningSession(session)) {
+        continue;
+      }
+      this.store.updateSession(
+        {
+          workspaceRoot,
+          nodeId: session.nodeId,
+          sessionId,
+        },
+        {
+          turnState: "idle",
+        }
+      );
     }
   }
 
