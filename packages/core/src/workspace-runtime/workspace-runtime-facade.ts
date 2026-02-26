@@ -28,7 +28,9 @@ type WorkspaceRuntimeFacadeDeps = {
   readonly nowIso?: () => string;
   readonly store?: WorkspaceStore;
   readonly sessionRuntime?: SessionRuntime;
-  readonly taskTimerStorage?: TaskTimerStorage;
+  readonly taskTimerStorageFactory?: (
+    workspaceRoot: string
+  ) => TaskTimerStorage;
   readonly hydrateWorkspaceSessions?: (workspaceRoot: string) => readonly {
     sessionId: string;
     nodeId: string;
@@ -105,7 +107,9 @@ const isSessionAccumulativeForTimer = (session: SessionSnapshot): boolean => {
 export class WorkspaceRuntimeFacade {
   private readonly store: WorkspaceStore;
   private readonly sessionRuntime: SessionRuntime;
-  private readonly taskTimerStorage: TaskTimerStorage;
+  private readonly taskTimerStorageFactory: (
+    workspaceRoot: string
+  ) => TaskTimerStorage;
   private readonly snapshotDebounceMs: number;
   private readonly selectionIdFactory: () => string;
   private readonly nowIso: () => string;
@@ -120,10 +124,16 @@ export class WorkspaceRuntimeFacade {
     string,
     Map<string, MutableTaskTimerState>
   >();
+  private readonly taskTimerStoragesByWorkspaceRoot = new Map<
+    string,
+    TaskTimerStorage
+  >();
 
   constructor(deps: WorkspaceRuntimeFacadeDeps = {}) {
     this.store = deps.store ?? new WorkspaceStore();
-    this.taskTimerStorage = deps.taskTimerStorage ?? new TaskTimerStorage();
+    this.taskTimerStorageFactory =
+      deps.taskTimerStorageFactory ?? ((root) => new TaskTimerStorage(root));
+    TaskTimerStorage.cleanupLegacy();
     this.snapshotDebounceMs =
       deps.snapshotDebounceMs ?? DEFAULT_SNAPSHOT_DEBOUNCE_MS;
     this.selectionIdFactory =
@@ -417,18 +427,28 @@ export class WorkspaceRuntimeFacade {
     this.snapshotTimers.clear();
   }
 
+  private getOrCreateStorage(workspaceRoot: string): TaskTimerStorage {
+    let storage = this.taskTimerStoragesByWorkspaceRoot.get(workspaceRoot);
+    if (!storage) {
+      storage = this.taskTimerStorageFactory(workspaceRoot);
+      this.taskTimerStoragesByWorkspaceRoot.set(workspaceRoot, storage);
+    }
+    return storage;
+  }
+
   private seedTaskTimers(workspaceRoot: string): void {
     if (this.taskTimersByWorkspaceRoot.has(workspaceRoot)) {
       return;
     }
 
-    const totals = this.taskTimerStorage.load().workspaces[workspaceRoot];
-    if (!totals) {
+    const totals = this.getOrCreateStorage(workspaceRoot).load();
+    const entries = Object.entries(totals);
+    if (entries.length === 0) {
       return;
     }
 
     const timers = new Map<string, MutableTaskTimerState>();
-    for (const [nodeId, totalSeconds] of Object.entries(totals)) {
+    for (const [nodeId, totalSeconds] of entries) {
       if (typeof totalSeconds !== "number" || !Number.isFinite(totalSeconds)) {
         continue;
       }
@@ -453,24 +473,13 @@ export class WorkspaceRuntimeFacade {
       return;
     }
 
-    const state = this.taskTimerStorage.load();
-    const nextWorkspaces = {
-      ...(state.workspaces as Record<string, Readonly<Record<string, number>>>),
-    } as Record<string, Record<string, number>>;
-
     for (const [workspaceRoot, timers] of this.taskTimersByWorkspaceRoot) {
       const totals = this.serializeTaskTimerTotals(timers);
       if (Object.keys(totals).length === 0) {
-        delete nextWorkspaces[workspaceRoot];
         continue;
       }
-      nextWorkspaces[workspaceRoot] = totals;
+      this.getOrCreateStorage(workspaceRoot).save(totals);
     }
-
-    this.taskTimerStorage.save({
-      schemaVersion: 1,
-      workspaces: nextWorkspaces,
-    });
   }
 
   private serializeTaskTimerTotals(
