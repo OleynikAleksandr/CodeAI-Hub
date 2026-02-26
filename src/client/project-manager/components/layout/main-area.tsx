@@ -68,19 +68,13 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [pendingSessionCreate, setPendingSessionCreate] = useState<{
     readonly providerTitle: string;
   } | null>(null);
-  const handleToolSelectBase = useWorkflowToolSelect({
+  const handleToolSelect = useWorkflowToolSelect({
     activeWorkspace,
     setActiveTool,
     setPendingSessionCreate,
     setPreferredSessionId,
+    onStageActivated: dispatchStageActivated,
   });
-  const handleToolSelect = useCallback(
-    (tool: string) => {
-      handleToolSelectBase(tool);
-      dispatchStageActivated(tool);
-    },
-    [handleToolSelectBase]
-  );
 
   useEffect(() => {
     const onSelected = (event: Event) => {

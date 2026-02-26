@@ -39,6 +39,7 @@ type UseWorkflowToolSelectParams = {
   readonly setActiveTool: (value: string) => void;
   readonly setPreferredSessionId: (value: string | null) => void;
   readonly setPendingSessionCreate: (value: PendingSessionCreate) => void;
+  readonly onStageActivated?: (tool: string) => void;
 };
 
 export const useWorkflowToolSelect = (
@@ -49,6 +50,7 @@ export const useWorkflowToolSelect = (
     setActiveTool,
     setPendingSessionCreate,
     setPreferredSessionId,
+    onStageActivated,
   } = params;
   const workflowStepStartServiceRef = useRef(new WorkflowStepStartService());
   const virtualSimulationStartInFlightRef = useRef(false);
@@ -59,7 +61,12 @@ export const useWorkflowToolSelect = (
 
   return useCallback(
     (tool: string) => {
-      setActiveTool(tool);
+      // Non-gated tools (Description, etc.): activate immediately
+      if (!isDiagramTool(tool) && tool !== VIRTUAL_SIMULATION_TOOL_LABEL) {
+        setActiveTool(tool);
+        onStageActivated?.(tool);
+        return;
+      }
 
       if (isDiagramTool(tool)) {
         if (!activeWorkspace?.path) return;
@@ -81,10 +88,10 @@ export const useWorkflowToolSelect = (
             workspaceSlug,
             activeWorkspace.path
           );
-          const blocked = workflowState?.gating?.blocked?.[stage] ?? true;
-          if (blocked) {
-            return;
-          }
+          if (workflowState?.gating?.blocked?.[stage] ?? true) return;
+
+          setActiveTool(tool);
+          onStageActivated?.(tool);
 
           const preferredProviderId =
             resolvePreferredWorkflowProviderId({ workflowState, providers }) ??
@@ -97,19 +104,19 @@ export const useWorkflowToolSelect = (
             providerTitle: provider.title ?? provider.id,
           });
 
-          const dialogIntent: DialogOpenIntent = {
-            providerId: provider.id,
-            providerSessionId: null,
-            workspacePath: activeWorkspace.path,
-            workspaceSlug,
-            initiativeSlug: workspaceSlug,
-            stage,
-            sessionKind: "collector",
-            runSlug: null,
-          };
-
           window.dispatchEvent(
-            new CustomEvent("pm:dialog:open", { detail: dialogIntent })
+            new CustomEvent("pm:dialog:open", {
+              detail: {
+                providerId: provider.id,
+                providerSessionId: null,
+                workspacePath: activeWorkspace.path,
+                workspaceSlug,
+                initiativeSlug: workspaceSlug,
+                stage,
+                sessionKind: "collector",
+                runSlug: null,
+              } satisfies DialogOpenIntent,
+            })
           );
 
           await workflowStepStartServiceRef.current[startMethod]({
@@ -130,19 +137,11 @@ export const useWorkflowToolSelect = (
         return;
       }
 
-      if (tool !== VIRTUAL_SIMULATION_TOOL_LABEL) {
-        return;
-      }
-      if (!activeWorkspace?.path) {
-        return;
-      }
+      // Virtual Simulation handler
+      if (!activeWorkspace?.path) return;
       const workspaceSlug = resolveWorkspaceSlug(activeWorkspace);
-      if (!workspaceSlug) {
-        return;
-      }
-      if (virtualSimulationStartInFlightRef.current) {
-        return;
-      }
+      if (!workspaceSlug) return;
+      if (virtualSimulationStartInFlightRef.current) return;
       virtualSimulationStartInFlightRef.current = true;
 
       const providers = api.getIdeaCollectorProviders();
@@ -151,38 +150,40 @@ export const useWorkflowToolSelect = (
         virtualSimulationStartInFlightRef.current = false;
         return;
       }
-      setPendingSessionCreate({
-        providerTitle: fallbackProvider.title ?? fallbackProvider.id,
-      });
 
       void (async () => {
         const workflowState = await api.getWorkflowState(
           workspaceSlug,
           activeWorkspace.path
         );
+        if (workflowState?.gating?.blocked?.virtual_simulation ?? true) return;
+
+        setActiveTool(tool);
+        onStageActivated?.(tool);
+
         const preferredProviderId =
-          resolvePreferredWorkflowProviderId({
-            workflowState,
-            providers,
-          }) ?? fallbackProvider.id;
+          resolvePreferredWorkflowProviderId({ workflowState, providers }) ??
+          fallbackProvider.id;
         const provider =
-          providers.find((candidate) => candidate.id === preferredProviderId) ??
+          providers.find((c) => c.id === preferredProviderId) ??
           fallbackProvider;
 
-        const dialogIntent: DialogOpenIntent = {
-          providerId: provider.id,
-          providerSessionId: null,
-          workspacePath: activeWorkspace.path,
-          workspaceSlug,
-          initiativeSlug: workspaceSlug,
-          stage: "virtual_simulation",
-          sessionKind: "collector",
-          runSlug: null,
-        };
+        setPendingSessionCreate({
+          providerTitle: provider.title ?? provider.id,
+        });
 
         window.dispatchEvent(
           new CustomEvent("pm:dialog:open", {
-            detail: dialogIntent,
+            detail: {
+              providerId: provider.id,
+              providerSessionId: null,
+              workspacePath: activeWorkspace.path,
+              workspaceSlug,
+              initiativeSlug: workspaceSlug,
+              stage: "virtual_simulation",
+              sessionKind: "collector",
+              runSlug: null,
+            } satisfies DialogOpenIntent,
           })
         );
 
@@ -195,17 +196,13 @@ export const useWorkflowToolSelect = (
         });
       })()
         .catch((error: unknown) => {
-          // keep best-effort; surface in console for now (avoids dead-click UX)
-          console.warn(
-            "[PM] Failed to start Virtual Simulation workflow step",
-            error
-          );
+          console.warn("[PM] Failed to start Virtual Simulation workflow step", error);
         })
         .finally(() => {
           virtualSimulationStartInFlightRef.current = false;
           setPendingSessionCreate(null);
         });
     },
-    [activeWorkspace, setActiveTool, setPendingSessionCreate, setPreferredSessionId]
+    [activeWorkspace, onStageActivated, setActiveTool, setPendingSessionCreate, setPreferredSessionId]
   );
 };

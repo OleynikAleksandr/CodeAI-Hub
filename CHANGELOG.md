@@ -11,7 +11,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 - Project Manager: table-driven toolbar handler (`DIAGRAM_STAGE_MAP`) for diagram clicks; `renderStagePanel()` helper eliminates duplicate workspace-check pattern in `main-area.tsx`.
 
 ### Fixed
-- Project Manager: suppress false "Creating session…" spinner when clicking Diagram Modules / Facades toolbar buttons while the upstream stage is not yet completed.
+- Project Manager: clicking Virtual Simulation / Diagram Modules / Diagram Facades toolbar buttons when the upstream artifact is missing now does nothing (no panel switch, no spinner, no dialog) instead of showing a false "Creating session…" placeholder.
 
 ## [1.1.681] - 2026-02-26
 ### Added
