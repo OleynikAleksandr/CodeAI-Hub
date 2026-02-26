@@ -118,6 +118,7 @@ export const buildVirtualSimulationBranchNodes = (options: {
   readonly workspacePath?: string;
   readonly selectArtifact: (artifactPath: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
+  readonly clearArtifactWithTool: (activeTool: string) => void;
 }): readonly TreeNode[] => {
   const workflowState = options.workflowState;
   const workspaceSlug = options.workspaceSlug;
@@ -183,9 +184,11 @@ export const buildVirtualSimulationBranchNodes = (options: {
           sessionKind: "collector",
           runSlug: null,
         });
-        // Sync: select the artifact for the same stage
+        // Sync: select the artifact for the same stage, or show VS placeholder
         if (options.virtualSimulationArtifactAvailable) {
           options.selectArtifact(vsArtifactPath, "virtual-simulation.md");
+        } else {
+          options.clearArtifactWithTool("VIRTUAL SIMULATION");
         }
       },
     });

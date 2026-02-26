@@ -70,6 +70,17 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     []
   );
 
+  const clearArtifactWithTool = useCallback(
+    (activeTool: string) => {
+      window.dispatchEvent(
+        new CustomEvent("pm:artifact:cleared", {
+          detail: { activeTool },
+        })
+      );
+    },
+    []
+  );
+
   const { handleStateUpdate, markWorkspaceChanged, resetPendingSelection } =
     useWorkspaceTreeAutoSelect({
       selectedWorkspaceId,
@@ -168,6 +179,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
                 workspacePath,
                 selectArtifact,
                 dispatchDialogOpenIntent,
+                clearArtifactWithTool,
               })
             : [];
       return {

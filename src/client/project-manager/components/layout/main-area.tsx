@@ -81,7 +81,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   );
 
   useEffect(() => {
-    const handler = (event: Event) => {
+    const onSelected = (event: Event) => {
       const custom = event as CustomEvent<{
         readonly workspacePath: string;
         readonly workspaceSlug: string;
@@ -90,9 +90,16 @@ export const MainArea: React.FC<MainAreaProps> = ({
       }>;
       setSelectedArtifact(custom.detail);
     };
-    window.addEventListener("pm:artifact:selected", handler);
+    const onCleared = (event: Event) => {
+      const custom = event as CustomEvent<{ readonly activeTool: string }>;
+      setSelectedArtifact(null);
+      setActiveTool(custom.detail.activeTool);
+    };
+    window.addEventListener("pm:artifact:selected", onSelected);
+    window.addEventListener("pm:artifact:cleared", onCleared);
     return () => {
-      window.removeEventListener("pm:artifact:selected", handler);
+      window.removeEventListener("pm:artifact:selected", onSelected);
+      window.removeEventListener("pm:artifact:cleared", onCleared);
     };
   }, []);
 
@@ -115,26 +122,14 @@ export const MainArea: React.FC<MainAreaProps> = ({
       if (events.length > 0) {
         setPreferredSessionId((current) => current ?? null);
       }
-
-      if (!selectedArtifact) {
-        return;
-      }
-
+      if (!selectedArtifact) return;
       const normalizedSelectedPath = selectedArtifact.path.replace(/\\/g, "/");
       const needsRefresh = events.some((event) => {
-        if (event.type !== "workflow.artifact.written") {
-          return false;
-        }
-        if (event.workspaceSlug !== selectedArtifact.workspaceSlug) {
-          return false;
-        }
-        if (!event.filePath) {
-          return true;
-        }
-        const normalizedFilePath = event.filePath.replace(/\\/g, "/");
-        return normalizedSelectedPath.endsWith(normalizedFilePath);
+        if (event.type !== "workflow.artifact.written") return false;
+        if (event.workspaceSlug !== selectedArtifact.workspaceSlug) return false;
+        if (!event.filePath) return true;
+        return normalizedSelectedPath.endsWith(event.filePath.replace(/\\/g, "/"));
       });
-
       if (needsRefresh) {
         setArtifactRefreshKey((current) => current + 1);
       }
