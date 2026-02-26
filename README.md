@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.687
-- Project Manager: Session EmptyState onboarding copy is now questionnaire-first (Artifacts on the right → `Submit questionnaire` → provider selection), replacing the legacy “buttons above” guidance.
-- Project Manager: Description questionnaire CTA labels are now English (`Submit questionnaire`, `Close`) for consistent PM UX wording.
-- Project Manager: stage panel “Fix with agent” callbacks are type-aligned with workflow start service contracts (`npm run typecheck:webview` passes).
+## Current Release — v1.1.688
+- Core: cold-start recovery now normalizes stale `running` sessions to `idle` on `workspace select` when the turn is already completed and no bootstrap lock is active.
+- Core: task timer totals are restored from `<workspaceRoot>/.codeai-hub/state/task-timers.json` even when runtime sessions hydrate before the first workspace selection.
+- Session UX: Virtual Simulation cold-start scenarios no longer depend on manual Stop workaround for stale runtime state, and total timer recovery remains stable after restart.
 
 Previous releases (summary): the `1.1.57x–1.1.68x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, and panel sync in Project Manager.
 
