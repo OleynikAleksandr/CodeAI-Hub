@@ -90,7 +90,7 @@
 2. [DONE] Git Commit: `fix(pm): resume dialog runtime session on open` (hash: `a092ee57`)
 
 ### Stream 1: Release build for retest
-1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session043.md`; expected commit: `docs(session): record phase263 release build results`).
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `7b058a72`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session043.md`; expected commit: `docs(session): record phase263 release build results`).
 4. [TODO] Git Commit: `docs(session): record phase263 release build results` (hash: TBD)
