@@ -24,7 +24,7 @@ import {
   type DialogIndexEntry,
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
-import { resolveRuntimeSessionIdFromWorkspaceSnapshot } from "./dialog-runtime-session-resolver";
+import { resolveRuntimeSessionFromWorkspaceSnapshot } from "./dialog-runtime-session-resolver";
 import { applyWorkspaceSnapshotToSnapshots } from "./session-stream";
 
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
@@ -85,7 +85,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
         const preferredRuntimeSessionId =
           match.latestSessionId ?? match.rootSessionId;
         const latestSnapshot = options.latestWorkspaceSnapshotRef.current;
-        const runtimeSessionId = resolveRuntimeSessionIdFromWorkspaceSnapshot({
+        const runtimeSession = resolveRuntimeSessionFromWorkspaceSnapshot({
           payload:
             latestSnapshot?.workspaceRoot === intent.workspacePath
               ? latestSnapshot
@@ -95,13 +95,13 @@ export const useProjectManagerDialogCoreEvents = (options: {
           providerSessionId: match.providerSessionId,
         });
         const nextSession = buildDialogSessionRecord({
-          runtimeSessionId,
+          runtimeSessionId: runtimeSession.runtimeSessionId,
           dialogId: match.dialogId,
           providerId,
           providerSessionId: match.providerSessionId,
           intent,
         });
-        if (!match.latestSessionId && match.providerSessionId) {
+        if (match.providerSessionId && !runtimeSession.hasRuntimeSession) {
           api.createSession({
             providerId: match.providerId ?? intent.providerId,
             providerSessionId: match.providerSessionId,

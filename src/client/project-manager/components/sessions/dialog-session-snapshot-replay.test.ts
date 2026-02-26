@@ -54,7 +54,7 @@ test("dialog core events replay workspace snapshot after creating base snapshot"
     "dialog core events must replay lock state from workspace snapshot"
   );
   assert.equal(
-    source.includes("resolveRuntimeSessionIdFromWorkspaceSnapshot"),
+    source.includes("resolveRuntimeSessionFromWorkspaceSnapshot"),
     true,
     "dialog core events must resolve runtime sessionId against latest workspace snapshot"
   );
@@ -74,13 +74,18 @@ test("dialog core events ensure resumed dialogs have a runtime session for snaps
     "dialog open must request runtime session creation so lock/timers hydrate after cold start"
   );
   assert.equal(
-    source.includes("match.latestSessionId"),
+    source.includes("resolveRuntimeSessionFromWorkspaceSnapshot"),
     true,
-    "dialog open should gate runtime session creation on latestSessionId availability"
+    "dialog open should consult workspace snapshots to detect missing runtime sessions"
   );
   assert.equal(
     source.includes("match.providerSessionId"),
     true,
     "dialog open must resume provider sessions using providerSessionId identity"
+  );
+  assert.equal(
+    source.includes("!runtimeSession.hasRuntimeSession"),
+    true,
+    "dialog open should request runtime resume when snapshot lacks runtime session"
   );
 });
