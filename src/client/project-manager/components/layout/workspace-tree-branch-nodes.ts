@@ -28,6 +28,8 @@ export const buildDescriptionBranchNodes = (options: {
       ? "description.md"
       : "questionnaire.md";
   const artifactStatus = branch.finalPath ? "active" : "draft";
+  const isReviewerSession = branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
+  const isTerminalCollector = !isReviewerSession && Boolean(branch.draftPath);
   if (artifactPath) {
     nodes.push({
       id: "workflow:description:artifact",
@@ -35,12 +37,25 @@ export const buildDescriptionBranchNodes = (options: {
       title: artifactPath,
       status: artifactStatus,
       visualDepth: 2,
-      onSelect: () => options.selectArtifact(artifactPath, artifactLabel),
+      onSelect: () => {
+        options.selectArtifact(artifactPath, artifactLabel);
+        // Sync: open the session for the same stage
+        if (session && !isTerminalCollector && options.workspaceSlug && options.workspacePath) {
+          options.dispatchDialogOpenIntent({
+            providerId: session.providerId,
+            providerSessionId: session.providerSessionId,
+            workspacePath: options.workspacePath,
+            workspaceSlug: options.workspaceSlug,
+            initiativeSlug: options.workspaceSlug,
+            stage: "description",
+            sessionKind: isReviewerSession ? "reviewer" : "collector",
+            runSlug: isReviewerSession ? "reviewer" : null,
+          });
+        }
+      },
     });
   }
   if (session) {
-    const isReviewerSession = branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
-    const isTerminalCollector = !isReviewerSession && Boolean(branch.draftPath);
     const providerTitle = resolveProviderTitle(session.providerId);
     const label = isReviewerSession
       ? `Reviewer ${providerTitle}`
@@ -67,6 +82,10 @@ export const buildDescriptionBranchNodes = (options: {
               sessionKind: isReviewerSession ? "reviewer" : "collector",
               runSlug,
             });
+            // Sync: select the artifact for the same stage
+            if (artifactPath) {
+              options.selectArtifact(artifactPath, artifactLabel);
+            }
           },
     });
   }
@@ -109,30 +128,41 @@ export const buildVirtualSimulationBranchNodes = (options: {
   }
 
   const nodes: TreeNode[] = [];
-
-  if (options.virtualSimulationArtifactAvailable) {
-    const artifactPath = `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`;
-    nodes.push({
-      id: "workflow:virtual_simulation:artifact",
-      label: "virtual-simulation.md",
-      title: artifactPath,
-      status: "active",
-      visualDepth: 2,
-      onSelect: () =>
-        options.selectArtifact(artifactPath, "virtual-simulation.md"),
-    });
-  }
+  const vsArtifactPath = `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`;
 
   const chain = resolveLatestStageChain(
     workflowState.continuity.chains,
     "virtual_simulation"
   );
-  if (!chain) {
-    return nodes;
+  const last = chain?.segments.at(-1) ?? null;
+
+  if (options.virtualSimulationArtifactAvailable) {
+    nodes.push({
+      id: "workflow:virtual_simulation:artifact",
+      label: "virtual-simulation.md",
+      title: vsArtifactPath,
+      status: "active",
+      visualDepth: 2,
+      onSelect: () => {
+        options.selectArtifact(vsArtifactPath, "virtual-simulation.md");
+        // Sync: open the session for the same stage
+        if (last) {
+          options.dispatchDialogOpenIntent({
+            providerId: last.providerId,
+            providerSessionId: last.providerSessionId,
+            workspacePath,
+            workspaceSlug,
+            initiativeSlug: workspaceSlug,
+            stage: "virtual_simulation",
+            sessionKind: "collector",
+            runSlug: null,
+          });
+        }
+      },
+    });
   }
 
-  const last = chain.segments.at(-1);
-  if (!last) {
+  if (!(chain && last)) {
     return nodes;
   }
 
@@ -153,6 +183,10 @@ export const buildVirtualSimulationBranchNodes = (options: {
           sessionKind: "collector",
           runSlug: null,
         });
+        // Sync: select the artifact for the same stage
+        if (options.virtualSimulationArtifactAvailable) {
+          options.selectArtifact(vsArtifactPath, "virtual-simulation.md");
+        }
       },
     });
   return nodes;
