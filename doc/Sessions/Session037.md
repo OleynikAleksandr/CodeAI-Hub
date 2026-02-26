@@ -2,7 +2,7 @@
 
 **Date:** 2026-02-26 11:15 (CET)
 **Branch:** main
-**Version:** 1.1.681
+**Version:** 1.1.682
 
 ---
 
@@ -13,12 +13,16 @@
 - Созданы 7 новых файлов: 2 панели, 2 availability hooks, 3 рефакторинг-модуля (для соблюдения лимита ≤300 строк)
 - Модифицированы 7 существующих файлов: start service, toolbar handler, main-area routing, workspace tree, branch nodes, stage panel sync, tree model
 - Все гейты качества пройдены: архитектура (0 файлов >300), duplication (2.12%), typecheck, build, lint
-- Собран VSIX `codeai-hub-1.1.681.vsix` для тестирования
-- Обновлён `doc/TODO/todo-plan.md` — streams 0-7 отмечены как DONE
+- Собран VSIX `codeai-hub-1.1.681.vsix` (код без обновлённых доков)
+- Обновлены `README.md` и `CHANGELOG.md` для v1.1.682 — описаны новые diagram steps
+- Собран финальный VSIX `codeai-hub-1.1.682.vsix` (doc-synced release)
+- Обновлён `doc/TODO/todo-plan.md` — все streams 0-9 отмечены как DONE
 
 ## Git commits
 - `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 - `e00f8283 chore(release): build-all v1.1.681`
+- `7ba57489 docs: update README and CHANGELOG for v1.1.682 diagram steps`
+- `a471600a chore(release): build-all v1.1.682`
 
 ---
 
@@ -32,10 +36,10 @@
 5. `doc/Sessions/Session037.md` (THIS REPORT)
 
 ## Plans for next session
-- **Stream 8 (TODO):** Обновить `README.md` и `CHANGELOG.md` для v1.1.681 — описать новые diagram steps
-- **Stream 9 (TODO):** Финальный release build (`build-all.sh` + `build-release.sh`) если потребуется
+- **Phase 259 завершена полностью** (все streams 0-9 DONE)
 - **Тестирование:** Проверить в UI: клик на Diagram Modules/Facades в toolbar → открытие сессии агента, появление артефакта, отображение branch nodes в дереве
 - **Возможные баги:** Валидация mermaid-контента в панелях (`%% Modules Diagram`, `%% Facades Graph`) — может потребоваться адаптация regex под реальный формат шаблонов
+- **Следующая фаза:** Архивировать `todo-plan.md` как `todo-plan-phase259.md`, создать новый план
 
 ## Files created in this session
 | File | Lines | Purpose |

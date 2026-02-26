@@ -37,44 +37,44 @@
 
 ### Stream 0: WorkflowStepStartService — methods for diagram steps
 1. [DONE] Добавить `startDiagramModules()` и `startDiagramFacades()` в `WorkflowStepStartService`. Расширен `resolveMostRecentContinuitySessionId` — union `ContinuityStageId`. Тип параметров обобщён в `StartWorkflowStepParams`. (scope: `workflow-step-start-service.ts`, 120 строк)
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 1: Toolbar handler — handle Diagram tool clicks
 1. [DONE] В `use-workflow-tool-select.ts`: добавлены `DIAGRAM_MODULES_TOOL_LABEL`, `DIAGRAM_FACADES_TOOL_LABEL`, `DIAGRAM_STAGE_MAP`, `diagramStartInFlightRef`. Общая логика через table-driven `DIAGRAM_STAGE_MAP` вместо дублирования. (scope: `use-workflow-tool-select.ts`, 206 строк)
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 2: Artifact availability hooks
 1. [DONE] Созданы `use-diagram-modules-artifact-availability.ts` (68 строк) и `use-diagram-facades-artifact-availability.ts` (68 строк). Паттерн идентичен VS hook.
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 3: DiagramModulesPanel component
 1. [DONE] Создан `diagram-modules/diagram-modules-panel.tsx` (227 строк). Validation: `%% Modules Diagram` title + ≥1 subgraph. Кнопка "Fix with agent" вызывает `startDiagramModules()`.
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 4: DiagramFacadesPanel component
 1. [DONE] Создан `diagram-facades/diagram-facades-panel.tsx` (227 строк). Validation: `%% Facades Graph` title + ≥1 edge. Кнопка "Fix with agent" вызывает `startDiagramFacades()`.
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 5: main-area.tsx — route to diagram panels
 1. [DONE] Импортированы `DiagramModulesPanel` и `DiagramFacadesPanel`. Placeholder'ы заменены на `renderStagePanel()` helper. (scope: `main-area.tsx`, 294 строки)
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 6: Workspace tree — availability hooks + branch nodes
 1. [DONE] В `workspace-tree.tsx`: подключены оба availability hooks, stage→builder маппинг вынесен в `resolveStageChildren()` (новый файл `workspace-tree-stage-children.ts`). `resolveTreeStatus` перенесён в `workspace-tree-model.ts`. (scope: `workspace-tree.tsx` 289 строк, `workspace-tree-stage-children.ts` 70 строк, `workspace-tree-model.ts` 42 строки)
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 7: Workspace tree branch nodes — builders + sync payload
 1. [DONE] Diagram builders вынесены в отдельный модуль `workspace-tree-diagram-branch-nodes.ts` (252 строки) для соблюдения лимита ≤300 строк. Фасад `workspace-tree-branch-nodes.ts` (285 строк) ре-экспортирует builders и делегирует diagram sync payload. `resolveStageSyncPayload()` расширен: `diagramModulesArtifactAvailable`, `diagramFacadesArtifactAvailable`. `use-stage-panel-sync.ts` расширен аналогично.
-2. [DONE] Git Commit: TBD (входит в общий коммит Phase 259)
+2. [DONE] Git Commit: `ce8ee616 feat(pm): activate Diagram Modules & Diagram Facades workflow steps`
 
 ### Stream 8: Build & verify
 1. [DONE] `npm run typecheck:webview` — passed. `npm run build:webview` — passed. `npx ultracite check` — 0 issues.
 2. [DONE] Обновить документацию: `README.md`, `CHANGELOG.md` (scope: `README.md`, `CHANGELOG.md`).
-3. [DONE] Git Commit: `docs: update README and CHANGELOG for v1.1.682 diagram steps` (hash: TBD)
+3. [DONE] Git Commit: `docs: update README and CHANGELOG for v1.1.682 diagram steps` (hash: 7ba57489)
 
 ### Stream 9: Release build
 1. [DONE] `./scripts/build-all.sh` на чистом дереве (scope: scripts (run)).
-2. [DONE] Git Commit: `chore(release): build-all v1.1.682` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): build-all v1.1.682` (hash: a471600a)
 3. [DONE] `./scripts/build-release.sh --use-current-version`; VSIX в `doc/tmp/releases/`.
 
 ---
