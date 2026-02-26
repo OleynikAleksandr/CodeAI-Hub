@@ -57,4 +57,22 @@
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `6bf1681a`)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session041.md` итогами релизной сборки (scope: `doc/Sessions/Session041.md`; expected commit: `docs(session): record phase261 release build results`).
-4. [DONE] Git Commit: `docs(session): record phase261 release build results` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): record phase261 release build results` (hash: `ef69e3b1`)
+
+---
+
+## Phase 262 — PM runtime snapshot replay after reload (owner: Oleksandr, updated: 2026-02-26)
+
+**Проблема:** если `workspace:snapshot` приходит до монтирования `Virtual Simulation` view, snapshot не попадает в PM store. При позднем открытии вкладки UI использует default `running` snapshot и показывает `Agent is working...`, а `total` остаётся `00h 00m 00s` несмотря на persisted timers.
+
+**Цель:** snapshot должен фиксироваться в store независимо от монтирования runtime view, чтобы при открытии вкладки после reload состояние lock/timer восстанавливалось из Core snapshot.
+
+### Stream 0: PM snapshot store sync вне runtime view
+1. [IN_PROGRESS] Добавить глобальный приём `workspace:snapshot` в `workspace-scope-sync` с валидацией payload и записью в `workspaceSnapshotStore`; добавить regression test на layout-уровень, чтобы не терять lock/timer state при позднем монтировании вкладки (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.test.ts`; expected commit: `fix(pm): persist workspace snapshot for late virtual simulation mount`).
+2. [TODO] Git Commit: `fix(pm): persist workspace snapshot for late virtual simulation mount` (hash: TBD)
+
+### Stream 1: Release build for retest
+1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session042.md`; expected commit: `docs(session): record phase262 release build results`).
+4. [TODO] Git Commit: `docs(session): record phase262 release build results` (hash: TBD)

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { api } from "../../api";
+import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { activateWorkspace } from "../../services/workspace-activate-client";
 import {
   createWorkspaceSelectRequestId,
@@ -9,6 +10,30 @@ import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store"
 import type { WorkspaceProject } from "../../types";
 
 const RECONNECT_SCOPE_RESYNC_DEBOUNCE_MS = 15000;
+
+const isWorkspaceSnapshotPayload = (
+  payload: unknown
+): payload is WorkspaceSnapshotPushPayload => {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return false;
+  }
+  const candidate = payload as {
+    readonly workspaceRoot?: unknown;
+    readonly selectionId?: unknown;
+    readonly sequence?: unknown;
+    readonly snapshot?: unknown;
+  };
+  return (
+    typeof candidate.workspaceRoot === "string" &&
+    typeof candidate.selectionId === "string" &&
+    typeof candidate.sequence === "number" &&
+    candidate.sequence > 0 &&
+    !!candidate.snapshot &&
+    typeof candidate.snapshot === "object" &&
+    !Array.isArray(candidate.snapshot)
+  );
+};
+
 const syncWorkspaceSelection = async (params: {
   readonly workspace: WorkspaceProject | null;
   readonly reason: "workspace_selected" | "workspace_cleared" | "reconnect";
@@ -33,6 +58,21 @@ const syncWorkspaceSelection = async (params: {
 export const useWorkspaceScopeSync = (activeWorkspace?: WorkspaceProject) => {
   const latestScopeSyncTokenRef = useRef(0);
   const lastReconnectScopeSyncAtRef = useRef(0);
+
+  useEffect(() => {
+    const unsubscribe = api.onCoreEvent((message) => {
+      if (message.type !== "workspace:snapshot") {
+        return;
+      }
+      if (!isWorkspaceSnapshotPayload(message.payload)) {
+        return;
+      }
+      workspaceSnapshotStore.applySnapshot(message.payload);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const syncWorkspaceScope = useCallback(
     async (params: {
