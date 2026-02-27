@@ -16,6 +16,7 @@
 ## Git commits
 - `78a2fd3c fix(pm): scope toolbar active stage to workspace`
 - `9d846e33 docs(todo): plan phase265 workspace tool highlight`
+- `132f4297 docs(todo): close phase265 release stream`
 - `d42f4afb chore(release): build-all v1.1.693`
 
 ## Release artifacts
