@@ -3,7 +3,10 @@ import { useCallback, useMemo } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
-import { StageArtifactContentView } from "../shared/stage-artifact-content-view";
+import {
+  StageArtifactPendingLayout,
+  StageArtifactStateView,
+} from "../shared/stage-artifact-stage-panel";
 
 const FACADES_GRAPH_TITLE_RE = /^%%\s+Facades Graph/m;
 const FACADES_GRAPH_NODE_RE = /\w+\s*-->?\s*\w+/g;
@@ -60,32 +63,29 @@ export const DiagramFacadesPanel: React.FC<{
     []
   );
 
-  if (status === "ready" && content !== null) {
-    return (
-      <StageArtifactContentView
-        artifactPath={artifactPath}
-        content={content}
-        displayFileName="facades-graph.mmd"
-        onFixStart={handleFixStart}
-        validationError={validationError}
-        workspacePath={props.workspacePath}
-        workspaceSlug={props.workspaceSlug}
-      />
-    );
-  }
-
-  if (status === "error") {
-    return <div className="pm-placeholder">{error ?? "Не удалось загрузить Diagram Facades."}</div>;
+  const stateView = (
+    <StageArtifactStateView
+      artifactPath={artifactPath}
+      content={content}
+      displayFileName="facades-graph.mmd"
+      error={error}
+      errorFallback="Не удалось загрузить Diagram Facades."
+      onFixStart={handleFixStart}
+      status={status}
+      validationError={validationError}
+      workspacePath={props.workspacePath}
+      workspaceSlug={props.workspaceSlug}
+    />
+  );
+  if (stateView !== null) {
+    return stateView;
   }
 
   return (
-    <div className="pm-details">
-      <div style={{ marginBottom: 12 }}>
-        <strong>Diagram Facades</strong>
-      </div>
-      <div className="pm-placeholder" style={{ marginBottom: 12 }}>
-        Ожидаем артефакт: <code>{artifactPath}</code>
-      </div>
+    <StageArtifactPendingLayout
+      artifactPath={artifactPath}
+      title="Diagram Facades"
+    >
       <div style={{ display: "grid", gap: 10 }}>
         <div>
           Здесь отображается Mermaid-граф фасадов: точки входа каждого модуля, их публичные интерфейсы и связи между фасадами.
@@ -95,6 +95,6 @@ export const DiagramFacadesPanel: React.FC<{
         </div>
         <div>Любые изменения пометят следующие шаги как требующие синхронизации.</div>
       </div>
-    </div>
+    </StageArtifactPendingLayout>
   );
 };
