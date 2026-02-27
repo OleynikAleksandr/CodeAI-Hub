@@ -7,7 +7,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.694
+## Current Release — v1.1.695
+- Release maintenance: deduplicated stage artifact panel state blocks in Project Manager to satisfy duplication gate (`jscpd`) without changing stage behavior.
 - Project Manager: toolbar stage highlight is now scoped to each workspace; switching workspaces no longer keeps the previous workspace's active step.
 - Project Manager: dialog open now resumes correctly when `workspace:snapshot` lacks a runtime session for the selected stage dialog.
 - Session UX: reopening Virtual Simulation after restart no longer stays in stale `Agent is working...` state when the turn is already waiting for user input.

@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.695] - 2026-02-27
+### Changed
+- Project Manager: refactored duplicated stage artifact panel state rendering into shared components (`StageArtifactStateView`, `StageArtifactPendingLayout`) to keep duplication checks under the pre-push threshold.
+
+### Fixed
+- Release pipeline: `pre-push` duplication gate now passes again after the panel deduplication (`jscpd` back under 3%).
+
 ## [1.1.694] - 2026-02-27
 ### Fixed
 - Project Manager: toolbar stage highlight is now workspace-scoped, so switching workspaces always reflects that workspace's last active step (`Description`, `Virtual Simulation`, `Diagram Modules`, or `Diagram Facades`).
