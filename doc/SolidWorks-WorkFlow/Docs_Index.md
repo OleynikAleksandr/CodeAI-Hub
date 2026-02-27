@@ -10,6 +10,9 @@
 
 ## 1) Канонические документы (этот каталог)
 
+### Workflow Overview
+- `WorkflowSteps_Overview.md` — SSOT всех шагов Workflow (от идеи к реализации): философия, шаги 1–6, артефакты, feedback loop.
+
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы.
 

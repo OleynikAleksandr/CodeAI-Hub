@@ -93,32 +93,11 @@ const toWorkspaceSlug = (value: string): string => {
   return slug.length > 0 ? slug : "workspace";
 };
 
-const formatDate = (value: Date): string => value.toISOString().slice(0, 10);
-
-const resolveAuthorName = (workspacePath: string): string => {
-  const normalized = workspacePath.replace(/\\/g, "/");
-  const segments = normalized.split("/").filter((part) => part.length > 0);
-  const markers = new Set(["Users", "home"]);
-  for (const [index, segment] of segments.entries()) {
-    if (!markers.has(segment)) {
-      continue;
-    }
-    const candidate = segments[index + 1];
-    if (candidate) {
-      return candidate;
-    }
-  }
-  return "User";
-};
-
 const buildDefaults = (
   workspaceName: string,
-  workspacePath: string
+  _workspacePath: string
 ): Record<string, string> => ({
   "meta.title": workspaceName,
-  "meta.created_date": formatDate(new Date()),
-  "meta.idea_type": "Draft",
-  "meta.author": resolveAuthorName(workspacePath),
 });
 
 const resolveQuestionnairePath = (workspaceSlug: string): string =>

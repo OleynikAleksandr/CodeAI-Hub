@@ -7,14 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.695
-- Release maintenance: deduplicated stage artifact panel state blocks in Project Manager to satisfy duplication gate (`jscpd`) without changing stage behavior.
-- Project Manager: toolbar stage highlight is now scoped to each workspace; switching workspaces no longer keeps the previous workspace's active step.
-- Project Manager: dialog open now resumes correctly when `workspace:snapshot` lacks a runtime session for the selected stage dialog.
-- Session UX: reopening Virtual Simulation after restart no longer stays in stale `Agent is working...` state when the turn is already waiting for user input.
-- Session UX: `total` timer restores after restart from persisted task-timer/snapshot state instead of resetting to zero.
+## Current Release — v1.1.696
+- Workflow templates: simplified the Description questionnaire from 16 to 10 sections with plain-language names and examples, making it accessible to non-programmers.
+- Workflow templates: aligned description-template, reviewer-prompt, reviewer-template, and description-collector-prompt with the new questionnaire structure.
+- Workflow docs: added `WorkflowSteps_Overview.md` — the single source of truth for all six workflow steps (from idea to implementation), including philosophy, artifacts, and feedback loop mechanics.
+- Code cleanup: removed unused `formatDate()` and `resolveAuthorName()` from `description-questionnaire-utils.ts`; simplified `buildDefaults()` to only set `meta.title`.
 
-Previous releases (summary): the `1.1.57x–1.1.68x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, and panel sync in Project Manager.
+Previous releases (summary): the `1.1.57x–1.1.69x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, and panel sync in Project Manager.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
