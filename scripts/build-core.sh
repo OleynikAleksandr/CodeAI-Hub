@@ -110,6 +110,9 @@ TARBALL_STAGE="$STAGING_DIR/tarballs"
 DOWNLOAD_STAGE="$STAGING_DIR/downloads"
 mkdir -p "$APP_STAGE" "$NODE_STAGE" "$TARBALL_STAGE" "$DOWNLOAD_STAGE"
 
+echo "📝 Generating bundled-templates.ts from asset sources..."
+node "$SCRIPT_DIR/generate-bundled-templates.js"
+
 echo "🔧 Building workspace packages..."
 npm run build --workspace=@codeai-hub/agent-shared >/dev/null
 npm run build --workspace=@codeai-hub/idea-collector >/dev/null

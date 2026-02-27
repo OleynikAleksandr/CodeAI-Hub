@@ -89,6 +89,11 @@ else
   echo "✅ Version updated"
 fi
 
+# Step 2.5: Generate bundled-templates.ts from asset sources
+echo ""
+echo "📝 Step 2.5: Generating bundled-templates.ts..."
+node "$SCRIPT_DIR/generate-bundled-templates.js"
+
 # Step 3: Pre-build UI bundles
 echo ""
 echo "⚛️ Step 3: Building UI bundles..."
