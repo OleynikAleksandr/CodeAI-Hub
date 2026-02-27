@@ -112,3 +112,21 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.692` (hash: `dc4681e4`)
 3. [DONE] Зафиксировать итоги сборки в `doc/Sessions/Session044.md` (scope: `doc/Sessions/Session044.md`; expected commit: `docs(session): record release v1.1.692`).
 4. [DONE] Git Commit: `docs(session): record release v1.1.692` (hash: `70e14de0`)
+
+---
+
+## Phase 265 — Toolbar active stage must follow workspace (owner: Oleksandr, updated: 2026-02-27)
+
+**Проблема:** подсветка stage-кнопок (Description / Virtual Simulation / Diagram Modules / Diagram Facades) “утекает” между workspace: при переключении на другой workspace подсвечивается шаг предыдущего workspace (например `Virtual Simulation`), даже если в новом workspace workflow ещё не стартовал.
+
+**Цель:** подсветка должна отражать актуальный “последний активный шаг” текущего workspace. При смене workspace активный шаг должен вычисляться из workflow state (continuity + stage statuses) и не зависеть от предыдущего workspace.
+
+### Stream 0: Fix per-workspace active stage highlight
+1. [DONE] При смене workspace сбрасывать tool на `Description` и затем один раз авто-выбирать “последний активный шаг” на основе workflow state (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`; expected commit: `fix(pm): scope toolbar active stage to workspace`).
+2. [DONE] Git Commit: `fix(pm): scope toolbar active stage to workspace` (hash: `78a2fd3c`)
+
+### Stream 1: Release build for retest
+1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session045.md`; expected commit: `docs(session): record phase265 release build results`).
+4. [TODO] Git Commit: `docs(session): record phase265 release build results` (hash: TBD)
