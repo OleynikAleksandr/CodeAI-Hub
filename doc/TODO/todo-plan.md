@@ -126,7 +126,7 @@
 2. [DONE] Git Commit: `fix(pm): scope toolbar active stage to workspace` (hash: `78a2fd3c`)
 
 ### Stream 1: Release build for retest
-1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session045.md`; expected commit: `docs(session): record phase265 release build results`).
-4. [TODO] Git Commit: `docs(session): record phase265 release build results` (hash: TBD)
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.693`).
+2. [DONE] Git Commit: `chore(release): build-all v1.1.693` (hash: `d42f4afb`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session045.md`; expected commit: `docs(session): record phase265 release build results`).
+4. [DONE] Git Commit: `docs(session): record phase265 release build results` (hash: `59b7ef4c`)
