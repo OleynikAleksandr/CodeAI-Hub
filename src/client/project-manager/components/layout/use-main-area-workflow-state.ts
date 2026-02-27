@@ -4,6 +4,8 @@ import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import type { WorkspaceProject } from "../../types";
 import { resolveWorkspaceSlug } from "./main-area-utils";
 import type { ProviderStackId } from "../../../../types/provider";
+import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
+import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
 
 type DescriptionDocument = {
   readonly workspacePath: string;
@@ -28,11 +30,52 @@ type UseMainAreaWorkflowStateParams = {
   readonly setHasDescriptionSession: (value: boolean) => void;
 };
 
+const TOOL_BY_STAGE: Record<WorkflowStageId, string> = {
+  description: "Description",
+  virtual_simulation: VIRTUAL_SIMULATION_TOOL_LABEL,
+  diagram_modules: "Diagram Modules",
+  diagram_facades: "Diagram Facades",
+};
+
+const STAGE_PRIORITY: readonly WorkflowStageId[] = [
+  "diagram_facades",
+  "diagram_modules",
+  "virtual_simulation",
+  "description",
+];
+
+const hasContinuitySegmentsForStage = (
+  state: WorkflowStateSnapshot,
+  stage: WorkflowStageId
+): boolean =>
+  state.continuity.chains.some(
+    (chain) => chain.stage === stage && chain.segments.length > 0
+  );
+
+const resolveLastActiveTool = (state: WorkflowStateSnapshot | null): string => {
+  if (!state) {
+    return TOOL_BY_STAGE.description;
+  }
+
+  for (const stage of STAGE_PRIORITY) {
+    if (
+      stage === "description" ||
+      state.stages[stage] !== "idle" ||
+      hasContinuitySegmentsForStage(state, stage)
+    ) {
+      return TOOL_BY_STAGE[stage];
+    }
+  }
+
+  return TOOL_BY_STAGE.description;
+};
+
 export const useMainAreaWorkflowState = (
   params: UseMainAreaWorkflowStateParams
 ): void => {
   const autoOpenedWorkspaceRef = useRef<string | null>(null);
   const autoOpenedReviewerRef = useRef<string | null>(null);
+  const autoResolvedActiveToolRef = useRef<string | null>(null);
   const activeToolRef = useRef<string | null>(params.activeTool ?? null);
 
   useEffect(() => {
@@ -46,6 +89,7 @@ export const useMainAreaWorkflowState = (
       params.setHasDescriptionSession(false);
       autoOpenedWorkspaceRef.current = null;
       autoOpenedReviewerRef.current = null;
+      autoResolvedActiveToolRef.current = null;
       return;
     }
 
@@ -56,6 +100,7 @@ export const useMainAreaWorkflowState = (
       params.setHasDescriptionSession(false);
       autoOpenedWorkspaceRef.current = null;
       autoOpenedReviewerRef.current = null;
+      autoResolvedActiveToolRef.current = null;
       return;
     }
 
@@ -64,6 +109,7 @@ export const useMainAreaWorkflowState = (
     let timer = 0;
     let fastPolling = true;
     autoOpenedReviewerRef.current = null;
+    autoResolvedActiveToolRef.current = null;
 
     const loadState = async () => {
       const state = await api.getWorkflowState(workspaceSlug, workspacePath);
@@ -77,6 +123,11 @@ export const useMainAreaWorkflowState = (
       }
 
       const branch = state?.description;
+      const resolvedActiveTool = resolveLastActiveTool(state);
+      if (state && autoResolvedActiveToolRef.current !== workspaceSlug) {
+        autoResolvedActiveToolRef.current = workspaceSlug;
+        params.setActiveTool(resolvedActiveTool);
+      }
       const nextDescription =
         branch?.finalPath && branch.finalPath.trim().length > 0
           ? { path: branch.finalPath, label: "Final_Description.md" as const }
@@ -110,7 +161,7 @@ export const useMainAreaWorkflowState = (
       );
 
       if (
-        activeToolRef.current === "Description" &&
+        resolvedActiveTool === "Description" &&
         branch?.sessionKind === "reviewer" &&
         branch.session?.providerId &&
         branch.session.providerSessionId &&

@@ -110,7 +110,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
       setActiveTool(null);
       return;
     }
-    setActiveTool((current) => current ?? "Description");
+    setActiveTool("Description");
   }, [activeWorkspace?.id]);
 
   const handleWorkflowEvents = useCallback(
