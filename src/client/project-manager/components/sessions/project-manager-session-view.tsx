@@ -60,9 +60,8 @@ const loadLastDialogIntent = (workspacePath: string): DialogOpenIntent | null =>
         : null;
     const sessionKind =
       parsed.sessionKind === "collector" ||
-      parsed.sessionKind === "reviewer" ||
       parsed.sessionKind === null
-        ? (parsed.sessionKind as "collector" | "reviewer" | null)
+        ? (parsed.sessionKind as "collector" | null)
         : null;
     const runSlug =
       parsed.runSlug === null || typeof parsed.runSlug === "string"
@@ -164,7 +163,6 @@ export const ProjectManagerSessionView = ({
           const descriptionSession =
             state?.description?.session ??
             state?.description?.collectorSession ??
-            state?.description?.reviewerSession ??
             null;
           const questionnairePathCandidate = state?.description?.questionnairePath;
           const questionnairePath =

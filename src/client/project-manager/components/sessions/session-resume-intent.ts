@@ -10,7 +10,7 @@ type SessionResumeIntent = {
   readonly workspaceSlug?: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
-  readonly sessionKind: "collector" | "reviewer" | null;
+  readonly sessionKind: "collector" | null;
   readonly runSlug: string | null;
 };
 
@@ -32,7 +32,7 @@ type SessionResumeCreatePayload = {
   readonly workspacePath: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
-  readonly sessionKind: "collector" | "reviewer" | null;
+  readonly sessionKind: "collector" | null;
   readonly runSlug: string | null;
 };
 
