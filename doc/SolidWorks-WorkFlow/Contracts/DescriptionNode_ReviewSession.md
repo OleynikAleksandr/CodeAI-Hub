@@ -1,26 +1,51 @@
-# Description → Reviewer — Contract (SSOT)
+# Description Node — Contract (SSOT)
 
 ## Назначение
-Контракт шага Workflow Tree: Questionnaire → draft `description.md` → auto-start Reviewer → `Final_Description.md`.
+Канонический контракт узла Workflow Tree `description`.
+
+**Target flow (SSOT):**
+`questionnaire.md` → **Description Agent (resume)** → `Final_Description.md`.
+
+Устаревший поток `questionnaire.md → description.md → auto-reviewer → Final_Description.md` считается legacy и поддерживается только для совместимости со старыми workspace/историей.
+
+Детализированный SSOT по новой модели: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`.
+
+---
 
 ## Артефакты
-- Draft: `.codeai-hub/<workspaceSlug>/description/description.md`
-- Final: `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
+- Questionnaire (ввод пользователя):
+  - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
+- Final Description (выход шага):
+  - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
+
+### Legacy artifacts (compat only)
+- Draft `description.md` (включая варианты в `runs/`) может существовать в старых workspace.
+- В новой модели он **не** является upstream-источником истины для следующих шагов.
+
+---
 
 ## Инварианты
-- Description agent — one-shot/no-resume: после финального ответа остаётся terminal/read-only.
-- Reviewer — resume-сессия; при правках перезаписывает `Final_Description.md`.
-- После появления `Final_Description.md` в ветке шага остаются: `Final_Description.md` + `Reviewer <Provider>`.
+1) **Single-agent step:** внутри узла `description` нет обязательного второго встроенного агента (reviewer).
+2) **Resume:** сессия Description должна быть `resume_in_place` (не one-shot).
+3) **Stable final path:** `Final_Description.md` пишется в стабильный путь (без `runs/`).
+4) **No auto-reviewer:** запись артефактов Description не должна триггерить скрытый auto-start reviewer-сессии.
+5) **Gating:** шаг `virtual_simulation` должен требовать **только** `Final_Description.md` как вход (а не `description.md`).
 
-## Recovery: ↻ Restart attempt (Description only)
+---
 
-**Problem:** one-shot `Description` нельзя “продолжить сообщением”. Если попытка зависла mid‑turn или сессия не создалась после фиксации анкеты как `Questionary.md`, пользователь должен иметь аварийный перезапуск.
+## Recovery: ↻ Restart attempt (Description)
 
-**Contract:**
-- ↻ **не** рестартит Core (нельзя сносить другие активные сессии).
-- ↻ запускает **новую попытку** `Description` из артефакта анкеты (`Questionary.md`).
-- Любые late results от старых попыток не должны писать `description.md`/`Final_Description.md` и не должны триггерить downstream. Принимаем только текущий `attemptId`.
+**Назначение:** аварийный перезапуск шага, если сессия не стартовала/зависла/сломалась.
 
-## Связанные контракты
+**Контракт:**
+- ↻ **не** рестартит Core (нельзя ломать другие активные сессии).
+- ↻ запускает новую Description-сессию из `questionnaire.md`.
+- Late results от старых попыток **не должны** перезаписывать `Final_Description.md` и не должны триггерить downstream.
+
+---
+
+## Связанные SSOT
+- Новый контракт шага Description: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Workspace runtime/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+- Virtual Simulation step: `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`

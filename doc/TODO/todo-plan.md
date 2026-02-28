@@ -5,13 +5,12 @@
   - `doc/SolidWorks-WorkFlow/README.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_VirtualSimulation_ColdStartRecovery.md`
-  - `doc/BugRegistry.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md` (будет обновлён в этой фазе)
+  - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
+  - `doc/Sessions/Session048.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream — подзадачи.
 - **Ограничение:** каждая подзадача должна затрагивать **≤ 3 файлов**.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -20,113 +19,110 @@
   - `git commit` → `.husky/pre-commit`: `npm test`, `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:tsprune`, `npx ultracite fix`
   - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
 - **НИКОГДА** не обходить гейты (`--no-verify`).
+- Перед релизной сборкой обновлять `README.md`, `CHANGELOG.md` и релевантные документы в `doc/`.
 
 ---
 
-## Phase 261 — Virtual Simulation cold start recovery (stuck lock + total timer) (owner: Oleksandr, updated: 2026-02-26)
+## Phase 266 — Description step simplification: single-agent final artifact (owner: Oleksandr, updated: 2026-02-28)
 
-**Проблема:** после перезапуска Project Manager/Core в workflow-узле `virtual_simulation` ввод может “залипать” в состоянии ожидания (как будто агент работает), хотя в истории уже есть вопросы и ожидается ответ пользователя. Дополнительно `total` в input footer может сбрасываться в `00h 00m 00s` при наличии persisted timers.
+**Проблема:** текущий узел `description` работает как связка из двух внутренних ролей (`collector` → авто-`reviewer`), где `description.md` выступает промежуточным артефактом. Это перегружает поток, дублирует структуру шаблонов и ограничивает адаптацию под тип проекта.
 
-**Цель:** восстановление после cold start должно быть корректным: если turn завершён и ожидается пользователь — input разблокирован; `total` не теряется и соответствует persisted totals (SSOT в Core).
+**Цель:** перейти к модели «один агент Description с бесконечной сессией и финальным артефактом `Final_Description.md`». Проработка standalone Reviewer переносится в отдельный архитектурный модуль после стабилизации текущих шагов PM.
 
----
+### Stream 0: Design Phase gate (архитектурное согласование)
+1. [TODO] Подготовить контракт-документ по новой модели узла Description (single-agent, артефакты, resume-модель, backward compatibility, граница с будущим reviewer-модулем) (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(description): draft single-agent description contract`).
+2. [TODO] Git Commit: `docs(description): draft single-agent description contract` (hash: TBD)
+3. [TODO] После утверждения пользователем синхронизировать SSOT шагов Workflow (заменить внутренний двухшаговый сценарий Description на единый) (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`; expected commit: `docs(workflow): approve single-agent description flow`).
+4. [TODO] Git Commit: `docs(workflow): approve single-agent description flow` (hash: TBD)
 
-### Stream 0: Contract sign-off (Design Phase gate)
-1. [DONE] Подтвердить контракт `ProjectManager_VirtualSimulation_ColdStartRecovery.md` (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_VirtualSimulation_ColdStartRecovery.md`; expected commit: `docs(vs): approve cold start recovery contract`).
-2. [DONE] Git Commit: `docs(vs): approve cold start recovery contract` (hash: `328be048`)
-
-### Stream 1: Repro snapshot + regression test (stuck lock)
-1. [DONE] Добавить regression test: после рестарта/cold start “stale running” не должен удерживать `turnState/connectionState` в `running`, если нет живого inflight-turn; ожидание пользователя должно приводить к `idle` (scope: `packages/core/src/workspace-runtime/*` test + минимальная фиксация; expected commit: `test(core): cover stale-running recovery on cold start`).
-2. [DONE] Git Commit: `test(core): cover stale-running recovery on cold start` (hash: `a33a620d`)
-
-### Stream 2: Core fix — stale running recovery
-1. [DONE] Реализовать нормализацию на гидрации/старте: “устаревший running” переводится в `idle` (или `recovery_required`, но с разблокированным вводом), без необходимости ручного Stop (scope: `packages/core/src/workspace-runtime/*`; expected commit: `fix(core): recover stale running sessions on cold start`).
-2. [DONE] Git Commit: `fix(core): recover stale running sessions on cold start` (hash: `c7c4c408`)
-
-### Stream 3: Regression test + fix (task timers / total)
-1. [DONE] Добавить regression test: при наличии persisted totals `.codeai-hub/state/task-timers.json` snapshot обязан содержать корректный `status.taskTimer.totalSeconds` после рестарта (scope: `packages/core/src/*` timers + test; expected commit: `test(core): restore taskTimer totals on cold start`).
-2. [DONE] Git Commit: `test(core): restore taskTimer totals on cold start` (hash: `89a0e59a`)
-3. [DONE] Починить восстановление `taskTimer.totalSeconds` из persisted state и прокидывание в `workspace:snapshot` (scope: `packages/core/src/*`; expected commit: `fix(core): restore task timer totals from persisted workspace state`).
-4. [DONE] Git Commit: `fix(core): restore task timer totals from persisted workspace state` (hash: `da275518`)
-
-### Stream 4: PM/UI smoke + docs sync
-1. [DONE] Выполнить PM UI smoke по критериям приемки (reopen после вопросов → input unlocked; total non-zero). При необходимости обновить SSOT-доки (`SessionTaskTimer_UI.md`, `SessionInputLock_SSOT_StateMachine.md`) без изменения смысла контракта (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`; expected commit: `docs(vs): sync cold start recovery behavior notes`).
-2. [DONE] Git Commit: `docs(vs): sync cold start recovery behavior notes` (hash: `1ad91d6d`)
-
-### Stream 5: Optional release build (после фикса)
-1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `6bf1681a`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session041.md` итогами релизной сборки (scope: `doc/Sessions/Session041.md`; expected commit: `docs(session): record phase261 release build results`).
-4. [DONE] Git Commit: `docs(session): record phase261 release build results` (hash: `ef69e3b1`)
+### Stream 1: План миграции и риски
+1. [TODO] Зафиксировать пофайловый migration plan (что меняем сразу, что оставляем временно совместимым: legacy `description.md`, legacy auto-reviewer, старые history chains) (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(description): add migration plan and compatibility rules`).
+2. [TODO] Git Commit: `docs(description): add migration plan and compatibility rules` (hash: TBD)
 
 ---
 
-## Phase 262 — PM runtime snapshot replay after reload (owner: Oleksandr, updated: 2026-02-26)
+## Phase 267 — Core runtime refactor for single Description agent (owner: Oleksandr, updated: 2026-02-28)
 
-**Проблема:** если `workspace:snapshot` приходит до монтирования `Virtual Simulation` view, snapshot не попадает в PM store. При позднем открытии вкладки UI использует default `running` snapshot и показывает `Agent is working...`, а `total` остаётся `00h 00m 00s` несмотря на persisted timers.
+**Проблема:** Core автоматически стартует reviewer после записи `description.md`, а collector-сессия создана как `no_resume`.
 
-**Цель:** snapshot должен фиксироваться в store независимо от монтирования runtime view, чтобы при открытии вкладки после reload состояние lock/timer восстанавливалось из Core snapshot.
+**Цель:** Description-сессия должна быть resume-friendly и завершаться прямой записью `Final_Description.md` без обязательного авто-reviewer.
 
-### Stream 0: PM snapshot store sync вне runtime view
-1. [DONE] Добавить глобальный приём `workspace:snapshot` в `workspace-scope-sync` с валидацией payload и записью в `workspaceSnapshotStore`; добавить regression test на layout-уровень, чтобы не терять lock/timer state при позднем монтировании вкладки (scope: `src/client/project-manager/components/layout/workspace-scope-sync.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.test.ts`; expected commit: `fix(pm): persist workspace snapshot for late virtual simulation mount`).
-2. [DONE] Git Commit: `fix(pm): persist workspace snapshot for late virtual simulation mount` (hash: `dbf21568`)
+### Stream 0: Disable auto-reviewer and enable description resume
+1. [TODO] Убрать автостарт reviewer из workflow runtime и перевести описание в единый управляемый диалог (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor(core): disable description auto-reviewer and allow resume`).
+2. [TODO] Git Commit: `refactor(core): disable description auto-reviewer and allow resume` (hash: TBD)
 
-### Stream 1: Release build for retest
-1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `8d28e4a7`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session042.md`; expected commit: `docs(session): record phase262 release build results`).
-4. [DONE] Git Commit: `docs(session): record phase262 release build results` (hash: `3e142971`)
+### Stream 1: Core workflow artifact plumbing (Final_Description.md)
+1. [TODO] Перевести Core allowlist/paths/validation для workflow-артефакта Description на `Final_Description.md` (и оставить чтение legacy `description.md` только для совместимости) (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `refactor(core): treat Final_Description.md as description artifact`).
+2. [TODO] Git Commit: `refactor(core): treat Final_Description.md as description artifact` (hash: TBD)
 
----
+### Stream 2: Description snapshot/state simplification
+1. [TODO] Упростить contract snapshot для Description (single primary session; legacy reviewer-поля оставить только для совместимости без развития функционала) (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): simplify description snapshot model for single-agent flow`).
+2. [TODO] Git Commit: `refactor(core): simplify description snapshot model for single-agent flow` (hash: TBD)
 
-## Phase 263 — Dialog open ensures runtime session (stuck lock + total after Core restart) (owner: Oleksandr, updated: 2026-02-26)
-
-**Проблема:** stage tabs (включая `virtual_simulation`) открываются через dialog/continuity chain. После рестарта Core runtime sessions отсутствуют (in-memory). `dialog:list` возвращает `latestSessionId` из continuity (обычно НЕ `null`), но этот sessionId отсутствует в runtime snapshot → `workspace:snapshot` не содержит stage-session → UI остаётся в default `running` (`Agent is working...`) и `total` = `00h 00m 00s`.
-
-**Цель:** при открытии dialog с известным `providerSessionId` PM должен инициировать resume runtime session (`session:create`), чтобы Core начал эмитить `workspace:snapshot` для stage-session и UI восстановил lock/timer состояние.
-
-### Stream 0: Resume runtime session on dialog open
-1. [DONE] В `dialog:list:result`: если `latestSessionId` отсутствует и `providerSessionId` задан — отправлять `session:create` с контекстом stage/runSlug, чтобы восстановить workspace snapshot lock/timer после cold start (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `fix(pm): resume dialog runtime session on open`).
-2. [DONE] Git Commit: `fix(pm): resume dialog runtime session on open` (hash: `a092ee57`)
-
-### Stream 1: Release build for retest
-1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `7b058a72`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session043.md`; expected commit: `docs(session): record phase263 release build results`).
-4. [DONE] Git Commit: `docs(session): record phase263 release build results` (hash: `c768cf75`)
+### Stream 3: Backward compatibility guardrails
+1. [TODO] Добавить совместимость с существующими workspace (legacy `description.md` и старые refs не должны ломать gating и continuity) (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix(core): keep legacy description compatibility during migration`).
+2. [TODO] Git Commit: `fix(core): keep legacy description compatibility during migration` (hash: TBD)
 
 ---
 
-## Phase 264 — Dialog open resumes when workspace snapshot lacks runtime session (owner: Oleksandr, updated: 2026-02-26)
+## Phase 268 — PM/UI flow update for unified Description step (owner: Oleksandr, updated: 2026-02-28)
 
-**Проблема:** Phase 263 была недостаточной: условие по `latestSessionId` почти никогда не срабатывает, потому что `latestSessionId` берётся из continuity index/chain и обычно заполнен даже после рестарта Core. Реальный сигнал отсутствия runtime session — отсутствие matching session в `workspace:snapshot` (по `sessionId` и/или `providerSessionId`).
+**Проблема:** PM copy и поведение панели Description заточены под старую схему «draft → auto reviewer → final».
 
-**Цель:** при открытии dialog с `providerSessionId` PM должен инициировать `session:create`, если `workspace:snapshot` не содержит runtime session для этого dialog → UI получает корректный lock/timer state и разблокирует ввод.
+**Цель:** UI должен отражать новый поток: «Questionnaire → единая Description-сессия → Final_Description.md».
 
-### Stream 0: Fix gating on workspace snapshot presence
-1. [DONE] В `dialog:list:result`: если есть `providerSessionId`, но `workspace:snapshot` не содержит runtime session для этого dialog — отправлять `session:create` (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/dialog-runtime-session-resolver.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `fix(pm): resume dialog when runtime session missing`).
-2. [DONE] Git Commit: `fix(pm): resume dialog when runtime session missing` (hash: `3b347d82`)
+### Stream 0: Description artifact wiring (Final_Description.md, no runs/)
+1. [TODO] Переключить выход Description на стабильный артефакт `.codeai-hub/<workspaceSlug>/description/Final_Description.md` (без `runs/`), а не `description.md` (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`; expected commit: `refactor(pm): write final description artifact directly`).
+2. [TODO] Git Commit: `refactor(pm): write final description artifact directly` (hash: TBD)
 
-### Stream 1: Release build for retest
-1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.692`).
-2. [DONE] Git Commit: `chore(release): build-all v1.1.692` (hash: `dc4681e4`)
-3. [DONE] Зафиксировать итоги сборки в `doc/Sessions/Session044.md` (scope: `doc/Sessions/Session044.md`; expected commit: `docs(session): record release v1.1.692`).
-4. [DONE] Git Commit: `docs(session): record release v1.1.692` (hash: `70e14de0`)
+### Stream 1: Description panel copy and UX
+1. [TODO] Обновить тексты, подсказки и ожидания в панели анкеты под single-agent flow (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm): align description UX copy with single-agent flow`).
+2. [TODO] Git Commit: `feat(pm): align description UX copy with single-agent flow` (hash: TBD)
+
+### Stream 2: Start/reopen logic for Description session
+1. [TODO] Пересобрать логику старта/возобновления Description в PM без завязки на внутреннюю reviewer-фазу (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `refactor(pm): unify description start and reopen flow`).
+2. [TODO] Git Commit: `refactor(pm): unify description start and reopen flow` (hash: TBD)
 
 ---
 
-## Phase 265 — Toolbar active stage must follow workspace (owner: Oleksandr, updated: 2026-02-27)
+## Phase 269 — Prompt/template redesign: adaptive Description output (owner: Oleksandr, updated: 2026-02-28)
 
-**Проблема:** подсветка stage-кнопок (Description / Virtual Simulation / Diagram Modules / Diagram Facades) “утекает” между workspace: при переключении на другой workspace подсвечивается шаг предыдущего workspace (например `Virtual Simulation`), даже если в новом workspace workflow ещё не стартовал.
+**Проблема:** текущие шаблоны задают фиксированные 10 пунктов и почти не отличаются между draft/final.
 
-**Цель:** подсветка должна отражать актуальный “последний активный шаг” текущего workspace. При смене workspace активный шаг должен вычисляться из workflow state (continuity + stage statuses) и не зависеть от предыдущего workspace.
+**Цель:** Description-агент должен сам выбирать структуру итогового документа по типу продукта, сохраняя минимальные обязательные инварианты для перехода к Virtual Simulation.
 
-### Stream 0: Fix per-workspace active stage highlight
-1. [DONE] При смене workspace сбрасывать tool на `Description` и затем один раз авто-выбирать “последний активный шаг” на основе workflow state (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`; expected commit: `fix(pm): scope toolbar active stage to workspace`).
-2. [DONE] Git Commit: `fix(pm): scope toolbar active stage to workspace` (hash: `78a2fd3c`)
+### Stream 0: New Description agent role definition
+1. [TODO] Переписать системный промпт Description-агента: бесконечная сессия, вопросы в чате, запись `Final_Description.md`, адаптивная структура вместо жёсткого чеклиста из 10 пунктов (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `feat(agents): define adaptive single description agent prompt`).
+2. [TODO] Git Commit: `feat(agents): define adaptive single description agent prompt` (hash: TBD)
 
-### Stream 1: Release build for retest
-1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.693`).
-2. [DONE] Git Commit: `chore(release): build-all v1.1.693` (hash: `d42f4afb`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session045.md`; expected commit: `docs(session): record phase265 release build results`).
-4. [DONE] Git Commit: `docs(session): record phase265 release build results` (hash: `59b7ef4c`)
+### Stream 1: Downstream prompt path fixes (no description.md)
+1. [TODO] Обновить промпты следующих шагов так, чтобы они читали `Final_Description.md` (а не `description.md`) как upstream-источник истины (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/source/modules-diagram-prompt.md`, `packages/core/src/templates/source/facades-graph-prompt.md`; expected commit: `fix(templates): downstream prompts use Final_Description.md`).
+2. [TODO] Git Commit: `fix(templates): downstream prompts use Final_Description.md` (hash: TBD)
+
+### Stream 2: Bundled templates sync
+1. [TODO] Обновить генерацию bundled templates под новую карту description/reviewer assets и проверить доставку в `~/.codeai-hub/templates` (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `scripts/build-release.sh`; expected commit: `build(templates): sync bundled templates with new description flow`).
+2. [TODO] Git Commit: `build(templates): sync bundled templates with new description flow` (hash: TBD)
+
+---
+
+## Phase 270 — Docs sync + release readiness (owner: Oleksandr, updated: 2026-02-28)
+
+### Stream 0: SSOT sync and session report
+1. [TODO] Синхронизировать System/Contracts/Workflow docs по новому single-agent Description flow и зафиксировать границу отложенного reviewer-модуля, подготовить session-report (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/Sessions/Session049.md`; expected commit: `docs(workflow): sync single-agent description architecture`).
+2. [TODO] Git Commit: `docs(workflow): sync single-agent description architecture` (hash: TBD)
+
+### Stream 1: Optional release build
+1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output-чеклист, зафиксировать итоги в session report (scope: `doc/Sessions/Session049.md`; expected commit: `docs(session): record release results for single-description flow`).
+4. [TODO] Git Commit: `docs(session): record release results for single-description flow` (hash: TBD)
+
+---
+
+## Backlog Module R1 (DEFERRED) — Standalone Reviewer as separate architecture module (owner: Oleksandr, updated: 2026-02-28)
+
+**Причина defer:** модуль переносится до стабилизации текущих шагов PM (`description` / `virtual_simulation` / `diagram_*`).
+
+### Stream 0: Future architecture kickoff (после стабилизации PM)
+1. [BLOCKED] Подготовить отдельный архитектурный контракт standalone Reviewer (manual trigger, cross-stage context, artifact policy, UX boundaries) (scope: `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md`; expected commit: `docs(reviewer): draft standalone reviewer module architecture`).
+2. [BLOCKED] Git Commit: `docs(reviewer): draft standalone reviewer module architecture` (hash: TBD)
