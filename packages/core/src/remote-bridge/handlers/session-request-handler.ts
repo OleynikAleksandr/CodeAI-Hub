@@ -3912,7 +3912,6 @@ export class SessionRequestHandler {
             dialogSessionId: continuityRootSessionId,
           },
           collectorSession: sessionRef,
-          reviewerSession: undefined,
           sessionKind,
           draftPath: shouldResetCollectorArtifacts ? null : undefined,
           finalPath: shouldResetCollectorArtifacts ? null : undefined,

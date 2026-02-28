@@ -89,8 +89,9 @@ export const handleWorkspaceActivate = async (params: {
 
     if (descriptionSnapshot) {
       // Description works in single-session collector mode.
-      // Legacy reviewer slots are intentionally ignored.
-      const collector = descriptionSnapshot.collectorSession;
+      const collector =
+        descriptionSnapshot.collectorSession ??
+        descriptionSnapshot.primarySession;
       const legacy = descriptionSnapshot.session;
 
       if (collector) {
