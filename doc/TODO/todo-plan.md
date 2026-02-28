@@ -37,7 +37,7 @@
 
 ### Stream 1: План миграции и риски
 1. [DONE] Зафиксировать пофайловый migration plan (что меняем сразу, что оставляем временно совместимым: legacy `description.md`, legacy auto-reviewer, старые history chains) (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(description): add migration plan and compatibility rules`).
-2. [IN_PROGRESS] Git Commit: `docs(description): add migration plan and compatibility rules` (hash: TBD)
+2. [DONE] Git Commit: `docs(description): add migration plan and compatibility rules` (hash: `744fc1f9`)
 
 ---
 
