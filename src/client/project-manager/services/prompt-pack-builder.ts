@@ -82,9 +82,6 @@ const resolveAgentRoleSlug = (role: string | null): string => {
   if (normalized.length === 0) {
     return "agent";
   }
-  if (normalized === "reviewer" || normalized === "collector") {
-    return normalized;
-  }
   return normalized;
 };
 
