@@ -14,7 +14,7 @@ const buildStatePath = (workspaceRoot: string, workspaceSlug: string): string =>
     "description-step.json"
   );
 
-test("DescriptionStepStore.read keeps session refs when workspaceRoot has trailing slash", async () => {
+test("DescriptionStepStore.read keeps collector session refs when workspaceRoot has trailing slash", async () => {
   const workspaceSlug = "codeai-hub";
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
 
@@ -29,13 +29,13 @@ test("DescriptionStepStore.read keeps session refs when workspaceRoot has traili
           workspacePath: workspaceRoot,
           createdAt: "2026-02-14T12:00:00.000Z",
           updatedAt: "2026-02-14T12:00:00.000Z",
-          reviewerSession: {
+          collectorSession: {
             providerId: "codexCli",
             providerSessionId: "019c5bbe-ece9-7832-8edc-b7c546f12e63",
             jsonlPath: "/tmp/dialog.jsonl",
-            dialogSessionId: "codex-abc-reviewer",
+            dialogSessionId: "codex-abc-collector",
           },
-          sessionKind: "reviewer",
+          sessionKind: "collector",
         },
         null,
         2
@@ -46,14 +46,14 @@ test("DescriptionStepStore.read keeps session refs when workspaceRoot has traili
     const store = new DescriptionStepStore();
     const snapshot = await store.read(`${workspaceRoot}/`, workspaceSlug);
 
-    assert.equal(snapshot?.sessionKind, "reviewer");
-    assert.equal(snapshot?.reviewerSession?.providerId, "codexCli");
+    assert.equal(snapshot?.sessionKind, "collector");
+    assert.equal(snapshot?.collectorSession?.providerId, "codexCli");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
 
-test("DescriptionStepStore.read falls back to workspaceRoot when snapshot workspacePath is non-absolute", async () => {
+test("DescriptionStepStore.read falls back to workspaceRoot when snapshot workspacePath is non-absolute for collector snapshot", async () => {
   const workspaceSlug = "codeai-hub";
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
 
@@ -69,13 +69,13 @@ test("DescriptionStepStore.read falls back to workspaceRoot when snapshot worksp
           workspacePath: workspaceSlug,
           createdAt: "2026-02-14T12:00:00.000Z",
           updatedAt: "2026-02-14T12:00:00.000Z",
-          reviewerSession: {
+          collectorSession: {
             providerId: "codexCli",
             providerSessionId: "019c5bbe-ece9-7832-8edc-b7c546f12e63",
             jsonlPath: "/tmp/dialog.jsonl",
-            dialogSessionId: "codex-abc-reviewer",
+            dialogSessionId: "codex-abc-collector",
           },
-          sessionKind: "reviewer",
+          sessionKind: "collector",
         },
         null,
         2
@@ -87,7 +87,7 @@ test("DescriptionStepStore.read falls back to workspaceRoot when snapshot worksp
     const snapshot = await store.read(workspaceRoot, workspaceSlug);
 
     assert.equal(snapshot?.workspacePath, path.resolve(workspaceRoot));
-    assert.equal(snapshot?.reviewerSession?.providerId, "codexCli");
+    assert.equal(snapshot?.collectorSession?.providerId, "codexCli");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

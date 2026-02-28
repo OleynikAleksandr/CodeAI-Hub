@@ -19,7 +19,7 @@ const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
 const parseSessionKind = (value: unknown): DescriptionSessionKind | null =>
-  value === "collector" || value === "reviewer" ? value : null;
+  value === "collector" ? value : null;
 
 const resolveField = (
   current: string | undefined,
@@ -35,9 +35,6 @@ const resolveSessionKind = (
   current: DescriptionSessionKind | undefined,
   update: DescriptionSessionKind | null | undefined
 ): DescriptionSessionKind | undefined => {
-  if (current === "reviewer" && update === "collector") {
-    return current;
-  }
   if (update === null) {
     return;
   }
@@ -46,15 +43,8 @@ const resolveSessionKind = (
 
 const resolveSession = (
   current: DescriptionSessionRef | undefined,
-  update: DescriptionSessionRef | null | undefined,
-  kinds?: {
-    readonly currentKind?: DescriptionSessionKind;
-    readonly updateKind?: DescriptionSessionKind | null | undefined;
-  }
+  update: DescriptionSessionRef | null | undefined
 ): DescriptionSessionRef | undefined => {
-  if (kinds?.currentKind === "reviewer" && kinds.updateKind === "collector") {
-    return current;
-  }
   if (update === null) {
     return;
   }
@@ -69,9 +59,6 @@ const resolvePrimarySessionUpdate = (
   }
   if (update.collectorSession !== undefined) {
     return update.collectorSession;
-  }
-  if (update.reviewerSession !== undefined) {
-    return update.reviewerSession;
   }
   return update.session;
 };
@@ -121,9 +108,6 @@ const parseSnapshot = (
   const collectorSession = parseSessionRef(
     (value as { readonly collectorSession?: unknown }).collectorSession
   );
-  const reviewerSession = parseSessionRef(
-    (value as { readonly reviewerSession?: unknown }).reviewerSession
-  );
   const session = parseSessionRef(value.session);
   const sessionKind =
     parseSessionKind(
@@ -146,7 +130,6 @@ const parseSnapshot = (
     finalPath,
     primarySession: primarySession ?? undefined,
     collectorSession: collectorSession ?? undefined,
-    reviewerSession: reviewerSession ?? undefined,
     session: session ?? undefined,
     sessionKind,
   };
@@ -190,7 +173,6 @@ export const buildDescriptionBranchSnapshot = (
       finalPath: snapshot.finalPath,
       primarySession: snapshot.primarySession,
       collectorSession: snapshot.collectorSession,
-      reviewerSession: snapshot.reviewerSession,
       session: snapshot.session,
       sessionKind: snapshot.sessionKind,
     };
@@ -202,7 +184,6 @@ export const buildDescriptionBranchSnapshot = (
     draftPath: snapshot.draftPath,
     primarySession: snapshot.primarySession,
     collectorSession: snapshot.collectorSession,
-    reviewerSession: snapshot.reviewerSession,
     session: snapshot.session,
     sessionKind: snapshot.sessionKind,
   };
@@ -239,7 +220,6 @@ export class DescriptionStepStore {
         ...parsed,
         primarySession: undefined,
         collectorSession: undefined,
-        reviewerSession: undefined,
         session: undefined,
         sessionKind: undefined,
       };
@@ -277,14 +257,7 @@ export class DescriptionStepStore {
         existing?.collectorSession,
         update.collectorSession
       ),
-      reviewerSession: resolveSession(
-        existing?.reviewerSession,
-        update.reviewerSession
-      ),
-      session: resolveSession(existing?.session, update.session, {
-        currentKind: existing?.sessionKind,
-        updateKind: update.sessionKind,
-      }),
+      session: resolveSession(existing?.session, update.session),
       sessionKind: nextSessionKind,
     };
 
