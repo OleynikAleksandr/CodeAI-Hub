@@ -92,8 +92,8 @@
 **Цель:** Description-агент должен сам выбирать структуру итогового документа по типу продукта, сохраняя минимальные обязательные инварианты для перехода к Virtual Simulation.
 
 ### Stream 0: New Description agent role definition
-1. [TODO] Переписать системный промпт Description-агента: бесконечная сессия, вопросы в чате, запись `Final_Description.md`, адаптивная структура вместо жёсткого чеклиста из 10 пунктов (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `feat(agents): define adaptive single description agent prompt`).
-2. [TODO] Git Commit: `feat(agents): define adaptive single description agent prompt` (hash: TBD)
+1. [DONE] Переписать системный промпт Description-агента: бесконечная сессия, вопросы в чате, запись `Final_Description.md`, адаптивная структура вместо жёсткого чеклиста из 10 пунктов (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `feat(agents): define adaptive single description agent prompt`).
+2. [DONE] Git Commit: `feat(agents): define adaptive single description agent prompt` (hash: `a61f06c6`)
 
 ### Stream 1: Downstream prompt path fixes (no description.md)
 1. [DONE] Обновить промпты следующих шагов так, чтобы они читали `Final_Description.md` (а не `description.md`) как upstream-источник истины (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/source/modules-diagram-prompt.md`, `packages/core/src/templates/source/facades-graph-prompt.md`; expected commit: `fix(templates): downstream prompts use Final_Description.md`).
