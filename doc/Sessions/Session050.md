@@ -1,6 +1,6 @@
-# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, release 1.1.698 built)
+# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, release 1.1.698 built, Phase 271 planned)
 
-**Date:** 2026-02-28 20:19 (CET)
+**Date:** 2026-02-28 20:23 (CET)
 **Branch:** main
 **Version:** 1.1.698
 
@@ -29,6 +29,8 @@
 - Phase 270 завершена по плану:
   - Stream 0: синхронизированы `SystemArchitecture.md` и `WorkflowSteps_Overview.md`, зафиксирована граница deferred standalone reviewer-модуля; Session049 дополнен итоговым addendum.
   - Stream 1: выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для версии `1.1.698`; собран VSIX `codeai-hub-1.1.698.vsix` (1.2M), локальные tarball-артефакты обновлены в `~/.codeai-hub/releases` и `doc/tmp/releases`.
+- Полностью реализованный `doc/TODO/todo-plan.md` (до Phase 270) перенесён в `doc/TODO/Archive/todo-plan-up-to-phase270-2026-02-28.md`.
+- Сформирован новый `doc/TODO/todo-plan.md` для `Phase 271` (design kickoff standalone reviewer-модуля).
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -53,6 +55,7 @@
 - `1475d17b docs(todo): update phase270 stream0 progress`
 - `15c8b11c chore(release): build-all v1.1.698`
 - `42c8dd6c docs(session): record release results for single-description flow`
+- `64a085ba docs(todo): close phase270 and sync session050`
 
 ---
 
@@ -70,6 +73,6 @@
 9. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
-- Финализировать `doc/TODO/todo-plan.md` после commit фиксации результатов release stream (hash для пункта `docs(session): ...`).
-- Заархивировать полностью реализованный `doc/TODO/todo-plan.md` в `doc/TODO/Archive/` и подготовить новый `todo-plan.md` под следующие задачи.
-- По запросу: стартовать `Backlog Module R1 (DEFERRED)` как отдельный архитектурный модуль standalone reviewer.
+- Реализовать `Phase 271 / Stream 0 / Task 1`: подготовить `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md`.
+- После утверждения архитектурного контракта синхронизировать SSOT (`WorkflowSteps_Overview.md`, `SystemArchitecture.md`).
+- После архитектурного gate раскрыть Stream 1 с микро-задачами реализации standalone reviewer (runtime/core, PM/UI, templates).
