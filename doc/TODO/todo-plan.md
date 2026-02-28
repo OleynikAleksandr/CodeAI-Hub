@@ -96,8 +96,8 @@
 2. [TODO] Git Commit: `feat(agents): define adaptive single description agent prompt` (hash: TBD)
 
 ### Stream 1: Downstream prompt path fixes (no description.md)
-1. [TODO] Обновить промпты следующих шагов так, чтобы они читали `Final_Description.md` (а не `description.md`) как upstream-источник истины (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/source/modules-diagram-prompt.md`, `packages/core/src/templates/source/facades-graph-prompt.md`; expected commit: `fix(templates): downstream prompts use Final_Description.md`).
-2. [TODO] Git Commit: `fix(templates): downstream prompts use Final_Description.md` (hash: TBD)
+1. [DONE] Обновить промпты следующих шагов так, чтобы они читали `Final_Description.md` (а не `description.md`) как upstream-источник истины (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/source/modules-diagram-prompt.md`, `packages/core/src/templates/source/facades-graph-prompt.md`; expected commit: `fix(templates): downstream prompts use Final_Description.md`).
+2. [DONE] Git Commit: `fix(templates): downstream prompts use Final_Description.md` (hash: `1779b17c`)
 
 ### Stream 2: Bundled templates sync
 1. [TODO] Обновить генерацию bundled templates под новую карту description/reviewer assets и проверить доставку в `~/.codeai-hub/templates` (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `scripts/build-release.sh`; expected commit: `build(templates): sync bundled templates with new description flow`).

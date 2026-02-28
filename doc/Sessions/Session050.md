@@ -16,6 +16,7 @@
 - Phase 267 / Stream 0: отключён auto-start reviewer из runtime-потока Description, default resume для Description переведён на `resume_in_place`.
 - Phase 267 / Stream 1: Core artifact plumbing переключён на канонический `Final_Description.md` (paths/types/router).
 - Phase 268 / Stream 0: PM switched to direct Description output `Final_Description.md` without `runs/`; legacy reviewer auto-open убран из main-area workflow state.
+- Phase 269 / Stream 1: downstream prompt templates переключены на `Final_Description.md` как upstream source of truth.
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -25,6 +26,7 @@
 - `44593ccf refactor(core): disable description auto-reviewer and allow resume`
 - `65417cc8 refactor(core): treat Final_Description.md as description artifact`
 - `e31597d9 refactor(pm): write final description artifact directly`
+- `1779b17c fix(templates): downstream prompts use Final_Description.md`
 
 ---
 
