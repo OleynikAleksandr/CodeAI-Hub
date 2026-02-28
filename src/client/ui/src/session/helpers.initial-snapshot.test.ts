@@ -33,10 +33,10 @@ test("createInitialSnapshot locks description collector sessions immediately", (
   assert.equal(snapshot.status.connectionState, "running");
 });
 
-test("createInitialSnapshot locks reviewer sessions immediately", () => {
+test("createInitialSnapshot locks non-description workflow sessions immediately", () => {
   const session = createSessionRecord({
-    stage: "description",
-    sessionKind: "reviewer",
+    stage: "virtual_simulation",
+    sessionKind: "collector",
   });
   const snapshot = createInitialSnapshot(
     session,
