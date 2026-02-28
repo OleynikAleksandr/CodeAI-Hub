@@ -108,6 +108,7 @@
 - `76ef5635 docs(todo): close phase276 and seed phase277`
 - `db6a16f9 docs(release): update notes for no-reviewer description flow`
 - `d677901b chore(release): build-all v1.1.701`
+- `bb0a1534 docs(session): record release after phase276`
 
 ---
 
