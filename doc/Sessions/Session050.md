@@ -1,8 +1,8 @@
-# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, roadmap replanned for release-check + deferred reviewer phase)
+# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, release verification 1.1.699 complete, deferred reviewer phase parked)
 
-**Date:** 2026-02-28 20:31 (CET)
+**Date:** 2026-02-28 20:37 (CET)
 **Branch:** main
-**Version:** 1.1.698
+**Version:** 1.1.699
 
 ---
 
@@ -35,6 +35,10 @@
 - По запросу пользователя roadmap переразмечен:
   - `Phase 271` выделена как отдельная фаза release verification (build-all + build-release) для проверки текущих изменений.
   - `Phase 272` выделена как отдельная `DEFERRED / NOT STARTED` фаза standalone reviewer со ссылкой на `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md`, чтобы модуль не потерялся в планировании.
+- Phase 271 выполнена:
+  - `./scripts/build-all.sh` поднял версию до `1.1.699` и пересобрал provider/core/ui/launcher артефакты.
+  - `./scripts/build-release.sh --use-current-version` завершился успешно; подтверждены чекпойнты `Verifying SDK exclusions`, `Removing dev dependencies`, `✅ Package created`.
+  - Собран VSIX `codeai-hub-1.1.699.vsix` (~1.2M).
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -63,6 +67,8 @@
 - `78b7bf4e docs(todo): archive phase270 plan and seed phase271`
 - `6f2aaf55 docs(reviewer): draft standalone reviewer module architecture`
 - `161a00a2 docs(todo): update phase271 stream0 progress`
+- `e4406a54 docs(todo): park standalone reviewer and add release verification phase`
+- `a5a44424 chore(release): build-all v1.1.699`
 
 ---
 
@@ -81,6 +87,6 @@
 10. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
-- Выполнить `Phase 271 / Stream 0`: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, затем зафиксировать итоги в session report.
 - Оставить `Phase 272` как `DEFERRED / NOT STARTED` до отдельного старта работ по standalone reviewer.
 - При старте `Phase 272` первым шагом вернуться к `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md` и пройти Design Gate.
+- При следующем релизном цикле повторить проверку `build-all` + `build-release` на чистом дереве и фиксировать результаты в новом session report.
