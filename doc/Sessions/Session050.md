@@ -1,8 +1,8 @@
-# Session 050 — Migration Description to Single-Agent (reviewer removed from active runtime/UI flow, phase278 purge in progress)
+# Session 050 — Migration Description to Single-Agent (reviewer removed from active runtime/UI flow, release rebuilt to 1.1.702)
 
-**Date:** 2026-02-28 23:15 (CET)
+**Date:** 2026-02-28 22:10 (CET)
 **Branch:** main
-**Version:** 1.1.701
+**Version:** 1.1.702
 
 ---
 
@@ -70,6 +70,11 @@
   - `npx tsc -p . --noEmit`
   - `npm run build --workspace=@codeai-hub/core`
   - `npm run build:project-manager`
+- Phase 278 Stream 3 завершён:
+  - Выполнен `./scripts/build-all.sh`, версия поднята до `1.1.702` (release commit `bb76e440`).
+  - Во время первого `build-release` выявлен compile blocker в `helpers.initial-snapshot.test.ts`; исправлено commit `797f55ba`.
+  - Повторный `./scripts/build-release.sh --use-current-version` завершился успешно; подтверждены чекпойнты `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`.
+  - Собран VSIX: `codeai-hub-1.1.702.vsix` (~1.2M), tarballs синхронизированы в `~/.codeai-hub/releases` и `doc/tmp/releases`.
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -134,6 +139,9 @@
 - `d49d55b5 refactor(runtime): remove reviewer literals from active session flow`
 - `e0d3e4cd refactor(ui): remove reviewer guard from description restart`
 - `f654ccd9 chore(repo): remove reviewer-agent legacy assets`
+- `9f8ac548 docs(session): finalize phase278 reviewer purge report`
+- `bb76e440 chore(release): build-all v1.1.702`
+- `797f55ba test(ui): align initial snapshot lock test with collector flow`
 
 ---
 
@@ -152,6 +160,6 @@
 10. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
-- Закрыть `Phase 278 / Stream 3`: выполнить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` после purge и зафиксировать результаты в docs.
-- После релизного rebuild проверить свежий VSIX и tarballs (`~/.codeai-hub/releases`, `doc/tmp/releases/`) и обновить `doc/Sessions/Session050.md`.
+- Зафиксировать и верифицировать установку релиза `1.1.702` (включая отсутствие reviewer templates в `~/.codeai-hub/templates/description/`).
 - Оставить `Phase 272` как `DEFERRED / NOT STARTED` до отдельного старта работ по standalone reviewer.
+- При старте новой активной задачи либо открыть новую Phase в `todo-plan.md`, либо после полного закрытия текущего плана архивировать его в `doc/TODO/Archive/`.

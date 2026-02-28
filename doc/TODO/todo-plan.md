@@ -158,8 +158,10 @@
 
 ### Stream 3: Validation, release rebuild, and session final report
 1. [DONE] Прогнать валидацию (`npx tsc -p . --noEmit` + target builds при необходимости), обновить `todo-plan` + `Session050` и подготовить итоговый отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session050.md`; expected commit: `docs(session): finalize phase278 reviewer purge report`).
-2. [TODO] Git Commit: `docs(session): finalize phase278 reviewer purge report` (hash: TBD)
-3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` после финальной purge и зафиксировать релизный коммит (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
-4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
-5. [TODO] Зафиксировать release results в session report (`checklist` + VSIX + tarballs) (scope: `doc/Sessions/Session050.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-purge release results`).
-6. [TODO] Git Commit: `docs(session): record post-purge release results` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): finalize phase278 reviewer purge report` (hash: `9f8ac548`)
+3. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` после финальной purge и зафиксировать релизный коммит (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
+4. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `bb76e440`)
+5. [DONE] Исправить compile-blocking тест после collector-only purge перед повторным `build-release` (scope: `src/client/ui/src/session/helpers.initial-snapshot.test.ts`; expected commit: `test(ui): align initial snapshot lock test with collector flow`).
+6. [DONE] Git Commit: `test(ui): align initial snapshot lock test with collector flow` (hash: `797f55ba`)
+7. [DONE] Зафиксировать release results в session report (`checklist` + VSIX + tarballs) (scope: `doc/Sessions/Session050.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-purge release results`).
+8. [TODO] Git Commit: `docs(session): record post-purge release results` (hash: TBD)
