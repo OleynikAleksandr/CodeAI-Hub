@@ -142,6 +142,7 @@
 - `9f8ac548 docs(session): finalize phase278 reviewer purge report`
 - `bb76e440 chore(release): build-all v1.1.702`
 - `797f55ba test(ui): align initial snapshot lock test with collector flow`
+- `e898f213 docs(session): record post-purge release results`
 
 ---
 

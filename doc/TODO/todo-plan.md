@@ -164,4 +164,4 @@
 5. [DONE] Исправить compile-blocking тест после collector-only purge перед повторным `build-release` (scope: `src/client/ui/src/session/helpers.initial-snapshot.test.ts`; expected commit: `test(ui): align initial snapshot lock test with collector flow`).
 6. [DONE] Git Commit: `test(ui): align initial snapshot lock test with collector flow` (hash: `797f55ba`)
 7. [DONE] Зафиксировать release results в session report (`checklist` + VSIX + tarballs) (scope: `doc/Sessions/Session050.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-purge release results`).
-8. [TODO] Git Commit: `docs(session): record post-purge release results` (hash: TBD)
+8. [DONE] Git Commit: `docs(session): record post-purge release results` (hash: `e898f213`)
