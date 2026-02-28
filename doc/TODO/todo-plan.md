@@ -76,12 +76,12 @@
 2. [DONE] Git Commit: `refactor(pm): write final description artifact directly` (hash: `e31597d9`)
 
 ### Stream 1: Description panel copy and UX
-1. [TODO] Обновить тексты, подсказки и ожидания в панели анкеты под single-agent flow (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm): align description UX copy with single-agent flow`).
-2. [TODO] Git Commit: `feat(pm): align description UX copy with single-agent flow` (hash: TBD)
+1. [DONE] Обновить тексты, подсказки и ожидания в панели анкеты под single-agent flow (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm): align description UX copy with single-agent flow`).
+2. [DONE] Git Commit: `feat(pm): align description UX copy with single-agent flow` (hash: `4549ecc0`)
 
 ### Stream 2: Start/reopen logic for Description session
-1. [TODO] Пересобрать логику старта/возобновления Description в PM без завязки на внутреннюю reviewer-фазу (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `refactor(pm): unify description start and reopen flow`).
-2. [TODO] Git Commit: `refactor(pm): unify description start and reopen flow` (hash: TBD)
+1. [DONE] Пересобрать логику старта/возобновления Description в PM без завязки на внутреннюю reviewer-фазу (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `refactor(pm): unify description start and reopen flow`).
+2. [DONE] Git Commit: `refactor(pm): unify description start and reopen flow` (hash: `9c34f8eb`)
 
 ---
 
