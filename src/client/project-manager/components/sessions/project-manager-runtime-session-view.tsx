@@ -12,12 +12,11 @@ import { resolveProjectManagerCoreConfig, useProjectManagerCoreStatusHydrator } 
 import { useSessionResumeIntent } from "./session-resume-intent";
 import { useSessionVisibility } from "./session-visibility";
 import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
-import { useReviewerSessionVisibility } from "./reviewer-session-visibility";
 import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe";
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
-import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId, resolveReviewerAutoFocusSessionId } from "./runtime-session-auto-select";
+import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId } from "./runtime-session-auto-select";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
@@ -34,15 +33,15 @@ export const ProjectManagerRuntimeSessionView = ({
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const forcedHiddenSessionIds = useMemo<ReadonlySet<string>>(
+    () => new Set(),
+    []
+  );
   const loadedHistorySessionIdsRef = useRef<Set<string>>(new Set());
   const sessionsRef = useRef<readonly SessionRecord[]>([]);
   const syncSessionsRef = useCallback((current: readonly SessionRecord[]) => {
     sessionsRef.current = current;
   }, []);
-  const { forcedHiddenSessionIds, reviewerSessionId } = useReviewerSessionVisibility({
-    sessions,
-    workspacePath,
-  });
   const { hideSession, removeHiddenSession, showSession, visibleSessions } = useSessionVisibility(
     {
       sessions,
@@ -244,20 +243,6 @@ export const ProjectManagerRuntimeSessionView = ({
     }
     setActiveSessionId(preferredSessionId);
   }, [preferredSessionId]);
-  useEffect(() => {
-    if (!reviewerSessionId) {
-      return;
-    }
-    showSession(reviewerSessionId);
-    setActiveSessionId((current) =>
-      resolveReviewerAutoFocusSessionId({
-        reviewerSessionId,
-        activeSessionId: current,
-        sessions: sessionsRef.current,
-        workspacePath,
-      }) ?? current
-    );
-  }, [reviewerSessionId, showSession, workspacePath]);
   useEffect(() => {
     if (!activeSessionId) {
       setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));

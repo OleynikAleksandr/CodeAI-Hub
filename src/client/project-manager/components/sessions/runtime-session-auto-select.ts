@@ -15,12 +15,6 @@ const resolveMostRecentSessionId = (
 export const resolveMostRecentVisibleSessionId = (
   visibleSessions: readonly SessionRecord[]
 ): string | null => {
-  const reviewerSessions = visibleSessions.filter(
-    (session) => session.sessionKind === "reviewer"
-  );
-  if (reviewerSessions.length > 0) {
-    return resolveMostRecentSessionId(reviewerSessions);
-  }
   return resolveMostRecentSessionId(visibleSessions);
 };
 
@@ -35,31 +29,6 @@ export const resolveMostRecentWorkspaceSessionId = (params: {
     (session) => session.workspacePath === params.workspacePath
   );
   return resolveMostRecentVisibleSessionId(inScope);
-};
-
-export const resolveReviewerAutoFocusSessionId = (params: {
-  readonly reviewerSessionId: string | null;
-  readonly activeSessionId: string | null;
-  readonly sessions: readonly SessionRecord[];
-  readonly workspacePath?: string;
-}): string | null => {
-  if (!params.reviewerSessionId) {
-    return null;
-  }
-  if (!params.activeSessionId || params.activeSessionId === params.reviewerSessionId) {
-    return params.reviewerSessionId;
-  }
-  const activeSession = params.sessions.find(
-    (session) => session.id === params.activeSessionId
-  );
-  if (!activeSession) {
-    return null;
-  }
-  const isDescriptionCollector =
-    activeSession.workspacePath === params.workspacePath &&
-    activeSession.stage === "description" &&
-    activeSession.sessionKind === "collector";
-  return isDescriptionCollector ? params.reviewerSessionId : null;
 };
 
 export const normalizeSessionHistoryMessages = (
