@@ -12,33 +12,33 @@ const RUNTIME_VIEW_SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
 );
 
-test("reviewer auto-focus is gated to description collector sessions", async () => {
+test("runtime auto-select no longer contains reviewer auto-focus resolver", async () => {
   const source = await readFile(AUTO_SELECT_SOURCE_PATH, "utf8");
 
-  assert.equal(source.includes("resolveReviewerAutoFocusSessionId"), true);
+  assert.equal(source.includes("resolveReviewerAutoFocusSessionId"), false);
   assert.equal(
-    source.includes('activeSession.stage === "description"'),
+    source.includes("return resolveMostRecentSessionId(visibleSessions);"),
     true,
-    "auto-focus must stay scoped to description stage"
-  );
-  assert.equal(
-    source.includes('activeSession.sessionKind === "collector"'),
-    true,
-    "auto-focus must not steal focus from non-collector sessions"
+    "visible sessions must now use plain most-recent selection"
   );
 });
 
-test("runtime session view applies reviewer auto-focus through active-session owner", async () => {
+test("runtime session view does not import reviewer auto-focus path", async () => {
   const source = await readFile(RUNTIME_VIEW_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes("resolveReviewerAutoFocusSessionId"),
-    true,
-    "runtime view must consume reviewer auto-focus resolver"
+    false,
+    "runtime view must not consume reviewer auto-focus resolver"
   );
   assert.equal(
-    source.includes("setActiveSessionId((current) =>"),
+    source.includes("useReviewerSessionVisibility"),
+    false,
+    "runtime view must not use reviewer visibility hook"
+  );
+  assert.equal(
+    source.includes("setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));"),
     true,
-    "runtime view must update active session through owner state"
+    "runtime view must keep most-recent fallback when active session is missing"
   );
 });
