@@ -1,6 +1,6 @@
-# Session 050 — Migration Description to Single-Agent (release 1.1.699 complete, docs index sync + root audit done)
+# Session 050 — Migration Description to Single-Agent (reviewer removed from active template delivery, release rebuild in progress)
 
-**Date:** 2026-02-28 20:45 (CET)
+**Date:** 2026-02-28 20:57 (CET)
 **Branch:** main
 **Version:** 1.1.699
 
@@ -44,6 +44,10 @@
   - SSOT и актуальны: `README.md`, `Docs_Index.md`, `WorkflowSteps_Overview.md`.
   - Исторический non-SSOT документ: `CodeAI-Hub_Manual_Retry_RFC.md` (status: Proposed, использовать как reference, не как канон).
   - Промежуточный non-SSOT черновик: `QuestionnaireTemplate_Draft.md` (не является текущим шаблоном-источником истины).
+- Phase 274 (reviewer removal from active product flow) закрыта по Stream 0–1:
+  - reviewer assets удалены из bundled-template генерации и release coverage checklist.
+  - `TemplateSyncService` теперь удаляет legacy файлы `~/.codeai-hub/templates/description/reviewer-prompt.md` и `reviewer-template.md` при синхронизации.
+  - В active description delivery оставлены только `description-collector-prompt.md`, `description-template.md`, `questionnaire-template.md`.
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -78,6 +82,8 @@
 - `ae53db11 docs(todo): close phase271 release verification and sync session050`
 - `91ed6992 docs(index): register new contracts and root docs status`
 - `b7ef6ef7 docs(session): record solidworks root docs audit`
+- `27347052 build(templates): remove reviewer assets from description bundle`
+- `c0784e5a fix(core): prune legacy reviewer templates during sync`
 
 ---
 
@@ -98,5 +104,5 @@
 ## Plans for next session
 - Оставить `Phase 272` как `DEFERRED / NOT STARTED` до отдельного старта работ по standalone reviewer.
 - При старте `Phase 272` первым шагом вернуться к `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md` и пройти Design Gate.
-- При следующем релизном цикле повторить проверку `build-all` + `build-release` на чистом дереве и фиксировать результаты в новом session report.
-- Решить судьбу root non-SSOT документов (`CodeAI-Hub_Manual_Retry_RFC.md`, `QuestionnaireTemplate_Draft.md`): оставить как исторические с явным статусом или перенести в `doc/SolidWorks-WorkFlow/Archive/`.
+- Завершить `Phase 275`: пересобрать релиз (`build-all` + `build-release`) после reviewer-removal и зафиксировать результаты.
+- После установки нового релиза проверить, что в `~/.codeai-hub/templates/description/` отсутствуют `reviewer-prompt.md` и `reviewer-template.md`.

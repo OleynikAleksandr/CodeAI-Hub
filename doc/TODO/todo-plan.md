@@ -55,3 +55,31 @@
 ### Stream 1: Root documents актуальность
 1. [DONE] Провести аудит root-файлов в `doc/SolidWorks-WorkFlow/` и зафиксировать решение «нужен/архивировать/перенести» в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record solidworks root docs audit`).
 2. [DONE] Git Commit: `docs(session): record solidworks root docs audit` (hash: `b7ef6ef7`)
+
+---
+
+## Phase 274 — Remove reviewer from active product flow (owner: Oleksandr, updated: 2026-02-28)
+
+**Контекст:** reviewer переносится в отдельный будущий модуль. В текущем релизном потоке reviewer должен быть полностью исключён из active description delivery и из `~/.codeai-hub/templates/description`.
+
+### Stream 0: Bundled templates mapping cleanup
+1. [DONE] Удалить reviewer assets из генерации bundled templates и release coverage checklist (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `scripts/build-release.sh`; expected commit: `build(templates): remove reviewer assets from description bundle`).
+2. [DONE] Git Commit: `build(templates): remove reviewer assets from description bundle` (hash: `27347052`)
+
+### Stream 1: Runtime template cleanup for installed homes
+1. [DONE] Добавить в template sync удаление legacy reviewer template files из `~/.codeai-hub/templates/description` при синхронизации (scope: `packages/core/src/templates/template-sync-service.ts`; expected commit: `fix(core): prune legacy reviewer templates during sync`).
+2. [DONE] Git Commit: `fix(core): prune legacy reviewer templates during sync` (hash: `c0784e5a`)
+
+### Stream 2: Session/report sync for reviewer removal
+1. [DONE] Синхронизировать `todo-plan` + session report по факту удаления reviewer из active template delivery (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session050.md`; expected commit: `docs(todo): sync reviewer-removal progress in session050`).
+2. [TODO] Git Commit: `docs(todo): sync reviewer-removal progress in session050` (hash: TBD)
+
+---
+
+## Phase 275 — Release rebuild after reviewer removal (owner: Oleksandr, updated: 2026-02-28)
+
+### Stream 0: Build and release verification
+1. [TODO] Выполнить `./scripts/build-all.sh` на чистом дереве и зафиксировать новую версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output checklist и зафиксировать результаты в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release after reviewer removal`).
+4. [TODO] Git Commit: `docs(session): record release after reviewer removal` (hash: TBD)
