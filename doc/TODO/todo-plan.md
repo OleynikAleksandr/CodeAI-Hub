@@ -25,7 +25,7 @@
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать новую версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `a5a44424`)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить release output checklist (`Verifying SDK exclusions`, `Removing dev dependencies`, `✅ Package created`) и зафиксировать итоги в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release verification for phase271`).
-4. [TODO] Git Commit: `docs(session): record release verification for phase271` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): record release verification for phase271` (hash: `591a030e`)
 
 ---
 

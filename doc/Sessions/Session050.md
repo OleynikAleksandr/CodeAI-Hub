@@ -69,6 +69,7 @@
 - `161a00a2 docs(todo): update phase271 stream0 progress`
 - `e4406a54 docs(todo): park standalone reviewer and add release verification phase`
 - `a5a44424 chore(release): build-all v1.1.699`
+- `591a030e docs(session): record release verification for phase271`
 
 ---
 
