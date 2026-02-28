@@ -19,6 +19,11 @@ type TemplateSyncResult = {
 const normalizeContent = (value: string): string =>
   value.replace(/\r\n/g, "\n").trimEnd();
 
+const LEGACY_TEMPLATE_RELATIVE_PATHS = [
+  ".codeai-hub/templates/description/reviewer-prompt.md",
+  ".codeai-hub/templates/description/reviewer-template.md",
+] as const;
+
 export class TemplateSyncService {
   private readonly logger: Logger;
 
@@ -31,6 +36,7 @@ export class TemplateSyncService {
     for (const source of BUNDLED_TEMPLATE_SOURCES) {
       results.push(await this.syncTemplate(source));
     }
+    const removedLegacyPaths = await this.removeLegacyTemplates();
 
     const summary = results.reduce(
       (acc, item) => {
@@ -45,7 +51,30 @@ export class TemplateSyncService {
       updated: summary.updated,
       upToDate: summary["up-to-date"],
       errors: summary.error,
+      removedLegacyTemplates: removedLegacyPaths,
     });
+  }
+
+  private async removeLegacyTemplates(): Promise<number> {
+    const home = homedir();
+    if (!home) {
+      return 0;
+    }
+
+    let removedCount = 0;
+    for (const relativePath of LEGACY_TEMPLATE_RELATIVE_PATHS) {
+      const absolutePath = path.join(home, relativePath);
+      try {
+        await fs.unlink(absolutePath);
+        removedCount += 1;
+        this.logger.info("Removed legacy template", {
+          path: absolutePath,
+        });
+      } catch {
+        // Ignore missing files and filesystem errors to keep sync resilient.
+      }
+    }
+    return removedCount;
   }
 
   private async syncTemplate(
