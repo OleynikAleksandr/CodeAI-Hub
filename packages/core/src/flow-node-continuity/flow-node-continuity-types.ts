@@ -15,5 +15,5 @@ export type FlowNodeContinuityRolloverFilter = Readonly<{
 export const FLOW_NODE_CONTINUITY_MVP_FILTER: FlowNodeContinuityRolloverFilter =
   {
     stageId: "description",
-    runSlug: "reviewer",
+    runSlug: "collector",
   } as const;
