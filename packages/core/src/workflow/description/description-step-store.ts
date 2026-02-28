@@ -61,6 +61,21 @@ const resolveSession = (
   return update ?? current;
 };
 
+const resolvePrimarySessionUpdate = (
+  update: DescriptionStepUpdate
+): DescriptionSessionRef | null | undefined => {
+  if (update.primarySession !== undefined) {
+    return update.primarySession;
+  }
+  if (update.collectorSession !== undefined) {
+    return update.collectorSession;
+  }
+  if (update.reviewerSession !== undefined) {
+    return update.reviewerSession;
+  }
+  return update.session;
+};
+
 const parseSessionRef = (value: unknown): DescriptionSessionRef | null => {
   if (!isRecord(value)) {
     return null;
@@ -100,6 +115,9 @@ const parseSnapshot = (
     readNonEmptyString(value.questionnairePath) ?? undefined;
   const draftPath = readNonEmptyString(value.draftPath) ?? undefined;
   const finalPath = readNonEmptyString(value.finalPath) ?? undefined;
+  const primarySession = parseSessionRef(
+    (value as { readonly primarySession?: unknown }).primarySession
+  );
   const collectorSession = parseSessionRef(
     (value as { readonly collectorSession?: unknown }).collectorSession
   );
@@ -126,6 +144,7 @@ const parseSnapshot = (
     questionnairePath,
     draftPath,
     finalPath,
+    primarySession: primarySession ?? undefined,
     collectorSession: collectorSession ?? undefined,
     reviewerSession: reviewerSession ?? undefined,
     session: session ?? undefined,
@@ -169,6 +188,7 @@ export const buildDescriptionBranchSnapshot = (
     return {
       updatedAt: snapshot.updatedAt,
       finalPath: snapshot.finalPath,
+      primarySession: snapshot.primarySession,
       collectorSession: snapshot.collectorSession,
       reviewerSession: snapshot.reviewerSession,
       session: snapshot.session,
@@ -180,6 +200,7 @@ export const buildDescriptionBranchSnapshot = (
     updatedAt: snapshot.updatedAt,
     questionnairePath: snapshot.questionnairePath,
     draftPath: snapshot.draftPath,
+    primarySession: snapshot.primarySession,
     collectorSession: snapshot.collectorSession,
     reviewerSession: snapshot.reviewerSession,
     session: snapshot.session,
@@ -216,6 +237,7 @@ export class DescriptionStepStore {
     ) {
       return {
         ...parsed,
+        primarySession: undefined,
         collectorSession: undefined,
         reviewerSession: undefined,
         session: undefined,
@@ -247,6 +269,10 @@ export class DescriptionStepStore {
       ),
       draftPath: resolveField(existing?.draftPath, update.draftPath),
       finalPath: resolveField(existing?.finalPath, update.finalPath),
+      primarySession: resolveSession(
+        existing?.primarySession,
+        resolvePrimarySessionUpdate(update)
+      ),
       collectorSession: resolveSession(
         existing?.collectorSession,
         update.collectorSession

@@ -20,6 +20,11 @@ export type DescriptionStepSnapshot = {
   readonly draftPath?: string;
   readonly finalPath?: string;
   /**
+   * Canonical single-session slot for the new single-agent description flow.
+   * Legacy collector/reviewer slots remain for backward compatibility.
+   */
+  readonly primarySession?: DescriptionSessionRef;
+  /**
    * Per-agent session refs for stage=description.
    * This is the source of truth for "1 agent = 1 dialog JSONL" persistence.
    */
@@ -34,6 +39,7 @@ export type DescriptionBranchSnapshot = {
   readonly questionnairePath?: string;
   readonly draftPath?: string;
   readonly finalPath?: string;
+  readonly primarySession?: DescriptionSessionRef;
   /**
    * Per-agent session refs for stage=description.
    * These are used by clients to restore dialog history after restart.
@@ -51,6 +57,7 @@ export type DescriptionStepUpdate = {
   readonly questionnairePath?: string | null;
   readonly draftPath?: string | null;
   readonly finalPath?: string | null;
+  readonly primarySession?: DescriptionSessionRef | null;
   readonly collectorSession?: DescriptionSessionRef | null;
   readonly reviewerSession?: DescriptionSessionRef | null;
   readonly session?: DescriptionSessionRef | null;
