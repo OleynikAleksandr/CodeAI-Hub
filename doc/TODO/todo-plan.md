@@ -114,8 +114,8 @@
 ### Stream 1: Optional release build
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `15c8b11c`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output-чеклист, зафиксировать итоги в session report (scope: `doc/Sessions/Session049.md`; expected commit: `docs(session): record release results for single-description flow`).
-4. [TODO] Git Commit: `docs(session): record release results for single-description flow` (hash: TBD)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output-чеклист, зафиксировать итоги в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release results for single-description flow`).
+4. [DONE] Git Commit: `docs(session): record release results for single-description flow` (hash: `42c8dd6c`)
 
 ---
 

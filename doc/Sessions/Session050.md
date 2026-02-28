@@ -52,6 +52,7 @@
 - `29e69c31 docs(workflow): sync single-agent description architecture`
 - `1475d17b docs(todo): update phase270 stream0 progress`
 - `15c8b11c chore(release): build-all v1.1.698`
+- `42c8dd6c docs(session): record release results for single-description flow`
 
 ---
 
