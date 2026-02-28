@@ -17,7 +17,7 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
 
 const WORKFLOW_STAGE_FILES = new Map<WorkflowStageId, WorkflowArtifactFileName>(
   [
-    ["description", "description.md"],
+    ["description", "Final_Description.md"],
     ["virtual_simulation", "virtual-simulation.md"],
     ["diagram_modules", "modules-diagram.mmd"],
     ["diagram_facades", "facades-graph.mmd"],

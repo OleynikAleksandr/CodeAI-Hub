@@ -1,6 +1,7 @@
 import type { WorkflowStageId } from "../watcher/watcher-types";
 
 export type WorkflowArtifactFileName =
+  | "Final_Description.md"
   | "description.md"
   | "virtual-simulation.md"
   | "modules-diagram.mmd"

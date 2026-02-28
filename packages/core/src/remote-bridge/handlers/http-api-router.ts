@@ -53,7 +53,7 @@ const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const WORKFLOW_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/workflow-artifact";
 const DESCRIPTION_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?description\.md$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/Final_Description\.md$/;
 const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
@@ -618,6 +618,7 @@ type WorkflowStageId =
   | "diagram_facades";
 
 type WorkflowArtifactFileName =
+  | "Final_Description.md"
   | "description.md"
   | "virtual-simulation.md"
   | "modules-diagram.mmd"
@@ -636,7 +637,7 @@ const WORKFLOW_STAGE_SLOTS = new Map<
 >([
   [
     "workspace.description",
-    { stage: "description", fileName: "description.md" },
+    { stage: "description", fileName: "Final_Description.md" },
   ],
   [
     "workspace.virtual_simulation",
@@ -1330,6 +1331,7 @@ const resolveWorkflowStageValidationError = (params: {
   readonly shouldValidate: boolean;
 }): string | null => {
   switch (params.fileName) {
+    case "Final_Description.md":
     case "description.md":
       return validateDescriptionMarkdown(params.content, params.shouldValidate);
     case "virtual-simulation.md":
