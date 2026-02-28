@@ -100,8 +100,8 @@
 2. [DONE] Git Commit: `fix(templates): downstream prompts use Final_Description.md` (hash: `1779b17c`)
 
 ### Stream 2: Bundled templates sync
-1. [TODO] Обновить генерацию bundled templates под новую карту description/reviewer assets и проверить доставку в `~/.codeai-hub/templates` (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `scripts/build-release.sh`; expected commit: `build(templates): sync bundled templates with new description flow`).
-2. [TODO] Git Commit: `build(templates): sync bundled templates with new description flow` (hash: TBD)
+1. [DONE] Обновить генерацию bundled templates под новую карту description/reviewer assets и проверить доставку в `~/.codeai-hub/templates` (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `scripts/build-release.sh`; expected commit: `build(templates): sync bundled templates with new description flow`).
+2. [DONE] Git Commit: `build(templates): sync bundled templates with new description flow` (hash: `5fc966f5`)
 
 ---
 
