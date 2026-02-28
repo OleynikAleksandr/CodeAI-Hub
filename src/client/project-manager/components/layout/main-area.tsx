@@ -269,7 +269,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
           ) : showDiagramFacades ? (
             renderStagePanel(DiagramFacadesPanel)
           ) : (
-            <div className="pm-placeholder">Artifacts will appear here.</div>
+            <div className="pm-placeholder">
+              Выберите шаг в Toolbar. Для Description начните с{" "}
+              <code>questionnaire.md</code> и доведите единую сессию до{" "}
+              <code>Final_Description.md</code>.
+            </div>
           )
         }
         onSizeChange={onSizeChange}
