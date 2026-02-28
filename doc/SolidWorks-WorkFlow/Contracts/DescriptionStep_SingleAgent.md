@@ -126,3 +126,23 @@
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+
+---
+
+## Prompt/Template Sync (Phase 269 Stream 0)
+
+### Prompt contract (`description-collector-prompt.md`)
+- Агент работает как единая resume-сессия и не использует внутренние reviewer-фазы.
+- Агент может задавать уточняющие вопросы в чате, если это повышает качество финального описания.
+- Запись `Final_Description.md` выполняется после явного подтверждения пользователя.
+- В prompt не должно быть упоминаний записи `description.md` как целевого артефакта.
+
+### Template contract (`description-template.md`)
+- Шаблон должен быть адаптивным каркасом, а не фиксированным чеклистом из 10 обязательных разделов.
+- При любой адаптации структуры должны сохраняться минимальные инварианты шага:
+  - проблема/ценность;
+  - целевые пользователи;
+  - 2–4 сценария;
+  - ограничения/допущения;
+  - out of scope;
+  - открытые вопросы.
