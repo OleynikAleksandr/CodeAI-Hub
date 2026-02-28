@@ -1,8 +1,8 @@
-# Session 050 — Migration Description to Single-Agent (reviewer removed from active template delivery, release rebuild in progress)
+# Session 050 — Migration Description to Single-Agent (reviewer removed from active runtime/UI flow, release rebuild in progress)
 
-**Date:** 2026-02-28 20:57 (CET)
+**Date:** 2026-02-28 22:35 (CET)
 **Branch:** main
-**Version:** 1.1.699
+**Version:** 1.1.700
 
 ---
 
@@ -48,6 +48,11 @@
   - reviewer assets удалены из bundled-template генерации и release coverage checklist.
   - `TemplateSyncService` теперь удаляет legacy файлы `~/.codeai-hub/templates/description/reviewer-prompt.md` и `reviewer-template.md` при синхронизации.
   - В active description delivery оставлены только `description-collector-prompt.md`, `description-template.md`, `questionnaire-template.md`.
+- Phase 275 / Stream 0 Step 1 выполнен: `./scripts/build-all.sh` зафиксирован коммитом версии `1.1.700`.
+- Phase 276 закрыта (reviewer removed from active runtime/UI flow):
+  - Core: удалены reviewer auto-runtime ветки из `WorkflowRuntime`, `workspace activate`, `session-request-handler` для active description потока.
+  - PM/UI: убраны reviewer auto-focus/visibility ветки, удалён reviewer visibility модуль, `workspace-tree` и resume intent приведены к collector-only для `description`.
+  - Templates: `description-collector-prompt.md` очищен от reviewer-терминов, bundled templates пересобраны.
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -85,6 +90,15 @@
 - `27347052 build(templates): remove reviewer assets from description bundle`
 - `c0784e5a fix(core): prune legacy reviewer templates during sync`
 - `bacfc352 docs(todo): sync reviewer-removal progress in session050`
+- `7c1e3ef5 docs(todo): close phase274 and sync session050`
+- `151f6823 chore(release): build-all v1.1.700`
+- `74336cd3 refactor(core): remove reviewer auto-runtime branch`
+- `2f6212dd refactor(core): lock description flow to collector session`
+- `cb20d02c refactor(pm): remove reviewer auto-focus from runtime view`
+- `93c7c389 refactor(pm): drop reviewer visibility module`
+- `1a0bd08e build(templates): remove reviewer wording from description prompt`
+- `386df167 refactor(pm): keep description resume in collector mode`
+- `6434243e test(pm): align auto-select assertions with no-reviewer flow`
 
 ---
 
@@ -105,5 +119,5 @@
 ## Plans for next session
 - Оставить `Phase 272` как `DEFERRED / NOT STARTED` до отдельного старта работ по standalone reviewer.
 - При старте `Phase 272` первым шагом вернуться к `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md` и пройти Design Gate.
-- Завершить `Phase 275`: пересобрать релиз (`build-all` + `build-release`) после reviewer-removal и зафиксировать результаты.
+- Завершить `Phase 277`: пересобрать релиз (`build-all` + `build-release`) после runtime/UI reviewer-removal и зафиксировать результаты.
 - После установки нового релиза проверить, что в `~/.codeai-hub/templates/description/` отсутствуют `reviewer-prompt.md` и `reviewer-template.md`.

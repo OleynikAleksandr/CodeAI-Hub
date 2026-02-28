@@ -79,7 +79,43 @@
 ## Phase 275 — Release rebuild after reviewer removal (owner: Oleksandr, updated: 2026-02-28)
 
 ### Stream 0: Build and release verification
-1. [TODO] Выполнить `./scripts/build-all.sh` на чистом дереве и зафиксировать новую версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
+1. [DONE] Выполнить `./scripts/build-all.sh` на чистом дереве и зафиксировать новую версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `151f6823`)
+3. [BLOCKED] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output checklist и зафиксировать результаты в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release after reviewer removal`).
+4. [BLOCKED] Git Commit: `docs(session): record release after reviewer removal` (hash: TBD)
+
+---
+
+## Phase 276 — Remove reviewer from active runtime/UI flow (owner: Oleksandr, updated: 2026-02-28)
+
+**Контекст:** после дополнительного уточнения reviewer исключается из текущего active runtime/UI потока `description`; standalone reviewer остаётся отдельной deferred фазой (`Phase 272`).
+
+### Stream 0: Core runtime collector-only guardrails
+1. [DONE] Удалить reviewer auto-runtime branch из `WorkflowRuntime` (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`; expected commit: `refactor(core): remove reviewer auto-runtime branch`).
+2. [DONE] Git Commit: `refactor(core): remove reviewer auto-runtime branch` (hash: `74336cd3`)
+3. [DONE] Зафиксировать collector-only поведение в bridge handlers (`workspace activate` + `session-request-handler`) (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor(core): lock description flow to collector session`).
+4. [DONE] Git Commit: `refactor(core): lock description flow to collector session` (hash: `2f6212dd`)
+
+### Stream 1: PM runtime/session visibility cleanup
+1. [DONE] Удалить reviewer auto-focus из PM runtime session view и автоселекта (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/runtime-session-auto-select.ts`; expected commit: `refactor(pm): remove reviewer auto-focus from runtime view`).
+2. [DONE] Git Commit: `refactor(pm): remove reviewer auto-focus from runtime view` (hash: `cb20d02c`)
+3. [DONE] Удалить неиспользуемый модуль reviewer visibility в PM (scope: `src/client/project-manager/components/sessions/reviewer-session-visibility.ts`, `src/client/project-manager/components/sessions/reviewer-session-visibility.test.ts`; expected commit: `refactor(pm): drop reviewer visibility module`).
+4. [DONE] Git Commit: `refactor(pm): drop reviewer visibility module` (hash: `93c7c389`)
+5. [DONE] Сохранить description resume/sync в collector-only режиме для workspace-tree/provider resolver (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `refactor(pm): keep description resume in collector mode`).
+6. [DONE] Git Commit: `refactor(pm): keep description resume in collector mode` (hash: `386df167`)
+7. [DONE] Синхронизировать source-based тест автоселекта с no-reviewer логикой (scope: `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; expected commit: `test(pm): align auto-select assertions with no-reviewer flow`).
+8. [DONE] Git Commit: `test(pm): align auto-select assertions with no-reviewer flow` (hash: `6434243e`)
+
+### Stream 2: Description template text alignment
+1. [DONE] Убрать reviewer-термин из description collector prompt и пересобрать bundled templates (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `build(templates): remove reviewer wording from description prompt`).
+2. [DONE] Git Commit: `build(templates): remove reviewer wording from description prompt` (hash: `1a0bd08e`)
+
+---
+
+## Phase 277 — Release rebuild after phase276 (owner: Oleksandr, updated: 2026-02-28)
+
+### Stream 0: Build and release verification
+1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать новую версию после phase276 (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output checklist и зафиксировать результаты в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release after reviewer removal`).
-4. [TODO] Git Commit: `docs(session): record release after reviewer removal` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить checklist (`Verifying SDK exclusions`, `Removing dev dependencies`, `✅ Package created`) и зафиксировать результаты в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release after phase276`).
+4. [TODO] Git Commit: `docs(session): record release after phase276` (hash: TBD)
