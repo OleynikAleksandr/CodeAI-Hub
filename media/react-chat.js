@@ -8447,7 +8447,7 @@
       initiativeSlug: typeof session.initiativeSlug === "string" ? session.initiativeSlug : null,
       stage: typeof session.stage === "string" ? session.stage : null,
       runSlug: typeof session.runSlug === "string" && session.runSlug.trim().length > 0 ? session.runSlug.trim() : null,
-      sessionKind: session.sessionKind === "collector" || session.sessionKind === "reviewer" ? session.sessionKind : null,
+      sessionKind: session.sessionKind === "collector" ? "collector" : null,
       continuationParentId: typeof session.continuationParentId === "string" ? session.continuationParentId : null,
       continuationIndex: typeof session.continuationIndex === "number" ? session.continuationIndex : null,
       createdAt: toNumberTimestamp(session.createdAt),
@@ -23765,15 +23765,12 @@ ${path2}` : path2;
     }
     return normalized.split(" ").filter(Boolean).map((token) => token.charAt(0).toUpperCase() + token.slice(1)).join(" ");
   };
-  var getAgentLabel = (sessionKind, stage, runSlug) => {
+  var getAgentLabel = (sessionKind, stage) => {
     if (stage && stage !== "description") {
       return formatWorkflowStageLabel(stage);
     }
     if (stage === "description") {
-      return sessionKind === "reviewer" || runSlug === "reviewer" ? "Reviewer" : "Description";
-    }
-    if (sessionKind === "reviewer") {
-      return "Reviewer";
+      return "Description";
     }
     if (sessionKind === "collector") {
       return "Agent";
@@ -23784,11 +23781,7 @@ ${path2}` : path2;
     return null;
   };
   var buildTabDisplayData = (session, providerLabels, isActive) => {
-    const agentLabel = getAgentLabel(
-      session.sessionKind,
-      session.stage,
-      session.runSlug
-    );
+    const agentLabel = getAgentLabel(session.sessionKind, session.stage);
     const providerNames = session.providerIds.map((providerId) => {
       const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
       const [primaryToken] = label.split(" ");
@@ -24268,7 +24261,7 @@ ${path2}` : path2;
       (session) => session.id === activeSessionId
     );
     const primaryProviderId = activeRecord?.providerIds[0] ?? null;
-    const descriptionRestartAttempt = activeRecord?.stage === "description" && activeRecord.runSlug !== "reviewer" && activeRecord.initiativeSlug ? {
+    const descriptionRestartAttempt = activeRecord?.stage === "description" && activeRecord.initiativeSlug ? {
       workspacePath: activeRecord.workspacePath,
       workspaceSlug: activeRecord.initiativeSlug,
       providerId: primaryProviderId
