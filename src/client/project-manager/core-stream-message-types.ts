@@ -166,7 +166,7 @@ export type OutgoingMessage =
         readonly initiativeSlug?: string | null;
         readonly providerSessionId?: string | null;
         readonly stage?: string | null;
-        readonly sessionKind?: "collector" | "reviewer" | null;
+        readonly sessionKind?: "collector" | null;
         readonly runSlug?: string | null;
       };
     }
