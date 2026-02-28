@@ -98,9 +98,7 @@ const SessionViewBody = ({
   );
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
   const descriptionRestartAttempt =
-    activeRecord?.stage === "description" &&
-    activeRecord.runSlug !== "reviewer" &&
-    activeRecord.initiativeSlug
+    activeRecord?.stage === "description" && activeRecord.initiativeSlug
       ? {
           workspacePath: activeRecord.workspacePath,
           workspaceSlug: activeRecord.initiativeSlug,
