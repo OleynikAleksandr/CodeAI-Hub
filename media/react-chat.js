@@ -22037,8 +22037,8 @@ ${message.content}`
       ] });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Start with the questionnaire" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: 'In Artifacts on the right, complete the Description questionnaire and click "Submit questionnaire". Then select one provider in the picker to start your first session.' })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Start with the Description questionnaire" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: 'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.' })
     ] });
   };
   var empty_state_default = EmptyState;
