@@ -48,12 +48,12 @@
 **Цель:** Description-сессия должна быть resume-friendly и завершаться прямой записью `Final_Description.md` без обязательного авто-reviewer.
 
 ### Stream 0: Disable auto-reviewer and enable description resume
-1. [TODO] Убрать автостарт reviewer из workflow runtime и перевести описание в единый управляемый диалог (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor(core): disable description auto-reviewer and allow resume`).
-2. [TODO] Git Commit: `refactor(core): disable description auto-reviewer and allow resume` (hash: TBD)
+1. [DONE] Убрать автостарт reviewer из workflow runtime и перевести описание в единый управляемый диалог (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor(core): disable description auto-reviewer and allow resume`).
+2. [DONE] Git Commit: `refactor(core): disable description auto-reviewer and allow resume` (hash: `44593ccf`)
 
 ### Stream 1: Core workflow artifact plumbing (Final_Description.md)
-1. [TODO] Перевести Core allowlist/paths/validation для workflow-артефакта Description на `Final_Description.md` (и оставить чтение legacy `description.md` только для совместимости) (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `refactor(core): treat Final_Description.md as description artifact`).
-2. [TODO] Git Commit: `refactor(core): treat Final_Description.md as description artifact` (hash: TBD)
+1. [DONE] Перевести Core allowlist/paths/validation для workflow-артефакта Description на `Final_Description.md` (и оставить чтение legacy `description.md` только для совместимости) (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `refactor(core): treat Final_Description.md as description artifact`).
+2. [DONE] Git Commit: `refactor(core): treat Final_Description.md as description artifact` (hash: `65417cc8`)
 
 ### Stream 2: Description snapshot/state simplification
 1. [TODO] Упростить contract snapshot для Description (single primary session; legacy reviewer-поля оставить только для совместимости без развития функционала) (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): simplify description snapshot model for single-agent flow`).

@@ -1,6 +1,6 @@
-# Session 050 — Migration Description to Single-Agent (Phase 266 completed)
+# Session 050 — Migration Description to Single-Agent (Phase 266 done, Phase 267 in progress)
 
-**Date:** 2026-02-28 19:42 (CET)
+**Date:** 2026-02-28 19:46 (CET)
 **Branch:** main
 **Version:** 1.1.697
 
@@ -13,11 +13,16 @@
 - Синхронизирован SSOT `WorkflowSteps_Overview.md` под single-agent модель (`questionnaire.md -> Description Agent -> Final_Description.md`).
 - В контракт `DescriptionStep_SingleAgent.md` добавлен пофайловый migration plan и compatibility guardrails.
 - Фаза 266 (`Design Phase gate` + `План миграции и риски`) закрыта полностью в `doc/TODO/todo-plan.md`.
+- Phase 267 / Stream 0: отключён auto-start reviewer из runtime-потока Description, default resume для Description переведён на `resume_in_place`.
+- Phase 267 / Stream 1: Core artifact plumbing переключён на канонический `Final_Description.md` (paths/types/router).
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
 - `ebc9dd65 docs(workflow): approve single-agent description flow`
 - `744fc1f9 docs(description): add migration plan and compatibility rules`
+- `b0809e49 docs(session): record phase266 completion in session050`
+- `44593ccf refactor(core): disable description auto-reviewer and allow resume`
+- `65417cc8 refactor(core): treat Final_Description.md as description artifact`
 
 ---
 
@@ -35,6 +40,8 @@
 9. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
-- Начать реализацию Phase 267 Stream 0: убрать auto-reviewer и перевести `description` в `resume_in_place`.
-- Затем выполнить Phase 267 Stream 1: перевести Core artifact plumbing на `Final_Description.md`.
-- После завершения фазы 267 обновить этот же отчёт сессии и список commit-ов.
+- Закрыть оставшиеся Stream в Phase 267:
+  - Stream 2: simplification `description-step` snapshot model.
+  - Stream 3: backward compatibility guardrails (`workflow-state-service` + session tests).
+- После закрытия всей Phase 267 обновить этот отчёт сессии.
+- Перейти к Phase 268 (PM/UI wiring для `Final_Description.md` без `runs/` и reviewer UX).
