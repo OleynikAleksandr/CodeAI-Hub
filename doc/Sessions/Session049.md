@@ -65,3 +65,11 @@
   - Phase 268: переключить PM wiring так, чтобы Description писал стабильный `.codeai-hub/<workspaceSlug>/description/Final_Description.md` (без `runs/`).
   - Phase 269: обновить downstream prompts на `Final_Description.md` и синхронизировать bundled templates.
 - Обновить LEGACY SSOT: `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md` и `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md` под single-agent модель.
+
+---
+
+## Addendum (2026-02-28 20:14 CET)
+
+- Фазы 266–269 реализованы и закрыты в `doc/Sessions/Session050.md`.
+- Базовый workflow закреплён как single-agent Description (`Final_Description.md` как SSOT).
+- Standalone Reviewer остаётся в `Backlog Module R1 (DEFERRED)` и не входит в обязательный поток шага 1.

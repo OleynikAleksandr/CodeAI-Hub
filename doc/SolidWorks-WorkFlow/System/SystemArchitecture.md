@@ -50,3 +50,14 @@
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
+
+## 5) Workflow Boundary (Description, 2026-02-28)
+
+- Шаг `description` зафиксирован как single-agent flow: `questionnaire.md` → единая resume-сессия → `Final_Description.md`.
+- Legacy `description.md`/reviewer-цепочка поддерживается только для совместимости старых workspace и не является SSOT для новых шагов.
+- Standalone Reviewer вынесен в `Backlog Module R1 (DEFERRED)` и не является частью базового workflow 1→6.
+
+Канонические документы:
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/TODO/todo-plan.md`

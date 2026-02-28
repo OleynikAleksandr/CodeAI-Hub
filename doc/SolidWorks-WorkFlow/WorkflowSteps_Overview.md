@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
-**Status:** Draft (awaiting approval)
-**Updated:** 2026-02-27
+**Status:** Active SSOT
+**Updated:** 2026-02-28
 **Owner:** Oleksandr
 
 ---
@@ -82,6 +82,11 @@ Workflow декларирует и настоятельно рекомендуе
 - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 - Legacy (compat only): `.codeai-hub/<workspaceSlug>/description/description.md` может встречаться в старых workspace, но не является SSOT.
+
+### Граница отложенного reviewer-модуля
+
+Standalone/manual Reviewer не входит в базовый шаг 1 текущего workflow.
+Если такой модуль будет возвращён, он должен жить как отдельная архитектурная надстройка поверх `Final_Description.md`, а не как обязательная внутренняя фаза шага Description.
 
 ---
 
@@ -322,6 +327,7 @@ Workflow декларирует кластерно-модульную архит
 
 - Workflow Steps & Watcher (state machine шагов): `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - Virtual Simulation step (контракт): `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-- Description Node (single-agent, контракт): `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
+- Description Node (single-agent, контракт): `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+- Description Node (legacy/compat): `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 - Facade Class Diagram (process): `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - System Architecture: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
