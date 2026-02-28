@@ -108,8 +108,8 @@
 ## Phase 270 — Docs sync + release readiness (owner: Oleksandr, updated: 2026-02-28)
 
 ### Stream 0: SSOT sync and session report
-1. [TODO] Синхронизировать System/Contracts/Workflow docs по новому single-agent Description flow и зафиксировать границу отложенного reviewer-модуля, подготовить session-report (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/Sessions/Session049.md`; expected commit: `docs(workflow): sync single-agent description architecture`).
-2. [TODO] Git Commit: `docs(workflow): sync single-agent description architecture` (hash: TBD)
+1. [DONE] Синхронизировать System/Contracts/Workflow docs по новому single-agent Description flow и зафиксировать границу отложенного reviewer-модуля, подготовить session-report (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/Sessions/Session049.md`; expected commit: `docs(workflow): sync single-agent description architecture`).
+2. [DONE] Git Commit: `docs(workflow): sync single-agent description architecture` (hash: `29e69c31`)
 
 ### Stream 1: Optional release build
 1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
