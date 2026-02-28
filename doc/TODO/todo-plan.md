@@ -43,3 +43,15 @@
 ### Stream 1: Execution planning (после Design Gate)
 1. [BLOCKED] Раскрыть фазу реализации standalone reviewer на микро-задачи (runtime/core, PM/UI, templates) с лимитом ≤3 файлов на подзадачу и обязательными commit-step пунктами (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): expand standalone reviewer execution streams`).
 2. [BLOCKED] Git Commit: `docs(todo): expand standalone reviewer execution streams` (hash: TBD)
+
+---
+
+## Phase 273 — Docs index sync and root-doc audit (owner: Oleksandr, updated: 2026-02-28)
+
+### Stream 0: SSOT navigation completeness
+1. [DONE] Обновить `Docs_Index.md`: добавить недостающие новые документы (`DescriptionStep_SingleAgent.md`, `StandaloneReviewer_Module.md`) и явный статус root-документов draft/RFC (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(index): register new contracts and root docs status`).
+2. [TODO] Git Commit: `docs(index): register new contracts and root docs status` (hash: TBD)
+
+### Stream 1: Root documents актуальность
+1. [TODO] Провести аудит root-файлов в `doc/SolidWorks-WorkFlow/` и зафиксировать решение «нужен/архивировать/перенести» в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record solidworks root docs audit`).
+2. [TODO] Git Commit: `docs(session): record solidworks root docs audit` (hash: TBD)

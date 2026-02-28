@@ -30,6 +30,7 @@
 ### Contracts
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
 - `Contracts/DescriptionNode_ReviewSession.md` — контракт шага `Description → Reviewer`.
+- `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` в single-agent модели (`questionnaire.md -> Final_Description.md`).
 - `Contracts/SessionContinuity.md` — continuity handoff/rollover contract.
 - `Contracts/WorkspaceRuntime.md` — multi-workspace + snapshot-first + lock contract.
 - `Contracts/SessionUI_Behavior.md` — Session UI laws (happy path) + lock/unlock rules.
@@ -38,7 +39,12 @@
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
 - `Contracts/Workflow_CLI.md` — CLI steps + watcher contract.
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation` (manual start, артефакт, DoD, OUTDATED, bundled templates).
+- `Contracts/StandaloneReviewer_Module.md` — draft-контракт standalone reviewer-модуля (deferred, not started).
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
+
+### Root Drafts/RFC (non-SSOT, keep for history)
+- `CodeAI-Hub_Manual_Retry_RFC.md` — исторический RFC (status: Proposed), не канон; актуальные инварианты зафиксированы в `Contracts/SessionInputLock_SSOT_StateMachine.md` и `Contracts/ProviderSessionHome_SnapshotEngine_Design.md`.
+- `QuestionnaireTemplate_Draft.md` — промежуточный черновик анкеты из redesign-итерации; не является текущим SSOT-шаблоном.
 
 ## 2) Текущие источники до завершения миграции (legacy)
 
