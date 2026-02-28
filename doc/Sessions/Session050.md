@@ -1,4 +1,4 @@
-# Session 050 — Migration Description to Single-Agent (reviewer removed from active runtime/UI flow, release rebuilt to 1.1.701)
+# Session 050 — Migration Description to Single-Agent (reviewer removed from active runtime/UI flow, phase278 purge in progress)
 
 **Date:** 2026-02-28 23:15 (CET)
 **Branch:** main
@@ -59,6 +59,17 @@
   - `./scripts/build-release.sh --use-current-version` завершился успешно для `1.1.701`.
   - Подтверждены чекпойнты release checklist: `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`.
   - Собран VSIX: `codeai-hub-1.1.701.vsix` (~1.2M).
+- Phase 278 Stream 0–2 выполнены (final reviewer purge):
+  - PM/UI/shared переведены на `collector-only` unions и session-kind semantics.
+  - Core `description-step` snapshot/store очищен от reviewer slots; continuity/bridge helper logic синхронизирован с collector-only.
+  - `reviewer-agent` удалён из workspace graph, source package и legacy assets удалены из репозитория.
+- Дополнительно закрыты residual reviewer хвосты в runtime:
+  - `flow-node-continuity` фильтр для description переключён с `runSlug: reviewer` на `runSlug: collector`.
+  - Удалены reviewer literals из `dialog-id`/`prompt-pack-builder`; снят reviewer guard в UI description restart path.
+- Выполнена промежуточная валидация перед релизным rebuild:
+  - `npx tsc -p . --noEmit`
+  - `npm run build --workspace=@codeai-hub/core`
+  - `npm run build:project-manager`
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -109,6 +120,20 @@
 - `db6a16f9 docs(release): update notes for no-reviewer description flow`
 - `d677901b chore(release): build-all v1.1.701`
 - `bb0a1534 docs(session): record release after phase276`
+- `28c959a7 docs(todo): close phase277 and sync session050`
+- `01b2ff4d docs(todo): add phase278 final reviewer purge plan`
+- `f8dbe5c1 refactor(ui): remove reviewer session kind from active labels`
+- `eaefbb07 refactor(pm): strip reviewer fields from workflow state client`
+- `52e64a48 refactor(pm): align protocol types with collector-only flow`
+- `8756efe1 refactor(core): remove reviewer slots from description-step store`
+- `ffe64c6e refactor(core): keep description dialog continuity collector-only`
+- `f35a1e44 chore(workspace): detach reviewer-agent package`
+- `8a6c553f chore(repo): remove reviewer-agent source package`
+- `a0933c35 refactor(pm): drop reviewer session-kind unions in bridge types`
+- `049af700 fix(core): use collector continuity filter for description`
+- `d49d55b5 refactor(runtime): remove reviewer literals from active session flow`
+- `e0d3e4cd refactor(ui): remove reviewer guard from description restart`
+- `f654ccd9 chore(repo): remove reviewer-agent legacy assets`
 
 ---
 
@@ -127,7 +152,6 @@
 10. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
+- Закрыть `Phase 278 / Stream 3`: выполнить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` после purge и зафиксировать результаты в docs.
+- После релизного rebuild проверить свежий VSIX и tarballs (`~/.codeai-hub/releases`, `doc/tmp/releases/`) и обновить `doc/Sessions/Session050.md`.
 - Оставить `Phase 272` как `DEFERRED / NOT STARTED` до отдельного старта работ по standalone reviewer.
-- При старте `Phase 272` первым шагом вернуться к `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md` и пройти Design Gate.
-- После установки релиза `1.1.701` проверить, что в `~/.codeai-hub/templates/description/` отсутствуют `reviewer-prompt.md` и `reviewer-template.md`.
-- При старте следующей итерации определить границы следующей активной фазы (новые задачи либо запуск Phase 272).

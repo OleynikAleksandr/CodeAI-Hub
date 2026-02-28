@@ -127,27 +127,37 @@
 **Контекст:** завершить очистку: убрать remaining `reviewer` хвосты из active code paths и исключить `packages/agents/reviewer-agent` из текущего workspace до старта отдельной deferred фазы.
 
 ### Stream 0: PM/UI/Shared types cleanup
-1. [TODO] Убрать reviewer-ветки из session kind/display logic и API bridge типов в PM/UI/shared (scope: `src/types/session.ts`, `src/client/ui/src/session/session-tabs.tsx`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit: `refactor(ui): remove reviewer session kind from active labels`).
-2. [TODO] Git Commit: `refactor(ui): remove reviewer session kind from active labels` (hash: TBD)
-3. [TODO] Убрать reviewer-поля/union из PM state clients и runtime intents (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-resume-intent.ts`; expected commit: `refactor(pm): strip reviewer fields from workflow state client`).
-4. [TODO] Git Commit: `refactor(pm): strip reviewer fields from workflow state client` (hash: TBD)
-5. [TODO] Синхронизировать остаточные PM типы протокола (`api/core-stream/dialog helpers/tool select`) под collector-only semantics (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`; expected commit: `refactor(pm): align protocol types with collector-only flow`).
-6. [TODO] Git Commit: `refactor(pm): align protocol types with collector-only flow` (hash: TBD)
+1. [DONE] Убрать reviewer-ветки из session kind/display logic и API bridge типов в PM/UI/shared (scope: `src/types/session.ts`, `src/client/ui/src/session/session-tabs.tsx`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit: `refactor(ui): remove reviewer session kind from active labels`).
+2. [DONE] Git Commit: `refactor(ui): remove reviewer session kind from active labels` (hash: `f8dbe5c1`)
+3. [DONE] Убрать reviewer-поля/union из PM state clients и runtime intents (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-resume-intent.ts`; expected commit: `refactor(pm): strip reviewer fields from workflow state client`).
+4. [DONE] Git Commit: `refactor(pm): strip reviewer fields from workflow state client` (hash: `eaefbb07`)
+5. [DONE] Синхронизировать остаточные PM типы протокола (`api/core-stream/dialog helpers/tool select`) под collector-only semantics (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`; expected commit: `refactor(pm): align protocol types with collector-only flow`).
+6. [DONE] Git Commit: `refactor(pm): align protocol types with collector-only flow` (hash: `52e64a48`)
+7. [DONE] Убрать дополнительные reviewer-union из PM/UI bridge helper типов (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts`, `src/client/ui/src/core-bridge/types.ts`; expected commit: `refactor(pm): drop reviewer session-kind unions in bridge types`).
+8. [DONE] Git Commit: `refactor(pm): drop reviewer session-kind unions in bridge types` (hash: `a0933c35`)
+9. [DONE] Убрать residual reviewer literals из runtime slug/helpers (scope: `packages/core/src/session-continuity/dialog-id.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `refactor(runtime): remove reviewer literals from active session flow`).
+10. [DONE] Git Commit: `refactor(runtime): remove reviewer literals from active session flow` (hash: `d49d55b5`)
+11. [DONE] Убрать reviewer guard из description restart path в UI сессии (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `refactor(ui): remove reviewer guard from description restart`).
+12. [DONE] Git Commit: `refactor(ui): remove reviewer guard from description restart` (hash: `e0d3e4cd`)
 
 ### Stream 1: Core description snapshot legacy fields
-1. [TODO] Упростить `description-step` типы/store до collector-only snapshot slots и убрать reviewerSession/sessionKind=reviewer ветки (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): remove reviewer slots from description-step store`).
-2. [TODO] Git Commit: `refactor(core): remove reviewer slots from description-step store` (hash: TBD)
-3. [TODO] Синхронизировать bridge/session continuity helper logic с collector-only description dialog ids (scope: `packages/core/src/session-continuity/dialog-id.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit: `refactor(core): keep description dialog continuity collector-only`).
-4. [TODO] Git Commit: `refactor(core): keep description dialog continuity collector-only` (hash: TBD)
+1. [DONE] Упростить `description-step` типы/store до collector-only snapshot slots и убрать reviewerSession/sessionKind=reviewer ветки (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): remove reviewer slots from description-step store`).
+2. [DONE] Git Commit: `refactor(core): remove reviewer slots from description-step store` (hash: `8756efe1`)
+3. [DONE] Синхронизировать bridge/session continuity helper logic с collector-only description dialog ids (scope: `packages/core/src/session-continuity/dialog-id.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit: `refactor(core): keep description dialog continuity collector-only`).
+4. [DONE] Git Commit: `refactor(core): keep description dialog continuity collector-only` (hash: `ffe64c6e`)
+5. [DONE] Переключить continuity MVP filter с reviewer на collector для description (scope: `packages/core/src/flow-node-continuity/flow-node-continuity-types.ts`; expected commit: `fix(core): use collector continuity filter for description`).
+6. [DONE] Git Commit: `fix(core): use collector continuity filter for description` (hash: `049af700`)
 
 ### Stream 2: Reviewer agent package deactivation
-1. [TODO] Удалить `reviewer-agent` из активного npm workspace graph (scope: `package.json`, `package-lock.json`; expected commit: `chore(workspace): detach reviewer-agent package`).
-2. [TODO] Git Commit: `chore(workspace): detach reviewer-agent package` (hash: TBD)
-3. [TODO] Архивно отключить source package reviewer-agent из текущей кодовой базы (scope: `packages/agents/reviewer-agent/package.json`, `packages/agents/reviewer-agent/src/index.ts`, `packages/agents/reviewer-agent/src/facade.ts`; expected commit: `chore(repo): remove reviewer-agent source package`).
-4. [TODO] Git Commit: `chore(repo): remove reviewer-agent source package` (hash: TBD)
+1. [DONE] Удалить `reviewer-agent` из активного npm workspace graph (scope: `package.json`, `package-lock.json`; expected commit: `chore(workspace): detach reviewer-agent package`).
+2. [DONE] Git Commit: `chore(workspace): detach reviewer-agent package` (hash: `f35a1e44`)
+3. [DONE] Архивно отключить source package reviewer-agent из текущей кодовой базы (scope: `packages/agents/reviewer-agent/package.json`, `packages/agents/reviewer-agent/src/index.ts`, `packages/agents/reviewer-agent/src/facade.ts`; expected commit: `chore(repo): remove reviewer-agent source package`).
+4. [DONE] Git Commit: `chore(repo): remove reviewer-agent source package` (hash: `8a6c553f`)
+5. [DONE] Удалить legacy assets reviewer-agent из репозитория (scope: `packages/agents/reviewer-agent/assets/reviewer-prompt.md`, `packages/agents/reviewer-agent/assets/reviewer-template.md`; expected commit: `chore(repo): remove reviewer-agent legacy assets`).
+6. [DONE] Git Commit: `chore(repo): remove reviewer-agent legacy assets` (hash: `f654ccd9`)
 
 ### Stream 3: Validation, release rebuild, and session final report
-1. [TODO] Прогнать валидацию (`npx tsc -p . --noEmit` + target builds при необходимости), обновить `todo-plan` + `Session050` и подготовить итоговый отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session050.md`; expected commit: `docs(session): finalize phase278 reviewer purge report`).
+1. [DONE] Прогнать валидацию (`npx tsc -p . --noEmit` + target builds при необходимости), обновить `todo-plan` + `Session050` и подготовить итоговый отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session050.md`; expected commit: `docs(session): finalize phase278 reviewer purge report`).
 2. [TODO] Git Commit: `docs(session): finalize phase278 reviewer purge report` (hash: TBD)
 3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` после финальной purge и зафиксировать релизный коммит (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
 4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
