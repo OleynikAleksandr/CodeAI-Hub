@@ -56,12 +56,12 @@
 2. [DONE] Git Commit: `refactor(core): treat Final_Description.md as description artifact` (hash: `65417cc8`)
 
 ### Stream 2: Description snapshot/state simplification
-1. [TODO] Упростить contract snapshot для Description (single primary session; legacy reviewer-поля оставить только для совместимости без развития функционала) (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): simplify description snapshot model for single-agent flow`).
-2. [TODO] Git Commit: `refactor(core): simplify description snapshot model for single-agent flow` (hash: TBD)
+1. [DONE] Упростить contract snapshot для Description (single primary session; legacy reviewer-поля оставить только для совместимости без развития функционала) (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): simplify description snapshot model for single-agent flow`).
+2. [DONE] Git Commit: `refactor(core): simplify description snapshot model for single-agent flow` (hash: `b622dbee`)
 
 ### Stream 3: Backward compatibility guardrails
-1. [TODO] Добавить совместимость с существующими workspace (legacy `description.md` и старые refs не должны ломать gating и continuity) (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix(core): keep legacy description compatibility during migration`).
-2. [TODO] Git Commit: `fix(core): keep legacy description compatibility during migration` (hash: TBD)
+1. [DONE] Добавить совместимость с существующими workspace (legacy `description.md` и старые refs не должны ломать gating и continuity) (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix(core): keep legacy description compatibility during migration`).
+2. [DONE] Git Commit: `fix(core): keep legacy description compatibility during migration` (hash: `21c4253a`)
 
 ---
 
