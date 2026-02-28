@@ -88,10 +88,9 @@ export const handleWorkspaceActivate = async (params: {
     );
 
     if (descriptionSnapshot) {
-      // Prefer per-agent session refs when available (collector + reviewer).
-      // Fall back to legacy `session` + `sessionKind` for older snapshots.
+      // Description works in single-session collector mode.
+      // Legacy reviewer slots are intentionally ignored.
       const collector = descriptionSnapshot.collectorSession;
-      const reviewer = descriptionSnapshot.reviewerSession;
       const legacy = descriptionSnapshot.session;
 
       if (collector) {
@@ -107,29 +106,14 @@ export const handleWorkspaceActivate = async (params: {
         );
       }
 
-      if (reviewer) {
-        await params.sessionHandler.handleCreate(
-          reviewer.providerId,
-          workspacePath,
-          {
-            initiativeSlug: workspaceSlug,
-            stage: "description",
-            runSlug: "reviewer",
-            providerSessionId: reviewer.providerSessionId,
-          }
-        );
-      }
-
-      if (!(collector || reviewer) && legacy) {
-        const runSlug =
-          descriptionSnapshot.sessionKind === "reviewer" ? "reviewer" : null;
+      if (!collector && legacy) {
         await params.sessionHandler.handleCreate(
           legacy.providerId,
           workspacePath,
           {
             initiativeSlug: workspaceSlug,
             stage: "description",
-            runSlug,
+            runSlug: null,
             providerSessionId: legacy.providerSessionId,
           }
         );

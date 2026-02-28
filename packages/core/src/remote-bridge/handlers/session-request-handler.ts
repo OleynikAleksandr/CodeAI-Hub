@@ -46,7 +46,7 @@ import {
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
-const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__(collector|reviewer)$/;
+const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__collector$/;
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
 
@@ -457,9 +457,6 @@ export class SessionRequestHandler {
   }): SessionResumeMode {
     if (options.explicitMode) {
       return options.explicitMode;
-    }
-    if (options.stage === "description" && options.runSlug !== "reviewer") {
-      return "resume_in_place";
     }
     return "resume_in_place";
   }
@@ -1182,7 +1179,6 @@ export class SessionRequestHandler {
   ): boolean {
     return (
       options.context.stage === "description" &&
-      options.context.runSlug !== "reviewer" &&
       !options.context.providerSessionId
     );
   }
@@ -1622,7 +1618,7 @@ export class SessionRequestHandler {
     readonly stageId: string | null;
     readonly runSlug: string | null;
   }): Promise<string> {
-    if (options.stageId !== "description" || options.runSlug === "reviewer") {
+    if (options.stageId !== "description") {
       return options.rootSessionId;
     }
     if (!options.rootSessionId.endsWith("-agent")) {
@@ -2086,9 +2082,6 @@ export class SessionRequestHandler {
 
   private inferRunSlugFromDialogId(dialogId: string): string | null {
     const trimmed = dialogId.trim().toLowerCase();
-    if (trimmed.endsWith("__reviewer") || trimmed.endsWith("-reviewer")) {
-      return "reviewer";
-    }
     if (trimmed.endsWith("__collector") || trimmed.endsWith("-collector")) {
       return "collector";
     }
@@ -2766,18 +2759,6 @@ export class SessionRequestHandler {
     });
   }
 
-  private resolveDescriptionReviewerFinalArtifactPath(
-    session: Session
-  ): string {
-    const relativePath = path.join(
-      ".codeai-hub",
-      session.initiativeSlug ?? "default-workspace",
-      "description",
-      "Final_Description.md"
-    );
-    return path.resolve(session.workspacePath, relativePath);
-  }
-
   private resolveFlowNodeId(stageId: string, runSlug: string | null): string {
     return runSlug ? `${stageId}/${runSlug}` : stageId;
   }
@@ -2789,34 +2770,17 @@ export class SessionRequestHandler {
     return `${runSlug.slice(0, 1).toUpperCase()}${runSlug.slice(1)}`;
   }
 
-  private resolveFlowNodeContinuityTemplate(options: {
-    readonly session: Session;
-    readonly stageId: string;
-  }): {
+  private resolveFlowNodeContinuityTemplate(): {
     readonly templateId:
       | "flow/continuity/create-report-doc.md"
       | "flow/continuity/create-report-code.md";
     readonly canonicalArtifactPath: string;
     readonly isReviewerBootstrapEligible: boolean;
   } {
-    const isReviewerBootstrapEligible =
-      options.stageId === "description" &&
-      options.session.runSlug === "reviewer";
-
-    if (isReviewerBootstrapEligible) {
-      return {
-        templateId: "flow/continuity/create-report-doc.md",
-        canonicalArtifactPath: this.resolveDescriptionReviewerFinalArtifactPath(
-          options.session
-        ),
-        isReviewerBootstrapEligible,
-      };
-    }
-
     return {
       templateId: "flow/continuity/create-report-code.md",
       canonicalArtifactPath: "",
-      isReviewerBootstrapEligible,
+      isReviewerBootstrapEligible: false,
     };
   }
 
@@ -2914,7 +2878,7 @@ export class SessionRequestHandler {
     }
 
     const { canonicalArtifactPath, templateId } =
-      this.resolveFlowNodeContinuityTemplate({ session, stageId });
+      this.resolveFlowNodeContinuityTemplate();
 
     const createReportPrompt = this.flowNodeContinuity.renderTemplate(
       templateId,
@@ -3805,20 +3769,14 @@ export class SessionRequestHandler {
       };
     }
 
-    const sessionKind =
-      session.runSlug === "reviewer" ? "reviewer" : ("collector" as const);
+    const sessionKind = "collector" as const;
 
     const snapshot = await this.descriptionStepStore.read(
       session.workspacePath,
       session.initiativeSlug
     );
 
-    // "1 agent = 1 dialog JSONL": collector and reviewer must never share the
-    // same unified-session history id, even if the provider thread id is reused.
-    const slot =
-      sessionKind === "reviewer"
-        ? snapshot?.reviewerSession
-        : snapshot?.collectorSession;
+    const slot = snapshot?.collectorSession;
 
     const legacySlot =
       snapshot?.sessionKind === sessionKind ? snapshot?.session : undefined;
@@ -3837,11 +3795,8 @@ export class SessionRequestHandler {
       legacySlot?.providerSessionId ??
       options.providerSessionId;
 
-    // New per-agent dialog id format.
     return {
       dialogSessionId: `${baseSessionId}__${sessionKind}`,
-      // Backfill/migration is handled explicitly in a dedicated stream to avoid
-      // mixing legacy collector+reviewer history into the new per-agent files.
       shouldBackfill: false,
     };
   }
@@ -3918,17 +3873,14 @@ export class SessionRequestHandler {
     if (!resolvedProviderSessionId) {
       return;
     }
-    const sessionKind =
-      session.runSlug === "reviewer" ? "reviewer" : "collector";
+    const sessionKind = "collector" as const;
     const continuityRootSessionId =
       this.continuityRootBySessionId.get(session.id) ?? session.id;
 
     const shouldResetCollectorArtifacts =
-      sessionKind === "collector"
-        ? await this.shouldResetDescriptionCollectorArtifacts(session).catch(
-            () => false
-          )
-        : false;
+      await this.shouldResetDescriptionCollectorArtifacts(session).catch(
+        () => false
+      );
 
     // Unified session history is stored under a workspace key derived from the
     // absolute workspace path (not the workflow slug/initiative slug).
@@ -3959,9 +3911,8 @@ export class SessionRequestHandler {
             jsonlPath,
             dialogSessionId: continuityRootSessionId,
           },
-          collectorSession:
-            sessionKind === "collector" ? sessionRef : undefined,
-          reviewerSession: sessionKind === "reviewer" ? sessionRef : undefined,
+          collectorSession: sessionRef,
+          reviewerSession: undefined,
           sessionKind,
           draftPath: shouldResetCollectorArtifacts ? null : undefined,
           finalPath: shouldResetCollectorArtifacts ? null : undefined,
@@ -3978,7 +3929,7 @@ export class SessionRequestHandler {
   private async shouldResetDescriptionCollectorArtifacts(
     session: Session
   ): Promise<boolean> {
-    if (session.stage !== "description" || session.runSlug === "reviewer") {
+    if (session.stage !== "description") {
       return false;
     }
     if (!session.initiativeSlug) {
@@ -3993,7 +3944,7 @@ export class SessionRequestHandler {
     if (!snapshot) {
       return true;
     }
-    if (snapshot.sessionKind === "reviewer" || snapshot.finalPath) {
+    if (snapshot.finalPath) {
       return false;
     }
     return true;
