@@ -119,3 +119,37 @@
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `d677901b`)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить checklist (`Verifying SDK exclusions`, `Removing dev dependencies`, `✅ Package created`) и зафиксировать результаты в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release after phase276`).
 4. [DONE] Git Commit: `docs(session): record release after phase276` (hash: `bb0a1534`)
+
+---
+
+## Phase 278 — Final reviewer purge from codebase (owner: Oleksandr, updated: 2026-02-28)
+
+**Контекст:** завершить очистку: убрать remaining `reviewer` хвосты из active code paths и исключить `packages/agents/reviewer-agent` из текущего workspace до старта отдельной deferred фазы.
+
+### Stream 0: PM/UI/Shared types cleanup
+1. [TODO] Убрать reviewer-ветки из session kind/display logic и API bridge типов в PM/UI/shared (scope: `src/types/session.ts`, `src/client/ui/src/session/session-tabs.tsx`, `src/client/ui/src/core-bridge/normalizers.ts`; expected commit: `refactor(ui): remove reviewer session kind from active labels`).
+2. [TODO] Git Commit: `refactor(ui): remove reviewer session kind from active labels` (hash: TBD)
+3. [TODO] Убрать reviewer-поля/union из PM state clients и runtime intents (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/session-resume-intent.ts`; expected commit: `refactor(pm): strip reviewer fields from workflow state client`).
+4. [TODO] Git Commit: `refactor(pm): strip reviewer fields from workflow state client` (hash: TBD)
+5. [TODO] Синхронизировать остаточные PM типы протокола (`api/core-stream/dialog helpers/tool select`) под collector-only semantics (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`; expected commit: `refactor(pm): align protocol types with collector-only flow`).
+6. [TODO] Git Commit: `refactor(pm): align protocol types with collector-only flow` (hash: TBD)
+
+### Stream 1: Core description snapshot legacy fields
+1. [TODO] Упростить `description-step` типы/store до collector-only snapshot slots и убрать reviewerSession/sessionKind=reviewer ветки (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): remove reviewer slots from description-step store`).
+2. [TODO] Git Commit: `refactor(core): remove reviewer slots from description-step store` (hash: TBD)
+3. [TODO] Синхронизировать bridge/session continuity helper logic с collector-only description dialog ids (scope: `packages/core/src/session-continuity/dialog-id.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`; expected commit: `refactor(core): keep description dialog continuity collector-only`).
+4. [TODO] Git Commit: `refactor(core): keep description dialog continuity collector-only` (hash: TBD)
+
+### Stream 2: Reviewer agent package deactivation
+1. [TODO] Удалить `reviewer-agent` из активного npm workspace graph (scope: `package.json`, `package-lock.json`; expected commit: `chore(workspace): detach reviewer-agent package`).
+2. [TODO] Git Commit: `chore(workspace): detach reviewer-agent package` (hash: TBD)
+3. [TODO] Архивно отключить source package reviewer-agent из текущей кодовой базы (scope: `packages/agents/reviewer-agent/package.json`, `packages/agents/reviewer-agent/src/index.ts`, `packages/agents/reviewer-agent/src/facade.ts`; expected commit: `chore(repo): remove reviewer-agent source package`).
+4. [TODO] Git Commit: `chore(repo): remove reviewer-agent source package` (hash: TBD)
+
+### Stream 3: Validation, release rebuild, and session final report
+1. [TODO] Прогнать валидацию (`npx tsc -p . --noEmit` + target builds при необходимости), обновить `todo-plan` + `Session050` и подготовить итоговый отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session050.md`; expected commit: `docs(session): finalize phase278 reviewer purge report`).
+2. [TODO] Git Commit: `docs(session): finalize phase278 reviewer purge report` (hash: TBD)
+3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` после финальной purge и зафиксировать релизный коммит (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
+4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+5. [TODO] Зафиксировать release results в session report (`checklist` + VSIX + tarballs) (scope: `doc/Sessions/Session050.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-purge release results`).
+6. [TODO] Git Commit: `docs(session): record post-purge release results` (hash: TBD)
