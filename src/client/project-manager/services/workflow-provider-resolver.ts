@@ -11,7 +11,6 @@ const resolveProviderIdFromDescription = (
   const candidates: readonly unknown[] = [
     description?.session?.providerId,
     description?.collectorSession?.providerId,
-    description?.reviewerSession?.providerId,
   ];
   for (const candidate of candidates) {
     if (isProviderStackId(candidate)) {

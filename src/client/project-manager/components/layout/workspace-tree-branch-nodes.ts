@@ -31,8 +31,6 @@ export const buildDescriptionBranchNodes = (options: {
       ? "description.md"
       : "questionnaire.md";
   const artifactStatus = branch.finalPath ? "active" : "draft";
-  const isReviewerSession = branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
-  const isTerminalCollector = !isReviewerSession && Boolean(branch.draftPath);
   if (artifactPath) {
     nodes.push({
       id: "workflow:description:artifact",
@@ -43,7 +41,7 @@ export const buildDescriptionBranchNodes = (options: {
       onSelect: () => {
         options.selectArtifact(artifactPath, artifactLabel);
         // Sync: open the session for the same stage
-        if (session && !isTerminalCollector && options.workspaceSlug && options.workspacePath) {
+        if (session && options.workspaceSlug && options.workspacePath) {
           options.dispatchDialogOpenIntent({
             providerId: session.providerId,
             providerSessionId: session.providerSessionId,
@@ -51,8 +49,8 @@ export const buildDescriptionBranchNodes = (options: {
             workspaceSlug: options.workspaceSlug,
             initiativeSlug: options.workspaceSlug,
             stage: "description",
-            sessionKind: isReviewerSession ? "reviewer" : "collector",
-            runSlug: isReviewerSession ? "reviewer" : null,
+            sessionKind: "collector",
+            runSlug: null,
           });
         }
       },
@@ -60,36 +58,31 @@ export const buildDescriptionBranchNodes = (options: {
   }
   if (session) {
     const providerTitle = resolveProviderTitle(session.providerId);
-    const label = isReviewerSession
-      ? `Reviewer ${providerTitle}`
-      : `Description ${providerTitle}${isTerminalCollector ? " (read-only)" : ""}`;
-    const runSlug = isReviewerSession ? "reviewer" : null;
+    const label = `Description ${providerTitle}`;
     nodes.push({
       id: "workflow:description:session",
       label,
-      status: isTerminalCollector ? "blocked" : "active",
+      status: "active",
       visualDepth: 2,
-      onSelect: isTerminalCollector
-        ? undefined
-        : () => {
-            if (!(options.workspaceSlug && options.workspacePath)) {
-              return;
-            }
-            options.dispatchDialogOpenIntent({
-              providerId: session.providerId,
-              providerSessionId: session.providerSessionId,
-              workspacePath: options.workspacePath,
-              workspaceSlug: options.workspaceSlug,
-              initiativeSlug: options.workspaceSlug,
-              stage: "description",
-              sessionKind: isReviewerSession ? "reviewer" : "collector",
-              runSlug,
-            });
-            // Sync: select the artifact for the same stage
-            if (artifactPath) {
-              options.selectArtifact(artifactPath, artifactLabel);
-            }
-          },
+      onSelect: () => {
+        if (!(options.workspaceSlug && options.workspacePath)) {
+          return;
+        }
+        options.dispatchDialogOpenIntent({
+          providerId: session.providerId,
+          providerSessionId: session.providerSessionId,
+          workspacePath: options.workspacePath,
+          workspaceSlug: options.workspaceSlug,
+          initiativeSlug: options.workspaceSlug,
+          stage: "description",
+          sessionKind: "collector",
+          runSlug: null,
+        });
+        // Sync: select the artifact for the same stage
+        if (artifactPath) {
+          options.selectArtifact(artifactPath, artifactLabel);
+        }
+      },
     });
   }
   return nodes;
@@ -140,14 +133,12 @@ export const resolveStageSyncPayload = (options: {
       : branch.draftPath
         ? "description.md"
         : "questionnaire.md";
-    const isReviewerSession = branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
-    const isTerminalCollector = !isReviewerSession && Boolean(branch.draftPath);
     const session = branch.session;
     return {
       artifact: artifactPath ? { path: artifactPath, label: artifactLabel } : null,
       clearTool: null,
       session:
-        session && !isTerminalCollector
+        session
           ? {
               providerId: session.providerId,
               providerSessionId: session.providerSessionId,
@@ -155,8 +146,8 @@ export const resolveStageSyncPayload = (options: {
               workspaceSlug,
               initiativeSlug: workspaceSlug,
               stage: "description",
-              sessionKind: isReviewerSession ? "reviewer" : "collector",
-              runSlug: isReviewerSession ? "reviewer" : null,
+              sessionKind: "collector",
+              runSlug: null,
             }
           : null,
     };

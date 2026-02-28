@@ -9,7 +9,7 @@ export type SessionResumeIntent = {
   readonly workspaceSlug: string;
   readonly initiativeSlug: string | null;
   readonly stage: string | null;
-  readonly sessionKind: "collector" | "reviewer" | null;
+  readonly sessionKind: "collector" | null;
   readonly runSlug: string | null;
 };
 
@@ -90,8 +90,6 @@ export const useWorkspaceTreeAutoSelect = (
         params.onSelectArtifact(artifactPath, artifactLabel);
       }
       if (branch?.session?.providerSessionId) {
-        const isReviewerSession =
-          branch.sessionKind === "reviewer" || Boolean(branch.finalPath);
         params.onResumeSession({
           providerId: branch.session.providerId,
           providerSessionId: branch.session.providerSessionId,
@@ -99,8 +97,8 @@ export const useWorkspaceTreeAutoSelect = (
           workspaceSlug: params.workspaceSlug,
           initiativeSlug: params.workspaceSlug,
           stage: "description",
-          sessionKind: isReviewerSession ? "reviewer" : "collector",
-          runSlug: isReviewerSession ? "reviewer" : null,
+          sessionKind: "collector",
+          runSlug: null,
         });
       }
       if (hasUnsubmittedQuestionnaire) return;
