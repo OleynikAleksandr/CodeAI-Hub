@@ -1,6 +1,6 @@
-# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, release 1.1.698 built, Phase 271 planned)
+# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, release 1.1.698 built, Phase 271 Stream 0 in progress)
 
-**Date:** 2026-02-28 20:23 (CET)
+**Date:** 2026-02-28 20:26 (CET)
 **Branch:** main
 **Version:** 1.1.698
 
@@ -31,6 +31,8 @@
   - Stream 1: выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для версии `1.1.698`; собран VSIX `codeai-hub-1.1.698.vsix` (1.2M), локальные tarball-артефакты обновлены в `~/.codeai-hub/releases` и `doc/tmp/releases`.
 - Полностью реализованный `doc/TODO/todo-plan.md` (до Phase 270) перенесён в `doc/TODO/Archive/todo-plan-up-to-phase270-2026-02-28.md`.
 - Сформирован новый `doc/TODO/todo-plan.md` для `Phase 271` (design kickoff standalone reviewer-модуля).
+- Для `Phase 271 / Stream 0` подготовлен черновой архитектурный контракт `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md` (manual trigger, out-of-band boundary, reviewer artifacts, apply semantics).
+- В `todo-plan` зафиксировано закрытие Task 1 + commit hash (`6f2aaf55`); дальнейшие шаги остаются `BLOCKED` до user approval контракта.
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -56,6 +58,8 @@
 - `15c8b11c chore(release): build-all v1.1.698`
 - `42c8dd6c docs(session): record release results for single-description flow`
 - `64a085ba docs(todo): close phase270 and sync session050`
+- `78b7bf4e docs(todo): archive phase270 plan and seed phase271`
+- `6f2aaf55 docs(reviewer): draft standalone reviewer module architecture`
 
 ---
 
@@ -69,10 +73,11 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 7. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session050.md` (THIS REPORT)
+8. `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md`
+9. `doc/TODO/todo-plan.md`
+10. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
-- Реализовать `Phase 271 / Stream 0 / Task 1`: подготовить `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md`.
-- После утверждения архитектурного контракта синхронизировать SSOT (`WorkflowSteps_Overview.md`, `SystemArchitecture.md`).
-- После архитектурного gate раскрыть Stream 1 с микро-задачами реализации standalone reviewer (runtime/core, PM/UI, templates).
+- Получить user approval/правки по `StandaloneReviewer_Module.md` (Design Gate для `Phase 271 / Stream 0`).
+- После утверждения выполнить `Phase 271 / Stream 0 / Task 3`: синхронизировать SSOT boundary в `WorkflowSteps_Overview.md` и `SystemArchitecture.md`.
+- После закрытия Stream 0 раскрыть `Stream 1` в `todo-plan` на микро-задачи реализации standalone reviewer (runtime/core, PM/UI, templates).

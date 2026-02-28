@@ -23,7 +23,7 @@
 
 ### Stream 0: Design Phase gate (архитектурное согласование)
 1. [DONE] Подготовить архитектурный контракт standalone reviewer: manual trigger, границы ответственности, артефакты, resume/memory policy, интеграция с PM/UI (scope: `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md`; expected commit: `docs(reviewer): draft standalone reviewer module architecture`).
-2. [TODO] Git Commit: `docs(reviewer): draft standalone reviewer module architecture` (hash: TBD)
+2. [DONE] Git Commit: `docs(reviewer): draft standalone reviewer module architecture` (hash: `6f2aaf55`)
 3. [BLOCKED] После утверждения контракта пользователем синхронизировать SSOT workflow документы и boundary с существующими шагами (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(workflow): approve standalone reviewer module boundary`).
 4. [BLOCKED] Git Commit: `docs(workflow): approve standalone reviewer module boundary` (hash: TBD)
 
