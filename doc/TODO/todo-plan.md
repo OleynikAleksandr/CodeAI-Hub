@@ -115,7 +115,7 @@
 ## Phase 277 — Release rebuild after phase276 (owner: Oleksandr, updated: 2026-02-28)
 
 ### Stream 0: Build and release verification
-1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать новую версию после phase276 (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
-2. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить checklist (`Verifying SDK exclusions`, `Removing dev dependencies`, `✅ Package created`) и зафиксировать результаты в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release after phase276`).
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать новую версию после phase276 (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
+2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `d677901b`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить checklist (`Verifying SDK exclusions`, `Removing dev dependencies`, `✅ Package created`) и зафиксировать результаты в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release after phase276`).
 4. [TODO] Git Commit: `docs(session): record release after phase276` (hash: TBD)

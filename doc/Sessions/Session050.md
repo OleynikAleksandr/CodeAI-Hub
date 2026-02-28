@@ -1,8 +1,8 @@
-# Session 050 — Migration Description to Single-Agent (reviewer removed from active runtime/UI flow, release rebuild in progress)
+# Session 050 — Migration Description to Single-Agent (reviewer removed from active runtime/UI flow, release rebuilt to 1.1.701)
 
-**Date:** 2026-02-28 22:35 (CET)
+**Date:** 2026-02-28 23:15 (CET)
 **Branch:** main
-**Version:** 1.1.700
+**Version:** 1.1.701
 
 ---
 
@@ -53,6 +53,12 @@
   - Core: удалены reviewer auto-runtime ветки из `WorkflowRuntime`, `workspace activate`, `session-request-handler` для active description потока.
   - PM/UI: убраны reviewer auto-focus/visibility ветки, удалён reviewer visibility модуль, `workspace-tree` и resume intent приведены к collector-only для `description`.
   - Templates: `description-collector-prompt.md` очищен от reviewer-терминов, bundled templates пересобраны.
+- Перед релизом синхронизированы release notes в `README.md` и `CHANGELOG.md` под no-reviewer description flow.
+- Phase 277 выполнена:
+  - `./scripts/build-all.sh` поднял unified version до `1.1.701`, пересобрал provider/core/ui/launcher артефакты и обновил tarball cache (`~/.codeai-hub/releases` + `doc/tmp/releases`).
+  - `./scripts/build-release.sh --use-current-version` завершился успешно для `1.1.701`.
+  - Подтверждены чекпойнты release checklist: `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`.
+  - Собран VSIX: `codeai-hub-1.1.701.vsix` (~1.2M).
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -99,6 +105,9 @@
 - `1a0bd08e build(templates): remove reviewer wording from description prompt`
 - `386df167 refactor(pm): keep description resume in collector mode`
 - `6434243e test(pm): align auto-select assertions with no-reviewer flow`
+- `76ef5635 docs(todo): close phase276 and seed phase277`
+- `db6a16f9 docs(release): update notes for no-reviewer description flow`
+- `d677901b chore(release): build-all v1.1.701`
 
 ---
 
@@ -119,5 +128,5 @@
 ## Plans for next session
 - Оставить `Phase 272` как `DEFERRED / NOT STARTED` до отдельного старта работ по standalone reviewer.
 - При старте `Phase 272` первым шагом вернуться к `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md` и пройти Design Gate.
-- Завершить `Phase 277`: пересобрать релиз (`build-all` + `build-release`) после runtime/UI reviewer-removal и зафиксировать результаты.
-- После установки нового релиза проверить, что в `~/.codeai-hub/templates/description/` отсутствуют `reviewer-prompt.md` и `reviewer-template.md`.
+- После установки релиза `1.1.701` проверить, что в `~/.codeai-hub/templates/description/` отсутствуют `reviewer-prompt.md` и `reviewer-template.md`.
+- При старте следующей итерации определить границы следующей активной фазы (новые задачи либо запуск Phase 272).
