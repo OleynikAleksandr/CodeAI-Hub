@@ -1,8 +1,8 @@
-# Session 050 — Migration Description to Single-Agent (Phase 266-269 done, Phase 270 in progress)
+# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, release 1.1.698 built)
 
-**Date:** 2026-02-28 20:14 (CET)
+**Date:** 2026-02-28 20:19 (CET)
 **Branch:** main
-**Version:** 1.1.697
+**Version:** 1.1.698
 
 ---
 
@@ -26,6 +26,9 @@
   - Stream 0: prompt/template Description Agent переведены на адаптивную структуру и explicit single-session правила (вопросы в чате + запись `Final_Description.md` после подтверждения).
   - Stream 1: downstream prompt templates переключены на `Final_Description.md` как upstream source of truth.
   - Stream 2: синхронизированы bundled templates (новая карта description/reviewer assets), добавлена release-проверка покрытия путей доставки в `~/.codeai-hub/templates`.
+- Phase 270 завершена по плану:
+  - Stream 0: синхронизированы `SystemArchitecture.md` и `WorkflowSteps_Overview.md`, зафиксирована граница deferred standalone reviewer-модуля; Session049 дополнен итоговым addendum.
+  - Stream 1: выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для версии `1.1.698`; собран VSIX `codeai-hub-1.1.698.vsix` (1.2M), локальные tarball-артефакты обновлены в `~/.codeai-hub/releases` и `doc/tmp/releases`.
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -45,6 +48,10 @@
 - `a61f06c6 feat(agents): define adaptive single description agent prompt`
 - `89340368 docs(todo): update phase269 stream0 progress`
 - `5fc966f5 build(templates): sync bundled templates with new description flow`
+- `94bb8f3b docs(todo): close phase269 and sync session050`
+- `29e69c31 docs(workflow): sync single-agent description architecture`
+- `1475d17b docs(todo): update phase270 stream0 progress`
+- `15c8b11c chore(release): build-all v1.1.698`
 
 ---
 
@@ -62,6 +69,6 @@
 9. `doc/Sessions/Session050.md` (THIS REPORT)
 
 ## Plans for next session
-- Закрыть Phase 270 / Stream 0: синхронизировать System/Workflow docs и зафиксировать границу deferred standalone reviewer-модуля.
-- Подготовить clean-tree и решить по запуску optional release build (Phase 270 / Stream 1).
-- При решении запускать релиз: выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и занести результаты в session report.
+- Финализировать `doc/TODO/todo-plan.md` после commit фиксации результатов release stream (hash для пункта `docs(session): ...`).
+- Заархивировать полностью реализованный `doc/TODO/todo-plan.md` в `doc/TODO/Archive/` и подготовить новый `todo-plan.md` под следующие задачи.
+- По запросу: стартовать `Backlog Module R1 (DEFERRED)` как отдельный архитектурный модуль standalone reviewer.
