@@ -60,17 +60,17 @@ Workflow декларирует и настоятельно рекомендуе
 **Выход:**
 - `questionnaire.md` — зафиксированная анкета (артефакт шага).
 
-### Подшаг 1.2 — Draft Description → Review → Final Description
+### Подшаг 1.2 — Description Agent (единая сессия) → Final Description
 
-**Кто ведёт:** Review Agent (в бесконечном диалоге с пользователем).
+**Кто ведёт:** Description Agent (в бесконечном диалоге с пользователем).
 
-Агент читает заполненную анкету и сгенерированный draft (`description.md`), обсуждает слабые места, задаёт уточняющие вопросы. Никаких искусственных лимитов: ни на количество вопросов агента, ни на количество замечаний пользователя. Диалог продолжается столько, сколько нужно, пока пользователь не скажет «утверждаю».
+Агент читает заполненную анкету, задаёт уточняющие вопросы и итеративно собирает итоговое описание. Никаких искусственных лимитов: ни на количество вопросов агента, ни на количество замечаний пользователя. Диалог продолжается столько, сколько нужно, пока пользователь не скажет «утверждаю».
 
 На этом этапе уже желательно обсудить **примерный состав модулей и кластеров**, но без жёсткой фиксации — это первое приближение, которое будет уточняться на следующих шагах.
 
 **Вход:**
 - `questionnaire.md` — заполненная анкета.
-- `description.md` — draft, сгенерированный Description Agent.
+- (опционально) документы из `pre_read_documents`, если они указаны пользователем.
 
 **Выход:**
 - `Final_Description.md` — отполированный, утверждённый пользователем документ описания.
@@ -80,8 +80,8 @@ Workflow декларирует и настоятельно рекомендуе
 ### Артефакты шага
 
 - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
-- `.codeai-hub/<workspaceSlug>/description/description.md`
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
+- Legacy (compat only): `.codeai-hub/<workspaceSlug>/description/description.md` может встречаться в старых workspace, но не является SSOT.
 
 ---
 
@@ -322,6 +322,6 @@ Workflow декларирует кластерно-модульную архит
 
 - Workflow Steps & Watcher (state machine шагов): `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - Virtual Simulation step (контракт): `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-- Description → Reviewer (контракт): `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
+- Description Node (single-agent, контракт): `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 - Facade Class Diagram (process): `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - System Architecture: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
