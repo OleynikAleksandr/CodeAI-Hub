@@ -24,11 +24,6 @@ const TEMPLATES = [
     dest: ".codeai-hub/templates/description/description-collector-prompt.md",
   },
   {
-    id: "description-reviewer-prompt",
-    source: "packages/agents/reviewer-agent/assets/reviewer-prompt.md",
-    dest: ".codeai-hub/templates/description/reviewer-prompt.md",
-  },
-  {
     id: "description-template",
     source: "packages/agents/description-agent/assets/description-template.md",
     dest: ".codeai-hub/templates/description/description-template.md",
@@ -38,6 +33,17 @@ const TEMPLATES = [
     source:
       "packages/agents/description-agent/assets/questionnaire-template.md",
     dest: ".codeai-hub/templates/description/questionnaire-template.md",
+  },
+  // Keep reviewer assets bundled for legacy workspace compatibility.
+  {
+    id: "description-reviewer-prompt",
+    source: "packages/agents/reviewer-agent/assets/reviewer-prompt.md",
+    dest: ".codeai-hub/templates/description/reviewer-prompt.md",
+  },
+  {
+    id: "description-reviewer-template",
+    source: "packages/agents/reviewer-agent/assets/reviewer-template.md",
+    dest: ".codeai-hub/templates/description/reviewer-template.md",
   },
   {
     id: "virtual-simulation-prompt",
@@ -68,11 +74,6 @@ const TEMPLATES = [
     id: "facades-graph-template",
     source: "packages/core/src/templates/source/facades-graph-template.mmd",
     dest: ".codeai-hub/templates/diagram_facades/facades-graph-template.mmd",
-  },
-  {
-    id: "description-reviewer-template",
-    source: "packages/agents/reviewer-agent/assets/reviewer-template.md",
-    dest: ".codeai-hub/templates/description/reviewer-template.md",
   },
 ];
 

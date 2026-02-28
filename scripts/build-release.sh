@@ -94,6 +94,28 @@ echo ""
 echo "📝 Step 2.5: Generating bundled-templates.ts..."
 node "$SCRIPT_DIR/generate-bundled-templates.js"
 
+echo ""
+echo "🔎 Step 2.6: Verifying bundled template coverage..."
+node <<'NODE'
+const { readFileSync } = require("node:fs");
+const source = readFileSync("packages/core/src/templates/bundled-templates.ts", "utf8");
+const requiredDestinations = [
+  ".codeai-hub/templates/description/description-collector-prompt.md",
+  ".codeai-hub/templates/description/description-template.md",
+  ".codeai-hub/templates/description/questionnaire-template.md",
+  ".codeai-hub/templates/description/reviewer-prompt.md",
+  ".codeai-hub/templates/description/reviewer-template.md",
+  ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
+];
+const missing = requiredDestinations.filter(
+  (path) => !source.includes(`\"${path}\"`)
+);
+if (missing.length > 0) {
+  throw new Error(`Missing bundled template destinations:\\n${missing.join("\\n")}`);
+}
+NODE
+echo "✅ Bundled template coverage verified"
+
 # Step 3: Pre-build UI bundles
 echo ""
 echo "⚛️ Step 3: Building UI bundles..."
