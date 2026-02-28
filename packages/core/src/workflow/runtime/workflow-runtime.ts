@@ -314,6 +314,9 @@ export class WorkflowRuntime {
       workspaceRoot,
       event.workspaceSlug
     );
+    if (snapshot?.finalPath) {
+      return false;
+    }
     if (!shouldAcceptDescriptionDraftArtifact(snapshot, relativePath)) {
       return false;
     }

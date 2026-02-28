@@ -236,9 +236,14 @@ const isStageDone = (params: {
 
 const resolveWorkflowBlockedStages = (params: {
   readonly state: WorkflowState;
-  readonly description: { readonly finalPath?: string } | null;
+  readonly description: {
+    readonly finalPath?: string;
+    readonly draftPath?: string;
+  } | null;
 }): Record<WorkflowStageId, boolean> => {
-  const descriptionDone = Boolean(params.description?.finalPath);
+  const descriptionDone = Boolean(
+    params.description?.finalPath ?? params.description?.draftPath
+  );
   const virtualSimulationDone =
     descriptionDone &&
     isStageDone({
