@@ -84,6 +84,7 @@
 - `b7ef6ef7 docs(session): record solidworks root docs audit`
 - `27347052 build(templates): remove reviewer assets from description bundle`
 - `c0784e5a fix(core): prune legacy reviewer templates during sync`
+- `bacfc352 docs(todo): sync reviewer-removal progress in session050`
 
 ---
 

@@ -72,7 +72,7 @@
 
 ### Stream 2: Session/report sync for reviewer removal
 1. [DONE] Синхронизировать `todo-plan` + session report по факту удаления reviewer из active template delivery (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session050.md`; expected commit: `docs(todo): sync reviewer-removal progress in session050`).
-2. [TODO] Git Commit: `docs(todo): sync reviewer-removal progress in session050` (hash: TBD)
+2. [DONE] Git Commit: `docs(todo): sync reviewer-removal progress in session050` (hash: `bacfc352`)
 
 ---
 
