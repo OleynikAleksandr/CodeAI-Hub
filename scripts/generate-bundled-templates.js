@@ -34,17 +34,6 @@ const TEMPLATES = [
       "packages/agents/description-agent/assets/questionnaire-template.md",
     dest: ".codeai-hub/templates/description/questionnaire-template.md",
   },
-  // Keep reviewer assets bundled for legacy workspace compatibility.
-  {
-    id: "description-reviewer-prompt",
-    source: "packages/agents/reviewer-agent/assets/reviewer-prompt.md",
-    dest: ".codeai-hub/templates/description/reviewer-prompt.md",
-  },
-  {
-    id: "description-reviewer-template",
-    source: "packages/agents/reviewer-agent/assets/reviewer-template.md",
-    dest: ".codeai-hub/templates/description/reviewer-template.md",
-  },
   {
     id: "virtual-simulation-prompt",
     source: "packages/core/src/templates/source/virtual-simulation-prompt.md",

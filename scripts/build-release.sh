@@ -103,8 +103,6 @@ const requiredDestinations = [
   ".codeai-hub/templates/description/description-collector-prompt.md",
   ".codeai-hub/templates/description/description-template.md",
   ".codeai-hub/templates/description/questionnaire-template.md",
-  ".codeai-hub/templates/description/reviewer-prompt.md",
-  ".codeai-hub/templates/description/reviewer-template.md",
   ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
 ];
 const missing = requiredDestinations.filter(
