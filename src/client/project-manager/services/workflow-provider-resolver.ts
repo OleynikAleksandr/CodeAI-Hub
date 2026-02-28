@@ -9,8 +9,8 @@ const resolveProviderIdFromDescription = (
 ): ProviderStackId | null => {
   const description = state?.description;
   const candidates: readonly unknown[] = [
-    description?.collectorSession?.providerId,
     description?.session?.providerId,
+    description?.collectorSession?.providerId,
     description?.reviewerSession?.providerId,
   ];
   for (const candidate of candidates) {
@@ -32,4 +32,3 @@ export const resolvePreferredWorkflowProviderId = (options: {
   }
   return options.providers.at(0)?.id ?? null;
 };
-

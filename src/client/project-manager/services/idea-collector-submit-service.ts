@@ -181,6 +181,7 @@ const createIdeaCollectorSession = async (params: {
   readonly initiativeSlug: string;
   readonly stage: WorkflowStageId;
   readonly providerId?: ProviderStackId;
+  readonly sessionKind?: "collector" | "reviewer" | null;
 }): Promise<SessionCreatedPayload> =>
   new Promise((resolve, reject) => {
     let resolved = false;
@@ -236,6 +237,7 @@ const createIdeaCollectorSession = async (params: {
       workspacePath: params.workspacePath,
       initiativeSlug: params.initiativeSlug,
       stage: params.stage,
+      sessionKind: params.sessionKind,
     });
   });
 export class IdeaCollectorSubmitService {
@@ -263,6 +265,7 @@ export class IdeaCollectorSubmitService {
       initiativeSlug,
       stage,
       providerId: params.providerId,
+      sessionKind: stage === "description" ? null : "collector",
     });
     params.onSessionCreated?.(session.id);
     const resolvedInitiativeSlug = session.initiativeSlug ?? initiativeSlug;

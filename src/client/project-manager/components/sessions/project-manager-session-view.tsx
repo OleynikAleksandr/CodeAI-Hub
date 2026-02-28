@@ -76,7 +76,7 @@ const loadLastDialogIntent = (workspacePath: string): DialogOpenIntent | null =>
       workspaceSlug,
       initiativeSlug,
       stage,
-      sessionKind,
+      sessionKind: stage === "description" ? null : sessionKind,
       runSlug,
     };
   } catch {
@@ -161,6 +161,11 @@ export const ProjectManagerSessionView = ({
             detail.workspaceSlug,
             detail.workspacePath
           );
+          const descriptionSession =
+            state?.description?.session ??
+            state?.description?.collectorSession ??
+            state?.description?.reviewerSession ??
+            null;
           const questionnairePathCandidate = state?.description?.questionnairePath;
           const questionnairePath =
             typeof questionnairePathCandidate === "string" &&
@@ -171,8 +176,7 @@ export const ProjectManagerSessionView = ({
           const providerIdCandidate =
             isProviderStackId(detail.providerId)
               ? detail.providerId
-              : state?.description?.collectorSession?.providerId ??
-                state?.description?.session?.providerId ??
+              : descriptionSession?.providerId ??
                 api.getIdeaCollectorProviders().at(0)?.id ??
                 null;
 
@@ -184,6 +188,34 @@ export const ProjectManagerSessionView = ({
             return;
           }
 
+          const dispatchDialogIntent = (providerSessionId: string | null) => {
+            const dialogIntent: DialogOpenIntent = {
+              providerId,
+              providerSessionId,
+              workspacePath: detail.workspacePath,
+              workspaceSlug: detail.workspaceSlug,
+              initiativeSlug: detail.workspaceSlug,
+              stage: "description",
+              sessionKind: null,
+              runSlug: null,
+            };
+            window.dispatchEvent(
+              new CustomEvent("pm:dialog:open", {
+                detail: dialogIntent,
+              })
+            );
+          };
+
+          const providerSessionId =
+            typeof descriptionSession?.providerSessionId === "string" &&
+            descriptionSession.providerSessionId.trim().length > 0
+              ? descriptionSession.providerSessionId.trim()
+              : null;
+          if (providerSessionId) {
+            dispatchDialogIntent(providerSessionId);
+            return;
+          }
+
           await submitServiceRef.current.submitQuestionnaire({
             workspacePath: detail.workspacePath,
             workspaceSlug: detail.workspaceSlug,
@@ -191,22 +223,7 @@ export const ProjectManagerSessionView = ({
             stage: "description",
             providerId,
           });
-
-          const dialogIntent: DialogOpenIntent = {
-            providerId,
-            providerSessionId: null,
-            workspacePath: detail.workspacePath,
-            workspaceSlug: detail.workspaceSlug,
-            initiativeSlug: detail.workspaceSlug,
-            stage: "description",
-            sessionKind: "collector",
-            runSlug: null,
-          };
-          window.dispatchEvent(
-            new CustomEvent("pm:dialog:open", {
-              detail: dialogIntent,
-            })
-          );
+          dispatchDialogIntent(null);
         } catch {
           // ignore: restart attempt is best-effort
         } finally {
