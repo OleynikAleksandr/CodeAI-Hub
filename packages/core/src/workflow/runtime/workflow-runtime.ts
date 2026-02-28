@@ -160,6 +160,7 @@ const buildReviewerPromptPack = async (params: {
 };
 
 export class WorkflowRuntime {
+  private readonly enableDescriptionAutoReviewer = false;
   private readonly logger: Logger;
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionHandler: SessionRequestHandler;
@@ -328,10 +329,12 @@ export class WorkflowRuntime {
       ),
     });
 
-    await this.maybeAutoStartReviewer({
-      workspaceRoot,
-      workspaceSlug: event.workspaceSlug,
-    });
+    if (this.enableDescriptionAutoReviewer) {
+      await this.maybeAutoStartReviewer({
+        workspaceRoot,
+        workspaceSlug: event.workspaceSlug,
+      });
+    }
 
     return true;
   }

@@ -111,6 +111,76 @@ const createHarness = (options: {
   };
 };
 
+test("WorkflowRuntime does not auto-start reviewer after description draft write", async () => {
+  const harness = createHarness({
+    preferredProviderId: "claudeCodeCli",
+    adapters: {
+      claudeCodeCli: {
+        resumeSession: () => Promise.resolve("claude-resumed-id"),
+      },
+    },
+  });
+
+  (
+    harness.runtime as unknown as {
+      descriptionStepStore: {
+        read: () => Promise<{
+          workspaceSlug: string;
+          workspacePath: string;
+          createdAt: string;
+          updatedAt: string;
+          sessionKind: "collector";
+          session: { providerId: string };
+        }>;
+        upsert: () => Promise<void>;
+      };
+      lastActiveStore: {
+        upsert: () => Promise<void>;
+      };
+    }
+  ).descriptionStepStore = {
+    read: () =>
+      Promise.resolve({
+        workspaceSlug: "workspace-no-reviewer",
+        workspacePath: "/tmp/workspace-no-reviewer",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        sessionKind: "collector",
+        session: { providerId: "claudeCodeCli" },
+      }),
+    upsert: () => Promise.resolve(),
+  };
+
+  (
+    harness.runtime as unknown as {
+      lastActiveStore: {
+        upsert: () => Promise<void>;
+      };
+    }
+  ).lastActiveStore = {
+    upsert: () => Promise.resolve(),
+  };
+
+  const shouldRecord = await (
+    harness.runtime as unknown as {
+      handleWorkflowEvent: (
+        workspaceRoot: string,
+        event: unknown
+      ) => Promise<boolean>;
+    }
+  ).handleWorkflowEvent("/tmp/workspace-no-reviewer", {
+    type: "workflow.artifact.written",
+    timestamp: new Date().toISOString(),
+    workspaceSlug: "workspace-no-reviewer",
+    stage: "description",
+    filePath: "description/description.md",
+  });
+
+  assert.equal(shouldRecord, true);
+  assert.equal(harness.createdSessions.length, 0);
+  assert.equal(harness.handledMessages.length, 0);
+});
+
 test("WorkflowRuntime keeps reviewer on preferred gemini provider when resume is supported", async () => {
   const harness = createHarness({
     preferredProviderId: "geminiCli",

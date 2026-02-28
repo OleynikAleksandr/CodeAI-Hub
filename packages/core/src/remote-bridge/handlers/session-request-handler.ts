@@ -459,7 +459,7 @@ export class SessionRequestHandler {
       return options.explicitMode;
     }
     if (options.stage === "description" && options.runSlug !== "reviewer") {
-      return "no_resume";
+      return "resume_in_place";
     }
     return "resume_in_place";
   }
