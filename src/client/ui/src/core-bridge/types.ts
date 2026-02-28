@@ -36,7 +36,7 @@ export type ServerSession = {
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
   readonly runSlug?: string | null;
-  readonly sessionKind?: "collector" | "reviewer" | null;
+  readonly sessionKind?: "collector" | null;
   readonly continuationParentId?: string | null;
   readonly continuationIndex?: number | null;
   readonly title?: string;

@@ -181,7 +181,7 @@ const createIdeaCollectorSession = async (params: {
   readonly initiativeSlug: string;
   readonly stage: WorkflowStageId;
   readonly providerId?: ProviderStackId;
-  readonly sessionKind?: "collector" | "reviewer" | null;
+  readonly sessionKind?: "collector" | null;
 }): Promise<SessionCreatedPayload> =>
   new Promise((resolve, reject) => {
     let resolved = false;
