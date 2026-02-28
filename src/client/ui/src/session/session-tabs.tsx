@@ -21,19 +21,13 @@ const formatWorkflowStageLabel = (stage: string): string => {
  */
 const getAgentLabel = (
   sessionKind: SessionKind | null | undefined,
-  stage: string | null | undefined,
-  runSlug: string | null | undefined
+  stage: string | null | undefined
 ): string | null => {
   if (stage && stage !== "description") {
     return formatWorkflowStageLabel(stage);
   }
   if (stage === "description") {
-    return sessionKind === "reviewer" || runSlug === "reviewer"
-      ? "Reviewer"
-      : "Description";
-  }
-  if (sessionKind === "reviewer") {
-    return "Reviewer";
+    return "Description";
   }
   if (sessionKind === "collector") {
     return "Agent";
@@ -56,11 +50,7 @@ const buildTabDisplayData = (
   providerLabels: ReadonlyMap<ProviderStackId, string>,
   isActive: boolean
 ): TabDisplayData => {
-  const agentLabel = getAgentLabel(
-    session.sessionKind,
-    session.stage,
-    session.runSlug
-  );
+  const agentLabel = getAgentLabel(session.sessionKind, session.stage);
   const providerNames = session.providerIds.map((providerId) => {
     const label =
       providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);

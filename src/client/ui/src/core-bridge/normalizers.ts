@@ -167,10 +167,7 @@ export const sanitizeSession = (
       typeof session.runSlug === "string" && session.runSlug.trim().length > 0
         ? session.runSlug.trim()
         : null,
-    sessionKind:
-      session.sessionKind === "collector" || session.sessionKind === "reviewer"
-        ? session.sessionKind
-        : null,
+    sessionKind: session.sessionKind === "collector" ? "collector" : null,
     continuationParentId:
       typeof session.continuationParentId === "string"
         ? session.continuationParentId

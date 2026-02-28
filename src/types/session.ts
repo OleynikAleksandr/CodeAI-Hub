@@ -90,10 +90,9 @@ export type FlowNodeRolloverInfo = {
 
 /**
  * Kind of session agent within a workflow stage.
- * - "collector": Initial agent that gathers information (e.g., Description agent)
- * - "reviewer": Agent that reviews and refines output (e.g., Reviewer)
+ * Active workflow uses collector-only semantics.
  */
-export type SessionKind = "collector" | "reviewer";
+export type SessionKind = "collector";
 
 export type SessionRecord = {
   readonly id: string;
