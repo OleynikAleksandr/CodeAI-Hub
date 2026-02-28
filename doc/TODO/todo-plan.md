@@ -72,8 +72,8 @@
 **Цель:** UI должен отражать новый поток: «Questionnaire → единая Description-сессия → Final_Description.md».
 
 ### Stream 0: Description artifact wiring (Final_Description.md, no runs/)
-1. [TODO] Переключить выход Description на стабильный артефакт `.codeai-hub/<workspaceSlug>/description/Final_Description.md` (без `runs/`), а не `description.md` (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`; expected commit: `refactor(pm): write final description artifact directly`).
-2. [TODO] Git Commit: `refactor(pm): write final description artifact directly` (hash: TBD)
+1. [DONE] Переключить выход Description на стабильный артефакт `.codeai-hub/<workspaceSlug>/description/Final_Description.md` (без `runs/`), а не `description.md` (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`; expected commit: `refactor(pm): write final description artifact directly`).
+2. [DONE] Git Commit: `refactor(pm): write final description artifact directly` (hash: `e31597d9`)
 
 ### Stream 1: Description panel copy and UX
 1. [TODO] Обновить тексты, подсказки и ожидания в панели анкеты под single-agent flow (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm): align description UX copy with single-agent flow`).
