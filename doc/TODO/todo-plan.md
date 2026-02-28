@@ -50,8 +50,8 @@
 
 ### Stream 0: SSOT navigation completeness
 1. [DONE] Обновить `Docs_Index.md`: добавить недостающие новые документы (`DescriptionStep_SingleAgent.md`, `StandaloneReviewer_Module.md`) и явный статус root-документов draft/RFC (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(index): register new contracts and root docs status`).
-2. [TODO] Git Commit: `docs(index): register new contracts and root docs status` (hash: TBD)
+2. [DONE] Git Commit: `docs(index): register new contracts and root docs status` (hash: `91ed6992`)
 
 ### Stream 1: Root documents актуальность
-1. [TODO] Провести аудит root-файлов в `doc/SolidWorks-WorkFlow/` и зафиксировать решение «нужен/архивировать/перенести» в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record solidworks root docs audit`).
+1. [DONE] Провести аудит root-файлов в `doc/SolidWorks-WorkFlow/` и зафиксировать решение «нужен/архивировать/перенести» в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record solidworks root docs audit`).
 2. [TODO] Git Commit: `docs(session): record solidworks root docs audit` (hash: TBD)

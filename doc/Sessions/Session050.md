@@ -1,6 +1,6 @@
-# Session 050 — Migration Description to Single-Agent (Phase 266-270 done, release verification 1.1.699 complete, deferred reviewer phase parked)
+# Session 050 — Migration Description to Single-Agent (release 1.1.699 complete, docs index sync + root audit done)
 
-**Date:** 2026-02-28 20:37 (CET)
+**Date:** 2026-02-28 20:45 (CET)
 **Branch:** main
 **Version:** 1.1.699
 
@@ -39,6 +39,11 @@
   - `./scripts/build-all.sh` поднял версию до `1.1.699` и пересобрал provider/core/ui/launcher артефакты.
   - `./scripts/build-release.sh --use-current-version` завершился успешно; подтверждены чекпойнты `Verifying SDK exclusions`, `Removing dev dependencies`, `✅ Package created`.
   - Собран VSIX `codeai-hub-1.1.699.vsix` (~1.2M).
+- Обновлён `Docs_Index.md`: добавлены недостающие новые документы `Contracts/DescriptionStep_SingleAgent.md` и `Contracts/StandaloneReviewer_Module.md`, а также отдельный блок root draft/RFC (non-SSOT).
+- Проведён аудит root-файлов `doc/SolidWorks-WorkFlow/`:
+  - SSOT и актуальны: `README.md`, `Docs_Index.md`, `WorkflowSteps_Overview.md`.
+  - Исторический non-SSOT документ: `CodeAI-Hub_Manual_Retry_RFC.md` (status: Proposed, использовать как reference, не как канон).
+  - Промежуточный non-SSOT черновик: `QuestionnaireTemplate_Draft.md` (не является текущим шаблоном-источником истины).
 
 ## Git commits
 - `69f9bcda docs(description): draft single-agent description contract`
@@ -70,6 +75,8 @@
 - `e4406a54 docs(todo): park standalone reviewer and add release verification phase`
 - `a5a44424 chore(release): build-all v1.1.699`
 - `591a030e docs(session): record release verification for phase271`
+- `ae53db11 docs(todo): close phase271 release verification and sync session050`
+- `91ed6992 docs(index): register new contracts and root docs status`
 
 ---
 
@@ -91,3 +98,4 @@
 - Оставить `Phase 272` как `DEFERRED / NOT STARTED` до отдельного старта работ по standalone reviewer.
 - При старте `Phase 272` первым шагом вернуться к `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md` и пройти Design Gate.
 - При следующем релизном цикле повторить проверку `build-all` + `build-release` на чистом дереве и фиксировать результаты в новом session report.
+- Решить судьбу root non-SSOT документов (`CodeAI-Hub_Manual_Retry_RFC.md`, `QuestionnaireTemplate_Draft.md`): оставить как исторические с явным статусом или перенести в `doc/SolidWorks-WorkFlow/Archive/`.
