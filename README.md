@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.696
-- Workflow templates: simplified the Description questionnaire from 16 to 10 sections with plain-language names and examples, making it accessible to non-programmers.
-- Workflow templates: aligned description-template, reviewer-prompt, reviewer-template, and description-collector-prompt with the new questionnaire structure.
-- Workflow docs: added `WorkflowSteps_Overview.md` — the single source of truth for all six workflow steps (from idea to implementation), including philosophy, artifacts, and feedback loop mechanics.
-- Code cleanup: removed unused `formatDate()` and `resolveAuthorName()` from `description-questionnaire-utils.ts`; simplified `buildDefaults()` to only set `meta.title`.
+## Current Release — v1.1.701
+- Description flow: active runtime/UI path is collector-only for stage `description`; reviewer auto-runtime and auto-focus branches are removed from current delivery.
+- Workflow templates: active `~/.codeai-hub/templates/description/` delivery includes only `description-collector-prompt.md`, `description-template.md`, and `questionnaire-template.md`.
+- Template sync: legacy `reviewer-prompt.md` and `reviewer-template.md` are pruned from `~/.codeai-hub/templates/description/` during synchronization.
+- Description prompt: wording aligned with single-session flow without `collector/reviewer` split terminology in user-facing process guidance.
 
 Previous releases (summary): the `1.1.57x–1.1.69x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, and panel sync in Project Manager.
 
