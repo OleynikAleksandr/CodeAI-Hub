@@ -30,14 +30,14 @@
 **Цель:** перейти к модели «один агент Description с бесконечной сессией и финальным артефактом `Final_Description.md`». Проработка standalone Reviewer переносится в отдельный архитектурный модуль после стабилизации текущих шагов PM.
 
 ### Stream 0: Design Phase gate (архитектурное согласование)
-1. [TODO] Подготовить контракт-документ по новой модели узла Description (single-agent, артефакты, resume-модель, backward compatibility, граница с будущим reviewer-модулем) (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(description): draft single-agent description contract`).
-2. [TODO] Git Commit: `docs(description): draft single-agent description contract` (hash: TBD)
-3. [TODO] После утверждения пользователем синхронизировать SSOT шагов Workflow (заменить внутренний двухшаговый сценарий Description на единый) (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`; expected commit: `docs(workflow): approve single-agent description flow`).
-4. [TODO] Git Commit: `docs(workflow): approve single-agent description flow` (hash: TBD)
+1. [DONE] Подготовить контракт-документ по новой модели узла Description (single-agent, артефакты, resume-модель, backward compatibility, граница с будущим reviewer-модулем) (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(description): draft single-agent description contract`).
+2. [DONE] Git Commit: `docs(description): draft single-agent description contract` (hash: `69f9bcda`)
+3. [DONE] После утверждения пользователем синхронизировать SSOT шагов Workflow (заменить внутренний двухшаговый сценарий Description на единый) (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`; expected commit: `docs(workflow): approve single-agent description flow`).
+4. [DONE] Git Commit: `docs(workflow): approve single-agent description flow` (hash: `ebc9dd65`)
 
 ### Stream 1: План миграции и риски
-1. [TODO] Зафиксировать пофайловый migration plan (что меняем сразу, что оставляем временно совместимым: legacy `description.md`, legacy auto-reviewer, старые history chains) (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(description): add migration plan and compatibility rules`).
-2. [TODO] Git Commit: `docs(description): add migration plan and compatibility rules` (hash: TBD)
+1. [DONE] Зафиксировать пофайловый migration plan (что меняем сразу, что оставляем временно совместимым: legacy `description.md`, legacy auto-reviewer, старые history chains) (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(description): add migration plan and compatibility rules`).
+2. [IN_PROGRESS] Git Commit: `docs(description): add migration plan and compatibility rules` (hash: TBD)
 
 ---
 

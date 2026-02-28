@@ -94,6 +94,30 @@
   - Diagram Facades
 - Core allowlist/paths/validation для workflow-артефакта Description должны считать каноном `Final_Description.md`.
 
+### Пофайловый migration plan (execution baseline)
+1. Core runtime/session lifecycle:
+   - `packages/core/src/workflow/runtime/workflow-runtime.ts` — убрать `description.md -> auto reviewer`, оставить watcher-совместимость с legacy draft.
+   - `packages/core/src/workflow/runtime/workflow-runtime.test.ts` — удалить/переписать сценарии auto-reviewer, добавить сценарии single-agent resume.
+   - `packages/core/src/remote-bridge/handlers/session-request-handler.ts` — `description` по умолчанию в `resume_in_place`, убрать reviewer-only ветвления как обязательные.
+2. Artifact path contract (Core):
+   - `packages/core/src/workflow/paths/workflow-paths-types.ts`
+   - `packages/core/src/workflow/paths/workflow-artifact-paths.ts`
+   - `packages/core/src/remote-bridge/handlers/http-api-router.ts`
+   - Цель: `description` stage canonical file = `Final_Description.md`; `description.md` только для чтения legacy/workspace migration.
+3. PM/UI wiring:
+   - `src/client/project-manager/services/prompt-pack-builder.ts`
+   - `src/client/project-manager/services/idea-collector-submit-service.ts`
+   - `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`
+   - Цель: запись сразу в `.codeai-hub/<workspaceSlug>/description/Final_Description.md` без `runs/` и без reviewer-phase UX.
+4. Downstream prompts/templates:
+   - `packages/core/src/templates/source/virtual-simulation-prompt.md`
+   - `packages/core/src/templates/source/modules-diagram-prompt.md`
+   - `packages/core/src/templates/source/facades-graph-prompt.md`
+   - Цель: upstream source of truth только `Final_Description.md`.
+5. Legacy guardrails (обязательная обратная совместимость):
+   - Старые workspace с `description.md`/`runs/*` не должны ломать gating, continuity и чтение history.
+   - Late-write legacy draft не должен понижать шаг относительно уже существующего `Final_Description.md`.
+
 ---
 
 ## Related SSOT
