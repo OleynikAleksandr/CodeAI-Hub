@@ -3,7 +3,6 @@ import { api } from "../../api";
 import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import type { WorkspaceProject } from "../../types";
 import { resolveWorkspaceSlug } from "./main-area-utils";
-import type { ProviderStackId } from "../../../../types/provider";
 import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
 import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
 
@@ -74,7 +73,6 @@ export const useMainAreaWorkflowState = (
   params: UseMainAreaWorkflowStateParams
 ): void => {
   const autoOpenedWorkspaceRef = useRef<string | null>(null);
-  const autoOpenedReviewerRef = useRef<string | null>(null);
   const autoResolvedActiveToolRef = useRef<string | null>(null);
   const activeToolRef = useRef<string | null>(params.activeTool ?? null);
 
@@ -88,7 +86,6 @@ export const useMainAreaWorkflowState = (
       params.setQuestionnaireDocument(null);
       params.setHasDescriptionSession(false);
       autoOpenedWorkspaceRef.current = null;
-      autoOpenedReviewerRef.current = null;
       autoResolvedActiveToolRef.current = null;
       return;
     }
@@ -99,7 +96,6 @@ export const useMainAreaWorkflowState = (
       params.setQuestionnaireDocument(null);
       params.setHasDescriptionSession(false);
       autoOpenedWorkspaceRef.current = null;
-      autoOpenedReviewerRef.current = null;
       autoResolvedActiveToolRef.current = null;
       return;
     }
@@ -108,7 +104,6 @@ export const useMainAreaWorkflowState = (
     let cancelled = false;
     let timer = 0;
     let fastPolling = true;
-    autoOpenedReviewerRef.current = null;
     autoResolvedActiveToolRef.current = null;
 
     const loadState = async () => {
@@ -159,33 +154,6 @@ export const useMainAreaWorkflowState = (
           ? { ...nextQuestionnaire, workspacePath, workspaceSlug }
           : null
       );
-
-      if (
-        resolvedActiveTool === "Description" &&
-        branch?.sessionKind === "reviewer" &&
-        branch.session?.providerId &&
-        branch.session.providerSessionId &&
-        branch.session.providerSessionId.trim().length > 0
-      ) {
-        const reviewerKey = `${workspaceSlug}:${branch.session.providerSessionId}`;
-        if (autoOpenedReviewerRef.current !== reviewerKey) {
-          autoOpenedReviewerRef.current = reviewerKey;
-          window.dispatchEvent(
-            new CustomEvent("pm:dialog:open", {
-              detail: {
-                providerId: branch.session.providerId as ProviderStackId,
-                providerSessionId: branch.session.providerSessionId,
-                workspacePath,
-                workspaceSlug,
-                initiativeSlug: workspaceSlug,
-                stage: "description",
-                sessionKind: "reviewer",
-                runSlug: "reviewer",
-              },
-            })
-          );
-        }
-      }
 
       if (
         isEmptyWorkflowState(state) &&

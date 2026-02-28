@@ -27,7 +27,7 @@ type WorkflowArtifactPaths = {
 };
 
 const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
-  description: "description.md",
+  description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
   diagram_modules: "modules-diagram.mmd",
   diagram_facades: "facades-graph.mmd",
@@ -127,7 +127,8 @@ const resolveWorkflowArtifactPaths = (params: {
   readonly runSlug?: string;
 }): WorkflowArtifactPaths => {
   const fileName = WORKFLOW_STAGE_FILES[params.stage];
-  const runSlug = resolveRunSlug(params.runSlug);
+  const runSlug =
+    params.stage === "description" ? null : resolveRunSlug(params.runSlug);
   const runSegment = runSlug ? `runs/${runSlug}/` : "";
   const relativePath = normalizeRelativePath(
     `.codeai-hub/${params.workspaceSlug}/${params.stage}/${runSegment}${fileName}`
