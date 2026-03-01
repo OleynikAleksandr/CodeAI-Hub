@@ -183,6 +183,11 @@ Manual start из PM + resume-сессия агента:
 - `description-template.md` (Help),
 - `description-collector-prompt.md` (инструкции агента).
 
+Шаг `Virtual Simulation` работает в режиме **prompt-only**:
+- bundled только `virtual-simulation-prompt.md`;
+- отдельный artifact template не поставляется и не отправляется агенту;
+- структура `virtual-simulation.md` задаётся контрактом шага и минимальными инвариантами валидации.
+
 ---
 
 ## Связанные документы
