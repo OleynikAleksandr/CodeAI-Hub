@@ -6,17 +6,15 @@ import {
   startWorkflowEventPolling,
   type WorkflowEvent,
 } from "../../services/workflow-events-client";
-import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
-import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
-import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
-import { DiagramFacadesPanel } from "../diagram-facades/diagram-facades-panel";
-import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { dispatchStageActivated, resolveWorkspaceSlug } from "./main-area-utils";
+import {
+  MainAreaArtifactContent,
+  MainAreaSessionContent,
+} from "./main-area-panel-content";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
 import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
-import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import {
   VIRTUAL_SIMULATION_TOOL_LABEL,
   useWorkflowToolSelect,
@@ -28,10 +26,6 @@ interface MainAreaProps {
   activeWorkspace?: WorkspaceProject;
 }
 
-/**
- * Main area component (Section 2)
- * Contains Toolbar (Section 3), PanelContainer (Sections 4, 5, 6), and StatusBar (Section 7)
- */
 export const MainArea: React.FC<MainAreaProps> = ({
   sizes,
   onSizeChange,
@@ -41,9 +35,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     ? ["Description", VIRTUAL_SIMULATION_TOOL_LABEL, "Diagram Modules", "Diagram Facades"]
     : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
-  const [preferredSessionId, setPreferredSessionId] = useState<string | null>(
-    null
-  );
+  const [preferredSessionId, setPreferredSessionId] = useState<string | null>(null);
   const [selectedArtifact, setSelectedArtifact] = useState<{
     readonly workspacePath: string;
     readonly workspaceSlug: string;
@@ -211,29 +203,21 @@ export const MainArea: React.FC<MainAreaProps> = ({
     selectedArtifact?.workspaceSlug,
   ]);
 
+  const isDescriptionActive = activeTool === "Description";
   const activeWorkspaceSlug = activeWorkspace
     ? resolveWorkspaceSlug(activeWorkspace)
     : null;
   const shouldShowQuestionnaireEditor = Boolean(
-    activeTool === "Description" &&
+    isDescriptionActive &&
       selectedArtifact?.label === "questionnaire.md" &&
       selectedArtifact.workspaceSlug === activeWorkspaceSlug &&
       !hasDescriptionSession
   );
-  const showArtifactViewer = Boolean(selectedArtifact) && !shouldShowQuestionnaireEditor;
-  const showDescriptionQuestionnaire =
-    activeTool === "Description" &&
-    !showArtifactViewer &&
-    (shouldShowQuestionnaireEditor ||
-      (descriptionDocument === null && questionnaireDocument === null));
-  const showVirtualSimulation = activeTool === VIRTUAL_SIMULATION_TOOL_LABEL;
-  const showDiagramModules = activeTool === "Diagram Modules";
-  const showDiagramFacades = activeTool === "Diagram Facades";
-
-  const renderStagePanel = (Panel: React.FC<{ readonly workspacePath: string; readonly workspaceSlug: string }>) =>
-    activeWorkspace?.path && activeWorkspaceSlug
-      ? <Panel workspacePath={activeWorkspace.path} workspaceSlug={activeWorkspaceSlug} />
-      : <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>;
+  const hasDescriptionSessionPending = pendingSessionCreate !== null;
+  const showDescriptionHelpInSessionPanel =
+    isDescriptionActive &&
+    !hasDescriptionSession &&
+    !hasDescriptionSessionPending;
 
   return (
     <main className="pm-main-area">
@@ -244,43 +228,30 @@ export const MainArea: React.FC<MainAreaProps> = ({
       />
       <PanelContainer
         artifactContent={
-          showArtifactViewer && selectedArtifact ? (
-            <WorkflowArtifactViewer
-              label={selectedArtifact.label}
-              onClose={() => setSelectedArtifact(null)}
-              path={selectedArtifact.path}
-              refreshKey={artifactRefreshKey}
-              workspacePath={selectedArtifact.workspacePath}
-              workspaceSlug={selectedArtifact.workspaceSlug}
-            />
-          ) : showDescriptionQuestionnaire ? (
-            <DescriptionQuestionnairePanel
-              onClose={() => setActiveTool(null)}
-              onIdeaSessionCreatePendingChange={setPendingSessionCreate}
-              onIdeaSessionCreated={handleIdeaSessionCreated}
-              workspaceName={activeWorkspace?.name}
-              workspacePath={activeWorkspace?.path}
-              workspaceSlug={activeWorkspace?.slug}
-            />
-          ) : showVirtualSimulation ? (
-            renderStagePanel(VirtualSimulationPanel)
-          ) : showDiagramModules ? (
-            renderStagePanel(DiagramModulesPanel)
-          ) : showDiagramFacades ? (
-            renderStagePanel(DiagramFacadesPanel)
-          ) : (
-            <div className="pm-placeholder">
-              Выберите шаг в Toolbar. Для Description начните с{" "}
-              <code>questionnaire.md</code> и доведите единую сессию до{" "}
-              <code>Final_Description.md</code>.
-            </div>
-          )
+          <MainAreaArtifactContent
+            activeTool={activeTool}
+            activeWorkspaceName={activeWorkspace?.name}
+            activeWorkspacePath={activeWorkspace?.path}
+            activeWorkspaceSlug={activeWorkspaceSlug}
+            artifactRefreshKey={artifactRefreshKey}
+            descriptionDocumentExists={descriptionDocument !== null}
+            descriptionHelpMode={false}
+            hasDescriptionSession={hasDescriptionSession}
+            onDescriptionSessionCreated={handleIdeaSessionCreated}
+            onPendingSessionCreateChange={setPendingSessionCreate}
+            onSelectedArtifactClear={() => setSelectedArtifact(null)}
+            onSetActiveToolNull={() => setActiveTool(null)}
+            questionnaireDocumentExists={questionnaireDocument !== null}
+            selectedArtifact={selectedArtifact}
+            shouldShowQuestionnaireEditor={shouldShowQuestionnaireEditor}
+          />
         }
         onSizeChange={onSizeChange}
         sessionContent={
-          <ProjectManagerSessionView
+          <MainAreaSessionContent
             pendingSessionCreate={pendingSessionCreate}
             preferredSessionId={preferredSessionId}
+            showDescriptionHelp={showDescriptionHelpInSessionPanel}
             workspacePath={activeWorkspace?.path}
           />
         }
