@@ -4,17 +4,19 @@
 
 ## 0) Start here (восстановление контекста)
 
-1) `doc/SolidWorks-WorkFlow/Docs_Index.md`
-2) `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
-3) `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
-4) `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-5) `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
-6) `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
-7) `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-8) `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-9) Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
-10) Workflow steps + watcher: `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
-11) Virtual Simulation step: `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
+1. `doc/SolidWorks-WorkFlow/Docs_Index.md`
+2. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+3. `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
+4. `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+5. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+6. `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+7. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
+8. `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+9. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
+10. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
+11. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+12. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+13. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -34,13 +36,13 @@
 
 ## 3) Глобальные инварианты (must-not-break)
 
-1) **Snapshot-first lock contract**: состояние input определяется только snapshot‑сигналами (`turnState`, continuity lock flags и т.п.).
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
-2) **Dialogs vs status split**: история/диалог (dialogId) независим от live status/usage (sessionId); routing обязателен после restart/reconnect.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
-3) **Session continuity**: rollover/handoff обязаны быть надёжны и не залипать UI в working.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`.
-4) **Provider-home**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
+1. **Snapshot-first lock contract**: состояние input определяется только snapshot‑сигналами (`turnState`, continuity lock flags и т.п.).
+   - Канон: `WorkspaceRuntime.md`, `SessionUI_Behavior.md`, `SessionInputLock_SSOT_StateMachine.md`.
+2. **Dialogs vs status split**: история/диалог (`dialogId`) независим от live status/usage (`sessionId`); routing обязателен после restart/reconnect.
+   - Канон: `Dialogs_And_Continuity_Routing.md`.
+3. **Session continuity**: rollover/handoff обязаны быть надёжны и не залипать UI в working.
+   - Канон: `SessionContinuity.md`.
+4. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
    - Канон: provider docs в `doc/SolidWorks-WorkFlow/Modules/*`.
 
 ## 4) Где искать правду в коде (high-signal)
@@ -51,13 +53,28 @@
 - Shared Session UI: `src/client/ui/src/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
 
-## 5) Workflow Boundary (Description, 2026-02-28)
+## 5) Workflow Boundary (Description, 2026-03-01)
 
-- Шаг `description` зафиксирован как single-agent flow: `questionnaire.md` → единая resume-сессия → `Final_Description.md`.
-- Legacy `description.md`/reviewer-цепочка поддерживается только для совместимости старых workspace и не является SSOT для новых шагов.
-- Standalone Reviewer вынесен в `Backlog Module R1 (DEFERRED)` и не является частью базового workflow 1→6.
+- Шаг `description` зафиксирован как single-agent file-first flow:
+  - pre-submit: `questionnaire.md` + user Help,
+  - post-submit: единая resume-сессия,
+  - SSOT-артефакт: `Final_Description.md`.
+- `Final_Description.md` должен формироваться сразу после чтения анкеты (первичный черновик), чтобы пользователь обсуждал уже существующий документ.
+- `Final_Description.md` должен содержать не только описание идеи, но и базу для следующего шага `virtual_simulation`:
+  - 2–4 сценария (актор/цель → действие → ожидаемый результат → критерий успеха),
+  - ограничения/допущения,
+  - ключевые сущности/термины.
+- Legacy `description.md`/reviewer-цепочка поддерживается только для совместимости старых workspace и не является SSOT.
+- Standalone Reviewer вынесен в deferred-модуль и не входит в базовый workflow 1→6.
+
+## 6) Runtime Templates Boundary (Description)
+
+Каноничные bundled templates в `.codeai-hub/templates/description/`:
+- `questionnaire-template.md` — pre-submit анкета.
+- `description-template.md` — user-facing Help для pre-submit и post-submit (`Artifacts/Help`).
+- `description-collector-prompt.md` — инструкции Description Agent (file-first, краткий контекст workflow, ограничения, DoD).
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-- `doc/TODO/todo-plan.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`

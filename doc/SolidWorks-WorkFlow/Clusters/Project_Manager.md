@@ -3,11 +3,13 @@
 ## 0) Start here (контекст + контракты)
 
 - System: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Workflow steps: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- Description step contract: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+- Description UI copy contract: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md`
 - Workspace Runtime (wire + lock): `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Session UI laws (lock/unlock): `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 - Input lock SSOT/state machine: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Dialog routing (messages vs status): `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-- Description → Reviewer: `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 - Session Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
 - Launcher: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`
@@ -29,12 +31,15 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 ## 3) Ключевой UX контракт (коротко)
 
 - Input lock — snapshot-first (не вычисляется из stream сообщений).
-- При Core restart/reconnect UI должен:
-  - восстановить список диалогов/историй;
-  - восстановить корректное соответствие “активный диалог” ↔ “активный live sessionId”;
-  - не оставлять пользователя в безвыходном состоянии (recovery actions).
+- До `Submit questionnaire` в стадии `Description` runtime-сессии нет:
+  - левая панель показывает Description Help,
+  - правая панель показывает редактор `questionnaire.md`.
+- После `Submit questionnaire` создаётся runtime-сессия Description:
+  - левая панель возвращается к Session UI,
+  - правая панель имеет переключатель `Artifacts/Help`.
+- В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
 
-Канон: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md` и `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
+Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.
 
 ## 4) Recovery UX (обязательно)
 
