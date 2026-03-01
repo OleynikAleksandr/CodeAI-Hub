@@ -1,69 +1,56 @@
-# Project Manager — Description Entry Copy Refactor (Contract)
+# Project Manager — Description Entry Copy / UX Contract
 
-## 1. Проблема
+## 1) Проблема
 
-В левом Session-регионе Project Manager до появления первой сессии показывается legacy copy:
-- `Create your first session`
-- `Use the buttons above to start a session. Select one provider in the picker to begin.`
+Legacy copy в Session-регионе вводил пользователя в заблуждение:
+- создавал впечатление, что сессию нужно стартовать кнопками тулбара;
+- не объяснял pre-submit этап с анкетой.
 
-Этот текст вводит в заблуждение для workflow `Description`: старт сессии выполняется не через toolbar, а после заполнения анкеты в правой панели артефактов и явного действия `Submit questionnaire`.
+Текущая модель `Description` начинается с анкеты и Help, а runtime-сессия появляется только после `Submit questionnaire`.
 
-Дополнительно в текущем UI остались русскоязычные CTA:
-- `Отправить анкету`
-- `Закрыть`
+## 2) Цель
 
-Они должны быть приведены к англоязычной UI-терминологии, чтобы copy была консистентной с остальным интерфейсом.
+Зафиксировать стабильный UX-контракт pre-submit/post-submit для шага `Description`.
 
-## 2. Цель и границы
+## 3) Контракт UX
 
-### Цель
-Обновить entry-copy и CTA так, чтобы пользователь однозначно понимал реальный стартовый сценарий шага `Description`.
+### 3.1 Pre-submit
 
-### In scope
-1. Обновление текста EmptyState в Session-регионе.
-2. Замена CTA `Отправить анкету` и `Закрыть` на английские аналоги в Description questionnaire flow.
-3. Сохранение существующей логики запуска сессии без функциональных изменений.
+- Левая панель (`Sessions`) показывает Description Help.
+- Правая панель (`Artifacts`) показывает `questionnaire.md`.
+- Основной CTA: `Submit questionnaire`.
 
-### Out of scope
-1. Любые изменения workflow-гейтинга, session routing, continuity, dialog matching.
-2. Перестройка layout или компонентов вне copy/labels.
+### 3.2 Post-submit
 
-## 3. Контракт UX-копирайта
+- Запускается runtime-сессия Description Agent.
+- Левая панель возвращается к Session UI.
+- Правая панель показывает переключатель `Artifacts/Help`.
 
-### 3.1 Session EmptyState (левая панель)
-В состоянии `session == null` и `pending == false` текст должен сообщать:
-1. сначала заполнить анкету в правой панели (`Artifacts`),
-2. затем нажать `Submit questionnaire`,
-3. после этого выбрать провайдера в picker.
+### 3.3 UI copy rules
 
-### 3.2 Description questionnaire CTA
-Кнопки должны быть англоязычными:
-- `Submit questionnaire`
-- `Close`
+- Тексты должны быть консистентны с англоязычной UI-терминологией.
+- Не допускаются упоминания auto-reviewer как части базового шага Description.
 
-## 4. Затрагиваемые компоненты (минимум)
+## 4) Затрагиваемые области
 
-1. `src/client/ui/src/session/empty-state.tsx`
-2. `src/client/project-manager/components/description/description-questionnaire-panel.tsx`
-3. `src/client/ui/src/app-host/session-region-questionnaire-copy.ts` (если label берётся из shared copy)
+- `src/client/ui/src/session/empty-state.tsx`
+- `src/client/project-manager/components/description/description-questionnaire-panel.tsx`
+- `src/client/ui/src/app-host/session-region-questionnaire-copy.ts` (если копирайт централизован)
 
-## 5. Инварианты
+## 5) Инварианты
 
-1. Никаких изменений бизнес-логики запуска Description сессии.
-2. Никаких изменений event-каналов (`pm:dialog:open`, `pm:session:open`, и т.д.).
-3. Текущие pending/loading состояния остаются без изменений.
+1. Не менять business-логику routing/continuity.
+2. Не менять workflow-gating.
+3. Менять только UX-copy и связанный режим отображения pre-submit/post-submit.
 
-## 6. Критерии приемки
+## 6) Критерии приемки
 
-1. В пустом Session-регионе отображается новый, корректный entry-text про `Artifacts` + `Submit questionnaire`.
-2. В Description questionnaire panel кнопки отображаются на английском (`Submit questionnaire`, `Close`).
-3. Запуск Description после отправки анкеты работает как прежде (без регрессий).
+1. До submit пользователь видит Help + анкету, без runtime Session UI.
+2. После submit стартует runtime-сессия, и доступен `Artifacts/Help`.
+3. Копирайт не конфликтует с контрактом `DescriptionStep_SingleAgent.md`.
 
-## 7. Верификация
+## 7) Связанные документы
 
-1. Smoke в PM UI:
-   - открыть workspace без активной сессии;
-   - проверить новый EmptyState copy;
-   - заполнить анкету и нажать `Submit questionnaire`;
-   - убедиться, что открывается provider picker и стартует сессия.
-2. Таргетно: `npm run typecheck:webview`.
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`

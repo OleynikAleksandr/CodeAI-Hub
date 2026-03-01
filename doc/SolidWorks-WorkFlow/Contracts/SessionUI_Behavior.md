@@ -1,171 +1,162 @@
 # Session UI (Project Manager) — Behavior Contract (Happy Path)
 
-**Scope:** каноническое поведение UI сессий в Project Manager при нормальной работе провайдера.
+**Scope:** каноническое поведение UI-сессий в Project Manager при нормальной работе Core/Provider.
 
 **Applies to:**
 - PM bundle: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 
-**Цель документа:** чтобы любой будущий фикс в PM/Session UI проверялся на регрессии по этому списку законов, а не только по “текущему багу”.
-
-**Вне скоупа (будет отдельным документом):**
-- `resume_failed` / `resume_timeout` / `continuity_failed` и recovery UX;
-- гарантии доставки сообщений, ретраи, idempotency/ack;
-- сетевые аварии, 401/auth recovery, rate limits.
-
 ---
 
 ## 1) Термины (SSOT)
 
-- **dialogId** — логический диалог (история/переписка в UI). Диалог “бесконечный”.
-- **sessionId** — runtime‑сегмент Core (live статус/lock/usage). Может меняться при continuity/rollover.
-- **providerSessionId** — нативный id провайдера (resume thread).
+- **dialogId** — логический диалог (история в UI), бесконечный.
+- **sessionId** — runtime-сегмент Core (live статус/lock/usage), может меняться при continuity.
+- **providerSessionId** — нативный id провайдера.
 
-См. также: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md` и `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
-
----
-
-## 2) Источники правды (приоритеты)
-
-### 2.1 Input lock — snapshot‑first
-**Закон:** итоговая блокировка ввода пользователя определяется **только snapshot‑сигналами** (из `workspace:snapshot`), а не из текстовых/диалоговых сообщений.
-
-Стрим‑события (`session:stream`) допускаются как “live‑ускорители” UI, но не должны ломать snapshot‑инварианты.
-
-**Критично (SSOT):** `continuityLockReason` — это только UX-hint (copy/placeholder) и может отсутствовать. UI **не имеет права** удерживать `blocked` при `turnState="idle"` и `continuityLockActive=false` только потому, что причина lock отсутствует.
-
-**Важно (гонка гидрации):** `workspace:snapshot` может прийти **раньше**, чем UI успеет создать локальный `SessionSnapshot` по `dialog:list:result` или обработать `session:created` (rollover). UI обязан сохранять последний `workspace:snapshot` и **пере‑применять** его после создания/переключения `sessionId`, иначе возможен “stuck lock” до следующего snapshot/перезагрузки.
-
-### 2.2 История диалога vs live статус
-- **DialogPanel (история)** живёт по `dialogId` (в том числе при смене `sessionId`).
-- **InputPanel / StatusPanel / SessionIdBar (статусы/лимиты/токены/ID)** должны следовать **активному live `sessionId`**.
+См. также:
+- `WorkspaceRuntime.md`
+- `Dialogs_And_Continuity_Routing.md`
 
 ---
 
-## 3) Типы сессий (контракт)
+## 2) Источники правды
 
-### 3.1 One‑shot / no‑resume (Description/collector)
-- Пользователь не может продолжать диалог после финального ответа.
-- UI должен быть read‑only (блокировка ввода “от начала и до конца”).
-- Ручной “замочек” (force unlock) не показывается.
-- Для `Description` one-shot recovery используется **↻ Restart attempt** (см. 6.2), а не Play/Stop и не “доп. сообщение”.
+### 2.1 Input lock — snapshot-first
 
-### 3.2 Resume‑сессии (“бесконечные”, напр. Reviewer)
-- После каждого завершённого turn, когда агент ждёт пользователя, ввод **обязан** стать доступным.
-- Continuity/rollover — внутренняя инфраструктура; пользователь видит один диалог.
+Итоговая блокировка ввода вычисляется только по snapshot-данным (`workspace:snapshot`).
+
+Стрим-события (`session:stream`) могут ускорять UI, но не должны ломать snapshot-инварианты.
+
+Критично:
+- `continuityLockReason` — UX-hint, а не условие блокировки.
+- Если snapshot сообщает `turnState="idle"` и `continuityLockActive=false`, UI обязан разблокировать ввод.
+
+### 2.2 История vs live статус
+
+- История/диалог отображаются по `dialogId`.
+- Status/usage/input-state следуют активному `sessionId`.
 
 ---
 
-## 4) Законы блокировки/разблокировки ввода
+## 3) Типы сессий
 
-### 4.1 Глобальный инвариант (что считается “можно вводить”)
-В нормальном режиме (без ручного замочка) ввод доступен тогда и только тогда, когда одновременно:
-- текущая сессия **не** terminal/read‑only;
+### 3.1 Resume workflow-сессии (основной режим)
+
+Примеры: `Description`, `Virtual Simulation`, `Diagram Modules`, `Diagram Facades`.
+
+Правило:
+- после завершённого turn, когда агент ждёт пользователя, ввод обязан быть доступен.
+
+### 3.2 One-shot/no-resume сессии (ограниченный режим)
+
+Применяются только там, где шаг/операция явно объявлены как no-resume.
+
+Правило:
+- после финала ввод read-only;
+- ручной force-unlock не должен нарушать контракт шага.
+
+---
+
+## 4) Законы блокировки/разблокировки
+
+### 4.1 Глобальный инвариант
+
+В нормальном режиме (без локального override) ввод доступен, когда одновременно:
+- сессия не terminal/read-only;
 - `continuityLockActive === false`;
-- `turnState === "idle"` (в UI это соответствует `connectionState === "idle"`);
-- нет очереди отправки (queued message).
+- `turnState === "idle"`;
+- нет queued сообщения.
 
-UI‑копирайт обязан соответствовать состоянию:
+UI copy должна соответствовать состоянию:
 - `running` → “Agent is working…”
-- `blocked`/continuity lock → “Agent is resuming…”
+- continuity lock → “Agent is resuming…”
 
-### 4.2 Workflow‑сессии со стартовым core‑submit
-**Закон:** если сессия открывается как workflow‑узел (есть `stage` и `sessionKind`), то она должна быть **заблокирована сразу при открытии**, потому что ядро отправляет стартовый “шаблон/инструкции” как первое user‑сообщение.
+### 4.2 Workflow open со стартовым core-submit
 
-Практический смысл: не должно существовать “unlock gap” до первого snapshot/сообщений.
+Если workflow-сессия создаётся со стартовым system submit, ввод должен быть заблокирован сразу при открытии.
 
-### 4.3 One‑shot / no‑resume
-**Закон:** для `no_resume` ввод не разблокируется никогда (read‑only режим).
+Не допускается unlock-gap до первого snapshot.
 
-### 4.4 Resume‑сессии (основной закон)
-**Закон:** каждый раз, когда агент завершил turn и ожидает пользователя, UI обязан перейти в “можно вводить” (см. 4.1).
+### 4.3 Resume-сессии
 
-Критично: “агент прислал текст” ≠ “turn завершён”. Разблокировка привязана к финальным статус‑сигналам.
+Разблокировка ввода привязана к завершению turn (status snapshot), а не к самому факту появления текстового ответа.
 
 ---
 
-## 5) Continuity / rollover — happy path
+## 5) Continuity / rollover (happy path)
 
-### 5.1 Общая идея
-Continuity делит долгий диалог на runtime‑сегменты (`sessionId`), но диалог в UI остаётся единым.
-
-### 5.2 UX‑закон для rollover
-Пока идёт rollover/resume bootstrap:
-- ввод заблокирован;
-- пользователь видит copy “resuming…”.
-
-Когда новая сессия создана и bootstrap завершён (агент “прочитал отчёт и готов продолжать”):
-- в истории появляется разделитель “Новая сессия” (маркер смены `sessionId`);
-- активный `sessionId` переключается на новый сегмент;
-- **ввод обязан разблокироваться**.
+- Во время rollover/resume bootstrap ввод блокирован и UI показывает `resuming...`.
+- После завершения bootstrap:
+  - активный `sessionId` переключён,
+  - история остаётся в рамках того же `dialogId`,
+  - ввод разблокирован.
 
 ---
 
-## 6) Ручной замочек (force lock/unlock) — текущий контракт
+## 6) Manual controls (аварийные)
 
-**Зачем:** аварийный escape hatch для resume‑сессий, когда UI оказался заблокированным и пользователь не может даже подготовить/повторить сообщение.
+### 6.1 Force unlock
 
-**Границы ответственности (важно):**
-- замочек **не гарантирует доставку** сообщения;
-- замочек даёт возможность набрать текст и инициировать отправку, но фактическая доставка зависит от того, вернётся ли сессия в нормальный “idle”.
+Force unlock — локальный UI override:
+- не меняет SSOT в Core;
+- нужен как аварийный escape hatch;
+- не гарантирует доставку сообщения без восстановления live-сессии.
 
-**Где доступен:**
-- только в resume‑сессиях;
-- не показывается в `collector` (one‑shot) и в terminal/read‑only.
+### 6.2 Play/Stop
 
-### 6.1 Session input Play/Stop (▶/■)
+- ▶ отправляет сообщение как Enter.
+- ■ останавливает Core и снимает локальную блокировку ввода для подготовки следующего шага recovery.
+- Следующая отправка должна сначала восстановить Core, затем отправить сообщение.
 
-**Зачем:** быстрый abort активного turn (когда агент “залип”/нужно срочно прервать выполнение) через остановку Core.
-
-**Поведение:**
-- ▶ — отправляет сообщение как Enter.
-- ■ — останавливает Core (через `POST /api/v1/shutdown`, без авто‑рестарта) и форс‑разблокирует input, чтобы пользователь мог подготовить новый запрос (placeholder “Agent is working…” не должен оставаться после stop).
-- Следующая отправка (Enter/▶) сначала запускает Core, затем отправляет новое сообщение после восстановления соединения:
-  - VS Code webview: через Supervisor (`acquireVsCodeApi().postMessage(...)`).
-  - Standalone Project Manager (CEF): через Launcher bridge `window.codeaiLauncher.ensureCoreRunning()` → `codeai://core-start`.
-
-**Scope:** Play/Stop относится к resume‑сессиям. Для one‑shot `Description` этот механизм не подходит (нельзя продолжить диалог; остановка Core может снести другие активные сессии).
-
-### 6.2 One‑shot Description — ↻ Restart attempt (re-run)
-
-**Goal:** аварийный recovery, когда `Description` завис/упал mid‑turn или workflow не смог создать live‑сессию после превращения анкеты в `Questionary.md` артефакт.
-
-**UI:**
-- В `Description` one‑shot сессии заменить Play/Stop на одну кнопку **↻ Restart attempt** (white icon, same size as Stop), с подтверждением.
-- В `Questionary.md` artifact header показывать тот же ↻ (с подтверждением), чтобы пользователь мог перезапустить попытку даже если live‑сессия не создалась.
-
-**Behavior (contract):**
-- ↻ НЕ перезапускает Core (другие активные сессии не должны падать).
-- ↻ запускает новую попытку `Description` из `Questionary.md` (new provider session / new turn).
-- Late results от предыдущих попыток должны игнорироваться: Core/PM принимает артефакты/сигналы только для текущего `attemptId`.
+Scope: в первую очередь для resume-сессий.
 
 ---
 
-## 7) Регрессионный чеклист (happy path)
+## 7) Description pre-submit UI (без сессии)
 
-Минимальный набор сценариев, который обязан оставаться рабочим после любого фикса Session UI:
+Отдельный UI-контракт для стадии `Description` до submit:
+- runtime-сессии ещё нет;
+- слева показывается Description Help;
+- справа редактируется `questionnaire.md`;
+- после `Submit questionnaire` переход к обычному Session UI.
 
-1) **Workflow open → immediate lock**
-   - Открыть workflow‑сессию (stage+sessionKind заданы).
-   - Ввод заблокирован сразу, без “unlock gap”.
+Канон:
+- `DescriptionStep_SingleAgent.md`
+- `ProjectManager_DescriptionEntry_CopyRefactor.md`
 
-2) **Reviewer turn complete → unlock**
-   - Дождаться ответа Reviewer.
+---
+
+## 8) Регрессионный чеклист (happy path)
+
+1. **Workflow open → immediate lock**
+   - Открыть workflow-сессию со стартовым submit.
+   - Ввод блокируется сразу.
+
+2. **Description turn complete → unlock**
+   - Дождаться ответа Description Agent.
    - После завершения turn ввод становится доступным.
 
-3) **One‑shot Description → always read‑only**
-   - После отправки анкеты и финального ответа Description ввод остаётся read‑only.
-   - Замочек не появляется.
+3. **Virtual Simulation turn complete → unlock**
+   - Дождаться завершения turn.
+   - Ввод доступен для следующего сообщения.
 
-4) **Rollover happy path → unlock after bootstrap**
-   - Дойти до rollover.
-   - Во время rollover ввод заблокирован и copy “resuming…”.
-   - После появления “Новая сессия” и завершения bootstrap ввод разблокирован.
+4. **Rollover happy path → unlock after bootstrap**
+   - В rollover ввод временно блокирован.
+   - После bootstrap ввод разблокирован.
 
-5) **Статусные панели не “подвисают” на старом сегменте**
-   - После rollover SessionIdBar/StatusPanel отображают данные активного сегмента (актуальный `sessionId`/`providerSessionId`).
+5. **Status panels follow active segment**
+   - После rollover StatusPanel/SessionIdBar показывают текущий `sessionId`.
 
-6) **Cold start: idle snapshot без lock reason не должен блокировать ввод**
-   - Открыть workspace с завершённой resume-сессией.
-   - `workspace:snapshot` сообщает `turnState="idle"` и `continuityLockActive=false`, но `continuityLockReason` отсутствует.
-   - Ввод доступен (no stuck `resuming...`).
+6. **Cold start idle snapshot without reason**
+   - `turnState="idle"`, `continuityLockActive=false`, без `continuityLockReason`.
+   - Ввод остаётся доступным.
+
+---
+
+## 9) Связанные документы
+
+- `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
+- `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`

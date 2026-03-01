@@ -167,7 +167,7 @@ Placeholder/copy — только по `inputLock.reason`.
 - `recovery_required` допускается, но ввод должен быть доступен (manual force-unlock остаётся только как аварийный fallback).
 
 4) **Cold start (комп/ядро)**
-- открыть workspace с уже завершённой reviewer‑сессией → `idle_ready` сразу, без “залипания”.
+- открыть workspace с уже завершённой resume workflow-сессией (например, Description или Virtual Simulation) → `idle_ready` сразу, без “залипания”.
 
 5) **One‑shot**
 - после финала → `terminal_no_resume`, ввод read‑only, без замочка.
