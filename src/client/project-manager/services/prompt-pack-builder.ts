@@ -148,7 +148,7 @@ export const buildWorkflowPromptPack = (
   });
   const defaultPrompt =
     params.stage === "virtual_simulation"
-      ? "Собери артефакт на основе `Final_Description.md` и шаблона."
+      ? "Собери артефакт на основе `Final_Description.md`."
       : "Собери артефакт на основе анкеты и шаблона.";
   const prompt = params.prompt.trim().length ? params.prompt.trim() : defaultPrompt;
 
@@ -180,7 +180,7 @@ export const buildWorkflowPromptPack = (
     `Целевой путь (relative): \`${relativePath}\``,
     `Целевой путь (absolute): \`${absolutePath}\``,
     ...primaryInputLines,
-    params.templatePath
+    params.stage !== "virtual_simulation" && params.templatePath
       ? `Шаблон (absolute): \`${params.templatePath}\``
       : null,
   ];
