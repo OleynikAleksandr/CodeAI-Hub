@@ -6,6 +6,7 @@ import {
   startWorkflowEventPolling,
   type WorkflowEvent,
 } from "../../services/workflow-events-client";
+import { DescriptionArtifactHeaderToggle } from "./description-artifact-header-toggle";
 import { dispatchStageActivated, resolveWorkspaceSlug } from "./main-area-utils";
 import {
   MainAreaArtifactContent,
@@ -60,6 +61,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [pendingSessionCreate, setPendingSessionCreate] = useState<{
     readonly providerTitle: string;
   } | null>(null);
+  const [descriptionArtifactMode, setDescriptionArtifactMode] = useState<
+    "artifacts" | "help"
+  >("artifacts");
   const handleToolSelect = useWorkflowToolSelect({
     activeWorkspace,
     setActiveTool,
@@ -98,6 +102,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setQuestionnaireDocument(null);
     setHasDescriptionSession(false);
     setPendingSessionCreate(null);
+    setDescriptionArtifactMode("artifacts");
     if (!activeWorkspace) {
       setActiveTool(null);
       return;
@@ -203,6 +208,15 @@ export const MainArea: React.FC<MainAreaProps> = ({
     selectedArtifact?.workspaceSlug,
   ]);
 
+  useEffect(() => {
+    if (
+      descriptionArtifactMode === "help" &&
+      (activeTool !== "Description" || !hasDescriptionSession)
+    ) {
+      setDescriptionArtifactMode("artifacts");
+    }
+  }, [activeTool, descriptionArtifactMode, hasDescriptionSession]);
+
   const isDescriptionActive = activeTool === "Description";
   const activeWorkspaceSlug = activeWorkspace
     ? resolveWorkspaceSlug(activeWorkspace)
@@ -213,6 +227,10 @@ export const MainArea: React.FC<MainAreaProps> = ({
       selectedArtifact.workspaceSlug === activeWorkspaceSlug &&
       !hasDescriptionSession
   );
+  const showDescriptionHelpInRightPanel =
+    isDescriptionActive &&
+    hasDescriptionSession &&
+    descriptionArtifactMode === "help";
   const hasDescriptionSessionPending = pendingSessionCreate !== null;
   const showDescriptionHelpInSessionPanel =
     isDescriptionActive &&
@@ -235,7 +253,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             activeWorkspaceSlug={activeWorkspaceSlug}
             artifactRefreshKey={artifactRefreshKey}
             descriptionDocumentExists={descriptionDocument !== null}
-            descriptionHelpMode={false}
+            descriptionHelpMode={showDescriptionHelpInRightPanel}
             hasDescriptionSession={hasDescriptionSession}
             onDescriptionSessionCreated={handleIdeaSessionCreated}
             onPendingSessionCreateChange={setPendingSessionCreate}
@@ -245,6 +263,14 @@ export const MainArea: React.FC<MainAreaProps> = ({
             selectedArtifact={selectedArtifact}
             shouldShowQuestionnaireEditor={shouldShowQuestionnaireEditor}
           />
+        }
+        artifactHeaderContent={
+          isDescriptionActive && hasDescriptionSession ? (
+            <DescriptionArtifactHeaderToggle
+              mode={descriptionArtifactMode}
+              onModeChange={setDescriptionArtifactMode}
+            />
+          ) : undefined
         }
         onSizeChange={onSizeChange}
         sessionContent={

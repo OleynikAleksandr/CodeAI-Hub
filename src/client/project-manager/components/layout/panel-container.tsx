@@ -7,6 +7,8 @@ interface PanelContainerProps {
   onSizeChange: (index: 0, delta: number, containerWidth: number) => void;
   sessionContent?: React.ReactNode;
   artifactContent?: React.ReactNode;
+  sessionHeaderContent?: React.ReactNode;
+  artifactHeaderContent?: React.ReactNode;
 }
 
 /**
@@ -18,6 +20,8 @@ export const PanelContainer: React.FC<PanelContainerProps> = ({
   onSizeChange,
   sessionContent,
   artifactContent,
+  sessionHeaderContent,
+  artifactHeaderContent,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +36,7 @@ export const PanelContainer: React.FC<PanelContainerProps> = ({
   return (
     <div className="pm-panel-container" ref={containerRef}>
       <section className="pm-panel pm-panel--sessions" style={{ width: `${sizes[0]}%` }}>
-        <div className="pm-panel__header">Sessions</div>
+        <div className="pm-panel__header">{sessionHeaderContent ?? "Sessions"}</div>
         <div className="pm-panel__content">
           {sessionContent ?? (
             <div className="pm-placeholder">Session windows will appear here.</div>
@@ -43,7 +47,7 @@ export const PanelContainer: React.FC<PanelContainerProps> = ({
       <VerticalResizer index={0} onResize={handleResize} />
 
       <section className="pm-panel pm-panel--artifacts" style={{ width: `${sizes[1]}%` }}>
-        <div className="pm-panel__header">Artifacts</div>
+        <div className="pm-panel__header">{artifactHeaderContent ?? "Artifacts"}</div>
         <div className="pm-panel__content">
           {artifactContent ?? (
             <div className="pm-placeholder">Artifacts will appear here.</div>
