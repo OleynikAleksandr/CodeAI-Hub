@@ -7,9 +7,7 @@ import {
 import type { ProviderTheme } from "./helpers";
 import { resolveProviderWaitColor } from "./helpers";
 import { resolveInputPlaceholder } from "./input-panel-placeholders";
-import InputPlayStopButton, {
-  type DescriptionRestartAttemptContext,
-} from "./input-play-stop-button";
+import InputPlayStopButton from "./input-play-stop-button";
 import { InputTextarea } from "./input-textarea";
 import type { TaskTimerSnapshot } from "./task-timer";
 import { TaskTimer } from "./task-timer";
@@ -21,7 +19,6 @@ type InputPanelProps = {
   readonly continuityErrorCopy?: string | null;
   readonly isQueued?: boolean;
   readonly providerTheme?: ProviderTheme | null;
-  readonly descriptionRestartAttempt?: DescriptionRestartAttemptContext | null;
   readonly terminalNoResume?: boolean;
   readonly taskTimer?: TaskTimerSnapshot | null;
   readonly onSubmit: (text: string) => void;
@@ -37,7 +34,6 @@ const InputPanel = ({
   continuityErrorCopy = null,
   isQueued = false,
   providerTheme = null,
-  descriptionRestartAttempt = null,
   terminalNoResume = false,
   taskTimer = null,
   onSubmit,
@@ -278,7 +274,6 @@ const InputPanel = ({
           />
         </fieldset>
         <InputPlayStopButton
-          descriptionRestartAttempt={descriptionRestartAttempt}
           onClick={handleActionClick}
           stopActive={stopActive}
         />

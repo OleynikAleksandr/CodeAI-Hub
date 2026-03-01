@@ -97,14 +97,6 @@ const SessionViewBody = ({
     (session) => session.id === activeSessionId
   );
   const primaryProviderId = activeRecord?.providerIds[0] ?? null;
-  const descriptionRestartAttempt =
-    activeRecord?.stage === "description" && activeRecord.initiativeSlug
-      ? {
-          workspacePath: activeRecord.workspacePath,
-          workspaceSlug: activeRecord.initiativeSlug,
-          providerId: primaryProviderId,
-        }
-      : null;
   const providerTheme = mapProviderTheme(primaryProviderId);
   const providerDisplayLabel = resolveProviderDisplayLabel({
     providerId: primaryProviderId,
@@ -203,7 +195,6 @@ const SessionViewBody = ({
             connectionState={inputConnectionState}
             continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
-            descriptionRestartAttempt={descriptionRestartAttempt}
             draft={activeSession.draft}
             isQueued={isQueued}
             onSubmit={submitMessage}

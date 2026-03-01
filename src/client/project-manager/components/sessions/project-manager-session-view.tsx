@@ -1,7 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import type { ProviderStackId } from "../../../../types/provider";
-import { api } from "../../api";
-import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
+import { useEffect, useState } from "react";
 import ProjectManagerDialogSessionView, {
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view";
@@ -94,15 +91,6 @@ const saveLastDialogIntent = (intent: DialogOpenIntent): void => {
   }
 };
 
-type DescriptionRestartAttemptEventDetail = {
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-  readonly providerId: string | null;
-};
-
-const isProviderStackId = (value: unknown): value is ProviderStackId =>
-  value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
-
 export const ProjectManagerSessionView = ({
   workspacePath,
   preferredSessionId,
@@ -112,8 +100,6 @@ export const ProjectManagerSessionView = ({
   const [dialogIntent, setDialogIntent] = useState<DialogOpenIntent | null>(
     null
   );
-  const submitServiceRef = useRef(new IdeaCollectorSubmitService());
-  const restartAttemptInFlightRef = useRef(false);
 
   useEffect(() => {
     if (!workspacePath) {
@@ -129,111 +115,6 @@ export const ProjectManagerSessionView = ({
     }
     setDialogIntent(null);
     setViewMode("runtime");
-  }, [workspacePath]);
-
-  useEffect(() => {
-    const handler = (event: Event) => {
-      const custom =
-        event as CustomEvent<DescriptionRestartAttemptEventDetail | null>;
-      const detail = custom.detail;
-      if (!detail) {
-        return;
-      }
-      if (
-        typeof detail.workspacePath !== "string" ||
-        typeof detail.workspaceSlug !== "string"
-      ) {
-        return;
-      }
-      if (workspacePath && detail.workspacePath !== workspacePath) {
-        return;
-      }
-
-      if (restartAttemptInFlightRef.current) {
-        return;
-      }
-      restartAttemptInFlightRef.current = true;
-
-      void (async () => {
-        try {
-          const state = await api.getWorkflowState(
-            detail.workspaceSlug,
-            detail.workspacePath
-          );
-          const descriptionSession =
-            state?.description?.session ??
-            state?.description?.collectorSession ??
-            null;
-          const questionnairePathCandidate = state?.description?.questionnairePath;
-          const questionnairePath =
-            typeof questionnairePathCandidate === "string" &&
-            questionnairePathCandidate.trim().length > 0
-              ? questionnairePathCandidate.trim()
-              : `.codeai-hub/${detail.workspaceSlug}/description/questionnaire.md`;
-
-          const providerIdCandidate =
-            isProviderStackId(detail.providerId)
-              ? detail.providerId
-              : descriptionSession?.providerId ??
-                api.getIdeaCollectorProviders().at(0)?.id ??
-                null;
-
-          const providerId = isProviderStackId(providerIdCandidate)
-            ? providerIdCandidate
-            : null;
-
-          if (providerId === null) {
-            return;
-          }
-
-          const dispatchDialogIntent = (providerSessionId: string | null) => {
-            const dialogIntent: DialogOpenIntent = {
-              providerId,
-              providerSessionId,
-              workspacePath: detail.workspacePath,
-              workspaceSlug: detail.workspaceSlug,
-              initiativeSlug: detail.workspaceSlug,
-              stage: "description",
-              sessionKind: null,
-              runSlug: null,
-            };
-            window.dispatchEvent(
-              new CustomEvent("pm:dialog:open", {
-                detail: dialogIntent,
-              })
-            );
-          };
-
-          const providerSessionId =
-            typeof descriptionSession?.providerSessionId === "string" &&
-            descriptionSession.providerSessionId.trim().length > 0
-              ? descriptionSession.providerSessionId.trim()
-              : null;
-          if (providerSessionId) {
-            dispatchDialogIntent(providerSessionId);
-            return;
-          }
-
-          await submitServiceRef.current.submitQuestionnaire({
-            workspacePath: detail.workspacePath,
-            workspaceSlug: detail.workspaceSlug,
-            questionnairePath,
-            stage: "description",
-            providerId,
-          });
-          dispatchDialogIntent(null);
-        } catch {
-          // ignore: restart attempt is best-effort
-        } finally {
-          restartAttemptInFlightRef.current = false;
-        }
-      })();
-    };
-
-    window.addEventListener("pm:description:restart-attempt", handler);
-    return () => {
-      window.removeEventListener("pm:description:restart-attempt", handler);
-    };
   }, [workspacePath]);
 
   useEffect(() => {
