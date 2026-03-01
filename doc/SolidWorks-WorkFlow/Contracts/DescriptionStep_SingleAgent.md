@@ -75,13 +75,27 @@
 
 ---
 
-## PM/UI Expectations
-- До старта сессии показывается редактор анкеты.
-- После старта сессии пользователь видит runtime session UI и может продолжать диалог после перезапуска PM/Core.
-- В артефактах узла `description` предпочтительно показывать:
+## PM/UI Expectations (Phase 279 user-facing contract)
+
+### До отправки анкеты (`questionnaire submit`)
+- Левая панель (`Sessions`) показывает **Description Help** вместо Session UI.
+- Правая панель (`Artifacts`) показывает редактор `questionnaire.md` как основной рабочий контент.
+- Пользователь может редактировать `questionnaire.md` без старта runtime-сессии.
+- Help должен явно объяснять:
+  - цель шага Description и ожидаемый результат (`Final_Description.md`);
+  - минимальный состав хорошей анкеты (проблема, пользователь, сценарии, ограничения);
+  - что произойдет после `Submit questionnaire` (запуск Description Agent в той же stage-сессии).
+
+### После отправки анкеты (runtime-сессия создана)
+- Левая панель возвращается к стандартному Session UI (runtime диалог Description).
+- Правая панель по умолчанию показывает артефакты узла `description`:
   - `Final_Description.md`, если файл существует;
   - иначе `questionnaire.md`.
-- Тексты в UI не должны упоминать `description.md` и auto-reviewer.
+- В заголовке правой панели появляется переключатель `Artifacts/Help`:
+  - `Artifacts` — просмотр артефактов;
+  - `Help` — тот же Description Help, что и на pre-submit экране (единый источник текста).
+- Переключатель относится только к stage `Description` и не должен ломать routing/continuity.
+- Тексты UI не должны упоминать `description.md` и auto-reviewer.
 
 ---
 
