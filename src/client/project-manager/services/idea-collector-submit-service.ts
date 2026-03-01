@@ -50,9 +50,7 @@ type SessionErrorPayload = {
 const cachedWorkflowSchemas = new Map<WorkflowStageId, Record<string, unknown>>();
 const pendingWorkflowSchemas = new Map<WorkflowStageId, Promise<Record<string, unknown>>>();
 
-const normalizeWorkflowContract = (
-  payload: unknown
-): WorkflowContractSnapshot | null => {
+const normalizeWorkflowContract = (payload: unknown): WorkflowContractSnapshot | null => {
   if (!isRecord(payload)) {
     return null;
   }
@@ -72,10 +70,7 @@ const normalizeWorkflowContract = (
     pathsRaw && typeof pathsRaw.questionnaire === "string"
       ? pathsRaw.questionnaire
       : undefined;
-  if (!(prompt && schema)) {
-    return null;
-  }
-  if (!(promptPath && templatePath)) {
+  if (!(prompt && schema && promptPath)) {
     return null;
   }
   return {
@@ -100,7 +95,7 @@ const loadWorkflowContract = async (
     prompt: WORKFLOW_FILE_FIRST_FALLBACK_PROMPT,
     schema: normalizeIdeaCollectorSchema(IDEA_COLLECTOR_FALLBACK_SCHEMA, null),
     template: "",
-    paths: { prompt: "", template: "" },
+    paths: { prompt: "" },
   };
   if (!httpUrl) {
     return fallback;
