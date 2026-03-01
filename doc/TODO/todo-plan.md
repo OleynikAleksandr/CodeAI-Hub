@@ -35,8 +35,8 @@
 2. [DONE] Git Commit: `docs(virtual-simulation): approve prompt-only contract source` (hash: `6ca3e7c1`)
 3. [DONE] Обновить SSOT контракта `Virtual Simulation` под режим prompt-only (без artifact template) (scope: `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`; expected commit: `docs(virtual-simulation): switch contract to prompt-only runtime`).
 4. [DONE] Git Commit: `docs(virtual-simulation): switch contract to prompt-only runtime` (hash: `860e1128`)
-5. [IN_PROGRESS] Синхронизировать системный SSOT и workflow state-machine после утверждения prompt-only дельты (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs(workflow): sync virtual simulation prompt-only invariants`).
-6. [TODO] Git Commit: `docs(workflow): sync virtual simulation prompt-only invariants` (hash: TBD)
+5. [DONE] Синхронизировать системный SSOT и workflow state-machine после утверждения prompt-only дельты (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs(workflow): sync virtual simulation prompt-only invariants`).
+6. [DONE] Git Commit: `docs(workflow): sync virtual simulation prompt-only invariants` (hash: `7965240e`)
 
 ### Stream 1: Runtime decomposition (post-approval)
 1. [DONE] Нарезать implementation-stream узла `Virtual Simulation` на микро-задачи с удалением artifact template из кодовой базы и runtime contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): decompose prompt-only virtual simulation migration`).
@@ -62,9 +62,9 @@
 
 ### Stream 2: Validation + status propagation guards
 1. [TODO] Добавить/обновить тесты для prompt-only генерации и валидации `virtual-simulation.md` (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `test(core): guard virtual simulation prompt-only pipeline`).
-2. [BLOCKED] Git Commit: `test(core): guard virtual simulation prompt-only pipeline` (hash: TBD)
+2. [TODO] Git Commit: `test(core): guard virtual simulation prompt-only pipeline` (hash: TBD)
 3. [TODO] Синхронизировать пересчёт статусов (`READY/DONE/ERROR/OUTDATED`) для prompt-only Virtual Simulation и проверить отсутствие регрессий в manual start flow (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `fix(workflow): align virtual simulation prompt-only status flow`).
-4. [BLOCKED] Git Commit: `fix(workflow): align virtual simulation prompt-only status flow` (hash: TBD)
+4. [TODO] Git Commit: `fix(workflow): align virtual simulation prompt-only status flow` (hash: TBD)
 
 ### Stream 3: Release build (по чеклисту)
 1. [BLOCKED] После закрытия всех stream запустить таргетные проверки затронутых пакетов/клиентов и зафиксировать результаты в отчёте сессии (scope: `doc/Sessions/Session056.md`; expected commit: `docs(session): record virtual simulation prompt-only validation`).
