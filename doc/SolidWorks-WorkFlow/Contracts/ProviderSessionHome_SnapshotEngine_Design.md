@@ -51,7 +51,7 @@
 - `~/.codeai-hub/providers/<providerId>/sessions/<workspaceSlug>/<sessionNodeSlug>--<sessionNodeId>/home`
 
 `sessionNodeSlug`:
-- читаемая часть, derived от user-visible названия узла (пример: `Reviewer Claude` -> `reviewer-claude`).
+- читаемая часть, derived от user-visible названия узла (пример: `Description Claude` -> `description-claude`).
 
 `sessionNodeId`:
 - стабильный идентификатор логической Session Node (должен переживать continuity rollover).

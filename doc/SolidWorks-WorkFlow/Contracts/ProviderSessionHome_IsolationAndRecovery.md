@@ -16,7 +16,7 @@
 - Core не создает HOME для всех провайдеров заранее; создается только HOME провайдера, назначенного текущему Session Node.
 - Рекомендуемый path шаблон:
   - `~/.codeai-hub/providers/<providerId>/sessions/<workspaceSlug>/<agentNodeSlug>--<dialogId>/home`
-- `agentNodeSlug` формируется из user-visible имени узла/агента (пример: `Reviewer Claude` -> `reviewer-claude`), чтобы путь оставался читаемым.
+- `agentNodeSlug` формируется из user-visible имени узла/агента (пример: `Description Claude` -> `description-claude`), чтобы путь оставался читаемым.
 - Для стабильности и уникальности suffix `--<dialogId>` обязателен даже при одинаковых именах узлов.
 - `dialogId` должен быть стабильным ключом UI-истории и Session Node (переживает continuity rollover).
 
