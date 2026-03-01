@@ -6,74 +6,68 @@
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-  - `doc/Sessions/Session052.md`
-- TODO Plan состоит из Phase/Stream, каждая подзадача затрагивает не более 3 файлов.
-- Каждая подзадача оформляется парой: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
+  - `doc/Sessions/Session055.md`
+- TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
+- Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
-- Husky gates не обходить (`--no-verify` запрещен).
+- Husky gates не обходить (`--no-verify` запрещён).
 - Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита.
 
 ---
 
-## Parked Phases (вынесены в отдельные файлы)
-- `Phase 272 (Standalone Reviewer, DEFERRED)`: `doc/TODO/Phase272-StandaloneReviewer.md`
+## Phase 282 — Virtual Simulation Node Transformation (owner: Oleksandr, updated: 2026-03-01)
 
-## Архив
-- Предыдущий общий план (Phase 271–278): `doc/TODO/Archive/todo-plan-up-to-phase278-2026-02-28.md`
-- Завершённый план Phase 279: `doc/TODO/Archive/todo-plan-up-to-phase279-2026-03-01.md`
+**Scope этой фазы:** обсуждение и фиксация небольшой трансформации узла `virtual_simulation` на уровне SSOT.
+
+**Цель:**
+- утвердить дельта-контракт шага `Virtual Simulation`;
+- синхронизировать связанные SSOT-документы;
+- подготовить декомпозицию runtime-реализации на микро-задачи.
+
+**Approved integration contract (prompt-only):**
+- `doc/Virtual_Simulation_Prompt.draft-v1.md` — утверждённый источник текста для runtime prompt Virtual Simulation.
+
+### Stream 0: Delta contract alignment
+1. [DONE] Утвердить prompt-контракт трансформации узла `virtual_simulation` и зафиксировать прямую ссылку на source-of-truth (`doc/Virtual_Simulation_Prompt.draft-v1.md`) (scope: `doc/Virtual_Simulation_Prompt.draft-v1.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(virtual-simulation): approve prompt-only contract source`).
+2. [TODO] Git Commit: `docs(virtual-simulation): approve prompt-only contract source` (hash: TBD)
+3. [TODO] Обновить SSOT контракта `Virtual Simulation` под режим prompt-only (без artifact template) (scope: `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`; expected commit: `docs(virtual-simulation): switch contract to prompt-only runtime`).
+4. [TODO] Git Commit: `docs(virtual-simulation): switch contract to prompt-only runtime` (hash: TBD)
+5. [TODO] Синхронизировать системный SSOT и workflow state-machine после утверждения prompt-only дельты (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs(workflow): sync virtual simulation prompt-only invariants`).
+6. [TODO] Git Commit: `docs(workflow): sync virtual simulation prompt-only invariants` (hash: TBD)
+
+### Stream 1: Runtime decomposition (post-approval)
+1. [DONE] Нарезать implementation-stream узла `Virtual Simulation` на микро-задачи с удалением artifact template из кодовой базы и runtime contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): decompose prompt-only virtual simulation migration`).
+2. [TODO] Git Commit: `docs(plan): decompose prompt-only virtual simulation migration` (hash: TBD)
 
 ---
 
-## Phase 280 — Description Draft Templates Review & Integration Plan (owner: Oleksandr, updated: 2026-03-01)
+## Phase 283 — Virtual Simulation Runtime Implementation (owner: Oleksandr, updated: 2026-03-01)
 
-**Scope этой фазы:** только ревью и согласование шаблонов шага `Description`.
+**Scope этой фазы:** реализация после закрытия Phase 282.
 
-**Цель:**
-- получить утверждённые user-facing и agent-facing шаблоны;
-- подготовить микро-план интеграции в runtime после пользовательского утверждения.
+### Stream 0: Core prompt-only migration (remove artifact template from codebase)
+1. [BLOCKED] Перенести утверждённый текст из `doc/Virtual_Simulation_Prompt.draft-v1.md` в runtime prompt Virtual Simulation и убрать упоминания `virtual-simulation-template.md` из bundled templates (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit: `feat(core): migrate virtual simulation prompt to approved contract`).
+2. [BLOCKED] Git Commit: `feat(core): migrate virtual simulation prompt to approved contract` (hash: TBD)
+3. [BLOCKED] Удалить `virtual-simulation-template.md` из workflow contract для stage `virtual_simulation` (не генерировать, не читать, не отправлять) (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(core): remove virtual simulation artifact template contract`).
+4. [BLOCKED] Git Commit: `refactor(core): remove virtual simulation artifact template contract` (hash: TBD)
 
-### Stream 0: Review Gate (with user)
-1. [TODO] Провести ревью и согласовать правки для `doc/Description_Step_Help_Template.draft-v1.md` (scope: `doc/Description_Step_Help_Template.draft-v1.md`; expected commit: `docs(help): approve description step help template v1`).
-2. [TODO] Git Commit: `docs(help): approve description step help template v1` (hash: TBD)
-3. [TODO] Провести ревью и согласовать правки для `doc/Description_Agent_Instructions_Template.draft-v2.md` (scope: `doc/Description_Agent_Instructions_Template.draft-v2.md`; expected commit: `docs(prompt): approve description agent instructions template v2`).
-4. [TODO] Git Commit: `docs(prompt): approve description agent instructions template v2` (hash: TBD)
+### Stream 1: Project Manager prompt-pack (stop sending template path)
+1. [BLOCKED] Обновить загрузку workflow contract в PM: stage `virtual_simulation` должен работать без `paths.template` и без markdown template payload (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit: `refactor(pm): consume virtual simulation contract without artifact template`).
+2. [BLOCKED] Git Commit: `refactor(pm): consume virtual simulation contract without artifact template` (hash: TBD)
+3. [BLOCKED] Убрать отправку template path в prompt-pack для `virtual_simulation` и переписать fallback/default prompt под режим prompt-only (scope: `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `refactor(pm): remove template hints from virtual simulation prompt pack`).
+4. [BLOCKED] Git Commit: `refactor(pm): remove template hints from virtual simulation prompt pack` (hash: TBD)
 
-### Stream 1: Integration planning (post-approval)
-1. [BLOCKED] Зафиксировать интеграционный план: какие draft-файлы становятся runtime-asset источником истины и какие файлы/модули нужно менять (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(description): define integration plan for approved templates`).
-2. [BLOCKED] Git Commit: `docs(description): define integration plan for approved templates` (hash: TBD)
+### Stream 2: Validation + status propagation guards
+1. [BLOCKED] Добавить/обновить тесты для prompt-only генерации и валидации `virtual-simulation.md` (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `test(core): guard virtual simulation prompt-only pipeline`).
+2. [BLOCKED] Git Commit: `test(core): guard virtual simulation prompt-only pipeline` (hash: TBD)
+3. [BLOCKED] Синхронизировать пересчёт статусов (`READY/DONE/ERROR/OUTDATED`) для prompt-only Virtual Simulation и проверить отсутствие регрессий в manual start flow (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `fix(workflow): align virtual simulation prompt-only status flow`).
+4. [BLOCKED] Git Commit: `fix(workflow): align virtual simulation prompt-only status flow` (hash: TBD)
 
----
-
-## Phase 281 — Description Resume Regression Fixes (Play/Stop + Continuity Trigger) (owner: Oleksandr, updated: 2026-03-01)
-
-**Scope этой фазы:** точечный фикс двух регрессий шага `Description` после миграции с one-shot на resume.
-
-**Цель:**
-- вернуть в runtime `Description` стандартный input toggle `Play/Stop` (без `Retry`);
-- восстановить реакцию Core на threshold context window (например, 80%) в бесконечной `Description`-сессии.
-
-### Stream 0: Registry + bug contract
-1. [DONE] Завести запись бага и контракт фикса в `doc/BugRegistry.md` (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): register description resume regressions`).
-2. [DONE] Git Commit: `docs(bug): register description resume regressions` (hash: `afccb439`)
-
-### Stream 1: Session UI — убрать legacy restart из runtime Description
-1. [DONE] Убрать подмену action-кнопки input на `Restart attempt` для runtime `Description` и вернуть стандартный `Play/Stop` (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-play-stop-button.tsx`, `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; expected commit: `fix(ui): restore play-stop action for description runtime`).
-2. [DONE] Git Commit: `fix(ui): restore play-stop action for description runtime` (hash: `473523a6`)
-3. [DONE] Добавить UI regression test для runtime `Description`, подтверждающий отображение `Play`/`Stop` без restart-ветки (scope: `src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts`; expected commit: `test(ui): guard description runtime play-stop action`).
-4. [DONE] Git Commit: `test(ui): guard description runtime play-stop action` (hash: `9419eb0e`)
-
-### Stream 2: Core continuity — восстановить threshold rollover eligibility
-1. [DONE] Синхронизировать flow-node continuity eligibility с современной `Description` resume-сессией (compat для `runSlug=null`) и исключить mismatch с legacy `collector` фильтром (scope: `packages/core/src/flow-node-continuity/flow-node-continuity-types.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.test.ts`; expected commit: `fix(core): restore description continuity threshold trigger`).
-2. [DONE] Git Commit: `fix(core): restore description continuity threshold trigger` (hash: `8d1f47f3`)
-
-### Stream 3: Guards + release
-1. [DONE] Прогнать таргетные проверки (минимум: тесты/сборки для затронутых UI/Core путей) и зафиксировать в отчёте сессии (scope: `doc/Sessions/Session053.md`; expected commit: `docs(session): record phase281 validation`).
-2. [DONE] Git Commit: `docs(session): record phase281 validation` (hash: `b423a36a`)
-3. [DONE] Выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` после фикса и зафиксировать release результаты (scope: release manifests + `doc/Sessions/Session053.md`; expected commit: `chore(release): build-all vX.Y.Z`).
-4. [DONE] Git Commit: `chore(release): build-all v1.1.704` (hashes: `3d6655d4`, `60f1053d`, `308ba8df`, `e872cf4d`, `baed7154`)
-
-### Stream 4: Bug closure
-1. [DONE] Обновить запись `BUG-2026-03-01-01` до `FIXED`: root cause/fix/commits/release/guards (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): close description resume regressions`).
-2. [DONE] Git Commit: `docs(bug): close description resume regressions` (hash: `d5c74e59`)
+### Stream 3: Release build (по чеклисту)
+1. [BLOCKED] После закрытия всех stream запустить таргетные проверки затронутых пакетов/клиентов и зафиксировать результаты в отчёте сессии (scope: `doc/Sessions/Session056.md`; expected commit: `docs(session): record virtual simulation prompt-only validation`).
+2. [BLOCKED] Git Commit: `docs(session): record virtual simulation prompt-only validation` (hash: TBD)
+3. [BLOCKED] Выполнить релизный цикл: `./scripts/build-all.sh` -> проверка чистого дерева -> `./scripts/build-release.sh --use-current-version` -> верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + `doc/Sessions/Session056.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+4. [BLOCKED] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
