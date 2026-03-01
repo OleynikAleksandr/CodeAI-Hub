@@ -51,9 +51,9 @@
 
 ### Stream 3: Drafts — prompts/templates (обсуждение обязательно)
 1. [DONE] Подготовить draft v2 для инструкций Description Agent (file-first + canvas-first: агент обновляет `Final_Description.md` итеративно и не вываливает полный документ в чат; вопросы задаёт после первичного черновика) без включения в runtime, в корне `doc/` для ревью (scope: `doc/Description_Agent_Instructions_Template.draft-v2.md`; expected commit: `docs(prompt): draft description agent system prompt v2`).
-2. [IN_PROGRESS] Git Commit: `docs(prompt): draft description agent system prompt v2` (hash: TBD)
-3. [IN_PROGRESS] Подготовить draft шаблона Help для пользователя шага Description (pre-submit и post-submit guidance) в корне `doc/` для ревью (scope: `doc/Description_Step_Help_Template.draft-v1.md`; expected commit: `docs(template): draft description help template for step1`).
-4. [BLOCKED] Git Commit: `docs(template): draft description help template for step1` (hash: TBD)
+2. [DONE] Git Commit: `docs(prompt): draft description agent system prompt v2` (hash: `2656382b`)
+3. [DONE] Подготовить draft шаблона Help для пользователя шага Description (pre-submit и post-submit guidance) в корне `doc/` для ревью (scope: `doc/Description_Step_Help_Template.draft-v1.md`; expected commit: `docs(template): draft description help template for step1`).
+4. [IN_PROGRESS] Git Commit: `docs(template): draft description help template for step1` (hash: TBD)
 
 ### Stream 4: Validation (после UI правок)
 1. [BLOCKED] Прогнать таргетную валидацию PM/UI (typecheck/build/test по необходимости) и зафиксировать итог в session report (scope: `doc/Sessions/Session051.md`; expected commit: `docs(session): record description refactor validation`).
