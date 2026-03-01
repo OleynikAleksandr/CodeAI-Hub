@@ -61,13 +61,13 @@
 4. [DONE] Git Commit: `refactor(pm): remove template hints from virtual simulation prompt pack` (hash: `5f2720e6`)
 
 ### Stream 2: Validation + status propagation guards
-1. [TODO] Добавить/обновить тесты для prompt-only генерации и валидации `virtual-simulation.md` (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `test(core): guard virtual simulation prompt-only pipeline`).
-2. [TODO] Git Commit: `test(core): guard virtual simulation prompt-only pipeline` (hash: TBD)
-3. [TODO] Синхронизировать пересчёт статусов (`READY/DONE/ERROR/OUTDATED`) для prompt-only Virtual Simulation и проверить отсутствие регрессий в manual start flow (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `fix(workflow): align virtual simulation prompt-only status flow`).
-4. [TODO] Git Commit: `fix(workflow): align virtual simulation prompt-only status flow` (hash: TBD)
+1. [DONE] Добавить/обновить тесты для prompt-only генерации и валидации `virtual-simulation.md` (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `test(core): guard virtual simulation prompt-only pipeline`).
+2. [DONE] Git Commit: `test(core): guard virtual simulation prompt-only pipeline` (hash: `77422b17`)
+3. [DONE] Синхронизировать пересчёт статусов (`READY/DONE/ERROR/OUTDATED`) для prompt-only Virtual Simulation и проверить отсутствие регрессий в manual start flow (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit: `fix(workflow): align virtual simulation prompt-only status flow`).
+4. [DONE] Git Commit: `fix(workflow): align virtual simulation prompt-only status flow` (hash: `dc10e920`)
 
 ### Stream 3: Release build (по чеклисту)
-1. [BLOCKED] После закрытия всех stream запустить таргетные проверки затронутых пакетов/клиентов и зафиксировать результаты в отчёте сессии (scope: `doc/Sessions/Session056.md`; expected commit: `docs(session): record virtual simulation prompt-only validation`).
-2. [BLOCKED] Git Commit: `docs(session): record virtual simulation prompt-only validation` (hash: TBD)
-3. [BLOCKED] Выполнить релизный цикл: `./scripts/build-all.sh` -> проверка чистого дерева -> `./scripts/build-release.sh --use-current-version` -> верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + `doc/Sessions/Session056.md`; expected commit: `chore(release): build-all vX.Y.Z`).
-4. [BLOCKED] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+1. [IN_PROGRESS] После закрытия всех stream запустить таргетные проверки затронутых пакетов/клиентов и зафиксировать результаты в отчёте сессии (scope: `doc/Sessions/Session056.md`; expected commit: `docs(session): record virtual simulation prompt-only validation`).
+2. [TODO] Git Commit: `docs(session): record virtual simulation prompt-only validation` (hash: TBD)
+3. [TODO] Выполнить релизный цикл: `./scripts/build-all.sh` -> проверка чистого дерева -> `./scripts/build-release.sh --use-current-version` -> верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + `doc/Sessions/Session056.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
