@@ -10712,11 +10712,11 @@ ${message.content}`
       }
     }
   }
-  function productionCreate(_, jsx46, jsxs42) {
+  function productionCreate(_, jsx46, jsxs41) {
     return create2;
     function create2(_2, type, props, key) {
       const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs42 : jsx46;
+      const fn = isStaticChildren ? jsxs41 : jsx46;
       return key ? fn(type, props, key) : fn(type, props);
     }
   }
@@ -22083,177 +22083,10 @@ ${message.content}`
   // src/client/ui/src/session/input-play-stop-button.tsx
   var import_react5 = __toESM(require_react());
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var RESTART_RESET_TIMEOUT_MS = 15e3;
-  var RESTART_CONFIRM_TIMEOUT_MS = 1e4;
-  var RestartAttemptButton = ({
-    context
-  }) => {
-    const [restartInFlight, setRestartInFlight] = (0, import_react5.useState)(false);
-    const [confirmOpen, setConfirmOpen] = (0, import_react5.useState)(false);
-    const restartTimerRef = (0, import_react5.useRef)(null);
-    const confirmTimerRef = (0, import_react5.useRef)(null);
-    const rootRef = (0, import_react5.useRef)(null);
-    (0, import_react5.useEffect)(
-      () => () => {
-        if (restartTimerRef.current !== null) {
-          window.clearTimeout(restartTimerRef.current);
-        }
-        if (confirmTimerRef.current !== null) {
-          window.clearTimeout(confirmTimerRef.current);
-        }
-      },
-      []
-    );
-    const clearConfirmTimer = (0, import_react5.useCallback)(() => {
-      if (confirmTimerRef.current === null) {
-        return;
-      }
-      window.clearTimeout(confirmTimerRef.current);
-      confirmTimerRef.current = null;
-    }, []);
-    const closeConfirm = (0, import_react5.useCallback)(() => {
-      setConfirmOpen(false);
-      clearConfirmTimer();
-    }, [clearConfirmTimer]);
-    const openConfirm = (0, import_react5.useCallback)(() => {
-      if (restartInFlight) {
-        return;
-      }
-      setConfirmOpen(true);
-      clearConfirmTimer();
-      confirmTimerRef.current = window.setTimeout(() => {
-        confirmTimerRef.current = null;
-        setConfirmOpen(false);
-      }, RESTART_CONFIRM_TIMEOUT_MS);
-    }, [clearConfirmTimer, restartInFlight]);
-    (0, import_react5.useEffect)(() => {
-      if (!confirmOpen) {
-        return;
-      }
-      const handleKeyDown = (event) => {
-        if (event.key === "Escape") {
-          closeConfirm();
-        }
-      };
-      const handlePointerDown = (event) => {
-        const root4 = rootRef.current;
-        if (!root4) {
-          return;
-        }
-        const target = event.target;
-        if (!(target instanceof Node)) {
-          return;
-        }
-        if (!root4.contains(target)) {
-          closeConfirm();
-        }
-      };
-      document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("mousedown", handlePointerDown);
-      return () => {
-        document.removeEventListener("keydown", handleKeyDown);
-        document.removeEventListener("mousedown", handlePointerDown);
-      };
-    }, [closeConfirm, confirmOpen]);
-    const label = restartInFlight ? "\u21BB Restarting..." : "\u21BB Restart attempt";
-    const handleClick = () => {
-      if (restartInFlight) {
-        return;
-      }
-      if (confirmOpen) {
-        closeConfirm();
-        return;
-      }
-      openConfirm();
-    };
-    const handleApply = () => {
-      if (restartInFlight) {
-        return;
-      }
-      closeConfirm();
-      setRestartInFlight(true);
-      window.dispatchEvent(
-        new CustomEvent("pm:description:restart-attempt", {
-          detail: context
-        })
-      );
-      restartTimerRef.current = window.setTimeout(() => {
-        restartTimerRef.current = null;
-        setRestartInFlight(false);
-      }, RESTART_RESET_TIMEOUT_MS);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "session-input__action", ref: rootRef, children: [
-      confirmOpen && !restartInFlight ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
-        "div",
-        {
-          "aria-label": "Confirm restart attempt",
-          className: "session-input__confirm-popover",
-          role: "dialog",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "session-input__confirm-text", children: "Restart attempt?" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-              "button",
-              {
-                className: [
-                  "session-input__confirm-button",
-                  "session-input__confirm-button--apply"
-                ].join(" "),
-                onClick: handleApply,
-                type: "button",
-                children: "Apply"
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-              "button",
-              {
-                className: [
-                  "session-input__confirm-button",
-                  "session-input__confirm-button--cancel"
-                ].join(" "),
-                onClick: closeConfirm,
-                type: "button",
-                children: "Cancel"
-              }
-            )
-          ]
-        }
-      ) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-        "button",
-        {
-          "aria-label": label,
-          className: [
-            "session-input__action-button",
-            "session-input__action-button--stop"
-          ].join(" "),
-          disabled: restartInFlight,
-          onClick: handleClick,
-          title: label,
-          type: "button",
-          children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-            "span",
-            {
-              "aria-hidden": "true",
-              className: [
-                "session-input__action-icon",
-                "session-input__action-icon--restart"
-              ].join(" "),
-              children: "\u21BB"
-            }
-          )
-        }
-      )
-    ] });
-  };
   var InputPlayStopButton = ({
     stopActive,
-    onClick,
-    descriptionRestartAttempt = null
+    onClick
   }) => {
-    const restartAttemptActive = descriptionRestartAttempt != null && descriptionRestartAttempt.workspacePath.trim().length > 0 && descriptionRestartAttempt.workspaceSlug.trim().length > 0;
-    if (restartAttemptActive) {
-      return descriptionRestartAttempt ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(RestartAttemptButton, { context: descriptionRestartAttempt }) : null;
-    }
     const showStop = stopActive;
     const label = showStop ? "Stop (stop core)" : "Send message (Enter)";
     const iconModifierClass = showStop ? "session-input__action-icon--stop" : "session-input__action-icon--play";
@@ -22265,7 +22098,7 @@ ${message.content}`
         "aria-label": label,
         className: [
           "session-input__action-button",
-          showStop || restartAttemptActive ? "session-input__action-button--stop" : ""
+          showStop ? "session-input__action-button--stop" : ""
         ].filter(Boolean).join(" "),
         onClick,
         title: label,
@@ -23293,7 +23126,6 @@ ${path2}` : path2;
     continuityErrorCopy = null,
     isQueued = false,
     providerTheme = null,
-    descriptionRestartAttempt = null,
     terminalNoResume = false,
     taskTimer = null,
     onSubmit
@@ -23498,7 +23330,6 @@ ${path2}` : path2;
             /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               input_play_stop_button_default,
               {
-                descriptionRestartAttempt,
                 onClick: handleActionClick,
                 stopActive
               }
@@ -24261,11 +24092,6 @@ ${path2}` : path2;
       (session) => session.id === activeSessionId
     );
     const primaryProviderId = activeRecord?.providerIds[0] ?? null;
-    const descriptionRestartAttempt = activeRecord?.stage === "description" && activeRecord.initiativeSlug ? {
-      workspacePath: activeRecord.workspacePath,
-      workspaceSlug: activeRecord.initiativeSlug,
-      providerId: primaryProviderId
-    } : null;
     const providerTheme = mapProviderTheme(primaryProviderId);
     const providerDisplayLabel = resolveProviderDisplayLabel({
       providerId: primaryProviderId,
@@ -24346,7 +24172,6 @@ ${path2}` : path2;
               connectionState: inputConnectionState,
               continuityErrorCopy,
               continuityLockActive: effectiveContinuityLockActive,
-              descriptionRestartAttempt,
               draft: activeSession.draft,
               isQueued,
               onSubmit: submitMessage,
