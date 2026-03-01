@@ -1,162 +1,144 @@
 # Description Step — Single Agent Final Artifact (Contract / SSOT)
 
 ## Scope
-Этот документ описывает **канонический контракт** шага Workflow `description`:
-- какие артефакты создаются;
-- какая сессия запускается;
-- какие инварианты должны соблюдаться для корректного перехода к `virtual_simulation`.
 
-Цель шага: получить **достаточно качественное описание продукта**, чтобы следующий шаг (Virtual Simulation) мог строить сценарии использования без догадок и без преждевременной технической детализации.
+Этот документ описывает канонический контракт шага Workflow `description`:
+- какие шаблоны и артефакты участвуют;
+- как работает pre-submit/post-submit UX;
+- как ведёт себя Description Agent;
+- какие инварианты обязательны для корректного перехода к `virtual_simulation`.
 
----
-
-## Legacy (с чем сейчас живём)
-Исторически узел `description` работал как связка:
-1) пользователь заполняет `questionnaire.md`;
-2) one-shot агент пишет `description.md`;
-3) Core **авто-стартует** Reviewer;
-4) Reviewer в диалоге доводит до `Final_Description.md`.
-
-Это создаёт лишний внутренний подшаг, дублирует шаблоны, усложняет recovery и оставляет «хвосты» автоматизации (`description.md written → auto-reviewer`).
+Цель шага: получить `Final_Description.md`, который пользователь может читать и обсуждать, и который даёт следующему агенту (`Virtual Simulation`) достаточную стартовую базу.
 
 ---
 
-## Target Flow (vNext)
-Шаг `description` становится **одним агентом** с бесконечной (resume) сессией.
+## 1) Runtime templates (SSOT)
 
-1) Пользователь заполняет анкету.
-2) Project Manager запускает **Description Agent** с контекстом (`workspaceSlug`, пути к артефактам).
-3) Агент читает `questionnaire.md` и (если указано) документы из `pre_read_documents`.
-4) Агент задаёт уточняющие вопросы в чате и итеративно уточняет понимание продукта.
-5) После явного подтверждения пользователя (`ОК/утверждаю/approve`) агент записывает финальный артефакт:
-   - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
+Каноничные bundled-шаблоны шага `Description`:
 
-**Важно:** auto-start Reviewer в рамках шага `description` отсутствует. Standalone Reviewer рассматривается как отдельный будущий архитектурный модуль (см. backlog).
+1. `.codeai-hub/templates/description/questionnaire-template.md`
+   - Назначение: анкета pre-submit.
+2. `.codeai-hub/templates/description/description-template.md`
+   - Назначение: user-facing Help (pre-submit и post-submit `Artifacts/Help`).
+3. `.codeai-hub/templates/description/description-collector-prompt.md`
+   - Назначение: системные инструкции Description Agent (file-first).
+
+Ключевая фиксация: `description-template.md` в текущей конфигурации — это Help-шаблон UI, а не каркас `Final_Description.md`.
 
 ---
 
-## Artifacts (SSOT)
-- Анкета:
-  - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
-- Финальное описание:
-  - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
+## 2) Target flow (v2)
+
+Шаг `description` работает как единая resume-сессия после submit.
+
+1. Пользователь редактирует `questionnaire.md` (pre-submit).
+2. Пользователь нажимает `Submit questionnaire`.
+3. PM запускает runtime-сессию Description Agent.
+4. Агент читает `questionnaire.md` (+ pre-read файлы, если есть).
+5. Агент **сразу** формирует первый черновик `Final_Description.md` в файле.
+6. Агент и пользователь итеративно уточняют документ до явного утверждения.
+
+Встроенный auto-reviewer в шаге `Description` отсутствует.
+
+---
+
+## 3) Artifacts (SSOT)
+
+- `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
+- `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 
 ### Legacy artifacts (compat only)
-- Draft `description.md` (включая варианты в `runs/`) может существовать в старых workspace.
-- Он **не является** upstream-источником истины для следующих шагов в новой модели.
+
+- `.codeai-hub/<workspaceSlug>/description/description.md` (включая `runs/*`) может существовать в старых workspace.
+- В новой модели legacy draft не является upstream-источником истины.
 
 ---
 
-## Invariants (must-not-break)
-1) **Stable final path**: `Final_Description.md` пишется в стабильный путь без `runs/`.
-2) **Resume model**: сессия Description должна быть `resume_in_place` (не one-shot).
-3) **No auto-reviewer**: запись артефактов не должна триггерить скрытый запуск reviewer-сессии.
-4) **Upstream SSOT**: следующий шаг (`virtual_simulation`) читает **только** `Final_Description.md` как upstream (не `description.md`).
-5) **No invented facts**: агент опирается на анкету и реально прочитанные файлы; неизвестное фиксирует как вопрос.
-6) **Language**: все сообщения и артефакт `Final_Description.md` на русском.
-7) **Outdated propagation**: любое изменение `Final_Description.md` должно помечать downstream стадии как `OUTDATED` (используем существующий механизм событий `workflow.artifact.written`).
+## 4) Description Agent behavior contract
+
+### 4.1 File-first принцип
+
+- Агент не начинает интервью до появления файла `Final_Description.md`.
+- Даже при короткой анкете агент создаёт скелет/черновик `Final_Description.md` и только после этого задаёт вопросы.
+
+### 4.2 Итеративный цикл
+
+На каждой итерации:
+1. Полная перезапись `Final_Description.md` с актуальными правками.
+2. Краткий отчёт в чате о том, что изменилось.
+3. До 3 критичных вопросов, которые реально улучшают документ.
+
+### 4.3 Ограничения
+
+- Не выдумывать факты.
+- Если данных не хватает: явное допущение или вопрос.
+- Не превращать шаг Description в техническую спецификацию.
+- Язык: русский (чат + артефакт).
+
+### 4.4 Что обязательно должно быть в `Final_Description.md`
+
+Минимальный набор для старта `Virtual Simulation` не с нуля:
+- проблема/ценность;
+- целевые пользователи;
+- 2–4 ключевых сценария (актор/цель → действие → ожидаемый результат → критерий успеха);
+- ограничения/допущения;
+- `out of scope`;
+- ключевые сущности/термины (3–10, короткие определения);
+- открытые вопросы для следующих шагов.
+
+### 4.5 Definition of Done
+
+Шаг считается готовым, когда:
+- пользователь явно подтвердил документ (`ОК/утверждаю/approve`),
+- `Final_Description.md` существует и содержит минимум из п. 4.4.
 
 ---
 
-## Description Agent Role (контракт поведения)
-Агент должен понять **тип продукта** и сам выбрать структуру описания.
+## 5) PM/UI contract (Description)
 
-### Минимальные обязательные элементы (для перехода к Virtual Simulation)
-`Final_Description.md` должен содержать, в свободной форме (структура адаптивна):
-- что это за продукт и какую проблему решает;
-- для кого продукт (целевые пользователи);
-- 2–4 ключевых сценария использования (человеческим языком);
-- ограничения и допущения (например: локальное хранение, офлайн-режим, поддерживаемые ОС);
-- явный `out of scope` (что точно не делаем);
-- список открытых вопросов, которые надо закрыть на следующих шагах.
+### 5.1 Pre-submit
 
-### Принцип прогрессии
-Шаг 1 допускает «сырое» описание. Нельзя превращать его в спецификацию. Детализация (security/auth/recovery/observability) появляется на поздних шагах.
+- Runtime-сессии нет.
+- Левая панель (`Sessions`) показывает Description Help.
+- Правая панель (`Artifacts`) показывает `questionnaire.md`.
 
----
+### 5.2 Post-submit
 
-## PM/UI Expectations (Phase 279 user-facing contract)
+- Создаётся runtime-сессия Description.
+- Левая панель возвращается к Session UI.
+- Правая панель поддерживает переключатель `Artifacts/Help`:
+  - `Artifacts` — артефакты стадии,
+  - `Help` — тот же user-facing Help из `description-template.md`.
 
-### До отправки анкеты (`questionnaire submit`)
-- Левая панель (`Sessions`) показывает **Description Help** вместо Session UI.
-- Правая панель (`Artifacts`) показывает редактор `questionnaire.md` как основной рабочий контент.
-- Пользователь может редактировать `questionnaire.md` без старта runtime-сессии.
-- Help должен явно объяснять:
-  - цель шага Description и ожидаемый результат (`Final_Description.md`);
-  - минимальный состав хорошей анкеты (проблема, пользователь, сценарии, ограничения);
-  - что произойдет после `Submit questionnaire` (запуск Description Agent в той же stage-сессии).
+### 5.3 UI copy invariants
 
-### После отправки анкеты (runtime-сессия создана)
-- Левая панель возвращается к стандартному Session UI (runtime диалог Description).
-- Правая панель по умолчанию показывает артефакты узла `description`:
-  - `Final_Description.md`, если файл существует;
-  - иначе `questionnaire.md`.
-- В заголовке правой панели появляется переключатель `Artifacts/Help`:
-  - `Artifacts` — просмотр артефактов;
-  - `Help` — тот же Description Help, что и на pre-submit экране (единый источник текста).
-- Переключатель относится только к stage `Description` и не должен ломать routing/continuity.
-- Тексты UI не должны упоминать `description.md` и auto-reviewer.
+- Не упоминать `description.md` как целевой артефакт.
+- Не упоминать auto-reviewer как часть шага `Description`.
 
 ---
 
-## Migration / Compatibility Rules
-- Отключить auto-start reviewer в Core runtime.
-- Перевести Description session на `resume_in_place`.
-- Обновить все промпты downstream шагов, которые сейчас требуют `description.md`:
-  - Virtual Simulation
-  - Diagram Modules
-  - Diagram Facades
-- Core allowlist/paths/validation для workflow-артефакта Description должны считать каноном `Final_Description.md`.
+## 6) Invariants (must-not-break)
 
-### Пофайловый migration plan (execution baseline)
-1. Core runtime/session lifecycle:
-   - `packages/core/src/workflow/runtime/workflow-runtime.ts` — убрать `description.md -> auto reviewer`, оставить watcher-совместимость с legacy draft.
-   - `packages/core/src/workflow/runtime/workflow-runtime.test.ts` — удалить/переписать сценарии auto-reviewer, добавить сценарии single-agent resume.
-   - `packages/core/src/remote-bridge/handlers/session-request-handler.ts` — `description` по умолчанию в `resume_in_place`, убрать reviewer-only ветвления как обязательные.
-2. Artifact path contract (Core):
-   - `packages/core/src/workflow/paths/workflow-paths-types.ts`
-   - `packages/core/src/workflow/paths/workflow-artifact-paths.ts`
-   - `packages/core/src/remote-bridge/handlers/http-api-router.ts`
-   - Цель: `description` stage canonical file = `Final_Description.md`; `description.md` только для чтения legacy/workspace migration.
-3. PM/UI wiring:
-   - `src/client/project-manager/services/prompt-pack-builder.ts`
-   - `src/client/project-manager/services/idea-collector-submit-service.ts`
-   - `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`
-   - Цель: запись сразу в `.codeai-hub/<workspaceSlug>/description/Final_Description.md` без `runs/` и без reviewer-phase UX.
-4. Downstream prompts/templates:
-   - `packages/core/src/templates/source/virtual-simulation-prompt.md`
-   - `packages/core/src/templates/source/modules-diagram-prompt.md`
-   - `packages/core/src/templates/source/facades-graph-prompt.md`
-   - Цель: upstream source of truth только `Final_Description.md`.
-5. Legacy guardrails (обязательная обратная совместимость):
-   - Старые workspace с `description.md`/`runs/*` не должны ломать gating, continuity и чтение history.
-   - Late-write legacy draft не должен понижать шаг относительно уже существующего `Final_Description.md`.
+1. `Final_Description.md` — единственный upstream SSOT для `virtual_simulation`.
+2. Description-сессия после submit — `resume_in_place`.
+3. Нет скрытого auto-start reviewer при записи description-артефактов.
+4. Любое изменение `Final_Description.md` должно помечать downstream шаги как `OUTDATED`.
+5. Late-write legacy `description.md` не должен понижать/ломать статус при наличии актуального `Final_Description.md`.
 
 ---
 
-## Related SSOT
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md` (шаги 1–6)
-- `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md` (legacy, подлежит обновлению)
+## 7) Compatibility + migration baseline
+
+- Legacy workspace с `description.md` должны оставаться читаемыми.
+- Runtime/watcher/gating обязаны опираться на `Final_Description.md` как канон.
+- Downstream prompts и path contracts используют только `Final_Description.md`.
+
+---
+
+## 8) Related SSOT
+
+- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md` (legacy filename, compat)
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-- `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-- `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-
----
-
-## Prompt/Template Sync (Phase 269 Stream 0)
-
-### Prompt contract (`description-collector-prompt.md`)
-- Агент работает как единая resume-сессия и не использует внутренние reviewer-фазы.
-- Агент может задавать уточняющие вопросы в чате, если это повышает качество финального описания.
-- Запись `Final_Description.md` выполняется после явного подтверждения пользователя.
-- В prompt не должно быть упоминаний записи `description.md` как целевого артефакта.
-
-### Template contract (`description-template.md`)
-- Шаблон должен быть адаптивным каркасом, а не фиксированным чеклистом из 10 обязательных разделов.
-- При любой адаптации структуры должны сохраняться минимальные инварианты шага:
-  - проблема/ценность;
-  - целевые пользователи;
-  - 2–4 сценария;
-  - ограничения/допущения;
-  - out of scope;
-  - открытые вопросы.
+- `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`

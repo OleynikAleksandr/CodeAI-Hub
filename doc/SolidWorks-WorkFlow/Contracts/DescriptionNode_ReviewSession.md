@@ -1,51 +1,53 @@
-# Description Node — Contract (SSOT)
+# Description Node — Runtime Contract (legacy filename)
 
 ## Назначение
-Канонический контракт узла Workflow Tree `description`.
+
+Этот файл сохранён по legacy-имени для обратной совместимости ссылок.
+Канонический контракт шага `description` находится в:
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 
 **Target flow (SSOT):**
-`questionnaire.md` → **Description Agent (resume)** → `Final_Description.md`.
-
-Устаревший поток `questionnaire.md → description.md → auto-reviewer → Final_Description.md` считается legacy и поддерживается только для совместимости со старыми workspace/историей.
-
-Детализированный SSOT по новой модели: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`.
+`questionnaire.md` → Description Agent (resume) → `Final_Description.md`.
 
 ---
 
 ## Артефакты
-- Questionnaire (ввод пользователя):
-  - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
-- Final Description (выход шага):
-  - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
+
+- `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
+- `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 
 ### Legacy artifacts (compat only)
-- Draft `description.md` (включая варианты в `runs/`) может существовать в старых workspace.
-- В новой модели он **не** является upstream-источником истины для следующих шагов.
+
+- `.codeai-hub/<workspaceSlug>/description/description.md` и `runs/*` могут встречаться в старых workspace.
+- Legacy draft не является upstream-источником истины.
 
 ---
 
 ## Инварианты
-1) **Single-agent step:** внутри узла `description` нет обязательного второго встроенного агента (reviewer).
-2) **Resume:** сессия Description должна быть `resume_in_place` (не one-shot).
-3) **Stable final path:** `Final_Description.md` пишется в стабильный путь (без `runs/`).
-4) **No auto-reviewer:** запись артефактов Description не должна триггерить скрытый auto-start reviewer-сессии.
-5) **Gating:** шаг `virtual_simulation` должен требовать **только** `Final_Description.md` как вход (а не `description.md`).
+
+1. В узле `description` нет обязательного встроенного reviewer-агента.
+2. Description-сессия после submit работает как `resume_in_place`.
+3. `Final_Description.md` пишется в стабильный путь (без `runs/`).
+4. Запись description-артефактов не должна триггерить auto-reviewer.
+5. Шаг `virtual_simulation` требует только `Final_Description.md` как вход.
 
 ---
 
 ## Recovery: ↻ Restart attempt (Description)
 
-**Назначение:** аварийный перезапуск шага, если сессия не стартовала/зависла/сломалась.
+Назначение: аварийный перезапуск попытки шага, если сессия не стартовала/зависла.
 
-**Контракт:**
-- ↻ **не** рестартит Core (нельзя ломать другие активные сессии).
-- ↻ запускает новую Description-сессию из `questionnaire.md`.
-- Late results от старых попыток **не должны** перезаписывать `Final_Description.md` и не должны триггерить downstream.
+Контракт:
+- ↻ не рестартит Core глобально;
+- ↻ запускает новую попытку Description на базе `questionnaire.md`;
+- late results от старых попыток не должны перезаписывать актуальный `Final_Description.md`.
 
 ---
 
 ## Связанные SSOT
-- Новый контракт шага Description: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-- Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-- Workspace runtime/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-- Virtual Simulation step: `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
+
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+- `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+- `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
