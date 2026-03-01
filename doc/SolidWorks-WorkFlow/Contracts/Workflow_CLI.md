@@ -99,6 +99,10 @@ Manual start не отменяет watcher:
 - артефакт может быть создан/изменён вне UI;
 - UI всё равно обязан корректно показать `READY/DONE/ERROR/OUTDATED`.
 
+Для `Virtual Simulation` runtime-контракт prompt-only:
+- отсутствие `templatePath`/artifact template не влияет на запуск шага и пересчёт статусов;
+- источником инструкций для агента является `virtual-simulation-prompt.md`.
+
 ---
 
 ## 9) Связанные контракты

@@ -67,12 +67,17 @@
 - Legacy `description.md`/reviewer-цепочка поддерживается только для совместимости старых workspace и не является SSOT.
 - Standalone Reviewer вынесен в deferred-модуль и не входит в базовый workflow 1→6.
 
-## 6) Runtime Templates Boundary (Description)
+## 6) Runtime Templates Boundary (Description + Virtual Simulation)
 
 Каноничные bundled templates в `.codeai-hub/templates/description/`:
 - `questionnaire-template.md` — pre-submit анкета.
 - `description-template.md` — user-facing Help для pre-submit и post-submit (`Artifacts/Help`).
 - `description-collector-prompt.md` — инструкции Description Agent (file-first, краткий контекст workflow, ограничения, DoD).
+
+Каноничный bundled prompt для `.codeai-hub/templates/virtual_simulation/`:
+- `virtual-simulation-prompt.md` — инструкции Virtual Simulation Agent.
+
+Инвариант: `Virtual Simulation` работает в режиме prompt-only. Отдельный artifact template (`virtual-simulation-template.md`) в runtime не поставляется и не отправляется агенту.
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
