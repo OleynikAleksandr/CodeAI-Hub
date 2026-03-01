@@ -40,11 +40,6 @@ const TEMPLATES = [
     dest: ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
   },
   {
-    id: "virtual-simulation-template",
-    source: "packages/core/src/templates/source/virtual-simulation-template.md",
-    dest: ".codeai-hub/templates/virtual_simulation/virtual-simulation-template.md",
-  },
-  {
     id: "modules-diagram-prompt",
     source: "packages/core/src/templates/source/modules-diagram-prompt.md",
     dest: ".codeai-hub/templates/diagram_modules/modules-diagram-prompt.md",
