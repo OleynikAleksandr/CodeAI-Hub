@@ -14,10 +14,12 @@
   - Stream 1: реализован pre-submit Help в левой панели вместо Sessions до старта Description сессии.
   - Stream 2: реализован post-submit переключатель `Artifacts/Help` в правой панели.
   - Stream 3: подготовлены два draft-шаблона в корне `doc/` для ревью пользователем.
+  - Stream 4: зафиксированы результаты таргетной валидации и обновлён session report.
 - Выполнен архитектурный guardrail по размеру файлов: `main-area.tsx` удержан ниже лимита 300 строк за счёт декомпозиции.
 - Проведена таргетная валидация PM/UI:
   - `npm run build:project-manager`
   - `npm run typecheck:webview`
+- Полностью реализованный `Phase 279` архивирован в `doc/TODO/Archive/todo-plan-up-to-phase279-2026-03-01.md`; создан новый `doc/TODO/todo-plan.md` с `Phase 280` (ревью и согласование шаблонов).
 
 ## Git commits
 - `7a07b4ff docs(description): specify user-facing help UX for description step`
@@ -25,6 +27,8 @@
 - `a436451a feat(pm): add artifacts/help toggle for description step`
 - `2656382b docs(prompt): draft description agent system prompt v2`
 - `013c3f00 docs(template): draft description help template for step1`
+- `9542566c docs(session): record description refactor validation`
+- `3dc5659d docs(session): persist session051 handoff artifacts`
 
 ---
 
@@ -36,12 +40,12 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-6. `doc/TODO/todo-plan.md`
+6. `doc/TODO/todo-plan.md` (Phase 280)
 7. `doc/Description_Agent_Instructions_Template.draft-v2.md`
 8. `doc/Description_Step_Help_Template.draft-v1.md`
 9. `doc/Sessions/Session052.md` (THIS REPORT)
 
 ## Plans for next session
 - Провести ревью draft-шаблонов в `doc/` вместе с пользователем и собрать правки.
-- После утверждения шаблонов определить интеграционный план (runtime assets vs doc-only reference).
-- Если `Phase 279` принят полностью, архивировать текущий `todo-plan.md` и открыть новую фазу под интеграцию/итерации шаблонов.
+- После утверждения шаблонов закрыть `Phase 280 / Stream 0` отдельными коммитами.
+- После `Stream 0` раскрыть `Phase 280 / Stream 1` в конкретные микро-задачи интеграции шаблонов в runtime.
