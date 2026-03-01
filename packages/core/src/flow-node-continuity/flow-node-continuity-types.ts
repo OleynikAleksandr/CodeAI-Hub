@@ -9,11 +9,11 @@ export type FlowNodeContinuityTemplateVariables = Readonly<
 
 export type FlowNodeContinuityRolloverFilter = Readonly<{
   stageId: string;
-  runSlug: string;
+  runSlug: string | null;
 }>;
 
 export const FLOW_NODE_CONTINUITY_MVP_FILTER: FlowNodeContinuityRolloverFilter =
   {
     stageId: "description",
-    runSlug: "collector",
+    runSlug: null,
   } as const;
