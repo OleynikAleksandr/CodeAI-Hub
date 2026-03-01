@@ -32,7 +32,7 @@ type WorkflowContractSnapshot = {
   readonly template: string;
   readonly paths: {
     readonly prompt: string;
-    readonly template: string;
+    readonly template?: string;
     readonly questionnaire?: string;
   };
 };
@@ -50,7 +50,10 @@ type SessionErrorPayload = {
 const cachedWorkflowSchemas = new Map<WorkflowStageId, Record<string, unknown>>();
 const pendingWorkflowSchemas = new Map<WorkflowStageId, Promise<Record<string, unknown>>>();
 
-const normalizeWorkflowContract = (payload: unknown): WorkflowContractSnapshot | null => {
+const normalizeWorkflowContract = (
+  payload: unknown,
+  stage: WorkflowStageId
+): WorkflowContractSnapshot | null => {
   if (!isRecord(payload)) {
     return null;
   }
@@ -70,7 +73,11 @@ const normalizeWorkflowContract = (payload: unknown): WorkflowContractSnapshot |
     pathsRaw && typeof pathsRaw.questionnaire === "string"
       ? pathsRaw.questionnaire
       : undefined;
+  const needsTemplate = stage !== "virtual_simulation";
   if (!(prompt && schema && promptPath)) {
+    return null;
+  }
+  if (needsTemplate && !templatePath) {
     return null;
   }
   return {
@@ -82,7 +89,7 @@ const normalizeWorkflowContract = (payload: unknown): WorkflowContractSnapshot |
     template,
     paths: {
       prompt: promptPath,
-      template: templatePath,
+      template: templatePath ?? undefined,
       questionnaire: questionnairePath,
     },
   };
@@ -100,7 +107,6 @@ const loadWorkflowContract = async (
   if (!httpUrl) {
     return fallback;
   }
-
   try {
     const response = await fetch(
       joinUrl(httpUrl, WORKFLOW_CONTRACT_ENDPOINTS[stage])
@@ -109,7 +115,7 @@ const loadWorkflowContract = async (
       return fallback;
     }
     const payload = (await response.json()) as unknown;
-    return normalizeWorkflowContract(payload) ?? fallback;
+    return normalizeWorkflowContract(payload, stage) ?? fallback;
   } catch {
     return fallback;
   }
@@ -269,7 +275,6 @@ export class IdeaCollectorSubmitService {
       return session.id;
     }
     const bindingPromise = waitForSessionProviderBinding(session.id);
-
     try {
       const contract = await contractPromise;
       const promptPack = buildWorkflowPromptPack({
@@ -280,7 +285,6 @@ export class IdeaCollectorSubmitService {
         templatePath: contract.paths.template,
         questionnairePath: params.questionnairePath,
       });
-
       await bindingPromise;
       api.sendSessionMessage(session.id, promptPack.content);
     } catch (error) {
@@ -289,7 +293,6 @@ export class IdeaCollectorSubmitService {
         error instanceof Error ? error.message : "Не удалось отправить анкету."
       );
     }
-
     return session.id;
   }
 }

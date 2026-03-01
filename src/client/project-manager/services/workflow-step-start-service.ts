@@ -77,7 +77,8 @@ export class WorkflowStepStartService {
 
     const vsArtifactPath = `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
     const vsStatus = state?.stages.virtual_simulation;
-    if (vsStatus !== "completed") {
+    const modulesBlocked = state?.gating?.blocked?.diagram_modules ?? true;
+    if (modulesBlocked || vsStatus !== "completed") {
       throw new Error("Missing virtual-simulation.md. Complete Virtual Simulation step first.");
     }
     return this.submitService.submitQuestionnaire({
@@ -104,7 +105,8 @@ export class WorkflowStepStartService {
 
     const dmArtifactPath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/modules-diagram.mmd`;
     const dmStatus = state?.stages.diagram_modules;
-    if (dmStatus !== "completed") {
+    const facadesBlocked = state?.gating?.blocked?.diagram_facades ?? true;
+    if (facadesBlocked || dmStatus !== "completed") {
       throw new Error("Missing modules-diagram.mmd. Complete Diagram Modules step first.");
     }
     return this.submitService.submitQuestionnaire({
