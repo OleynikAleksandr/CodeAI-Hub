@@ -64,7 +64,10 @@
   - `src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts`
 
 **Commits:**
-- `TBD` (изменения выполнены в рабочем дереве текущей сессии, без отдельного git commit в рамках этого прогона).
+- `473523a6 fix(ui): restore play-stop action for description runtime`
+- `8d1f47f3 fix(core): restore description continuity threshold trigger`
+- `9419eb0e test(ui): guard description runtime play-stop action`
+- `afccb439 docs(bug): register description resume regressions`
 
 **Release:** `1.1.704`
 
