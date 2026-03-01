@@ -38,6 +38,43 @@
 | BUG-2026-02-24-02 | FIXED | Launcher/CEF | Standalone PM (CEF): crash on ↻ Restart attempt confirm | 1.1.665 |
 | BUG-2026-02-24-03 | FIXED | PM/UI | ↻ Restart attempt создаёт новую сессию, но PM остаётся на старой («resuming…») | 1.1.668 |
 | BUG-2026-02-24-04 | FIXED | Session UI | reviewer: Stop→message→Play resets task timer total | 1.1.669 |
+| BUG-2026-03-01-01 | FIXED | UI + Core Continuity | Description runtime: в input показан `Retry` вместо `Play/Stop`; threshold-trigger continuity (80%) не срабатывает | 1.1.704 |
+
+---
+
+## BUG-2026-03-01-01 — Description runtime: `Retry` вместо `Play/Stop`, и не срабатывает threshold continuity trigger
+
+**Status:** FIXED
+**Lifecycle:** запись заведена в реестре до начала кодового фикса; затем обновлена до `FIXED` после валидации и release-сборки `1.1.704`.
+
+**Symptom:**
+- В runtime-сессии шага `Description` в правом action input показывается `↻ Retry/Restart attempt`, а не стандартный `Play/Stop` toggle как в `Virtual Simulation`.
+- При достижении порога контекстного окна (например, 80%) бесконечная `Description`-сессия не запускает flow-node continuity rollover.
+
+**Root cause (observed):**
+- В `Session UI` для `stage=description` безусловно включается `descriptionRestartAttempt`, что принудительно переключает кнопку input на restart-ветку.
+- В Core flow-node continuity фильтр закреплён на `runSlug="collector"`, тогда как текущая runtime `Description`-сессия создаётся с `runSlug=null`; из-за mismatch eligibility всегда `false`.
+
+**Fix:**
+- Session UI: убрана restart-attempt ветка из input action-кнопки; для runtime сессий используется только стандартный `Play/Stop` toggle.
+- Session UI/PM: удалён runtime listener `pm:description:restart-attempt` в `ProjectManagerSessionView`, чтобы не оставалось мёртвого one-shot tail в контуре runtime-сессий.
+- Core continuity: фильтр flow-node rollover для `Description` синхронизирован с современной сессией (`runSlug=null`), поэтому threshold-trigger снова проходит eligibility check.
+- Добавлены регрессионные тесты:
+  - `packages/core/src/flow-node-continuity/flow-node-continuity-facade.test.ts`
+  - `src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts`
+
+**Commits:**
+- `TBD` (изменения выполнены в рабочем дереве текущей сессии, без отдельного git commit в рамках этого прогона).
+
+**Release:** `1.1.704`
+
+**Guards:**
+- `node --test --import tsx packages/core/src/flow-node-continuity/flow-node-continuity-facade.test.ts`
+- `node --test --import tsx src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts`
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- `npm run build --workspace @codeai-hub/core`
 
 ---
 
