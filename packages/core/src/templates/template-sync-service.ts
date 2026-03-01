@@ -22,6 +22,7 @@ const normalizeContent = (value: string): string =>
 const LEGACY_TEMPLATE_RELATIVE_PATHS = [
   ".codeai-hub/templates/description/reviewer-prompt.md",
   ".codeai-hub/templates/description/reviewer-template.md",
+  ".codeai-hub/templates/virtual_simulation/virtual-simulation-template.md",
 ] as const;
 
 export class TemplateSyncService {

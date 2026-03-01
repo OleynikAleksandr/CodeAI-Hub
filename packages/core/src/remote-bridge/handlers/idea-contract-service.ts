@@ -16,7 +16,7 @@ type WorkflowContractPayload = {
   readonly template: string;
   readonly paths: {
     readonly prompt: string;
-    readonly template: string;
+    readonly template?: string;
     readonly questionnaire?: string;
   };
   readonly questionnaire?: {
@@ -28,8 +28,15 @@ type WorkflowContractPayload = {
 type WorkflowContractPaths = {
   readonly prompt: string;
   readonly schema?: string;
-  readonly template: string;
+  readonly template?: string;
   readonly questionnaire?: string;
+};
+
+type ResolvedWorkflowContractPaths = {
+  readonly prompt: string | null;
+  readonly schema: string | null;
+  readonly template: string | null;
+  readonly questionnaire: string | null;
 };
 
 const TEMPLATE_ROOT_SEGMENTS = [".codeai-hub", "templates"];
@@ -42,7 +49,6 @@ const DESCRIPTION_TEMPLATE_PATHS: WorkflowContractPaths = {
 
 const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "virtual_simulation/virtual-simulation-prompt.md",
-  template: "virtual_simulation/virtual-simulation-template.md",
 };
 
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
@@ -93,39 +99,68 @@ const resolveTemplatePath = (relativePath: string): string | null => {
   return path.join(home, ...TEMPLATE_ROOT_SEGMENTS, relativePath);
 };
 
-const buildWorkflowContract = async (
+const resolveWorkflowContractPaths = (
   paths: WorkflowContractPaths
-): Promise<WorkflowContractPayload | null> => {
-  const resolved = {
-    prompt: resolveTemplatePath(paths.prompt),
-    schema: paths.schema ? resolveTemplatePath(paths.schema) : null,
-    template: resolveTemplatePath(paths.template),
-    questionnaire: paths.questionnaire
-      ? resolveTemplatePath(paths.questionnaire)
-      : null,
-  };
+): ResolvedWorkflowContractPaths => ({
+  prompt: resolveTemplatePath(paths.prompt),
+  schema: paths.schema ? resolveTemplatePath(paths.schema) : null,
+  template: paths.template ? resolveTemplatePath(paths.template) : null,
+  questionnaire: paths.questionnaire
+    ? resolveTemplatePath(paths.questionnaire)
+    : null,
+});
 
-  if (!(resolved.prompt && resolved.template)) {
-    return null;
-  }
-
+const readWorkflowContractInputs = async (resolved: {
+  readonly prompt: string;
+  readonly schema: string | null;
+  readonly template: string | null;
+  readonly questionnaire: string | null;
+}): Promise<{
+  readonly prompt: string | null;
+  readonly schema: Record<string, unknown> | null;
+  readonly template: string | null;
+  readonly questionnaireTemplate: string | null;
+}> => {
   const [prompt, schema, template, questionnaireTemplate] = await Promise.all([
     readTextFile(resolved.prompt),
     resolved.schema ? readJsonFile(resolved.schema) : Promise.resolve({}),
-    readTextFile(resolved.template),
+    resolved.template ? readTextFile(resolved.template) : Promise.resolve(""),
     resolved.questionnaire ? readTextFile(resolved.questionnaire) : null,
   ]);
+  return { prompt, schema, template, questionnaireTemplate };
+};
 
-  if (!(prompt && template)) {
+const buildWorkflowContract = async (
+  paths: WorkflowContractPaths
+): Promise<WorkflowContractPayload | null> => {
+  const resolved = resolveWorkflowContractPaths(paths);
+
+  if (!resolved.prompt) {
+    return null;
+  }
+
+  const { prompt, schema, template, questionnaireTemplate } =
+    await readWorkflowContractInputs({
+      prompt: resolved.prompt,
+      schema: resolved.schema,
+      template: resolved.template,
+      questionnaire: resolved.questionnaire,
+    });
+
+  if (!prompt) {
+    return null;
+  }
+  if (resolved.template && !template) {
     return null;
   }
   const resolvedSchema = schema ?? {};
+  const resolvedTemplate = template ?? "";
 
   const questionnaireMarkdown = questionnaireTemplate ?? "";
   const versionSeed = JSON.stringify({
     prompt,
     schema: resolvedSchema,
-    template,
+    template: resolvedTemplate,
     questionnaire: questionnaireMarkdown,
   });
   const version = createHash("sha256").update(versionSeed).digest("hex");
@@ -133,10 +168,10 @@ const buildWorkflowContract = async (
   return {
     prompt,
     schema: resolvedSchema,
-    template,
+    template: resolvedTemplate,
     paths: {
       prompt: resolved.prompt,
-      template: resolved.template,
+      template: resolved.template ?? undefined,
       questionnaire: resolved.questionnaire ?? undefined,
     },
     questionnaire: paths.questionnaire
