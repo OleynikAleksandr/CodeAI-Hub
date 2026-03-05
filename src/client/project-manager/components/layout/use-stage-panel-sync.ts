@@ -18,7 +18,7 @@ export const useStagePanelSync = (params: {
   readonly selectArtifact: (path: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
-}): ((stage: string, opts?: { skipSession?: boolean }) => void) => {
+}): ((stage: string) => void) => {
   const {
     workflowState,
     workspaceSlug,
@@ -32,7 +32,7 @@ export const useStagePanelSync = (params: {
   } = params;
 
   const syncPanelsToStage = useCallback(
-    (stage: string, opts?: { skipSession?: boolean }) => {
+    (stage: string) => {
       if (!workflowState || !workspaceSlug || !workspacePath) return;
       const p = resolveStageSyncPayload({
         stage,
@@ -45,15 +45,19 @@ export const useStagePanelSync = (params: {
       });
       if (p.artifact) selectArtifact(p.artifact.path, p.artifact.label);
       else if (p.clearTool) clearArtifactWithTool(p.clearTool);
-      if (!opts?.skipSession && p.session) dispatchDialogOpenIntent(p.session);
+      if (p.session) dispatchDialogOpenIntent(p.session);
     },
     [clearArtifactWithTool, diagramFacadesArtifactAvailable, diagramModulesArtifactAvailable, dispatchDialogOpenIntent, selectArtifact, virtualSimulationArtifactAvailable, workflowState, workspacePath, workspaceSlug]
   );
 
   useEffect(() => {
     const handler = (event: Event) => {
-      const { stage, skipSession } = (event as CustomEvent).detail;
-      syncPanelsToStage(stage, { skipSession });
+      const stage = (event as CustomEvent<{ readonly stage?: string }>).detail
+        ?.stage;
+      if (typeof stage !== "string") {
+        return;
+      }
+      syncPanelsToStage(stage);
     };
     window.addEventListener("pm:stage:activated", handler);
     return () => window.removeEventListener("pm:stage:activated", handler);

@@ -61,10 +61,14 @@ export const useWorkflowToolSelect = (
 
   return useCallback(
     (tool: string) => {
+      const activateToolAndStage = (nextTool: string): void => {
+        setActiveTool(nextTool);
+        onStageActivated?.(nextTool);
+      };
+
       // Non-gated tools (Description, etc.): activate immediately
       if (!isDiagramTool(tool) && tool !== VIRTUAL_SIMULATION_TOOL_LABEL) {
-        setActiveTool(tool);
-        onStageActivated?.(tool);
+        activateToolAndStage(tool);
         return;
       }
 
@@ -90,8 +94,7 @@ export const useWorkflowToolSelect = (
           );
           if (workflowState?.gating?.blocked?.[stage] ?? true) return;
 
-          setActiveTool(tool);
-          onStageActivated?.(tool);
+          activateToolAndStage(tool);
 
           const preferredProviderId =
             resolvePreferredWorkflowProviderId({ workflowState, providers }) ??
@@ -158,8 +161,7 @@ export const useWorkflowToolSelect = (
         );
         if (workflowState?.gating?.blocked?.virtual_simulation ?? true) return;
 
-        setActiveTool(tool);
-        onStageActivated?.(tool);
+        activateToolAndStage(tool);
 
         const preferredProviderId =
           resolvePreferredWorkflowProviderId({ workflowState, providers }) ??

@@ -24,7 +24,7 @@ export const dispatchStageActivated = (tool: string): void => {
   if (stage) {
     window.dispatchEvent(
       new CustomEvent("pm:stage:activated", {
-        detail: { stage, skipSession: tool === VIRTUAL_SIMULATION_TOOL_LABEL },
+        detail: { stage, source: "toolbar" },
       })
     );
   }
