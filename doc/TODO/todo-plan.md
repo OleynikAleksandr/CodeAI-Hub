@@ -165,11 +165,11 @@
 1. [DONE] Удалить неиспользуемые PM placeholders/state-store (inbound=0): `session-create-pending-placeholder.tsx`, `dialog-tabs-store.ts` (scope: `src/client/project-manager/components/description/session-create-pending-placeholder.tsx`, `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit: `chore(pm): remove unused placeholder + dialog tabs store`).
 2. [DONE] Git Commit: `chore(pm): remove unused placeholder + dialog tabs store` (hash: `48a7581a`)
 3. [DONE] Удалить неиспользуемый UI компонент `AnimatedDots` (inbound=0) (scope: `src/client/ui/src/session/animated-dots.tsx`; expected commit: `chore(ui): remove unused animated dots component`).
-4. [IN_PROGRESS] Git Commit: `chore(ui): remove unused animated dots component` (hash: TBD)
+4. [DONE] Git Commit: `chore(ui): remove unused animated dots component` (hash: `536c57cd`)
 
 ### Stream 2: Remove dead extension-module utilities
-1. [TODO] Удалить неиспользуемые extension-module утилиты (inbound=0): `core-manager-lock.ts`, `install-provider-module.ts` (scope: `src/extension-module/core/core-manager-lock.ts`, `src/extension-module/provider/shared/install-provider-module.ts`; expected commit: `chore(ext): remove unused lock + provider installer helpers`).
-2. [TODO] Git Commit: `chore(ext): remove unused lock + provider installer helpers` (hash: TBD)
+1. [DONE] Удалить неиспользуемые extension-module утилиты (inbound=0): `core-manager-lock.ts`, `install-provider-module.ts` (scope: `src/extension-module/core/core-manager-lock.ts`, `src/extension-module/provider/shared/install-provider-module.ts`; expected commit: `chore(ext): remove unused lock + provider installer helpers`).
+2. [IN_PROGRESS] Git Commit: `chore(ext): remove unused lock + provider installer helpers` (hash: TBD)
 
 ### Stream 3: Remove dead package helpers (Claude/Core)
 1. [TODO] Удалить неиспользуемый Claude SDK session discovery helper (inbound=0) (scope: `packages/Claude_Module/src/messaging/session-file-discovery.ts`; expected commit: `chore(claude): remove unused sdk session discovery helper`).
