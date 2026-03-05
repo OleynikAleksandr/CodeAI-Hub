@@ -123,11 +123,11 @@
 
 ### Stream 0: Design (watchdog contract)
 1. [DONE] Дополнить контракт Dialog Routing watchdog-правилом: один автоматический forced retry для cold-open history при зависшем pending запросе (scope: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): define dialog history watchdog retry contract`).
-2. [IN_PROGRESS] Git Commit: `docs(pm): define dialog history watchdog retry contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): define dialog history watchdog retry contract` (hash: `f19ffd7a`)
 
 ### Stream 1: Implementation (pending timeout recovery)
-1. [TODO] Добавить watchdog в `requestDialogHistory`: если первый `cursor=0` запрос остаётся pending по таймауту, очищать pending/loaded markers и делать forced retry, чтобы восстановить историю без ручного клика (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix(pm): retry stalled dialog history on workspace open`).
-2. [TODO] Git Commit: `fix(pm): retry stalled dialog history on workspace open` (hash: TBD)
+1. [DONE] Добавить watchdog в `requestDialogHistory`: если первый `cursor=0` запрос остаётся pending по таймауту, очищать pending/loaded markers и делать forced retry, чтобы восстановить историю без ручного клика (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix(pm): retry stalled dialog history on workspace open`).
+2. [IN_PROGRESS] Git Commit: `fix(pm): retry stalled dialog history on workspace open` (hash: TBD)
 
 ### Stream 2: Guards (regression)
 1. [TODO] Расширить guard-тесты для фиксации watchdog-инварианта (source-level assertions на retry при pending timeout) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard dialog history watchdog retry`).

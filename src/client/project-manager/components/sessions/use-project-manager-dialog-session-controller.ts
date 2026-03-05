@@ -108,6 +108,15 @@ export const useProjectManagerDialogSessionController = (
       );
 
       pendingHistoryCursorRef.current.set(dialogId, resolvedCursor);
+      if (resolvedCursor === 0 && !options?.force) {
+        window.setTimeout(() => {
+          const activeIntent = pendingIntentRef.current;
+          if (!activeIntent || !pendingHistoryCursorRef.current.has(dialogId)) return;
+          pendingHistoryCursorRef.current.delete(dialogId);
+          loadedDialogIdsRef.current.delete(dialogId);
+          requestDialogHistory(activeIntent, dialogId, 0, { force: true });
+        }, 1_500);
+      }
     },
     []
   );
