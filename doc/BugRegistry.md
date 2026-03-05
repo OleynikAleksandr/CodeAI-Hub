@@ -39,8 +39,34 @@
 | BUG-2026-02-24-03 | FIXED | PM/UI | ↻ Restart attempt создаёт новую сессию, но PM остаётся на старой («resuming…») | 1.1.668 |
 | BUG-2026-02-24-04 | FIXED | Session UI | reviewer: Stop→message→Play resets task timer total | 1.1.669 |
 | BUG-2026-03-01-01 | FIXED | UI + Core Continuity | Description runtime: в input показан `Retry` вместо `Play/Stop`; threshold-trigger continuity (80%) не срабатывает | 1.1.704 |
+| BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
 
 ---
+
+## BUG-2026-03-05-01 — Session UI: dialog-mode token usage остаётся `0 tokens / 100%` после resume (continuity)
+
+**Status:** FIXED
+
+**Symptom:**
+- При одновременной работе в разных workspace (например, Claude vs Codex), в Codex‑сессии UI может показывать `0 tokens (100%)`, хотя фактический usage уже известен.
+- В `.codeai-hub/<workspaceSlug>/continuity/.../chain.json` при этом есть корректный `tokenUsage`.
+
+**Root cause (confirmed):**
+- Core гидрировал token usage из continuity при `session:binding`, но событие `session:stream` не содержало `providerSessionId`/`threadId`.
+- В dialog‑mode Project Manager может не иметь snapshot по `payload.sessionId` (runtime session id), поэтому `updateSnapshotsWithTokenUsage` требует идентификатор провайдера (`threadId`/`providerSessionId`) для fallback‑обновления. Без него token usage оставался на default `0 / 200_000`.
+
+**Fix:**
+- Core: при эмите continuity token usage (на `session:binding`) добавлен `providerSessionId` в payload, чтобы PM мог восстановить token usage через fallback‑маршрутизацию.
+
+**Commits:**
+- `0564920b fix(core): include providerSessionId in continuity token usage`
+
+**Release:** `1.1.708`
+
+**Guards:**
+- `node --test --import tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts`
+
+**Verified:** 2026-03-05 — подтверждено пользователем (Codex больше не показывает `0 tokens / 100%`).
 
 ## BUG-2026-03-01-01 — Description runtime: `Retry` вместо `Play/Stop`, и не срабатывает threshold continuity trigger
 
