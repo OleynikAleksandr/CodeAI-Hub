@@ -1,8 +1,8 @@
 # Session 059 — PM Workflow Navigation SSOT Sync (Toolbar ↔ Tree ↔ Panels)
 
-**Date:** 2026-03-05 21:10 (CET)  
+**Date:** 2026-03-05 23:05 (CET)  
 **Branch:** main  
-**Version:** 1.1.708
+**Version:** 1.1.709
 
 ---
 
@@ -18,6 +18,8 @@
 
 ## Validation / checks
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-navigation.test.ts` — ✅ passed.
+- `./scripts/build-all.sh` — ✅ success (version bump to `1.1.709`, provider/core/ui/launcher tarballs built).
+- `./scripts/build-release.sh --use-current-version` — ✅ success (`codeai-hub-1.1.709.vsix`), с подтверждёнными строками `Verifying SDK exclusions`, `Removing dev dependencies before packaging...`, `✅ Package created`.
 - Husky pre-commit gates на каждом коммите — ✅ passed (`test`, `check-architecture`, `lint`, `check:tsprune`, `ultracite fix`).
 
 ## Git commits
@@ -34,6 +36,8 @@
 - `b781eaac feat(pm): add workflow step help panels`
 - `f58e258b test(pm): guard workflow navigation sync`
 - `7a0c5ab1 docs(bug): register pm workflow navigation desync`
+- `2dcc8b38 docs(session): record Session059 pm navigation sync`
+- `37d799fa chore(release): build-all v1.1.709`
 
 ---
 
@@ -51,5 +55,5 @@
 9. `doc/Sessions/Session059.md` (THIS REPORT)
 
 ## Plans for next session
-- Закрыть Stream 5: выполнить релизный цикл (`build-all` + `build-release`) и зафиксировать результаты в этом отчёте.
-- Синхронизировать release-версию в `BugRegistry` для `BUG-2026-03-05-02` после финальной сборки.
+- Выполнить smoke-проверку PM UX на `v1.1.709` в живом сценарии (Toolbar ↔ Tree ↔ Artifacts/Help).
+- При новых изменениях по Phase 284 начать новый Session-отчёт от актуального состояния `todo-plan.md`.

@@ -2,6 +2,16 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.709] - 2026-03-05
+### Fixed
+- Project Manager: устранён workflow navigation desync между Toolbar, левым tree (stage/session/artifact) и auto-select; активный шаг синхронизируется через единый `activeStage` route.
+- Project Manager: убраны stage-specific исключения (`skipSession`) в stage activation semantics, поэтому выбор шага стабильно открывает согласованную dialog-session.
+
+### Changed
+- Project Manager: правый header унифицирован для всех workflow-шагов (`<Step Name> + Artifacts/Help`), режим `Artifacts/Help` теперь работает кросс-этапно.
+- Project Manager: добавлены help-панели для non-description этапов (`Virtual Simulation`, `Diagram Modules`, `Diagram Facades`).
+- Tests: добавлен guard `workflow-navigation.test.ts`, предотвращающий регрессию рассинхрона stage selection.
+
 ## [1.1.708] - 2026-03-05
 ### Fixed
 - Session UI: token usage now hydrates correctly for dialog-mode sessions resumed from continuity (fixes Codex showing `0 tokens / 100%`).

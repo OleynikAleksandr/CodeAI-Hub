@@ -40,7 +40,7 @@
 | BUG-2026-02-24-04 | FIXED | Session UI | reviewer: Stop→message→Play resets task timer total | 1.1.669 |
 | BUG-2026-03-01-01 | FIXED | UI + Core Continuity | Description runtime: в input показан `Retry` вместо `Play/Stop`; threshold-trigger continuity (80%) не срабатывает | 1.1.704 |
 | BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
-| BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | TBD |
+| BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | 1.1.709 |
 
 ---
 
@@ -74,8 +74,9 @@
 - `206df0f0 fix(pm): apply artifacts/help mode across stages`
 - `b781eaac feat(pm): add workflow step help panels`
 - `f58e258b test(pm): guard workflow navigation sync`
+- `37d799fa chore(release): build-all v1.1.709`
 
-**Release:** `TBD` (закроется в Stream 5 после build/release).
+**Release:** `1.1.709`
 
 **Guards:**
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-navigation.test.ts`

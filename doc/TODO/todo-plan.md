@@ -69,6 +69,6 @@
 
 ### Stream 5: Release build (по чеклисту)
 1. [DONE] Обновить Session-отчёт с результатами валидации и списком коммитов (scope: `doc/Sessions/Session059.md`; expected commit: `docs(session): record Session059 pm navigation sync`).
-2. [IN_PROGRESS] Git Commit: `docs(session): record Session059 pm navigation sync` (hash: TBD)
-3. [TODO] Выполнить релизный цикл: `./scripts/build-all.sh` → проверка чистого дерева → `./scripts/build-release.sh --use-current-version` → верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + docs; expected commit: `chore(release): build-all vX.Y.Z`).
-4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record Session059 pm navigation sync` (hash: `2dcc8b38`)
+3. [DONE] Выполнить релизный цикл: `./scripts/build-all.sh` → проверка чистого дерева → `./scripts/build-release.sh --use-current-version` → верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + docs; expected commit: `chore(release): build-all vX.Y.Z`).
+4. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `37d799fa`)
