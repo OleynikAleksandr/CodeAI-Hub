@@ -41,9 +41,9 @@
 
 ### Stream 1: Stage selection SSOT (Toolbar ↔ Tree ↔ auto-select)
 1. [DONE] Сделать `MainArea` реактивным к “навигационному событию” (stage) и выставлять `activeTool` из stage (подсветка Toolbar + заголовок правой панели) (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `fix(pm): sync toolbar stage with navigation events`).
-2. [IN_PROGRESS] Git Commit: `fix(pm): sync toolbar stage with navigation events` (hash: TBD)
-3. [TODO] Привести клики по stage в дереве к одному маршруту с Toolbar (через единое stage-событие, без прямого “ручного” рассинхрона) (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `refactor(pm): route tree stage clicks through navigation event`).
-4. [TODO] Git Commit: `refactor(pm): route tree stage clicks through navigation event` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): sync toolbar stage with navigation events` (hash: `70af1927`)
+3. [DONE] Привести клики по stage в дереве к одному маршруту с Toolbar (через единое stage-событие, без прямого “ручного” рассинхрона) (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `refactor(pm): route tree stage clicks through navigation event`).
+4. [IN_PROGRESS] Git Commit: `refactor(pm): route tree stage clicks through navigation event` (hash: TBD)
 5. [TODO] Синхронизировать клики по artifact/session nodes в дереве: перед открытием артефакта/сессии всегда выставлять `activeStage` (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix(pm): sync tree artifact/session clicks with active stage`).
 6. [TODO] Git Commit: `fix(pm): sync tree artifact/session clicks with active stage` (hash: TBD)
 7. [TODO] Синхронизировать auto-select при смене workspace (latest chain) с `activeStage`, чтобы Toolbar/headers не показывали “старый” шаг (scope: `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`; expected commit: `fix(pm): sync auto-select stage with toolbar`).

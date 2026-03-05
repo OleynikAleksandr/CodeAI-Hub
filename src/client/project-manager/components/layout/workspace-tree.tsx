@@ -96,7 +96,15 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     []
   );
 
-  const syncPanelsToStage = useStagePanelSync({
+  const dispatchStageActivated = useCallback((stage: string) => {
+    window.dispatchEvent(
+      new CustomEvent("pm:stage:activated", {
+        detail: { stage, source: "workspace-tree-stage" },
+      })
+    );
+  }, []);
+
+  useStagePanelSync({
     workflowState,
     workspaceSlug,
     workspacePath,
@@ -201,7 +209,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         visualDepth: 1,
         isCollapsible: children.length > 0,
         children: children.length > 0 ? children : undefined,
-        onSelect: children.length > 0 ? () => syncPanelsToStage(stage) : undefined,
+        onSelect: () => dispatchStageActivated(stage),
       };
     });
   };
