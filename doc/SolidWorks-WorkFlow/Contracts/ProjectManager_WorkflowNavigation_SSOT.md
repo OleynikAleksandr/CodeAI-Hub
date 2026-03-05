@@ -1,0 +1,86 @@
+# Project Manager — Workflow Navigation SSOT
+
+**Status:** Active SSOT  
+**Updated:** 2026-03-05  
+**Owner:** Oleksandr + Codex
+
+---
+
+## 1) Проблема
+
+Навигация в Project Manager шла разными путями:
+- Toolbar;
+- левое дерево (stage/session/artifact);
+- auto-select после смены workspace.
+
+Из-за этого подсветка шага, открытая dialog-сессия, выбранный артефакт и header правой панели могли расходиться.
+
+## 2) Единый термин
+
+`activeStage` — единственный source of truth для шага workflow в UI.
+
+Допустимые значения:
+- `description`
+- `virtual_simulation`
+- `diagram_modules`
+- `diagram_facades`
+
+## 3) Источники активации stage
+
+Любое из событий ниже обязано приводить к установке `activeStage`:
+- клик по Toolbar;
+- клик по stage-узлу в дереве;
+- клик по artifact/session узлу в дереве;
+- auto-select latest chain при смене workspace.
+
+Канонический route:
+1. Сначала обновляем `activeStage`.
+2. Затем синхронизируем правую/левую панели.
+3. Затем (если есть) открываем соответствующую dialog-session.
+
+## 4) Контракт синхронизации
+
+`activeStage` обязан детерминировать:
+- `dialogIntent.stage` (если открывается session);
+- `selectedArtifact` (если артефакт существует);
+- `headerMode` правой панели (`artifacts`/`help`);
+- заголовок правой панели (`<Step Name>` + toggle `Artifacts/Help`).
+
+### 4.1 Матрица `activeStage → UI`
+
+| activeStage | Toolbar highlight | Right header title | Right header toggle | Session route |
+|---|---|---|---|---|
+| `description` | `Description` | `Description` | `Artifacts/Help` | `stage=description` |
+| `virtual_simulation` | `VIRTUAL SIMULATION` | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
+| `diagram_modules` | `Diagram Modules` | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
+| `diagram_facades` | `Diagram Facades` | `Diagram Facades` | `Artifacts/Help` | `stage=diagram_facades` |
+
+## 5) Инварианты
+
+1. Нельзя открывать session/artifact в stage `X`, оставляя Toolbar на stage `Y`.
+2. Нельзя рендерить header правой панели по старому stage после маршрутизации на новый.
+3. Если route идёт через `pm:dialog:open` для workflow-stage, активный stage должен быть установлен до/в момент route.
+4. Для stage-узла не допускается stage-specific поведение вида `skipSession`, если это ломает консистентность с другими route.
+
+## 6) Особый случай Description pre-submit
+
+До `Submit questionnaire` runtime session отсутствует — это не отменяет `activeStage=description`.
+
+Инвариант pre-submit:
+- слева показывается Description Help;
+- справа редактируется `questionnaire.md`;
+- header правой панели остаётся в формате `Description + Artifacts/Help`.
+
+## 7) Критерии приёмки
+
+1. Любой клик в Toolbar/Tree/auto-select приводит к одному и тому же stage-состоянию UI.
+2. Header правой панели всегда соответствует текущему stage.
+3. Для всех stage доступен единый toggle `Artifacts/Help`.
+4. Переходы между stage не оставляют «залипших» артефактов/сессий предыдущего шага.
+
+## 8) Связанные документы
+
+- `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+- `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`

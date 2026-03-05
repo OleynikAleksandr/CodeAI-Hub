@@ -34,8 +34,8 @@
   - ниже — имя артефакта выбранного шага и его текст (если доступен).
 
 ### Stream 0: Design (SSOT + contract)
-1. [TODO] Зафиксировать SSOT навигации/selection в PM: единый термин `activeStage` + маршрутизация событий из Toolbar/Tree/auto-select, правила синхронизации `activeStage → (dialogIntent, selectedArtifact, headerMode)` (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): add workflow navigation SSOT contract`).
-2. [TODO] Git Commit: `docs(pm): add workflow navigation SSOT contract` (hash: TBD)
+1. [DONE] Зафиксировать SSOT навигации/selection в PM: единый термин `activeStage` + маршрутизация событий из Toolbar/Tree/auto-select, правила синхронизации `activeStage → (dialogIntent, selectedArtifact, headerMode)` (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): add workflow navigation SSOT contract`).
+2. [IN_PROGRESS] Git Commit: `docs(pm): add workflow navigation SSOT contract` (hash: TBD)
 3. [TODO] Синхронизировать SSOT документов системы под новый инвариант (любой route в dialog-session обязан обновлять `activeStage` в UI) (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(pm): document workflow navigation invariants`).
 4. [TODO] Git Commit: `docs(pm): document workflow navigation invariants` (hash: TBD)
 
