@@ -183,11 +183,11 @@
 1. [DONE] Удалить неиспользуемые экспорты: `ensureLauncherWorkspaceConfig`, `resolveProviderModulePath` (scope: `src/extension-module/cef/launcher.ts`, `src/extension-module/core/core-workspace.ts`; expected commit: `refactor(ext): drop unused launcher/workspace exports`).
 2. [DONE] Git Commit: `refactor(ext): drop unused launcher/workspace exports` (hash: `a8647a23`)
 3. [DONE] Удалить неиспользуемые экспорты: `resolveAppDirectory`, `getSettingsPath` (scope: `src/extension-module/core/runtime-paths.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit: `refactor(ext): drop unused runtime/settings exports`).
-4. [IN_PROGRESS] Git Commit: `refactor(ext): drop unused runtime/settings exports` (hash: TBD)
+4. [DONE] Git Commit: `refactor(ext): drop unused runtime/settings exports` (hash: `8ee87dde`)
 
 ### Stream 5: Checks hardening (links)
-1. [TODO] Сделать `check:links` обязательным и автономным: добавить `scripts/check-markdown-links.js` и переключить `check:links` на него (scope: `scripts/check-markdown-links.js`, `package.json`; expected commit: `chore(checks): enforce markdown link check`).
-2. [TODO] Git Commit: `chore(checks): enforce markdown link check` (hash: TBD)
+1. [DONE] Сделать `check:links` обязательным и автономным: добавить `scripts/check-markdown-links.js` и переключить `check:links` на него (scope: `scripts/check-markdown-links.js`, `package.json`; expected commit: `chore(checks): enforce markdown link check`).
+2. [IN_PROGRESS] Git Commit: `chore(checks): enforce markdown link check` (hash: TBD)
 
 ### Stream 6: Release build (v1.1.712)
 1. [TODO] Выполнить релизный цикл после cleanup: `./scripts/build-all.sh` (scope: release manifests + packages; expected commit: `chore(release): build-all v1.1.712`).
