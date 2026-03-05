@@ -173,9 +173,9 @@
 
 ### Stream 3: Remove dead package helpers (Claude/Core)
 1. [DONE] Удалить неиспользуемый Claude SDK session discovery helper (inbound=0) (scope: `packages/Claude_Module/src/messaging/session-file-discovery.ts`; expected commit: `chore(claude): remove unused sdk session discovery helper`).
-2. [IN_PROGRESS] Git Commit: `chore(claude): remove unused sdk session discovery helper` (hash: TBD)
-3. [TODO] Удалить неиспользуемые core helpers (inbound=0): `history-writer.ts`, `workflow-gates-facade.ts` (scope: `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`; expected commit: `chore(core): remove unused history writer + gates facade`).
-4. [TODO] Git Commit: `chore(core): remove unused history writer + gates facade` (hash: TBD)
+2. [DONE] Git Commit: `chore(claude): remove unused sdk session discovery helper` (hash: `c12440c9`)
+3. [DONE] Удалить неиспользуемые core helpers (inbound=0): `history-writer.ts`, `workflow-gates-facade.ts` (scope: `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`; expected commit: `chore(core): remove unused history writer + gates facade`).
+4. [IN_PROGRESS] Git Commit: `chore(core): remove unused history writer + gates facade` (hash: TBD)
 5. [TODO] Удалить неиспользуемые core facades (inbound=0): `workflow-paths-facade.ts`, `workflow-watcher-facade.ts` (scope: `packages/core/src/workflow/paths/workflow-paths-facade.ts`, `packages/core/src/workflow/watcher/workflow-watcher-facade.ts`; expected commit: `chore(core): remove unused workflow facades`).
 6. [TODO] Git Commit: `chore(core): remove unused workflow facades` (hash: TBD)
 
