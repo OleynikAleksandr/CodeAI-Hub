@@ -2,24 +2,15 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
-import {
-  startWorkflowEventPolling,
-  type WorkflowEvent,
-} from "../../services/workflow-events-client";
+import { type WorkflowEvent, startWorkflowEventPolling } from "../../services/workflow-events-client";
 import { DescriptionArtifactHeaderToggle } from "./description-artifact-header-toggle";
-import { dispatchStageActivated, resolveWorkspaceSlug } from "./main-area-utils";
-import {
-  MainAreaArtifactContent,
-  MainAreaSessionContent,
-} from "./main-area-panel-content";
+import { dispatchStageActivated, resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
+import { MainAreaArtifactContent, MainAreaSessionContent } from "./main-area-panel-content";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
 import { PanelContainer } from "./panel-container";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
-import {
-  VIRTUAL_SIMULATION_TOOL_LABEL,
-  useWorkflowToolSelect,
-} from "./use-workflow-tool-select";
+import { VIRTUAL_SIMULATION_TOOL_LABEL, useWorkflowToolSelect } from "./use-workflow-tool-select";
 
 interface MainAreaProps {
   sizes: [number, number];
@@ -87,11 +78,23 @@ export const MainArea: React.FC<MainAreaProps> = ({
       setSelectedArtifact(null);
       setActiveTool(custom.detail.activeTool);
     };
+    const onStageActivated = (event: Event) => {
+      const stage = (event as CustomEvent<{ readonly stage?: string }>).detail?.stage;
+      if (typeof stage !== "string") {
+        return;
+      }
+      const nextTool = resolveToolByStage(stage);
+      if (nextTool) {
+        setActiveTool(nextTool);
+      }
+    };
     window.addEventListener("pm:artifact:selected", onSelected);
     window.addEventListener("pm:artifact:cleared", onCleared);
+    window.addEventListener("pm:stage:activated", onStageActivated);
     return () => {
       window.removeEventListener("pm:artifact:selected", onSelected);
       window.removeEventListener("pm:artifact:cleared", onCleared);
+      window.removeEventListener("pm:stage:activated", onStageActivated);
     };
   }, []);
 
