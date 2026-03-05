@@ -27467,9 +27467,9 @@ ${replacement}
       tier: "mini"
     },
     {
-      id: "gpt-5.2",
-      displayName: "GPT-5.2",
-      description: "Best general agentic model for tasks across industries",
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
+      description: "General-purpose flagship model for coding and agentic tasks",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
@@ -27485,14 +27485,28 @@ ${replacement}
       tier: "flagship"
     },
     {
-      id: "gpt-5.2",
-      displayName: "GPT-5.2",
-      description: "Best general agentic model for tasks across industries",
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
+      description: "General-purpose flagship model for coding and agentic tasks",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
     }
   ];
+  var LEGACY_CODEX_SETTINGS_MODEL_MIGRATIONS = {
+    "gpt-5.2": "gpt-5.4"
+  };
+  var CODEX_SETTINGS_MODEL_ID_SET = new Set(
+    CODEX_SETTINGS_MODELS.map((model) => model.id)
+  );
+  var normalizeCodexSettingsModelId = (value) => {
+    if (typeof value !== "string") {
+      return null;
+    }
+    const trimmed = value.trim();
+    const normalized = LEGACY_CODEX_SETTINGS_MODEL_MIGRATIONS[trimmed] ?? trimmed;
+    return CODEX_SETTINGS_MODEL_ID_SET.has(normalized) ? normalized : null;
+  };
   var CODEX_LEGACY_MODELS = [
     {
       id: "gpt-5.2-codex",
@@ -27502,11 +27516,18 @@ ${replacement}
       successor: "gpt-5.3-codex"
     },
     {
+      id: "gpt-5.2",
+      displayName: "GPT-5.2",
+      description: "Previous general-purpose model for coding and agentic tasks",
+      status: "succeeded_by",
+      successor: "gpt-5.4"
+    },
+    {
       id: "gpt-5.1",
       displayName: "GPT-5.1",
       description: "For coding and agentic tasks",
       status: "succeeded_by",
-      successor: "gpt-5.2"
+      successor: "gpt-5.4"
     },
     {
       id: "gpt-5.1-codex",
@@ -29725,7 +29746,7 @@ ${replacement}
     defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
     sessionContinuity: mapContinuity(value?.sessionContinuity)
   });
-  var resolveCodexModelId = (value) => typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : DEFAULT_CODEX_MODEL_ID;
+  var resolveCodexModelId = (value) => normalizeCodexSettingsModelId(value) ?? DEFAULT_CODEX_MODEL_ID;
   var resolveClaudeDefaultModel = (value) => {
     if (typeof value !== "string") {
       return DEFAULT_CLAUDE_MODEL_ALIAS;
@@ -29735,13 +29756,26 @@ ${replacement}
   };
   var mapCodexReasoningByModel = (value) => {
     const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
+    const assignedModelIds = /* @__PURE__ */ new Set();
     if (!isRecord16(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
       if (typeof reasoning === "string" && CODEX_MODEL_IDS.has(modelId) && CODEX_REASONING_LEVEL_SET.has(reasoning)) {
         nextReasoningByModel[modelId] = reasoning;
+        assignedModelIds.add(modelId);
       }
+    }
+    for (const [modelId, reasoning] of Object.entries(value)) {
+      if (typeof reasoning !== "string" || !CODEX_REASONING_LEVEL_SET.has(reasoning) || CODEX_MODEL_IDS.has(modelId)) {
+        continue;
+      }
+      const normalizedModelId = normalizeCodexSettingsModelId(modelId);
+      if (!normalizedModelId || assignedModelIds.has(normalizedModelId)) {
+        continue;
+      }
+      nextReasoningByModel[normalizedModelId] = reasoning;
+      assignedModelIds.add(normalizedModelId);
     }
     return nextReasoningByModel;
   };
