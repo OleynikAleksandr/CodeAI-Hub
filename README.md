@@ -7,7 +7,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.711
+## Current Release — v1.1.712
+- Codebase hygiene: удалён мёртвый код (inbound=0) и неиспользуемые экспорты; `check:links` теперь реально проверяет локальные markdown-ссылки и падает на битых.
 - Project Manager: добавлен watchdog-ретрай для cold-open `dialog:history` — если первый `cursor=0` запрос зависает, PM автоматически делает forced retry без ручного клика по session/stage в tree.
 - Project Manager: устранена гонка first-open dialog hydration — история из JSONL подтягивается при первом открытии workspace без дополнительного клика по stage/session в tree.
 - Project Manager: внедрён единый navigation SSOT (`activeStage`) — клики в Toolbar, workflow tree и auto-select больше не рассинхронизируют подсветку шага, сессию и правую панель.

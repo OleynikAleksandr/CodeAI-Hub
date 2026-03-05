@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.712] - 2026-03-05
+### Changed
+- Checks: `check:links` теперь автономно валидирует локальные markdown-ссылки (только tracked `.md`) через `scripts/check-markdown-links.js`.
+
+### Removed
+- Codebase hygiene: удалён мёртвый код (inbound=0) и неиспользуемые экспорты в client/extension/packages (по результатам `ts-prune` + ручной проверки).
+
 ## [1.1.711] - 2026-03-05
 ### Fixed
 - Project Manager: для cold-open history добавлен watchdog-ретрай — зависший первый `dialog:history` запрос (`cursor=0`) автоматически сбрасывается и повторяется forced-route без участия пользователя.
