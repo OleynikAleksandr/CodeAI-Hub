@@ -181,9 +181,9 @@
 
 ### Stream 4: Remove unused exports in live modules
 1. [DONE] Удалить неиспользуемые экспорты: `ensureLauncherWorkspaceConfig`, `resolveProviderModulePath` (scope: `src/extension-module/cef/launcher.ts`, `src/extension-module/core/core-workspace.ts`; expected commit: `refactor(ext): drop unused launcher/workspace exports`).
-2. [IN_PROGRESS] Git Commit: `refactor(ext): drop unused launcher/workspace exports` (hash: TBD)
-3. [TODO] Удалить неиспользуемые экспорты: `resolveAppDirectory`, `getSettingsPath` (scope: `src/extension-module/core/runtime-paths.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit: `refactor(ext): drop unused runtime/settings exports`).
-4. [TODO] Git Commit: `refactor(ext): drop unused runtime/settings exports` (hash: TBD)
+2. [DONE] Git Commit: `refactor(ext): drop unused launcher/workspace exports` (hash: `a8647a23`)
+3. [DONE] Удалить неиспользуемые экспорты: `resolveAppDirectory`, `getSettingsPath` (scope: `src/extension-module/core/runtime-paths.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit: `refactor(ext): drop unused runtime/settings exports`).
+4. [IN_PROGRESS] Git Commit: `refactor(ext): drop unused runtime/settings exports` (hash: TBD)
 
 ### Stream 5: Checks hardening (links)
 1. [TODO] Сделать `check:links` обязательным и автономным: добавить `scripts/check-markdown-links.js` и переключить `check:links` на него (scope: `scripts/check-markdown-links.js`, `package.json`; expected commit: `chore(checks): enforce markdown link check`).

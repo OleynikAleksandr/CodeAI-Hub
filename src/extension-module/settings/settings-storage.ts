@@ -137,5 +137,3 @@ export const applyDefaultModelsEnv = (snapshot: SettingsSnapshot): void => {
   process.env.GEMINI_DEFAULT_MODEL = snapshot.providers.gemini.defaultModel;
   process.env.CLAUDE_SETTINGS_PATH = SETTINGS_FILE;
 };
-
-export const getSettingsPath = (): string => SETTINGS_FILE;

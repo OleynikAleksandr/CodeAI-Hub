@@ -13,6 +13,3 @@ export const resolveNodeExecutable = (
 
 export const resolveEntryPoint = (runtimeDir: string): string =>
   path.join(runtimeDir, "app", "dist", "index.js");
-
-export const resolveAppDirectory = (runtimeDir: string): string =>
-  path.join(runtimeDir, "app");
