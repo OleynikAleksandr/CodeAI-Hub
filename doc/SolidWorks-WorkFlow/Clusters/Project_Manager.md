@@ -10,6 +10,7 @@
 - Session UI laws (lock/unlock): `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 - Input lock SSOT/state machine: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Dialog routing (messages vs status): `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+- Workflow navigation SSOT (stage selection): `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - Session Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
 - Launcher: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`
@@ -40,6 +41,10 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
 
 Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.
+
+Дополнительный инвариант навигации:
+- любой route на workflow stage (Toolbar/Tree/auto-select) обязан сначала синхронизировать `activeStage`, чтобы Toolbar, Session route и правая панель не расходились.
+- канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
 
 ## 4) Recovery UX (обязательно)
 

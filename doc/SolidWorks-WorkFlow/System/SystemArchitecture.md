@@ -15,8 +15,9 @@
 9. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 10. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 11. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-12. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-13. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
+13. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+14. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -42,7 +43,9 @@
    - Канон: `Dialogs_And_Continuity_Routing.md`.
 3. **Session continuity**: rollover/handoff обязаны быть надёжны и не залипать UI в working.
    - Канон: `SessionContinuity.md`.
-4. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
+4. **Workflow navigation SSOT**: любой route в workflow stage (Toolbar/Tree/auto-select/dialog-intent) обязан синхронизировать `activeStage`; подсветка Toolbar, открытая session и header правой панели не могут расходиться.
+   - Канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
+5. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
    - Канон: provider docs в `doc/SolidWorks-WorkFlow/Modules/*`.
 
 ## 4) Где искать правду в коде (high-signal)
