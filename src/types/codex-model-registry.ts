@@ -45,9 +45,9 @@ export const CODEX_RECOMMENDED_MODELS = [
     tier: "mini",
   },
   {
-    id: "gpt-5.2",
-    displayName: "GPT-5.2",
-    description: "Best general agentic model for tasks across industries",
+    id: "gpt-5.4",
+    displayName: "GPT-5.4",
+    description: "General-purpose flagship model for coding and agentic tasks",
     platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
     status: "active",
     tier: "general",
@@ -68,14 +68,39 @@ export const CODEX_SETTINGS_MODELS = [
     tier: "flagship",
   },
   {
-    id: "gpt-5.2",
-    displayName: "GPT-5.2",
-    description: "Best general agentic model for tasks across industries",
+    id: "gpt-5.4",
+    displayName: "GPT-5.4",
+    description: "General-purpose flagship model for coding and agentic tasks",
     platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
     status: "active",
     tier: "general",
   },
 ] as const satisfies readonly CodexRecommendedModelDescriptor[];
+
+const LEGACY_CODEX_SETTINGS_MODEL_MIGRATIONS: Readonly<
+  Record<string, CodexRecommendedModelId>
+> = {
+  "gpt-5.2": "gpt-5.4",
+};
+
+const CODEX_SETTINGS_MODEL_ID_SET = new Set<string>(
+  CODEX_SETTINGS_MODELS.map((model) => model.id)
+);
+
+export const normalizeCodexSettingsModelId = (
+  value: unknown
+): CodexRecommendedModelId | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  const normalized = LEGACY_CODEX_SETTINGS_MODEL_MIGRATIONS[trimmed] ?? trimmed;
+
+  return CODEX_SETTINGS_MODEL_ID_SET.has(normalized)
+    ? (normalized as CodexRecommendedModelId)
+    : null;
+};
 
 export type CodexLegacyModelDescriptor = {
   readonly id: string;
@@ -95,11 +120,18 @@ export const CODEX_LEGACY_MODELS = [
     successor: "gpt-5.3-codex",
   },
   {
+    id: "gpt-5.2",
+    displayName: "GPT-5.2",
+    description: "Previous general-purpose model for coding and agentic tasks",
+    status: "succeeded_by",
+    successor: "gpt-5.4",
+  },
+  {
     id: "gpt-5.1",
     displayName: "GPT-5.1",
     description: "For coding and agentic tasks",
     status: "succeeded_by",
-    successor: "gpt-5.2",
+    successor: "gpt-5.4",
   },
   {
     id: "gpt-5.1-codex",
