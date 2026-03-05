@@ -159,11 +159,11 @@
 
 ### Stream 0: Plan + scope (cleanup)
 1. [DONE] Зафиксировать Phase 288 в `todo-plan.md`: чистка мёртвого кода (inbound=0), удаление неиспользуемых экспортов, усиление `check:links`, затем пересборка релиза (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(pm): plan phase288 codebase hygiene`).
-2. [IN_PROGRESS] Git Commit: `docs(pm): plan phase288 codebase hygiene` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): plan phase288 codebase hygiene` (hash: `98674d1b`)
 
 ### Stream 1: Remove dead client files (PM/UI)
-1. [TODO] Удалить неиспользуемые PM placeholders/state-store (inbound=0): `session-create-pending-placeholder.tsx`, `dialog-tabs-store.ts` (scope: `src/client/project-manager/components/description/session-create-pending-placeholder.tsx`, `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit: `chore(pm): remove unused placeholder + dialog tabs store`).
-2. [TODO] Git Commit: `chore(pm): remove unused placeholder + dialog tabs store` (hash: TBD)
+1. [DONE] Удалить неиспользуемые PM placeholders/state-store (inbound=0): `session-create-pending-placeholder.tsx`, `dialog-tabs-store.ts` (scope: `src/client/project-manager/components/description/session-create-pending-placeholder.tsx`, `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit: `chore(pm): remove unused placeholder + dialog tabs store`).
+2. [IN_PROGRESS] Git Commit: `chore(pm): remove unused placeholder + dialog tabs store` (hash: TBD)
 3. [TODO] Удалить неиспользуемый UI компонент `AnimatedDots` (inbound=0) (scope: `src/client/ui/src/session/animated-dots.tsx`; expected commit: `chore(ui): remove unused animated dots component`).
 4. [TODO] Git Commit: `chore(ui): remove unused animated dots component` (hash: TBD)
 
