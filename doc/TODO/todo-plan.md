@@ -152,3 +152,45 @@
 ### Stream 0: Push unblock (check:dup < 3%)
 1. [DONE] Удалить неиспользуемый дублирующий toggle-компонент в PM layout (`description-artifact-header-toggle`), чтобы снизить `jscpd` перед `git push` (scope: `src/client/project-manager/components/layout/description-artifact-header-toggle.tsx`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): drop unused description artifact toggle`).
 2. [DONE] Git Commit: `refactor(pm): drop unused description artifact toggle` (hash: `479cb298`)
+
+---
+
+## Phase 288 — Codebase hygiene: dead code + checks hardening (owner: Oleksandr, updated: 2026-03-05)
+
+### Stream 0: Plan + scope (cleanup)
+1. [DONE] Зафиксировать Phase 288 в `todo-plan.md`: чистка мёртвого кода (inbound=0), удаление неиспользуемых экспортов, усиление `check:links`, затем пересборка релиза (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(pm): plan phase288 codebase hygiene`).
+2. [IN_PROGRESS] Git Commit: `docs(pm): plan phase288 codebase hygiene` (hash: TBD)
+
+### Stream 1: Remove dead client files (PM/UI)
+1. [TODO] Удалить неиспользуемые PM placeholders/state-store (inbound=0): `session-create-pending-placeholder.tsx`, `dialog-tabs-store.ts` (scope: `src/client/project-manager/components/description/session-create-pending-placeholder.tsx`, `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit: `chore(pm): remove unused placeholder + dialog tabs store`).
+2. [TODO] Git Commit: `chore(pm): remove unused placeholder + dialog tabs store` (hash: TBD)
+3. [TODO] Удалить неиспользуемый UI компонент `AnimatedDots` (inbound=0) (scope: `src/client/ui/src/session/animated-dots.tsx`; expected commit: `chore(ui): remove unused animated dots component`).
+4. [TODO] Git Commit: `chore(ui): remove unused animated dots component` (hash: TBD)
+
+### Stream 2: Remove dead extension-module utilities
+1. [TODO] Удалить неиспользуемые extension-module утилиты (inbound=0): `core-manager-lock.ts`, `install-provider-module.ts` (scope: `src/extension-module/core/core-manager-lock.ts`, `src/extension-module/provider/shared/install-provider-module.ts`; expected commit: `chore(ext): remove unused lock + provider installer helpers`).
+2. [TODO] Git Commit: `chore(ext): remove unused lock + provider installer helpers` (hash: TBD)
+
+### Stream 3: Remove dead package helpers (Claude/Core)
+1. [TODO] Удалить неиспользуемый Claude SDK session discovery helper (inbound=0) (scope: `packages/Claude_Module/src/messaging/session-file-discovery.ts`; expected commit: `chore(claude): remove unused sdk session discovery helper`).
+2. [TODO] Git Commit: `chore(claude): remove unused sdk session discovery helper` (hash: TBD)
+3. [TODO] Удалить неиспользуемые core helpers (inbound=0): `history-writer.ts`, `workflow-gates-facade.ts` (scope: `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`; expected commit: `chore(core): remove unused history writer + gates facade`).
+4. [TODO] Git Commit: `chore(core): remove unused history writer + gates facade` (hash: TBD)
+5. [TODO] Удалить неиспользуемые core facades (inbound=0): `workflow-paths-facade.ts`, `workflow-watcher-facade.ts` (scope: `packages/core/src/workflow/paths/workflow-paths-facade.ts`, `packages/core/src/workflow/watcher/workflow-watcher-facade.ts`; expected commit: `chore(core): remove unused workflow facades`).
+6. [TODO] Git Commit: `chore(core): remove unused workflow facades` (hash: TBD)
+
+### Stream 4: Remove unused exports in live modules
+1. [TODO] Удалить неиспользуемые экспорты: `ensureLauncherWorkspaceConfig`, `resolveProviderModulePath` (scope: `src/extension-module/cef/launcher.ts`, `src/extension-module/core/core-workspace.ts`; expected commit: `refactor(ext): drop unused launcher/workspace exports`).
+2. [TODO] Git Commit: `refactor(ext): drop unused launcher/workspace exports` (hash: TBD)
+3. [TODO] Удалить неиспользуемые экспорты: `resolveAppDirectory`, `getSettingsPath` (scope: `src/extension-module/core/runtime-paths.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit: `refactor(ext): drop unused runtime/settings exports`).
+4. [TODO] Git Commit: `refactor(ext): drop unused runtime/settings exports` (hash: TBD)
+
+### Stream 5: Checks hardening (links)
+1. [TODO] Сделать `check:links` обязательным и автономным: добавить `scripts/check-markdown-links.js` и переключить `check:links` на него (scope: `scripts/check-markdown-links.js`, `package.json`; expected commit: `chore(checks): enforce markdown link check`).
+2. [TODO] Git Commit: `chore(checks): enforce markdown link check` (hash: TBD)
+
+### Stream 6: Release build (v1.1.712)
+1. [TODO] Выполнить релизный цикл после cleanup: `./scripts/build-all.sh` (scope: release manifests + packages; expected commit: `chore(release): build-all v1.1.712`).
+2. [TODO] Git Commit: `chore(release): build-all v1.1.712` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.712 notes`).
+4. [TODO] Git Commit: `docs(release): sync v1.1.712 notes` (hash: TBD)
