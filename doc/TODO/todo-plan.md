@@ -91,8 +91,8 @@
 
 ### Stream 1: Implementation (sequential hydration)
 1. [DONE] Устранить race в dialog-controller: гарантировать синхронную фиксацию `sessionRef` на этапе `dialog:list:result` и очистку ref при смене intent/workspace (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix(pm): prevent first-open dialog history race`).
-2. [IN_PROGRESS] Git Commit: `fix(pm): prevent first-open dialog history race` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): prevent first-open dialog history race` (hash: `092e73e4`)
 
 ### Stream 2: Guards (regression)
-1. [TODO] Добавить guard на race первого history payload (source-level test на обязательную синхронную фиксацию `sessionRef` до запроса history) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard first-open dialog history hydration`).
-2. [TODO] Git Commit: `test(pm): guard first-open dialog history hydration` (hash: TBD)
+1. [DONE] Добавить guard на race первого history payload (source-level test на обязательную синхронную фиксацию `sessionRef` до запроса history) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard first-open dialog history hydration`).
+2. [IN_PROGRESS] Git Commit: `test(pm): guard first-open dialog history hydration` (hash: TBD)

@@ -89,3 +89,28 @@ test("dialog core events ensure resumed dialogs have a runtime session for snaps
     "dialog open should request runtime resume when snapshot lacks runtime session"
   );
 });
+
+test("dialog first-open hydration binds session identity before requesting history", async () => {
+  const [controllerSource, coreEventsSource] = await Promise.all([
+    readFile(CONTROLLER_SOURCE_PATH, "utf8"),
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    controllerSource.includes("sessionRef.current = null;"),
+    true,
+    "controller must clear session ref on intent switch to avoid stale first-open routing"
+  );
+
+  const sessionRefBindIndex = coreEventsSource.indexOf(
+    "options.sessionRef.current = nextSession;"
+  );
+  const firstHistoryRequestIndex = coreEventsSource.indexOf(
+    "options.requestDialogHistory(intent, match.dialogId);"
+  );
+  assert.equal(
+    sessionRefBindIndex >= 0 && firstHistoryRequestIndex > sessionRefBindIndex,
+    true,
+    "dialog list handler must bind sessionRef before the first history request"
+  );
+});
