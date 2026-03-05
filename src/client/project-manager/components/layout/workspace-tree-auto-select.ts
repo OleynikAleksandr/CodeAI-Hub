@@ -23,6 +23,14 @@ type WorkspaceTreeAutoSelectParams = {
   readonly onClearArtifactWithTool: (activeTool: string) => void;
 };
 
+const dispatchStageActivated = (stage: string): void => {
+  window.dispatchEvent(
+    new CustomEvent("pm:stage:activated", {
+      detail: { stage, source: "workspace-tree-auto-select" },
+    })
+  );
+};
+
 export const useWorkspaceTreeAutoSelect = (
   params: WorkspaceTreeAutoSelectParams
 ) => {
@@ -50,6 +58,7 @@ export const useWorkspaceTreeAutoSelect = (
       const vsLast = vsChain?.segments.at(-1) ?? null;
 
       if (vsLast) {
+        dispatchStageActivated("virtual_simulation");
         // VS session exists → open VS as the latest step
         const vsArtifactPath =
           `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
@@ -86,6 +95,7 @@ export const useWorkspaceTreeAutoSelect = (
         : branch?.draftPath
           ? "description.md"
           : null;
+      dispatchStageActivated("description");
       if (artifactPath && artifactLabel) {
         params.onSelectArtifact(artifactPath, artifactLabel);
       }
