@@ -136,3 +136,11 @@
 ### Stream 3: Bug registry sync
 1. [DONE] Обновить запись BUG-2026-03-05-03: добавить второй root-cause (intermittent pending timeout) и коммиты watchdog-фикса (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): update pm dialog history watchdog fix`).
 2. [DONE] Git Commit: `docs(bug): update pm dialog history watchdog fix` (hash: `17e77d36`)
+
+### Stream 4: Release build (v1.1.711)
+1. [DONE] Подготовить release-stream в `todo-plan.md` и вернуть clean working tree перед `build-all` (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(pm): prepare v1.1.711 release stream`).
+2. [IN_PROGRESS] Git Commit: `docs(pm): prepare v1.1.711 release stream` (hash: TBD)
+3. [TODO] Выполнить релизный цикл для watchdog-фикса: `./scripts/build-all.sh` с фиксацией новых версий/манифестов (scope: release manifests + packages; expected commit: `chore(release): build-all v1.1.711`).
+4. [TODO] Git Commit: `chore(release): build-all v1.1.711` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.711 notes`).
+6. [TODO] Git Commit: `docs(release): sync v1.1.711 notes` (hash: TBD)
