@@ -112,8 +112,8 @@ export const useProjectManagerDialogCoreEvents = (options: {
             runSlug: intent.runSlug,
           });
         }
-
         options.dialogIdRef.current = match.dialogId;
+        options.sessionRef.current = nextSession;
         options.setSession(nextSession);
         options.setSnapshots((previous) => {
           if (previous[nextSession.id]) {

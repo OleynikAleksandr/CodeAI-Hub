@@ -87,11 +87,11 @@
 
 ### Stream 0: Design (routing invariant)
 1. [DONE] Обновить контракт Dialog Routing: зафиксировать последовательность cold-open (`dialog:list:result` → фиксация session identity → `dialog:history`) и запрет на потерю первого history payload (scope: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): document first-open dialog hydration contract`).
-2. [IN_PROGRESS] Git Commit: `docs(pm): document first-open dialog hydration contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): document first-open dialog hydration contract` (hash: `0b33084b`)
 
 ### Stream 1: Implementation (sequential hydration)
-1. [TODO] Устранить race в dialog-controller: гарантировать синхронную фиксацию `sessionRef` на этапе `dialog:list:result` и очистку ref при смене intent/workspace (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix(pm): prevent first-open dialog history race`).
-2. [TODO] Git Commit: `fix(pm): prevent first-open dialog history race` (hash: TBD)
+1. [DONE] Устранить race в dialog-controller: гарантировать синхронную фиксацию `sessionRef` на этапе `dialog:list:result` и очистку ref при смене intent/workspace (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix(pm): prevent first-open dialog history race`).
+2. [IN_PROGRESS] Git Commit: `fix(pm): prevent first-open dialog history race` (hash: TBD)
 
 ### Stream 2: Guards (regression)
 1. [TODO] Добавить guard на race первого history payload (source-level test на обязательную синхронную фиксацию `sessionRef` до запроса history) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard first-open dialog history hydration`).

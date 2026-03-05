@@ -115,6 +115,7 @@ export const useProjectManagerDialogSessionController = (
   useEffect(() => {
     pendingIntentRef.current = intent;
     dialogIdRef.current = null;
+    sessionRef.current = null;
     loadedDialogIdsRef.current.clear();
     dialogCursorRef.current.clear();
     pendingHistoryCursorRef.current.clear();
@@ -221,6 +222,7 @@ export const useProjectManagerDialogSessionController = (
           return next;
         });
 
+        sessionRef.current = created;
         return created;
       });
     },
