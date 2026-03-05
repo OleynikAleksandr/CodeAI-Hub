@@ -7,9 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.707
+## Current Release — v1.1.708
 - Workflow: `Virtual Simulation` runs in prompt-only mode (no artifact template shipped); the agent writes `virtual-simulation.md` from `Final_Description.md`.
 - Project Manager: selecting workflow steps from the toolbar/tree opens the stage session UI (e.g. `Virtual Simulation`) and keeps Sessions + Artifacts panels in sync.
+- Session UI: token usage hydration from continuity now includes `providerSessionId`, fixing `0 tokens / 100%` in dialog-mode for Codex sessions.
 - Description flow: active runtime/UI path is collector-only for stage `description`; reviewer auto-runtime and auto-focus branches are removed from current delivery.
 - Workflow templates: active `~/.codeai-hub/templates/description/` delivery includes only `description-collector-prompt.md`, `description-template.md`, and `questionnaire-template.md`.
 - Template sync: legacy `reviewer-prompt.md` and `reviewer-template.md` are pruned from `~/.codeai-hub/templates/description/` during synchronization.

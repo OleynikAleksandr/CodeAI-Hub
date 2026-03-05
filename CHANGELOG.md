@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.708] - 2026-03-05
+### Fixed
+- Session UI: token usage now hydrates correctly for dialog-mode sessions resumed from continuity (fixes Codex showing `0 tokens / 100%`).
+
 ## [1.1.707] - 2026-03-05
 ### Changed
 - Rebuild of the stable workflow baseline from `v1.1.706` as the new main release line (no workflow approval markers).
