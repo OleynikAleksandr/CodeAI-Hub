@@ -2,6 +2,22 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.714] - 2026-03-05
+### Fixed
+- Codex runtime: persisted `~/.codeai-hub/settings/settings.json` now wins over stale `CODEX_DEFAULT_MODEL` inherited by a long-lived Core process, so new provider sessions no longer start as `gpt-5.3-codex` after the user has switched Settings to `gpt-5.4`.
+- Codex compatibility: legacy env `CODEX_DEFAULT_MODEL=gpt-5.2` is normalized through the same `gpt-5.4` migration path as Settings snapshots.
+
+## [1.1.713] - 2026-03-05
+### Changed
+- Codex: general-purpose model в Settings/UI/runtime переключена с `gpt-5.2` на `gpt-5.4`; default coding model остаётся `gpt-5.3-codex`.
+- Compatibility: legacy Codex settings (`defaultModel` и `reasoningByModel.gpt-5.2`) теперь мягко нормализуются в `gpt-5.4` в extension, webview, core и SDK manager.
+
+### Fixed
+- Codex runtime: resume-path больше не делает скрытый rollback в sticky `gpt-5.3-codex` thread, если пользователь явно выбрал general-purpose модель `gpt-5.4`.
+
+### Removed
+- Codex SDK: удалён stale override для несуществующей provider-side migration `gpt-5.2 -> gpt-5.3-codex`.
+
 ## [1.1.712] - 2026-03-05
 ### Changed
 - Checks: `check:links` теперь автономно валидирует локальные markdown-ссылки (только tracked `.md`) через `scripts/check-markdown-links.js`.

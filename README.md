@@ -7,21 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.712
-- Codebase hygiene: удалён мёртвый код (inbound=0) и неиспользуемые экспорты; `check:links` теперь реально проверяет локальные markdown-ссылки и падает на битых.
-- Project Manager: добавлен watchdog-ретрай для cold-open `dialog:history` — если первый `cursor=0` запрос зависает, PM автоматически делает forced retry без ручного клика по session/stage в tree.
-- Project Manager: устранена гонка first-open dialog hydration — история из JSONL подтягивается при первом открытии workspace без дополнительного клика по stage/session в tree.
-- Project Manager: внедрён единый navigation SSOT (`activeStage`) — клики в Toolbar, workflow tree и auto-select больше не рассинхронизируют подсветку шага, сессию и правую панель.
-- Project Manager: правый header унифицирован для всех workflow-шагов (`<Step Name> + Artifacts/Help`), добавлены help-панели для `Virtual Simulation`, `Diagram Modules`, `Diagram Facades`.
-- Workflow: `Virtual Simulation` runs in prompt-only mode (no artifact template shipped); the agent writes `virtual-simulation.md` from `Final_Description.md`.
-- Project Manager: selecting workflow steps from the toolbar/tree opens the stage session UI (e.g. `Virtual Simulation`) and keeps Sessions + Artifacts panels in sync.
-- Session UI: token usage hydration from continuity now includes `providerSessionId`, fixing `0 tokens / 100%` in dialog-mode for Codex sessions.
-- Description flow: active runtime/UI path is collector-only for stage `description`; reviewer auto-runtime and auto-focus branches are removed from current delivery.
-- Workflow templates: active `~/.codeai-hub/templates/description/` delivery includes only `description-collector-prompt.md`, `description-template.md`, and `questionnaire-template.md`.
-- Template sync: legacy `reviewer-prompt.md` and `reviewer-template.md` are pruned from `~/.codeai-hub/templates/description/` during synchronization.
-- Release line: stable pre-approval-marker baseline (no `.approved.json` workflow approval markers).
+## Current Release — v1.1.714
+- Codex: general-purpose модель в Settings/UI/runtime остаётся `gpt-5.4`; default coding model остаётся `gpt-5.3-codex`.
+- Codex compatibility: legacy `defaultModel = gpt-5.2` и `reasoningByModel.gpt-5.2` мягко нормализуются в `gpt-5.4` в extension, webview, core и SDK manager.
+- Codex runtime hotfix: persisted `settings.json` теперь имеет приоритет над stale `CODEX_DEFAULT_MODEL`/`CODEX_DEFAULT_REASONING_EFFORT` из уже запущенного Core, поэтому новые provider sessions больше не должны откатываться в `gpt-5.3-codex` после смены Settings на `gpt-5.4`.
+- Release pipeline: локальный `build-all` обновил unified version до `1.1.714` и пересобрал provider/core/ui/launcher артефакты под hotfix rollout.
 
-Previous releases (summary): the `1.1.57x–1.1.69x` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, and panel sync in Project Manager.
+Previous releases (summary): the `1.1.57x–1.1.713` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, codebase hygiene / markdown-link gates, and the initial Codex `gpt-5.4` rollout from `v1.1.713`.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
