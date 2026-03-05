@@ -193,4 +193,4 @@
 1. [DONE] Выполнить релизный цикл после cleanup: `./scripts/build-all.sh` (scope: release manifests + packages; expected commit: `chore(release): build-all v1.1.712`).
 2. [DONE] Git Commit: `chore(release): build-all v1.1.712` (hash: `9614ab37`)
 3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.712 notes`).
-4. [IN_PROGRESS] Git Commit: `docs(release): sync v1.1.712 notes` (hash: TBD)
+4. [DONE] Git Commit: `docs(release): sync v1.1.712 notes` (hash: `04b6ae92`)
