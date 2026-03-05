@@ -55,9 +55,9 @@
 1. [DONE] Ввести универсальный header для правой панели: `<Step Name>` + toggle `Artifacts/Help` (не только для `Description`) (scope: `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm): add stage artifact header toggle`).
 2. [DONE] Git Commit: `feat(pm): add stage artifact header toggle` (hash: `31493aa4`)
 3. [DONE] Распространить режимы `Artifacts/Help` на все шаги (а не только `Description`), сохраняя корректный выбранный артефакт и контент (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit: `fix(pm): apply artifacts/help mode across stages`).
-4. [IN_PROGRESS] Git Commit: `fix(pm): apply artifacts/help mode across stages` (hash: TBD)
-5. [TODO] Добавить help-экраны для non-description шагов (VS/Diagrams), чтобы `Help` всегда был полезным и одинаковым по UX (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`; expected commit: `feat(pm): add workflow step help panels`).
-6. [TODO] Git Commit: `feat(pm): add workflow step help panels` (hash: TBD)
+4. [DONE] Git Commit: `fix(pm): apply artifacts/help mode across stages` (hash: `206df0f0`)
+5. [DONE] Добавить help-экраны для non-description шагов (VS/Diagrams), чтобы `Help` всегда был полезным и одинаковым по UX (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`; expected commit: `feat(pm): add workflow step help panels`).
+6. [IN_PROGRESS] Git Commit: `feat(pm): add workflow step help panels` (hash: TBD)
 
 ### Stream 3: Guards (регрессии)
 1. [TODO] Добавить тест(ы), которые ловят рассинхрон: stage selection из дерева обязан обновлять Toolbar/highlight и header правой панели (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `test(pm): guard workflow navigation sync`).

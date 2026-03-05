@@ -1,9 +1,12 @@
 import type React from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
+import { DiagramFacadesHelp } from "../diagram-facades/diagram-facades-help";
 import { DiagramFacadesPanel } from "../diagram-facades/diagram-facades-panel";
+import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
 import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
+import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
@@ -78,37 +81,13 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
       );
     }
     if (activeTool === VIRTUAL_SIMULATION_TOOL_LABEL) {
-      return (
-        <div className="pm-details">
-          <strong>Virtual Simulation Help</strong>
-          <div style={{ marginTop: 10 }}>
-            В этом режиме показываются правила шага и ожидаемый артефакт
-            <code> virtual-simulation.md</code>.
-          </div>
-        </div>
-      );
+      return <VirtualSimulationHelp />;
     }
     if (activeTool === "Diagram Modules") {
-      return (
-        <div className="pm-details">
-          <strong>Diagram Modules Help</strong>
-          <div style={{ marginTop: 10 }}>
-            В этом режиме показываются правила шага и ожидаемый артефакт
-            <code> modules-diagram.mmd</code>.
-          </div>
-        </div>
-      );
+      return <DiagramModulesHelp />;
     }
     if (activeTool === "Diagram Facades") {
-      return (
-        <div className="pm-details">
-          <strong>Diagram Facades Help</strong>
-          <div style={{ marginTop: 10 }}>
-            В этом режиме показываются правила шага и ожидаемый артефакт
-            <code> facades-graph.mmd</code>.
-          </div>
-        </div>
-      );
+      return <DiagramFacadesHelp />;
     }
   }
   if (showArtifactViewer && selectedArtifact) {
