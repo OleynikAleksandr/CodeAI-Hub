@@ -9,6 +9,14 @@ const resolveProviderTitle = (providerId: string): string =>
     ? getDefaultProviderTitle(providerId)
     : providerId;
 
+const dispatchStageActivated = (stage: string): void => {
+  window.dispatchEvent(
+    new CustomEvent("pm:stage:activated", {
+      detail: { stage, source: "workspace-tree-diagram-branch-node" },
+    })
+  );
+};
+
 const resolveLatestDiagramChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
   stage: "diagram_modules" | "diagram_facades"
@@ -117,6 +125,7 @@ export const buildDiagramModulesBranchNodes = (options: {
       status: "active",
       visualDepth: 2,
       onSelect: () => {
+        dispatchStageActivated("diagram_modules");
         options.selectArtifact(dmArtifactPath, "modules-diagram.mmd");
         // Sync: open the session for the same stage
         if (last) {
@@ -146,6 +155,7 @@ export const buildDiagramModulesBranchNodes = (options: {
     status: "active",
     visualDepth: 2,
     onSelect: () => {
+      dispatchStageActivated("diagram_modules");
       options.dispatchDialogOpenIntent({
         providerId: last.providerId,
         providerSessionId: last.providerSessionId,
@@ -201,6 +211,7 @@ export const buildDiagramFacadesBranchNodes = (options: {
       status: "active",
       visualDepth: 2,
       onSelect: () => {
+        dispatchStageActivated("diagram_facades");
         options.selectArtifact(dfArtifactPath, "facades-graph.mmd");
         // Sync: open the session for the same stage
         if (last) {
@@ -230,6 +241,7 @@ export const buildDiagramFacadesBranchNodes = (options: {
     status: "active",
     visualDepth: 2,
     onSelect: () => {
+      dispatchStageActivated("diagram_facades");
       options.dispatchDialogOpenIntent({
         providerId: last.providerId,
         providerSessionId: last.providerSessionId,

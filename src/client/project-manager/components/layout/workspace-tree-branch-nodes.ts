@@ -11,6 +11,14 @@ const resolveProviderTitle = (providerId: string): string =>
     ? getDefaultProviderTitle(providerId)
     : providerId;
 
+const dispatchStageActivated = (stage: string): void => {
+  window.dispatchEvent(
+    new CustomEvent("pm:stage:activated", {
+      detail: { stage, source: "workspace-tree-branch-node" },
+    })
+  );
+};
+
 export const buildDescriptionBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly workspaceSlug: string | null;
@@ -39,6 +47,7 @@ export const buildDescriptionBranchNodes = (options: {
       status: artifactStatus,
       visualDepth: 2,
       onSelect: () => {
+        dispatchStageActivated("description");
         options.selectArtifact(artifactPath, artifactLabel);
         // Sync: open the session for the same stage
         if (session && options.workspaceSlug && options.workspacePath) {
@@ -65,6 +74,7 @@ export const buildDescriptionBranchNodes = (options: {
       status: "active",
       visualDepth: 2,
       onSelect: () => {
+        dispatchStageActivated("description");
         if (!(options.workspaceSlug && options.workspacePath)) {
           return;
         }
@@ -225,6 +235,7 @@ export const buildVirtualSimulationBranchNodes = (options: {
       status: "active",
       visualDepth: 2,
       onSelect: () => {
+        dispatchStageActivated("virtual_simulation");
         options.selectArtifact(vsArtifactPath, "virtual-simulation.md");
         // Sync: open the session for the same stage
         if (last) {
@@ -254,6 +265,7 @@ export const buildVirtualSimulationBranchNodes = (options: {
       status: "active",
       visualDepth: 2,
       onSelect: () => {
+        dispatchStageActivated("virtual_simulation");
         options.dispatchDialogOpenIntent({
           providerId: last.providerId,
           providerSessionId: last.providerSessionId,
