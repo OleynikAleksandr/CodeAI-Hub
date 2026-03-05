@@ -31,5 +31,5 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.714` (hash: `81c9928e`)
 
 ### Stream 3: Release docs + session log
-1. [IN_PROGRESS] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session063.md` и архив предыдущего плана под финальный hotfix `v1.1.714` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session063.md`, `doc/TODO/Archive/todo-plan-up-to-phase288-2026-03-05.md`; expected commit: `docs(release): sync v1.1.714 codex notes`).
-2. [TODO] Git Commit: `docs(release): sync v1.1.714 codex notes` (hash: TBD)
+1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session063.md` и архив предыдущего плана под финальный hotfix `v1.1.714` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session063.md`, `doc/TODO/Archive/todo-plan-up-to-phase288-2026-03-05.md`; expected commit: `docs(release): sync v1.1.714 codex notes`).
+2. [DONE] Git Commit: `docs(release): sync v1.1.714 codex notes` (hash: `a84c7dfa`)
