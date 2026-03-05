@@ -114,3 +114,28 @@ test("dialog first-open hydration binds session identity before requesting histo
     "dialog list handler must bind sessionRef before the first history request"
   );
 });
+
+test("dialog controller retries stalled cold-open history request after timeout", async () => {
+  const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("window.setTimeout(() => {"),
+    true,
+    "controller must schedule watchdog timeout for cold-open history"
+  );
+  assert.equal(
+    source.includes("pendingHistoryCursorRef.current.has(dialogId)"),
+    true,
+    "watchdog must verify request is still pending before retry"
+  );
+  assert.equal(
+    source.includes("loadedDialogIdsRef.current.delete(dialogId);"),
+    true,
+    "watchdog must clear loaded marker before forced retry"
+  );
+  assert.equal(
+    source.includes("requestDialogHistory(activeIntent, dialogId, 0, { force: true });"),
+    true,
+    "watchdog must issue a forced full-history retry for stalled cold-open"
+  );
+});
