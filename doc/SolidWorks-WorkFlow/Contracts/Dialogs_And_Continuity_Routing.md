@@ -13,6 +13,7 @@
 - После restart Core/PM диалог восстанавливается из накопительного JSONL.
 - Дубликаты от replay/reconnect подавляются (dedupe).
 - Первичное открытие dialog-mode выполняется последовательно: сначала фиксируем active dialog/session identity в PM-контроллере, затем запрашиваем `dialog:history`; history payload не должен теряться из-за гонки между `dialog:list:result` и первым `dialog:history:result`.
+- Для cold-open `dialog:history` обязателен watchdog-ретрай: если первый full-history запрос (`cursor=0`) остаётся pending дольше таймаута, PM должен сбросить pending-marker и сделать один forced retry, чтобы пользователь не зависал в `No messages yet`.
 
 ## Связанные контракты
 - Workspace runtime/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

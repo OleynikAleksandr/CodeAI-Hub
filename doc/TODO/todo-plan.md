@@ -108,3 +108,31 @@
 4. [DONE] Git Commit: `chore(release): build-all v1.1.710` (hash: `f3cfc4ca`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.710 notes`).
 6. [DONE] Git Commit: `docs(release): sync v1.1.710 notes` (hash: `93f6da39`)
+
+---
+
+## Phase 286 — Project Manager: Intermittent dialog history miss on workspace open (owner: Oleksandr, updated: 2026-03-05)
+
+**Problem (repro):**
+- В релизе `1.1.710` баг с пустой лентой диалога остаётся интермиттирующим: в части запусков при первом открытии Workspace (`Virtual Simulation`/другие этапы) панель `Sessions` показывает `No messages yet`, хотя история есть.
+- Ручной повторный клик по session node в левом tree сразу подтягивает историю.
+
+**Target UX (invariant):**
+- Даже при race на старте первый cold-open route не должен оставлять историю в pending-состоянии.
+- Если initial full-history запрос (`cursor=0`) завис/потерялся, PM обязан автоматически сделать forced retry без участия пользователя.
+
+### Stream 0: Design (watchdog contract)
+1. [DONE] Дополнить контракт Dialog Routing watchdog-правилом: один автоматический forced retry для cold-open history при зависшем pending запросе (scope: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): define dialog history watchdog retry contract`).
+2. [IN_PROGRESS] Git Commit: `docs(pm): define dialog history watchdog retry contract` (hash: TBD)
+
+### Stream 1: Implementation (pending timeout recovery)
+1. [TODO] Добавить watchdog в `requestDialogHistory`: если первый `cursor=0` запрос остаётся pending по таймауту, очищать pending/loaded markers и делать forced retry, чтобы восстановить историю без ручного клика (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix(pm): retry stalled dialog history on workspace open`).
+2. [TODO] Git Commit: `fix(pm): retry stalled dialog history on workspace open` (hash: TBD)
+
+### Stream 2: Guards (regression)
+1. [TODO] Расширить guard-тесты для фиксации watchdog-инварианта (source-level assertions на retry при pending timeout) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard dialog history watchdog retry`).
+2. [TODO] Git Commit: `test(pm): guard dialog history watchdog retry` (hash: TBD)
+
+### Stream 3: Bug registry sync
+1. [TODO] Обновить запись BUG-2026-03-05-03: добавить второй root-cause (intermittent pending timeout) и коммиты watchdog-фикса (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): update pm dialog history watchdog fix`).
+2. [TODO] Git Commit: `docs(bug): update pm dialog history watchdog fix` (hash: TBD)
