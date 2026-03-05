@@ -5,11 +5,13 @@
   - `doc/SolidWorks-WorkFlow/README.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-  - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+  - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/Sessions/Session055.md`
+  - `doc/BugRegistry.md`
+  - `doc/Sessions/Session057.md`
+  - `doc/Sessions/Session058.md` (после создания)
 - TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -18,56 +20,55 @@
 
 ---
 
-## Phase 282 — Virtual Simulation Node Transformation (owner: Oleksandr, updated: 2026-03-01)
+## Phase 284 — Project Manager: Unified Workflow Navigation (owner: Oleksandr, updated: 2026-03-05)
 
-**Scope этой фазы:** обсуждение и фиксация небольшой трансформации узла `virtual_simulation` на уровне SSOT.
+**Problem (repro):**
+- Выбор шага/сессии/артефакта в разных местах UI (верхний Toolbar vs левое дерево) приводит к разному состоянию правой панели и подсветки шага.
+- Наблюдаемый эффект: в Toolbar выбран `Description`, а фактически открыты `Virtual Simulation` session + `virtual-simulation.md` artifact; header правой панели может показывать не тот шаг.
 
-**Цель:**
-- утвердить дельта-контракт шага `Virtual Simulation`;
-- синхронизировать связанные SSOT-документы;
-- подготовить декомпозицию runtime-реализации на микро-задачи.
+**Target UX (invariant):**
+- Где бы ни был выполнен клик (Toolbar / левое дерево: шаг / артефакт / сессия / авто-выбор), Project Manager должен приходить к одному и тому же состоянию:
+  - в Toolbar подсвечен выбранный шаг;
+  - слева header всегда `Sessions`, ниже — UI сессии выбранного шага;
+  - справа header: `<Step Name>` и две кнопки справа `Artifacts` и `Help`;
+  - ниже — имя артефакта выбранного шага и его текст (если доступен).
 
-**Approved integration contract (prompt-only):**
-- `doc/Virtual_Simulation_Prompt.draft-v1.md` — утверждённый источник текста для runtime prompt Virtual Simulation.
+### Stream 0: Design (SSOT + contract)
+1. [TODO] Зафиксировать SSOT навигации/selection в PM: единый термин `activeStage` + маршрутизация событий из Toolbar/Tree/auto-select, правила синхронизации `activeStage → (dialogIntent, selectedArtifact, headerMode)` (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): add workflow navigation SSOT contract`).
+2. [TODO] Git Commit: `docs(pm): add workflow navigation SSOT contract` (hash: TBD)
+3. [TODO] Синхронизировать SSOT документов системы под новый инвариант (любой route в dialog-session обязан обновлять `activeStage` в UI) (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(pm): document workflow navigation invariants`).
+4. [TODO] Git Commit: `docs(pm): document workflow navigation invariants` (hash: TBD)
 
-### Stream 0: Delta contract alignment
-1. [DONE] Утвердить prompt-контракт трансформации узла `virtual_simulation` и зафиксировать прямую ссылку на source-of-truth (`doc/Virtual_Simulation_Prompt.draft-v1.md`) (scope: `doc/Virtual_Simulation_Prompt.draft-v1.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(virtual-simulation): approve prompt-only contract source`).
-2. [DONE] Git Commit: `docs(virtual-simulation): approve prompt-only contract source` (hash: `6ca3e7c1`)
-3. [DONE] Обновить SSOT контракта `Virtual Simulation` под режим prompt-only (без artifact template) (scope: `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`; expected commit: `docs(virtual-simulation): switch contract to prompt-only runtime`).
-4. [DONE] Git Commit: `docs(virtual-simulation): switch contract to prompt-only runtime` (hash: `860e1128`)
-5. [DONE] Синхронизировать системный SSOT и workflow state-machine после утверждения prompt-only дельты (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs(workflow): sync virtual simulation prompt-only invariants`).
-6. [DONE] Git Commit: `docs(workflow): sync virtual simulation prompt-only invariants` (hash: `7965240e`)
+### Stream 1: Stage selection SSOT (Toolbar ↔ Tree ↔ auto-select)
+1. [TODO] Сделать `MainArea` реактивным к “навигационному событию” (stage) и выставлять `activeTool` из stage (подсветка Toolbar + заголовок правой панели) (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `fix(pm): sync toolbar stage with navigation events`).
+2. [TODO] Git Commit: `fix(pm): sync toolbar stage with navigation events` (hash: TBD)
+3. [TODO] Привести клики по stage в дереве к одному маршруту с Toolbar (через единое stage-событие, без прямого “ручного” рассинхрона) (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit: `refactor(pm): route tree stage clicks through navigation event`).
+4. [TODO] Git Commit: `refactor(pm): route tree stage clicks through navigation event` (hash: TBD)
+5. [TODO] Синхронизировать клики по artifact/session nodes в дереве: перед открытием артефакта/сессии всегда выставлять `activeStage` (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix(pm): sync tree artifact/session clicks with active stage`).
+6. [TODO] Git Commit: `fix(pm): sync tree artifact/session clicks with active stage` (hash: TBD)
+7. [TODO] Синхронизировать auto-select при смене workspace (latest chain) с `activeStage`, чтобы Toolbar/headers не показывали “старый” шаг (scope: `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`; expected commit: `fix(pm): sync auto-select stage with toolbar`).
+8. [TODO] Git Commit: `fix(pm): sync auto-select stage with toolbar` (hash: TBD)
+9. [TODO] Унифицировать семантику выбора шага: “выбор шага” должен открывать соответствующую dialog-сессию (без stage-specific исключений типа `skipSession`), либо зафиксировать чёткое правило и применить везде одинаково (scope: `src/client/project-manager/components/layout/main-area-utils.ts`, `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`; expected commit: `fix(pm): unify stage activation semantics`).
+10. [TODO] Git Commit: `fix(pm): unify stage activation semantics` (hash: TBD)
 
-### Stream 1: Runtime decomposition (post-approval)
-1. [DONE] Нарезать implementation-stream узла `Virtual Simulation` на микро-задачи с удалением artifact template из кодовой базы и runtime contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): decompose prompt-only virtual simulation migration`).
-2. [DONE] Git Commit: `docs(plan): decompose prompt-only virtual simulation migration` (hash: `6ca3e7c1`)
+### Stream 2: Right panel header SSOT (Step name + Artifacts/Help)
+1. [TODO] Ввести универсальный header для правой панели: `<Step Name>` + toggle `Artifacts/Help` (не только для `Description`) (scope: `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm): add stage artifact header toggle`).
+2. [TODO] Git Commit: `feat(pm): add stage artifact header toggle` (hash: TBD)
+3. [TODO] Распространить режимы `Artifacts/Help` на все шаги (а не только `Description`), сохраняя корректный выбранный артефакт и контент (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit: `fix(pm): apply artifacts/help mode across stages`).
+4. [TODO] Git Commit: `fix(pm): apply artifacts/help mode across stages` (hash: TBD)
+5. [TODO] Добавить help-экраны для non-description шагов (VS/Diagrams), чтобы `Help` всегда был полезным и одинаковым по UX (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`; expected commit: `feat(pm): add workflow step help panels`).
+6. [TODO] Git Commit: `feat(pm): add workflow step help panels` (hash: TBD)
 
----
+### Stream 3: Guards (регрессии)
+1. [TODO] Добавить тест(ы), которые ловят рассинхрон: stage selection из дерева обязан обновлять Toolbar/highlight и header правой панели (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `test(pm): guard workflow navigation sync`).
+2. [TODO] Git Commit: `test(pm): guard workflow navigation sync` (hash: TBD)
 
-## Phase 283 — Virtual Simulation Runtime Implementation (owner: Oleksandr, updated: 2026-03-01)
+### Stream 4: Bug registry + docs sync
+1. [TODO] Завести запись в Bug Registry (OPEN → FIXED) и привязать guards/релиз (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): register pm workflow navigation desync`).
+2. [TODO] Git Commit: `docs(bug): register pm workflow navigation desync` (hash: TBD)
 
-**Scope этой фазы:** реализация после закрытия Phase 282.
-
-### Stream 0: Core prompt-only migration (remove artifact template from codebase)
-1. [DONE] Перенести утверждённый текст из `doc/Virtual_Simulation_Prompt.draft-v1.md` в runtime prompt Virtual Simulation и убрать упоминания `virtual-simulation-template.md` из bundled templates (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit: `feat(core): migrate virtual simulation prompt to approved contract`).
-2. [DONE] Git Commit: `feat(core): migrate virtual simulation prompt to approved contract` (hash: `e9d99ee3`)
-3. [DONE] Удалить `virtual-simulation-template.md` из workflow contract для stage `virtual_simulation` (не генерировать, не читать, не отправлять) (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(core): remove virtual simulation artifact template contract`).
-4. [DONE] Git Commit: `refactor(core): remove virtual simulation artifact template contract` (hash: `b32bb7d5`)
-
-### Stream 1: Project Manager prompt-pack (stop sending template path)
-1. [DONE] Обновить загрузку workflow contract в PM: stage `virtual_simulation` должен работать без `paths.template` и без markdown template payload (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`; expected commit: `refactor(pm): consume virtual simulation contract without artifact template`).
-2. [DONE] Git Commit: `refactor(pm): consume virtual simulation contract without artifact template` (hash: `b41aa814`)
-3. [DONE] Убрать отправку template path в prompt-pack для `virtual_simulation` и переписать fallback/default prompt под режим prompt-only (scope: `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit: `refactor(pm): remove template hints from virtual simulation prompt pack`).
-4. [DONE] Git Commit: `refactor(pm): remove template hints from virtual simulation prompt pack` (hash: `5f2720e6`)
-
-### Stream 2: Validation + status propagation guards
-1. [DONE] Добавить/обновить тесты для prompt-only генерации и валидации `virtual-simulation.md` (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `test(core): guard virtual simulation prompt-only pipeline`).
-2. [DONE] Git Commit: `test(core): guard virtual simulation prompt-only pipeline` (hash: `77422b17`)
-3. [DONE] Синхронизировать пересчёт статусов (`READY/DONE/ERROR/OUTDATED`) для prompt-only Virtual Simulation и проверить отсутствие регрессий в manual start flow (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit: `fix(workflow): align virtual simulation prompt-only status flow`).
-4. [DONE] Git Commit: `fix(workflow): align virtual simulation prompt-only status flow` (hash: `dc10e920`)
-
-### Stream 3: Release build (по чеклисту)
-1. [IN_PROGRESS] После закрытия всех stream запустить таргетные проверки затронутых пакетов/клиентов и зафиксировать результаты в отчёте сессии (scope: `doc/Sessions/Session056.md`; expected commit: `docs(session): record virtual simulation prompt-only validation`).
-2. [TODO] Git Commit: `docs(session): record virtual simulation prompt-only validation` (hash: TBD)
-3. [TODO] Выполнить релизный цикл: `./scripts/build-all.sh` -> проверка чистого дерева -> `./scripts/build-release.sh --use-current-version` -> верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + `doc/Sessions/Session056.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+### Stream 5: Release build (по чеклисту)
+1. [TODO] Обновить Session-отчёт с результатами валидации и списком коммитов (scope: `doc/Sessions/Session059.md`; expected commit: `docs(session): record Session059 pm navigation sync`).
+2. [TODO] Git Commit: `docs(session): record Session059 pm navigation sync` (hash: TBD)
+3. [TODO] Выполнить релизный цикл: `./scripts/build-all.sh` → проверка чистого дерева → `./scripts/build-release.sh --use-current-version` → верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + docs; expected commit: `chore(release): build-all vX.Y.Z`).
 4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
