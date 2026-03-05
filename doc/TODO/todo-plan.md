@@ -107,4 +107,4 @@
 3. [DONE] Выполнить релизный цикл для фикса first-open hydration: `./scripts/build-all.sh` с фиксацией новых версий/манифестов (scope: release manifests + packages; expected commit: `chore(release): build-all v1.1.710`).
 4. [DONE] Git Commit: `chore(release): build-all v1.1.710` (hash: `f3cfc4ca`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.710 notes`).
-6. [IN_PROGRESS] Git Commit: `docs(release): sync v1.1.710 notes` (hash: TBD)
+6. [DONE] Git Commit: `docs(release): sync v1.1.710 notes` (hash: `93f6da39`)
