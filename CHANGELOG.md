@@ -2,6 +2,14 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.711] - 2026-03-05
+### Fixed
+- Project Manager: для cold-open history добавлен watchdog-ретрай — зависший первый `dialog:history` запрос (`cursor=0`) автоматически сбрасывается и повторяется forced-route без участия пользователя.
+- Project Manager: устранён интермиттирующий кейс `No messages yet` при открытии Workspace, когда история появлялась только после повторного клика по session/stage в левом tree.
+
+### Changed
+- Tests: `dialog-session-snapshot-replay.test.ts` расширен проверками watchdog-инварианта (`pending timeout -> forced retry`).
+
 ## [1.1.710] - 2026-03-05
 ### Fixed
 - Project Manager: устранена гонка первого открытия dialog-mode — `dialog:history:result` больше не теряется между `dialog:list:result` и обновлением session identity.

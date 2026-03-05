@@ -41,7 +41,7 @@
 | BUG-2026-03-01-01 | FIXED | UI + Core Continuity | Description runtime: в input показан `Retry` вместо `Play/Stop`; threshold-trigger continuity (80%) не срабатывает | 1.1.704 |
 | BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
 | BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | 1.1.709 |
-| BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | TBD |
+| BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | 1.1.711 |
 
 ---
 
@@ -109,8 +109,9 @@
 - `f19ffd7a docs(pm): define dialog history watchdog retry contract`
 - `b8370e93 fix(pm): retry stalled dialog history on workspace open`
 - `650e33f9 test(pm): guard dialog history watchdog retry`
+- `d9857f83 chore(release): build-all v1.1.711`
 
-**Release:** `TBD` (после `1.1.710`)
+**Release:** `1.1.711`
 
 **Guards:**
 - `node --test --import tsx src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
