@@ -57,11 +57,11 @@
 3. [DONE] Распространить режимы `Artifacts/Help` на все шаги (а не только `Description`), сохраняя корректный выбранный артефакт и контент (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit: `fix(pm): apply artifacts/help mode across stages`).
 4. [DONE] Git Commit: `fix(pm): apply artifacts/help mode across stages` (hash: `206df0f0`)
 5. [DONE] Добавить help-экраны для non-description шагов (VS/Diagrams), чтобы `Help` всегда был полезным и одинаковым по UX (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`; expected commit: `feat(pm): add workflow step help panels`).
-6. [IN_PROGRESS] Git Commit: `feat(pm): add workflow step help panels` (hash: TBD)
+6. [DONE] Git Commit: `feat(pm): add workflow step help panels` (hash: `b781eaac`)
 
 ### Stream 3: Guards (регрессии)
-1. [TODO] Добавить тест(ы), которые ловят рассинхрон: stage selection из дерева обязан обновлять Toolbar/highlight и header правой панели (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `test(pm): guard workflow navigation sync`).
-2. [TODO] Git Commit: `test(pm): guard workflow navigation sync` (hash: TBD)
+1. [DONE] Добавить тест(ы), которые ловят рассинхрон: stage selection из дерева обязан обновлять Toolbar/highlight и header правой панели (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `test(pm): guard workflow navigation sync`).
+2. [IN_PROGRESS] Git Commit: `test(pm): guard workflow navigation sync` (hash: TBD)
 
 ### Stream 4: Bug registry + docs sync
 1. [TODO] Завести запись в Bug Registry (OPEN → FIXED) и привязать guards/релиз (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): register pm workflow navigation desync`).

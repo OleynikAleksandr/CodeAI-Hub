@@ -19,8 +19,11 @@ const STAGE_TO_TOOL_MAP: Readonly<Record<WorkflowStageId, string>> = {
   diagram_facades: "Diagram Facades",
 };
 
+export const resolveStageByTool = (tool: string): string | null =>
+  TOOL_TO_STAGE_MAP[tool] ?? null;
+
 export const dispatchStageActivated = (tool: string): void => {
-  const stage = TOOL_TO_STAGE_MAP[tool];
+  const stage = resolveStageByTool(tool);
   if (stage) {
     window.dispatchEvent(
       new CustomEvent("pm:stage:activated", {
