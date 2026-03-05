@@ -131,8 +131,8 @@
 
 ### Stream 2: Guards (regression)
 1. [DONE] Расширить guard-тесты для фиксации watchdog-инварианта (source-level assertions на retry при pending timeout) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard dialog history watchdog retry`).
-2. [IN_PROGRESS] Git Commit: `test(pm): guard dialog history watchdog retry` (hash: TBD)
+2. [DONE] Git Commit: `test(pm): guard dialog history watchdog retry` (hash: `650e33f9`)
 
 ### Stream 3: Bug registry sync
-1. [TODO] Обновить запись BUG-2026-03-05-03: добавить второй root-cause (intermittent pending timeout) и коммиты watchdog-фикса (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): update pm dialog history watchdog fix`).
-2. [TODO] Git Commit: `docs(bug): update pm dialog history watchdog fix` (hash: TBD)
+1. [DONE] Обновить запись BUG-2026-03-05-03: добавить второй root-cause (intermittent pending timeout) и коммиты watchdog-фикса (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): update pm dialog history watchdog fix`).
+2. [IN_PROGRESS] Git Commit: `docs(bug): update pm dialog history watchdog fix` (hash: TBD)

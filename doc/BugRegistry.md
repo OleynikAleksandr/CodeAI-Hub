@@ -41,7 +41,7 @@
 | BUG-2026-03-01-01 | FIXED | UI + Core Continuity | Description runtime: в input показан `Retry` вместо `Play/Stop`; threshold-trigger continuity (80%) не срабатывает | 1.1.704 |
 | BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
 | BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | 1.1.709 |
-| BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | 1.1.710 |
+| BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | TBD |
 
 ---
 
@@ -93,6 +93,7 @@
 **Root cause (confirmed):**
 - В `dialog:list:result` history запрашивалась сразу после `setSession(nextSession)`, но `dialog:history:result` мог прийти раньше, чем `sessionRef` обновлялся из React state/effect.
 - Из-за этого первый history payload отбрасывался проверкой `if (!currentSession) return`, и initial hydration зависела от дополнительного пользовательского действия.
+- В части запусков initial `dialog:history` (`cursor=0`) мог зависать в pending без payload, поэтому UI оставался в `No messages yet` до ручного повторного route из tree.
 
 **Fix:**
 - `use-project-manager-dialog-core-events.ts`: session identity теперь фиксируется синхронно (`sessionRef.current = nextSession`) до первого `requestDialogHistory`.
@@ -105,8 +106,11 @@
 - `092e73e4 fix(pm): prevent first-open dialog history race`
 - `e5e6daf9 test(pm): guard first-open dialog history hydration`
 - `f3cfc4ca chore(release): build-all v1.1.710`
+- `f19ffd7a docs(pm): define dialog history watchdog retry contract`
+- `b8370e93 fix(pm): retry stalled dialog history on workspace open`
+- `650e33f9 test(pm): guard dialog history watchdog retry`
 
-**Release:** `1.1.710`
+**Release:** `TBD` (после `1.1.710`)
 
 **Guards:**
 - `node --test --import tsx src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
