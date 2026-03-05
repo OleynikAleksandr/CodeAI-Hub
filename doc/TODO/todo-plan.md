@@ -163,9 +163,9 @@
 
 ### Stream 1: Remove dead client files (PM/UI)
 1. [DONE] Удалить неиспользуемые PM placeholders/state-store (inbound=0): `session-create-pending-placeholder.tsx`, `dialog-tabs-store.ts` (scope: `src/client/project-manager/components/description/session-create-pending-placeholder.tsx`, `src/client/project-manager/services/dialog-tabs-store.ts`; expected commit: `chore(pm): remove unused placeholder + dialog tabs store`).
-2. [IN_PROGRESS] Git Commit: `chore(pm): remove unused placeholder + dialog tabs store` (hash: TBD)
-3. [TODO] Удалить неиспользуемый UI компонент `AnimatedDots` (inbound=0) (scope: `src/client/ui/src/session/animated-dots.tsx`; expected commit: `chore(ui): remove unused animated dots component`).
-4. [TODO] Git Commit: `chore(ui): remove unused animated dots component` (hash: TBD)
+2. [DONE] Git Commit: `chore(pm): remove unused placeholder + dialog tabs store` (hash: `48a7581a`)
+3. [DONE] Удалить неиспользуемый UI компонент `AnimatedDots` (inbound=0) (scope: `src/client/ui/src/session/animated-dots.tsx`; expected commit: `chore(ui): remove unused animated dots component`).
+4. [IN_PROGRESS] Git Commit: `chore(ui): remove unused animated dots component` (hash: TBD)
 
 ### Stream 2: Remove dead extension-module utilities
 1. [TODO] Удалить неиспользуемые extension-module утилиты (inbound=0): `core-manager-lock.ts`, `install-provider-module.ts` (scope: `src/extension-module/core/core-manager-lock.ts`, `src/extension-module/provider/shared/install-provider-module.ts`; expected commit: `chore(ext): remove unused lock + provider installer helpers`).
