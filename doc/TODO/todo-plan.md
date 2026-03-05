@@ -99,4 +99,4 @@
 
 ### Stream 3: Bug registry sync
 1. [DONE] Зафиксировать баг первого открытия dialog-history в Bug Registry с root-cause и списком guard-коммитов (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(bug): register pm first-open dialog hydration race`).
-2. [IN_PROGRESS] Git Commit: `docs(bug): register pm first-open dialog hydration race` (hash: TBD)
+2. [DONE] Git Commit: `docs(bug): register pm first-open dialog hydration race` (hash: `7aad030f`)
