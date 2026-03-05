@@ -135,4 +135,4 @@
 
 ### Stream 3: Bug registry sync
 1. [DONE] Обновить запись BUG-2026-03-05-03: добавить второй root-cause (intermittent pending timeout) и коммиты watchdog-фикса (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): update pm dialog history watchdog fix`).
-2. [IN_PROGRESS] Git Commit: `docs(bug): update pm dialog history watchdog fix` (hash: TBD)
+2. [DONE] Git Commit: `docs(bug): update pm dialog history watchdog fix` (hash: `17e77d36`)
