@@ -49,13 +49,6 @@ const ensureLauncherConfig = async (
   return configPath;
 };
 
-export const ensureLauncherWorkspaceConfig = (
-  launcher: LauncherInstallInfo,
-  indexFilePath: string,
-  workspacePath?: string
-): Promise<string> =>
-  ensureLauncherConfig(launcher, indexFilePath, workspacePath);
-
 export const ensureProjectManagerConfig = (
   launcher: LauncherInstallInfo,
   indexFilePath: string,

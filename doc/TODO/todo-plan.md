@@ -177,11 +177,11 @@
 3. [DONE] Удалить неиспользуемые core helpers (inbound=0): `history-writer.ts`, `workflow-gates-facade.ts` (scope: `packages/core/src/unified-session/history-writer.ts`, `packages/core/src/workflow/gates/workflow-gates-facade.ts`; expected commit: `chore(core): remove unused history writer + gates facade`).
 4. [DONE] Git Commit: `chore(core): remove unused history writer + gates facade` (hash: `c7d70220`)
 5. [DONE] Удалить неиспользуемые core facades (inbound=0): `workflow-paths-facade.ts`, `workflow-watcher-facade.ts` (scope: `packages/core/src/workflow/paths/workflow-paths-facade.ts`, `packages/core/src/workflow/watcher/workflow-watcher-facade.ts`; expected commit: `chore(core): remove unused workflow facades`).
-6. [IN_PROGRESS] Git Commit: `chore(core): remove unused workflow facades` (hash: TBD)
+6. [DONE] Git Commit: `chore(core): remove unused workflow facades` (hash: `2bcc55b2`)
 
 ### Stream 4: Remove unused exports in live modules
-1. [TODO] Удалить неиспользуемые экспорты: `ensureLauncherWorkspaceConfig`, `resolveProviderModulePath` (scope: `src/extension-module/cef/launcher.ts`, `src/extension-module/core/core-workspace.ts`; expected commit: `refactor(ext): drop unused launcher/workspace exports`).
-2. [TODO] Git Commit: `refactor(ext): drop unused launcher/workspace exports` (hash: TBD)
+1. [DONE] Удалить неиспользуемые экспорты: `ensureLauncherWorkspaceConfig`, `resolveProviderModulePath` (scope: `src/extension-module/cef/launcher.ts`, `src/extension-module/core/core-workspace.ts`; expected commit: `refactor(ext): drop unused launcher/workspace exports`).
+2. [IN_PROGRESS] Git Commit: `refactor(ext): drop unused launcher/workspace exports` (hash: TBD)
 3. [TODO] Удалить неиспользуемые экспорты: `resolveAppDirectory`, `getSettingsPath` (scope: `src/extension-module/core/runtime-paths.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit: `refactor(ext): drop unused runtime/settings exports`).
 4. [TODO] Git Commit: `refactor(ext): drop unused runtime/settings exports` (hash: TBD)
 
