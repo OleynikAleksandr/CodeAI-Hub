@@ -53,9 +53,9 @@
 
 ### Stream 2: Right panel header SSOT (Step name + Artifacts/Help)
 1. [DONE] Ввести универсальный header для правой панели: `<Step Name>` + toggle `Artifacts/Help` (не только для `Description`) (scope: `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `feat(pm): add stage artifact header toggle`).
-2. [IN_PROGRESS] Git Commit: `feat(pm): add stage artifact header toggle` (hash: TBD)
-3. [TODO] Распространить режимы `Artifacts/Help` на все шаги (а не только `Description`), сохраняя корректный выбранный артефакт и контент (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit: `fix(pm): apply artifacts/help mode across stages`).
-4. [TODO] Git Commit: `fix(pm): apply artifacts/help mode across stages` (hash: TBD)
+2. [DONE] Git Commit: `feat(pm): add stage artifact header toggle` (hash: `31493aa4`)
+3. [DONE] Распространить режимы `Artifacts/Help` на все шаги (а не только `Description`), сохраняя корректный выбранный артефакт и контент (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit: `fix(pm): apply artifacts/help mode across stages`).
+4. [IN_PROGRESS] Git Commit: `fix(pm): apply artifacts/help mode across stages` (hash: TBD)
 5. [TODO] Добавить help-экраны для non-description шагов (VS/Diagrams), чтобы `Help` всегда был полезным и одинаковым по UX (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`; expected commit: `feat(pm): add workflow step help panels`).
 6. [TODO] Git Commit: `feat(pm): add workflow step help panels` (hash: TBD)
 

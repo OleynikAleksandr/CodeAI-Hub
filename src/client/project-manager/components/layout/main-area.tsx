@@ -52,7 +52,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [pendingSessionCreate, setPendingSessionCreate] = useState<{
     readonly providerTitle: string;
   } | null>(null);
-  const [descriptionArtifactMode, setDescriptionArtifactMode] = useState<
+  const [artifactHeaderMode, setArtifactHeaderMode] = useState<
     "artifacts" | "help"
   >("artifacts");
   const handleToolSelect = useWorkflowToolSelect({
@@ -105,7 +105,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setQuestionnaireDocument(null);
     setHasDescriptionSession(false);
     setPendingSessionCreate(null);
-    setDescriptionArtifactMode("artifacts");
+    setArtifactHeaderMode("artifacts");
     if (!activeWorkspace) {
       setActiveTool(null);
       return;
@@ -212,13 +212,10 @@ export const MainArea: React.FC<MainAreaProps> = ({
   ]);
 
   useEffect(() => {
-    if (
-      descriptionArtifactMode === "help" &&
-      (activeTool !== "Description" || !hasDescriptionSession)
-    ) {
-      setDescriptionArtifactMode("artifacts");
+    if (!activeTool && artifactHeaderMode === "help") {
+      setArtifactHeaderMode("artifacts");
     }
-  }, [activeTool, descriptionArtifactMode, hasDescriptionSession]);
+  }, [activeTool, artifactHeaderMode]);
 
   const isDescriptionActive = activeTool === "Description";
   const activeWorkspaceSlug = activeWorkspace
@@ -230,10 +227,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
       selectedArtifact.workspaceSlug === activeWorkspaceSlug &&
       !hasDescriptionSession
   );
-  const showDescriptionHelpInRightPanel =
-    isDescriptionActive &&
-    hasDescriptionSession &&
-    descriptionArtifactMode === "help";
+  const showHelpInRightPanel = Boolean(activeTool && artifactHeaderMode === "help");
   const hasDescriptionSessionPending = pendingSessionCreate !== null;
   const showDescriptionHelpInSessionPanel =
     isDescriptionActive &&
@@ -260,7 +254,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             activeWorkspaceSlug={activeWorkspaceSlug}
             artifactRefreshKey={artifactRefreshKey}
             descriptionDocumentExists={descriptionDocument !== null}
-            descriptionHelpMode={showDescriptionHelpInRightPanel}
+            helpMode={showHelpInRightPanel}
             hasDescriptionSession={hasDescriptionSession}
             onDescriptionSessionCreated={handleIdeaSessionCreated}
             onPendingSessionCreateChange={setPendingSessionCreate}
@@ -274,8 +268,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
         artifactHeaderContent={
           artifactHeaderTitle ? (
             <StageArtifactHeaderToggle
-              mode={descriptionArtifactMode}
-              onModeChange={setDescriptionArtifactMode}
+              mode={artifactHeaderMode}
+              onModeChange={setArtifactHeaderMode}
               title={artifactHeaderTitle}
             />
           ) : undefined

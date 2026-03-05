@@ -33,7 +33,7 @@ interface ArtifactContentProps {
   readonly activeWorkspaceSlug: string | null;
   readonly artifactRefreshKey: number;
   readonly descriptionDocumentExists: boolean;
-  readonly descriptionHelpMode: boolean;
+  readonly helpMode: boolean;
   readonly hasDescriptionSession: boolean;
   readonly onDescriptionSessionCreated: (sessionId: string) => void;
   readonly onPendingSessionCreateChange: (
@@ -53,7 +53,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   activeWorkspaceSlug,
   artifactRefreshKey,
   descriptionDocumentExists,
-  descriptionHelpMode,
+  helpMode,
   hasDescriptionSession,
   onDescriptionSessionCreated,
   onPendingSessionCreateChange,
@@ -64,15 +64,52 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   shouldShowQuestionnaireEditor,
 }) => {
   const showArtifactViewer =
-    selectedArtifact !== null && !shouldShowQuestionnaireEditor && !descriptionHelpMode;
+    selectedArtifact !== null && !shouldShowQuestionnaireEditor && !helpMode;
   const showDescriptionQuestionnaire =
     activeTool === "Description" &&
-    !descriptionHelpMode &&
+    !helpMode &&
     !showArtifactViewer &&
     (shouldShowQuestionnaireEditor || (!descriptionDocumentExists && !questionnaireDocumentExists));
 
-  if (descriptionHelpMode) {
-    return <DescriptionStepHelp mode="post_submit" />;
+  if (helpMode) {
+    if (activeTool === "Description") {
+      return (
+        <DescriptionStepHelp mode={hasDescriptionSession ? "post_submit" : "pre_submit"} />
+      );
+    }
+    if (activeTool === VIRTUAL_SIMULATION_TOOL_LABEL) {
+      return (
+        <div className="pm-details">
+          <strong>Virtual Simulation Help</strong>
+          <div style={{ marginTop: 10 }}>
+            В этом режиме показываются правила шага и ожидаемый артефакт
+            <code> virtual-simulation.md</code>.
+          </div>
+        </div>
+      );
+    }
+    if (activeTool === "Diagram Modules") {
+      return (
+        <div className="pm-details">
+          <strong>Diagram Modules Help</strong>
+          <div style={{ marginTop: 10 }}>
+            В этом режиме показываются правила шага и ожидаемый артефакт
+            <code> modules-diagram.mmd</code>.
+          </div>
+        </div>
+      );
+    }
+    if (activeTool === "Diagram Facades") {
+      return (
+        <div className="pm-details">
+          <strong>Diagram Facades Help</strong>
+          <div style={{ marginTop: 10 }}>
+            В этом режиме показываются правила шага и ожидаемый артефакт
+            <code> facades-graph.mmd</code>.
+          </div>
+        </div>
+      );
+    }
   }
   if (showArtifactViewer && selectedArtifact) {
     return (
