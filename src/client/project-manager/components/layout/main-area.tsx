@@ -3,11 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { type WorkflowEvent, startWorkflowEventPolling } from "../../services/workflow-events-client";
-import { DescriptionArtifactHeaderToggle } from "./description-artifact-header-toggle";
 import { dispatchStageActivated, resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
 import { MainAreaArtifactContent, MainAreaSessionContent } from "./main-area-panel-content";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
 import { PanelContainer } from "./panel-container";
+import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
 import { VIRTUAL_SIMULATION_TOOL_LABEL, useWorkflowToolSelect } from "./use-workflow-tool-select";
@@ -239,6 +239,10 @@ export const MainArea: React.FC<MainAreaProps> = ({
     isDescriptionActive &&
     !hasDescriptionSession &&
     !hasDescriptionSessionPending;
+  const artifactHeaderTitle =
+    activeTool === VIRTUAL_SIMULATION_TOOL_LABEL
+      ? "Virtual Simulation"
+      : activeTool;
 
   return (
     <main className="pm-main-area">
@@ -268,10 +272,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
           />
         }
         artifactHeaderContent={
-          isDescriptionActive && hasDescriptionSession ? (
-            <DescriptionArtifactHeaderToggle
+          artifactHeaderTitle ? (
+            <StageArtifactHeaderToggle
               mode={descriptionArtifactMode}
               onModeChange={setDescriptionArtifactMode}
+              title={artifactHeaderTitle}
             />
           ) : undefined
         }
