@@ -72,3 +72,27 @@
 2. [DONE] Git Commit: `docs(session): record Session059 pm navigation sync` (hash: `2dcc8b38`)
 3. [DONE] Выполнить релизный цикл: `./scripts/build-all.sh` → проверка чистого дерева → `./scripts/build-release.sh --use-current-version` → верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + docs; expected commit: `chore(release): build-all vX.Y.Z`).
 4. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `37d799fa`)
+
+---
+
+## Phase 285 — Project Manager: First-open dialog hydration race (owner: Oleksandr, updated: 2026-03-05)
+
+**Problem (repro):**
+- После открытия Workspace в Project Manager выбранный workflow-session может отображаться без истории (`No messages yet`) до ручного повторного клика по stage в левом дереве.
+- Симптом проявляется на первом входе и выглядит как гонка между `dialog:list:result` и первым `dialog:history:result` (история из JSONL подтягивается не всегда).
+
+**Target UX (invariant):**
+- Первое открытие workflow-stage обязано сразу гидратировать dialog history без дополнительного клика по stage/session node.
+- Если список диалогов уже найден, первый `dialog:history:result` не должен теряться из-за несинхронного обновления ссылки на активную session.
+
+### Stream 0: Design (routing invariant)
+1. [DONE] Обновить контракт Dialog Routing: зафиксировать последовательность cold-open (`dialog:list:result` → фиксация session identity → `dialog:history`) и запрет на потерю первого history payload (scope: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): document first-open dialog hydration contract`).
+2. [IN_PROGRESS] Git Commit: `docs(pm): document first-open dialog hydration contract` (hash: TBD)
+
+### Stream 1: Implementation (sequential hydration)
+1. [TODO] Устранить race в dialog-controller: гарантировать синхронную фиксацию `sessionRef` на этапе `dialog:list:result` и очистку ref при смене intent/workspace (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit: `fix(pm): prevent first-open dialog history race`).
+2. [TODO] Git Commit: `fix(pm): prevent first-open dialog history race` (hash: TBD)
+
+### Stream 2: Guards (regression)
+1. [TODO] Добавить guard на race первого history payload (source-level test на обязательную синхронную фиксацию `sessionRef` до запроса history) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard first-open dialog history hydration`).
+2. [TODO] Git Commit: `test(pm): guard first-open dialog history hydration` (hash: TBD)
