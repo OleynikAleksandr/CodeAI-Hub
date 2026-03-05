@@ -65,10 +65,10 @@
 
 ### Stream 4: Bug registry + docs sync
 1. [DONE] Завести запись в Bug Registry (OPEN → FIXED) и привязать guards/релиз (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): register pm workflow navigation desync`).
-2. [IN_PROGRESS] Git Commit: `docs(bug): register pm workflow navigation desync` (hash: TBD)
+2. [DONE] Git Commit: `docs(bug): register pm workflow navigation desync` (hash: `7a0c5ab1`)
 
 ### Stream 5: Release build (по чеклисту)
-1. [TODO] Обновить Session-отчёт с результатами валидации и списком коммитов (scope: `doc/Sessions/Session059.md`; expected commit: `docs(session): record Session059 pm navigation sync`).
-2. [TODO] Git Commit: `docs(session): record Session059 pm navigation sync` (hash: TBD)
+1. [DONE] Обновить Session-отчёт с результатами валидации и списком коммитов (scope: `doc/Sessions/Session059.md`; expected commit: `docs(session): record Session059 pm navigation sync`).
+2. [IN_PROGRESS] Git Commit: `docs(session): record Session059 pm navigation sync` (hash: TBD)
 3. [TODO] Выполнить релизный цикл: `./scripts/build-all.sh` → проверка чистого дерева → `./scripts/build-release.sh --use-current-version` → верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + docs; expected commit: `chore(release): build-all vX.Y.Z`).
 4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
