@@ -95,4 +95,8 @@
 
 ### Stream 2: Guards (regression)
 1. [DONE] Добавить guard на race первого history payload (source-level test на обязательную синхронную фиксацию `sessionRef` до запроса history) (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): guard first-open dialog history hydration`).
-2. [IN_PROGRESS] Git Commit: `test(pm): guard first-open dialog history hydration` (hash: TBD)
+2. [DONE] Git Commit: `test(pm): guard first-open dialog history hydration` (hash: `e5e6daf9`)
+
+### Stream 3: Bug registry sync
+1. [DONE] Зафиксировать баг первого открытия dialog-history в Bug Registry с root-cause и списком guard-коммитов (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(bug): register pm first-open dialog hydration race`).
+2. [IN_PROGRESS] Git Commit: `docs(bug): register pm first-open dialog hydration race` (hash: TBD)

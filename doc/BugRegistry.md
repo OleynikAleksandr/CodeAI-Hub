@@ -41,6 +41,7 @@
 | BUG-2026-03-01-01 | FIXED | UI + Core Continuity | Description runtime: в input показан `Retry` вместо `Play/Stop`; threshold-trigger continuity (80%) не срабатывает | 1.1.704 |
 | BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
 | BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | 1.1.709 |
+| BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | TBD |
 
 ---
 
@@ -80,6 +81,34 @@
 
 **Guards:**
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-navigation.test.ts`
+
+## BUG-2026-03-05-03 — PM/UI: first-open dialog hydration race (history from JSONL missing until extra click)
+
+**Status:** FIXED
+
+**Symptom:**
+- При первом открытии Workspace в PM могла открыться workflow session с пустой лентой (`No messages yet`) даже когда у dialog уже есть история в JSONL.
+- Повторный клик по stage/session в левом дереве форсировал повторный route, после чего история появлялась.
+
+**Root cause (confirmed):**
+- В `dialog:list:result` history запрашивалась сразу после `setSession(nextSession)`, но `dialog:history:result` мог прийти раньше, чем `sessionRef` обновлялся из React state/effect.
+- Из-за этого первый history payload отбрасывался проверкой `if (!currentSession) return`, и initial hydration зависела от дополнительного пользовательского действия.
+
+**Fix:**
+- `use-project-manager-dialog-core-events.ts`: session identity теперь фиксируется синхронно (`sessionRef.current = nextSession`) до первого `requestDialogHistory`.
+- `use-project-manager-dialog-session-controller.ts`: `sessionRef` очищается при смене intent/workspace и синхронизируется при rollover-created session.
+- Добавлен guard-тест на порядок `bind sessionRef -> request history`.
+- Контракт `Dialogs_And_Continuity_Routing.md` обновлён: cold-open history должен идти последовательной цепочкой без потери первого payload.
+
+**Commits:**
+- `0b33084b docs(pm): document first-open dialog hydration contract`
+- `092e73e4 fix(pm): prevent first-open dialog history race`
+- `e5e6daf9 test(pm): guard first-open dialog history hydration`
+
+**Release:** `TBD` (после `1.1.709`)
+
+**Guards:**
+- `node --test --import tsx src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
 
 ## BUG-2026-03-05-01 — Session UI: dialog-mode token usage остаётся `0 tokens / 100%` после resume (continuity)
 
