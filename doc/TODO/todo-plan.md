@@ -143,4 +143,4 @@
 3. [DONE] Выполнить релизный цикл для watchdog-фикса: `./scripts/build-all.sh` с фиксацией новых версий/манифестов (scope: release manifests + packages; expected commit: `chore(release): build-all v1.1.711`).
 4. [DONE] Git Commit: `chore(release): build-all v1.1.711` (hash: `d9857f83`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.711 notes`).
-6. [IN_PROGRESS] Git Commit: `docs(release): sync v1.1.711 notes` (hash: TBD)
+6. [DONE] Git Commit: `docs(release): sync v1.1.711 notes` (hash: `c328fe7f`)
