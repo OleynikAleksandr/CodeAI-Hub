@@ -3568,6 +3568,7 @@ export class SessionRequestHandler {
             sessionId,
             event: {
               type: "stream_event",
+              providerSessionId,
               tokenUsage: { used: snapshot.used, limit: snapshot.limit },
               data: {
                 kind: "token_usage",

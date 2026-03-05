@@ -179,3 +179,30 @@ test("updateSnapshotsWithTokenUsage falls back to providerSessionId when session
   assert.equal(next.root.status.tokenUsage.used, 256);
   assert.equal(next.root.status.tokenUsage.limit, 512);
 });
+
+test("updateSnapshotsWithTokenUsage falls back to providerSessionId field when threadId is missing", () => {
+  const snapshots = {
+    root: {
+      ...createSnapshot(),
+      binding: {
+        providerSessionId: "thread-456",
+        status: "ready" as const,
+      },
+    },
+  };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "latest",
+    event: {
+      type: "stream_event",
+      providerSessionId: "thread-456",
+      tokenUsage: {
+        used: 64,
+        limit: 128,
+      },
+    },
+  });
+
+  assert.equal(next.root.status.tokenUsage.used, 64);
+  assert.equal(next.root.status.tokenUsage.limit, 128);
+});
