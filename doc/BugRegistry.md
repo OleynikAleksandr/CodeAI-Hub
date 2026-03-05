@@ -40,8 +40,45 @@
 | BUG-2026-02-24-04 | FIXED | Session UI | reviewer: Stop→message→Play resets task timer total | 1.1.669 |
 | BUG-2026-03-01-01 | FIXED | UI + Core Continuity | Description runtime: в input показан `Retry` вместо `Play/Stop`; threshold-trigger continuity (80%) не срабатывает | 1.1.704 |
 | BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
+| BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | TBD |
 
 ---
+
+## BUG-2026-03-05-02 — PM/UI: Workflow navigation desync (Toolbar ↔ Tree ↔ Session/Artifact)
+
+**Status:** FIXED
+
+**Symptom:**
+- После кликов в левом workflow tree (`stage`/`session`/`artifact`) подсветка в Toolbar могла оставаться на другом шаге.
+- Правая панель показывала header/режимы не для текущего шага (например, `Description` при открытом `virtual-simulation.md`).
+
+**Root cause (confirmed):**
+- В UI не было единого stage SSOT: `activeTool` в `MainArea` обновлялся отдельно от tree/auto-select маршрутов.
+- В stage route использовалась stage-specific ветка `skipSession` (Virtual Simulation), из-за чего часть переходов не открывала согласованную dialog-session.
+
+**Fix:**
+- Введён и задокументирован SSOT навигации `activeStage` (`ProjectManager_WorkflowNavigation_SSOT.md`).
+- Все route (Toolbar, tree stage/session/artifact, auto-select) приведены к событию `pm:stage:activated`.
+- `MainArea` слушает stage-активацию и синхронизирует Toolbar highlight.
+- Убран `skipSession`; stage activation теперь унифицированно синхронизирует artifact/session.
+- Правый header унифицирован для всех stage (`<Step Name> + Artifacts/Help`), добавлены help-panels для VS/Diagrams.
+- Добавлен guard-тест на регрессию рассинхрона.
+
+**Commits:**
+- `70af1927 fix(pm): sync toolbar stage with navigation events`
+- `e2d07b04 refactor(pm): route tree stage clicks through navigation event`
+- `1e5a5394 fix(pm): sync tree artifact/session clicks with active stage`
+- `0333ac19 fix(pm): sync auto-select stage with toolbar`
+- `cdb2d066 fix(pm): unify stage activation semantics`
+- `31493aa4 feat(pm): add stage artifact header toggle`
+- `206df0f0 fix(pm): apply artifacts/help mode across stages`
+- `b781eaac feat(pm): add workflow step help panels`
+- `f58e258b test(pm): guard workflow navigation sync`
+
+**Release:** `TBD` (закроется в Stream 5 после build/release).
+
+**Guards:**
+- `node --test --import tsx src/client/project-manager/components/layout/workflow-navigation.test.ts`
 
 ## BUG-2026-03-05-01 — Session UI: dialog-mode token usage остаётся `0 tokens / 100%` после resume (continuity)
 

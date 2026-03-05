@@ -61,11 +61,11 @@
 
 ### Stream 3: Guards (регрессии)
 1. [DONE] Добавить тест(ы), которые ловят рассинхрон: stage selection из дерева обязан обновлять Toolbar/highlight и header правой панели (scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `test(pm): guard workflow navigation sync`).
-2. [IN_PROGRESS] Git Commit: `test(pm): guard workflow navigation sync` (hash: TBD)
+2. [DONE] Git Commit: `test(pm): guard workflow navigation sync` (hash: `f58e258b`)
 
 ### Stream 4: Bug registry + docs sync
-1. [TODO] Завести запись в Bug Registry (OPEN → FIXED) и привязать guards/релиз (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): register pm workflow navigation desync`).
-2. [TODO] Git Commit: `docs(bug): register pm workflow navigation desync` (hash: TBD)
+1. [DONE] Завести запись в Bug Registry (OPEN → FIXED) и привязать guards/релиз (scope: `doc/BugRegistry.md`; expected commit: `docs(bug): register pm workflow navigation desync`).
+2. [IN_PROGRESS] Git Commit: `docs(bug): register pm workflow navigation desync` (hash: TBD)
 
 ### Stream 5: Release build (по чеклисту)
 1. [TODO] Обновить Session-отчёт с результатами валидации и списком коммитов (scope: `doc/Sessions/Session059.md`; expected commit: `docs(session): record Session059 pm navigation sync`).
