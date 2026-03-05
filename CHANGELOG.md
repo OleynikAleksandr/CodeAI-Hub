@@ -2,6 +2,17 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.707] - 2026-03-05
+### Changed
+- Rebuild of the stable workflow baseline from `v1.1.706` as the new main release line (no workflow approval markers).
+
+## [1.1.706] - 2026-03-01
+### Changed
+- Virtual Simulation is now prompt-only (no artifact template shipped); the agent writes `virtual-simulation.md` from `Final_Description.md`.
+
+### Fixed
+- Workflow: aligned Virtual Simulation prompt-only status and gating checks for downstream stages.
+
 ## [1.1.701] - 2026-02-28
 ### Changed
 - Description runtime/core: removed reviewer auto-runtime branch and fixed description session persistence to collector-only mode for active flow.
