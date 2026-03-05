@@ -2,6 +2,14 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.710] - 2026-03-05
+### Fixed
+- Project Manager: устранена гонка первого открытия dialog-mode — `dialog:history:result` больше не теряется между `dialog:list:result` и обновлением session identity.
+- Project Manager: при cold-open workspace история stage-диалога (JSONL) подтягивается сразу, без повторного клика по `Virtual Simulation`/другому workflow шагу.
+
+### Changed
+- Tests: добавлен guard `dialog-session-snapshot-replay.test.ts` на порядок `bind sessionRef -> requestDialogHistory`.
+
 ## [1.1.709] - 2026-03-05
 ### Fixed
 - Project Manager: устранён workflow navigation desync между Toolbar, левым tree (stage/session/artifact) и auto-select; активный шаг синхронизируется через единый `activeStage` route.
