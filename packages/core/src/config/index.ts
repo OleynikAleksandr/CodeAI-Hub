@@ -55,12 +55,15 @@ const CODEX_SETTINGS_PATH = path.join(
 );
 const DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
 const DEFAULT_CODEX_REASONING_EFFORT: CodexReasoningEffort = "medium";
+const LEGACY_CODEX_MODEL_MIGRATIONS = new Map<string, string>([
+  ["gpt-5.2", "gpt-5.4"],
+]);
 const CODEX_MODEL_IDS = new Set([
   "gpt-5.3-codex",
   "gpt-5.2-codex",
   "gpt-5.1-codex-max",
   "gpt-5.1-codex-mini",
-  "gpt-5.2",
+  "gpt-5.4",
   "gpt-5.1",
   "gpt-5.1-codex",
   "gpt-5-codex",
@@ -152,12 +155,20 @@ const normalizeCodexReasoningEffort = (
     ? (value as CodexReasoningEffort)
     : undefined;
 
-const normalizeCodexModelFromSettings = (value: unknown): string | undefined =>
-  typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : undefined;
+const normalizeCodexModelId = (value: unknown): string | undefined => {
+  if (typeof value !== "string") {
+    return;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return;
+  }
+  const normalized = LEGACY_CODEX_MODEL_MIGRATIONS.get(trimmed) ?? trimmed;
+  return CODEX_MODEL_IDS.has(normalized) ? normalized : undefined;
+};
 
-const normalizeOptionalString = (
-  value: string | undefined
-): string | undefined => (value?.trim() ? value.trim() : undefined);
+const normalizeCodexModelFromSettings = (value: unknown): string | undefined =>
+  normalizeCodexModelId(value);
 
 const loadCodexSettingsSnapshot = (): CodexSettingsSnapshot | null => {
   try {
@@ -189,10 +200,28 @@ const resolveCodexReasoningFromSettings = (
   }
 
   const normalized: Record<string, CodexReasoningEffort> = {};
+  const assignedModelIds = new Set<string>();
   for (const [modelId, reasoning] of Object.entries(value)) {
     const normalizedReasoning = normalizeCodexReasoningEffort(reasoning);
-    if (normalizedReasoning) {
+    if (normalizedReasoning && CODEX_MODEL_IDS.has(modelId)) {
       normalized[modelId] = normalizedReasoning;
+      assignedModelIds.add(modelId);
+    }
+  }
+
+  for (const [modelId, reasoning] of Object.entries(value)) {
+    if (CODEX_MODEL_IDS.has(modelId)) {
+      continue;
+    }
+    const normalizedReasoning = normalizeCodexReasoningEffort(reasoning);
+    const normalizedModelId = normalizeCodexModelId(modelId);
+    if (
+      normalizedReasoning &&
+      normalizedModelId &&
+      !assignedModelIds.has(normalizedModelId)
+    ) {
+      normalized[normalizedModelId] = normalizedReasoning;
+      assignedModelIds.add(normalizedModelId);
     }
   }
 
@@ -348,13 +377,15 @@ export const loadConfig = (): CoreConfig => {
   const codexSettingsReasoningByModel = resolveCodexReasoningFromSettings(
     codexSettings?.reasoningByModel
   );
+  // Settings are the SSOT. Core may stay alive across Settings edits, so its
+  // inherited boot env can lag behind the persisted snapshot.
   const codexDefaultModel =
-    normalizeOptionalString(process.env.CODEX_DEFAULT_MODEL) ??
     codexSettingsDefaultModel ??
+    normalizeCodexModelId(process.env.CODEX_DEFAULT_MODEL) ??
     DEFAULT_CODEX_MODEL_ID;
   const codexDefaultReasoningEffort =
-    normalizeCodexReasoningEffort(process.env.CODEX_DEFAULT_REASONING_EFFORT) ??
     codexSettingsReasoningByModel[codexDefaultModel] ??
+    normalizeCodexReasoningEffort(process.env.CODEX_DEFAULT_REASONING_EFFORT) ??
     DEFAULT_CODEX_REASONING_EFFORT;
   const geminiWorkspacePath =
     process.env.GEMINI_WORKSPACE_PATH ?? workspacePath;

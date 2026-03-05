@@ -7,6 +7,9 @@ import type { BridgeEvent } from "../types";
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const LEGACY_CODEX_GENERAL_MODEL_ID = "gpt-5.2";
+const CURRENT_CODEX_GENERAL_MODEL_ID = "gpt-5.4";
+
 const DEFAULT_SETTINGS_SNAPSHOT = {
   general: {
     coreControls: {
@@ -145,6 +148,68 @@ const migrateLegacyClaudeDefaultModel = (
   };
 };
 
+const migrateLegacyCodexGeneralModel = (
+  settings: Record<string, unknown>
+): {
+  readonly migrated: boolean;
+  readonly settings: Record<string, unknown>;
+} => {
+  const providers = settings.providers;
+  if (!isRecord(providers)) {
+    return { migrated: false, settings };
+  }
+
+  const codex = providers.codex;
+  if (!isRecord(codex)) {
+    return { migrated: false, settings };
+  }
+
+  let migrated = false;
+  const nextCodex: Record<string, unknown> = { ...codex };
+
+  if (codex.defaultModel === LEGACY_CODEX_GENERAL_MODEL_ID) {
+    nextCodex.defaultModel = CURRENT_CODEX_GENERAL_MODEL_ID;
+    migrated = true;
+  }
+
+  if (isRecord(codex.reasoningByModel)) {
+    const nextReasoningByModel = {
+      ...codex.reasoningByModel,
+    } as Record<string, unknown>;
+
+    if (
+      !(CURRENT_CODEX_GENERAL_MODEL_ID in nextReasoningByModel) &&
+      LEGACY_CODEX_GENERAL_MODEL_ID in nextReasoningByModel
+    ) {
+      nextReasoningByModel[CURRENT_CODEX_GENERAL_MODEL_ID] =
+        nextReasoningByModel[LEGACY_CODEX_GENERAL_MODEL_ID];
+      migrated = true;
+    }
+
+    if (LEGACY_CODEX_GENERAL_MODEL_ID in nextReasoningByModel) {
+      delete nextReasoningByModel[LEGACY_CODEX_GENERAL_MODEL_ID];
+      migrated = true;
+    }
+
+    nextCodex.reasoningByModel = nextReasoningByModel;
+  }
+
+  if (!migrated) {
+    return { migrated: false, settings };
+  }
+
+  return {
+    migrated: true,
+    settings: {
+      ...settings,
+      providers: {
+        ...providers,
+        codex: nextCodex,
+      },
+    },
+  };
+};
+
 const persistDefaultSettingsSnapshot = async (
   settingsPath: string,
   snapshot: Record<string, unknown>
@@ -180,10 +245,12 @@ export class SettingsRequestHandler {
       const baseSettings = isRecord(parsed)
         ? parsed
         : buildDefaultSettingsSnapshot(this.config);
-      const { migrated, settings } =
+      const { migrated: migratedClaude, settings: afterClaudeMigration } =
         migrateLegacyClaudeDefaultModel(baseSettings);
+      const { migrated: migratedCodex, settings } =
+        migrateLegacyCodexGeneralModel(afterClaudeMigration);
 
-      if (migrated) {
+      if (migratedClaude || migratedCodex) {
         try {
           await persistDefaultSettingsSnapshot(settingsPath, settings);
         } catch (persistError) {
