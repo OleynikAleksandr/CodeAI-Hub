@@ -151,4 +151,4 @@
 
 ### Stream 0: Push unblock (check:dup < 3%)
 1. [DONE] Удалить неиспользуемый дублирующий toggle-компонент в PM layout (`description-artifact-header-toggle`), чтобы снизить `jscpd` перед `git push` (scope: `src/client/project-manager/components/layout/description-artifact-header-toggle.tsx`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): drop unused description artifact toggle`).
-2. [IN_PROGRESS] Git Commit: `refactor(pm): drop unused description artifact toggle` (hash: TBD)
+2. [DONE] Git Commit: `refactor(pm): drop unused description artifact toggle` (hash: `479cb298`)
