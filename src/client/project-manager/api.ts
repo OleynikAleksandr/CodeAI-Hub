@@ -12,17 +12,19 @@ import {
 import type {
   CoreStatePayload,
   IncomingMessage,
-  OutgoingMessage,
   ProjectUpdatePayload,
   WorkspaceSelectPayload,
   WorkspaceSnapshotRequestPayload,
 } from "./core-stream-message-types";
 import { OutgoingMessageQueue } from "./services/outgoing-message-queue";
-import type { WorkspaceProject } from "./types";
 import {
-  resolveLauncherBridge,
-  resolveVscodeBridge,
-} from "./services/pm-bridges";
+  DialogSendTraceClient,
+  isDialogHistoryMessage,
+  isDialogSendMessage,
+  type ProjectManagerOutboundMessage,
+} from "./services/dialog-send-trace-client";
+import type { WorkspaceProject } from "./types";
+import { resolveLauncherBridge, resolveVscodeBridge } from "./services/pm-bridges";
 import { createDialogApi, type DialogApi } from "./services/dialog-api";
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
@@ -35,9 +37,13 @@ export class ProjectManagerApi {
   private readonly listeners = new Set<ProjectListener>();
   private readonly coreListeners = new Set<CoreEventListener>();
   private providerSnapshot: ProviderSnapshot[] = [];
-  private readonly outgoingQueue = new OutgoingMessageQueue();
+  private readonly outgoingQueue =
+    new OutgoingMessageQueue<ProjectManagerOutboundMessage>();
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly config: ApiConfig;
+  private readonly dialogTrace = new DialogSendTraceClient((message) =>
+    this.send(message)
+  );
   readonly dialogs: DialogApi;
 
   constructor() {
@@ -66,7 +72,10 @@ export class ProjectManagerApi {
       }
     });
 
-    this.dialogs = createDialogApi((message) => this.send(message));
+    this.dialogs = createDialogApi(
+      (message) => this.send(message),
+      (attempt) => this.dialogTrace.registerSendAttempt(attempt)
+    );
   }
 
   connect(): void {
@@ -79,10 +88,7 @@ export class ProjectManagerApi {
       this.socket.onopen = () => {
         console.log("[ProjectManagerApi] Connected to Core");
         this.outgoingQueue.flush((message) => {
-          if (this.socket?.readyState !== WebSocket.OPEN) {
-            throw new Error("Socket not ready");
-          }
-          this.socket.send(JSON.stringify(message));
+          this.sendOverSocket(message);
         });
         this.listProjects(); // Initial fetch
         this.loadSettings();
@@ -219,9 +225,9 @@ export class ProjectManagerApi {
     return fetchWorkflowState({ httpUrl, workspaceSlug, workspacePath });
   }
 
-  private send(message: OutgoingMessage): void {
+  private send(message: ProjectManagerOutboundMessage): void {
     if (this.socket?.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(message));
+      this.sendOverSocket(message);
     } else {
       // PM may call into the API before the WS is fully connected (e.g. during
       // cold start after Core restart). Queue messages so scope selection and
@@ -235,6 +241,7 @@ export class ProjectManagerApi {
   }
 
   private handleMessage(message: IncomingMessage): void {
+    this.dialogTrace.handleIncomingMessage(message);
     if (message.type === "projects:update") {
       const payload = message.payload as ProjectUpdatePayload;
       if (payload?.projects) {
@@ -261,6 +268,18 @@ export class ProjectManagerApi {
     for (const listener of this.coreListeners) {
       listener(message);
     }
+  }
+
+  private sendOverSocket(message: ProjectManagerOutboundMessage): void {
+    if (this.socket?.readyState !== WebSocket.OPEN) {
+      throw new Error("Socket not ready");
+    }
+    if (isDialogSendMessage(message)) {
+      this.dialogTrace.traceDialogSendDispatch(message);
+    } else if (isDialogHistoryMessage(message)) {
+      this.dialogTrace.traceDialogHistoryDispatch(message);
+    }
+    this.socket.send(JSON.stringify(message));
   }
 
   private scheduleReconnect(): void {

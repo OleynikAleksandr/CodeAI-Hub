@@ -340,6 +340,9 @@ export class RemoteBridge {
       case "dialog:send":
         await this.handleDialogSend(clientId, incoming.payload);
         break;
+      case "dialog:trace":
+        this.handleDialogTrace(clientId, incoming.payload);
+        break;
       case "projects:add":
         this.projectHandler.handleAdd(
           incoming.payload.path,
@@ -732,6 +735,50 @@ export class RemoteBridge {
         status: options.status,
         error: options.error,
       },
+    });
+  }
+
+  private handleDialogTrace(
+    clientId: string,
+    payload: {
+      readonly event: string;
+      readonly requestId: string;
+      readonly outboundAttemptId: string;
+      readonly workspaceSlug: string;
+      readonly dialogId: string;
+      readonly contentLength?: number;
+      readonly payload?: unknown;
+      readonly error?: string | null;
+    }
+  ): void {
+    if (!payload.event.startsWith("pm.dialog_send.")) {
+      return;
+    }
+    this.dialogSendTrace.record({
+      event: payload.event,
+      outboundAttemptId:
+        typeof payload.outboundAttemptId === "string" &&
+        payload.outboundAttemptId.trim().length > 0
+          ? payload.outboundAttemptId
+          : `missing-outbound-attempt-${payload.requestId}`,
+      requestId: payload.requestId,
+      workspaceSlug:
+        typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "",
+      dialogId: typeof payload.dialogId === "string" ? payload.dialogId : "",
+      providerId: "unknown",
+      contentLength:
+        typeof payload.contentLength === "number" &&
+        Number.isFinite(payload.contentLength)
+          ? payload.contentLength
+          : undefined,
+      payload:
+        payload.payload === undefined
+          ? { clientId }
+          : { clientId, details: payload.payload },
+      error:
+        typeof payload.error === "string" && payload.error.trim().length > 0
+          ? payload.error
+          : undefined,
     });
   }
 
