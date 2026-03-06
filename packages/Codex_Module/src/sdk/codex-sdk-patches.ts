@@ -34,6 +34,7 @@ type PatchedExecArgs = {
   readonly sandboxMode?: string;
   readonly workingDirectory?: string;
   readonly skipGitRepoCheck?: boolean;
+  readonly includeOutputSchemaFlag?: boolean;
   readonly outputSchemaFile?: string;
   configOverrides?: readonly ConfigOverride[];
 };
@@ -93,6 +94,15 @@ const createOutputSchemaFile = async (schema?: unknown) => {
   };
   await fs.writeFile(schemaPath, JSON.stringify(schema), "utf8");
   return { schemaPath, cleanup };
+};
+
+const hasExplicitOutputSchema = (
+  turnOptions?: ThreadTurnOptions
+): turnOptions is { readonly outputSchema: unknown } => {
+  if (!(turnOptions && "outputSchema" in turnOptions)) {
+    return false;
+  }
+  return turnOptions.outputSchema !== undefined;
 };
 
 const normalizeInput = (
@@ -162,7 +172,7 @@ const buildExecCommandArgs = (args: PatchedExecArgs): string[] => {
   if (args.skipGitRepoCheck) {
     commandArgs.push("--skip-git-repo-check");
   }
-  if (args.outputSchemaFile) {
+  if (args.includeOutputSchemaFlag && args.outputSchemaFile) {
     commandArgs.push("--output-schema", args.outputSchemaFile);
   }
   buildConfigArguments(args.configOverrides, commandArgs);
@@ -257,8 +267,9 @@ const streamCodexExec = async function* (
 
 const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
   async function* (input, turnOptions = {}) {
+    const structuredOutputRequested = hasExplicitOutputSchema(turnOptions);
     const { schemaPath, cleanup } = await createOutputSchemaFile(
-      turnOptions.outputSchema
+      structuredOutputRequested ? turnOptions.outputSchema : undefined
     );
     const options = this._threadOptions;
     const { prompt, images } = normalizeInput(input);
@@ -272,6 +283,7 @@ const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
       sandboxMode: options?.sandboxMode,
       workingDirectory: options?.workingDirectory,
       skipGitRepoCheck: options?.skipGitRepoCheck,
+      includeOutputSchemaFlag: structuredOutputRequested,
       outputSchemaFile: schemaPath,
     };
     if (options?.modelReasoningEffort) {

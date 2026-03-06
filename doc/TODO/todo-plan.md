@@ -23,8 +23,8 @@
 
 ### Stream 0: Убрать legacy structured-output default из Codex runtime
 1. [DONE] Убрать автоподстановку дефолтной schema в Codex structured-output controller, чтобы raw workflow turn без явного `outputSchema` не превращался в JSON-only контракт; raw `agent_message` снова проходит без JSON-only prompt и без JSON extractor path по умолчанию (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`; actual commit: `fix(codex): disable default structured output injection`).
-2. [TODO] Git Commit: `fix(codex): disable default structured output injection` (hash: TBD)
-3. [TODO] Ограничить передачу `--output-schema` в Codex CLI только explicit structured turn, не затрагивая обычные workflow turns PM (scope: `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`; expected commit: `fix(codex): gate output schema cli flag behind opt-in`).
+2. [DONE] Git Commit: `fix(codex): disable default structured output injection` (hash: `2be5a234`)
+3. [DONE] Ограничить передачу `--output-schema` в Codex CLI только explicit structured turn, не затрагивая обычные workflow turns PM; explicit structured-output marker теперь обязателен даже при наличии schema file path (scope: `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`; actual commit: `fix(codex): gate output schema cli flag behind opt-in`).
 4. [TODO] Git Commit: `fix(codex): gate output schema cli flag behind opt-in` (hash: TBD)
 
 ### Stream 1: Очистить PM/Core caller contract для raw workflow turns
