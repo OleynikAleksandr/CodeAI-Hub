@@ -40,7 +40,8 @@
 - `Contracts/SessionInputLock_SSOT_StateMachine.md` — SSOT/state machine для input lock/unlock.
 - `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — session-home isolation + resume-first recovery contract.
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
-- `Contracts/Codex_Workflow_UserTurn_Delivery.md` — delivery/ACK/reconciliation/resend contract для workflow submit в Codex.
+- `Contracts/Codex_Workflow_TurnStarted_ACK.md` — single-source ACK contract: runtime verdict delivered/failed для Codex submit опирается только на `sdk:turn.started`.
+- `Contracts/Claude_Workflow_TurnStarted_ACK.md` — single-source ACK contract: runtime verdict delivered/failed для Claude submit опирается только на provider-originated `sdk:stream_event(message_start)`.
 - `Contracts/Codex_Workflow_Submit_Diagnostics.md` — сквозной trace contract для PM/Core/Codex submit path, `pm.dialog_send.*`, `outbound.child.*` и SSOT-логов `~/.codeai-hub/logs/core/dialog-send-trace.jsonl` + `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 

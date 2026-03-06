@@ -197,7 +197,6 @@ PM генерирует события, но запись на диск выпо
 - Для сбоя "only thread.started then timeout" по логам должен однозначно читаться последний успешный этап.
 
 ## Связанные контракты
-- `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_UserTurn_Delivery.md`
 - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`

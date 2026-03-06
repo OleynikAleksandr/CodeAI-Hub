@@ -27,6 +27,7 @@
 - Промежуточные `agent_message/commentary` для raw workflow turns должны доходить до stream pipeline и unified dialog history; suppress commentary допустим только для explicit structured turns.
 - Bundled workflow prompts (`Description`, `Virtual Simulation`) обязаны требовать короткие progress commentary updates и запрещают только публикацию полного markdown-артефакта в чат.
 - Для user submit в workflow `thread.started` не считается provider ACK; delivered user message попадает в unified dialog history только после подтверждения provider-side turn, а pending/failed outbound submit должны поддерживать явный resend без повторного набора текста.
+- Runtime truth source для provider ACK в Codex только один: `sdk:turn.started`; rollout JSONL и diagnostics trail не участвуют в verdict delivered/failed и используются только для расследований.
 - Для диагностики stalled submit каждый outbound user turn должен иметь `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, transport trace Codex — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
 - Транспортная диагностика Codex обязана покрывать два слоя:
   - processor breadcrumbs: `processor.enqueue`, `processor.dequeue`, `processor.turn.begin`, `processor.run_streamed.begin`, `processor.first_event`;
@@ -38,5 +39,5 @@
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - Workflow commentary restore: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Commentary_Restore.md`
-- Workflow user-turn delivery: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_UserTurn_Delivery.md`
+- Workflow turn-start ACK: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
 - Workflow submit diagnostics: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`

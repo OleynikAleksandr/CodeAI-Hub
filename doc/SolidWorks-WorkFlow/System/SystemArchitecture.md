@@ -17,9 +17,10 @@
 11. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 13. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-14. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_UserTurn_Delivery.md`
-15. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
-16. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+14. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
+15. `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`
+16. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
+17. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -51,9 +52,11 @@
    - Канон: provider docs в `doc/SolidWorks-WorkFlow/Modules/*`.
 6. **Workflow raw-turn contract**: PM workflow turns для Codex по умолчанию raw; structured output допустим только по явному opt-in, а промежуточные `assistant`/`thinking` сообщения должны сохраняться через dialog history JSONL и быть доступны после replay/reopen.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Commentary_Restore.md`.
-7. **Outbound user-turn delivery contract**: workflow submit не считается доставленным до provider ACK; `thread.started` недостаточен, pending/failed outbound submit хранятся отдельно от dialog history и должны поддерживать безопасный resend без повторного набора текста.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_UserTurn_Delivery.md`.
-8. **Workflow submit diagnostics contract**: для каждого user submit должен существовать сквозной `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, а Codex transport trace — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
+7. **Single-source ACK contract for Codex workflow submit**: runtime verdict delivered/failed опирается только на `sdk:turn.started`; diagnostics trail и provider rollout не участвуют в state machine, чтобы не создавать гонку между несколькими источниками правды.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`.
+8. **Single-source ACK contract for Claude workflow submit**: runtime verdict delivered/failed опирается только на provider-originated `sdk:stream_event(message_start)`; локальный `turn_started`, `sdk:system(init)` и diagnostics trail не участвуют в state machine, чтобы не создавать гонку между несколькими источниками правды.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`.
+9. **Workflow submit diagnostics contract**: для каждого user submit должен существовать сквозной `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, а Codex transport trace — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
    - PM lifecycle trace обязан покрывать `pm.dialog_send.clicked`, `pm.dialog_send.ws_dispatched`, `pm.dialog_send.ack_received`, `pm.dialog_send.history_refresh_requested`, `pm.dialog_send.history_refresh_result`.
    - Codex transport trace обязан покрывать не только processor breadcrumbs, но и child-process boundaries `outbound.child.spawned/stdin_write_started/stdin_write_finished/stdout_first_line/exit/killed`.
    - Release line `v1.1.716` является первой, где этот diagnostic trail обязателен end-to-end для workflow submit path в PM/Core/Codex.

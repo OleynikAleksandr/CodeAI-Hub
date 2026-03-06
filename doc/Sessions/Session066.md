@@ -1,6 +1,6 @@
 # Session 066 — Workflow submit diagnostics release 1.1.716
 
-**Date:** 2026-03-06 18:39 (CET)
+**Date:** 2026-03-06 21:26 (CET)
 **Branch:** main
 **Version:** 1.1.716
 
@@ -36,6 +36,24 @@
   - `codeai-hub-1.1.716.vsix`
   - свежие tarball'ы в `~/.codeai-hub/releases/`
   - свежие tarball'ы в `doc/tmp/releases/`
+- После релиза пользователь прогнал live smoke `v1.1.716`:
+  - в `Description` для Codex не наблюдалось сбоев;
+  - infinite session / continuity rollover при пороге `80%` context window отработал штатно и перевёл workflow на новый `providerSessionId`;
+  - параллельная workflow-сессия в другом workspace с Claude также отработала без видимых проблем.
+- Проведена ручная проверка живых логов:
+  - `~/.codeai-hub/logs/core/dialog-send-trace.jsonl` действительно пишет полную PM/Core цепочку для Codex и Claude;
+  - `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl` действительно пишет processor breadcrumbs и child-process boundaries;
+  - при этом persisted provider-side trace пока не содержит `outboundAttemptId`, поэтому cross-file join между Core trace и provider trace всё ещё делается по `providerSessionId/threadId + timestamp`, а не по идеальному correlation key.
+- По итогам architecture discussion оформлен новый SSOT:
+  - [Codex_Workflow_TurnStarted_ACK.md](../SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md)
+  - правило зафиксировано жёстко: единственный runtime truth source для verdict delivered/failed у Codex submit — `sdk:turn.started`; diagnostics JSONL и provider rollout остаются только диагностическими источниками.
+- Проведён живой adapter-level эксперимент по обоим провайдерам:
+  - Codex resume-path подтвердил, что первый provider feedback после submit — `sdk:thread.started`, а достаточный ACK для начала нового turn — `sdk:turn.started`;
+  - Claude resume-path показал, что текущий `turn_started` в модуле эмитится локально до provider feedback и потому не может считаться provider ACK;
+  - earliest raw Claude SDK feedback в observed resume-path начинается с `sdk:system (subtype=init)`, а первый пригодный provider-native ACK для начала нового turn приходит как `sdk:stream_event` с `message_start`.
+- Для Claude оформлен отдельный SSOT:
+  - [Claude_Workflow_TurnStarted_ACK.md](../SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md)
+  - правило зафиксировано жёстко: единственный runtime truth source для verdict delivered/failed у Claude submit — provider-originated `sdk:stream_event(message_start)`; локальный `turn_started`, `sdk:system(init)` и diagnostics trail остаются только вспомогательными сигналами.
 
 ## Git commits
 - `bd41a123 docs(plan): open phase 292 workflow submit diagnostics`
@@ -72,20 +90,23 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
-6. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_UserTurn_Delivery.md`
-7. `doc/TODO/Archive/todo-plan-up-to-phase292-2026-03-06.md`
-8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session066.md` (THIS REPORT)
+6. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
+7. `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`
+8. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
+9. `doc/TODO/Archive/todo-plan-up-to-phase292-2026-03-06.md`
+10. `doc/TODO/todo-plan.md`
+11. `doc/Sessions/Session066.md` (THIS REPORT)
 
 ## Runtime artifacts worth remembering
 - `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`
 - `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`
+- `~/.codeai-hub/logs/claude/sdk-claude-<providerSessionId>.jsonl`
 - `codeai-hub-1.1.716.vsix`
 - `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.1.716.tar.bz2`
 - `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.1.716.tar.bz2`
 - `doc/tmp/releases/codex-module-1.1.716.tar.bz2`
 
 ## Plans for next session
-- Начать с `Phase 293` из `doc/TODO/todo-plan.md`: прогнать live PM smoke на `v1.1.716` и снять один реальный end-to-end trail по `outboundAttemptId`.
-- Сопоставить live trail с контрактами diagnostics/delivery и только после этого решать, нужна ли следующая implementation phase для provider ACK persistence, resend/recovery или PM UX вокруг failed submit.
-- Если smoke выявит новый сбой, использовать уже собранные JSONL-логи как SSOT-источник последней успешной точки вместо догадок по dialog history.
+- Для Codex использовать новый single-source ACK contract: delivered verdict опирается только на `sdk:turn.started`, без rollout reconciliation в runtime state machine.
+- Если будет принято решение делать resend UX, сначала отдельно спроектировать outbox/pending/failed payload contract, а не выводить его автоматически из текущего ACK SSOT.
+- Для Claude отдельно решить, как именно пробросить и использовать `sdk:stream_event(message_start)` в Core/PM state machine без смешения с локальным `turn_started`, а затем спроектировать resend UX поверх этого single-source ACK.
