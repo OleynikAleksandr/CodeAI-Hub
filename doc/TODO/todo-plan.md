@@ -28,8 +28,8 @@
 
 ### Stream 1: Core handler trace
 1. [DONE] Протрассировать в Core граничные точки `handleMessage`: вход, local history append start/success/failure, adapter dispatch start/success/failure; писать их в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl` в JSONL-формате. Внутренний trace-context для `dialog:send` теперь проходит через `handleMessage`, но срезается до provider dispatch, чтобы `outboundAttemptId` не утекал в Codex turn options (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/telemetry/`; actual commit: `feat(core): trace outbound message handling stages`).
-2. [TODO] Git Commit: `feat(core): trace outbound message handling stages` (hash: TBD)
-3. [TODO] Добавить regression tests на Core trace schema и гарантировать, что при падении на каждом из этапов последняя успешная точка видна в логах (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/telemetry/`; expected commit: `test(core): cover dialog send trace stages`).
+2. [DONE] Git Commit: `feat(core): trace outbound message handling stages` (hash: `1d3074bd`)
+3. [DONE] Добавить regression tests на Core trace schema и гарантировать, что при падении на каждом из этапов последняя успешная точка видна в логах; harness теперь проверяет success path, history append failure и adapter dispatch failure, а также отсутствие утечки internal trace-context в provider turn options (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/telemetry/`; actual commit: `test(core): cover dialog send trace stages`).
 4. [TODO] Git Commit: `test(core): cover dialog send trace stages` (hash: TBD)
 
 ### Stream 2: Codex transport trace

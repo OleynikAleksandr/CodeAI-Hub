@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { SessionManager } from "../../session-manager";
+import type { DialogSendTraceRecord } from "../../telemetry/dialog-send-trace-logger";
 import type { BridgeEvent } from "../types";
 import {
   type ProviderSessionBinding,
@@ -25,10 +26,13 @@ type HandlerHarness = {
   readonly sessionManager: SessionManager;
   readonly providerSessions: Map<string, ProviderSessionBinding>;
   readonly events: BridgeEvent[];
+  readonly traceRecords: DialogSendTraceRecord[];
   readonly promoted: BindingUpdate[];
   readonly continuityUpdates: BindingUpdate[];
   readonly runtimeLockUpdates: RuntimeLockUpdate[];
 };
+
+const DIALOG_SEND_TRACE_CONTEXT_KEY = "__dialogSendTraceContext";
 
 const noop = (): void => {
   // noop
@@ -49,6 +53,7 @@ const createHarness = (): HandlerHarness => {
   const sessionManager = new SessionManager();
   const providerSessions = new Map<string, ProviderSessionBinding>();
   const events: BridgeEvent[] = [];
+  const traceRecords: DialogSendTraceRecord[] = [];
   const promoted: BindingUpdate[] = [];
   const continuityUpdates: BindingUpdate[] = [];
   const runtimeLockUpdates: RuntimeLockUpdate[] = [];
@@ -96,6 +101,11 @@ const createHarness = (): HandlerHarness => {
       warn: noop,
       error: noop,
     },
+    dialogSendTrace: {
+      record: (record: DialogSendTraceRecord) => {
+        traceRecords.push(record);
+      },
+    },
     workspaceRuntime: {
       notifyTurnStateChanged: noop,
       notifyFinalTurnCompleted: noop,
@@ -139,6 +149,7 @@ const createHarness = (): HandlerHarness => {
     sessionManager,
     providerSessions,
     events,
+    traceRecords,
     promoted,
     continuityUpdates,
     runtimeLockUpdates,
@@ -1219,6 +1230,155 @@ test("SessionRequestHandler preserves workflow output schema only for explicit o
       },
     },
   ]);
+});
+
+test("SessionRequestHandler traces dialog send handleMessage stages and strips internal trace context", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-dialog-send-trace-success"
+  );
+
+  const sendCalls: Array<{
+    readonly content: string;
+    readonly turnOptions?: Record<string, unknown>;
+  }> = [];
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sendCalls.push({ content, turnOptions });
+        return Promise.resolve();
+      },
+    }),
+    handleRuntimeFailure: noop,
+  };
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-trace-success",
+    unsubscribe: noop,
+  });
+
+  await (harness.handler as any).handleMessage(session.id, {
+    text: "trace success",
+    turnOptions: {
+      [DIALOG_SEND_TRACE_CONTEXT_KEY]: {
+        outboundAttemptId: "outbound-1",
+        requestId: "request-1",
+        workspaceSlug: "workspace-1",
+        dialogId: "dialog-1",
+      },
+    },
+  });
+
+  assert.deepEqual(sendCalls, [
+    {
+      content: "trace success",
+      turnOptions: undefined,
+    },
+  ]);
+  assert.deepEqual(
+    harness.traceRecords.map((record) => record.event),
+    [
+      "core.dialog_send.handle_message_enter",
+      "core.dialog_send.history_append_started",
+      "core.dialog_send.history_append_succeeded",
+      "core.dialog_send.adapter_dispatch_started",
+      "core.dialog_send.adapter_dispatch_succeeded",
+    ]
+  );
+  for (const record of harness.traceRecords) {
+    assert.equal(record.outboundAttemptId, "outbound-1");
+    assert.equal(record.requestId, "request-1");
+    assert.equal(record.workspaceSlug, "workspace-1");
+    assert.equal(record.dialogId, "dialog-1");
+    assert.equal(record.contentLength, "trace success".length);
+  }
+  assert.equal(harness.traceRecords.at(-1)?.sessionId, session.id);
+});
+
+test("SessionRequestHandler traces history append failure as terminal last-success point", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-dialog-send-trace-history-failure"
+  );
+
+  (harness.handler as any).sessionStorage = {
+    appendMessage: async () =>
+      Promise.reject(new Error("history write failed")),
+    close: noop,
+    promote: noop,
+  };
+
+  await (harness.handler as any).handleMessage(session.id, {
+    text: "trace history failure",
+    turnOptions: {
+      [DIALOG_SEND_TRACE_CONTEXT_KEY]: {
+        outboundAttemptId: "outbound-2",
+        requestId: "request-2",
+        workspaceSlug: "workspace-2",
+        dialogId: "dialog-2",
+      },
+    },
+  });
+
+  assert.deepEqual(
+    harness.traceRecords.map((record) => record.event),
+    [
+      "core.dialog_send.handle_message_enter",
+      "core.dialog_send.history_append_started",
+      "core.dialog_send.history_append_failed",
+    ]
+  );
+  assert.equal(harness.traceRecords.at(-1)?.error, "history write failed");
+});
+
+test("SessionRequestHandler traces adapter dispatch failure after the last successful stage", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-dialog-send-trace-dispatch-failure"
+  );
+
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => ({
+      sendMessage: () => Promise.reject(new Error("adapter dispatch failed")),
+    }),
+    handleRuntimeFailure: noop,
+  };
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-trace-failure",
+    unsubscribe: noop,
+  });
+
+  await (harness.handler as any).handleMessage(session.id, {
+    text: "trace adapter failure",
+    turnOptions: {
+      [DIALOG_SEND_TRACE_CONTEXT_KEY]: {
+        outboundAttemptId: "outbound-3",
+        requestId: "request-3",
+        workspaceSlug: "workspace-3",
+        dialogId: "dialog-3",
+      },
+    },
+  });
+
+  assert.deepEqual(
+    harness.traceRecords.map((record) => record.event),
+    [
+      "core.dialog_send.handle_message_enter",
+      "core.dialog_send.history_append_started",
+      "core.dialog_send.history_append_succeeded",
+      "core.dialog_send.adapter_dispatch_started",
+      "core.dialog_send.adapter_dispatch_failed",
+    ]
+  );
+  assert.equal(harness.traceRecords.at(-1)?.error, "adapter dispatch failed");
 });
 
 test("SessionRequestHandler rolls back running state to idle on provider send failure", async () => {
