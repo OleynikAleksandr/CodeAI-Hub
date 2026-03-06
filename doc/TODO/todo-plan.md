@@ -43,10 +43,10 @@
 1. [DONE] Обновить prompt Description Agent: полный документ не публикуется в чат, но progress commentary по ходу работы и после значимых правок файла обязателен (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; actual commit: `docs(prompts): require commentary in description workflow`).
 2. [DONE] Git Commit: `docs(prompts): require commentary in description workflow` (hash: `3484ecfd`)
 3. [DONE] Обновить prompt Virtual Simulation тем же контрактом: короткие рабочие комментарии обязательны, запрещён только dump полного артефакта в чат (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`; actual commit: `docs(prompts): require commentary in virtual simulation workflow`).
-4. [TODO] Git Commit: `docs(prompts): require commentary in virtual simulation workflow` (hash: TBD)
+4. [DONE] Git Commit: `docs(prompts): require commentary in virtual simulation workflow` (hash: `c17b2839`)
 
 ### Stream 4: Таргетная валидация и regression coverage
-1. [TODO] Добавить таргетную проверку Core bridge на opt-in structured-output boundary для workflow turns, чтобы дефолтный raw path больше не регрессировал (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): cover raw workflow turn options`).
+1. [DONE] Добавить таргетную проверку Core bridge на opt-in structured-output boundary для workflow turns, чтобы дефолтный raw path больше не регрессировал; test подтверждает strip schema по умолчанию и сохранение schema только через `allowStructuredOutput` без утечки marker-а в provider layer (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; actual commit: `test(core): cover raw workflow turn options`).
 2. [TODO] Git Commit: `test(core): cover raw workflow turn options` (hash: TBD)
 3. [TODO] Добавить PM/session regression coverage: промежуточные commentary из workflow turn должны оставаться в dialog stream и после snapshot replay/open history (scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): cover workflow commentary replay`).
 4. [TODO] Git Commit: `test(pm): cover workflow commentary replay` (hash: TBD)

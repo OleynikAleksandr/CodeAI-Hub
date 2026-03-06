@@ -1121,6 +1121,106 @@ test("SessionRequestHandler emits immediate running before provider send resolve
   await pendingSend;
 });
 
+test("SessionRequestHandler strips workflow output schema unless explicitly opted in", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-workflow-raw-default",
+    undefined,
+    {
+      initiativeSlug: "workflow-raw-default",
+      stage: "description",
+      runSlug: null,
+    }
+  );
+
+  const sendCalls: Array<{
+    readonly content: string;
+    readonly turnOptions?: Record<string, unknown>;
+  }> = [];
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sendCalls.push({ content, turnOptions });
+        return Promise.resolve();
+      },
+    }),
+    handleRuntimeFailure: noop,
+  };
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-5",
+    unsubscribe: noop,
+  });
+
+  await (harness.handler as any).handleMessage(session.id, {
+    text: "hello",
+    turnOptions: {
+      outputSchema: { type: "object" },
+    },
+  });
+
+  assert.deepEqual(sendCalls, [{ content: "hello", turnOptions: undefined }]);
+});
+
+test("SessionRequestHandler preserves workflow output schema only for explicit opt-in", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-workflow-structured-opt-in",
+    undefined,
+    {
+      initiativeSlug: "workflow-structured-opt-in",
+      stage: "description",
+      runSlug: null,
+    }
+  );
+
+  const sendCalls: Array<{
+    readonly content: string;
+    readonly turnOptions?: Record<string, unknown>;
+  }> = [];
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sendCalls.push({ content, turnOptions });
+        return Promise.resolve();
+      },
+    }),
+    handleRuntimeFailure: noop,
+  };
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-6",
+    unsubscribe: noop,
+  });
+
+  await (harness.handler as any).handleMessage(session.id, {
+    text: "hello",
+    turnOptions: {
+      outputSchema: { type: "object" },
+      allowStructuredOutput: true,
+    },
+  });
+
+  assert.deepEqual(sendCalls, [
+    {
+      content: "hello",
+      turnOptions: {
+        outputSchema: { type: "object" },
+      },
+    },
+  ]);
+});
+
 test("SessionRequestHandler rolls back running state to idle on provider send failure", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
