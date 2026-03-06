@@ -262,6 +262,8 @@ type WorkflowTurnOptionsResolution = {
   readonly stageMatched: boolean;
 };
 
+const STRUCTURED_OUTPUT_OPT_IN_KEY = "allowStructuredOutput";
+
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
   "virtual_simulation",
@@ -351,6 +353,25 @@ const stripOutputSchema = (
   return Object.keys(rest).length > 0 ? rest : undefined;
 };
 
+const stripStructuredOutputOptIn = (
+  turnOptions?: Record<string, unknown>
+): Record<string, unknown> | undefined => {
+  if (!turnOptions) {
+    return;
+  }
+  if (!(STRUCTURED_OUTPUT_OPT_IN_KEY in turnOptions)) {
+    return turnOptions;
+  }
+  const { [STRUCTURED_OUTPUT_OPT_IN_KEY]: _ignored, ...rest } = turnOptions;
+  return Object.keys(rest).length > 0 ? rest : undefined;
+};
+
+const hasExplicitWorkflowStructuredOutput = (
+  turnOptions?: Record<string, unknown>
+): boolean =>
+  Boolean(turnOptions?.outputSchema !== undefined) &&
+  turnOptions?.[STRUCTURED_OUTPUT_OPT_IN_KEY] === true;
+
 const resolveWorkflowStage = (
   stage: string | null | undefined
 ): WorkflowStageId | null =>
@@ -363,17 +384,27 @@ const resolveWorkflowTurnOptions = (params: {
   readonly turnOptions?: Record<string, unknown>;
 }): WorkflowTurnOptionsResolution => {
   const stage = resolveWorkflowStage(params.stage);
+  const sanitizedTurnOptions = stripStructuredOutputOptIn(params.turnOptions);
   if (!stage) {
     return {
-      turnOptions: params.turnOptions,
+      turnOptions: sanitizedTurnOptions,
       appliedSchema: false,
       source: "none",
       stageMatched: false,
     };
   }
 
+  if (hasExplicitWorkflowStructuredOutput(params.turnOptions)) {
+    return {
+      turnOptions: sanitizedTurnOptions,
+      appliedSchema: true,
+      source: "turnOptions",
+      stageMatched: true,
+    };
+  }
+
   return {
-    turnOptions: stripOutputSchema(params.turnOptions),
+    turnOptions: stripOutputSchema(sanitizedTurnOptions),
     appliedSchema: false,
     source: "none",
     stageMatched: true,
@@ -2258,9 +2289,7 @@ export class SessionRequestHandler {
         stage: session.stage,
         turnOptions,
       });
-      const providerTurnOptions = workflowTurnOptions.stageMatched
-        ? workflowTurnOptions.turnOptions
-        : turnOptions;
+      const providerTurnOptions = workflowTurnOptions.turnOptions;
       if (workflowTurnOptions.appliedSchema) {
         this.logger.info("Applied workflow output schema", {
           sessionId,

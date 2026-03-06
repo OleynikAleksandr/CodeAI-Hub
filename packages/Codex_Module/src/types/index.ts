@@ -45,6 +45,7 @@ export type CodexThreadOptions = ThreadOptions & {
 };
 export type CodexTurnOptions = TurnOptions & {
   readonly outputSchema?: unknown;
+  readonly allowStructuredOutput?: boolean;
 };
 export type CodexSandboxMode = SandboxMode;
 export type CodexApprovalMode = ApprovalMode;
