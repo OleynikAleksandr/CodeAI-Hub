@@ -50,6 +50,7 @@ type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__collector$/;
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
+const CODEX_OUTBOUND_ATTEMPT_ID_KEY = "__codexOutboundAttemptId";
 
 type UnifiedSessionSegmentSummaryPayload = {
   readonly kind: "segment_summary";
@@ -461,6 +462,21 @@ const resolveWorkflowTurnOptions = (params: {
     appliedSchema: false,
     source: "none",
     stageMatched: true,
+  };
+};
+
+const attachCodexOutboundAttemptIdTurnOption = (params: {
+  readonly providerId: string;
+  readonly turnOptions?: Record<string, unknown>;
+  readonly traceContext?: DialogSendHandleMessageTraceContext;
+}): Record<string, unknown> | undefined => {
+  if (params.providerId !== "codex" || !params.traceContext) {
+    return params.turnOptions;
+  }
+
+  return {
+    ...(params.turnOptions ?? {}),
+    [CODEX_OUTBOUND_ATTEMPT_ID_KEY]: params.traceContext.outboundAttemptId,
   };
 };
 
@@ -2571,7 +2587,11 @@ export class SessionRequestHandler {
         stage: options.session.stage,
         turnOptions: options.turnOptions,
       });
-      const providerTurnOptions = workflowTurnOptions.turnOptions;
+      const providerTurnOptions = attachCodexOutboundAttemptIdTurnOption({
+        providerId: options.binding.providerId,
+        turnOptions: workflowTurnOptions.turnOptions,
+        traceContext: options.traceContext,
+      });
       if (workflowTurnOptions.appliedSchema) {
         this.logger.info("Applied workflow output schema", {
           sessionId: options.sessionId,

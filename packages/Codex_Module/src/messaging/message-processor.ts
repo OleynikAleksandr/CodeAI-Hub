@@ -40,6 +40,7 @@ type EnqueuedMessage = {
   readonly content: string;
   readonly turnOptions?: CodexTurnOptions;
   readonly internal?: boolean;
+  readonly outboundAttemptId?: string;
 };
 
 type ProcessTurnContext = {
@@ -98,6 +99,12 @@ const areUsageLimitsSnapshotsEqual = (
     right.currentWeekSonnetOnly
   );
 
+const withOutboundAttemptId = <TPayload extends Record<string, unknown>>(
+  payload: TPayload,
+  outboundAttemptId?: string
+): TPayload & { readonly outboundAttemptId?: string } =>
+  outboundAttemptId ? { ...payload, outboundAttemptId } : payload;
+
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
   private readonly options?: MessageProcessorOptions;
@@ -120,6 +127,10 @@ export class CodexMessageProcessor {
   private readonly structuredOutputTurns = new WeakMap<
     ActiveSession,
     boolean
+  >();
+  private readonly activeOutboundAttemptIds = new WeakMap<
+    ActiveSession,
+    string
   >();
 
   private async raceWithTimeout<T>(payload: {
@@ -264,33 +275,44 @@ export class CodexMessageProcessor {
     sessionId: string,
     content: string,
     turnOptions?: CodexTurnOptions,
-    options?: { readonly internal?: boolean }
+    options?: {
+      readonly internal?: boolean;
+      readonly outboundAttemptId?: string;
+    }
   ): void {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
     const internal = options?.internal ?? false;
+    const outboundAttemptId = options?.outboundAttemptId;
     if (!internal) {
       session.logger?.logUserInput(content);
     }
     // Trace breadcrumbs for diagnosing stalled turns (e.g. user_input logged but no sdk:turn.started).
-    session.logger?.logSDKEvent("processor.enqueue", {
-      sessionId: session.sessionId,
-      threadId: session.codexThreadId,
-      internal,
-      contentLength: content.length,
-      pendingCount: session.messageController.pendingMessages.length,
-      hasResolveNext: Boolean(session.messageController.resolveNext),
-      hasProcessingLoop: Boolean(session.processingLoop),
-      timestampIso: new Date().toISOString(),
-    });
+    session.logger?.logSDKEvent(
+      "processor.enqueue",
+      withOutboundAttemptId(
+        {
+          sessionId: session.sessionId,
+          threadId: session.codexThreadId,
+          internal,
+          contentLength: content.length,
+          pendingCount: session.messageController.pendingMessages.length,
+          hasResolveNext: Boolean(session.messageController.resolveNext),
+          hasProcessingLoop: Boolean(session.processingLoop),
+          timestampIso: new Date().toISOString(),
+        },
+        outboundAttemptId
+      )
+    );
     const controller = session.messageController;
     controller.pendingMessages.push({
       type: "user_input",
       content,
       turnOptions,
       internal,
+      outboundAttemptId,
     });
     if (controller.resolveNext) {
       const resolver = controller.resolveNext;
@@ -320,12 +342,18 @@ export class CodexMessageProcessor {
         continue;
       }
       session.logger?.logSDKEvent("processor.dequeue", {
-        sessionId: session.sessionId,
-        threadId: session.codexThreadId,
-        internal: raw.internal ?? false,
-        contentLength: raw.content.length,
-        remainingPendingCount: session.messageController.pendingMessages.length,
-        timestampIso: new Date().toISOString(),
+        ...withOutboundAttemptId(
+          {
+            sessionId: session.sessionId,
+            threadId: session.codexThreadId,
+            internal: raw.internal ?? false,
+            contentLength: raw.content.length,
+            remainingPendingCount:
+              session.messageController.pendingMessages.length,
+            timestampIso: new Date().toISOString(),
+          },
+          raw.outboundAttemptId
+        ),
       });
       await this.processTurn({ session, thread, message: raw });
     }
@@ -334,18 +362,29 @@ export class CodexMessageProcessor {
   private async processTurn(context: ProcessTurnContext): Promise<void> {
     const { session, thread, message } = context;
     session.internalTurn = message.internal ?? false;
+    if (message.outboundAttemptId) {
+      this.activeOutboundAttemptIds.set(session, message.outboundAttemptId);
+    } else {
+      this.activeOutboundAttemptIds.delete(session);
+    }
     if (!session.internalTurn) {
       this.userTurnLifecycle.set(session, { started: false, ended: false });
     }
     const turnStartedAt = Date.now();
     this.structuredOutputTurns.set(session, false);
-    session.logger?.logSDKEvent("processor.turn.begin", {
-      sessionId: session.sessionId,
-      threadId: session.codexThreadId,
-      internal: session.internalTurn,
-      pendingCountAtBegin: session.messageController.pendingMessages.length,
-      timestampIso: new Date().toISOString(),
-    });
+    session.logger?.logSDKEvent(
+      "processor.turn.begin",
+      withOutboundAttemptId(
+        {
+          sessionId: session.sessionId,
+          threadId: session.codexThreadId,
+          internal: session.internalTurn,
+          pendingCountAtBegin: session.messageController.pendingMessages.length,
+          timestampIso: new Date().toISOString(),
+        },
+        message.outboundAttemptId
+      )
+    );
     let startupLock: StartupLockContext | null = null;
     try {
       const turnOptions = message.turnOptions ?? {};
@@ -383,13 +422,19 @@ export class CodexMessageProcessor {
         timestampIso: new Date().toISOString(),
       });
       const runStreamedStartedAt = Date.now();
-      session.logger?.logSDKEvent("processor.run_streamed.begin", {
-        sessionId: session.sessionId,
-        threadId: session.codexThreadId,
-        internal: session.internalTurn,
-        elapsedMs: runStreamedStartedAt - turnStartedAt,
-        timestampIso: new Date().toISOString(),
-      });
+      session.logger?.logSDKEvent(
+        "processor.run_streamed.begin",
+        withOutboundAttemptId(
+          {
+            sessionId: session.sessionId,
+            threadId: session.codexThreadId,
+            internal: session.internalTurn,
+            elapsedMs: runStreamedStartedAt - turnStartedAt,
+            timestampIso: new Date().toISOString(),
+          },
+          message.outboundAttemptId
+        )
+      );
       const { events } = await thread.runStreamed(prompt, runOptions);
       session.logger?.logSDKEvent("processor.run_streamed.ready", {
         sessionId: session.sessionId,
@@ -425,6 +470,7 @@ export class CodexMessageProcessor {
       });
       startupLock?.release();
       session.internalTurn = false;
+      this.activeOutboundAttemptIds.delete(session);
     }
   }
 
@@ -601,13 +647,19 @@ export class CodexMessageProcessor {
       return;
     }
     state.logged = true;
-    session.logger?.logSDKEvent("processor.first_event", {
-      sessionId: session.sessionId,
-      threadId: session.codexThreadId,
-      internal: session.internalTurn ?? false,
-      eventType,
-      timestampIso: new Date().toISOString(),
-    });
+    session.logger?.logSDKEvent(
+      "processor.first_event",
+      withOutboundAttemptId(
+        {
+          sessionId: session.sessionId,
+          threadId: session.codexThreadId,
+          internal: session.internalTurn ?? false,
+          eventType,
+          timestampIso: new Date().toISOString(),
+        },
+        this.activeOutboundAttemptIds.get(session)
+      )
+    );
   }
 
   private async dispatchEvent(

@@ -8,6 +8,42 @@ import type { CodexModuleOptions, CodexTurnOptions } from "../types";
 
 export type SessionListener = (payload: unknown) => void;
 
+const CODEX_OUTBOUND_ATTEMPT_ID_KEY = "__codexOutboundAttemptId";
+
+const normalizeOutboundAttemptId = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+
+const stripCodexOutboundAttemptId = (turnOptions?: CodexTurnOptions) => {
+  if (!turnOptions) {
+    return {
+      outboundAttemptId: undefined,
+      providerSafeTurnOptions: undefined,
+    };
+  }
+
+  const typedTurnOptions = turnOptions as CodexTurnOptions &
+    Record<string, unknown>;
+  const outboundAttemptId = normalizeOutboundAttemptId(
+    typedTurnOptions[CODEX_OUTBOUND_ATTEMPT_ID_KEY]
+  );
+  if (!(CODEX_OUTBOUND_ATTEMPT_ID_KEY in typedTurnOptions)) {
+    return {
+      outboundAttemptId,
+      providerSafeTurnOptions: turnOptions,
+    };
+  }
+
+  const { [CODEX_OUTBOUND_ATTEMPT_ID_KEY]: _ignored, ...rest } =
+    typedTurnOptions;
+  return {
+    outboundAttemptId,
+    providerSafeTurnOptions:
+      Object.keys(rest).length > 0 ? (rest as CodexTurnOptions) : undefined,
+  };
+};
+
 export class CodexProviderAdapter {
   private readonly sdkManager: CodexSDKManager;
   private readonly listeners = new Map<string, Set<SessionListener>>();
@@ -71,7 +107,14 @@ export class CodexProviderAdapter {
     content: string,
     turnOptions?: CodexTurnOptions
   ): Promise<void> {
-    await this.sdkManager.sendMessage(sessionId, content, turnOptions);
+    const { outboundAttemptId, providerSafeTurnOptions } =
+      stripCodexOutboundAttemptId(turnOptions);
+    await this.sdkManager.sendMessage(
+      sessionId,
+      content,
+      providerSafeTurnOptions,
+      { outboundAttemptId }
+    );
   }
 
   subscribe(sessionId: string, listener: SessionListener): () => void {

@@ -49,6 +49,11 @@ type CodexManagerDependencies = {
   readonly reporter?: ModuleReporter;
 };
 
+type SendMessageOptions = {
+  readonly internal?: boolean;
+  readonly outboundAttemptId?: string;
+};
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
@@ -203,7 +208,7 @@ export class CodexSDKManager {
     sessionId: string,
     content: string,
     turnOptions?: CodexTurnOptions,
-    options?: { readonly internal?: boolean }
+    options?: SendMessageOptions
   ): Promise<void> {
     await this.initialize();
     this.deps.processor.enqueueMessage(
