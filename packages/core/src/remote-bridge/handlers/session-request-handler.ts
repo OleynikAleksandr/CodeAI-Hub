@@ -158,6 +158,13 @@ type MessageContentExtraction = {
   readonly turnOptions?: Record<string, unknown>;
 };
 
+type DialogSendHandleMessageTraceContext = {
+  readonly outboundAttemptId: string;
+  readonly requestId: string;
+  readonly workspaceSlug: string;
+  readonly dialogId: string;
+};
+
 type SessionIdChangedPayload = {
   readonly newId?: string;
 };
@@ -264,6 +271,7 @@ type WorkflowTurnOptionsResolution = {
 };
 
 const STRUCTURED_OUTPUT_OPT_IN_KEY = "allowStructuredOutput";
+const DIALOG_SEND_TRACE_CONTEXT_KEY = "__dialogSendTraceContext";
 
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
@@ -372,6 +380,50 @@ const hasExplicitWorkflowStructuredOutput = (
 ): boolean =>
   Boolean(turnOptions?.outputSchema !== undefined) &&
   turnOptions?.[STRUCTURED_OUTPUT_OPT_IN_KEY] === true;
+
+const isDialogSendHandleMessageTraceContext = (
+  value: unknown
+): value is DialogSendHandleMessageTraceContext => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const typed = value as {
+    readonly outboundAttemptId?: unknown;
+    readonly requestId?: unknown;
+    readonly workspaceSlug?: unknown;
+    readonly dialogId?: unknown;
+  };
+  return (
+    typeof typed.outboundAttemptId === "string" &&
+    typed.outboundAttemptId.trim().length > 0 &&
+    typeof typed.requestId === "string" &&
+    typed.requestId.trim().length > 0 &&
+    typeof typed.workspaceSlug === "string" &&
+    typeof typed.dialogId === "string"
+  );
+};
+
+const readDialogSendTraceContext = (
+  turnOptions?: Record<string, unknown>
+): DialogSendHandleMessageTraceContext | undefined => {
+  const candidate = turnOptions?.[DIALOG_SEND_TRACE_CONTEXT_KEY];
+  return isDialogSendHandleMessageTraceContext(candidate)
+    ? candidate
+    : undefined;
+};
+
+const stripDialogSendTraceContext = (
+  turnOptions?: Record<string, unknown>
+): Record<string, unknown> | undefined => {
+  if (!turnOptions) {
+    return;
+  }
+  if (!(DIALOG_SEND_TRACE_CONTEXT_KEY in turnOptions)) {
+    return turnOptions;
+  }
+  const { [DIALOG_SEND_TRACE_CONTEXT_KEY]: _ignored, ...rest } = turnOptions;
+  return Object.keys(rest).length > 0 ? rest : undefined;
+};
 
 const resolveWorkflowStage = (
   stage: string | null | undefined
@@ -2205,7 +2257,17 @@ export class SessionRequestHandler {
       },
     });
 
-    await this.handleMessage(resolvedSession.id, options.content);
+    await this.handleMessage(resolvedSession.id, {
+      text: options.content,
+      turnOptions: {
+        [DIALOG_SEND_TRACE_CONTEXT_KEY]: {
+          outboundAttemptId: options.outboundAttemptId,
+          requestId: options.requestId,
+          workspaceSlug: options.workspaceSlug,
+          dialogId: options.dialogId,
+        },
+      },
+    });
     return {
       ok: true,
       providerId: resolvedSession.providerId,
@@ -2271,7 +2333,15 @@ export class SessionRequestHandler {
     }
 
     const { content, turnOptions } = extracted;
+    const dialogSendTraceContext = readDialogSendTraceContext(turnOptions);
+    const providerSafeTurnOptions = stripDialogSendTraceContext(turnOptions);
     this.logSessionMessageExtracted(sessionId, content, turnOptions);
+    this.traceDialogSendHandleMessageStage({
+      event: "core.dialog_send.handle_message_enter",
+      traceContext: dialogSendTraceContext,
+      targetSessionId: sessionId,
+      contentLength: content.length,
+    });
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
       this.broadcaster({
@@ -2345,71 +2415,238 @@ export class SessionRequestHandler {
       return;
     }
 
-    try {
-      await this.sessionStorage.appendMessage(sessionId, userMessage);
-    } catch (error: unknown) {
-      this.logger.error(
-        "Failed to append unified session record",
-        error as Error,
-        {
-          sessionId,
-          providerId: session.providerId,
-        }
-      );
-      this.broadcaster({
-        type: "session:error",
-        payload: { sessionId, message: "Failed to persist message to history" },
-      });
+    const historyPersisted = await this.persistUserMessageToHistory({
+      sessionId,
+      session,
+      userMessage,
+      traceContext: dialogSendTraceContext,
+      contentLength: content.length,
+    });
+    if (!historyPersisted) {
       return;
     }
     this.broadcaster({ type: "session:message", payload: userMessage });
 
-    const binding = this.providerSessions.get(sessionId);
-    const adapter = binding
-      ? this.providerRegistry.getAdapter(binding.providerId)
-      : null;
-
-    if (!(binding && adapter)) {
-      this.logMissingProviderBindingForIncomingMessage(
-        sessionId,
-        binding?.providerId,
-        Boolean(binding),
-        Boolean(adapter)
-      );
+    const dispatchContext = this.resolveProviderDispatchContext({
+      sessionId,
+      session,
+      traceContext: dialogSendTraceContext,
+      contentLength: content.length,
+    });
+    if (!dispatchContext) {
       return;
     }
 
     this.emitTurnStateEvent({ sessionId, state: "running" });
+    await this.dispatchMessageToProvider({
+      session,
+      sessionId,
+      binding: dispatchContext.binding,
+      adapter: dispatchContext.adapter,
+      content,
+      turnOptions: providerSafeTurnOptions,
+      traceContext: dialogSendTraceContext,
+    });
+  }
+
+  private async persistUserMessageToHistory(options: {
+    readonly sessionId: string;
+    readonly session: Session;
+    readonly userMessage: SessionMessage;
+    readonly traceContext?: DialogSendHandleMessageTraceContext;
+    readonly contentLength: number;
+  }): Promise<boolean> {
+    try {
+      this.traceDialogSendHandleMessageStage({
+        event: "core.dialog_send.history_append_started",
+        traceContext: options.traceContext,
+        session: options.session,
+        contentLength: options.contentLength,
+      });
+      await this.sessionStorage.appendMessage(
+        options.sessionId,
+        options.userMessage
+      );
+      this.traceDialogSendHandleMessageStage({
+        event: "core.dialog_send.history_append_succeeded",
+        traceContext: options.traceContext,
+        session: options.session,
+        contentLength: options.contentLength,
+      });
+      return true;
+    } catch (error: unknown) {
+      this.traceDialogSendHandleMessageStage({
+        event: "core.dialog_send.history_append_failed",
+        traceContext: options.traceContext,
+        session: options.session,
+        contentLength: options.contentLength,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      this.logger.error(
+        "Failed to append unified session record",
+        error as Error,
+        {
+          sessionId: options.sessionId,
+          providerId: options.session.providerId,
+        }
+      );
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId: options.sessionId,
+          message: "Failed to persist message to history",
+        },
+      });
+      return false;
+    }
+  }
+
+  private resolveProviderDispatchContext(options: {
+    readonly sessionId: string;
+    readonly session: Session;
+    readonly traceContext?: DialogSendHandleMessageTraceContext;
+    readonly contentLength: number;
+  }): {
+    readonly binding: ProviderSessionBinding;
+    readonly adapter: ProviderAdapter;
+  } | null {
+    const binding = this.providerSessions.get(options.sessionId);
+    const adapter = binding
+      ? this.providerRegistry.getAdapter(binding.providerId)
+      : null;
+    if (!(binding && adapter)) {
+      this.traceDialogSendHandleMessageStage({
+        event: "core.dialog_send.adapter_dispatch_failed",
+        traceContext: options.traceContext,
+        session: options.session,
+        contentLength: options.contentLength,
+        error: "Provider binding unavailable",
+        payload: {
+          hasBinding: Boolean(binding),
+          hasAdapter: Boolean(adapter),
+          providerId: binding?.providerId,
+        },
+      });
+      this.logMissingProviderBindingForIncomingMessage(
+        options.sessionId,
+        binding?.providerId,
+        Boolean(binding),
+        Boolean(adapter)
+      );
+      return null;
+    }
+    return { binding, adapter };
+  }
+
+  private async dispatchMessageToProvider(options: {
+    readonly session: Session;
+    readonly sessionId: string;
+    readonly binding: ProviderSessionBinding;
+    readonly adapter: ProviderAdapter;
+    readonly content: string;
+    readonly turnOptions?: Record<string, unknown>;
+    readonly traceContext?: DialogSendHandleMessageTraceContext;
+  }): Promise<void> {
     try {
       await this.continuity.ensureTrackedOnOutboundMessage({
-        sessionId,
-        providerSessionId: binding.providerSessionId,
+        sessionId: options.sessionId,
+        providerSessionId: options.binding.providerSessionId,
       });
 
-      this.logDispatchingMessageToProvider(sessionId, binding, content.length);
+      this.traceDialogSendHandleMessageStage({
+        event: "core.dialog_send.adapter_dispatch_started",
+        traceContext: options.traceContext,
+        session: options.session,
+        providerId: options.binding.providerId,
+        providerSessionId: options.binding.providerSessionId,
+        contentLength: options.content.length,
+      });
+      this.logDispatchingMessageToProvider(
+        options.sessionId,
+        options.binding,
+        options.content.length
+      );
 
       const workflowTurnOptions = await resolveWorkflowTurnOptions({
-        stage: session.stage,
-        turnOptions,
+        stage: options.session.stage,
+        turnOptions: options.turnOptions,
       });
       const providerTurnOptions = workflowTurnOptions.turnOptions;
       if (workflowTurnOptions.appliedSchema) {
         this.logger.info("Applied workflow output schema", {
-          sessionId,
-          stage: session.stage,
+          sessionId: options.sessionId,
+          stage: options.session.stage,
           source: workflowTurnOptions.source,
         });
       }
-      await adapter.sendMessage(
-        binding.providerSessionId,
-        content,
+      await options.adapter.sendMessage(
+        options.binding.providerSessionId,
+        options.content,
         providerTurnOptions
       );
+      this.traceDialogSendHandleMessageStage({
+        event: "core.dialog_send.adapter_dispatch_succeeded",
+        traceContext: options.traceContext,
+        session: options.session,
+        providerId: options.binding.providerId,
+        providerSessionId: options.binding.providerSessionId,
+        contentLength: options.content.length,
+      });
     } catch (error) {
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
-      this.logProviderSendMessageFailed(sessionId, binding, error);
-      this.handleProviderFailure(binding.providerId, error, sessionId);
+      this.traceDialogSendHandleMessageStage({
+        event: "core.dialog_send.adapter_dispatch_failed",
+        traceContext: options.traceContext,
+        session: options.session,
+        providerId: options.binding.providerId,
+        providerSessionId: options.binding.providerSessionId,
+        contentLength: options.content.length,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      this.emitTurnStateEvent({ sessionId: options.sessionId, state: "idle" });
+      this.logProviderSendMessageFailed(
+        options.sessionId,
+        options.binding,
+        error
+      );
+      this.handleProviderFailure(
+        options.binding.providerId,
+        error,
+        options.sessionId
+      );
     }
+  }
+
+  private traceDialogSendHandleMessageStage(options: {
+    readonly event: string;
+    readonly traceContext?: DialogSendHandleMessageTraceContext;
+    readonly session?: Session;
+    readonly targetSessionId?: string;
+    readonly providerId?: string;
+    readonly providerSessionId?: string | null;
+    readonly contentLength: number;
+    readonly payload?: unknown;
+    readonly error?: string;
+  }): void {
+    if (!options.traceContext) {
+      return;
+    }
+    const providerSessionId =
+      options.providerSessionId ?? options.session?.providerSessionId;
+    this.dialogSendTrace.record({
+      event: options.event,
+      outboundAttemptId: options.traceContext.outboundAttemptId,
+      requestId: options.traceContext.requestId,
+      workspaceSlug: options.traceContext.workspaceSlug,
+      dialogId: options.traceContext.dialogId,
+      providerId:
+        options.providerId ?? options.session?.providerId ?? "unknown",
+      providerSessionId: providerSessionId ?? undefined,
+      threadId: providerSessionId ?? undefined,
+      sessionId: options.session?.id ?? options.targetSessionId,
+      contentLength: options.contentLength,
+      payload: options.payload,
+      error: options.error,
+    });
   }
 
   async handleDelete(sessionId: string): Promise<void> {
