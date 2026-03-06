@@ -36,7 +36,7 @@
 ### Stream 2: Вернуть и сохранить промежуточные commentary messages
 1. [DONE] Восстановить обработку промежуточных `agent_message/commentary` для raw workflow turns, чтобы Codex message processor не схлопывал поток в один финальный ответ; suppress commentary оставлен только для явных structured turns, raw workflow commentary снова проходит в stream pipeline (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; actual commit: `fix(codex): surface workflow commentary messages`).
 2. [DONE] Git Commit: `fix(codex): surface workflow commentary messages` (hash: `be98fb1d`)
-3. [TODO] Проверить и при необходимости скорректировать сохранение intermediate commentary/thinking в unified dialog history JSONL, чтобы PM видел те же промежуточные сообщения после reopen/replay (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/unified-session/storage.ts`; expected commit: `fix(core): persist intermediate codex workflow commentary`).
+3. [DONE] Проверить и скорректировать сохранение intermediate commentary/thinking в unified dialog history JSONL: dialog history reader теперь явно сохраняет порядок промежуточных сообщений при одинаковом timestamp, а отдельный regression test подтверждает чтение `assistant/thinking` из JSONL и tail-cursor replay для PM dialog refresh (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/remote-bridge/handlers/dialog-history-service.test.ts`; actual commit: `fix(core): persist intermediate codex workflow commentary`).
 4. [TODO] Git Commit: `fix(core): persist intermediate codex workflow commentary` (hash: TBD)
 
 ### Stream 3: Уточнить prompt contract для обязательных progress updates
@@ -53,7 +53,7 @@
 
 ### Stream 5: Архитектурная синхронизация перед релизом
 1. [DONE] Синхронизировать SSOT после кода: обновить системные и модульные документы под raw workflow contract, opt-in structured output и обязательные commentary updates; в SSOT зафиксированы raw-by-default workflow, explicit `allowStructuredOutput`, commentary suppress только для structured turns и обязательные prompt commentary (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Commentary_Restore.md`; actual commit: `docs(codex): sync workflow commentary contract`).
-2. [TODO] Git Commit: `docs(codex): sync workflow commentary contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(codex): sync workflow commentary contract` (hash: `bcf08939`)
 
 ### Stream 6: Release build по инструкции
 1. [TODO] Перед релизом синхронизировать пользовательские документы под новый versioned behavior: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md` и связанные release notes, чтобы release собирался уже на актуальном описании поведения GPT-5.4 workflow commentary (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync workflow commentary restore notes`).
