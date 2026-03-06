@@ -35,12 +35,12 @@
 
 ### Stream 2: Вернуть и сохранить промежуточные commentary messages
 1. [DONE] Восстановить обработку промежуточных `agent_message/commentary` для raw workflow turns, чтобы Codex message processor не схлопывал поток в один финальный ответ; suppress commentary оставлен только для явных structured turns, raw workflow commentary снова проходит в stream pipeline (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; actual commit: `fix(codex): surface workflow commentary messages`).
-2. [TODO] Git Commit: `fix(codex): surface workflow commentary messages` (hash: TBD)
+2. [DONE] Git Commit: `fix(codex): surface workflow commentary messages` (hash: `be98fb1d`)
 3. [TODO] Проверить и при необходимости скорректировать сохранение intermediate commentary/thinking в unified dialog history JSONL, чтобы PM видел те же промежуточные сообщения после reopen/replay (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/unified-session/storage.ts`; expected commit: `fix(core): persist intermediate codex workflow commentary`).
 4. [TODO] Git Commit: `fix(core): persist intermediate codex workflow commentary` (hash: TBD)
 
 ### Stream 3: Уточнить prompt contract для обязательных progress updates
-1. [TODO] Обновить prompt Description Agent: полный документ не публикуется в чат, но progress commentary по ходу работы и после значимых правок файла обязателен (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; expected commit: `docs(prompts): require commentary in description workflow`).
+1. [DONE] Обновить prompt Description Agent: полный документ не публикуется в чат, но progress commentary по ходу работы и после значимых правок файла обязателен (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; actual commit: `docs(prompts): require commentary in description workflow`).
 2. [TODO] Git Commit: `docs(prompts): require commentary in description workflow` (hash: TBD)
 3. [TODO] Обновить prompt Virtual Simulation тем же контрактом: короткие рабочие комментарии обязательны, запрещён только dump полного артефакта в чат (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`; expected commit: `docs(prompts): require commentary in virtual simulation workflow`).
 4. [TODO] Git Commit: `docs(prompts): require commentary in virtual simulation workflow` (hash: TBD)
