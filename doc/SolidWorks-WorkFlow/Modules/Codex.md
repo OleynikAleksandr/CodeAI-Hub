@@ -20,7 +20,15 @@
 - UI история диалога ведётся отдельно (unified-session JSONL по `dialogId`), не смешивать с provider rollouts.
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 
+## Workflow turn contract
+- Workflow turns Project Manager для Codex по умолчанию идут в raw conversational mode.
+- `outputSchema` для workflow разрешён только по явному opt-in через Core turn-options contract; внутренний marker `allowStructuredOutput` не должен утекать в provider layer.
+- Raw workflow turns не должны получать implicit JSON-only prompt или неявный `--output-schema` в `codex exec`.
+- Промежуточные `agent_message/commentary` для raw workflow turns должны доходить до stream pipeline и unified dialog history; suppress commentary допустим только для explicit structured turns.
+- Bundled workflow prompts (`Description`, `Virtual Simulation`) обязаны требовать короткие progress commentary updates и запрещают только публикацию полного markdown-артефакта в чат.
+
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+- Workflow commentary restore: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Commentary_Restore.md`

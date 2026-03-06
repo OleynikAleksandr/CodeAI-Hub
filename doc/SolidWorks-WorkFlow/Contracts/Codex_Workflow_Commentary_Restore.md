@@ -48,6 +48,13 @@
 - Сравнить unified session JSONL: в диалоге PM должны сохраниться промежуточные реплики, как это было на `gpt-5.3-codex`.
 - Проверить, что explicit structured-output use cases, если они остаются, продолжают работать по opt-in и не ломают raw workflow turns.
 
+## Implementation status (2026-03-06)
+- Убран implicit structured-output default в Codex runtime: raw turn без `outputSchema` больше не получает JSON-only prompt и не переводится в schema-driven path.
+- `codex exec` получает `--output-schema` только для explicit structured turn; PM/Core workflow contract переведён в raw-by-default режим с opt-in marker `allowStructuredOutput`.
+- `agent_message/commentary` больше не подавляется для raw turns; suppress commentary остаётся только для explicit structured turns.
+- Workflow prompts `Description` и `Virtual Simulation` теперь явно требуют короткие progress commentary updates.
+- Core/PM regression coverage добавлена для opt-in boundary и dialog history replay; release/docs финализация остаются в следующих stream'ах Phase 290.
+
 ## Связанные документы
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`

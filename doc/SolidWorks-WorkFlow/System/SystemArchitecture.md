@@ -47,6 +47,8 @@
    - Канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
 5. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
    - Канон: provider docs в `doc/SolidWorks-WorkFlow/Modules/*`.
+6. **Workflow raw-turn contract**: PM workflow turns для Codex по умолчанию raw; structured output допустим только по явному opt-in, а промежуточные `assistant`/`thinking` сообщения должны сохраняться через dialog history JSONL и быть доступны после replay/reopen.
+   - Канон: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Commentary_Restore.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
@@ -81,6 +83,12 @@
 - `virtual-simulation-prompt.md` — инструкции Virtual Simulation Agent.
 
 Инвариант: `Virtual Simulation` работает в режиме prompt-only. Отдельный artifact template (`virtual-simulation-template.md`) в runtime не поставляется и не отправляется агенту.
+
+Workflow-коммуникация для Codex:
+- file-first сохраняется;
+- короткие progress commentary в чате обязательны;
+- запрет касается только полного markdown-дампа артефакта в чат;
+- raw workflow turns не должны получать implicit structured-output contract без явного opt-in.
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
