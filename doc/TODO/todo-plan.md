@@ -51,8 +51,8 @@
 4. [DONE] Git Commit: `test(trace): verify workflow submit diagnostics chain` (hash: `0650fafb`)
 
 ### Stream 5: Release build по инструкции
-1. [TODO] Перед релизом актуализировать документы под финальную версию: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `SystemArchitecture.md` и diagnostics contract; версия релиза должна быть отражена в документах до запуска сборки (scope: `README.md`, `CHANGELOG.md`, `doc/`; expected commit: `docs(release): sync workflow submit diagnostics notes`).
-2. [TODO] Git Commit: `docs(release): sync workflow submit diagnostics notes` (hash: TBD)
+1. [DONE] Перед релизом актуализировать документы под финальную версию: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `SystemArchitecture.md` и diagnostics contract; версия релиза отражена в `README.md`/`CHANGELOG.md`, а SSOT уточняет, что `v1.1.716` — первая release line с обязательным end-to-end diagnostics trail для workflow submit path (scope: `README.md`, `CHANGELOG.md`, `doc/`; actual commit: `docs(release): sync workflow submit diagnostics notes`).
+2. [DONE] Git Commit: `docs(release): sync workflow submit diagnostics notes` (hash: `54e17edb`)
 3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` без флагов; если сборка падает, исправления вносить и повторно запускать только этот скрипт (scope: release pipeline, all packages; expected commit: `chore(release): build-all v1.1.716 workflow submit diagnostics`).
 4. [TODO] Git Commit: `chore(release): build-all v1.1.716 workflow submit diagnostics` (hash: TBD)
 5. [TODO] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version` без флагов; проверить строки `Verifying SDK exclusions`, `Removing dev dependencies before packaging...`, `✅ Package created` и зафиксировать артефакты релиза (scope: release pipeline, VSIX packaging; expected commit: `chore(release): build-release v1.1.716 workflow submit diagnostics`).
