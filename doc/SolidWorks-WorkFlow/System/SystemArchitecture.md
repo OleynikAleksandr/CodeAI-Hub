@@ -54,6 +54,8 @@
 7. **Outbound user-turn delivery contract**: workflow submit не считается доставленным до provider ACK; `thread.started` недостаточен, pending/failed outbound submit хранятся отдельно от dialog history и должны поддерживать безопасный resend без повторного набора текста.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_UserTurn_Delivery.md`.
 8. **Workflow submit diagnostics contract**: для каждого user submit должен существовать сквозной `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, а Codex transport trace — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
+   - PM lifecycle trace обязан покрывать `pm.dialog_send.clicked`, `pm.dialog_send.ws_dispatched`, `pm.dialog_send.ack_received`, `pm.dialog_send.history_refresh_requested`, `pm.dialog_send.history_refresh_result`.
+   - Codex transport trace обязан покрывать не только processor breadcrumbs, но и child-process boundaries `outbound.child.spawned/stdin_write_started/stdin_write_finished/stdout_first_line/exit/killed`.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`.
 
 ## 4) Где искать правду в коде (high-signal)

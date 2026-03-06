@@ -95,6 +95,11 @@ PM генерирует события, но запись на диск выпо
 - `pm.dialog_send.history_refresh_requested`
 - `pm.dialog_send.history_refresh_result`
 
+Текущая реализация:
+- PM не пишет отдельный browser-side файл; lifecycle trace уходит в Core через служебное bridge message `dialog:trace`.
+- `clicked` генерируется в PM в момент подготовки `dialog:send`, `ws_dispatched` — только в момент реальной отправки websocket payload в Core.
+- `ack_received/history_refresh_requested/history_refresh_result` коррелируются в PM через in-memory attempt registry по `requestId` + `outboundAttemptId`, чтобы один submit читался как единая цепочка даже при отложенном history refresh.
+
 ### Core bridge / routing layer
 Пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`:
 - `core.dialog_send.received`
@@ -128,6 +133,11 @@ PM генерирует события, но запись на диск выпо
 - `outbound.idle_timeout`
 - `outbound.child.exit`
 - `outbound.child.killed`
+
+Текущая реализация:
+- Core вкладывает codex-only internal correlation key в provider turn options и снимает его в `CodexProviderAdapter` до передачи в SDK `runOptions`, так что `outboundAttemptId` доходит до transport trace, но не утекает в provider CLI contract.
+- `CodexMessageProcessor` пишет correlation в `processor.enqueue/dequeue/turn.begin/run_streamed.begin/first_event`.
+- Patched `codex exec` использует внутренний transport trace callback и пишет `child.spawned/stdin_write_started/stdin_write_finished/stdout_first_line/child.exit/child.killed`, включая ранний abort path.
 
 ## Диагностические verdict rules
 Минимальный контракт интерпретации:

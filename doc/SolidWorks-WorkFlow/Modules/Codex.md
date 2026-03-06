@@ -28,6 +28,10 @@
 - Bundled workflow prompts (`Description`, `Virtual Simulation`) обязаны требовать короткие progress commentary updates и запрещают только публикацию полного markdown-артефакта в чат.
 - Для user submit в workflow `thread.started` не считается provider ACK; delivered user message попадает в unified dialog history только после подтверждения provider-side turn, а pending/failed outbound submit должны поддерживать явный resend без повторного набора текста.
 - Для диагностики stalled submit каждый outbound user turn должен иметь `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, transport trace Codex — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
+- Транспортная диагностика Codex обязана покрывать два слоя:
+  - processor breadcrumbs: `processor.enqueue`, `processor.dequeue`, `processor.turn.begin`, `processor.run_streamed.begin`, `processor.first_event`;
+  - child-process boundaries: `outbound.child.spawned`, `outbound.child.stdin_write_started`, `outbound.child.stdin_write_finished`, `outbound.child.stdout_first_line`, `outbound.child.exit`, `outbound.child.killed`.
+- PM lifecycle trace (`pm.dialog_send.clicked/ws_dispatched/ack_received/history_refresh_requested/history_refresh_result`) должен писаться не в browser storage, а в тот же Core JSONL через bridge message `dialog:trace`.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

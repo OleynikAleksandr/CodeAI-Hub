@@ -41,7 +41,7 @@
 - `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — session-home isolation + resume-first recovery contract.
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
 - `Contracts/Codex_Workflow_UserTurn_Delivery.md` — delivery/ACK/reconciliation/resend contract для workflow submit в Codex.
-- `Contracts/Codex_Workflow_Submit_Diagnostics.md` — сквозной trace contract для PM/Core/Codex submit path и точных логов диагностики.
+- `Contracts/Codex_Workflow_Submit_Diagnostics.md` — сквозной trace contract для PM/Core/Codex submit path, `pm.dialog_send.*`, `outbound.child.*` и SSOT-логов `~/.codeai-hub/logs/core/dialog-send-trace.jsonl` + `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Contracts (legacy/deferred)
