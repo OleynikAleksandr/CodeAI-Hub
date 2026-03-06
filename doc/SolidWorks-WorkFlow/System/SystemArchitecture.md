@@ -56,6 +56,7 @@
 8. **Workflow submit diagnostics contract**: для каждого user submit должен существовать сквозной `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, а Codex transport trace — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
    - PM lifecycle trace обязан покрывать `pm.dialog_send.clicked`, `pm.dialog_send.ws_dispatched`, `pm.dialog_send.ack_received`, `pm.dialog_send.history_refresh_requested`, `pm.dialog_send.history_refresh_result`.
    - Codex transport trace обязан покрывать не только processor breadcrumbs, но и child-process boundaries `outbound.child.spawned/stdin_write_started/stdin_write_finished/stdout_first_line/exit/killed`.
+   - Release line `v1.1.716` является первой, где этот diagnostic trail обязателен end-to-end для workflow submit path в PM/Core/Codex.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`.
 
 ## 4) Где искать правду в коде (high-signal)

@@ -2,10 +2,15 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
-## [1.1.714] - 2026-03-05
-### Fixed
-- Codex runtime: persisted `~/.codeai-hub/settings/settings.json` now wins over stale `CODEX_DEFAULT_MODEL` inherited by a long-lived Core process, so new provider sessions no longer start as `gpt-5.3-codex` after the user has switched Settings to `gpt-5.4`.
-- Codex compatibility: legacy env `CODEX_DEFAULT_MODEL=gpt-5.2` is normalized through the same `gpt-5.4` migration path as Settings snapshots.
+## [1.1.716] - 2026-03-06
+### Added
+- Workflow submit diagnostics: every Project Manager workflow submit now gets an `outboundAttemptId` that is correlated end-to-end across PM, Core bridge, Core session handler, and Codex transport trace.
+- Core diagnostics log: `~/.codeai-hub/logs/core/dialog-send-trace.jsonl` now records PM lifecycle events (`pm.dialog_send.clicked/ws_dispatched/ack_received/history_refresh_requested/history_refresh_result`) together with Core routing and adapter-delivery stages.
+- Codex transport diagnostics: session-scoped `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl` now includes child-process boundaries `outbound.child.spawned/stdin_write_started/stdin_write_finished/stdout_first_line/exit/killed`.
+
+### Changed
+- Project Manager bridge: PM send lifecycle trace is forwarded through service message `dialog:trace`, so browser-side diagnostics stay fileless while Core remains the single JSONL sink.
+- SSOT/docs/tests: synchronized the diagnostics contract, System Architecture, Codex module docs, and regression coverage around one-attempt correlation from click to history refresh.
 
 ## [1.1.715] - 2026-03-06
 ### Fixed
@@ -17,6 +22,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 ### Changed
 - Workflow prompts: `Description` and `Virtual Simulation` now explicitly require short progress commentary updates while still forbidding publication of the full markdown artifact in chat.
 - Tests: added regression coverage for workflow raw-turn opt-in boundaries, dialog history replay of `assistant/thinking`, and PM dialog refresh via `dialog:history`.
+
+## [1.1.714] - 2026-03-05
+### Fixed
+- Codex runtime: persisted `~/.codeai-hub/settings/settings.json` now wins over stale `CODEX_DEFAULT_MODEL` inherited by a long-lived Core process, so new provider sessions no longer start as `gpt-5.3-codex` after the user has switched Settings to `gpt-5.4`.
+- Codex compatibility: legacy env `CODEX_DEFAULT_MODEL=gpt-5.2` is normalized through the same `gpt-5.4` migration path as Settings snapshots.
 
 ## [1.1.713] - 2026-03-05
 ### Changed
