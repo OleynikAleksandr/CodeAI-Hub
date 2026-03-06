@@ -60,6 +60,7 @@
 - `e1079c2b docs(plan): sync phase 292 build-all progress`
 - `1c742da2 fix(pm): narrow dialog trace incoming payload types`
 - `8933c383 chore(release): build-release v1.1.716 workflow submit diagnostics`
+- `40c7f0d1 docs(session): record workflow submit diagnostics release`
 
 ---
 
