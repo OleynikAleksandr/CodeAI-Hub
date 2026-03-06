@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import type { SessionMessage } from "../../../../types/session";
 
 const CONTROLLER_SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -12,10 +13,29 @@ const CORE_EVENTS_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts"
 );
+const DIALOG_HELPERS_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts"
+);
 const RUNTIME_RESOLVER_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/dialog-runtime-session-resolver.ts"
 );
+
+type ConvertHistoryToMessages =
+  typeof import("./project-manager-dialog-session-view-helpers")["convertHistoryToMessages"];
+
+let convertHistoryToMessagesLoader: Promise<ConvertHistoryToMessages> | null =
+  null;
+const loadConvertHistoryToMessages =
+  async (): Promise<ConvertHistoryToMessages> => {
+    if (!convertHistoryToMessagesLoader) {
+      convertHistoryToMessagesLoader = import(
+        "./project-manager-dialog-session-view-helpers"
+      ).then((module) => module.convertHistoryToMessages);
+    }
+    return convertHistoryToMessagesLoader;
+  };
 
 test("dialog session controller caches workspace snapshots for replay", async () => {
   const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
@@ -87,6 +107,55 @@ test("dialog core events ensure resumed dialogs have a runtime session for snaps
     source.includes("!runtimeSession.hasRuntimeSession"),
     true,
     "dialog open should request runtime resume when snapshot lacks runtime session"
+  );
+});
+
+test("dialog history helpers preserve assistant and thinking records for replay", async () => {
+  const convertHistoryToMessages = await loadConvertHistoryToMessages();
+  const messages = convertHistoryToMessages([
+    {
+      messageId: "assistant-1",
+      role: "assistant",
+      content: "progress update",
+      timestamp: "2026-03-06T09:00:00.000Z",
+    },
+    {
+      messageId: "thinking-1",
+      role: "thinking",
+      content: "internal reasoning summary",
+      timestamp: "2026-03-06T09:00:01.000Z",
+    },
+  ]);
+
+  assert.deepEqual(
+    messages.map((message: SessionMessage) => message.role),
+    ["assistant", "thinking"],
+    "dialog history replay must preserve assistant and thinking roles from JSONL"
+  );
+});
+
+test("dialog core events refresh dialog history after live dialog message", async () => {
+  const [coreEventsSource, helpersSource] = await Promise.all([
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+    readFile(DIALOG_HELPERS_SOURCE_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    coreEventsSource.includes('if (message.type === "dialog:message") {'),
+    true,
+    "dialog core events must listen to live dialog message notifications"
+  );
+  assert.equal(
+    coreEventsSource.includes(
+      "options.requestDialogHistory(intent, incomingDialogId, cursor, { force: cursor <= 0 });"
+    ),
+    true,
+    "live dialog message must trigger history refresh from JSONL instead of relying on runtime session messages"
+  );
+  assert.equal(
+    helpersSource.includes('role !== "thinking"'),
+    true,
+    "dialog history sanitizer must continue accepting thinking role"
   );
 });
 

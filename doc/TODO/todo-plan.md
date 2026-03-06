@@ -47,8 +47,8 @@
 
 ### Stream 4: Таргетная валидация и regression coverage
 1. [DONE] Добавить таргетную проверку Core bridge на opt-in structured-output boundary для workflow turns, чтобы дефолтный raw path больше не регрессировал; test подтверждает strip schema по умолчанию и сохранение schema только через `allowStructuredOutput` без утечки marker-а в provider layer (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; actual commit: `test(core): cover raw workflow turn options`).
-2. [TODO] Git Commit: `test(core): cover raw workflow turn options` (hash: TBD)
-3. [TODO] Добавить PM/session regression coverage: промежуточные commentary из workflow turn должны оставаться в dialog stream и после snapshot replay/open history (scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `test(pm): cover workflow commentary replay`).
+2. [DONE] Git Commit: `test(core): cover raw workflow turn options` (hash: `02c6988d`)
+3. [DONE] Добавить PM/session regression coverage: промежуточные commentary из workflow turn должны оставаться в dialog stream и после snapshot replay/open history; compact replay-suite теперь проверяет сохранение ролей `assistant/thinking` и refresh через `dialog:history` на live `dialog:message` (scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; actual commit: `test(pm): cover workflow commentary replay`).
 4. [TODO] Git Commit: `test(pm): cover workflow commentary replay` (hash: TBD)
 
 ### Stream 5: Архитектурная синхронизация перед релизом
