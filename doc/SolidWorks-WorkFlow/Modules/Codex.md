@@ -26,9 +26,13 @@
 - Raw workflow turns не должны получать implicit JSON-only prompt или неявный `--output-schema` в `codex exec`.
 - Промежуточные `agent_message/commentary` для raw workflow turns должны доходить до stream pipeline и unified dialog history; suppress commentary допустим только для explicit structured turns.
 - Bundled workflow prompts (`Description`, `Virtual Simulation`) обязаны требовать короткие progress commentary updates и запрещают только публикацию полного markdown-артефакта в чат.
+- Для user submit в workflow `thread.started` не считается provider ACK; delivered user message попадает в unified dialog history только после подтверждения provider-side turn, а pending/failed outbound submit должны поддерживать явный resend без повторного набора текста.
+- Для диагностики stalled submit каждый outbound user turn должен иметь `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, transport trace Codex — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - Workflow commentary restore: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Commentary_Restore.md`
+- Workflow user-turn delivery: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_UserTurn_Delivery.md`
+- Workflow submit diagnostics: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
