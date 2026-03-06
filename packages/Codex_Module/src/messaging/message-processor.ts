@@ -77,9 +77,6 @@ const resolveThreadItemPhase = (item: ThreadItem): string | null => {
   return typeof candidate.phase === "string" ? candidate.phase : null;
 };
 
-const shouldSuppressAgentMessageItem = (item: ThreadItem): boolean =>
-  resolveThreadItemPhase(item) === "commentary";
-
 const areUsageLimitBucketsEqual = (
   left: CodexUsageLimitBucket | null,
   right: CodexUsageLimitBucket | null
@@ -119,6 +116,10 @@ export class CodexMessageProcessor {
   private readonly userTurnLifecycle = new WeakMap<
     ActiveSession,
     TurnLifecycleState
+  >();
+  private readonly structuredOutputTurns = new WeakMap<
+    ActiveSession,
+    boolean
   >();
 
   private async raceWithTimeout<T>(payload: {
@@ -337,6 +338,7 @@ export class CodexMessageProcessor {
       this.userTurnLifecycle.set(session, { started: false, ended: false });
     }
     const turnStartedAt = Date.now();
+    this.structuredOutputTurns.set(session, false);
     session.logger?.logSDKEvent("processor.turn.begin", {
       sessionId: session.sessionId,
       threadId: session.codexThreadId,
@@ -350,6 +352,10 @@ export class CodexMessageProcessor {
       const runOptions = session.internalTurn
         ? turnOptions
         : this.structuredOutput.applyOutputSchema(turnOptions);
+      this.structuredOutputTurns.set(
+        session,
+        Boolean(!session.internalTurn && runOptions.outputSchema)
+      );
       let prompt = message.content;
       if (!session.internalTurn) {
         const config = this.structuredOutput.prepareTurn(
@@ -695,6 +701,7 @@ export class CodexMessageProcessor {
     this.maybeEmitTurnCompleted(session, event.usage, usageLimits);
     this.refreshTokenUsage(session);
     this.structuredOutput.clear(session.sessionId);
+    this.structuredOutputTurns.delete(session);
     this.clearReasoningSession(session.sessionId);
 
     session.logger?.logSDKEvent("processor.turn.completed.done", {
@@ -919,6 +926,7 @@ export class CodexMessageProcessor {
   ): void {
     this.maybeEmitTurnFailed(session, event.error);
     this.structuredOutput.clear(session.sessionId);
+    this.structuredOutputTurns.delete(session);
     this.clearReasoningSession(session.sessionId);
   }
 
@@ -935,6 +943,7 @@ export class CodexMessageProcessor {
       timestamp: new Date().toISOString(),
     });
     this.structuredOutput.clear(session.sessionId);
+    this.structuredOutputTurns.delete(session);
     this.clearReasoningSession(session.sessionId);
   }
 
@@ -992,10 +1001,7 @@ export class CodexMessageProcessor {
     if (!isAgentMessageItem(item)) {
       return;
     }
-    // Codex emits an assistant message twice: once as a "commentary" phase and
-    // again as "final_answer". Commentary is internal and should not appear in
-    // the UI dialog history to avoid duplicates.
-    if (shouldSuppressAgentMessageItem(item)) {
+    if (this.shouldSuppressAgentMessageItem(session, item)) {
       return;
     }
     if (event.type === "item.updated") {
@@ -1133,6 +1139,16 @@ export class CodexMessageProcessor {
       return;
     }
     session.eventEmitter.emit("message", payload);
+  }
+
+  private shouldSuppressAgentMessageItem(
+    session: ActiveSession,
+    item: ThreadItem
+  ): boolean {
+    return (
+      this.structuredOutputTurns.get(session) === true &&
+      resolveThreadItemPhase(item) === "commentary"
+    );
   }
 
   private emitDialogMessage(
