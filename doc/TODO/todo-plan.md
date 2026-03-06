@@ -41,8 +41,8 @@
 
 ### Stream 3: Уточнить prompt contract для обязательных progress updates
 1. [DONE] Обновить prompt Description Agent: полный документ не публикуется в чат, но progress commentary по ходу работы и после значимых правок файла обязателен (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; actual commit: `docs(prompts): require commentary in description workflow`).
-2. [TODO] Git Commit: `docs(prompts): require commentary in description workflow` (hash: TBD)
-3. [TODO] Обновить prompt Virtual Simulation тем же контрактом: короткие рабочие комментарии обязательны, запрещён только dump полного артефакта в чат (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`; expected commit: `docs(prompts): require commentary in virtual simulation workflow`).
+2. [DONE] Git Commit: `docs(prompts): require commentary in description workflow` (hash: `3484ecfd`)
+3. [DONE] Обновить prompt Virtual Simulation тем же контрактом: короткие рабочие комментарии обязательны, запрещён только dump полного артефакта в чат (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`; actual commit: `docs(prompts): require commentary in virtual simulation workflow`).
 4. [TODO] Git Commit: `docs(prompts): require commentary in virtual simulation workflow` (hash: TBD)
 
 ### Stream 4: Таргетная валидация и regression coverage
