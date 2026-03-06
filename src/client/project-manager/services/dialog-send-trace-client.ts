@@ -39,12 +39,28 @@ type DialogHistoryMessage = Extract<
   OutgoingMessage,
   { readonly type: "dialog:history" }
 >;
+type DialogSendAckMessage = Extract<
+  IncomingMessage,
+  { readonly type: "dialog:send:ack" }
+>;
+type DialogHistoryResultMessage = Extract<
+  IncomingMessage,
+  { readonly type: "dialog:history:result" }
+>;
 
 const readOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0 ? value : undefined;
 
 const readOptionalNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
+
+const isDialogSendAckMessage = (
+  message: IncomingMessage
+): message is DialogSendAckMessage => message.type === "dialog:send:ack";
+
+const isDialogHistoryResultMessage = (
+  message: IncomingMessage
+): message is DialogHistoryResultMessage => message.type === "dialog:history:result";
 
 export class DialogSendTraceClient {
   private readonly attemptsByRequestId = new Map<string, DialogSendAttempt>();
@@ -102,11 +118,11 @@ export class DialogSendTraceClient {
   }
 
   handleIncomingMessage(message: IncomingMessage): void {
-    if (message.type === "dialog:send:ack") {
+    if (isDialogSendAckMessage(message)) {
       this.handleDialogSendAck(message.payload);
       return;
     }
-    if (message.type === "dialog:history:result") {
+    if (isDialogHistoryResultMessage(message)) {
       this.handleDialogHistoryResult(message.payload);
     }
   }
