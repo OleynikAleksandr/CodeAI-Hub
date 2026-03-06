@@ -10,6 +10,7 @@ import type {
   TurnCompletedEvent,
   TurnFailedEvent,
 } from "@openai/codex-sdk";
+import { INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY } from "../sdk/codex-sdk-patches";
 import { CodexUsageLimitsReader } from "../sdk/codex-usage-limits-reader";
 import type {
   CodexUsageLimitBucket,
@@ -104,6 +105,35 @@ const withOutboundAttemptId = <TPayload extends Record<string, unknown>>(
   outboundAttemptId?: string
 ): TPayload & { readonly outboundAttemptId?: string } =>
   outboundAttemptId ? { ...payload, outboundAttemptId } : payload;
+
+const attachTransportTraceContext = (options: {
+  readonly runOptions: CodexTurnOptions;
+  readonly session: ActiveSession;
+  readonly outboundAttemptId?: string;
+}): CodexTurnOptions => {
+  const tracedRunOptions = {
+    ...options.runOptions,
+    [INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY]: {
+      logEvent: (scope: string, payload: Record<string, unknown>) => {
+        options.session.logger?.logSDKEvent(
+          scope,
+          withOutboundAttemptId(
+            {
+              sessionId: options.session.sessionId,
+              threadId: options.session.codexThreadId,
+              internal: options.session.internalTurn ?? false,
+              ...payload,
+              timestampIso: new Date().toISOString(),
+            },
+            options.outboundAttemptId
+          )
+        );
+      },
+    },
+  } as CodexTurnOptions & Record<string, unknown>;
+
+  return tracedRunOptions;
+};
 
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
@@ -435,7 +465,14 @@ export class CodexMessageProcessor {
           message.outboundAttemptId
         )
       );
-      const { events } = await thread.runStreamed(prompt, runOptions);
+      const { events } = await thread.runStreamed(
+        prompt,
+        attachTransportTraceContext({
+          runOptions,
+          session,
+          outboundAttemptId: message.outboundAttemptId,
+        })
+      );
       session.logger?.logSDKEvent("processor.run_streamed.ready", {
         sessionId: session.sessionId,
         threadId: session.codexThreadId,
