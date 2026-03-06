@@ -22,8 +22,8 @@
 
 ### Stream 0: PM/Core correlation id
 1. [DONE] Ввести `outboundAttemptId` в PM `dialog:send` path и протащить его через bridge message types, чтобы у каждой отправки был единый correlation key с самого клика `Send`; `dialog:send` payload теперь содержит отдельный `outboundAttemptId`, сгенерированный в PM до отправки в Core bridge (scope: `src/client/project-manager/services/dialog-api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `packages/core/src/remote-bridge/types.ts`; actual commit: `feat(trace): add outbound attempt id to dialog send contract`).
-2. [TODO] Git Commit: `feat(trace): add outbound attempt id to dialog send contract` (hash: TBD)
-3. [TODO] Добавить Core bridge trace для событий `received/scope_resolved/chain_resolved/session_resolved/ack`, чтобы путь PM -> Core больше не был "чёрным ящиком" (scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/telemetry/`; expected commit: `feat(core): add dialog send trace log`).
+2. [DONE] Git Commit: `feat(trace): add outbound attempt id to dialog send contract` (hash: `82682d06`)
+3. [DONE] Добавить Core bridge trace для событий `received/scope_resolved/chain_resolved/session_resolved/ack`, чтобы путь PM -> Core больше не был "чёрным ящиком"; новый file-backed trace пишет JSONL в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, а `RemoteBridge` и `SessionRequestHandler` фиксируют ключевые этапы разрешения submit до `ack` (scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/telemetry/`; actual commit: `feat(core): add dialog send trace log`).
 4. [TODO] Git Commit: `feat(core): add dialog send trace log` (hash: TBD)
 
 ### Stream 1: Core handler trace

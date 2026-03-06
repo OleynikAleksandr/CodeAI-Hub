@@ -27,6 +27,7 @@ import type {
   SessionManager,
   SessionMessage,
 } from "../../session-manager";
+import type { DialogSendTraceLogger } from "../../telemetry/dialog-send-trace-logger";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { DescriptionStepStore } from "../../workflow/description";
@@ -417,6 +418,7 @@ export type SessionRequestHandlerOptions = {
   readonly providerRegistry: ProviderRegistry;
   readonly sessionStorage: UnifiedSessionStorage;
   readonly logger: Logger;
+  readonly dialogSendTrace: DialogSendTraceLogger;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly stateBroadcaster: () => void;
   readonly continuityClock?: () => string;
@@ -432,6 +434,7 @@ export class SessionRequestHandler {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionStorage: UnifiedSessionStorage;
   private readonly logger: Logger;
+  private readonly dialogSendTrace: DialogSendTraceLogger;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
@@ -1108,6 +1111,7 @@ export class SessionRequestHandler {
     this.providerRegistry = options.providerRegistry;
     this.sessionStorage = options.sessionStorage;
     this.logger = options.logger;
+    this.dialogSendTrace = options.dialogSendTrace;
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
     this.workspaceRuntime = options.workspaceRuntime;
@@ -2056,8 +2060,22 @@ export class SessionRequestHandler {
     readonly workspaceSlug: string;
     readonly dialogId: string;
     readonly content: string;
+    readonly requestId: string;
+    readonly outboundAttemptId: string;
   }): Promise<
-    { readonly ok: true } | { readonly ok: false; readonly error: string }
+    | {
+        readonly ok: true;
+        readonly providerId: string;
+        readonly providerSessionId: string | null;
+        readonly sessionId: string;
+      }
+    | {
+        readonly ok: false;
+        readonly error: string;
+        readonly providerId?: string;
+        readonly providerSessionId?: string | null;
+        readonly sessionId?: string;
+      }
   > {
     const chains = await SessionContinuityFacade.readWorkspaceChains({
       workspaceRoot: options.workspaceRoot,
@@ -2068,12 +2086,50 @@ export class SessionRequestHandler {
         (candidate.dialogId ?? candidate.rootSessionId) === options.dialogId
     );
     if (!chain) {
+      this.dialogSendTrace.record({
+        event: "core.dialog_send.chain_resolved",
+        outboundAttemptId: options.outboundAttemptId,
+        requestId: options.requestId,
+        workspaceSlug: options.workspaceSlug,
+        dialogId: options.dialogId,
+        providerId: "unknown",
+        contentLength: options.content.length,
+        error: "Dialog chain not found",
+        payload: { resolved: false },
+      });
       return { ok: false, error: "Dialog chain not found" };
     }
     const last = chain.segments.at(-1) ?? null;
     if (!last) {
+      this.dialogSendTrace.record({
+        event: "core.dialog_send.chain_resolved",
+        outboundAttemptId: options.outboundAttemptId,
+        requestId: options.requestId,
+        workspaceSlug: options.workspaceSlug,
+        dialogId: options.dialogId,
+        providerId: "unknown",
+        contentLength: options.content.length,
+        error: "Dialog has no segments",
+        payload: { resolved: false, stage: chain.stage },
+      });
       return { ok: false, error: "Dialog has no segments" };
     }
+    this.dialogSendTrace.record({
+      event: "core.dialog_send.chain_resolved",
+      outboundAttemptId: options.outboundAttemptId,
+      requestId: options.requestId,
+      workspaceSlug: options.workspaceSlug,
+      dialogId: options.dialogId,
+      providerId: last.providerId,
+      providerSessionId: last.providerSessionId,
+      threadId: last.providerSessionId,
+      contentLength: options.content.length,
+      payload: {
+        resolved: true,
+        stage: chain.stage,
+        segmentCount: chain.segments.length,
+      },
+    });
 
     const existingSession = this.sessionManager
       .getSessionsByWorkspacePath(options.workspaceRoot)
@@ -2085,6 +2141,19 @@ export class SessionRequestHandler {
 
     const adapter = this.providerRegistry.getAdapter(last.providerId);
     if (!adapter) {
+      this.dialogSendTrace.record({
+        event: "core.dialog_send.session_resolved",
+        outboundAttemptId: options.outboundAttemptId,
+        requestId: options.requestId,
+        workspaceSlug: options.workspaceSlug,
+        dialogId: options.dialogId,
+        providerId: last.providerId,
+        providerSessionId: last.providerSessionId,
+        threadId: last.providerSessionId,
+        contentLength: options.content.length,
+        error: `Provider ${last.providerId} unavailable`,
+        payload: { resolved: false, providerAvailable: false },
+      });
       return { ok: false, error: `Provider ${last.providerId} unavailable` };
     }
 
@@ -2104,11 +2173,45 @@ export class SessionRequestHandler {
       }));
 
     if (!resolvedSession) {
+      this.dialogSendTrace.record({
+        event: "core.dialog_send.session_resolved",
+        outboundAttemptId: options.outboundAttemptId,
+        requestId: options.requestId,
+        workspaceSlug: options.workspaceSlug,
+        dialogId: options.dialogId,
+        providerId: last.providerId,
+        providerSessionId: last.providerSessionId,
+        threadId: last.providerSessionId,
+        contentLength: options.content.length,
+        error: "Failed to resume dialog session",
+        payload: { resolved: false, providerAvailable: true },
+      });
       return { ok: false, error: "Failed to resume dialog session" };
     }
+    this.dialogSendTrace.record({
+      event: "core.dialog_send.session_resolved",
+      outboundAttemptId: options.outboundAttemptId,
+      requestId: options.requestId,
+      workspaceSlug: options.workspaceSlug,
+      dialogId: options.dialogId,
+      providerId: resolvedSession.providerId,
+      providerSessionId: resolvedSession.providerSessionId,
+      threadId: resolvedSession.providerSessionId,
+      sessionId: resolvedSession.id,
+      contentLength: options.content.length,
+      payload: {
+        resolved: true,
+        reusedExistingSession: Boolean(existingSession),
+      },
+    });
 
     await this.handleMessage(resolvedSession.id, options.content);
-    return { ok: true };
+    return {
+      ok: true,
+      providerId: resolvedSession.providerId,
+      providerSessionId: resolvedSession.providerSessionId ?? null,
+      sessionId: resolvedSession.id,
+    };
   }
 
   private inferRunSlugFromDialogId(dialogId: string): string | null {
