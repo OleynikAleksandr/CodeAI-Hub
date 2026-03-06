@@ -2,18 +2,6 @@ import { createHash } from "node:crypto";
 import type { CodexTurnOptions } from "../types";
 import { AnswerJsonStreamExtractor } from "./answer-json-stream-extractor";
 
-const CODEX_OUTPUT_SCHEMA = {
-  type: "object",
-  additionalProperties: false,
-  properties: {
-    answer: {
-      type: "string",
-      description: "Final answer for the user. Markdown allowed.",
-    },
-  },
-  required: ["answer"],
-} as const;
-
 const STRUCTURED_OUTPUT_PROMPT = [
   "You must respond with a JSON object that matches the provided schema.",
   "Populate the field:",
@@ -23,7 +11,7 @@ const STRUCTURED_OUTPUT_PROMPT = [
   "User request:",
 ].join("\n");
 
-type StructuredOutputMode = "default" | "idea_collector";
+type StructuredOutputMode = "raw" | "default" | "idea_collector";
 type StructuredOutputTurnConfig = {
   readonly mode: StructuredOutputMode;
   readonly fieldKey: "answer" | "suggested_response";
@@ -47,7 +35,7 @@ type StructuredOutputParseOptions = {
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
 type AnswerStreamState = {
-  extractor: AnswerJsonStreamExtractor;
+  extractor: AnswerJsonStreamExtractor | null;
   itemId: string | null;
   assistantText: string;
   mode: StructuredOutputMode;
@@ -65,6 +53,11 @@ const DEFAULT_TURN_CONFIG: StructuredOutputTurnConfig = {
   fieldKey: "answer",
   applyPrompt: true,
 };
+const RAW_TURN_CONFIG: StructuredOutputTurnConfig = {
+  mode: "raw",
+  fieldKey: "answer",
+  applyPrompt: false,
+};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -73,6 +66,9 @@ const resolveTurnConfig = (
   turnOptions: CodexTurnOptions
 ): StructuredOutputTurnConfig => {
   const schema = turnOptions.outputSchema;
+  if (!schema) {
+    return RAW_TURN_CONFIG;
+  }
   const allowedArtifactSlots = resolveAllowedArtifactSlots(schema);
   if (
     isRecord(schema) &&
@@ -153,16 +149,16 @@ export class StructuredOutputStreamController {
   }
 
   applyOutputSchema(turnOptions: CodexTurnOptions): CodexTurnOptions {
-    if (turnOptions.outputSchema) {
-      return turnOptions;
-    }
-    return { ...turnOptions, outputSchema: CODEX_OUTPUT_SCHEMA };
+    return turnOptions;
   }
 
   startTurn(sessionId: string): void {
-    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
+    const config = this.turnConfigs.get(sessionId) ?? RAW_TURN_CONFIG;
     this.streams.set(sessionId, {
-      extractor: new AnswerJsonStreamExtractor(config.fieldKey),
+      extractor:
+        config.mode === "raw"
+          ? null
+          : new AnswerJsonStreamExtractor(config.fieldKey),
       itemId: null,
       assistantText: "",
       mode: config.mode,
@@ -171,7 +167,10 @@ export class StructuredOutputStreamController {
 
   appendChunk(sessionId: string, itemId: string, text: string): string | null {
     const state = this.ensureState(sessionId, itemId);
-    const delta = state.extractor.append(text);
+    if (state.mode === "raw") {
+      return appendRawDelta(state, text);
+    }
+    const delta = state.extractor?.append(text);
     if (delta) {
       state.assistantText += delta;
     }
@@ -184,34 +183,13 @@ export class StructuredOutputStreamController {
     text: string
   ): StructuredOutputResult {
     const state = this.ensureState(sessionId, itemId);
-    const streamDelta = state.extractor.append(text) ?? null;
-    if (streamDelta) {
-      state.assistantText += streamDelta;
-    }
-    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
-    const parsed = parseStructuredOutput(text, state.mode, {
-      allowedArtifactSlots: config.allowedArtifactSlots,
-    });
-    let assistantText =
-      state.assistantText.trim().length > 0
-        ? state.assistantText
-        : parsed.assistantText;
-    if (state.mode === "idea_collector" && parsed.assistantText?.trim()) {
-      assistantText = parsed.assistantText;
-    }
-    this.streams.delete(sessionId);
-    this.turnConfigs.delete(sessionId);
-    const trimmedText = text.trim();
-    return {
-      streamDelta: streamDelta ?? undefined,
-      assistantText: assistantText ?? undefined,
-      nextAction: parsed.nextAction ?? undefined,
-      artifact: parsed.artifact ?? undefined,
-      artifacts: parsed.artifacts ?? undefined,
-      outputHash: trimmedText.length
-        ? createHash("sha256").update(trimmedText).digest("hex")
-        : undefined,
-    };
+    const config = this.turnConfigs.get(sessionId) ?? RAW_TURN_CONFIG;
+    const result =
+      state.mode === "raw"
+        ? completeRawTurn(state, text)
+        : completeStructuredTurn(state, text, config);
+    this.clear(sessionId);
+    return result;
   }
 
   clear(sessionId: string): void {
@@ -221,10 +199,13 @@ export class StructuredOutputStreamController {
 
   private ensureState(sessionId: string, itemId: string): AnswerStreamState {
     const existing = this.streams.get(sessionId);
-    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
+    const config = this.turnConfigs.get(sessionId) ?? RAW_TURN_CONFIG;
     if (!existing || (existing.itemId && existing.itemId !== itemId)) {
       const fresh = {
-        extractor: new AnswerJsonStreamExtractor(config.fieldKey),
+        extractor:
+          config.mode === "raw"
+            ? null
+            : new AnswerJsonStreamExtractor(config.fieldKey),
         itemId,
         assistantText: "",
         mode: config.mode,
@@ -238,6 +219,79 @@ export class StructuredOutputStreamController {
     return existing;
   }
 }
+
+const appendRawDelta = (
+  state: AnswerStreamState,
+  nextText: string
+): string | null => {
+  if (!nextText) {
+    return null;
+  }
+  const previousText = state.assistantText;
+  if (!previousText) {
+    state.assistantText = nextText;
+    return nextText;
+  }
+  if (nextText.startsWith(previousText)) {
+    const delta = nextText.slice(previousText.length);
+    state.assistantText = nextText;
+    return delta || null;
+  }
+  if (previousText.startsWith(nextText)) {
+    return null;
+  }
+  state.assistantText = nextText;
+  return nextText;
+};
+
+const completeRawTurn = (
+  state: AnswerStreamState,
+  text: string
+): StructuredOutputResult => {
+  const streamDelta = appendRawDelta(state, text);
+  const assistantText = text.trim().length > 0 ? text : state.assistantText;
+  return {
+    streamDelta: streamDelta ?? undefined,
+    assistantText: assistantText.trim() || undefined,
+  };
+};
+
+const completeStructuredTurn = (
+  state: AnswerStreamState,
+  text: string,
+  config: StructuredOutputTurnConfig
+): StructuredOutputResult => {
+  const streamDelta = state.extractor?.append(text) ?? null;
+  if (streamDelta) {
+    state.assistantText += streamDelta;
+  }
+  const parsed = parseStructuredOutput(text, state.mode, {
+    allowedArtifactSlots: config.allowedArtifactSlots,
+  });
+  let assistantText =
+    state.assistantText.trim().length > 0
+      ? state.assistantText
+      : parsed.assistantText;
+  if (state.mode === "idea_collector" && parsed.assistantText?.trim()) {
+    assistantText = parsed.assistantText;
+  }
+  return {
+    streamDelta: streamDelta ?? undefined,
+    assistantText: assistantText ?? undefined,
+    nextAction: parsed.nextAction ?? undefined,
+    artifact: parsed.artifact ?? undefined,
+    artifacts: parsed.artifacts ?? undefined,
+    outputHash: hashOutputText(text),
+  };
+};
+
+const hashOutputText = (text: string): string | undefined => {
+  const trimmedText = text.trim();
+  return trimmedText.length
+    ? createHash("sha256").update(trimmedText).digest("hex")
+    : undefined;
+};
+
 const parseStructuredOutput = (
   text: string,
   mode: StructuredOutputMode,

@@ -22,7 +22,7 @@
 ## Phase 290 — Restore GPT-5.4 workflow commentary in Project Manager (owner: Oleksandr, updated: 2026-03-06)
 
 ### Stream 0: Убрать legacy structured-output default из Codex runtime
-1. [TODO] Убрать автоподстановку дефолтной schema в Codex structured-output controller, чтобы raw workflow turn без явного `outputSchema` не превращался в JSON-only контракт (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`; expected commit: `fix(codex): disable default structured output injection`).
+1. [DONE] Убрать автоподстановку дефолтной schema в Codex structured-output controller, чтобы raw workflow turn без явного `outputSchema` не превращался в JSON-only контракт; raw `agent_message` снова проходит без JSON-only prompt и без JSON extractor path по умолчанию (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`; actual commit: `fix(codex): disable default structured output injection`).
 2. [TODO] Git Commit: `fix(codex): disable default structured output injection` (hash: TBD)
 3. [TODO] Ограничить передачу `--output-schema` в Codex CLI только explicit structured turn, не затрагивая обычные workflow turns PM (scope: `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`; expected commit: `fix(codex): gate output schema cli flag behind opt-in`).
 4. [TODO] Git Commit: `fix(codex): gate output schema cli flag behind opt-in` (hash: TBD)
