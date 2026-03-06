@@ -210,6 +210,7 @@ export type IncomingMessage =
       readonly type: "dialog:send";
       readonly payload: {
         readonly requestId: string;
+        readonly outboundAttemptId: string;
         readonly workspaceSlug: string;
         readonly dialogId: string;
         readonly content: string;

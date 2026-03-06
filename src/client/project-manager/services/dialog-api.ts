@@ -17,7 +17,12 @@ export type DialogApi = {
     dialogId: string,
     content: string,
     requestId?: string
-  ) => string | null;
+  ) =>
+    | {
+        readonly requestId: string;
+        readonly outboundAttemptId: string;
+      }
+    | null;
 };
 
 const createRequestId = (prefix: string): string => {
@@ -76,10 +81,20 @@ export const createDialogApi = (
       return null;
     }
     const resolvedRequestId = requestId ?? createRequestId("dialog-send");
+    const outboundAttemptId = createRequestId("dialog-outbound");
     send({
       type: "dialog:send",
-      payload: { requestId: resolvedRequestId, workspaceSlug, dialogId, content },
+      payload: {
+        requestId: resolvedRequestId,
+        outboundAttemptId,
+        workspaceSlug,
+        dialogId,
+        content,
+      },
     });
-    return resolvedRequestId;
+    return {
+      requestId: resolvedRequestId,
+      outboundAttemptId,
+    };
   },
 });

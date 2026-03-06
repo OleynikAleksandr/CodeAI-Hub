@@ -21,7 +21,7 @@
 ## Phase 292 — Workflow submit diagnostics trace for Codex (owner: Oleksandr, updated: 2026-03-06)
 
 ### Stream 0: PM/Core correlation id
-1. [TODO] Ввести `outboundAttemptId` в PM `dialog:send` path и протащить его через bridge message types, чтобы у каждой отправки был единый correlation key с самого клика `Send` (scope: `src/client/project-manager/services/dialog-api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit: `feat(trace): add outbound attempt id to dialog send contract`).
+1. [DONE] Ввести `outboundAttemptId` в PM `dialog:send` path и протащить его через bridge message types, чтобы у каждой отправки был единый correlation key с самого клика `Send`; `dialog:send` payload теперь содержит отдельный `outboundAttemptId`, сгенерированный в PM до отправки в Core bridge (scope: `src/client/project-manager/services/dialog-api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `packages/core/src/remote-bridge/types.ts`; actual commit: `feat(trace): add outbound attempt id to dialog send contract`).
 2. [TODO] Git Commit: `feat(trace): add outbound attempt id to dialog send contract` (hash: TBD)
 3. [TODO] Добавить Core bridge trace для событий `received/scope_resolved/chain_resolved/session_resolved/ack`, чтобы путь PM -> Core больше не был "чёрным ящиком" (scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/telemetry/`; expected commit: `feat(core): add dialog send trace log`).
 4. [TODO] Git Commit: `feat(core): add dialog send trace log` (hash: TBD)
