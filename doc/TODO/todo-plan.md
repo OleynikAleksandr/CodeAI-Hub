@@ -37,7 +37,7 @@
 1. [DONE] Восстановить обработку промежуточных `agent_message/commentary` для raw workflow turns, чтобы Codex message processor не схлопывал поток в один финальный ответ; suppress commentary оставлен только для явных structured turns, raw workflow commentary снова проходит в stream pipeline (scope: `packages/Codex_Module/src/messaging/message-processor.ts`; actual commit: `fix(codex): surface workflow commentary messages`).
 2. [DONE] Git Commit: `fix(codex): surface workflow commentary messages` (hash: `be98fb1d`)
 3. [DONE] Проверить и скорректировать сохранение intermediate commentary/thinking в unified dialog history JSONL: dialog history reader теперь явно сохраняет порядок промежуточных сообщений при одинаковом timestamp, а отдельный regression test подтверждает чтение `assistant/thinking` из JSONL и tail-cursor replay для PM dialog refresh (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/remote-bridge/handlers/dialog-history-service.test.ts`; actual commit: `fix(core): persist intermediate codex workflow commentary`).
-4. [TODO] Git Commit: `fix(core): persist intermediate codex workflow commentary` (hash: TBD)
+4. [DONE] Git Commit: `fix(core): persist intermediate codex workflow commentary` (hash: `3ef70fcc`)
 
 ### Stream 3: Уточнить prompt contract для обязательных progress updates
 1. [DONE] Обновить prompt Description Agent: полный документ не публикуется в чат, но progress commentary по ходу работы и после значимых правок файла обязателен (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`; actual commit: `docs(prompts): require commentary in description workflow`).
@@ -56,7 +56,7 @@
 2. [DONE] Git Commit: `docs(codex): sync workflow commentary contract` (hash: `bcf08939`)
 
 ### Stream 6: Release build по инструкции
-1. [TODO] Перед релизом синхронизировать пользовательские документы под новый versioned behavior: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md` и связанные release notes, чтобы release собирался уже на актуальном описании поведения GPT-5.4 workflow commentary (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync workflow commentary restore notes`).
+1. [DONE] Перед релизом синхронизировать пользовательские документы под новый versioned behavior: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md` и связанные release notes, чтобы release собирался уже на актуальном описании поведения GPT-5.4 workflow commentary; release target зафиксирован как `v1.1.715` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; actual commit: `docs(release): sync workflow commentary restore notes`).
 2. [TODO] Git Commit: `docs(release): sync workflow commentary restore notes` (hash: TBD)
 3. [TODO] На чистом дереве прогнать релизный цикл строго по checklist: `./scripts/build-all.sh`, затем после проверки clean tree — `./scripts/build-release.sh --use-current-version`; принять только артефакт, где подтверждены `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: version bumps, release manifests, `doc/tmp/releases/`, `~/.codeai-hub/releases/`; expected commit: `chore(release): build-all vNEXT workflow commentary restore`).
 4. [TODO] Git Commit: `chore(release): build-all vNEXT workflow commentary restore` (hash: TBD)

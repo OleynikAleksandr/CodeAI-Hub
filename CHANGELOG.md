@@ -7,6 +7,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 - Codex runtime: persisted `~/.codeai-hub/settings/settings.json` now wins over stale `CODEX_DEFAULT_MODEL` inherited by a long-lived Core process, so new provider sessions no longer start as `gpt-5.3-codex` after the user has switched Settings to `gpt-5.4`.
 - Codex compatibility: legacy env `CODEX_DEFAULT_MODEL=gpt-5.2` is normalized through the same `gpt-5.4` migration path as Settings snapshots.
 
+## [1.1.715] - 2026-03-06
+### Fixed
+- Codex workflow runtime: Project Manager workflow turns now default to a raw conversational contract; legacy implicit structured-output injection, JSON-only wrapping, and implicit `--output-schema` no longer suppress `gpt-5.4` intermediate commentary.
+- Project Manager / Core bridge: ordinary workflow messages (`Description`, `Virtual Simulation`) no longer request `outputSchema` by default; explicit structured-output remains available only through opt-in.
+- Codex dialog pipeline: raw `agent_message/commentary` is no longer suppressed in `message-processor`, so intermediate assistant updates can flow into PM dialog history again.
+- Core dialog history: JSONL replay for `assistant` / `thinking` now preserves stable ordering for same-timestamp commentary during reopen/tail refresh.
+
+### Changed
+- Workflow prompts: `Description` and `Virtual Simulation` now explicitly require short progress commentary updates while still forbidding publication of the full markdown artifact in chat.
+- Tests: added regression coverage for workflow raw-turn opt-in boundaries, dialog history replay of `assistant/thinking`, and PM dialog refresh via `dialog:history`.
+
 ## [1.1.713] - 2026-03-05
 ### Changed
 - Codex: general-purpose model в Settings/UI/runtime переключена с `gpt-5.2` на `gpt-5.4`; default coding model остаётся `gpt-5.3-codex`.

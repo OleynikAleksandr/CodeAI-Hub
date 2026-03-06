@@ -7,13 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.714
+## Current Release — v1.1.715
 - Codex: general-purpose модель в Settings/UI/runtime остаётся `gpt-5.4`; default coding model остаётся `gpt-5.3-codex`.
 - Codex compatibility: legacy `defaultModel = gpt-5.2` и `reasoningByModel.gpt-5.2` мягко нормализуются в `gpt-5.4` в extension, webview, core и SDK manager.
 - Codex runtime hotfix: persisted `settings.json` теперь имеет приоритет над stale `CODEX_DEFAULT_MODEL`/`CODEX_DEFAULT_REASONING_EFFORT` из уже запущенного Core, поэтому новые provider sessions больше не должны откатываться в `gpt-5.3-codex` после смены Settings на `gpt-5.4`.
-- Release pipeline: локальный `build-all` обновил unified version до `1.1.714` и пересобрал provider/core/ui/launcher артефакты под hotfix rollout.
+- Codex workflow restore: Project Manager workflow turns (`Description`, `Virtual Simulation`) снова работают в raw conversational contract по умолчанию; legacy implicit `outputSchema`/JSON-only path убран, а промежуточные `commentary`/`thinking` должны возвращаться в dialog history JSONL и PM dialog.
+- Workflow prompts: `Description` и `Virtual Simulation` теперь явно требуют короткие progress commentary updates и по-прежнему запрещают только dump полного markdown-артефакта в чат.
+- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.715` и пересобрать provider/core/ui/launcher артефакты под commentary-restore rollout.
 
-Previous releases (summary): the `1.1.57x–1.1.713` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, codebase hygiene / markdown-link gates, and the initial Codex `gpt-5.4` rollout from `v1.1.713`.
+Previous releases (summary): the `1.1.57x–1.1.714` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, codebase hygiene / markdown-link gates, the initial Codex `gpt-5.4` rollout, and the stale-env hotfix from `v1.1.714`.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
