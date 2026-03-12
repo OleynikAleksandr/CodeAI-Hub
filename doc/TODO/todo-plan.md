@@ -47,11 +47,11 @@
 12. [DONE] Git Commit: `fix(pm): discard stale dialog restore intent` (hash: `36de0ed8`)
 
 ### Stream 6: Align Virtual Simulation validator with live artifacts
-13. [IN_PROGRESS] Убрать ложный `invalid` для текущего runtime output `virtual-simulation.md`: validator и UI должны принимать `##` и `### Сценарий N` в repair window, не ломая user-facing guidance (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`; expected commit: `fix(workflow): align virtual simulation heading validation`).
-14. [TODO] Git Commit: `fix(workflow): align virtual simulation heading validation` (hash: TBD)
+13. [DONE] Убрать ложный `invalid` для текущего runtime output `virtual-simulation.md`: validator и UI должны принимать `##` и `### Сценарий N` в repair window, не ломая user-facing guidance (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`; expected commit: `fix(workflow): align virtual simulation heading validation`).
+14. [DONE] Git Commit: `fix(workflow): align virtual simulation heading validation` (hash: `c6f035d1`)
 
 ### Stream 7: Regression verification on real workspace data
-15. [TODO] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description dialog поверх Virtual Simulation (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
+15. [IN_PROGRESS] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description dialog поверх Virtual Simulation (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
 16. [TODO] Git Commit: `test(release): verify pm workflow regression repair` (hash: TBD)
 
 ## Phase 302 — Release Rebuild After Regression Repair (owner: Oleksandr, updated: 2026-03-12)

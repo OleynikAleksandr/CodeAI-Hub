@@ -26,6 +26,9 @@
 - Закрыт `Phase 301 / Stream 5`: `ProjectManagerSessionView` больше не восстанавливает stale dialog intent вслепую из `localStorage`, а сверяет его с reconciled `workflow-state` и отбрасывает restore, если workflow уже ушёл на более поздний stage.
 - Для stale dialog restore guard добавлен unit coverage: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`.
 - Таргетная проверка зелёная: `npm exec tsx --test src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`.
+- Закрыт `Phase 301 / Stream 6`: runtime validator и PM panel для `virtual-simulation.md` теперь принимают как `##`, так и `### Сценарий N`, поэтому уже созданные live-артефакты больше не должны получать ложный `invalid`.
+- SSOT `VirtualSimulation_Step.md` синхронизирован с repair-window допуском для `##`/`###`.
+- Таргетная проверка зелёная: `npm run build --workspace @codeai-hub/core`, `npm run typecheck:webview`, `npm run build:webview`.
 
 ## Reported runtime issues to investigate next
 - Workspace Claude: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude/.codeai-hub/codeai-hub-claude`
@@ -55,6 +58,7 @@
 - `5c565af6 fix(core): advance workflow last-active across stages`
 - `6eae900e fix(pm): resync panels to active workflow stage`
 - `36de0ed8 fix(pm): discard stale dialog restore intent`
+- `c6f035d1 fix(workflow): align virtual simulation heading validation`
 
 ---
 
@@ -70,6 +74,6 @@
 7. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`
 
 ## Plans for next session
-- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 6: align Virtual Simulation validator with live artifacts`.
-- Особое внимание: выравнивание validator для `virtual-simulation.md`, затем финальный regression smoke на реальных workspace и повторная локальная проверка двух проблемных репродукций.
+- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 7: regression verification on real workspace data`.
+- Особое внимание: повторный smoke на двух проблемных workspace из отчёта, проверка tree hydration/completed badges/dialog restore, затем только при зелёном результате можно идти в `Phase 302` на patch release.
 - Перед кодовыми правками держать открытым `ProjectManager_WorkflowState_Reconciliation.md` как SSOT текущего repair track.
