@@ -50,9 +50,17 @@
 13. [DONE] Убрать ложный `invalid` для текущего runtime output `virtual-simulation.md`: validator и UI должны принимать `##` и `### Сценарий N` в repair window, не ломая user-facing guidance (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`; expected commit: `fix(workflow): align virtual simulation heading validation`).
 14. [DONE] Git Commit: `fix(workflow): align virtual simulation heading validation` (hash: `c6f035d1`)
 
-### Stream 7: Regression verification on real workspace data
-15. [IN_PROGRESS] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description dialog поверх Virtual Simulation (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
-16. [TODO] Git Commit: `test(release): verify pm workflow regression repair` (hash: TBD)
+### Stream 7: Restore fast PM workflow-state hydration
+15. [IN_PROGRESS] Вернуть shared `workflow-state` в fast cadence на горячем workflow окне и добавить явный refresh/invalidate path для submit-driven UI, чтобы tree/main area не жили на stale snapshot после `session:created` и записи `Final_Description.md` (scope: `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/idea-collector-submit-service.open-fast.test.ts`; expected commit: `fix(pm): refresh workflow state after description submit`).
+16. [TODO] Git Commit: `fix(pm): refresh workflow state after description submit` (hash: TBD)
+
+### Stream 8: Stop PM from downgrading back to pre-submit help
+17. [TODO] Сделать `hasDescriptionSession` monotonic внутри активного workspace после `session:created`, чтобы stale poll не возвращал левую панель в `Description Help`, и синхронизировать description auto-select через общий session resolver (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/description-workflow-state.test.ts`; expected commit: `fix(pm): preserve description session after submit`).
+18. [TODO] Git Commit: `fix(pm): preserve description session after submit` (hash: TBD)
+
+### Stream 9: Renew regression verification on real workspace data
+19. [TODO] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description help/session mismatch и стробирования артефакта после submit (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
+20. [TODO] Git Commit: `test(release): verify pm workflow regression repair` (hash: TBD)
 
 ## Phase 302 — Release Rebuild After Regression Repair (owner: Oleksandr, updated: 2026-03-12)
 

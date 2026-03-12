@@ -15,6 +15,8 @@
 - Успешно выполнен `./scripts/build-release.sh --use-current-version`: собран VSIX `codeai-hub-1.1.718.vsix`.
 - Release artefacts подтверждены в `doc/tmp/releases/` и локальном release cache `~/.codeai-hub/releases/`.
 - Рабочее дерево очищено; после сборки не осталось незакоммиченных release-хвостов.
+- После пользовательского smoke подтверждён новый PM regression поверх `v1.1.718`: после `Submit questionnaire` workflow в фоне отрабатывает и пишет `Final_Description.md`, но PM остаётся на `Description Help`/анкете, не поднимает session node и не гидратит workflow tree.
+- Для repair track зафиксированы новые implementation streams в `todo-plan`: shared workflow-state fast refresh после submit, защита от downgrade обратно в pre-submit help и повторный smoke только после этих фиксов.
 
 ## Git commits
 - `3b36e92f docs(release): prepare pm workflow repair test build`
@@ -34,6 +36,6 @@
 7. `doc/Sessions/Session073.md` (THIS REPORT)
 
 ## Plans for next session
-- Установить и проверить локально `codeai-hub-1.1.718.vsix`.
-- Прогнать regression smoke на двух workspace из `Session072.md`: tree hydration, completed badges, correct dialog restore, отсутствие stale `Description` dialog поверх `Virtual Simulation`.
-- Если smoke зелёный, закрыть `Phase 301 / Stream 7`, затем вернуться к `Phase 302` и решать, нужен ли ещё один финальный release cycle или `v1.1.718` уже годится как patch release.
+- Разобрать PM-side regression `v1.1.718` на двух workspace из `Session072.md`, начиная с shared workflow-state hydration после `session:created`.
+- Убрать возврат левой панели в `Description Help` после успешного submit и прекратить forced reselect `questionnaire.md`.
+- Повторный smoke и новый patch release возможны только после закрытия новых `Phase 301 / Stream 7-9`.
