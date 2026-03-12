@@ -27,11 +27,11 @@
 ## Phase 301 — PM Workflow State Reconciliation Repair (owner: Oleksandr, updated: 2026-03-12)
 
 ### Stream 1: Filter internal metadata artifacts
-3. [TODO] Исключить `description-step.json` и временные atomic-write файлы `description-step.json.tmp-*` из watcher/state projection, чтобы internal metadata никогда не попадала в user-facing artifacts шага `Description` (scope: `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `fix(core): filter internal workflow metadata artifacts`).
-4. [TODO] Git Commit: `fix(core): filter internal workflow metadata artifacts` (hash: TBD)
+3. [DONE] Исключить `description-step.json` и временные atomic-write файлы `description-step.json.tmp-*` из watcher/state projection, чтобы internal metadata никогда не попадала в user-facing artifacts шага `Description` (scope: `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/workflow-internal-metadata-artifacts.test.ts`; expected commit: `fix(core): filter internal workflow metadata artifacts`).
+4. [DONE] Git Commit: `fix(core): filter internal workflow metadata artifacts` (hash: `0b63cb54`)
 
 ### Stream 2: Reconcile stage status on read path
-5. [TODO] Нормализовать `workflow-state` read path: derived `completed`/`invalid`/`outdated` status должен выводиться из continuity, канонических файлов и validator results, а не только из watcher-memory event trail (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.reconciliation.test.ts`; expected commit: `fix(core): reconcile workflow stage state on read`).
+5. [IN_PROGRESS] Нормализовать `workflow-state` read path: derived `completed`/`invalid`/`outdated` status должен выводиться из continuity, канонических файлов и validator results, а не только из watcher-memory event trail (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.reconciliation.test.ts`; expected commit: `fix(core): reconcile workflow stage state on read`).
 6. [TODO] Git Commit: `fix(core): reconcile workflow stage state on read` (hash: TBD)
 
 ### Stream 3: Advance cross-stage lastActive
