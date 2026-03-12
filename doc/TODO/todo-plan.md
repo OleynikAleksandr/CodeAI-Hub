@@ -74,7 +74,9 @@
 8. [DONE] Git Commit: `docs(pm): sync workspace identity stabilization closeout` (hash: `a2fc590a`)
 
 ### Stream 2: Release build by checklist
-5. [IN_PROGRESS] После закрытия implementation/regression streams актуализировать release-facing документы под следующий patch release, который поднимет `build-all.sh`: `README.md` и `CHANGELOG.md` с итогами workspace identity stabilization (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare workspace identity stabilization release notes`).
-6. [TODO] Git Commit: `docs(release): prepare workspace identity stabilization release notes` (hash: TBD)
-7. [TODO] Выполнить release build строго по `Release Build Checklist`: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, перенести/проверить артефакты в `doc/tmp/releases/`, зафиксировать результаты в session closeout (scope: `scripts/`, `doc/tmp/releases/`, `doc/Sessions/`; expected commit: `build(release): ship workspace identity stabilization`).
-8. [TODO] Git Commit: `build(release): ship workspace identity stabilization` (hash: TBD)
+5. [DONE] После закрытия implementation/regression streams актуализировать release-facing документы под следующий patch release, который поднимет `build-all.sh`: `README.md` и `CHANGELOG.md` с итогами workspace identity stabilization (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare workspace identity stabilization release notes`).
+6. [DONE] Git Commit: `docs(release): prepare workspace identity stabilization release notes` (hash: `781ed5c1`)
+7. [IN_PROGRESS] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version/manifest bump до `1.1.717` и подготовить репозиторий к финальному VSIX packaging (scope: `package.json`, `package-lock.json`, `assets/**/manifest.json` и package manifests; expected commit: `build(release): stage workspace identity stabilization artifacts`).
+8. [TODO] Git Commit: `build(release): stage workspace identity stabilization artifacts` (hash: TBD)
+9. [TODO] После clean commit от `build-all` выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.717.vsix`, зафиксировать release/session closeout и итоговую поставку (scope: `doc/Sessions/`, `doc/TODO/todo-plan.md`, release artefacts/checklist results; expected commit: `build(release): ship workspace identity stabilization`).
+10. [TODO] Git Commit: `build(release): ship workspace identity stabilization` (hash: TBD)
