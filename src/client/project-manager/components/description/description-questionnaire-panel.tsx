@@ -6,8 +6,8 @@ import { DescriptionQuestionnaireService } from "../../services/description-ques
 import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
+import { requestWorkspaceWorkflowStateRefresh, useWorkspaceWorkflowState } from "../layout/use-workspace-workflow-state";
 import { IdeaCollectorProviderPicker } from "./idea-collector-provider-picker";
-import { useWorkspaceWorkflowState } from "../layout/use-workspace-workflow-state";
 
 const SAVE_DEBOUNCE_MS = 400;
 
@@ -145,6 +145,13 @@ export const DescriptionQuestionnairePanel: React.FC<
       ? getDefaultProviderTitle(executionProfile.providerId as ProviderStackId)
       : executionProfile?.providerId ?? null;
 
+  const refreshWorkflowState = () => workspacePath
+    ? requestWorkspaceWorkflowStateRefresh({
+        workspacePath,
+        workspaceSlug: resolvedWorkspaceSlug,
+      })
+    : undefined;
+
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((current) => ({ ...current, [questionId]: value }));
   };
@@ -206,20 +213,12 @@ export const DescriptionQuestionnairePanel: React.FC<
         questionnairePath: panelState.questionnairePath,
         stage: "description",
         providerId,
-        onSessionCreated: onIdeaSessionCreated,
+        onSessionCreated: (sessionId) => {
+          onIdeaSessionCreated?.(sessionId);
+          refreshWorkflowState();
+        },
       });
-      if (workspacePath) {
-        window.dispatchEvent(
-          new CustomEvent("pm:artifact:selected", {
-            detail: {
-              label: "questionnaire.md",
-              path: panelState.questionnairePath,
-              workspacePath,
-              workspaceSlug: resolvedWorkspaceSlug,
-            },
-          })
-        );
-      }
+      refreshWorkflowState();
     } catch (error) {
       setSubmitError(
         error instanceof Error

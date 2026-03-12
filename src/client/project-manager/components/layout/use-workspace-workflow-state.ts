@@ -1,9 +1,13 @@
 import { useSyncExternalStore } from "react";
 import { api } from "../../api";
-import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import type {
+  WorkflowStageStatus,
+  WorkflowStateSnapshot,
+} from "../../services/workflow-state-client";
 
 const FAST_POLL_INTERVAL_MS = 3_000;
 const SLOW_POLL_INTERVAL_MS = 15_000;
+const RECENT_ACTIVITY_WINDOW_MS = 60_000;
 
 type WorkspaceWorkflowStateEntry = {
   readonly workspaceSlug: string;
@@ -44,6 +48,39 @@ const scheduleEntryTimer = (entry: WorkspaceWorkflowStateEntry): void => {
   }, entry.fastPolling ? FAST_POLL_INTERVAL_MS : SLOW_POLL_INTERVAL_MS);
 };
 
+const hasHotWorkflowStatus = (status: WorkflowStageStatus): boolean =>
+  status === "in_progress" || status === "completed";
+
+const resolveSnapshotUpdatedAtMs = (
+  state: WorkflowStateSnapshot | null
+): number | null => {
+  if (!state) {
+    return null;
+  }
+  const timestamp = Date.parse(state.updatedAt);
+  return Number.isNaN(timestamp) ? null : timestamp;
+};
+
+const shouldUseFastPolling = (
+  state: WorkflowStateSnapshot | null,
+  nowMs: number = Date.now()
+): boolean => {
+  if (!state) {
+    return true;
+  }
+
+  if (Object.values(state.stages).some(hasHotWorkflowStatus)) {
+    return true;
+  }
+
+  const updatedAtMs = resolveSnapshotUpdatedAtMs(state);
+  if (updatedAtMs === null) {
+    return true;
+  }
+
+  return nowMs - updatedAtMs < RECENT_ACTIVITY_WINDOW_MS;
+};
+
 const refreshEntry = async (
   entry: WorkspaceWorkflowStateEntry
 ): Promise<void> => {
@@ -56,8 +93,9 @@ const refreshEntry = async (
       entry.workspaceSlug,
       entry.workspacePath
     );
-    if (entry.state && entry.fastPolling) {
-      entry.fastPolling = false;
+    const nextFastPolling = shouldUseFastPolling(entry.state);
+    if (entry.fastPolling !== nextFastPolling) {
+      entry.fastPolling = nextFastPolling;
       scheduleEntryTimer(entry);
     }
     notifyEntry(entry);
@@ -87,6 +125,18 @@ const getOrCreateEntry = (
   };
   entries.set(entryKey, entry);
   return entry;
+};
+
+export const requestWorkspaceWorkflowStateRefresh = (params: {
+  readonly workspaceSlug: string;
+  readonly workspacePath?: string;
+}): void => {
+  const entry = getOrCreateEntry(params.workspaceSlug, params.workspacePath);
+  entry.fastPolling = true;
+  if (entry.subscribers > 0) {
+    scheduleEntryTimer(entry);
+  }
+  void refreshEntry(entry);
 };
 
 export const useWorkspaceWorkflowState = (params: {
