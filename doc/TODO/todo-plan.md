@@ -56,15 +56,15 @@
 6. [DONE] Git Commit: `feat(pm): show workspace execution lock summary` (hash: `bfece482`)
 
 ### Stream 2: Provider lock warning in picker
-7. [IN_PROGRESS] Добавить в provider picker после `Submit questionnaire` заметное красное предупреждение, что в MVP выбор provider и его default model фиксируется один раз на весь workspace (scope: `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit: `feat(pm): warn about workspace provider lock in picker`).
-8. [TODO] Git Commit: `feat(pm): warn about workspace provider lock in picker` (hash: TBD)
+7. [DONE] Добавить в provider picker после `Submit questionnaire` заметное красное предупреждение, что в MVP выбор provider и его default model фиксируется один раз на весь workspace (scope: `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit: `feat(pm): warn about workspace provider lock in picker`).
+8. [DONE] Git Commit: `feat(pm): warn about workspace provider lock in picker` (hash: `6bdfbede`)
 
 ---
 
 ## Phase 299 — Regression Coverage And Closeout (owner: Oleksandr, updated: 2026-03-12)
 
 ### Stream 1: Regression verification
-1. [TODO] Добавить таргетные regression tests для execution profile lock и Description recovery в Core (scope: `packages/core/src/workflow/`, `packages/core/src/remote-bridge/handlers/`; expected commit: `test(core): cover workspace identity stabilization`).
+1. [IN_PROGRESS] Добавить таргетные regression tests для execution profile lock и Description recovery в Core (scope: `packages/core/src/workflow/`, `packages/core/src/remote-bridge/handlers/`; expected commit: `test(core): cover workspace identity stabilization`).
 2. [TODO] Git Commit: `test(core): cover workspace identity stabilization` (hash: TBD)
 3. [TODO] Добавить PM regression coverage для shared workflow-state/fallback и синхронно обновить closeout docs по результатам реализации (scope: `src/client/project-manager/components/layout/`, `doc/SolidWorks-WorkFlow/`, `doc/Sessions/`; expected commit: `test(pm): cover shared workflow state recovery`).
 4. [TODO] Git Commit: `test(pm): cover shared workflow state recovery` (hash: TBD)
