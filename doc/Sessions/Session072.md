@@ -15,6 +15,8 @@
 - Утверждён отдельный repair SSOT: `ProjectManager_WorkflowState_Reconciliation.md`.
 - Закрыт `Phase 301 / Stream 1`: internal metadata `description-step.json` и `description-step.json.tmp-*` больше не должны попадать в watcher/runtime user-facing artifact path.
 - Таргетная проверка зелёная: `npm exec --workspace packages/core tsx --test src/workflow/workflow-internal-metadata-artifacts.test.ts` и `npm run build --workspace @codeai-hub/core`.
+- Закрыт `Phase 301 / Stream 2`: `workflow-state` read path теперь прогоняет отдельный reconciler, который восстанавливает derived `completed`/`in_progress` для workflow stages из continuity и канонических файлов на диске.
+- Для read-side reconciliation добавлен отдельный unit coverage: `src/workflow/state/workflow-state-reconciliation.test.ts`.
 
 ## Reported runtime issues to investigate next
 - Workspace Claude: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude/.codeai-hub/codeai-hub-claude`
@@ -40,6 +42,7 @@
 ## Git commits
 - `81ab9099 docs(architecture): capture pm workflow regression repair`
 - `0b63cb54 fix(core): filter internal workflow metadata artifacts`
+- `ebfb48ac fix(core): reconcile workflow stage state on read`
 
 ---
 
@@ -55,6 +58,6 @@
 7. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`
 
 ## Plans for next session
-- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 2: read-side stage reconciliation`.
+- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 3: cross-stage lastActive`.
 - Особое внимание: `lastActive` cross-stage, stale dialog restore из `localStorage`, reactive resync после появления VS continuity/session.
 - Перед кодовыми правками держать открытым `ProjectManager_WorkflowState_Reconciliation.md` как SSOT текущего repair track.

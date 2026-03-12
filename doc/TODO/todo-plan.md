@@ -31,11 +31,11 @@
 4. [DONE] Git Commit: `fix(core): filter internal workflow metadata artifacts` (hash: `0b63cb54`)
 
 ### Stream 2: Reconcile stage status on read path
-5. [IN_PROGRESS] Нормализовать `workflow-state` read path: derived `completed`/`invalid`/`outdated` status должен выводиться из continuity, канонических файлов и validator results, а не только из watcher-memory event trail (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.reconciliation.test.ts`; expected commit: `fix(core): reconcile workflow stage state on read`).
-6. [TODO] Git Commit: `fix(core): reconcile workflow stage state on read` (hash: TBD)
+5. [DONE] Нормализовать `workflow-state` read path: derived `completed`/`invalid`/`outdated` status теперь выводится из continuity и канонических файлов через отдельный reconciler, а не только из watcher-memory event trail (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/state/workflow-state-reconciliation.ts`, `packages/core/src/workflow/state/workflow-state-reconciliation.test.ts`; expected commit: `fix(core): reconcile workflow stage state on read`).
+6. [DONE] Git Commit: `fix(core): reconcile workflow stage state on read` (hash: `ebfb48ac`)
 
 ### Stream 3: Advance cross-stage lastActive
-7. [TODO] Обновлять `lastActive` для `virtual_simulation` и следующих user-facing artifacts, чтобы reopen workspace и stage restore не застревали на `questionnaire.md` после продвижения workflow вперёд (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `fix(core): advance workflow last-active across stages`).
+7. [IN_PROGRESS] Обновлять `lastActive` для `virtual_simulation` и следующих user-facing artifacts, чтобы reopen workspace и stage restore не застревали на `questionnaire.md` после продвижения workflow вперёд (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `fix(core): advance workflow last-active across stages`).
 8. [TODO] Git Commit: `fix(core): advance workflow last-active across stages` (hash: TBD)
 
 ### Stream 4: Reactive stage-to-panel sync in PM
