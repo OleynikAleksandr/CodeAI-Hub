@@ -69,9 +69,9 @@
 18. [BLOCKED] Git Commit: `build(release): ship pm workflow regression repair` (hash: TBD)
 
 ### Stream 2: User-requested test release before smoke closeout
-21. [IN_PROGRESS] По явному запросу пользователя синхронизировать release-facing docs и собрать отдельный тестовый VSIX с текущими PM hydration repair-фиксами до завершения `Stream 9`, чтобы прогнать ручной smoke на новой сборке (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session074.md`; expected commit: `docs(release): prepare pm hydration repair test build`).
-22. [TODO] Git Commit: `docs(release): prepare pm hydration repair test build` (hash: TBD)
-23. [TODO] Запустить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, подтвердить новый VSIX/tarball артефакты и зафиксировать build output отдельными коммитами (scope: root release assets, `doc/tmp/releases/`, `package-lock.json`; expected commit: `build(release): stage pm hydration repair test artifacts`).
-24. [TODO] Git Commit: `build(release): stage pm hydration repair test artifacts` (hash: TBD)
-25. [TODO] Создать новый session report под тестовый релиз и очистить дерево после сборки (scope: `doc/Sessions/`; expected commit: `docs(session): record test release 1.1.719 build`).
+21. [DONE] По явному запросу пользователя синхронизировать release-facing docs и собрать отдельный тестовый VSIX с текущими PM hydration repair-фиксами до завершения `Stream 9`, чтобы прогнать ручной smoke на новой сборке (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session074.md`; expected commit: `docs(release): prepare pm hydration repair test build`).
+22. [DONE] Git Commit: `docs(release): prepare pm hydration repair test build` (hash: `c5aad906`)
+23. [DONE] Запустить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, подтвердить новый VSIX/tarball артефакты и зафиксировать build output отдельными коммитами (scope: root release assets, `doc/tmp/releases/`, `package-lock.json`; expected commit: `build(release): stage pm hydration repair test artifacts`).
+24. [DONE] Git Commit: `build(release): stage pm hydration repair test artifacts` (hash: `f6d56a5e`)
+25. [IN_PROGRESS] Создать новый session report под тестовый релиз и очистить дерево после сборки (scope: `doc/Sessions/`; expected commit: `docs(session): record test release 1.1.719 build`).
 26. [TODO] Git Commit: `docs(session): record test release 1.1.719 build` (hash: TBD)
