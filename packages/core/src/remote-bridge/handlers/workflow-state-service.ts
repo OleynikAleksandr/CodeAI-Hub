@@ -8,6 +8,7 @@ import { DescriptionStepStore } from "../../workflow/description/description-ste
 import { WorkspaceExecutionProfileFacade } from "../../workflow/execution-profile/workspace-execution-profile-facade";
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
+import { reconcileWorkflowState } from "../../workflow/state/workflow-state-reconciliation";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
 import type {
@@ -114,22 +115,30 @@ export class WorkflowStateService {
             state,
             workspaceRoot,
             workspaceSlug: workspaceSlugResult.value,
-          }).then((validatedState) => {
-            const gating = {
-              blocked: resolveWorkflowBlockedStages({
-                state: validatedState,
-                description,
-              }),
-            };
-            res.json({
+          }).then((validatedState) =>
+            reconcileWorkflowState({
               state: validatedState,
-              continuity: { chains },
               description,
-              executionProfile,
-              lastActive,
-              gating,
-            });
-          })
+              chains,
+              workspaceRoot,
+              workspaceSlug: workspaceSlugResult.value,
+            }).then((reconciledState) => {
+              const gating = {
+                blocked: resolveWorkflowBlockedStages({
+                  state: reconciledState,
+                  description,
+                }),
+              };
+              res.json({
+                state: reconciledState,
+                continuity: { chains },
+                description,
+                executionProfile,
+                lastActive,
+                gating,
+              });
+            })
+          )
         )
       )
       .catch((error) => {
