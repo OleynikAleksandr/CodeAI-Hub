@@ -165,25 +165,9 @@ export class CodexSDKManager {
       workspacePath ?? this.deps.workspace.workspacePath;
     const logger = new CodexSessionLogger();
 
-    // Codex CLI treats the original thread model as sticky. When resuming a
-    // `gpt-5.3-codex` thread, switching to the general-purpose `gpt-5.4`
-    // selection requires a fresh thread to keep the user's choice intact.
-    if (
-      this.workspaceDefaults.defaultModel === CURRENT_CODEX_GENERAL_MODEL_ID
-    ) {
-      this.deps.reporter?.info?.(
-        `Codex resume skipped for thread ${threadId} because defaultModel=${CURRENT_CODEX_GENERAL_MODEL_ID}; starting a new thread instead`
-      );
-      const { tempId, session: newSession } = this.deps.sessions.createSession(
-        actualWorkspacePath,
-        logger
-      );
-      const thread = this.createThread(newSession);
-      newSession.thread = thread;
-      this.deps.processor.initializeSession(newSession, thread);
-      return tempId;
-    }
-
+    // Workflow identity is locked at the workspace level. Resume must keep the
+    // existing provider thread instead of forking a new one from current
+    // Settings defaults.
     const session = this.deps.sessions.createResumedSession(
       actualWorkspacePath,
       threadId,
