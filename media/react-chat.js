@@ -27451,24 +27451,8 @@ ${replacement}
       tier: "flagship"
     },
     {
-      id: "gpt-5.1-codex-max",
-      displayName: "GPT-5.1-Codex-Max",
-      description: "Optimized for long-horizon, agentic coding tasks in Codex",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "max"
-    },
-    {
-      id: "gpt-5.1-codex-mini",
-      displayName: "GPT-5.1-Codex-Mini",
-      description: "Smaller, more cost-effective, less-capable version of GPT-5.1-Codex",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "mini"
-    },
-    {
-      id: "gpt-5.2",
-      displayName: "GPT-5.2",
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
       description: "Best general agentic model for tasks across industries",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
@@ -27485,58 +27469,15 @@ ${replacement}
       tier: "flagship"
     },
     {
-      id: "gpt-5.2",
-      displayName: "GPT-5.2",
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
       description: "Best general agentic model for tasks across industries",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
     }
   ];
-  var CODEX_LEGACY_MODELS = [
-    {
-      id: "gpt-5.2-codex",
-      displayName: "GPT-5.2-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      status: "succeeded_by",
-      successor: "gpt-5.3-codex"
-    },
-    {
-      id: "gpt-5.1",
-      displayName: "GPT-5.1",
-      description: "For coding and agentic tasks",
-      status: "succeeded_by",
-      successor: "gpt-5.2"
-    },
-    {
-      id: "gpt-5.1-codex",
-      displayName: "GPT-5.1-Codex",
-      description: "Optimized for long-running agentic coding",
-      status: "succeeded_by",
-      successor: "gpt-5.1-codex-max"
-    },
-    {
-      id: "gpt-5-codex",
-      displayName: "GPT-5-Codex",
-      description: "Tuned for long-running agentic coding",
-      status: "succeeded_by",
-      successor: "gpt-5.1-codex"
-    },
-    {
-      id: "gpt-5-codex-mini",
-      displayName: "GPT-5-Codex-Mini",
-      description: "Cost-effective predecessor",
-      status: "succeeded_by",
-      successor: "gpt-5.1-codex-mini"
-    },
-    {
-      id: "gpt-5",
-      displayName: "GPT-5",
-      description: "Reasoning model for coding tasks",
-      status: "succeeded_by",
-      successor: "gpt-5.1"
-    }
-  ];
+  var CODEX_LEGACY_MODELS = [];
   var CODEX_ALL_MODELS = [
     ...CODEX_RECOMMENDED_MODELS,
     ...CODEX_LEGACY_MODELS
