@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolveLatestStageChain } from "./workspace-tree-branch-nodes";
+import { resolveDescriptionSession } from "./description-workflow-state";
 
 export type SessionResumeIntent = {
   readonly providerId: string;
@@ -83,11 +84,12 @@ export const useWorkspaceTreeAutoSelect = (
 
       // Fallback: open Description step
       const branch = state.description;
+      const descriptionSession = resolveDescriptionSession(state);
       const hasDraftOrFinal = Boolean(branch?.finalPath || branch?.draftPath);
       const hasUnsubmittedQuestionnaire = Boolean(
         branch?.questionnairePath &&
           !hasDraftOrFinal &&
-          !branch?.session?.providerSessionId
+          !descriptionSession?.providerSessionId
       );
       const artifactPath = branch?.finalPath ?? branch?.draftPath ?? null;
       const artifactLabel = branch?.finalPath
@@ -99,10 +101,10 @@ export const useWorkspaceTreeAutoSelect = (
       if (artifactPath && artifactLabel) {
         params.onSelectArtifact(artifactPath, artifactLabel);
       }
-      if (branch?.session?.providerSessionId) {
+      if (descriptionSession?.providerSessionId) {
         params.onResumeSession({
-          providerId: branch.session.providerId,
-          providerSessionId: branch.session.providerSessionId,
+          providerId: descriptionSession.providerId,
+          providerSessionId: descriptionSession.providerSessionId,
           workspacePath: params.workspacePath,
           workspaceSlug: params.workspaceSlug,
           initiativeSlug: params.workspaceSlug,
@@ -112,7 +114,7 @@ export const useWorkspaceTreeAutoSelect = (
         });
       }
       if (hasUnsubmittedQuestionnaire) return;
-      if (artifactPath || branch?.session?.providerSessionId) {
+      if (artifactPath || descriptionSession?.providerSessionId) {
         pendingWorkspaceIdRef.current = null;
       }
     },

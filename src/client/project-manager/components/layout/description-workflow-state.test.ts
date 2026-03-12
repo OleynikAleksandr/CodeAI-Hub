@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 import type {
   DescriptionBranchSnapshot,
@@ -8,6 +10,16 @@ import {
   resolveDescriptionArtifact,
   resolveDescriptionSession,
 } from "./description-workflow-state";
+
+const MAIN_AREA_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/main-area.tsx"
+);
+
+const WORKSPACE_TREE_AUTO_SELECT_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/workspace-tree-auto-select.ts"
+);
 
 const createWorkflowState = (
   description: DescriptionBranchSnapshot | null
@@ -82,4 +94,32 @@ test("resolveDescriptionArtifact prefers final artifact over draft and questionn
     path: ".codeai-hub/workspace-lock/description/Final_Description.md",
     label: "Final_Description.md",
   });
+});
+
+test("pm description consumers preserve session state through the shared resolver", async () => {
+  const [mainAreaSource, workspaceTreeAutoSelectSource] = await Promise.all([
+    readFile(MAIN_AREA_PATH, "utf8"),
+    readFile(WORKSPACE_TREE_AUTO_SELECT_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    mainAreaSource.includes("setHasDescriptionSession: (value) => {"),
+    true
+  );
+  assert.equal(
+    mainAreaSource.includes("setHasDescriptionSession(true);"),
+    true
+  );
+  assert.equal(
+    workspaceTreeAutoSelectSource.includes(
+      'import { resolveDescriptionSession } from "./description-workflow-state";'
+    ),
+    true
+  );
+  assert.equal(
+    workspaceTreeAutoSelectSource.includes(
+      "const descriptionSession = resolveDescriptionSession(state);"
+    ),
+    true
+  );
 });
