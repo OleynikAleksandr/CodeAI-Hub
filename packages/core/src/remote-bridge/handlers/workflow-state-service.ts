@@ -3,10 +3,8 @@ import type { Request, Response } from "express";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
-import {
-  buildDescriptionBranchSnapshot,
-  DescriptionStepStore,
-} from "../../workflow/description/description-step-store";
+import { recoverDescriptionBranchSnapshot } from "../../workflow/description/description-artifact-recovery";
+import { DescriptionStepStore } from "../../workflow/description/description-step-store";
 import { WorkspaceExecutionProfileFacade } from "../../workflow/execution-profile/workspace-execution-profile-facade";
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
@@ -106,31 +104,34 @@ export class WorkflowStateService {
       executionProfilePromise,
       lastActivePromise,
     ])
-      .then(([chains, descriptionSnapshot, executionProfile, lastActive]) => {
-        const description = descriptionSnapshot
-          ? buildDescriptionBranchSnapshot(descriptionSnapshot)
-          : null;
-        return applyVirtualSimulationValidation({
-          state,
+      .then(([chains, descriptionSnapshot, executionProfile, lastActive]) =>
+        recoverDescriptionBranchSnapshot({
           workspaceRoot,
           workspaceSlug: workspaceSlugResult.value,
-        }).then((validatedState) => {
-          const gating = {
-            blocked: resolveWorkflowBlockedStages({
+          snapshot: descriptionSnapshot,
+        }).then((description) =>
+          applyVirtualSimulationValidation({
+            state,
+            workspaceRoot,
+            workspaceSlug: workspaceSlugResult.value,
+          }).then((validatedState) => {
+            const gating = {
+              blocked: resolveWorkflowBlockedStages({
+                state: validatedState,
+                description,
+              }),
+            };
+            res.json({
               state: validatedState,
+              continuity: { chains },
               description,
-            }),
-          };
-          res.json({
-            state: validatedState,
-            continuity: { chains },
-            description,
-            executionProfile,
-            lastActive,
-            gating,
-          });
-        });
-      })
+              executionProfile,
+              lastActive,
+              gating,
+            });
+          })
+        )
+      )
       .catch((error) => {
         this.logger.warn("Failed to read workflow metadata", {
           workspaceSlug: workspaceSlugResult.value,

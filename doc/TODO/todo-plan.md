@@ -39,9 +39,9 @@
 
 ### Stream 1: Atomic description snapshot
 1. [DONE] Сделать `DescriptionStepStore` атомарным и сериализованным по workspace, с явным логированием corruption/read failures вместо silent `null` (scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store-storage.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `fix(core): harden description step store`).
-2. [IN_PROGRESS] Git Commit: `fix(core): harden description step store` (hash: TBD)
-3. [TODO] Восстанавливать `workflow-state.description` по каноническим файлам на диске и перестать показывать `description-step.json` как user-facing artifact (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit: `fix(core): recover description artifacts from filesystem`).
-4. [TODO] Git Commit: `fix(core): recover description artifacts from filesystem` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): harden description step store` (hash: `e76881b1`)
+3. [DONE] Восстанавливать `workflow-state.description` по каноническим файлам на диске и перестать показывать `description-step.json` как user-facing artifact (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-artifact-recovery.ts`; expected commit: `fix(core): recover description artifacts from filesystem`).
+4. [IN_PROGRESS] Git Commit: `fix(core): recover description artifacts from filesystem` (hash: TBD)
 
 ---
 

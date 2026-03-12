@@ -147,7 +147,7 @@ export class WorkflowRuntime {
       relativePath === "description/description-step.json" ||
       relativePath.endsWith("/description-step.json")
     ) {
-      return true;
+      return false;
     }
 
     if (relativePath === "description/questionnaire.md") {
