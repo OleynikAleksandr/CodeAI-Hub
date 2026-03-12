@@ -2,6 +2,21 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.717] - 2026-03-12
+### Fixed
+- Workflow runtime: every workspace is now locked to a single execution profile (`providerId` + `modelId`) after the first `Description submit`, so later Settings changes no longer cause provider drift or identity churn during workflow resume.
+- Codex workflow resume: removed the `gpt-5.4`-driven special-case that could create a new native thread instead of resuming the locked workflow dialog.
+- Description recovery: Core rebuilds `workflow-state.description` from canonical files on disk (`questionnaire.md`, `description.md`, `Final_Description.md`) and stops exposing `description-step.json` as a user-facing artifact.
+- Project Manager: workflow tree and main area now consume one shared `workflow-state` snapshot and use one shared description fallback helper, eliminating the split-brain cases where a live session or artifact disappeared from one side of the UI.
+
+### Added
+- Project Manager: `Description` questionnaire now shows the locked provider/model as read-only workspace metadata.
+- Project Manager: provider picker now warns that in MVP the provider and its default model are chosen once per workspace.
+- Regression coverage: added targeted Core and PM tests for workspace execution profile lock, description artifact recovery, shared description fallback, and shared workflow-state entrypoint usage.
+
+### Changed
+- Architecture docs: synchronized the workspace identity stabilization SSOT with an implementation snapshot and a new session closeout report for the completed implementation/regression track.
+
 ## [1.1.716] - 2026-03-06
 ### Added
 - Workflow submit diagnostics: every Project Manager workflow submit now gets an `outboundAttemptId` that is correlated end-to-end across PM, Core bridge, Core session handler, and Codex transport trace.

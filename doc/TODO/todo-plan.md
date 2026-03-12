@@ -70,11 +70,11 @@
 4. [DONE] Git Commit: `test(pm): cover description workflow fallback helper` (hash: `251fe948`)
 5. [DONE] Добавить source-level regression test, что tree/main area читают workflow snapshot только через shared `useWorkspaceWorkflowState` path без возврата к split polling (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`, `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`; expected commit: `test(pm): cover shared workflow state entrypoint`).
 6. [DONE] Git Commit: `test(pm): cover shared workflow state entrypoint` (hash: `ef32d520`)
-7. [IN_PROGRESS] Синхронно обновить closeout docs по результатам stabilization implementation после закрытия PM regression coverage (scope: `doc/SolidWorks-WorkFlow/`, `doc/Sessions/`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): sync workspace identity stabilization closeout`).
-8. [TODO] Git Commit: `docs(pm): sync workspace identity stabilization closeout` (hash: TBD)
+7. [DONE] Синхронно обновить closeout docs по результатам stabilization implementation после закрытия PM regression coverage (scope: `doc/SolidWorks-WorkFlow/`, `doc/Sessions/`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): sync workspace identity stabilization closeout`).
+8. [DONE] Git Commit: `docs(pm): sync workspace identity stabilization closeout` (hash: `a2fc590a`)
 
 ### Stream 2: Release build by checklist
-5. [TODO] После закрытия всех implementation streams и на чистом дереве актуализировать release-facing документы перед сборкой: `README.md`, `CHANGELOG.md` и связанные архитектурные материалы по итоговой реализации stabilization plan (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/`; expected commit: `docs(release): prepare workspace identity stabilization release notes`).
+5. [IN_PROGRESS] После закрытия implementation/regression streams актуализировать release-facing документы под следующий patch release, который поднимет `build-all.sh`: `README.md` и `CHANGELOG.md` с итогами workspace identity stabilization (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare workspace identity stabilization release notes`).
 6. [TODO] Git Commit: `docs(release): prepare workspace identity stabilization release notes` (hash: TBD)
 7. [TODO] Выполнить release build строго по `Release Build Checklist`: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, перенести/проверить артефакты в `doc/tmp/releases/`, зафиксировать результаты в session closeout (scope: `scripts/`, `doc/tmp/releases/`, `doc/Sessions/`; expected commit: `build(release): ship workspace identity stabilization`).
 8. [TODO] Git Commit: `build(release): ship workspace identity stabilization` (hash: TBD)
