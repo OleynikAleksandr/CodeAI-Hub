@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.718] - 2026-03-12
+### Fixed
+- Workflow runtime: `lastActive` now advances from `Description` into `Virtual Simulation`, `Diagram Modules`, and `Diagram Facades`, so workspace reopen and stage restore no longer stick to `questionnaire.md` after later workflow activity exists.
+- Project Manager: stage-to-panel sync now replays the last activated workflow stage when `workflow-state` catches up, so late continuity/session hydration no longer leaves the dialog pane stuck on stale `Description`.
+- Project Manager: persisted dialog restore from `localStorage` is now stage-aware; stale `Description` intents are discarded when reconciled workflow state has already advanced to a later step.
+- Virtual Simulation: validator and PM artifact panel now accept both `##` and `### Сценарий N`, eliminating false `invalid` status for live `virtual-simulation.md` files generated in existing workspaces.
+
 ## [1.1.717] - 2026-03-12
 ### Fixed
 - Workflow runtime: every workspace is now locked to a single execution profile (`providerId` + `modelId`) after the first `Description submit`, so later Settings changes no longer cause provider drift or identity churn during workflow resume.
