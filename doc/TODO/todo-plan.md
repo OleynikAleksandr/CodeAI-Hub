@@ -63,7 +63,7 @@
 20. [TODO] Git Commit: `test(release): verify pm workflow regression repair` (hash: TBD)
 
 ### Stream 10: Historical baseline compare before `gpt-5.4` rollout
-27. [TODO] Снять forensic baseline до codex `gpt-5.4` rollout и сравнить PM/Description workflow против текущей ветки, чтобы отделить model-switch изменения от более поздних PM workflow-state refactor/regression commits (scope: `doc/Sessions/Session075.md`, local git history around `9614ab37` / `b78d78a8` / `e6cd53da`; expected commit: `docs(todo): plan pre-gpt-5.4 baseline compare`).
+27. [IN_PROGRESS] Снять forensic baseline до codex `gpt-5.4` rollout и сравнить PM/Description workflow против текущей ветки, чтобы отделить model-switch изменения от более поздних PM workflow-state refactor/regression commits; отдельный detached worktree уже создан в `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-pre-gpt54-v1.1.712` на commit `9614ab37` (scope: `doc/Sessions/Session075.md`, local git history around `9614ab37` / `b78d78a8` / `e6cd53da`; expected commit: `docs(todo): plan pre-gpt-5.4 baseline compare`).
 28. [TODO] Git Commit: `docs(todo): plan pre-gpt-5.4 baseline compare` (hash: TBD)
 
 ## Phase 302 — Release Rebuild After Regression Repair (owner: Oleksandr, updated: 2026-03-12)
@@ -77,5 +77,5 @@
 22. [DONE] Git Commit: `docs(release): prepare pm hydration repair test build` (hash: `c5aad906`)
 23. [DONE] Запустить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, подтвердить новый VSIX/tarball артефакты и зафиксировать build output отдельными коммитами (scope: root release assets, `doc/tmp/releases/`, `package-lock.json`; expected commit: `build(release): stage pm hydration repair test artifacts`).
 24. [DONE] Git Commit: `build(release): stage pm hydration repair test artifacts` (hash: `f6d56a5e`)
-25. [IN_PROGRESS] Создать новый session report под тестовый релиз и очистить дерево после сборки (scope: `doc/Sessions/`; expected commit: `docs(session): record test release 1.1.719 build`).
-26. [TODO] Git Commit: `docs(session): record test release 1.1.719 build` (hash: TBD)
+25. [DONE] Создать новый session report под тестовый релиз и очистить дерево после сборки (scope: `doc/Sessions/`; expected commit: `docs(session): record test release 1.1.719 build`).
+26. [DONE] Git Commit: `docs(session): record test release 1.1.719 build` (hash: `647a4381`)

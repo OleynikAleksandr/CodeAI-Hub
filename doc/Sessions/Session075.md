@@ -22,10 +22,17 @@
   - session pane появляется, но обе панели визуально "стробят"/перемонтируются;
   - workflow tree в левом sidebar остаётся на жёлтом статусе `Description` и не показывает children (`questionnaire.md`, session node, `Final_Description.md`).
 - По истории git подтверждено, что codex `gpt-5.4` rollout был в коммитах `b78d78a8` / `93d75291`, а основной PM shared workflow-state refactor начался позже в `e6cd53da`; так как текущий дефект воспроизводится и на Claude workspace, следующий шаг — historical compare с pre-`gpt-5.4` baseline, а не слепой rollback текущего `main`.
+- Создан отдельный detached `git worktree` для baseline до `gpt-5.4` rollout:
+  - путь: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-pre-gpt54-v1.1.712`
+  - commit: `9614ab37` (`chore(release): build-all v1.1.712`)
+  - статус: `HEAD (no branch)` / detached worktree
+- Этот worktree утверждён как стартовая точка следующей сессии для сборки baseline-релиза и smoke-сравнения без отката текущего `main`.
 
 ## Git commits
 - `c5aad906 docs(release): prepare pm hydration repair test build`
 - `f6d56a5e build(release): stage pm hydration repair test artifacts`
+- `647a4381 docs(session): record test release 1.1.719 build`
+- `d6c4eaca docs(todo): capture failed smoke after v1.1.719`
 
 ---
 
@@ -44,5 +51,6 @@
 ## Plans for next session
 - Установить и прогнать ручной smoke на `codeai-hub-1.1.719.vsix` для двух проблемных workspace из `Session072.md`.
 - Проверить конкретно: появление Description session node, артефактов `questionnaire.md`/`Final_Description.md` в tree, отсутствие `Description Help` fallback после submit, отсутствие стробирования правой панели.
+- Зайти в worktree `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-pre-gpt54-v1.1.712`, собрать из него baseline release и прогнать тот же smoke на тех же workspace.
 - Выполнить historical compare против pre-`gpt-5.4` baseline (`9614ab37` / до `b78d78a8`) и отделить model-switch дельту от более поздних PM workflow-state рефакторингов.
 - Если smoke зелёный, закрыть `Phase 301 / Stream 9` verification commit и решать, нужен ли уже обычный patch release closeout или ещё один repair loop.
