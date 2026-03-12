@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import type { WorkspaceProject } from "../../types";
+import {
+  resolveDescriptionArtifact,
+  resolveDescriptionHasSession,
+} from "./description-workflow-state";
 import { resolveWorkspaceSlug } from "./main-area-utils";
 import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
 import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
@@ -106,44 +110,49 @@ export const useMainAreaWorkflowState = (
       autoResolvedActiveToolRef.current = null;
       return;
     }
+    if (!workflowState) {
+      params.setDescriptionDocument(null);
+      params.setQuestionnaireDocument(null);
+      params.setHasDescriptionSession(false);
+      return;
+    }
 
-    const branch = workflowState?.description;
+    const branch = workflowState.description;
+    const descriptionArtifact = resolveDescriptionArtifact(branch, workspaceSlug);
     const resolvedActiveTool = resolveLastActiveTool(workflowState);
-    if (workflowState && autoResolvedActiveToolRef.current !== workspaceSlug) {
+    if (autoResolvedActiveToolRef.current !== workspaceSlug) {
       autoResolvedActiveToolRef.current = workspaceSlug;
       params.setActiveTool(resolvedActiveTool);
     }
-    const nextDescription =
-      branch?.finalPath && branch.finalPath.trim().length > 0
-        ? { path: branch.finalPath, label: "Final_Description.md" as const }
-        : branch?.draftPath && branch.draftPath.trim().length > 0
-          ? { path: branch.draftPath, label: "description.md" as const }
-          : null;
+    let nextDescription: DescriptionDocument | null = null;
+    if (
+      descriptionArtifact?.label === "description.md" ||
+      descriptionArtifact?.label === "Final_Description.md"
+    ) {
+      nextDescription = {
+        workspacePath,
+        workspaceSlug,
+        path: descriptionArtifact.path,
+        label: descriptionArtifact.label,
+      };
+    }
 
-    params.setDescriptionDocument(
-      nextDescription ? { ...nextDescription, workspacePath, workspaceSlug } : null
-    );
+    params.setDescriptionDocument(nextDescription);
 
-    const nextHasDescriptionSession = Boolean(
-      branch?.session?.providerSessionId || branch?.sessionKind
-    );
+    const nextHasDescriptionSession = resolveDescriptionHasSession(workflowState);
     params.setHasDescriptionSession(nextHasDescriptionSession);
 
-    const questionnairePath =
-      branch?.questionnairePath && branch.questionnairePath.trim().length > 0
-        ? branch.questionnairePath
-        : `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
+    let nextQuestionnaire: QuestionnaireDocument | null = null;
+    if (!nextDescription && descriptionArtifact?.label === "questionnaire.md") {
+      nextQuestionnaire = {
+        workspacePath,
+        workspaceSlug,
+        path: descriptionArtifact.path,
+        label: "questionnaire.md",
+      };
+    }
 
-    const nextQuestionnaire =
-      nextHasDescriptionSession && !nextDescription
-        ? { path: questionnairePath, label: "questionnaire.md" as const }
-        : null;
-
-    params.setQuestionnaireDocument(
-      nextQuestionnaire
-        ? { ...nextQuestionnaire, workspacePath, workspaceSlug }
-        : null
-    );
+    params.setQuestionnaireDocument(nextQuestionnaire);
 
     if (
       isEmptyWorkflowState(workflowState) &&

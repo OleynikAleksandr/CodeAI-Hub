@@ -1,5 +1,9 @@
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import {
+  resolveDescriptionArtifact,
+  resolveDescriptionSession,
+} from "./description-workflow-state";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { TreeNode } from "./workspace-tree-model";
 import { resolveDiagramStageSyncPayload } from "./workspace-tree-diagram-branch-nodes";
@@ -30,14 +34,11 @@ export const buildDescriptionBranchNodes = (options: {
   if (!branch) {
     return [];
   }
-  const session = branch.session;
+  const session = resolveDescriptionSession(options.workflowState);
   const nodes: TreeNode[] = [];
-  const artifactPath = branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
-  const artifactLabel = branch.finalPath
-    ? "Final_Description.md"
-    : branch.draftPath
-      ? "description.md"
-      : "questionnaire.md";
+  const artifact = resolveDescriptionArtifact(branch, options.workspaceSlug);
+  const artifactPath = artifact?.path ?? null;
+  const artifactLabel = artifact?.label ?? "questionnaire.md";
   const artifactStatus = branch.finalPath ? "active" : "draft";
   if (artifactPath) {
     nodes.push({
@@ -137,15 +138,10 @@ export const resolveStageSyncPayload = (options: {
   if (stage === "description") {
     const branch = workflowState.description;
     if (!branch) return { artifact: null, clearTool: null, session: null };
-    const artifactPath = branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
-    const artifactLabel = branch.finalPath
-      ? "Final_Description.md"
-      : branch.draftPath
-        ? "description.md"
-        : "questionnaire.md";
-    const session = branch.session;
+    const artifact = resolveDescriptionArtifact(branch, workspaceSlug);
+    const session = resolveDescriptionSession(workflowState);
     return {
-      artifact: artifactPath ? { path: artifactPath, label: artifactLabel } : null,
+      artifact,
       clearTool: null,
       session:
         session
