@@ -945,6 +945,18 @@ body {
   line-height: 1.4;
 }
 
+.pm-provider-picker__lock-warning {
+  margin: -2px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 115, 115, 0.45);
+  background: rgba(166, 44, 44, 0.16);
+  color: #ff9e9e;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
 .pm-provider-picker__actions {
   display: flex;
   align-items: center;

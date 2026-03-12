@@ -51,12 +51,12 @@
 1. [DONE] Вынести единый shared source для `workflow-state`, чтобы tree/main area/auto-select читали один snapshot вместо независимых polling-контуров (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`; expected commit: `refactor(pm): share workflow state across layout`).
 2. [DONE] Git Commit: `refactor(pm): share workflow state across layout` (hash: `e6cd53da`)
 3. [DONE] Выровнять fallback/session selection для `description` между tree и main area через общий helper без альтернативных runtime path (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/description-workflow-state.ts`; expected commit: `fix(pm): align description fallback with locked workspace profile`).
-4. [IN_PROGRESS] Git Commit: `fix(pm): align description fallback with locked workspace profile` (hash: TBD)
-5. [TODO] Добавить `executionProfile` в PM workflow snapshot и показать в `Description` questionnaire read-only summary с locked provider/model для текущего workspace без альтернативных runtime path (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit: `feat(pm): show workspace execution lock summary`).
-6. [TODO] Git Commit: `feat(pm): show workspace execution lock summary` (hash: TBD)
+4. [DONE] Git Commit: `fix(pm): align description fallback with locked workspace profile` (hash: `b03cec52`)
+5. [DONE] Добавить `executionProfile` в PM workflow snapshot и показать в `Description` questionnaire read-only summary с locked provider/model для текущего workspace без альтернативных runtime path (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-execution-profile-client.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit: `feat(pm): show workspace execution lock summary`).
+6. [DONE] Git Commit: `feat(pm): show workspace execution lock summary` (hash: `bfece482`)
 
 ### Stream 2: Provider lock warning in picker
-7. [TODO] Добавить в provider picker после `Submit questionnaire` заметное красное предупреждение, что в MVP выбор provider и его default model фиксируется один раз на весь workspace (scope: `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit: `feat(pm): warn about workspace provider lock in picker`).
+7. [IN_PROGRESS] Добавить в provider picker после `Submit questionnaire` заметное красное предупреждение, что в MVP выбор provider и его default model фиксируется один раз на весь workspace (scope: `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `packages/ui/project-manager/styles.css`; expected commit: `feat(pm): warn about workspace provider lock in picker`).
 8. [TODO] Git Commit: `feat(pm): warn about workspace provider lock in picker` (hash: TBD)
 
 ---
