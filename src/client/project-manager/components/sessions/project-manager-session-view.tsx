@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { api } from "../../api";
 import ProjectManagerDialogSessionView, {
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view";
+import { shouldDiscardRestoredDialogIntent } from "./project-manager-dialog-session-view-helpers";
 import ProjectManagerRuntimeSessionView from "./project-manager-runtime-session-view";
 
 type ProjectManagerSessionViewProps = {
@@ -100,21 +102,52 @@ export const ProjectManagerSessionView = ({
   const [dialogIntent, setDialogIntent] = useState<DialogOpenIntent | null>(
     null
   );
+  const restoreGenerationRef = useRef(0);
 
   useEffect(() => {
+    restoreGenerationRef.current += 1;
+    const restoreGeneration = restoreGenerationRef.current;
+
     if (!workspacePath) {
       setDialogIntent(null);
       setViewMode("runtime");
       return;
     }
-    const restored = loadLastDialogIntent(workspacePath);
-    if (restored) {
+
+    const restoreDialogIntent = async () => {
+      const restored = loadLastDialogIntent(workspacePath);
+      if (!restored) {
+        if (restoreGenerationRef.current !== restoreGeneration) {
+          return;
+        }
+        setDialogIntent(null);
+        setViewMode("runtime");
+        return;
+      }
+
+      const workflowState = await api.getWorkflowState(
+        restored.workspaceSlug,
+        workspacePath
+      );
+      if (restoreGenerationRef.current !== restoreGeneration) {
+        return;
+      }
+      if (
+        shouldDiscardRestoredDialogIntent({
+          intent: restored,
+          workflowState,
+        })
+      ) {
+        setDialogIntent(null);
+        setViewMode("runtime");
+        return;
+      }
+
       setDialogIntent(restored);
       setViewMode("dialog");
-      return;
-    }
-    setDialogIntent(null);
-    setViewMode("runtime");
+    };
+
+    void restoreDialogIntent();
   }, [workspacePath]);
 
   useEffect(() => {
@@ -129,6 +162,7 @@ export const ProjectManagerSessionView = ({
       ) {
         return;
       }
+      restoreGenerationRef.current += 1;
       setDialogIntent(detail);
       setViewMode("dialog");
       saveLastDialogIntent(detail);
