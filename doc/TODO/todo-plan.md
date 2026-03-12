@@ -35,11 +35,11 @@
 6. [DONE] Git Commit: `fix(core): reconcile workflow stage state on read` (hash: `ebfb48ac`)
 
 ### Stream 3: Advance cross-stage lastActive
-7. [IN_PROGRESS] Обновлять `lastActive` для `virtual_simulation` и следующих user-facing artifacts, чтобы reopen workspace и stage restore не застревали на `questionnaire.md` после продвижения workflow вперёд (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `fix(core): advance workflow last-active across stages`).
-8. [TODO] Git Commit: `fix(core): advance workflow last-active across stages` (hash: TBD)
+7. [DONE] Обновлять `lastActive` для `virtual_simulation` и следующих user-facing artifacts, чтобы reopen workspace и stage restore не застревали на `questionnaire.md` после продвижения workflow вперёд (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-last-active-cross-stage.test.ts`; expected commit: `fix(core): advance workflow last-active across stages`).
+8. [DONE] Git Commit: `fix(core): advance workflow last-active across stages` (hash: `5c565af6`)
 
 ### Stream 4: Reactive stage-to-panel sync in PM
-9. [TODO] Сделать stage sync реактивным к обновлению `workflowState`, чтобы позднее появление continuity/session выбранного шага автоматически переоткрывало правильный dialog pane и не оставляло stale `Description` session (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `fix(pm): resync panels to active workflow stage`).
+9. [IN_PROGRESS] Сделать stage sync реактивным к обновлению `workflowState`, чтобы позднее появление continuity/session выбранного шага автоматически переоткрывало правильный dialog pane и не оставляло stale `Description` session (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `fix(pm): resync panels to active workflow stage`).
 10. [TODO] Git Commit: `fix(pm): resync panels to active workflow stage` (hash: TBD)
 
 ### Stream 5: Reconcile persisted dialog intent

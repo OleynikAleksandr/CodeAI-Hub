@@ -17,6 +17,9 @@
 - Таргетная проверка зелёная: `npm exec --workspace packages/core tsx --test src/workflow/workflow-internal-metadata-artifacts.test.ts` и `npm run build --workspace @codeai-hub/core`.
 - Закрыт `Phase 301 / Stream 2`: `workflow-state` read path теперь прогоняет отдельный reconciler, который восстанавливает derived `completed`/`in_progress` для workflow stages из continuity и канонических файлов на диске.
 - Для read-side reconciliation добавлен отдельный unit coverage: `src/workflow/state/workflow-state-reconciliation.test.ts`.
+- Закрыт `Phase 301 / Stream 3`: `WorkflowRuntime` теперь продвигает `lastActive` на canonical user-facing artifacts поздних шагов (`virtual_simulation`, `diagram_modules`, `diagram_facades`) вместо вечного залипания на `description/questionnaire.md`.
+- Для cross-stage `lastActive` добавлен отдельный unit coverage: `src/workflow/runtime/workflow-last-active-cross-stage.test.ts`.
+- Таргетная проверка зелёная: `npm exec --workspace packages/core tsx --test src/workflow/runtime/workflow-last-active-cross-stage.test.ts` и `npm run build --workspace @codeai-hub/core`.
 
 ## Reported runtime issues to investigate next
 - Workspace Claude: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude/.codeai-hub/codeai-hub-claude`
@@ -43,6 +46,7 @@
 - `81ab9099 docs(architecture): capture pm workflow regression repair`
 - `0b63cb54 fix(core): filter internal workflow metadata artifacts`
 - `ebfb48ac fix(core): reconcile workflow stage state on read`
+- `5c565af6 fix(core): advance workflow last-active across stages`
 
 ---
 
@@ -58,6 +62,6 @@
 7. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`
 
 ## Plans for next session
-- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 3: cross-stage lastActive`.
-- Особое внимание: `lastActive` cross-stage, stale dialog restore из `localStorage`, reactive resync после появления VS continuity/session.
+- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 4: reactive stage-to-panel sync in PM`.
+- Особое внимание: reactive resync после появления VS continuity/session, stale dialog restore из `localStorage`, затем выравнивание validator для `virtual-simulation.md`.
 - Перед кодовыми правками держать открытым `ProjectManager_WorkflowState_Reconciliation.md` как SSOT текущего repair track.
