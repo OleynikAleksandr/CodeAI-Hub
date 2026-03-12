@@ -39,11 +39,11 @@
 8. [DONE] Git Commit: `fix(core): advance workflow last-active across stages` (hash: `5c565af6`)
 
 ### Stream 4: Reactive stage-to-panel sync in PM
-9. [IN_PROGRESS] Сделать stage sync реактивным к обновлению `workflowState`, чтобы позднее появление continuity/session выбранного шага автоматически переоткрывало правильный dialog pane и не оставляло stale `Description` session (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `fix(pm): resync panels to active workflow stage`).
-10. [TODO] Git Commit: `fix(pm): resync panels to active workflow stage` (hash: TBD)
+9. [DONE] Сделать stage sync реактивным к обновлению `workflowState`, чтобы позднее появление continuity/session выбранного шага автоматически переоткрывало правильный dialog pane и не оставляло stale `Description` session (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/use-stage-panel-sync.test.ts`; expected commit: `fix(pm): resync panels to active workflow stage`).
+10. [DONE] Git Commit: `fix(pm): resync panels to active workflow stage` (hash: `6eae900e`)
 
 ### Stream 5: Reconcile persisted dialog intent
-11. [TODO] Превратить `localStorage` dialog restore в stage-aware hint: stale intent должен отбрасываться при reopen, если reconciled `workflow-state` и `lastActive` уже указывают на более поздний шаг (scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; expected commit: `fix(pm): discard stale dialog restore intent`).
+11. [IN_PROGRESS] Превратить `localStorage` dialog restore в stage-aware hint: stale intent должен отбрасываться при reopen, если reconciled `workflow-state` и `lastActive` уже указывают на более поздний шаг (scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; expected commit: `fix(pm): discard stale dialog restore intent`).
 12. [TODO] Git Commit: `fix(pm): discard stale dialog restore intent` (hash: TBD)
 
 ### Stream 6: Align Virtual Simulation validator with live artifacts
