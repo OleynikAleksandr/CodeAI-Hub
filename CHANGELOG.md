@@ -2,6 +2,12 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.720] - 2026-03-12
+### Changed
+- Codex baseline settings/UI/runtime replace the general-purpose model `gpt-5.2` with `gpt-5.4`, while keeping `gpt-5.3-codex` as the dedicated coding model.
+- Codex settings snapshots now persist only two user-facing model keys in `reasoningByModel`: `gpt-5.3-codex` and `gpt-5.4`.
+- Stable baseline release rebuilt from the pre-`gpt-5.4` workflow line, avoiding later PM workflow-state/hydration refactors while updating only the Codex model selection surface.
+
 ## [1.1.711] - 2026-03-05
 ### Fixed
 - Project Manager: для cold-open history добавлен watchdog-ретрай — зависший первый `dialog:history` запрос (`cursor=0`) автоматически сбрасывается и повторяется forced-route без участия пользователя.

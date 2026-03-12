@@ -13,6 +13,8 @@
 ## Инварианты
 - UI история диалога ведётся отдельно (unified-session JSONL по `dialogId`), не смешивать с provider rollouts.
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
+- User-facing Codex settings в baseline line экспонируют только две модели: `gpt-5.3-codex` и `gpt-5.4`.
+- Persisted `settings.json` для Codex не должен разрастаться устаревшими model ids; `reasoningByModel` хранит только active user-facing keys этой линии.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

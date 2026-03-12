@@ -28,11 +28,11 @@ const CODEX_SETTINGS_FILE = path.join(
 );
 const CODEX_MODELS_CACHE_FILE = "models_cache.json";
 const CODEX_CONFIG_FILE = "config.toml";
-const CODEX_MIGRATION_FROM = "gpt-5.2";
+const CODEX_MIGRATION_FROM = "gpt-5.4";
 const CODEX_MIGRATION_TO = "gpt-5.3-codex";
 const NEWLINE_SPLIT_REGEX = /\r?\n/u;
 const MIGRATION_LINE_REGEX =
-  /^\s*(["']?)gpt-5\.2\1\s*=\s*(["']?)gpt-5\.3-codex\2\s*(#.*)?$/u;
+  /^\s*(["']?)gpt-5\.4\1\s*=\s*(["']?)gpt-5\.3-codex\2\s*(#.*)?$/u;
 const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "low",
   "medium",
@@ -282,8 +282,8 @@ export class CodexSDKManager {
     const logger = new CodexSessionLogger();
 
     // Codex CLI treats the original thread model as sticky. In particular, when resuming a
-    // `gpt-5.3-codex` thread, passing `--model gpt-5.2` is not sufficient to force a downgrade.
-    // If the user selected `gpt-5.2` in Settings, prefer starting a fresh thread so the choice
+    // `gpt-5.3-codex` thread, passing `--model gpt-5.4` is not sufficient to force a downgrade.
+    // If the user selected `gpt-5.4` in Settings, prefer starting a fresh thread so the choice
     // is respected.
     if (this.workspaceDefaults.defaultModel === CODEX_MIGRATION_FROM) {
       this.deps.reporter?.info?.(

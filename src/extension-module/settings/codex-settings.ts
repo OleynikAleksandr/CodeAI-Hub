@@ -1,6 +1,6 @@
 import {
-  CODEX_ALL_MODELS,
   CODEX_REASONING_LEVELS,
+  CODEX_SETTINGS_MODELS,
   type CodexModelId,
   type CodexReasoningLevel,
   DEFAULT_CODEX_MODEL_ID,
@@ -31,13 +31,15 @@ export type CodexSettings = {
 export const MIN_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 export const MAX_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 
-const CODEX_MODEL_IDS = new Set(CODEX_ALL_MODELS.map((model) => model.id));
+const CODEX_MODEL_IDS = new Set<string>(
+  CODEX_SETTINGS_MODELS.map((model) => model.id)
+);
 const CODEX_REASONING_LEVEL_SET = new Set<string>(
   CODEX_REASONING_LEVELS.map((level) => level.name)
 );
 
 const createDefaultReasoningByModel = (): CodexReasoningByModel =>
-  CODEX_ALL_MODELS.reduce<Record<string, CodexReasoningLevel>>(
+  CODEX_SETTINGS_MODELS.reduce<Record<string, CodexReasoningLevel>>(
     (accumulator, model) => {
       accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
       return accumulator;
@@ -67,7 +69,7 @@ const isCodexReasoningLevel = (value: string): value is CodexReasoningLevel =>
 
 const normalizeCodexDefaultModel = (value: unknown): CodexModelId =>
   typeof value === "string" && isCodexModelId(value)
-    ? value
+    ? (value as CodexModelId)
     : DEFAULT_CODEX_MODEL_ID;
 
 const normalizeCodexReasoningByModel = (

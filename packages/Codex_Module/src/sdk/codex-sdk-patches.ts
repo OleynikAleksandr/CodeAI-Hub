@@ -7,7 +7,7 @@ import type { ThreadOptions } from "@openai/codex-sdk";
 
 const MODEL_REASONING_KEY = "model_reasoning_effort";
 const NOTICE_MODEL_MIGRATIONS_KEY = "notice.model_migrations";
-const MIGRATION_SANITIZE_MODEL_ID = "gpt-5.2";
+const MIGRATION_SANITIZE_MODEL_ID = "gpt-5.4";
 const EMPTY_INLINE_TABLE_TOML = "{}";
 const THREAD_PATCHED = Symbol("codex-reasoning-thread-patch");
 const EXEC_PATCHED = Symbol("codex-reasoning-exec-run");
