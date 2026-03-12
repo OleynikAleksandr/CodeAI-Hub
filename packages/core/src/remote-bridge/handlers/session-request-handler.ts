@@ -31,6 +31,7 @@ import type { DialogSendTraceLogger } from "../../telemetry/dialog-send-trace-lo
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { DescriptionStepStore } from "../../workflow/description";
+import { WorkspaceExecutionProfileFacade } from "../../workflow/execution-profile/workspace-execution-profile-facade";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type {
   SessionContinuityLockReason,
@@ -508,6 +509,8 @@ export class SessionRequestHandler {
   private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionStepStore = new DescriptionStepStore();
+  private readonly executionProfileFacade =
+    new WorkspaceExecutionProfileFacade();
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeRolloverInFlight = new Set<string>();
   private readonly flowNodeRolloverStarted = new Set<string>();
@@ -1218,6 +1221,76 @@ export class SessionRequestHandler {
     return {
       providerId: options.providerId,
       providerSessionId: options.requestedProviderSessionId,
+    };
+  }
+
+  private async resolveLockedWorkflowProviderContext(options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly initiativeSlug: string | null;
+    readonly stage: string | null;
+    readonly requestedProviderSessionId: string | null;
+  }): Promise<{
+    readonly providerId: string;
+    readonly providerSessionId: string | null;
+  }> {
+    const stage = resolveWorkflowStage(options.stage);
+    if (!(stage && options.initiativeSlug)) {
+      return {
+        providerId: options.providerId,
+        providerSessionId: options.requestedProviderSessionId,
+      };
+    }
+
+    const executionProfile = await this.executionProfileFacade.readOrBootstrap({
+      workspaceRoot: options.workspacePath,
+      workspaceSlug: options.initiativeSlug,
+      resolveLegacySeed: async () => {
+        const descriptionSnapshot = await this.descriptionStepStore
+          .read(options.workspacePath, options.initiativeSlug ?? "")
+          .catch(() => null);
+        const lockedProviderId =
+          descriptionSnapshot?.collectorSession?.providerId ??
+          descriptionSnapshot?.primarySession?.providerId ??
+          descriptionSnapshot?.session?.providerId ??
+          options.providerId;
+        const modelId = this.providerRegistry.getDefaultModel(lockedProviderId);
+        if (!modelId) {
+          return null;
+        }
+        return {
+          providerId: lockedProviderId,
+          modelId,
+          lockedFromStage: "description" as const,
+        };
+      },
+    });
+
+    if (!executionProfile) {
+      return {
+        providerId: options.providerId,
+        providerSessionId: options.requestedProviderSessionId,
+      };
+    }
+
+    if (executionProfile.providerId !== options.providerId) {
+      this.logger.info(
+        "Workflow provider selection overridden by locked workspace profile",
+        {
+          workspaceSlug: options.initiativeSlug,
+          stage,
+          requestedProviderId: options.providerId,
+          lockedProviderId: executionProfile.providerId,
+        }
+      );
+    }
+
+    return {
+      providerId: executionProfile.providerId,
+      providerSessionId:
+        executionProfile.providerId === options.providerId
+          ? options.requestedProviderSessionId
+          : null,
     };
   }
 
@@ -2074,12 +2147,19 @@ export class SessionRequestHandler {
       normalizedRequestedProviderId ?? this.getDefaultProviderId();
     const actualWorkspacePath = this.resolveWorkspacePath(workspacePath);
 
-    const runBound = this.resolveRunBoundProviderContext({
+    const requestedRunBound = this.resolveRunBoundProviderContext({
       providerId: requestedProviderId,
       workspacePath: actualWorkspacePath,
       initiativeSlug: context?.initiativeSlug ?? null,
       runSlug: context?.runSlug ?? null,
       requestedProviderSessionId: context?.providerSessionId ?? null,
+    });
+    const runBound = await this.resolveLockedWorkflowProviderContext({
+      providerId: requestedRunBound.providerId,
+      workspacePath: actualWorkspacePath,
+      initiativeSlug: context?.initiativeSlug ?? null,
+      stage: context?.stage ?? null,
+      requestedProviderSessionId: requestedRunBound.providerSessionId,
     });
     const actualProviderId = runBound.providerId;
     if (
@@ -2310,17 +2390,24 @@ export class SessionRequestHandler {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
-    const adapter = this.providerRegistry.getAdapter(options.providerId);
+    const lockedContext = await this.resolveLockedWorkflowProviderContext({
+      providerId: options.providerId,
+      workspacePath: options.workspacePath,
+      initiativeSlug: options.context.initiativeSlug,
+      stage: options.context.stage,
+      requestedProviderSessionId: null,
+    });
+    const adapter = this.providerRegistry.getAdapter(lockedContext.providerId);
     if (!adapter) {
       this.logger.warn("Workflow session creation failed: provider missing", {
-        providerId: options.providerId,
+        providerId: lockedContext.providerId,
       });
       return null;
     }
 
     try {
       return await this.createAndRegisterSession({
-        providerId: options.providerId,
+        providerId: lockedContext.providerId,
         workspacePath: options.workspacePath,
         adapter,
         resumeMode: options.context.resumeMode,
@@ -2332,7 +2419,7 @@ export class SessionRequestHandler {
         },
       });
     } catch (error) {
-      this.handleProviderFailure(options.providerId, error);
+      this.handleProviderFailure(lockedContext.providerId, error);
       return null;
     }
   }

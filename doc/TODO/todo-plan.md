@@ -25,9 +25,9 @@
 
 ### Stream 1: Core execution profile SSOT
 1. [DONE] Добавить типы/store/facade для `.codeai-hub/<workspaceSlug>/runtime/execution-profile.json` и legacy bootstrap существующих workspace без profile (scope: `packages/core/src/workflow/execution-profile/`; expected commit: `feat(core): add workspace execution profile store`).
-2. [IN_PROGRESS] Git Commit: `feat(core): add workspace execution profile store` (hash: TBD)
-3. [TODO] Привязать workflow session creation/read paths в Core к locked execution profile и запретить provider drift после первого `Description submit` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/provider-registry/index.ts`; expected commit: `feat(core): lock workflow sessions to workspace profile`).
-4. [TODO] Git Commit: `feat(core): lock workflow sessions to workspace profile` (hash: TBD)
+2. [DONE] Git Commit: `feat(core): add workspace execution profile store` (hash: `8555843b`)
+3. [DONE] Привязать workflow session creation/read paths в Core к locked execution profile и запретить provider drift после первого `Description submit` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/provider-registry/index.ts`; expected commit: `feat(core): lock workflow sessions to workspace profile`).
+4. [IN_PROGRESS] Git Commit: `feat(core): lock workflow sessions to workspace profile` (hash: TBD)
 
 ### Stream 2: Codex resume simplification
 5. [TODO] Убрать global-settings-based special-case `resume -> create new thread` из workflow path Codex и резолвить workflow create/resume только через locked workspace profile (scope: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/core/src/provider-registry/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(codex): resume locked workflow threads`).

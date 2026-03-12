@@ -7,6 +7,7 @@ import {
   buildDescriptionBranchSnapshot,
   DescriptionStepStore,
 } from "../../workflow/description/description-step-store";
+import { WorkspaceExecutionProfileFacade } from "../../workflow/execution-profile/workspace-execution-profile-facade";
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
@@ -39,6 +40,8 @@ export class WorkflowStateService {
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
+  private readonly executionProfileFacade =
+    new WorkspaceExecutionProfileFacade();
   private readonly lastActiveStore = new WorkflowLastActiveStore();
 
   constructor(options: {
@@ -74,6 +77,7 @@ export class WorkflowStateService {
         state,
         continuity: { chains: [] },
         description: null,
+        executionProfile: null,
         lastActive: null,
       });
       return;
@@ -87,13 +91,22 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlugResult.value
     );
+    const executionProfilePromise = this.executionProfileFacade.read(
+      workspaceRoot,
+      workspaceSlugResult.value
+    );
     const lastActivePromise = this.lastActiveStore.read(
       workspaceRoot,
       workspaceSlugResult.value
     );
 
-    Promise.all([continuityPromise, descriptionPromise, lastActivePromise])
-      .then(([chains, descriptionSnapshot, lastActive]) => {
+    Promise.all([
+      continuityPromise,
+      descriptionPromise,
+      executionProfilePromise,
+      lastActivePromise,
+    ])
+      .then(([chains, descriptionSnapshot, executionProfile, lastActive]) => {
         const description = descriptionSnapshot
           ? buildDescriptionBranchSnapshot(descriptionSnapshot)
           : null;
@@ -112,6 +125,7 @@ export class WorkflowStateService {
             state: validatedState,
             continuity: { chains },
             description,
+            executionProfile,
             lastActive,
             gating,
           });
@@ -126,6 +140,7 @@ export class WorkflowStateService {
           state,
           continuity: { chains: [] },
           description: null,
+          executionProfile: null,
           lastActive: null,
         });
       });

@@ -99,6 +99,7 @@ const GEMINI_INSTALLER_PATHS: GeminiInstallerPaths = {
 
 const PROVIDER_RECOVERY_INTERVAL_MS = 60_000;
 const PROVIDERS_ROOT = path.join(homedir(), ".codeai-hub", "providers");
+const DEFAULT_GEMINI_MODEL_ID = "gemini-3-pro-preview";
 
 type ClaudeAdapterCtor = new (options: ClaudeModuleOptions) => ProviderAdapter;
 
@@ -520,6 +521,19 @@ export class ProviderRegistry {
   getAdapter(providerId: string): ProviderAdapter | undefined {
     return this.providers.find((provider) => provider.id === providerId)
       ?.adapter;
+  }
+
+  getDefaultModel(providerId: string): string | null {
+    if (providerId === "claudeCodeCli") {
+      return this.options.config.claudeDefaultModel;
+    }
+    if (providerId === "codexCli") {
+      return this.options.config.codexDefaultModel ?? null;
+    }
+    if (providerId === "geminiCli") {
+      return this.geminiDefaultModel ?? DEFAULT_GEMINI_MODEL_ID;
+    }
+    return null;
   }
 
   handleRuntimeFailure(providerId: string, error: unknown): void {
