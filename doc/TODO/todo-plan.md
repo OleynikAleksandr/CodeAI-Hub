@@ -79,4 +79,4 @@
 7. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version/manifest bump до `1.1.717` и подготовить репозиторий к финальному VSIX packaging (scope: `package.json`, `package-lock.json`, `assets/**/manifest.json` и package manifests; expected commit: `build(release): stage workspace identity stabilization artifacts`).
 8. [DONE] Git Commit: `build(release): stage workspace identity stabilization artifacts` (hash: `662b717c`)
 9. [DONE] После clean commit от `build-all` выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.717.vsix`, зафиксировать release/session closeout и итоговую поставку (scope: `doc/Sessions/`, `doc/TODO/todo-plan.md`, release artefacts/checklist results; expected commit: `build(release): ship workspace identity stabilization`).
-10. [TODO] Git Commit: `build(release): ship workspace identity stabilization` (hash: TBD)
+10. [DONE] Git Commit: `build(release): ship workspace identity stabilization` (hash: `a65a9a87`)

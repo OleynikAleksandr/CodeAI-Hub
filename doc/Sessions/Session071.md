@@ -25,6 +25,7 @@
 ## Git commits
 - `781ed5c1 docs(release): prepare workspace identity stabilization release notes`
 - `662b717c build(release): stage workspace identity stabilization artifacts`
+- `a65a9a87 build(release): ship workspace identity stabilization`
 
 ---
 
