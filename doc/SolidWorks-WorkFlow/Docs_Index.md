@@ -32,6 +32,7 @@
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
+- `Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md` — MVP-контракт стабилизации PM/workspace identity: immutable provider/model lock, filesystem-backed Description recovery, shared `workflow-state`.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
 - `Contracts/SessionContinuity.md` — continuity handoff/rollover contract.

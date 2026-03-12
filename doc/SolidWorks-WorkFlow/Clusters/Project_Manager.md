@@ -11,6 +11,7 @@
 - Input lock SSOT/state machine: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Dialog routing (messages vs status): `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Workflow navigation SSOT (stage selection): `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
+- Workspace identity stabilization (MVP): `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`
 - Session Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
 - Launcher: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`
@@ -45,6 +46,13 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 Дополнительный инвариант навигации:
 - любой route на workflow stage (Toolbar/Tree/auto-select) обязан сначала синхронизировать `activeStage`, чтобы Toolbar, Session route и правая панель не расходились.
 - канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
+
+Дополнительный MVP-инвариант identity:
+- после первого `Description submit` PM работает только в рамках locked workspace provider/model profile;
+- reopen существующего workspace означает продолжение уже зафиксированной identity, а не новую попытку применить текущие Settings;
+- дерево, main area и auto-select обязаны читать один shared `workflow-state` snapshot.
+
+Канон: `ProjectManager_WorkspaceIdentity_Stabilization.md`.
 
 ## 4) Recovery UX (обязательно)
 

@@ -15,6 +15,7 @@
 - General-purpose модель в Settings/normalization: `gpt-5.4`; legacy `gpt-5.2` при чтении настроек должен мягко нормализоваться в `gpt-5.4`.
 - Runtime не должен опираться на неявную provider-side миграцию `gpt-5.2 -> gpt-5.3-codex`; выбор general-модели должен уважаться явно через локальные настройки CodeAI Hub.
 - Persisted `~/.codeai-hub/settings/settings.json` — SSOT для Codex default model/reasoning; stale boot-time env (`CODEX_DEFAULT_MODEL`, `CODEX_DEFAULT_REASONING_EFFORT`) не должен перебивать уже сохранённые Settings в long-lived Core/provider runtime.
+- Для активного workflow workspace MVP-источником правды является не текущий global Settings snapshot, а locked workspace execution profile; Codex workflow resume не имеет права создавать новый thread только потому, что в глобальных Settings сейчас выбран другой default model.
 
 ## Инварианты
 - UI история диалога ведётся отдельно (unified-session JSONL по `dialogId`), не смешивать с provider rollouts.

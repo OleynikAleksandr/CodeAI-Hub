@@ -5,6 +5,7 @@
 
 ## Канонические ключи
 - `workspacePath` / `workspaceSlug`
+- `executionProfile` — locked workflow provider/model profile для активного workspace
 - `dialogId` — логический диалог агента (история UI)
 - `sessionId` — текущий runtime сегмент Core (live status/usage/lock)
 - `providerSessionId` — native id провайдера (resume)
@@ -24,5 +25,6 @@
 - Normalization (release `1.1.646`): для `resume_in_place` idle/unlocked-сессий Core эмитит явный unlock-reason `no_rollover_needed` вместо `undefined`.
 
 ## Связанные контракты
+- Workspace identity stabilization: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`

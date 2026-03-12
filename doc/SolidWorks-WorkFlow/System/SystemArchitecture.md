@@ -16,11 +16,12 @@
 10. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 11. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
-13. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-14. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
-15. `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`
-16. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
-17. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+13. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`
+14. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+15. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
+16. `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`
+17. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
+18. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -61,6 +62,8 @@
    - Codex transport trace обязан покрывать не только processor breadcrumbs, но и child-process boundaries `outbound.child.spawned/stdin_write_started/stdin_write_finished/stdout_first_line/exit/killed`.
    - Release line `v1.1.716` является первой, где этот diagnostic trail обязателен end-to-end для workflow submit path в PM/Core/Codex.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`.
+10. **Workspace identity lock for MVP workflow**: после первого `Description submit` provider/model фиксируются на весь workspace; reopen/resume не имеют права перестраивать workflow identity из текущих глобальных Settings, а Description artifacts должны восстанавливаться по filesystem-backed правилам.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
