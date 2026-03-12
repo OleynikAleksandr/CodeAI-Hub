@@ -23,6 +23,9 @@
 - Закрыт `Phase 301 / Stream 4`: `use-stage-panel-sync` теперь запоминает последнюю активированную workflow stage и повторно синхронизирует artifact/session panes, когда позже обновляется `workflowState`.
 - Для PM stage replay добавлен отдельный structural test: `src/client/project-manager/components/layout/use-stage-panel-sync.test.ts`.
 - Таргетная проверка зелёная: `npm exec tsx --test src/client/project-manager/components/layout/use-stage-panel-sync.test.ts`, `npm run typecheck:webview`, `npm run build:webview`.
+- Закрыт `Phase 301 / Stream 5`: `ProjectManagerSessionView` больше не восстанавливает stale dialog intent вслепую из `localStorage`, а сверяет его с reconciled `workflow-state` и отбрасывает restore, если workflow уже ушёл на более поздний stage.
+- Для stale dialog restore guard добавлен unit coverage: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`.
+- Таргетная проверка зелёная: `npm exec tsx --test src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`.
 
 ## Reported runtime issues to investigate next
 - Workspace Claude: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude/.codeai-hub/codeai-hub-claude`
@@ -51,6 +54,7 @@
 - `ebfb48ac fix(core): reconcile workflow stage state on read`
 - `5c565af6 fix(core): advance workflow last-active across stages`
 - `6eae900e fix(pm): resync panels to active workflow stage`
+- `36de0ed8 fix(pm): discard stale dialog restore intent`
 
 ---
 
@@ -66,6 +70,6 @@
 7. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`
 
 ## Plans for next session
-- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 5: reconcile persisted dialog intent`.
-- Особое внимание: stale dialog restore из `localStorage`, затем выравнивание validator для `virtual-simulation.md` и финальный regression smoke на реальных workspace.
+- Реализация должна идти по `Phase 301` из `doc/TODO/todo-plan.md`; следующий активный шаг уже `Stream 6: align Virtual Simulation validator with live artifacts`.
+- Особое внимание: выравнивание validator для `virtual-simulation.md`, затем финальный regression smoke на реальных workspace и повторная локальная проверка двух проблемных репродукций.
 - Перед кодовыми правками держать открытым `ProjectManager_WorkflowState_Reconciliation.md` как SSOT текущего repair track.

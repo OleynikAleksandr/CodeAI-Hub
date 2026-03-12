@@ -43,11 +43,11 @@
 10. [DONE] Git Commit: `fix(pm): resync panels to active workflow stage` (hash: `6eae900e`)
 
 ### Stream 5: Reconcile persisted dialog intent
-11. [IN_PROGRESS] Превратить `localStorage` dialog restore в stage-aware hint: stale intent должен отбрасываться при reopen, если reconciled `workflow-state` и `lastActive` уже указывают на более поздний шаг (scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; expected commit: `fix(pm): discard stale dialog restore intent`).
-12. [TODO] Git Commit: `fix(pm): discard stale dialog restore intent` (hash: TBD)
+11. [DONE] Превратить `localStorage` dialog restore в stage-aware hint: stale intent должен отбрасываться при reopen, если reconciled `workflow-state` и `lastActive` уже указывают на более поздний шаг (scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; expected commit: `fix(pm): discard stale dialog restore intent`).
+12. [DONE] Git Commit: `fix(pm): discard stale dialog restore intent` (hash: `36de0ed8`)
 
 ### Stream 6: Align Virtual Simulation validator with live artifacts
-13. [TODO] Убрать ложный `invalid` для текущего runtime output `virtual-simulation.md`: validator и UI должны принимать `##` и `### Сценарий N` в repair window, не ломая user-facing guidance (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`; expected commit: `fix(workflow): align virtual simulation heading validation`).
+13. [IN_PROGRESS] Убрать ложный `invalid` для текущего runtime output `virtual-simulation.md`: validator и UI должны принимать `##` и `### Сценарий N` в repair window, не ломая user-facing guidance (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`; expected commit: `fix(workflow): align virtual simulation heading validation`).
 14. [TODO] Git Commit: `fix(workflow): align virtual simulation heading validation` (hash: TBD)
 
 ### Stream 7: Regression verification on real workspace data
