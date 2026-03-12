@@ -41,15 +41,15 @@
 1. [DONE] Сделать `DescriptionStepStore` атомарным и сериализованным по workspace, с явным логированием corruption/read failures вместо silent `null` (scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store-storage.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `fix(core): harden description step store`).
 2. [DONE] Git Commit: `fix(core): harden description step store` (hash: `e76881b1`)
 3. [DONE] Восстанавливать `workflow-state.description` по каноническим файлам на диске и перестать показывать `description-step.json` как user-facing artifact (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-artifact-recovery.ts`; expected commit: `fix(core): recover description artifacts from filesystem`).
-4. [IN_PROGRESS] Git Commit: `fix(core): recover description artifacts from filesystem` (hash: TBD)
+4. [DONE] Git Commit: `fix(core): recover description artifacts from filesystem` (hash: `f77dc2d5`)
 
 ---
 
 ## Phase 298 — Project Manager Shared Workflow State (owner: Oleksandr, updated: 2026-03-12)
 
 ### Stream 1: Shared workflow snapshot
-1. [TODO] Вынести единый shared source для `workflow-state`, чтобы tree/main area/auto-select читали один snapshot вместо независимых polling-контуров (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`; expected commit: `refactor(pm): share workflow state across layout`).
-2. [TODO] Git Commit: `refactor(pm): share workflow state across layout` (hash: TBD)
+1. [DONE] Вынести единый shared source для `workflow-state`, чтобы tree/main area/auto-select читали один snapshot вместо независимых polling-контуров (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`; expected commit: `refactor(pm): share workflow state across layout`).
+2. [IN_PROGRESS] Git Commit: `refactor(pm): share workflow state across layout` (hash: TBD)
 3. [TODO] Выровнять fallback логики `description` и показать locked provider/model в read-only виде без альтернативных runtime path (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`; expected commit: `fix(pm): align description fallback with locked workspace profile`).
 4. [TODO] Git Commit: `fix(pm): align description fallback with locked workspace profile` (hash: TBD)
 
