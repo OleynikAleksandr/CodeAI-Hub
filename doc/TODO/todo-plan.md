@@ -31,15 +31,15 @@
 
 ### Stream 2: Codex resume simplification
 5. [DONE] Убрать global-settings-based special-case `resume -> create new thread` из workflow path Codex и резолвить workflow create/resume только через locked workspace profile (scope: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/core/src/provider-registry/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(codex): resume locked workflow threads`).
-6. [IN_PROGRESS] Git Commit: `fix(codex): resume locked workflow threads` (hash: TBD)
+6. [DONE] Git Commit: `fix(codex): resume locked workflow threads` (hash: `765d2323`)
 
 ---
 
 ## Phase 297 — Description Metadata Hardening (owner: Oleksandr, updated: 2026-03-12)
 
 ### Stream 1: Atomic description snapshot
-1. [TODO] Сделать `DescriptionStepStore` атомарным и сериализованным по workspace, с явным логированием corruption/read failures вместо silent `null` (scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-types.ts`; expected commit: `fix(core): harden description step store`).
-2. [TODO] Git Commit: `fix(core): harden description step store` (hash: TBD)
+1. [DONE] Сделать `DescriptionStepStore` атомарным и сериализованным по workspace, с явным логированием corruption/read failures вместо silent `null` (scope: `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store-storage.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `fix(core): harden description step store`).
+2. [IN_PROGRESS] Git Commit: `fix(core): harden description step store` (hash: TBD)
 3. [TODO] Восстанавливать `workflow-state.description` по каноническим файлам на диске и перестать показывать `description-step.json` как user-facing artifact (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/description/description-step-store.ts`; expected commit: `fix(core): recover description artifacts from filesystem`).
 4. [TODO] Git Commit: `fix(core): recover description artifacts from filesystem` (hash: TBD)
 
