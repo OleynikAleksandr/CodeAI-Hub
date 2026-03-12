@@ -144,7 +144,19 @@ Watcher/runtime фильтрация обязана убирать их до п�
 
 Один только edge-trigger `pm:stage:activated` для этого недостаточен.
 
-### 7. Validator compatibility law for `virtual-simulation.md`
+### 7. Shared workflow-state must stay hot around submit
+
+После `Submit questionnaire` PM не имеет права ждать редкий slow-poll, чтобы увидеть:
+- `session:created`;
+- description session binding;
+- запись `Final_Description.md`.
+
+Для repair window утверждается следующий контракт:
+- shared `workflow-state` store должен оставаться в fast cadence, пока snapshot недавно менялся;
+- submit-driven UI может явно invalidate/refresh shared snapshot;
+- PM не должен насильно переоткрывать `questionnaire.md` после успешного старта Description session, если workflow-state уже может продвинуть UI дальше.
+
+### 8. Validator compatibility law for `virtual-simulation.md`
 
 Во время repair window validator и UI обязаны принимать оба формата scenario heading:
 - `## Сценарий N`
@@ -163,6 +175,7 @@ Watcher/runtime фильтрация обязана убирать их до п�
 
 ### PM
 - tree/main area/session pane обязаны опираться на один reconciled snapshot stage state.
+- shared `workflow-state` store обязан иметь fast refresh window вокруг submit/start событий, а не деградировать сразу в slow poll.
 - persisted dialog restore обязан стать stage-aware.
 - stage panel sync обязан стать reactive к позднему появлению continuity/artifact для уже выбранного шага.
 
@@ -171,6 +184,7 @@ Watcher/runtime фильтрация обязана убирать их до п�
 - `Description` и `Virtual Simulation` больше не выглядят пустыми, если канонические артефакты уже существуют на диске.
 - stage rows получают корректный status без зависимости только от `workflow.stage.completed`.
 - internal metadata/temp files не попадают в user-facing workflow artifacts.
+- после `Submit questionnaire` PM быстро видит session binding и не держит левую панель на `Description Help` только из-за stale snapshot.
 - reopen workspace не открывает stale `Description` dialog поверх более позднего активного шага.
 - если пользователь уже выбрал `Virtual Simulation`, появление его continuity/session позже не оставляет dialog pane на `Description`.
 - `virtual-simulation.md`, сгенерированный текущим runtime prompt, не получает ложный `invalid` только из-за `### Сценарий N`.

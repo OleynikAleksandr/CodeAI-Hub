@@ -51,11 +51,11 @@
 14. [DONE] Git Commit: `fix(workflow): align virtual simulation heading validation` (hash: `c6f035d1`)
 
 ### Stream 7: Restore fast PM workflow-state hydration
-15. [IN_PROGRESS] Вернуть shared `workflow-state` в fast cadence на горячем workflow окне и добавить явный refresh/invalidate path для submit-driven UI, чтобы tree/main area не жили на stale snapshot после `session:created` и записи `Final_Description.md` (scope: `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/idea-collector-submit-service.open-fast.test.ts`; expected commit: `fix(pm): refresh workflow state after description submit`).
-16. [TODO] Git Commit: `fix(pm): refresh workflow state after description submit` (hash: TBD)
+15. [DONE] Вернуть shared `workflow-state` в fast cadence на горячем workflow окне и добавить явный refresh/invalidate path для submit-driven UI, чтобы tree/main area не жили на stale snapshot после `session:created` и записи `Final_Description.md` (scope: `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/idea-collector-submit-service.open-fast.test.ts`; expected commit: `fix(pm): refresh workflow state after description submit`).
+16. [DONE] Git Commit: `fix(pm): refresh workflow state after description submit` (hash: `68167149`)
 
 ### Stream 8: Stop PM from downgrading back to pre-submit help
-17. [TODO] Сделать `hasDescriptionSession` monotonic внутри активного workspace после `session:created`, чтобы stale poll не возвращал левую панель в `Description Help`, и синхронизировать description auto-select через общий session resolver (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/description-workflow-state.test.ts`; expected commit: `fix(pm): preserve description session after submit`).
+17. [IN_PROGRESS] Сделать `hasDescriptionSession` monotonic внутри активного workspace после `session:created`, чтобы stale poll не возвращал левую панель в `Description Help`, и синхронизировать description auto-select через общий session resolver (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/description-workflow-state.test.ts`; expected commit: `fix(pm): preserve description session after submit`).
 18. [TODO] Git Commit: `fix(pm): preserve description session after submit` (hash: TBD)
 
 ### Stream 9: Renew regression verification on real workspace data
