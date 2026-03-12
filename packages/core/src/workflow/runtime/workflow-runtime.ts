@@ -15,9 +15,14 @@ const BACKSLASH_RE = /\\/g;
 const LEADING_DOT_SLASH_RE = /^\.?\//;
 const DESCRIPTION_DRAFT_RUN_SLUG_RE =
   /^description\/runs\/([^/]+)\/description\.md$/;
+const DESCRIPTION_INTERNAL_METADATA_RE =
+  /^description\/description-step\.json(?:\.tmp-[^/]+)?$/;
 
 const normalizeRelativePath = (value: string): string =>
   value.replace(BACKSLASH_RE, "/").replace(LEADING_DOT_SLASH_RE, "");
+
+const isDescriptionInternalMetadataArtifact = (relativePath: string): boolean =>
+  DESCRIPTION_INTERNAL_METADATA_RE.test(normalizeRelativePath(relativePath));
 
 const buildWorkflowRelativePath = (
   workspaceSlug: string,
@@ -143,10 +148,7 @@ export class WorkflowRuntime {
     }
 
     const relativePath = normalizeRelativePath(event.filePath);
-    if (
-      relativePath === "description/description-step.json" ||
-      relativePath.endsWith("/description-step.json")
-    ) {
+    if (isDescriptionInternalMetadataArtifact(relativePath)) {
       return false;
     }
 
