@@ -55,11 +55,11 @@
 16. [DONE] Git Commit: `fix(pm): refresh workflow state after description submit` (hash: `68167149`)
 
 ### Stream 8: Stop PM from downgrading back to pre-submit help
-17. [IN_PROGRESS] Сделать `hasDescriptionSession` monotonic внутри активного workspace после `session:created`, чтобы stale poll не возвращал левую панель в `Description Help`, и синхронизировать description auto-select через общий session resolver (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/description-workflow-state.test.ts`; expected commit: `fix(pm): preserve description session after submit`).
-18. [TODO] Git Commit: `fix(pm): preserve description session after submit` (hash: TBD)
+17. [DONE] Сделать `hasDescriptionSession` monotonic внутри активного workspace после `session:created`, чтобы stale poll не возвращал левую панель в `Description Help`, и синхронизировать description auto-select через общий session resolver (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/description-workflow-state.test.ts`; expected commit: `fix(pm): preserve description session after submit`).
+18. [DONE] Git Commit: `fix(pm): preserve description session after submit` (hash: `dcd02f6e`)
 
 ### Stream 9: Renew regression verification on real workspace data
-19. [TODO] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description help/session mismatch и стробирования артефакта после submit (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
+19. [IN_PROGRESS] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description help/session mismatch и стробирования артефакта после submit (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
 20. [TODO] Git Commit: `test(release): verify pm workflow regression repair` (hash: TBD)
 
 ## Phase 302 — Release Rebuild After Regression Repair (owner: Oleksandr, updated: 2026-03-12)
