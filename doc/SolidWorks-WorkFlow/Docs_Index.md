@@ -33,6 +33,7 @@
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
 - `Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md` — MVP-контракт стабилизации PM/workspace identity: immutable provider/model lock, filesystem-backed Description recovery, shared `workflow-state`.
+- `Contracts/ProjectManager_WorkflowState_Reconciliation.md` — post-release repair contract для tree/main area/session restore: reconciled stage projection, stale dialog intent discard, internal metadata filtering, `lastActive` cross-stage, validator alignment.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
 - `Contracts/SessionContinuity.md` — continuity handoff/rollover contract.

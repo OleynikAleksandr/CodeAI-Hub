@@ -17,11 +17,12 @@
 11. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 13. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`
-14. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-15. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
-16. `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`
-17. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
-18. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+14. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`
+15. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+16. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
+17. `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`
+18. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
+19. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -64,6 +65,8 @@
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`.
 10. **Workspace identity lock for MVP workflow**: после первого `Description submit` provider/model фиксируются на весь workspace; reopen/resume не имеют права перестраивать workflow identity из текущих глобальных Settings, а Description artifacts должны восстанавливаться по filesystem-backed правилам.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`.
+11. **Workflow state reconciliation for PM**: sidebar/tree, main area, session pane и reopen restore обязаны опираться на reconciled stage projection; internal metadata files не могут быть user-facing artifacts, stale dialog intent не может переоткрывать более старый stage поверх актуального workflow state.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
