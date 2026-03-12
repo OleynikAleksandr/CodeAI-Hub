@@ -62,6 +62,10 @@
 19. [IN_PROGRESS] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description help/session mismatch и стробирования артефакта после submit (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
 20. [TODO] Git Commit: `test(release): verify pm workflow regression repair` (hash: TBD)
 
+### Stream 10: Historical baseline compare before `gpt-5.4` rollout
+27. [TODO] Снять forensic baseline до codex `gpt-5.4` rollout и сравнить PM/Description workflow против текущей ветки, чтобы отделить model-switch изменения от более поздних PM workflow-state refactor/regression commits (scope: `doc/Sessions/Session075.md`, local git history around `9614ab37` / `b78d78a8` / `e6cd53da`; expected commit: `docs(todo): plan pre-gpt-5.4 baseline compare`).
+28. [TODO] Git Commit: `docs(todo): plan pre-gpt-5.4 baseline compare` (hash: TBD)
+
 ## Phase 302 — Release Rebuild After Regression Repair (owner: Oleksandr, updated: 2026-03-12)
 
 ### Stream 1: Next patch release by checklist
