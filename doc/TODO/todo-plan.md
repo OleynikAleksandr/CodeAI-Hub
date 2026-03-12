@@ -209,4 +209,4 @@
 5. [DONE] Поднять baseline version line до предрелизного состояния, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для нового локального baseline релиза с чистого дерева (scope: root release assets, `doc/tmp/releases/`, package versions/manifests; expected commit: `chore(release): build-all v1.1.720`).
 6. [DONE] Git Commit: `chore(release): build-all v1.1.720` (hash: `56f86371`)
 7. [DONE] Создать новый session-report с итогами baseline smoke-prep и release build (scope: `doc/Sessions/`; expected commit: `docs(session): record baseline gpt-5.4 release build`).
-8. [TODO] Git Commit: `docs(session): record baseline gpt-5.4 release build` (hash: TBD)
+8. [DONE] Git Commit: `docs(session): record baseline gpt-5.4 release build` (hash: `8b8f1677`)

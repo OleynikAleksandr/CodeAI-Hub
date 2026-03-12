@@ -32,6 +32,7 @@
 - `b4a38d48 docs(todo): capture baseline gpt-5.4 prep progress`
 - `0a5de467 chore(release): seed baseline version line to v1.1.719`
 - `56f86371 chore(release): build-all v1.1.720`
+- `8b8f1677 docs(session): record baseline gpt-5.4 release build`
 
 ---
 
