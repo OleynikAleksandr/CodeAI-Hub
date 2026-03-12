@@ -7,7 +7,7 @@ import { StageArtifactContentView } from "../shared/stage-artifact-content-view"
 
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE =
-  /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
+  /^#{2,3}\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 
 const validateVirtualSimulationMarkdown = (content: string): string | null => {
   if (content.trim().length === 0) {
@@ -19,10 +19,10 @@ const validateVirtualSimulationMarkdown = (content: string): string | null => {
   const scenarioMatches = content.match(VIRTUAL_SIMULATION_SCENARIO_RE);
   const scenarioCount = scenarioMatches?.length ?? 0;
   if (scenarioCount < 2) {
-    return "Нужно минимум 2 сценария: `## Сценарий N`.";
+    return "Нужно минимум 2 сценария: `##` или `### Сценарий N`.";
   }
   if (scenarioCount > 4) {
-    return "Нужно максимум 4 сценария: `## Сценарий N`.";
+    return "Нужно максимум 4 сценария: `##` или `### Сценарий N`.";
   }
   return null;
 };
