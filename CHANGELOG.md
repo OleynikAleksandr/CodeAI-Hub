@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.719] - 2026-03-12
+### Fixed
+- Project Manager: shared `workflow-state` now keeps a hot polling window around fresh workflow activity and can be explicitly refreshed right after `Description submit`, so tree/main area no longer have to wait for slow poll to pick up `session:created`, binding metadata, and `Final_Description.md`.
+- Project Manager: `DescriptionQuestionnairePanel` no longer force-selects `questionnaire.md` after a successful submit; the UI now lets reconciled `workflow-state` advance the artifact/session panes naturally.
+- Project Manager: once `Description` session creation is observed inside an active workspace, the session pane no longer falls back to pre-submit `Description Help` because of one stale workflow snapshot.
+- Project Manager: Description auto-select / reopen now resolves the session through the shared description session helper, so collector sessions are restored even when the runtime snapshot uses `collectorSession` instead of only the legacy `session` slot.
+
 ## [1.1.718] - 2026-03-12
 ### Fixed
 - Workflow runtime: `lastActive` now advances from `Description` into `Virtual Simulation`, `Diagram Modules`, and `Diagram Facades`, so workspace reopen and stage restore no longer stick to `questionnaire.md` after later workflow activity exists.

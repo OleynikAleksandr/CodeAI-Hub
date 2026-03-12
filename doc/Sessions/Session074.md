@@ -24,6 +24,7 @@
   - `npm exec tsx --test src/client/project-manager/components/layout/description-workflow-state.test.ts`
   - `npm run typecheck:webview`
   - `npm run build:webview`
+- После закрытия обоих repair-stream пользователь запросил новый тестовый релиз; release-facing docs синхронизируются под `v1.1.719` до запуска `build-all/build-release`.
 
 ## Git commits
 - `7cc87097 docs(todo): track pm hydration regression repair`
@@ -45,5 +46,5 @@
 
 ## Plans for next session
 - Повторить smoke на двух проблемных workspace из `Session072.md` и проверить tree hydration, session node, completed badge и отсутствие стробирования/отката к анкете.
-- Если smoke зелёный, зафиксировать verification commit и решить, нужен ли сразу новый test release (`v1.1.719`) или достаточно локальной сборки webview для следующей проверки.
+- После сборки нового тестового релиза установить его и повторить smoke на тех же workspace.
 - Только после зелёного smoke возвращаться к новому test release cycle.

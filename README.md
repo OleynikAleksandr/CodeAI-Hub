@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.718
-- PM workflow repair: `lastActive` теперь корректно продвигается на `Virtual Simulation` и поздние шаги, поэтому reopen workspace и stage restore больше не должны застревать на `questionnaire.md`.
-- PM panel sync: выбранный workflow stage теперь повторно синхронизирует artifact/session panes, когда `workflow-state` догоняет и позже приносит continuity/session для этого шага.
-- PM dialog restore: stale dialog intent из `localStorage` больше не должен насильно открывать старый `Description` dialog, если workflow уже ушёл на более поздний шаг.
-- Virtual Simulation validation: Core и Project Manager теперь принимают и `##`, и `### Сценарий N`, чтобы уже созданные live-артефакты не получали ложный `invalid`.
-- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.718` и пересобрать provider/core/ui/launcher артефакты под PM workflow regression repair test rollout.
+## Current Release — v1.1.719
+- PM workflow hydration: shared `workflow-state` теперь остаётся в fast cadence на горячем workflow окне и может быть явно обновлён сразу после `Description submit`, поэтому tree/main area не должны ждать slow poll, чтобы увидеть новую session binding и `Final_Description.md`.
+- PM Description session: после `session:created` левая панель больше не должна откатываться обратно в pre-submit `Description Help`, пока workflow-state догоняет артефакты и continuity.
+- PM Description restore: auto-select / reopen для `Description` теперь использует общий session resolver и должен надёжнее поднимать collector session node в существующих workspace.
+- Virtual Simulation validation: Core и Project Manager по-прежнему принимают и `##`, и `### Сценарий N`, чтобы уже созданные live-артефакты не получали ложный `invalid`.
+- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.719` и пересобрать provider/core/ui/launcher артефакты под PM hydration repair test rollout.
 
 Previous releases (summary): the `1.1.57x–1.1.716` series focused on workflow submit diagnostics, SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, codebase hygiene / markdown-link gates, the Codex `gpt-5.4` rollout, the stale-env hotfix from `v1.1.714`, and the raw workflow commentary-restore baseline from `v1.1.715`.
 
