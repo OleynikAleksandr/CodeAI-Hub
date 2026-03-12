@@ -205,8 +205,8 @@
 
 ### Stream 2: Release docs + baseline rebuild
 3. [DONE] Синхронизировать release-facing документы и SSOT модуля Codex под baseline release `v1.1.720` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs(release): sync baseline gpt-5.4 notes`).
-4. [DONE] Git Commit: `feat(codex): switch baseline general model to gpt-5.4` (hash: `2978ba51`)
-5. [TODO] Поднять baseline version line до предрелизного состояния, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для нового локального baseline релиза с чистого дерева (scope: root release assets, `doc/tmp/releases/`, package versions/manifests; expected commit: `chore(release): build-all v1.1.720`).
-6. [TODO] Git Commit: `chore(release): build-all v1.1.720` (hash: TBD)
-7. [TODO] Создать новый session-report с итогами baseline smoke-prep и release build (scope: `doc/Sessions/`; expected commit: `docs(session): record baseline gpt-5.4 release build`).
+4. [DONE] Git Commit: `docs(todo): capture baseline gpt-5.4 prep progress` (hash: `b4a38d48`)
+5. [DONE] Поднять baseline version line до предрелизного состояния, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для нового локального baseline релиза с чистого дерева (scope: root release assets, `doc/tmp/releases/`, package versions/manifests; expected commit: `chore(release): build-all v1.1.720`).
+6. [DONE] Git Commit: `chore(release): build-all v1.1.720` (hash: `56f86371`)
+7. [DONE] Создать новый session-report с итогами baseline smoke-prep и release build (scope: `doc/Sessions/`; expected commit: `docs(session): record baseline gpt-5.4 release build`).
 8. [TODO] Git Commit: `docs(session): record baseline gpt-5.4 release build` (hash: TBD)
