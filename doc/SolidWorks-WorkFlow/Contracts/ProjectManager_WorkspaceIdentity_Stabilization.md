@@ -211,6 +211,23 @@ Execution profile хранится под workspace slug:
 - rules engine "когда можно и нельзя менять provider/model";
 - retry submit UX и resend semantics.
 
+## Implementation snapshot (2026-03-12)
+
+По состоянию на текущий stabilization track контракт реализован в runtime и PM так:
+
+- Core хранит immutable workspace execution profile и резолвит workflow provider через него до provider-specific create/resume path.
+- Codex workflow resume больше не создаёт новый native thread только из-за текущего глобального model default.
+- `workflow-state-service` восстанавливает `questionnaire.md`, `description.md` и `Final_Description.md` по filesystem-backed правилам.
+- PM tree и main area читают общий `useWorkspaceWorkflowState` snapshot вместо независимых polling-контуров.
+- PM показывает locked provider/model как read-only summary в `Description` questionnaire и предупреждает в provider picker, что выбор фиксируется на весь workspace.
+
+Таргетное regression coverage, закрывающее этот контракт:
+
+- Core: `session-request-handler.workflow-lock.test.ts`
+- Core: `description-artifact-recovery.test.ts`
+- PM: `description-workflow-state.test.ts`
+- PM: `use-main-area-workflow-state.test.ts`
+
 ## Acceptance criteria
 
 - reopen существующего workspace не меняет provider/model identity;

@@ -68,9 +68,9 @@
 2. [DONE] Git Commit: `test(core): cover workspace identity stabilization` (hash: `035215a0`)
 3. [DONE] Добавить unit regression test для `description-workflow-state`, чтобы зафиксировать единый fallback/session selection для `questionnaire`/`draft`/`final` и collector-session precedence (scope: `src/client/project-manager/components/layout/description-workflow-state.ts`, `src/client/project-manager/components/layout/description-workflow-state.test.ts`; expected commit: `test(pm): cover description workflow fallback helper`).
 4. [DONE] Git Commit: `test(pm): cover description workflow fallback helper` (hash: `251fe948`)
-5. [IN_PROGRESS] Добавить source-level regression test, что tree/main area читают workflow snapshot только через shared `useWorkspaceWorkflowState` path без возврата к split polling (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`, `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`; expected commit: `test(pm): cover shared workflow state entrypoint`).
-6. [TODO] Git Commit: `test(pm): cover shared workflow state entrypoint` (hash: TBD)
-7. [TODO] Синхронно обновить closeout docs по результатам stabilization implementation после закрытия PM regression coverage (scope: `doc/SolidWorks-WorkFlow/`, `doc/Sessions/`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): sync workspace identity stabilization closeout`).
+5. [DONE] Добавить source-level regression test, что tree/main area читают workflow snapshot только через shared `useWorkspaceWorkflowState` path без возврата к split polling (scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`, `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`; expected commit: `test(pm): cover shared workflow state entrypoint`).
+6. [DONE] Git Commit: `test(pm): cover shared workflow state entrypoint` (hash: `ef32d520`)
+7. [IN_PROGRESS] Синхронно обновить closeout docs по результатам stabilization implementation после закрытия PM regression coverage (scope: `doc/SolidWorks-WorkFlow/`, `doc/Sessions/`, `doc/TODO/todo-plan.md`; expected commit: `docs(pm): sync workspace identity stabilization closeout`).
 8. [TODO] Git Commit: `docs(pm): sync workspace identity stabilization closeout` (hash: TBD)
 
 ### Stream 2: Release build by checklist
