@@ -107,7 +107,7 @@ export class IdeaCollectorService {
       this.state.markNoticeSent(sessionId);
       postSystemNotice(
         sessionId,
-        "Запускаю Virtual Simulation. При необходимости приложите description.md или другие файлы проекта."
+        "Запускаю Virtual Simulation. При необходимости приложите Final_Description.md или другие файлы проекта."
       );
     }
   }

@@ -106,8 +106,8 @@
 10. [DONE] Git Commit: `refactor(core): align description artifact bridge labels` (hash: `44e75f42`)
 
 ### Stream 5: Legacy agent asset wording
-11. [TODO] Синхронизировать оставшиеся bundled legacy assets `idea-collector` с каноническим Description contract: prompt/schema больше не должны описывать `idea.md` и `cluster.idea.*` как текущую модель финализации (scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `packages/agents/idea-collector/assets/idea-collector-schema.json`, `doc/TODO/todo-plan.md`; expected commit: `docs(agents): align legacy idea collector assets with description contract`).
-12. [TODO] Git Commit: `docs(agents): align legacy idea collector assets with description contract` (hash: TBD)
+11. [DONE] Синхронизировать оставшиеся bundled legacy assets `idea-collector` с каноническим Description contract: prompt/schema больше не должны описывать `idea.md` и `cluster.idea.*` как текущую модель финализации (scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `packages/agents/idea-collector/assets/idea-collector-schema.json`, `doc/TODO/todo-plan.md`; expected commit: `docs(agents): align legacy idea collector assets with description contract`).
+12. [DONE] Git Commit: `docs(agents): align legacy idea collector assets with description contract` (hash: `dd0914c9`)
 
 ### Stream 6: Remove obsolete legacy artifact endpoint
 13. [TODO] Удалить неиспользуемый `/api/v1/orchestrator/idea-artifact` и связанные legacy path validators, а также вычистить UI-copy, которая всё ещё советует прикладывать `description.md` вместо `Final_Description.md` для `Virtual Simulation` (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(core): remove legacy description artifact endpoint`).

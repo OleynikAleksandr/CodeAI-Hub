@@ -41,7 +41,6 @@ const DIAGRAM_MODULES_CONTRACT_ENDPOINT =
   "/api/v1/orchestrator/diagram-modules-contract";
 const DIAGRAM_FACADES_CONTRACT_ENDPOINT =
   "/api/v1/orchestrator/diagram-facades-contract";
-const IDEA_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/idea-artifact";
 const ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
 const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
@@ -60,10 +59,6 @@ const DIAGRAM_MODULES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?modules-diagram\.mmd$/;
 const DIAGRAM_FACADES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?facades-graph\.mmd$/;
-const LEGACY_IDEA_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/idea\.md$/;
-const LEGACY_VIRTUAL_SIMULATION_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/description\/runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/idea\/virtual-simulation\.md$/;
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -174,10 +169,6 @@ export class HttpApiRouter {
         );
       }
     );
-
-    app.post(IDEA_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
-      await this.handleIdeaArtifactSave(req, res);
-    });
 
     app.post(ARTIFACT_UPSERT_ENDPOINT, async (req: Request, res: Response) => {
       await this.handleArtifactUpsertSave(req, res);
@@ -392,72 +383,7 @@ export class HttpApiRouter {
       })),
     });
   }
-
-  private async handleIdeaArtifactSave(
-    req: Request,
-    res: Response
-  ): Promise<void> {
-    const parsedPayload = parseIdeaArtifactPayload(req.body as unknown);
-    if (!parsedPayload.ok) {
-      res.status(HTTP_BAD_REQUEST).json({ error: parsedPayload.error });
-      return;
-    }
-    const { sessionId, paths } = parsedPayload.value;
-    try {
-      const planResult = await buildIdeaArtifactUpdatePlan(
-        this.deps,
-        parsedPayload.value
-      );
-      if (!planResult.ok) {
-        res.status(planResult.status).json({ error: planResult.error });
-        return;
-      }
-      const writeResult = await writeIdeaArtifactUpdatePlan(planResult.value);
-      if (!writeResult.ok) {
-        this.deps.logger.error(
-          "Failed to write Idea artifacts",
-          writeResult.error,
-          {
-            sessionId,
-            ideaPath: paths.idea,
-            virtualSimulationPath: paths.virtualSimulation,
-          }
-        );
-        res
-          .status(HTTP_INTERNAL_ERROR)
-          .json({ error: "Unable to write artifact" });
-        return;
-      }
-      res.json({
-        paths: {
-          idea: paths.idea,
-          virtualSimulation: paths.virtualSimulation,
-        },
-      });
-    } catch (error) {
-      this.deps.logger.error("Failed to write Idea artifacts", error as Error, {
-        sessionId,
-        ideaPath: paths.idea,
-        virtualSimulationPath: paths.virtualSimulation,
-      });
-      res
-        .status(HTTP_INTERNAL_ERROR)
-        .json({ error: "Unable to write artifact" });
-    }
-  }
 }
-
-type IdeaArtifactPayload = {
-  readonly sessionId: string;
-  readonly nextAction: "finalize" | "revise_artifacts";
-  readonly ideaMarkdown: string | null;
-  readonly virtualSimulationMarkdown: string | null;
-  readonly patch: IdeaArtifactPatchEntry[] | null;
-  readonly paths: {
-    readonly idea: string;
-    readonly virtualSimulation: string;
-  };
-};
 
 type ArtifactUpsertItem = {
   readonly slot: string;
@@ -472,72 +398,6 @@ type ArtifactUpsertPayload = {
 type ArtifactUpsertPayloadResult =
   | { readonly ok: true; readonly value: ArtifactUpsertPayload }
   | { readonly ok: false; readonly error: string };
-
-type IdeaArtifactPayloadResult =
-  | { readonly ok: true; readonly value: IdeaArtifactPayload }
-  | { readonly ok: false; readonly error: string };
-
-type IdeaArtifactPatchTarget = "idea" | "virtual_simulation";
-type IdeaArtifactPatchOperation = "replace" | "append" | "prepend" | "remove";
-
-type IdeaArtifactPatchEntry = {
-  readonly target: IdeaArtifactPatchTarget;
-  readonly section: string;
-  readonly operation: IdeaArtifactPatchOperation;
-  readonly content: string;
-};
-
-const parseIdeaArtifactPayload = (
-  payload: unknown
-): IdeaArtifactPayloadResult => {
-  if (!payload || typeof payload !== "object") {
-    return { ok: false, error: "Invalid payload" };
-  }
-  const candidate = payload as Record<string, unknown>;
-  const sessionId = readNonEmptyString(candidate.sessionId);
-  if (!sessionId) {
-    return { ok: false, error: "Missing sessionId" };
-  }
-  const nextActionResult = parseNextAction(candidate);
-  if (!nextActionResult.ok) {
-    return { ok: false, error: nextActionResult.error };
-  }
-  const ideaMarkdown =
-    readNonEmptyString(candidate.ideaMarkdown) ??
-    readNonEmptyString(candidate.idea_markdown);
-  const virtualSimulationMarkdown =
-    readNonEmptyString(candidate.virtualSimulationMarkdown) ??
-    readNonEmptyString(candidate.virtual_simulation_markdown);
-  const patchParse = parsePatchList(candidate.patch);
-  if (!patchParse.ok) {
-    return { ok: false, error: patchParse.error };
-  }
-  const patch = patchParse.value.length > 0 ? patchParse.value : null;
-  const payloadError = validateIdeaArtifactPayload({
-    nextAction: nextActionResult.value,
-    ideaMarkdown,
-    virtualSimulationMarkdown,
-    patch,
-  });
-  if (payloadError) {
-    return { ok: false, error: payloadError };
-  }
-  const pathResult = parseIdeaArtifactPaths(candidate);
-  if (!pathResult.ok) {
-    return { ok: false, error: pathResult.error };
-  }
-  return {
-    ok: true,
-    value: {
-      sessionId,
-      nextAction: nextActionResult.value,
-      ideaMarkdown,
-      virtualSimulationMarkdown,
-      patch,
-      paths: pathResult.value,
-    },
-  };
-};
 
 const parseArtifactUpsertPayload = (
   payload: unknown
@@ -574,23 +434,7 @@ const parseArtifactUpsertPayload = (
   return { ok: true, value: { sessionId, artifacts } };
 };
 
-type IdeaArtifactUpdatePlan = {
-  readonly ideaPath: string;
-  readonly virtualSimulationPath: string;
-  readonly ideaContent: string;
-  readonly virtualContent: string;
-  readonly ideaChanged: boolean;
-  readonly virtualChanged: boolean;
-  readonly existingIdea: string | null;
-  readonly existingVirtualSimulation: string | null;
-  readonly nextAction: IdeaArtifactPayload["nextAction"];
-};
-
-type IdeaArtifactUpdatePlanResult =
-  | { readonly ok: true; readonly value: IdeaArtifactUpdatePlan }
-  | { readonly ok: false; readonly status: number; readonly error: string };
-
-type IdeaArtifactWriteResult =
+type ArtifactWriteResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly error: Error };
 
@@ -824,7 +668,7 @@ const buildWorkflowStageArtifactUpsertPlan = async (params: {
 
 const writeArtifactUpsertPlan = async (
   plan: WorkflowStageArtifactUpsertPlan
-): Promise<IdeaArtifactWriteResult> => {
+): Promise<ArtifactWriteResult> => {
   const backups: ArtifactBackup[] = [];
   try {
     for (const upsert of plan.upserts) {
@@ -847,151 +691,6 @@ const writeArtifactUpsertPlan = async (
   }
 };
 
-const buildIdeaArtifactUpdatePlan = async (
-  deps: RouterDependencies,
-  payload: IdeaArtifactPayload
-): Promise<IdeaArtifactUpdatePlanResult> => {
-  const session = deps.sessionManager.getSession(payload.sessionId);
-  if (!session) {
-    return {
-      ok: false,
-      status: HTTP_NOT_FOUND,
-      error: `Session ${payload.sessionId} not found`,
-    };
-  }
-  if (!isAllowedIdeaArtifactPaths(payload.paths)) {
-    return {
-      ok: false,
-      status: HTTP_BAD_REQUEST,
-      error:
-        "Invalid artifact paths (expected .codeai-hub/<workspaceSlug>/description/runs/<runSlug>/idea/...)",
-    };
-  }
-  const workspaceRoot = path.resolve(session.workspacePath);
-  const ideaPath = resolveArtifactPath(workspaceRoot, payload.paths.idea);
-  const virtualSimulationPath = resolveArtifactPath(
-    workspaceRoot,
-    payload.paths.virtualSimulation
-  );
-  if (!(ideaPath && virtualSimulationPath)) {
-    return {
-      ok: false,
-      status: HTTP_BAD_REQUEST,
-      error: "Unsafe artifact path",
-    };
-  }
-  const [existingIdea, existingVirtualSimulation] = await Promise.all([
-    readArtifactFile(ideaPath),
-    readArtifactFile(virtualSimulationPath),
-  ]);
-  const ideaUpdate = resolveArtifactUpdate({
-    target: "idea",
-    existingContent: existingIdea,
-    fullMarkdown: payload.ideaMarkdown,
-    patchEntries: payload.patch ?? [],
-    nextAction: payload.nextAction,
-  });
-  if (!ideaUpdate.ok) {
-    return {
-      ok: false,
-      status: HTTP_BAD_REQUEST,
-      error: ideaUpdate.error,
-    };
-  }
-  const virtualUpdate = resolveArtifactUpdate({
-    target: "virtual_simulation",
-    existingContent: existingVirtualSimulation,
-    fullMarkdown: payload.virtualSimulationMarkdown,
-    patchEntries: payload.patch ?? [],
-    nextAction: payload.nextAction,
-  });
-  if (!virtualUpdate.ok) {
-    return {
-      ok: false,
-      status: HTTP_BAD_REQUEST,
-      error: virtualUpdate.error,
-    };
-  }
-
-  const ideaContent = normalizeArtifactContent(ideaUpdate.value.content);
-  const virtualContent = normalizeArtifactContent(virtualUpdate.value.content);
-  const shouldValidate =
-    payload.nextAction === "finalize" ||
-    ideaUpdate.value.changed ||
-    virtualUpdate.value.changed;
-  const ideaValidationError = validateIdeaMarkdown(ideaContent, shouldValidate);
-  if (ideaValidationError) {
-    return {
-      ok: false,
-      status: HTTP_BAD_REQUEST,
-      error: ideaValidationError,
-    };
-  }
-  const virtualValidationError = validateVirtualSimulationMarkdown(
-    virtualContent,
-    shouldValidate
-  );
-  if (virtualValidationError) {
-    return {
-      ok: false,
-      status: HTTP_BAD_REQUEST,
-      error: virtualValidationError,
-    };
-  }
-  return {
-    ok: true,
-    value: {
-      ideaPath,
-      virtualSimulationPath,
-      ideaContent,
-      virtualContent,
-      ideaChanged: ideaUpdate.value.changed,
-      virtualChanged: virtualUpdate.value.changed,
-      existingIdea,
-      existingVirtualSimulation,
-      nextAction: payload.nextAction,
-    },
-  };
-};
-
-const writeIdeaArtifactUpdatePlan = async (
-  plan: IdeaArtifactUpdatePlan
-): Promise<IdeaArtifactWriteResult> => {
-  const backups: ArtifactBackup[] = [];
-  try {
-    if (plan.ideaChanged) {
-      backups.push(
-        await backupAndWriteArtifact(
-          plan.ideaPath,
-          plan.ideaContent,
-          plan.existingIdea
-        )
-      );
-    }
-    if (plan.virtualChanged) {
-      backups.push(
-        await backupAndWriteArtifact(
-          plan.virtualSimulationPath,
-          plan.virtualContent,
-          plan.existingVirtualSimulation
-        )
-      );
-    }
-    return { ok: true };
-  } catch (error) {
-    await restoreBackups(backups);
-    const failure = error instanceof Error ? error : new Error(String(error));
-    return { ok: false, error: failure };
-  }
-};
-
-const isAllowedIdeaArtifactPaths = (paths: {
-  readonly idea: string;
-  readonly virtualSimulation: string;
-}): boolean =>
-  LEGACY_IDEA_PATH_RE.test(paths.idea) &&
-  LEGACY_VIRTUAL_SIMULATION_PATH_RE.test(paths.virtualSimulation);
-
 const readNonEmptyString = (value: unknown): string | null => {
   if (typeof value !== "string") {
     return null;
@@ -1000,326 +699,13 @@ const readNonEmptyString = (value: unknown): string | null => {
   return trimmed.length > 0 ? value : null;
 };
 
-const readString = (value: unknown): string | null =>
-  typeof value === "string" ? value : null;
-
-type PatchParseResult =
-  | { readonly ok: true; readonly value: IdeaArtifactPatchEntry[] }
-  | { readonly ok: false; readonly error: string };
-
 type PayloadParseResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly error: string };
-
-const PATCH_TARGETS = new Set<IdeaArtifactPatchTarget>([
-  "idea",
-  "virtual_simulation",
-]);
-const PATCH_OPERATIONS = new Set<IdeaArtifactPatchOperation>([
-  "replace",
-  "append",
-  "prepend",
-  "remove",
-]);
-const LINE_SPLIT_RE = /\r?\n/;
-const HEADING_RE = /^(#{1,6})\s+(.*)$/;
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
-const IDEA_TITLE_RE = /^#\s+Idea:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 const MERMAID_FLOWCHART_RE = /^\s*flowchart\s+/m;
-
-const parsePatchList = (patchValue: unknown): PatchParseResult => {
-  if (patchValue === undefined) {
-    return { ok: true, value: [] };
-  }
-  if (!Array.isArray(patchValue)) {
-    return { ok: false, error: "Invalid patch payload" };
-  }
-  const entries: IdeaArtifactPatchEntry[] = [];
-  for (const entry of patchValue) {
-    const parsed = parsePatchEntry(entry);
-    if (!parsed) {
-      return { ok: false, error: "Invalid patch entry" };
-    }
-    entries.push(parsed);
-  }
-  return { ok: true, value: entries };
-};
-
-const parsePatchEntry = (entry: unknown): IdeaArtifactPatchEntry | null => {
-  if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
-    return null;
-  }
-  const candidate = entry as Record<string, unknown>;
-  const target = readString(candidate.target);
-  if (!(target && PATCH_TARGETS.has(target as IdeaArtifactPatchTarget))) {
-    return null;
-  }
-  const section = readNonEmptyString(candidate.section);
-  if (!section) {
-    return null;
-  }
-  const operation = readString(candidate.operation);
-  if (
-    !(
-      operation && PATCH_OPERATIONS.has(operation as IdeaArtifactPatchOperation)
-    )
-  ) {
-    return null;
-  }
-  const content = readString(candidate.content);
-  if (content === null) {
-    return null;
-  }
-  return {
-    target: target as IdeaArtifactPatchTarget,
-    section,
-    operation: operation as IdeaArtifactPatchOperation,
-    content,
-  };
-};
-
-const parseNextAction = (
-  candidate: Record<string, unknown>
-): PayloadParseResult<IdeaArtifactPayload["nextAction"]> => {
-  const nextActionRaw =
-    readString(candidate.nextAction) ?? readString(candidate.next_action);
-  if (!nextActionRaw) {
-    return { ok: true, value: "finalize" };
-  }
-  if (nextActionRaw === "finalize" || nextActionRaw === "revise_artifacts") {
-    return { ok: true, value: nextActionRaw };
-  }
-  return { ok: false, error: "Invalid nextAction" };
-};
-
-const parseIdeaArtifactPaths = (
-  candidate: Record<string, unknown>
-): PayloadParseResult<IdeaArtifactPayload["paths"]> => {
-  const ideaPath =
-    readNonEmptyString(candidate.ideaPath) ??
-    readNonEmptyString(candidate.idea_path);
-  const virtualSimulationPath =
-    readNonEmptyString(candidate.virtualSimulationPath) ??
-    readNonEmptyString(candidate.virtual_simulation_path);
-  if (!ideaPath) {
-    return { ok: false, error: "Missing ideaPath" };
-  }
-  if (!virtualSimulationPath) {
-    return { ok: false, error: "Missing virtualSimulationPath" };
-  }
-  return {
-    ok: true,
-    value: {
-      idea: ideaPath,
-      virtualSimulation: virtualSimulationPath,
-    },
-  };
-};
-
-const validateIdeaArtifactPayload = (params: {
-  readonly nextAction: IdeaArtifactPayload["nextAction"];
-  readonly ideaMarkdown: string | null;
-  readonly virtualSimulationMarkdown: string | null;
-  readonly patch: IdeaArtifactPatchEntry[] | null;
-}): string | null => {
-  const hasFull =
-    Boolean(params.ideaMarkdown) && Boolean(params.virtualSimulationMarkdown);
-  const hasPatch = Boolean(params.patch);
-  if (params.nextAction === "finalize" && !hasFull) {
-    return "Missing artifact markdown for finalize";
-  }
-  if (params.nextAction === "revise_artifacts" && !(hasFull || hasPatch)) {
-    return "Missing artifact patch or markdown for revise_artifacts";
-  }
-  return null;
-};
-
-type ArtifactUpdateResult =
-  | { readonly ok: true; readonly value: { content: string; changed: boolean } }
-  | { readonly ok: false; readonly error: string };
-
-const resolveArtifactUpdate = (params: {
-  readonly target: IdeaArtifactPatchTarget;
-  readonly existingContent: string | null;
-  readonly fullMarkdown: string | null;
-  readonly patchEntries: IdeaArtifactPatchEntry[];
-  readonly nextAction: IdeaArtifactPayload["nextAction"];
-}): ArtifactUpdateResult => {
-  const targetLabel =
-    params.target === "idea" ? "Final_Description.md" : "virtual-simulation.md";
-  if (params.nextAction === "finalize") {
-    if (!params.fullMarkdown) {
-      return { ok: false, error: `Missing ${targetLabel} content` };
-    }
-    return {
-      ok: true,
-      value: { content: params.fullMarkdown, changed: true },
-    };
-  }
-  const patchEntries = params.patchEntries.filter(
-    (entry) => entry.target === params.target
-  );
-  if (patchEntries.length > 0) {
-    if (!params.existingContent) {
-      return {
-        ok: false,
-        error: `Missing existing ${targetLabel} for patch application`,
-      };
-    }
-    const patchResult = applyPatchToContent(
-      params.existingContent,
-      patchEntries
-    );
-    if (!patchResult.ok) {
-      return { ok: false, error: patchResult.error };
-    }
-    return {
-      ok: true,
-      value: { content: patchResult.value, changed: true },
-    };
-  }
-  if (params.fullMarkdown) {
-    return { ok: true, value: { content: params.fullMarkdown, changed: true } };
-  }
-  if (!params.existingContent) {
-    return {
-      ok: false,
-      error: `Missing existing ${targetLabel} for revise_artifacts`,
-    };
-  }
-  return {
-    ok: true,
-    value: { content: params.existingContent, changed: false },
-  };
-};
-
-type PatchApplyResult =
-  | { readonly ok: true; readonly value: string }
-  | { readonly ok: false; readonly error: string };
-
-const applyPatchToContent = (
-  content: string,
-  patchEntries: IdeaArtifactPatchEntry[]
-): PatchApplyResult => {
-  let lines = content.split(LINE_SPLIT_RE);
-  for (const entry of patchEntries) {
-    const result = applyPatchEntry(lines, entry);
-    if (!result.ok) {
-      return result;
-    }
-    lines = result.value;
-  }
-  return { ok: true, value: lines.join("\n") };
-};
-
-type PatchEntryApplyResult =
-  | { readonly ok: true; readonly value: string[] }
-  | { readonly ok: false; readonly error: string };
-
-const applyPatchEntry = (
-  lines: string[],
-  entry: IdeaArtifactPatchEntry
-): PatchEntryApplyResult => {
-  const range = findSectionRange(lines, entry.section);
-  if (!range) {
-    return {
-      ok: false,
-      error: `Section not found: ${entry.section}`,
-    };
-  }
-  const contentLines =
-    entry.content.length > 0 ? entry.content.split(LINE_SPLIT_RE) : [];
-  switch (entry.operation) {
-    case "replace": {
-      const next = [
-        ...lines.slice(0, range.start + 1),
-        ...contentLines,
-        ...lines.slice(range.end),
-      ];
-      return { ok: true, value: next };
-    }
-    case "append": {
-      const next = [
-        ...lines.slice(0, range.end),
-        ...contentLines,
-        ...lines.slice(range.end),
-      ];
-      return { ok: true, value: next };
-    }
-    case "prepend": {
-      const next = [
-        ...lines.slice(0, range.start + 1),
-        ...contentLines,
-        ...lines.slice(range.start + 1),
-      ];
-      return { ok: true, value: next };
-    }
-    case "remove": {
-      const next = [...lines.slice(0, range.start), ...lines.slice(range.end)];
-      return { ok: true, value: next };
-    }
-    default:
-      return {
-        ok: false,
-        error: `Unsupported operation: ${entry.operation}`,
-      };
-  }
-};
-
-type SectionStart = { index: number; level: number };
-
-const findSectionRange = (
-  lines: string[],
-  section: string
-): { start: number; end: number } | null => {
-  const normalizedTarget = normalizeHeading(section);
-  const start = findSectionStart(lines, normalizedTarget);
-  if (!start) {
-    return null;
-  }
-  const end = findSectionEnd(lines, start.index, start.level);
-  return { start: start.index, end };
-};
-
-const findSectionStart = (
-  lines: string[],
-  normalizedTarget: string
-): SectionStart | null => {
-  for (let index = 0; index < lines.length; index += 1) {
-    const match = HEADING_RE.exec(lines[index]);
-    if (!match) {
-      continue;
-    }
-    const heading = normalizeHeading(match[2] ?? "");
-    if (heading === normalizedTarget) {
-      return { index, level: match[1]?.length ?? 0 };
-    }
-  }
-  return null;
-};
-
-const findSectionEnd = (
-  lines: string[],
-  startIndex: number,
-  level: number
-): number => {
-  for (let index = startIndex + 1; index < lines.length; index += 1) {
-    const match = HEADING_RE.exec(lines[index]);
-    if (!match) {
-      continue;
-    }
-    const nextLevel = match[1]?.length ?? 0;
-    if (nextLevel <= level) {
-      return index;
-    }
-  }
-  return lines.length;
-};
-
-const normalizeHeading = (value: string): string =>
-  value.trim().replace(/\s+/g, " ").toLowerCase();
 
 const normalizeArtifactContent = (content: string): string =>
   content.endsWith("\n") ? content : `${content}\n`;
@@ -1360,22 +746,6 @@ const validateDescriptionMarkdown = (
   }
   if (!DESCRIPTION_TITLE_RE.test(content)) {
     return "Description markdown is missing '# Description:' header";
-  }
-  return null;
-};
-
-const validateIdeaMarkdown = (
-  content: string,
-  shouldValidate: boolean
-): string | null => {
-  if (!shouldValidate) {
-    return null;
-  }
-  if (content.trim().length === 0) {
-    return "Idea markdown is empty";
-  }
-  if (!IDEA_TITLE_RE.test(content)) {
-    return "Idea markdown is missing '# Idea:' header";
   }
   return null;
 };
