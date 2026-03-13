@@ -270,7 +270,7 @@ export class IdeaCollectorService {
     const slotLines =
       stage === "virtual_simulation"
         ? ["- virtual-simulation.md: workspace.virtual_simulation"]
-        : ["- description.md: workspace.description"];
+        : ["- Final_Description.md: workspace.description"];
     return (
       `${prompt}\n\n` +
       "Слоты сохранения для этой сессии (используй в Structured Output):\n" +

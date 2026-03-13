@@ -115,8 +115,8 @@ const injectTemplateIntoSchema = (
   const description =
     typeof ideaMarkdown.description === "string"
       ? ideaMarkdown.description
-      : "Idea.md markdown output.";
-  ideaMarkdown.description = `${description}\n\nIdea.md template:\n${template}`;
+      : "Final_Description.md markdown output.";
+  ideaMarkdown.description = `${description}\n\nFinal_Description.md template:\n${template}`;
   return schema;
 };
 

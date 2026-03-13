@@ -26,7 +26,7 @@ const FALLBACK_SCHEMA_JSON = `{
         "assumptions",
         "risks"
       ],
-      "description": "Оценка достаточности данных анкеты для подготовки idea.md и virtual-simulation.md.",
+      "description": "Оценка достаточности данных анкеты для подготовки Final_Description.md и virtual-simulation.md.",
       "properties": {
         "ready_for_finalize": {
           "type": "boolean",
@@ -81,8 +81,8 @@ const FALLBACK_SCHEMA_JSON = `{
             "type": "string",
             "description": "Слот артефакта.",
             "enum": [
-              "cluster.idea.idea",
-              "cluster.idea.virtual-simulation"
+              "workspace.description",
+              "workspace.virtual_simulation"
             ]
           },
           "markdown": {
