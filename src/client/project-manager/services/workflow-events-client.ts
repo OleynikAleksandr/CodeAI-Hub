@@ -21,8 +21,12 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
-const joinUrl = (baseUrl: string, path: string): string =>
-  baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path}` : `${baseUrl}${path}`;
+const joinUrl = (baseUrl: string, path: string): string => {
+  const normalizedBaseUrl = baseUrl.endsWith("/")
+    ? baseUrl.slice(0, -1)
+    : baseUrl;
+  return `${normalizedBaseUrl}${path}`;
+};
 
 const normalizeEvent = (event: unknown): WorkflowEvent | null => {
   if (!isRecord(event)) {
