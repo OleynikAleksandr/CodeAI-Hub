@@ -13,7 +13,6 @@ const HTTP_BAD_REQUEST = 400;
 const DEFAULT_MAX_BYTES = 300_000;
 const MIN_MAX_BYTES = 1000;
 const MAX_MAX_BYTES = 500_000;
-const LEGACY_RUN_QUESTIONNAIRE_SUFFIX = "/idea/questionnaire.md";
 
 type WorkspaceFilePayload = {
   readonly sessionId: string;
@@ -40,26 +39,6 @@ const readMaxBytes = (value: unknown): number => {
   const rounded = Math.floor(value);
   return Math.max(MIN_MAX_BYTES, Math.min(MAX_MAX_BYTES, rounded));
 };
-
-const normalizeWorkspacePath = (value: string): string => {
-  const normalized = value.replace(/\\/g, "/");
-  return normalized.startsWith("./") ? normalized.slice(2) : normalized;
-};
-
-const isLegacyRunQuestionnairePath = (
-  pathValue: string,
-  initiativeSlug: string,
-  runSlug: string
-): boolean => {
-  const normalized = normalizeWorkspacePath(pathValue);
-  return (
-    normalized ===
-    `.codeai-hub/${initiativeSlug}/description/runs/${runSlug}${LEGACY_RUN_QUESTIONNAIRE_SUFFIX}`
-  );
-};
-
-const resolveCanonicalQuestionnairePath = (initiativeSlug: string): string =>
-  `.codeai-hub/${initiativeSlug}/description/questionnaire.md`;
 
 const parseWorkspaceFilePayload = (
   payload: unknown
@@ -224,28 +203,6 @@ export const handleWorkspaceFileWrite = async (
       : `${parsedPayload.value.content}\n`;
     await mkdir(path.dirname(absolutePath), { recursive: true });
     await writeFile(absolutePath, content, { encoding: "utf8" });
-
-    if (
-      session.initiativeSlug &&
-      session.runSlug &&
-      isLegacyRunQuestionnairePath(
-        parsedPayload.value.path,
-        session.initiativeSlug,
-        session.runSlug
-      )
-    ) {
-      const canonicalQuestionnairePath = resolveCanonicalQuestionnairePath(
-        session.initiativeSlug
-      );
-      const canonicalAbsolutePath = resolveWorkspaceFilePath(
-        workspaceRoot,
-        canonicalQuestionnairePath
-      );
-      if (canonicalAbsolutePath && canonicalAbsolutePath !== absolutePath) {
-        await mkdir(path.dirname(canonicalAbsolutePath), { recursive: true });
-        await writeFile(canonicalAbsolutePath, content, { encoding: "utf8" });
-      }
-    }
 
     res.json({ path: parsedPayload.value.path });
   } catch (error) {
