@@ -35,7 +35,7 @@
 1. [DONE] Удалить legacy PM artifact-header restart wiring: убрать import/render/error-state из viewer и удалить `QuestionnaireRestartAttemptControl`, чтобы рядом с `questionnaire.md` больше не рендерилась круговая стрелка `↻` и не существовал ручной re-submit flow через артефакт (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`; expected commit: `fix(pm): remove questionnaire restart attempt control`).
 2. [DONE] Git Commit: `fix(pm): remove questionnaire restart attempt control` (hash: `638d1759`)
 3. [DONE] Добавить узкий regression guard, который подтверждает отсутствие restart-attempt UI в PM artifact viewer для `questionnaire.md` и не позволяет вернуть этот control через скрытый import/render branch (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`; expected commit: `test(pm): guard questionnaire header cleanup`).
-4. [DONE] Git Commit: `test(pm): guard questionnaire header cleanup` (hash: TBD)
+4. [DONE] Git Commit: `test(pm): guard questionnaire header cleanup` (hash: `53942478`)
 
 ---
 
@@ -50,7 +50,7 @@
 4. [TODO] Git Commit: `refactor(core): use canonical description session slot` (hash: TBD)
 
 ### Stream 2: PM workflow-state client alignment
-5. [TODO] Упростить PM-side workflow-state parsing и selection logic до канонического `primarySession`, чтобы tree/provider resolution не опирались на legacy `collectorSession`/`sessionKind` shape (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit: `refactor(pm): align description workflow state with primary session`).
+5. [IN_PROGRESS] Упростить PM-side workflow-state parsing и selection logic до канонического `primarySession`, чтобы tree/provider resolution не опирались на legacy `collectorSession`/`sessionKind` shape; первый проход уже перевёл `workflow-state-client` и tree на `primarySession`, provider resolver добиваем отдельным микро-коммитом (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit: `refactor(pm): align description workflow state with primary session`).
 6. [TODO] Git Commit: `refactor(pm): align description workflow state with primary session` (hash: TBD)
 
 ---

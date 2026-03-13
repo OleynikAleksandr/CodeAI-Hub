@@ -30,7 +30,7 @@ export const buildDescriptionBranchNodes = (options: {
   if (!branch) {
     return [];
   }
-  const session = branch.session;
+  const session = branch.primarySession;
   const nodes: TreeNode[] = [];
   const artifactPath = branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
   const artifactLabel = branch.finalPath
@@ -143,7 +143,7 @@ export const resolveStageSyncPayload = (options: {
       : branch.draftPath
         ? "description.md"
         : "questionnaire.md";
-    const session = branch.session;
+    const session = branch.primarySession;
     return {
       artifact: artifactPath ? { path: artifactPath, label: artifactLabel } : null,
       clearTool: null,

@@ -47,6 +47,7 @@ export type DescriptionBranchSnapshot = {
   readonly questionnairePath?: string;
   readonly draftPath?: string;
   readonly finalPath?: string;
+  readonly primarySession?: DescriptionSessionRef;
   readonly collectorSession?: DescriptionSessionRef;
   readonly session?: DescriptionSessionRef;
   readonly sessionKind?: "collector";
@@ -198,6 +199,7 @@ const parseDescriptionBranch = (
     readNonEmptyString(payload.questionnairePath) ?? undefined;
   const draftPath = readNonEmptyString(payload.draftPath) ?? undefined;
   const finalPath = readNonEmptyString(payload.finalPath) ?? undefined;
+  const primarySession = parseDescriptionSessionRef(payload.primarySession);
   const collectorSession = parseDescriptionSessionRef(payload.collectorSession);
   const session = parseDescriptionSessionRef(payload.session);
   const sessionKindValue = readNonEmptyString(payload.sessionKind);
@@ -207,6 +209,7 @@ const parseDescriptionBranch = (
     questionnairePath,
     draftPath,
     finalPath,
+    primarySession: primarySession ?? collectorSession ?? session ?? undefined,
     collectorSession: collectorSession ?? undefined,
     session: session ?? undefined,
     sessionKind,
