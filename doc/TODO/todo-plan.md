@@ -118,4 +118,4 @@
 7. [DONE] Выполнить релизный цикл для baseline-линии с новым runtime fix: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> получить `codeai-hub-1.1.722.vsix` и tarball-набор `1.1.722` (scope: version/manifests/release artefacts; expected commit: `chore(release): build-all v1.1.722`).
 8. [DONE] Git Commit: `chore(release): build-all v1.1.722` (hash: `142e0958`)
 9. [DONE] Зафиксировать bug closure, release handoff и session report для `v1.1.722` (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session065.md`; expected commit: `docs(release): record response mode promotion fix`).
-10. [TODO] Git Commit: `docs(release): record response mode promotion fix` (hash: TBD)
+10. [DONE] Git Commit: `docs(release): record response mode promotion fix` (hash: `2382f168`)
