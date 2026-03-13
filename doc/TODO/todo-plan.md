@@ -46,12 +46,16 @@
 2. [TODO] Git Commit: `refactor(core): collapse description session slots` (hash: TBD)
 
 ### Stream 1: Session handler and workspace activation
-3. [TODO] Перевести description session persistence/activation на `primarySession` без fallback на legacy collector/session slots и удалить compat-ветки, которые поддерживали restart-era continuity shape (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): use canonical description session slot`).
-4. [TODO] Git Commit: `refactor(core): use canonical description session slot` (hash: TBD)
+3. [DONE] Перевести description continuity/activation на приоритет `primarySession`, чтобы core routing и workspace activation перестали читать legacy collector slot как основной источник dialog/session identity; compat fallback пока сохраняется до следующего микро-шага (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): prefer primary session for description continuity`).
+4. [DONE] Git Commit: `refactor(core): prefer primary session for description continuity` (hash: `16dbeb22`)
+5. [TODO] Удалить из description session persistence/activation remaining fallback на legacy `collectorSession` / `session`, чтобы core-side continuity shape окончательно опирался на канонический `primarySession` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): use canonical description session slot`).
+6. [TODO] Git Commit: `refactor(core): use canonical description session slot` (hash: TBD)
 
 ### Stream 2: PM workflow-state client alignment
-5. [DONE] Упростить PM-side workflow-state parsing и selection logic до канонического `primarySession`, чтобы tree/provider resolution не опирались на legacy `collectorSession`/`sessionKind` shape (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit: `refactor(pm): align description workflow state with primary session`).
-6. [DONE] Git Commit: `refactor(pm): align description workflow state with primary session` (hash: TBD)
+7. [DONE] Перевести PM tree/stage sync на `primarySession`, чтобы Description branch открывал сессию и artifact sync через канонический slot вместо `branch.session` (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): prefer primary session in description tree`).
+8. [DONE] Git Commit: `refactor(pm): prefer primary session in description tree` (hash: `de680416`)
+9. [DONE] Довести PM workflow-state alignment до канонического `primarySession`: поднять `primarySession` в client parse shape и перевести provider resolver на него как на основной источник provider choice (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): align description workflow state with primary session`).
+10. [DONE] Git Commit: `refactor(pm): align description workflow state with primary session` (hash: `72eee7fc`)
 
 ---
 
