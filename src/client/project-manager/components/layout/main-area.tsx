@@ -39,7 +39,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     readonly workspacePath: string;
     readonly workspaceSlug: string;
     readonly path: string;
-    readonly label: "description.md" | "Final_Description.md";
+    readonly label: "Final_Description.md";
   } | null>(null);
   const [questionnaireDocument, setQuestionnaireDocument] = useState<{
     readonly workspacePath: string;
@@ -189,8 +189,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     const shouldAutoReplace =
       selectedArtifact === null ||
       (selectedArtifact.workspaceSlug === autoDocument.workspaceSlug &&
-        (selectedArtifact.label === "description.md" ||
-          selectedArtifact.label === "Final_Description.md" ||
+        (selectedArtifact.label === "Final_Description.md" ||
           selectedArtifact.label === "questionnaire.md"));
 
     if (!shouldAutoReplace) {

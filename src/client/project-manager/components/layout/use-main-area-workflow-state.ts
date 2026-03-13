@@ -10,7 +10,7 @@ type DescriptionDocument = {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
   readonly path: string;
-  readonly label: "description.md" | "Final_Description.md";
+  readonly label: "Final_Description.md";
 };
 
 type QuestionnaireDocument = {
@@ -127,7 +127,7 @@ export const useMainAreaWorkflowState = (
         branch?.finalPath && branch.finalPath.trim().length > 0
           ? { path: branch.finalPath, label: "Final_Description.md" as const }
           : branch?.draftPath && branch.draftPath.trim().length > 0
-            ? { path: branch.draftPath, label: "description.md" as const }
+            ? { path: branch.draftPath, label: "Final_Description.md" as const }
             : null;
 
       params.setDescriptionDocument(

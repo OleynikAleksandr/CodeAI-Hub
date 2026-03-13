@@ -114,12 +114,12 @@
 14. [DONE] Git Commit: `refactor(core): remove legacy description artifact endpoint` (hash: `4797aef5`)
 
 ### Stream 7: Canonical label in Description tree routes
-15. [TODO] Убрать user-facing label `description.md` из tree/auto-select маршрутов Description: при наличии legacy `draftPath` PM должен продолжать открывать файл, но показывать пользователю только канонический label `Final_Description.md` (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): hide legacy description draft label`).
-16. [TODO] Git Commit: `refactor(pm): hide legacy description draft label` (hash: TBD)
+15. [DONE] Убрать user-facing label `description.md` из tree/auto-select маршрутов Description: при наличии legacy `draftPath` PM должен продолжать открывать файл, но показывать пользователю только канонический label `Final_Description.md` (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): hide legacy description draft label`).
+16. [DONE] Git Commit: `refactor(pm): hide legacy description draft label` (hash: `2cea566b`)
 
 ### Stream 8: Canonical label in main-area auto-open
-17. [TODO] Перевести auto-open Description document в main-area на канонический label `Final_Description.md` и закрепить это guard-тестом, чтобы active PM view больше не рендерил legacy filename даже при compat `draftPath` (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(pm): guard canonical description artifact label`).
-18. [TODO] Git Commit: `test(pm): guard canonical description artifact label` (hash: TBD)
+17. [TODO] Перевести auto-open Description document в main-area на канонический label `Final_Description.md`, чтобы active PM view больше не рендерил legacy filename даже при compat `draftPath`; финальный guard на это инвариантное поведение будет добавлен в `Phase 302` (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/main-area.tsx`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): keep canonical description label in main area`).
+18. [TODO] Git Commit: `refactor(pm): keep canonical description label in main area` (hash: TBD)
 
 ---
 
