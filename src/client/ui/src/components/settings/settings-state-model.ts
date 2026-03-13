@@ -10,13 +10,16 @@ import {
   type CodexReasoningLevel,
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
-  normalizeCodexSettingsModelId,
 } from "../../../../../types/codex-model-registry";
 import {
   areGeminiThinkingLevelByModelEqual,
   type GeminiSettings,
   mapGeminiSettings,
 } from "./gemini-mapping";
+import {
+  areGeneralResponsePolicyEqual,
+  mapGeneralResponsePolicy,
+} from "./general-response-mode/response-mode-state";
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
@@ -30,6 +33,10 @@ export type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../../types/codex-model-registry";
+export type {
+  GeneralResponseMode,
+  GeneralResponsePolicySettings,
+} from "./general-response-mode/response-mode-state";
 
 export type ProviderId = "claude" | "codex" | "gemini";
 
@@ -48,6 +55,7 @@ type CoreControlsSettings = {
 };
 type GeneralSettings = {
   readonly coreControls: CoreControlsSettings;
+  readonly responsePolicy: import("./general-response-mode/response-mode-state").GeneralResponsePolicySettings;
 };
 type ContinuitySettings = {
   readonly remainingPercentThreshold: number;
@@ -109,6 +117,7 @@ const mapThinkingSettings = (
       : DEFAULT_THINKING_MAX_TOKENS,
   };
 };
+
 const mapAutoUpdateSettings = (
   value: RawAutoUpdateSettings | undefined
 ): AutoUpdateSettings => ({
@@ -117,6 +126,7 @@ const mapAutoUpdateSettings = (
       ? value.enabled
       : DEFAULT_AUTO_UPDATE_ENABLED,
 });
+
 const mapGeneralSettings = (
   value: RawGeneralSettings | undefined
 ): GeneralSettings => ({
@@ -126,7 +136,9 @@ const mapGeneralSettings = (
         ? value.coreControls.allowRestart
         : DEFAULT_CORE_RESTART_ENABLED,
   },
+  responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy),
 });
+
 const mapContinuity = (value: unknown): ContinuitySettings => {
   const numericValue = Number(
     isRecord(value) ? value.remainingPercentThreshold : undefined
@@ -142,6 +154,7 @@ const mapContinuity = (value: unknown): ContinuitySettings => {
     : DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
   return { remainingPercentThreshold };
 };
+
 const mapClaudeSettings = (
   value: RawClaudeSettings | undefined
 ): ClaudeSettings => ({
@@ -150,8 +163,12 @@ const mapClaudeSettings = (
   defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
   sessionContinuity: mapContinuity(value?.sessionContinuity),
 });
+
 const resolveCodexModelId = (value: unknown): CodexModelId =>
-  normalizeCodexSettingsModelId(value) ?? DEFAULT_CODEX_MODEL_ID;
+  typeof value === "string" && CODEX_MODEL_IDS.has(value)
+    ? (value as CodexModelId)
+    : DEFAULT_CODEX_MODEL_ID;
+
 const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
   if (typeof value !== "string") {
     return DEFAULT_CLAUDE_MODEL_ALIAS;
@@ -163,7 +180,6 @@ const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
 
 const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
   const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
-  const assignedModelIds = new Set<string>();
 
   if (!isRecord(value)) {
     return nextReasoningByModel;
@@ -176,26 +192,7 @@ const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
       CODEX_REASONING_LEVEL_SET.has(reasoning)
     ) {
       nextReasoningByModel[modelId] = reasoning as CodexReasoningLevel;
-      assignedModelIds.add(modelId);
     }
-  }
-
-  for (const [modelId, reasoning] of Object.entries(value)) {
-    if (
-      typeof reasoning !== "string" ||
-      !CODEX_REASONING_LEVEL_SET.has(reasoning) ||
-      CODEX_MODEL_IDS.has(modelId)
-    ) {
-      continue;
-    }
-
-    const normalizedModelId = normalizeCodexSettingsModelId(modelId);
-    if (!normalizedModelId || assignedModelIds.has(normalizedModelId)) {
-      continue;
-    }
-
-    nextReasoningByModel[normalizedModelId] = reasoning as CodexReasoningLevel;
-    assignedModelIds.add(normalizedModelId);
   }
 
   return nextReasoningByModel;
@@ -253,7 +250,8 @@ const areGeneralSettingsEqual = (
   left: GeneralSettings,
   right: GeneralSettings
 ): boolean =>
-  left.coreControls.allowRestart === right.coreControls.allowRestart;
+  left.coreControls.allowRestart === right.coreControls.allowRestart &&
+  areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
 
 const areClaudeSettingsEqual = (
   left: ClaudeSettings,

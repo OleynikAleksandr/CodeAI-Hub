@@ -1,6 +1,5 @@
 import { buildWorkflowStateQuery } from "./workflow-state-query";
 import { parseWorkflowGating, type WorkflowGatingSnapshot } from "./workflow-gating-client";
-import { parseWorkflowExecutionProfile, type WorkflowExecutionProfileSnapshot } from "./workflow-execution-profile-client";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 export type WorkflowStageId =
   | "description"
@@ -59,13 +58,22 @@ export type WorkflowStateSnapshot = {
   readonly stages: Record<WorkflowStageId, WorkflowStageStatus>;
   readonly continuity: WorkflowContinuitySnapshot;
   readonly description: DescriptionBranchSnapshot | null;
-  readonly executionProfile: WorkflowExecutionProfileSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
 };
 
-type WorkflowStateResponse = { readonly state: unknown; readonly continuity?: unknown; readonly description?: unknown; readonly executionProfile?: unknown; readonly gating?: unknown };
+type WorkflowStateResponse = {
+  readonly state: unknown;
+  readonly continuity?: unknown;
+  readonly description?: unknown;
+  readonly gating?: unknown;
+};
 
-const STAGE_ORDER: readonly WorkflowStageId[] = ["description", "virtual_simulation", "diagram_modules", "diagram_facades"];
+const STAGE_ORDER: readonly WorkflowStageId[] = [
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "diagram_facades",
+];
 
 const DEFAULT_STAGE_STATUS: WorkflowStageStatus = "idle";
 
@@ -222,7 +230,6 @@ const parseWorkflowState = (
   const stages = buildDefaultStages();
   const continuity = parseContinuitySnapshot(response?.continuity);
   const description = parseDescriptionBranch(response?.description);
-  const executionProfile = parseWorkflowExecutionProfile(response?.executionProfile);
   const gating = parseWorkflowGating({ payload: response?.gating, stageOrder: STAGE_ORDER });
   if (isRecord(stagesPayload)) {
     for (const stage of STAGE_ORDER) {
@@ -237,7 +244,7 @@ const parseWorkflowState = (
     }
   }
 
-  return { workspaceSlug, updatedAt, stages, continuity, description, executionProfile, gating };
+  return { workspaceSlug, updatedAt, stages, continuity, description, gating };
 };
 
 const joinUrl = (baseUrl: string, path: string): string =>

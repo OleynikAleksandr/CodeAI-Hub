@@ -18,12 +18,8 @@
 ## Инварианты
 - Один user/internal turn = один `query(...)` запуск (one-shot), FIFO.
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
-- Текущий `turn_started` в Claude module — это локальный lifecycle signal, который эмитится при `send()` до первого provider-originated SDK message; его нельзя трактовать как provider ACK доставки user submit.
-- В observed resume-path Claude earliest raw provider feedback сейчас выглядит как `sdk:system (subtype=init)`, затем `sdk:stream_event` с `message_start`.
-- Runtime truth source для provider ACK в Claude только один: provider-originated `sdk:stream_event(message_start)`; локальный `turn_started`, `sdk:system(init)` и provider-home session JSONL не участвуют в verdict delivered/failed и используются только для расследований.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-- Turn-start ACK: `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`

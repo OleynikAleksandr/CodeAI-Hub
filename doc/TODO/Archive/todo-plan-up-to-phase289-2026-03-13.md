@@ -191,6 +191,22 @@
 
 ### Stream 6: Release build (v1.1.712)
 1. [DONE] Выполнить релизный цикл после cleanup: `./scripts/build-all.sh` (scope: release manifests + packages; expected commit: `chore(release): build-all v1.1.712`).
-2. [DONE] Git Commit: `chore(release): build-all v1.1.712` (hash: `9614ab37`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.712 notes`).
-4. [DONE] Git Commit: `docs(release): sync v1.1.712 notes` (hash: `04b6ae92`)
+2. [IN_PROGRESS] Git Commit: `chore(release): build-all v1.1.712` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, синхронизировать release-доки (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync v1.1.712 notes`).
+4. [TODO] Git Commit: `docs(release): sync v1.1.712 notes` (hash: TBD)
+
+---
+
+## Phase 289 — Baseline Codex `gpt-5.4` Release Rebuild (owner: Oleksandr, updated: 2026-03-12)
+
+### Stream 1: Replace baseline general model without PM refactors
+1. [DONE] На стабильной baseline-линии заменить user-facing Codex general model `gpt-5.2` на `gpt-5.4`, оставить `gpt-5.3-codex` как coding model и сузить persisted settings snapshot до двух active model ids без подтягивания более поздних PM/workflow-state рефакторингов (scope: `src/types/codex-model-registry.ts`, `src/extension-module/settings/codex-settings.ts`, `packages/core/src/config/index.ts`; expected commit: `feat(codex): switch baseline general model to gpt-5.4`).
+2. [DONE] Git Commit: `feat(codex): switch baseline general model to gpt-5.4` (hash: `2978ba51`)
+
+### Stream 2: Release docs + baseline rebuild
+3. [DONE] Синхронизировать release-facing документы и SSOT модуля Codex под baseline release `v1.1.720` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs(release): sync baseline gpt-5.4 notes`).
+4. [DONE] Git Commit: `docs(todo): capture baseline gpt-5.4 prep progress` (hash: `b4a38d48`)
+5. [DONE] Поднять baseline version line до предрелизного состояния, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для нового локального baseline релиза с чистого дерева (scope: root release assets, `doc/tmp/releases/`, package versions/manifests; expected commit: `chore(release): build-all v1.1.720`).
+6. [DONE] Git Commit: `chore(release): build-all v1.1.720` (hash: `56f86371`)
+7. [DONE] Создать новый session-report с итогами baseline smoke-prep и release build (scope: `doc/Sessions/`; expected commit: `docs(session): record baseline gpt-5.4 release build`).
+8. [DONE] Git Commit: `docs(session): record baseline gpt-5.4 release build` (hash: `8b8f1677`)

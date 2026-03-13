@@ -10,7 +10,7 @@ import type {
   TurnCompletedEvent,
   TurnFailedEvent,
 } from "@openai/codex-sdk";
-import { INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY } from "../sdk/codex-sdk-patches";
+import { DEFAULT_CODEX_RESPONSE_POLICY } from "../response-policy/response-policy-defaults";
 import { CodexUsageLimitsReader } from "../sdk/codex-usage-limits-reader";
 import type {
   CodexUsageLimitBucket,
@@ -41,7 +41,6 @@ type EnqueuedMessage = {
   readonly content: string;
   readonly turnOptions?: CodexTurnOptions;
   readonly internal?: boolean;
-  readonly outboundAttemptId?: string;
 };
 
 type ProcessTurnContext = {
@@ -79,6 +78,14 @@ const resolveThreadItemPhase = (item: ThreadItem): string | null => {
   return typeof candidate.phase === "string" ? candidate.phase : null;
 };
 
+const shouldSuppressAgentMessageItem = (
+  controller: StructuredOutputStreamController,
+  sessionId: string,
+  item: ThreadItem
+): boolean =>
+  resolveThreadItemPhase(item) === "commentary" &&
+  controller.shouldSuppressCommentary(sessionId);
+
 const areUsageLimitBucketsEqual = (
   left: CodexUsageLimitBucket | null,
   right: CodexUsageLimitBucket | null
@@ -100,41 +107,6 @@ const areUsageLimitsSnapshotsEqual = (
     right.currentWeekSonnetOnly
   );
 
-const withOutboundAttemptId = <TPayload extends Record<string, unknown>>(
-  payload: TPayload,
-  outboundAttemptId?: string
-): TPayload & { readonly outboundAttemptId?: string } =>
-  outboundAttemptId ? { ...payload, outboundAttemptId } : payload;
-
-const attachTransportTraceContext = (options: {
-  readonly runOptions: CodexTurnOptions;
-  readonly session: ActiveSession;
-  readonly outboundAttemptId?: string;
-}): CodexTurnOptions => {
-  const tracedRunOptions = {
-    ...options.runOptions,
-    [INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY]: {
-      logEvent: (scope: string, payload: Record<string, unknown>) => {
-        options.session.logger?.logSDKEvent(
-          scope,
-          withOutboundAttemptId(
-            {
-              sessionId: options.session.sessionId,
-              threadId: options.session.codexThreadId,
-              internal: options.session.internalTurn ?? false,
-              ...payload,
-              timestampIso: new Date().toISOString(),
-            },
-            options.outboundAttemptId
-          )
-        );
-      },
-    },
-  } as CodexTurnOptions & Record<string, unknown>;
-
-  return tracedRunOptions;
-};
-
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
   private readonly options?: MessageProcessorOptions;
@@ -153,14 +125,6 @@ export class CodexMessageProcessor {
   private readonly userTurnLifecycle = new WeakMap<
     ActiveSession,
     TurnLifecycleState
-  >();
-  private readonly structuredOutputTurns = new WeakMap<
-    ActiveSession,
-    boolean
-  >();
-  private readonly activeOutboundAttemptIds = new WeakMap<
-    ActiveSession,
-    string
   >();
 
   private async raceWithTimeout<T>(payload: {
@@ -305,44 +269,33 @@ export class CodexMessageProcessor {
     sessionId: string,
     content: string,
     turnOptions?: CodexTurnOptions,
-    options?: {
-      readonly internal?: boolean;
-      readonly outboundAttemptId?: string;
-    }
+    options?: { readonly internal?: boolean }
   ): void {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
     const internal = options?.internal ?? false;
-    const outboundAttemptId = options?.outboundAttemptId;
     if (!internal) {
       session.logger?.logUserInput(content);
     }
     // Trace breadcrumbs for diagnosing stalled turns (e.g. user_input logged but no sdk:turn.started).
-    session.logger?.logSDKEvent(
-      "processor.enqueue",
-      withOutboundAttemptId(
-        {
-          sessionId: session.sessionId,
-          threadId: session.codexThreadId,
-          internal,
-          contentLength: content.length,
-          pendingCount: session.messageController.pendingMessages.length,
-          hasResolveNext: Boolean(session.messageController.resolveNext),
-          hasProcessingLoop: Boolean(session.processingLoop),
-          timestampIso: new Date().toISOString(),
-        },
-        outboundAttemptId
-      )
-    );
+    session.logger?.logSDKEvent("processor.enqueue", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal,
+      contentLength: content.length,
+      pendingCount: session.messageController.pendingMessages.length,
+      hasResolveNext: Boolean(session.messageController.resolveNext),
+      hasProcessingLoop: Boolean(session.processingLoop),
+      timestampIso: new Date().toISOString(),
+    });
     const controller = session.messageController;
     controller.pendingMessages.push({
       type: "user_input",
       content,
       turnOptions,
       internal,
-      outboundAttemptId,
     });
     if (controller.resolveNext) {
       const resolver = controller.resolveNext;
@@ -372,18 +325,12 @@ export class CodexMessageProcessor {
         continue;
       }
       session.logger?.logSDKEvent("processor.dequeue", {
-        ...withOutboundAttemptId(
-          {
-            sessionId: session.sessionId,
-            threadId: session.codexThreadId,
-            internal: raw.internal ?? false,
-            contentLength: raw.content.length,
-            remainingPendingCount:
-              session.messageController.pendingMessages.length,
-            timestampIso: new Date().toISOString(),
-          },
-          raw.outboundAttemptId
-        ),
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: raw.internal ?? false,
+        contentLength: raw.content.length,
+        remainingPendingCount: session.messageController.pendingMessages.length,
+        timestampIso: new Date().toISOString(),
       });
       await this.processTurn({ session, thread, message: raw });
     }
@@ -392,44 +339,31 @@ export class CodexMessageProcessor {
   private async processTurn(context: ProcessTurnContext): Promise<void> {
     const { session, thread, message } = context;
     session.internalTurn = message.internal ?? false;
-    if (message.outboundAttemptId) {
-      this.activeOutboundAttemptIds.set(session, message.outboundAttemptId);
-    } else {
-      this.activeOutboundAttemptIds.delete(session);
-    }
     if (!session.internalTurn) {
       this.userTurnLifecycle.set(session, { started: false, ended: false });
     }
     const turnStartedAt = Date.now();
-    this.structuredOutputTurns.set(session, false);
-    session.logger?.logSDKEvent(
-      "processor.turn.begin",
-      withOutboundAttemptId(
-        {
-          sessionId: session.sessionId,
-          threadId: session.codexThreadId,
-          internal: session.internalTurn,
-          pendingCountAtBegin: session.messageController.pendingMessages.length,
-          timestampIso: new Date().toISOString(),
-        },
-        message.outboundAttemptId
-      )
-    );
+    session.logger?.logSDKEvent("processor.turn.begin", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal: session.internalTurn,
+      pendingCountAtBegin: session.messageController.pendingMessages.length,
+      timestampIso: new Date().toISOString(),
+    });
     let startupLock: StartupLockContext | null = null;
     try {
       const turnOptions = message.turnOptions ?? {};
-      const runOptions = session.internalTurn
-        ? turnOptions
-        : this.structuredOutput.applyOutputSchema(turnOptions);
-      this.structuredOutputTurns.set(
-        session,
-        Boolean(!session.internalTurn && runOptions.outputSchema)
-      );
       let prompt = message.content;
+      let runOptions = turnOptions;
       if (!session.internalTurn) {
         const config = this.structuredOutput.prepareTurn(
           session.sessionId,
-          runOptions
+          turnOptions,
+          session.responsePolicy ?? DEFAULT_CODEX_RESPONSE_POLICY
+        );
+        runOptions = this.structuredOutput.applyOutputSchema(
+          turnOptions,
+          config
         );
         prompt = this.structuredOutput.applyPrompt(message.content, config);
       }
@@ -452,27 +386,14 @@ export class CodexMessageProcessor {
         timestampIso: new Date().toISOString(),
       });
       const runStreamedStartedAt = Date.now();
-      session.logger?.logSDKEvent(
-        "processor.run_streamed.begin",
-        withOutboundAttemptId(
-          {
-            sessionId: session.sessionId,
-            threadId: session.codexThreadId,
-            internal: session.internalTurn,
-            elapsedMs: runStreamedStartedAt - turnStartedAt,
-            timestampIso: new Date().toISOString(),
-          },
-          message.outboundAttemptId
-        )
-      );
-      const { events } = await thread.runStreamed(
-        prompt,
-        attachTransportTraceContext({
-          runOptions,
-          session,
-          outboundAttemptId: message.outboundAttemptId,
-        })
-      );
+      session.logger?.logSDKEvent("processor.run_streamed.begin", {
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        internal: session.internalTurn,
+        elapsedMs: runStreamedStartedAt - turnStartedAt,
+        timestampIso: new Date().toISOString(),
+      });
+      const { events } = await thread.runStreamed(prompt, runOptions);
       session.logger?.logSDKEvent("processor.run_streamed.ready", {
         sessionId: session.sessionId,
         threadId: session.codexThreadId,
@@ -507,7 +428,6 @@ export class CodexMessageProcessor {
       });
       startupLock?.release();
       session.internalTurn = false;
-      this.activeOutboundAttemptIds.delete(session);
     }
   }
 
@@ -684,19 +604,13 @@ export class CodexMessageProcessor {
       return;
     }
     state.logged = true;
-    session.logger?.logSDKEvent(
-      "processor.first_event",
-      withOutboundAttemptId(
-        {
-          sessionId: session.sessionId,
-          threadId: session.codexThreadId,
-          internal: session.internalTurn ?? false,
-          eventType,
-          timestampIso: new Date().toISOString(),
-        },
-        this.activeOutboundAttemptIds.get(session)
-      )
-    );
+    session.logger?.logSDKEvent("processor.first_event", {
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      internal: session.internalTurn ?? false,
+      eventType,
+      timestampIso: new Date().toISOString(),
+    });
   }
 
   private async dispatchEvent(
@@ -755,6 +669,7 @@ export class CodexMessageProcessor {
     session.logger?.logSDKEvent("thread_id", threadId);
 
     if (!existingThreadId && previousId !== threadId) {
+      this.structuredOutput.promoteSession(previousId, threadId);
       this.sessionManager.updateSessionId(previousId, threadId);
       session.logger?.renameSession?.(previousId, threadId);
       this.clearReasoningSession(previousId);
@@ -790,7 +705,6 @@ export class CodexMessageProcessor {
     this.maybeEmitTurnCompleted(session, event.usage, usageLimits);
     this.refreshTokenUsage(session);
     this.structuredOutput.clear(session.sessionId);
-    this.structuredOutputTurns.delete(session);
     this.clearReasoningSession(session.sessionId);
 
     session.logger?.logSDKEvent("processor.turn.completed.done", {
@@ -1015,7 +929,6 @@ export class CodexMessageProcessor {
   ): void {
     this.maybeEmitTurnFailed(session, event.error);
     this.structuredOutput.clear(session.sessionId);
-    this.structuredOutputTurns.delete(session);
     this.clearReasoningSession(session.sessionId);
   }
 
@@ -1032,7 +945,6 @@ export class CodexMessageProcessor {
       timestamp: new Date().toISOString(),
     });
     this.structuredOutput.clear(session.sessionId);
-    this.structuredOutputTurns.delete(session);
     this.clearReasoningSession(session.sessionId);
   }
 
@@ -1090,7 +1002,16 @@ export class CodexMessageProcessor {
     if (!isAgentMessageItem(item)) {
       return;
     }
-    if (this.shouldSuppressAgentMessageItem(session, item)) {
+    // Codex emits an assistant message twice: once as a "commentary" phase and
+    // again as "final_answer". Commentary is internal and should not appear in
+    // the UI dialog history to avoid duplicates.
+    if (
+      shouldSuppressAgentMessageItem(
+        this.structuredOutput,
+        session.sessionId,
+        item
+      )
+    ) {
       return;
     }
     if (event.type === "item.updated") {
@@ -1228,16 +1149,6 @@ export class CodexMessageProcessor {
       return;
     }
     session.eventEmitter.emit("message", payload);
-  }
-
-  private shouldSuppressAgentMessageItem(
-    session: ActiveSession,
-    item: ThreadItem
-  ): boolean {
-    return (
-      this.structuredOutputTurns.get(session) === true &&
-      resolveThreadItemPhase(item) === "commentary"
-    );
   }
 
   private emitDialogMessage(

@@ -132,11 +132,6 @@ export const IdeaCollectorProviderPicker = ({
               );
             })}
           </div>
-          <p className="pm-provider-picker__lock-warning" role="note">
-            В MVP провайдер и его default model выбираются один раз на весь
-            workspace. После запуска Description изменить этот выбор для данного
-            workspace нельзя.
-          </p>
           <div className="pm-provider-picker__actions">
             <output aria-live="polite" className="pm-provider-picker__status-line">
               {statusMessage}

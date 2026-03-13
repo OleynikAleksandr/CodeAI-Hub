@@ -28,10 +28,6 @@ type SessionMessageRecord = Extract<
   SessionRecord,
   { readonly type: "message" }
 >;
-type IndexedDialogHistoryMessage = {
-  readonly message: DialogHistoryMessage;
-  readonly order: number;
-};
 
 export class DialogHistoryService {
   private readonly logger: Logger;
@@ -43,9 +39,8 @@ export class DialogHistoryService {
   }
 
   private appendMessageRecord(
-    byId: Map<string, IndexedDialogHistoryMessage>,
-    record: SessionRecord,
-    order: number
+    byId: Map<string, DialogHistoryMessage>,
+    record: SessionRecord
   ): void {
     if (record.type !== "message") {
       return;
@@ -55,13 +50,10 @@ export class DialogHistoryService {
       return;
     }
     byId.set(messageRecord.messageId, {
-      message: {
-        messageId: messageRecord.messageId,
-        role: messageRecord.role,
-        content: messageRecord.content,
-        timestamp: messageRecord.timestamp,
-      },
-      order,
+      messageId: messageRecord.messageId,
+      role: messageRecord.role,
+      content: messageRecord.content,
+      timestamp: messageRecord.timestamp,
     });
   }
 
@@ -85,21 +77,14 @@ export class DialogHistoryService {
     const slice =
       requestedCursor > 0 ? records.slice(requestedCursor) : records;
 
-    const byId = new Map<string, IndexedDialogHistoryMessage>();
-    for (const [index, record] of slice.entries()) {
-      this.appendMessageRecord(byId, record, index);
+    const byId = new Map<string, DialogHistoryMessage>();
+    for (const record of slice) {
+      this.appendMessageRecord(byId, record);
     }
 
     const messages = Array.from(byId.values());
-    messages.sort(
-      (left, right) =>
-        left.message.timestamp.localeCompare(right.message.timestamp) ||
-        left.order - right.order
-    );
-    return {
-      messages: messages.map((entry) => entry.message),
-      lastCursor,
-    };
+    messages.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    return { messages, lastCursor };
   }
 
   private async readHistoryFromFile(options: {

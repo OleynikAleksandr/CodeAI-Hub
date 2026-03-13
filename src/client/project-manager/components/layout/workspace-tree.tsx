@@ -1,5 +1,6 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
+import { api } from "../../api";
 import {
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
@@ -15,7 +16,6 @@ import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import { useDiagramFacadesArtifactAvailability } from "./use-diagram-facades-artifact-availability";
-import { useWorkspaceWorkflowState } from "./use-workspace-workflow-state";
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -29,6 +29,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   workspaceSlug: resolvedWorkspaceSlug,
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Readonly<Record<string, boolean>>>({});
+  const [workflowState, setWorkflowState] =
+    useState<WorkflowStateSnapshot | null>(null);
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
   const workspaceSlug =
@@ -36,11 +38,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     (workspaceName && workspaceName.trim().length > 0
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
-  const workflowState = useWorkspaceWorkflowState({
-    enabled: Boolean(selectedWorkspaceId && workspaceSlug),
-    workspaceSlug,
-    workspacePath,
-  });
 
   const virtualSimulationArtifactAvailable =
     useVirtualSimulationArtifactAvailability({
@@ -133,6 +130,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   useEffect(() => {
     if (!selectedWorkspaceId) {
       setExpandedNodes({});
+      setWorkflowState(null);
       resetPendingSelection();
       return;
     }
@@ -149,11 +147,33 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   ]);
 
   useEffect(() => {
-    if (!(selectedWorkspaceId && workspaceSlug)) {
+    if (!selectedWorkspaceId || !workspaceSlug) {
+      setWorkflowState(null);
       return;
     }
-    handleStateUpdate(workflowState);
-  }, [handleStateUpdate, selectedWorkspaceId, workflowState, workspaceSlug]);
+    let cancelled = false;
+    let timer = 0;
+    let fastPolling = true;
+    const loadState = async () => {
+      const state = await api.getWorkflowState(workspaceSlug, workspacePath);
+      if (cancelled) {
+        return;
+      }
+      if (state && fastPolling) {
+        fastPolling = false;
+        window.clearInterval(timer);
+        timer = window.setInterval(loadState, 15_000);
+      }
+      setWorkflowState(state);
+      handleStateUpdate(state);
+    };
+    loadState();
+    timer = window.setInterval(loadState, 3_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [handleStateUpdate, selectedWorkspaceId, workspacePath, workspaceSlug]);
 
   const resolveStageNodes = (): readonly TreeNode[] => {
     if (!workflowState) {

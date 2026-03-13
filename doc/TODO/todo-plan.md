@@ -5,77 +5,117 @@
   - `doc/SolidWorks-WorkFlow/README.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`
-  - `doc/Sessions/Session071.md`
-  - `doc/Sessions/Session072.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
+  - `doc/BugRegistry.md`
+  - `doc/Sessions/Session061.md`
+  - `doc/Sessions/Session062.md`
+  - `doc/Sessions/Session063.md`
 - TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - Husky gates не обходить (`--no-verify` запрещён).
 - Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита.
-- Release stream закрывается только на чистом дереве и строго по `Release Build Checklist`.
+- Response Mode в `Settings -> General` реализуется только как отдельный модуль со своим фасадом; добавление логики напрямую в существующий `general-settings.tsx` или в монолитный settings-state без выделения модуля запрещено.
+- Для диагностики новых моделей raw provider log считается обязательным артефактом; UI/history фильтры не могут быть единственным источником того, что "сказал провайдер".
 
 ---
 
-## Phase 300 — Post-Release Smoke And Regression Intake (owner: Oleksandr, updated: 2026-03-12)
+## Phase 290 — Codex response modes: design registration + settings foundation (owner: Oleksandr, updated: 2026-03-13)
 
-### Stream 1: Release smoke verification
-1. [DONE] Проверить локально установленный `codeai-hub-1.1.717.vsix`, зафиксировать реальные regression-сценарии на двух workspace и утвердить repair SSOT для PM/Core (`ProjectManager_WorkflowState_Reconciliation.md`) вместо открытия нового feature track (scope: `doc/Sessions/Session072.md`, `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(architecture): capture pm workflow regression repair`).
-2. [DONE] Git Commit: `docs(architecture): capture pm workflow regression repair` (hash: `81ab9099`)
+### Stream 0: Design registration
+1. [DONE] Заархивировать завершённый план до `Phase 289`, зафиксировать архитектурный контракт response modes/raw diagnostics и создать новый execution plan под baseline `gpt-5.4` recovery без подтягивания поздних rollout/refactor-изменений (scope: `doc/TODO/Archive/todo-plan-up-to-phase289-2026-03-13.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(codex): add response mode architecture plan`).
+2. [DONE] Git Commit: `docs(codex): add response mode architecture plan` (hash: `e6ddc991`)
 
-## Phase 301 — PM Workflow State Reconciliation Repair (owner: Oleksandr, updated: 2026-03-12)
+### Stream 1: General settings snapshot contract
+3. [DONE] Расширить extension-side `GeneralSettings` и `SettingsSnapshot`: добавить `general.responsePolicy` с default `hybrid` и strict contract fields без поломки существующего `coreControls` snapshot (scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit: `feat(settings): add response policy snapshot contract`; actual consolidated commit: `feat(codex): add response mode settings`).
+4. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
+5. [DONE] Синхронизировать core bootstrap/default snapshot для нового `general.responsePolicy`, чтобы `settings.json` рождался с тем же контрактом при cold-start/reset/load-defaults (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/config/index.ts`; expected commit: `feat(core): seed response policy settings defaults`; actual consolidated commit: `feat(codex): add response mode settings`).
+6. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
 
-### Stream 1: Filter internal metadata artifacts
-3. [DONE] Исключить `description-step.json` и временные atomic-write файлы `description-step.json.tmp-*` из watcher/state projection, чтобы internal metadata никогда не попадала в user-facing artifacts шага `Description` (scope: `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/workflow-internal-metadata-artifacts.test.ts`; expected commit: `fix(core): filter internal workflow metadata artifacts`).
-4. [DONE] Git Commit: `fix(core): filter internal workflow metadata artifacts` (hash: `0b63cb54`)
+### Stream 2: Extension-module response policy facade
+7. [DONE] Создать закрытый settings-модуль `src/extension-module/settings/general-response-mode/` с фасадом как единственной публичной точкой входа для defaults/normalize/validation strict schema contract (scope: `src/extension-module/settings/general-response-mode/general-response-mode-facade.ts`, `src/extension-module/settings/general-response-mode/response-mode-settings.ts`, `src/extension-module/settings/general-response-mode/response-mode-schema.ts`; expected commit: `feat(settings): add general response mode facade`; actual consolidated commit: `feat(codex): add response mode settings`).
+8. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
+9. [DONE] Перевести `general-settings.ts` и storage parsing на использование нового фасада вместо инлайн-нормализации response policy (scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/settings-storage.ts`; expected commit: `refactor(settings): route response policy through facade`; actual consolidated commit: `feat(codex): add response mode settings`).
+10. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
 
-### Stream 2: Reconcile stage status on read path
-5. [DONE] Нормализовать `workflow-state` read path: derived `completed`/`invalid`/`outdated` status теперь выводится из continuity и канонических файлов через отдельный reconciler, а не только из watcher-memory event trail (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/workflow/state/workflow-state-reconciliation.ts`, `packages/core/src/workflow/state/workflow-state-reconciliation.test.ts`; expected commit: `fix(core): reconcile workflow stage state on read`).
-6. [DONE] Git Commit: `fix(core): reconcile workflow stage state on read` (hash: `ebfb48ac`)
+### Stream 3: UI General Settings module/facade
+11. [DONE] Создать UI-модуль `src/client/ui/src/components/settings/general-response-mode/` и фасад как единственную точку входа новой карточки `Response Mode` в General tab (scope: `src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx`, `src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx`, `src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts`; expected commit: `feat(ui): add general response mode facade`; actual consolidated commit: `feat(codex): add response mode settings`).
+12. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
+13. [DONE] Подключить новый UI facade в `GeneralSettings` и `SettingsView`, сохранив `Restart Core` отдельной карточкой и не смешивая её с response mode controls (scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings-view.tsx`; expected commit: `refactor(ui): compose general tab from response mode facade`; actual consolidated commit: `feat(codex): add response mode settings`).
+14. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
+15. [DONE] Расширить raw/state/helper слой Settings UI под `general.responsePolicy`, mode switching и strict schema editing state (scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit: `feat(ui): track response policy in settings state`; actual consolidated commit: `feat(codex): add response mode settings`).
+16. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
 
-### Stream 3: Advance cross-stage lastActive
-7. [DONE] Обновлять `lastActive` для `virtual_simulation` и следующих user-facing artifacts, чтобы reopen workspace и stage restore не застревали на `questionnaire.md` после продвижения workflow вперёд (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-last-active-cross-stage.test.ts`; expected commit: `fix(core): advance workflow last-active across stages`).
-8. [DONE] Git Commit: `fix(core): advance workflow last-active across stages` (hash: `5c565af6`)
+---
 
-### Stream 4: Reactive stage-to-panel sync in PM
-9. [DONE] Сделать stage sync реактивным к обновлению `workflowState`, чтобы позднее появление continuity/session выбранного шага автоматически переоткрывало правильный dialog pane и не оставляло stale `Description` session (scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/use-stage-panel-sync.test.ts`; expected commit: `fix(pm): resync panels to active workflow stage`).
-10. [DONE] Git Commit: `fix(pm): resync panels to active workflow stage` (hash: `6eae900e`)
+## Phase 291 — Codex runtime response policy + diagnostics (owner: Oleksandr, updated: 2026-03-13)
 
-### Stream 5: Reconcile persisted dialog intent
-11. [DONE] Превратить `localStorage` dialog restore в stage-aware hint: stale intent должен отбрасываться при reopen, если reconciled `workflow-state` и `lastActive` уже указывают на более поздний шаг (scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; expected commit: `fix(pm): discard stale dialog restore intent`).
-12. [DONE] Git Commit: `fix(pm): discard stale dialog restore intent` (hash: `36de0ed8`)
+### Stream 0: Codex runtime facade
+1. [DONE] Создать закрытый runtime-модуль `packages/Codex_Module/src/response-policy/` с фасадом, который превращает persisted settings в turn execution policy (`strict` / `hybrid` / `debug_raw`) (scope: `packages/Codex_Module/src/response-policy/codex-response-policy-facade.ts`, `packages/Codex_Module/src/response-policy/response-policy-types.ts`, `packages/Codex_Module/src/response-policy/response-policy-defaults.ts`; expected commit: `feat(codex): add response policy facade`; actual consolidated commit: `feat(codex): add response mode settings`).
+2. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
+3. [DONE] Пробросить response policy из settings/bootstrap в Codex runtime create/resume path без позднего rollout-кода и без изменения PM/workflow-state слоя (scope: `packages/core/src/config/index.ts`, `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/provider/codex-provider-adapter.ts`; expected commit: `feat(codex): wire runtime response policy`; actual consolidated commit: `feat(codex): add response mode settings`).
+4. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
 
-### Stream 6: Align Virtual Simulation validator with live artifacts
-13. [DONE] Убрать ложный `invalid` для текущего runtime output `virtual-simulation.md`: validator и UI должны принимать `##` и `### Сценарий N` в repair window, не ломая user-facing guidance (scope: `packages/core/src/workflow/validation/virtual-simulation-validator.ts`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`; expected commit: `fix(workflow): align virtual simulation heading validation`).
-14. [DONE] Git Commit: `fix(workflow): align virtual simulation heading validation` (hash: `c6f035d1`)
+### Stream 1: Structured output behavior by mode
+5. [DONE] Изолировать strict JSON-only behavior за фасадом response policy, чтобы `structured-output-stream-controller` больше не считался универсальным контрактом каждого turn (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/response-policy/codex-response-policy-facade.ts`, `packages/Codex_Module/src/types/index.ts`; expected commit: `refactor(codex): scope structured output to response policy`; actual consolidated commit: `feat(codex): add response mode settings`).
+6. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
+7. [DONE] Реализовать `hybrid` route: commentary остаётся свободным, а structured contract применяется только к terminal result path (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/response-policy/codex-response-policy-facade.ts`; expected commit: `fix(codex): restore commentary in hybrid mode`; actual consolidated commit: `feat(codex): add response mode settings`).
+8. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
+9. [DONE] Реализовать `debug_raw` route без жёсткой schema injection, но с сохранением совместимости текущего turn lifecycle (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/response-policy/codex-response-policy-facade.ts`; expected commit: `feat(codex): add debug raw response mode`; actual consolidated commit: `feat(codex): add response mode settings`).
+10. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
 
-### Stream 7: Restore fast PM workflow-state hydration
-15. [DONE] Вернуть shared `workflow-state` в fast cadence на горячем workflow окне и добавить явный refresh/invalidate path для submit-driven UI, чтобы tree/main area не жили на stale snapshot после `session:created` и записи `Final_Description.md` (scope: `src/client/project-manager/components/layout/use-workspace-workflow-state.ts`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/idea-collector-submit-service.open-fast.test.ts`; expected commit: `fix(pm): refresh workflow state after description submit`).
-16. [DONE] Git Commit: `fix(pm): refresh workflow state after description submit` (hash: `68167149`)
+### Stream 2: Raw provider diagnostics
+11. [TODO] Формализовать append-safe raw provider diagnostic writer до UI/history фильтров и сделать его обязательным инвариантом для всех response modes; текущее baseline-изменение закрывает только policy facade и не оформляет отдельный raw diagnostic writer contract (scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/response-policy/codex-response-policy-facade.ts`; expected commit: `feat(codex): persist raw provider diagnostics`).
+12. [TODO] Git Commit: `feat(codex): persist raw provider diagnostics` (hash: TBD)
+13. [DONE] Исправить overwrite historical SDK JSONL при `resume` на том же `thread_id` (scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/session/session-manager.ts`; expected commit: `fix(codex): preserve sdk logs across resume`; actual consolidated commit: `feat(codex): add response mode settings`).
+14. [DONE] Git Commit: `feat(codex): add response mode settings` (hash: `45318c70`)
 
-### Stream 8: Stop PM from downgrading back to pre-submit help
-17. [DONE] Сделать `hasDescriptionSession` monotonic внутри активного workspace после `session:created`, чтобы stale poll не возвращал левую панель в `Description Help`, и синхронизировать description auto-select через общий session resolver (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/description-workflow-state.test.ts`; expected commit: `fix(pm): preserve description session after submit`).
-18. [DONE] Git Commit: `fix(pm): preserve description session after submit` (hash: `dcd02f6e`)
+---
 
-### Stream 9: Renew regression verification on real workspace data
-19. [IN_PROGRESS] Прогнать таргетные проверки затронутых пакетов/клиентов и повторный smoke на двух workspace из `Session072`: tree hydration, completed badges, correct dialog restore, отсутствие stale Description help/session mismatch и стробирования артефакта после submit (scope: `packages/core`, `src/client/project-manager`, `doc/Sessions/Session072.md`; expected commit: `test(release): verify pm workflow regression repair`).
-20. [TODO] Git Commit: `test(release): verify pm workflow regression repair` (hash: TBD)
+## Phase 292 — UI/history normalization + guards (owner: Oleksandr, updated: 2026-03-13)
 
-### Stream 10: Historical baseline compare before `gpt-5.4` rollout
-27. [IN_PROGRESS] Снять forensic baseline до codex `gpt-5.4` rollout и сравнить PM/Description workflow против текущей ветки, чтобы отделить model-switch изменения от более поздних PM workflow-state refactor/regression commits; отдельный detached worktree уже создан в `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-pre-gpt54-v1.1.712` на commit `9614ab37` (scope: `doc/Sessions/Session075.md`, local git history around `9614ab37` / `b78d78a8` / `e6cd53da`; expected commit: `docs(todo): plan pre-gpt-5.4 baseline compare`).
-28. [TODO] Git Commit: `docs(todo): plan pre-gpt-5.4 baseline compare` (hash: TBD)
+### Stream 0: Normalization and persistence
+1. [TODO] Прекратить безусловное подавление commentary-path и привести нормализацию turn events к mode-aware схеме без утраты user-facing progress (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/unified-session/storage.ts`; expected commit: `fix(core): preserve mode-aware commentary normalization`).
+2. [TODO] Git Commit: `fix(core): preserve mode-aware commentary normalization` (hash: TBD)
+3. [TODO] Добавить fallback progress-layer для случаев, когда модель не присылает commentary, но присылает tool/file activity (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/unified-session/storage.ts`, `src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts`; expected commit: `feat(core): add progress fallback for response modes`).
+4. [TODO] Git Commit: `feat(core): add progress fallback for response modes` (hash: TBD)
 
-## Phase 302 — Release Rebuild After Regression Repair (owner: Oleksandr, updated: 2026-03-12)
+### Stream 1: Guards
+5. [TODO] Добавить source-level guards на новый settings contract и response policy parsing (scope: `src/extension-module/settings/general-settings.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `packages/Codex_Module/src/response-policy/codex-response-policy-facade.ts`; expected commit: `test(settings): guard response policy contract`).
+6. [TODO] Git Commit: `test(settings): guard response policy contract` (hash: TBD)
+7. [TODO] Добавить regression guards на commentary/raw-log invariant для `strict`, `hybrid` и `debug_raw` (scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(codex): guard response modes diagnostics`).
+8. [TODO] Git Commit: `test(codex): guard response modes diagnostics` (hash: TBD)
 
-### Stream 1: Next patch release by checklist
-17. [BLOCKED] После зелёного regression smoke синхронизировать release-facing docs, пройти `Release Build Checklist` и собрать следующий patch release с чистого дерева (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/`; expected commit: `build(release): ship pm workflow regression repair`).
-18. [BLOCKED] Git Commit: `build(release): ship pm workflow regression repair` (hash: TBD)
+---
 
-### Stream 2: User-requested test release before smoke closeout
-21. [DONE] По явному запросу пользователя синхронизировать release-facing docs и собрать отдельный тестовый VSIX с текущими PM hydration repair-фиксами до завершения `Stream 9`, чтобы прогнать ручной smoke на новой сборке (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session074.md`; expected commit: `docs(release): prepare pm hydration repair test build`).
-22. [DONE] Git Commit: `docs(release): prepare pm hydration repair test build` (hash: `c5aad906`)
-23. [DONE] Запустить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, подтвердить новый VSIX/tarball артефакты и зафиксировать build output отдельными коммитами (scope: root release assets, `doc/tmp/releases/`, `package-lock.json`; expected commit: `build(release): stage pm hydration repair test artifacts`).
-24. [DONE] Git Commit: `build(release): stage pm hydration repair test artifacts` (hash: `f6d56a5e`)
-25. [DONE] Создать новый session report под тестовый релиз и очистить дерево после сборки (scope: `doc/Sessions/`; expected commit: `docs(session): record test release 1.1.719 build`).
-26. [DONE] Git Commit: `docs(session): record test release 1.1.719 build` (hash: `647a4381`)
+## Phase 293 — Docs sync + release validation (owner: Oleksandr, updated: 2026-03-13)
+
+### Stream 0: SSOT sync
+1. [DONE] Синхронизировать системные и модульные документы под новый response mode contract и raw diagnostics invariant (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(codex): sync response mode ssot`).
+2. [DONE] Git Commit: `docs(codex): sync response mode ssot` (hash: `56d66e2b`)
+
+### Stream 1: Release prep
+3. [DONE] Зафиксировать `Session063` и финальный release handoff для response mode rollout; `README.md` и `CHANGELOG.md` уже синхронизированы в `56d66e2b` под версию `1.1.721` (scope: `doc/Sessions/Session063.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record response mode rollout`).
+4. [DONE] Git Commit: `docs(release): record response mode rollout` (hash: `4f7c3ab9`)
+5. [DONE] Выполнить release cycle по чеклисту: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + package versions/manifests; expected commit: `chore(release): build-all vX.Y.Z`).
+6. [DONE] Git Commit: `chore(release): build-all v1.1.721` (hash: `19dc0289`)
+
+---
+
+## Phase 294 — Codex response-mode promotion regression (`Debug/Raw` empty dialog) (owner: Oleksandr, updated: 2026-03-13)
+
+### Stream 0: Preserve response policy across session promotion
+1. [DONE] Минимально исправить session-promotion path внутри Codex runtime: сохранить response-mode turn config и in-flight structured-output state при переходе `temp session id -> real thread id`, чтобы `Debug/Raw`/`Hybrid` не откатывались в `DEFAULT_TURN_CONFIG` после `thread.started` (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`; expected commit: `fix(codex): preserve response mode across session promotion`).
+2. [DONE] Git Commit: `fix(codex): preserve response mode across session promotion` (hash: `67da3fb6`)
+3. [DONE] Добавить узкий regression guard на сценарий `thread.started` promotion до первого `agent_message`: проверить, что при `Debug/Raw` и `Hybrid` commentary и final text после promotion доходят до downstream `assistant` emit без forced JSON parsing (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.test.ts`; expected commit: `test(codex): guard response mode session promotion`).
+4. [DONE] Git Commit: `test(codex): guard response mode session promotion` (hash: `7e9d370c`)
+
+### Stream 1: Release validation + handoff
+5. [DONE] Синхронизировать release-facing документы под `v1.1.722` до запуска релизной сборки, чтобы release notes отражали session-promotion fix для `Debug/Raw`/`Hybrid` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare v1.1.722 notes`).
+6. [DONE] Git Commit: `docs(release): prepare v1.1.722 notes` (hash: `a5b5f649`)
+7. [DONE] Выполнить релизный цикл для baseline-линии с новым runtime fix: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> получить `codeai-hub-1.1.722.vsix` и tarball-набор `1.1.722` (scope: version/manifests/release artefacts; expected commit: `chore(release): build-all v1.1.722`).
+8. [DONE] Git Commit: `chore(release): build-all v1.1.722` (hash: `142e0958`)
+9. [DONE] Зафиксировать bug closure, release handoff и session report для `v1.1.722` (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session065.md`; expected commit: `docs(release): record response mode promotion fix`).
+10. [DONE] Git Commit: `docs(release): record response mode promotion fix` (hash: `2382f168`)

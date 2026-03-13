@@ -8,6 +8,7 @@
 4. `Clusters/CoreOrchestrator.md`
 5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 6. `Contracts/` (только по ссылкам из документов выше)
+7. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 
 ## 1) Канонические документы (этот каталог)
 
@@ -32,8 +33,6 @@
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
-- `Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md` — MVP-контракт стабилизации PM/workspace identity: immutable provider/model lock, filesystem-backed Description recovery, shared `workflow-state`.
-- `Contracts/ProjectManager_WorkflowState_Reconciliation.md` — post-release repair contract для tree/main area/session restore: reconciled stage projection, stale dialog intent discard, internal metadata filtering, `lastActive` cross-stage, validator alignment.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
 - `Contracts/SessionContinuity.md` — continuity handoff/rollover contract.
@@ -42,9 +41,7 @@
 - `Contracts/SessionInputLock_SSOT_StateMachine.md` — SSOT/state machine для input lock/unlock.
 - `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — session-home isolation + resume-first recovery contract.
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
-- `Contracts/Codex_Workflow_TurnStarted_ACK.md` — single-source ACK contract: runtime verdict delivered/failed для Codex submit опирается только на `sdk:turn.started`.
-- `Contracts/Claude_Workflow_TurnStarted_ACK.md` — single-source ACK contract: runtime verdict delivered/failed для Claude submit опирается только на provider-originated `sdk:stream_event(message_start)`.
-- `Contracts/Codex_Workflow_Submit_Diagnostics.md` — сквозной trace contract для PM/Core/Codex submit path, `pm.dialog_send.*`, `outbound.child.*` и SSOT-логов `~/.codeai-hub/logs/core/dialog-send-trace.jsonl` + `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
+- `Contracts/Codex_ResponseMode_Settings_Architecture.md` — response modes (`Strict` / `Hybrid` / `Debug/Raw`) + raw provider diagnostics contract для Codex.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Contracts (legacy/deferred)

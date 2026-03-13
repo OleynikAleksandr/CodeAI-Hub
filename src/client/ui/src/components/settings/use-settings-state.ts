@@ -16,6 +16,9 @@ import {
   updateGeminiDefaultModel,
   updateGeminiThinking,
   updateProviderAutoUpdate,
+  updateResponsePolicyMode,
+  updateStrictInstructionText,
+  updateStrictSchemaText,
   updateThinkingSettings,
 } from "./settings-state-helpers";
 import {
@@ -23,6 +26,7 @@ import {
   type CodexModelId,
   type CodexReasoningLevel,
   createDefaultSettings,
+  type GeneralResponseMode,
   mapSettingsSnapshot,
   type ProviderId,
   type Settings,
@@ -187,6 +191,27 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleResponsePolicyModeChange = useCallback(
+    (mode: GeneralResponseMode) => {
+      updateSettings(updateResponsePolicyMode(settings, mode));
+    },
+    [settings, updateSettings]
+  );
+
+  const handleStrictSchemaTextChange = useCallback(
+    (value: string) => {
+      updateSettings(updateStrictSchemaText(settings, value));
+    },
+    [settings, updateSettings]
+  );
+
+  const handleStrictInstructionTextChange = useCallback(
+    (value: string) => {
+      updateSettings(updateStrictInstructionText(settings, value));
+    },
+    [settings, updateSettings]
+  );
+
   const handleGeminiDefaultModelChange = useCallback(
     (modelId: GeminiModelId) => {
       updateSettings(updateGeminiDefaultModel(settings, modelId));
@@ -251,6 +276,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleGeminiThinkingChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
+    handleResponsePolicyModeChange,
+    handleStrictSchemaTextChange,
+    handleStrictInstructionTextChange,
     handleSave,
     handleReset,
     handleUpdateProvider,

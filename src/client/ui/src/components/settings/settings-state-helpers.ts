@@ -6,6 +6,7 @@ import type {
 import type {
   CodexModelId,
   CodexReasoningLevel,
+  GeneralResponseMode,
   ProviderId,
   Settings,
 } from "./settings-state-model";
@@ -186,6 +187,54 @@ export const updateGeminiContextWindowTokenLimit = (
       sessionContinuity: {
         ...settings.providers.gemini.sessionContinuity,
         contextWindowTokenLimit,
+      },
+    },
+  },
+});
+
+export const updateResponsePolicyMode = (
+  settings: Settings,
+  mode: GeneralResponseMode
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    responsePolicy: {
+      ...settings.general.responsePolicy,
+      mode,
+    },
+  },
+});
+
+export const updateStrictSchemaText = (
+  settings: Settings,
+  schemaText: string
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    responsePolicy: {
+      ...settings.general.responsePolicy,
+      strictOutput: {
+        ...settings.general.responsePolicy.strictOutput,
+        schemaText,
+      },
+    },
+  },
+});
+
+export const updateStrictInstructionText = (
+  settings: Settings,
+  instructionText: string
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    responsePolicy: {
+      ...settings.general.responsePolicy,
+      strictOutput: {
+        ...settings.general.responsePolicy.strictOutput,
+        instructionText,
       },
     },
   },

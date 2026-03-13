@@ -20,10 +20,6 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
 const supportsRecursiveWatch = (): boolean =>
   process.platform === "darwin" || process.platform === "win32";
 
-const BACKSLASH_RE = /\\/g;
-const DESCRIPTION_INTERNAL_METADATA_RE =
-  /^description\/description-step\.json(?:\.tmp-[^/]+)?$/;
-
 type WorkflowPathMatch = {
   readonly stage: WorkflowStageId;
   readonly filePath?: string;
@@ -44,22 +40,12 @@ const normalizeFileName = (
   return fileName.toString("utf8").trim();
 };
 
-const normalizeWorkflowPath = (value: string): string =>
-  value.replace(BACKSLASH_RE, "/").trim();
-
-const isInternalWorkflowMetadataPath = (relativePath: string): boolean =>
-  DESCRIPTION_INTERNAL_METADATA_RE.test(normalizeWorkflowPath(relativePath));
-
 const shouldIgnorePath = (relativePath: string): boolean => {
   const baseName = path.basename(relativePath);
   if (!baseName) {
     return true;
   }
-  return (
-    baseName.startsWith(".") ||
-    baseName.endsWith("~") ||
-    isInternalWorkflowMetadataPath(relativePath)
-  );
+  return baseName.startsWith(".") || baseName.endsWith("~");
 };
 
 const parseWorkflowPath = (relativePath: string): WorkflowPathMatch | null => {

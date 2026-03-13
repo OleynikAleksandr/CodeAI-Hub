@@ -5,18 +5,14 @@ import path from "node:path";
 import readline from "node:readline";
 import type { ThreadOptions } from "@openai/codex-sdk";
 
-export const INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY =
-  "__codeaiTransportTraceContext";
-
 const MODEL_REASONING_KEY = "model_reasoning_effort";
+const NOTICE_MODEL_MIGRATIONS_KEY = "notice.model_migrations";
+const MIGRATION_SANITIZE_MODEL_ID = "gpt-5.4";
+const EMPTY_INLINE_TABLE_TOML = "{}";
 const THREAD_PATCHED = Symbol("codex-reasoning-thread-patch");
 const EXEC_PATCHED = Symbol("codex-reasoning-exec-run");
 const INTERNAL_ORIGINATOR_ENV = "CODEX_INTERNAL_ORIGINATOR_OVERRIDE";
 const TYPESCRIPT_SDK_ORIGINATOR = "codex_sdk_ts";
-
-type InternalTransportTraceContext = {
-  readonly logEvent: (scope: string, payload: Record<string, unknown>) => void;
-};
 
 type ConfigOverride = {
   readonly key: string;
@@ -29,7 +25,6 @@ type PatchedThreadOptions = ThreadOptions & {
 
 type ThreadTurnOptions = {
   readonly outputSchema?: unknown;
-  readonly [INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY]?: unknown;
 };
 
 type PatchedExecArgs = {
@@ -42,9 +37,7 @@ type PatchedExecArgs = {
   readonly sandboxMode?: string;
   readonly workingDirectory?: string;
   readonly skipGitRepoCheck?: boolean;
-  readonly includeOutputSchemaFlag?: boolean;
   readonly outputSchemaFile?: string;
-  readonly transportTrace?: InternalTransportTraceContext;
   configOverrides?: readonly ConfigOverride[];
 };
 
@@ -103,55 +96,6 @@ const createOutputSchemaFile = async (schema?: unknown) => {
   };
   await fs.writeFile(schemaPath, JSON.stringify(schema), "utf8");
   return { schemaPath, cleanup };
-};
-
-const hasExplicitOutputSchema = (
-  turnOptions?: ThreadTurnOptions
-): turnOptions is { readonly outputSchema: unknown } => {
-  if (!(turnOptions && "outputSchema" in turnOptions)) {
-    return false;
-  }
-  return turnOptions.outputSchema !== undefined;
-};
-
-const isInternalTransportTraceContext = (
-  value: unknown
-): value is InternalTransportTraceContext =>
-  typeof value === "object" &&
-  value !== null &&
-  typeof (value as { readonly logEvent?: unknown }).logEvent === "function";
-
-const readInternalTransportTraceContext = (
-  turnOptions?: ThreadTurnOptions
-): InternalTransportTraceContext | undefined => {
-  const candidate = turnOptions?.[INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY];
-  return isInternalTransportTraceContext(candidate) ? candidate : undefined;
-};
-
-const stripInternalTransportTraceContext = (
-  turnOptions?: ThreadTurnOptions
-): ThreadTurnOptions | undefined => {
-  if (!turnOptions) {
-    return;
-  }
-  if (!(INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY in turnOptions)) {
-    return turnOptions;
-  }
-  const { [INTERNAL_TRANSPORT_TRACE_CONTEXT_KEY]: _ignored, ...rest } =
-    turnOptions;
-  return Object.keys(rest).length > 0 ? rest : undefined;
-};
-
-const emitTransportTrace = (
-  traceContext: InternalTransportTraceContext | undefined,
-  scope: string,
-  payload: Record<string, unknown>
-): void => {
-  try {
-    traceContext?.logEvent(scope, payload);
-  } catch {
-    // ignore transport trace logging failures
-  }
 };
 
 const normalizeInput = (
@@ -221,7 +165,7 @@ const buildExecCommandArgs = (args: PatchedExecArgs): string[] => {
   if (args.skipGitRepoCheck) {
     commandArgs.push("--skip-git-repo-check");
   }
-  if (args.includeOutputSchemaFlag && args.outputSchemaFile) {
+  if (args.outputSchemaFile) {
     commandArgs.push("--output-schema", args.outputSchemaFile);
   }
   buildConfigArguments(args.configOverrides, commandArgs);
@@ -250,38 +194,6 @@ const buildExecEnv = (args: PatchedExecArgs): NodeJS.ProcessEnv => {
   return env;
 };
 
-const writeChildStdin = async (
-  args: PatchedExecArgs,
-  childStdin: NodeJS.WritableStream
-): Promise<void> => {
-  const inputBytes = Buffer.byteLength(args.input, "utf8");
-  emitTransportTrace(
-    args.transportTrace,
-    "outbound.child.stdin_write_started",
-    {
-      inputBytes,
-    }
-  );
-  await new Promise<void>((resolve, reject) => {
-    const handleError = (error: Error): void => {
-      childStdin.off("error", handleError);
-      reject(error);
-    };
-    childStdin.once("error", handleError);
-    childStdin.end(args.input, "utf8", () => {
-      childStdin.off("error", handleError);
-      resolve();
-    });
-  });
-  emitTransportTrace(
-    args.transportTrace,
-    "outbound.child.stdin_write_finished",
-    {
-      inputBytes,
-    }
-  );
-};
-
 const streamCodexExec = async function* (
   executablePath: string,
   commandArgs: string[],
@@ -290,89 +202,55 @@ const streamCodexExec = async function* (
 ): AsyncGenerator<string, void, unknown> {
   const child = spawn(executablePath, commandArgs, { env });
   let spawnError: Error | null = null;
-  let stdoutFirstLineLogged = false;
-  child.once("spawn", () => {
-    emitTransportTrace(args.transportTrace, "outbound.child.spawned", {
-      pid: child.pid ?? null,
-      commandArgs,
-      imageCount: args.images?.length ?? 0,
-      workingDirectory: args.workingDirectory ?? null,
-      resumedThreadId: args.threadId ?? null,
-    });
-  });
   child.once("error", (err) => {
     spawnError = err instanceof Error ? err : new Error(String(err));
-  });
-  const stderrChunks: Buffer[] = [];
-  if (child.stderr) {
-    child.stderr.on("data", (data) => stderrChunks.push(data));
-  }
-  const exitStatus = new Promise<{
-    readonly code: number | null;
-    readonly signal: NodeJS.Signals | null;
-    readonly stderr: string;
-  }>((resolve) => {
-    child.once("exit", (code, signal) => {
-      const stderrBuffer = Buffer.concat(stderrChunks);
-      emitTransportTrace(args.transportTrace, "outbound.child.exit", {
-        code,
-        signal: signal ?? null,
-        stderrLength: stderrBuffer.length,
-      });
-      resolve({
-        code,
-        signal: signal ?? null,
-        stderr: stderrBuffer.toString("utf8"),
-      });
-    });
   });
   if (!child.stdin) {
     child.kill();
     throw new Error("Child process has no stdin");
   }
+  child.stdin.write(args.input);
+  child.stdin.end();
   if (!child.stdout) {
     child.kill();
     throw new Error("Child process has no stdout");
   }
-  await writeChildStdin(args, child.stdin);
+  const stderrChunks: Buffer[] = [];
+  if (child.stderr) {
+    child.stderr.on("data", (data) => stderrChunks.push(data));
+  }
   const rl = readline.createInterface({
     input: child.stdout,
     crlfDelay: Number.POSITIVE_INFINITY,
   });
   try {
     for await (const line of rl) {
-      if (!stdoutFirstLineLogged) {
-        stdoutFirstLineLogged = true;
-        emitTransportTrace(
-          args.transportTrace,
-          "outbound.child.stdout_first_line",
-          {
-            lineLength: line.length,
-            looksJson: line.trimStart().startsWith("{"),
-          }
-        );
-      }
       yield line;
     }
+    const exitCode = new Promise<void>((resolve, reject) => {
+      child.once("exit", (code) => {
+        if (code === 0) {
+          resolve();
+          return;
+        }
+        const stderrBuffer = Buffer.concat(stderrChunks);
+        reject(
+          new Error(
+            `Codex Exec exited with code ${code}: ${stderrBuffer.toString("utf8")}`
+          )
+        );
+      });
+    });
     if (spawnError) {
       throw spawnError;
     }
-    const { code, signal, stderr } = await exitStatus;
-    if (code !== 0) {
-      throw new Error(
-        `Codex Exec exited with code ${code} signal ${signal ?? "null"}: ${stderr}`
-      );
-    }
+    await exitCode;
   } finally {
     rl.close();
+    child.removeAllListeners();
     try {
       if (!child.killed) {
-        const killed = child.kill();
-        if (killed) {
-          emitTransportTrace(args.transportTrace, "outbound.child.killed", {
-            signal: "SIGTERM",
-          });
-        }
+        child.kill();
       }
     } catch {
       // ignore kill errors
@@ -382,16 +260,8 @@ const streamCodexExec = async function* (
 
 const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
   async function* (input, turnOptions = {}) {
-    const transportTrace = readInternalTransportTraceContext(turnOptions);
-    const providerSafeTurnOptions =
-      stripInternalTransportTraceContext(turnOptions);
-    const structuredOutputRequested = hasExplicitOutputSchema(
-      providerSafeTurnOptions
-    );
     const { schemaPath, cleanup } = await createOutputSchemaFile(
-      structuredOutputRequested
-        ? providerSafeTurnOptions.outputSchema
-        : undefined
+      turnOptions.outputSchema
     );
     const options = this._threadOptions;
     const { prompt, images } = normalizeInput(input);
@@ -405,17 +275,23 @@ const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
       sandboxMode: options?.sandboxMode,
       workingDirectory: options?.workingDirectory,
       skipGitRepoCheck: options?.skipGitRepoCheck,
-      includeOutputSchemaFlag: structuredOutputRequested,
       outputSchemaFile: schemaPath,
-      transportTrace,
     };
+    const configOverrides: ConfigOverride[] = [];
+    if (options?.model === MIGRATION_SANITIZE_MODEL_ID) {
+      configOverrides.push({
+        key: NOTICE_MODEL_MIGRATIONS_KEY,
+        value: EMPTY_INLINE_TABLE_TOML,
+      });
+    }
     if (options?.modelReasoningEffort) {
-      execArgs.configOverrides = [
-        {
-          key: MODEL_REASONING_KEY,
-          value: options.modelReasoningEffort,
-        },
-      ];
+      configOverrides.push({
+        key: MODEL_REASONING_KEY,
+        value: options.modelReasoningEffort,
+      });
+    }
+    if (configOverrides.length > 0) {
+      execArgs.configOverrides = configOverrides;
     }
     const generator = this._exec.run(execArgs);
     try {

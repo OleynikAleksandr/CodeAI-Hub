@@ -1,14 +1,10 @@
 import { useEffect, useRef } from "react";
+import { api } from "../../api";
 import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import type { WorkspaceProject } from "../../types";
-import {
-  resolveDescriptionArtifact,
-  resolveDescriptionHasSession,
-} from "./description-workflow-state";
 import { resolveWorkspaceSlug } from "./main-area-utils";
 import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
 import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { useWorkspaceWorkflowState } from "./use-workspace-workflow-state";
 
 type DescriptionDocument = {
   readonly workspacePath: string;
@@ -78,22 +74,14 @@ export const useMainAreaWorkflowState = (
 ): void => {
   const autoOpenedWorkspaceRef = useRef<string | null>(null);
   const autoResolvedActiveToolRef = useRef<string | null>(null);
-  const workspacePath = params.activeWorkspace?.path;
-  const workspaceSlug = params.activeWorkspace
-    ? resolveWorkspaceSlug(params.activeWorkspace)
-    : null;
-  const workflowState = useWorkspaceWorkflowState({
-    enabled: Boolean(workspacePath && workspaceSlug),
-    workspaceSlug,
-    workspacePath,
-  });
+  const activeToolRef = useRef<string | null>(params.activeTool ?? null);
 
   useEffect(() => {
-    autoResolvedActiveToolRef.current = null;
-  }, [workspaceSlug]);
+    activeToolRef.current = params.activeTool ?? null;
+  }, [params.activeTool]);
 
   useEffect(() => {
-    if (!workspacePath) {
+    if (!params.activeWorkspace?.path) {
       params.setDescriptionDocument(null);
       params.setQuestionnaireDocument(null);
       params.setHasDescriptionSession(false);
@@ -102,6 +90,7 @@ export const useMainAreaWorkflowState = (
       return;
     }
 
+    const workspaceSlug = resolveWorkspaceSlug(params.activeWorkspace);
     if (!workspaceSlug) {
       params.setDescriptionDocument(null);
       params.setQuestionnaireDocument(null);
@@ -110,67 +99,85 @@ export const useMainAreaWorkflowState = (
       autoResolvedActiveToolRef.current = null;
       return;
     }
-    if (!workflowState) {
-      params.setDescriptionDocument(null);
-      params.setQuestionnaireDocument(null);
-      params.setHasDescriptionSession(false);
-      return;
-    }
 
-    const branch = workflowState.description;
-    const descriptionArtifact = resolveDescriptionArtifact(branch, workspaceSlug);
-    const resolvedActiveTool = resolveLastActiveTool(workflowState);
-    if (autoResolvedActiveToolRef.current !== workspaceSlug) {
-      autoResolvedActiveToolRef.current = workspaceSlug;
-      params.setActiveTool(resolvedActiveTool);
-    }
-    let nextDescription: DescriptionDocument | null = null;
-    if (
-      descriptionArtifact?.label === "description.md" ||
-      descriptionArtifact?.label === "Final_Description.md"
-    ) {
-      nextDescription = {
-        workspacePath,
-        workspaceSlug,
-        path: descriptionArtifact.path,
-        label: descriptionArtifact.label,
-      };
-    }
+    const workspacePath = params.activeWorkspace.path;
+    let cancelled = false;
+    let timer = 0;
+    let fastPolling = true;
+    autoResolvedActiveToolRef.current = null;
 
-    params.setDescriptionDocument(nextDescription);
+    const loadState = async () => {
+      const state = await api.getWorkflowState(workspaceSlug, workspacePath);
+      if (cancelled) {
+        return;
+      }
+      if (state && fastPolling) {
+        fastPolling = false;
+        window.clearInterval(timer);
+        timer = window.setInterval(loadState, 10_000);
+      }
 
-    const nextHasDescriptionSession = resolveDescriptionHasSession(workflowState);
-    params.setHasDescriptionSession(nextHasDescriptionSession);
+      const branch = state?.description;
+      const resolvedActiveTool = resolveLastActiveTool(state);
+      if (state && autoResolvedActiveToolRef.current !== workspaceSlug) {
+        autoResolvedActiveToolRef.current = workspaceSlug;
+        params.setActiveTool(resolvedActiveTool);
+      }
+      const nextDescription =
+        branch?.finalPath && branch.finalPath.trim().length > 0
+          ? { path: branch.finalPath, label: "Final_Description.md" as const }
+          : branch?.draftPath && branch.draftPath.trim().length > 0
+            ? { path: branch.draftPath, label: "description.md" as const }
+            : null;
 
-    let nextQuestionnaire: QuestionnaireDocument | null = null;
-    if (!nextDescription && descriptionArtifact?.label === "questionnaire.md") {
-      nextQuestionnaire = {
-        workspacePath,
-        workspaceSlug,
-        path: descriptionArtifact.path,
-        label: "questionnaire.md",
-      };
-    }
+      params.setDescriptionDocument(
+        nextDescription ? { ...nextDescription, workspacePath, workspaceSlug } : null
+      );
 
-    params.setQuestionnaireDocument(nextQuestionnaire);
+      const nextHasDescriptionSession = Boolean(
+        branch?.session?.providerSessionId || branch?.sessionKind
+      );
+      params.setHasDescriptionSession(nextHasDescriptionSession);
 
-    if (
-      isEmptyWorkflowState(workflowState) &&
-      autoOpenedWorkspaceRef.current !== workspaceSlug
-    ) {
-      autoOpenedWorkspaceRef.current = workspaceSlug;
-      params.setActiveTool("Description");
-    }
+      const questionnairePath =
+        branch?.questionnairePath && branch.questionnairePath.trim().length > 0
+          ? branch.questionnairePath
+          : `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
+
+      const nextQuestionnaire =
+        nextHasDescriptionSession && !nextDescription
+          ? { path: questionnairePath, label: "questionnaire.md" as const }
+          : null;
+
+      params.setQuestionnaireDocument(
+        nextQuestionnaire
+          ? { ...nextQuestionnaire, workspacePath, workspaceSlug }
+          : null
+      );
+
+      if (
+        isEmptyWorkflowState(state) &&
+        autoOpenedWorkspaceRef.current !== workspaceSlug
+      ) {
+        autoOpenedWorkspaceRef.current = workspaceSlug;
+        params.setActiveTool("Description");
+      }
+    };
+
+    loadState();
+    timer = window.setInterval(loadState, 3_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
   }, [
     params.activeWorkspace?.id,
+    params.activeWorkspace?.path,
     params.activeWorkspace?.slug,
     params.activeWorkspace?.name,
     params.setActiveTool,
     params.setDescriptionDocument,
     params.setHasDescriptionSession,
     params.setQuestionnaireDocument,
-    workflowState,
-    workspacePath,
-    workspaceSlug,
   ]);
 };

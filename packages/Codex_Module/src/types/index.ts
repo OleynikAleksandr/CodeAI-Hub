@@ -6,6 +6,7 @@ import type {
   ThreadOptions,
   TurnOptions,
 } from "@openai/codex-sdk";
+import type { CodexResponsePolicy } from "../response-policy/response-policy-types";
 
 export type CodexInstallerPaths = {
   readonly macOS: string;
@@ -21,6 +22,7 @@ export type CodexWorkspaceOptions = {
   readonly defaultApprovalMode?: ApprovalMode;
   readonly defaultModel?: string;
   readonly defaultReasoningEffort?: CodexReasoningEffort;
+  readonly defaultResponsePolicy?: CodexResponsePolicy;
   readonly skipGitRepoCheck?: boolean;
 };
 
@@ -45,10 +47,13 @@ export type CodexThreadOptions = ThreadOptions & {
 };
 export type CodexTurnOptions = TurnOptions & {
   readonly outputSchema?: unknown;
-  readonly allowStructuredOutput?: boolean;
 };
 export type CodexSandboxMode = SandboxMode;
 export type CodexApprovalMode = ApprovalMode;
+export type {
+  CodexResponseMode,
+  CodexResponsePolicy,
+} from "../response-policy/response-policy-types";
 
 export type ModuleProgressEvent = {
   readonly label: string;

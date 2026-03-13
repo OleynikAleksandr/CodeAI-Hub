@@ -1,5 +1,4 @@
 import type { OutgoingMessage } from "../core-stream-message-types";
-import type { DialogSendAttempt } from "./dialog-send-trace-client";
 
 export type DialogApi = {
   readonly listDialogs: (workspaceSlug: string, requestId?: string) => string;
@@ -18,12 +17,7 @@ export type DialogApi = {
     dialogId: string,
     content: string,
     requestId?: string
-  ) =>
-    | {
-        readonly requestId: string;
-        readonly outboundAttemptId: string;
-      }
-    | null;
+  ) => string | null;
 };
 
 const createRequestId = (prefix: string): string => {
@@ -37,8 +31,7 @@ const createRequestId = (prefix: string): string => {
 };
 
 export const createDialogApi = (
-  send: (message: OutgoingMessage) => void,
-  onDialogSendPrepared?: (attempt: DialogSendAttempt) => void
+  send: (message: OutgoingMessage) => void
 ): DialogApi => ({
   listDialogs: (workspaceSlug, requestId) => {
     const resolvedRequestId = requestId ?? createRequestId("dialog-list");
@@ -83,27 +76,10 @@ export const createDialogApi = (
       return null;
     }
     const resolvedRequestId = requestId ?? createRequestId("dialog-send");
-    const outboundAttemptId = createRequestId("dialog-outbound");
-    onDialogSendPrepared?.({
-      requestId: resolvedRequestId,
-      outboundAttemptId,
-      workspaceSlug,
-      dialogId,
-      contentLength: content.length,
-    });
     send({
       type: "dialog:send",
-      payload: {
-        requestId: resolvedRequestId,
-        outboundAttemptId,
-        workspaceSlug,
-        dialogId,
-        content,
-      },
+      payload: { requestId: resolvedRequestId, workspaceSlug, dialogId, content },
     });
-    return {
-      requestId: resolvedRequestId,
-      outboundAttemptId,
-    };
+    return resolvedRequestId;
   },
 });

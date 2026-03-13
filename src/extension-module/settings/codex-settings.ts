@@ -5,7 +5,6 @@ import {
   type CodexReasoningLevel,
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
-  normalizeCodexSettingsModelId,
 } from "../../types/codex-model-registry";
 import {
   type AutoUpdateSettings,
@@ -69,45 +68,9 @@ const isCodexReasoningLevel = (value: string): value is CodexReasoningLevel =>
   CODEX_REASONING_LEVEL_SET.has(value);
 
 const normalizeCodexDefaultModel = (value: unknown): CodexModelId =>
-  normalizeCodexSettingsModelId(value) ?? DEFAULT_CODEX_MODEL_ID;
-
-const resolveCodexReasoningLevel = (
-  value: unknown
-): CodexReasoningLevel | null =>
-  typeof value === "string" && isCodexReasoningLevel(value) ? value : null;
-
-const applyKnownCodexReasoning = (
-  nextReasoningByModel: Record<string, CodexReasoningLevel>,
-  assignedModelIds: Set<string>,
-  modelId: string,
-  reasoning: CodexReasoningLevel
-): void => {
-  if (!isCodexModelId(modelId)) {
-    return;
-  }
-
-  nextReasoningByModel[modelId] = reasoning;
-  assignedModelIds.add(modelId);
-};
-
-const applyLegacyCodexReasoning = (
-  nextReasoningByModel: Record<string, CodexReasoningLevel>,
-  assignedModelIds: Set<string>,
-  modelId: string,
-  reasoning: CodexReasoningLevel
-): void => {
-  if (isCodexModelId(modelId)) {
-    return;
-  }
-
-  const normalizedModelId = normalizeCodexSettingsModelId(modelId);
-  if (!normalizedModelId || assignedModelIds.has(normalizedModelId)) {
-    return;
-  }
-
-  nextReasoningByModel[normalizedModelId] = reasoning;
-  assignedModelIds.add(normalizedModelId);
-};
+  typeof value === "string" && isCodexModelId(value)
+    ? (value as CodexModelId)
+    : DEFAULT_CODEX_MODEL_ID;
 
 const normalizeCodexReasoningByModel = (
   value: unknown
@@ -119,34 +82,11 @@ const normalizeCodexReasoningByModel = (
   const nextReasoningByModel = {
     ...DEFAULT_CODEX_REASONING_BY_MODEL,
   };
-  const assignedModelIds = new Set<string>();
 
   for (const [modelId, reasoning] of Object.entries(value)) {
-    const normalizedReasoning = resolveCodexReasoningLevel(reasoning);
-    if (!normalizedReasoning) {
-      continue;
+    if (typeof reasoning === "string" && isCodexReasoningLevel(reasoning)) {
+      nextReasoningByModel[modelId] = reasoning;
     }
-
-    applyKnownCodexReasoning(
-      nextReasoningByModel,
-      assignedModelIds,
-      modelId,
-      normalizedReasoning
-    );
-  }
-
-  for (const [modelId, reasoning] of Object.entries(value)) {
-    const normalizedReasoning = resolveCodexReasoningLevel(reasoning);
-    if (!normalizedReasoning) {
-      continue;
-    }
-
-    applyLegacyCodexReasoning(
-      nextReasoningByModel,
-      assignedModelIds,
-      modelId,
-      normalizedReasoning
-    );
   }
 
   return nextReasoningByModel;

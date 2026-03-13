@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import type { CodexResponsePolicy } from "../response-policy/response-policy-types";
 import type { CodexTurnOptions } from "../types";
 import { AnswerJsonStreamExtractor } from "./answer-json-stream-extractor";
 
@@ -11,11 +12,14 @@ const STRUCTURED_OUTPUT_PROMPT = [
   "User request:",
 ].join("\n");
 
-type StructuredOutputMode = "raw" | "default" | "idea_collector";
+type StructuredOutputMode = "default" | "idea_collector" | "passthrough";
 type StructuredOutputTurnConfig = {
   readonly mode: StructuredOutputMode;
   readonly fieldKey: "answer" | "suggested_response";
   readonly applyPrompt: boolean;
+  readonly promptTemplate?: string;
+  readonly defaultOutputSchema?: unknown;
+  readonly suppressCommentary: boolean;
   readonly allowedArtifactSlots?: ReadonlySet<string>;
 };
 type StructuredOutputArtifact = Record<string, unknown>;
@@ -35,9 +39,10 @@ type StructuredOutputParseOptions = {
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
 type AnswerStreamState = {
-  extractor: AnswerJsonStreamExtractor | null;
+  extractor?: AnswerJsonStreamExtractor;
   itemId: string | null;
   assistantText: string;
+  sourceText: string;
   mode: StructuredOutputMode;
 };
 export type StructuredOutputResult = {
@@ -52,23 +57,24 @@ const DEFAULT_TURN_CONFIG: StructuredOutputTurnConfig = {
   mode: "default",
   fieldKey: "answer",
   applyPrompt: true,
+  promptTemplate: STRUCTURED_OUTPUT_PROMPT,
+  suppressCommentary: true,
 };
-const RAW_TURN_CONFIG: StructuredOutputTurnConfig = {
-  mode: "raw",
+const PASSTHROUGH_TURN_CONFIG: StructuredOutputTurnConfig = {
+  mode: "passthrough",
   fieldKey: "answer",
   applyPrompt: false,
+  suppressCommentary: false,
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 const resolveTurnConfig = (
-  turnOptions: CodexTurnOptions
+  turnOptions: CodexTurnOptions,
+  responsePolicy: CodexResponsePolicy
 ): StructuredOutputTurnConfig => {
   const schema = turnOptions.outputSchema;
-  if (!schema) {
-    return RAW_TURN_CONFIG;
-  }
   const allowedArtifactSlots = resolveAllowedArtifactSlots(schema);
   if (
     isRecord(schema) &&
@@ -85,10 +91,21 @@ const resolveTurnConfig = (
       mode: "idea_collector",
       fieldKey: "suggested_response",
       applyPrompt: false,
+      suppressCommentary: true,
       allowedArtifactSlots,
     };
   }
-  return DEFAULT_TURN_CONFIG;
+  if (turnOptions.outputSchema) {
+    return DEFAULT_TURN_CONFIG;
+  }
+  if (responsePolicy.mode !== "strict") {
+    return PASSTHROUGH_TURN_CONFIG;
+  }
+  return {
+    ...DEFAULT_TURN_CONFIG,
+    promptTemplate: responsePolicy.strictOutput.instructionText,
+    defaultOutputSchema: responsePolicy.strictOutput.schemaObject,
+  };
 };
 
 const resolveAllowedArtifactSlots = (
@@ -134,9 +151,10 @@ export class StructuredOutputStreamController {
 
   prepareTurn(
     sessionId: string,
-    turnOptions: CodexTurnOptions
+    turnOptions: CodexTurnOptions,
+    responsePolicy: CodexResponsePolicy
   ): StructuredOutputTurnConfig {
-    const config = resolveTurnConfig(turnOptions);
+    const config = resolveTurnConfig(turnOptions, responsePolicy);
     this.turnConfigs.set(sessionId, config);
     return config;
   }
@@ -145,32 +163,54 @@ export class StructuredOutputStreamController {
     if (!config.applyPrompt) {
       return prompt;
     }
-    return `${STRUCTURED_OUTPUT_PROMPT}\n${prompt}`;
+    return `${config.promptTemplate ?? STRUCTURED_OUTPUT_PROMPT}\n${prompt}`;
   }
 
-  applyOutputSchema(turnOptions: CodexTurnOptions): CodexTurnOptions {
-    return turnOptions;
+  applyOutputSchema(
+    turnOptions: CodexTurnOptions,
+    config: StructuredOutputTurnConfig
+  ): CodexTurnOptions {
+    if (turnOptions.outputSchema) {
+      return turnOptions;
+    }
+    if (!config.defaultOutputSchema) {
+      return turnOptions;
+    }
+    return { ...turnOptions, outputSchema: config.defaultOutputSchema };
+  }
+
+  shouldSuppressCommentary(sessionId: string): boolean {
+    return (this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG)
+      .suppressCommentary;
   }
 
   startTurn(sessionId: string): void {
-    const config = this.turnConfigs.get(sessionId) ?? RAW_TURN_CONFIG;
+    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
     this.streams.set(sessionId, {
       extractor:
-        config.mode === "raw"
-          ? null
+        config.mode === "passthrough"
+          ? undefined
           : new AnswerJsonStreamExtractor(config.fieldKey),
       itemId: null,
       assistantText: "",
+      sourceText: "",
       mode: config.mode,
     });
   }
 
   appendChunk(sessionId: string, itemId: string, text: string): string | null {
     const state = this.ensureState(sessionId, itemId);
-    if (state.mode === "raw") {
-      return appendRawDelta(state, text);
+    if (state.mode === "passthrough") {
+      const delta = resolvePassthroughDelta(state.sourceText, text);
+      state.sourceText = text;
+      state.assistantText = text;
+      return delta;
     }
-    const delta = state.extractor?.append(text);
+    const extractor = state.extractor;
+    if (!extractor) {
+      return null;
+    }
+    const delta = extractor.append(text);
     if (delta) {
       state.assistantText += delta;
     }
@@ -183,13 +223,10 @@ export class StructuredOutputStreamController {
     text: string
   ): StructuredOutputResult {
     const state = this.ensureState(sessionId, itemId);
-    const config = this.turnConfigs.get(sessionId) ?? RAW_TURN_CONFIG;
-    const result =
-      state.mode === "raw"
-        ? completeRawTurn(state, text)
-        : completeStructuredTurn(state, text, config);
-    this.clear(sessionId);
-    return result;
+    if (state.mode === "passthrough") {
+      return this.completePassthroughTurn(sessionId, state, text);
+    }
+    return this.completeStructuredTurn(sessionId, state, text);
   }
 
   clear(sessionId: string): void {
@@ -197,17 +234,36 @@ export class StructuredOutputStreamController {
     this.turnConfigs.delete(sessionId);
   }
 
+  promoteSession(oldSessionId: string, newSessionId: string): void {
+    if (oldSessionId === newSessionId) {
+      return;
+    }
+
+    const config = this.turnConfigs.get(oldSessionId);
+    if (config) {
+      this.turnConfigs.set(newSessionId, config);
+      this.turnConfigs.delete(oldSessionId);
+    }
+
+    const state = this.streams.get(oldSessionId);
+    if (state) {
+      this.streams.set(newSessionId, state);
+      this.streams.delete(oldSessionId);
+    }
+  }
+
   private ensureState(sessionId: string, itemId: string): AnswerStreamState {
     const existing = this.streams.get(sessionId);
-    const config = this.turnConfigs.get(sessionId) ?? RAW_TURN_CONFIG;
+    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
     if (!existing || (existing.itemId && existing.itemId !== itemId)) {
       const fresh = {
         extractor:
-          config.mode === "raw"
-            ? null
+          config.mode === "passthrough"
+            ? undefined
             : new AnswerJsonStreamExtractor(config.fieldKey),
         itemId,
         assistantText: "",
+        sourceText: "",
         mode: config.mode,
       };
       this.streams.set(sessionId, fresh);
@@ -218,80 +274,53 @@ export class StructuredOutputStreamController {
     }
     return existing;
   }
+
+  private completePassthroughTurn(
+    sessionId: string,
+    state: AnswerStreamState,
+    text: string
+  ): StructuredOutputResult {
+    const streamDelta = resolvePassthroughDelta(state.sourceText, text);
+    const assistantText = text.trim().length ? text : state.assistantText;
+    this.streams.delete(sessionId);
+    return {
+      streamDelta: streamDelta ?? undefined,
+      assistantText: assistantText.trim().length ? assistantText : undefined,
+      outputHash: buildOutputHash(text),
+    };
+  }
+
+  private completeStructuredTurn(
+    sessionId: string,
+    state: AnswerStreamState,
+    text: string
+  ): StructuredOutputResult {
+    const streamDelta = state.extractor?.append(text) ?? null;
+    if (streamDelta) {
+      state.assistantText += streamDelta;
+    }
+    const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
+    const parsed = parseStructuredOutput(text, state.mode, {
+      allowedArtifactSlots: config.allowedArtifactSlots,
+    });
+    let assistantText =
+      state.assistantText.trim().length > 0
+        ? state.assistantText
+        : parsed.assistantText;
+    if (state.mode === "idea_collector" && parsed.assistantText?.trim()) {
+      assistantText = parsed.assistantText;
+    }
+    this.streams.delete(sessionId);
+    return {
+      streamDelta: streamDelta ?? undefined,
+      assistantText: assistantText ?? undefined,
+      nextAction: parsed.nextAction ?? undefined,
+      artifact: parsed.artifact ?? undefined,
+      artifacts: parsed.artifacts ?? undefined,
+      outputHash: buildOutputHash(text),
+    };
+  }
 }
-
-const appendRawDelta = (
-  state: AnswerStreamState,
-  nextText: string
-): string | null => {
-  if (!nextText) {
-    return null;
-  }
-  const previousText = state.assistantText;
-  if (!previousText) {
-    state.assistantText = nextText;
-    return nextText;
-  }
-  if (nextText.startsWith(previousText)) {
-    const delta = nextText.slice(previousText.length);
-    state.assistantText = nextText;
-    return delta || null;
-  }
-  if (previousText.startsWith(nextText)) {
-    return null;
-  }
-  state.assistantText = nextText;
-  return nextText;
-};
-
-const completeRawTurn = (
-  state: AnswerStreamState,
-  text: string
-): StructuredOutputResult => {
-  const streamDelta = appendRawDelta(state, text);
-  const assistantText = text.trim().length > 0 ? text : state.assistantText;
-  return {
-    streamDelta: streamDelta ?? undefined,
-    assistantText: assistantText.trim() || undefined,
-  };
-};
-
-const completeStructuredTurn = (
-  state: AnswerStreamState,
-  text: string,
-  config: StructuredOutputTurnConfig
-): StructuredOutputResult => {
-  const streamDelta = state.extractor?.append(text) ?? null;
-  if (streamDelta) {
-    state.assistantText += streamDelta;
-  }
-  const parsed = parseStructuredOutput(text, state.mode, {
-    allowedArtifactSlots: config.allowedArtifactSlots,
-  });
-  let assistantText =
-    state.assistantText.trim().length > 0
-      ? state.assistantText
-      : parsed.assistantText;
-  if (state.mode === "idea_collector" && parsed.assistantText?.trim()) {
-    assistantText = parsed.assistantText;
-  }
-  return {
-    streamDelta: streamDelta ?? undefined,
-    assistantText: assistantText ?? undefined,
-    nextAction: parsed.nextAction ?? undefined,
-    artifact: parsed.artifact ?? undefined,
-    artifacts: parsed.artifacts ?? undefined,
-    outputHash: hashOutputText(text),
-  };
-};
-
-const hashOutputText = (text: string): string | undefined => {
-  const trimmedText = text.trim();
-  return trimmedText.length
-    ? createHash("sha256").update(trimmedText).digest("hex")
-    : undefined;
-};
-
 const parseStructuredOutput = (
   text: string,
   mode: StructuredOutputMode,
@@ -299,6 +328,9 @@ const parseStructuredOutput = (
 ): ParsedOutput => {
   if (!text) {
     return {};
+  }
+  if (mode === "passthrough") {
+    return { assistantText: text.trim().length ? text : undefined };
   }
   try {
     const parsed = JSON.parse(text) as Record<string, unknown> | null;
@@ -314,6 +346,30 @@ const parseStructuredOutput = (
   } catch {
     return {};
   }
+};
+
+const resolvePassthroughDelta = (
+  previousText: string,
+  nextText: string
+): string | null => {
+  if (!nextText) {
+    return null;
+  }
+  if (!previousText) {
+    return nextText;
+  }
+  if (nextText.startsWith(previousText)) {
+    const delta = nextText.slice(previousText.length);
+    return delta.length > 0 ? delta : null;
+  }
+  return nextText;
+};
+
+const buildOutputHash = (text: string): string | undefined => {
+  const trimmedText = text.trim();
+  return trimmedText.length
+    ? createHash("sha256").update(trimmedText).digest("hex")
+    : undefined;
 };
 const parseDefaultOutput = (parsed: Record<string, unknown>): ParsedOutput => {
   const assistantText =

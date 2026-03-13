@@ -1,14 +1,14 @@
-type QueueMessage = { readonly type: string };
+import type { OutgoingMessage } from "../core-stream-message-types";
 
-export class OutgoingMessageQueue<TMessage extends QueueMessage = QueueMessage> {
-  private pending: TMessage[] = [];
+export class OutgoingMessageQueue {
+  private pending: OutgoingMessage[] = [];
   private readonly maxPending: number;
 
   constructor(options?: { readonly maxPending?: number }) {
     this.maxPending = options?.maxPending ?? 200;
   }
 
-  enqueue(message: TMessage): void {
+  enqueue(message: OutgoingMessage): void {
     if (message.type === "workspace:select") {
       // Keep only the most recent selection intent.
       this.pending = this.pending.filter(
@@ -22,7 +22,7 @@ export class OutgoingMessageQueue<TMessage extends QueueMessage = QueueMessage> 
     this.pending.push(message);
   }
 
-  flush(send: (message: TMessage) => void): void {
+  flush(send: (message: OutgoingMessage) => void): void {
     if (this.pending.length === 0) {
       return;
     }
@@ -38,3 +38,4 @@ export class OutgoingMessageQueue<TMessage extends QueueMessage = QueueMessage> 
     }
   }
 }
+

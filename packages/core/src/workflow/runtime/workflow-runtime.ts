@@ -6,10 +6,7 @@ import type { Logger } from "../../telemetry/logger";
 import { DescriptionStepStore } from "../description/description-step-store";
 import type { DescriptionStepSnapshot } from "../description/description-step-types";
 import { WorkflowLastActiveStore } from "../state/workflow-last-active-store";
-import type {
-  WorkflowStageId,
-  WorkflowWatcherEvent,
-} from "../watcher/watcher-types";
+import type { WorkflowWatcherEvent } from "../watcher/watcher-types";
 import { WorkflowWatcher } from "../watcher/workflow-watcher";
 
 const WORKSPACE_ROOT_DIR = ".codeai-hub";
@@ -18,19 +15,9 @@ const BACKSLASH_RE = /\\/g;
 const LEADING_DOT_SLASH_RE = /^\.?\//;
 const DESCRIPTION_DRAFT_RUN_SLUG_RE =
   /^description\/runs\/([^/]+)\/description\.md$/;
-const DESCRIPTION_INTERNAL_METADATA_RE =
-  /^description\/description-step\.json(?:\.tmp-[^/]+)?$/;
-const USER_FACING_STAGE_ARTIFACTS = new Map<WorkflowStageId, string>([
-  ["virtual_simulation", "virtual-simulation.md"],
-  ["diagram_modules", "modules-diagram.mmd"],
-  ["diagram_facades", "facades-graph.mmd"],
-]);
 
 const normalizeRelativePath = (value: string): string =>
   value.replace(BACKSLASH_RE, "/").replace(LEADING_DOT_SLASH_RE, "");
-
-const isDescriptionInternalMetadataArtifact = (relativePath: string): boolean =>
-  DESCRIPTION_INTERNAL_METADATA_RE.test(normalizeRelativePath(relativePath));
 
 const buildWorkflowRelativePath = (
   workspaceSlug: string,
@@ -68,17 +55,6 @@ const shouldAcceptDescriptionDraftArtifact = (
     return !collectorAttemptId || runSlug === collectorAttemptId;
   }
   return !collectorAttemptId;
-};
-
-const resolveCrossStageLastActiveArtifactPath = (
-  event: Extract<WorkflowWatcherEvent, { type: "workflow.artifact.written" }>
-): string | null => {
-  const fileName = USER_FACING_STAGE_ARTIFACTS.get(event.stage);
-  if (!fileName) {
-    return null;
-  }
-  const relativePath = normalizeRelativePath(event.filePath);
-  return relativePath === `${event.stage}/${fileName}` ? relativePath : null;
 };
 
 export class WorkflowRuntime {
@@ -162,25 +138,16 @@ export class WorkflowRuntime {
       return true;
     }
 
-    const crossStageLastActivePath =
-      resolveCrossStageLastActiveArtifactPath(event);
-    if (crossStageLastActivePath) {
-      await this.lastActiveStore.upsert(workspaceRoot, event.workspaceSlug, {
-        stage: event.stage,
-        artifactPath: buildWorkflowRelativePath(
-          event.workspaceSlug,
-          crossStageLastActivePath
-        ),
-      });
-    }
-
     if (event.stage !== "description") {
       return true;
     }
 
     const relativePath = normalizeRelativePath(event.filePath);
-    if (isDescriptionInternalMetadataArtifact(relativePath)) {
-      return false;
+    if (
+      relativePath === "description/description-step.json" ||
+      relativePath.endsWith("/description-step.json")
+    ) {
+      return true;
     }
 
     if (relativePath === "description/questionnaire.md") {

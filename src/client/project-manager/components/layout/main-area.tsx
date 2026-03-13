@@ -174,11 +174,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setActiveTool,
     setDescriptionDocument,
     setQuestionnaireDocument,
-    setHasDescriptionSession: (value) => {
-      if (value) {
-        setHasDescriptionSession(true);
-      }
-    },
+    setHasDescriptionSession,
   });
 
   useEffect(() => {

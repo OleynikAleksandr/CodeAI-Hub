@@ -16,13 +16,9 @@
 10. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 11. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
-13. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`
-14. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`
-15. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-16. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`
-17. `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`
-18. `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`
-19. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+13. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+14. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+15. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -52,21 +48,8 @@
    - Канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
 5. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
    - Канон: provider docs в `doc/SolidWorks-WorkFlow/Modules/*`.
-6. **Workflow raw-turn contract**: PM workflow turns для Codex по умолчанию raw; structured output допустим только по явному opt-in, а промежуточные `assistant`/`thinking` сообщения должны сохраняться через dialog history JSONL и быть доступны после replay/reopen.
-   - Канон: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Commentary_Restore.md`.
-7. **Single-source ACK contract for Codex workflow submit**: runtime verdict delivered/failed опирается только на `sdk:turn.started`; diagnostics trail и provider rollout не участвуют в state machine, чтобы не создавать гонку между несколькими источниками правды.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_TurnStarted_ACK.md`.
-8. **Single-source ACK contract for Claude workflow submit**: runtime verdict delivered/failed опирается только на provider-originated `sdk:stream_event(message_start)`; локальный `turn_started`, `sdk:system(init)` и diagnostics trail не участвуют в state machine, чтобы не создавать гонку между несколькими источниками правды.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Claude_Workflow_TurnStarted_ACK.md`.
-9. **Workflow submit diagnostics contract**: для каждого user submit должен существовать сквозной `outboundAttemptId`; PM/Core trace пишется в `~/.codeai-hub/logs/core/dialog-send-trace.jsonl`, а Codex transport trace — в `~/.codeai-hub/logs/codex/sdk-codex-<providerSessionId>.jsonl`.
-   - PM lifecycle trace обязан покрывать `pm.dialog_send.clicked`, `pm.dialog_send.ws_dispatched`, `pm.dialog_send.ack_received`, `pm.dialog_send.history_refresh_requested`, `pm.dialog_send.history_refresh_result`.
-   - Codex transport trace обязан покрывать не только processor breadcrumbs, но и child-process boundaries `outbound.child.spawned/stdin_write_started/stdin_write_finished/stdout_first_line/exit/killed`.
-   - Release line `v1.1.716` является первой, где этот diagnostic trail обязателен end-to-end для workflow submit path в PM/Core/Codex.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_Workflow_Submit_Diagnostics.md`.
-10. **Workspace identity lock for MVP workflow**: после первого `Description submit` provider/model фиксируются на весь workspace; reopen/resume не имеют права перестраивать workflow identity из текущих глобальных Settings, а Description artifacts должны восстанавливаться по filesystem-backed правилам.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkspaceIdentity_Stabilization.md`.
-11. **Workflow state reconciliation for PM**: sidebar/tree, main area, session pane и reopen restore обязаны опираться на reconciled stage projection; internal metadata files не могут быть user-facing artifacts, stale dialog intent не может переоткрывать более старый stage поверх актуального workflow state.
-   - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowState_Reconciliation.md`.
+6. **Response-mode diagnostics split**: shaping live Codex turn-ов (`strict` / `hybrid` / `debug_raw`) не может быть единственным местом, где существует provider output; raw provider logs остаются диагностическим SSOT до любых UI/history фильтров.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
@@ -74,7 +57,9 @@
 - Core: `packages/core/`
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
+- General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
+- Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 
 ## 5) Workflow Boundary (Description, 2026-03-01)
 
@@ -102,13 +87,15 @@
 
 Инвариант: `Virtual Simulation` работает в режиме prompt-only. Отдельный artifact template (`virtual-simulation-template.md`) в runtime не поставляется и не отправляется агенту.
 
-Workflow-коммуникация для Codex:
-- file-first сохраняется;
-- короткие progress commentary в чате обязательны;
-- запрет касается только полного markdown-дампа артефакта в чат;
-- raw workflow turns не должны получать implicit structured-output contract без явного opt-in.
-
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+
+## 7) Codex Response Mode Boundary (2026-03-13)
+
+- `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.
+- Baseline default для workflow-сценариев: `hybrid`.
+- `strict` оставляет editable schema/instruction contract для узких machine-readable turn-ов.
+- `debug_raw` нужен для исследования новых моделей без baseline default schema pressure на обычные turn-ы.
+- Raw provider rollouts и append-safe SDK JSONL являются диагностическими артефактами; dialog/history остаётся нормализованным display-слоем.

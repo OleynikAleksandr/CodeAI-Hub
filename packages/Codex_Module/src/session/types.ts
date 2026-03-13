@@ -1,5 +1,6 @@
 import type { EventEmitter } from "node:events";
 import type { Thread } from "@openai/codex-sdk";
+import type { CodexResponsePolicy } from "../response-policy/response-policy-types";
 
 export type MessageController = {
   pendingMessages: unknown[];
@@ -26,6 +27,7 @@ export type ActiveSession = {
   codexThreadId: string | null;
   processingLoop?: Promise<void>;
   internalTurn?: boolean;
+  responsePolicy?: CodexResponsePolicy;
   structuredOutputUuids?: Set<string>;
 };
 

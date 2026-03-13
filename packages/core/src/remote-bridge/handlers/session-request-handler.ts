@@ -27,11 +27,9 @@ import type {
   SessionManager,
   SessionMessage,
 } from "../../session-manager";
-import type { DialogSendTraceLogger } from "../../telemetry/dialog-send-trace-logger";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import { DescriptionStepStore } from "../../workflow/description";
-import { WorkspaceExecutionProfileFacade } from "../../workflow/execution-profile/workspace-execution-profile-facade";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type {
   SessionContinuityLockReason,
@@ -51,7 +49,6 @@ type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__collector$/;
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
-const CODEX_OUTBOUND_ATTEMPT_ID_KEY = "__codexOutboundAttemptId";
 
 type UnifiedSessionSegmentSummaryPayload = {
   readonly kind: "segment_summary";
@@ -160,13 +157,6 @@ type MessageContentExtraction = {
   readonly turnOptions?: Record<string, unknown>;
 };
 
-type DialogSendHandleMessageTraceContext = {
-  readonly outboundAttemptId: string;
-  readonly requestId: string;
-  readonly workspaceSlug: string;
-  readonly dialogId: string;
-};
-
 type SessionIdChangedPayload = {
   readonly newId?: string;
 };
@@ -272,9 +262,6 @@ type WorkflowTurnOptionsResolution = {
   readonly stageMatched: boolean;
 };
 
-const STRUCTURED_OUTPUT_OPT_IN_KEY = "allowStructuredOutput";
-const DIALOG_SEND_TRACE_CONTEXT_KEY = "__dialogSendTraceContext";
-
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
   "virtual_simulation",
@@ -364,69 +351,6 @@ const stripOutputSchema = (
   return Object.keys(rest).length > 0 ? rest : undefined;
 };
 
-const stripStructuredOutputOptIn = (
-  turnOptions?: Record<string, unknown>
-): Record<string, unknown> | undefined => {
-  if (!turnOptions) {
-    return;
-  }
-  if (!(STRUCTURED_OUTPUT_OPT_IN_KEY in turnOptions)) {
-    return turnOptions;
-  }
-  const { [STRUCTURED_OUTPUT_OPT_IN_KEY]: _ignored, ...rest } = turnOptions;
-  return Object.keys(rest).length > 0 ? rest : undefined;
-};
-
-const hasExplicitWorkflowStructuredOutput = (
-  turnOptions?: Record<string, unknown>
-): boolean =>
-  Boolean(turnOptions?.outputSchema !== undefined) &&
-  turnOptions?.[STRUCTURED_OUTPUT_OPT_IN_KEY] === true;
-
-const isDialogSendHandleMessageTraceContext = (
-  value: unknown
-): value is DialogSendHandleMessageTraceContext => {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-  const typed = value as {
-    readonly outboundAttemptId?: unknown;
-    readonly requestId?: unknown;
-    readonly workspaceSlug?: unknown;
-    readonly dialogId?: unknown;
-  };
-  return (
-    typeof typed.outboundAttemptId === "string" &&
-    typed.outboundAttemptId.trim().length > 0 &&
-    typeof typed.requestId === "string" &&
-    typed.requestId.trim().length > 0 &&
-    typeof typed.workspaceSlug === "string" &&
-    typeof typed.dialogId === "string"
-  );
-};
-
-const readDialogSendTraceContext = (
-  turnOptions?: Record<string, unknown>
-): DialogSendHandleMessageTraceContext | undefined => {
-  const candidate = turnOptions?.[DIALOG_SEND_TRACE_CONTEXT_KEY];
-  return isDialogSendHandleMessageTraceContext(candidate)
-    ? candidate
-    : undefined;
-};
-
-const stripDialogSendTraceContext = (
-  turnOptions?: Record<string, unknown>
-): Record<string, unknown> | undefined => {
-  if (!turnOptions) {
-    return;
-  }
-  if (!(DIALOG_SEND_TRACE_CONTEXT_KEY in turnOptions)) {
-    return turnOptions;
-  }
-  const { [DIALOG_SEND_TRACE_CONTEXT_KEY]: _ignored, ...rest } = turnOptions;
-  return Object.keys(rest).length > 0 ? rest : undefined;
-};
-
 const resolveWorkflowStage = (
   stage: string | null | undefined
 ): WorkflowStageId | null =>
@@ -439,45 +363,20 @@ const resolveWorkflowTurnOptions = (params: {
   readonly turnOptions?: Record<string, unknown>;
 }): WorkflowTurnOptionsResolution => {
   const stage = resolveWorkflowStage(params.stage);
-  const sanitizedTurnOptions = stripStructuredOutputOptIn(params.turnOptions);
   if (!stage) {
     return {
-      turnOptions: sanitizedTurnOptions,
+      turnOptions: params.turnOptions,
       appliedSchema: false,
       source: "none",
       stageMatched: false,
     };
   }
 
-  if (hasExplicitWorkflowStructuredOutput(params.turnOptions)) {
-    return {
-      turnOptions: sanitizedTurnOptions,
-      appliedSchema: true,
-      source: "turnOptions",
-      stageMatched: true,
-    };
-  }
-
   return {
-    turnOptions: stripOutputSchema(sanitizedTurnOptions),
+    turnOptions: stripOutputSchema(params.turnOptions),
     appliedSchema: false,
     source: "none",
     stageMatched: true,
-  };
-};
-
-const attachCodexOutboundAttemptIdTurnOption = (params: {
-  readonly providerId: string;
-  readonly turnOptions?: Record<string, unknown>;
-  readonly traceContext?: DialogSendHandleMessageTraceContext;
-}): Record<string, unknown> | undefined => {
-  if (params.providerId !== "codex" || !params.traceContext) {
-    return params.turnOptions;
-  }
-
-  return {
-    ...(params.turnOptions ?? {}),
-    [CODEX_OUTBOUND_ATTEMPT_ID_KEY]: params.traceContext.outboundAttemptId,
   };
 };
 
@@ -487,7 +386,6 @@ export type SessionRequestHandlerOptions = {
   readonly providerRegistry: ProviderRegistry;
   readonly sessionStorage: UnifiedSessionStorage;
   readonly logger: Logger;
-  readonly dialogSendTrace: DialogSendTraceLogger;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly stateBroadcaster: () => void;
   readonly continuityClock?: () => string;
@@ -503,14 +401,11 @@ export class SessionRequestHandler {
   private readonly providerRegistry: ProviderRegistry;
   private readonly sessionStorage: UnifiedSessionStorage;
   private readonly logger: Logger;
-  private readonly dialogSendTrace: DialogSendTraceLogger;
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionStepStore = new DescriptionStepStore();
-  private readonly executionProfileFacade =
-    new WorkspaceExecutionProfileFacade();
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeRolloverInFlight = new Set<string>();
   private readonly flowNodeRolloverStarted = new Set<string>();
@@ -1182,7 +1077,6 @@ export class SessionRequestHandler {
     this.providerRegistry = options.providerRegistry;
     this.sessionStorage = options.sessionStorage;
     this.logger = options.logger;
-    this.dialogSendTrace = options.dialogSendTrace;
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
     this.workspaceRuntime = options.workspaceRuntime;
@@ -1221,76 +1115,6 @@ export class SessionRequestHandler {
     return {
       providerId: options.providerId,
       providerSessionId: options.requestedProviderSessionId,
-    };
-  }
-
-  private async resolveLockedWorkflowProviderContext(options: {
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly initiativeSlug: string | null;
-    readonly stage: string | null;
-    readonly requestedProviderSessionId: string | null;
-  }): Promise<{
-    readonly providerId: string;
-    readonly providerSessionId: string | null;
-  }> {
-    const stage = resolveWorkflowStage(options.stage);
-    if (!(stage && options.initiativeSlug)) {
-      return {
-        providerId: options.providerId,
-        providerSessionId: options.requestedProviderSessionId,
-      };
-    }
-
-    const executionProfile = await this.executionProfileFacade.readOrBootstrap({
-      workspaceRoot: options.workspacePath,
-      workspaceSlug: options.initiativeSlug,
-      resolveLegacySeed: async () => {
-        const descriptionSnapshot = await this.descriptionStepStore
-          .read(options.workspacePath, options.initiativeSlug ?? "")
-          .catch(() => null);
-        const lockedProviderId =
-          descriptionSnapshot?.collectorSession?.providerId ??
-          descriptionSnapshot?.primarySession?.providerId ??
-          descriptionSnapshot?.session?.providerId ??
-          options.providerId;
-        const modelId = this.providerRegistry.getDefaultModel(lockedProviderId);
-        if (!modelId) {
-          return null;
-        }
-        return {
-          providerId: lockedProviderId,
-          modelId,
-          lockedFromStage: "description" as const,
-        };
-      },
-    });
-
-    if (!executionProfile) {
-      return {
-        providerId: options.providerId,
-        providerSessionId: options.requestedProviderSessionId,
-      };
-    }
-
-    if (executionProfile.providerId !== options.providerId) {
-      this.logger.info(
-        "Workflow provider selection overridden by locked workspace profile",
-        {
-          workspaceSlug: options.initiativeSlug,
-          stage,
-          requestedProviderId: options.providerId,
-          lockedProviderId: executionProfile.providerId,
-        }
-      );
-    }
-
-    return {
-      providerId: executionProfile.providerId,
-      providerSessionId:
-        executionProfile.providerId === options.providerId
-          ? options.requestedProviderSessionId
-          : null,
     };
   }
 
@@ -2147,19 +1971,12 @@ export class SessionRequestHandler {
       normalizedRequestedProviderId ?? this.getDefaultProviderId();
     const actualWorkspacePath = this.resolveWorkspacePath(workspacePath);
 
-    const requestedRunBound = this.resolveRunBoundProviderContext({
+    const runBound = this.resolveRunBoundProviderContext({
       providerId: requestedProviderId,
       workspacePath: actualWorkspacePath,
       initiativeSlug: context?.initiativeSlug ?? null,
       runSlug: context?.runSlug ?? null,
       requestedProviderSessionId: context?.providerSessionId ?? null,
-    });
-    const runBound = await this.resolveLockedWorkflowProviderContext({
-      providerId: requestedRunBound.providerId,
-      workspacePath: actualWorkspacePath,
-      initiativeSlug: context?.initiativeSlug ?? null,
-      stage: context?.stage ?? null,
-      requestedProviderSessionId: requestedRunBound.providerSessionId,
     });
     const actualProviderId = runBound.providerId;
     if (
@@ -2208,22 +2025,8 @@ export class SessionRequestHandler {
     readonly workspaceSlug: string;
     readonly dialogId: string;
     readonly content: string;
-    readonly requestId: string;
-    readonly outboundAttemptId: string;
   }): Promise<
-    | {
-        readonly ok: true;
-        readonly providerId: string;
-        readonly providerSessionId: string | null;
-        readonly sessionId: string;
-      }
-    | {
-        readonly ok: false;
-        readonly error: string;
-        readonly providerId?: string;
-        readonly providerSessionId?: string | null;
-        readonly sessionId?: string;
-      }
+    { readonly ok: true } | { readonly ok: false; readonly error: string }
   > {
     const chains = await SessionContinuityFacade.readWorkspaceChains({
       workspaceRoot: options.workspaceRoot,
@@ -2234,50 +2037,12 @@ export class SessionRequestHandler {
         (candidate.dialogId ?? candidate.rootSessionId) === options.dialogId
     );
     if (!chain) {
-      this.dialogSendTrace.record({
-        event: "core.dialog_send.chain_resolved",
-        outboundAttemptId: options.outboundAttemptId,
-        requestId: options.requestId,
-        workspaceSlug: options.workspaceSlug,
-        dialogId: options.dialogId,
-        providerId: "unknown",
-        contentLength: options.content.length,
-        error: "Dialog chain not found",
-        payload: { resolved: false },
-      });
       return { ok: false, error: "Dialog chain not found" };
     }
     const last = chain.segments.at(-1) ?? null;
     if (!last) {
-      this.dialogSendTrace.record({
-        event: "core.dialog_send.chain_resolved",
-        outboundAttemptId: options.outboundAttemptId,
-        requestId: options.requestId,
-        workspaceSlug: options.workspaceSlug,
-        dialogId: options.dialogId,
-        providerId: "unknown",
-        contentLength: options.content.length,
-        error: "Dialog has no segments",
-        payload: { resolved: false, stage: chain.stage },
-      });
       return { ok: false, error: "Dialog has no segments" };
     }
-    this.dialogSendTrace.record({
-      event: "core.dialog_send.chain_resolved",
-      outboundAttemptId: options.outboundAttemptId,
-      requestId: options.requestId,
-      workspaceSlug: options.workspaceSlug,
-      dialogId: options.dialogId,
-      providerId: last.providerId,
-      providerSessionId: last.providerSessionId,
-      threadId: last.providerSessionId,
-      contentLength: options.content.length,
-      payload: {
-        resolved: true,
-        stage: chain.stage,
-        segmentCount: chain.segments.length,
-      },
-    });
 
     const existingSession = this.sessionManager
       .getSessionsByWorkspacePath(options.workspaceRoot)
@@ -2289,19 +2054,6 @@ export class SessionRequestHandler {
 
     const adapter = this.providerRegistry.getAdapter(last.providerId);
     if (!adapter) {
-      this.dialogSendTrace.record({
-        event: "core.dialog_send.session_resolved",
-        outboundAttemptId: options.outboundAttemptId,
-        requestId: options.requestId,
-        workspaceSlug: options.workspaceSlug,
-        dialogId: options.dialogId,
-        providerId: last.providerId,
-        providerSessionId: last.providerSessionId,
-        threadId: last.providerSessionId,
-        contentLength: options.content.length,
-        error: `Provider ${last.providerId} unavailable`,
-        payload: { resolved: false, providerAvailable: false },
-      });
       return { ok: false, error: `Provider ${last.providerId} unavailable` };
     }
 
@@ -2321,55 +2073,11 @@ export class SessionRequestHandler {
       }));
 
     if (!resolvedSession) {
-      this.dialogSendTrace.record({
-        event: "core.dialog_send.session_resolved",
-        outboundAttemptId: options.outboundAttemptId,
-        requestId: options.requestId,
-        workspaceSlug: options.workspaceSlug,
-        dialogId: options.dialogId,
-        providerId: last.providerId,
-        providerSessionId: last.providerSessionId,
-        threadId: last.providerSessionId,
-        contentLength: options.content.length,
-        error: "Failed to resume dialog session",
-        payload: { resolved: false, providerAvailable: true },
-      });
       return { ok: false, error: "Failed to resume dialog session" };
     }
-    this.dialogSendTrace.record({
-      event: "core.dialog_send.session_resolved",
-      outboundAttemptId: options.outboundAttemptId,
-      requestId: options.requestId,
-      workspaceSlug: options.workspaceSlug,
-      dialogId: options.dialogId,
-      providerId: resolvedSession.providerId,
-      providerSessionId: resolvedSession.providerSessionId,
-      threadId: resolvedSession.providerSessionId,
-      sessionId: resolvedSession.id,
-      contentLength: options.content.length,
-      payload: {
-        resolved: true,
-        reusedExistingSession: Boolean(existingSession),
-      },
-    });
 
-    await this.handleMessage(resolvedSession.id, {
-      text: options.content,
-      turnOptions: {
-        [DIALOG_SEND_TRACE_CONTEXT_KEY]: {
-          outboundAttemptId: options.outboundAttemptId,
-          requestId: options.requestId,
-          workspaceSlug: options.workspaceSlug,
-          dialogId: options.dialogId,
-        },
-      },
-    });
-    return {
-      ok: true,
-      providerId: resolvedSession.providerId,
-      providerSessionId: resolvedSession.providerSessionId ?? null,
-      sessionId: resolvedSession.id,
-    };
+    await this.handleMessage(resolvedSession.id, options.content);
+    return { ok: true };
   }
 
   private inferRunSlugFromDialogId(dialogId: string): string | null {
@@ -2390,24 +2098,17 @@ export class SessionRequestHandler {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
-    const lockedContext = await this.resolveLockedWorkflowProviderContext({
-      providerId: options.providerId,
-      workspacePath: options.workspacePath,
-      initiativeSlug: options.context.initiativeSlug,
-      stage: options.context.stage,
-      requestedProviderSessionId: null,
-    });
-    const adapter = this.providerRegistry.getAdapter(lockedContext.providerId);
+    const adapter = this.providerRegistry.getAdapter(options.providerId);
     if (!adapter) {
       this.logger.warn("Workflow session creation failed: provider missing", {
-        providerId: lockedContext.providerId,
+        providerId: options.providerId,
       });
       return null;
     }
 
     try {
       return await this.createAndRegisterSession({
-        providerId: lockedContext.providerId,
+        providerId: options.providerId,
         workspacePath: options.workspacePath,
         adapter,
         resumeMode: options.context.resumeMode,
@@ -2419,7 +2120,7 @@ export class SessionRequestHandler {
         },
       });
     } catch (error) {
-      this.handleProviderFailure(lockedContext.providerId, error);
+      this.handleProviderFailure(options.providerId, error);
       return null;
     }
   }
@@ -2436,15 +2137,7 @@ export class SessionRequestHandler {
     }
 
     const { content, turnOptions } = extracted;
-    const dialogSendTraceContext = readDialogSendTraceContext(turnOptions);
-    const providerSafeTurnOptions = stripDialogSendTraceContext(turnOptions);
     this.logSessionMessageExtracted(sessionId, content, turnOptions);
-    this.traceDialogSendHandleMessageStage({
-      event: "core.dialog_send.handle_message_enter",
-      traceContext: dialogSendTraceContext,
-      targetSessionId: sessionId,
-      contentLength: content.length,
-    });
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
       this.broadcaster({
@@ -2518,242 +2211,73 @@ export class SessionRequestHandler {
       return;
     }
 
-    const historyPersisted = await this.persistUserMessageToHistory({
-      sessionId,
-      session,
-      userMessage,
-      traceContext: dialogSendTraceContext,
-      contentLength: content.length,
-    });
-    if (!historyPersisted) {
-      return;
-    }
-    this.broadcaster({ type: "session:message", payload: userMessage });
-
-    const dispatchContext = this.resolveProviderDispatchContext({
-      sessionId,
-      session,
-      traceContext: dialogSendTraceContext,
-      contentLength: content.length,
-    });
-    if (!dispatchContext) {
-      return;
-    }
-
-    this.emitTurnStateEvent({ sessionId, state: "running" });
-    await this.dispatchMessageToProvider({
-      session,
-      sessionId,
-      binding: dispatchContext.binding,
-      adapter: dispatchContext.adapter,
-      content,
-      turnOptions: providerSafeTurnOptions,
-      traceContext: dialogSendTraceContext,
-    });
-  }
-
-  private async persistUserMessageToHistory(options: {
-    readonly sessionId: string;
-    readonly session: Session;
-    readonly userMessage: SessionMessage;
-    readonly traceContext?: DialogSendHandleMessageTraceContext;
-    readonly contentLength: number;
-  }): Promise<boolean> {
     try {
-      this.traceDialogSendHandleMessageStage({
-        event: "core.dialog_send.history_append_started",
-        traceContext: options.traceContext,
-        session: options.session,
-        contentLength: options.contentLength,
-      });
-      await this.sessionStorage.appendMessage(
-        options.sessionId,
-        options.userMessage
-      );
-      this.traceDialogSendHandleMessageStage({
-        event: "core.dialog_send.history_append_succeeded",
-        traceContext: options.traceContext,
-        session: options.session,
-        contentLength: options.contentLength,
-      });
-      return true;
+      await this.sessionStorage.appendMessage(sessionId, userMessage);
     } catch (error: unknown) {
-      this.traceDialogSendHandleMessageStage({
-        event: "core.dialog_send.history_append_failed",
-        traceContext: options.traceContext,
-        session: options.session,
-        contentLength: options.contentLength,
-        error: error instanceof Error ? error.message : String(error),
-      });
       this.logger.error(
         "Failed to append unified session record",
         error as Error,
         {
-          sessionId: options.sessionId,
-          providerId: options.session.providerId,
+          sessionId,
+          providerId: session.providerId,
         }
       );
       this.broadcaster({
         type: "session:error",
-        payload: {
-          sessionId: options.sessionId,
-          message: "Failed to persist message to history",
-        },
+        payload: { sessionId, message: "Failed to persist message to history" },
       });
-      return false;
+      return;
     }
-  }
+    this.broadcaster({ type: "session:message", payload: userMessage });
 
-  private resolveProviderDispatchContext(options: {
-    readonly sessionId: string;
-    readonly session: Session;
-    readonly traceContext?: DialogSendHandleMessageTraceContext;
-    readonly contentLength: number;
-  }): {
-    readonly binding: ProviderSessionBinding;
-    readonly adapter: ProviderAdapter;
-  } | null {
-    const binding = this.providerSessions.get(options.sessionId);
+    const binding = this.providerSessions.get(sessionId);
     const adapter = binding
       ? this.providerRegistry.getAdapter(binding.providerId)
       : null;
+
     if (!(binding && adapter)) {
-      this.traceDialogSendHandleMessageStage({
-        event: "core.dialog_send.adapter_dispatch_failed",
-        traceContext: options.traceContext,
-        session: options.session,
-        contentLength: options.contentLength,
-        error: "Provider binding unavailable",
-        payload: {
-          hasBinding: Boolean(binding),
-          hasAdapter: Boolean(adapter),
-          providerId: binding?.providerId,
-        },
-      });
       this.logMissingProviderBindingForIncomingMessage(
-        options.sessionId,
+        sessionId,
         binding?.providerId,
         Boolean(binding),
         Boolean(adapter)
       );
-      return null;
+      return;
     }
-    return { binding, adapter };
-  }
 
-  private async dispatchMessageToProvider(options: {
-    readonly session: Session;
-    readonly sessionId: string;
-    readonly binding: ProviderSessionBinding;
-    readonly adapter: ProviderAdapter;
-    readonly content: string;
-    readonly turnOptions?: Record<string, unknown>;
-    readonly traceContext?: DialogSendHandleMessageTraceContext;
-  }): Promise<void> {
+    this.emitTurnStateEvent({ sessionId, state: "running" });
     try {
       await this.continuity.ensureTrackedOnOutboundMessage({
-        sessionId: options.sessionId,
-        providerSessionId: options.binding.providerSessionId,
+        sessionId,
+        providerSessionId: binding.providerSessionId,
       });
 
-      this.traceDialogSendHandleMessageStage({
-        event: "core.dialog_send.adapter_dispatch_started",
-        traceContext: options.traceContext,
-        session: options.session,
-        providerId: options.binding.providerId,
-        providerSessionId: options.binding.providerSessionId,
-        contentLength: options.content.length,
-      });
-      this.logDispatchingMessageToProvider(
-        options.sessionId,
-        options.binding,
-        options.content.length
-      );
+      this.logDispatchingMessageToProvider(sessionId, binding, content.length);
 
       const workflowTurnOptions = await resolveWorkflowTurnOptions({
-        stage: options.session.stage,
-        turnOptions: options.turnOptions,
+        stage: session.stage,
+        turnOptions,
       });
-      const providerTurnOptions = attachCodexOutboundAttemptIdTurnOption({
-        providerId: options.binding.providerId,
-        turnOptions: workflowTurnOptions.turnOptions,
-        traceContext: options.traceContext,
-      });
+      const providerTurnOptions = workflowTurnOptions.stageMatched
+        ? workflowTurnOptions.turnOptions
+        : turnOptions;
       if (workflowTurnOptions.appliedSchema) {
         this.logger.info("Applied workflow output schema", {
-          sessionId: options.sessionId,
-          stage: options.session.stage,
+          sessionId,
+          stage: session.stage,
           source: workflowTurnOptions.source,
         });
       }
-      await options.adapter.sendMessage(
-        options.binding.providerSessionId,
-        options.content,
+      await adapter.sendMessage(
+        binding.providerSessionId,
+        content,
         providerTurnOptions
       );
-      this.traceDialogSendHandleMessageStage({
-        event: "core.dialog_send.adapter_dispatch_succeeded",
-        traceContext: options.traceContext,
-        session: options.session,
-        providerId: options.binding.providerId,
-        providerSessionId: options.binding.providerSessionId,
-        contentLength: options.content.length,
-      });
     } catch (error) {
-      this.traceDialogSendHandleMessageStage({
-        event: "core.dialog_send.adapter_dispatch_failed",
-        traceContext: options.traceContext,
-        session: options.session,
-        providerId: options.binding.providerId,
-        providerSessionId: options.binding.providerSessionId,
-        contentLength: options.content.length,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      this.emitTurnStateEvent({ sessionId: options.sessionId, state: "idle" });
-      this.logProviderSendMessageFailed(
-        options.sessionId,
-        options.binding,
-        error
-      );
-      this.handleProviderFailure(
-        options.binding.providerId,
-        error,
-        options.sessionId
-      );
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
+      this.logProviderSendMessageFailed(sessionId, binding, error);
+      this.handleProviderFailure(binding.providerId, error, sessionId);
     }
-  }
-
-  private traceDialogSendHandleMessageStage(options: {
-    readonly event: string;
-    readonly traceContext?: DialogSendHandleMessageTraceContext;
-    readonly session?: Session;
-    readonly targetSessionId?: string;
-    readonly providerId?: string;
-    readonly providerSessionId?: string | null;
-    readonly contentLength: number;
-    readonly payload?: unknown;
-    readonly error?: string;
-  }): void {
-    if (!options.traceContext) {
-      return;
-    }
-    const providerSessionId =
-      options.providerSessionId ?? options.session?.providerSessionId;
-    this.dialogSendTrace.record({
-      event: options.event,
-      outboundAttemptId: options.traceContext.outboundAttemptId,
-      requestId: options.traceContext.requestId,
-      workspaceSlug: options.traceContext.workspaceSlug,
-      dialogId: options.traceContext.dialogId,
-      providerId:
-        options.providerId ?? options.session?.providerId ?? "unknown",
-      providerSessionId: providerSessionId ?? undefined,
-      threadId: providerSessionId ?? undefined,
-      sessionId: options.session?.id ?? options.targetSessionId,
-      contentLength: options.contentLength,
-      payload: options.payload,
-      error: options.error,
-    });
   }
 
   async handleDelete(sessionId: string): Promise<void> {

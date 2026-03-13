@@ -1,10 +1,15 @@
 import type { CSSProperties } from "react";
 import { memo } from "react";
 import { postVsCodeMessage } from "../../vscode";
+import GeneralResponseModeFacade from "./general-response-mode/general-response-mode-facade";
+import type { GeneralResponseMode } from "./general-response-mode/response-mode-copy";
+import type { GeneralResponsePolicySettings } from "./general-response-mode/response-mode-state";
 import SettingsCard from "./settings-card";
 
 const wrapperStyles: CSSProperties = {
-  marginBottom: "30px",
+  display: "flex",
+  flexDirection: "column",
+  gap: "24px",
 };
 
 const descriptionStyles: CSSProperties = {
@@ -25,13 +30,26 @@ const buttonStyles: CSSProperties = {
   fontSize: "12px",
 };
 
-const GeneralSettings = () => {
+type GeneralSettingsProps = {
+  readonly responsePolicy: GeneralResponsePolicySettings;
+  readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
+  readonly onStrictSchemaTextChange: (value: string) => void;
+  readonly onStrictInstructionTextChange: (value: string) => void;
+};
+
+const GeneralSettings = (props: GeneralSettingsProps) => {
   const handleRestartCore = () => {
     postVsCodeMessage({ type: "core:restart-request" });
   };
 
   return (
     <div style={wrapperStyles}>
+      <GeneralResponseModeFacade
+        onModeChange={props.onResponsePolicyModeChange}
+        onStrictInstructionTextChange={props.onStrictInstructionTextChange}
+        onStrictSchemaTextChange={props.onStrictSchemaTextChange}
+        responsePolicy={props.responsePolicy}
+      />
       <SettingsCard title="Core Controls">
         <p style={descriptionStyles}>
           Restart the CodeAI Hub core to trigger a fresh CLI detection cycle.

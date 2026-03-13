@@ -2,10 +2,6 @@ import type { ProviderStackId } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { providerIdSet } from "../../../ui/src/session/helpers";
-import type {
-  WorkflowStageId,
-  WorkflowStateSnapshot,
-} from "../../services/workflow-state-client";
 
 export type DialogOpenIntent = {
   readonly providerId: string;
@@ -37,78 +33,6 @@ type DialogHistoryRecord = {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
-const WORKFLOW_STAGE_ORDER: readonly WorkflowStageId[] = [
-  "description",
-  "virtual_simulation",
-  "diagram_modules",
-  "diagram_facades",
-];
-
-const isWorkflowStageId = (value: string | null): value is WorkflowStageId =>
-  value !== null && WORKFLOW_STAGE_ORDER.includes(value as WorkflowStageId);
-
-const resolveStageIndex = (stage: WorkflowStageId): number =>
-  WORKFLOW_STAGE_ORDER.indexOf(stage);
-
-const hasContinuitySegmentsForStage = (
-  workflowState: WorkflowStateSnapshot,
-  stage: WorkflowStageId
-): boolean =>
-  workflowState.continuity.chains.some(
-    (chain) => chain.stage === stage && chain.segments.length > 0
-  );
-
-const hasDescriptionActivity = (
-  workflowState: WorkflowStateSnapshot
-): boolean =>
-  Boolean(
-    workflowState.description?.questionnairePath ||
-      workflowState.description?.draftPath ||
-      workflowState.description?.finalPath ||
-      workflowState.description?.collectorSession ||
-      workflowState.description?.session ||
-      workflowState.stages.description !== "idle" ||
-      hasContinuitySegmentsForStage(workflowState, "description")
-  );
-
-const hasStageActivity = (
-  workflowState: WorkflowStateSnapshot,
-  stage: WorkflowStageId
-): boolean =>
-  stage === "description"
-    ? hasDescriptionActivity(workflowState)
-    : workflowState.stages[stage] !== "idle" ||
-      hasContinuitySegmentsForStage(workflowState, stage);
-
-export const resolveLatestWorkflowStage = (
-  workflowState: WorkflowStateSnapshot | null
-): WorkflowStageId | null => {
-  if (!workflowState) {
-    return null;
-  }
-  for (let index = WORKFLOW_STAGE_ORDER.length - 1; index >= 0; index -= 1) {
-    const stage = WORKFLOW_STAGE_ORDER[index];
-    if (stage && hasStageActivity(workflowState, stage)) {
-      return stage;
-    }
-  }
-  return null;
-};
-
-export const shouldDiscardRestoredDialogIntent = (options: {
-  readonly intent: DialogOpenIntent;
-  readonly workflowState: WorkflowStateSnapshot | null;
-}): boolean => {
-  if (!isWorkflowStageId(options.intent.stage)) {
-    return false;
-  }
-  const latestStage = resolveLatestWorkflowStage(options.workflowState);
-  if (!latestStage) {
-    return false;
-  }
-  return resolveStageIndex(latestStage) > resolveStageIndex(options.intent.stage);
-};
 
 export const sanitizeDialogIndexEntry = (value: unknown): DialogIndexEntry | null => {
   if (!isRecord(value)) {

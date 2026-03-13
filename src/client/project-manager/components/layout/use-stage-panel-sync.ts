@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolveStageSyncPayload } from "./workspace-tree-branch-nodes";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
@@ -30,11 +30,9 @@ export const useStagePanelSync = (params: {
     dispatchDialogOpenIntent,
     clearArtifactWithTool,
   } = params;
-  const lastActivatedStageRef = useRef<string | null>(null);
 
   const syncPanelsToStage = useCallback(
     (stage: string) => {
-      lastActivatedStageRef.current = stage;
       if (!workflowState || !workspaceSlug || !workspacePath) return;
       const p = resolveStageSyncPayload({
         stage,
@@ -51,21 +49,6 @@ export const useStagePanelSync = (params: {
     },
     [clearArtifactWithTool, diagramFacadesArtifactAvailable, diagramModulesArtifactAvailable, dispatchDialogOpenIntent, selectArtifact, virtualSimulationArtifactAvailable, workflowState, workspacePath, workspaceSlug]
   );
-
-  useEffect(() => {
-    lastActivatedStageRef.current = null;
-  }, [workspacePath, workspaceSlug]);
-
-  useEffect(() => {
-    if (!(workflowState && workspaceSlug && workspacePath)) {
-      return;
-    }
-    const stage = lastActivatedStageRef.current;
-    if (!stage) {
-      return;
-    }
-    syncPanelsToStage(stage);
-  }, [syncPanelsToStage, workflowState, workspacePath, workspaceSlug]);
 
   useEffect(() => {
     const handler = (event: Event) => {

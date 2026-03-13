@@ -1,12 +1,11 @@
-import { getDefaultProviderTitle, type ProviderStackDescriptor, type ProviderStackId } from "../../../../types/provider";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { IdeaQuestionnaireView } from "../../../ui/src/components/idea-questionnaire/idea-questionnaire-view";
 import { DescriptionQuestionnaireService } from "../../services/description-questionnaire-service";
 import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
+import type { ProviderStackDescriptor, ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
-import { requestWorkspaceWorkflowStateRefresh, useWorkspaceWorkflowState } from "../layout/use-workspace-workflow-state";
 import { IdeaCollectorProviderPicker } from "./idea-collector-provider-picker";
 
 const SAVE_DEBOUNCE_MS = 400;
@@ -72,14 +71,9 @@ export const DescriptionQuestionnairePanel: React.FC<
     typeof workspaceSlug === "string" && workspaceSlug.trim().length > 0
       ? workspaceSlug.trim()
       : toWorkflowWorkspaceSlug(resolvedWorkspaceName);
+
   const canLoad =
     typeof workspacePath === "string" && workspacePath.trim().length > 0;
-  const workflowState = useWorkspaceWorkflowState({
-    enabled: canLoad,
-    workspaceSlug: resolvedWorkspaceSlug,
-    workspacePath,
-  });
-
   useEffect(() => {
     if (!canLoad) {
       setPanelState({ status: "idle" });
@@ -136,21 +130,7 @@ export const DescriptionQuestionnairePanel: React.FC<
     workspacePath,
   ]);
 
-  const title = `Анкета описания — ${resolvedWorkspaceName}`;
-  const executionProfile = workflowState?.executionProfile ?? null;
-  const lockedProviderTitle =
-    executionProfile?.providerId === "claudeCodeCli" ||
-    executionProfile?.providerId === "codexCli" ||
-    executionProfile?.providerId === "geminiCli"
-      ? getDefaultProviderTitle(executionProfile.providerId as ProviderStackId)
-      : executionProfile?.providerId ?? null;
-
-  const refreshWorkflowState = () => workspacePath
-    ? requestWorkspaceWorkflowStateRefresh({
-        workspacePath,
-        workspaceSlug: resolvedWorkspaceSlug,
-      })
-    : undefined;
+  const title = useMemo(() => `Анкета описания — ${resolvedWorkspaceName}`, [resolvedWorkspaceName]);
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((current) => ({ ...current, [questionId]: value }));
@@ -213,12 +193,20 @@ export const DescriptionQuestionnairePanel: React.FC<
         questionnairePath: panelState.questionnairePath,
         stage: "description",
         providerId,
-        onSessionCreated: (sessionId) => {
-          onIdeaSessionCreated?.(sessionId);
-          refreshWorkflowState();
-        },
+        onSessionCreated: onIdeaSessionCreated,
       });
-      refreshWorkflowState();
+      if (workspacePath) {
+        window.dispatchEvent(
+          new CustomEvent("pm:artifact:selected", {
+            detail: {
+              label: "questionnaire.md",
+              path: panelState.questionnairePath,
+              workspacePath,
+              workspaceSlug: resolvedWorkspaceSlug,
+            },
+          })
+        );
+      }
     } catch (error) {
       setSubmitError(
         error instanceof Error
@@ -268,13 +256,6 @@ export const DescriptionQuestionnairePanel: React.FC<
     <div className="pm-questionnaire-wrapper">
       {submitError ? (
         <div className="pm-questionnaire-alert">{submitError}</div>
-      ) : null}
-      {executionProfile ? (
-        <p style={{ margin: "0 0 12px", color: "#d7dde8", fontSize: 13, lineHeight: 1.45 }}>
-          <strong>Workspace lock:</strong> {lockedProviderTitle} /{" "}
-          <code>{executionProfile.modelId}</code>. Для этого workspace provider и
-          model уже зафиксированы и не меняются через текущие Settings.
-        </p>
       ) : null}
       <IdeaQuestionnaireView
         answers={answers}

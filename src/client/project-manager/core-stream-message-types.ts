@@ -143,7 +143,6 @@ export type DialogHistoryRequestPayload = {
 
 export type DialogSendRequestPayload = {
   readonly requestId: string;
-  readonly outboundAttemptId: string;
   readonly workspaceSlug: string;
   readonly dialogId: string;
   readonly content: string;

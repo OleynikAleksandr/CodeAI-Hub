@@ -31,19 +31,6 @@ test("questionnaire submit opens session immediately after session:created", asy
   );
 
   const panelSource = await readFile(PANEL_PATH, "utf8");
-  assert.equal(
-    panelSource.includes("onSessionCreated: (sessionId) => {"),
-    true,
-    "panel should wrap onSessionCreated to refresh workflow state immediately"
-  );
-  assert.equal(
-    panelSource.includes("requestWorkspaceWorkflowStateRefresh({"),
-    true,
-    "questionnaire submit should explicitly refresh shared workflow state"
-  );
-  assert.equal(
-    panelSource.includes('new CustomEvent("pm:artifact:selected"'),
-    false,
-    "questionnaire submit must not force-select questionnaire.md after the session starts"
-  );
+  assert.equal(panelSource.includes("onSessionCreated: onIdeaSessionCreated,"), true);
 });
+

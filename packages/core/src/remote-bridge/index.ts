@@ -12,7 +12,6 @@ import type {
   RuntimeStatusEvent,
   RuntimeStatusReporter,
 } from "../status/runtime-status-reporter";
-import { DialogSendTraceLogger } from "../telemetry/dialog-send-trace-logger";
 import type { Logger } from "../telemetry/logger";
 import { UnifiedSessionStorage } from "../unified-session/storage";
 import { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
@@ -49,14 +48,6 @@ type RemoteBridgeHooks = {
   readonly onShutdownRequested?: () => void;
 };
 
-type NormalizedDialogSendPayload = {
-  readonly requestId: string;
-  readonly outboundAttemptId: string;
-  readonly workspaceSlug: string;
-  readonly dialogId: string;
-  readonly content: string;
-};
-
 export class RemoteBridge {
   private readonly config: CoreConfig;
   private readonly sessionManager: SessionManager;
@@ -80,7 +71,6 @@ export class RemoteBridge {
   private readonly dialogListService: DialogListService;
   private readonly dialogOpenService: DialogOpenService;
   private readonly dialogHistoryService: DialogHistoryService;
-  private readonly dialogSendTrace = new DialogSendTraceLogger();
   private readonly sessionHandler: SessionRequestHandler;
   private readonly systemHandler: SystemRequestHandler;
   private readonly settingsHandler: SettingsRequestHandler;
@@ -153,7 +143,6 @@ export class RemoteBridge {
       providerRegistry: this.providerRegistry,
       sessionStorage: this.sessionStorage,
       logger: this.logger,
-      dialogSendTrace: this.dialogSendTrace,
       continuityClock: () => new Date().toISOString(),
       workspaceRuntime: this.workspaceRuntime,
       broadcaster: (event) => {
@@ -339,9 +328,6 @@ export class RemoteBridge {
         break;
       case "dialog:send":
         await this.handleDialogSend(clientId, incoming.payload);
-        break;
-      case "dialog:trace":
-        this.handleDialogTrace(clientId, incoming.payload);
         break;
       case "projects:add":
         this.projectHandler.handleAdd(
@@ -603,7 +589,6 @@ export class RemoteBridge {
     clientId: string,
     payload: {
       readonly requestId: string;
-      readonly outboundAttemptId: string;
       readonly workspaceSlug: string;
       readonly dialogId: string;
       readonly content: string;
@@ -613,8 +598,6 @@ export class RemoteBridge {
     if (!wsManager) {
       return;
     }
-    const normalizedPayload = this.normalizeDialogSendPayload(payload);
-    this.traceDialogSendReceived(clientId, normalizedPayload);
     const scope = wsManager.getWorkspaceScope(clientId);
     const workspaceRoot = scope?.workspacePath ?? null;
     if (!workspaceRoot) {
@@ -625,160 +608,45 @@ export class RemoteBridge {
       );
       return;
     }
+    const workspaceSlug =
+      typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "";
+    const dialogId =
+      typeof payload.dialogId === "string" ? payload.dialogId : "";
+    const content = typeof payload.content === "string" ? payload.content : "";
+
     if (
-      normalizedPayload.workspaceSlug.trim().length === 0 ||
-      normalizedPayload.dialogId.trim().length === 0 ||
-      normalizedPayload.content.trim().length === 0
+      workspaceSlug.trim().length === 0 ||
+      dialogId.trim().length === 0 ||
+      content.trim().length === 0
     ) {
-      this.sendDialogSendAck(clientId, normalizedPayload, {
-        status: "rejected",
-        error: "Missing workspaceSlug/dialogId/content",
+      wsManager.sendToClient(clientId, {
+        type: "dialog:send:ack",
+        payload: {
+          requestId: payload.requestId,
+          workspaceSlug,
+          dialogId,
+          status: "rejected",
+          error: "Missing workspaceSlug/dialogId/content",
+        },
       });
       return;
     }
-    this.dialogSendTrace.record({
-      event: "core.dialog_send.scope_resolved",
-      outboundAttemptId: normalizedPayload.outboundAttemptId,
-      requestId: normalizedPayload.requestId,
-      workspaceSlug: normalizedPayload.workspaceSlug,
-      dialogId: normalizedPayload.dialogId,
-      providerId: "unknown",
-      contentLength: normalizedPayload.content.length,
-      payload: { clientId, workspaceRoot },
-    });
 
     const result = await this.sessionHandler.handleDialogSend({
       workspaceRoot,
-      workspaceSlug: normalizedPayload.workspaceSlug,
-      dialogId: normalizedPayload.dialogId,
-      content: normalizedPayload.content,
-      requestId: normalizedPayload.requestId,
-      outboundAttemptId: normalizedPayload.outboundAttemptId,
+      workspaceSlug,
+      dialogId,
+      content,
     });
-    this.sendDialogSendAck(clientId, normalizedPayload, {
-      status: result.ok ? "sent" : "rejected",
-      error: result.ok ? null : result.error,
-      providerId: result.providerId ?? "unknown",
-      providerSessionId: result.providerSessionId ?? undefined,
-      sessionId: result.sessionId,
-    });
-  }
-
-  private normalizeDialogSendPayload(payload: {
-    readonly requestId: string;
-    readonly outboundAttemptId: string;
-    readonly workspaceSlug: string;
-    readonly dialogId: string;
-    readonly content: string;
-  }): NormalizedDialogSendPayload {
-    return {
-      requestId: payload.requestId,
-      outboundAttemptId:
-        typeof payload.outboundAttemptId === "string" &&
-        payload.outboundAttemptId.trim().length > 0
-          ? payload.outboundAttemptId
-          : `missing-outbound-attempt-${payload.requestId}`,
-      workspaceSlug:
-        typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "",
-      dialogId: typeof payload.dialogId === "string" ? payload.dialogId : "",
-      content: typeof payload.content === "string" ? payload.content : "",
-    };
-  }
-
-  private traceDialogSendReceived(
-    clientId: string,
-    payload: NormalizedDialogSendPayload
-  ): void {
-    this.dialogSendTrace.record({
-      event: "core.dialog_send.received",
-      outboundAttemptId: payload.outboundAttemptId,
-      requestId: payload.requestId,
-      workspaceSlug: payload.workspaceSlug,
-      dialogId: payload.dialogId,
-      providerId: "unknown",
-      contentLength: payload.content.length,
-      payload: { clientId },
-    });
-  }
-
-  private sendDialogSendAck(
-    clientId: string,
-    payload: NormalizedDialogSendPayload,
-    options: {
-      readonly status: "sent" | "rejected";
-      readonly error: string | null;
-      readonly providerId?: string;
-      readonly providerSessionId?: string;
-      readonly sessionId?: string;
-    }
-  ): void {
-    this.dialogSendTrace.record({
-      event: "core.dialog_send.ack",
-      outboundAttemptId: payload.outboundAttemptId,
-      requestId: payload.requestId,
-      workspaceSlug: payload.workspaceSlug,
-      dialogId: payload.dialogId,
-      providerId: options.providerId ?? "unknown",
-      providerSessionId: options.providerSessionId,
-      threadId: options.providerSessionId,
-      sessionId: options.sessionId,
-      contentLength: payload.content.length,
-      error: options.error ?? undefined,
-      payload: { status: options.status },
-    });
-    this.wsManager?.sendToClient(clientId, {
+    wsManager.sendToClient(clientId, {
       type: "dialog:send:ack",
       payload: {
         requestId: payload.requestId,
-        workspaceSlug: payload.workspaceSlug,
-        dialogId: payload.dialogId,
-        status: options.status,
-        error: options.error,
+        workspaceSlug,
+        dialogId,
+        status: result.ok ? "sent" : "rejected",
+        error: result.ok ? null : result.error,
       },
-    });
-  }
-
-  private handleDialogTrace(
-    clientId: string,
-    payload: {
-      readonly event: string;
-      readonly requestId: string;
-      readonly outboundAttemptId: string;
-      readonly workspaceSlug: string;
-      readonly dialogId: string;
-      readonly contentLength?: number;
-      readonly payload?: unknown;
-      readonly error?: string | null;
-    }
-  ): void {
-    if (!payload.event.startsWith("pm.dialog_send.")) {
-      return;
-    }
-    this.dialogSendTrace.record({
-      event: payload.event,
-      outboundAttemptId:
-        typeof payload.outboundAttemptId === "string" &&
-        payload.outboundAttemptId.trim().length > 0
-          ? payload.outboundAttemptId
-          : `missing-outbound-attempt-${payload.requestId}`,
-      requestId: payload.requestId,
-      workspaceSlug:
-        typeof payload.workspaceSlug === "string" ? payload.workspaceSlug : "",
-      dialogId: typeof payload.dialogId === "string" ? payload.dialogId : "",
-      providerId: "unknown",
-      contentLength:
-        typeof payload.contentLength === "number" &&
-        Number.isFinite(payload.contentLength)
-          ? payload.contentLength
-          : undefined,
-      payload:
-        payload.payload === undefined
-          ? { clientId }
-          : { clientId, details: payload.payload },
-      error:
-        typeof payload.error === "string" && payload.error.trim().length > 0
-          ? payload.error
-          : undefined,
     });
   }
 

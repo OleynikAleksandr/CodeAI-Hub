@@ -1,36 +1,43 @@
-# Session 063 — Codex GPT-5.4 rollout + stale-env hotfix release v1.1.714
+# Session 063 — Response Mode Settings release `v1.1.721`
 
-**Date:** 2026-03-05 20:48 (CET)
-**Branch:** main
-**Version:** 1.1.714
+**Date:** 2026-03-13 09:31 (CET)  
+**Branch:** codex/baseline-gpt54-release  
+**Version:** 1.1.721
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
-- Выполнен rollout general-purpose модели Codex: `gpt-5.2` заменена на `gpt-5.4` в shared registry, Settings UI/extension, core normalization и Codex SDK manager с мягкой совместимостью для legacy settings.
-- Удалён устаревший Codex SDK override, который опирался на несуществующую provider-side migration `gpt-5.2 -> gpt-5.3-codex`; SSOT модуля Codex синхронизирован в `doc/SolidWorks-WorkFlow/Modules/Codex.md`.
-- На реальном provider rollout воспроизведён mismatch: `settings.json` уже содержал `gpt-5.4`, но `~/.codeai-hub/providers/codex/home/sessions/.../rollout-*.jsonl` и shell snapshot показывали `CODEX_DEFAULT_MODEL=gpt-5.3-codex` / runtime `model = gpt-5.3-codex`.
-- Корневая причина: long-lived Core переносил stale boot env в provider child process; в `core config` и `CodexSDKManager` env имел приоритет над persisted `~/.codeai-hub/settings/settings.json`.
-- Исправлено: persisted settings snapshot теперь SSOT для Codex model/reasoning и выигрывает у stale env; legacy env `gpt-5.2` нормализуется в `gpt-5.4` тем же путём, что и settings.
-- Выполнены локальные релизные циклы `v1.1.713` и hotfix `v1.1.714`; финальным артефактом этой сессии является `codeai-hub-1.1.714.vsix` и tarball-линейка `1.1.714`.
+- На baseline-линии завершена реализация `Settings -> General -> Response Mode` как отдельного UI/settings/runtime-модуля с фасадами и режимами `Strict`, `Hybrid`, `Debug/Raw`.
+- Синхронизированы SSOT-документы под новый response-policy contract: `Docs_Index`, `SystemArchitecture`, `Modules/Codex`, `todo-plan`, а также release-facing `README.md` и `CHANGELOG.md` под версию `1.1.721`.
+- В процессе релизной сборки локализован package-level TypeScript дефект в `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`: workspace build падал из-за ветки, где `state.extractor` логически существовал, но не был доказан для `tsc`. Исправление вынесено в отдельный commit.
+- Выполнен полный release cycle baseline-дерева:
+  - `npm run compile`
+  - `npm run build --workspace @codeai-hub/codex-module`
+  - `./scripts/build-all.sh`
+  - `./scripts/build-release.sh --use-current-version`
+- Получены новые артефакты релиза `v1.1.721`:
+  - VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-pre-gpt54-v1.1.712/codeai-hub-1.1.721.vsix`
+  - tarballs: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-pre-gpt54-v1.1.712/doc/tmp/releases/`
 
-## Validation / checks
-- `npm run build --workspace=@codeai-hub/codex-module` — ✅ success.
-- `npm run build --workspace=@codeai-hub/core` — ✅ success.
-- `npm run compile` — ✅ success.
-- `./scripts/build-all.sh --allow-dirty` — ✅ success for `v1.1.713` (initial rollout) and ✅ success for `v1.1.714` (stale-env hotfix); provider/core/ui/launcher tarballs собраны в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
-- `./scripts/build-release.sh --use-current-version --allow-dirty` — ✅ success for `v1.1.713` and ✅ success for `v1.1.714`.
-- `build-release` лог hotfix-релиза — ✅ подтверждены этапы `Verifying SDK exclusions`, `Removing dev dependencies before packaging...`, `✅ Package created`.
-- `build-release` quality gates — ✅ `Markdown links OK (223 files checked)`, ✅ duplication `2.97%`, ✅ architecture/type-check/compile passed.
+## Release verification notes
+- `build-all` завершился успешно после отдельного фикса `state.extractor` guard.
+- `build-release.sh --use-current-version` подтвердил:
+  - `Verifying SDK exclusions`
+  - `Removing dev dependencies before packaging...`
+  - `✅ Package created`
+- Итоговый VSIX: `codeai-hub-1.1.721.vsix` (`1.1M`).
+- В `General Settings` в кодовой базе зафиксирована новая карточка `Response Mode`; baseline default остаётся `Hybrid`.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через `git show`)
-- `b78d78a8 feat(codex): expose gpt-5.4 general model`
-- `93d75291 fix(codex): honor gpt-5.4 settings across runtime`
-- `81c9928e chore(release): build-all v1.1.714`
-- `a84c7dfa docs(release): sync v1.1.714 codex notes`
+- `e6ddc991 docs(codex): add response mode architecture plan`
+- `45318c70 feat(codex): add response mode settings`
+- `56d66e2b docs(codex): sync response mode ssot`
+- `8fb69fa4 fix(codex): guard structured passthrough extractor`
+- `19dc0289 chore(release): build-all v1.1.721`
+- `4f7c3ab9 docs(release): record response mode rollout`
 
 ---
 
@@ -41,13 +48,13 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Modules/Codex.md`
-5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session063.md` (THIS REPORT)
-
-> Далее: в зависимости от результатов smoke открыть нужные документы из `doc/SolidWorks-WorkFlow/Contracts/` и `doc/SolidWorks-WorkFlow/Clusters/`.
+5. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
+6. `doc/TODO/todo-plan.md`
+7. `doc/Sessions/Session063.md` (THIS REPORT)
 
 ## Plans for next session
-- После пользовательского обновления Codex CLI/SDK и `~/.codeai-hub/providers/codex/home/models_cache.json` с `gpt-5.4` прогнать smoke `v1.1.714` для Codex Settings/runtime/resume-path.
-- Проверить на реальном fresh session, что rollout JSONL фиксирует `turn_context.model = gpt-5.4`, даже если Core был запущен до последнего изменения Settings.
-- Проверить, что legacy `gpt-5.2` настройки автоматически нормализуются в `gpt-5.4`, а явный выбор general-модели не откатывается в sticky `gpt-5.3-codex` thread.
-- Если smoke зелёный, решить: делать ли отдельные git commits/post-release cleanup и архивировать текущий `todo-plan.md`; если найдётся дефект, открыть новую Phase под follow-up fix.
+- Сначала выполнить smoke на `v1.1.721` в реальной инсталляции и проверить persistence/round-trip трёх режимов в `Settings -> General`.
+- Проверить поведение `gpt-5.4` в `Hybrid` и `Debug/Raw` на свежем workspace и сравнить raw provider rollout против нашего dialog/history слоя.
+- Закрыть оставшийся diagnostic gap из `Phase 291 / Stream 2`: оформить явный append-safe raw provider diagnostic writer contract до UI/history фильтров.
+- Затем перейти к `Phase 292`: mode-aware normalization/persistence, fallback progress-layer и regression guards для `strict`, `hybrid`, `debug_raw`.
+- Если smoke будет зелёным, готовить следующую итерацию уже не на уровне настройки, а на уровне качества отображения commentary/progress для `gpt-5.4`.

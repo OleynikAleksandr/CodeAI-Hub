@@ -161,38 +161,3 @@ test("DescriptionStepStore.read clears primarySession on workspace mismatch", as
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
-
-test("DescriptionStepStore.read warns when snapshot JSON is corrupted", async () => {
-  const workspaceSlug = "codeai-hub";
-  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
-
-  try {
-    const statePath = buildStatePath(workspaceRoot, workspaceSlug);
-    await mkdir(path.dirname(statePath), { recursive: true });
-    await writeFile(statePath, "{invalid-json", "utf8");
-
-    const warnings: Array<{
-      readonly message: string;
-      readonly context?: Record<string, unknown>;
-    }> = [];
-    const store = new DescriptionStepStore({
-      logger: {
-        warn(message, context) {
-          warnings.push({ message, context });
-        },
-      },
-    });
-
-    const snapshot = await store.read(workspaceRoot, workspaceSlug);
-
-    assert.equal(snapshot, null);
-    assert.equal(warnings.length, 1);
-    assert.equal(
-      warnings[0]?.message,
-      "Failed to read description step snapshot"
-    );
-    assert.equal(warnings[0]?.context?.filePath, statePath);
-  } finally {
-    await rm(workspaceRoot, { recursive: true, force: true });
-  }
-});

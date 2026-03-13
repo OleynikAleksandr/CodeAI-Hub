@@ -1,11 +1,5 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  type DescriptionStepStoreLogger,
-  readDescriptionStepJson,
-  resolveDescriptionStepStoreLogger,
-  SerializedWorkspaceWriter,
-  writeDescriptionStepJson,
-} from "./description-step-store-storage";
 import type {
   DescriptionBranchSnapshot,
   DescriptionSessionKind,
@@ -156,6 +150,20 @@ const normalizeWorkspacePath = (value: string): string => {
   return path.resolve(value);
 };
 
+const readJson = async <T>(filePath: string): Promise<T | null> => {
+  try {
+    const content = await readFile(filePath, "utf8");
+    return JSON.parse(content) as T;
+  } catch {
+    return null;
+  }
+};
+
+const writeJson = async (filePath: string, value: unknown): Promise<void> => {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+};
+
 export const buildDescriptionBranchSnapshot = (
   snapshot: DescriptionStepSnapshot
 ): DescriptionBranchSnapshot => {
@@ -183,34 +191,23 @@ export const buildDescriptionBranchSnapshot = (
 
 export class DescriptionStepStore {
   private readonly clock: () => string;
-  private readonly logger: DescriptionStepStoreLogger;
-  private readonly writeQueue = new SerializedWorkspaceWriter();
 
-  constructor(options?: {
-    readonly clock?: () => string;
-    readonly logger?: DescriptionStepStoreLogger;
-  }) {
+  constructor(options?: { readonly clock?: () => string }) {
     this.clock = options?.clock ?? (() => new Date().toISOString());
-    this.logger = resolveDescriptionStepStoreLogger(options?.logger);
   }
 
   async read(
     workspaceRoot: string,
     workspaceSlug: string
   ): Promise<DescriptionStepSnapshot | null> {
-    const statePath = buildStatePath(workspaceRoot, workspaceSlug);
-    const snapshot = await readDescriptionStepJson<DescriptionStepSnapshot>(
-      statePath,
-      this.logger
+    const snapshot = await readJson<DescriptionStepSnapshot>(
+      buildStatePath(workspaceRoot, workspaceSlug)
     );
     if (!snapshot) {
       return null;
     }
     const parsed = parseSnapshot(snapshot, workspaceRoot);
     if (!parsed) {
-      this.logger.warn("Ignoring invalid description step snapshot shape", {
-        filePath: statePath,
-      });
       return null;
     }
     // Validate workspacePath matches current workspaceRoot
@@ -230,47 +227,41 @@ export class DescriptionStepStore {
     return parsed;
   }
 
-  upsert(
+  async upsert(
     workspaceRoot: string,
     workspaceSlug: string,
     update: DescriptionStepUpdate
   ): Promise<DescriptionStepSnapshot> {
-    const queueKey = `${normalizeWorkspacePath(workspaceRoot)}::${workspaceSlug}`;
-    return this.writeQueue.serialize(queueKey, async () => {
-      const existing = await this.read(workspaceRoot, workspaceSlug);
-      const now = this.clock();
-      const nextSessionKind = resolveSessionKind(
-        existing?.sessionKind,
-        update.sessionKind
-      );
-      const next: DescriptionStepSnapshot = {
-        workspaceSlug,
-        workspacePath: normalizeWorkspacePath(workspaceRoot),
-        createdAt: existing?.createdAt ?? now,
-        updatedAt: now,
-        questionnairePath: resolveField(
-          existing?.questionnairePath,
-          update.questionnairePath
-        ),
-        draftPath: resolveField(existing?.draftPath, update.draftPath),
-        finalPath: resolveField(existing?.finalPath, update.finalPath),
-        primarySession: resolveSession(
-          existing?.primarySession,
-          resolvePrimarySessionUpdate(update)
-        ),
-        collectorSession: resolveSession(
-          existing?.collectorSession,
-          update.collectorSession
-        ),
-        session: resolveSession(existing?.session, update.session),
-        sessionKind: nextSessionKind,
-      };
+    const existing = await this.read(workspaceRoot, workspaceSlug);
+    const now = this.clock();
+    const nextSessionKind = resolveSessionKind(
+      existing?.sessionKind,
+      update.sessionKind
+    );
+    const next: DescriptionStepSnapshot = {
+      workspaceSlug,
+      workspacePath: normalizeWorkspacePath(workspaceRoot),
+      createdAt: existing?.createdAt ?? now,
+      updatedAt: now,
+      questionnairePath: resolveField(
+        existing?.questionnairePath,
+        update.questionnairePath
+      ),
+      draftPath: resolveField(existing?.draftPath, update.draftPath),
+      finalPath: resolveField(existing?.finalPath, update.finalPath),
+      primarySession: resolveSession(
+        existing?.primarySession,
+        resolvePrimarySessionUpdate(update)
+      ),
+      collectorSession: resolveSession(
+        existing?.collectorSession,
+        update.collectorSession
+      ),
+      session: resolveSession(existing?.session, update.session),
+      sessionKind: nextSessionKind,
+    };
 
-      await writeDescriptionStepJson(
-        buildStatePath(workspaceRoot, workspaceSlug),
-        next
-      );
-      return next;
-    });
+    await writeJson(buildStatePath(workspaceRoot, workspaceSlug), next);
+    return next;
   }
 }

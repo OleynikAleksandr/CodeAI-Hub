@@ -210,23 +210,9 @@ export type IncomingMessage =
       readonly type: "dialog:send";
       readonly payload: {
         readonly requestId: string;
-        readonly outboundAttemptId: string;
         readonly workspaceSlug: string;
         readonly dialogId: string;
         readonly content: string;
-      };
-    }
-  | {
-      readonly type: "dialog:trace";
-      readonly payload: {
-        readonly event: string;
-        readonly requestId: string;
-        readonly outboundAttemptId: string;
-        readonly workspaceSlug: string;
-        readonly dialogId: string;
-        readonly contentLength?: number;
-        readonly payload?: unknown;
-        readonly error?: string | null;
       };
     }
   | {

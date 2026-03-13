@@ -7,14 +7,16 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.719
-- PM workflow hydration: shared `workflow-state` теперь остаётся в fast cadence на горячем workflow окне и может быть явно обновлён сразу после `Description submit`, поэтому tree/main area не должны ждать slow poll, чтобы увидеть новую session binding и `Final_Description.md`.
-- PM Description session: после `session:created` левая панель больше не должна откатываться обратно в pre-submit `Description Help`, пока workflow-state догоняет артефакты и continuity.
-- PM Description restore: auto-select / reopen для `Description` теперь использует общий session resolver и должен надёжнее поднимать collector session node в существующих workspace.
-- Virtual Simulation validation: Core и Project Manager по-прежнему принимают и `##`, и `### Сценарий N`, чтобы уже созданные live-артефакты не получали ложный `invalid`.
-- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.719` и пересобрать provider/core/ui/launcher артефакты под PM hydration repair test rollout.
+## Current Release — v1.1.722
+- Stable baseline release: сохраняет workflow/PM поведение линии `v1.1.712`, которая прошла зелёный smoke после зачистки старых инсталляций и сессий.
+- Codex settings: general-purpose модель остаётся `gpt-5.4`; coding-модель `gpt-5.3-codex` оставлена без изменений.
+- General Settings: карточка `Response Mode` остаётся в `Strict`, `Hybrid` и `Debug/Raw`, без возврата к позднему rollout-коду основной ветки.
+- Codex runtime: исправлен session-promotion regression, из-за которого `Debug/Raw` и `Hybrid` после `thread.started` откатывались в `DEFAULT_TURN_CONFIG`.
+- Для `gpt-5.4` это восстанавливает downstream dialog path: provider commentary и финальный текст снова могут пройти из native rollout/SDK path в unified-session history после смены временного `sessionId` на реальный `threadId`.
+- SDK diagnostics: `sdk-codex-*.jsonl` по-прежнему не должны затираться при `resume` на том же `thread_id`.
+- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.722` и пересобрать provider/core/ui/launcher артефакты для baseline response-mode promotion-fix release.
 
-Previous releases (summary): the `1.1.57x–1.1.716` series focused on workflow submit diagnostics, SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, codebase hygiene / markdown-link gates, the Codex `gpt-5.4` rollout, the stale-env hotfix from `v1.1.714`, and the raw workflow commentary-restore baseline from `v1.1.715`.
+Previous releases (summary): the `1.1.57x–1.1.719` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, and later PM hydration/workflow-state experiments that are intentionally not part of this stable baseline release.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

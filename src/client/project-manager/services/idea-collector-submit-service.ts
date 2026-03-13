@@ -47,6 +47,9 @@ type SessionErrorPayload = {
   readonly message: string;
 };
 
+const cachedWorkflowSchemas = new Map<WorkflowStageId, Record<string, unknown>>();
+const pendingWorkflowSchemas = new Map<WorkflowStageId, Promise<Record<string, unknown>>>();
+
 const normalizeWorkflowContract = (
   payload: unknown,
   stage: WorkflowStageId
@@ -151,6 +154,28 @@ const extractSessionErrorPayload = (
   const sessionId =
     typeof payload.sessionId === "string" ? payload.sessionId : undefined;
   return { sessionId, message };
+};
+export const loadWorkflowSchemaForProjectManager = async (
+  stage: WorkflowStageId
+): Promise<Record<string, unknown>> => {
+  const cachedSchema = cachedWorkflowSchemas.get(stage);
+  if (cachedSchema) {
+    return cachedSchema;
+  }
+  const pendingSchema = pendingWorkflowSchemas.get(stage);
+  if (pendingSchema) {
+    return pendingSchema;
+  }
+  const pending = loadWorkflowContract(stage)
+    .then((contract) => {
+      cachedWorkflowSchemas.set(stage, contract.schema);
+      return contract.schema;
+    })
+    .finally(() => {
+      pendingWorkflowSchemas.delete(stage);
+    });
+  pendingWorkflowSchemas.set(stage, pending);
+  return pending;
 };
 const createIdeaCollectorSession = async (params: {
   readonly workspacePath: string;
