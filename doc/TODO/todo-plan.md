@@ -42,8 +42,8 @@
 ## Phase 298 — Description workflow state: collapse legacy session model (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Core description snapshot contract
-1. [TODO] Сжать core snapshot шага `description` до одного канонического session slot `primarySession`: убрать legacy `collectorSession`, `session` и `sessionKind` из active types/store merge logic, сохранив только текущую single-session модель; runtime consumer из `Phase 299` уже снят, stream снова разблокирован (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): collapse description session slots`).
-2. [TODO] Git Commit: `refactor(core): collapse description session slots` (hash: TBD)
+1. [DONE] Сжать persisted core snapshot шага `description` до одного канонического session slot `primarySession`: убрать legacy `collectorSession`, `session` и `sessionKind` из active types/store merge logic, сохранив только single-session source-of-truth; на workflow-state boundary временно оставлен compat alias от `primarySession`, пока PM consumers не перестанут читать `description.session/sessionKind` (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): collapse description session slots`).
+2. [DONE] Git Commit: `refactor(core): collapse description session slots` (hash: `92829b21`)
 
 ### Stream 1: Session handler and workspace activation
 3. [DONE] Перевести description continuity/activation на приоритет `primarySession`, чтобы core routing и workspace activation перестали читать legacy collector slot как основной источник dialog/session identity; compat fallback пока сохраняется до следующего микро-шага (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): prefer primary session for description continuity`).
@@ -56,6 +56,18 @@
 8. [DONE] Git Commit: `refactor(pm): prefer primary session in description tree` (hash: `de680416`)
 9. [DONE] Довести PM workflow-state alignment до канонического `primarySession`: поднять `primarySession` в client parse shape и перевести provider resolver на него как на основной источник provider choice (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): align description workflow state with primary session`).
 10. [DONE] Git Commit: `refactor(pm): align description workflow state with primary session` (hash: `72eee7fc`)
+
+### Stream 3: PM description state consumers
+11. [TODO] Перевести оставшихся PM consumers workflow-state на `primarySession`, чтобы main-area и workspace auto-select больше не зависели от временного compat alias `description.session/sessionKind` при показе `questionnaire.md` и resume Description dialog (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/services/workflow-state-helpers.ts`; expected commit: `refactor(pm): use primary session in description consumers`).
+12. [TODO] Git Commit: `refactor(pm): use primary session in description consumers` (hash: TBD)
+
+### Stream 4: PM workflow-state boundary contract
+13. [TODO] Удалить из PM workflow-state client/solver remaining fallback на legacy `description.session` / `description.collectorSession` / `description.sessionKind`, чтобы webview boundary тоже считала `primarySession` единственным живым session slot (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`; expected commit: `refactor(pm): drop legacy description state aliases`).
+14. [TODO] Git Commit: `refactor(pm): drop legacy description state aliases` (hash: TBD)
+
+### Stream 5: Core workflow-state output cleanup
+15. [TODO] Снять временный compat alias `description.session/sessionKind` на core workflow-state boundary после PM migration и закрепить canonical output contract только на `primarySession` (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit: `refactor(core): drop description session compat alias`).
+16. [TODO] Git Commit: `refactor(core): drop description session compat alias` (hash: TBD)
 
 ---
 

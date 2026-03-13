@@ -13,7 +13,9 @@
 - Полностью удалён живой PM/UI entry point старого `↻ Restart attempt` рядом с `questionnaire.md`.
 - Добавлен regression guard, который не позволяет вернуть PM restart-control через скрытый import/render branch.
 - PM-side workflow state и routing переведены на канонический `primarySession`.
-- Core-side continuity и workspace activation переведены на приоритет `primarySession`; legacy fallback пока ещё жив, но перестал быть основным источником для description dialog identity.
+- Core-side continuity и workspace activation переведены на приоритет `primarySession`; legacy fallback на continuity уже снят.
+- Persisted `description-step` snapshot схлопнут до одного source-of-truth slot `primarySession`; legacy `collectorSession/session/sessionKind` теперь читаются только как read-compat для старых state-файлов.
+- Во время закрытия `Phase 298` обнаружено, что часть PM consumers всё ещё читает workflow-state alias `description.session/sessionKind`, поэтому фаза расширена дополнительными boundary streams до полного снятия compat output.
 
 ## Phase progress
 
@@ -33,7 +35,18 @@
 
 ### Phase 298 — IN_PROGRESS
 
-#### Stream 1 — partial DONE
+#### Stream 0 — DONE
+- `packages/core/src/workflow/description/description-step-types.ts`
+  - `DescriptionStepSnapshot` и `DescriptionStepUpdate` очищены от active `collectorSession` / `session` / `sessionKind`.
+- `packages/core/src/workflow/description/description-step-store.ts`
+  - parse/read/upsert сведены к canonical `primarySession`.
+  - Legacy state-файлы с `collectorSession`/`session` всё ещё читаются, но только как import-compat.
+  - Persisted `description-step.json` больше не пишет legacy session slots.
+- `packages/core/src/workflow/description/description-step-store.test.ts`
+  - Добавлены guards, что store складывает legacy read в `primarySession`, не пишет старые поля и временно продолжает отдавать compat alias на workflow-state boundary.
+- Временный compat alias `description.session/sessionKind` оставлен только на boundary-слое `buildDescriptionBranchSnapshot(...)`, чтобы не сломать PM до завершения оставшихся streams.
+
+#### Stream 1 — DONE
 - Core continuity/activation теперь предпочитает `primarySession`:
   - `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
   - `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`
@@ -47,8 +60,11 @@
   - `src/client/project-manager/services/workflow-provider-resolver.ts`
   - `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`
 
-#### Stream 0 — TODO
-- Core `description-step` types/store ещё не очищены от `collectorSession` / `session` / `sessionKind`.
+#### Streams 3-5 — TODO
+- Осталось:
+  - перевести PM consumers (`use-main-area-workflow-state.ts`, `workspace-tree-auto-select.ts`, `workflow-state-helpers.ts`) на `primarySession`;
+  - убрать fallback на legacy alias из `workflow-state-client.ts` и `workflow-provider-resolver.ts`;
+  - после этого снять временный compat alias `description.session/sessionKind` на core workflow-state boundary.
 
 ### Phase 299 — DONE
 
@@ -73,6 +89,7 @@
 - `node --test --import tsx --test-name-pattern "primary description dialog session ref" packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
 - `node --test --import tsx --test-name-pattern "legacy run-scoped description drafts" packages/core/src/workflow/runtime/workflow-runtime.test.ts`
 - `node --test --import tsx --test-name-pattern "primary description dialog session ref|persists primary description session ref without resetting artifacts" packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
+- `node --test --import tsx packages/core/src/workflow/description/description-step-store.test.ts`
 - Все git commits проходили через штатные Husky hooks:
   - `npm test`
   - `./scripts/check-architecture.sh`
@@ -91,6 +108,8 @@
 - `8cd39e19 refactor(core): use canonical description session slot`
 - `cb3f0d91 refactor(core): drop description attempt gating`
 - `3bf1abeb refactor(core): remove description attempt reset logic`
+- `15f34518 docs(session): record runtime cleanup progress`
+- `92829b21 refactor(core): collapse description session slots`
 
 ---
 
@@ -104,6 +123,6 @@
 5. `doc/Sessions/Session069.md` (THIS REPORT)
 
 ## Plans for next session
-- Закрыть `Phase 298 / Stream 0`: убрать legacy session slots из `description-step` types/store/tests.
-- После этого вычистить path contracts из `Phase 300`.
+- Закрыть оставшиеся `Phase 298 / Streams 3-5`: перевести PM consumers на `primarySession`, убрать boundary fallback и снять временный core compat alias.
+- После закрытия `Phase 298` перейти к path contracts из `Phase 300`.
 - Затем синхронизировать docs/guards и дойти до release build из `Phase 303`.
