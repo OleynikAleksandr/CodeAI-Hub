@@ -50,8 +50,8 @@
 4. [TODO] Git Commit: `refactor(core): use canonical description session slot` (hash: TBD)
 
 ### Stream 2: PM workflow-state client alignment
-5. [IN_PROGRESS] Упростить PM-side workflow-state parsing и selection logic до канонического `primarySession`, чтобы tree/provider resolution не опирались на legacy `collectorSession`/`sessionKind` shape; первый проход уже перевёл `workflow-state-client` и tree на `primarySession`, provider resolver добиваем отдельным микро-коммитом (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit: `refactor(pm): align description workflow state with primary session`).
-6. [TODO] Git Commit: `refactor(pm): align description workflow state with primary session` (hash: TBD)
+5. [DONE] Упростить PM-side workflow-state parsing и selection logic до канонического `primarySession`, чтобы tree/provider resolution не опирались на legacy `collectorSession`/`sessionKind` shape (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit: `refactor(pm): align description workflow state with primary session`).
+6. [DONE] Git Commit: `refactor(pm): align description workflow state with primary session` (hash: TBD)
 
 ---
 

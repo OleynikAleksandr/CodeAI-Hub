@@ -9,6 +9,7 @@ const resolveProviderIdFromDescription = (
 ): ProviderStackId | null => {
   const description = state?.description;
   const candidates: readonly unknown[] = [
+    description?.primarySession?.providerId,
     description?.session?.providerId,
     description?.collectorSession?.providerId,
   ];
