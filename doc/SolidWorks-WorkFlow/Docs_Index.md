@@ -49,10 +49,6 @@
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — draft implementation design для deferred session-home architecture.
 - `Contracts/StandaloneReviewer_Module.md` — draft deferred-модуля standalone reviewer (manual-only, вне базового chain 1→6).
 
-### Root Drafts/RFC (non-SSOT, keep for history)
-- `CodeAI-Hub_Manual_Retry_RFC.md` — исторический RFC (status: Proposed), не канон.
-- `QuestionnaireTemplate_Draft.md` — промежуточный черновик анкеты, не runtime SSOT.
-
 ## 2) Runtime templates (Description)
 
 Каноничные bundled-шаблоны для шага `Description`:
