@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.723] - 2026-03-13
+### Changed
+- Mainline release verification: основной `main` жёстко синхронизирован с baseline line `v1.1.722`, чтобы дальнейшая работа и release cycle шли уже от проверенного response-mode stable baseline.
+
+### Fixed
+- Codex runtime: baseline fix для response-mode session promotion (`Debug/Raw` / `Hybrid`) теперь доступен напрямую из основного `main`, без зависимости от отдельного baseline worktree.
+
 ## [1.1.722] - 2026-03-13
 ### Fixed
 - Codex runtime: preserved response-mode state across `temp session id -> real thread id` promotion, so `Debug/Raw` and `Hybrid` no longer fall back to the default structured-output config after `thread.started`.

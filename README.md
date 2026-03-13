@@ -7,14 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.722
+## Current Release — v1.1.723
+- Mainline baseline promotion: основной `main` жёстко синхронизирован с проверенной baseline-линией `v1.1.722`, чтобы дальнейшая разработка шла уже от стабильной точки без поздних PM/workflow-state экспериментов.
 - Stable baseline release: сохраняет workflow/PM поведение линии `v1.1.712`, которая прошла зелёный smoke после зачистки старых инсталляций и сессий.
 - Codex settings: general-purpose модель остаётся `gpt-5.4`; coding-модель `gpt-5.3-codex` оставлена без изменений.
 - General Settings: карточка `Response Mode` остаётся в `Strict`, `Hybrid` и `Debug/Raw`, без возврата к позднему rollout-коду основной ветки.
 - Codex runtime: исправлен session-promotion regression, из-за которого `Debug/Raw` и `Hybrid` после `thread.started` откатывались в `DEFAULT_TURN_CONFIG`.
 - Для `gpt-5.4` это восстанавливает downstream dialog path: provider commentary и финальный текст снова могут пройти из native rollout/SDK path в unified-session history после смены временного `sessionId` на реальный `threadId`.
 - SDK diagnostics: `sdk-codex-*.jsonl` по-прежнему не должны затираться при `resume` на том же `thread_id`.
-- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.722` и пересобрать provider/core/ui/launcher артефакты для baseline response-mode promotion-fix release.
+- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.723` и пересобрать provider/core/ui/launcher артефакты уже из `main`, который теперь совпадает с baseline response-mode line.
 
 Previous releases (summary): the `1.1.57x–1.1.719` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, and later PM hydration/workflow-state experiments that are intentionally not part of this stable baseline release.
 

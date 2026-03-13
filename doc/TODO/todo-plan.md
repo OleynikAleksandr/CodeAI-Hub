@@ -119,3 +119,13 @@
 8. [DONE] Git Commit: `chore(release): build-all v1.1.722` (hash: `142e0958`)
 9. [DONE] Зафиксировать bug closure, release handoff и session report для `v1.1.722` (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session065.md`; expected commit: `docs(release): record response mode promotion fix`).
 10. [DONE] Git Commit: `docs(release): record response mode promotion fix` (hash: `2382f168`)
+
+## Phase 295 — Mainline baseline promotion release verification (owner: Oleksandr, updated: 2026-03-13)
+
+### Stream 0: User-requested release build from main
+1. [IN_PROGRESS] Синхронизировать release-facing документы основного репозитория после жёсткого baseline merge и подготовить локальную release-проверку уже из `main` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare main baseline verification build`).
+2. [TODO] Git Commit: `docs(release): prepare main baseline verification build` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version` из основного репозитория, подтвердить новый VSIX/tarball набор и проверить, что mainline release cycle проходит на baseline tree без merge-регрессий (scope: root release assets, `doc/tmp/releases/`, `package-lock.json`; expected commit: `build(release): verify main baseline promotion build`).
+4. [TODO] Git Commit: `build(release): verify main baseline promotion build` (hash: TBD)
+5. [TODO] Зафиксировать результаты проверки и оформить новый session report для уже объединённого `main` (scope: `doc/Sessions/`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record main baseline release verification`).
+6. [TODO] Git Commit: `docs(session): record main baseline release verification` (hash: TBD)
