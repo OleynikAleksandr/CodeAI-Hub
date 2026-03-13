@@ -42,14 +42,14 @@
 ## Phase 298 — Description workflow state: collapse legacy session model (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Core description snapshot contract
-1. [BLOCKED] Сжать core snapshot шага `description` до одного канонического session slot `primarySession`: убрать legacy `collectorSession`, `session` и `sessionKind` из active types/store merge logic, сохранив только текущую single-session модель; blocked до снятия последнего runtime consumer в `Phase 299`, иначе `workflow-runtime.ts` останется на удалённых полях (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): collapse description session slots`).
+1. [TODO] Сжать core snapshot шага `description` до одного канонического session slot `primarySession`: убрать legacy `collectorSession`, `session` и `sessionKind` из active types/store merge logic, сохранив только текущую single-session модель; runtime consumer из `Phase 299` уже снят, stream снова разблокирован (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/workflow/description/description-step-store.test.ts`; expected commit: `refactor(core): collapse description session slots`).
 2. [TODO] Git Commit: `refactor(core): collapse description session slots` (hash: TBD)
 
 ### Stream 1: Session handler and workspace activation
 3. [DONE] Перевести description continuity/activation на приоритет `primarySession`, чтобы core routing и workspace activation перестали читать legacy collector slot как основной источник dialog/session identity; compat fallback пока сохраняется до следующего микро-шага (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): prefer primary session for description continuity`).
 4. [DONE] Git Commit: `refactor(core): prefer primary session for description continuity` (hash: `16dbeb22`)
 5. [DONE] Удалить из description session persistence/activation remaining fallback на legacy `collectorSession` / `session`, чтобы core-side continuity shape окончательно опирался на канонический `primarySession` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): use canonical description session slot`).
-6. [DONE] Git Commit: `refactor(core): use canonical description session slot` (hash: TBD)
+6. [DONE] Git Commit: `refactor(core): use canonical description session slot` (hash: `8cd39e19`)
 
 ### Stream 2: PM workflow-state client alignment
 7. [DONE] Перевести PM tree/stage sync на `primarySession`, чтобы Description branch открывал сессию и artifact sync через канонический slot вместо `branch.session` (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): prefer primary session in description tree`).
@@ -62,12 +62,12 @@
 ## Phase 299 — Runtime: remove attempt/run semantics from description flow (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Workflow runtime cleanup
-1. [TODO] Удалить из workflow runtime run-scoped draft detection и stale-attempt gating для `description`, чтобы active runtime contract больше не распознавал `description/runs/<attempt>/description.md` как часть нормального flow (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `refactor(core): drop description attempt gating`).
-2. [TODO] Git Commit: `refactor(core): drop description attempt gating` (hash: TBD)
+1. [DONE] Удалить из workflow runtime run-scoped draft detection и stale-attempt gating для `description`, чтобы active runtime contract больше не распознавал `description/runs/<attempt>/description.md` как часть нормального flow (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`; expected commit: `refactor(core): drop description attempt gating`).
+2. [DONE] Git Commit: `refactor(core): drop description attempt gating` (hash: `cb3f0d91`)
 
 ### Stream 1: Remove new-attempt reset semantics
-3. [TODO] Удалить `shouldResetDescriptionCollectorArtifacts(...)` и связанную reset-механику, которая обнуляет `draftPath`/`finalPath` при появлении новой description session как если бы существовала “новая попытка” (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): remove description attempt reset logic`).
-4. [TODO] Git Commit: `refactor(core): remove description attempt reset logic` (hash: TBD)
+3. [DONE] Удалить `shouldResetDescriptionCollectorArtifacts(...)` и связанную reset-механику, которая обнуляет `draftPath`/`finalPath` при появлении новой description session как если бы существовала “новая попытка” (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `refactor(core): remove description attempt reset logic`).
+4. [DONE] Git Commit: `refactor(core): remove description attempt reset logic` (hash: `3bf1abeb`)
 
 ---
 
