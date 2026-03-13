@@ -50,7 +50,7 @@
 ### Legacy artifacts (compat only)
 
 - `.codeai-hub/<workspaceSlug>/description/description.md` (включая `runs/*`) может существовать в старых workspace.
-- В новой модели legacy draft не является upstream-источником истины.
+- В новой модели legacy draft не является upstream-источником истины и не должен просачиваться в product-visible PM/UI labels.
 
 ---
 
@@ -114,6 +114,8 @@
 
 - Не упоминать `description.md` как целевой артефакт.
 - Не упоминать auto-reviewer как часть шага `Description`.
+- Не показывать пользователю legacy label `description.md`; даже compat `draftPath` отображается как `Final_Description.md`.
+- Не описывать ручной recovery/restart flow как поддерживаемую возможность продукта.
 
 ---
 
@@ -130,7 +132,7 @@
 ## 7) Compatibility + migration baseline
 
 - Legacy workspace с `description.md` должны оставаться читаемыми.
-- Runtime/watcher/gating обязаны опираться на `Final_Description.md` как канон.
+- Runtime/watcher/gating обязаны опираться на `Final_Description.md` как канон; внутренний compat-слой для legacy draft допустим только как non-SSOT fallback.
 - Downstream prompts и path contracts используют только `Final_Description.md`.
 
 ---

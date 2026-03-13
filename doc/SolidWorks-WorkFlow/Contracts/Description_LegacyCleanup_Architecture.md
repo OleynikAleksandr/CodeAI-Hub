@@ -17,6 +17,25 @@
 
 ---
 
+## Status checkpoint (2026-03-13)
+
+Фактический статус implementation-линии:
+- `Phase 297` закрыт: PM restart control удалён.
+- `Phase 298` закрыт: workflow-state/session model сведены к `primarySession`.
+- `Phase 299` закрыт: attempt/reset semantics удалены.
+- `Phase 300` закрыт: active UI/package/router/path хвосты старой architecture вычищены, product-visible `description.md` больше не показывается.
+
+Оставшийся допустимый compat-слой на текущей границе:
+- внутренний runtime/store fallback для legacy `description/description.md`;
+- связанные source-level tests, подтверждающие, что такой compat не ломает канонический `Final_Description.md`.
+
+Этот compat-слой не считается частью product contract, пока он:
+- не виден в PM/UI;
+- не участвует в downstream routing как SSOT;
+- не возвращает attempt/restart semantics.
+
+---
+
 ## Problem statement
 
 После перехода на single-agent file-first flow в кодовой базе остались legacy-слои старой архитектуры:
@@ -39,7 +58,7 @@
 - read/write fallbacks для `description.md`, `description/runs/*`, `description/idea/*`, `runs/*/idea/questionnaire.md`.
 
 5. Docs legacy:
-- живые контракты ещё содержат recovery/restart semantics, хотя текущий SSOT уже основан на `Final_Description.md`.
+- часть живых контрактов ещё содержит recovery/restart semantics или недостаточно чётко отделяет internal compat от product contract.
 
 Пока эти слои живы, кодовая база противоречит собственному SSOT и требует лишней когнитивной нагрузки при любом изменении шага `description`.
 
@@ -125,7 +144,8 @@ Legacy slots:
   - `description/Final_Description.md`
 
 ### Draft invariant
-- `description.md` и `description/runs/*/description.md` не участвуют в active runtime contract.
+- `description.md` и `description/runs/*/description.md` не участвуют в active product/runtime contract.
+- Допускается внутренний compat fallback для legacy `description.md`, если он не влияет на PM/UI labels и downstream SSOT-routing.
 - Для шага `description` нет logic branch “accept only latest attempt”.
 
 ### Continuity invariant
@@ -161,14 +181,15 @@ Legacy slots:
 - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 
-### Disallowed active paths
+### Disallowed active product paths
 - `.codeai-hub/<workspaceSlug>/description/description.md`
 - `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/description.md`
 - `.codeai-hub/<workspaceSlug>/description/idea/idea.md`
 - `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/idea/idea.md`
 - `.codeai-hub/<workspaceSlug>/description/runs/<runSlug>/idea/questionnaire.md`
 
-Если где-то такие пути ещё используются текущим кодом, это считается cleanup debt и должно быть устранено.
+Если где-то такие пути ещё используются product-visible кодом, это считается cleanup debt и должно быть устранено.
+Внутренний compat fallback для `description/description.md` допускается только как временный non-SSOT bridge.
 
 ---
 
@@ -247,7 +268,7 @@ Cleanup считается завершённым, когда одновреме
 1. В живом UI нет `↻ Restart attempt`.
 2. В active code нет special-case логики “description restart/new attempt”.
 3. Workflow state не использует legacy session slots для `description`.
-4. Active path contracts больше не зависят от `description.md` и `runs/*`.
+4. Active product path contracts больше не зависят от `description.md` и `runs/*`.
 5. Живые SSOT документы синхронизированы с фактической моделью.
 6. Таргетные build/test проверки проходят без rollback compat-fixes.
 
