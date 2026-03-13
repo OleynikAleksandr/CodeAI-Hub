@@ -139,19 +139,11 @@ const writeJson = async (filePath: string, value: unknown): Promise<void> => {
 export const buildDescriptionBranchSnapshot = (
   snapshot: DescriptionStepSnapshot
 ): DescriptionBranchSnapshot => {
-  const sessionCompat = snapshot.primarySession
-    ? {
-        primarySession: snapshot.primarySession,
-        session: snapshot.primarySession,
-        sessionKind: "collector" as const,
-      }
-    : {};
-
   if (snapshot.finalPath) {
     return {
       updatedAt: snapshot.updatedAt,
       finalPath: snapshot.finalPath,
-      ...sessionCompat,
+      primarySession: snapshot.primarySession,
     };
   }
 
@@ -159,7 +151,7 @@ export const buildDescriptionBranchSnapshot = (
     updatedAt: snapshot.updatedAt,
     questionnairePath: snapshot.questionnairePath,
     draftPath: snapshot.draftPath,
-    ...sessionCompat,
+    primarySession: snapshot.primarySession,
   };
 };
 

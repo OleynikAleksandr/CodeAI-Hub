@@ -29,12 +29,6 @@ export type DescriptionBranchSnapshot = {
   readonly draftPath?: string;
   readonly finalPath?: string;
   readonly primarySession?: DescriptionSessionRef;
-  /**
-   * Temporary compat alias for PM consumers that still read `description.session`.
-   * Remove once workflow-state client stops emitting/reading the legacy slot.
-   */
-  readonly session?: DescriptionSessionRef;
-  readonly sessionKind?: "collector";
 };
 
 export type DescriptionStepUpdate = {

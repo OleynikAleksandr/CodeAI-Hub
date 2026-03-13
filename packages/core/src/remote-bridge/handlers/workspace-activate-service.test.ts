@@ -22,11 +22,9 @@ test("workspace-activate-service preserves deterministic resume/reopen path afte
     "workspace activation must resume description branch session"
   );
   assert.equal(
-    source.includes(
-      "providerSessionId: descriptionSnapshot.session.providerSessionId"
-    ),
+    source.includes("providerSessionId: collector.providerSessionId"),
     true,
-    "workspace activation must pass providerSessionId to deterministic resume"
+    "workspace activation must resume description via primarySession"
   );
   assert.equal(
     source.includes("description: descriptionSnapshot"),

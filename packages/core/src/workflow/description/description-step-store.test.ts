@@ -120,10 +120,9 @@ test("DescriptionStepStore.upsert persists canonical primarySession without lega
     );
     const branchSnapshot = buildDescriptionBranchSnapshot(snapshot);
     assert.equal(
-      branchSnapshot.session?.providerSessionId,
+      branchSnapshot.primarySession?.providerSessionId,
       "collector-session-1"
     );
-    assert.equal(branchSnapshot.sessionKind, "collector");
 
     const persisted = JSON.parse(
       await readFile(buildStatePath(workspaceRoot, workspaceSlug), "utf8")
