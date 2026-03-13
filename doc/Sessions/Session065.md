@@ -36,7 +36,10 @@
   - `Verifying SDK exclusions`
   - `Removing dev dependencies before packaging...`
   - `✅ Package created`
-- Реальный smoke на установленном `1.1.722` в этой сессии не прогонялся; пользовательский runtime-валидатор остаётся следующим обязательным шагом.
+- После сборки пользователь подтвердил успешный smoke на установленном `1.1.722`:
+  - `Debug/Raw` работает корректно и пропускает промежуточные сообщения агента Codex в диалог.
+  - `Hybrid` работает аналогично `Debug/Raw` и тоже пропускает промежуточные сообщения агента Codex.
+- Сессия завершена как успешная реализация baseline-fix; дальнейшая работа по режимам `Strict / Hybrid / Debug/Raw` переносится в отдельную исследовательскую итерацию, а не в блокирующий post-release hotfix.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через `git show`)
@@ -62,7 +65,8 @@
 9. `doc/Sessions/Session065.md` (THIS REPORT)
 
 ## Plans for next session
-- Сначала сделать реальный smoke на установленном `codeai-hub-1.1.722.vsix` в workspace `gpt-5.4`, в первую очередь на `Settings -> General -> Debug/Raw`.
-- Проверить, что после runtime-fix commentary и final answer действительно попадают в unified-session/dialog JSONL, а не только в raw provider rollout.
-- Если smoke зелёный, вернуться к оставшимся пунктам `Phase 291 / Stream 2` и `Phase 292`: raw diagnostic writer contract и fallback progress-layer для случаев без provider commentary.
-- Если smoke не зелёный, локализовать уже следующий слой проблемы, но не трогать текущий promotion-fix без прямого подтверждения новой поломки.
+- Немедленных hotfix-задач по baseline-релизу `1.1.722` не осталось: пользователь подтвердил рабочий `Debug/Raw` и рабочий `Hybrid`.
+- При следующем возврате к теме response modes продолжать уже как отдельное улучшение, а не как аварийный repair:
+  - вернуться к оставшимся пунктам `Phase 291 / Stream 2` и `Phase 292`;
+  - отдельно исследовать, что можно улучшить в `Strict / Hybrid / Debug/Raw` без риска для текущего стабильного baseline.
+- Если тема будет возобновлена, не менять рабочий promotion-fix без нового воспроизводимого regression-case.
