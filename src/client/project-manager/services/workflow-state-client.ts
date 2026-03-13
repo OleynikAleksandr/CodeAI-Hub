@@ -48,9 +48,6 @@ export type DescriptionBranchSnapshot = {
   readonly draftPath?: string;
   readonly finalPath?: string;
   readonly primarySession?: DescriptionSessionRef;
-  readonly collectorSession?: DescriptionSessionRef;
-  readonly session?: DescriptionSessionRef;
-  readonly sessionKind?: "collector";
 };
 
 export type WorkflowStateSnapshot = {
@@ -200,19 +197,12 @@ const parseDescriptionBranch = (
   const draftPath = readNonEmptyString(payload.draftPath) ?? undefined;
   const finalPath = readNonEmptyString(payload.finalPath) ?? undefined;
   const primarySession = parseDescriptionSessionRef(payload.primarySession);
-  const collectorSession = parseDescriptionSessionRef(payload.collectorSession);
-  const session = parseDescriptionSessionRef(payload.session);
-  const sessionKindValue = readNonEmptyString(payload.sessionKind);
-  const sessionKind = sessionKindValue === "collector" ? "collector" : undefined;
   return {
     updatedAt,
     questionnairePath,
     draftPath,
     finalPath,
-    primarySession: primarySession ?? collectorSession ?? session ?? undefined,
-    collectorSession: collectorSession ?? undefined,
-    session: session ?? undefined,
-    sessionKind,
+    primarySession: primarySession ?? undefined,
   };
 };
 

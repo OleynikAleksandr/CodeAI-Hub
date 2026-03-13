@@ -8,12 +8,11 @@ const SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
 );
 
-test("use-main-area-workflow-state auto-opens reviewer dialog after description handoff", async () => {
+test("use-main-area-workflow-state relies on primarySession for description state", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
 
-  assert.equal(source.includes('resolvedActiveTool === "Description"'), true);
-  assert.equal(source.includes('branch?.sessionKind === "reviewer"'), true);
-  assert.equal(source.includes('new CustomEvent("pm:dialog:open"'), true);
-  assert.equal(source.includes('sessionKind: "reviewer"'), true);
-  assert.equal(source.includes('runSlug: "reviewer"'), true);
+  assert.equal(source.includes("branch?.primarySession?.providerSessionId"), true);
+  assert.equal(source.includes("branch?.session?.providerSessionId"), false);
+  assert.equal(source.includes("branch?.sessionKind"), false);
+  assert.equal(source.includes('label: "questionnaire.md" as const'), true);
 });

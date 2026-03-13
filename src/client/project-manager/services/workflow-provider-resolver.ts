@@ -7,16 +7,9 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
 const resolveProviderIdFromDescription = (
   state: WorkflowStateSnapshot | null
 ): ProviderStackId | null => {
-  const description = state?.description;
-  const candidates: readonly unknown[] = [
-    description?.primarySession?.providerId,
-    description?.session?.providerId,
-    description?.collectorSession?.providerId,
-  ];
-  for (const candidate of candidates) {
-    if (isProviderStackId(candidate)) {
-      return candidate;
-    }
+  const providerId = state?.description?.primarySession?.providerId;
+  if (isProviderStackId(providerId)) {
+    return providerId;
   }
   return null;
 };
