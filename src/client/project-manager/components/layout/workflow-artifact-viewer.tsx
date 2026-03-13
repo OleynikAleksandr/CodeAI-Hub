@@ -2,7 +2,6 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { api } from "../../api";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
-import { QuestionnaireRestartAttemptControl } from "./questionnaire-restart-attempt-control";
 
 export const WorkflowArtifactViewer: React.FC<{
   readonly workspacePath: string;
@@ -14,7 +13,6 @@ export const WorkflowArtifactViewer: React.FC<{
 }> = (props) => {
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [restartError, setRestartError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,22 +66,11 @@ export const WorkflowArtifactViewer: React.FC<{
     };
   }, [props.path, props.refreshKey, props.workspacePath, props.workspaceSlug]);
 
-  const canRestartAttempt = props.label === "questionnaire.md";
-
   return (
     <div className="pm-details">
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
         <strong title={props.path}>{props.label}</strong>
-        {canRestartAttempt ? (
-          <QuestionnaireRestartAttemptControl
-            onError={setRestartError}
-            questionnairePath={props.path}
-            workspacePath={props.workspacePath}
-            workspaceSlug={props.workspaceSlug}
-          />
-        ) : null}
       </div>
-      {restartError ? <div className="pm-placeholder">{restartError}</div> : null}
       {error ? <div className="pm-placeholder">{error}</div> : null}
       {!error && content === null ? (
         <div className="pm-placeholder">Загружаем артефакт...</div>

@@ -25,15 +25,15 @@
 
 ### Stream 0: Architecture and execution-plan bootstrap
 1. [DONE] Заархивировать текущий response-mode execution plan, зафиксировать отдельный архитектурный контракт полного cleanup-а legacy `Description` и развернуть новый `todo-plan.md` под removal `restart attempt`, attempt/run semantics и compat-path слоя (scope: `doc/TODO/Archive/todo-plan-up-to-phase295-2026-03-13.md`, `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(description): register legacy cleanup plan`).
-2. [TODO] Git Commit: `docs(description): register legacy cleanup plan` (hash: TBD)
+2. [DONE] Git Commit: `docs(description): register legacy cleanup plan` (hash: `658ee83e`)
 
 ---
 
 ## Phase 297 — PM/UI: remove restart-attempt entry points (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Questionnaire artifact header cleanup
-1. [TODO] Удалить legacy PM artifact-header restart wiring: убрать import/render/error-state из viewer и удалить `QuestionnaireRestartAttemptControl`, чтобы рядом с `questionnaire.md` больше не рендерилась круговая стрелка `↻` и не существовал ручной re-submit flow через артефакт (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`; expected commit: `fix(pm): remove questionnaire restart attempt control`).
-2. [TODO] Git Commit: `fix(pm): remove questionnaire restart attempt control` (hash: TBD)
+1. [DONE] Удалить legacy PM artifact-header restart wiring: убрать import/render/error-state из viewer и удалить `QuestionnaireRestartAttemptControl`, чтобы рядом с `questionnaire.md` больше не рендерилась круговая стрелка `↻` и не существовал ручной re-submit flow через артефакт (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`; expected commit: `fix(pm): remove questionnaire restart attempt control`).
+2. [DONE] Git Commit: `fix(pm): remove questionnaire restart attempt control` (hash: TBD)
 3. [TODO] Добавить узкий regression guard, который подтверждает отсутствие restart-attempt UI в PM artifact viewer для `questionnaire.md` и не позволяет вернуть этот control через скрытый import/render branch (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`; expected commit: `test(pm): guard questionnaire header cleanup`).
 4. [TODO] Git Commit: `test(pm): guard questionnaire header cleanup` (hash: TBD)
 
