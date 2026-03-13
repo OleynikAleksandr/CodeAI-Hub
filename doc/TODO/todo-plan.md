@@ -154,9 +154,13 @@
 ## Phase 303 — Mandatory new release build after description cleanup (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Build new release
-1. [TODO] После закрытия cleanup streams синхронизировать release-facing документы и **обязательно собрать новый релиз**: выполнить `./scripts/build-all.sh`, затем на чистом дереве `./scripts/build-release.sh --use-current-version`, получить новый VSIX и tarball-набор без rollback на legacy Description architecture (scope: `README.md`, `CHANGELOG.md`, release manifests/assets`; expected commit: `chore(release): build description cleanup release`).
-2. [TODO] Git Commit: `chore(release): build description cleanup release` (hash: TBD)
+1. [DONE] Подготовить release-facing документы под `v1.1.724` и устранить release-blockers, найденные во время сборки: stale export `IDEA_OUTPUT_ROOT` в `idea-collector` и test-only type issue в `session-request-handler.test.ts` (scope: `README.md`, `CHANGELOG.md`, `packages/agents/idea-collector/src/paths/index.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commits: `docs(release): prep description cleanup release notes`, `fix(agents): drop stale idea output root export`, `fix(core): unblock description cleanup release build`).
+2. [DONE] Git Commits: `cbc16d06 docs(release): prep description cleanup release notes`; `14824925 fix(agents): drop stale idea output root export`; `36578265 fix(core): unblock description cleanup release build`
+3. [DONE] Выполнить `./scripts/build-all.sh`, получить unified tarball-набор `1.1.724` и зафиксировать version/manifests без rollback на legacy Description architecture (scope: `package.json`, workspace package manifests, `assets/**/manifest.json`; expected commit: `chore(release): build description cleanup release`).
+4. [DONE] Git Commit: `chore(release): build description cleanup release` (hash: `d3bd953a`)
 
 ### Stream 1: Release handoff
-3. [TODO] Зафиксировать release artefacts, финальный handoff и итоговый session report именно для нового cleanup-релиза уже после пользовательского smoke-test подтверждения (scope: `doc/Sessions/Session0XX.md`, `doc/TODO/todo-plan.md`, `doc/tmp/releases/`; expected commit: `docs(release): record description cleanup release`).
-4. [TODO] Git Commit: `docs(release): record description cleanup release` (hash: TBD)
+5. [DONE] Зафиксировать release build checkpoint для `codeai-hub-1.1.724.vsix` и tarball-набора в session report / TODO plan; пользовательский smoke-test остаётся внешним post-build шагом (scope: `doc/Sessions/Session069.md`, `doc/TODO/todo-plan.md`, `doc/tmp/releases/`; expected commit: `docs(release): record description cleanup release`).
+6. [DONE] Git Commit: `docs(release): record description cleanup release` (hash: TBD)
+7. [TODO] После пользовательского smoke-test подтвердить release checkpoint `1.1.724`, при необходимости оформить post-release follow-up или архивировать текущий plan (scope: `doc/Sessions/Session0XX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): confirm description cleanup smoke`).
+8. [TODO] Git Commit: `docs(release): confirm description cleanup smoke` (hash: TBD)

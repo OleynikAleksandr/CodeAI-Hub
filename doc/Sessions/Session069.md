@@ -1,8 +1,8 @@
 # Session 069 — Implementation progress: Description legacy cleanup
 
-**Date:** 2026-03-13 13:11 (CET)
+**Date:** 2026-03-13 13:20 (CET)
 **Branch:** main
-**Version:** 1.1.723
+**Version:** 1.1.724
 
 ---
 
@@ -21,6 +21,7 @@
 - PM больше не показывает пользователю label `description.md`: tree, auto-select и main-area везде используют canonical `Final_Description.md`, даже если открыт compat `draftPath`.
 - `Phase 301` полностью закрыт: живые SSOT-документы синхронизированы с фактической single-agent Description architecture и больше не описывают `↻ Restart attempt` как поддерживаемую product-функцию.
 - `Phase 302` полностью закрыт: cleanup invariants закреплены source/unit guards, таргетные tests/build/typecheck прошли, дерево снова готово к релизной фазе.
+- `Phase 303` доведён до нового release build checkpoint: подготовлены release-facing docs, устранены два release-blocker'а, собран unified `v1.1.724` и выпущен новый VSIX `codeai-hub-1.1.724.vsix`.
 
 ## Phase progress
 
@@ -204,6 +205,34 @@
   - `npm run typecheck:webview`
 - В ходе validation найден и исправлен один test-only TypeScript issue в `session-request-handler.test.ts`; после правки все команды прошли.
 
+### Phase 303 — IN_PROGRESS
+
+#### Stream 0 — DONE
+- Release-facing документы синхронизированы под новый cleanup-релиз:
+  - `README.md`
+  - `CHANGELOG.md`
+- В ходе обязательной release-сборки всплыли два независимых блока:
+  - `packages/agents/idea-collector/src/paths/index.ts`
+    - Удалён stale export `IDEA_OUTPUT_ROOT`, ломавший `build-all` в `packages/agents/idea-collector`.
+  - `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
+    - Исправлен test-only TypeScript guard, который валил `tsc` в `packages/core` уже после version bump.
+- После фиксов прошёл полный `./scripts/build-all.sh`:
+  - unified version поднята до `1.1.724`;
+  - tarball-набор собран и лежит в `doc/tmp/releases/` и `~/.codeai-hub/releases/`;
+  - обновлены release manifests для providers/core/UI/launcher;
+  - version/manifests состояние зафиксировано commit'ом `d3bd953a chore(release): build description cleanup release`.
+
+#### Stream 1 — IN_PROGRESS
+- Финальный `./scripts/build-release.sh --use-current-version` прошёл успешно.
+- Получен новый пакет:
+  - `codeai-hub-1.1.724.vsix`
+- Build script подтвердил ожидаемые release checkpoints:
+  - `Verifying SDK exclusions`
+  - `Removing dev dependencies...`
+  - `✅ Package created`
+- Во время package duplication check вышел advisory `3.01%` против порога `3%`, но скрипт не остановил релиз и завершил упаковку успешно.
+- Пользовательский smoke-test для `1.1.724` ещё не выполнялся в рамках этой сессии; текущий отчёт фиксирует build/handoff checkpoint.
+
 ## Verification
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`
 - `node --test --import tsx --test-name-pattern "primary description dialog session ref" packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
@@ -216,6 +245,9 @@
 - `npm run build --workspace packages/core`
 - `npm run build:webview`
 - `npm run typecheck:webview`
+- `npm run build --workspace packages/agents/idea-collector -- --pretty false`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
 - Все git commits проходили через штатные Husky hooks:
   - `npm test`
   - `./scripts/check-architecture.sh`
@@ -255,18 +287,25 @@
 - `ec319096 docs(session): close phase 301 docs sync`
 - `7a80cbc7 test(description): guard cleanup invariants`
 - `273bae68 chore(verify): validate description cleanup targets`
+- `ca6e181f docs(session): close phase 302 verification`
+- `cbc16d06 docs(release): prep description cleanup release notes`
+- `14824925 fix(agents): drop stale idea output root export`
+- `36578265 fix(core): unblock description cleanup release build`
+- `d3bd953a chore(release): build description cleanup release`
 
 ---
 
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`
-2. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-3. `doc/TODO/todo-plan.md`
-4. `doc/Sessions/Session068.md`
-5. `doc/Sessions/Session069.md` (THIS REPORT)
+1. `README.md`
+2. `CHANGELOG.md`
+3. `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`
+4. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+5. `doc/TODO/todo-plan.md`
+6. `doc/Sessions/Session068.md`
+7. `doc/Sessions/Session069.md` (THIS REPORT)
 
 ## Plans for next session
-- Перейти к `Phase 303`: синхронизировать release-facing документы, собрать новый cleanup-release и оформить финальный handoff.
-- После успешной сборки выполнить пользовательский smoke и зафиксировать итоговый release checkpoint.
+- Выполнить пользовательский smoke-test для `codeai-hub-1.1.724.vsix` и зафиксировать итоговый release checkpoint.
+- Если smoke зелёный, закрыть оставшийся post-release пункт в `Phase 303` и решить, архивировать ли текущий plan перед открытием новой рабочей фазы.
