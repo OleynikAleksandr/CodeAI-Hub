@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 import { SessionManager } from "../../session-manager";
 import type { BridgeEvent } from "../types";
@@ -6,6 +8,11 @@ import {
   type ProviderSessionBinding,
   SessionRequestHandler,
 } from "./session-request-handler";
+
+const SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "packages/core/src/remote-bridge/handlers/session-request-handler.ts"
+);
 
 type BindingUpdate = {
   readonly sessionId: string;
@@ -1229,4 +1236,15 @@ test("SessionRequestHandler persists primary description session ref without res
       ?.providerSessionId,
     "provider-session-updated"
   );
+});
+
+test("SessionRequestHandler source keeps description cleanup invariants", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("shouldResetDescriptionCollectorArtifacts"),
+    false
+  );
+  assert.equal(source.includes("collectorSession"), false);
+  assert.equal(source.includes("description restart"), false);
 });

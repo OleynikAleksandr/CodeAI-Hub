@@ -1,286 +1,34 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 import { WorkflowRuntime } from "./workflow-runtime";
 
-type CreatedWorkflowSession = {
-  readonly providerId: string;
+const SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "packages/core/src/workflow/runtime/workflow-runtime.ts"
+);
+
+type DescriptionSnapshot = {
+  readonly workspaceSlug: string;
   readonly workspacePath: string;
-  readonly context: {
-    readonly initiativeSlug: string;
-    readonly stage: string;
-    readonly runSlug?: string | null;
-    readonly resumeMode?: string;
-  };
+  readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly finalPath?: string;
 };
 
 type RuntimeHarness = {
   readonly runtime: WorkflowRuntime;
-  readonly createdSessions: CreatedWorkflowSession[];
-  readonly handledMessages: Array<{
-    readonly sessionId: string;
-    readonly prompt: string;
-  }>;
-  readonly warnings: string[];
+  readonly descriptionUpserts: Record<string, unknown>[];
+  readonly lastActiveUpserts: Record<string, unknown>[];
 };
 
-const createHarness = (options: {
-  readonly adapters: Record<
-    string,
-    { readonly resumeSession?: unknown } | undefined
-  >;
-  readonly preferredProviderId: string;
-  readonly draftPath?: string;
-}): RuntimeHarness => {
-  const createdSessions: CreatedWorkflowSession[] = [];
-  const handledMessages: Array<{
-    readonly sessionId: string;
-    readonly prompt: string;
-  }> = [];
-  const warnings: string[] = [];
+const createHarness = (
+  snapshot: DescriptionSnapshot | null = null
+): RuntimeHarness => {
+  const descriptionUpserts: Record<string, unknown>[] = [];
+  const lastActiveUpserts: Record<string, unknown>[] = [];
 
-  const runtime = new WorkflowRuntime({
-    logger: {
-      info: () => {
-        // noop
-      },
-      warn: (message: string) => {
-        warnings.push(message);
-      },
-      error: () => {
-        // noop
-      },
-      debug: () => {
-        // noop
-      },
-    } as never,
-    providerRegistry: {
-      getAdapter: (providerId: string) => options.adapters[providerId],
-    } as never,
-    sessionHandler: {
-      createSessionForWorkflow: (request: CreatedWorkflowSession) => {
-        createdSessions.push(request);
-        return Promise.resolve({ id: "workflow-session-1" });
-      },
-      handleMessage: (sessionId: string, prompt: string) => {
-        handledMessages.push({ sessionId, prompt });
-        return Promise.resolve();
-      },
-    } as never,
-  });
-
-  (
-    runtime as unknown as {
-      descriptionStepStore: {
-        read: (
-          workspaceRoot: string,
-          workspaceSlug: string
-        ) => Promise<{
-          draftPath?: string;
-          finalPath?: string;
-          sessionKind?: "collector" | "reviewer";
-          session?: { providerId: string };
-          workspacePath: string;
-          workspaceSlug: string;
-          createdAt: string;
-          updatedAt: string;
-        } | null>;
-      };
-    }
-  ).descriptionStepStore = {
-    read: (workspaceRoot: string, workspaceSlug: string) =>
-      Promise.resolve({
-        workspacePath: workspaceRoot,
-        workspaceSlug,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        draftPath:
-          options.draftPath ??
-          `.codeai-hub/${workspaceSlug}/description/description.md`,
-        sessionKind: "collector",
-        session: {
-          providerId: options.preferredProviderId,
-        },
-      }),
-  };
-
-  return {
-    runtime,
-    createdSessions,
-    handledMessages,
-    warnings,
-  };
-};
-
-test("WorkflowRuntime does not auto-start reviewer after description draft write", async () => {
-  const harness = createHarness({
-    preferredProviderId: "claudeCodeCli",
-    adapters: {
-      claudeCodeCli: {
-        resumeSession: () => Promise.resolve("claude-resumed-id"),
-      },
-    },
-  });
-
-  (
-    harness.runtime as unknown as {
-      descriptionStepStore: {
-        read: () => Promise<{
-          workspaceSlug: string;
-          workspacePath: string;
-          createdAt: string;
-          updatedAt: string;
-          sessionKind: "collector";
-          session: { providerId: string };
-        }>;
-        upsert: () => Promise<void>;
-      };
-      lastActiveStore: {
-        upsert: () => Promise<void>;
-      };
-    }
-  ).descriptionStepStore = {
-    read: () =>
-      Promise.resolve({
-        workspaceSlug: "workspace-no-reviewer",
-        workspacePath: "/tmp/workspace-no-reviewer",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        sessionKind: "collector",
-        session: { providerId: "claudeCodeCli" },
-      }),
-    upsert: () => Promise.resolve(),
-  };
-
-  (
-    harness.runtime as unknown as {
-      lastActiveStore: {
-        upsert: () => Promise<void>;
-      };
-    }
-  ).lastActiveStore = {
-    upsert: () => Promise.resolve(),
-  };
-
-  const shouldRecord = await (
-    harness.runtime as unknown as {
-      handleWorkflowEvent: (
-        workspaceRoot: string,
-        event: unknown
-      ) => Promise<boolean>;
-    }
-  ).handleWorkflowEvent("/tmp/workspace-no-reviewer", {
-    type: "workflow.artifact.written",
-    timestamp: new Date().toISOString(),
-    workspaceSlug: "workspace-no-reviewer",
-    stage: "description",
-    filePath: "description/description.md",
-  });
-
-  assert.equal(shouldRecord, true);
-  assert.equal(harness.createdSessions.length, 0);
-  assert.equal(harness.handledMessages.length, 0);
-});
-
-test("WorkflowRuntime keeps reviewer on preferred gemini provider when resume is supported", async () => {
-  const harness = createHarness({
-    preferredProviderId: "geminiCli",
-    adapters: {
-      geminiCli: {
-        resumeSession: () => Promise.resolve("gemini-resumed-id"),
-      },
-      claudeCodeCli: {
-        resumeSession: () => Promise.resolve("claude-resumed-id"),
-      },
-    },
-  });
-
-  await (
-    harness.runtime as unknown as {
-      maybeAutoStartReviewer: (params: {
-        readonly workspaceRoot: string;
-        readonly workspaceSlug: string;
-      }) => Promise<void>;
-    }
-  ).maybeAutoStartReviewer({
-    workspaceRoot: "/tmp/workspace-gemini",
-    workspaceSlug: "workspace-gemini",
-  });
-
-  assert.equal(harness.createdSessions.length, 1);
-  assert.equal(harness.createdSessions[0]?.providerId, "geminiCli");
-  assert.equal(harness.createdSessions[0]?.context.stage, "description");
-  assert.equal(harness.createdSessions[0]?.context.runSlug, "reviewer");
-  assert.equal(harness.handledMessages.length, 1);
-  assert.equal(harness.handledMessages[0]?.sessionId, "workflow-session-1");
-  assert.equal(harness.warnings.length, 0);
-});
-
-test("WorkflowRuntime reviewer prompt uses run-scoped draft path when provided", async () => {
-  const workspaceSlug = "workspace-runs";
-  const draftPath = `.codeai-hub/${workspaceSlug}/description/runs/attempt-123/description.md`;
-
-  const harness = createHarness({
-    preferredProviderId: "claudeCodeCli",
-    draftPath,
-    adapters: {
-      claudeCodeCli: {
-        resumeSession: () => Promise.resolve("claude-resumed-id"),
-      },
-    },
-  });
-
-  await (
-    harness.runtime as unknown as {
-      maybeAutoStartReviewer: (params: {
-        readonly workspaceRoot: string;
-        readonly workspaceSlug: string;
-      }) => Promise<void>;
-    }
-  ).maybeAutoStartReviewer({
-    workspaceRoot: "/tmp/workspace-runs",
-    workspaceSlug,
-  });
-
-  assert.equal(harness.handledMessages.length, 1);
-  assert.equal(harness.handledMessages[0]?.prompt.includes(draftPath), true);
-});
-
-test("WorkflowRuntime falls back to claude reviewer when preferred gemini lacks resume support", async () => {
-  const harness = createHarness({
-    preferredProviderId: "geminiCli",
-    adapters: {
-      geminiCli: {
-        // no resumeSession in current adapter contract
-      },
-      claudeCodeCli: {
-        resumeSession: () => Promise.resolve("claude-resumed-id"),
-      },
-    },
-  });
-
-  await (
-    harness.runtime as unknown as {
-      maybeAutoStartReviewer: (params: {
-        readonly workspaceRoot: string;
-        readonly workspaceSlug: string;
-      }) => Promise<void>;
-    }
-  ).maybeAutoStartReviewer({
-    workspaceRoot: "/tmp/workspace-fallback",
-    workspaceSlug: "workspace-fallback",
-  });
-
-  assert.equal(harness.createdSessions.length, 1);
-  assert.equal(harness.createdSessions[0]?.providerId, "claudeCodeCli");
-  assert.equal(
-    harness.warnings.includes(
-      "Reviewer auto-start switched provider due resume support"
-    ),
-    true
-  );
-});
-
-test("WorkflowRuntime ignores legacy run-scoped description drafts", async () => {
   const runtime = new WorkflowRuntime({
     logger: {
       info: () => {
@@ -308,51 +56,177 @@ test("WorkflowRuntime ignores legacy run-scoped description drafts", async () =>
   (
     runtime as unknown as {
       descriptionStepStore: {
-        read: () => Promise<{
-          workspaceSlug: string;
-          workspacePath: string;
-          createdAt: string;
-          updatedAt: string;
-        }>;
+        read: () => Promise<DescriptionSnapshot | null>;
+        upsert: (
+          workspaceRoot: string,
+          workspaceSlug: string,
+          update: Record<string, unknown>
+        ) => Promise<void>;
       };
       lastActiveStore: {
-        upsert: () => Promise<void>;
+        upsert: (
+          workspaceRoot: string,
+          workspaceSlug: string,
+          update: Record<string, unknown>
+        ) => Promise<void>;
       };
     }
   ).descriptionStepStore = {
-    read: () =>
-      Promise.resolve({
-        workspaceSlug: "workspace-stale-run",
-        workspacePath: "/tmp/workspace-stale-run",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }),
+    read: () => Promise.resolve(snapshot),
+    upsert: (_workspaceRoot, _workspaceSlug, update) => {
+      descriptionUpserts.push(update);
+      return Promise.resolve();
+    },
   };
 
   (
     runtime as unknown as {
-      lastActiveStore: { upsert: () => Promise<void> };
+      lastActiveStore: {
+        upsert: (
+          workspaceRoot: string,
+          workspaceSlug: string,
+          update: Record<string, unknown>
+        ) => Promise<void>;
+      };
     }
   ).lastActiveStore = {
-    upsert: () => {
-      throw new Error("Unexpected lastActiveStore.upsert call");
+    upsert: (_workspaceRoot, _workspaceSlug, update) => {
+      lastActiveUpserts.push(update);
+      return Promise.resolve();
     },
   };
 
-  const shouldRecord = await (
-    runtime as unknown as {
+  return { runtime, descriptionUpserts, lastActiveUpserts };
+};
+
+const emitDescriptionWrite = async (
+  harness: RuntimeHarness,
+  filePath: string,
+  workspaceSlug = "demo-workspace"
+): Promise<boolean> =>
+  await (
+    harness.runtime as unknown as {
       handleWorkflowEvent: (
         workspaceRoot: string,
         event: unknown
       ) => Promise<boolean>;
     }
-  ).handleWorkflowEvent("/tmp/workspace-stale-run", {
+  ).handleWorkflowEvent("/tmp/demo-workspace", {
     type: "workflow.artifact.written",
-    timestamp: new Date().toISOString(),
-    workspaceSlug: "workspace-stale-run",
+    timestamp: "2026-03-13T12:00:00.000Z",
+    workspaceSlug,
     stage: "description",
-    filePath: "description/runs/attempt-old/description.md",
+    filePath,
   });
 
+test("WorkflowRuntime source keeps description cleanup invariants", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("maybeAutoStartReviewer"), false);
+  assert.equal(source.includes("collectorAttempt"), false);
+  assert.equal(source.includes("reviewer"), false);
+  assert.equal(
+    source.includes('relativePath.startsWith("description/runs/")'),
+    true
+  );
+});
+
+test("WorkflowRuntime records questionnaire writes into description state", async () => {
+  const harness = createHarness();
+
+  const shouldRecord = await emitDescriptionWrite(
+    harness,
+    "description/questionnaire.md"
+  );
+
+  assert.equal(shouldRecord, true);
+  assert.deepEqual(harness.descriptionUpserts, [
+    {
+      questionnairePath:
+        ".codeai-hub/demo-workspace/description/questionnaire.md",
+    },
+  ]);
+  assert.deepEqual(harness.lastActiveUpserts, [
+    {
+      stage: "description",
+      artifactPath: ".codeai-hub/demo-workspace/description/questionnaire.md",
+    },
+  ]);
+});
+
+test("WorkflowRuntime records Final_Description.md as canonical description artifact", async () => {
+  const harness = createHarness();
+
+  const shouldRecord = await emitDescriptionWrite(
+    harness,
+    "description/Final_Description.md"
+  );
+
+  assert.equal(shouldRecord, true);
+  assert.deepEqual(harness.descriptionUpserts, [
+    {
+      finalPath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+    },
+  ]);
+  assert.deepEqual(harness.lastActiveUpserts, [
+    {
+      stage: "description",
+      artifactPath:
+        ".codeai-hub/demo-workspace/description/Final_Description.md",
+    },
+  ]);
+});
+
+test("WorkflowRuntime keeps legacy description.md only as fallback when final artifact is absent", async () => {
+  const harness = createHarness();
+
+  const shouldRecord = await emitDescriptionWrite(
+    harness,
+    "description/description.md"
+  );
+
+  assert.equal(shouldRecord, true);
+  assert.deepEqual(harness.descriptionUpserts, [
+    {
+      draftPath: ".codeai-hub/demo-workspace/description/description.md",
+    },
+  ]);
+  assert.deepEqual(harness.lastActiveUpserts, [
+    {
+      stage: "description",
+      artifactPath: ".codeai-hub/demo-workspace/description/description.md",
+    },
+  ]);
+});
+
+test("WorkflowRuntime ignores legacy description.md writes after Final_Description.md exists", async () => {
+  const harness = createHarness({
+    workspaceSlug: "demo-workspace",
+    workspacePath: "/tmp/demo-workspace",
+    createdAt: "2026-03-13T12:00:00.000Z",
+    updatedAt: "2026-03-13T12:00:00.000Z",
+    finalPath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+  });
+
+  const shouldRecord = await emitDescriptionWrite(
+    harness,
+    "description/description.md"
+  );
+
   assert.equal(shouldRecord, false);
+  assert.deepEqual(harness.descriptionUpserts, []);
+  assert.deepEqual(harness.lastActiveUpserts, []);
+});
+
+test("WorkflowRuntime ignores legacy run-scoped description drafts", async () => {
+  const harness = createHarness();
+
+  const shouldRecord = await emitDescriptionWrite(
+    harness,
+    "description/runs/attempt-old/description.md"
+  );
+
+  assert.equal(shouldRecord, false);
+  assert.deepEqual(harness.descriptionUpserts, []);
+  assert.deepEqual(harness.lastActiveUpserts, []);
 });

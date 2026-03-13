@@ -19,6 +19,8 @@ test("workflow artifact viewer does not expose questionnaire restart attempt UI"
   assert.equal(source.includes("QuestionnaireRestartAttemptControl"), false);
   assert.equal(source.includes("restartError"), false);
   assert.equal(source.includes("canRestartAttempt"), false);
+  assert.equal(source.includes("submitQuestionnaire"), false);
+  assert.equal(source.includes("Restart attempt"), false);
 
   await assert.rejects(access(RESTART_CONTROL_SOURCE_PATH));
 });
