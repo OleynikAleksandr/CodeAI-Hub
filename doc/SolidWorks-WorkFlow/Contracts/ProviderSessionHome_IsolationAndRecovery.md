@@ -1,14 +1,26 @@
-# Provider Session Home Isolation & Recovery — Contract (SSOT)
+# Provider Session Home Isolation & Recovery — Target Architecture (Deferred)
+
+**Status:** Deferred target architecture
+**Updated:** 2026-03-13
+**Current mainline status:** not implemented as active runtime contract
 
 ## Назначение
-Зафиксировать обязательный runtime-контракт для бесконечного жизненного цикла узла сессии в дереве разработки: каждая сессия должна быть возобновляема в том же provider-thread без пересборки контекста в новой сессии.
+Зафиксировать целевую архитектуру для бесконечного жизненного цикла узла сессии в дереве разработки: каждая сессия должна быть возобновляема в том же provider-thread без пересборки контекста в новой сессии.
 
-## Ключевое решение
+## Current baseline (main)
+- Текущая mainline-реализация ещё не использует per-session `sessionHomePath`.
+- Codex и Claude сейчас работают через provider-scoped home:
+  - `~/.codeai-hub/providers/codex/home`
+  - `~/.codeai-hub/providers/claude/home`
+- Отдельный Core-модуль `packages/core/src/provider-session-home/` и snapshot/replay engine из этого документа пока не реализованы.
+- Поэтому этот файл нельзя использовать как описание текущего runtime-контракта; это целевой deferred-дизайн для отдельного рабочего трека.
+
+## Целевое решение
 - **Scope HOME = одна логическая сессия (Session Node)**.
 - Промежуточный этап `HOME per workspace` не применяется.
 - Recovery выполняется в приоритете через native resume, затем через restore `last-known-good` snapshot этой же session-home.
 
-## Placement `sessionHomePath` (обязательный layout)
+## Placement `sessionHomePath` (target layout)
 - `sessionHomePath` создается **внутри директории выбранного провайдера**:
   - `~/.codeai-hub/providers/claude/sessions/...`
   - `~/.codeai-hub/providers/codex/sessions/...`
@@ -48,13 +60,13 @@
 - Если turn завершился `completed_failed` (или завис), Core обязан запустить recovery (resume/restore/replay policy) и гарантировать отсутствие “вечного lock” в UI (см. lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`).
 - Любой restore должен быть idempotent и воспроизводим.
 
-## Recovery policy (канон)
+## Recovery policy (target)
 1. `resume-first`: попытка возобновить native provider session по `providerSessionId`.
 2. Если turn неуспешен/завис или resume не восстановил консистентность turn-state — restore последнего валидного snapshot для **этого** `sessionHomePath`.
 3. После restore — повторный resume и controlled replay последнего `sent` turn.
 4. Если replay подтвержден как дубликат и не нужен — turn закрывается как `completed_success` без повторной отправки.
 
-## Требования к snapshot (session-home)
+## Требования к snapshot (target session-home)
 - Snapshot scope по умолчанию покрывает весь `sessionHomePath` (без ручного парсинга внутренних подпапок провайдера).
 - Исключаются только кэш/временные артефакты, не влияющие на resume (по allowlist/denylist, версионируемой в Core).
 - Snapshot ведется как `last-known-good` состояние **после каждого `completed_success` turn** (rolling replace/atomic swap).
@@ -72,7 +84,7 @@
 - После ротации обязательно чистить историю (`reflog expire` + `gc/prune`) чтобы не накапливать скрытые старые состояния.
 - Restore выполняется как checkout/restore `sessionHomePath` к выбранному commit-у под lock (atomic swap предпочтительнее).
 
-## Provider binding (обязательные env/entry points)
+## Provider binding (target env/entry points)
 - **Codex:** `CODEX_HOME=<sessionHomePath>`.
 - **Claude:** `HOME=<sessionHomePath>` и provider-home разрешение через `CODEAI_CLAUDE_HOME`.
 - **Gemini:** `GEMINI_CLI_HOME=<sessionHomePath>` (поддерживается upstream; интеграция в Core обязательна).

@@ -1,15 +1,26 @@
 # Codex Response Modes + Raw Provider Diagnostics — Architecture
 
-**Status:** Approved for implementation planning  
+**Status:** Implemented on `main` (current SSOT + design history)  
 **Updated:** 2026-03-13  
 **Owner:** Oleksandr + Codex  
-**Target line:** `codex/baseline-gpt54-release` (`v1.1.720`)
+**Validated on:** `main` (`v1.1.724`)
 
 ---
 
-## 1) Problem
+## Status checkpoint (2026-03-13)
 
-На baseline-линии `v1.1.720` модель `gpt-5.4` работает, но в user-facing dialog показывает только финальный ответ turn и теряет промежуточный progress/commentary.
+- `Settings -> General` уже владеет persisted policy `general.responsePolicy`.
+- Карточка `Response Mode` живёт отдельно от `Core Controls`.
+- User-facing Codex settings экспонируют только две активные модели: `gpt-5.3-codex` и `gpt-5.4`.
+- Default policy для workflow-сценариев: `hybrid`.
+- Raw provider rollouts и SDK JSONL используются как диагностический SSOT.
+- Этот документ сохраняет исходную design-логику, но описывает уже внедрённый контракт, а не будущую baseline-ветку.
+
+---
+
+## 1) Original problem (resolved)
+
+На старте baseline-линии `v1.1.720` модель `gpt-5.4` работала, но в user-facing dialog показывала только финальный ответ turn и теряла промежуточный progress/commentary.
 
 Разбор реальных JSONL-артефактов показал две разные причины:
 - **Upstream shaping:** текущий `outputSchema` + prompt в стиле `Return only JSON, no extra text.` меняют сам turn и могут заставлять провайдера не присылать commentary в привычной форме.
@@ -19,7 +30,7 @@
 - мы не можем безопасно экспериментировать с новыми Codex-моделями;
 - мы не имеем неизменяемого диагностического SSOT для сырого provider output;
 - `structured output` смешан с живым пользовательским dialogue/progress;
-- General Settings пока не дают управлять этим runtime policy.
+- на момент начала работ General Settings не давали управлять этим runtime policy.
 
 ---
 
@@ -65,7 +76,7 @@
 **`Hybrid`**
 - commentary/progress остаётся свободным;
 - structured output применяется только к terminal-result слою;
-- это целевой default для workflow-сценариев baseline-линии.
+- это текущий default для workflow-сценариев.
 
 **`Debug/Raw`**
 - schema injection отключается или становится максимально прозрачной;
@@ -95,7 +106,7 @@
       "mode": "hybrid",
       "strictOutput": {
         "schemaText": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"answer\": { \"type\": \"string\" }\n  },\n  \"required\": [\"answer\"],\n  \"additionalProperties\": false\n}",
-        "instructionText": "Return only JSON, no extra text."
+        "instructionText": "You must respond with a JSON object that matches the provided schema.\nPopulate the field:\n- answer: the user-facing answer.\nReturn only JSON, no extra text.\n\nUser request:"
       }
     }
   }
@@ -115,7 +126,7 @@
 
 - `mode = "hybrid"`
 - `strictOutput.schemaText` — bundled schema эквивалент текущему baseline-контракту `{"answer": "string"}`
-- `strictOutput.instructionText` — текущий baseline prompt suffix для strict JSON-only path
+- `strictOutput.instructionText` — текущий strict prompt template с явным перечислением полей и финальной строкой `User request:`
 
 ---
 
@@ -234,15 +245,15 @@ flowchart LR
 
 ---
 
-## 10) Acceptance Criteria
+## 10) Current implementation checkpoints
 
 1. В `Settings -> General` есть отдельная Response Mode карточка, реализованная как самостоятельный модуль/фасад.
-2. Default mode для baseline-линии — `Hybrid`.
+2. Default mode на `main` — `Hybrid`.
 3. `Strict` даёт editable schema + editable instruction text.
 4. `Debug/Raw` даёт исследовательский режим без жёсткой schema-injection зависимости.
-5. Raw provider log всегда можно открыть и использовать как диагностический SSOT.
+5. Raw provider log можно использовать как диагностический SSOT.
 6. Повторный `resume` не затирает исторический SDK JSONL лог.
-7. Восстановление commentary/progress для `gpt-5.4` делается на baseline-линии без переноса поздних PM refactor-изменений.
+7. Фикс commentary/progress для `gpt-5.4` доступен на `main` без переноса поздних PM refactor-изменений.
 
 ---
 

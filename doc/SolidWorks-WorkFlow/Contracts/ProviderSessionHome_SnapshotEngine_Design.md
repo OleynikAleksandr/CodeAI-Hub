@@ -2,13 +2,16 @@
 
 **Status:** Draft (needs approval)
 **Owner:** Core Orchestrator
-**Date:** 2026-02-21
+**Date:** 2026-03-13
+**Current mainline status:** not implemented; current baseline still uses provider-scoped homes
 
 ---
 
 ## 0) Scope
 
 Этот документ описывает реализацию модуля snapshot/recovery для provider-home при модели **1 Session Node = 1 provider HOME**.
+
+Важно: это draft-дизайн для отдельного трека. На текущем `main` ещё нет `packages/core/src/provider-session-home/`, а provider runtime продолжает работать через provider-level homes (`~/.codeai-hub/providers/<providerId>/home`).
 
 Канон (высокоуровневый контракт):
 - `doc/SolidWorks-WorkFlow/Contracts/ProviderSessionHome_IsolationAndRecovery.md`

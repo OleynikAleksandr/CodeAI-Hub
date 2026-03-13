@@ -40,13 +40,13 @@
 - `Contracts/WorkspaceRuntime.md` — multi-workspace + snapshot-first + lock contract.
 - `Contracts/SessionUI_Behavior.md` — Session UI laws (happy path) + lock/unlock rules.
 - `Contracts/SessionInputLock_SSOT_StateMachine.md` — SSOT/state machine для input lock/unlock.
-- `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — session-home isolation + resume-first recovery contract.
-- `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
 - `Contracts/Codex_ResponseMode_Settings_Architecture.md` — response modes (`Strict` / `Hybrid` / `Debug/Raw`) + raw provider diagnostics contract для Codex.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Contracts (legacy/deferred)
 - `Contracts/DescriptionNode_ReviewSession.md` — legacy filename; redirect/compat note для узла `description`, без restart/reviewer semantics как активной возможности продукта.
+- `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — deferred target-architecture для per-session provider HOME + resume/snapshot recovery; не описывает текущую mainline-реализацию.
+- `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — draft implementation design для deferred session-home architecture.
 - `Contracts/StandaloneReviewer_Module.md` — draft deferred-модуля standalone reviewer (manual-only, вне базового chain 1→6).
 
 ### Root Drafts/RFC (non-SSOT, keep for history)
