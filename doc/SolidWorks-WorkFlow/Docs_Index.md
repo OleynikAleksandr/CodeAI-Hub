@@ -8,6 +8,7 @@
 4. `Clusters/CoreOrchestrator.md`
 5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 6. `Contracts/` (только по ссылкам из документов выше)
+7. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 
 ## 1) Канонические документы (этот каталог)
 
@@ -40,6 +41,7 @@
 - `Contracts/SessionInputLock_SSOT_StateMachine.md` — SSOT/state machine для input lock/unlock.
 - `Contracts/ProviderSessionHome_IsolationAndRecovery.md` — session-home isolation + resume-first recovery contract.
 - `Contracts/ProviderSessionHome_SnapshotEngine_Design.md` — design: Core module + snapshot engines (FS/Git) для session-home.
+- `Contracts/Codex_ResponseMode_Settings_Architecture.md` — response modes (`Strict` / `Hybrid` / `Debug/Raw`) + raw provider diagnostics contract для Codex.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Contracts (legacy/deferred)

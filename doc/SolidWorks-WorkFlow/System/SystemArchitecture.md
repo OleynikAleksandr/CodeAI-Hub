@@ -18,6 +18,7 @@
 12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 13. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 14. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+15. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -47,6 +48,8 @@
    - Канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
 5. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
    - Канон: provider docs в `doc/SolidWorks-WorkFlow/Modules/*`.
+6. **Response-mode diagnostics split**: shaping live Codex turn-ов (`strict` / `hybrid` / `debug_raw`) не может быть единственным местом, где существует provider output; raw provider logs остаются диагностическим SSOT до любых UI/history фильтров.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
@@ -54,7 +57,9 @@
 - Core: `packages/core/`
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
+- General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
+- Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 
 ## 5) Workflow Boundary (Description, 2026-03-01)
 
@@ -86,3 +91,11 @@
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+
+## 7) Codex Response Mode Boundary (2026-03-13)
+
+- `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.
+- Baseline default для workflow-сценариев: `hybrid`.
+- `strict` оставляет editable schema/instruction contract для узких machine-readable turn-ов.
+- `debug_raw` нужен для исследования новых моделей без baseline default schema pressure на обычные turn-ы.
+- Raw provider rollouts и append-safe SDK JSONL являются диагностическими артефактами; dialog/history остаётся нормализованным display-слоем.

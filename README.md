@@ -7,12 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.720
+## Current Release — v1.1.721
 - Stable baseline release: сохраняет workflow/PM поведение линии `v1.1.712`, которая прошла зелёный smoke после зачистки старых инсталляций и сессий.
-- Codex settings: general-purpose модель заменена с `gpt-5.2` на `gpt-5.4`; coding-модель `gpt-5.3-codex` оставлена без изменений.
-- Codex settings snapshot: user-facing список моделей и `reasoningByModel` теперь ограничены только двумя ключами — `gpt-5.3-codex` и `gpt-5.4`.
-- Codex runtime: baseline line теперь запрашивает `gpt-5.4` в тех же точках create/resume/SDK patch path, где раньше использовалась `gpt-5.2`, без PM workflow-state рефакторингов из более поздних релизов.
-- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.720` и пересобрать provider/core/ui/launcher артефакты для baseline `gpt-5.4` release.
+- Codex settings: general-purpose модель остаётся `gpt-5.4`; coding-модель `gpt-5.3-codex` оставлена без изменений.
+- General Settings: добавлена отдельная карточка `Response Mode` с режимами `Strict`, `Hybrid` и `Debug/Raw`.
+- Baseline default: `Hybrid`; `Strict` даёт editable schema/instruction contract, а `Debug/Raw` убирает baseline default schema pressure с обычных turn-ов для исследования новых моделей.
+- Codex runtime теперь читает `general.responsePolicy` из settings snapshot и применяет mode-aware shaping/commentary suppression вместо безусловного JSON-only контракта для каждого turn.
+- SDK diagnostics: `sdk-codex-*.jsonl` больше не должны затираться при `resume` на том же `thread_id`.
+- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.721` и пересобрать provider/core/ui/launcher артефакты для baseline response-mode release.
 
 Previous releases (summary): the `1.1.57x–1.1.719` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, and later PM hydration/workflow-state experiments that are intentionally not part of this stable baseline release.
 
