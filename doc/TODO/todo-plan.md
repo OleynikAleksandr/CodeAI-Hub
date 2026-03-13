@@ -110,4 +110,12 @@
 1. [DONE] Минимально исправить session-promotion path внутри Codex runtime: сохранить response-mode turn config и in-flight structured-output state при переходе `temp session id -> real thread id`, чтобы `Debug/Raw`/`Hybrid` не откатывались в `DEFAULT_TURN_CONFIG` после `thread.started` (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`; expected commit: `fix(codex): preserve response mode across session promotion`).
 2. [DONE] Git Commit: `fix(codex): preserve response mode across session promotion` (hash: `67da3fb6`)
 3. [DONE] Добавить узкий regression guard на сценарий `thread.started` promotion до первого `agent_message`: проверить, что при `Debug/Raw` и `Hybrid` commentary и final text после promotion доходят до downstream `assistant` emit без forced JSON parsing (scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.test.ts`; expected commit: `test(codex): guard response mode session promotion`).
-4. [TODO] Git Commit: `test(codex): guard response mode session promotion` (hash: TBD)
+4. [DONE] Git Commit: `test(codex): guard response mode session promotion` (hash: `7e9d370c`)
+
+### Stream 1: Release validation + handoff
+5. [DONE] Синхронизировать release-facing документы под `v1.1.722` до запуска релизной сборки, чтобы release notes отражали session-promotion fix для `Debug/Raw`/`Hybrid` (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prepare v1.1.722 notes`).
+6. [DONE] Git Commit: `docs(release): prepare v1.1.722 notes` (hash: `a5b5f649`)
+7. [DONE] Выполнить релизный цикл для baseline-линии с новым runtime fix: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> получить `codeai-hub-1.1.722.vsix` и tarball-набор `1.1.722` (scope: version/manifests/release artefacts; expected commit: `chore(release): build-all v1.1.722`).
+8. [DONE] Git Commit: `chore(release): build-all v1.1.722` (hash: `142e0958`)
+9. [DONE] Зафиксировать bug closure, release handoff и session report для `v1.1.722` (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session065.md`; expected commit: `docs(release): record response mode promotion fix`).
+10. [TODO] Git Commit: `docs(release): record response mode promotion fix` (hash: TBD)

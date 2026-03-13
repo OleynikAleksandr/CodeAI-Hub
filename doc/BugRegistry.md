@@ -48,7 +48,7 @@
 
 ## BUG-2026-03-13-01 — Codex Runtime: `Debug/Raw` теряет agent messages после `thread.started` promotion
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - В режиме `Settings -> General -> Response Mode = Debug/Raw` native provider rollout содержит полный `commentary` и `final_answer`, то есть `gpt-5.4` реально присылает промежуточные сообщения.
@@ -77,9 +77,27 @@
 - Сохранить response-mode config и in-flight structured-output state при `temp session id -> real thread id` promotion без изменения внешнего протокола.
 - Исправление должно быть минимальным и локальным: не менять PM/UI/core binding слой, не расширять feature scope и не добавлять новый runtime protocol.
 
+**Fix (implemented):**
+- В `StructuredOutputStreamController` добавлен локальный promotion path, который переносит `turnConfig` и active stream state со временного `sessionId` на реальный `threadId`.
+- `CodexMessageProcessor` вызывает этот promotion в момент `thread.started` до дальнейшей обработки turn lifecycle, поэтому `Debug/Raw` и `Hybrid` не деградируют в `DEFAULT_TURN_CONFIG` mid-turn.
+- Добавлен узкий regression guard на controller-level сценарий `temp session id -> real thread id` для обоих passthrough режимов (`hybrid`, `debug_raw`).
+
+**Commits:**
+- `67da3fb6 fix(codex): preserve response mode across session promotion`
+- `7e9d370c test(codex): guard response mode session promotion`
+- `142e0958 chore(release): build-all v1.1.722`
+
+**Release:** `1.1.722`
+
 **Guards required:**
 - Точечный regression test на сценарий `Debug/Raw`/`Hybrid` с `thread.started` promotion до первого `agent_message`.
 - Smoke-check: raw provider rollout содержит commentary, и тот же turn даёт `assistant` сообщения в unified-session/dialog history.
+
+**Guards delivered:**
+- `node --test packages/Codex_Module/dist/messaging/structured-output-stream-controller.test.js`
+- `npm run build --workspace @codeai-hub/codex-module`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
 
 ## BUG-2026-03-05-02 — PM/UI: Workflow navigation desync (Toolbar ↔ Tree ↔ Session/Artifact)
 
