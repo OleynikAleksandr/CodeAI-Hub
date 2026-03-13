@@ -206,7 +206,11 @@ export class StructuredOutputStreamController {
       state.assistantText = text;
       return delta;
     }
-    const delta = state.extractor.append(text);
+    const extractor = state.extractor;
+    if (!extractor) {
+      return null;
+    }
+    const delta = extractor.append(text);
     if (delta) {
       state.assistantText += delta;
     }
