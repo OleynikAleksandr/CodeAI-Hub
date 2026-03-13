@@ -135,7 +135,7 @@ export const useMainAreaWorkflowState = (
       );
 
       const nextHasDescriptionSession = Boolean(
-        branch?.session?.providerSessionId || branch?.sessionKind
+        branch?.primarySession?.providerSessionId
       );
       params.setHasDescriptionSession(nextHasDescriptionSession);
 

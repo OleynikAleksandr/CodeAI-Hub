@@ -10,8 +10,7 @@ const hasDescriptionArtifacts = (
     branch?.draftPath ||
       branch?.finalPath ||
       branch?.questionnairePath ||
-      branch?.session ||
-      branch?.sessionKind
+      branch?.primarySession
   );
 
 export const isEmptyWorkflowState = (
