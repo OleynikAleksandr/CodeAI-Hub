@@ -1,6 +1,6 @@
 # Session 069 — Implementation progress: Description legacy cleanup
 
-**Date:** 2026-03-13 13:20 (CET)
+**Date:** 2026-03-13 13:28 (CET)
 **Branch:** main
 **Version:** 1.1.724
 
@@ -22,6 +22,7 @@
 - `Phase 301` полностью закрыт: живые SSOT-документы синхронизированы с фактической single-agent Description architecture и больше не описывают `↻ Restart attempt` как поддерживаемую product-функцию.
 - `Phase 302` полностью закрыт: cleanup invariants закреплены source/unit guards, таргетные tests/build/typecheck прошли, дерево снова готово к релизной фазе.
 - `Phase 303` доведён до нового release build checkpoint: подготовлены release-facing docs, устранены два release-blocker'а, собран unified `v1.1.724` и выпущен новый VSIX `codeai-hub-1.1.724.vsix`.
+- Пользовательский smoke-test для `v1.1.724` подтверждён как успешный: release validated и готов к push/publish из `main`.
 
 ## Phase progress
 
@@ -205,7 +206,7 @@
   - `npm run typecheck:webview`
 - В ходе validation найден и исправлен один test-only TypeScript issue в `session-request-handler.test.ts`; после правки все команды прошли.
 
-### Phase 303 — IN_PROGRESS
+### Phase 303 — DONE
 
 #### Stream 0 — DONE
 - Release-facing документы синхронизированы под новый cleanup-релиз:
@@ -222,7 +223,7 @@
   - обновлены release manifests для providers/core/UI/launcher;
   - version/manifests состояние зафиксировано commit'ом `d3bd953a chore(release): build description cleanup release`.
 
-#### Stream 1 — IN_PROGRESS
+#### Stream 1 — DONE
 - Финальный `./scripts/build-release.sh --use-current-version` прошёл успешно.
 - Получен новый пакет:
   - `codeai-hub-1.1.724.vsix`
@@ -231,7 +232,7 @@
   - `Removing dev dependencies...`
   - `✅ Package created`
 - Во время package duplication check вышел advisory `3.01%` против порога `3%`, но скрипт не остановил релиз и завершил упаковку успешно.
-- Пользовательский smoke-test для `1.1.724` ещё не выполнялся в рамках этой сессии; текущий отчёт фиксирует build/handoff checkpoint.
+- Пользователь подтвердил smoke-test для `1.1.724` как успешный; cleanup release validated без обнаруженных post-release regressions.
 
 ## Verification
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`
@@ -292,6 +293,7 @@
 - `14824925 fix(agents): drop stale idea output root export`
 - `36578265 fix(core): unblock description cleanup release build`
 - `d3bd953a chore(release): build description cleanup release`
+- `b10a4782 docs(release): record description cleanup release`
 
 ---
 
@@ -307,5 +309,5 @@
 7. `doc/Sessions/Session069.md` (THIS REPORT)
 
 ## Plans for next session
-- Выполнить пользовательский smoke-test для `codeai-hub-1.1.724.vsix` и зафиксировать итоговый release checkpoint.
-- Если smoke зелёный, закрыть оставшийся post-release пункт в `Phase 303` и решить, архивировать ли текущий plan перед открытием новой рабочей фазы.
+- Заархивировать полностью выполненный `doc/TODO/todo-plan.md`, если следующая сессия открывает уже новый scope работ.
+- Перед началом новой фазы создать новый архитектурный SSOT и новый execution plan под следующий рабочий трек.
