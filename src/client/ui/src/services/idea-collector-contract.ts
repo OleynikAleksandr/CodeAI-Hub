@@ -40,9 +40,9 @@ const DESCRIPTION_CONTRACT_ENDPOINT =
 const VIRTUAL_SIMULATION_CONTRACT_ENDPOINT =
   "/api/v1/orchestrator/virtual-simulation-contract";
 const FALLBACK_OUTPUT_PATHS = {
-  idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/description.md",
+  idea: ".codeai-hub/unknown-workspace/description/Final_Description.md",
   virtualSimulation:
-    ".codeai-hub/unknown-workspace/virtual_simulation/runs/000-unknown/virtual-simulation.md",
+    ".codeai-hub/unknown-workspace/virtual_simulation/virtual-simulation.md",
 } as const;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

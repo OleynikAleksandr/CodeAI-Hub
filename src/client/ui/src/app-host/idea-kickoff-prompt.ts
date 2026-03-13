@@ -13,4 +13,4 @@ export const IDEA_KICKOFF_PROMPT =
   "После явного подтверждения (ОК/утверждаю) следующий ответ обязан быть next_action=finalize: не задавай вопросов и не проси «сохранить» — сохранение делает система автоматически.\n" +
   "На финале верни полный Idea.md и virtual-simulation.md в artifact и в suggested_response напиши только краткую выжимку + что файлы будут сохранены.\n" +
   "virtual-simulation.md должен включать: цель симуляции, 2–4 сценария, UI ↔ Core события, логи и телеметрию, мини-матрицу рисков, must-pass проверки (E2E), выводы.\n" +
-  "Пути сохранения: `.codeai-hub/<workspaceSlug>/description/description.md` и `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`.";
+  "Пути сохранения: `.codeai-hub/<workspaceSlug>/description/Final_Description.md` и `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`.";
