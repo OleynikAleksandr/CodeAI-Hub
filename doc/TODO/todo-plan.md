@@ -8,8 +8,10 @@
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
+  - `doc/BugRegistry.md`
   - `doc/Sessions/Session061.md`
   - `doc/Sessions/Session062.md`
+  - `doc/Sessions/Session063.md`
 - TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -99,3 +101,13 @@
 4. [DONE] Git Commit: `docs(release): record response mode rollout` (hash: `4f7c3ab9`)
 5. [DONE] Выполнить release cycle по чеклисту: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + package versions/manifests; expected commit: `chore(release): build-all vX.Y.Z`).
 6. [DONE] Git Commit: `chore(release): build-all v1.1.721` (hash: `19dc0289`)
+
+---
+
+## Phase 294 — Codex response-mode promotion regression (`Debug/Raw` empty dialog) (owner: Oleksandr, updated: 2026-03-13)
+
+### Stream 0: Preserve response policy across session promotion
+1. [TODO] Минимально исправить session-promotion path внутри Codex runtime: сохранить response-mode turn config и in-flight structured-output state при переходе `temp session id -> real thread id`, чтобы `Debug/Raw`/`Hybrid` не откатывались в `DEFAULT_TURN_CONFIG` после `thread.started` (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`; expected commit: `fix(codex): preserve response mode across session promotion`).
+2. [TODO] Git Commit: `fix(codex): preserve response mode across session promotion` (hash: TBD)
+3. [TODO] Добавить узкий regression guard на сценарий `thread.started` promotion до первого `agent_message`: проверить, что при `Debug/Raw` и `Hybrid` commentary и final text после promotion доходят до downstream `assistant` emit без forced JSON parsing (scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `test(codex): guard response mode session promotion`).
+4. [TODO] Git Commit: `test(codex): guard response mode session promotion` (hash: TBD)

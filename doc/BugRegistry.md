@@ -42,8 +42,44 @@
 | BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
 | BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | 1.1.709 |
 | BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | 1.1.711 |
+| BUG-2026-03-13-01 | OPEN | Codex Runtime | `Debug/Raw`: raw provider log полный, но unified-session/dialog JSONL пуст от агента | TBD |
 
 ---
+
+## BUG-2026-03-13-01 — Codex Runtime: `Debug/Raw` теряет agent messages после `thread.started` promotion
+
+**Status:** OPEN
+
+**Symptom:**
+- В режиме `Settings -> General -> Response Mode = Debug/Raw` native provider rollout содержит полный `commentary` и `final_answer`, то есть `gpt-5.4` реально присылает промежуточные сообщения.
+- При этом наш unified-session/dialog JSONL для той же `Description`-сессии содержит только `session-open` и `user`; ни `assistant`, ни `thinking` не записываются.
+- Пользовательский эффект: в правой панели диалога агент выглядит полностью "молчаливым", хотя raw provider log и SDK log показывают живой ход работы.
+
+**Affected evidence (confirmed):**
+- Raw provider rollout: `/Users/oleksandroliinyk/.codeai-hub/providers/codex/home/sessions/2026/03/13/rollout-2026-03-13T09-43-33-019ce65d-8182-7bf2-8220-ecd9080ea4a0.jsonl`
+- SDK log: `/Users/oleksandroliinyk/.codeai-hub/logs/codex/sdk-codex-019ce65d-8182-7bf2-8220-ecd9080ea4a0.jsonl`
+- Unified-session JSONL: `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4/codexCli/codex-0446deca-91a3-462a-866d-5c356cec5b17-description.jsonl`
+
+**Root cause (confirmed):**
+- `Debug/Raw` policy корректно применяется в начале turn и не навязывает `outputSchema`; это подтверждается SDK log (`runOptionsKeys: []`).
+- Но `StructuredOutputStreamController` хранит `turnConfig` и in-flight state по временному `sessionId`, а после `thread.started` `CodexMessageProcessor` меняет `session.sessionId` на реальный `threadId`.
+- После promotion дальнейшие lookup'и `shouldSuppressCommentary()`, `startTurn()`, `appendChunk()` и `complete()` идут уже по новому `sessionId`, для которого controller не находит сохранённый `passthrough` config и молча падает в `DEFAULT_TURN_CONFIG`.
+- Из-за этого:
+  - `commentary` снова suppress-ится как internal;
+  - `final_answer` пытается пройти через structured JSON parsing, но `gpt-5.4` в `Debug/Raw` присылает обычный текст, поэтому `assistantText` остаётся пустым и `assistant` event не эмитится.
+
+**Boundaries / non-causes:**
+- Это не баг провайдера: raw rollout и SDK log уже содержат нужные `agent_message`.
+- Это не проблема unified-session storage: в целевой JSONL физически не появляется ни одного `assistant`, значит потеря происходит раньше, в Codex runtime.
+- Это не повод трогать PM/UI routing, continuity или core persistence: дефект локализован в session-promotion/structured-output state path внутри Codex runtime.
+
+**Fix direction (approved for implementation):**
+- Сохранить response-mode config и in-flight structured-output state при `temp session id -> real thread id` promotion без изменения внешнего протокола.
+- Исправление должно быть минимальным и локальным: не менять PM/UI/core binding слой, не расширять feature scope и не добавлять новый runtime protocol.
+
+**Guards required:**
+- Точечный regression test на сценарий `Debug/Raw`/`Hybrid` с `thread.started` promotion до первого `agent_message`.
+- Smoke-check: raw provider rollout содержит commentary, и тот же turn даёт `assistant` сообщения в unified-session/dialog history.
 
 ## BUG-2026-03-05-02 — PM/UI: Workflow navigation desync (Toolbar ↔ Tree ↔ Session/Artifact)
 
