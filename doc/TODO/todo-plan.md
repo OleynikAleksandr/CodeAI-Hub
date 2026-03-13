@@ -86,16 +86,40 @@
 ## Phase 300 — Path contracts: remove legacy description artifact compatibility (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Questionnaire path canonicalization
-1. [TODO] Свести resolution для анкеты к canonical `description/questionnaire.md` и убрать runtime/UI fallbacks для старых `description/runs/*` и `description/idea/*` путей (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-questionnaire-paths.ts`, `src/client/ui/src/services/idea-questionnaire-paths.test.ts`; expected commit: `refactor(paths): drop legacy description questionnaire fallbacks`).
-2. [TODO] Git Commit: `refactor(paths): drop legacy description questionnaire fallbacks` (hash: TBD)
+1. [DONE] Свести resolution для анкеты к canonical `description/questionnaire.md` и убрать runtime/UI fallbacks для старых `description/runs/*` и `description/idea/*` путей (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `src/client/ui/src/services/idea-questionnaire-paths.ts`, `src/client/ui/src/services/idea-questionnaire-paths.test.ts`; expected commit: `refactor(paths): drop legacy description questionnaire fallbacks`).
+2. [DONE] Git Commit: `refactor(paths): drop legacy description questionnaire fallbacks` (hash: `800bffd5`)
 
 ### Stream 1: UI-side description output contract
-3. [TODO] Убрать из active UI helpers/contract snapshots прямые упоминания `description.md` и `runs/*` как output-path модели шага `description`, чтобы клиент больше не производил старую artifact schema даже в fallback copy/state (scope: `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `src/client/ui/src/app-host/session-region-idea-paths.ts`, `src/client/ui/src/services/idea-collector-contract.ts`; expected commit: `refactor(ui): remove legacy description output paths`).
-4. [TODO] Git Commit: `refactor(ui): remove legacy description output paths` (hash: TBD)
+3. [DONE] Убрать из active UI helpers/contract snapshots прямые упоминания `description.md` и `runs/*` как output-path модели шага `description`, чтобы клиент больше не производил старую artifact schema даже в fallback copy/state (scope: `src/client/ui/src/app-host/idea-kickoff-prompt.ts`, `src/client/ui/src/app-host/session-region-idea-paths.ts`, `src/client/ui/src/services/idea-collector-contract.ts`; expected commit: `refactor(ui): remove legacy description output paths`).
+4. [DONE] Git Commit: `refactor(ui): remove legacy description output paths` (hash: `869851ad`)
 
 ### Stream 2: Agent asset path schema cleanup
-5. [TODO] Удалить из idea-collector assets/path helpers run-scoped legacy output schema для `description`, чтобы bundled contracts больше не нормализовали старую attempt-era структуру артефактов (scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/assets/idea-template.md`; expected commit: `refactor(agents): drop legacy description artifact schema`).
-6. [TODO] Git Commit: `refactor(agents): drop legacy description artifact schema` (hash: TBD)
+5. [DONE] Удалить из idea-collector assets/path helpers run-scoped legacy output schema для `description`, чтобы bundled contracts больше не нормализовали старую attempt-era структуру артефактов (scope: `packages/agents/idea-collector/src/paths/artifact-paths.ts`, `packages/agents/idea-collector/assets/idea-template.md`; expected commit: `refactor(agents): drop legacy description artifact schema`).
+6. [DONE] Git Commit: `refactor(agents): drop legacy description artifact schema` (hash: `df7c652a`)
+
+### Stream 3: Fallback slots and schema text
+7. [DONE] Перевести active fallback schema/prompt hints на Description SSOT: заменить `idea.md` и legacy `cluster.idea.*` slots на `Final_Description.md` и `workspace.description`, чтобы деградационные ветки UI не возвращали старую модель артефактов (scope: `src/client/ui/src/services/idea-collector-fallback-schema.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `src/client/ui/src/services/idea-collector-schema-utils.ts`; expected commit: `refactor(ui): align description fallback slots`).
+8. [DONE] Git Commit: `refactor(ui): align description fallback slots` (hash: `7e5028c4`)
+
+### Stream 4: Legacy artifact bridge labels
+9. [DONE] Дочистить legacy finalize/bridge mapping для Description: старый artifact parser и core revise-artifacts labels не должны ссылаться на `cluster.idea.idea` или `idea.md`, если речь идёт о canonical `workspace.description` / `Final_Description.md` (scope: `src/client/ui/src/services/idea-collector-artifact.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(core): align description artifact bridge labels`).
+10. [DONE] Git Commit: `refactor(core): align description artifact bridge labels` (hash: `44e75f42`)
+
+### Stream 5: Legacy agent asset wording
+11. [TODO] Синхронизировать оставшиеся bundled legacy assets `idea-collector` с каноническим Description contract: prompt/schema больше не должны описывать `idea.md` и `cluster.idea.*` как текущую модель финализации (scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `packages/agents/idea-collector/assets/idea-collector-schema.json`, `doc/TODO/todo-plan.md`; expected commit: `docs(agents): align legacy idea collector assets with description contract`).
+12. [TODO] Git Commit: `docs(agents): align legacy idea collector assets with description contract` (hash: TBD)
+
+### Stream 6: Remove obsolete legacy artifact endpoint
+13. [TODO] Удалить неиспользуемый `/api/v1/orchestrator/idea-artifact` и связанные legacy path validators, а также вычистить UI-copy, которая всё ещё советует прикладывать `description.md` вместо `Final_Description.md` для `Virtual Simulation` (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(core): remove legacy description artifact endpoint`).
+14. [TODO] Git Commit: `refactor(core): remove legacy description artifact endpoint` (hash: TBD)
+
+### Stream 7: Canonical label in Description tree routes
+15. [TODO] Убрать user-facing label `description.md` из tree/auto-select маршрутов Description: при наличии legacy `draftPath` PM должен продолжать открывать файл, но показывать пользователю только канонический label `Final_Description.md` (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): hide legacy description draft label`).
+16. [TODO] Git Commit: `refactor(pm): hide legacy description draft label` (hash: TBD)
+
+### Stream 8: Canonical label in main-area auto-open
+17. [TODO] Перевести auto-open Description document в main-area на канонический label `Final_Description.md` и закрепить это guard-тестом, чтобы active PM view больше не рендерил legacy filename даже при compat `draftPath` (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(pm): guard canonical description artifact label`).
+18. [TODO] Git Commit: `test(pm): guard canonical description artifact label` (hash: TBD)
 
 ---
 

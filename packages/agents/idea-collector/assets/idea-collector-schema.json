@@ -21,7 +21,7 @@
         "assumptions",
         "risks"
       ],
-      "description": "Оценка достаточности данных анкеты для подготовки idea.md и virtual-simulation.md.",
+      "description": "Оценка достаточности данных анкеты для подготовки Final_Description.md и virtual-simulation.md.",
       "properties": {
         "ready_for_finalize": {
           "type": "boolean",
@@ -72,7 +72,7 @@
           "slot": {
             "type": "string",
             "description": "Слот артефакта.",
-            "enum": ["cluster.idea.idea", "cluster.idea.virtual-simulation"]
+            "enum": ["workspace.description", "workspace.virtual_simulation"]
           },
           "markdown": {
             "type": "string",
