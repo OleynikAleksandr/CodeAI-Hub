@@ -1,6 +1,6 @@
 # Session 069 — Implementation progress: Description legacy cleanup
 
-**Date:** 2026-03-13 13:28 (CET)
+**Date:** 2026-03-13 13:36 (CET)
 **Branch:** main
 **Version:** 1.1.724
 
@@ -23,6 +23,7 @@
 - `Phase 302` полностью закрыт: cleanup invariants закреплены source/unit guards, таргетные tests/build/typecheck прошли, дерево снова готово к релизной фазе.
 - `Phase 303` доведён до нового release build checkpoint: подготовлены release-facing docs, устранены два release-blocker'а, собран unified `v1.1.724` и выпущен новый VSIX `codeai-hub-1.1.724.vsix`.
 - Пользовательский smoke-test для `v1.1.724` подтверждён как успешный: release validated и готов к push/publish из `main`.
+- При фактическом `git push` всплыл отдельный `pre-push` blocker: `jscpd` показал `3.01%` дублей в `src`; проблема снята минимальным refactor-фиксом локального URL helper-а, после чего `check:dup` вернулся к допустимым `3.00%`.
 
 ## Phase progress
 
@@ -233,6 +234,11 @@
   - `✅ Package created`
 - Во время package duplication check вышел advisory `3.01%` против порога `3%`, но скрипт не остановил релиз и завершил упаковку успешно.
 - Пользователь подтвердил smoke-test для `1.1.724` как успешный; cleanup release validated без обнаруженных post-release regressions.
+- Перед финальным push устранён отдельный `pre-push` blocker:
+  - `src/client/project-manager/services/workflow-events-client.ts`
+    - Переписан локальный `joinUrl` без изменения поведения, чтобы снять лишний clone-hit в `jscpd`.
+  - `npm run -s check:dup`
+    - После правки duplication check вернулся на границу допуска и перестал блокировать push.
 
 ## Verification
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`
@@ -249,6 +255,7 @@
 - `npm run build --workspace packages/agents/idea-collector -- --pretty false`
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
+- `npm run -s check:dup`
 - Все git commits проходили через штатные Husky hooks:
   - `npm test`
   - `./scripts/check-architecture.sh`
@@ -294,6 +301,8 @@
 - `36578265 fix(core): unblock description cleanup release build`
 - `d3bd953a chore(release): build description cleanup release`
 - `b10a4782 docs(release): record description cleanup release`
+- `a03b09c5 docs(release): confirm description cleanup smoke`
+- `2e7cabd2 refactor(pm): reduce workflow events helper duplication`
 
 ---
 

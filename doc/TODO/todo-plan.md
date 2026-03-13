@@ -163,4 +163,4 @@
 5. [DONE] Зафиксировать release build checkpoint для `codeai-hub-1.1.724.vsix` и tarball-набора в session report / TODO plan; пользовательский smoke-test остаётся внешним post-build шагом (scope: `doc/Sessions/Session069.md`, `doc/TODO/todo-plan.md`, `doc/tmp/releases/`; expected commit: `docs(release): record description cleanup release`).
 6. [DONE] Git Commit: `docs(release): record description cleanup release` (hash: `b10a4782`)
 7. [DONE] После пользовательского smoke-test подтвердить release checkpoint `1.1.724`: пользователь подтвердил, что релиз работает, поэтому cleanup release считается validated и готов к push/publish (scope: `doc/Sessions/Session069.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): confirm description cleanup smoke`).
-8. [DONE] Git Commit: `docs(release): confirm description cleanup smoke` (hash: TBD)
+8. [DONE] Git Commit: `docs(release): confirm description cleanup smoke` (hash: `a03b09c5`)
