@@ -123,9 +123,9 @@
 ## Phase 295 — Mainline baseline promotion release verification (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: User-requested release build from main
-1. [IN_PROGRESS] Синхронизировать release-facing документы основного репозитория после жёсткого baseline merge и подготовить локальную release-проверку уже из `main` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare main baseline verification build`).
-2. [TODO] Git Commit: `docs(release): prepare main baseline verification build` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version` из основного репозитория, подтвердить новый VSIX/tarball набор и проверить, что mainline release cycle проходит на baseline tree без merge-регрессий (scope: root release assets, `doc/tmp/releases/`, `package-lock.json`; expected commit: `build(release): verify main baseline promotion build`).
-4. [TODO] Git Commit: `build(release): verify main baseline promotion build` (hash: TBD)
-5. [TODO] Зафиксировать результаты проверки и оформить новый session report для уже объединённого `main` (scope: `doc/Sessions/`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record main baseline release verification`).
+1. [DONE] Синхронизировать release-facing документы основного репозитория после жёсткого baseline merge и подготовить локальную release-проверку уже из `main` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare main baseline verification build`).
+2. [DONE] Git Commit: `docs(release): prepare main baseline verification build` (hash: `9ad7704a`)
+3. [DONE] Выполнить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version` из основного репозитория, подтвердить новый VSIX/tarball набор и проверить, что mainline release cycle проходит на baseline tree без merge-регрессий (scope: root release assets, `doc/tmp/releases/`, `package-lock.json`; expected commit: `build(release): verify main baseline promotion build`).
+4. [DONE] Git Commit: `build(release): verify main baseline promotion build` (hash: `bba59ec5`)
+5. [IN_PROGRESS] Зафиксировать результаты проверки и оформить новый session report для уже объединённого `main` (scope: `doc/Sessions/`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record main baseline release verification`).
 6. [TODO] Git Commit: `docs(session): record main baseline release verification` (hash: TBD)
