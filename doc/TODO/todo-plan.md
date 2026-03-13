@@ -138,12 +138,12 @@
 ## Phase 302 — Guards + targeted verification + handoff (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Cleanup invariants guards
-1. [TODO] Добавить финальные regression guards на отсутствие legacy restart/attempt semantics в живом Description flow: PM artifact header, workflow runtime и session handler должны проваливать тесты при попытке вернуть старую архитектуру (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(description): guard cleanup invariants`).
-2. [TODO] Git Commit: `test(description): guard cleanup invariants` (hash: TBD)
+1. [DONE] Добавить финальные regression guards на отсутствие legacy restart/attempt semantics в живом Description flow: PM artifact header, workflow runtime и session handler должны проваливать тесты при попытке вернуть старую архитектуру (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(description): guard cleanup invariants`).
+2. [DONE] Git Commit: `test(description): guard cleanup invariants` (hash: `7a80cbc7`)
 
 ### Stream 1: Targeted validation
-3. [TODO] Прогнать таргетные проверки затронутых контуров cleanup-а и довести дерево до чистого состояния без полного релизного цикла до закрытия phase: core runtime/handlers + PM/webview + UI state contract (scope: `packages/core`, `src/client/project-manager`, `src/client/ui`; expected commit: `chore(verify): validate description cleanup targets`).
-4. [TODO] Git Commit: `chore(verify): validate description cleanup targets` (hash: TBD)
+3. [DONE] Прогнать таргетные проверки затронутых контуров cleanup-а и довести дерево до чистого состояния без полного релизного цикла до закрытия phase: core runtime/handlers + PM/webview + UI state contract (scope: `packages/core`, `src/client/project-manager`, `src/client/ui`; expected commit: `chore(verify): validate description cleanup targets`).
+4. [DONE] Git Commit: `chore(verify): validate description cleanup targets` (hash: `273bae68`)
 
 ### Stream 2: Session handoff
 5. [TODO] Обновить статусы нового `todo-plan.md`, оформить session report по закрытому cleanup-циклу и зафиксировать итоговые invariants/риски для следующей сессии (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session0XX.md`; expected commit: `docs(session): record description legacy cleanup`).
