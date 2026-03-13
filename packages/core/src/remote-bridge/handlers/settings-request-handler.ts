@@ -12,6 +12,34 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
     coreControls: {
       allowRestart: true,
     },
+    responsePolicy: {
+      mode: "hybrid",
+      strictOutput: {
+        schemaText: `${JSON.stringify(
+          {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              answer: {
+                type: "string",
+                description: "Final answer for the user. Markdown allowed.",
+              },
+            },
+            required: ["answer"],
+          },
+          null,
+          2
+        )}\n`,
+        instructionText: [
+          "You must respond with a JSON object that matches the provided schema.",
+          "Populate the field:",
+          "- answer: the user-facing answer.",
+          "Return only JSON, no extra text.",
+          "",
+          "User request:",
+        ].join("\n"),
+      },
+    },
   },
   providers: {
     claude: {

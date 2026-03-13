@@ -6,6 +6,7 @@ import type {
 import type {
   CodexModelId,
   CodexReasoningLevel,
+  GeneralResponseMode,
   ProviderId,
   ProviderVersions,
   RawSettingsSnapshot,
@@ -94,6 +95,9 @@ export type UseSettingsStateResult = {
     provider: ProviderId,
     enabled: boolean
   ) => void;
+  readonly handleResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
+  readonly handleStrictSchemaTextChange: (value: string) => void;
+  readonly handleStrictInstructionTextChange: (value: string) => void;
   readonly handleSave: () => void;
   readonly handleReset: () => void;
   readonly handleUpdateProvider: (

@@ -36,8 +36,17 @@ export type RawGeminiSettings = {
 export type RawCoreControlsSettings = {
   readonly allowRestart?: unknown;
 };
+export type RawGeneralStrictOutputSettings = {
+  readonly schemaText?: unknown;
+  readonly instructionText?: unknown;
+};
+export type RawGeneralResponsePolicySettings = {
+  readonly mode?: unknown;
+  readonly strictOutput?: RawGeneralStrictOutputSettings;
+};
 export type RawGeneralSettings = {
   readonly coreControls?: RawCoreControlsSettings;
+  readonly responsePolicy?: RawGeneralResponsePolicySettings;
 };
 export type RawSettingsSnapshot = {
   readonly general?: RawGeneralSettings;

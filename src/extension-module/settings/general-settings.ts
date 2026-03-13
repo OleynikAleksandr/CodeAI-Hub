@@ -1,15 +1,22 @@
+import {
+  createDefaultGeneralResponsePolicy,
+  normalizeGeneralResponsePolicy,
+} from "./general-response-mode/general-response-mode-facade";
+import type { GeneralResponsePolicySettings } from "./general-response-mode/response-mode-settings";
 import { isRecord, resolveBoolean } from "./settings-utils";
 
 export type GeneralSettings = {
   readonly coreControls: {
     readonly allowRestart: boolean;
   };
+  readonly responsePolicy: GeneralResponsePolicySettings;
 };
 
 export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   coreControls: {
     allowRestart: true,
   },
+  responsePolicy: createDefaultGeneralResponsePolicy(),
 };
 
 export const normalizeGeneralSettings = (value: unknown): GeneralSettings => {
@@ -26,5 +33,6 @@ export const normalizeGeneralSettings = (value: unknown): GeneralSettings => {
         DEFAULT_GENERAL_SETTINGS.coreControls.allowRestart
       ),
     },
+    responsePolicy: normalizeGeneralResponsePolicy(value.responsePolicy),
   };
 };

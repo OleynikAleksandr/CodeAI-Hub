@@ -16,6 +16,10 @@ import {
   type GeminiSettings,
   mapGeminiSettings,
 } from "./gemini-mapping";
+import {
+  areGeneralResponsePolicyEqual,
+  mapGeneralResponsePolicy,
+} from "./general-response-mode/response-mode-state";
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
@@ -29,6 +33,10 @@ export type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../../types/codex-model-registry";
+export type {
+  GeneralResponseMode,
+  GeneralResponsePolicySettings,
+} from "./general-response-mode/response-mode-state";
 
 export type ProviderId = "claude" | "codex" | "gemini";
 
@@ -47,6 +55,7 @@ type CoreControlsSettings = {
 };
 type GeneralSettings = {
   readonly coreControls: CoreControlsSettings;
+  readonly responsePolicy: import("./general-response-mode/response-mode-state").GeneralResponsePolicySettings;
 };
 type ContinuitySettings = {
   readonly remainingPercentThreshold: number;
@@ -127,6 +136,7 @@ const mapGeneralSettings = (
         ? value.coreControls.allowRestart
         : DEFAULT_CORE_RESTART_ENABLED,
   },
+  responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy),
 });
 
 const mapContinuity = (value: unknown): ContinuitySettings => {
@@ -240,7 +250,8 @@ const areGeneralSettingsEqual = (
   left: GeneralSettings,
   right: GeneralSettings
 ): boolean =>
-  left.coreControls.allowRestart === right.coreControls.allowRestart;
+  left.coreControls.allowRestart === right.coreControls.allowRestart &&
+  areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
 
 const areClaudeSettingsEqual = (
   left: ClaudeSettings,

@@ -6,10 +6,12 @@ import type { CodexAuthManager } from "../auth/sdk-auth-manager";
 import type { CodexInstaller } from "../installer/codex-installer";
 import { CodexSessionLogger } from "../logging/session-logger";
 import type { CodexMessageProcessor } from "../messaging/message-processor";
+import { CodexResponsePolicyFacade } from "../response-policy/codex-response-policy-facade";
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
   CodexReasoningEffort,
+  CodexResponsePolicy,
   CodexThreadOptions,
   CodexTurnOptions,
   CodexWorkspaceOptions,
@@ -43,6 +45,7 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
 type CodexSettingsSnapshot = {
   readonly defaultModel?: string;
   readonly reasoningByModel: Record<string, CodexReasoningEffort>;
+  readonly responsePolicy?: CodexResponsePolicy;
 };
 
 type CodexManagerDependencies = {
@@ -159,6 +162,7 @@ export class CodexSDKManager {
   private codexInstance: CodexCtor | null = null;
   private initialized = false;
   private readonly deps: CodexManagerDependencies;
+  private readonly responsePolicyFacade = new CodexResponsePolicyFacade();
   private workspaceDefaults: CodexWorkspaceOptions;
 
   constructor(deps: CodexManagerDependencies) {
@@ -326,6 +330,10 @@ export class CodexSDKManager {
     options?: { readonly internal?: boolean }
   ): Promise<void> {
     await this.initialize();
+    const session = this.deps.sessions.getSession(sessionId);
+    if (session) {
+      session.responsePolicy = this.workspaceDefaults.defaultResponsePolicy;
+    }
     this.deps.processor.enqueueMessage(
       sessionId,
       content,
@@ -372,11 +380,14 @@ export class CodexSDKManager {
       envReasoningEffort ??
       settingsReasoningEffort ??
       this.deps.workspace.defaultReasoningEffort;
+    const resolvedResponsePolicy =
+      settings?.responsePolicy ?? this.deps.workspace.defaultResponsePolicy;
 
     this.workspaceDefaults = {
       ...this.deps.workspace,
       defaultModel: resolvedDefaultModel,
       defaultReasoningEffort: resolvedReasoningEffort,
+      defaultResponsePolicy: resolvedResponsePolicy,
     };
   }
 
@@ -411,6 +422,9 @@ export class CodexSDKManager {
     return {
       defaultModel: normalizeOptionalString(codex.defaultModel),
       reasoningByModel: normalizeCodexReasoningByModel(codex.reasoningByModel),
+      responsePolicy: this.responsePolicyFacade.resolve(
+        isRecord(value.general) ? value.general.responsePolicy : undefined
+      ),
     };
   }
 

@@ -115,6 +115,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleGeminiThinkingChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
+    handleResponsePolicyModeChange,
+    handleStrictSchemaTextChange,
+    handleStrictInstructionTextChange,
     handleSave,
     handleReset,
     handleUpdateProvider,
@@ -183,7 +186,14 @@ const SettingsView: React.FC<SettingsViewProps> = ({
           if (activeTab === "general") {
             return (
               <div style={stackStyles}>
-                <GeneralSettings />
+                <GeneralSettings
+                  onResponsePolicyModeChange={handleResponsePolicyModeChange}
+                  onStrictInstructionTextChange={
+                    handleStrictInstructionTextChange
+                  }
+                  onStrictSchemaTextChange={handleStrictSchemaTextChange}
+                  responsePolicy={settings.general.responsePolicy}
+                />
               </div>
             );
           }

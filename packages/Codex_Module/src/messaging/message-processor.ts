@@ -10,6 +10,7 @@ import type {
   TurnCompletedEvent,
   TurnFailedEvent,
 } from "@openai/codex-sdk";
+import { DEFAULT_CODEX_RESPONSE_POLICY } from "../response-policy/response-policy-defaults";
 import { CodexUsageLimitsReader } from "../sdk/codex-usage-limits-reader";
 import type {
   CodexUsageLimitBucket,
@@ -77,8 +78,13 @@ const resolveThreadItemPhase = (item: ThreadItem): string | null => {
   return typeof candidate.phase === "string" ? candidate.phase : null;
 };
 
-const shouldSuppressAgentMessageItem = (item: ThreadItem): boolean =>
-  resolveThreadItemPhase(item) === "commentary";
+const shouldSuppressAgentMessageItem = (
+  controller: StructuredOutputStreamController,
+  sessionId: string,
+  item: ThreadItem
+): boolean =>
+  resolveThreadItemPhase(item) === "commentary" &&
+  controller.shouldSuppressCommentary(sessionId);
 
 const areUsageLimitBucketsEqual = (
   left: CodexUsageLimitBucket | null,
@@ -347,14 +353,17 @@ export class CodexMessageProcessor {
     let startupLock: StartupLockContext | null = null;
     try {
       const turnOptions = message.turnOptions ?? {};
-      const runOptions = session.internalTurn
-        ? turnOptions
-        : this.structuredOutput.applyOutputSchema(turnOptions);
       let prompt = message.content;
+      let runOptions = turnOptions;
       if (!session.internalTurn) {
         const config = this.structuredOutput.prepareTurn(
           session.sessionId,
-          runOptions
+          turnOptions,
+          session.responsePolicy ?? DEFAULT_CODEX_RESPONSE_POLICY
+        );
+        runOptions = this.structuredOutput.applyOutputSchema(
+          turnOptions,
+          config
         );
         prompt = this.structuredOutput.applyPrompt(message.content, config);
       }
@@ -995,7 +1004,13 @@ export class CodexMessageProcessor {
     // Codex emits an assistant message twice: once as a "commentary" phase and
     // again as "final_answer". Commentary is internal and should not appear in
     // the UI dialog history to avoid duplicates.
-    if (shouldSuppressAgentMessageItem(item)) {
+    if (
+      shouldSuppressAgentMessageItem(
+        this.structuredOutput,
+        session.sessionId,
+        item
+      )
+    ) {
       return;
     }
     if (event.type === "item.updated") {

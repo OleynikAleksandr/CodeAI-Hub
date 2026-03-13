@@ -88,7 +88,7 @@ export class CodexSessionLogger implements SessionLogger {
     this.logFilePath = filePath;
     this.fileReady = false;
     fs.mkdir(LOG_ROOT, { recursive: true })
-      .then(() => fs.writeFile(filePath, "", { flag: "w" }))
+      .then(() => fs.appendFile(filePath, "", "utf8"))
       .then(() => {
         this.fileReady = true;
         this.flushBuffer();
