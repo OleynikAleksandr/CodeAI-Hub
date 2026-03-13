@@ -94,7 +94,7 @@ export const useWorkspaceTreeAutoSelect = (
       const artifactLabel = branch?.finalPath
         ? "Final_Description.md"
         : branch?.draftPath
-          ? "description.md"
+          ? "Final_Description.md"
           : null;
       dispatchStageActivated("description");
       if (artifactPath && artifactLabel) {

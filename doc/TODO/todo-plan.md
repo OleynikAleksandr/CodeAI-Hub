@@ -110,8 +110,8 @@
 12. [DONE] Git Commit: `docs(agents): align legacy idea collector assets with description contract` (hash: `dd0914c9`)
 
 ### Stream 6: Remove obsolete legacy artifact endpoint
-13. [TODO] Удалить неиспользуемый `/api/v1/orchestrator/idea-artifact` и связанные legacy path validators, а также вычистить UI-copy, которая всё ещё советует прикладывать `description.md` вместо `Final_Description.md` для `Virtual Simulation` (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(core): remove legacy description artifact endpoint`).
-14. [TODO] Git Commit: `refactor(core): remove legacy description artifact endpoint` (hash: TBD)
+13. [DONE] Удалить неиспользуемый `/api/v1/orchestrator/idea-artifact` и связанные legacy path validators, а также вычистить UI-copy, которая всё ещё советует прикладывать `description.md` вместо `Final_Description.md` для `Virtual Simulation` (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/ui/src/services/idea-collector-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(core): remove legacy description artifact endpoint`).
+14. [DONE] Git Commit: `refactor(core): remove legacy description artifact endpoint` (hash: `4797aef5`)
 
 ### Stream 7: Canonical label in Description tree routes
 15. [TODO] Убрать user-facing label `description.md` из tree/auto-select маршрутов Description: при наличии legacy `draftPath` PM должен продолжать открывать файл, но показывать пользователю только канонический label `Final_Description.md` (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): hide legacy description draft label`).

@@ -36,7 +36,7 @@ export const buildDescriptionBranchNodes = (options: {
   const artifactLabel = branch.finalPath
     ? "Final_Description.md"
     : branch.draftPath
-      ? "description.md"
+      ? "Final_Description.md"
       : "questionnaire.md";
   const artifactStatus = branch.finalPath ? "active" : "draft";
   if (artifactPath) {
@@ -141,7 +141,7 @@ export const resolveStageSyncPayload = (options: {
     const artifactLabel = branch.finalPath
       ? "Final_Description.md"
       : branch.draftPath
-        ? "description.md"
+        ? "Final_Description.md"
         : "questionnaire.md";
     const session = branch.primarySession;
     return {
