@@ -1231,11 +1231,10 @@ test("SessionRequestHandler persists primary description session ref without res
 
   assert.ok(capturedUpdate);
   assert.deepEqual(Object.keys(capturedUpdate).sort(), ["primarySession"]);
-  assert.equal(
-    (capturedUpdate?.primarySession as { providerSessionId?: string })
-      ?.providerSessionId,
-    "provider-session-updated"
-  );
+  const primarySession = capturedUpdate.primarySession as
+    | { readonly providerSessionId?: string }
+    | undefined;
+  assert.equal(primarySession?.providerSessionId, "provider-session-updated");
 });
 
 test("SessionRequestHandler source keeps description cleanup invariants", async () => {

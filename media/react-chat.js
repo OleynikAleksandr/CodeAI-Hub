@@ -24864,11 +24864,14 @@ ${path2}` : path2;
     const { ideaMarkdown, virtualSimulationMarkdown } = readArtifactPayload(artifact);
     const legacyArtifacts = [];
     if (ideaMarkdown) {
-      legacyArtifacts.push({ slot: "cluster.idea.idea", markdown: ideaMarkdown });
+      legacyArtifacts.push({
+        slot: "workspace.description",
+        markdown: ideaMarkdown
+      });
     }
     if (virtualSimulationMarkdown) {
       legacyArtifacts.push({
-        slot: "cluster.idea.virtual-simulation",
+        slot: "workspace.virtual_simulation",
         markdown: virtualSimulationMarkdown
       });
     }
@@ -25008,7 +25011,7 @@ ${path2}` : path2;
   };
 
   // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u0415\u0441\u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043F\u0440\u043E\u0441\u0438\u0442 \u043F\u0440\u0430\u0432\u043A\u0438 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u043E\u0432, \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439 \u0434\u0438\u0430\u043B\u043E\u0433 (ask/clarify/summarize), \u0441\u043D\u043E\u0432\u0430 \u0437\u0430\u043F\u0440\u043E\u0441\u0438 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u0437\u0430\u0442\u0435\u043C \u0432\u0435\u0440\u043D\u0438 finalize.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/<workspaceSlug>/description/description.md` \u0438 `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`.";
+  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u0415\u0441\u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043F\u0440\u043E\u0441\u0438\u0442 \u043F\u0440\u0430\u0432\u043A\u0438 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u043E\u0432, \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439 \u0434\u0438\u0430\u043B\u043E\u0433 (ask/clarify/summarize), \u0441\u043D\u043E\u0432\u0430 \u0437\u0430\u043F\u0440\u043E\u0441\u0438 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u0437\u0430\u0442\u0435\u043C \u0432\u0435\u0440\u043D\u0438 finalize.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, 2\u20134 \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u044F, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/<workspaceSlug>/description/Final_Description.md` \u0438 `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`.";
 
   // src/client/ui/src/services/idea-collector-fallback-schema.ts
   var FALLBACK_SCHEMA_JSON = `{
@@ -25039,7 +25042,7 @@ ${path2}` : path2;
         "assumptions",
         "risks"
       ],
-      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 idea.md \u0438 virtual-simulation.md.",
+      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 Final_Description.md \u0438 virtual-simulation.md.",
       "properties": {
         "ready_for_finalize": {
           "type": "boolean",
@@ -25094,8 +25097,8 @@ ${path2}` : path2;
             "type": "string",
             "description": "\u0421\u043B\u043E\u0442 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430.",
             "enum": [
-              "cluster.idea.idea",
-              "cluster.idea.virtual-simulation"
+              "workspace.description",
+              "workspace.virtual_simulation"
             ]
           },
           "markdown": {
@@ -25209,10 +25212,10 @@ ${path2}` : path2;
     if (!isRecord7(ideaMarkdown)) {
       return schema;
     }
-    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Idea.md markdown output.";
+    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Final_Description.md markdown output.";
     ideaMarkdown.description = `${description}
 
-Idea.md template:
+Final_Description.md template:
 ${template}`;
     return schema;
   };
@@ -25272,8 +25275,8 @@ ${template}`;
   var DESCRIPTION_CONTRACT_ENDPOINT = "/api/v1/orchestrator/description-contract";
   var VIRTUAL_SIMULATION_CONTRACT_ENDPOINT = "/api/v1/orchestrator/virtual-simulation-contract";
   var FALLBACK_OUTPUT_PATHS = {
-    idea: ".codeai-hub/unknown-workspace/description/runs/000-unknown/description.md",
-    virtualSimulation: ".codeai-hub/unknown-workspace/virtual_simulation/runs/000-unknown/virtual-simulation.md"
+    idea: ".codeai-hub/unknown-workspace/description/Final_Description.md",
+    virtualSimulation: ".codeai-hub/unknown-workspace/virtual_simulation/virtual-simulation.md"
   };
   var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var isWorkflowContractPayload = (value) => {
@@ -25638,7 +25641,7 @@ ${command.remainingMessage}`);
         this.state.markNoticeSent(sessionId);
         postSystemNotice(
           sessionId,
-          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Virtual Simulation. \u041F\u0440\u0438 \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E\u0441\u0442\u0438 \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u0435 description.md \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u043F\u0440\u043E\u0435\u043A\u0442\u0430."
+          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Virtual Simulation. \u041F\u0440\u0438 \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E\u0441\u0442\u0438 \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u0435 Final_Description.md \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u043F\u0440\u043E\u0435\u043A\u0442\u0430."
         );
       }
     }
@@ -25762,7 +25765,7 @@ ${content3}`;
       clearQuestionnairePendingStored(sessionId);
     }
     buildPromptWithOutputSlots(prompt, stage) {
-      const slotLines = stage === "virtual_simulation" ? ["- virtual-simulation.md: workspace.virtual_simulation"] : ["- description.md: workspace.description"];
+      const slotLines = stage === "virtual_simulation" ? ["- virtual-simulation.md: workspace.virtual_simulation"] : ["- Final_Description.md: workspace.description"];
       return `${prompt}
 
 \u0421\u043B\u043E\u0442\u044B \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 (\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0432 Structured Output):
@@ -25861,70 +25864,29 @@ ${updatedBody}
   var LEGACY_IDEA_RUN_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/idea\/idea\.md$/;
   var FALLBACK_PATH_SEGMENT_RE = /[^/]+$/;
   var buildCanonicalQuestionnairePath = (workspaceSlug) => `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
-  var buildLegacyInitiativeQuestionnairePath = (workspaceSlug) => `.codeai-hub/${workspaceSlug}/description/idea/questionnaire.md`;
-  var buildLegacyRunQuestionnairePath = (workspaceSlug, runSlug) => `.codeai-hub/${workspaceSlug}/description/runs/${runSlug}/idea/questionnaire.md`;
-  var resolveQuestionnairePaths = (descriptionPath) => {
+  var resolveCanonicalQuestionnairePath = (descriptionPath) => {
     const descriptionMatch = DESCRIPTION_PATH_RE.exec(descriptionPath);
     if (descriptionMatch) {
-      const workspaceSlug2 = descriptionMatch[1];
-      return {
-        canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
-        legacyReadPaths: [buildLegacyInitiativeQuestionnairePath(workspaceSlug2)]
-      };
+      return buildCanonicalQuestionnairePath(descriptionMatch[1]);
     }
     const runMatch = DESCRIPTION_RUN_PATH_RE.exec(descriptionPath);
     if (runMatch) {
-      const workspaceSlug2 = runMatch[1];
-      const runSlug2 = runMatch[2];
-      return {
-        canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
-        legacyReadPaths: [
-          buildLegacyRunQuestionnairePath(workspaceSlug2, runSlug2),
-          buildLegacyInitiativeQuestionnairePath(workspaceSlug2)
-        ]
-      };
+      return buildCanonicalQuestionnairePath(runMatch[1]);
     }
     const legacyIdeaMatch = LEGACY_IDEA_PATH_RE.exec(descriptionPath);
     if (legacyIdeaMatch) {
-      const workspaceSlug2 = legacyIdeaMatch[1];
-      return {
-        canonical: buildCanonicalQuestionnairePath(workspaceSlug2),
-        legacyReadPaths: [buildLegacyInitiativeQuestionnairePath(workspaceSlug2)]
-      };
+      return buildCanonicalQuestionnairePath(legacyIdeaMatch[1]);
     }
     const legacyRunMatch = LEGACY_IDEA_RUN_PATH_RE.exec(descriptionPath);
     if (!legacyRunMatch) {
       return null;
     }
-    const workspaceSlug = legacyRunMatch[1];
-    const runSlug = legacyRunMatch[2];
-    return {
-      canonical: buildCanonicalQuestionnairePath(workspaceSlug),
-      legacyReadPaths: [
-        buildLegacyRunQuestionnairePath(workspaceSlug, runSlug),
-        buildLegacyInitiativeQuestionnairePath(workspaceSlug)
-      ]
-    };
+    return buildCanonicalQuestionnairePath(legacyRunMatch[1]);
   };
   var resolveFallbackQuestionnairePath = (descriptionPath) => descriptionPath.replace(FALLBACK_PATH_SEGMENT_RE, "questionnaire.md");
-  var collectReadFallbackPaths = (paths, primaryPath) => {
-    const unique = /* @__PURE__ */ new Set();
-    for (const path2 of paths) {
-      if (!path2 || path2 === primaryPath) {
-        continue;
-      }
-      unique.add(path2);
-    }
-    return Array.from(unique);
-  };
   var resolveQuestionnaireTargets = (descriptionPath) => {
-    const pathSet = resolveQuestionnairePaths(descriptionPath);
-    const primaryPath = pathSet?.canonical ?? resolveFallbackQuestionnairePath(descriptionPath);
-    const readFallbackPaths = collectReadFallbackPaths(
-      pathSet?.legacyReadPaths ?? [],
-      primaryPath
-    );
-    return { primaryPath, readFallbackPaths };
+    const primaryPath = resolveCanonicalQuestionnairePath(descriptionPath) ?? resolveFallbackQuestionnairePath(descriptionPath);
+    return { primaryPath, readFallbackPaths: [] };
   };
 
   // src/client/ui/src/services/idea-questionnaire-template.ts
@@ -26271,7 +26233,7 @@ ${replacement}
       return null;
     }
     return {
-      idea: `.codeai-hub/${session.initiativeSlug}/description/description.md`,
+      idea: `.codeai-hub/${session.initiativeSlug}/description/Final_Description.md`,
       virtualSimulation: `.codeai-hub/${session.initiativeSlug}/virtual_simulation/virtual-simulation.md`
     };
   };
