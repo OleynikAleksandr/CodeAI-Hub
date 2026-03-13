@@ -669,6 +669,7 @@ export class CodexMessageProcessor {
     session.logger?.logSDKEvent("thread_id", threadId);
 
     if (!existingThreadId && previousId !== threadId) {
+      this.structuredOutput.promoteSession(previousId, threadId);
       this.sessionManager.updateSessionId(previousId, threadId);
       session.logger?.renameSession?.(previousId, threadId);
       this.clearReasoningSession(previousId);

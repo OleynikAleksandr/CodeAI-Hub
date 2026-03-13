@@ -234,6 +234,24 @@ export class StructuredOutputStreamController {
     this.turnConfigs.delete(sessionId);
   }
 
+  promoteSession(oldSessionId: string, newSessionId: string): void {
+    if (oldSessionId === newSessionId) {
+      return;
+    }
+
+    const config = this.turnConfigs.get(oldSessionId);
+    if (config) {
+      this.turnConfigs.set(newSessionId, config);
+      this.turnConfigs.delete(oldSessionId);
+    }
+
+    const state = this.streams.get(oldSessionId);
+    if (state) {
+      this.streams.set(newSessionId, state);
+      this.streams.delete(oldSessionId);
+    }
+  }
+
   private ensureState(sessionId: string, itemId: string): AnswerStreamState {
     const existing = this.streams.get(sessionId);
     const config = this.turnConfigs.get(sessionId) ?? DEFAULT_TURN_CONFIG;
