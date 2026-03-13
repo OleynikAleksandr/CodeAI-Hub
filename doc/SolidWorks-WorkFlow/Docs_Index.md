@@ -31,6 +31,7 @@
 
 ### Contracts (активные)
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
+- `Contracts/Description_LegacyCleanup_Architecture.md` — активный cleanup-contract для removal legacy restart/attempt/path architecture вокруг `Description`.
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
@@ -45,7 +46,7 @@
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Contracts (legacy/deferred)
-- `Contracts/DescriptionNode_ReviewSession.md` — legacy filename; содержит compatibility-контракт узла `description` (без встроенного reviewer).
+- `Contracts/DescriptionNode_ReviewSession.md` — legacy filename; redirect/compat note для узла `description`, без restart/reviewer semantics как активной возможности продукта.
 - `Contracts/StandaloneReviewer_Module.md` — draft deferred-модуля standalone reviewer (manual-only, вне базового chain 1→6).
 
 ### Root Drafts/RFC (non-SSOT, keep for history)
@@ -62,4 +63,4 @@
 ## 3) Правило миграции
 
 - Новые правки делаем только в SSOT-файлах этого каталога.
-- Legacy документы используем как редиректы/compat notes, затем удаляем после зелёного `npm run check:links`.
+- Legacy документы используем как редиректы/compat notes, но не описываем в них поддерживаемые product-возможности, уже снятые из живого кода.

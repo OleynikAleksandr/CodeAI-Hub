@@ -24,7 +24,7 @@
 
 - **Core Orchestrator** (Node.js сервис): бизнес‑логика, turn lifecycle, routing, continuity.
 - **Core Supervisor**: управление runtime, запуск/перезапуск и version attach.
-- **Project Manager (CEF UI bundle)**: Workflow Tree + Sessions/Artifacts + recovery UX.
+- **Project Manager (CEF UI bundle)**: Workflow Tree + Sessions/Artifacts + stage/session routing UX.
 - **UI bundles**: `project-manager`, `vscode-webview`.
 - **CEF Launcher**: локальный клиент для Project Manager.
 - **Providers**: Claude/Codex/Gemini модули (CLI/SDK контуры).
@@ -72,7 +72,7 @@
   - 2–4 сценария (актор/цель → действие → ожидаемый результат → критерий успеха),
   - ограничения/допущения,
   - ключевые сущности/термины.
-- Legacy `description.md`/reviewer-цепочка поддерживается только для совместимости старых workspace и не является SSOT.
+- Product-visible contract шага не использует `description.md`, manual restart или встроенный reviewer; internal compat для legacy draft допустим только как non-SSOT fallback.
 - Standalone Reviewer вынесен в deferred-модуль и не входит в базовый workflow 1→6.
 
 ## 6) Runtime Templates Boundary (Description + Virtual Simulation)

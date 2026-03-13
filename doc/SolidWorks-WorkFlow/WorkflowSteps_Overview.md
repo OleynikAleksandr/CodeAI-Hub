@@ -73,12 +73,13 @@ UI после submit:
 
 - `.codeai-hub/<workspaceSlug>/description/questionnaire.md`
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
-- Legacy (compat only): `.codeai-hub/<workspaceSlug>/description/description.md`
+- Internal compat only: `.codeai-hub/<workspaceSlug>/description/description.md` может читаться runtime/store, но не является product-visible SSOT.
 
 ### 1.5 Reviewer boundary
 
 Встроенного reviewer-подшага в `Description` нет.
 Standalone reviewer остаётся отдельным deferred-модулем и не входит в базовый chain 1→6.
+Ручной `↻ Restart attempt` в шаге `Description` отсутствует.
 
 ---
 
