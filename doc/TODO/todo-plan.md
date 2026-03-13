@@ -33,9 +33,9 @@
 
 ### Stream 0: Questionnaire artifact header cleanup
 1. [DONE] Удалить legacy PM artifact-header restart wiring: убрать import/render/error-state из viewer и удалить `QuestionnaireRestartAttemptControl`, чтобы рядом с `questionnaire.md` больше не рендерилась круговая стрелка `↻` и не существовал ручной re-submit flow через артефакт (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/components/layout/questionnaire-restart-attempt-control.tsx`; expected commit: `fix(pm): remove questionnaire restart attempt control`).
-2. [DONE] Git Commit: `fix(pm): remove questionnaire restart attempt control` (hash: TBD)
-3. [TODO] Добавить узкий regression guard, который подтверждает отсутствие restart-attempt UI в PM artifact viewer для `questionnaire.md` и не позволяет вернуть этот control через скрытый import/render branch (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`; expected commit: `test(pm): guard questionnaire header cleanup`).
-4. [TODO] Git Commit: `test(pm): guard questionnaire header cleanup` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): remove questionnaire restart attempt control` (hash: `638d1759`)
+3. [DONE] Добавить узкий regression guard, который подтверждает отсутствие restart-attempt UI в PM artifact viewer для `questionnaire.md` и не позволяет вернуть этот control через скрытый import/render branch (scope: `src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`; expected commit: `test(pm): guard questionnaire header cleanup`).
+4. [DONE] Git Commit: `test(pm): guard questionnaire header cleanup` (hash: TBD)
 
 ---
 
