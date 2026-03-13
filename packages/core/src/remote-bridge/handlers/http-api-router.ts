@@ -619,7 +619,6 @@ type WorkflowStageId =
 
 type WorkflowArtifactFileName =
   | "Final_Description.md"
-  | "description.md"
   | "virtual-simulation.md"
   | "modules-diagram.mmd"
   | "facades-graph.mmd";
@@ -1149,7 +1148,7 @@ const resolveArtifactUpdate = (params: {
   readonly nextAction: IdeaArtifactPayload["nextAction"];
 }): ArtifactUpdateResult => {
   const targetLabel =
-    params.target === "idea" ? "idea.md" : "virtual-simulation.md";
+    params.target === "idea" ? "Final_Description.md" : "virtual-simulation.md";
   if (params.nextAction === "finalize") {
     if (!params.fullMarkdown) {
       return { ok: false, error: `Missing ${targetLabel} content` };
@@ -1332,7 +1331,6 @@ const resolveWorkflowStageValidationError = (params: {
 }): string | null => {
   switch (params.fileName) {
     case "Final_Description.md":
-    case "description.md":
       return validateDescriptionMarkdown(params.content, params.shouldValidate);
     case "virtual-simulation.md":
       return validateVirtualSimulationMarkdown(

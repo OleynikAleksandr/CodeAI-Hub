@@ -107,11 +107,14 @@ export const extractIdeaCollectorArtifact = (
     readArtifactPayload(artifact);
   const legacyArtifacts: { slot: string; markdown: string }[] = [];
   if (ideaMarkdown) {
-    legacyArtifacts.push({ slot: "cluster.idea.idea", markdown: ideaMarkdown });
+    legacyArtifacts.push({
+      slot: "workspace.description",
+      markdown: ideaMarkdown,
+    });
   }
   if (virtualSimulationMarkdown) {
     legacyArtifacts.push({
-      slot: "cluster.idea.virtual-simulation",
+      slot: "workspace.virtual_simulation",
       markdown: virtualSimulationMarkdown,
     });
   }
