@@ -280,7 +280,7 @@ test("WorkflowRuntime falls back to claude reviewer when preferred gemini lacks 
   );
 });
 
-test("WorkflowRuntime ignores stale description draft runs when collector attempt changes", async () => {
+test("WorkflowRuntime ignores legacy run-scoped description drafts", async () => {
   const runtime = new WorkflowRuntime({
     logger: {
       info: () => {
@@ -313,11 +313,6 @@ test("WorkflowRuntime ignores stale description draft runs when collector attemp
           workspacePath: string;
           createdAt: string;
           updatedAt: string;
-          sessionKind: "collector";
-          collectorSession: {
-            dialogSessionId: string;
-            providerSessionId: string;
-          };
         }>;
       };
       lastActiveStore: {
@@ -331,11 +326,6 @@ test("WorkflowRuntime ignores stale description draft runs when collector attemp
         workspacePath: "/tmp/workspace-stale-run",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        sessionKind: "collector",
-        collectorSession: {
-          dialogSessionId: "attempt-new",
-          providerSessionId: "provider-new",
-        },
       }),
   };
 

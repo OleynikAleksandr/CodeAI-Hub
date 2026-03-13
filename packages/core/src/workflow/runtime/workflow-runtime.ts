@@ -4,7 +4,6 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { SessionRequestHandler } from "../../remote-bridge/handlers/session-request-handler";
 import type { Logger } from "../../telemetry/logger";
 import { DescriptionStepStore } from "../description/description-step-store";
-import type { DescriptionStepSnapshot } from "../description/description-step-types";
 import { WorkflowLastActiveStore } from "../state/workflow-last-active-store";
 import type { WorkflowWatcherEvent } from "../watcher/watcher-types";
 import { WorkflowWatcher } from "../watcher/workflow-watcher";
@@ -13,8 +12,6 @@ const WORKSPACE_ROOT_DIR = ".codeai-hub";
 
 const BACKSLASH_RE = /\\/g;
 const LEADING_DOT_SLASH_RE = /^\.?\//;
-const DESCRIPTION_DRAFT_RUN_SLUG_RE =
-  /^description\/runs\/([^/]+)\/description\.md$/;
 
 const normalizeRelativePath = (value: string): string =>
   value.replace(BACKSLASH_RE, "/").replace(LEADING_DOT_SLASH_RE, "");
@@ -30,32 +27,6 @@ const buildWorkflowRelativePath = (
       normalizeRelativePath(filePathWithinWorkspaceSlug)
     )
   );
-
-const parseDescriptionDraftRunSlug = (relativePath: string): string | null => {
-  const match = DESCRIPTION_DRAFT_RUN_SLUG_RE.exec(relativePath);
-  return match?.[1] ?? null;
-};
-
-const resolveCollectorAttemptId = (
-  snapshot: DescriptionStepSnapshot | null
-): string | null => {
-  const ref =
-    snapshot?.collectorSession ??
-    (snapshot?.sessionKind === "collector" ? snapshot.session : undefined);
-  return ref?.dialogSessionId ?? ref?.providerSessionId ?? null;
-};
-
-const shouldAcceptDescriptionDraftArtifact = (
-  snapshot: DescriptionStepSnapshot | null,
-  relativePath: string
-): boolean => {
-  const collectorAttemptId = resolveCollectorAttemptId(snapshot);
-  const runSlug = parseDescriptionDraftRunSlug(relativePath);
-  if (runSlug) {
-    return !collectorAttemptId || runSlug === collectorAttemptId;
-  }
-  return !collectorAttemptId;
-};
 
 export class WorkflowRuntime {
   private readonly logger: Logger;
@@ -195,9 +166,11 @@ export class WorkflowRuntime {
       return true;
     }
 
-    const isDraft =
-      relativePath === "description/description.md" ||
-      relativePath.endsWith("/description.md");
+    if (relativePath.startsWith("description/runs/")) {
+      return false;
+    }
+
+    const isDraft = relativePath === "description/description.md";
     if (!isDraft) {
       return true;
     }
@@ -207,9 +180,6 @@ export class WorkflowRuntime {
       event.workspaceSlug
     );
     if (snapshot?.finalPath) {
-      return false;
-    }
-    if (!shouldAcceptDescriptionDraftArtifact(snapshot, relativePath)) {
       return false;
     }
 
