@@ -3867,11 +3867,6 @@ export class SessionRequestHandler {
     const continuityRootSessionId =
       this.continuityRootBySessionId.get(session.id) ?? session.id;
 
-    const shouldResetCollectorArtifacts =
-      await this.shouldResetDescriptionCollectorArtifacts(session).catch(
-        () => false
-      );
-
     // Unified session history is stored under a workspace key derived from the
     // absolute workspace path (not the workflow slug/initiative slug).
     const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
@@ -3896,8 +3891,6 @@ export class SessionRequestHandler {
         session.initiativeSlug,
         {
           primarySession: sessionRef,
-          draftPath: shouldResetCollectorArtifacts ? null : undefined,
-          finalPath: shouldResetCollectorArtifacts ? null : undefined,
         }
       );
     } catch (error: unknown) {
@@ -3906,30 +3899,6 @@ export class SessionRequestHandler {
         error: error instanceof Error ? error.message : String(error),
       });
     }
-  }
-
-  private async shouldResetDescriptionCollectorArtifacts(
-    session: Session
-  ): Promise<boolean> {
-    if (session.stage !== "description") {
-      return false;
-    }
-    if (!session.initiativeSlug) {
-      return false;
-    }
-
-    const snapshot = await this.descriptionStepStore.read(
-      session.workspacePath,
-      session.initiativeSlug
-    );
-
-    if (!snapshot) {
-      return true;
-    }
-    if (snapshot.finalPath) {
-      return false;
-    }
-    return true;
   }
 
   private getDefaultProviderId(): string {

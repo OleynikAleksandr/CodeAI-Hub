@@ -1190,3 +1190,43 @@ test("SessionRequestHandler uses only primary description dialog session ref for
   assert.equal(result.dialogSessionId, "primary-description-dialog");
   assert.equal(result.shouldBackfill, false);
 });
+
+test("SessionRequestHandler persists primary description session ref without resetting artifacts", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-description-session-ref",
+    "provider-session-current",
+    {
+      initiativeSlug: "description-workspace",
+      stage: "description",
+      runSlug: null,
+    }
+  );
+
+  let capturedUpdate: Record<string, unknown> | null = null;
+  (harness.handler as any).descriptionStepStore = {
+    upsert: (
+      _workspacePath: string,
+      _workspaceSlug: string,
+      update: Record<string, unknown>
+    ) => {
+      capturedUpdate = update;
+      return Promise.resolve({});
+    },
+  };
+  (harness.handler as any).continuityRootBySessionId = new Map();
+
+  await (harness.handler as any).updateDescriptionSessionRef(
+    session,
+    "provider-session-updated"
+  );
+
+  assert.ok(capturedUpdate);
+  assert.deepEqual(Object.keys(capturedUpdate).sort(), ["primarySession"]);
+  assert.equal(
+    (capturedUpdate?.primarySession as { providerSessionId?: string })
+      ?.providerSessionId,
+    "provider-session-updated"
+  );
+});
