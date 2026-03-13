@@ -58,16 +58,16 @@
 10. [DONE] Git Commit: `refactor(pm): align description workflow state with primary session` (hash: `72eee7fc`)
 
 ### Stream 3: PM description state consumers
-11. [TODO] Перевести оставшихся PM consumers workflow-state на `primarySession`, чтобы main-area и workspace auto-select больше не зависели от временного compat alias `description.session/sessionKind` при показе `questionnaire.md` и resume Description dialog (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/services/workflow-state-helpers.ts`; expected commit: `refactor(pm): use primary session in description consumers`).
-12. [TODO] Git Commit: `refactor(pm): use primary session in description consumers` (hash: TBD)
+11. [DONE] Перевести оставшихся PM consumers workflow-state на `primarySession`, чтобы main-area и workspace auto-select больше не зависели от временного compat alias `description.session/sessionKind` при показе `questionnaire.md` и resume Description dialog (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/services/workflow-state-helpers.ts`; expected commit: `refactor(pm): use primary session in description consumers`).
+12. [DONE] Git Commit: `refactor(pm): use primary session in description consumers` (hash: `6f32bbcd`)
 
 ### Stream 4: PM workflow-state boundary contract
-13. [TODO] Удалить из PM workflow-state client/solver remaining fallback на legacy `description.session` / `description.collectorSession` / `description.sessionKind`, чтобы webview boundary тоже считала `primarySession` единственным живым session slot (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`; expected commit: `refactor(pm): drop legacy description state aliases`).
-14. [TODO] Git Commit: `refactor(pm): drop legacy description state aliases` (hash: TBD)
+13. [DONE] Удалить из PM workflow-state client/solver remaining fallback на legacy `description.session` / `description.collectorSession` / `description.sessionKind`, чтобы webview boundary тоже считала `primarySession` единственным живым session slot (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`; expected commit: `refactor(pm): drop legacy description state aliases`).
+14. [DONE] Git Commit: `refactor(pm): drop legacy description state aliases` (hash: `378f35ff`)
 
 ### Stream 5: Core workflow-state output cleanup
-15. [TODO] Снять временный compat alias `description.session/sessionKind` на core workflow-state boundary после PM migration и закрепить canonical output contract только на `primarySession` (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit: `refactor(core): drop description session compat alias`).
-16. [TODO] Git Commit: `refactor(core): drop description session compat alias` (hash: TBD)
+15. [DONE] Снять временный compat alias `description.session/sessionKind` на core workflow-state boundary после PM migration и закрепить canonical output contract только на `primarySession` (scope: `packages/core/src/workflow/description/description-step-types.ts`, `packages/core/src/workflow/description/description-step-store.ts`, `packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit: `refactor(core): drop description session compat alias`).
+16. [DONE] Git Commit: `refactor(core): drop description session compat alias` (hash: `a68a1812`)
 
 ---
 
