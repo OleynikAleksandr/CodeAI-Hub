@@ -1146,7 +1146,7 @@ test("SessionRequestHandler rolls back running state to idle on provider send fa
   assert.deepEqual(turnStates, ["running", "idle"]);
 });
 
-test("SessionRequestHandler reuses legacy description dialog session ref for collector flow", async () => {
+test("SessionRequestHandler prefers primary description dialog session ref for collector flow", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -1165,6 +1165,12 @@ test("SessionRequestHandler reuses legacy description dialog session ref for col
       workspacePath: "/tmp/core-legacy-description-dialog",
       createdAt: "2026-02-28T18:30:00.000Z",
       updatedAt: "2026-02-28T18:30:00.000Z",
+      primarySession: {
+        providerId: "claudeCodeCli",
+        providerSessionId: "provider-session-primary",
+        jsonlPath: "/tmp/primary-session.jsonl",
+        dialogSessionId: "primary-description-dialog",
+      },
       sessionKind: "collector",
       session: {
         providerId: "claudeCodeCli",
@@ -1182,6 +1188,6 @@ test("SessionRequestHandler reuses legacy description dialog session ref for col
     providerSessionId: "provider-session-current",
   });
 
-  assert.equal(result.dialogSessionId, "legacy-description-dialog");
+  assert.equal(result.dialogSessionId, "primary-description-dialog");
   assert.equal(result.shouldBackfill, false);
 });

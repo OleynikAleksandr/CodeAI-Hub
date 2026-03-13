@@ -90,8 +90,8 @@ export const handleWorkspaceActivate = async (params: {
     if (descriptionSnapshot) {
       // Description works in single-session collector mode.
       const collector =
-        descriptionSnapshot.collectorSession ??
-        descriptionSnapshot.primarySession;
+        descriptionSnapshot.primarySession ??
+        descriptionSnapshot.collectorSession;
       const legacy = descriptionSnapshot.session;
 
       if (collector) {

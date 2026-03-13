@@ -3777,7 +3777,7 @@ export class SessionRequestHandler {
       session.initiativeSlug
     );
 
-    const slot = snapshot?.collectorSession;
+    const slot = snapshot?.primarySession ?? snapshot?.collectorSession;
 
     const legacySlot =
       snapshot?.sessionKind === sessionKind ? snapshot?.session : undefined;
@@ -3906,6 +3906,7 @@ export class SessionRequestHandler {
         session.workspacePath,
         session.initiativeSlug,
         {
+          primarySession: sessionRef,
           session: {
             providerId: session.providerId,
             providerSessionId: resolvedProviderSessionId,
