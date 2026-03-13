@@ -9,8 +9,6 @@ export type DescriptionSessionRef = {
   readonly dialogSessionId?: string;
 };
 
-export type DescriptionSessionKind = "collector";
-
 export type DescriptionStepSnapshot = {
   readonly workspaceSlug: string;
   readonly workspacePath: string;
@@ -20,17 +18,9 @@ export type DescriptionStepSnapshot = {
   readonly draftPath?: string;
   readonly finalPath?: string;
   /**
-   * Canonical single-session slot for the new single-agent description flow.
-   * Legacy collector slot remains for backward compatibility.
+   * Canonical single-session slot for the single-agent description flow.
    */
   readonly primarySession?: DescriptionSessionRef;
-  /**
-   * Session ref for stage=description.
-   * This is the source of truth for "1 agent = 1 dialog JSONL" persistence.
-   */
-  readonly collectorSession?: DescriptionSessionRef;
-  readonly session?: DescriptionSessionRef;
-  readonly sessionKind?: DescriptionSessionKind;
 };
 
 export type DescriptionBranchSnapshot = {
@@ -40,15 +30,11 @@ export type DescriptionBranchSnapshot = {
   readonly finalPath?: string;
   readonly primarySession?: DescriptionSessionRef;
   /**
-   * Session ref for stage=description.
-   * These are used by clients to restore dialog history after restart.
-   */
-  readonly collectorSession?: DescriptionSessionRef;
-  /**
-   * Legacy single-slot ref (kept for backward compatibility while migrating).
+   * Temporary compat alias for PM consumers that still read `description.session`.
+   * Remove once workflow-state client stops emitting/reading the legacy slot.
    */
   readonly session?: DescriptionSessionRef;
-  readonly sessionKind?: DescriptionSessionKind;
+  readonly sessionKind?: "collector";
 };
 
 export type DescriptionStepUpdate = {
@@ -56,7 +42,4 @@ export type DescriptionStepUpdate = {
   readonly draftPath?: string | null;
   readonly finalPath?: string | null;
   readonly primarySession?: DescriptionSessionRef | null;
-  readonly collectorSession?: DescriptionSessionRef | null;
-  readonly session?: DescriptionSessionRef | null;
-  readonly sessionKind?: DescriptionSessionKind | null;
 };

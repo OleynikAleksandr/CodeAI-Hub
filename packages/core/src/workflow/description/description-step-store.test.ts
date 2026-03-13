@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { DescriptionStepStore } from "./description-step-store";
+import {
+  buildDescriptionBranchSnapshot,
+  DescriptionStepStore,
+} from "./description-step-store";
 
 const buildStatePath = (workspaceRoot: string, workspaceSlug: string): string =>
   path.join(
@@ -14,7 +17,7 @@ const buildStatePath = (workspaceRoot: string, workspaceSlug: string): string =>
     "description-step.json"
   );
 
-test("DescriptionStepStore.read keeps collector session refs when workspaceRoot has trailing slash", async () => {
+test("DescriptionStepStore.read folds legacy collector session into primarySession when workspaceRoot has trailing slash", async () => {
   const workspaceSlug = "codeai-hub";
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
 
@@ -46,14 +49,15 @@ test("DescriptionStepStore.read keeps collector session refs when workspaceRoot 
     const store = new DescriptionStepStore();
     const snapshot = await store.read(`${workspaceRoot}/`, workspaceSlug);
 
-    assert.equal(snapshot?.sessionKind, "collector");
-    assert.equal(snapshot?.collectorSession?.providerId, "codexCli");
+    assert.equal(snapshot?.primarySession?.providerId, "codexCli");
+    assert.equal("collectorSession" in (snapshot ?? {}), false);
+    assert.equal("sessionKind" in (snapshot ?? {}), false);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
 
-test("DescriptionStepStore.read falls back to workspaceRoot when snapshot workspacePath is non-absolute for collector snapshot", async () => {
+test("DescriptionStepStore.read falls back to workspaceRoot when snapshot workspacePath is non-absolute for legacy collector snapshot", async () => {
   const workspaceSlug = "codeai-hub";
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
 
@@ -87,13 +91,13 @@ test("DescriptionStepStore.read falls back to workspaceRoot when snapshot worksp
     const snapshot = await store.read(workspaceRoot, workspaceSlug);
 
     assert.equal(snapshot?.workspacePath, path.resolve(workspaceRoot));
-    assert.equal(snapshot?.collectorSession?.providerId, "codexCli");
+    assert.equal(snapshot?.primarySession?.providerId, "codexCli");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
 
-test("DescriptionStepStore.upsert mirrors legacy session slot into primarySession", async () => {
+test("DescriptionStepStore.upsert persists canonical primarySession without legacy session slots", async () => {
   const workspaceSlug = "codeai-hub";
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
 
@@ -103,22 +107,31 @@ test("DescriptionStepStore.upsert mirrors legacy session slot into primarySessio
     });
 
     const snapshot = await store.upsert(workspaceRoot, workspaceSlug, {
-      collectorSession: {
+      primarySession: {
         providerId: "claudeCodeCli",
         providerSessionId: "collector-session-1",
         jsonlPath: "/tmp/collector-session-1.jsonl",
       },
-      sessionKind: "collector",
     });
 
     assert.equal(
       snapshot.primarySession?.providerSessionId,
       "collector-session-1"
     );
+    const branchSnapshot = buildDescriptionBranchSnapshot(snapshot);
     assert.equal(
-      snapshot.collectorSession?.providerSessionId,
+      branchSnapshot.session?.providerSessionId,
       "collector-session-1"
     );
+    assert.equal(branchSnapshot.sessionKind, "collector");
+
+    const persisted = JSON.parse(
+      await readFile(buildStatePath(workspaceRoot, workspaceSlug), "utf8")
+    ) as Record<string, unknown>;
+    assert.equal("primarySession" in persisted, true);
+    assert.equal("collectorSession" in persisted, false);
+    assert.equal("session" in persisted, false);
+    assert.equal("sessionKind" in persisted, false);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -144,7 +157,6 @@ test("DescriptionStepStore.read clears primarySession on workspace mismatch", as
             providerSessionId: "legacy-primary",
             jsonlPath: "/tmp/legacy-primary.jsonl",
           },
-          sessionKind: "collector",
         },
         null,
         2
@@ -156,7 +168,6 @@ test("DescriptionStepStore.read clears primarySession on workspace mismatch", as
     const snapshot = await store.read(workspaceRoot, workspaceSlug);
 
     assert.equal(snapshot?.primarySession, undefined);
-    assert.equal(snapshot?.sessionKind, undefined);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

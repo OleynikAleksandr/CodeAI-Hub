@@ -2,7 +2,6 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   DescriptionBranchSnapshot,
-  DescriptionSessionKind,
   DescriptionSessionRef,
   DescriptionStepSnapshot,
   DescriptionStepUpdate,
@@ -18,23 +17,10 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
-const parseSessionKind = (value: unknown): DescriptionSessionKind | null =>
-  value === "collector" ? value : null;
-
 const resolveField = (
   current: string | undefined,
   update: string | null | undefined
 ): string | undefined => {
-  if (update === null) {
-    return;
-  }
-  return update ?? current;
-};
-
-const resolveSessionKind = (
-  current: DescriptionSessionKind | undefined,
-  update: DescriptionSessionKind | null | undefined
-): DescriptionSessionKind | undefined => {
   if (update === null) {
     return;
   }
@@ -49,18 +35,6 @@ const resolveSession = (
     return;
   }
   return update ?? current;
-};
-
-const resolvePrimarySessionUpdate = (
-  update: DescriptionStepUpdate
-): DescriptionSessionRef | null | undefined => {
-  if (update.primarySession !== undefined) {
-    return update.primarySession;
-  }
-  if (update.collectorSession !== undefined) {
-    return update.collectorSession;
-  }
-  return update.session;
 };
 
 const parseSessionRef = (value: unknown): DescriptionSessionRef | null => {
@@ -84,6 +58,17 @@ const parseSessionRef = (value: unknown): DescriptionSessionRef | null => {
   };
 };
 
+const parsePrimarySessionRef = (
+  value: Record<string, unknown>
+): DescriptionSessionRef | null =>
+  parseSessionRef(
+    (value as { readonly primarySession?: unknown }).primarySession
+  ) ??
+  parseSessionRef(
+    (value as { readonly collectorSession?: unknown }).collectorSession
+  ) ??
+  parseSessionRef(value.session);
+
 const parseSnapshot = (
   value: unknown,
   fallbackWorkspacePath: string
@@ -102,17 +87,7 @@ const parseSnapshot = (
     readNonEmptyString(value.questionnairePath) ?? undefined;
   const draftPath = readNonEmptyString(value.draftPath) ?? undefined;
   const finalPath = readNonEmptyString(value.finalPath) ?? undefined;
-  const primarySession = parseSessionRef(
-    (value as { readonly primarySession?: unknown }).primarySession
-  );
-  const collectorSession = parseSessionRef(
-    (value as { readonly collectorSession?: unknown }).collectorSession
-  );
-  const session = parseSessionRef(value.session);
-  const sessionKind =
-    parseSessionKind(
-      (value as { readonly sessionKind?: unknown }).sessionKind
-    ) ?? undefined;
+  const primarySession = parsePrimarySessionRef(value);
 
   return {
     workspaceSlug,
@@ -129,9 +104,6 @@ const parseSnapshot = (
     draftPath,
     finalPath,
     primarySession: primarySession ?? undefined,
-    collectorSession: collectorSession ?? undefined,
-    session: session ?? undefined,
-    sessionKind,
   };
 };
 
@@ -167,14 +139,19 @@ const writeJson = async (filePath: string, value: unknown): Promise<void> => {
 export const buildDescriptionBranchSnapshot = (
   snapshot: DescriptionStepSnapshot
 ): DescriptionBranchSnapshot => {
+  const sessionCompat = snapshot.primarySession
+    ? {
+        primarySession: snapshot.primarySession,
+        session: snapshot.primarySession,
+        sessionKind: "collector" as const,
+      }
+    : {};
+
   if (snapshot.finalPath) {
     return {
       updatedAt: snapshot.updatedAt,
       finalPath: snapshot.finalPath,
-      primarySession: snapshot.primarySession,
-      collectorSession: snapshot.collectorSession,
-      session: snapshot.session,
-      sessionKind: snapshot.sessionKind,
+      ...sessionCompat,
     };
   }
 
@@ -182,10 +159,7 @@ export const buildDescriptionBranchSnapshot = (
     updatedAt: snapshot.updatedAt,
     questionnairePath: snapshot.questionnairePath,
     draftPath: snapshot.draftPath,
-    primarySession: snapshot.primarySession,
-    collectorSession: snapshot.collectorSession,
-    session: snapshot.session,
-    sessionKind: snapshot.sessionKind,
+    ...sessionCompat,
   };
 };
 
@@ -211,7 +185,7 @@ export class DescriptionStepStore {
       return null;
     }
     // Validate workspacePath matches current workspaceRoot
-    // If mismatch, treat session/sessionKind as stale (cross-workspace leak)
+    // If mismatch, treat the persisted dialog ref as stale (cross-workspace leak)
     if (
       normalizeWorkspacePath(parsed.workspacePath) !==
       normalizeWorkspacePath(workspaceRoot)
@@ -219,9 +193,6 @@ export class DescriptionStepStore {
       return {
         ...parsed,
         primarySession: undefined,
-        collectorSession: undefined,
-        session: undefined,
-        sessionKind: undefined,
       };
     }
     return parsed;
@@ -234,10 +205,6 @@ export class DescriptionStepStore {
   ): Promise<DescriptionStepSnapshot> {
     const existing = await this.read(workspaceRoot, workspaceSlug);
     const now = this.clock();
-    const nextSessionKind = resolveSessionKind(
-      existing?.sessionKind,
-      update.sessionKind
-    );
     const next: DescriptionStepSnapshot = {
       workspaceSlug,
       workspacePath: normalizeWorkspacePath(workspaceRoot),
@@ -251,14 +218,8 @@ export class DescriptionStepStore {
       finalPath: resolveField(existing?.finalPath, update.finalPath),
       primarySession: resolveSession(
         existing?.primarySession,
-        resolvePrimarySessionUpdate(update)
+        update.primarySession
       ),
-      collectorSession: resolveSession(
-        existing?.collectorSession,
-        update.collectorSession
-      ),
-      session: resolveSession(existing?.session, update.session),
-      sessionKind: nextSessionKind,
     };
 
     await writeJson(buildStatePath(workspaceRoot, workspaceSlug), next);
