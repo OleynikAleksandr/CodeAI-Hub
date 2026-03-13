@@ -89,10 +89,7 @@ export const handleWorkspaceActivate = async (params: {
 
     if (descriptionSnapshot) {
       // Description works in single-session collector mode.
-      const collector =
-        descriptionSnapshot.primarySession ??
-        descriptionSnapshot.collectorSession;
-      const legacy = descriptionSnapshot.session;
+      const collector = descriptionSnapshot.primarySession;
 
       if (collector) {
         await params.sessionHandler.handleCreate(
@@ -103,19 +100,6 @@ export const handleWorkspaceActivate = async (params: {
             stage: "description",
             runSlug: null,
             providerSessionId: collector.providerSessionId,
-          }
-        );
-      }
-
-      if (!collector && legacy) {
-        await params.sessionHandler.handleCreate(
-          legacy.providerId,
-          workspacePath,
-          {
-            initiativeSlug: workspaceSlug,
-            stage: "description",
-            runSlug: null,
-            providerSessionId: legacy.providerSessionId,
           }
         );
       }

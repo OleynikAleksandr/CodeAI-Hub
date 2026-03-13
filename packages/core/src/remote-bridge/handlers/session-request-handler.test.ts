@@ -1146,7 +1146,7 @@ test("SessionRequestHandler rolls back running state to idle on provider send fa
   assert.deepEqual(turnStates, ["running", "idle"]);
 });
 
-test("SessionRequestHandler prefers primary description dialog session ref for collector flow", async () => {
+test("SessionRequestHandler uses only primary description dialog session ref for collector flow", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -1171,7 +1171,6 @@ test("SessionRequestHandler prefers primary description dialog session ref for c
         jsonlPath: "/tmp/primary-session.jsonl",
         dialogSessionId: "primary-description-dialog",
       },
-      sessionKind: "collector",
       session: {
         providerId: "claudeCodeCli",
         providerSessionId: "provider-session-legacy",

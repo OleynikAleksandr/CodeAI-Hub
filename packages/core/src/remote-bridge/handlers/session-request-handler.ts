@@ -3770,20 +3770,13 @@ export class SessionRequestHandler {
       };
     }
 
-    const sessionKind = "collector" as const;
-
     const snapshot = await this.descriptionStepStore.read(
       session.workspacePath,
       session.initiativeSlug
     );
 
-    const slot = snapshot?.primarySession ?? snapshot?.collectorSession;
-
-    const legacySlot =
-      snapshot?.sessionKind === sessionKind ? snapshot?.session : undefined;
-
-    const existingDialogSessionId =
-      slot?.dialogSessionId ?? legacySlot?.dialogSessionId ?? null;
+    const slot = snapshot?.primarySession;
+    const existingDialogSessionId = slot?.dialogSessionId ?? null;
     if (existingDialogSessionId) {
       return {
         dialogSessionId: existingDialogSessionId,
@@ -3791,13 +3784,10 @@ export class SessionRequestHandler {
       };
     }
 
-    const baseSessionId =
-      slot?.providerSessionId ??
-      legacySlot?.providerSessionId ??
-      options.providerSessionId;
+    const baseSessionId = slot?.providerSessionId ?? options.providerSessionId;
 
     return {
-      dialogSessionId: `${baseSessionId}__${sessionKind}`,
+      dialogSessionId: `${baseSessionId}__collector`,
       shouldBackfill: false,
     };
   }
@@ -3874,7 +3864,6 @@ export class SessionRequestHandler {
     if (!resolvedProviderSessionId) {
       return;
     }
-    const sessionKind = "collector" as const;
     const continuityRootSessionId =
       this.continuityRootBySessionId.get(session.id) ?? session.id;
 
@@ -3907,14 +3896,6 @@ export class SessionRequestHandler {
         session.initiativeSlug,
         {
           primarySession: sessionRef,
-          session: {
-            providerId: session.providerId,
-            providerSessionId: resolvedProviderSessionId,
-            jsonlPath,
-            dialogSessionId: continuityRootSessionId,
-          },
-          collectorSession: sessionRef,
-          sessionKind,
           draftPath: shouldResetCollectorArtifacts ? null : undefined,
           finalPath: shouldResetCollectorArtifacts ? null : undefined,
         }
