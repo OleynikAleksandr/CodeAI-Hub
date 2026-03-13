@@ -95,7 +95,7 @@
 2. [DONE] Git Commit: `docs(codex): sync response mode ssot` (hash: `56d66e2b`)
 
 ### Stream 1: Release prep
-3. [TODO] Зафиксировать `Session063` и финальный release handoff для response mode rollout; `README.md` и `CHANGELOG.md` уже синхронизированы в `56d66e2b` под версию `1.1.721` (scope: `doc/Sessions/Session063.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record response mode rollout`).
-4. [TODO] Git Commit: `docs(release): record response mode rollout` (hash: TBD)
+3. [DONE] Зафиксировать `Session063` и финальный release handoff для response mode rollout; `README.md` и `CHANGELOG.md` уже синхронизированы в `56d66e2b` под версию `1.1.721` (scope: `doc/Sessions/Session063.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record response mode rollout`).
+4. [DONE] Git Commit: `docs(release): record response mode rollout` (hash: `4f7c3ab9`)
 5. [DONE] Выполнить release cycle по чеклисту: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + package versions/manifests; expected commit: `chore(release): build-all vX.Y.Z`).
 6. [DONE] Git Commit: `chore(release): build-all v1.1.721` (hash: `19dc0289`)

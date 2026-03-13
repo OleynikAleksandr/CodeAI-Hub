@@ -37,6 +37,7 @@
 - `56d66e2b docs(codex): sync response mode ssot`
 - `8fb69fa4 fix(codex): guard structured passthrough extractor`
 - `19dc0289 chore(release): build-all v1.1.721`
+- `4f7c3ab9 docs(release): record response mode rollout`
 
 ---
 
