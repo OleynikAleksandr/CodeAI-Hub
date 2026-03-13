@@ -1,6 +1,6 @@
 # Session 069 — Implementation progress: Description legacy cleanup
 
-**Date:** 2026-03-13 13:03 (CET)
+**Date:** 2026-03-13 13:06 (CET)
 **Branch:** main
 **Version:** 1.1.723
 
@@ -19,6 +19,7 @@
 - `Phase 300` полностью закрыт: active path/schema/package/router/UI label хвосты старой description architecture вычищены до ожидаемого compat-слоя runtime/tests.
 - Из core удалён неиспользуемый `/api/v1/orchestrator/idea-artifact`; active artifact persistence теперь целиком опирается на `/artifact-upsert`.
 - PM больше не показывает пользователю label `description.md`: tree, auto-select и main-area везде используют canonical `Final_Description.md`, даже если открыт compat `draftPath`.
+- `Phase 301` полностью закрыт: живые SSOT-документы синхронизированы с фактической single-agent Description architecture и больше не описывают `↻ Restart attempt` как поддерживаемую product-функцию.
 
 ## Phase progress
 
@@ -166,6 +167,24 @@
 - `src/client/project-manager/components/layout/main-area.tsx`
   - Main-area selection sync больше не рассматривает `description.md` как живой UI label.
 
+### Phase 301 — DONE
+
+#### Stream 0 — DONE
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
+  - Legacy filename сохранён, но restart/recovery semantics убраны из live contract.
+- `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+  - UI/product invariants уточнены: `description.md` не product-visible label, manual restart не поддерживается, compat draft остаётся только non-SSOT fallback.
+- `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`
+  - Добавлен status checkpoint после закрытия code phases и явно описан допустимый внутренний compat-layer для `description/description.md`.
+
+#### Stream 1 — DONE
+- `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - Workflow boundary Description больше не использует формулировки recovery UX и product-visible legacy contract.
+- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+  - Step overview теперь явно отделяет internal compat `description.md` от active SSOT и фиксирует отсутствие ручного restart flow.
+- `doc/SolidWorks-WorkFlow/Docs_Index.md`
+  - `Description_LegacyCleanup_Architecture.md` поднят в active contracts; legacy redirect-docs больше не описываются как источник живой product semantics.
+
 ## Verification
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`
 - `node --test --import tsx --test-name-pattern "primary description dialog session ref" packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
@@ -208,6 +227,9 @@
 - `4797aef5 refactor(core): remove legacy description artifact endpoint`
 - `2cea566b refactor(pm): hide legacy description draft label`
 - `bf3a3f2b refactor(pm): keep canonical description label in main area`
+- `2a340990 docs(session): close phase 300 cleanup`
+- `1b0ed9ea docs(description): sync cleanup contracts`
+- `03b43acb docs(workflow): remove legacy description architecture references`
 
 ---
 
@@ -221,5 +243,5 @@
 5. `doc/Sessions/Session069.md` (THIS REPORT)
 
 ## Plans for next session
-- Перейти к `Phase 301`: синхронизировать живые SSOT-документы с уже завершённым cleanup-циклом `Description`.
-- Затем закрыть `Phase 302` (guards + targeted verification) и перейти к обязательной релизной сборке из `Phase 303`.
+- Перейти к `Phase 302`: добавить финальные cleanup-guards и прогнать таргетную валидацию затронутых контуров.
+- После зелёного `Phase 302` перейти к обязательной релизной сборке `Phase 303` и собрать новый cleanup-release.

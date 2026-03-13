@@ -126,12 +126,12 @@
 ## Phase 301 — SSOT docs: sync active documentation with cleanup target (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: Description contracts
-1. [TODO] Удалить recovery/restart semantics из живых description contracts и синхронизировать их с cleanup architecture SSOT, не переписывая исторические bug/session документы (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`, `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`; expected commit: `docs(description): sync cleanup contracts`).
-2. [TODO] Git Commit: `docs(description): sync cleanup contracts` (hash: TBD)
+1. [DONE] Удалить recovery/restart semantics из живых description contracts и синхронизировать их с cleanup architecture SSOT, не переписывая исторические bug/session документы (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`, `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`; expected commit: `docs(description): sync cleanup contracts`).
+2. [DONE] Git Commit: `docs(description): sync cleanup contracts` (hash: `1b0ed9ea`)
 
 ### Stream 1: System and workflow overview
-3. [TODO] Обновить системные и overview-документы под чистый single-agent contract без attempt/run compatibility и без упоминаний ручного restart flow как живой возможности продукта (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(workflow): remove legacy description architecture references`).
-4. [TODO] Git Commit: `docs(workflow): remove legacy description architecture references` (hash: TBD)
+3. [DONE] Обновить системные и overview-документы под чистый single-agent contract без attempt/run compatibility и без упоминаний ручного restart flow как живой возможности продукта (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(workflow): remove legacy description architecture references`).
+4. [DONE] Git Commit: `docs(workflow): remove legacy description architecture references` (hash: `03b43acb`)
 
 ---
 
