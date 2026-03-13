@@ -28,11 +28,9 @@ export const IDEA_TEMPLATE_PATHS = {
  * Output paths (where artifacts are saved).
  * Paths are relative to workspace root.
  */
-export const IDEA_OUTPUT_ROOT = `.codeai-hub/${DEFAULT_INITIATIVE_SLUG}/description/runs/${DEFAULT_RUN_SLUG}/${IDEA_STAGE}`;
-
 export const IDEA_OUTPUT_PATHS = {
-  idea: `${IDEA_OUTPUT_ROOT}/idea.md`,
-  virtualSimulation: `${IDEA_OUTPUT_ROOT}/virtual-simulation.md`,
+  idea: `.codeai-hub/${DEFAULT_INITIATIVE_SLUG}/description/Final_Description.md`,
+  virtualSimulation: `.codeai-hub/${DEFAULT_INITIATIVE_SLUG}/virtual_simulation/virtual-simulation.md`,
 } as const;
 
 /**
@@ -44,19 +42,17 @@ export type IdeaArtifactPaths = {
 };
 
 /**
- * Get artifact output paths for a specific initiative/run.
- * Allows customization of the initiative and run slugs.
+ * Get artifact output paths for a specific initiative.
+ * `runSlug` is retained only for compatibility with older callers.
  */
 export const getIdeaOutputPaths = (
   initiativeSlug: string = DEFAULT_INITIATIVE_SLUG,
-  runSlug: string = DEFAULT_RUN_SLUG
-): IdeaArtifactPaths => {
-  const root = `.codeai-hub/${initiativeSlug}/description/runs/${runSlug}/${IDEA_STAGE}`;
-  return {
-    idea: `${root}/idea.md`,
-    virtualSimulation: `${root}/virtual-simulation.md`,
-  };
-};
+  // Description cleanup removes run-scoped artifact paths from the live schema.
+  _runSlug: string = DEFAULT_RUN_SLUG
+): IdeaArtifactPaths => ({
+  idea: `.codeai-hub/${initiativeSlug}/description/Final_Description.md`,
+  virtualSimulation: `.codeai-hub/${initiativeSlug}/virtual_simulation/virtual-simulation.md`,
+});
 
 /**
  * Schema path for template injection.
