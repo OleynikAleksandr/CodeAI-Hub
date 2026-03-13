@@ -118,8 +118,8 @@
 16. [DONE] Git Commit: `refactor(pm): hide legacy description draft label` (hash: `2cea566b`)
 
 ### Stream 8: Canonical label in main-area auto-open
-17. [TODO] Перевести auto-open Description document в main-area на канонический label `Final_Description.md`, чтобы active PM view больше не рендерил legacy filename даже при compat `draftPath`; финальный guard на это инвариантное поведение будет добавлен в `Phase 302` (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/main-area.tsx`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): keep canonical description label in main area`).
-18. [TODO] Git Commit: `refactor(pm): keep canonical description label in main area` (hash: TBD)
+17. [DONE] Перевести auto-open Description document в main-area на канонический label `Final_Description.md`, чтобы active PM view больше не рендерил legacy filename даже при compat `draftPath`; финальный guard на это инвариантное поведение будет добавлен в `Phase 302` (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/main-area.tsx`, `doc/TODO/todo-plan.md`; expected commit: `refactor(pm): keep canonical description label in main area`).
+18. [DONE] Git Commit: `refactor(pm): keep canonical description label in main area` (hash: `bf3a3f2b`)
 
 ---
 

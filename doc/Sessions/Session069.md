@@ -1,6 +1,6 @@
 # Session 069 — Implementation progress: Description legacy cleanup
 
-**Date:** 2026-03-13 12:29 (CET)
+**Date:** 2026-03-13 13:03 (CET)
 **Branch:** main
 **Version:** 1.1.723
 
@@ -16,6 +16,9 @@
 - Core-side continuity и workspace activation переведены на приоритет `primarySession`; legacy fallback на continuity уже снят.
 - Persisted `description-step` snapshot схлопнут до одного source-of-truth slot `primarySession`; legacy `collectorSession/session/sessionKind` теперь читаются только как read-compat для старых state-файлов.
 - PM-side workflow-state client, helpers и auto-select переведены на canonical `primarySession`; временный compat alias на core boundary удалён.
+- `Phase 300` полностью закрыт: active path/schema/package/router/UI label хвосты старой description architecture вычищены до ожидаемого compat-слоя runtime/tests.
+- Из core удалён неиспользуемый `/api/v1/orchestrator/idea-artifact`; active artifact persistence теперь целиком опирается на `/artifact-upsert`.
+- PM больше не показывает пользователю label `description.md`: tree, auto-select и main-area везде используют canonical `Final_Description.md`, даже если открыт compat `draftPath`.
 
 ## Phase progress
 
@@ -101,12 +104,75 @@
 - Добавлен guard:
   - `SessionRequestHandler persists primary description session ref without resetting artifacts`
 
+### Phase 300 — DONE
+
+#### Stream 0 — DONE
+- `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`
+  - Удалён legacy mirroring `questionnaire.md` из `description/runs/*` и `description/idea/*`.
+- `src/client/ui/src/services/idea-questionnaire-paths.ts`
+  - Canonical resolution анкеты сведён к `.codeai-hub/<workspace>/description/questionnaire.md`.
+- `src/client/ui/src/services/idea-questionnaire-paths.test.ts`
+  - Добавлен guard на canonical questionnaire-path contract и отсутствие legacy mirroring helpers.
+
+#### Stream 1 — DONE
+- `src/client/ui/src/app-host/idea-kickoff-prompt.ts`
+  - Save-path copy переведён на `Final_Description.md`.
+- `src/client/ui/src/app-host/session-region-idea-paths.ts`
+  - UI output paths больше не строят legacy `description.md` / `runs/*`.
+- `src/client/ui/src/services/idea-collector-contract.ts`
+  - Fallback output contract переведён на canonical Description/Virtual Simulation paths.
+
+#### Stream 2 — DONE
+- `packages/agents/idea-collector/src/paths/artifact-paths.ts`
+  - Run-scoped legacy output schema удалена; helper возвращает только canonical paths.
+- `packages/agents/idea-collector/assets/idea-template.md`
+  - Artifact path section синхронизирован с `Final_Description.md` и `virtual-simulation.md`.
+
+#### Stream 3 — DONE
+- `src/client/ui/src/services/idea-collector-fallback-schema.ts`
+  - Fallback schema переведена на `workspace.description` / `workspace.virtual_simulation`.
+- `src/client/ui/src/services/idea-collector-service.ts`
+  - Fallback slot hints больше не возвращают `cluster.idea.*`.
+- `src/client/ui/src/services/idea-collector-schema-utils.ts`
+  - Default template description переведён на `Final_Description.md`.
+
+#### Stream 4 — DONE
+- `src/client/ui/src/services/idea-collector-artifact.ts`
+  - Legacy structured-output parser теперь маппит fallback artifacts в canonical `workspace.*` slots.
+- `packages/core/src/remote-bridge/handlers/http-api-router.ts`
+  - Bridge labels и validation cases выровнены под `Final_Description.md`.
+
+#### Stream 5 — DONE
+- `packages/agents/idea-collector/assets/idea-collector-prompt.md`
+  - Legacy bundled prompt больше не описывает `idea.md` и `cluster.idea.*` как активный финальный контракт.
+- `packages/agents/idea-collector/assets/idea-collector-schema.json`
+  - Schema enum и assessment wording синхронизированы с `Final_Description.md` и `workspace.*`.
+
+#### Stream 6 — DONE
+- `packages/core/src/remote-bridge/handlers/http-api-router.ts`
+  - Полностью удалён obsolete `/api/v1/orchestrator/idea-artifact` endpoint вместе с patch/path machinery старой description-era модели.
+- `src/client/ui/src/services/idea-collector-service.ts`
+  - Virtual Simulation notice больше не просит приложить `description.md`.
+
+#### Stream 7 — DONE
+- `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`
+  - Description artifact label в tree всегда canonical `Final_Description.md`.
+- `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`
+  - Auto-select больше не реэкспортирует legacy label `description.md`.
+
+#### Stream 8 — DONE
+- `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`
+  - Auto-open Description document всегда отдаёт canonical label `Final_Description.md`.
+- `src/client/project-manager/components/layout/main-area.tsx`
+  - Main-area selection sync больше не рассматривает `description.md` как живой UI label.
+
 ## Verification
 - `node --test --import tsx src/client/project-manager/components/layout/workflow-artifact-viewer.description-cleanup.test.ts`
 - `node --test --import tsx --test-name-pattern "primary description dialog session ref" packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
 - `node --test --import tsx --test-name-pattern "legacy run-scoped description drafts" packages/core/src/workflow/runtime/workflow-runtime.test.ts`
 - `node --test --import tsx --test-name-pattern "primary description dialog session ref|persists primary description session ref without resetting artifacts" packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
 - `node --test --import tsx packages/core/src/workflow/description/description-step-store.test.ts`
+- `node --test --import tsx src/client/ui/src/services/idea-questionnaire-paths.test.ts`
 - `node --test --import tsx src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`
 - `node --test --import tsx packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`
 - Все git commits проходили через штатные Husky hooks:
@@ -133,6 +199,15 @@
 - `6f32bbcd refactor(pm): use primary session in description consumers`
 - `378f35ff refactor(pm): drop legacy description state aliases`
 - `a68a1812 refactor(core): drop description session compat alias`
+- `800bffd5 refactor(paths): drop legacy description questionnaire fallbacks`
+- `869851ad refactor(ui): remove legacy description output paths`
+- `df7c652a refactor(agents): drop legacy description artifact schema`
+- `7e5028c4 refactor(ui): align description fallback slots`
+- `44e75f42 refactor(core): align description artifact bridge labels`
+- `dd0914c9 docs(agents): align legacy idea collector assets with description contract`
+- `4797aef5 refactor(core): remove legacy description artifact endpoint`
+- `2cea566b refactor(pm): hide legacy description draft label`
+- `bf3a3f2b refactor(pm): keep canonical description label in main area`
 
 ---
 
@@ -146,5 +221,5 @@
 5. `doc/Sessions/Session069.md` (THIS REPORT)
 
 ## Plans for next session
-- Перейти к path contracts из `Phase 300`: canonical questionnaire path и removal legacy `description/runs/*` / `description/idea/*` fallbacks.
-- Затем синхронизировать docs/guards и дойти до release build из `Phase 303`.
+- Перейти к `Phase 301`: синхронизировать живые SSOT-документы с уже завершённым cleanup-циклом `Description`.
+- Затем закрыть `Phase 302` (guards + targeted verification) и перейти к обязательной релизной сборке из `Phase 303`.
