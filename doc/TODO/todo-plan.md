@@ -91,11 +91,11 @@
 ## Phase 293 — Docs sync + release validation (owner: Oleksandr, updated: 2026-03-13)
 
 ### Stream 0: SSOT sync
-1. [TODO] Синхронизировать системные и модульные документы под новый response mode contract и raw diagnostics invariant (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(codex): sync response mode ssot`).
-2. [TODO] Git Commit: `docs(codex): sync response mode ssot` (hash: TBD)
+1. [DONE] Синхронизировать системные и модульные документы под новый response mode contract и raw diagnostics invariant (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(codex): sync response mode ssot`).
+2. [DONE] Git Commit: `docs(codex): sync response mode ssot` (hash: `56d66e2b`)
 
 ### Stream 1: Release prep
-3. [TODO] Обновить release-facing документы и session-report после реализации response modes и диагностики (`README`, `CHANGELOG`, новая Session) (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session063.md`; expected commit: `docs(release): record response mode rollout`).
+3. [TODO] Зафиксировать `Session063` и финальный release handoff для response mode rollout; `README.md` и `CHANGELOG.md` уже синхронизированы в `56d66e2b` под версию `1.1.721` (scope: `doc/Sessions/Session063.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record response mode rollout`).
 4. [TODO] Git Commit: `docs(release): record response mode rollout` (hash: TBD)
-5. [TODO] Выполнить release cycle по чеклисту: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + package versions/manifests; expected commit: `chore(release): build-all vX.Y.Z`).
-6. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)
+5. [DONE] Выполнить release cycle по чеклисту: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + package versions/manifests; expected commit: `chore(release): build-all vX.Y.Z`).
+6. [DONE] Git Commit: `chore(release): build-all v1.1.721` (hash: `19dc0289`)
