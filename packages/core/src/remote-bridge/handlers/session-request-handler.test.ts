@@ -1230,8 +1230,9 @@ test("SessionRequestHandler persists primary description session ref without res
   );
 
   assert.ok(capturedUpdate);
-  assert.deepEqual(Object.keys(capturedUpdate).sort(), ["primarySession"]);
-  const primarySession = capturedUpdate.primarySession as
+  const updateRecord = capturedUpdate as Record<string, unknown>;
+  assert.deepEqual(Object.keys(updateRecord).sort(), ["primarySession"]);
+  const primarySession = updateRecord.primarySession as
     | { readonly providerSessionId?: string }
     | undefined;
   assert.equal(primarySession?.providerSessionId, "provider-session-updated");
