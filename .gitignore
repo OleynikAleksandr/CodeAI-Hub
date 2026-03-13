@@ -12,7 +12,6 @@ tmp/
 .vscode/
 .gemini/
 .codeai-hub/
-AGENTS.md
 GEMINI.md
 
 lefthook.yml

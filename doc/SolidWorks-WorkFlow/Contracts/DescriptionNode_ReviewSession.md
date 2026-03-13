@@ -37,7 +37,6 @@
 ## Связанные SSOT
 
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-- `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`

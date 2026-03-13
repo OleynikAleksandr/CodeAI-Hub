@@ -50,6 +50,8 @@
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session<N>.md` (THIS REPORT)
 
+> Далее: в зависимости от задачи открыть нужные документы из `doc/SolidWorks-WorkFlow/Clusters/`, `doc/SolidWorks-WorkFlow/Modules/`, `doc/SolidWorks-WorkFlow/Contracts/`.
+
 ## Plans for next session
 - <Что осталось сделать>
 - <Какие модули требуют внимания>
@@ -61,8 +63,15 @@
 - **Закрытые модули**: Если модуль работает и проверен, **НЕ ТРОГАЙ ЕГО**. Новый функционал = Новый модуль (или строго аддитивные изменения).
 
 ## 3. Этап Проектирования (Design Phase)
+**Где что хранится:**
+- Баги: `doc/BugRegistry.md`
+- Новый scope до `todo-plan.md`: `doc/SolidWorks-WorkFlow/Plans/`
+- Реализованный SSOT: только `doc/SolidWorks-WorkFlow/System/`, `Clusters/`, `Modules/`, `Contracts/`
+- Завершённый `todo-plan.md`: `doc/TODO/Archive/`
+- Завершённый planning-док: либо переезд в `System/` / `Clusters/` / `Modules/` / `Contracts/`, либо `doc/SolidWorks-WorkFlow/Plans/Archive/`, либо удаление, если это был временный refactoring/cleanup-док
+
 **Перед тем как создать или обновить `todo-plan.md`, необходимо:**
-1. **Создать или обновить Архитектурный документ** в `doc/SolidWorks-WorkFlow/Contracts/` (например, `doc/SolidWorks-WorkFlow/Contracts/NewFeature_Architecture.md`).
+1. **Создать или обновить planning-документ** в `doc/SolidWorks-WorkFlow/Plans/` (например, `doc/SolidWorks-WorkFlow/Plans/NewFeature_Architecture.md`).
 2. В этом документе утвердить: проблему, решение, структуру классов, контракты.
 3. Только **после утверждения** этого документа пользователем, мы берем его за основу и нарезаем на Фазы и Стримы в `todo-plan.md`.
 
@@ -74,21 +83,23 @@
 doc/TODO/Archive/
 На его месте создается новый `todo-plan.md` под новые задачи.
 - **Ограничение**: Разбивай работу на **Микро-задачи**. Каждая задача должна затрагивать **≤ 3 файлов**.
+- **КРИТИЧНЫЙ НЮАНС**: после **каждой** микро‑задачи в Stream обязан быть **отдельный** следующий пункт `Git Commit: ...`, чтобы коммит нельзя было пропустить.
 
 - **Шаблон todo-plan.md**:
   ```markdown
   # План разработки (Development TODO Plan)
 
   ## Правила выполнения (Execution Rules):
+  - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое колличество - Stream (стрим), в каждом Стриме - некоторое кол-во подзадач.
   - Каждая подзадача должна затрагивать не более 3 файлов.
   - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
   - Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
-- **Gates (автоматически через Husky hooks):**
-  - `git commit` → `.husky/pre-commit`: `npm test`, `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:tsprune`, `npx ultracite fix`
-  - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
-  - Ручной прогон этих команд обычно не нужен (только для диагностики).
-- **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
+  - **Gates (автоматически через Husky hooks):**
+    - `git commit` → `.husky/pre-commit`: `npm test`, `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:tsprune`, `npx ultracite fix`
+    - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
+    - Ручной прогон этих команд обычно не нужен (только для диагностики).
+  - **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
   - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
   - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
   - **Real-time Документация**: 
@@ -127,11 +138,11 @@ doc/TODO/Archive/
 ## 6. Критические правила
 - **НИКОГДА** не обходи Husky hooks / quality gates (например `git commit --no-verify`) и `check-architecture.sh`.
 - **НИКОГДА** не редактируй версии в `package.json` вручную (используй `build-all.sh`).
-- **ВСЕГДА** держи `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
+- **ВСЕГДА** держи doc/SolidWorks-WorkFlow/System/SystemArchitecture.md и другие связанные с подзадачей документы из папки - doc/ в синхронизации с изменениями кода (в том же коммите).
 
 ## 7. Release Build Checklist
 0. Перед сборкой релиза актуализируй документы: в первую очередь `README.md` и `CHANGELOG.md`, а также связанные архитектурные материалы из `doc/`. Релиз собирается только для версии, указанной в этих документах.
-1. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`.
+1. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`/`build:web-client`.
 2. Закрой все микро‑задачи/стримы: для затронутых пакетов должны пройти таргетные `npm run build --workspace …` (или `npm run build:webview`, `npm run typecheck:webview`) + гейты качества (обычно автоматически через `.husky/pre-commit` и `.husky/pre-push`). Только после этого чистим рабочее дерево.
 3. Проверь, что `git status` пустой (никаких staged/unstaged). Версии пакетов/манифестов руками не меняем — это сделает скрипт.
 4. Выполни `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт Claude/Codex/Gemini, core, CEF launcher, UI и соберёт tarball’ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправь проблему и перезапусти **только** `build-all.sh`.
@@ -140,6 +151,10 @@ doc/TODO/Archive/
 7. После успеха проверь вывод `scripts/build-release.sh`: должны появиться строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`. Забери `codeai-hub-<version>.vsix` из корня и при необходимости скопируй свежие tarball’ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`.
 8. Зафиксируй изменения (включая версии и манифесты), обнови `doc/TODO/todo-plan.md`, создай новый `doc/Sessions/SessionXXX.md`.
 9. Только после этого передавай VSIX или делись релизом.
+
+
+Держи документ коротким; добавляй сюда только правила, которые реально блокируют работу.
+
 
 # Ultracite Code Standards
 
@@ -264,3 +279,10 @@ Biome's linter will catch most issues automatically. Focus your attention on:
 ---
 
 Most formatting and common issues are automatically fixed by Biome. Run `npx ultracite fix` before committing to ensure compliance.
+
+---
+
+## Политика релизов (GitHub)
+- Во время активной разработки **не публикуем релизы на GitHub** (слишком много бинарных артефактов/модулей).
+- Все релизы оформляются и проверяются **локально** (артефакты в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, VSIX в корне репозитория).
+- Любые действия вида `gh auth login`, `gh release create/upload`, публикация assets/notes выполняются **только по явному запросу пользователя**.
