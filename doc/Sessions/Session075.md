@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-14 18:30 (CET)
 **Branch:** main
-**Version:** 1.1.726
+**Version:** 1.1.727
 
 ---
 
@@ -36,6 +36,7 @@
 - Реализован `Phase 6 / item 1`: shared usage-limits facade теперь возвращает source-aware diagnostics (`cache_hit`, `fresh_read`, `fallback_cached`, `unavailable`), stream payload прокидывает diagnostics в `data`, а `Codex` integration пишет facade/runtime result logs с `source`, `providerScopeKey` и diagnostics payload.
 - Реализован `Phase 6 / item 3`: shared stream payload теперь несёт compat `usageLimitLabels`, UI/project-manager sync сохраняют их в session status и local cache, а `Session ID bar` показывает provider-aware labels вместо hardcoded `session/weekly`, сохраняя fallback для старых snapshots.
 - Для соблюдения 300-line rule label parsing/comparison вынесены в `src/client/ui/src/session/usage-limit-labels.ts`; `app-host` и `project-manager` usage-limits sync остались под архитектурным лимитом.
+- Запущен `Phase 7 / item 1`: release-facing docs (`README.md`, `CHANGELOG.md`, `Session075.md`) переведены на upcoming локальный релиз `1.1.727`, чтобы следующий шаг `build-all.sh` выполнялся уже из согласованного release baseline.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -59,6 +60,7 @@
 - `1a54eb29 docs(session): sync phase5 usage limits progress`
 - `3afef37b feat(core): add usage limits diagnostics`
 - `1d0d3a74 feat(ui): generalize provider usage limit labels`
+- `d2a7b353 docs(session): sync phase6 usage limits progress`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
