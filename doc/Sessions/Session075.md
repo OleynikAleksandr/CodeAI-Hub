@@ -27,6 +27,8 @@
 - Для `Gemini` подтверждён structured live-source без TUI parsing: локальный `Gemini CLI` config умеет `refreshUserQuota()`, а quota API возвращает `buckets` с `modelId`, `tokenType`, `remainingFraction` и `resetTime`.
 - Реализован `Phase 4 / item 1`: в `packages/core/src/provider-usage-limits/providers/gemini/` добавлены `gemini-quota-api-reader.ts`, `gemini-usage-limits-normalizer.ts` и `gemini-usage-limits-facade.ts`.
 - `Gemini` shared normalizer теперь строит provider-native snapshot из quota buckets и временно выбирает до трёх compat-окон (`primary/secondary/tertiary`) по active-model-aware приоритету без возврата к text/TUI parsing.
+- Реализован `Phase 4 / item 3`: `GeminiProviderAdapter` теперь после `turn_completed` делает `force`-refresh через injected shared facade bridge и эмитит `stream_event` с `kind: "usage_limits"` в тот же session pipeline, что и Claude/Codex.
+- В `core/provider-registry` добавлен `GeminiUsageLimitsFacade` bridge, а `Gemini_Module` получил типизированный usage-limits contract без прямой зависимости на `core`.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -42,6 +44,7 @@
 - `bce0b865 feat(core): inject codex usage limits facade bridge`
 - `f38b96db feat(core): add codex app-server rate limits fallback`
 - `f4bfce78 feat(core): add gemini usage limits facade`
+- `5f0e6dd0 feat(gemini): emit usage limits through shared contract`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -68,6 +71,9 @@
 - Выполнен живой validation-spike через локальный `@google/gemini-cli` / `@google/gemini-cli-core`: подтверждено, что `loadCliConfig -> refreshAuth -> initialize -> refreshUserQuota` возвращает structured quota `buckets` для Gemini account surface.
 - Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после добавления shared `Gemini` quota API reader/facade.
 - Выполнена ручная smoke-проверка через `node` against `packages/core/dist/.../gemini-quota-api-reader.js`; reader успешно вернул live snapshot с `source: gemini_quota_api`, provider-native labels и daily quota windows.
+- Выполнены `npx ultracite fix`, `npm run build --workspace @codeai-hub/gemini-module` и `npm run build --workspace @codeai-hub/core` после подключения Gemini usage-limits bridge в provider/session pipeline.
+- Первый end-to-end smoke `GeminiProviderAdapter` на `gemini-2.5-flash` упёрся в внешний `429 MODEL_CAPACITY_EXHAUSTED`, то есть упал до завершения turn и не мог подтвердить emission path.
+- Повторный live smoke на `gemini-3-flash-preview` прошёл: после `turn_completed` реально пришёл `stream_event` с `data.kind = "usage_limits"` и `source: gemini_quota_api`.
 
 ---
 
@@ -83,11 +89,11 @@
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1` закрыт. `Phase 2` закрыт.
-> Текущий статус: `Phase 3` по `Codex` закрыт. В `Phase 4` для `Gemini` закрыт `item 1`: shared quota API facade уже реализован и подтверждён live smoke.
-> Следующий рабочий шаг — `Phase 4 / item 3`: подключить `Gemini` usage limits emission в provider adapter/session pipeline без UI label rewrite.
+> Текущий статус: `Phase 3` по `Codex` закрыт. В `Phase 4` для `Gemini` закрыты `item 1` и `item 3`: shared quota facade и emission path уже работают.
+> Следующий рабочий шаг — `Phase 4 / item 5`: добавлять secondary CLI/status fallback только если quota API покажет реальные gaps по стабильности или доступности.
 
 ## Plans for next session
-- Следующий реальный implementation-step — `Phase 4 / item 3`: протянуть `Gemini` usage limits emission из provider/session pipeline в shared contract без смены UI cache keys.
-- Если при wiring выяснится, что post-turn refresh надо брать не из отдельного ephemeral config load, а из уже активного session `config`, то вынести это как отдельный bridge вместо добавления text/TUI fallback.
+- Следующий реальный implementation-step — оценить, нужен ли `Phase 4 / item 5` вообще: пока quota API работает и emission path подтверждён, поэтому CLI/status fallback не должен добавляться без доказанного operational gap.
+- Если у Gemini начнутся частые `capacity`/availability сбои именно на post-turn refresh path, сначала проверить возможность refresh от уже активного session `config`, и только потом рассматривать CLI/status fallback.
 - PTY `/status` для `Codex` рассматривать только как optional diagnostic source на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.
 - Не терять из фокуса будущий перевод UI-кеша на `providerScopeKey`, чтобы следующая интеграция не закрепила зависимость от `providerSummary`.

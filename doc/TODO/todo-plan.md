@@ -61,8 +61,8 @@
 ### Stream: Gemini provider chain
 1. [DONE] Добавить `Gemini` quota API reader, normalizer и provider facade на shared contract (scope: `packages/core/src/provider-usage-limits/providers/gemini/gemini-quota-api-reader.ts`, `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-normalizer.ts`, `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-facade.ts`; expected commit: `feat(core): add gemini usage limits facade`).
 2. [DONE] Git Commit: `feat(core): add gemini usage limits facade` (hash: `f4bfce78`)
-3. [TODO] Подключить `Gemini` usage limits emission в provider adapter/session pipeline без UI label rewrite (scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`; expected commit: `feat(gemini): emit usage limits through shared contract`).
-4. [TODO] Git Commit: `feat(gemini): emit usage limits through shared contract` (hash: TBD)
+3. [DONE] Подключить `Gemini` usage limits emission в provider adapter/session pipeline без UI label rewrite через shared facade bridge и post-turn refresh после `turn_completed` (scope: `packages/Gemini_Module/src/types/index.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/core/src/provider-registry/index.ts`; expected commit: `feat(gemini): emit usage limits through shared contract`).
+4. [DONE] Git Commit: `feat(gemini): emit usage limits through shared contract` (hash: `5f0e6dd0`)
 5. [TODO] Добавить secondary CLI/status fallback только если quota API покажет gaps по стабильности или доступности (scope: `packages/core/src/provider-usage-limits/providers/gemini/gemini-cli-usage-limits-reader.ts`, `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-normalizer.ts`; expected commit: `feat(core): add gemini usage limits fallback`).
 6. [TODO] Git Commit: `feat(core): add gemini usage limits fallback` (hash: TBD)
 
