@@ -18,10 +18,10 @@
 
 ### Stream: Core facade boundary
 1. [DONE] Ввести shared contract для universal usage limits: `provider-usage-limits-types.ts`, `provider-usage-limits-scope-key.ts`, `provider-usage-limits-compat-adapter.ts` (scope: `packages/core/src/provider-usage-limits/provider-usage-limits-types.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-scope-key.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-compat-adapter.ts`; expected commit: `feat(core): add provider usage limits shared contract`).
-2. [TODO] Git Commit: `feat(core): add provider usage limits shared contract` (hash: TBD)
-3. [TODO] Добавить shared cache/change detector/facade skeleton без provider integration (scope: `packages/core/src/provider-usage-limits/provider-usage-limits-cache.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-change-detector.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`; expected commit: `feat(core): add provider usage limits facade skeleton`).
+2. [DONE] Git Commit: `feat(core): add provider usage limits shared contract` (hash: `a930f36d`)
+3. [DONE] Добавить shared cache/change detector/facade skeleton без provider integration (scope: `packages/core/src/provider-usage-limits/provider-usage-limits-cache.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-change-detector.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`; expected commit: `feat(core): add provider usage limits facade skeleton`).
 4. [TODO] Git Commit: `feat(core): add provider usage limits facade skeleton` (hash: TBD)
-5. [TODO] Ввести shared stream payload helper и canonical `providerScopeKey` emission contract без UI-переключения на новый cache key (scope: `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-types.ts`; expected commit: `feat(core): add provider usage limits stream contract`).
+5. [IN_PROGRESS] Ввести shared stream payload helper и canonical `providerScopeKey` emission contract без UI-переключения на новый cache key (scope: `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-types.ts`; expected commit: `feat(core): add provider usage limits stream contract`).
 6. [TODO] Git Commit: `feat(core): add provider usage limits stream contract` (hash: TBD)
 
 ---
