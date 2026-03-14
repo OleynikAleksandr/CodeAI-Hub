@@ -49,8 +49,10 @@
 4. [DONE] Git Commit: `feat(core): add codex runtime usage limits reader` (hash: `206da7e1`)
 5. [TODO] Добавить PTY `/status` fallback reader для `Codex` и завершить strategy chain primary->secondary->tertiary (scope: `packages/core/src/provider-usage-limits/providers/codex/codex-status-usage-limits-reader.ts`, `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-normalizer.ts`; expected commit: `feat(core): add codex status usage limits fallback`).
 6. [TODO] Git Commit: `feat(core): add codex status usage limits fallback` (hash: TBD)
-7. [TODO] Перевести `Codex` message processor на shared facade и убрать прямую зависимость от rollout-only reader как primary path (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/sdk/codex-usage-limits-reader.ts`, `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts`; expected commit: `refactor(codex): route usage limits through shared facade`).
-8. [TODO] Git Commit: `refactor(codex): route usage limits through shared facade` (hash: TBD)
+7. [DONE] Перевести `Codex` message processor на shared facade/runtime payload path и оставить rollout-only reader только compat fallback, если bridge не инжектирован (scope: `packages/Codex_Module/src/types/index.ts`, `packages/Codex_Module/src/provider/codex-provider-adapter.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit: `refactor(codex): add shared usage limits facade bridge`).
+8. [DONE] Git Commit: `refactor(codex): add shared usage limits facade bridge` (hash: `63930691`)
+9. [DONE] Протянуть injection contract `core -> Codex adapter`, чтобы shared `CodexUsageLimitsFacade` реально использовался как runtime-first boundary (scope: `packages/core/src/provider-registry/index.ts`; expected commit: `feat(core): inject codex usage limits facade bridge`).
+10. [DONE] Git Commit: `feat(core): inject codex usage limits facade bridge` (hash: `bce0b865`)
 
 ---
 

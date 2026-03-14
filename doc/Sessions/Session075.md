@@ -20,6 +20,8 @@
 - В локально установленном `@anthropic-ai/claude-agent-sdk` найден и интегрирован `SDKRateLimitEvent`: теперь Claude usage limits предпочитают runtime event path, а synthetic probe остаётся fallback.
 - Для `Codex` начат `Phase 3`: rollout JSONL path вынесен в `packages/core/src/provider-usage-limits/providers/codex/` как shared fallback strategy (`reader -> normalizer -> facade`), без переключения `Codex_Module` на shared facade на этом шаге.
 - Для `Codex` добавлен shared runtime-first reader `codex_rpc`: shared facade теперь умеет предпочитать структурированный runtime payload (`codex_rpc`) и откатываться на rollout fallback, хотя wiring из `Codex_Module` ещё не подключён.
+- `Codex_Module` переведён на shared usage-limits facade boundary: добавлены facade bridge types, injection в provider adapter и runtime payload bridge из raw Codex stream events (`token_count -> rate_limits`) в shared `codex_rpc` path.
+- В `core/provider-registry` подключён `CodexUsageLimitsFacade` bridge, поэтому `Codex` теперь реально идёт через общий shared pipeline `reader -> normalizer -> shared snapshot -> compat stream payload`; старый rollout reader остаётся только compat fallback, если facade не инжектирован.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -31,6 +33,8 @@
 - `74cd1551 feat(claude): prefer sdk rate limit events`
 - `31182e9b feat(core): add codex rollout usage limits fallback`
 - `206da7e1 feat(core): add codex runtime usage limits reader`
+- `63930691 refactor(codex): add shared usage limits facade bridge`
+- `bce0b865 feat(core): inject codex usage limits facade bridge`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -48,6 +52,9 @@
 - В `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` подтверждено, что модуль использует raw JSON output `codex exec --experimental-json`, а не только типизированные `ThreadEvent`, что оставляет путь для будущего runtime payload bridge.
 - В локальном `~/.codex/sessions/2026/03/14/rollout-2026-03-14T17-45-09-019ced3c-c63e-7a71-aec5-efdad038f50f.jsonl` найден реальный `token_count.rate_limits` payload (`primary/secondary`, `plan_type: team`) на `Codex Desktop 0.115.0-alpha.11`; это подтвердило canonical runtime payload shape для shared `codex_rpc` reader.
 - Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после добавления shared `Codex` runtime reader и strategy order `runtime -> rollout fallback`.
+- Выполнены `npm run build --workspace @codeai-hub/codex-module`, `npx ultracite fix` и повторная таргетная сборка `npm run build --workspace @codeai-hub/codex-module` после перевода `Codex_Module` на shared facade/runtime payload path.
+- Выполнена таргетная сборка `npm run build --workspace @codeai-hub/core` после injection `CodexUsageLimitsFacade` bridge в `provider-registry`.
+- Оба commit hooks (`refactor(codex): add shared usage limits facade bridge`, `feat(core): inject codex usage limits facade bridge`) прошли без обхода Husky; остались только стандартные repo-wide warnings по warning-zone files и ts-prune noise.
 
 ---
 
@@ -62,13 +69,12 @@
 6. `doc/TODO/todo-plan.md`
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
-> Далее: `Phase 1` закрыт. Следующий рабочий шаг — `Phase 2 / Stream: Claude shared strategy chain`.
-> Далее: `Phase 2` закрыт.
-> Текущий статус: `Phase 3 / items 1-3` закрыты коммитами `31182e9b` и `206da7e1`.
-> Следующий рабочий шаг — завершить `Phase 3` на provider boundary: либо добавить `Codex /status` fallback reader, либо сразу подключить wiring runtime payload из `Codex_Module` в shared facade.
+> Далее: `Phase 1` закрыт. `Phase 2` закрыт.
+> Текущий статус: в `Phase 3` закрыты rollout fallback, runtime reader и shared facade wiring (`31182e9b`, `206da7e1`, `63930691`, `bce0b865`).
+> Следующий рабочий шаг — закрыть `Phase 3 / item 5`: добавить `Codex /status` fallback reader только после подтверждения стабильного формата `Session Stats`; если формат не удаётся подтвердить, нужно явно решить, оставляем ли `runtime + rollout fallback` как достаточный strategy chain для первой версии.
 
 ## Plans for next session
-- Продолжить `Phase 3` с `Codex` runtime/API source как primary candidate и встроить его в shared strategy order поверх уже добавленного rollout fallback.
-- Принять решение по следующему микро-шагу `Phase 3`: реализовывать ли сначала PTY `/status` fallback parser в core, либо сначала протянуть runtime payload bridge из `Codex_Module` в новый shared `codex_rpc` reader.
-- Если выбирать `/status` path, сначала найти существующие паттерны парсинга `Codex Session Stats` в старом коде/доках, чтобы не изобретать новый формат вручную.
+- Закрыть `Phase 3` через безопасный `Codex /status` fallback reader или официально переопределить scope, если подтверждённого формата `Session Stats` для Codex всё ещё нет.
+- Если продолжать `/status` path, сначала собрать и зафиксировать реальные samples `Codex Session Stats`, а уже потом писать parser/normalizer.
+- Если `/status` path окажется нестабильным, обновить planning-doc и `todo-plan.md`, чтобы `runtime + rollout fallback` считались допустимой первой delivery-версией для Codex.
 - Не терять из фокуса будущий перевод UI-кеша на `providerScopeKey`, чтобы следующая интеграция не закрепила зависимость от `providerSummary`.
