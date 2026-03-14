@@ -34,6 +34,7 @@ export type ModelInfo = {
 
 export type SessionStatusInfo = {
   readonly providerSummary: string;
+  readonly providerScopeKey?: string | null;
   readonly models?: readonly ModelInfo[];
   readonly rollover?: FlowNodeRolloverInfo | null;
   readonly continuityLock?: SessionContinuityLockInfo;

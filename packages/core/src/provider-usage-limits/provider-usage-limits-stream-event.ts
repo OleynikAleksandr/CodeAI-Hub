@@ -17,7 +17,7 @@ const hasUsageLimits = (
 
 const buildPayload = (
   snapshot: ProviderUsageLimitsSnapshot,
-  usageLimits: NonNullable<CompatibleSessionUsageLimits>
+  usageLimits: CompatibleSessionUsageLimits
 ): ProviderUsageLimitsStreamPayload => ({
   providerScopeKey: snapshot.providerScopeKey,
   usageLimits,
@@ -33,8 +33,10 @@ const buildPayload = (
 export const buildProviderUsageLimitsStreamPayload = (
   result: ProviderUsageLimitsReadResult
 ): ProviderUsageLimitsStreamPayload | null => {
-  if (!(result.snapshot && hasUsageLimits(result.compat))) {
+  if (!result.snapshot) {
     return null;
   }
-  return buildPayload(result.snapshot, result.compat);
+
+  const usageLimits = hasUsageLimits(result.compat) ? result.compat : null;
+  return buildPayload(result.snapshot, usageLimits);
 };

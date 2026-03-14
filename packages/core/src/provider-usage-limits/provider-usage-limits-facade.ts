@@ -75,7 +75,7 @@ export class ProviderUsageLimitsFacade {
   async readDetailed(
     params: ReadProviderUsageLimitsParams
   ): Promise<ProviderUsageLimitsReadResult> {
-    const scopeKey = buildProviderUsageLimitScopeKey({
+    const scopeKey = this.getScopeKey({
       providerId: params.providerId,
       providerSessionId: params.providerSessionId,
     });
@@ -108,11 +108,18 @@ export class ProviderUsageLimitsFacade {
     return buildProviderUsageLimitsStreamPayload(result);
   }
 
+  getScopeKey(params: {
+    readonly providerId: ProviderUsageLimitProviderId;
+    readonly providerSessionId: string | null;
+  }): string {
+    return buildProviderUsageLimitScopeKey(params);
+  }
+
   getCached(params: {
     readonly providerId: ProviderUsageLimitProviderId;
     readonly providerSessionId: string | null;
   }): CompatibleSessionUsageLimits {
-    const scopeKey = buildProviderUsageLimitScopeKey(params);
+    const scopeKey = this.getScopeKey(params);
     return this.#cache.get(scopeKey)?.compat ?? null;
   }
 
@@ -120,7 +127,7 @@ export class ProviderUsageLimitsFacade {
     readonly providerId: ProviderUsageLimitProviderId;
     readonly providerSessionId: string | null;
   }): ProviderUsageLimitsSnapshot | null {
-    const scopeKey = buildProviderUsageLimitScopeKey(params);
+    const scopeKey = this.getScopeKey(params);
     return this.#cache.get(scopeKey)?.snapshot ?? null;
   }
 
@@ -128,7 +135,7 @@ export class ProviderUsageLimitsFacade {
     readonly providerId: ProviderUsageLimitProviderId;
     readonly providerSessionId: string | null;
   }): ProviderUsageLimitsStreamPayload | null {
-    const scopeKey = buildProviderUsageLimitScopeKey(params);
+    const scopeKey = this.getScopeKey(params);
     const cached = this.#cache.get(scopeKey);
     if (!cached) {
       return null;
@@ -144,7 +151,7 @@ export class ProviderUsageLimitsFacade {
     providerId: ProviderUsageLimitProviderId,
     providerSessionId: string | null
   ): void {
-    const scopeKey = buildProviderUsageLimitScopeKey({
+    const scopeKey = this.getScopeKey({
       providerId,
       providerSessionId,
     });
