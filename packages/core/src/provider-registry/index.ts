@@ -16,6 +16,7 @@ import type {
 } from "@codeai-hub/codex-module";
 import type { CoreConfig } from "../config";
 import { ProviderUsageLimitsFacade } from "../provider-usage-limits/provider-usage-limits-facade";
+import { buildProviderUsageLimitScopeKey } from "../provider-usage-limits/provider-usage-limits-scope-key";
 import { ClaudeUsageLimitsFacade } from "../provider-usage-limits/providers/claude/claude-usage-limits-facade";
 import type {
   RuntimeStatusEvent,
@@ -103,6 +104,8 @@ const GEMINI_INSTALLER_PATHS: GeminiInstallerPaths = {
 
 const PROVIDER_RECOVERY_INTERVAL_MS = 60_000;
 const PROVIDERS_ROOT = path.join(homedir(), ".codeai-hub", "providers");
+const CLAUDE_RUNTIME_RATE_LIMIT_INFO_ENV_KEY =
+  "CODEAI_CLAUDE_RATE_LIMIT_INFO_PAYLOAD";
 
 type ClaudeAdapterCtor = new (options: ClaudeModuleOptions) => ProviderAdapter;
 
@@ -448,6 +451,47 @@ const resolveGeminiModulePath = (): string | undefined => {
   const installed = resolveInstalledProviderPath("gemini");
   return installed ?? undefined;
 };
+type CoreClaudeUsageLimitsStreamPayload = NonNullable<
+  ReturnType<ProviderUsageLimitsFacade["getCachedStreamPayload"]>
+>;
+
+const mergeCoreClaudeUsageLimitsPayloads = (
+  runtimePayload: CoreClaudeUsageLimitsStreamPayload | null,
+  fallbackPayload: ReturnType<
+    ProviderUsageLimitsFacade["getCachedStreamPayload"]
+  >
+): CoreClaudeUsageLimitsStreamPayload | null => {
+  if (!runtimePayload) {
+    return fallbackPayload;
+  }
+  if (!fallbackPayload) {
+    return runtimePayload;
+  }
+
+  const usageLimits = {
+    currentSession:
+      runtimePayload.usageLimits?.currentSession ??
+      fallbackPayload.usageLimits?.currentSession ??
+      null,
+    currentWeekAllModels:
+      runtimePayload.usageLimits?.currentWeekAllModels ??
+      fallbackPayload.usageLimits?.currentWeekAllModels ??
+      null,
+    currentWeekSonnetOnly:
+      runtimePayload.usageLimits?.currentWeekSonnetOnly ??
+      fallbackPayload.usageLimits?.currentWeekSonnetOnly ??
+      null,
+  };
+
+  return {
+    providerScopeKey: runtimePayload.providerScopeKey,
+    usageLimits,
+    data: {
+      ...runtimePayload.data,
+      usageLimits,
+    },
+  };
+};
 
 const createClaudeUsageLimitsFacadeBridge =
   (): ClaudeUsageLimitsFacadeBridge => {
@@ -459,21 +503,75 @@ const createClaudeUsageLimitsFacadeBridge =
         },
       },
     });
+    const runtimePayloadCache = new Map<
+      string,
+      CoreClaudeUsageLimitsStreamPayload
+    >();
+
+    const getCachedCorePayload = (
+      providerSessionId: string | null
+    ): CoreClaudeUsageLimitsStreamPayload | null => {
+      const scopeKey = buildProviderUsageLimitScopeKey({
+        providerId: "claude",
+        providerSessionId,
+      });
+      return mergeCoreClaudeUsageLimitsPayloads(
+        runtimePayloadCache.get(scopeKey) ?? null,
+        sharedFacade.getCachedStreamPayload({
+          providerId: "claude",
+          providerSessionId,
+        })
+      );
+    };
+
+    const readRuntimePayload = (
+      params: Parameters<ClaudeUsageLimitsFacadeBridge["readStreamPayload"]>[0]
+    ): CoreClaudeUsageLimitsStreamPayload | null => {
+      const raw =
+        params.environment?.[CLAUDE_RUNTIME_RATE_LIMIT_INFO_ENV_KEY]?.trim();
+      if (!raw) {
+        return null;
+      }
+
+      try {
+        const runtimePayload =
+          sourceFacade.readStreamPayloadFromRuntimeRateLimit({
+            providerSessionId: params.providerSessionId,
+            previousUsageLimits:
+              getCachedCorePayload(params.providerSessionId)?.usageLimits ??
+              null,
+            runtimePayload: JSON.parse(raw),
+          });
+        if (!runtimePayload) {
+          return null;
+        }
+        runtimePayloadCache.set(
+          runtimePayload.providerScopeKey,
+          runtimePayload
+        );
+        return getCachedCorePayload(params.providerSessionId);
+      } catch {
+        return null;
+      }
+    };
 
     return {
-      readStreamPayload: async (params) =>
-        toClaudeUsageLimitsStreamPayload(
+      readStreamPayload: async (params) => {
+        const runtimePayload = readRuntimePayload(params);
+        if (runtimePayload) {
+          return toClaudeUsageLimitsStreamPayload(runtimePayload);
+        }
+
+        return toClaudeUsageLimitsStreamPayload(
           await sharedFacade.readStreamPayload({
             ...params,
             providerId: "claude",
           })
-        ),
+        );
+      },
       getCachedStreamPayload: (params) =>
         toClaudeUsageLimitsStreamPayload(
-          sharedFacade.getCachedStreamPayload({
-            providerId: "claude",
-            providerSessionId: params.providerSessionId,
-          })
+          getCachedCorePayload(params.providerSessionId)
         ),
     };
   };

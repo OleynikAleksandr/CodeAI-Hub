@@ -139,6 +139,8 @@ const areUsageLimitsPayloadEqual = (
 
 const MIN_REFRESH_INTERVAL_MS = 1500;
 const TEMP_SESSION_PREFIX = "temp_";
+const CLAUDE_RUNTIME_RATE_LIMIT_INFO_ENV_KEY =
+  "CODEAI_CLAUDE_RATE_LIMIT_INFO_PAYLOAD";
 
 const readStructuredOutput = (
   source: Record<string, unknown>
@@ -153,6 +155,37 @@ const shouldSkipSDKMessageLog = (message: ClaudeStreamMessage): boolean => {
   }
   const event = message.event;
   return isRecord(event) && event.type === "content_block_delta";
+};
+
+const buildRuntimeUsageLimitsPayload = (
+  message: ClaudeStreamMessage
+): string | null => {
+  let rateLimitInfo: Record<string, unknown> | null = null;
+  if (isRecord(message.rate_limit_info)) {
+    rateLimitInfo = message.rate_limit_info;
+  } else if (isRecord(message.rateLimitInfo)) {
+    rateLimitInfo = message.rateLimitInfo;
+  }
+  if (!rateLimitInfo) {
+    return null;
+  }
+
+  const rateLimitType = rateLimitInfo.rateLimitType;
+  if (
+    rateLimitType !== "five_hour" &&
+    rateLimitType !== "seven_day" &&
+    rateLimitType !== "seven_day_sonnet"
+  ) {
+    return null;
+  }
+
+  return JSON.stringify({
+    collectedAt:
+      typeof message.timestamp === "string"
+        ? message.timestamp
+        : new Date().toISOString(),
+    rateLimitInfo,
+  });
 };
 
 type ProcessResponseOptions = {
@@ -182,6 +215,7 @@ export class SDKMessageProcessor {
     Promise<TokenUsageSnapshot | null>
   >();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
+  private readonly latestRuntimeUsageLimitsPayload = new Map<string, string>();
 
   constructor(
     sessionManager: SDKSessionManager,
@@ -406,6 +440,10 @@ export class SDKMessageProcessor {
         this.handleAssistantMessage(session, message);
         break;
       }
+      case "rate_limit_event": {
+        await this.handleRateLimitEvent(session, message);
+        break;
+      }
       case "result": {
         await this.handleResultLifecycle(session, message);
         break;
@@ -626,7 +664,7 @@ export class SDKMessageProcessor {
         workspacePath: session.workspacePath,
         runtimeSessionId: session.sessionId,
         providerSessionId: resolvedId,
-        environment: this.usageLimitsEnvironment,
+        environment: this.buildUsageLimitsEnvironment(resolvedId),
         force: options.force,
       })
       .catch((error) => {
@@ -657,6 +695,64 @@ export class SDKMessageProcessor {
     return nextPayload.usageLimits;
   }
 
+  private async handleRateLimitEvent(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): Promise<void> {
+    const facade = this.usageLimitsFacade;
+    if (!facade) {
+      return;
+    }
+
+    const resolvedId = this.resolveTokenUsageSessionId(
+      session,
+      message.session_id
+    );
+    const runtimePayload = buildRuntimeUsageLimitsPayload(message);
+    if (!(resolvedId && runtimePayload)) {
+      return;
+    }
+
+    this.latestRuntimeUsageLimitsPayload.set(resolvedId, runtimePayload);
+    const previousPayload = facade.getCachedStreamPayload({
+      providerSessionId: resolvedId,
+    });
+    const nextPayload = await facade
+      .readStreamPayload({
+        workspacePath: session.workspacePath,
+        runtimeSessionId: session.sessionId,
+        providerSessionId: resolvedId,
+        environment: this.buildUsageLimitsEnvironment(resolvedId),
+        force: true,
+      })
+      .catch((error) => {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.options.reporter?.warn?.(
+          `Claude runtime usage limits read failed (session ${resolvedId}): ${errorMessage}`
+        );
+        return null;
+      });
+
+    if (
+      !nextPayload?.usageLimits ||
+      areUsageLimitsPayloadEqual(previousPayload, nextPayload)
+    ) {
+      return;
+    }
+
+    session.eventEmitter.emit("message", {
+      type: "stream_event",
+      provider: "claude",
+      sessionId: session.sessionId,
+      claudeSessionId: resolvedId,
+      usageLimits: nextPayload.usageLimits,
+      data: nextPayload.data,
+      uuid: `${crypto.randomUUID()}::usage_limits`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   private resolveTokenUsageSessionId(
     session: ActiveSession,
     claudeSessionId: string | null | undefined
@@ -666,6 +762,21 @@ export class SDKMessageProcessor {
       return null;
     }
     return candidate;
+  }
+
+  private buildUsageLimitsEnvironment(
+    providerSessionId: string
+  ): NodeJS.ProcessEnv | undefined {
+    const runtimePayload =
+      this.latestRuntimeUsageLimitsPayload.get(providerSessionId);
+    if (!runtimePayload) {
+      return this.usageLimitsEnvironment;
+    }
+
+    return {
+      ...(this.usageLimitsEnvironment ?? {}),
+      [CLAUDE_RUNTIME_RATE_LIMIT_INFO_ENV_KEY]: runtimePayload,
+    };
   }
 
   private handleAssistantMessage(
