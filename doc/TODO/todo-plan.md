@@ -29,7 +29,7 @@
 ## Phase 2 — Claude unification on shared module (owner: Oleksandr, updated: 2026-03-14)
 
 ### Stream: Claude shared strategy chain
-1. [IN_PROGRESS] Обернуть текущий live/probe path Claude в shared strategy contract и normalizer (scope: `packages/core/src/provider-usage-limits/providers/claude/claude-live-headers-reader.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-normalizer.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `feat(core): add claude usage limits shared facade`).
+1. [DONE] Обернуть текущий live/probe path Claude в shared strategy contract и normalizer (scope: `packages/core/src/provider-usage-limits/providers/claude/claude-live-headers-reader.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-normalizer.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `feat(core): add claude usage limits shared facade`).
 2. [TODO] Git Commit: `feat(core): add claude usage limits shared facade` (hash: TBD)
 3. [TODO] Перевести `Claude` message processor на shared facade и убрать локальную изоляцию cache/dedupe из provider-модуля (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/sdk/claude-usage-limits-reader.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `refactor(claude): route usage limits through shared facade`).
 4. [TODO] Git Commit: `refactor(claude): route usage limits through shared facade` (hash: TBD)
