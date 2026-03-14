@@ -63,20 +63,20 @@
 2. [DONE] Git Commit: `feat(core): add gemini usage limits facade` (hash: `f4bfce78`)
 3. [DONE] Подключить `Gemini` usage limits emission в provider adapter/session pipeline без UI label rewrite через shared facade bridge и post-turn refresh после `turn_completed` (scope: `packages/Gemini_Module/src/types/index.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/core/src/provider-registry/index.ts`; expected commit: `feat(gemini): emit usage limits through shared contract`).
 4. [DONE] Git Commit: `feat(gemini): emit usage limits through shared contract` (hash: `5f0e6dd0`)
-5. [TODO] Добавить secondary CLI/status fallback только если quota API покажет gaps по стабильности или доступности (scope: `packages/core/src/provider-usage-limits/providers/gemini/gemini-cli-usage-limits-reader.ts`, `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-normalizer.ts`; expected commit: `feat(core): add gemini usage limits fallback`).
-6. [TODO] Git Commit: `feat(core): add gemini usage limits fallback` (hash: TBD)
+5. [BLOCKED] Secondary CLI/status fallback для `Gemini` de-scoped для v1: локальный `Gemini CLI` stats использует тот же quota API surface, независимый machine-readable source не найден; переоткрывать только если появится отдельный endpoint или quota API покажет реальные operational gaps (scope: planning/docs only; expected commit: `docs(session): sync phase5 usage limits progress`).
+6. [BLOCKED] Git Commit: de-scoped до появления независимого fallback source (hash: n/a)
 
 ---
 
 ## Phase 5 — Scope-key and UI hardening (owner: Oleksandr, updated: 2026-03-14)
 
 ### Stream: Replace providerSummary cache coupling
-1. [TODO] Протянуть `providerScopeKey` в session status/bridge contract как канонический cache key для usage limits (scope: `src/types/session.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`; expected commit: `feat(core): propagate provider scope key for usage limits`).
-2. [TODO] Git Commit: `feat(core): propagate provider scope key for usage limits` (hash: TBD)
-3. [TODO] Перевести UI local cache и stream fan-out с `providerSummary` на `providerScopeKey` (scope: `src/client/ui/src/session/usage-limits-cache.ts`, `src/client/project-manager/components/sessions/usage-limits-stream.ts`, `src/client/ui/src/app-host/session-stream-usage-sync.ts`; expected commit: `refactor(ui): use provider scope key for usage limits cache`).
-4. [TODO] Git Commit: `refactor(ui): use provider scope key for usage limits cache` (hash: TBD)
-5. [TODO] Обновить initial snapshot fallback и Session ID bar на новый cache key без label generalization (scope: `src/client/ui/src/session/helpers.ts`, `src/client/ui/src/session/session-id-bar.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`; expected commit: `refactor(ui): resolve usage limits by scope key`).
-6. [TODO] Git Commit: `refactor(ui): resolve usage limits by scope key` (hash: TBD)
+1. [DONE] Протянуть `providerScopeKey` в session status/bridge contract как канонический cache key для usage limits (scope: `src/types/session.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`; expected commit: `feat(core): propagate provider scope key for usage limits`).
+2. [DONE] Git Commit: `feat(core): propagate provider scope key for usage limits` (hash: `e1ad78e5`)
+3. [DONE] Перевести UI local cache и stream fan-out с `providerSummary` на `providerScopeKey`; фактический scope расширен helper extraction-ом для соблюдения 300-line rule: `src/client/ui/src/session/usage-limits-cache.ts`, `src/client/project-manager/components/sessions/usage-limits-stream.ts`, `src/client/ui/src/app-host/session-stream-usage-sync.ts`, `src/client/ui/src/app-host/session-stream-usage-limits-sync.ts` (expected commit: `refactor(ui): use provider scope key for usage limits cache`).
+4. [DONE] Git Commit: `refactor(ui): use provider scope key for usage limits cache` (hash: `8496d9e5`)
+5. [DONE] Обновить initial snapshot fallback и Session ID bar на новый cache key без label generalization (scope: `src/client/ui/src/session/helpers.ts`, `src/client/ui/src/session/session-id-bar.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`; expected commit: `refactor(ui): resolve usage limits by scope key`).
+6. [DONE] Git Commit: `refactor(ui): resolve usage limits by scope key` (hash: `7223fdab`)
 
 ---
 

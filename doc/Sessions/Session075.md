@@ -29,6 +29,10 @@
 - `Gemini` shared normalizer теперь строит provider-native snapshot из quota buckets и временно выбирает до трёх compat-окон (`primary/secondary/tertiary`) по active-model-aware приоритету без возврата к text/TUI parsing.
 - Реализован `Phase 4 / item 3`: `GeminiProviderAdapter` теперь после `turn_completed` делает `force`-refresh через injected shared facade bridge и эмитит `stream_event` с `kind: "usage_limits"` в тот же session pipeline, что и Claude/Codex.
 - В `core/provider-registry` добавлен `GeminiUsageLimitsFacade` bridge, а `Gemini_Module` получил типизированный usage-limits contract без прямой зависимости на `core`.
+- Для `Gemini` формально de-scoped `Phase 4 / item 5`: локальный `statsCommand` в установленном `@google/gemini-cli` использует тот же quota API surface (`refreshUserQuota()`), поэтому независимый secondary fallback source для первой версии не найден.
+- Реализован весь `Phase 5`: `providerScopeKey` теперь является каноническим usage-limits cache key и протянут в session status contract, shared stream payload и UI cache/fan-out.
+- Initial snapshot, `Session ID bar` и binding rehydration теперь читают usage limits по `providerScopeKey` с compat fallback на legacy `providerSummary`, без возврата к display-label keying.
+- После финального `build:webview` обновлён tracked bundle `media/react-chat.js`, чтобы webview-артефакт соответствовал новой scope-key логике.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -45,6 +49,10 @@
 - `f38b96db feat(core): add codex app-server rate limits fallback`
 - `f4bfce78 feat(core): add gemini usage limits facade`
 - `5f0e6dd0 feat(gemini): emit usage limits through shared contract`
+- `e1ad78e5 feat(core): propagate provider scope key for usage limits`
+- `8496d9e5 refactor(ui): use provider scope key for usage limits cache`
+- `7223fdab refactor(ui): resolve usage limits by scope key`
+- `4eb23982 build(ui): refresh webview bundle`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -74,6 +82,10 @@
 - Выполнены `npx ultracite fix`, `npm run build --workspace @codeai-hub/gemini-module` и `npm run build --workspace @codeai-hub/core` после подключения Gemini usage-limits bridge в provider/session pipeline.
 - Первый end-to-end smoke `GeminiProviderAdapter` на `gemini-2.5-flash` упёрся в внешний `429 MODEL_CAPACITY_EXHAUSTED`, то есть упал до завершения turn и не мог подтвердить emission path.
 - Повторный live smoke на `gemini-3-flash-preview` прошёл: после `turn_completed` реально пришёл `stream_event` с `data.kind = "usage_limits"` и `source: gemini_quota_api`.
+- Выполнен локальный просмотр установленного `@google/gemini-cli`: `statsCommand` использует тот же `refreshUserQuota()` path, поэтому отдельный независимый fallback source для `Gemini` не подтверждён.
+- Выполнена таргетная сборка `npm run build --workspace @codeai-hub/core` после введения `providerScopeKey` в shared session status/stream contract.
+- Выполнены `npx ultracite fix` и `npm run typecheck:webview` после перевода UI local cache и stream fan-out на `providerScopeKey`; для соблюдения 300-line rule usage-limits sync app-host был вынесен в отдельный helper.
+- Выполнены `npx ultracite fix`, `npm run typecheck:webview` и `npm run build:webview` после перевода initial snapshot, binding rehydration и `Session ID bar` на новый scope key.
 
 ---
 
@@ -89,11 +101,11 @@
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1` закрыт. `Phase 2` закрыт.
-> Текущий статус: `Phase 3` по `Codex` закрыт. В `Phase 4` для `Gemini` закрыты `item 1` и `item 3`: shared quota facade и emission path уже работают.
-> Следующий рабочий шаг — `Phase 4 / item 5`: добавлять secondary CLI/status fallback только если quota API покажет реальные gaps по стабильности или доступности.
+> Текущий статус: `Phase 3` по `Codex` закрыт. `Phase 4` по `Gemini` закрыт для первой delivery-версии: `item 5` de-scoped, потому что отдельный независимый fallback source не найден. `Phase 5` тоже закрыт: UI/cache переведены на `providerScopeKey`.
+> Следующий рабочий шаг — `Phase 6 / item 1`: добавить source-aware diagnostics в shared usage-limits module и provider integrations.
 
 ## Plans for next session
-- Следующий реальный implementation-step — оценить, нужен ли `Phase 4 / item 5` вообще: пока quota API работает и emission path подтверждён, поэтому CLI/status fallback не должен добавляться без доказанного operational gap.
-- Если у Gemini начнутся частые `capacity`/availability сбои именно на post-turn refresh path, сначала проверить возможность refresh от уже активного session `config`, и только потом рассматривать CLI/status fallback.
-- PTY `/status` для `Codex` рассматривать только как optional diagnostic source на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.
-- Не терять из фокуса будущий перевод UI-кеша на `providerScopeKey`, чтобы следующая интеграция не закрепила зависимость от `providerSummary`.
+- Следующий implementation-step — `Phase 6 / item 1`: source-aware diagnostics для refresh/result/fallback paths в shared usage-limits facade и provider integrations.
+- После diagnostics можно переходить к `Phase 6 / item 3`: provider-aware labels для `Session ID bar`, потому что cache key migration уже завершена.
+- `Gemini` CLI/status fallback не возвращать в scope без нового независимого machine-readable source или подтверждённого operational gap в quota API path.
+- PTY `/status` для `Codex` по-прежнему держать только как optional diagnostic path на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.
