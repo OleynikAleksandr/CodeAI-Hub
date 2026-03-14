@@ -33,6 +33,9 @@
 - Реализован весь `Phase 5`: `providerScopeKey` теперь является каноническим usage-limits cache key и протянут в session status contract, shared stream payload и UI cache/fan-out.
 - Initial snapshot, `Session ID bar` и binding rehydration теперь читают usage limits по `providerScopeKey` с compat fallback на legacy `providerSummary`, без возврата к display-label keying.
 - После финального `build:webview` обновлён tracked bundle `media/react-chat.js`, чтобы webview-артефакт соответствовал новой scope-key логике.
+- Реализован `Phase 6 / item 1`: shared usage-limits facade теперь возвращает source-aware diagnostics (`cache_hit`, `fresh_read`, `fallback_cached`, `unavailable`), stream payload прокидывает diagnostics в `data`, а `Codex` integration пишет facade/runtime result logs с `source`, `providerScopeKey` и diagnostics payload.
+- Реализован `Phase 6 / item 3`: shared stream payload теперь несёт compat `usageLimitLabels`, UI/project-manager sync сохраняют их в session status и local cache, а `Session ID bar` показывает provider-aware labels вместо hardcoded `session/weekly`, сохраняя fallback для старых snapshots.
+- Для соблюдения 300-line rule label parsing/comparison вынесены в `src/client/ui/src/session/usage-limit-labels.ts`; `app-host` и `project-manager` usage-limits sync остались под архитектурным лимитом.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -53,6 +56,9 @@
 - `8496d9e5 refactor(ui): use provider scope key for usage limits cache`
 - `7223fdab refactor(ui): resolve usage limits by scope key`
 - `4eb23982 build(ui): refresh webview bundle`
+- `1a54eb29 docs(session): sync phase5 usage limits progress`
+- `3afef37b feat(core): add usage limits diagnostics`
+- `1d0d3a74 feat(ui): generalize provider usage limit labels`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -86,6 +92,9 @@
 - Выполнена таргетная сборка `npm run build --workspace @codeai-hub/core` после введения `providerScopeKey` в shared session status/stream contract.
 - Выполнены `npx ultracite fix` и `npm run typecheck:webview` после перевода UI local cache и stream fan-out на `providerScopeKey`; для соблюдения 300-line rule usage-limits sync app-host был вынесен в отдельный helper.
 - Выполнены `npx ultracite fix`, `npm run typecheck:webview` и `npm run build:webview` после перевода initial snapshot, binding rehydration и `Session ID bar` на новый scope key.
+- Выполнены `npx ultracite fix`, `npm run build --workspace @codeai-hub/core` и `npm run build --workspace @codeai-hub/codex-module` после добавления diagnostics path в shared facade, stream payload и `Codex` message processor.
+- Выполнены `npx ultracite fix`, `npm run build --workspace @codeai-hub/core`, `npm run typecheck:webview` и `npm run build:webview` после протяжки provider-aware `usageLimitLabels` в shared payload, session status, local cache и `Session ID bar`.
+- Отдельно подтверждено, что `src/client/ui/src/app-host/session-stream-usage-limits-sync.ts` и `src/client/project-manager/components/sessions/usage-limits-stream.ts` возвращены под лимит `<= 300` строк через helper extraction в `src/client/ui/src/session/usage-limit-labels.ts`.
 
 ---
 
@@ -101,11 +110,11 @@
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1` закрыт. `Phase 2` закрыт.
-> Текущий статус: `Phase 3` по `Codex` закрыт. `Phase 4` по `Gemini` закрыт для первой delivery-версии: `item 5` de-scoped, потому что отдельный независимый fallback source не найден. `Phase 5` тоже закрыт: UI/cache переведены на `providerScopeKey`.
-> Следующий рабочий шаг — `Phase 6 / item 1`: добавить source-aware diagnostics в shared usage-limits module и provider integrations.
+> Текущий статус: `Phase 3` по `Codex` закрыт. `Phase 4` по `Gemini` закрыт для первой delivery-версии: `item 5` de-scoped, потому что отдельный независимый fallback source не найден. `Phase 5` и `Phase 6` тоже закрыты: UI/cache переведены на `providerScopeKey`, diagnostics и provider-aware labels уже в shared pipeline/UI.
+> Следующий рабочий шаг — `Phase 7`: release docs, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`.
 
 ## Plans for next session
-- Следующий implementation-step — `Phase 6 / item 1`: source-aware diagnostics для refresh/result/fallback paths в shared usage-limits facade и provider integrations.
-- После diagnostics можно переходить к `Phase 6 / item 3`: provider-aware labels для `Session ID bar`, потому что cache key migration уже завершена.
+- Следующий implementation-step — `Phase 7 / item 1`: актуализировать `README.md`, `CHANGELOG.md` и release-facing docs под upcoming локальный релиз universal provider usage limits.
+- После docs-prep нужно выполнять только release sequence из плана: `./scripts/build-all.sh` на чистом дереве, затем `./scripts/build-release.sh --use-current-version`.
 - `Gemini` CLI/status fallback не возвращать в scope без нового независимого machine-readable source или подтверждённого operational gap в quota API path.
 - PTY `/status` для `Codex` по-прежнему держать только как optional diagnostic path на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.

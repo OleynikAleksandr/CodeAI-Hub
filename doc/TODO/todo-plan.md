@@ -83,10 +83,10 @@
 ## Phase 6 — Diagnostics and future UI generalization (owner: Oleksandr, updated: 2026-03-14)
 
 ### Stream: Debuggability and provider-aware UI
-1. [TODO] Добавить source-aware diagnostics для usage limits refresh/result/fallback в shared module и provider integrations (scope: `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit: `feat(core): add usage limits diagnostics`).
-2. [TODO] Git Commit: `feat(core): add usage limits diagnostics` (hash: TBD)
-3. [TODO] Перевести Session ID bar с hardcoded `session/weekly` на provider-aware labels, сохранив compat для старых snapshots (scope: `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/session/usage-limits-cache.ts`, `src/types/session.ts`; expected commit: `feat(ui): generalize provider usage limit labels`).
-4. [TODO] Git Commit: `feat(ui): generalize provider usage limit labels` (hash: TBD)
+1. [DONE] Добавить source-aware diagnostics для usage limits refresh/result/fallback в shared module и provider integrations; фактический scope расширен helper extraction-ом и runtime result logging для `Codex`: `packages/core/src/provider-usage-limits/provider-usage-limits-facade.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-read-helpers.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-types.ts`, `packages/Codex_Module/src/messaging/message-processor.ts` (expected commit: `feat(core): add usage limits diagnostics`).
+2. [DONE] Git Commit: `feat(core): add usage limits diagnostics` (hash: `3afef37b`)
+3. [DONE] Перевести Session ID bar с hardcoded `session/weekly` на provider-aware labels, сохранив compat для старых snapshots; фактический scope расширен shared label emission-ом и helper extraction-ом для соблюдения 300-line rule: `packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.ts`, `packages/core/src/provider-usage-limits/provider-usage-limits-types.ts`, `src/types/session.ts`, `src/client/ui/src/session/usage-limit-labels.ts`, `src/client/ui/src/session/usage-limits-cache.ts`, `src/client/ui/src/session/session-id-bar.tsx`, `src/client/ui/src/app-host/session-stream-usage-limits-sync.ts`, `src/client/project-manager/components/sessions/usage-limits-stream.ts` (expected commit: `feat(ui): generalize provider usage limit labels`).
+4. [DONE] Git Commit: `feat(ui): generalize provider usage limit labels` (hash: `1d0d3a74`)
 
 ---
 
