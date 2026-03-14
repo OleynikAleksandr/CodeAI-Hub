@@ -37,6 +37,9 @@
 - Реализован `Phase 6 / item 3`: shared stream payload теперь несёт compat `usageLimitLabels`, UI/project-manager sync сохраняют их в session status и local cache, а `Session ID bar` показывает provider-aware labels вместо hardcoded `session/weekly`, сохраняя fallback для старых snapshots.
 - Для соблюдения 300-line rule label parsing/comparison вынесены в `src/client/ui/src/session/usage-limit-labels.ts`; `app-host` и `project-manager` usage-limits sync остались под архитектурным лимитом.
 - Запущен `Phase 7 / item 1`: release-facing docs (`README.md`, `CHANGELOG.md`, `Session075.md`) переведены на upcoming локальный релиз `1.1.727`, чтобы следующий шаг `build-all.sh` выполнялся уже из согласованного release baseline.
+- Выполнен весь `Phase 7`: `./scripts/build-all.sh` поднял unified/workspace version до `1.1.727`, пересобрал provider/core/ui/launcher артефакты и обновил manifest pointers для локального release cache.
+- Выполнен `./scripts/build-release.sh --use-current-version`; подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, собран VSIX `codeai-hub-1.1.727.vsix`.
+- Финальный release-набор лежит в `doc/tmp/releases/`: `claude-module-1.1.727.tar.bz2`, `codex-module-1.1.727.tar.bz2`, `gemini-module-1.1.727.tar.bz2`, `codeai-hub-core-darwin-arm64-1.1.727.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.1.727.tar.bz2`, `vscode-webview-1.1.727.tar.bz2`, `project-manager-1.1.727.tar.bz2`.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -61,6 +64,8 @@
 - `3afef37b feat(core): add usage limits diagnostics`
 - `1d0d3a74 feat(ui): generalize provider usage limit labels`
 - `d2a7b353 docs(session): sync phase6 usage limits progress`
+- `7e56ac1d docs(release): prep universal usage limits release`
+- `0b251c95 chore(release): build universal usage limits release`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -97,6 +102,9 @@
 - Выполнены `npx ultracite fix`, `npm run build --workspace @codeai-hub/core` и `npm run build --workspace @codeai-hub/codex-module` после добавления diagnostics path в shared facade, stream payload и `Codex` message processor.
 - Выполнены `npx ultracite fix`, `npm run build --workspace @codeai-hub/core`, `npm run typecheck:webview` и `npm run build:webview` после протяжки provider-aware `usageLimitLabels` в shared payload, session status, local cache и `Session ID bar`.
 - Отдельно подтверждено, что `src/client/ui/src/app-host/session-stream-usage-limits-sync.ts` и `src/client/project-manager/components/sessions/usage-limits-stream.ts` возвращены под лимит `<= 300` строк через helper extraction в `src/client/ui/src/session/usage-limit-labels.ts`.
+- Выполнен `./scripts/build-all.sh`: version bump до `1.1.727`, пересборка `Claude/Codex/Gemini`, `core`, `vscode-webview`, `project-manager`, CEF launcher и синхронизация release tarball-ов в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
+- Выполнен `./scripts/build-release.sh --use-current-version`; build output явно показал `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, после чего появился `codeai-hub-1.1.727.vsix`.
+- Во время `build-release` advisory duplication check показал `3.12%` вместо порога `3%`, но сам release script отработал до конца и успешно собрал VSIX; критического падения релизного pipeline не произошло.
 
 ---
 
@@ -112,11 +120,11 @@
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1` закрыт. `Phase 2` закрыт.
-> Текущий статус: `Phase 3` по `Codex` закрыт. `Phase 4` по `Gemini` закрыт для первой delivery-версии: `item 5` de-scoped, потому что отдельный независимый fallback source не найден. `Phase 5` и `Phase 6` тоже закрыты: UI/cache переведены на `providerScopeKey`, diagnostics и provider-aware labels уже в shared pipeline/UI.
-> Следующий рабочий шаг — `Phase 7`: release docs, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`.
+> Текущий статус: `Phase 3` по `Codex` закрыт. `Phase 4` по `Gemini` закрыт для первой delivery-версии: `item 5` de-scoped, потому что отдельный независимый fallback source не найден. `Phase 5`, `Phase 6` и `Phase 7` тоже закрыты: общий usage-limits module доведён до релизного состояния и локально собран в `v1.1.727`.
+> Следующий рабочий шаг — только новый scope: архивировать завершённый `todo-plan.md` по правилам процесса и начинать новую planning/execution цепочку от следующего утверждённого документа.
 
 ## Plans for next session
-- Следующий implementation-step — `Phase 7 / item 1`: актуализировать `README.md`, `CHANGELOG.md` и release-facing docs под upcoming локальный релиз universal provider usage limits.
-- После docs-prep нужно выполнять только release sequence из плана: `./scripts/build-all.sh` на чистом дереве, затем `./scripts/build-release.sh --use-current-version`.
+- Следующий implementation-step — не продолжение текущего плана, а новый planning-док в `doc/SolidWorks-WorkFlow/Plans/` под следующий утверждённый scope.
+- Перед новой реализацией архивировать этот завершённый `doc/TODO/todo-plan.md` по правилам процесса и создать новый execution-plan только после утверждения нового planning-документа.
 - `Gemini` CLI/status fallback не возвращать в scope без нового независимого machine-readable source или подтверждённого operational gap в quota API path.
 - PTY `/status` для `Codex` по-прежнему держать только как optional diagnostic path на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.

@@ -94,8 +94,8 @@
 
 ### Stream: Local release assembly
 1. [DONE] Актуализировать release-facing docs перед сборкой: `README.md`, `CHANGELOG.md`, связанные материалы `doc/` и итоговый `doc/Sessions/Session075.md` под фактическую версию/состав релиза `1.1.727`; следующим шагом после этого коммита должен идти только `build-all.sh` на чистом дереве (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session075.md`; expected commit: `docs(release): prep universal usage limits release`).
-2. [DONE] Git Commit: `docs(release): prep universal usage limits release` (hash: TBD)
-3. [TODO] На чистом дереве выполнить полный релизный прогон `./scripts/build-all.sh`, зафиксировать версию/артефакты и при необходимости обновить release-manifest файлы (scope: `package.json`, release manifests/versioned artifacts, `doc/tmp/releases/`; expected commit: `chore(release): build universal usage limits release`).
-4. [TODO] Git Commit: `chore(release): build universal usage limits release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление VSIX и зафиксировать результаты в session report и `todo-plan.md` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session075.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record universal usage limits release build`).
-6. [TODO] Git Commit: `docs(session): record universal usage limits release build` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prep universal usage limits release` (hash: `7e56ac1d`)
+3. [DONE] На чистом дереве выполнить полный релизный прогон `./scripts/build-all.sh`, зафиксировать версию/артефакты и при необходимости обновить release-manifest файлы; фактически обновлены unified/package versions до `1.1.727` и manifest pointers для provider/core/ui/launcher (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build universal usage limits release`).
+4. [DONE] Git Commit: `chore(release): build universal usage limits release` (hash: `0b251c95`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление VSIX и зафиксировать результаты в session report и `todo-plan.md`; подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, собран `codeai-hub-1.1.727.vsix` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session075.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record universal usage limits release build`).
+6. [DONE] Git Commit: `docs(session): record universal usage limits release build` (hash: TBD)
