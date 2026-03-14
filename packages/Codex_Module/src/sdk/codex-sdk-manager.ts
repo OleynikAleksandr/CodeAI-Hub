@@ -63,6 +63,15 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim() ? value.trim() : undefined;
 
+export const resolvePreferredCodexDefaultModel = (options: {
+  readonly settingsDefaultModel?: string;
+  readonly envDefaultModel?: string;
+  readonly fallbackModel?: string;
+}): string | undefined =>
+  options.settingsDefaultModel ??
+  normalizeOptionalString(options.envDefaultModel) ??
+  options.fallbackModel;
+
 const normalizeCodexReasoningEffort = (
   value: unknown
 ): CodexReasoningEffort | undefined =>
@@ -369,10 +378,13 @@ export class CodexSDKManager {
       process.env.CODEX_DEFAULT_REASONING_EFFORT
     );
     const settingsDefaultModel = settings?.defaultModel;
-    const resolvedDefaultModel =
-      envDefaultModel ??
-      settingsDefaultModel ??
-      this.deps.workspace.defaultModel;
+    const resolvedDefaultModel = resolvePreferredCodexDefaultModel({
+      // Persisted settings are the runtime SSOT. Process env may be stale if
+      // the host process outlives a settings change and never refreshes env.
+      settingsDefaultModel,
+      envDefaultModel,
+      fallbackModel: this.deps.workspace.defaultModel,
+    });
     const settingsReasoningEffort = resolvedDefaultModel
       ? settings?.reasoningByModel[resolvedDefaultModel]
       : undefined;

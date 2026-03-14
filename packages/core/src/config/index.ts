@@ -148,6 +148,15 @@ const normalizeOptionalString = (
   value: string | undefined
 ): string | undefined => (value?.trim() ? value.trim() : undefined);
 
+export const resolvePreferredCodexDefaultModel = (options: {
+  readonly settingsDefaultModel?: string;
+  readonly envDefaultModel?: string;
+  readonly fallbackModel: string;
+}): string =>
+  options.settingsDefaultModel ??
+  normalizeOptionalString(options.envDefaultModel) ??
+  options.fallbackModel;
+
 const loadCodexSettingsSnapshot = (): CodexSettingsSnapshot | null => {
   try {
     const raw = readFileSync(CODEX_SETTINGS_PATH, "utf8");
@@ -337,10 +346,13 @@ export const loadConfig = (): CoreConfig => {
   const codexSettingsReasoningByModel = resolveCodexReasoningFromSettings(
     codexSettings?.reasoningByModel
   );
-  const codexDefaultModel =
-    normalizeOptionalString(process.env.CODEX_DEFAULT_MODEL) ??
-    codexSettingsDefaultModel ??
-    DEFAULT_CODEX_MODEL_ID;
+  const codexDefaultModel = resolvePreferredCodexDefaultModel({
+    // Persisted settings are the user-facing SSOT. Process env can stay stale
+    // in long-lived core/runtime processes after the user changes Settings.
+    settingsDefaultModel: codexSettingsDefaultModel,
+    envDefaultModel: process.env.CODEX_DEFAULT_MODEL,
+    fallbackModel: DEFAULT_CODEX_MODEL_ID,
+  });
   const codexDefaultReasoningEffort =
     normalizeCodexReasoningEffort(process.env.CODEX_DEFAULT_REASONING_EFFORT) ??
     codexSettingsReasoningByModel[codexDefaultModel] ??

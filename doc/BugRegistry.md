@@ -42,7 +42,8 @@
 | BUG-2026-03-05-01 | FIXED | Core/PM | dialog-mode: token usage остаётся `0 tokens / 100%` после resume (continuity) | 1.1.708 |
 | BUG-2026-03-05-02 | FIXED | PM/UI | Workflow navigation desync: Toolbar step не совпадает с Tree/session/artifact | 1.1.709 |
 | BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | 1.1.711 |
-| BUG-2026-03-13-01 | OPEN | Codex Runtime | `Debug/Raw`: raw provider log полный, но unified-session/dialog JSONL пуст от агента | TBD |
+| BUG-2026-03-13-01 | FIXED | Codex Runtime | `Debug/Raw`: raw provider log полный, но unified-session/dialog JSONL пуст от агента | 1.1.722 |
+| BUG-2026-03-14-01 | FIXED | Codex Runtime | saved `gpt-5.4` default model пересиливается stale `CODEX_DEFAULT_MODEL=gpt-5.3-codex` | unreleased |
 
 ---
 
@@ -194,6 +195,43 @@
 - `node --test --import tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts`
 
 **Verified:** 2026-03-05 — подтверждено пользователем (Codex больше не показывает `0 tokens / 100%`).
+
+## BUG-2026-03-14-01 — Codex Runtime: stale `CODEX_DEFAULT_MODEL` overrides saved Codex settings
+
+**Status:** FIXED
+
+**Symptom:**
+- В `Settings -> Codex Default model` пользователь выбирает `gpt-5.4`, и `~/.codeai-hub/settings/settings.json` действительно сохраняет `providers.codex.defaultModel = "gpt-5.4"`.
+- При этом свежий provider rollout всё равно пишет `turn_context.payload.model = "gpt-5.3-codex"`.
+- Пользовательский эффект: новый Codex turn идёт не на выбранной модели, а на старом coding baseline.
+
+**Affected evidence (confirmed):**
+- Saved settings snapshot: `/Users/oleksandroliinyk/.codeai-hub/settings/settings.json`
+- Problem rollout: `/Users/oleksandroliinyk/.codeai-hub/providers/codex/home/sessions/2026/03/14/rollout-2026-03-14T16-31-38-019cecf9-7835-71a2-85f8-e0c16ff1784b.jsonl`
+- Matching shell snapshot: `/Users/oleksandroliinyk/.codeai-hub/providers/codex/home/shell_snapshots/019cecf9-7835-71a2-85f8-e0c16ff1784b.sh`
+
+**Root cause (confirmed):**
+- Long-lived host/runtime process сохранил старый `process.env.CODEX_DEFAULT_MODEL=gpt-5.3-codex`.
+- И `packages/core/src/config/index.ts`, и `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` брали `CODEX_DEFAULT_MODEL` раньше, чем persisted `settings.json`.
+- В результате корректно сохранённый user-facing settings snapshot не мог переопределить stale env, и новый turn стартовал как `gpt-5.3-codex`.
+
+**Fix (implemented):**
+- В `packages/core/src/config/index.ts` и `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` приоритет источников изменён:
+  1. persisted Codex settings snapshot;
+  2. env fallback;
+  3. hardcoded/workspace fallback.
+- Добавлены regression tests на сценарий `saved settings wins over stale env`.
+
+**Commits:**
+- Pending in current working session
+
+**Release:** `unreleased`
+
+**Guards delivered:**
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build --workspace=@codeai-hub/codex-module`
+- `node --test packages/core/dist/config/index.test.js`
+- `node --test packages/Codex_Module/dist/sdk/codex-sdk-manager.test.js`
 
 ## BUG-2026-03-01-01 — Description runtime: `Retry` вместо `Play/Stop`, и не срабатывает threshold continuity trigger
 
