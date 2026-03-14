@@ -18,6 +18,7 @@
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
 - `59ca3a7a feat(core): add provider usage limits facade skeleton`
+- `ca24d723 feat(core): add provider usage limits stream contract`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -39,9 +40,9 @@
 6. `doc/TODO/todo-plan.md`
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
-> Далее: продолжать строго по `Phase 1 / Stream: Core facade boundary`, закрывая микро-задачи с scope `<= 3` файлов и отдельными commit checkpoints.
+> Далее: `Phase 1` закрыт. Следующий рабочий шаг — `Phase 2 / Stream: Claude shared strategy chain`.
 
 ## Plans for next session
-- Зафиксировать финальный commit закрытия `Phase 1 / Stream: Core facade boundary`.
-- После этого перейти к `Phase 2` и перевести `Claude` на shared facade как low-risk live-source path.
+- Перейти к `Phase 2` и перевести `Claude` на shared facade как low-risk live-source path.
+- Сначала перенести live/probe path в `packages/core/src/provider-usage-limits/providers/claude/`.
 - Отдельно держать в фокусе `providerScopeKey`, чтобы не закрепить дальше зависимость UI-кеша от `providerSummary`.
