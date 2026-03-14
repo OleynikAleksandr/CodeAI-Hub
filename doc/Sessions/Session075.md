@@ -19,6 +19,7 @@
 - `Claude` message processor переведён на injected shared facade: локальные usage-limits cache/in-flight maps убраны, stream-event и turn-complete теперь питаются из shared module.
 - В локально установленном `@anthropic-ai/claude-agent-sdk` найден и интегрирован `SDKRateLimitEvent`: теперь Claude usage limits предпочитают runtime event path, а synthetic probe остаётся fallback.
 - Для `Codex` начат `Phase 3`: rollout JSONL path вынесен в `packages/core/src/provider-usage-limits/providers/codex/` как shared fallback strategy (`reader -> normalizer -> facade`), без переключения `Codex_Module` на shared facade на этом шаге.
+- Для `Codex` добавлен shared runtime-first reader `codex_rpc`: shared facade теперь умеет предпочитать структурированный runtime payload (`codex_rpc`) и откатываться на rollout fallback, хотя wiring из `Codex_Module` ещё не подключён.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -29,6 +30,7 @@
 - `fc29738d refactor(claude): route usage limits through shared facade`
 - `74cd1551 feat(claude): prefer sdk rate limit events`
 - `31182e9b feat(core): add codex rollout usage limits fallback`
+- `206da7e1 feat(core): add codex runtime usage limits reader`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -42,6 +44,10 @@
 - Выполнены таргетные сборки `npm run build --workspace @codeai-hub/claude-module` и `npm run build --workspace @codeai-hub/core` после переключения Claude usage limits на runtime event-preferred path.
 - Выполнен просмотр реальных `Codex` rollout JSONL в `~/.codeai-hub/providers/codex/home/sessions/`; подтверждено, что `token_count` присутствует, но `rate_limits` может отсутствовать (`null`), поэтому shared fallback обязан быть non-destructive к кэшу.
 - Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после добавления shared `Codex` rollout fallback слоя.
+- Выполнен runtime-spike через `codex exec --experimental-json`; подтверждено, что stdout event stream не отдаёт `token_count/rate_limits`, то есть live-source не лежит в публичном SDK stdout-потоке.
+- В `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` подтверждено, что модуль использует raw JSON output `codex exec --experimental-json`, а не только типизированные `ThreadEvent`, что оставляет путь для будущего runtime payload bridge.
+- В локальном `~/.codex/sessions/2026/03/14/rollout-2026-03-14T17-45-09-019ced3c-c63e-7a71-aec5-efdad038f50f.jsonl` найден реальный `token_count.rate_limits` payload (`primary/secondary`, `plan_type: team`) на `Codex Desktop 0.115.0-alpha.11`; это подтвердило canonical runtime payload shape для shared `codex_rpc` reader.
+- Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после добавления shared `Codex` runtime reader и strategy order `runtime -> rollout fallback`.
 
 ---
 
@@ -58,10 +64,11 @@
 
 > Далее: `Phase 1` закрыт. Следующий рабочий шаг — `Phase 2 / Stream: Claude shared strategy chain`.
 > Далее: `Phase 2` закрыт.
-> Текущий статус: `Phase 3 / item 1` закрыт коммитом `31182e9b`.
-> Следующий рабочий шаг — `Phase 3 / item 3`: найти и реализовать `Codex` structured runtime/API reader как primary source, а rollout оставить fallback.
+> Текущий статус: `Phase 3 / items 1-3` закрыты коммитами `31182e9b` и `206da7e1`.
+> Следующий рабочий шаг — завершить `Phase 3` на provider boundary: либо добавить `Codex /status` fallback reader, либо сразу подключить wiring runtime payload из `Codex_Module` в shared facade.
 
 ## Plans for next session
 - Продолжить `Phase 3` с `Codex` runtime/API source как primary candidate и встроить его в shared strategy order поверх уже добавленного rollout fallback.
-- Отдельно проверить, можно ли использовать live `event_msg/token_count.rate_limits` или иной runtime signal из `Codex` SDK раньше, чем PTY `/status`.
+- Принять решение по следующему микро-шагу `Phase 3`: реализовывать ли сначала PTY `/status` fallback parser в core, либо сначала протянуть runtime payload bridge из `Codex_Module` в новый shared `codex_rpc` reader.
+- Если выбирать `/status` path, сначала найти существующие паттерны парсинга `Codex Session Stats` в старом коде/доках, чтобы не изобретать новый формат вручную.
 - Не терять из фокуса будущий перевод UI-кеша на `providerScopeKey`, чтобы следующая интеграция не закрепила зависимость от `providerSummary`.
