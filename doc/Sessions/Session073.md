@@ -35,6 +35,7 @@
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
 - `npm run check:links`
+- `git push origin main`
 - Release artifacts:
   - `codeai-hub-1.1.726.vsix`
   - `doc/tmp/releases/claude-module-1.1.726.tar.bz2`
@@ -44,6 +45,7 @@
   - `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.1.726.tar.bz2`
   - `doc/tmp/releases/vscode-webview-1.1.726.tar.bz2`
   - `doc/tmp/releases/project-manager-1.1.726.tar.bz2`
+- Push в `origin/main` выполнен успешно.
 
 ---
 
