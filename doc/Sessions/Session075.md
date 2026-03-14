@@ -24,6 +24,9 @@
 - В `core/provider-registry` подключён `CodexUsageLimitsFacade` bridge, поэтому `Codex` теперь реально идёт через общий shared pipeline `reader -> normalizer -> shared snapshot -> compat stream payload`; старый rollout reader остаётся только compat fallback, если facade не инжектирован.
 - Для `Codex` подтверждён официальный structured secondary source: `codex app-server --listen stdio://` отвечает на JSON-RPC `account/rateLimits/read` и возвращает `RateLimitSnapshot`; на его основе `codex_rpc` reader теперь делает short-lived `app-server` read, если runtime payload отсутствует.
 - PTY `/status` больше не нужен как обязательный этап для первой delivery-версии `Codex` limits: strategy chain закрыт как `runtime payload -> app-server rateLimits/read -> rollout JSONL fallback`.
+- Для `Gemini` подтверждён structured live-source без TUI parsing: локальный `Gemini CLI` config умеет `refreshUserQuota()`, а quota API возвращает `buckets` с `modelId`, `tokenType`, `remainingFraction` и `resetTime`.
+- Реализован `Phase 4 / item 1`: в `packages/core/src/provider-usage-limits/providers/gemini/` добавлены `gemini-quota-api-reader.ts`, `gemini-usage-limits-normalizer.ts` и `gemini-usage-limits-facade.ts`.
+- `Gemini` shared normalizer теперь строит provider-native snapshot из quota buckets и временно выбирает до трёх compat-окон (`primary/secondary/tertiary`) по active-model-aware приоритету без возврата к text/TUI parsing.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -38,6 +41,7 @@
 - `63930691 refactor(codex): add shared usage limits facade bridge`
 - `bce0b865 feat(core): inject codex usage limits facade bridge`
 - `f38b96db feat(core): add codex app-server rate limits fallback`
+- `f4bfce78 feat(core): add gemini usage limits facade`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -61,6 +65,9 @@
 - Выполнен живой probe `codex app-server --listen stdio://`: подтверждено, что после `initialize` и `initialized` запрос `account/rateLimits/read` возвращает structured `rateLimits` / `rateLimitsByLimitId.codex` с `primary`, `secondary`, `planType` и epoch `resetsAt`.
 - Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после расширения `codex-rpc-usage-limits-reader.ts` на `app-server` fallback.
 - Выполнена ручная smoke-проверка через `node` against `packages/core/dist/.../codex-rpc-usage-limits-reader.js`; reader успешно вернул live snapshot с `source: codex_rpc`, окнами `primary/secondary` и ISO-normalized `resetsAt`.
+- Выполнен живой validation-spike через локальный `@google/gemini-cli` / `@google/gemini-cli-core`: подтверждено, что `loadCliConfig -> refreshAuth -> initialize -> refreshUserQuota` возвращает structured quota `buckets` для Gemini account surface.
+- Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после добавления shared `Gemini` quota API reader/facade.
+- Выполнена ручная smoke-проверка через `node` against `packages/core/dist/.../gemini-quota-api-reader.js`; reader успешно вернул live snapshot с `source: gemini_quota_api`, provider-native labels и daily quota windows.
 
 ---
 
@@ -76,11 +83,11 @@
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1` закрыт. `Phase 2` закрыт.
-> Текущий статус: `Phase 3` по `Codex` фактически закрыт через `runtime payload -> app-server rateLimits/read -> rollout fallback`; осталось только зафиксировать hash коммита под `app-server` fallback.
-> Следующий рабочий шаг — переходить к `Phase 4` (`Gemini`) или, если понадобится отдельный diagnostic path, уже вне critical path добавить необязательный PTY `/status` probe для `Codex`.
+> Текущий статус: `Phase 3` по `Codex` закрыт. В `Phase 4` для `Gemini` закрыт `item 1`: shared quota API facade уже реализован и подтверждён live smoke.
+> Следующий рабочий шаг — `Phase 4 / item 3`: подключить `Gemini` usage limits emission в provider adapter/session pipeline без UI label rewrite.
 
 ## Plans for next session
-- Зафиксировать hash коммита для `Codex app-server rate limits fallback` в `todo-plan.md` и в этом отчёте.
-- Следующий реальный implementation-step — `Phase 4 / Gemini`: найти живой quota/status source и повторить тот же shared pipeline без возврата к provider-specific cache keys.
+- Следующий реальный implementation-step — `Phase 4 / item 3`: протянуть `Gemini` usage limits emission из provider/session pipeline в shared contract без смены UI cache keys.
+- Если при wiring выяснится, что post-turn refresh надо брать не из отдельного ephemeral config load, а из уже активного session `config`, то вынести это как отдельный bridge вместо добавления text/TUI fallback.
 - PTY `/status` для `Codex` рассматривать только как optional diagnostic source на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.
 - Не терять из фокуса будущий перевод UI-кеша на `providerScopeKey`, чтобы следующая интеграция не закрепила зависимость от `providerSummary`.
