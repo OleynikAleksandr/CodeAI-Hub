@@ -22,6 +22,8 @@
 - Для `Codex` добавлен shared runtime-first reader `codex_rpc`: shared facade теперь умеет предпочитать структурированный runtime payload (`codex_rpc`) и откатываться на rollout fallback, хотя wiring из `Codex_Module` ещё не подключён.
 - `Codex_Module` переведён на shared usage-limits facade boundary: добавлены facade bridge types, injection в provider adapter и runtime payload bridge из raw Codex stream events (`token_count -> rate_limits`) в shared `codex_rpc` path.
 - В `core/provider-registry` подключён `CodexUsageLimitsFacade` bridge, поэтому `Codex` теперь реально идёт через общий shared pipeline `reader -> normalizer -> shared snapshot -> compat stream payload`; старый rollout reader остаётся только compat fallback, если facade не инжектирован.
+- Для `Codex` подтверждён официальный structured secondary source: `codex app-server --listen stdio://` отвечает на JSON-RPC `account/rateLimits/read` и возвращает `RateLimitSnapshot`; на его основе `codex_rpc` reader теперь делает short-lived `app-server` read, если runtime payload отсутствует.
+- PTY `/status` больше не нужен как обязательный этап для первой delivery-версии `Codex` limits: strategy chain закрыт как `runtime payload -> app-server rateLimits/read -> rollout JSONL fallback`.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -35,6 +37,7 @@
 - `206da7e1 feat(core): add codex runtime usage limits reader`
 - `63930691 refactor(codex): add shared usage limits facade bridge`
 - `bce0b865 feat(core): inject codex usage limits facade bridge`
+- `f38b96db feat(core): add codex app-server rate limits fallback`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -55,6 +58,9 @@
 - Выполнены `npm run build --workspace @codeai-hub/codex-module`, `npx ultracite fix` и повторная таргетная сборка `npm run build --workspace @codeai-hub/codex-module` после перевода `Codex_Module` на shared facade/runtime payload path.
 - Выполнена таргетная сборка `npm run build --workspace @codeai-hub/core` после injection `CodexUsageLimitsFacade` bridge в `provider-registry`.
 - Оба commit hooks (`refactor(codex): add shared usage limits facade bridge`, `feat(core): inject codex usage limits facade bridge`) прошли без обхода Husky; остались только стандартные repo-wide warnings по warning-zone files и ts-prune noise.
+- Выполнен живой probe `codex app-server --listen stdio://`: подтверждено, что после `initialize` и `initialized` запрос `account/rateLimits/read` возвращает structured `rateLimits` / `rateLimitsByLimitId.codex` с `primary`, `secondary`, `planType` и epoch `resetsAt`.
+- Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после расширения `codex-rpc-usage-limits-reader.ts` на `app-server` fallback.
+- Выполнена ручная smoke-проверка через `node` against `packages/core/dist/.../codex-rpc-usage-limits-reader.js`; reader успешно вернул live snapshot с `source: codex_rpc`, окнами `primary/secondary` и ISO-normalized `resetsAt`.
 
 ---
 
@@ -70,11 +76,11 @@
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1` закрыт. `Phase 2` закрыт.
-> Текущий статус: в `Phase 3` закрыты rollout fallback, runtime reader и shared facade wiring (`31182e9b`, `206da7e1`, `63930691`, `bce0b865`).
-> Следующий рабочий шаг — закрыть `Phase 3 / item 5`: добавить `Codex /status` fallback reader только после подтверждения стабильного формата `Session Stats`; если формат не удаётся подтвердить, нужно явно решить, оставляем ли `runtime + rollout fallback` как достаточный strategy chain для первой версии.
+> Текущий статус: `Phase 3` по `Codex` фактически закрыт через `runtime payload -> app-server rateLimits/read -> rollout fallback`; осталось только зафиксировать hash коммита под `app-server` fallback.
+> Следующий рабочий шаг — переходить к `Phase 4` (`Gemini`) или, если понадобится отдельный diagnostic path, уже вне critical path добавить необязательный PTY `/status` probe для `Codex`.
 
 ## Plans for next session
-- Закрыть `Phase 3` через безопасный `Codex /status` fallback reader или официально переопределить scope, если подтверждённого формата `Session Stats` для Codex всё ещё нет.
-- Если продолжать `/status` path, сначала собрать и зафиксировать реальные samples `Codex Session Stats`, а уже потом писать parser/normalizer.
-- Если `/status` path окажется нестабильным, обновить planning-doc и `todo-plan.md`, чтобы `runtime + rollout fallback` считались допустимой первой delivery-версией для Codex.
+- Зафиксировать hash коммита для `Codex app-server rate limits fallback` в `todo-plan.md` и в этом отчёте.
+- Следующий реальный implementation-step — `Phase 4 / Gemini`: найти живой quota/status source и повторить тот же shared pipeline без возврата к provider-specific cache keys.
+- PTY `/status` для `Codex` рассматривать только как optional diagnostic source на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.
 - Не терять из фокуса будущий перевод UI-кеша на `providerScopeKey`, чтобы следующая интеграция не закрепила зависимость от `providerSummary`.
