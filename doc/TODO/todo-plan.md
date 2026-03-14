@@ -30,11 +30,13 @@
 
 ### Stream: Claude shared strategy chain
 1. [DONE] Обернуть текущий live/probe path Claude в shared strategy contract и normalizer (scope: `packages/core/src/provider-usage-limits/providers/claude/claude-live-headers-reader.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-normalizer.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `feat(core): add claude usage limits shared facade`).
-2. [TODO] Git Commit: `feat(core): add claude usage limits shared facade` (hash: TBD)
-3. [TODO] Перевести `Claude` message processor на shared facade и убрать локальную изоляцию cache/dedupe из provider-модуля (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/sdk/claude-usage-limits-reader.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `refactor(claude): route usage limits through shared facade`).
-4. [TODO] Git Commit: `refactor(claude): route usage limits through shared facade` (hash: TBD)
-5. [TODO] Если bridge без сильной переделки даёт доступ к response metadata, добавить приоритет live turn headers над synthetic probe (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-live-headers-reader.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `feat(claude): prefer live headers for usage limits`).
-6. [TODO] Git Commit: `feat(claude): prefer live headers for usage limits` (hash: TBD)
+2. [DONE] Git Commit: `feat(core): add claude usage limits shared facade` (hash: `532c5ec7`)
+3. [DONE] Протянуть injection contract shared Claude usage limits facade через boundary `core -> Claude adapter` (scope: `packages/Claude_Module/src/types/index.ts`, `packages/core/src/provider-registry/index.ts`; expected commit: `feat(core): inject claude usage limits facade boundary`).
+4. [TODO] Git Commit: `feat(core): inject claude usage limits facade boundary` (hash: TBD)
+5. [TODO] Перевести `Claude` message processor на injected shared facade и убрать локальные usage-limits cache/in-flight maps из provider-модуля (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit: `refactor(claude): route usage limits through shared facade`).
+6. [TODO] Git Commit: `refactor(claude): route usage limits through shared facade` (hash: TBD)
+7. [TODO] Если bridge без сильной переделки даёт доступ к response metadata, добавить приоритет live turn headers над synthetic probe (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-live-headers-reader.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `feat(claude): prefer live headers for usage limits`).
+8. [TODO] Git Commit: `feat(claude): prefer live headers for usage limits` (hash: TBD)
 
 ---
 

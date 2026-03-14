@@ -6,6 +6,8 @@ import { pathToFileURL } from "node:url";
 import type {
   ClaudeInstallerPaths,
   ClaudeModuleOptions,
+  ClaudeUsageLimitsFacadeBridge,
+  ClaudeUsageLimitsStreamPayload,
   ModuleReporter,
 } from "@codeai-hub/claude-module";
 import type {
@@ -13,6 +15,8 @@ import type {
   CodexModuleOptions,
 } from "@codeai-hub/codex-module";
 import type { CoreConfig } from "../config";
+import { ProviderUsageLimitsFacade } from "../provider-usage-limits/provider-usage-limits-facade";
+import { ClaudeUsageLimitsFacade } from "../provider-usage-limits/providers/claude/claude-usage-limits-facade";
 import type {
   RuntimeStatusEvent,
   RuntimeStatusPhase,
@@ -445,6 +449,61 @@ const resolveGeminiModulePath = (): string | undefined => {
   return installed ?? undefined;
 };
 
+const createClaudeUsageLimitsFacadeBridge =
+  (): ClaudeUsageLimitsFacadeBridge => {
+    const sourceFacade = new ClaudeUsageLimitsFacade();
+    const sharedFacade = new ProviderUsageLimitsFacade({
+      readers: {
+        claude: {
+          read: async (params) => await sourceFacade.read(params),
+        },
+      },
+    });
+
+    return {
+      readStreamPayload: async (params) =>
+        toClaudeUsageLimitsStreamPayload(
+          await sharedFacade.readStreamPayload({
+            ...params,
+            providerId: "claude",
+          })
+        ),
+      getCachedStreamPayload: (params) =>
+        toClaudeUsageLimitsStreamPayload(
+          sharedFacade.getCachedStreamPayload({
+            providerId: "claude",
+            providerSessionId: params.providerSessionId,
+          })
+        ),
+    };
+  };
+
+const toClaudeUsageLimitsStreamPayload = (
+  payload: ReturnType<ProviderUsageLimitsFacade["getCachedStreamPayload"]>
+): ClaudeUsageLimitsStreamPayload | null => {
+  if (!payload) {
+    return null;
+  }
+
+  const usageLimits = payload.usageLimits
+    ? {
+        currentSession: payload.usageLimits.currentSession ?? null,
+        currentWeekAllModels: payload.usageLimits.currentWeekAllModels ?? null,
+        currentWeekSonnetOnly:
+          payload.usageLimits.currentWeekSonnetOnly ?? null,
+      }
+    : null;
+
+  return {
+    providerScopeKey: payload.providerScopeKey,
+    usageLimits,
+    data: {
+      ...payload.data,
+      usageLimits,
+    },
+  };
+};
+
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
@@ -705,6 +764,7 @@ export class ProviderRegistry {
   private createClaudeAdapter(): ProviderAdapter {
     return new this.claudeAdapterCtor({
       installerPaths: CLAUDE_INSTALLER_PATHS,
+      usageLimitsFacade: createClaudeUsageLimitsFacadeBridge(),
       workspace: {
         workspacePath: this.options.config.claudeWorkspacePath ?? process.cwd(),
         claudeProjectSlug: this.options.config.claudeProjectSlug,

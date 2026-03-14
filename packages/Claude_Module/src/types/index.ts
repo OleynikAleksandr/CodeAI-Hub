@@ -18,11 +18,52 @@ export type ModuleReporter = {
   readonly progress?: (event: ModuleProgressEvent) => void;
 };
 
+export type ClaudeUsageLimitBucket = {
+  readonly percentUsed: number;
+  readonly resetsAt: string | null;
+};
+
+export type ClaudeUsageLimits = {
+  readonly currentSession?: ClaudeUsageLimitBucket | null;
+  readonly currentWeekAllModels?: ClaudeUsageLimitBucket | null;
+  readonly currentWeekSonnetOnly?: ClaudeUsageLimitBucket | null;
+} | null;
+
+export type ClaudeUsageLimitsReadParams = {
+  readonly workspacePath: string;
+  readonly runtimeSessionId: string;
+  readonly providerSessionId: string | null;
+  readonly environment?: NodeJS.ProcessEnv;
+  readonly force?: boolean;
+};
+
+export type ClaudeUsageLimitsStreamPayload = {
+  readonly providerScopeKey: string;
+  readonly usageLimits: ClaudeUsageLimits;
+  readonly data: {
+    readonly kind: "usage_limits";
+    readonly usageLimits: ClaudeUsageLimits;
+    readonly providerScopeKey: string;
+    readonly source: string;
+    readonly collectedAt: string;
+  };
+};
+
+export type ClaudeUsageLimitsFacadeBridge = {
+  readStreamPayload(
+    params: ClaudeUsageLimitsReadParams
+  ): Promise<ClaudeUsageLimitsStreamPayload | null>;
+  getCachedStreamPayload(params: {
+    readonly providerSessionId: string | null;
+  }): ClaudeUsageLimitsStreamPayload | null;
+};
+
 export type ClaudeModuleOptions = {
   readonly installerPaths: ClaudeInstallerPaths;
   readonly workspace: ClaudeWorkspaceOptions;
   readonly enableDebugStreams?: boolean;
   readonly reporter?: ModuleReporter;
+  readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
 };
 
 export type ClaudeStreamMessage = {
