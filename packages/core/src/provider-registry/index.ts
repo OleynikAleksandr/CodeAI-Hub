@@ -18,6 +18,7 @@ import type { CoreConfig } from "../config";
 import { ProviderUsageLimitsFacade } from "../provider-usage-limits/provider-usage-limits-facade";
 import { buildProviderUsageLimitScopeKey } from "../provider-usage-limits/provider-usage-limits-scope-key";
 import { ClaudeUsageLimitsFacade } from "../provider-usage-limits/providers/claude/claude-usage-limits-facade";
+import { CodexUsageLimitsFacade } from "../provider-usage-limits/providers/codex/codex-usage-limits-facade";
 import type {
   RuntimeStatusEvent,
   RuntimeStatusPhase,
@@ -602,6 +603,68 @@ const toClaudeUsageLimitsStreamPayload = (
   };
 };
 
+const createCodexUsageLimitsFacadeBridge = () => {
+  const sourceFacade = new CodexUsageLimitsFacade();
+  const sharedFacade = new ProviderUsageLimitsFacade({
+    readers: {
+      codex: {
+        read: async (params) => await sourceFacade.read(params),
+      },
+    },
+  });
+
+  return {
+    readStreamPayload: async (params: {
+      readonly workspacePath: string;
+      readonly runtimeSessionId: string;
+      readonly providerSessionId: string | null;
+      readonly environment?: NodeJS.ProcessEnv;
+      readonly force?: boolean;
+    }) =>
+      toCodexUsageLimitsStreamPayload(
+        await sharedFacade.readStreamPayload({
+          ...params,
+          providerId: "codex",
+        })
+      ),
+    getCachedStreamPayload: (params: {
+      readonly providerSessionId: string | null;
+    }) =>
+      toCodexUsageLimitsStreamPayload(
+        sharedFacade.getCachedStreamPayload({
+          providerId: "codex",
+          providerSessionId: params.providerSessionId,
+        })
+      ),
+  };
+};
+
+const toCodexUsageLimitsStreamPayload = (
+  payload: ReturnType<ProviderUsageLimitsFacade["getCachedStreamPayload"]>
+) => {
+  if (!payload) {
+    return null;
+  }
+
+  const usageLimits = payload.usageLimits
+    ? {
+        currentSession: payload.usageLimits.currentSession ?? null,
+        currentWeekAllModels: payload.usageLimits.currentWeekAllModels ?? null,
+        currentWeekSonnetOnly:
+          payload.usageLimits.currentWeekSonnetOnly ?? null,
+      }
+    : null;
+
+  return {
+    providerScopeKey: payload.providerScopeKey,
+    usageLimits,
+    data: {
+      ...payload.data,
+      usageLimits,
+    },
+  };
+};
+
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
@@ -885,6 +948,7 @@ export class ProviderRegistry {
 
     return new this.codexAdapterCtor({
       installerPaths: CODEX_INSTALLER_PATHS,
+      usageLimitsFacade: createCodexUsageLimitsFacadeBridge(),
       workspace: {
         workspacePath: codexWorkspacePath ?? process.cwd(),
         defaultSandboxMode: codexSandboxMode,
