@@ -13,15 +13,18 @@
 - `doc/TODO/todo-plan.md` развёрнут из заглушки в execution-plan с фазами `shared core -> Claude -> Codex -> Gemini -> scope-key/UI hardening -> diagnostics/UI labels`.
 - В конец `doc/TODO/todo-plan.md` добавлен отдельный Stream под локальную release-сборку по правилам `build-all.sh` + `build-release.sh --use-current-version`.
 - Реализован первый shared contract слой `Phase 1 / Stream: Core facade boundary` в `packages/core/src/provider-usage-limits/`: canonical types, `providerScopeKey`, compat adapter.
+- Реализован второй и третий слои `Phase 1 / Stream: Core facade boundary`: shared cache, change detector, facade skeleton, stream payload helper и canonical emission contract.
 
 ## Git commits
-- No commits created in this session yet.
+- `a930f36d feat(core): add provider usage limits shared contract`
+- `59ca3a7a feat(core): add provider usage limits facade skeleton`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
 - Выполнена вычитка нового `doc/TODO/todo-plan.md` после разворачивания фаз и release-stream.
 - Перед стартом реализации проверены структура `packages/core`, паттерны существующих фасадов и границы зависимостей.
 - Выполнена таргетная сборка `npm run build --workspace @codeai-hub/core` после добавления shared contract слоя.
+- Выполнен ручной `npx ultracite fix` на новых файлах `provider-usage-limits/*` для стабилизации pre-commit formatting.
 
 ---
 
@@ -39,6 +42,6 @@
 > Далее: продолжать строго по `Phase 1 / Stream: Core facade boundary`, закрывая микро-задачи с scope `<= 3` файлов и отдельными commit checkpoints.
 
 ## Plans for next session
-- Завершить `Phase 1` shared contract bootstrap в `packages/core/src/provider-usage-limits/`.
+- Зафиксировать финальный commit закрытия `Phase 1 / Stream: Core facade boundary`.
 - После этого перейти к `Phase 2` и перевести `Claude` на shared facade как low-risk live-source path.
 - Отдельно держать в фокусе `providerScopeKey`, чтобы не закрепить дальше зависимость UI-кеша от `providerSummary`.

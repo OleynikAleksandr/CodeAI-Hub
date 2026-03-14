@@ -2,12 +2,14 @@ import { ProviderUsageLimitsCache } from "./provider-usage-limits-cache";
 import { ProviderUsageLimitsChangeDetector } from "./provider-usage-limits-change-detector";
 import { ProviderUsageLimitsCompatAdapter } from "./provider-usage-limits-compat-adapter";
 import { buildProviderUsageLimitScopeKey } from "./provider-usage-limits-scope-key";
+import { buildProviderUsageLimitsStreamPayload } from "./provider-usage-limits-stream-event";
 import type {
   CompatibleSessionUsageLimits,
   ProviderUsageLimitProviderId,
   ProviderUsageLimitsAdapter,
   ProviderUsageLimitsReadResult,
   ProviderUsageLimitsSnapshot,
+  ProviderUsageLimitsStreamPayload,
   ReadProviderUsageLimitsParams,
 } from "./provider-usage-limits-types";
 
@@ -99,6 +101,13 @@ export class ProviderUsageLimitsFacade {
     }
   }
 
+  async readStreamPayload(
+    params: ReadProviderUsageLimitsParams
+  ): Promise<ProviderUsageLimitsStreamPayload | null> {
+    const result = await this.readDetailed(params);
+    return buildProviderUsageLimitsStreamPayload(result);
+  }
+
   getCached(params: {
     readonly providerId: ProviderUsageLimitProviderId;
     readonly providerSessionId: string | null;
@@ -113,6 +122,22 @@ export class ProviderUsageLimitsFacade {
   }): ProviderUsageLimitsSnapshot | null {
     const scopeKey = buildProviderUsageLimitScopeKey(params);
     return this.#cache.get(scopeKey)?.snapshot ?? null;
+  }
+
+  getCachedStreamPayload(params: {
+    readonly providerId: ProviderUsageLimitProviderId;
+    readonly providerSessionId: string | null;
+  }): ProviderUsageLimitsStreamPayload | null {
+    const scopeKey = buildProviderUsageLimitScopeKey(params);
+    const cached = this.#cache.get(scopeKey);
+    if (!cached) {
+      return null;
+    }
+
+    return buildProviderUsageLimitsStreamPayload({
+      snapshot: cached.snapshot,
+      compat: cached.compat,
+    });
   }
 
   clearScope(

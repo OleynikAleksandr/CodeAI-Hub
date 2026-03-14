@@ -57,6 +57,20 @@ export type ProviderUsageLimitsReadResult = {
   readonly compat: CompatibleSessionUsageLimits;
 };
 
+export type ProviderUsageLimitsStreamEventData = {
+  readonly kind: "usage_limits";
+  readonly usageLimits: CompatibleSessionUsageLimits;
+  readonly providerScopeKey: string;
+  readonly source: ProviderUsageLimitSource;
+  readonly collectedAt: string;
+};
+
+export type ProviderUsageLimitsStreamPayload = {
+  readonly providerScopeKey: string;
+  readonly usageLimits: CompatibleSessionUsageLimits;
+  readonly data: ProviderUsageLimitsStreamEventData;
+};
+
 export type ProviderUsageLimitsAdapter = {
   toCompat(
     snapshot: ProviderUsageLimitsSnapshot | null
