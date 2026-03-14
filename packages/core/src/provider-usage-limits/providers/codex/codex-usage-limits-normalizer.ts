@@ -92,13 +92,13 @@ const parseRateLimitBucket = (
   if (!isRecord(value)) {
     return null;
   }
-  const usedPercent = readNumber(value.used_percent);
+  const usedPercent = readNumber(value.used_percent ?? value.usedPercent);
   if (usedPercent === null) {
     return null;
   }
   return {
     percentUsed: clampPercent(usedPercent),
-    resetsAt: normalizeResetAt(value.resets_at),
+    resetsAt: normalizeResetAt(value.resets_at ?? value.resetsAt),
   };
 };
 
