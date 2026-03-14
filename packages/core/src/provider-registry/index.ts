@@ -19,6 +19,7 @@ import { ProviderUsageLimitsFacade } from "../provider-usage-limits/provider-usa
 import { buildProviderUsageLimitScopeKey } from "../provider-usage-limits/provider-usage-limits-scope-key";
 import { ClaudeUsageLimitsFacade } from "../provider-usage-limits/providers/claude/claude-usage-limits-facade";
 import { CodexUsageLimitsFacade } from "../provider-usage-limits/providers/codex/codex-usage-limits-facade";
+import { GeminiUsageLimitsFacade } from "../provider-usage-limits/providers/gemini/gemini-usage-limits-facade";
 import type {
   RuntimeStatusEvent,
   RuntimeStatusPhase,
@@ -46,6 +47,43 @@ type GeminiModuleOptions = {
     readonly directory?: string;
     readonly requiredFiles?: readonly string[];
   };
+  readonly usageLimitsFacade?: GeminiUsageLimitsFacadeBridge;
+};
+
+type GeminiUsageLimitBucket = {
+  readonly percentUsed: number;
+  readonly resetsAt: string | null;
+};
+
+type GeminiUsageLimits = {
+  readonly currentSession?: GeminiUsageLimitBucket | null;
+  readonly currentWeekAllModels?: GeminiUsageLimitBucket | null;
+  readonly currentWeekSonnetOnly?: GeminiUsageLimitBucket | null;
+} | null;
+
+type GeminiUsageLimitsStreamPayload = {
+  readonly providerScopeKey: string;
+  readonly usageLimits: GeminiUsageLimits;
+  readonly data: {
+    readonly kind: "usage_limits";
+    readonly usageLimits: GeminiUsageLimits;
+    readonly providerScopeKey: string;
+    readonly source: string;
+    readonly collectedAt: string;
+  };
+};
+
+type GeminiUsageLimitsFacadeBridge = {
+  readStreamPayload(params: {
+    readonly workspacePath: string;
+    readonly runtimeSessionId: string;
+    readonly providerSessionId: string | null;
+    readonly environment?: NodeJS.ProcessEnv;
+    readonly force?: boolean;
+  }): Promise<GeminiUsageLimitsStreamPayload | null>;
+  getCachedStreamPayload(params: {
+    readonly providerSessionId: string | null;
+  }): GeminiUsageLimitsStreamPayload | null;
 };
 
 export type Provider = {
@@ -665,6 +703,61 @@ const toCodexUsageLimitsStreamPayload = (
   };
 };
 
+const createGeminiUsageLimitsFacadeBridge =
+  (): GeminiUsageLimitsFacadeBridge => {
+    const sourceFacade = new GeminiUsageLimitsFacade();
+    const sharedFacade = new ProviderUsageLimitsFacade({
+      readers: {
+        gemini: {
+          read: async (params) => await sourceFacade.read(params),
+        },
+      },
+    });
+
+    return {
+      readStreamPayload: async (params) =>
+        toGeminiUsageLimitsStreamPayload(
+          await sharedFacade.readStreamPayload({
+            ...params,
+            providerId: "gemini",
+          })
+        ),
+      getCachedStreamPayload: (params) =>
+        toGeminiUsageLimitsStreamPayload(
+          sharedFacade.getCachedStreamPayload({
+            providerId: "gemini",
+            providerSessionId: params.providerSessionId,
+          })
+        ),
+    };
+  };
+
+const toGeminiUsageLimitsStreamPayload = (
+  payload: ReturnType<ProviderUsageLimitsFacade["getCachedStreamPayload"]>
+): GeminiUsageLimitsStreamPayload | null => {
+  if (!payload) {
+    return null;
+  }
+
+  const usageLimits = payload.usageLimits
+    ? {
+        currentSession: payload.usageLimits.currentSession ?? null,
+        currentWeekAllModels: payload.usageLimits.currentWeekAllModels ?? null,
+        currentWeekSonnetOnly:
+          payload.usageLimits.currentWeekSonnetOnly ?? null,
+      }
+    : null;
+
+  return {
+    providerScopeKey: payload.providerScopeKey,
+    usageLimits,
+    data: {
+      ...payload.data,
+      usageLimits,
+    },
+  };
+};
+
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
@@ -859,6 +952,7 @@ export class ProviderRegistry {
         },
         reporter: this.createReporter("gemini"),
         credentials,
+        usageLimitsFacade: createGeminiUsageLimitsFacadeBridge(),
       });
       mutable.adapter = adapter;
       this.emitStatus({

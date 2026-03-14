@@ -1,12 +1,24 @@
+import crypto from "node:crypto";
 import path from "node:path";
 import { GeminiInstaller } from "../installer/gemini-installer";
 import { GeminiSessionLogger } from "../logging/session-logger";
 import { isGeminiCliCompatibilityError } from "../runtime/cli-bridge";
 import type { GeminiCliBridge } from "../runtime/cli-types";
 import { GeminiSessionManager } from "../session/gemini-session-manager";
-import type { GeminiModuleOptions } from "../types";
+import type { ActiveSession } from "../session/types";
+import type {
+  GeminiModuleOptions,
+  GeminiUsageLimitsFacadeBridge,
+} from "../types";
+import { areGeminiUsageLimitsPayloadEqual } from "../types";
 
 export type SessionListener = (payload: unknown) => void;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isTurnCompletedPayload = (payload: unknown): boolean =>
+  isRecord(payload) && payload.type === "turn_completed";
 
 export class GeminiProviderAdapter {
   private readonly installer: GeminiInstaller;
@@ -18,9 +30,11 @@ export class GeminiProviderAdapter {
   private readonly listeners = new Map<string, Set<SessionListener>>();
 
   private readonly options: GeminiModuleOptions;
+  private readonly usageLimitsFacade?: GeminiUsageLimitsFacadeBridge;
 
   constructor(options: GeminiModuleOptions) {
     this.options = options;
+    this.usageLimitsFacade = options.usageLimitsFacade;
     this.installer = new GeminiInstaller(options.installerPaths, {
       reporter: options.reporter,
     });
@@ -97,8 +111,11 @@ export class GeminiProviderAdapter {
         });
     const { sessionId, session } = sessionResult;
     let currentSessionId = sessionId;
-    const forwardMessage = (payload: unknown): void => {
+    const forwardMessage = async (payload: unknown): Promise<void> => {
       this.dispatchMessage(currentSessionId, payload);
+      if (isTurnCompletedPayload(payload)) {
+        await this.refreshUsageLimitsAfterTurn(session, currentSessionId);
+      }
     };
     const forwardError = (payload: unknown): void => {
       this.dispatchMessage(currentSessionId, payload);
@@ -121,6 +138,53 @@ export class GeminiProviderAdapter {
       }
     });
     return sessionId;
+  }
+
+  private async refreshUsageLimitsAfterTurn(
+    session: ActiveSession,
+    runtimeSessionId: string
+  ): Promise<void> {
+    const facade = this.usageLimitsFacade;
+    const providerSessionId = session.sessionId.trim();
+    if (!(facade && providerSessionId)) {
+      return;
+    }
+
+    const previousPayload = facade.getCachedStreamPayload({
+      providerSessionId,
+    });
+    const nextPayload = await facade
+      .readStreamPayload({
+        workspacePath: session.workspacePath,
+        runtimeSessionId,
+        providerSessionId,
+        force: true,
+      })
+      .catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options.reporter?.warn?.(
+          `Gemini shared usage limits read failed (session ${providerSessionId}): ${message}`
+        );
+        return null;
+      });
+    if (
+      !nextPayload?.usageLimits ||
+      areGeminiUsageLimitsPayloadEqual(previousPayload, nextPayload)
+    ) {
+      return;
+    }
+
+    this.dispatchMessage(runtimeSessionId, {
+      type: "stream_event",
+      provider: "gemini",
+      sessionId: runtimeSessionId,
+      providerSessionId,
+      providerScopeKey: nextPayload.providerScopeKey,
+      usageLimits: nextPayload.usageLimits,
+      data: nextPayload.data,
+      uuid: `${crypto.randomUUID()}::usage_limits`,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   async closeSession(sessionId: string): Promise<void> {
