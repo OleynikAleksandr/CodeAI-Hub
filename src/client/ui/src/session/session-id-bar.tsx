@@ -3,6 +3,7 @@ import type {
   SessionBindingInfo,
   SessionStatusInfo,
 } from "../../../../types/session";
+import { resolveStatusUsageLimitScopeKey } from "./helpers";
 import { buildResetLabel } from "./session-id-bar-reset-format";
 import { readLastKnownUsageLimits } from "./usage-limits-cache";
 
@@ -54,8 +55,10 @@ const renderLimitLabel = (payload: {
     .join(" ");
 
 const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
+  const providerScopeKey = resolveStatusUsageLimitScopeKey(status, binding);
   const resolvedUsageLimits =
-    status.usageLimits ?? readLastKnownUsageLimits(status.providerSummary);
+    status.usageLimits ??
+    readLastKnownUsageLimits(providerScopeKey, status.providerSummary);
   const sessionPercent =
     resolvedUsageLimits?.currentSession?.percentUsed ?? null;
   const sessionResetsAt = resolvedUsageLimits?.currentSession?.resetsAt ?? null;

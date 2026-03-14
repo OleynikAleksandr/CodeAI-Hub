@@ -4,7 +4,7 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
-import { buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
@@ -118,10 +118,7 @@ export const ProjectManagerRuntimeSessionView = ({
         if (existing) {
           return {
             ...previous,
-            [session.id]: {
-              ...existing,
-              binding: session.binding,
-            },
+            [session.id]: applyBindingToSessionSnapshot(existing, session.binding),
           };
         }
         return {
@@ -206,13 +203,10 @@ export const ProjectManagerRuntimeSessionView = ({
         }
         return {
           ...previous,
-          [payload.sessionId]: {
-            ...current,
-            binding: {
-              providerSessionId: payload.providerSessionId,
-              status: payload.status,
-            },
-          },
+          [payload.sessionId]: applyBindingToSessionSnapshot(current, {
+            providerSessionId: payload.providerSessionId,
+            status: payload.status,
+          }),
         };
       });
     },

@@ -43,6 +43,35 @@ export const createDefaultBinding = (): SessionBindingInfo => ({
   status: "pending",
 });
 
+const USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX = "global";
+
+const mapUsageLimitProviderId = (
+  providerId: ProviderStackId | null | undefined
+): "claude" | "codex" | "gemini" | null => {
+  switch (providerId) {
+    case "claudeCodeCli":
+      return "claude";
+    case "codexCli":
+      return "codex";
+    case "geminiCli":
+      return "gemini";
+    default:
+      return null;
+  }
+};
+
+const buildUsageLimitScopeKey = (
+  providerId: ProviderStackId | null | undefined,
+  providerSessionId: string | null | undefined
+): string | null => {
+  const usageLimitProviderId = mapUsageLimitProviderId(providerId);
+  if (!usageLimitProviderId) {
+    return null;
+  }
+
+  return `${usageLimitProviderId}:${providerSessionId?.trim() || USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX}`;
+};
+
 export const normalizeBinding = (
   binding: SessionBindingInfo | undefined
 ): SessionBindingInfo => {
@@ -55,6 +84,49 @@ export const normalizeBinding = (
       binding.status === "ready" || binding.status === "failed"
         ? binding.status
         : "pending",
+  };
+};
+
+export const resolveSessionUsageLimitScopeKey = (
+  session: Pick<SessionRecord, "providerIds" | "binding">
+): string | null =>
+  buildUsageLimitScopeKey(
+    session.providerIds[0] ?? null,
+    session.binding.providerSessionId
+  );
+
+export const resolveStatusUsageLimitScopeKey = (
+  status: Pick<SessionStatusInfo, "models" | "providerScopeKey">,
+  binding?: Pick<SessionBindingInfo, "providerSessionId"> | null
+): string | null =>
+  status.providerScopeKey?.trim().toLowerCase() ||
+  buildUsageLimitScopeKey(
+    status.models?.[0]?.providerId,
+    binding?.providerSessionId ?? null
+  );
+
+export const applyBindingToSessionSnapshot = (
+  snapshot: SessionSnapshot,
+  binding: SessionBindingInfo
+): SessionSnapshot => {
+  const providerScopeKey = resolveStatusUsageLimitScopeKey(
+    snapshot.status,
+    binding
+  );
+  const cachedUsageLimits = readLastKnownUsageLimits(
+    providerScopeKey,
+    snapshot.status.providerSummary
+  );
+  const usageLimits = snapshot.status.usageLimits ?? cachedUsageLimits;
+
+  return {
+    ...snapshot,
+    binding,
+    status: {
+      ...snapshot.status,
+      ...(providerScopeKey ? { providerScopeKey } : {}),
+      ...(usageLimits ? { usageLimits } : {}),
+    },
   };
 };
 
@@ -88,14 +160,19 @@ export const createInitialSnapshot = (
 
   const now = Date.now();
   const models = buildModelInfoList(session.providerIds, settings ?? null);
+  const providerScopeKey = resolveSessionUsageLimitScopeKey(session);
 
   const cachedTokenUsage = session.binding.providerSessionId
     ? readLastKnownTokenUsage(session.binding.providerSessionId)
     : null;
-  const cachedUsageLimits = readLastKnownUsageLimits(providersSummary);
+  const cachedUsageLimits = readLastKnownUsageLimits(
+    providerScopeKey,
+    providersSummary
+  );
 
   const status: SessionStatusInfo = {
     providerSummary: providersSummary,
+    ...(providerScopeKey ? { providerScopeKey } : {}),
     models,
     tokenUsage: {
       used: cachedTokenUsage?.used ?? 0,
