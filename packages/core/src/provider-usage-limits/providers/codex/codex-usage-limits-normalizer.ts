@@ -7,7 +7,7 @@ import type {
 
 type CodexUsageLimitSource = Extract<
   ProviderUsageLimitSource,
-  "codex_rollout_fallback"
+  "codex_rollout_fallback" | "codex_rpc"
 >;
 
 export type CodexRolloutUsageLimitsSnapshot = {
@@ -102,17 +102,11 @@ const parseRateLimitBucket = (
   };
 };
 
-const extractFromEvent = (
-  event: unknown
-): CodexRolloutUsageLimitsSnapshot | null => {
-  if (!isRecord(event) || event.type !== "event_msg") {
-    return null;
-  }
-  const payload = isRecord(event.payload) ? event.payload : null;
-  if (!payload || payload.type !== "token_count") {
-    return null;
-  }
-  const rateLimits = isRecord(payload.rate_limits) ? payload.rate_limits : null;
+export const extractCodexUsageLimitsSnapshotFromRateLimits = (payload: {
+  readonly collectedAt?: string | null;
+  readonly rateLimits: unknown;
+}): CodexRolloutUsageLimitsSnapshot | null => {
+  const rateLimits = isRecord(payload.rateLimits) ? payload.rateLimits : null;
   if (!rateLimits) {
     return null;
   }
@@ -125,11 +119,27 @@ const extractFromEvent = (
   }
 
   return {
-    collectedAt: typeof event.timestamp === "string" ? event.timestamp : null,
+    collectedAt: payload.collectedAt ?? null,
     currentSession,
     currentWeekAllModels,
     currentWeekSonnetOnly,
   };
+};
+
+const extractFromEvent = (
+  event: unknown
+): CodexRolloutUsageLimitsSnapshot | null => {
+  if (!isRecord(event) || event.type !== "event_msg") {
+    return null;
+  }
+  const payload = isRecord(event.payload) ? event.payload : null;
+  if (!payload || payload.type !== "token_count") {
+    return null;
+  }
+  return extractCodexUsageLimitsSnapshotFromRateLimits({
+    collectedAt: typeof event.timestamp === "string" ? event.timestamp : null,
+    rateLimits: payload.rate_limits,
+  });
 };
 
 const buildWindow = (payload: {
