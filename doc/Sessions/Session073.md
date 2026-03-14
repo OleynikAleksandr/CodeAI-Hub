@@ -19,6 +19,7 @@
 - `8f2d9197 fix(codex): prefer saved model over stale env`
 - `4fed6a44 docs(release): prep 1.1.726 notes`
 - `684075de chore(release): build 1.1.726`
+- `dea1f4f4 docs(session): record 1.1.726 release build`
 
 ## Verification
 - Targeted verification:
@@ -60,5 +61,5 @@
 
 ## Plans for next session
 - Провести smoke-check, что новый Codex turn с сохранённым `gpt-5.4` больше не стартует как `gpt-5.3-codex` в provider rollout.
-- Если smoke зелёный, решить вопрос о push текущих 3 рабочих коммитов этой сессии и распространении артефактов `1.1.726`.
+- Если smoke зелёный, продолжать уже от опубликованного baseline `v1.1.726`.
 - Если следующая работа не релизная, начинать уже от baseline `v1.1.726`.
