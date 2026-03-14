@@ -7,15 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.724
-- Description cleanup release: из продукта полностью убран ручной `↻ Restart attempt`; Project Manager больше не держит legacy restart wiring рядом с `questionnaire.md`.
-- Description contract: product-visible workflow теперь везде опирается на `questionnaire.md` + `Final_Description.md`; label `description.md` больше не показывается в tree, auto-select и main-area.
-- Core cleanup: удалён obsolete `/api/v1/orchestrator/idea-artifact`; active artifact persistence целиком идёт через canonical `/api/v1/orchestrator/artifact-upsert`.
-- Description docs: живые SSOT-контракты и overview/system документы синхронизированы с single-agent architecture и больше не описывают restart/reviewer semantics как текущую возможность продукта.
-- Cleanup guards: PM/runtime/session-handler получили финальные regression guards на отсутствие restart/attempt legacy semantics.
-- Targeted verification: зелёно пройдены `packages/core` build, `build:webview`, `typecheck:webview` и таргетные tests по Description cleanup contour.
-- Codex baseline: general-purpose модель остаётся `gpt-5.4`, coding-модель `gpt-5.3-codex`; response-mode baseline `Strict` / `Hybrid` / `Debug/Raw` сохраняется без возврата к позднему rollout-коду старой mainline.
-- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.724` и пересобрать provider/core/ui/launcher артефакты уже после полного Description legacy cleanup.
+## Current Release — v1.1.725
+- Description cleanup baseline: продукт по-прежнему работает на canonical `questionnaire.md` -> `Final_Description.md` flow без legacy `↻ Restart attempt` semantics и без старого `description.md` label в tree/main-area.
+- Core/runtime baseline: active artifact persistence остаётся на canonical `/api/v1/orchestrator/artifact-upsert`; obsolete restart-era transport не возвращается в stable line.
+- Documentation governance: перед `doc/TODO/todo-plan.md` новый scope теперь обязан сначала жить в `doc/SolidWorks-WorkFlow/Plans/`, а реализованный SSOT остаётся только в `System/`, `Clusters/`, `Modules/`, `Contracts/`.
+- Agent instructions: единственный git-tracked источник правил — `AGENTS.md`; локальные `GEMINI.md` и `.claude/CLAUDE.md` сведены к коротким redirect-файлам.
+- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.725` и пересобрать provider/core/ui/launcher артефакты уже поверх этого документационного baseline.
 
 Previous releases (summary): the `1.1.57x–1.1.719` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, and later PM hydration/workflow-state experiments that are intentionally not part of this stable baseline release.
 
