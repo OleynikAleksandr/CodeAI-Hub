@@ -36,7 +36,7 @@
 5. [DONE] Перевести `Claude` message processor на injected shared facade и убрать локальные usage-limits cache/in-flight maps из provider-модуля (scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit: `refactor(claude): route usage limits through shared facade`).
 6. [DONE] Git Commit: `refactor(claude): route usage limits through shared facade` (hash: `fc29738d`)
 7. [DONE] Если Claude SDK runtime отдаёт `SDKRateLimitEvent`, предпочесть этот live runtime signal synthetic probe и оставить probe только fallback path (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/core/src/provider-registry/index.ts`, `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`; expected commit: `feat(claude): prefer sdk rate limit events`).
-8. [TODO] Git Commit: `feat(claude): prefer sdk rate limit events` (hash: TBD)
+8. [DONE] Git Commit: `feat(claude): prefer sdk rate limit events` (hash: `74cd1551`)
 
 ---
 
