@@ -22,6 +22,7 @@ export class CodexProviderAdapter {
     const sessionManager = new CodexSessionManager();
     const messageProcessor = new CodexMessageProcessor(sessionManager, {
       reporter: options.reporter,
+      usageLimitsFacade: options.usageLimitsFacade,
     });
     this.sdkManager = new CodexSDKManager({
       installer,

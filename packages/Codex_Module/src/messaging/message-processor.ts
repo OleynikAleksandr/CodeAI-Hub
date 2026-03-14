@@ -12,14 +12,17 @@ import type {
 } from "@openai/codex-sdk";
 import { DEFAULT_CODEX_RESPONSE_POLICY } from "../response-policy/response-policy-defaults";
 import { CodexUsageLimitsReader } from "../sdk/codex-usage-limits-reader";
-import type {
-  CodexUsageLimitBucket,
-  CodexUsageLimitsSnapshot,
-} from "../sdk/codex-usage-limits-snapshot";
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import { CodexTokenUsageReader, type TokenUsageSnapshot } from "../token-usage";
-import type { CodexTurnOptions, ModuleReporter } from "../types";
+import type {
+  CodexTurnOptions,
+  CodexUsageLimitBucket,
+  CodexUsageLimits,
+  CodexUsageLimitsFacadeBridge,
+  CodexUsageLimitsStreamPayload,
+  ModuleReporter,
+} from "../types";
 import type { CodexStartupLockRelease } from "./codex-startup-lock";
 import { codexStartupLock } from "./codex-startup-lock";
 import {
@@ -35,6 +38,8 @@ const STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS = 30_000;
 const TURN_IDLE_TIMEOUT_MS = 180_000;
 const USAGE_LIMITS_READ_TIMEOUT_MS = 5000;
 const EVENTS_RETURN_TIMEOUT_MS = 1500;
+const CODEAI_CODEX_RATE_LIMITS_PAYLOAD_ENV_KEY =
+  "CODEAI_CODEX_RATE_LIMITS_PAYLOAD";
 
 type EnqueuedMessage = {
   readonly type: "user_input";
@@ -51,6 +56,7 @@ type ProcessTurnContext = {
 
 type MessageProcessorOptions = {
   readonly reporter?: ModuleReporter;
+  readonly usageLimitsFacade?: CodexUsageLimitsFacadeBridge;
 };
 
 type ReasoningDelta = {
@@ -73,6 +79,9 @@ type AgentMessageItem = ThreadItem & { readonly type: "agent_message" };
 const isAgentMessageItem = (item: ThreadItem): item is AgentMessageItem =>
   item.type === "agent_message";
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
 const resolveThreadItemPhase = (item: ThreadItem): string | null => {
   const candidate = item as unknown as { readonly phase?: unknown };
   return typeof candidate.phase === "string" ? candidate.phase : null;
@@ -87,25 +96,67 @@ const shouldSuppressAgentMessageItem = (
   controller.shouldSuppressCommentary(sessionId);
 
 const areUsageLimitBucketsEqual = (
-  left: CodexUsageLimitBucket | null,
-  right: CodexUsageLimitBucket | null
+  left: CodexUsageLimitBucket | null | undefined,
+  right: CodexUsageLimitBucket | null | undefined
 ): boolean =>
   left?.percentUsed === right?.percentUsed &&
   left?.resetsAt === right?.resetsAt;
 
-const areUsageLimitsSnapshotsEqual = (
-  left: CodexUsageLimitsSnapshot,
-  right: CodexUsageLimitsSnapshot
+const areUsageLimitsEqual = (
+  left: CodexUsageLimits,
+  right: CodexUsageLimits
 ): boolean =>
-  areUsageLimitBucketsEqual(left.currentSession, right.currentSession) &&
   areUsageLimitBucketsEqual(
-    left.currentWeekAllModels,
-    right.currentWeekAllModels
+    left?.currentSession ?? null,
+    right?.currentSession ?? null
   ) &&
   areUsageLimitBucketsEqual(
-    left.currentWeekSonnetOnly,
-    right.currentWeekSonnetOnly
+    left?.currentWeekAllModels ?? null,
+    right?.currentWeekAllModels ?? null
+  ) &&
+  areUsageLimitBucketsEqual(
+    left?.currentWeekSonnetOnly ?? null,
+    right?.currentWeekSonnetOnly ?? null
   );
+
+const areUsageLimitsPayloadEqual = (
+  left: CodexUsageLimitsStreamPayload | null,
+  right: CodexUsageLimitsStreamPayload | null
+): boolean =>
+  !(left || right) ||
+  Boolean(
+    left &&
+      right &&
+      left.providerScopeKey === right.providerScopeKey &&
+      left.data.source === right.data.source &&
+      left.data.collectedAt === right.data.collectedAt &&
+      areUsageLimitsEqual(left.usageLimits, right.usageLimits)
+  );
+
+const buildRuntimeUsageLimitsPayload = (event: unknown): string | null => {
+  const root = isRecord(event) ? event : null;
+  if (!root) {
+    return null;
+  }
+
+  const payload = isRecord(root.payload) ? root.payload : null;
+  if (payload?.type !== "token_count") {
+    return null;
+  }
+
+  const rateLimits = payload.rate_limits ?? payload.rateLimits;
+  if (!isRecord(rateLimits)) {
+    return null;
+  }
+
+  return JSON.stringify({
+    collectedAt:
+      typeof root.timestamp === "string"
+        ? root.timestamp
+        : new Date().toISOString(),
+    rateLimits,
+  });
+};
 
 export class CodexMessageProcessor {
   private readonly sessionManager: CodexSessionManager;
@@ -120,12 +171,14 @@ export class CodexMessageProcessor {
   >();
   private readonly usageLimitsCache = new Map<
     string,
-    CodexUsageLimitsSnapshot
+    NonNullable<CodexUsageLimits>
   >();
   private readonly userTurnLifecycle = new WeakMap<
     ActiveSession,
     TurnLifecycleState
   >();
+  private readonly usageLimitsFacade?: CodexUsageLimitsFacadeBridge;
+  private readonly latestRuntimeUsageLimitsPayload = new Map<string, string>();
 
   private async raceWithTimeout<T>(payload: {
     readonly promise: Promise<T>;
@@ -250,6 +303,7 @@ export class CodexMessageProcessor {
     this.options = options;
     this.tokenUsageReader = new CodexTokenUsageReader();
     this.usageLimitsReader = new CodexUsageLimitsReader();
+    this.usageLimitsFacade = options?.usageLimitsFacade;
   }
 
   initializeSession(session: ActiveSession, thread: Thread): void {
@@ -645,6 +699,9 @@ export class CodexMessageProcessor {
         this.handleStreamError(session, event);
         break;
       default:
+        if (await this.handleRuntimeUsageEvent(session, event)) {
+          break;
+        }
         this.options?.reporter?.warn?.(
           `Unhandled Codex event ${(event as { type: string }).type}`
         );
@@ -719,7 +776,7 @@ export class CodexMessageProcessor {
 
   private async safeRefreshUsageLimits(
     session: ActiveSession
-  ): Promise<CodexUsageLimitsSnapshot | null> {
+  ): Promise<CodexUsageLimits> {
     const providerSessionId = session.codexThreadId;
     if (!providerSessionId) {
       return null;
@@ -747,7 +804,7 @@ export class CodexMessageProcessor {
         elapsedMs: Date.now() - startedAt,
         timestampIso: new Date().toISOString(),
       });
-      return this.usageLimitsCache.get(providerSessionId) ?? null;
+      return this.getCachedUsageLimits(providerSessionId);
     }
 
     session.logger?.logSDKEvent("processor.usage_limits.read.done", {
@@ -780,7 +837,7 @@ export class CodexMessageProcessor {
   private maybeEmitTurnCompleted(
     session: ActiveSession,
     usage: unknown,
-    usageLimits?: CodexUsageLimitsSnapshot | null
+    usageLimits?: CodexUsageLimits
   ): void {
     const state = this.userTurnLifecycle.get(session);
     if (!state || state.ended) {
@@ -870,7 +927,62 @@ export class CodexMessageProcessor {
   private async refreshUsageLimits(
     session: ActiveSession,
     options: { readonly force?: boolean } = {}
-  ): Promise<CodexUsageLimitsSnapshot | null> {
+  ): Promise<CodexUsageLimits> {
+    if (this.usageLimitsFacade) {
+      return await this.refreshUsageLimitsFromFacade(session, options);
+    }
+
+    return await this.refreshUsageLimitsFromReader(session, options);
+  }
+
+  private async refreshUsageLimitsFromFacade(
+    session: ActiveSession,
+    options: { readonly force?: boolean } = {}
+  ): Promise<CodexUsageLimits> {
+    const facade = this.usageLimitsFacade;
+    const providerSessionId = session.codexThreadId;
+    if (!(facade && providerSessionId)) {
+      return null;
+    }
+
+    const previousPayload = facade.getCachedStreamPayload({
+      providerSessionId,
+    });
+    const nextPayload = await facade
+      .readStreamPayload({
+        workspacePath: session.workspacePath,
+        runtimeSessionId: session.sessionId,
+        providerSessionId,
+        environment: this.buildUsageLimitsEnvironment(providerSessionId),
+        force: options.force,
+      })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options?.reporter?.warn?.(
+          `Codex shared usage limits read failed (session ${providerSessionId}): ${message}`
+        );
+        return null;
+      });
+
+    if (!nextPayload?.usageLimits) {
+      return previousPayload?.usageLimits ?? null;
+    }
+
+    if (!areUsageLimitsPayloadEqual(previousPayload, nextPayload)) {
+      this.emitUsageLimitsStreamPayload(
+        session,
+        providerSessionId,
+        nextPayload
+      );
+    }
+
+    return nextPayload.usageLimits;
+  }
+
+  private async refreshUsageLimitsFromReader(
+    session: ActiveSession,
+    options: { readonly force?: boolean } = {}
+  ): Promise<CodexUsageLimits> {
     const providerSessionId = session.codexThreadId;
     if (!providerSessionId) {
       return null;
@@ -894,10 +1006,7 @@ export class CodexMessageProcessor {
     }
 
     const previousSnapshot = this.usageLimitsCache.get(providerSessionId);
-    if (
-      previousSnapshot &&
-      areUsageLimitsSnapshotsEqual(previousSnapshot, snapshot)
-    ) {
+    if (previousSnapshot && areUsageLimitsEqual(previousSnapshot, snapshot)) {
       return previousSnapshot;
     }
 
@@ -909,7 +1018,7 @@ export class CodexMessageProcessor {
   private emitUsageLimitsStreamEvent(
     session: ActiveSession,
     providerSessionId: string,
-    usageLimits: CodexUsageLimitsSnapshot
+    usageLimits: NonNullable<CodexUsageLimits>
   ): void {
     session.eventEmitter.emit("message", {
       type: "stream_event",
@@ -921,6 +1030,107 @@ export class CodexMessageProcessor {
       uuid: `${crypto.randomUUID()}::usage_limits`,
       timestamp: new Date().toISOString(),
     });
+  }
+
+  private emitUsageLimitsStreamPayload(
+    session: ActiveSession,
+    providerSessionId: string,
+    payload: CodexUsageLimitsStreamPayload
+  ): void {
+    session.eventEmitter.emit("message", {
+      type: "stream_event",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: providerSessionId,
+      usageLimits: payload.usageLimits,
+      data: payload.data,
+      uuid: `${crypto.randomUUID()}::usage_limits`,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private getCachedUsageLimits(providerSessionId: string): CodexUsageLimits {
+    if (this.usageLimitsFacade) {
+      return (
+        this.usageLimitsFacade.getCachedStreamPayload({
+          providerSessionId,
+        })?.usageLimits ?? null
+      );
+    }
+
+    return this.usageLimitsCache.get(providerSessionId) ?? null;
+  }
+
+  private buildUsageLimitsEnvironment(
+    providerSessionId: string
+  ): NodeJS.ProcessEnv | undefined {
+    const runtimePayload =
+      this.latestRuntimeUsageLimitsPayload.get(providerSessionId);
+    if (!runtimePayload) {
+      return;
+    }
+
+    return {
+      [CODEAI_CODEX_RATE_LIMITS_PAYLOAD_ENV_KEY]: runtimePayload,
+    };
+  }
+
+  private async handleRuntimeUsageEvent(
+    session: ActiveSession,
+    event: unknown
+  ): Promise<boolean> {
+    const runtimePayload = buildRuntimeUsageLimitsPayload(event);
+    if (!runtimePayload) {
+      return false;
+    }
+
+    const root = isRecord(event) ? event : null;
+    let providerSessionId = session.codexThreadId;
+    if (!providerSessionId && typeof root?.thread_id === "string") {
+      providerSessionId = root.thread_id;
+    }
+    if (!providerSessionId && typeof root?.threadId === "string") {
+      providerSessionId = root.threadId;
+    }
+    if (!providerSessionId) {
+      return true;
+    }
+
+    this.latestRuntimeUsageLimitsPayload.set(providerSessionId, runtimePayload);
+
+    const facade = this.usageLimitsFacade;
+    if (!facade) {
+      return true;
+    }
+
+    const previousPayload = facade.getCachedStreamPayload({
+      providerSessionId,
+    });
+    const nextPayload = await facade
+      .readStreamPayload({
+        workspacePath: session.workspacePath,
+        runtimeSessionId: session.sessionId,
+        providerSessionId,
+        environment: this.buildUsageLimitsEnvironment(providerSessionId),
+        force: true,
+      })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        this.options?.reporter?.warn?.(
+          `Codex runtime usage limits read failed (session ${providerSessionId}): ${message}`
+        );
+        return null;
+      });
+
+    if (
+      !nextPayload?.usageLimits ||
+      areUsageLimitsPayloadEqual(previousPayload, nextPayload)
+    ) {
+      return true;
+    }
+
+    this.emitUsageLimitsStreamPayload(session, providerSessionId, nextPayload);
+    return true;
   }
 
   private handleTurnFailed(

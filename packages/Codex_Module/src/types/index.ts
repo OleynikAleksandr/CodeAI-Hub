@@ -33,11 +33,52 @@ export type ModuleReporter = {
   readonly progress?: (event: ModuleProgressEvent) => void;
 };
 
+export type CodexUsageLimitBucket = {
+  readonly percentUsed: number;
+  readonly resetsAt: string | null;
+};
+
+export type CodexUsageLimits = {
+  readonly currentSession?: CodexUsageLimitBucket | null;
+  readonly currentWeekAllModels?: CodexUsageLimitBucket | null;
+  readonly currentWeekSonnetOnly?: CodexUsageLimitBucket | null;
+} | null;
+
+export type CodexUsageLimitsReadParams = {
+  readonly workspacePath: string;
+  readonly runtimeSessionId: string;
+  readonly providerSessionId: string | null;
+  readonly environment?: NodeJS.ProcessEnv;
+  readonly force?: boolean;
+};
+
+export type CodexUsageLimitsStreamPayload = {
+  readonly providerScopeKey: string;
+  readonly usageLimits: CodexUsageLimits;
+  readonly data: {
+    readonly kind: "usage_limits";
+    readonly usageLimits: CodexUsageLimits;
+    readonly providerScopeKey: string;
+    readonly source: string;
+    readonly collectedAt: string;
+  };
+};
+
+export type CodexUsageLimitsFacadeBridge = {
+  readStreamPayload(
+    params: CodexUsageLimitsReadParams
+  ): Promise<CodexUsageLimitsStreamPayload | null>;
+  getCachedStreamPayload(params: {
+    readonly providerSessionId: string | null;
+  }): CodexUsageLimitsStreamPayload | null;
+};
+
 export type CodexModuleOptions = {
   readonly installerPaths: CodexInstallerPaths;
   readonly workspace: CodexWorkspaceOptions;
   readonly reporter?: ModuleReporter;
   readonly enableDebugStreams?: boolean;
+  readonly usageLimitsFacade?: CodexUsageLimitsFacadeBridge;
 };
 
 export type CodexThreadEvent = ThreadEvent;
