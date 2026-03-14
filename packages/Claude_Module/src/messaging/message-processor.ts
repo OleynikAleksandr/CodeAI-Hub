@@ -1,14 +1,19 @@
 import crypto from "node:crypto";
 import { ClaudeContextUsageReader } from "../sdk/claude-context-usage-reader";
-import { ClaudeUsageLimitsReader } from "../sdk/claude-usage-limits-reader";
-import type { UsageLimitsSnapshot } from "../sdk/claude-usage-limits-snapshot";
 import type { SDKSessionManager } from "../session/session-manager";
 import type {
   ActiveSession,
   ClaudeQueuedTurn,
   ClaudeTurnProcessorHooks,
 } from "../session/types";
-import type { ClaudeStreamMessage, ModuleReporter } from "../types";
+import type {
+  ClaudeStreamMessage,
+  ClaudeUsageLimitBucket,
+  ClaudeUsageLimits,
+  ClaudeUsageLimitsFacadeBridge,
+  ClaudeUsageLimitsStreamPayload,
+  ModuleReporter,
+} from "../types";
 import type { IdeaCollectorStructuredOutput } from "./idea-collector-structured-output";
 import {
   parseIdeaCollectorOutputFromResultMessage,
@@ -86,37 +91,51 @@ type TokenUsageSnapshot = {
   readonly limit: number;
 };
 
-const areUsageLimitsEqual = (
-  left: UsageLimitsSnapshot,
-  right: UsageLimitsSnapshot
+const areUsageLimitBucketsEqual = (
+  left: ClaudeUsageLimitBucket | null | undefined,
+  right: ClaudeUsageLimitBucket | null | undefined
 ): boolean => {
-  const eqBucket = (
-    a: UsageLimitsSnapshot[keyof UsageLimitsSnapshot],
-    b: UsageLimitsSnapshot[keyof UsageLimitsSnapshot]
-  ): boolean => {
-    if (a === null || b === null) {
-      return a === b;
-    }
-    return a.percentUsed === b.percentUsed && a.resetsAt === b.resetsAt;
-  };
-
+  if (!(left || right)) {
+    return true;
+  }
+  if (!(left && right)) {
+    return false;
+  }
   return (
-    eqBucket(left.currentSession, right.currentSession) &&
-    eqBucket(left.currentWeekAllModels, right.currentWeekAllModels) &&
-    eqBucket(left.currentWeekSonnetOnly, right.currentWeekSonnetOnly)
+    left.percentUsed === right.percentUsed && left.resetsAt === right.resetsAt
   );
 };
 
-const normalizeUsageLimitsSnapshot = (
-  snapshot: UsageLimitsSnapshot
-): UsageLimitsSnapshot => {
-  return {
-    currentSession: snapshot.currentSession ?? null,
-    currentWeekAllModels: snapshot.currentWeekAllModels ?? null,
-    // Keep sonnet bucket disabled to preserve current UI contract.
-    currentWeekSonnetOnly: null,
-  };
-};
+const areUsageLimitsEqual = (
+  left: ClaudeUsageLimits,
+  right: ClaudeUsageLimits
+): boolean =>
+  areUsageLimitBucketsEqual(
+    left?.currentSession ?? null,
+    right?.currentSession ?? null
+  ) &&
+  areUsageLimitBucketsEqual(
+    left?.currentWeekAllModels ?? null,
+    right?.currentWeekAllModels ?? null
+  ) &&
+  areUsageLimitBucketsEqual(
+    left?.currentWeekSonnetOnly ?? null,
+    right?.currentWeekSonnetOnly ?? null
+  );
+
+const areUsageLimitsPayloadEqual = (
+  left: ClaudeUsageLimitsStreamPayload | null,
+  right: ClaudeUsageLimitsStreamPayload | null
+): boolean =>
+  !(left || right) ||
+  Boolean(
+    left &&
+      right &&
+      left.providerScopeKey === right.providerScopeKey &&
+      left.data.source === right.data.source &&
+      left.data.collectedAt === right.data.collectedAt &&
+      areUsageLimitsEqual(left.usageLimits, right.usageLimits)
+  );
 
 const MIN_REFRESH_INTERVAL_MS = 1500;
 const TEMP_SESSION_PREFIX = "temp_";
@@ -145,6 +164,7 @@ type ProcessResponseOptions = {
 type MessageProcessorOptions = {
   readonly projectPath: string;
   readonly reporter?: ModuleReporter;
+  readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
 };
 
 export class SDKMessageProcessor {
@@ -155,18 +175,13 @@ export class SDKMessageProcessor {
     { used: number; limit: number }
   >();
   private contextUsageReader: ClaudeContextUsageReader | null = null;
-  private usageLimitsReader: ClaudeUsageLimitsReader | null = null;
+  private readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
+  private usageLimitsEnvironment: NodeJS.ProcessEnv | undefined;
   private readonly contextUsageInFlight = new Map<
     string,
     Promise<TokenUsageSnapshot | null>
   >();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
-  private readonly usageLimitsCache = new Map<string, UsageLimitsSnapshot>();
-  private readonly usageLimitsInFlight = new Map<
-    string,
-    Promise<UsageLimitsSnapshot | null>
-  >();
-  private readonly usageLimitsLastAttemptAt = new Map<string, number>();
 
   constructor(
     sessionManager: SDKSessionManager,
@@ -174,14 +189,15 @@ export class SDKMessageProcessor {
   ) {
     this.sessionManager = sessionManager;
     this.options = options;
+    this.usageLimitsFacade = options.usageLimitsFacade;
   }
 
   configureContextUsageReader(config: ContextUsageReaderConfig): void {
+    this.usageLimitsEnvironment = config.env;
     if (this.contextUsageReader) {
       return;
     }
     this.contextUsageReader = new ClaudeContextUsageReader(config);
-    this.usageLimitsReader = new ClaudeUsageLimitsReader(config);
   }
 
   enqueueTurn(
@@ -450,7 +466,7 @@ export class SDKMessageProcessor {
     claudeSessionId: string | null | undefined,
     payload?: {
       readonly tokenUsage?: TokenUsageSnapshot | null;
-      readonly usageLimits?: UsageLimitsSnapshot | null;
+      readonly usageLimits?: ClaudeUsageLimits;
     }
   ): void {
     const queueState = session.turnQueue;
@@ -587,9 +603,9 @@ export class SDKMessageProcessor {
     session: ActiveSession,
     claudeSessionId: string | null | undefined,
     options: { readonly force?: boolean } = {}
-  ): Promise<UsageLimitsSnapshot | null> {
-    const reader = this.usageLimitsReader;
-    if (!reader) {
+  ): Promise<ClaudeUsageLimits> {
+    const facade = this.usageLimitsFacade;
+    if (!facade) {
       return null;
     }
 
@@ -601,62 +617,44 @@ export class SDKMessageProcessor {
       return null;
     }
 
-    const now = Date.now();
-    const lastAttempt = this.usageLimitsLastAttemptAt.get(resolvedId);
-    if (
-      !options.force &&
-      lastAttempt &&
-      now - lastAttempt < MIN_REFRESH_INTERVAL_MS
-    ) {
-      return null;
-    }
-    this.usageLimitsLastAttemptAt.set(resolvedId, now);
+    const previousPayload = facade.getCachedStreamPayload({
+      providerSessionId: resolvedId,
+    });
 
-    const inFlight = this.usageLimitsInFlight.get(resolvedId);
-    if (inFlight) {
-      if (options.force) {
-        await inFlight;
-      }
-      return this.usageLimitsCache.get(resolvedId) ?? null;
-    }
-
-    const refreshPromise = reader
-      .read({ sessionId: resolvedId, cwd: session.workspacePath })
-      .then((snapshot) => {
-        if (!snapshot) {
-          return null;
-        }
-        const nextUsage = normalizeUsageLimitsSnapshot(snapshot);
-        const previous = this.usageLimitsCache.get(resolvedId);
-        if (previous && areUsageLimitsEqual(previous, nextUsage)) {
-          return previous;
-        }
-        this.usageLimitsCache.set(resolvedId, nextUsage);
-        session.eventEmitter.emit("message", {
-          type: "stream_event",
-          provider: "claude",
-          sessionId: session.sessionId,
-          claudeSessionId: resolvedId,
-          usageLimits: nextUsage,
-          data: { kind: "usage_limits", usageLimits: nextUsage },
-          uuid: `${crypto.randomUUID()}::usage_limits`,
-          timestamp: new Date().toISOString(),
-        });
-        return nextUsage;
+    const nextPayload = await facade
+      .readStreamPayload({
+        workspacePath: session.workspacePath,
+        runtimeSessionId: session.sessionId,
+        providerSessionId: resolvedId,
+        environment: this.usageLimitsEnvironment,
+        force: options.force,
       })
       .catch((error) => {
         const message = error instanceof Error ? error.message : String(error);
         this.options.reporter?.warn?.(
-          `Claude usage limits probe failed (session ${resolvedId}): ${message}`
+          `Claude shared usage limits read failed (session ${resolvedId}): ${message}`
         );
         return null;
-      })
-      .finally(() => {
-        this.usageLimitsInFlight.delete(resolvedId);
       });
 
-    this.usageLimitsInFlight.set(resolvedId, refreshPromise);
-    return await refreshPromise;
+    if (!nextPayload?.usageLimits) {
+      return null;
+    }
+
+    if (!areUsageLimitsPayloadEqual(previousPayload, nextPayload)) {
+      session.eventEmitter.emit("message", {
+        type: "stream_event",
+        provider: "claude",
+        sessionId: session.sessionId,
+        claudeSessionId: resolvedId,
+        usageLimits: nextPayload.usageLimits,
+        data: nextPayload.data,
+        uuid: `${crypto.randomUUID()}::usage_limits`,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    return nextPayload.usageLimits;
   }
 
   private resolveTokenUsageSessionId(

@@ -32,6 +32,7 @@ export class ClaudeProviderAdapter {
     const messageProcessor = new SDKMessageProcessor(sessionManager, {
       projectPath,
       reporter,
+      usageLimitsFacade: options.usageLimitsFacade,
     });
     this.sdkManager = new ClaudeSDKManager({
       installer,
