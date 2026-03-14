@@ -29,6 +29,24 @@ export type CompatibleSessionUsageLimits = {
   readonly currentWeekSonnetOnly?: ProviderUsageLimitBucket | null;
 } | null;
 
+export type ProviderUsageLimitsDiagnostics = {
+  readonly result:
+    | "cache_hit"
+    | "fresh_read"
+    | "fallback_cached"
+    | "unavailable";
+  readonly fallbackReason?:
+    | "min_refresh_interval"
+    | "reader_missing"
+    | "read_failed"
+    | "snapshot_unavailable";
+  readonly source: ProviderUsageLimitSource | null;
+  readonly fromCache: boolean;
+  readonly readerRegistered: boolean;
+  readonly force: boolean;
+  readonly changed?: boolean;
+};
+
 export type ProviderUsageLimitWindow = ProviderUsageLimitBucket & {
   readonly id: ProviderUsageLimitWindowId;
   readonly label: string;
@@ -55,6 +73,7 @@ export type ReadProviderUsageLimitsParams = {
 export type ProviderUsageLimitsReadResult = {
   readonly snapshot: ProviderUsageLimitsSnapshot | null;
   readonly compat: CompatibleSessionUsageLimits;
+  readonly diagnostics?: ProviderUsageLimitsDiagnostics;
 };
 
 export type ProviderUsageLimitsStreamEventData = {
@@ -63,6 +82,7 @@ export type ProviderUsageLimitsStreamEventData = {
   readonly providerScopeKey: string;
   readonly source: ProviderUsageLimitSource;
   readonly collectedAt: string;
+  readonly diagnostics?: ProviderUsageLimitsDiagnostics;
 };
 
 export type ProviderUsageLimitsStreamPayload = {

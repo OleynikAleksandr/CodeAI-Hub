@@ -1,5 +1,6 @@
 import type {
   CompatibleSessionUsageLimits,
+  ProviderUsageLimitsDiagnostics,
   ProviderUsageLimitsReadResult,
   ProviderUsageLimitsSnapshot,
   ProviderUsageLimitsStreamPayload,
@@ -17,7 +18,8 @@ const hasUsageLimits = (
 
 const buildPayload = (
   snapshot: ProviderUsageLimitsSnapshot,
-  usageLimits: CompatibleSessionUsageLimits
+  usageLimits: CompatibleSessionUsageLimits,
+  diagnostics?: ProviderUsageLimitsDiagnostics
 ): ProviderUsageLimitsStreamPayload => ({
   providerScopeKey: snapshot.providerScopeKey,
   usageLimits,
@@ -27,6 +29,7 @@ const buildPayload = (
     providerScopeKey: snapshot.providerScopeKey,
     source: snapshot.source,
     collectedAt: snapshot.collectedAt,
+    ...(diagnostics ? { diagnostics } : {}),
   },
 });
 
@@ -38,5 +41,5 @@ export const buildProviderUsageLimitsStreamPayload = (
   }
 
   const usageLimits = hasUsageLimits(result.compat) ? result.compat : null;
-  return buildPayload(result.snapshot, usageLimits);
+  return buildPayload(result.snapshot, usageLimits, result.diagnostics);
 };

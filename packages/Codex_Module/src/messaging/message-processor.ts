@@ -133,6 +133,15 @@ const areUsageLimitsPayloadEqual = (
       areUsageLimitsEqual(left.usageLimits, right.usageLimits)
   );
 
+const readUsageLimitsDiagnostics = (
+  payload: CodexUsageLimitsStreamPayload | null
+): Record<string, unknown> | null => {
+  const diagnostics = isRecord(payload?.data)
+    ? (payload.data as Record<string, unknown>).diagnostics
+    : null;
+  return isRecord(diagnostics) ? diagnostics : null;
+};
+
 const buildRuntimeUsageLimitsPayload = (event: unknown): string | null => {
   const root = isRecord(event) ? event : null;
   if (!root) {
@@ -965,16 +974,37 @@ export class CodexMessageProcessor {
       });
 
     if (!nextPayload?.usageLimits) {
+      session.logger?.logSDKEvent("processor.usage_limits.facade.result", {
+        sessionId: session.sessionId,
+        threadId: providerSessionId,
+        emitted: false,
+        usedPreviousPayload: Boolean(previousPayload?.usageLimits),
+        source: previousPayload?.data.source ?? null,
+        diagnostics: readUsageLimitsDiagnostics(previousPayload),
+        timestampIso: new Date().toISOString(),
+      });
       return previousPayload?.usageLimits ?? null;
     }
 
-    if (!areUsageLimitsPayloadEqual(previousPayload, nextPayload)) {
+    const emitted = !areUsageLimitsPayloadEqual(previousPayload, nextPayload);
+    if (emitted) {
       this.emitUsageLimitsStreamPayload(
         session,
         providerSessionId,
         nextPayload
       );
     }
+
+    session.logger?.logSDKEvent("processor.usage_limits.facade.result", {
+      sessionId: session.sessionId,
+      threadId: providerSessionId,
+      emitted,
+      source: nextPayload.data.source,
+      providerScopeKey: nextPayload.providerScopeKey,
+      hasUsageLimits: Boolean(nextPayload.usageLimits),
+      diagnostics: readUsageLimitsDiagnostics(nextPayload),
+      timestampIso: new Date().toISOString(),
+    });
 
     return nextPayload.usageLimits;
   }
@@ -1126,10 +1156,34 @@ export class CodexMessageProcessor {
       !nextPayload?.usageLimits ||
       areUsageLimitsPayloadEqual(previousPayload, nextPayload)
     ) {
+      session.logger?.logSDKEvent("processor.usage_limits.runtime.result", {
+        sessionId: session.sessionId,
+        threadId: providerSessionId,
+        emitted: false,
+        source:
+          nextPayload?.data.source ?? previousPayload?.data.source ?? null,
+        providerScopeKey:
+          nextPayload?.providerScopeKey ??
+          previousPayload?.providerScopeKey ??
+          null,
+        diagnostics:
+          readUsageLimitsDiagnostics(nextPayload) ??
+          readUsageLimitsDiagnostics(previousPayload),
+        timestampIso: new Date().toISOString(),
+      });
       return true;
     }
 
     this.emitUsageLimitsStreamPayload(session, providerSessionId, nextPayload);
+    session.logger?.logSDKEvent("processor.usage_limits.runtime.result", {
+      sessionId: session.sessionId,
+      threadId: providerSessionId,
+      emitted: true,
+      source: nextPayload.data.source,
+      providerScopeKey: nextPayload.providerScopeKey,
+      diagnostics: readUsageLimitsDiagnostics(nextPayload),
+      timestampIso: new Date().toISOString(),
+    });
     return true;
   }
 
