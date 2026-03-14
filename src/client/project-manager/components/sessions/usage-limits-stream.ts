@@ -21,7 +21,10 @@ const readNumber = (value: unknown): number | null => {
   return null;
 };
 
-type Bucket = { readonly percentUsed: number; readonly resetsAt: string | null };
+type Bucket = {
+  readonly percentUsed: number;
+  readonly resetsAt?: string | null;
+};
 
 type UsageLimits = {
   readonly currentSession?: Bucket | null;
@@ -29,12 +32,45 @@ type UsageLimits = {
   readonly currentWeekSonnetOnly?: Bucket | null;
 };
 
+const areBucketsEqual = (
+  left: Bucket | null | undefined,
+  right: Bucket | null | undefined
+): boolean =>
+  left?.percentUsed === right?.percentUsed &&
+  left?.resetsAt === right?.resetsAt;
+
+const areUsageLimitsEqual = (
+  left: UsageLimits | null | undefined,
+  right: UsageLimits
+): boolean =>
+  Boolean(
+    left &&
+      areBucketsEqual(left.currentSession, right.currentSession) &&
+      areBucketsEqual(left.currentWeekAllModels, right.currentWeekAllModels) &&
+      areBucketsEqual(left.currentWeekSonnetOnly, right.currentWeekSonnetOnly)
+  );
+
 const normalizeProviderScopeKey = (value: string | null | undefined): string =>
   value?.trim().toLowerCase() ?? "";
+
+const extractProviderScopeKey = (event: unknown): string => {
+  if (!isRecord(event)) {
+    return "";
+  }
+
+  const direct = readString(event.providerScopeKey);
+  if (direct) {
+    return normalizeProviderScopeKey(direct);
+  }
+
+  const data = isRecord(event.data) ? event.data : null;
+  return normalizeProviderScopeKey(readString(data?.providerScopeKey));
+};
 
 const resolveProviderScopeKey = (
   snapshot: SessionSnapshots[string]
 ): string =>
+  normalizeProviderScopeKey(snapshot.status.providerScopeKey) ||
   normalizeProviderScopeKey(snapshot.status.providerSummary);
 
 const hasUsageLimits = (
@@ -122,25 +158,58 @@ export const updateSnapshotsWithUsageLimits = (
     return snapshots;
   }
 
-  writeLastKnownUsageLimits(sourceSnapshot.status.providerSummary, usageLimits);
+  const sourceProviderKey =
+    extractProviderScopeKey(payload.event) ||
+    resolveProviderScopeKey(sourceSnapshot);
+  const currentSourceProviderKey = normalizeProviderScopeKey(
+    sourceSnapshot.status.providerScopeKey
+  );
+  if (
+    areUsageLimitsEqual(sourceSnapshot.status.usageLimits, usageLimits) &&
+    currentSourceProviderKey === sourceProviderKey
+  ) {
+    return snapshots;
+  }
 
-  const sourceProviderKey = resolveProviderScopeKey(sourceSnapshot);
+  writeLastKnownUsageLimits(
+    sourceProviderKey,
+    usageLimits,
+    sourceSnapshot.status.providerSummary
+  );
+
   const now = Date.now();
   const nextSnapshots: SessionSnapshots = { ...snapshots };
   let changed = false;
 
   for (const [sessionId, snapshot] of Object.entries(snapshots)) {
+    const currentProviderScopeKey = normalizeProviderScopeKey(
+      snapshot.status.providerScopeKey
+    );
     const sameProviderScope =
       sourceProviderKey.length > 0 &&
       resolveProviderScopeKey(snapshot) === sourceProviderKey;
+    const shouldUpdateScopeKey =
+      sourceProviderKey.length > 0 &&
+      currentProviderScopeKey !== sourceProviderKey;
     if (!(sameProviderScope || sessionId === payload.sessionId)) {
       continue;
     }
+
+    if (
+      areUsageLimitsEqual(snapshot.status.usageLimits, usageLimits) &&
+      !shouldUpdateScopeKey
+    ) {
+      continue;
+    }
+
     changed = true;
     nextSnapshots[sessionId] = {
       ...snapshot,
       status: {
         ...snapshot.status,
+        ...(sourceProviderKey
+          ? { providerScopeKey: sourceProviderKey }
+          : {}),
         usageLimits,
         updatedAt: now,
       },
@@ -152,9 +221,9 @@ export const updateSnapshotsWithUsageLimits = (
 
 export const resolveLatestUsageLimitsForProvider = (
   snapshots: SessionSnapshots,
-  providerSummary: string
+  providerScopeKey: string
 ): SessionSnapshots[string]["status"]["usageLimits"] | null => {
-  const providerKey = normalizeProviderScopeKey(providerSummary);
+  const providerKey = normalizeProviderScopeKey(providerScopeKey);
   if (!providerKey) {
     return null;
   }

@@ -20,8 +20,22 @@ const getLocalStorage = (): Storage | null => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const normalizeProviderKey = (value: string): string =>
-  value.trim().toLowerCase();
+const normalizeStorageKey = (value: string | null | undefined): string =>
+  value?.trim().toLowerCase() ?? "";
+
+const resolveStorageKeys = (
+  providerScopeKey: string | null | undefined,
+  legacyProviderSummary?: string | null
+): readonly string[] => {
+  const keys: string[] = [];
+  for (const candidate of [providerScopeKey, legacyProviderSummary]) {
+    const normalized = normalizeStorageKey(candidate);
+    if (normalized && !keys.includes(normalized)) {
+      keys.push(normalized);
+    }
+  }
+  return keys;
+};
 
 const readNumber = (value: unknown): number | null =>
   typeof value === "number" && Number.isFinite(value) ? value : null;
@@ -85,33 +99,44 @@ const parseStoredUsageLimits = (raw: string): StoredUsageLimits | null => {
 };
 
 export const readLastKnownUsageLimits = (
-  providerSummary: string
+  providerScopeKey: string | null | undefined,
+  legacyProviderSummary?: string | null
 ): UsageLimits | null => {
   const storage = getLocalStorage();
   if (!storage) {
     return null;
   }
-  const providerKey = normalizeProviderKey(providerSummary);
-  if (!providerKey) {
-    return null;
+
+  for (const providerKey of resolveStorageKeys(
+    providerScopeKey,
+    legacyProviderSummary
+  )) {
+    const raw = storage.getItem(`${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`);
+    if (!raw) {
+      continue;
+    }
+    const stored = parseStoredUsageLimits(raw);
+    if (stored?.usageLimits) {
+      return stored.usageLimits;
+    }
   }
-  const raw = storage.getItem(`${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`);
-  if (!raw) {
-    return null;
-  }
-  const stored = parseStoredUsageLimits(raw);
-  return stored?.usageLimits ?? null;
+
+  return null;
 };
 
 export const writeLastKnownUsageLimits = (
-  providerSummary: string,
-  usageLimits: SessionStatusInfo["usageLimits"]
+  providerScopeKey: string | null | undefined,
+  usageLimits: SessionStatusInfo["usageLimits"],
+  legacyProviderSummary?: string | null
 ): void => {
   const storage = getLocalStorage();
   if (!storage) {
     return;
   }
-  const providerKey = normalizeProviderKey(providerSummary);
+  const providerKey = resolveStorageKeys(
+    providerScopeKey,
+    legacyProviderSummary
+  )[0];
   if (!providerKey) {
     return;
   }
