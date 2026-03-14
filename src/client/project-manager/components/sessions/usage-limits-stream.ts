@@ -1,4 +1,8 @@
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import {
+  areUsageLimitLabelsEqual,
+  extractUsageLimitLabels,
+} from "../../../ui/src/session/usage-limit-labels";
 import { writeLastKnownUsageLimits } from "../../../ui/src/session/usage-limits-cache";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -26,11 +30,14 @@ type Bucket = {
   readonly resetsAt?: string | null;
 };
 
-type UsageLimits = {
-  readonly currentSession?: Bucket | null;
-  readonly currentWeekAllModels?: Bucket | null;
-  readonly currentWeekSonnetOnly?: Bucket | null;
+type UsageValue<T> = {
+  readonly currentSession?: T | null;
+  readonly currentWeekAllModels?: T | null;
+  readonly currentWeekSonnetOnly?: T | null;
 };
+
+type UsageLimits = UsageValue<Bucket>;
+type UsageLimitLabels = UsageValue<string>;
 
 const areBucketsEqual = (
   left: Bucket | null | undefined,
@@ -164,8 +171,13 @@ export const updateSnapshotsWithUsageLimits = (
   const currentSourceProviderKey = normalizeProviderScopeKey(
     sourceSnapshot.status.providerScopeKey
   );
+  const usageLimitLabels =
+    extractUsageLimitLabels(payload.event) ??
+    sourceSnapshot.status.usageLimitLabels ??
+    null;
   if (
     areUsageLimitsEqual(sourceSnapshot.status.usageLimits, usageLimits) &&
+    areUsageLimitLabelsEqual(sourceSnapshot.status.usageLimitLabels, usageLimitLabels) &&
     currentSourceProviderKey === sourceProviderKey
   ) {
     return snapshots;
@@ -174,7 +186,8 @@ export const updateSnapshotsWithUsageLimits = (
   writeLastKnownUsageLimits(
     sourceProviderKey,
     usageLimits,
-    sourceSnapshot.status.providerSummary
+    sourceSnapshot.status.providerSummary,
+    usageLimitLabels
   );
 
   const now = Date.now();
@@ -197,6 +210,10 @@ export const updateSnapshotsWithUsageLimits = (
 
     if (
       areUsageLimitsEqual(snapshot.status.usageLimits, usageLimits) &&
+      areUsageLimitLabelsEqual(
+        snapshot.status.usageLimitLabels,
+        usageLimitLabels
+      ) &&
       !shouldUpdateScopeKey
     ) {
       continue;
@@ -211,6 +228,7 @@ export const updateSnapshotsWithUsageLimits = (
           ? { providerScopeKey: sourceProviderKey }
           : {}),
         usageLimits,
+        ...(usageLimitLabels ? { usageLimitLabels } : {}),
         updatedAt: now,
       },
     };

@@ -5,7 +5,7 @@ import type {
 } from "../../../../types/session";
 import { resolveStatusUsageLimitScopeKey } from "./helpers";
 import { buildResetLabel } from "./session-id-bar-reset-format";
-import { readLastKnownUsageLimits } from "./usage-limits-cache";
+import { readLastKnownUsageLimitsState } from "./usage-limits-cache";
 
 const SESSION_ID_PREFIX_LENGTH = 8;
 
@@ -54,11 +54,60 @@ const renderLimitLabel = (payload: {
     .filter((value): value is string => Boolean(value))
     .join(" ");
 
+const readProviderLabelPrefix = (
+  status: SessionStatusInfo,
+  binding: SessionBindingInfo
+): string | null => {
+  const scopeKey = resolveStatusUsageLimitScopeKey(status, binding);
+  const providerId = scopeKey?.split(":")[0]?.trim().toLowerCase();
+  if (providerId) {
+    return providerId;
+  }
+
+  switch (status.models?.[0]?.providerId) {
+    case "claudeCodeCli":
+      return "claude";
+    case "codexCli":
+      return "codex";
+    case "geminiCli":
+      return "gemini";
+    default:
+      return null;
+  }
+};
+
+const buildFallbackLabels = (
+  status: SessionStatusInfo,
+  binding: SessionBindingInfo
+): NonNullable<SessionStatusInfo["usageLimitLabels"]> => {
+  switch (readProviderLabelPrefix(status, binding)) {
+    case "gemini":
+      return {
+        currentSession: "Primary",
+        currentWeekAllModels: "Secondary",
+        currentWeekSonnetOnly: "Tertiary",
+      };
+    default:
+      return {
+        currentSession: "Session",
+        currentWeekAllModels: "Weekly",
+        currentWeekSonnetOnly: "Model Weekly",
+      };
+  }
+};
+
 const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
   const providerScopeKey = resolveStatusUsageLimitScopeKey(status, binding);
+  const cachedUsageLimitsState = readLastKnownUsageLimitsState(
+    providerScopeKey,
+    status.providerSummary
+  );
   const resolvedUsageLimits =
-    status.usageLimits ??
-    readLastKnownUsageLimits(providerScopeKey, status.providerSummary);
+    status.usageLimits ?? cachedUsageLimitsState?.usageLimits ?? null;
+  const resolvedUsageLimitLabels =
+    status.usageLimitLabels ??
+    cachedUsageLimitsState?.usageLimitLabels ??
+    buildFallbackLabels(status, binding);
   const sessionPercent =
     resolvedUsageLimits?.currentSession?.percentUsed ?? null;
   const sessionResetsAt = resolvedUsageLimits?.currentSession?.resetsAt ?? null;
@@ -99,7 +148,7 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
         >
           <span className="session-id-bar__limit-label">
             {renderLimitLabel({
-              label: "session",
+              label: resolvedUsageLimitLabels.currentSession ?? "Session",
               percentUsed: sessionPercent,
               resetLabel: sessionResetLabel,
             })}
@@ -115,7 +164,7 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
         >
           <span className="session-id-bar__limit-label">
             {renderLimitLabel({
-              label: "weekly",
+              label: resolvedUsageLimitLabels.currentWeekAllModels ?? "Weekly",
               percentUsed: weeklyPercent,
               resetLabel: weeklyResetLabel,
             })}

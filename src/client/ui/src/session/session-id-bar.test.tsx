@@ -33,17 +33,21 @@ const installMemoryStorage = (): void => {
 test("SessionIdBar falls back to cached usage limits for same provider", () => {
   installMemoryStorage();
   Object.assign(globalThis, { React: { createElement } });
-  writeLastKnownUsageLimits("Claude", {
-    currentSession: {
-      percentUsed: 9,
-      resetsAt: "2026-02-12T17:00:00.000Z",
+  writeLastKnownUsageLimits(
+    "Claude",
+    {
+      currentSession: {
+        percentUsed: 9,
+        resetsAt: "2026-02-12T17:00:00.000Z",
+      },
+      currentWeekAllModels: {
+        percentUsed: 12,
+        resetsAt: "2026-02-15T07:00:00.000Z",
+      },
+      currentWeekSonnetOnly: null,
     },
-    currentWeekAllModels: {
-      percentUsed: 12,
-      resetsAt: "2026-02-15T07:00:00.000Z",
-    },
-    currentWeekSonnetOnly: null,
-  });
+    "Claude"
+  );
 
   const html = renderToStaticMarkup(
     createElement(SessionIdBar, {
@@ -61,7 +65,7 @@ test("SessionIdBar falls back to cached usage limits for same provider", () => {
     })
   );
 
-  assert.equal(html.includes("session 9%"), true);
-  assert.equal(html.includes("weekly 12%"), true);
+  assert.equal(html.includes("Session 9%"), true);
+  assert.equal(html.includes("Weekly 12%"), true);
   assert.equal(html.includes("Resets"), true);
 });

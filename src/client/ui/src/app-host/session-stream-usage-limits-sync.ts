@@ -1,5 +1,9 @@
 import type { SessionSnapshot } from "../../../../types/session";
 import type { SessionSnapshots } from "../session/helpers";
+import {
+  areUsageLimitLabelsEqual,
+  extractUsageLimitLabels,
+} from "../session/usage-limit-labels";
 import { writeLastKnownUsageLimits } from "../session/usage-limits-cache";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -35,14 +39,15 @@ type UsageLimitBucket = {
   readonly resetsAt?: string | null;
 };
 
-type UsageLimitBucketKey =
-  | "currentSession"
-  | "currentWeekAllModels"
-  | "currentWeekSonnetOnly";
-
-type UsageLimits = Partial<
-  Record<UsageLimitBucketKey, UsageLimitBucket | null>
+type UsageLimitState<T> = Partial<
+  Record<
+    "currentSession" | "currentWeekAllModels" | "currentWeekSonnetOnly",
+    T | null
+  >
 >;
+
+type UsageLimits = UsageLimitState<UsageLimitBucket>;
+type UsageLimitLabels = UsageLimitState<string>;
 
 const readUsageLimitBucket = (value: unknown): UsageLimitBucket | null => {
   if (value === null) {
@@ -147,9 +152,14 @@ const resolveUsageLimitsProviderScopeKey = (
 const hasMatchingUsageLimitsState = (
   snapshot: SessionSnapshot,
   usageLimits: UsageLimits,
-  providerScopeKey: string
+  providerScopeKey: string,
+  usageLimitLabels: UsageLimitLabels | null
 ): boolean =>
   areUsageLimitsEqual(snapshot.status.usageLimits, usageLimits) &&
+  areUsageLimitLabelsEqual(
+    snapshot.status.usageLimitLabels,
+    usageLimitLabels ?? null
+  ) &&
   normalizeProviderScopeKey(snapshot.status.providerScopeKey) ===
     providerScopeKey;
 
@@ -159,6 +169,7 @@ const shouldApplyUsageLimitsToCandidate = (params: {
   readonly snapshot: SessionSnapshot;
   readonly usageLimits: UsageLimits;
   readonly providerScopeKey: string;
+  readonly usageLimitLabels: UsageLimitLabels | null;
 }): boolean => {
   if (
     params.sessionId !== params.sourceSessionId &&
@@ -172,7 +183,8 @@ const shouldApplyUsageLimitsToCandidate = (params: {
   return !hasMatchingUsageLimitsState(
     params.snapshot,
     params.usageLimits,
-    params.providerScopeKey
+    params.providerScopeKey,
+    params.usageLimitLabels
   );
 };
 
@@ -180,6 +192,7 @@ const applyUsageLimitsToSnapshot = (params: {
   readonly snapshot: SessionSnapshot;
   readonly usageLimits: UsageLimits;
   readonly providerScopeKey: string;
+  readonly usageLimitLabels: UsageLimitLabels | null;
   readonly updatedAt: number;
 }): SessionSnapshot => ({
   ...params.snapshot,
@@ -189,6 +202,9 @@ const applyUsageLimitsToSnapshot = (params: {
       ? { providerScopeKey: params.providerScopeKey }
       : {}),
     usageLimits: params.usageLimits,
+    ...(params.usageLimitLabels
+      ? { usageLimitLabels: params.usageLimitLabels }
+      : {}),
     updatedAt: params.updatedAt,
   },
 });
@@ -204,19 +220,31 @@ export const applyUsageLimitsSyncFromStreamEvent = (payload: {
   if (!usageLimits) {
     return { snapshots: payload.snapshots, snapshot: payload.snapshot };
   }
+  const usageLimitLabels =
+    extractUsageLimitLabels(payload.event) ??
+    payload.snapshot.status.usageLimitLabels ??
+    null;
 
   const providerKey = resolveUsageLimitsProviderScopeKey(
     payload.snapshot,
     payload.event
   );
-  if (hasMatchingUsageLimitsState(payload.snapshot, usageLimits, providerKey)) {
+  if (
+    hasMatchingUsageLimitsState(
+      payload.snapshot,
+      usageLimits,
+      providerKey,
+      usageLimitLabels
+    )
+  ) {
     return { snapshots: payload.snapshots, snapshot: payload.snapshot };
   }
 
   writeLastKnownUsageLimits(
     providerKey,
     usageLimits,
-    payload.snapshot.status.providerSummary
+    payload.snapshot.status.providerSummary,
+    usageLimitLabels
   );
 
   const nextSnapshots: SessionSnapshots = { ...payload.snapshots };
@@ -229,6 +257,7 @@ export const applyUsageLimitsSyncFromStreamEvent = (payload: {
         snapshot: candidate,
         usageLimits,
         providerScopeKey: providerKey,
+        usageLimitLabels,
       })
     ) {
       continue;
@@ -239,6 +268,7 @@ export const applyUsageLimitsSyncFromStreamEvent = (payload: {
       snapshot: candidate,
       usageLimits,
       providerScopeKey: providerKey,
+      usageLimitLabels,
       updatedAt: payload.updatedAt,
     });
   }

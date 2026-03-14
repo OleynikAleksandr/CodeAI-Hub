@@ -1,9 +1,11 @@
 import type { SessionStatusInfo } from "../../../../types/session";
 
 type UsageLimits = NonNullable<SessionStatusInfo["usageLimits"]>;
+type UsageLimitLabels = SessionStatusInfo["usageLimitLabels"];
 
 type StoredUsageLimits = {
   readonly usageLimits: UsageLimits;
+  readonly usageLimitLabels?: UsageLimitLabels;
   readonly updatedAt: number;
 };
 
@@ -42,6 +44,19 @@ const readNumber = (value: unknown): number | null =>
 
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const parseLabels = (value: unknown): UsageLimitLabels => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const labels: NonNullable<UsageLimitLabels> = {
+    currentSession: readString(value.currentSession),
+    currentWeekAllModels: readString(value.currentWeekAllModels),
+    currentWeekSonnetOnly: readString(value.currentWeekSonnetOnly),
+  };
+  return Object.values(labels).some((label) => Boolean(label)) ? labels : null;
+};
 
 const parseBucket = (
   value: unknown
@@ -91,17 +106,22 @@ const parseStoredUsageLimits = (raw: string): StoredUsageLimits | null => {
     return null;
   }
   const usageLimits = parseUsageLimits(parsed.usageLimits);
+  const usageLimitLabels = parseLabels(parsed.usageLimitLabels);
   const updatedAt = readNumber(parsed.updatedAt);
   if (!usageLimits || updatedAt === null || updatedAt <= 0) {
     return null;
   }
-  return { usageLimits, updatedAt };
+  return {
+    usageLimits,
+    ...(usageLimitLabels ? { usageLimitLabels } : {}),
+    updatedAt,
+  };
 };
 
-export const readLastKnownUsageLimits = (
+export const readLastKnownUsageLimitsState = (
   providerScopeKey: string | null | undefined,
   legacyProviderSummary?: string | null
-): UsageLimits | null => {
+): StoredUsageLimits | null => {
   const storage = getLocalStorage();
   if (!storage) {
     return null;
@@ -117,17 +137,25 @@ export const readLastKnownUsageLimits = (
     }
     const stored = parseStoredUsageLimits(raw);
     if (stored?.usageLimits) {
-      return stored.usageLimits;
+      return stored;
     }
   }
 
   return null;
 };
 
+export const readLastKnownUsageLimits = (
+  providerScopeKey: string | null | undefined,
+  legacyProviderSummary?: string | null
+): UsageLimits | null =>
+  readLastKnownUsageLimitsState(providerScopeKey, legacyProviderSummary)
+    ?.usageLimits ?? null;
+
 export const writeLastKnownUsageLimits = (
   providerScopeKey: string | null | undefined,
   usageLimits: SessionStatusInfo["usageLimits"],
-  legacyProviderSummary?: string | null
+  legacyProviderSummary?: string | null,
+  usageLimitLabels?: SessionStatusInfo["usageLimitLabels"]
 ): void => {
   const storage = getLocalStorage();
   if (!storage) {
@@ -145,10 +173,12 @@ export const writeLastKnownUsageLimits = (
     return;
   }
   try {
+    const parsedLabels = parseLabels(usageLimitLabels);
     storage.setItem(
       `${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`,
       JSON.stringify({
         usageLimits: parsed,
+        ...(parsedLabels ? { usageLimitLabels: parsedLabels } : {}),
         updatedAt: Date.now(),
       } satisfies StoredUsageLimits)
     );

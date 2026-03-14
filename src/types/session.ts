@@ -32,6 +32,12 @@ export type ModelInfo = {
   readonly reasoning?: string;
 };
 
+export type SessionUsageLimitLabels = {
+  readonly currentSession?: string | null;
+  readonly currentWeekAllModels?: string | null;
+  readonly currentWeekSonnetOnly?: string | null;
+} | null;
+
 export type SessionStatusInfo = {
   readonly providerSummary: string;
   readonly providerScopeKey?: string | null;
@@ -52,6 +58,7 @@ export type SessionStatusInfo = {
       readonly resetsAt?: string | null;
     } | null;
   } | null;
+  readonly usageLimitLabels?: SessionUsageLimitLabels;
   readonly tokenUsage: {
     readonly used: number;
     readonly limit: number;

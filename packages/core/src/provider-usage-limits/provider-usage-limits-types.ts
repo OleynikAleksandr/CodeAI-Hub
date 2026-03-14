@@ -29,6 +29,12 @@ export type CompatibleSessionUsageLimits = {
   readonly currentWeekSonnetOnly?: ProviderUsageLimitBucket | null;
 } | null;
 
+export type CompatibleSessionUsageLimitLabels = {
+  readonly currentSession?: string | null;
+  readonly currentWeekAllModels?: string | null;
+  readonly currentWeekSonnetOnly?: string | null;
+} | null;
+
 export type ProviderUsageLimitsDiagnostics = {
   readonly result:
     | "cache_hit"
@@ -79,6 +85,7 @@ export type ProviderUsageLimitsReadResult = {
 export type ProviderUsageLimitsStreamEventData = {
   readonly kind: "usage_limits";
   readonly usageLimits: CompatibleSessionUsageLimits;
+  readonly usageLimitLabels?: CompatibleSessionUsageLimitLabels;
   readonly providerScopeKey: string;
   readonly source: ProviderUsageLimitSource;
   readonly collectedAt: string;
