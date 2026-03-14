@@ -18,6 +18,7 @@
 - На boundary `core -> Claude adapter` протянут structural bridge для usage limits facade без циклической зависимости `Claude_Module -> core`.
 - `Claude` message processor переведён на injected shared facade: локальные usage-limits cache/in-flight maps убраны, stream-event и turn-complete теперь питаются из shared module.
 - В локально установленном `@anthropic-ai/claude-agent-sdk` найден и интегрирован `SDKRateLimitEvent`: теперь Claude usage limits предпочитают runtime event path, а synthetic probe остаётся fallback.
+- Для `Codex` начат `Phase 3`: rollout JSONL path вынесен в `packages/core/src/provider-usage-limits/providers/codex/` как shared fallback strategy (`reader -> normalizer -> facade`), без переключения `Codex_Module` на shared facade на этом шаге.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -27,6 +28,7 @@
 - `5abbac4a feat(core): inject claude usage limits facade boundary`
 - `fc29738d refactor(claude): route usage limits through shared facade`
 - `74cd1551 feat(claude): prefer sdk rate limit events`
+- `31182e9b feat(core): add codex rollout usage limits fallback`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -38,6 +40,8 @@
 - Повторно выполнены таргетные сборки `npm run build --workspace @codeai-hub/claude-module` и `npm run build --workspace @codeai-hub/core` после перевода `Claude` message processor на injected shared facade.
 - Выполнен локальный поиск по `@anthropic-ai/claude-agent-sdk/sdk.d.ts`; подтверждено наличие `SDKRateLimitEvent` и `SDKRateLimitInfo` как runtime live-source кандидата.
 - Выполнены таргетные сборки `npm run build --workspace @codeai-hub/claude-module` и `npm run build --workspace @codeai-hub/core` после переключения Claude usage limits на runtime event-preferred path.
+- Выполнен просмотр реальных `Codex` rollout JSONL в `~/.codeai-hub/providers/codex/home/sessions/`; подтверждено, что `token_count` присутствует, но `rate_limits` может отсутствовать (`null`), поэтому shared fallback обязан быть non-destructive к кэшу.
+- Выполнены `npx ultracite fix` и таргетная сборка `npm run build --workspace @codeai-hub/core` после добавления shared `Codex` rollout fallback слоя.
 
 ---
 
@@ -53,9 +57,11 @@
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1` закрыт. Следующий рабочий шаг — `Phase 2 / Stream: Claude shared strategy chain`.
-> Далее: `Phase 2` закрыт. Следующий рабочий шаг — `Phase 3 / Stream: Codex strategy chain`.
+> Далее: `Phase 2` закрыт.
+> Текущий статус: `Phase 3 / item 1` закрыт коммитом `31182e9b`.
+> Следующий рабочий шаг — `Phase 3 / item 3`: найти и реализовать `Codex` structured runtime/API reader как primary source, а rollout оставить fallback.
 
 ## Plans for next session
-- Перейти к `Phase 3` и вынести `Codex` rollout path в shared strategy contract как явный fallback, а не primary source.
-- Отдельно проверить, где в Codex можно получить более живой structured/runtime source до PTY `/status` fallback.
+- Продолжить `Phase 3` с `Codex` runtime/API source как primary candidate и встроить его в shared strategy order поверх уже добавленного rollout fallback.
+- Отдельно проверить, можно ли использовать live `event_msg/token_count.rate_limits` или иной runtime signal из `Codex` SDK раньше, чем PTY `/status`.
 - Не терять из фокуса будущий перевод UI-кеша на `providerScopeKey`, чтобы следующая интеграция не закрепила зависимость от `providerSummary`.
