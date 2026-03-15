@@ -114,8 +114,8 @@
 
 ### Stream: Local release assembly for v1.1.728
 1. [DONE] Актуализировать release-facing docs под hotfix-релиз `1.1.728`: зафиксировать websocket replay fix в `README.md` и `CHANGELOG.md`, а также добавить отдельную release-phase в execution-plan перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep usage limits replay hotfix release`).
-2. [DONE] Git Commit: `docs(release): prep usage limits replay hotfix release` (hash: TBD)
-3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать unified/workspace version `1.1.728`, обновлённые manifests и release tarball-артефакты (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build usage limits replay hotfix release`).
-4. [TODO] Git Commit: `chore(release): build usage limits replay hotfix release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление `codeai-hub-1.1.728.vsix`, создать новый session report и синхронизировать execution-plan по финальному релизному состоянию (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session076.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record usage limits replay hotfix release`).
-6. [TODO] Git Commit: `docs(session): record usage limits replay hotfix release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prep usage limits replay hotfix release` (hash: `08699bef`)
+3. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать unified/workspace version `1.1.728`, обновлённые manifests и release tarball-артефакты (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build usage limits replay hotfix release`).
+4. [DONE] Git Commit: `chore(release): build usage limits replay hotfix release` (hash: `b4ea4eef`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление `codeai-hub-1.1.728.vsix`, создать новый session report и синхронизировать execution-plan по финальному релизному состоянию; подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, собран `codeai-hub-1.1.728.vsix`, advisory duplication check снова показал `3.12% > 3%`, но release pipeline не упал (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session076.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record usage limits replay hotfix release`).
+6. [DONE] Git Commit: `docs(session): record usage limits replay hotfix release` (hash: TBD)
