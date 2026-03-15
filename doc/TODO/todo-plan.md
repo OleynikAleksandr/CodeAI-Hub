@@ -62,4 +62,12 @@
 1. [DONE] Перевести публичные markdown-файлы `CHANGELOG.md` и `scripts/README.md` полностью на английский язык, чтобы GitHub-facing docs вне `doc/` не содержали кириллицу; одновременно обновить execution-plan под новый docs-scope (scope: `CHANGELOG.md`, `scripts/README.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(public): translate public markdown to English`).
 2. [DONE] Git Commit: `docs(public): translate public markdown to English` (hash: `2e4da25c`)
 3. [DONE] Зафиксировать session report по public-docs language normalization и подготовить ветку к повторному push после перевода GitHub-facing markdown-файлов (scope: `doc/Sessions/Session080.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record public docs English normalization`).
-4. [IN_PROGRESS] Git Commit: `docs(session): record public docs English normalization` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): record public docs English normalization` (hash: `97bf7f23`)
+
+### Stream: GitHub release publication for v1.1.730
+1. [DONE] Проверить готовность GitHub publication path для `v1.1.730`: наличие VSIX, отсутствие уже опубликованного release/tag collision и доступность GitHub credentials через локальный credential helper/CLI path (scope: local release artifacts + remote release metadata; expected commit: no commit).
+2. [DONE] Используя явный запрос пользователя, опубликовать GitHub release `v1.1.730` с release notes из `CHANGELOG.md` и приложить `codeai-hub-1.1.730.vsix` как артефакт (scope: GitHub release metadata + release asset; expected commit: no commit).
+3. [DONE] После пересборки `build-release.sh --use-current-version` зафиксировать regenerated tracked webview bundle, чтобы source state совпадал со свежим VSIX, опубликованным в GitHub release (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected commit: `build(webview): refresh bundled react-chat output`).
+4. [IN_PROGRESS] Git Commit: `build(webview): refresh bundled react-chat output` (hash: TBD)
+5. [TODO] Зафиксировать session report по GitHub release publication, записать release URL/итоговый статус и синхронизировать execution-plan (scope: `doc/Sessions/Session081.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record GitHub release publication`).
+6. [TODO] Git Commit: `docs(session): record GitHub release publication` (hash: TBD)

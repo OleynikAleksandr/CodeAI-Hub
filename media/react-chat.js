@@ -27501,6 +27501,45 @@ ${replacement}
     color: "#a7a7a7",
     lineHeight: 1.4
   };
+  var modelBodyStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    flex: 1
+  };
+  var modelIdStyles = {
+    fontSize: "11px",
+    color: "#8c8c8c"
+  };
+  var modelControlRowStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    paddingLeft: "28px"
+  };
+  var modelControlLabelStyles = {
+    fontSize: "11px",
+    color: "#8f8f8f"
+  };
+  var modelControlButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "4px 10px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "11px"
+  };
+  var modelControlButtonHoverStyles = {
+    borderColor: "#5a5a5a",
+    background: "#2b2f33",
+    color: "#ffffff"
+  };
+  var modelControlButtonActiveStyles = {
+    borderColor: "#0e639c",
+    background: "#0e639c",
+    color: "#ffffff"
+  };
   var radioCircleStyles = {
     width: "16px",
     height: "16px",
@@ -27678,45 +27717,6 @@ ${replacement}
     padding: "8px 10px",
     fontSize: "12px",
     lineHeight: 1.5
-  };
-  var modelBodyStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    flex: 1
-  };
-  var modelIdStyles = {
-    fontSize: "11px",
-    color: "#8c8c8c"
-  };
-  var reasoningRowStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    paddingLeft: "28px"
-  };
-  var reasoningLabelStyles = {
-    fontSize: "11px",
-    color: "#8f8f8f"
-  };
-  var reasoningButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    padding: "4px 10px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "11px"
-  };
-  var reasoningButtonHoverStyles = {
-    borderColor: "#5a5a5a",
-    background: "#2b2f33",
-    color: "#ffffff"
-  };
-  var reasoningButtonActiveStyles = {
-    borderColor: "#0e639c",
-    background: "#0e639c",
-    color: "#ffffff"
   };
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
@@ -27988,9 +27988,9 @@ ${replacement}
           const isButtonPressed = pressedButtonId === model.id;
           let reasoningStateStyles = {};
           if (isButtonPressed) {
-            reasoningStateStyles = reasoningButtonActiveStyles;
+            reasoningStateStyles = modelControlButtonActiveStyles;
           } else if (isButtonHovered) {
-            reasoningStateStyles = reasoningButtonHoverStyles;
+            reasoningStateStyles = modelControlButtonHoverStyles;
           }
           const rowStyle = {
             ...rowBaseStyles,
@@ -28019,8 +28019,8 @@ ${replacement}
                       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { style: modelIdStyles, children: model.id }),
                       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: reasoningRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: reasoningLabelStyles, children: "Configure reasoning:" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { style: modelControlRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { style: modelControlLabelStyles, children: "Configure reasoning:" }),
                       /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
                         "button",
                         {
@@ -28033,7 +28033,7 @@ ${replacement}
                           },
                           onMouseUp: () => setPressedButtonId(null),
                           style: {
-                            ...reasoningButtonStyles,
+                            ...modelControlButtonStyles,
                             ...reasoningStateStyles
                           },
                           type: "button",
@@ -28144,47 +28144,6 @@ ${replacement}
       useCase: "Complex refactoring and PhD-level research."
     }
   ];
-
-  // src/client/ui/src/components/settings/gemini-default-model/gemini-model-card-styles.ts
-  var modelBodyStyles2 = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    flex: 1
-  };
-  var modelIdStyles2 = {
-    fontSize: "11px",
-    color: "#8c8c8c"
-  };
-  var reasoningRowStyles2 = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    paddingLeft: "28px"
-  };
-  var reasoningLabelStyles2 = {
-    fontSize: "11px",
-    color: "#8f8f8f"
-  };
-  var reasoningButtonStyles2 = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    padding: "4px 10px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "11px"
-  };
-  var reasoningButtonHoverStyles2 = {
-    borderColor: "#5a5a5a",
-    background: "#2b2f33",
-    color: "#ffffff"
-  };
-  var reasoningButtonActiveStyles2 = {
-    borderColor: "#0e639c",
-    background: "#0e639c",
-    color: "#ffffff"
-  };
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
   var import_react22 = __toESM(require_react());
@@ -28448,9 +28407,9 @@ ${replacement}
           const isButtonPressed = pressedButtonId === model.id;
           let thinkingStateStyles = {};
           if (isButtonPressed) {
-            thinkingStateStyles = reasoningButtonActiveStyles2;
+            thinkingStateStyles = modelControlButtonActiveStyles;
           } else if (isButtonHovered) {
-            thinkingStateStyles = reasoningButtonHoverStyles2;
+            thinkingStateStyles = modelControlButtonHoverStyles;
           }
           const rowStyle = {
             ...rowBaseStyles,
@@ -28473,14 +28432,14 @@ ${replacement}
                 tabIndex: -1,
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(RadioCircle2, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: modelBodyStyles2, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: modelBodyStyles, children: [
                     /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: modelInfoStyles, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: modelIdStyles2, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { style: modelIdStyles, children: model.id }),
                       /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: modelDescriptionStyles, children: model.description })
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: reasoningRowStyles2, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: reasoningLabelStyles2, children: "Configure thinking:" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: modelControlRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: modelControlLabelStyles, children: "Configure thinking:" }),
                       /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
                         "button",
                         {
@@ -28493,7 +28452,7 @@ ${replacement}
                           },
                           onMouseUp: () => setPressedButtonId(null),
                           style: {
-                            ...reasoningButtonStyles2,
+                            ...modelControlButtonStyles,
                             ...thinkingStateStyles
                           },
                           type: "button",
