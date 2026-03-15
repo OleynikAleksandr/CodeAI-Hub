@@ -70,4 +70,9 @@
 3. [DONE] После пересборки `build-release.sh --use-current-version` зафиксировать regenerated tracked webview bundle, чтобы source state совпадал со свежим VSIX, опубликованным в GitHub release (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected commit: `build(webview): refresh bundled react-chat output`).
 4. [DONE] Git Commit: `build(webview): refresh bundled react-chat output` (hash: `ebcb0a32`)
 5. [DONE] Зафиксировать session report по GitHub release publication, записать release URL/итоговый статус и синхронизировать execution-plan (scope: `doc/Sessions/Session081.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record GitHub release publication`).
-6. [IN_PROGRESS] Git Commit: `docs(session): record GitHub release publication` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record GitHub release publication` (hash: `8c4c507d`)
+
+### Stream: GitHub release rollback for active development
+1. [DONE] По явному запросу пользователя удалить ошибочно опубликованный GitHub release `v1.1.730` и связанный remote tag, чтобы development line снова не имела публичного release во время активной разработки (scope: GitHub release metadata + remote tag; expected commit: no commit).
+2. [DONE] Зафиксировать session report по rollback-у GitHub release и синхронизировать execution-plan под текущее состояние без опубликованного release (scope: `doc/Sessions/Session082.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record GitHub release rollback`).
+3. [IN_PROGRESS] Git Commit: `docs(session): record GitHub release rollback` (hash: TBD)
