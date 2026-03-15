@@ -60,4 +60,6 @@
 
 ### Stream: Public markdown English normalization
 1. [DONE] Перевести публичные markdown-файлы `CHANGELOG.md` и `scripts/README.md` полностью на английский язык, чтобы GitHub-facing docs вне `doc/` не содержали кириллицу; одновременно обновить execution-plan под новый docs-scope (scope: `CHANGELOG.md`, `scripts/README.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(public): translate public markdown to English`).
-2. [IN_PROGRESS] Git Commit: `docs(public): translate public markdown to English` (hash: TBD)
+2. [DONE] Git Commit: `docs(public): translate public markdown to English` (hash: `2e4da25c`)
+3. [DONE] Зафиксировать session report по public-docs language normalization и подготовить ветку к повторному push после перевода GitHub-facing markdown-файлов (scope: `doc/Sessions/Session080.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record public docs English normalization`).
+4. [IN_PROGRESS] Git Commit: `docs(session): record public docs English normalization` (hash: TBD)
