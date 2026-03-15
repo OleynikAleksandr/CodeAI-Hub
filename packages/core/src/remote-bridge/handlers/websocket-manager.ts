@@ -31,6 +31,26 @@ type TokenUsageSnapshot = {
   readonly updatedAt: string;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const extractUsageLimitsReplayEvent = (event: unknown): unknown | null => {
+  if (!isRecord(event)) {
+    return null;
+  }
+
+  if (event.type !== "stream_event") {
+    return null;
+  }
+
+  const data = isRecord(event.data) ? event.data : null;
+  if (!data || data.kind !== "usage_limits") {
+    return null;
+  }
+
+  return event;
+};
+
 export type WebSocketManagerDependencies = {
   readonly httpServer: Server;
   readonly logger: Logger;
@@ -53,6 +73,7 @@ export class WebSocketManager {
     string,
     TokenUsageSnapshot
   >();
+  private readonly lastUsageLimitsEventBySessionId = new Map<string, unknown>();
   private readonly sessionWorkspaceById = new Map<string, string>();
 
   constructor(deps: WebSocketManagerDependencies) {
@@ -144,6 +165,8 @@ export class WebSocketManager {
       return rejected(parsed.requestId, parsed.error);
     }
     client.scope = { enabled: true, workspacePath: parsed.workspacePath };
+    this.replayTokenUsageSnapshots(clientId);
+    this.replayUsageLimitsSnapshots(clientId);
     return {
       requestId: parsed.requestId,
       status: "applied",
@@ -164,6 +187,8 @@ export class WebSocketManager {
       enabled: true,
       workspacePath,
     };
+    this.replayTokenUsageSnapshots(clientId);
+    this.replayUsageLimitsSnapshots(clientId);
   }
 
   getWorkspaceScope(clientId: string): ClientSocket["scope"] | null {
@@ -223,6 +248,7 @@ export class WebSocketManager {
     }
 
     this.replayTokenUsageSnapshots(clientId);
+    this.replayUsageLimitsSnapshots(clientId);
   }
 
   private async processMessage(
@@ -251,12 +277,23 @@ export class WebSocketManager {
   private recordTokenUsageSnapshot(event: BridgeEvent): void {
     if (event.type === "session:deleted") {
       this.lastTokenUsageBySessionId.delete(event.payload.sessionId);
+      this.lastUsageLimitsEventBySessionId.delete(event.payload.sessionId);
       return;
     }
 
     if (event.type === "session:stream") {
       const snapshot = extractTokenUsage(event.payload.event);
       if (!snapshot) {
+        const usageLimitsEvent = extractUsageLimitsReplayEvent(
+          event.payload.event
+        );
+        if (!usageLimitsEvent) {
+          return;
+        }
+        this.lastUsageLimitsEventBySessionId.set(
+          event.payload.sessionId,
+          usageLimitsEvent
+        );
         return;
       }
       this.lastTokenUsageBySessionId.set(event.payload.sessionId, snapshot);
@@ -300,6 +337,32 @@ export class WebSocketManager {
               timestamp: snapshot.updatedAt,
             },
           },
+        })
+      );
+    }
+  }
+
+  private replayUsageLimitsSnapshots(clientId: string): void {
+    const client = this.clients.get(clientId);
+    if (!client || client.socket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
+    for (const [sessionId, event] of this.lastUsageLimitsEventBySessionId) {
+      if (
+        !shouldDeliverTokenUsageForScope({
+          scope: client.scope,
+          sessionId,
+          sessionWorkspaceById: this.sessionWorkspaceById,
+        })
+      ) {
+        continue;
+      }
+
+      client.socket.send(
+        JSON.stringify({
+          type: "session:stream",
+          payload: { sessionId, event },
         })
       );
     }
