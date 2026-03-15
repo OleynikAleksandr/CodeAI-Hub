@@ -1,6 +1,6 @@
 # Session 075 — Universal provider usage limits execution bootstrap
 
-**Date:** 2026-03-14 18:30 (CET)
+**Date:** 2026-03-15 09:33 (CET)
 **Branch:** main
 **Version:** 1.1.727
 
@@ -40,6 +40,9 @@
 - Выполнен весь `Phase 7`: `./scripts/build-all.sh` поднял unified/workspace version до `1.1.727`, пересобрал provider/core/ui/launcher артефакты и обновил manifest pointers для локального release cache.
 - Выполнен `./scripts/build-release.sh --use-current-version`; подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, собран VSIX `codeai-hub-1.1.727.vsix`.
 - Финальный release-набор лежит в `doc/tmp/releases/`: `claude-module-1.1.727.tar.bz2`, `codex-module-1.1.727.tar.bz2`, `gemini-module-1.1.727.tar.bz2`, `codeai-hub-core-darwin-arm64-1.1.727.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.1.727.tar.bz2`, `vscode-webview-1.1.727.tar.bz2`, `project-manager-1.1.727.tar.bz2`.
+- Во время post-release проверки `v1.1.727` подтверждено, что у `Codex` `token_usage` приходит сразу после первого turn-а, а отсутствие usage limits в PM/session UI вызвано не reader-ом, а transport-gap в websocket replay path.
+- Реализован hotfix `Phase 8`: `WebSocketManager` теперь кеширует canonical `usage_limits` stream-events по `sessionId` и реплеит их после websocket connect и после смены workspace scope, как это уже делалось для `token_usage`.
+- Для transport replay добавлен regression-test на реальный websocket lifecycle: out-of-scope `usage_limits` event не доставляется live, но корректно реплеится после scope switch и сохраняет `providerScopeKey`.
 
 ## Git commits
 - `a930f36d feat(core): add provider usage limits shared contract`
@@ -66,6 +69,8 @@
 - `d2a7b353 docs(session): sync phase6 usage limits progress`
 - `7e56ac1d docs(release): prep universal usage limits release`
 - `0b251c95 chore(release): build universal usage limits release`
+- `33a2221a docs(session): record universal usage limits release build`
+- `c9feab28 fix(core): replay usage limits after scope sync`
 
 ## Verification
 - Выполнена вычитка planning-дока после правок.
@@ -105,6 +110,9 @@
 - Выполнен `./scripts/build-all.sh`: version bump до `1.1.727`, пересборка `Claude/Codex/Gemini`, `core`, `vscode-webview`, `project-manager`, CEF launcher и синхронизация release tarball-ов в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
 - Выполнен `./scripts/build-release.sh --use-current-version`; build output явно показал `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, после чего появился `codeai-hub-1.1.727.vsix`.
 - Во время `build-release` advisory duplication check показал `3.12%` вместо порога `3%`, но сам release script отработал до конца и успешно собрал VSIX; критического падения релизного pipeline не произошло.
+- Выполнен `npx ultracite fix packages/core/src/remote-bridge/handlers/websocket-manager.ts packages/core/src/remote-bridge/handlers/websocket-manager.test.ts` после добавления replay path для `usage_limits`.
+- Выполнена таргетная сборка `npm run build --workspace @codeai-hub/core` после transport hotfix в `WebSocketManager`.
+- Выполнен regression-test `node --test packages/core/dist/remote-bridge/handlers/websocket-manager.test.js`; подтверждено, что `usage_limits` реплеятся после смены workspace scope и не теряют `providerScopeKey`.
 
 ---
 
@@ -119,12 +127,13 @@
 6. `doc/TODO/todo-plan.md`
 7. `doc/Sessions/Session075.md` (THIS REPORT)
 
-> Далее: `Phase 1` закрыт. `Phase 2` закрыт.
-> Текущий статус: `Phase 3` по `Codex` закрыт. `Phase 4` по `Gemini` закрыт для первой delivery-версии: `item 5` de-scoped, потому что отдельный независимый fallback source не найден. `Phase 5`, `Phase 6` и `Phase 7` тоже закрыты: общий usage-limits module доведён до релизного состояния и локально собран в `v1.1.727`.
-> Следующий рабочий шаг — только новый scope: архивировать завершённый `todo-plan.md` по правилам процесса и начинать новую planning/execution цепочку от следующего утверждённого документа.
+> Далее: `Phase 1`–`Phase 7` закрыты. Дополнительно закрыт `Phase 8` post-release hotfix: websocket replay path для `usage_limits` теперь симметричен `token_usage`, что закрывает подтверждённую проблему `Codex` limits в PM/session UI для релиза `v1.1.727`.
+> Следующий рабочий шаг — новый scope после архивирования завершённого `todo-plan.md`; отдельным follow-up остаётся только `Claude`-специфичный симптом, где context/token usage materialize после reopen workspace, а не сразу live-потоком.
 
 ## Plans for next session
 - Следующий implementation-step — не продолжение текущего плана, а новый planning-док в `doc/SolidWorks-WorkFlow/Plans/` под следующий утверждённый scope.
 - Перед новой реализацией архивировать этот завершённый `doc/TODO/todo-plan.md` по правилам процесса и создать новый execution-plan только после утверждения нового planning-документа.
+- Если после hotfix `c9feab28` `Codex` limits всё ещё не отображаются в PM/session UI, трассировать уже не reader и не websocket replay, а downstream sync путь `session:stream -> session status snapshot -> Session ID bar`.
+- Отдельно разобрать `Claude`-симптом: почему `token_usage` / context-window counters materialize только после reopen workspace, хотя `Codex` их показывает сразу после первого turn-а.
 - `Gemini` CLI/status fallback не возвращать в scope без нового независимого machine-readable source или подтверждённого operational gap в quota API path.
 - PTY `/status` для `Codex` по-прежнему держать только как optional diagnostic path на случай регрессии `app-server`, а не как обязательную часть базовой архитектуры.

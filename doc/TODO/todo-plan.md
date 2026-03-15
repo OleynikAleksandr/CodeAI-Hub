@@ -98,4 +98,12 @@
 3. [DONE] На чистом дереве выполнить полный релизный прогон `./scripts/build-all.sh`, зафиксировать версию/артефакты и при необходимости обновить release-manifest файлы; фактически обновлены unified/package versions до `1.1.727` и manifest pointers для provider/core/ui/launcher (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build universal usage limits release`).
 4. [DONE] Git Commit: `chore(release): build universal usage limits release` (hash: `0b251c95`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление VSIX и зафиксировать результаты в session report и `todo-plan.md`; подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, собран `codeai-hub-1.1.727.vsix` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session075.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record universal usage limits release build`).
-6. [DONE] Git Commit: `docs(session): record universal usage limits release build` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record universal usage limits release build` (hash: `33a2221a`)
+
+---
+
+## Phase 8 — Post-release usage limits delivery hotfix (owner: Oleksandr, updated: 2026-03-15)
+
+### Stream: WebSocket replay hardening
+1. [DONE] Закрыть transport-gap для stateful usage limits signals: `WebSocketManager` теперь кеширует canonical `usage_limits` stream-events и реплеит их после websocket connect и после смены workspace scope, сохраняя workspace delivery guard; regression покрыт live websocket-тестом, чтобы `Codex` limits не терялись в PM/session UI при позднем scope attach (scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(core): replay usage limits after scope sync`).
+2. [DONE] Git Commit: `fix(core): replay usage limits after scope sync` (hash: `c9feab28`)
