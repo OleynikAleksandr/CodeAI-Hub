@@ -34,4 +34,20 @@
 3. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать новый unified/workspace version, обновлённые manifests и release tarball-артефакты по release checklist (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build flow-node continuity boundary release`).
 4. [DONE] Git Commit: `chore(release): build flow-node continuity boundary release` (hash: `5b25b8cb`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и синхронизировать session report + execution-plan по финальному релизному состоянию, включая результаты релизной проверки (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record flow-node continuity boundary release`).
-6. [IN_PROGRESS] Git Commit: `docs(session): record flow-node continuity boundary release` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record flow-node continuity boundary release` (hash: `78e0dbd4`)
+
+---
+
+## Phase 3 — Post-release SSOT sync and GitHub publication (owner: Oleksandr, updated: 2026-03-15)
+
+### Stream: System/Core continuity invariants
+1. [DONE] Синхронизировать системный и кластерный SSOT под релиз `1.1.730`: закрепить, что threshold-driven continuity использует `token_usage` только как post-turn arbitration input, а Core обязан быть устойчивым к обоим provider event orders и очищать turn-scoped usage cache после завершения решения (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): sync post-turn continuity invariants`).
+2. [IN_PROGRESS] Git Commit: `docs(architecture): sync post-turn continuity invariants` (hash: TBD)
+3. [TODO] Синхронизировать provider/routing SSOT и release-facing summary: зафиксировать Gemini-specific event order, инвариант сохранения активного dialog до post-turn boundary и обновить release summary для ручного smoke результата `1.1.730` (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `README.md`; expected commit: `docs(architecture): sync continuity routing surfaces`).
+4. [TODO] Git Commit: `docs(architecture): sync continuity routing surfaces` (hash: TBD)
+5. [TODO] Досинхронизировать release trail: отразить подтверждённую live validation `1.1.730` в `CHANGELOG.md`, исправить неполный commit trail в `Session078.md` и обновить execution-plan под новый статус документации (scope: `CHANGELOG.md`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record continuity validation sync`).
+6. [TODO] Git Commit: `docs(release): record continuity validation sync` (hash: TBD)
+
+### Stream: Session report and GitHub push
+1. [TODO] Создать новый session report по post-release validation/push, зафиксировать финальный статус `v1.1.730` и подготовить ветку к публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record release 1.1.730 validation sync`).
+2. [TODO] Git Commit: `docs(session): record release 1.1.730 validation sync` (hash: TBD)
