@@ -62,10 +62,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [1.1.723] - 2026-03-13
 ### Changed
-- Mainline release verification: основной `main` жёстко синхронизирован с baseline line `v1.1.722`, чтобы дальнейшая работа и release cycle шли уже от проверенного response-mode stable baseline.
+- Mainline release verification: the primary `main` branch was hard-synchronized with baseline line `v1.1.722`, so subsequent work and the release cycle now proceed from the verified response-mode stable baseline.
 
 ### Fixed
-- Codex runtime: baseline fix для response-mode session promotion (`Debug/Raw` / `Hybrid`) теперь доступен напрямую из основного `main`, без зависимости от отдельного baseline worktree.
+- Codex runtime: the baseline fix for response-mode session promotion (`Debug/Raw` / `Hybrid`) is now available directly from the primary `main`, without depending on a separate baseline worktree.
 
 ## [1.1.722] - 2026-03-13
 ### Fixed
@@ -95,29 +95,29 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [1.1.711] - 2026-03-05
 ### Fixed
-- Project Manager: для cold-open history добавлен watchdog-ретрай — зависший первый `dialog:history` запрос (`cursor=0`) автоматически сбрасывается и повторяется forced-route без участия пользователя.
-- Project Manager: устранён интермиттирующий кейс `No messages yet` при открытии Workspace, когда история появлялась только после повторного клика по session/stage в левом tree.
+- Project Manager: a watchdog retry was added for cold-open history, so a stalled first `dialog:history` request (`cursor=0`) is automatically reset and retried through a forced route without user intervention.
+- Project Manager: fixed an intermittent `No messages yet` case on workspace open where history appeared only after a second click on the session/stage in the left tree.
 
 ### Changed
-- Tests: `dialog-session-snapshot-replay.test.ts` расширен проверками watchdog-инварианта (`pending timeout -> forced retry`).
+- Tests: `dialog-session-snapshot-replay.test.ts` was expanded with watchdog invariant coverage (`pending timeout -> forced retry`).
 
 ## [1.1.710] - 2026-03-05
 ### Fixed
-- Project Manager: устранена гонка первого открытия dialog-mode — `dialog:history:result` больше не теряется между `dialog:list:result` и обновлением session identity.
-- Project Manager: при cold-open workspace история stage-диалога (JSONL) подтягивается сразу, без повторного клика по `Virtual Simulation`/другому workflow шагу.
+- Project Manager: fixed the first dialog-mode open race, so `dialog:history:result` is no longer lost between `dialog:list:result` and the session identity update.
+- Project Manager: on cold-open workspace, stage dialog history (JSONL) now hydrates immediately without requiring a second click on `Virtual Simulation` or another workflow step.
 
 ### Changed
-- Tests: добавлен guard `dialog-session-snapshot-replay.test.ts` на порядок `bind sessionRef -> requestDialogHistory`.
+- Tests: added a `dialog-session-snapshot-replay.test.ts` guard for the order `bind sessionRef -> requestDialogHistory`.
 
 ## [1.1.709] - 2026-03-05
 ### Fixed
-- Project Manager: устранён workflow navigation desync между Toolbar, левым tree (stage/session/artifact) и auto-select; активный шаг синхронизируется через единый `activeStage` route.
-- Project Manager: убраны stage-specific исключения (`skipSession`) в stage activation semantics, поэтому выбор шага стабильно открывает согласованную dialog-session.
+- Project Manager: fixed workflow navigation desync between the Toolbar, the left tree (stage/session/artifact), and auto-select; the active step is now synchronized through a single `activeStage` route.
+- Project Manager: removed stage-specific exceptions (`skipSession`) from stage activation semantics, so selecting a step now consistently opens the aligned dialog session.
 
 ### Changed
-- Project Manager: правый header унифицирован для всех workflow-шагов (`<Step Name> + Artifacts/Help`), режим `Artifacts/Help` теперь работает кросс-этапно.
-- Project Manager: добавлены help-панели для non-description этапов (`Virtual Simulation`, `Diagram Modules`, `Diagram Facades`).
-- Tests: добавлен guard `workflow-navigation.test.ts`, предотвращающий регрессию рассинхрона stage selection.
+- Project Manager: the right-side header was unified for all workflow steps (`<Step Name> + Artifacts/Help`), and `Artifacts/Help` now works across steps.
+- Project Manager: added help panels for non-description stages (`Virtual Simulation`, `Diagram Modules`, `Diagram Facades`).
+- Tests: added a `workflow-navigation.test.ts` guard to prevent regressions in stage-selection synchronization.
 
 ## [1.1.708] - 2026-03-05
 ### Fixed
@@ -365,7 +365,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 ### Fixed
 - Project Manager / Session UI (BUG-2026-02-22-01): avoid stuck “resuming/blocked” on cold start — unlock input when `workspace:snapshot` reports `turnState=idle` and `continuityLockActive=false`, even if `continuityLockReason` is missing.
 - Core / Workspace snapshots: normalize idle resume-in-place sessions to emit an explicit unlock hint `continuityLockReason="no_rollover_needed"` (defense-in-depth; reason is never a hard unlock gate).
-- Crash/restart resilience: after Core restarts mid-turn, input unblocks automatically when the snapshot is `idle/unlocked`; sending “Продолжай” continues the interrupted turn.
+- Crash/restart resilience: after Core restarts mid-turn, input unblocks automatically when the snapshot is `idle/unlocked`; sending “Continue” resumes the interrupted turn.
 
 ### Changed
 - Docs: update release notes (`README.md`, `CHANGELOG.md`) before packaging.
@@ -375,7 +375,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 ### Fixed
 - Project Manager / Session UI (BUG-2026-02-22-01): avoid stuck “resuming/blocked” on cold start — unlock input when `workspace:snapshot` reports `turnState=idle` and `continuityLockActive=false`, even if `continuityLockReason` is missing.
 - Core / Workspace snapshots: normalize idle resume-in-place sessions to emit an explicit unlock hint `continuityLockReason="no_rollover_needed"` (defense-in-depth; reason is never a hard unlock gate).
-- Crash/restart resilience: after Core restarts mid-turn, input unblocks automatically when the snapshot is `idle/unlocked`; sending “Продолжай” continues the interrupted turn.
+- Crash/restart resilience: after Core restarts mid-turn, input unblocks automatically when the snapshot is `idle/unlocked`; sending “Continue” resumes the interrupted turn.
 
 ### Changed
 - Release notes: `1.1.646` artifacts were packaged before the docs were updated; use `1.1.647` for the doc-synced release.

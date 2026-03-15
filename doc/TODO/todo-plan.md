@@ -56,4 +56,8 @@
 1. [DONE] Устранить pre-push blocker по `jscpd`: дедуплицировать общий UI control-style слой для Codex/Gemini model cards без изменения runtime-поведения, чтобы `git push` снова проходил обязательный duplication gate (scope: `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts`, `src/client/ui/src/components/settings/gemini-default-model/gemini-model-card-styles.ts`; expected commit: `refactor(ui): dedupe model control styles`).
 2. [DONE] Git Commit: `refactor(ui): dedupe model control styles` (hash: `8fe5d88a`)
 3. [DONE] Обновить session trail после unblock-а: зафиксировать в `Session079.md` причину проваленного pre-push, результирующий refactor и готовность ветки к повторной публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record push gate unblock`).
-4. [IN_PROGRESS] Git Commit: `docs(session): record push gate unblock` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): record push gate unblock` (hash: `732522f0`)
+
+### Stream: Public markdown English normalization
+1. [DONE] Перевести публичные markdown-файлы `CHANGELOG.md` и `scripts/README.md` полностью на английский язык, чтобы GitHub-facing docs вне `doc/` не содержали кириллицу; одновременно обновить execution-plan под новый docs-scope (scope: `CHANGELOG.md`, `scripts/README.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(public): translate public markdown to English`).
+2. [IN_PROGRESS] Git Commit: `docs(public): translate public markdown to English` (hash: TBD)
