@@ -30,8 +30,8 @@
 
 ### Stream: Release assembly for flow-node continuity fix
 1. [DONE] После закрытия Core fix/tests/docs актуализировать release-facing docs под следующий локальный релиз с continuity boundary fix: синхронизировать `README.md`, `CHANGELOG.md` и execution-plan перед сборкой, зафиксировав новый product delta (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep flow-node continuity boundary release`).
-2. [IN_PROGRESS] Git Commit: `docs(release): prep flow-node continuity boundary release` (hash: TBD)
-3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать новый unified/workspace version, обновлённые manifests и release tarball-артефакты по release checklist (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build flow-node continuity boundary release`).
-4. [TODO] Git Commit: `chore(release): build flow-node continuity boundary release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prep flow-node continuity boundary release` (hash: `9065c280`)
+3. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать новый unified/workspace version, обновлённые manifests и release tarball-артефакты по release checklist (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build flow-node continuity boundary release`).
+4. [IN_PROGRESS] Git Commit: `chore(release): build flow-node continuity boundary release` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и синхронизировать session report + execution-plan по финальному релизному состоянию, включая результаты релизной проверки (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record flow-node continuity boundary release`).
 6. [TODO] Git Commit: `docs(session): record flow-node continuity boundary release` (hash: TBD)
