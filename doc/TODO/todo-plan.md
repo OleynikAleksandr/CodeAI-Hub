@@ -20,9 +20,9 @@
 1. [DONE] Перестроить flow-node continuity arbitration в Core: threshold breach на `token_usage` должен только кешироваться во время активного one-shot turn, а `rolloverFlowNodeSession()` должен запускаться только после `turn_completed` или после trailing `token_usage` уже в pending post-turn state (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(core): defer continuity rollover until turn completion`).
 2. [DONE] Git Commit: `fix(core): defer continuity rollover until turn completion` (hash: `13a8092b`)
 3. [DONE] Добавить regression tests на оба порядка provider events: `Gemini` (`token_usage -> turn_completed`) и `Claude/Codex` (`turn_completed -> token_usage`), чтобы rollover не мог стартовать внутри незавершённого one-shot turn и при этом поздний usage всё ещё завершал pending arbitration (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): guard flow-node rollover turn boundary`).
-4. [IN_PROGRESS] Git Commit: `test(core): guard flow-node rollover turn boundary` (hash: TBD)
-5. [IN_PROGRESS] Синхронизировать continuity SSOT и session report по новому инварианту: flow-node rollover начинается только после завершения текущего one-shot turn; зафиксировать таргетную верификацию и результаты smoke после фикса (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(core): record flow-node continuity turn boundary`).
-6. [TODO] Git Commit: `docs(core): record flow-node continuity turn boundary` (hash: TBD)
+4. [DONE] Git Commit: `test(core): guard flow-node rollover turn boundary` (hash: `e171e6a0`)
+5. [DONE] Синхронизировать continuity SSOT и session report по новому инварианту: flow-node rollover начинается только после завершения текущего one-shot turn; зафиксировать таргетную верификацию и результаты smoke после фикса (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(core): record flow-node continuity turn boundary`).
+6. [IN_PROGRESS] Git Commit: `docs(core): record flow-node continuity turn boundary` (hash: TBD)
 
 ---
 
