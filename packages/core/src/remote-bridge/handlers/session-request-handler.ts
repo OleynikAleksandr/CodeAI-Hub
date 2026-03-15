@@ -586,6 +586,7 @@ export class SessionRequestHandler {
   private clearPostTurnContextDecision(sessionId: string): void {
     this.postTurnContextDecisionPendingSessions.delete(sessionId);
     this.postTurnContextDecisionBySessionId.delete(sessionId);
+    this.flowNodeTokenUsageSnapshots.delete(sessionId);
   }
 
   private recordPostTurnContextDecision(
@@ -2443,56 +2444,77 @@ export class SessionRequestHandler {
       return;
     }
 
-    const shouldDeferPostTurnCompletion =
-      isRecord(event) &&
-      (event as ProviderEventEnvelope).type === "turn_completed";
+    const typedEvent = isRecord(event)
+      ? (event as ProviderEventEnvelope)
+      : null;
+    const shouldDeferPostTurnCompletion = typedEvent?.type === "turn_completed";
+    const usage = extractTokenUsage(event);
+    if (usage) {
+      this.flowNodeTokenUsageSnapshots.set(sessionId, usage);
+    }
 
+    const shouldEvaluatePostTurnDecision =
+      shouldDeferPostTurnCompletion ||
+      (this.postTurnContextDecisionPendingSessions.has(sessionId) &&
+        usage !== undefined);
+    if (!shouldEvaluatePostTurnDecision) {
+      return;
+    }
+
+    await this.resolveFlowNodePostTurnContextDecision({
+      session,
+      sessionId,
+      usage,
+      deferPostTurnCompletion: shouldDeferPostTurnCompletion,
+    });
+  }
+
+  private async resolveFlowNodePostTurnContextDecision(options: {
+    readonly session: Session;
+    readonly sessionId: string;
+    readonly usage: TokenUsageSnapshot | null;
+    readonly deferPostTurnCompletion: boolean;
+  }): Promise<void> {
     const recordNoRolloverDecision = () => {
-      if (shouldDeferPostTurnCompletion) {
-        this.recordPostTurnContextDecision(sessionId, "no_rollover");
+      if (options.deferPostTurnCompletion) {
+        this.recordPostTurnContextDecision(options.sessionId, "no_rollover");
         return;
       }
-      this.registerPostTurnNoRolloverDecision(sessionId);
+      this.registerPostTurnNoRolloverDecision(options.sessionId);
     };
 
     const recordRolloverRequiredDecision = () => {
-      if (shouldDeferPostTurnCompletion) {
-        this.recordPostTurnContextDecision(sessionId, "rollover_required");
+      if (options.deferPostTurnCompletion) {
+        this.recordPostTurnContextDecision(
+          options.sessionId,
+          "rollover_required"
+        );
         return;
       }
-      this.registerPostTurnRolloverRequiredDecision(sessionId);
+      this.registerPostTurnRolloverRequiredDecision(options.sessionId);
     };
 
     if (
-      this.flowNodeRolloverStarted.has(sessionId) ||
-      this.flowNodeRolloverInFlight.has(sessionId)
+      this.flowNodeRolloverStarted.has(options.sessionId) ||
+      this.flowNodeRolloverInFlight.has(options.sessionId)
     ) {
       recordRolloverRequiredDecision();
       return;
     }
 
-    if (this.isStaleFlowNodeContinuitySegment(session)) {
+    if (this.isStaleFlowNodeContinuitySegment(options.session)) {
       recordNoRolloverDecision();
       return;
     }
 
-    const usage = extractTokenUsage(event);
-    if (!usage) {
-      // No token usage data in event - cannot evaluate rollover threshold.
-      // Safe fallback: treat as no-rollover so the turn completion unlocks the UI.
-      recordNoRolloverDecision();
-      return;
-    }
-    this.flowNodeTokenUsageSnapshots.set(sessionId, usage);
-
-    if (!(session.initiativeSlug && session.stage)) {
+    if (!(options.session.initiativeSlug && options.session.stage)) {
       recordNoRolloverDecision();
       return;
     }
 
     const eligibleForRollover = this.flowNodeContinuity.isEligibleForRollover({
-      stageId: session.stage,
-      runSlug: session.runSlug,
+      stageId: options.session.stage,
+      runSlug: options.session.runSlug,
     });
     if (!eligibleForRollover) {
       recordNoRolloverDecision();
@@ -2500,22 +2522,31 @@ export class SessionRequestHandler {
     }
 
     const remainingPercentThreshold =
-      await this.resolveLiveContinuityRemainingPercentThreshold(session);
+      await this.resolveLiveContinuityRemainingPercentThreshold(
+        options.session
+      );
+    const usage =
+      options.usage ??
+      this.flowNodeTokenUsageSnapshots.get(options.sessionId) ??
+      null;
+    if (!usage) {
+      return;
+    }
     if (!isBelowRemainingPercentThreshold(usage, remainingPercentThreshold)) {
       recordNoRolloverDecision();
       return;
     }
 
-    if (this.flowNodeRolloverInFlight.has(sessionId)) {
+    if (this.flowNodeRolloverInFlight.has(options.sessionId)) {
       recordRolloverRequiredDecision();
       return;
     }
 
     await this.startFlowNodeRolloverFromUsage({
-      session,
-      sessionId,
-      stageId: session.stage,
-      runSlug: session.runSlug ?? null,
+      session: options.session,
+      sessionId: options.sessionId,
+      stageId: options.session.stage,
+      runSlug: options.session.runSlug ?? null,
       usage,
       remainingPercentThreshold,
     });
