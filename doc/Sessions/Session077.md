@@ -1,8 +1,8 @@
-# Session 077 — Gemini dialog segmentation fix in progress
+# Session 077 — Gemini dialog segmentation release 1.1.729
 
 **Date:** 2026-03-15 10:47 (CET)
 **Branch:** main
-**Version:** 1.1.728
+**Version:** 1.1.729
 
 ---
 
@@ -13,19 +13,28 @@
 - Реализован `Phase 1 / item 3`: `GeminiSessionManager` теперь считает уже отстримленные assistant segments и не публикует финальный aggregate `assistant` block, если provider уже отдал сегменты через `dialog_message`; fallback aggregate сохранён только для некорректно завершённых turn-ов без `finished`.
 - Добавлены regression-tests на оба сценария: segmented delivery без дубля финального assistant block и fallback delivery при отсутствии `finished`.
 - SSOT обновлён: `SystemArchitecture.md` теперь явно фиксирует инвариант сохранения provider dialog segment boundaries.
-- Execution-plan держится в актуальном состоянии для нового Gemini scope; следующий шаг внутри этой же сессии — release-prep и локальная сборка релиза по новому release-stream.
+- Release-facing docs синхронизированы под локальный релиз `1.1.729`: `README.md`, `CHANGELOG.md` и release-stream в `doc/TODO/todo-plan.md` теперь фиксируют Gemini dialog segmentation fix как новую релизную дельту.
+- Выполнен `./scripts/build-all.sh`: unified/workspace version поднята до `1.1.729`, обновлены package versions и manifest pointers для `core`, `launcher`, provider-модулей и UI; release tarball-артефакты пересобраны в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
+- Выполнен `./scripts/build-release.sh --use-current-version`; собран VSIX `codeai-hub-1.1.729.vsix`.
 
 ## Git commits
 - `1a49e794 fix(gemini): flush assistant segments on finished`
 - `8ae29b23 refactor(gemini): preserve segmented assistant delivery`
+- `05be9e28 docs(session): record gemini dialog segmentation fix`
+- `21747bae docs(release): prep gemini dialog segmentation release`
+- `5b28048c chore(release): build gemini dialog segmentation release`
 
 ## Verification
 - `npm run build --workspace @codeai-hub/gemini-module`
 - `npm run build --workspace @codeai-hub/core`
 - `node --test packages/Gemini_Module/dist/messaging/message-processor.test.js packages/Gemini_Module/dist/session/gemini-session-manager.test.js`
 - `npx ultracite check packages/Gemini_Module/src/session/gemini-session-manager.ts packages/Gemini_Module/src/session/gemini-session-manager.test.ts`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
 - Подтверждено, что при нескольких циклах `content -> finished` `GeminiSessionManager` больше не добавляет дублирующий финальный `assistant` event поверх уже emitted segmented `dialog_message`.
 - Подтверждено, что compat fallback остаётся рабочим: если `content` пришёл, а `finished` не пришёл, финальный aggregate `assistant` block всё ещё публикуется.
+- В release build подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`.
+- Advisory duplication check во время `build-release` снова показал `3.12%` при пороге `3%`, но pipeline не прервался и VSIX был собран успешно.
 
 ---
 
@@ -41,10 +50,10 @@
 7. `doc/Sessions/Session076.md`
 8. `doc/Sessions/Session077.md` (THIS REPORT)
 
-> Текущий status: кодовый Gemini segmentation scope реализован и покрыт таргетной проверкой, но release-stream для этого scope ещё не выполнен. Перед завершением работы нужно синхронизировать release-facing docs, выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`.
+> Текущий status: локальный релиз `v1.1.729` собран. Gemini dialog segmentation fix зафиксирован в коде, SSOT и release-facing docs; следующий шаг — живой post-release smoke в Project Manager / Gemini runtime.
 
 ## Plans for next session
-- Актуализировать `README.md` и `CHANGELOG.md` под следующий локальный релиз с Gemini dialog segmentation fix.
-- На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать новый unified/workspace version и manifests.
-- Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и обновить `Session077.md` + `doc/TODO/todo-plan.md` по финальному релизному состоянию.
-- После релиза отдельно проверить живой Gemini сценарий на реальном SDK log, чтобы подтвердить соответствие unified session history нескольким assistant segments из raw feedback.
+- Протестировать `v1.1.729` локально в `Project Manager` и подтвердить, что Gemini session history теперь хранит несколько assistant segments без финального дубля.
+- Сопоставить свежий raw SDK log Gemini с unified session log после релиза, чтобы подтвердить соответствие реальных `content -> finished` границ.
+- Отдельно проверить, что hotfix с `Codex` usage limits в `v1.1.729` не регрессировал после нового release cycle.
+- Вернуться к follow-up по `Claude`, где context/token usage materialize только после reopen workspace.

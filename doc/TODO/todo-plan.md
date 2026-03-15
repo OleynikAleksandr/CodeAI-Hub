@@ -30,8 +30,8 @@
 
 ### Stream: Local release assembly after segmentation fix
 1. [DONE] После закрытия всех Gemini микро-задач актуализировать release-facing docs под новый локальный релиз `1.1.729`, синхронизировать `README.md`, `CHANGELOG.md` и execution-plan перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep gemini dialog segmentation release`).
-2. [DONE] Git Commit: `docs(release): prep gemini dialog segmentation release` (hash: TBD)
-3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать новый unified/workspace version `1.1.729`, обновлённые manifests и release tarball-артефакты (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build gemini dialog segmentation release`).
-4. [TODO] Git Commit: `chore(release): build gemini dialog segmentation release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление нового `codeai-hub-<version>.vsix`, синхронизировать session report и execution-plan по финальному релизному состоянию (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session077.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record gemini dialog segmentation release`).
-6. [TODO] Git Commit: `docs(session): record gemini dialog segmentation release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prep gemini dialog segmentation release` (hash: `21747bae`)
+3. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать новый unified/workspace version `1.1.729`, обновлённые manifests и release tarball-артефакты (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build gemini dialog segmentation release`).
+4. [DONE] Git Commit: `chore(release): build gemini dialog segmentation release` (hash: `5b28048c`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление нового `codeai-hub-1.1.729.vsix`, синхронизировать session report и execution-plan по финальному релизному состоянию; подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, собран `codeai-hub-1.1.729.vsix`, advisory duplication check снова показал `3.12% > 3%`, но release pipeline не упал (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session077.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record gemini dialog segmentation release`).
+6. [DONE] Git Commit: `docs(session): record gemini dialog segmentation release` (hash: TBD)
