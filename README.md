@@ -7,16 +7,17 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.727
+## Current Release — v1.1.728
 - Universal provider usage limits: `Claude`, `Codex` и `Gemini` теперь работают через единый shared module в `packages/core`, где live provider surface является primary source, а provider-specific fallback остаётся только запасным путём.
 - Codex live-source migration: usage limits читаются по цепочке `runtime payload -> app-server account/rateLimits/read -> rollout JSONL fallback`, без обязательной зависимости от PTY/TUI `/status`.
+- WebSocket replay hardening: stateful `usage_limits` signals теперь реплеятся после websocket connect и после смены workspace scope, поэтому `Codex` лимиты не должны теряться в `Project Manager` / `Session UI` при позднем attach/rebind.
 - Session UI hardening: usage limits теперь кэшируются по canonical `providerScopeKey`, а `Session ID bar` показывает provider-aware labels из shared snapshot вместо старого hardcoded `session/weekly`.
 - Diagnostics: shared usage-limits facade и `Codex` integration теперь отдают source-aware diagnostics для `cache_hit`, `fresh_read`, `fallback_cached` и `unavailable`, что упрощает разбор refresh/fallback поведения.
 - Description cleanup baseline: продукт по-прежнему работает на canonical `questionnaire.md` -> `Final_Description.md` flow без legacy `↻ Restart attempt` semantics и без старого `description.md` label в tree/main-area.
 - Core/runtime baseline: active artifact persistence остаётся на canonical `/api/v1/orchestrator/artifact-upsert`; obsolete restart-era transport не возвращается в stable line.
 - Documentation governance: перед `doc/TODO/todo-plan.md` новый scope теперь обязан сначала жить в `doc/SolidWorks-WorkFlow/Plans/`, а реализованный SSOT остаётся только в `System/`, `Clusters/`, `Modules/`, `Contracts/`.
 - Agent instructions: единственный git-tracked источник правил — `AGENTS.md`; локальные `GEMINI.md` и `.claude/CLAUDE.md` сведены к коротким redirect-файлам.
-- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.727` и пересобрать provider/core/ui/launcher артефакты уже поверх этого baseline.
+- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.728` и пересобрать provider/core/ui/launcher артефакты уже поверх этого baseline.
 
 Previous releases (summary): the `1.1.57x–1.1.719` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, and later PM hydration/workflow-state experiments that are intentionally not part of this stable baseline release.
 

@@ -107,3 +107,15 @@
 ### Stream: WebSocket replay hardening
 1. [DONE] Закрыть transport-gap для stateful usage limits signals: `WebSocketManager` теперь кеширует canonical `usage_limits` stream-events и реплеит их после websocket connect и после смены workspace scope, сохраняя workspace delivery guard; regression покрыт live websocket-тестом, чтобы `Codex` limits не терялись в PM/session UI при позднем scope attach (scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(core): replay usage limits after scope sync`).
 2. [DONE] Git Commit: `fix(core): replay usage limits after scope sync` (hash: `c9feab28`)
+
+---
+
+## Phase 9 — Hotfix release build and packaging (owner: Oleksandr, updated: 2026-03-15)
+
+### Stream: Local release assembly for v1.1.728
+1. [DONE] Актуализировать release-facing docs под hotfix-релиз `1.1.728`: зафиксировать websocket replay fix в `README.md` и `CHANGELOG.md`, а также добавить отдельную release-phase в execution-plan перед сборкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep usage limits replay hotfix release`).
+2. [DONE] Git Commit: `docs(release): prep usage limits replay hotfix release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать unified/workspace version `1.1.728`, обновлённые manifests и release tarball-артефакты (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build usage limits replay hotfix release`).
+4. [TODO] Git Commit: `chore(release): build usage limits replay hotfix release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить появление `codeai-hub-1.1.728.vsix`, создать новый session report и синхронизировать execution-plan по финальному релизному состоянию (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session076.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record usage limits replay hotfix release`).
+6. [TODO] Git Commit: `docs(session): record usage limits replay hotfix release` (hash: TBD)
