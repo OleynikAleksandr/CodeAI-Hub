@@ -12,6 +12,7 @@ import type { GeminiSessionEvent, ModuleReporter } from "../types";
 
 type TurnAccumulator = {
   readonly promptId: string;
+  currentAssistantChunks: string[];
   responseChunks: string[];
   citations: string[];
   toolRequests: ToolCallRequestInfo[];
@@ -132,6 +133,7 @@ export class GeminiMessageProcessor {
   createAccumulator(promptId: string): TurnAccumulator {
     return {
       promptId,
+      currentAssistantChunks: [],
       responseChunks: [],
       citations: [],
       toolRequests: [],
@@ -184,6 +186,7 @@ export class GeminiMessageProcessor {
     const value = this.getEventValue(event);
     const chunk = typeof value === "string" ? value : "";
     if (chunk.length > 0) {
+      accumulator.currentAssistantChunks.push(chunk);
       accumulator.responseChunks.push(chunk);
       session.logger?.logEvent({ direction: "incoming", chunk });
     }
@@ -417,6 +420,14 @@ export class GeminiMessageProcessor {
       value && typeof value === "object"
         ? (value as { usageMetadata?: UsageMetadata }).usageMetadata
         : undefined;
+    const assistantSegment = accumulator.currentAssistantChunks.join("");
+    accumulator.currentAssistantChunks.length = 0;
+    this.emitDialogMessage(
+      session,
+      "assistant",
+      assistantSegment,
+      accumulator.promptId
+    );
     return [];
   }
 
