@@ -38,6 +38,7 @@ type GeminiTurnResult = {
   readonly usage?: UsageMetadata;
   readonly citations: readonly string[];
   readonly toolRequests: readonly ToolCallRequestInfo[];
+  readonly assistantSegmentsEmitted: number;
 };
 
 type ToolExecutionOutcome = {
@@ -51,6 +52,7 @@ type ConversationResult = {
   readonly citations: readonly string[];
   readonly usage?: UsageMetadata;
   readonly depthExceeded: boolean;
+  readonly assistantSegmentsEmitted: number;
 };
 
 type ProcessTurnContext = {
@@ -338,25 +340,27 @@ export class GeminiSessionManager {
       const finalText = result.text.trim();
       const finalCitations = [...result.citations];
 
-      session.logger?.logEvent({
-        type: "assistant_response",
-        promptId,
-        content: finalText,
-        citations: finalCitations,
-      });
-
-      this.emitEvents(session, [
-        {
-          type: "assistant",
-          provider: "gemini",
+      if (result.assistantSegmentsEmitted === 0 && finalText.length > 0) {
+        session.logger?.logEvent({
+          type: "assistant_response",
+          promptId,
           content: finalText,
-          data: {
-            promptId,
-            usage: result.usage,
-            citations: finalCitations,
+          citations: finalCitations,
+        });
+
+        this.emitEvents(session, [
+          {
+            type: "assistant",
+            provider: "gemini",
+            content: finalText,
+            data: {
+              promptId,
+              usage: result.usage,
+              citations: finalCitations,
+            },
           },
-        },
-      ]);
+        ]);
+      }
       didComplete = true;
     } catch (error) {
       session.logger?.logError({
@@ -499,6 +503,7 @@ export class GeminiSessionManager {
         citations: [],
         usage: undefined,
         depthExceeded: true,
+        assistantSegmentsEmitted: 0,
       };
     }
 
@@ -507,6 +512,7 @@ export class GeminiSessionManager {
     let citations = [...turnResult.citations];
     let usage = turnResult.usage;
     let depthExceeded = false;
+    let assistantSegmentsEmitted = turnResult.assistantSegmentsEmitted;
 
     if (turnResult.toolRequests.length === 0) {
       return {
@@ -514,6 +520,7 @@ export class GeminiSessionManager {
         citations,
         usage,
         depthExceeded,
+        assistantSegmentsEmitted,
       };
     }
 
@@ -557,12 +564,14 @@ export class GeminiSessionManager {
     citations = citations.concat(nested.citations);
     usage = nested.usage ?? usage;
     depthExceeded = nested.depthExceeded;
+    assistantSegmentsEmitted += nested.assistantSegmentsEmitted;
 
     return {
       text: responseText,
       citations,
       usage,
       depthExceeded,
+      assistantSegmentsEmitted,
     };
   }
 
@@ -577,6 +586,18 @@ export class GeminiSessionManager {
       modules: this.modules,
     });
     const accumulator = messageProcessor.createAccumulator(promptId);
+    let assistantSegmentsEmitted = 0;
+    const countAssistantSegment = (payload: unknown): void => {
+      if (
+        payload &&
+        typeof payload === "object" &&
+        (payload as { type?: string }).type === "dialog_message" &&
+        (payload as { role?: string }).role === "assistant"
+      ) {
+        assistantSegmentsEmitted += 1;
+      }
+    };
+    session.eventEmitter.on("message", countAssistantSegment);
 
     const stream = session.client.sendMessageStream(
       Array.from(parts) as Part[],
@@ -584,12 +605,23 @@ export class GeminiSessionManager {
       promptId
     );
 
-    for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
-      const outcome = messageProcessor.handleEvent(session, event, accumulator);
-      this.emitEvents(session, outcome.events);
+    try {
+      for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
+        const outcome = messageProcessor.handleEvent(
+          session,
+          event,
+          accumulator
+        );
+        this.emitEvents(session, outcome.events);
+      }
+    } finally {
+      session.eventEmitter.off("message", countAssistantSegment);
     }
 
-    return messageProcessor.finalize(accumulator);
+    return {
+      ...messageProcessor.finalize(accumulator),
+      assistantSegmentsEmitted,
+    };
   }
 
   private async executeToolCalls(
