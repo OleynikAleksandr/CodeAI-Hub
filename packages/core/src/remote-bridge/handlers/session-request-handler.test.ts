@@ -851,6 +851,160 @@ test("SessionRequestHandler keeps turn-completed locked until delayed no-rollove
   assert.equal(countNoRolloverUnlockEvents(harness.events), 1);
 });
 
+test("SessionRequestHandler starts rollover only after turn_completed when token usage arrives first", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "geminiCli",
+    "/tmp/core-gemini-post-turn-rollover",
+    "provider-session-gemini-rollover",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  (harness.handler as any).getSessionResumeLifecycleStore().set(session.id, {
+    mode: "resume_in_place",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+  (harness.handler as any).handleFlowNodeContinuityProviderEvent = (
+    SessionRequestHandler.prototype as any
+  ).handleFlowNodeContinuityProviderEvent.bind(harness.handler);
+
+  const rolloverStarts: Array<{
+    readonly sessionId: string;
+    readonly usage: { readonly used: number; readonly limit: number };
+  }> = [];
+  (harness.handler as any).resolveLiveContinuityRemainingPercentThreshold =
+    async () => 80;
+  (harness.handler as any).startFlowNodeRolloverFromUsage = (options: {
+    readonly sessionId: string;
+    readonly usage: { readonly used: number; readonly limit: number };
+  }) => {
+    rolloverStarts.push({
+      sessionId: options.sessionId,
+      usage: options.usage,
+    });
+    (harness.handler as any).recordPostTurnContextDecision(
+      options.sessionId,
+      "rollover_required"
+    );
+    return Promise.resolve();
+  };
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "stream_event",
+    data: { kind: "token_usage", used: 150_000, limit: 200_000 },
+    tokenUsage: { used: 150_000, limit: 200_000 },
+  });
+  await flushAsyncWork();
+
+  assert.equal(rolloverStarts.length, 0);
+  const cachedUsage = (harness.handler as any).flowNodeTokenUsageSnapshots.get(
+    session.id
+  );
+  assert.equal(cachedUsage?.used, 150_000);
+  assert.equal(cachedUsage?.limit, 200_000);
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  assert.equal(rolloverStarts.length, 1);
+  assert.equal(rolloverStarts[0]?.sessionId, session.id);
+  assert.equal(rolloverStarts[0]?.usage.used, 150_000);
+  assert.equal(rolloverStarts[0]?.usage.limit, 200_000);
+  assert.equal(countIdleTurnStateEvents(harness.events), 0);
+});
+
+test("SessionRequestHandler resolves delayed no-rollover from trailing token usage on the production path", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-trailing-token-usage",
+    "provider-session-trailing-token-usage",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  (harness.handler as any).getSessionResumeLifecycleStore().set(session.id, {
+    mode: "resume_in_place",
+    finalTurnCompleted: false,
+    terminalLockReason: null,
+  });
+  (harness.handler as any).handleFlowNodeContinuityProviderEvent = (
+    SessionRequestHandler.prototype as any
+  ).handleFlowNodeContinuityProviderEvent.bind(harness.handler);
+  (harness.handler as any).resolveLiveContinuityRemainingPercentThreshold =
+    async () => 30;
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  assert.equal(countContextCheckPendingLockEvents(harness.events), 1);
+  assert.equal(countIdleTurnStateEvents(harness.events), 0);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 0);
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "stream_event",
+    data: { kind: "token_usage", used: 50_000, limit: 200_000 },
+    tokenUsage: { used: 50_000, limit: 200_000 },
+  });
+  await flushAsyncWork();
+
+  assert.equal(countIdleTurnStateEvents(harness.events), 1);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 1);
+});
+
+test("SessionRequestHandler clears cached token usage snapshot when a new outbound turn starts", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-reset-usage-snapshot",
+    "provider-session-reset-usage-snapshot",
+    {
+      initiativeSlug: "demo",
+      stage: "description",
+      runSlug: "reviewer",
+    }
+  );
+  harness.providerSessions.set(session.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-reset-usage-snapshot",
+    unsubscribe: noop,
+  });
+
+  const sentMessages: string[] = [];
+  (harness.handler as any).providerRegistry = {
+    getAdapter: () => ({
+      sendMessage: (_providerSessionId: string, content: string) => {
+        sentMessages.push(content);
+        return Promise.resolve();
+      },
+    }),
+    handleRuntimeFailure: noop,
+  };
+  (harness.handler as any).flowNodeTokenUsageSnapshots.set(session.id, {
+    used: 150_000,
+    limit: 200_000,
+  });
+
+  await (harness.handler as any).handleMessage(session.id, "next turn");
+  await flushAsyncWork();
+
+  assert.deepEqual(sentMessages, ["next turn"]);
+  assert.equal(
+    (harness.handler as any).flowNodeTokenUsageSnapshots.has(session.id),
+    false
+  );
+});
+
 test("SessionRequestHandler enforces no_resume terminal lock and read-only send guard", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(
