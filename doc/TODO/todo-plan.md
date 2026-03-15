@@ -68,6 +68,6 @@
 1. [DONE] Проверить готовность GitHub publication path для `v1.1.730`: наличие VSIX, отсутствие уже опубликованного release/tag collision и доступность GitHub credentials через локальный credential helper/CLI path (scope: local release artifacts + remote release metadata; expected commit: no commit).
 2. [DONE] Используя явный запрос пользователя, опубликовать GitHub release `v1.1.730` с release notes из `CHANGELOG.md` и приложить `codeai-hub-1.1.730.vsix` как артефакт (scope: GitHub release metadata + release asset; expected commit: no commit).
 3. [DONE] После пересборки `build-release.sh --use-current-version` зафиксировать regenerated tracked webview bundle, чтобы source state совпадал со свежим VSIX, опубликованным в GitHub release (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected commit: `build(webview): refresh bundled react-chat output`).
-4. [IN_PROGRESS] Git Commit: `build(webview): refresh bundled react-chat output` (hash: TBD)
-5. [TODO] Зафиксировать session report по GitHub release publication, записать release URL/итоговый статус и синхронизировать execution-plan (scope: `doc/Sessions/Session081.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record GitHub release publication`).
-6. [TODO] Git Commit: `docs(session): record GitHub release publication` (hash: TBD)
+4. [DONE] Git Commit: `build(webview): refresh bundled react-chat output` (hash: `ebcb0a32`)
+5. [DONE] Зафиксировать session report по GitHub release publication, записать release URL/итоговый статус и синхронизировать execution-plan (scope: `doc/Sessions/Session081.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record GitHub release publication`).
+6. [IN_PROGRESS] Git Commit: `docs(session): record GitHub release publication` (hash: TBD)
