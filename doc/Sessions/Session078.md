@@ -28,6 +28,7 @@
 - `f6ac1d8f docs(core): record flow-node continuity turn boundary`
 - `9065c280 docs(release): prep flow-node continuity boundary release`
 - `5b25b8cb chore(release): build flow-node continuity boundary release`
+- `78e0dbd4 docs(session): record flow-node continuity boundary release`
 
 ## Verification
 - Сопоставлены runtime artifacts:
