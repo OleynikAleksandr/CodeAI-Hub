@@ -1,8 +1,8 @@
-# Session 078 — Flow-node continuity one-shot boundary analysis
+# Session 078 — Flow-node continuity one-shot boundary release 1.1.730
 
 **Date:** 2026-03-15 14:47 (CET)
 **Branch:** main
-**Version:** 1.1.729
+**Version:** 1.1.730
 
 ---
 
@@ -18,10 +18,16 @@
 - Реализован Core fix в `packages/core/src/remote-bridge/handlers/session-request-handler.ts`: pre-turn `token_usage` теперь только кеширует usage snapshot, а threshold-driven flow-node rollover оценивается только после `turn_completed` или по trailing `token_usage` уже в pending post-turn arbitration.
 - Добавлены regression tests на production path: подтверждены оба provider order-а (`Gemini`: `token_usage -> turn_completed`, `Claude/Codex`: `turn_completed -> token_usage`) и очистка cached token-usage snapshot при старте нового outbound turn-а.
 - Continuity SSOT и session docs синхронизированы под новый инвариант post-turn arbitration; execution-plan обновлён отдельной release-phase под следующий локальный релиз continuity boundary fix.
+- Актуализированы release-facing docs под `v1.1.730`: `README.md`, `CHANGELOG.md` и release-stream в `doc/TODO/todo-plan.md` теперь фиксируют continuity boundary fix как новую релизную дельту.
+- Выполнен `./scripts/build-all.sh`: unified/workspace version поднята до `1.1.730`, обновлены package versions и manifest pointers для `core`, `launcher`, provider-модулей и UI; release tarball-артефакты пересобраны в `~/.codeai-hub/releases/`.
+- Выполнен `./scripts/build-release.sh --use-current-version`; собран VSIX `codeai-hub-1.1.730.vsix`.
 
 ## Git commits
 - `13a8092b fix(core): defer continuity rollover until turn completion`
 - `e171e6a0 test(core): guard flow-node rollover turn boundary`
+- `f6ac1d8f docs(core): record flow-node continuity turn boundary`
+- `9065c280 docs(release): prep flow-node continuity boundary release`
+- `5b25b8cb chore(release): build flow-node continuity boundary release`
 
 ## Verification
 - Сопоставлены runtime artifacts:
@@ -41,6 +47,11 @@
   - `Gemini` path: rollover больше не стартует на pre-turn `token_usage`; запуск возможен только после `turn_completed`.
   - `Claude/Codex` path: `turn_completed` без usage оставляет session в pending-arbitration, а trailing `token_usage` завершает решение `no_rollover`.
   - Cached `flowNodeTokenUsageSnapshots` очищается при старте нового outbound turn-а.
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
+- В release build подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`.
+- Собран локальный VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.730.vsix`.
+- Advisory duplication check во время `build-release` снова показал `3.12%` при пороге `3%`, но pipeline не прервался и VSIX был собран успешно.
 
 ---
 
@@ -57,8 +68,9 @@
 8. `doc/Sessions/Session077.md`
 9. `doc/Sessions/Session078.md` (THIS REPORT)
 
-> Текущий status: локальный релиз `v1.1.729` подтверждён пользователем. Core fix для flow-node continuity turn boundary реализован, regression tests зелёные, continuity SSOT синхронизирован. Открыты живой smoke document node после фикса и последующий локальный release cycle.
+> Текущий status: локальный релиз `v1.1.730` собран. Continuity boundary fix зафиксирован в коде, SSOT и release-facing docs; открытым остаётся живой smoke document node на реальном Gemini runtime.
 
 ## Plans for next session
 - Выполнить живой smoke для document node на `Gemini`, чтобы подтвердить: agent finish текущего one-shot завершается до continuity report prompt.
-- После smoke пройти release-stream: `README.md` / `CHANGELOG.md` -> `./scripts/build-all.sh` -> `./scripts/build-release.sh --use-current-version` -> финальная синхронизация `Session078.md` и `doc/TODO/todo-plan.md`.
+- Сопоставить post-release runtime artifacts (`JSONL` + continuity reports) с новым `v1.1.730`, чтобы подтвердить отсутствие premature rollover в реальном сценарии.
+- Публикацию GitHub release по-прежнему не делать без явного запроса пользователя.
