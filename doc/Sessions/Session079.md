@@ -15,13 +15,17 @@
 - Обновлены `Gemini.md` и `Dialogs_And_Continuity_Routing.md`: зафиксированы `Gemini`-специфичный порядок `token_usage -> turn_completed`, запрет на premature rollover до post-turn boundary и инвариант сохранения активного `dialogId` до фактического handoff/bootstrap.
 - Дополнительно синхронизированы release-facing документы `README.md` и `CHANGELOG.md` под подтверждённый ручной smoke `1.1.730`.
 - Исправлен неполный commit trail в `Session078.md`: в отчёт добавлен пропущенный release-docs commit `78e0dbd4`.
-- `main` подготовлен к публикации на GitHub после завершения текущего session-report commit.
+- Первая попытка `git push origin main` была заблокирована обязательным pre-push gate `check:dup`: глобальный `jscpd` считал `3.12%` duplicated lines при пороге `3%`.
+- Для разблокировки push выполнен минимальный UI refactor: общие Codex/Gemini model-control styles вынесены в shared слой, что сняло дублирование без изменения runtime-поведения карточек настроек.
+- После рефакторинга standalone `npm run check:dup` проходит на `3.00%`, а pre-commit duplication scan для затронутого scope вернулся к `2.11%`; ветка готова к повторному push.
 
 ## Git commits
 - `3f29b7ae docs(architecture): sync post-turn continuity invariants`
 - `9d18529d docs(architecture): sync continuity routing surfaces`
 - `99059472 docs(release): record continuity validation sync`
-- `TBD-at-commit-time docs(session): record release 1.1.730 validation sync`
+- `6dada58c docs(session): record release 1.1.730 validation sync`
+- `8fe5d88a refactor(ui): dedupe model control styles`
+- `TBD-at-commit-time docs(session): record push gate unblock`
 
 ## Verification
 - Проверен актуальный SSOT-след для релиза `1.1.730` в:
@@ -34,6 +38,9 @@
   - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - Подтверждено, что release-facing docs теперь фиксируют ручную live validation на точной дате `2026-03-15`, а архитектурные документы согласованы с уже реализованным Core fix.
 - Подтверждено, что `Session078.md` теперь содержит полный список релизных коммитов для восстановления контекста в следующей сессии.
+- `npm run check:dup`
+- `npx ultracite check src/client/ui/src/components/settings/shared-model-card-styles.ts src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts src/client/ui/src/components/settings/gemini-default-model/gemini-model-card-styles.ts`
+- Подтверждено, что quality-gate blocker для GitHub push снят shared-style refactor-ом и может быть безопасно перепроверен повторным `git push`.
 
 ---
 
@@ -49,7 +56,7 @@
 7. `doc/Sessions/Session078.md`
 8. `doc/Sessions/Session079.md` (THIS REPORT)
 
-> Текущий status: локальный релиз `v1.1.730` верифицирован вручную, архитектурные и release-facing документы синхронизированы, ветка `main` готова к дальнейшей работе от уже подтверждённого continuity baseline.
+> Текущий status: локальный релиз `v1.1.730` верифицирован вручную, архитектурные и release-facing документы синхронизированы, pre-push duplication blocker устранён; ветка `main` готова к повторной публикации на GitHub и дальнейшей работе от подтверждённого continuity baseline.
 
 ## Plans for next session
 - Если после push или следующего smoke появятся новые continuity/runtime расхождения, начинать с артефактов `JSONL` + continuity reports и открывать новый planning-doc в `doc/SolidWorks-WorkFlow/Plans/`.

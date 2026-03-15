@@ -50,4 +50,10 @@
 
 ### Stream: Session report and GitHub push
 1. [DONE] Создать новый session report по post-release validation/push, зафиксировать финальный статус `v1.1.730` и подготовить ветку к публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record release 1.1.730 validation sync`).
-2. [IN_PROGRESS] Git Commit: `docs(session): record release 1.1.730 validation sync` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record release 1.1.730 validation sync` (hash: `6dada58c`)
+
+### Stream: GitHub push quality-gate unblock
+1. [DONE] Устранить pre-push blocker по `jscpd`: дедуплицировать общий UI control-style слой для Codex/Gemini model cards без изменения runtime-поведения, чтобы `git push` снова проходил обязательный duplication gate (scope: `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts`, `src/client/ui/src/components/settings/gemini-default-model/gemini-model-card-styles.ts`; expected commit: `refactor(ui): dedupe model control styles`).
+2. [DONE] Git Commit: `refactor(ui): dedupe model control styles` (hash: `8fe5d88a`)
+3. [DONE] Обновить session trail после unblock-а: зафиксировать в `Session079.md` причину проваленного pre-push, результирующий refactor и готовность ветки к повторной публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record push gate unblock`).
+4. [IN_PROGRESS] Git Commit: `docs(session): record push gate unblock` (hash: TBD)
