@@ -8,19 +8,19 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Bug registry: `doc/BugRegistry.md`
 
 ## Current Release — v1.1.730
-- Universal provider usage limits: `Claude`, `Codex` и `Gemini` теперь работают через единый shared module в `packages/core`, где live provider surface является primary source, а provider-specific fallback остаётся только запасным путём.
-- Codex live-source migration: usage limits читаются по цепочке `runtime payload -> app-server account/rateLimits/read -> rollout JSONL fallback`, без обязательной зависимости от PTY/TUI `/status`.
-- WebSocket replay hardening: stateful `usage_limits` signals теперь реплеятся после websocket connect и после смены workspace scope, поэтому `Codex` лимиты не должны теряться в `Project Manager` / `Session UI` при позднем attach/rebind.
-- Gemini dialog segmentation: `Gemini_Module` теперь флашит assistant segments на каждом `finished` и больше не дублирует их одним финальным aggregate block, если segmented replies уже были отданы через dialog history.
-- Flow-node continuity turn boundary: threshold-trigger continuity для document/workflow nodes больше не может прервать активный user one-shot turn на первом `token_usage`; rollover разрешён только после `turn_completed` или по trailing usage уже в pending post-turn arbitration.
-- Release validation on March 15, 2026: ручной smoke для document-node `Gemini` подтвердил, что в `v1.1.730` текущий one-shot turn завершается полностью до continuity handoff/bootstrap.
-- Session UI hardening: usage limits теперь кэшируются по canonical `providerScopeKey`, а `Session ID bar` показывает provider-aware labels из shared snapshot вместо старого hardcoded `session/weekly`.
-- Diagnostics: shared usage-limits facade и `Codex` integration теперь отдают source-aware diagnostics для `cache_hit`, `fresh_read`, `fallback_cached` и `unavailable`, что упрощает разбор refresh/fallback поведения.
-- Description cleanup baseline: продукт по-прежнему работает на canonical `questionnaire.md` -> `Final_Description.md` flow без legacy `↻ Restart attempt` semantics и без старого `description.md` label в tree/main-area.
-- Core/runtime baseline: active artifact persistence остаётся на canonical `/api/v1/orchestrator/artifact-upsert`; obsolete restart-era transport не возвращается в stable line.
-- Documentation governance: перед `doc/TODO/todo-plan.md` новый scope теперь обязан сначала жить в `doc/SolidWorks-WorkFlow/Plans/`, а реализованный SSOT остаётся только в `System/`, `Clusters/`, `Modules/`, `Contracts/`.
-- Agent instructions: единственный git-tracked источник правил — `AGENTS.md`; локальные `GEMINI.md` и `.claude/CLAUDE.md` сведены к коротким redirect-файлам.
-- Release pipeline: локальный `build-all` должен поднять unified version до `1.1.730` и пересобрать provider/core/ui/launcher артефакты уже поверх этого baseline.
+- Universal provider usage limits: `Claude`, `Codex`, and `Gemini` now use a shared module in `packages/core`, where the live provider surface is the primary source and provider-specific fallbacks remain secondary.
+- Codex live-source migration: usage limits are read through `runtime payload -> app-server account/rateLimits/read -> rollout JSONL fallback`, without a mandatory dependency on PTY/TUI `/status`.
+- WebSocket replay hardening: stateful `usage_limits` signals are replayed after websocket connect and after workspace scope changes, so `Codex` limits are not lost in `Project Manager` / `Session UI` during late attach or rebind.
+- Gemini dialog segmentation: `Gemini_Module` now flushes assistant segments on every `finished` event and no longer duplicates them with a final aggregate block when segmented replies were already emitted through dialog history.
+- Flow-node continuity turn boundary: threshold-trigger continuity for document/workflow nodes can no longer interrupt an active user one-shot turn on the first `token_usage`; rollover is allowed only after `turn_completed` or by trailing usage in pending post-turn arbitration.
+- Release validation on March 15, 2026: a manual smoke test for the `Gemini` document node confirmed that in `v1.1.730` the active one-shot turn finishes completely before continuity handoff/bootstrap begins.
+- Session UI hardening: usage limits are now cached by the canonical `providerScopeKey`, and the `Session ID bar` renders provider-aware labels from the shared snapshot instead of the old hardcoded `session/weekly`.
+- Diagnostics: the shared usage-limits facade and `Codex` integration now expose source-aware diagnostics for `cache_hit`, `fresh_read`, `fallback_cached`, and `unavailable`, making refresh/fallback behavior easier to investigate.
+- Description cleanup baseline: the product remains on the canonical `questionnaire.md` -> `Final_Description.md` flow without legacy `↻ Restart attempt` semantics and without the old `description.md` label in the tree/main area.
+- Core/runtime baseline: active artifact persistence remains on the canonical `/api/v1/orchestrator/artifact-upsert`; obsolete restart-era transport does not return to the stable line.
+- Documentation governance: before `doc/TODO/todo-plan.md`, every new scope must first live in `doc/SolidWorks-WorkFlow/Plans/`, while implemented SSOT remains only in `System/`, `Clusters/`, `Modules/`, and `Contracts/`.
+- Agent instructions: `AGENTS.md` is the only git-tracked source of instructions; local `GEMINI.md` and `.claude/CLAUDE.md` are reduced to short redirect files.
+- Release pipeline: local `build-all` must raise the unified version to `1.1.730` and rebuild provider/core/ui/launcher artifacts on top of that baseline.
 
 Previous releases (summary): the `1.1.57x–1.1.719` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, Diagram Modules / Facades workflow, workflow handoff UX, panel sync in Project Manager, and later PM hydration/workflow-state experiments that are intentionally not part of this stable baseline release.
 
@@ -38,7 +38,7 @@ cd CodeAI-Hub
 npm install
 ```
 
-Перед запуском прочитайте `doc/SolidWorks-WorkFlow/Docs_Index.md` и следуйте SSOT-контрактам из `doc/SolidWorks-WorkFlow/Contracts/` (в частности `Contracts/Workflow_CLI.md`) для настройки провайдерных CLI/SDK.
+Before starting, read `doc/SolidWorks-WorkFlow/Docs_Index.md` and follow the SSOT contracts in `doc/SolidWorks-WorkFlow/Contracts/` (especially `Contracts/Workflow_CLI.md`) to configure provider CLIs and SDKs.
 
 ## Development Workflow
 1. Install dependencies
