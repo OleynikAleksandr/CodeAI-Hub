@@ -46,8 +46,8 @@
 3. [DONE] Синхронизировать provider/routing SSOT и release-facing summary: зафиксировать Gemini-specific event order, инвариант сохранения активного dialog до post-turn boundary и обновить release summary для ручного smoke результата `1.1.730` (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `README.md`; expected commit: `docs(architecture): sync continuity routing surfaces`).
 4. [DONE] Git Commit: `docs(architecture): sync continuity routing surfaces` (hash: `9d18529d`)
 5. [DONE] Досинхронизировать release trail: отразить подтверждённую live validation `1.1.730` в `CHANGELOG.md`, исправить неполный commit trail в `Session078.md` и обновить execution-plan под новый статус документации (scope: `CHANGELOG.md`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record continuity validation sync`).
-6. [IN_PROGRESS] Git Commit: `docs(release): record continuity validation sync` (hash: TBD)
+6. [DONE] Git Commit: `docs(release): record continuity validation sync` (hash: `99059472`)
 
 ### Stream: Session report and GitHub push
-1. [TODO] Создать новый session report по post-release validation/push, зафиксировать финальный статус `v1.1.730` и подготовить ветку к публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record release 1.1.730 validation sync`).
-2. [TODO] Git Commit: `docs(session): record release 1.1.730 validation sync` (hash: TBD)
+1. [DONE] Создать новый session report по post-release validation/push, зафиксировать финальный статус `v1.1.730` и подготовить ветку к публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record release 1.1.730 validation sync`).
+2. [IN_PROGRESS] Git Commit: `docs(session): record release 1.1.730 validation sync` (hash: TBD)
