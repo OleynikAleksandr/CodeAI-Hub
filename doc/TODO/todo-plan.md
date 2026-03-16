@@ -124,9 +124,9 @@
 1. [DONE] Синхронизировать release-facing docs под visual shell: React Flow render, ELK first-layout, persisted `*.flow.json`, `Auto-layout` без semantic roundtrip (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep diagram visual shell release`).
 2. [DONE] Git Commit: `docs(release): prep diagram visual shell release` (hash: `4e54ec48`)
 3. [DONE] На чистом дереве выполнить release checklist Phase 2 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram visual shell release`).
-4. [TODO] Git Commit: `chore(release): build diagram visual shell release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: рендер `module-map.md`, рендер `facade-map.md`, `Auto-layout`, сохранение `*.flow.json`, reopen workspace с восстановлением layout (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram visual shell release`).
-6. [TODO] Git Commit: `docs(session): record diagram visual shell release` (hash: TBD)
+4. [DONE] Git Commit: `chore(release): build diagram visual shell release` (hash: `05184368`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: рендер `module-map.md`, рендер `facade-map.md`, `Auto-layout`, сохранение `*.flow.json`, reopen workspace с восстановлением layout (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram visual shell release`).
+6. [DONE] Git Commit: `docs(session): record diagram visual shell release` (hash: TBD)
 
 ---
 
