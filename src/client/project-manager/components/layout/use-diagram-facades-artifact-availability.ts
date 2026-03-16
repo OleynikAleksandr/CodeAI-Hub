@@ -9,7 +9,7 @@ export const useDiagramFacadesArtifactAvailability = (params: {
   const artifactPath = useMemo(
     () =>
       params.workspaceSlug
-        ? `.codeai-hub/${params.workspaceSlug}/diagram_facades/facades-graph.mmd`
+        ? `.codeai-hub/${params.workspaceSlug}/diagram_facades/facade-map.md`
         : null,
     [params.workspaceSlug]
   );

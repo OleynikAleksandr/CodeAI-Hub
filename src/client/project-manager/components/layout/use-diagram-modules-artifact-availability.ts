@@ -9,7 +9,7 @@ export const useDiagramModulesArtifactAvailability = (params: {
   const artifactPath = useMemo(
     () =>
       params.workspaceSlug
-        ? `.codeai-hub/${params.workspaceSlug}/diagram_modules/modules-diagram.mmd`
+        ? `.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.md`
         : null,
     [params.workspaceSlug]
   );
