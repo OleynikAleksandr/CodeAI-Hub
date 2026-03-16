@@ -8,20 +8,9 @@ import {
   StageArtifactStateView,
 } from "../shared/stage-artifact-stage-panel";
 
-const MODULES_DIAGRAM_TITLE_RE = /^%%\s+Modules Diagram/m;
-const MODULES_DIAGRAM_SUBGRAPH_RE = /subgraph\s+/g;
-
-const validateModulesDiagramMermaid = (content: string): string | null => {
+const validateModuleMapContent = (content: string): string | null => {
   if (content.trim().length === 0) {
     return "Файл пустой.";
-  }
-  if (!MODULES_DIAGRAM_TITLE_RE.test(content)) {
-    return "Нет заголовка `%% Modules Diagram`.";
-  }
-  const subgraphMatches = content.match(MODULES_DIAGRAM_SUBGRAPH_RE);
-  const subgraphCount = subgraphMatches?.length ?? 0;
-  if (subgraphCount < 1) {
-    return "Нужен минимум 1 subgraph.";
   }
   return null;
 };
@@ -33,7 +22,7 @@ export const DiagramModulesPanel: React.FC<{
   readonly workspaceSlug: string;
 }> = (props) => {
   const artifactPath = useMemo(
-    () => `.codeai-hub/${props.workspaceSlug}/diagram_modules/modules-diagram.mmd`,
+    () => `.codeai-hub/${props.workspaceSlug}/diagram_modules/module-map.md`,
     [props.workspaceSlug]
   );
   const { status, content, error } = useStageArtifactLoader({
@@ -44,7 +33,7 @@ export const DiagramModulesPanel: React.FC<{
   });
 
   const validationError = useMemo(
-    () => (content ? validateModulesDiagramMermaid(content) : null),
+    () => (content ? validateModuleMapContent(content) : null),
     [content]
   );
 
@@ -67,7 +56,7 @@ export const DiagramModulesPanel: React.FC<{
     <StageArtifactStateView
       artifactPath={artifactPath}
       content={content}
-      displayFileName="modules-diagram.mmd"
+      displayFileName="module-map.md"
       error={error}
       errorFallback="Не удалось загрузить Diagram Modules."
       onFixStart={handleFixStart}
@@ -88,10 +77,10 @@ export const DiagramModulesPanel: React.FC<{
     >
       <div style={{ display: "grid", gap: 10 }}>
         <div>
-          Здесь отображается Mermaid-диаграмма модулей: какие модули существуют, их зависимости и интерфейсы.
+          Здесь отображается canonical module map: какие модули существуют, как они сгруппированы и какие связи между ними зафиксированы в Markdown DSL.
         </div>
         <div>
-          Вы можете править <code>modules-diagram.mmd</code> вручную в редакторе или через агента (он проанализирует виртуальную симуляцию и построит граф модулей).
+          Вы можете править <code>module-map.md</code> вручную в редакторе или через агента. Visual shell появится в следующем этапе, но canonical artifact уже здесь.
         </div>
         <div>Любые изменения пометят следующие шаги как требующие синхронизации.</div>
       </div>

@@ -8,20 +8,9 @@ import {
   StageArtifactStateView,
 } from "../shared/stage-artifact-stage-panel";
 
-const FACADES_GRAPH_TITLE_RE = /^%%\s+Facades Graph/m;
-const FACADES_GRAPH_NODE_RE = /\w+\s*-->?\s*\w+/g;
-
-const validateFacadesGraphMermaid = (content: string): string | null => {
+const validateFacadeMapContent = (content: string): string | null => {
   if (content.trim().length === 0) {
     return "Файл пустой.";
-  }
-  if (!FACADES_GRAPH_TITLE_RE.test(content)) {
-    return "Нет заголовка `%% Facades Graph`.";
-  }
-  const edgeMatches = content.match(FACADES_GRAPH_NODE_RE);
-  const edgeCount = edgeMatches?.length ?? 0;
-  if (edgeCount < 1) {
-    return "Нужна минимум 1 связь между узлами.";
   }
   return null;
 };
@@ -33,7 +22,7 @@ export const DiagramFacadesPanel: React.FC<{
   readonly workspaceSlug: string;
 }> = (props) => {
   const artifactPath = useMemo(
-    () => `.codeai-hub/${props.workspaceSlug}/diagram_facades/facades-graph.mmd`,
+    () => `.codeai-hub/${props.workspaceSlug}/diagram_facades/facade-map.md`,
     [props.workspaceSlug]
   );
   const { status, content, error } = useStageArtifactLoader({
@@ -44,7 +33,7 @@ export const DiagramFacadesPanel: React.FC<{
   });
 
   const validationError = useMemo(
-    () => (content ? validateFacadesGraphMermaid(content) : null),
+    () => (content ? validateFacadeMapContent(content) : null),
     [content]
   );
 
@@ -67,7 +56,7 @@ export const DiagramFacadesPanel: React.FC<{
     <StageArtifactStateView
       artifactPath={artifactPath}
       content={content}
-      displayFileName="facades-graph.mmd"
+      displayFileName="facade-map.md"
       error={error}
       errorFallback="Не удалось загрузить Diagram Facades."
       onFixStart={handleFixStart}
@@ -88,10 +77,10 @@ export const DiagramFacadesPanel: React.FC<{
     >
       <div style={{ display: "grid", gap: 10 }}>
         <div>
-          Здесь отображается Mermaid-граф фасадов: точки входа каждого модуля, их публичные интерфейсы и связи между фасадами.
+          Здесь отображается canonical facade map: фасады модулей, типы взаимодействий и зависимости между ними в Markdown DSL.
         </div>
         <div>
-          Вы можете править <code>facades-graph.mmd</code> вручную в редакторе или через агента (он проанализирует диаграмму модулей и построит граф фасадов).
+          Вы можете править <code>facade-map.md</code> вручную в редакторе или через агента. Visual shell и layout sidecar будут добавлены следующим stream.
         </div>
         <div>Любые изменения пометят следующие шаги как требующие синхронизации.</div>
       </div>

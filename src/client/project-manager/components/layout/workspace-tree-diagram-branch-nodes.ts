@@ -49,10 +49,10 @@ export const resolveDiagramStageSyncPayload = (options: {
   if (stage === "diagram_modules") {
     const chain = resolveLatestDiagramChain(workflowState.continuity.chains, "diagram_modules");
     const last = chain?.segments.at(-1) ?? null;
-    const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/modules-diagram.mmd`;
+    const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`;
     const available = options.diagramModulesArtifactAvailable ?? false;
     return {
-      artifact: available ? { path: dmArtifactPath, label: "modules-diagram.mmd" } : null,
+      artifact: available ? { path: dmArtifactPath, label: "module-map.md" } : null,
       clearTool: available ? null : "Diagram Modules",
       session: last
         ? {
@@ -71,10 +71,10 @@ export const resolveDiagramStageSyncPayload = (options: {
 
   const chain = resolveLatestDiagramChain(workflowState.continuity.chains, "diagram_facades");
   const last = chain?.segments.at(-1) ?? null;
-  const dfArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_facades/facades-graph.mmd`;
+  const dfArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.md`;
   const available = options.diagramFacadesArtifactAvailable ?? false;
   return {
-    artifact: available ? { path: dfArtifactPath, label: "facades-graph.mmd" } : null,
+    artifact: available ? { path: dfArtifactPath, label: "facade-map.md" } : null,
     clearTool: available ? null : "Diagram Facades",
     session: last
       ? {
@@ -109,7 +109,7 @@ export const buildDiagramModulesBranchNodes = (options: {
   }
 
   const nodes: TreeNode[] = [];
-  const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/modules-diagram.mmd`;
+  const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`;
 
   const chain = resolveLatestDiagramChain(
     workflowState.continuity.chains,
@@ -120,13 +120,13 @@ export const buildDiagramModulesBranchNodes = (options: {
   if (options.diagramModulesArtifactAvailable) {
     nodes.push({
       id: "workflow:diagram_modules:artifact",
-      label: "modules-diagram.mmd",
+      label: "module-map.md",
       title: dmArtifactPath,
       status: "active",
       visualDepth: 2,
       onSelect: () => {
         dispatchStageActivated("diagram_modules");
-        options.selectArtifact(dmArtifactPath, "modules-diagram.mmd");
+        options.selectArtifact(dmArtifactPath, "module-map.md");
         // Sync: open the session for the same stage
         if (last) {
           options.dispatchDialogOpenIntent({
@@ -168,7 +168,7 @@ export const buildDiagramModulesBranchNodes = (options: {
       });
       // Sync: select the artifact for the same stage, or show DM placeholder
       if (options.diagramModulesArtifactAvailable) {
-        options.selectArtifact(dmArtifactPath, "modules-diagram.mmd");
+        options.selectArtifact(dmArtifactPath, "module-map.md");
       } else {
         options.clearArtifactWithTool("Diagram Modules");
       }
@@ -195,7 +195,7 @@ export const buildDiagramFacadesBranchNodes = (options: {
   }
 
   const nodes: TreeNode[] = [];
-  const dfArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_facades/facades-graph.mmd`;
+  const dfArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.md`;
 
   const chain = resolveLatestDiagramChain(
     workflowState.continuity.chains,
@@ -206,13 +206,13 @@ export const buildDiagramFacadesBranchNodes = (options: {
   if (options.diagramFacadesArtifactAvailable) {
     nodes.push({
       id: "workflow:diagram_facades:artifact",
-      label: "facades-graph.mmd",
+      label: "facade-map.md",
       title: dfArtifactPath,
       status: "active",
       visualDepth: 2,
       onSelect: () => {
         dispatchStageActivated("diagram_facades");
-        options.selectArtifact(dfArtifactPath, "facades-graph.mmd");
+        options.selectArtifact(dfArtifactPath, "facade-map.md");
         // Sync: open the session for the same stage
         if (last) {
           options.dispatchDialogOpenIntent({
@@ -254,7 +254,7 @@ export const buildDiagramFacadesBranchNodes = (options: {
       });
       // Sync: select the artifact for the same stage, or show DF placeholder
       if (options.diagramFacadesArtifactAvailable) {
-        options.selectArtifact(dfArtifactPath, "facades-graph.mmd");
+        options.selectArtifact(dfArtifactPath, "facade-map.md");
       } else {
         options.clearArtifactWithTool("Diagram Facades");
       }
