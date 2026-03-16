@@ -62,9 +62,9 @@
 3. [DONE] Исправить release generator `bundled-templates`, чтобы `build-core` не требовал удалённые Mermaid diagram source files (scope: `scripts/generate-bundled-templates.js`; expected commit: `fix(release): align bundled template generator with diagram dsl assets`).
 4. [DONE] Git Commit: `fix(release): align bundled template generator with diagram dsl assets` (hash: `33309be2`)
 5. [DONE] На чистом дереве выполнить release checklist Phase 1 через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram dsl foundation release`).
-6. [DONE] Git Commit: `chore(release): build diagram dsl foundation release` (hash: TBD)
-7. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: создание `module-map.md`, создание `module-map.agent-baseline.md`, повторный запуск агента с change summary, gating `Diagram Facades` по `module-map.md` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram dsl foundation release`).
-8. [TODO] Git Commit: `docs(session): record diagram dsl foundation release` (hash: TBD)
+6. [DONE] Git Commit: `chore(release): build diagram dsl foundation release` (hash: `263df6eb`)
+7. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: создание `module-map.md`, создание `module-map.agent-baseline.md`, повторный запуск агента с change summary, gating `Diagram Facades` по `module-map.md` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram dsl foundation release`).
+8. [DONE] Git Commit: `docs(session): record diagram dsl foundation release` (hash: TBD)
 
 ---
 
