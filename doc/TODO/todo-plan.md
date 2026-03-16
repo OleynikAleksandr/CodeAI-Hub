@@ -94,8 +94,8 @@
 3. [DONE] Удалить stale legacy diagram templates из `~/.codeai-hub/templates`, чтобы локальный cache не продолжал показывать `modules-diagram-prompt.md` и `modules-diagram-template.mmd` после перехода на Markdown DSL (scope: `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(core): clean up legacy diagram templates`).
 4. [DONE] Git Commit: `fix(core): clean up legacy diagram templates` (hash: `d6702846`)
 5. [DONE] Подготовить release-facing docs под corrective release: diagram contracts в core runtime, cleanup legacy template cache, ожидаемая ручная проверка запуска `Diagram Modules` / `Diagram Facades` в установленном VSIX (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram contract corrective release`).
-6. [TODO] Git Commit: `docs(release): prep diagram contract corrective release` (hash: TBD)
-7. [TODO] На чистом дереве выполнить release checklist для corrective test release, зафиксировать version bump и refreshed artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram contract corrective release`).
+6. [DONE] Git Commit: `docs(release): prep diagram contract corrective release` (hash: `f0a1175b`)
+7. [DONE] На чистом дереве выполнить release checklist для corrective test release, зафиксировать version bump и refreshed artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram contract corrective release`).
 8. [TODO] Git Commit: `chore(release): build diagram contract corrective release` (hash: TBD)
 9. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки corrective release перед возвратом к visual shell (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram contract corrective release`).
 10. [TODO] Git Commit: `docs(session): record diagram contract corrective release` (hash: TBD)
