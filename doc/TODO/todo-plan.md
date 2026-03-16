@@ -19,8 +19,8 @@
 ## Phase 1 — DSL foundation and artifact migration (owner: Oleksandr, updated: 2026-03-16)
 
 ### Stream: Diagram DSL parser foundation
-1. [TODO] Создать базовые типы DSL и parser для `Module Map`: `diagram-dsl-types.ts`, `markdown-dsl-parser.ts`, `markdown-dsl-parser.test.ts` (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`; expected commit: `feat(core): add module map dsl parser foundation`).
-2. [TODO] Git Commit: `feat(core): add module map dsl parser foundation` (hash: TBD)
+1. [DONE] Создать базовые типы DSL и parser для `Module Map`: `diagram-dsl-types.ts`, `markdown-dsl-shared.ts`, `markdown-dsl-parser.ts`, `markdown-dsl-parser.test.ts` (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`; expected commit: `feat(core): add module map dsl parser foundation`).
+2. [DONE] Git Commit: `feat(core): add module map dsl parser foundation` (hash: TBD)
 3. [TODO] Расширить parser под `Facade Map` и strict error policy для unknown/duplicate/missing-field cases (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`; expected commit: `feat(core): add facade map parser validation rules`).
 4. [TODO] Git Commit: `feat(core): add facade map parser validation rules` (hash: TBD)
 5. [TODO] Добавить serializer и revision service для детерминированного Markdown-DSL output (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `packages/core/src/workflow/diagram-dsl/diagram-revision.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`; expected commit: `feat(core): add diagram dsl serializer and revision`).
