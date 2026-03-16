@@ -84,9 +84,9 @@
 1. [DONE] Подготовить release-facing docs под PM/UI alignment для diagram workflow: запуск шагов 3-4, canonical `.md` artifacts в tree/panels/help, отсутствие активных Mermaid references в PM (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram contract alignment release`).
 2. [DONE] Git Commit: `docs(release): prep diagram contract alignment release` (hash: `33b25bf8`)
 3. [DONE] На чистом дереве выполнить release checklist для test release через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram contract alignment release`).
-4. [TODO] Git Commit: `chore(release): build diagram contract alignment release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: toolbar start для `Diagram Modules`, toolbar start для `Diagram Facades`, открытие `module-map.md` / `facade-map.md` из tree, отсутствие `.mmd` labels в PM (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram contract alignment release`).
-6. [TODO] Git Commit: `docs(session): record diagram contract alignment release` (hash: TBD)
+4. [DONE] Git Commit: `chore(release): build diagram contract alignment release` (hash: `881cd66f`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: toolbar start для `Diagram Modules`, toolbar start для `Diagram Facades`, открытие `module-map.md` / `facade-map.md` из tree, отсутствие `.mmd` labels в PM (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram contract alignment release`).
+6. [DONE] Git Commit: `docs(session): record diagram contract alignment release` (hash: TBD)
 
 ### Stream: Graph adapters
 1. [TODO] Реализовать `domainModelToReactFlow()` adapter для module map и тесты на nodes/edges projection (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add module graph adapter`).
