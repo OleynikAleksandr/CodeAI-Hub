@@ -1,8 +1,22 @@
 import type React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { domainModelToReactFlow } from "../diagram-editor/adapters/domain-model-to-react-flow";
+import { applyFacadeDomainPatch } from "../diagram-editor/apply-facade-domain-patch";
+import { applyFacadeRelationPatch } from "../diagram-editor/apply-facade-relation-patch";
 import { DiagramEditorShell } from "../diagram-editor/diagram-editor-shell";
+import {
+  mergeFacadeConflicts,
+  type FacadeSemanticPatch,
+} from "../diagram-editor/facade-conflict-merge";
+import { FacadeEntityEditor } from "../diagram-editor/facade-entity-editor";
+import { FacadeMethodsEditor } from "../diagram-editor/facade-methods-editor";
+import type { FacadeDomainPatch } from "../diagram-editor/facade-domain-patches";
+import { resolveLocalEditOrigin } from "../diagram-editor/module-origin-rules";
+import { FacadePortsEditor } from "../diagram-editor/facade-ports-editor";
+import { FacadeRelationEditor } from "../diagram-editor/facade-relation-editor";
+import { useDomainPatch } from "../diagram-editor/use-domain-patch";
 import { useDiagramLoader } from "../diagram-editor/use-diagram-loader";
 import { useDiagramPersistence } from "../diagram-editor/use-diagram-persistence";
 import { StageArtifactFixButton } from "../shared/stage-artifact-fix-button";
@@ -17,19 +31,51 @@ export const DiagramFacadesPanel: React.FC<{
   readonly workspaceSlug: string;
   readonly refreshKey?: number;
 }> = (props) => {
-  const { status, content, error, projection, artifactPath, flowSidecarPath } =
-    useDiagramLoader({
+  const {
+    status,
+    content,
+    error,
+    model,
+    projection,
+    artifactPath,
+    flowSidecarPath,
+  } = useDiagramLoader({
       refreshKey: props.refreshKey,
       stage: "diagram_facades",
       workspacePath: props.workspacePath,
       workspaceSlug: props.workspaceSlug,
     });
-  const { saveState, persistNodes } = useDiagramPersistence({
+  const {
+    saveState,
+    persistNodes,
+    persistModel,
+    markConflict,
+    clearConflict,
+  } = useDiagramPersistence({
     artifactPath,
     flowSidecarPath,
     stage: "diagram_facades",
     workspacePath: props.workspacePath,
     workspaceSlug: props.workspaceSlug,
+  });
+  const {
+    model: editableModel,
+    conflicts,
+    applyDomainPatch,
+    clearConflicts,
+  } = useDomainPatch<
+    Extract<typeof model, { readonly stage: "diagram_facades" }>,
+    FacadeSemanticPatch
+  >({
+    baseModel: model?.stage === "diagram_facades" ? model : null,
+    applyPatch: (currentModel, patch) =>
+      patch.type === "add-facade" ||
+      patch.type === "update-facade" ||
+      patch.type === "delete-facade"
+        ? applyFacadeDomainPatch(currentModel, patch as FacadeDomainPatch)
+        : applyFacadeRelationPatch(currentModel, patch),
+    mergeIncoming: (incoming, patches) => mergeFacadeConflicts({ incoming, patches }),
+    persistModel,
   });
 
   const handleFixStart = useCallback(
@@ -46,6 +92,14 @@ export const DiagramFacadesPanel: React.FC<{
     },
     []
   );
+
+  useEffect(() => {
+    if (conflicts.length > 0) {
+      markConflict();
+      return;
+    }
+    clearConflict();
+  }, [clearConflict, conflicts.length, markConflict]);
 
   if (status === "loading") {
     return <div className="pm-placeholder">Загружаем Diagram Facades…</div>;
@@ -74,22 +128,138 @@ export const DiagramFacadesPanel: React.FC<{
     );
   }
 
-  if (status === "ready" && projection) {
+  if (status === "ready" && projection && editableModel) {
+    const visualProjection = domainModelToReactFlow(editableModel);
+
     return (
       <div className="pm-details" style={{ display: "grid", gap: 12 }}>
         <div style={{ display: "grid", gap: 4 }}>
           <strong>Diagram Facades</strong>
           <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
-            <code>facade-map.md</code> рендерится в read-only visual shell;
+            <code>facade-map.md</code> рендерится в semantic visual shell;
             layout сохраняется в <code>facade-map.flow.json</code>.
           </span>
         </div>
+        <FacadeEntityEditor
+          facades={editableModel.facades}
+          onAddFacade={async (draft) => {
+            await applyDomainPatch({
+              type: "add-facade",
+              facade: draft,
+            });
+          }}
+          onDeleteFacade={async (facadeId) => {
+            await applyDomainPatch({
+              type: "delete-facade",
+              facadeId,
+            });
+          }}
+          onUpdateFacade={async (facadeId, draft) => {
+            const current = editableModel.facades.find((entity) => entity.id === facadeId);
+            if (!current) {
+              return;
+            }
+            await applyDomainPatch({
+              type: "update-facade",
+              facadeId,
+              changes: {
+                module: draft.module,
+                visibility: draft.visibility,
+                contractTargets: draft.contractTargets,
+                codeTargets: draft.codeTargets,
+                notes: draft.notes,
+                rationale: draft.rationale,
+                origin: resolveLocalEditOrigin(current.origin),
+              },
+            });
+          }}
+        />
+        <FacadeMethodsEditor
+          facades={editableModel.facades}
+          onSaveMethods={async (facadeId, methods) => {
+            const current = editableModel.facades.find((entity) => entity.id === facadeId);
+            if (!current) {
+              return;
+            }
+            await applyDomainPatch({
+              type: "update-facade",
+              facadeId,
+              changes: {
+                methods,
+                origin: resolveLocalEditOrigin(current.origin),
+              },
+            });
+          }}
+        />
+        <FacadePortsEditor
+          facades={editableModel.facades}
+          onSavePorts={async (facadeId, ports) => {
+            const current = editableModel.facades.find((entity) => entity.id === facadeId);
+            if (!current) {
+              return;
+            }
+            await applyDomainPatch({
+              type: "update-facade",
+              facadeId,
+              changes: {
+                ports,
+                origin: resolveLocalEditOrigin(current.origin),
+              },
+            });
+          }}
+        />
+        <FacadeRelationEditor
+          onAddRelation={async (draft) => {
+            await applyDomainPatch({
+              type: "add-facade-relation",
+              relation: draft,
+            });
+          }}
+          onDeleteRelation={async (relationId) => {
+            await applyDomainPatch({
+              type: "delete-facade-relation",
+              relationId,
+            });
+          }}
+          onUpdateRelation={async (relationId, draft) => {
+            const current = editableModel.relations.find(
+              (relation) => relation.id === relationId
+            );
+            if (!current) {
+              return;
+            }
+            await applyDomainPatch({
+              type: "update-facade-relation",
+              relationId,
+              changes: {
+                from: draft.from,
+                to: draft.to,
+                type: draft.type,
+                label: draft.label,
+                notes: draft.notes,
+                origin: resolveLocalEditOrigin(current.origin),
+              },
+            });
+          }}
+          relations={editableModel.relations}
+        />
+        {conflicts.length > 0 ? (
+          <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
+            <strong>Conflict merge warnings</strong>
+            {conflicts.map((message) => (
+              <div key={message}>{message}</div>
+            ))}
+            <button type="button" onClick={clearConflicts}>
+              Dismiss warnings
+            </button>
+          </div>
+        ) : null}
         <DiagramEditorShell
           initialNodes={projection.nodes}
           onNodesChange={async (nodes) => {
-            await persistNodes({ nodes, revision: projection.revision });
+            await persistNodes({ nodes, revision: visualProjection.revision });
           }}
-          projection={projection}
+          projection={visualProjection}
           saveState={saveState}
           subtitle={`${artifactPath} -> ${flowSidecarPath}`}
           title="Diagram Facades"

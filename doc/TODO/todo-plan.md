@@ -160,17 +160,9 @@
 3. [DONE] Реализовать facade relation patch model и patch application для add/update/delete facade relation (scope: `src/client/project-manager/components/diagram-editor/facade-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.test.ts`; expected commit: `feat(diagram-facades): add facade relation patch pipeline`).
 4. [DONE] Git Commit: `feat(diagram-facades): add facade relation patch pipeline` (hash: TBD)
 
-### Stream: Facade UI semantic editing
-1. [TODO] Добавить UI controls для facade create/update/delete и autosave в `facade-map.md` (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/use-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`; expected commit: `feat(diagram-facades): add facade editing ui`).
-2. [TODO] Git Commit: `feat(diagram-facades): add facade editing ui` (hash: TBD)
-3. [TODO] Добавить UI editing для methods/ports и facade relation операций без выхода за canonical DSL rules (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/facade-methods-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-ports-editor.tsx`; expected commit: `feat(diagram-facades): add methods and ports editing`).
-4. [TODO] Git Commit: `feat(diagram-facades): add methods and ports editing` (hash: TBD)
-
-### Stream: Facade conflict handling
-1. [TODO] Реализовать baseline-driven merge для `facade-map.md` и facade-specific change summary consumption (scope: `src/client/project-manager/components/diagram-editor/facade-conflict-merge.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.test.ts`; expected commit: `feat(diagram-facades): add baseline driven merges`).
-2. [TODO] Git Commit: `feat(diagram-facades): add baseline driven merges` (hash: TBD)
-3. [TODO] Привязать `Diagram Facades` к invalidation от `module-map.md` и save/conflict UX в facade panel (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/use-diagram-facades-artifact-availability.ts`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`; expected commit: `feat(diagram-facades): add invalidation and save states`).
-4. [TODO] Git Commit: `feat(diagram-facades): add invalidation and save states` (hash: TBD)
+### Stream: Facade semantic editing and conflict handling
+1. [DONE] Добавить semantic editing UI для facades, methods, ports и facade relations, autosave в `facade-map.md`, facade-specific merge warnings и save/conflict UX поверх visual shell (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/facade-entity-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-methods-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-ports-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-relation-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.ts`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.test.ts`; expected commit: `feat(diagram-facades): add semantic editing ui`).
+2. [DONE] Git Commit: `feat(diagram-facades): add semantic editing ui` (hash: TBD)
 
 ### Stream: Phase 4 release build and verification
 1. [TODO] Синхронизировать release-facing docs под full roundtrip для `Diagram Facades`: methods/ports, facade relations, autosave и повторный запуск facade-agent поверх user edits (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram facades semantic editing release`).
