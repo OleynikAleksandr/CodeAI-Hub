@@ -7,14 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.734
-- Diagram workflow now has a visible PM surface: `Diagram Modules` and `Diagram Facades` render canonical `module-map.md` / `facade-map.md` inside a read-only React Flow shell instead of showing raw Markdown text only.
-- First open without saved layout runs ELK auto-layout automatically, and the result is persisted into `module-map.flow.json` / `facade-map.flow.json`. Reopening the workspace restores the saved node positions from these sidecars without semantic writes back into the canonical `.md`.
-- Project Manager build/runtime now supports browser-safe parsing of the Markdown DSL artifacts while preserving the canonical `Revision` field, so the visual shell can project the same domain model that core runtime uses.
-- Workflow diagrams still use Markdown DSL as the canonical runtime format, with the same artifact triplet: canonical `.md`, visual-layout sidecar `*.flow.json`, and agent baseline `*.agent-baseline.md`.
-- Known follow-up: the deferred toolbar bootstrap blocker for starting a fresh `Diagram Modules` / `Diagram Facades` agent session remains outside this release scope; this release targets inspection and layout persistence for existing diagram artifacts.
+## Current Release — v1.1.735
+- `Diagram Modules` now supports semantic editing directly in Project Manager: create, update, and delete modules plus module relations without leaving the visual shell workflow surface.
+- Semantic edits autosave back into canonical `module-map.md`; the visual layout still persists separately in `module-map.flow.json`, so semantic SSOT and visual sidecar remain split.
+- Local user edits now keep `Origin: agent -> merged` when modifying agent-generated entities and relations, preserving provenance inside the Markdown DSL instead of silently rewriting everything as pure user-owned state.
+- A local merge/conflict loop now reapplies pending module semantic patches when an external diagram artifact refresh arrives during the same UI session, surfacing conflict warnings instead of dropping local edits immediately.
+- Known follow-up remains unchanged: starting a fresh toolbar session for `Diagram Modules` / `Diagram Facades` is still a separate deferred blocker. This release targets semantic roundtrip on existing diagram artifacts.
 
-Previous releases (summary): the `1.1.57x–1.1.733` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, and corrective runtime/template delivery before this visual shell release.
+Previous releases (summary): the `1.1.57x–1.1.734` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, and the first visual shell release before semantic editing.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

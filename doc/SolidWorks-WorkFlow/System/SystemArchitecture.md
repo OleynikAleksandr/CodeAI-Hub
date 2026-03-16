@@ -133,6 +133,23 @@
 - `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 - `doc/TODO/todo-plan.md`
 
+## 6.3) Module Semantic Editing Boundary (Phase 3, 2026-03-16)
+
+- `Diagram Modules` получает semantic editing поверх visual shell, но сам graph canvas остаётся read-only projection layer.
+- Источник semantic truth не меняется:
+  - пользовательские операции apply-ятся как domain patches;
+  - результат сериализуется обратно только в `module-map.md`;
+  - `module-map.flow.json` не содержит semantic edits.
+- Локальные semantic edits обязаны сохранять provenance:
+  - новый entity/relation, созданный пользователем, получает `origin: user`;
+  - изменение agent-generated entity/relation переводит `origin` в `merged`.
+- UI обязан держать локальную очередь semantic patches до тех пор, пока incoming remote refresh не будет либо совпадать с текущей локальной ревизией, либо безопасно перемержен поверх локальных патчей.
+- При конфликте patch reapply пользователь должен видеть explicit warning state; silent drop локальных semantic edits недопустим.
+
+Канонические документы:
+- `doc/TODO/todo-plan.md`
+- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
 - `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.
