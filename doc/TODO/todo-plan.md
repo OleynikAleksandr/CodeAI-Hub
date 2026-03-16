@@ -134,9 +134,9 @@
 
 ### Stream: Module semantic patch pipeline
 1. [DONE] Реализовать module patch model и `applyModuleDomainPatch()` для add/update/delete module операций (scope: `src/client/project-manager/components/diagram-editor/module-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.test.ts`; expected commit: `feat(diagram-modules): add module patch pipeline`).
-2. [DONE] Git Commit: `feat(diagram-modules): add module patch pipeline` (hash: TBD)
-3. [IN_PROGRESS] Реализовать relation patch model и `applyModuleRelationPatch()` для add/update/delete relation операций (scope: `src/client/project-manager/components/diagram-editor/module-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.test.ts`; expected commit: `feat(diagram-modules): add relation patch pipeline`).
-4. [TODO] Git Commit: `feat(diagram-modules): add relation patch pipeline` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-modules): add module patch pipeline` (hash: `8e57e6e8`)
+3. [DONE] Реализовать relation patch model и `applyModuleRelationPatch()` для add/update/delete relation операций (scope: `src/client/project-manager/components/diagram-editor/module-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.test.ts`; expected commit: `feat(diagram-modules): add relation patch pipeline`).
+4. [DONE] Git Commit: `feat(diagram-modules): add relation patch pipeline` (hash: TBD)
 
 ### Stream: Module UI semantic editing
 1. [TODO] Добавить UI controls для module create/update/delete и autosave в `module-map.md` через serializer (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-editor/use-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`; expected commit: `feat(diagram-modules): add module editing ui`).
