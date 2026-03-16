@@ -195,3 +195,17 @@ test("parseModuleMapDsl fails when metadata section is missing", () => {
 
   assert.equal(result.error.code, "missing-section");
 });
+
+test("parseModuleMapDsl accepts UTF-8 BOM and CRLF line endings", () => {
+  const result = parseModuleMapDsl(
+    `\uFEFF${MODULE_MAP_FIXTURE.replace(/\n/g, "\r\n")}`
+  );
+
+  assert.equal(result.ok, true);
+  if (!result.ok) {
+    return;
+  }
+
+  assert.equal(result.value.stage, "diagram_modules");
+  assert.equal(result.value.modules[0].id, "auth-service");
+});

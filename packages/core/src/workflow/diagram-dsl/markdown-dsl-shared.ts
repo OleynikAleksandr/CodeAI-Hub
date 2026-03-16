@@ -48,8 +48,11 @@ export type Fields = {
   readonly rationale?: string;
 };
 
+const stripUtf8Bom = (content: string): string =>
+  content.startsWith("\uFEFF") ? content.slice(1) : content;
+
 export const toLines = (content: string): readonly Line[] =>
-  content
+  stripUtf8Bom(content)
     .replace(/\r\n?/g, "\n")
     .split("\n")
     .map((text, index) => ({ number: index + 1, text }));
@@ -58,7 +61,9 @@ export const normalizeMarkdownDsl = (content: string): string => {
   const out: string[] = [];
   let lastBlank = false;
 
-  for (const line of content.replace(/\r\n?/g, "\n").split("\n")) {
+  for (const line of stripUtf8Bom(content)
+    .replace(/\r\n?/g, "\n")
+    .split("\n")) {
     const trimmed = line.trimEnd();
     const blank = trimmed.trim().length === 0;
     if (blank) {
