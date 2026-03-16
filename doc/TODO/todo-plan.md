@@ -118,10 +118,10 @@
 1. [DONE] Реализовать `*.flow.json` loader/persistence для positions/viewport без semantic writes в canonical `.md` (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`; expected commit: `feat(ui): persist diagram flow sidecar state`).
 2. [DONE] Git Commit: `feat(ui): persist diagram flow sidecar state` (hash: `2d9439e9`)
 3. [DONE] Перевести панели `Diagram Modules` и `Diagram Facades` с Mermaid-text view на read-only visual shell, а также закрыть browser-safe parser seam для PM bundle (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts`; expected commit: `feat(ui): render diagram stages via visual shell`).
-4. [TODO] Git Commit: `feat(ui): render diagram stages via visual shell` (hash: TBD)
+4. [DONE] Git Commit: `feat(ui): render diagram stages via visual shell` (hash: `a2ca1a02`)
 
 ### Stream: Phase 2 release build and verification
-1. [TODO] Синхронизировать release-facing docs под visual shell: React Flow render, ELK first-layout, persisted `*.flow.json`, `Auto-layout` без semantic roundtrip (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram visual shell release`).
+1. [DONE] Синхронизировать release-facing docs под visual shell: React Flow render, ELK first-layout, persisted `*.flow.json`, `Auto-layout` без semantic roundtrip (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep diagram visual shell release`).
 2. [TODO] Git Commit: `docs(release): prep diagram visual shell release` (hash: TBD)
 3. [TODO] На чистом дереве выполнить release checklist Phase 2 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram visual shell release`).
 4. [TODO] Git Commit: `chore(release): build diagram visual shell release` (hash: TBD)

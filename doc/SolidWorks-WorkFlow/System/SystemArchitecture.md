@@ -116,6 +116,23 @@
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 
+## 6.2) Diagram Visual Shell Boundary (Phase 2, 2026-03-16)
+
+- Project Manager для `Diagram Modules` и `Diagram Facades` теперь рендерит канонические DSL artifacts через read-only visual shell на базе React Flow.
+- Visual shell не владеет semantic state:
+  - source of truth остаётся `module-map.md` / `facade-map.md`;
+  - shell работает только как projection layer `Markdown DSL -> domain model -> flow nodes/edges`.
+- `*.flow.json` остаётся non-semantic sidecar:
+  - хранит positions/viewport для visual shell;
+  - пишется отдельно через `workspace-file-write`;
+  - не меняет содержимое канонического `.md`.
+- Если sidecar отсутствует или не совпадает по `Revision`, shell обязан построить ELK first-layout и затем сохранить новый `*.flow.json`.
+- Browser/UI bundle не должен зависеть от Node-only imports ради рендера diagram artifacts; для `Revision` browser-safe parsing path может переиспользовать уже записанное поле `- Revision:` из канонического Markdown DSL.
+
+Канонические документы:
+- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- `doc/TODO/todo-plan.md`
+
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
 - `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.

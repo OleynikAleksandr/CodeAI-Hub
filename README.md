@@ -7,14 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.733
-- Corrective release for diagram workflow delivery: the packaged core runtime now ships both `diagram-modules-agent` and `diagram-facades-agent` asset directories, so installed contract endpoints can resolve the Markdown DSL prompt/template files instead of silently missing them.
-- Template sync now removes stale home-cache artifacts `modules-diagram-prompt.md`, `modules-diagram-template.mmd`, `facades-graph-prompt.md`, and `facades-graph-template.mmd`, so local `~/.codeai-hub/templates/**` no longer advertises the removed Mermaid workflow files after the DSL migration.
-- PM/UI contract from `1.1.732` remains the expected user-facing surface: stage gating, toolbar start, tree nodes, artifact availability, and help/panel copy target `module-map.md` / `facade-map.md`.
+## Current Release — v1.1.734
+- Diagram workflow now has a visible PM surface: `Diagram Modules` and `Diagram Facades` render canonical `module-map.md` / `facade-map.md` inside a read-only React Flow shell instead of showing raw Markdown text only.
+- First open without saved layout runs ELK auto-layout automatically, and the result is persisted into `module-map.flow.json` / `facade-map.flow.json`. Reopening the workspace restores the saved node positions from these sidecars without semantic writes back into the canonical `.md`.
+- Project Manager build/runtime now supports browser-safe parsing of the Markdown DSL artifacts while preserving the canonical `Revision` field, so the visual shell can project the same domain model that core runtime uses.
 - Workflow diagrams still use Markdown DSL as the canonical runtime format, with the same artifact triplet: canonical `.md`, visual-layout sidecar `*.flow.json`, and agent baseline `*.agent-baseline.md`.
-- Release pipeline: local `build-all` must raise the unified version to `1.1.733` and rebuild provider/core/ui/launcher artifacts on top of the corrective runtime baseline.
+- Known follow-up: the deferred toolbar bootstrap blocker for starting a fresh `Diagram Modules` / `Diagram Facades` agent session remains outside this release scope; this release targets inspection and layout persistence for existing diagram artifacts.
 
-Previous releases (summary): the `1.1.57x–1.1.731` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, and PM/UI contract cleanup before the future visual shell release.
+Previous releases (summary): the `1.1.57x–1.1.733` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, and corrective runtime/template delivery before this visual shell release.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
