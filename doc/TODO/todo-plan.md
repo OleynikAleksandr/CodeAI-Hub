@@ -34,9 +34,9 @@
 
 ### Stream: Agent stubs and prompt pack assembly
 1. [DONE] Создать facade stubs для `diagram-modules-agent` и `diagram-facades-agent`, чтобы runtime имел явные точки входа под будущие asset packs (scope: `packages/agents/diagram-modules-agent/src/facade.ts`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit: `feat(agents): add diagram agent facades`).
-2. [DONE] Git Commit: `feat(agents): add diagram agent facades` (hash: TBD)
-3. [IN_PROGRESS] Завести оставшийся facade stub и подключить diagram prompt pack assembly с change summary в runtime builder, читая agent assets из `packages/agents/*/assets/` (scope: `packages/agents/diagram-facades-agent/src/index.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `feat(runtime): assemble diagram prompt packs with change summary`).
-4. [TODO] Git Commit: `feat(runtime): assemble diagram prompt packs with change summary` (hash: TBD)
+2. [DONE] Git Commit: `feat(agents): add diagram agent facades` (hash: `f6a2f221`)
+3. [DONE] Завести оставшийся facade stub и подключить diagram prompt pack assembly с change summary в runtime builder, читая agent assets из `packages/agents/*/assets/` (scope: `packages/agents/diagram-facades-agent/src/index.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `feat(runtime): assemble diagram prompt packs with change summary`).
+4. [DONE] Git Commit: `feat(runtime): assemble diagram prompt packs with change summary` (hash: TBD)
 
 ### Stream: Artifact path migration and templates
 1. [TODO] Перевести workflow artifact paths c `.mmd` на Markdown-DSL triplet в core path layer (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `refactor(workflow): migrate diagram artifact paths to markdown dsl`).

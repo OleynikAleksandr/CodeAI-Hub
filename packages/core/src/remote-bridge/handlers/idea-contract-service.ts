@@ -25,21 +25,24 @@ type WorkflowContractPayload = {
   readonly version: string;
 };
 
+type WorkflowContractPathSource = string | readonly string[];
+
 type WorkflowContractPaths = {
-  readonly prompt: string;
-  readonly schema?: string;
-  readonly template?: string;
-  readonly questionnaire?: string;
+  readonly prompt: WorkflowContractPathSource;
+  readonly schema?: WorkflowContractPathSource;
+  readonly template?: WorkflowContractPathSource;
+  readonly questionnaire?: WorkflowContractPathSource;
 };
 
 type ResolvedWorkflowContractPaths = {
-  readonly prompt: string | null;
-  readonly schema: string | null;
-  readonly template: string | null;
-  readonly questionnaire: string | null;
+  readonly prompt: readonly string[];
+  readonly schema: readonly string[];
+  readonly template: readonly string[];
+  readonly questionnaire: readonly string[];
 };
 
 const TEMPLATE_ROOT_SEGMENTS = [".codeai-hub", "templates"];
+const AGENT_ROOT_PATH = path.resolve(__dirname, "../../../../agents");
 
 const DESCRIPTION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "description/description-collector-prompt.md",
@@ -51,14 +54,31 @@ const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "virtual_simulation/virtual-simulation-prompt.md",
 };
 
+const resolveAgentAssetPath = (
+  agentName: string,
+  assetFileName: string
+): string => path.join(AGENT_ROOT_PATH, agentName, "assets", assetFileName);
+
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: "diagram_modules/modules-diagram-prompt.md",
-  template: "diagram_modules/modules-diagram-template.mmd",
+  prompt: [
+    resolveAgentAssetPath("diagram-modules-agent", "module-map-prompt.md"),
+    "diagram_modules/modules-diagram-prompt.md",
+  ],
+  template: [
+    resolveAgentAssetPath("diagram-modules-agent", "module-map-template.md"),
+    "diagram_modules/modules-diagram-template.mmd",
+  ],
 };
 
 const DIAGRAM_FACADES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: "diagram_facades/facades-graph-prompt.md",
-  template: "diagram_facades/facades-graph-template.mmd",
+  prompt: [
+    resolveAgentAssetPath("diagram-facades-agent", "facade-map-prompt.md"),
+    "diagram_facades/facades-graph-prompt.md",
+  ],
+  template: [
+    resolveAgentAssetPath("diagram-facades-agent", "facade-map-template.md"),
+    "diagram_facades/facades-graph-template.mmd",
+  ],
 };
 
 const readTextFile = async (filePath: string): Promise<string | null> => {
@@ -99,35 +119,90 @@ const resolveTemplatePath = (relativePath: string): string | null => {
   return path.join(home, ...TEMPLATE_ROOT_SEGMENTS, relativePath);
 };
 
+const resolveWorkflowContractPathCandidates = (
+  value: WorkflowContractPathSource | undefined
+): readonly string[] => {
+  if (!value) {
+    return [];
+  }
+  const candidates = Array.isArray(value) ? value : [value];
+  return candidates
+    .map((candidate) =>
+      path.isAbsolute(candidate) ? candidate : resolveTemplatePath(candidate)
+    )
+    .filter((candidate): candidate is string => Boolean(candidate));
+};
+
 const resolveWorkflowContractPaths = (
   paths: WorkflowContractPaths
 ): ResolvedWorkflowContractPaths => ({
-  prompt: resolveTemplatePath(paths.prompt),
-  schema: paths.schema ? resolveTemplatePath(paths.schema) : null,
-  template: paths.template ? resolveTemplatePath(paths.template) : null,
-  questionnaire: paths.questionnaire
-    ? resolveTemplatePath(paths.questionnaire)
-    : null,
+  prompt: resolveWorkflowContractPathCandidates(paths.prompt),
+  schema: resolveWorkflowContractPathCandidates(paths.schema),
+  template: resolveWorkflowContractPathCandidates(paths.template),
+  questionnaire: resolveWorkflowContractPathCandidates(paths.questionnaire),
 });
 
+const readFirstAvailableTextFile = async (
+  filePaths: readonly string[]
+): Promise<{
+  readonly path: string | null;
+  readonly content: string | null;
+}> => {
+  for (const filePath of filePaths) {
+    const content = await readTextFile(filePath);
+    if (content) {
+      return { path: filePath, content };
+    }
+  }
+  return { path: null, content: null };
+};
+
+const readFirstAvailableJsonFile = async (
+  filePaths: readonly string[]
+): Promise<{
+  readonly path: string | null;
+  readonly content: Record<string, unknown> | null;
+}> => {
+  for (const filePath of filePaths) {
+    const content = await readJsonFile(filePath);
+    if (content) {
+      return { path: filePath, content };
+    }
+  }
+  return { path: null, content: null };
+};
+
 const readWorkflowContractInputs = async (resolved: {
-  readonly prompt: string;
-  readonly schema: string | null;
-  readonly template: string | null;
-  readonly questionnaire: string | null;
+  readonly prompt: readonly string[];
+  readonly schema: readonly string[];
+  readonly template: readonly string[];
+  readonly questionnaire: readonly string[];
 }): Promise<{
+  readonly promptPath: string | null;
   readonly prompt: string | null;
+  readonly schemaPath: string | null;
   readonly schema: Record<string, unknown> | null;
+  readonly templatePath: string | null;
   readonly template: string | null;
+  readonly questionnairePath: string | null;
   readonly questionnaireTemplate: string | null;
 }> => {
   const [prompt, schema, template, questionnaireTemplate] = await Promise.all([
-    readTextFile(resolved.prompt),
-    resolved.schema ? readJsonFile(resolved.schema) : Promise.resolve({}),
-    resolved.template ? readTextFile(resolved.template) : Promise.resolve(""),
-    resolved.questionnaire ? readTextFile(resolved.questionnaire) : null,
+    readFirstAvailableTextFile(resolved.prompt),
+    readFirstAvailableJsonFile(resolved.schema),
+    readFirstAvailableTextFile(resolved.template),
+    readFirstAvailableTextFile(resolved.questionnaire),
   ]);
-  return { prompt, schema, template, questionnaireTemplate };
+  return {
+    promptPath: prompt.path,
+    prompt: prompt.content,
+    schemaPath: schema.path,
+    schema: schema.content,
+    templatePath: template.path,
+    template: template.content,
+    questionnairePath: questionnaireTemplate.path,
+    questionnaireTemplate: questionnaireTemplate.content,
+  };
 };
 
 const buildWorkflowContract = async (
@@ -135,22 +210,29 @@ const buildWorkflowContract = async (
 ): Promise<WorkflowContractPayload | null> => {
   const resolved = resolveWorkflowContractPaths(paths);
 
-  if (!resolved.prompt) {
+  if (resolved.prompt.length === 0) {
     return null;
   }
 
-  const { prompt, schema, template, questionnaireTemplate } =
-    await readWorkflowContractInputs({
-      prompt: resolved.prompt,
-      schema: resolved.schema,
-      template: resolved.template,
-      questionnaire: resolved.questionnaire,
-    });
+  const {
+    prompt,
+    promptPath,
+    schema,
+    template,
+    templatePath,
+    questionnairePath,
+    questionnaireTemplate,
+  } = await readWorkflowContractInputs({
+    prompt: resolved.prompt,
+    schema: resolved.schema,
+    template: resolved.template,
+    questionnaire: resolved.questionnaire,
+  });
 
   if (!prompt) {
     return null;
   }
-  if (resolved.template && !template) {
+  if (resolved.template.length > 0 && !template) {
     return null;
   }
   const resolvedSchema = schema ?? {};
@@ -170,9 +252,9 @@ const buildWorkflowContract = async (
     schema: resolvedSchema,
     template: resolvedTemplate,
     paths: {
-      prompt: resolved.prompt,
-      template: resolved.template ?? undefined,
-      questionnaire: resolved.questionnaire ?? undefined,
+      prompt: promptPath ?? "",
+      template: templatePath ?? undefined,
+      questionnaire: questionnairePath ?? undefined,
     },
     questionnaire: paths.questionnaire
       ? { templateMarkdown: questionnaireMarkdown }
