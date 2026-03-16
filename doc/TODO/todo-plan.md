@@ -146,9 +146,9 @@
 1. [DONE] Синхронизировать release-facing docs под первый full roundtrip для `Diagram Modules`: semantic edits, autosave, merge/conflict handling и повторный запуск агента поверх user changes (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep diagram modules semantic editing release`).
 2. [DONE] Git Commit: `docs(release): prep diagram modules semantic editing release` (hash: `49a87a1a`)
 3. [DONE] На чистом дереве выполнить release checklist Phase 3 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram modules semantic editing release`).
-4. [TODO] Git Commit: `chore(release): build diagram modules semantic editing release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: добавить модуль, изменить поля модуля, создать/удалить relation, убедиться что `module-map.md` обновился корректно, повторно запустить агента и проверить сохранение user changes (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules semantic editing release`).
-6. [TODO] Git Commit: `docs(session): record diagram modules semantic editing release` (hash: TBD)
+4. [DONE] Git Commit: `chore(release): build diagram modules semantic editing release` (hash: `9d624be6`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: добавить модуль, изменить поля модуля, создать/удалить relation, убедиться что `module-map.md` обновился корректно, повторно запустить агента и проверить сохранение user changes (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules semantic editing release`).
+6. [DONE] Git Commit: `docs(session): record diagram modules semantic editing release` (hash: TBD)
 
 ---
 
