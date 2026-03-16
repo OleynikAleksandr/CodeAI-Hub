@@ -15,9 +15,12 @@ export const DiagramModulesHelp: React.FC = () => (
         минимально необходимые интеграции между модулями.
       </div>
       <div>
+        Canonical artifact шага теперь хранится в Markdown DSL, а не в Mermaid.
+      </div>
+      <div>
         Итоговый артефакт:{" "}
         <code>
-          .codeai-hub/&lt;workspace&gt;/diagram_modules/modules-diagram.mmd
+          .codeai-hub/&lt;workspace&gt;/diagram_modules/module-map.md
         </code>
         .
       </div>

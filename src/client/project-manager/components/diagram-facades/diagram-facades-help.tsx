@@ -10,13 +10,13 @@ export const DiagramFacadesHelp: React.FC = () => (
         Шаг фиксирует фасады модулей и контракты взаимодействия между ними.
       </div>
       <div>
-        Диаграмма должна быть согласована с <code>modules-diagram.mmd</code> и
-        не дублировать внутренние детали реализации.
+        Артефакт должен быть согласован с <code>module-map.md</code> и не
+        дублировать внутренние детали реализации.
       </div>
       <div>
         Итоговый артефакт:{" "}
         <code>
-          .codeai-hub/&lt;workspace&gt;/diagram_facades/facades-graph.mmd
+          .codeai-hub/&lt;workspace&gt;/diagram_facades/facade-map.md
         </code>
         .
       </div>
