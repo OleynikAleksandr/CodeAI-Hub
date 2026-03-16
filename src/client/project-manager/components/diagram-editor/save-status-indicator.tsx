@@ -24,9 +24,11 @@ const SAVE_STATUS_COLOR: Record<DiagramSaveState, string> = {
 };
 
 export const SaveStatusIndicator: React.FC<{
+  readonly detail?: string | null;
   readonly state: DiagramSaveState;
-}> = ({ state }) => (
+}> = ({ detail, state }) => (
   <div
+    title={detail ?? SAVE_STATUS_COPY[state]}
     style={{
       display: "inline-flex",
       alignItems: "center",
@@ -51,5 +53,10 @@ export const SaveStatusIndicator: React.FC<{
       }}
     />
     <span>{SAVE_STATUS_COPY[state]}</span>
+    {detail ? (
+      <span style={{ color: "var(--pm-text-muted)", fontWeight: 500 }}>
+        {detail}
+      </span>
+    ) : null}
   </div>
 );

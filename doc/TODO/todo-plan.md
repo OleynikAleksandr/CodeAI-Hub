@@ -182,11 +182,11 @@
 3. [DONE] Закрыть parser edge cases для BOM / normalized metadata parsing в Markdown DSL (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts`; expected commit: `fix(core): harden diagram parser edge cases`).
 4. [DONE] Git Commit: `fix(core): harden diagram parser edge cases` (hash: `6b3abc08`)
 5. [DONE] Закрыть serializer edge cases для multiline CRLF values и canonical output normalization (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`; expected commit: `fix(core): harden diagram serializer edge cases`).
-6. [DONE] Git Commit: `fix(core): harden diagram serializer edge cases` (hash: TBD)
+6. [DONE] Git Commit: `fix(core): harden diagram serializer edge cases` (hash: `7f084ba8`)
 
 ### Stream: UX stabilization
-1. [TODO] Довести UX/error states в shared diagram editor: empty states, parse errors, conflict affordances, reopen/resume stability без монолитного компонента (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`; expected commit: `fix(ui): harden shared diagram editor ux`).
-2. [TODO] Git Commit: `fix(ui): harden shared diagram editor ux` (hash: TBD)
+1. [DONE] Довести UX/error states в shared diagram editor: empty states, parse errors, conflict affordances, reopen/resume stability без монолитного компонента (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`; expected commit: `fix(ui): harden shared diagram editor ux`).
+2. [DONE] Git Commit: `fix(ui): harden shared diagram editor ux` (hash: TBD)
 3. [TODO] Довести workflow stage UX вокруг diagram branches и availability states после semantic editing (scope: `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.ts`, `src/client/project-manager/components/layout/use-diagram-facades-artifact-availability.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix(ui): harden diagram workflow availability states`).
 4. [TODO] Git Commit: `fix(ui): harden diagram workflow availability states` (hash: TBD)
 

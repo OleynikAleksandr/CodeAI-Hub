@@ -37,11 +37,18 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     initialNodes ?? projection.nodes
   );
   const [isAutoLayoutPending, setIsAutoLayoutPending] = useState(false);
+  const [layoutError, setLayoutError] = useState<string | null>(null);
   const initialLayoutDoneRef = useRef<string | null>(null);
+  const effectiveSaveState =
+    layoutError && saveState !== "conflict" ? "error" : saveState;
 
   useEffect(() => {
     setNodes(initialNodes ?? projection.nodes);
   }, [initialNodes, projection.nodes, projection.revision]);
+
+  useEffect(() => {
+    setLayoutError(null);
+  }, [projection.revision]);
 
   useEffect(() => {
     if (initialLayoutDoneRef.current === projection.revision) {
@@ -67,6 +74,13 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
         setNodes(nextNodes);
         await onNodesChange?.(nextNodes);
       })
+      .catch((error) => {
+        if (!cancelled) {
+          setLayoutError(
+            error instanceof Error ? error.message : "Auto-layout failed"
+          );
+        }
+      })
       .finally(() => {
         if (!cancelled) {
           setIsAutoLayoutPending(false);
@@ -86,6 +100,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
 
   const handleAutoLayout = async (): Promise<void> => {
     setIsAutoLayoutPending(true);
+    setLayoutError(null);
     try {
       const nextNodes = await applyDiagramAutoLayout({
         nodes,
@@ -93,6 +108,10 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       });
       setNodes(nextNodes);
       await onNodesChange?.(nextNodes);
+    } catch (error) {
+      setLayoutError(
+        error instanceof Error ? error.message : "Auto-layout failed"
+      );
     } finally {
       setIsAutoLayoutPending(false);
     }
@@ -102,9 +121,16 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     <div style={{ display: "grid", gap: 12 }}>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <SaveStatusIndicator
-          state={isAutoLayoutPending ? "saving" : saveState}
+          detail={layoutError}
+          state={isAutoLayoutPending ? "saving" : effectiveSaveState}
         />
       </div>
+      {projection.nodes.length === 0 ? (
+        <div className="pm-placeholder">
+          Visual shell is ready, but the diagram is empty. Add semantic entities
+          or rerun the stage to populate the graph.
+        </div>
+      ) : null}
       <DiagramEditorFacade
         edges={projection.edges}
         nodes={nodes}

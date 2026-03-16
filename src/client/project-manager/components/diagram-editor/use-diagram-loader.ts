@@ -112,6 +112,7 @@ export const useDiagramLoader = (params: {
   );
   const [pollTick, setPollTick] = useState(0);
   const paths = resolveDiagramPaths(params.workspaceSlug, params.stage);
+  const contextKey = `${params.workspacePath}::${params.workspaceSlug}::${params.stage}`;
 
   useEffect(() => {
     if (status !== "missing") {
@@ -126,13 +127,18 @@ export const useDiagramLoader = (params: {
   }, [status]);
 
   useEffect(() => {
-    let cancelled = false;
     setStatus("loading");
     setContent(null);
     setError(null);
     setProjection(null);
     setModel(null);
     setFlowDocument(null);
+  }, [contextKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setStatus((current) => (current === "ready" ? current : "loading"));
+    setError(null);
 
     const httpUrl = api.getHttpUrl();
     if (!httpUrl) {
@@ -156,10 +162,17 @@ export const useDiagramLoader = (params: {
       }
 
       if (artifactResult.status === "missing") {
+        setContent(null);
+        setModel(null);
+        setProjection(null);
+        setFlowDocument(null);
         setStatus("missing");
         return;
       }
       if (artifactResult.status === "error") {
+        setModel(null);
+        setProjection(null);
+        setFlowDocument(null);
         setStatus("error");
         setError(`Не удалось загрузить ${paths.label}: ${artifactResult.error}`);
         return;
@@ -171,6 +184,9 @@ export const useDiagramLoader = (params: {
           : parseFacadeMapDsl(artifactResult.content);
 
       if (!parseResult.ok) {
+        setModel(null);
+        setProjection(null);
+        setFlowDocument(null);
         setStatus("error");
         setError(
           `Не удалось разобрать ${paths.label}: строка ${parseResult.error.line}, ${parseResult.error.message}`
@@ -219,9 +235,9 @@ export const useDiagramLoader = (params: {
     params.stage,
     params.workspacePath,
     params.workspaceSlug,
+    paths.label,
     paths.artifactPath,
     paths.flowSidecarPath,
-    paths.label,
   ]);
 
   return {
