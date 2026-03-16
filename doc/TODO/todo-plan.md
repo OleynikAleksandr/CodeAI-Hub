@@ -155,8 +155,8 @@
 ## Phase 4 — semantic editing for Diagram Facades (owner: Oleksandr, updated: 2026-03-16)
 
 ### Stream: Facade semantic patch pipeline
-1. [TODO] Реализовать facade patch model и `applyFacadeDomainPatch()` для add/update/delete facade операций (scope: `src/client/project-manager/components/diagram-editor/facade-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.test.ts`; expected commit: `feat(diagram-facades): add facade patch pipeline`).
-2. [TODO] Git Commit: `feat(diagram-facades): add facade patch pipeline` (hash: TBD)
+1. [DONE] Реализовать facade patch model и `applyFacadeDomainPatch()` для add/update/delete facade операций (scope: `src/client/project-manager/components/diagram-editor/facade-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.test.ts`; expected commit: `feat(diagram-facades): add facade patch pipeline`).
+2. [DONE] Git Commit: `feat(diagram-facades): add facade patch pipeline` (hash: TBD)
 3. [TODO] Реализовать facade relation patch model и patch application для add/update/delete facade relation (scope: `src/client/project-manager/components/diagram-editor/facade-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.test.ts`; expected commit: `feat(diagram-facades): add facade relation patch pipeline`).
 4. [TODO] Git Commit: `feat(diagram-facades): add facade relation patch pipeline` (hash: TBD)
 
