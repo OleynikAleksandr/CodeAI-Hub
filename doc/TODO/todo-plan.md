@@ -156,9 +156,9 @@
 
 ### Stream: Facade semantic patch pipeline
 1. [DONE] Реализовать facade patch model и `applyFacadeDomainPatch()` для add/update/delete facade операций (scope: `src/client/project-manager/components/diagram-editor/facade-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.test.ts`; expected commit: `feat(diagram-facades): add facade patch pipeline`).
-2. [DONE] Git Commit: `feat(diagram-facades): add facade patch pipeline` (hash: TBD)
-3. [TODO] Реализовать facade relation patch model и patch application для add/update/delete facade relation (scope: `src/client/project-manager/components/diagram-editor/facade-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.test.ts`; expected commit: `feat(diagram-facades): add facade relation patch pipeline`).
-4. [TODO] Git Commit: `feat(diagram-facades): add facade relation patch pipeline` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-facades): add facade patch pipeline` (hash: `84e23463`)
+3. [DONE] Реализовать facade relation patch model и patch application для add/update/delete facade relation (scope: `src/client/project-manager/components/diagram-editor/facade-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.test.ts`; expected commit: `feat(diagram-facades): add facade relation patch pipeline`).
+4. [DONE] Git Commit: `feat(diagram-facades): add facade relation patch pipeline` (hash: TBD)
 
 ### Stream: Facade UI semantic editing
 1. [TODO] Добавить UI controls для facade create/update/delete и autosave в `facade-map.md` (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/use-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`; expected commit: `feat(diagram-facades): add facade editing ui`).
