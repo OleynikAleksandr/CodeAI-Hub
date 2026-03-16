@@ -2,77 +2,185 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Plans/FlowNodeContinuity_OneShotBoundary_Architecture.md`, `doc/Sessions/Session077.md`, `doc/Sessions/Session078.md`.
-- Execution-plan основан на planning-доке `doc/SolidWorks-WorkFlow/Plans/FlowNodeContinuity_OneShotBoundary_Architecture.md`.
-- TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи.
-- Каждая микро-задача затрагивает не более 3 файлов или пакетов.
-- Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
-- Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
-- Husky gates не обходить (`--no-verify` запрещен).
-- Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита.
-- Таргетные сборки выполнять перед закрытием затронутого Stream/Phase.
+- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/Sessions/Session082.md`
+- Execution-plan основан на planning-доке `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи
+- Каждая микро-задача затрагивает не более 3 файлов или пакетов
+- Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
+- Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
+- Husky gates не обходить (`--no-verify` запрещен)
+- Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
+- Таргетные сборки выполнять перед закрытием затронутого Stream/Phase
+- После каждой Phase обязателен отдельный release stream: актуализация docs -> `./scripts/build-all.sh` -> `./scripts/build-release.sh --use-current-version` -> session report с ручным checklist того, что пользователь должен проверить
+- Полностью реализованный `todo-plan.md` переносится в `doc/TODO/Archive/`, после чего на его месте создаётся новый план под следующий scope
 
 ---
 
-## Phase 1 — Defer flow-node rollover to the one-shot boundary (owner: Oleksandr, updated: 2026-03-15)
+## Phase 1 — DSL foundation and artifact migration (owner: Oleksandr, updated: 2026-03-16)
 
-### Stream: Core post-turn arbitration for document nodes
-1. [DONE] Перестроить flow-node continuity arbitration в Core: threshold breach на `token_usage` должен только кешироваться во время активного one-shot turn, а `rolloverFlowNodeSession()` должен запускаться только после `turn_completed` или после trailing `token_usage` уже в pending post-turn state (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(core): defer continuity rollover until turn completion`).
-2. [DONE] Git Commit: `fix(core): defer continuity rollover until turn completion` (hash: `13a8092b`)
-3. [DONE] Добавить regression tests на оба порядка provider events: `Gemini` (`token_usage -> turn_completed`) и `Claude/Codex` (`turn_completed -> token_usage`), чтобы rollover не мог стартовать внутри незавершённого one-shot turn и при этом поздний usage всё ещё завершал pending arbitration (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test(core): guard flow-node rollover turn boundary`).
-4. [DONE] Git Commit: `test(core): guard flow-node rollover turn boundary` (hash: `e171e6a0`)
-5. [DONE] Синхронизировать continuity SSOT и session report по новому инварианту: flow-node rollover начинается только после завершения текущего one-shot turn; зафиксировать таргетную верификацию и результаты smoke после фикса (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(core): record flow-node continuity turn boundary`).
-6. [DONE] Git Commit: `docs(core): record flow-node continuity turn boundary` (hash: `f6ac1d8f`)
+### Stream: Diagram DSL parser foundation
+1. [TODO] Создать базовые типы DSL и parser для `Module Map`: `diagram-dsl-types.ts`, `markdown-dsl-parser.ts`, `markdown-dsl-parser.test.ts` (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`; expected commit: `feat(core): add module map dsl parser foundation`).
+2. [TODO] Git Commit: `feat(core): add module map dsl parser foundation` (hash: TBD)
+3. [TODO] Расширить parser под `Facade Map` и strict error policy для unknown/duplicate/missing-field cases (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`; expected commit: `feat(core): add facade map parser validation rules`).
+4. [TODO] Git Commit: `feat(core): add facade map parser validation rules` (hash: TBD)
+5. [TODO] Добавить serializer и revision service для детерминированного Markdown-DSL output (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `packages/core/src/workflow/diagram-dsl/diagram-revision.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`; expected commit: `feat(core): add diagram dsl serializer and revision`).
+6. [TODO] Git Commit: `feat(core): add diagram dsl serializer and revision` (hash: TBD)
+
+### Stream: Baseline diff and change summary
+1. [TODO] Реализовать baseline diff service и типы structured `ChangeSummary` для `module-map.md` (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add module map baseline diff service`).
+2. [TODO] Git Commit: `feat(core): add module map baseline diff service` (hash: TBD)
+3. [TODO] Расширить baseline diff service под `facade-map.md` и field-level modified summaries (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add facade map change summaries`).
+4. [TODO] Git Commit: `feat(core): add facade map change summaries` (hash: TBD)
+
+### Stream: Agent stubs and prompt pack assembly
+1. [TODO] Создать facade stubs для `diagram-modules-agent` и `diagram-facades-agent`, чтобы runtime имел явные точки входа под будущие asset packs (scope: `packages/agents/diagram-modules-agent/src/facade.ts`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit: `feat(agents): add diagram agent facades`).
+2. [TODO] Git Commit: `feat(agents): add diagram agent facades` (hash: TBD)
+3. [TODO] Завести оставшийся facade stub и подключить diagram prompt pack assembly с change summary в runtime builder, читая agent assets из `packages/agents/*/assets/` (scope: `packages/agents/diagram-facades-agent/src/index.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `feat(runtime): assemble diagram prompt packs with change summary`).
+4. [TODO] Git Commit: `feat(runtime): assemble diagram prompt packs with change summary` (hash: TBD)
+
+### Stream: Artifact path migration and templates
+1. [TODO] Перевести workflow artifact paths c `.mmd` на Markdown-DSL triplet в core path layer (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `refactor(workflow): migrate diagram artifact paths to markdown dsl`).
+2. [TODO] Git Commit: `refactor(workflow): migrate diagram artifact paths to markdown dsl` (hash: TBD)
+3. [TODO] Создать module-agent asset pack part 1 в agent package: prompt, template и field-reference для `Diagram Modules` (scope: `packages/agents/diagram-modules-agent/assets/module-map-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-map-template.md`, `packages/agents/diagram-modules-agent/assets/module-map-field-reference.md`; expected commit: `feat(agents): add module diagram asset pack part 1`).
+4. [TODO] Git Commit: `feat(agents): add module diagram asset pack part 1` (hash: TBD)
+5. [TODO] Создать module-agent merge-rules asset и удалить legacy module Mermaid source files, чтобы orphaned `.mmd` не оставались в репозитории (scope: `packages/agents/diagram-modules-agent/assets/module-map-merge-rules.md`, `packages/core/src/templates/source/modules-diagram-prompt.md`, `packages/core/src/templates/source/modules-diagram-template.mmd`; expected commit: `refactor(agents): replace module mermaid assets with agent pack`).
+6. [TODO] Git Commit: `refactor(agents): replace module mermaid assets with agent pack` (hash: TBD)
+7. [TODO] Создать facade-agent asset pack part 1 в agent package: prompt, template и field-reference для `Diagram Facades` (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `packages/agents/diagram-facades-agent/assets/facade-map-template.md`, `packages/agents/diagram-facades-agent/assets/facade-map-field-reference.md`; expected commit: `feat(agents): add facade diagram asset pack part 1`).
+8. [TODO] Git Commit: `feat(agents): add facade diagram asset pack part 1` (hash: TBD)
+9. [TODO] Создать facade-agent merge-rules asset и удалить legacy facade Mermaid source files, чтобы orphaned `.mmd` не оставались в репозитории (scope: `packages/agents/diagram-facades-agent/assets/facade-map-merge-rules.md`, `packages/core/src/templates/source/facades-graph-prompt.md`, `packages/core/src/templates/source/facades-graph-template.mmd`; expected commit: `refactor(agents): replace facade mermaid assets with agent pack`).
+10. [TODO] Git Commit: `refactor(agents): replace facade mermaid assets with agent pack` (hash: TBD)
+11. [TODO] Обновить template registry/runtime references после удаления Mermaid assets и перевода diagram prompts на agent packages (scope: `packages/core/src/templates/bundled-templates.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(runtime): point diagram template registry to agent asset packs`).
+12. [TODO] Git Commit: `refactor(runtime): point diagram template registry to agent asset packs` (hash: TBD)
+
+### Stream: SSOT migration
+1. [TODO] Обновить SSOT шагов 3-4 и workflow artifact contract под `module-map.md` / `facade-map.md` / `*.agent-baseline.md` (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(workflow): sync diagram dsl artifact contract`).
+2. [TODO] Git Commit: `docs(workflow): sync diagram dsl artifact contract` (hash: TBD)
+
+### Stream: Phase 1 release build and verification
+1. [TODO] Подготовить release-facing docs под Phase 1 foundation: новые canonical artifacts, baseline diff, prompt pack assets, отсутствие `.mmd` в workflow (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram dsl foundation release`).
+2. [TODO] Git Commit: `docs(release): prep diagram dsl foundation release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist Phase 1 через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram dsl foundation release`).
+4. [TODO] Git Commit: `chore(release): build diagram dsl foundation release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: создание `module-map.md`, создание `module-map.agent-baseline.md`, повторный запуск агента с change summary, gating `Diagram Facades` по `module-map.md` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram dsl foundation release`).
+6. [TODO] Git Commit: `docs(session): record diagram dsl foundation release` (hash: TBD)
 
 ---
 
-## Phase 2 — Local release build after continuity boundary fix (owner: Oleksandr, updated: 2026-03-15)
+## Phase 2 — visual shell with React Flow and ELK (owner: Oleksandr, updated: 2026-03-16)
 
-### Stream: Release assembly for flow-node continuity fix
-1. [DONE] После закрытия Core fix/tests/docs актуализировать release-facing docs под следующий локальный релиз с continuity boundary fix: синхронизировать `README.md`, `CHANGELOG.md` и execution-plan перед сборкой, зафиксировав новый product delta (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep flow-node continuity boundary release`).
-2. [DONE] Git Commit: `docs(release): prep flow-node continuity boundary release` (hash: `9065c280`)
-3. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать новый unified/workspace version, обновлённые manifests и release tarball-артефакты по release checklist (scope: `package.json`, workspace `package.json`, `assets/**/manifest.json`, `doc/tmp/releases/`; expected commit: `chore(release): build flow-node continuity boundary release`).
-4. [DONE] Git Commit: `chore(release): build flow-node continuity boundary release` (hash: `5b25b8cb`)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и синхронизировать session report + execution-plan по финальному релизному состоянию, включая результаты релизной проверки (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record flow-node continuity boundary release`).
-6. [DONE] Git Commit: `docs(session): record flow-node continuity boundary release` (hash: `78e0dbd4`)
+### Stream: Graph adapters
+1. [TODO] Реализовать `domainModelToReactFlow()` adapter для module map и тесты на nodes/edges projection (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add module graph adapter`).
+2. [TODO] Git Commit: `feat(ui): add module graph adapter` (hash: TBD)
+3. [TODO] Расширить graph adapter под facade map и общий stage-aware transform contract (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add facade graph adapter`).
+4. [TODO] Git Commit: `feat(ui): add facade graph adapter` (hash: TBD)
+
+### Stream: Editor shell and layout facade
+1. [TODO] Подключить `@xyflow/react` и `elkjs`, создать shared `DiagramEditorFacade` и `DiagramLayoutFacade` как изолирующий слой поверх внешних библиотек (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-layout-facade.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `feat(ui): add shared diagram editor facade`).
+2. [TODO] Git Commit: `feat(ui): add shared diagram editor facade` (hash: TBD)
+3. [TODO] Реализовать read-only diagram shell с ELK first-layout и кнопкой `Auto-layout` (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/auto-layout-button.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`; expected commit: `feat(ui): add diagram editor visual shell`).
+4. [TODO] Git Commit: `feat(ui): add diagram editor visual shell` (hash: TBD)
+
+### Stream: Flow sidecar persistence and panels
+1. [TODO] Реализовать `*.flow.json` loader/persistence для positions/viewport без semantic writes в canonical `.md` (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`; expected commit: `feat(ui): persist diagram flow sidecar state`).
+2. [TODO] Git Commit: `feat(ui): persist diagram flow sidecar state` (hash: TBD)
+3. [TODO] Перевести панели `Diagram Modules` и `Diagram Facades` с Mermaid-text view на read-only visual shell (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit: `feat(ui): render diagram stages via visual shell`).
+4. [TODO] Git Commit: `feat(ui): render diagram stages via visual shell` (hash: TBD)
+
+### Stream: Phase 2 release build and verification
+1. [TODO] Синхронизировать release-facing docs под visual shell: React Flow render, ELK first-layout, persisted `*.flow.json`, `Auto-layout` без semantic roundtrip (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram visual shell release`).
+2. [TODO] Git Commit: `docs(release): prep diagram visual shell release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist Phase 2 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram visual shell release`).
+4. [TODO] Git Commit: `chore(release): build diagram visual shell release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: рендер `module-map.md`, рендер `facade-map.md`, `Auto-layout`, сохранение `*.flow.json`, reopen workspace с восстановлением layout (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram visual shell release`).
+6. [TODO] Git Commit: `docs(session): record diagram visual shell release` (hash: TBD)
 
 ---
 
-## Phase 3 — Post-release SSOT sync and GitHub publication (owner: Oleksandr, updated: 2026-03-15)
+## Phase 3 — semantic editing for Diagram Modules (owner: Oleksandr, updated: 2026-03-16)
 
-### Stream: System/Core continuity invariants
-1. [DONE] Синхронизировать системный и кластерный SSOT под релиз `1.1.730`: закрепить, что threshold-driven continuity использует `token_usage` только как post-turn arbitration input, а Core обязан быть устойчивым к обоим provider event orders и очищать turn-scoped usage cache после завершения решения (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): sync post-turn continuity invariants`).
-2. [DONE] Git Commit: `docs(architecture): sync post-turn continuity invariants` (hash: `3f29b7ae`)
-3. [DONE] Синхронизировать provider/routing SSOT и release-facing summary: зафиксировать Gemini-specific event order, инвариант сохранения активного dialog до post-turn boundary и обновить release summary для ручного smoke результата `1.1.730` (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `README.md`; expected commit: `docs(architecture): sync continuity routing surfaces`).
-4. [DONE] Git Commit: `docs(architecture): sync continuity routing surfaces` (hash: `9d18529d`)
-5. [DONE] Досинхронизировать release trail: отразить подтверждённую live validation `1.1.730` в `CHANGELOG.md`, исправить неполный commit trail в `Session078.md` и обновить execution-plan под новый статус документации (scope: `CHANGELOG.md`, `doc/Sessions/Session078.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record continuity validation sync`).
-6. [DONE] Git Commit: `docs(release): record continuity validation sync` (hash: `99059472`)
+### Stream: Module semantic patch pipeline
+1. [TODO] Реализовать module patch model и `applyModuleDomainPatch()` для add/update/delete module операций (scope: `src/client/project-manager/components/diagram-editor/module-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.test.ts`; expected commit: `feat(diagram-modules): add module patch pipeline`).
+2. [TODO] Git Commit: `feat(diagram-modules): add module patch pipeline` (hash: TBD)
+3. [TODO] Реализовать relation patch model и `applyModuleRelationPatch()` для add/update/delete relation операций (scope: `src/client/project-manager/components/diagram-editor/module-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.test.ts`; expected commit: `feat(diagram-modules): add relation patch pipeline`).
+4. [TODO] Git Commit: `feat(diagram-modules): add relation patch pipeline` (hash: TBD)
 
-### Stream: Session report and GitHub push
-1. [DONE] Создать новый session report по post-release validation/push, зафиксировать финальный статус `v1.1.730` и подготовить ветку к публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record release 1.1.730 validation sync`).
-2. [DONE] Git Commit: `docs(session): record release 1.1.730 validation sync` (hash: `6dada58c`)
+### Stream: Module UI semantic editing
+1. [TODO] Добавить UI controls для module create/update/delete и autosave в `module-map.md` через serializer (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-editor/use-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`; expected commit: `feat(diagram-modules): add module editing ui`).
+2. [TODO] Git Commit: `feat(diagram-modules): add module editing ui` (hash: TBD)
+3. [TODO] Добавить UI controls для relation create/update/delete и `Origin: agent -> merged` transitions при local semantic edits (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-editor/use-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/module-origin-rules.ts`; expected commit: `feat(diagram-modules): add relation editing ui`).
+4. [TODO] Git Commit: `feat(diagram-modules): add relation editing ui` (hash: TBD)
 
-### Stream: GitHub push quality-gate unblock
-1. [DONE] Устранить pre-push blocker по `jscpd`: дедуплицировать общий UI control-style слой для Codex/Gemini model cards без изменения runtime-поведения, чтобы `git push` снова проходил обязательный duplication gate (scope: `src/client/ui/src/components/settings/shared-model-card-styles.ts`, `src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts`, `src/client/ui/src/components/settings/gemini-default-model/gemini-model-card-styles.ts`; expected commit: `refactor(ui): dedupe model control styles`).
-2. [DONE] Git Commit: `refactor(ui): dedupe model control styles` (hash: `8fe5d88a`)
-3. [DONE] Обновить session trail после unblock-а: зафиксировать в `Session079.md` причину проваленного pre-push, результирующий refactor и готовность ветки к повторной публикации на GitHub (scope: `doc/Sessions/Session079.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record push gate unblock`).
-4. [DONE] Git Commit: `docs(session): record push gate unblock` (hash: `732522f0`)
+### Stream: Module conflict handling
+1. [TODO] Реализовать baseline-driven merge для `module-map.md` и safe auto-merge path при внешних agent writes (scope: `src/client/project-manager/components/diagram-editor/module-conflict-merge.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `src/client/project-manager/components/diagram-editor/module-conflict-merge.test.ts`; expected commit: `feat(diagram-modules): add baseline driven merges`).
+2. [TODO] Git Commit: `feat(diagram-modules): add baseline driven merges` (hash: TBD)
+3. [TODO] Реализовать save-status machine и conflict state UI для `Diagram Modules` (scope: `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`; expected commit: `feat(diagram-modules): add save and conflict states`).
+4. [TODO] Git Commit: `feat(diagram-modules): add save and conflict states` (hash: TBD)
 
-### Stream: Public markdown English normalization
-1. [DONE] Перевести публичные markdown-файлы `CHANGELOG.md` и `scripts/README.md` полностью на английский язык, чтобы GitHub-facing docs вне `doc/` не содержали кириллицу; одновременно обновить execution-plan под новый docs-scope (scope: `CHANGELOG.md`, `scripts/README.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(public): translate public markdown to English`).
-2. [DONE] Git Commit: `docs(public): translate public markdown to English` (hash: `2e4da25c`)
-3. [DONE] Зафиксировать session report по public-docs language normalization и подготовить ветку к повторному push после перевода GitHub-facing markdown-файлов (scope: `doc/Sessions/Session080.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record public docs English normalization`).
-4. [DONE] Git Commit: `docs(session): record public docs English normalization` (hash: `97bf7f23`)
+### Stream: Phase 3 release build and verification
+1. [TODO] Синхронизировать release-facing docs под первый full roundtrip для `Diagram Modules`: semantic edits, autosave, merge/conflict handling и повторный запуск агента поверх user changes (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram modules semantic editing release`).
+2. [TODO] Git Commit: `docs(release): prep diagram modules semantic editing release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist Phase 3 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram modules semantic editing release`).
+4. [TODO] Git Commit: `chore(release): build diagram modules semantic editing release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: добавить модуль, изменить поля модуля, создать/удалить relation, убедиться что `module-map.md` обновился корректно, повторно запустить агента и проверить сохранение user changes (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules semantic editing release`).
+6. [TODO] Git Commit: `docs(session): record diagram modules semantic editing release` (hash: TBD)
 
-### Stream: GitHub release publication for v1.1.730
-1. [DONE] Проверить готовность GitHub publication path для `v1.1.730`: наличие VSIX, отсутствие уже опубликованного release/tag collision и доступность GitHub credentials через локальный credential helper/CLI path (scope: local release artifacts + remote release metadata; expected commit: no commit).
-2. [DONE] Используя явный запрос пользователя, опубликовать GitHub release `v1.1.730` с release notes из `CHANGELOG.md` и приложить `codeai-hub-1.1.730.vsix` как артефакт (scope: GitHub release metadata + release asset; expected commit: no commit).
-3. [DONE] После пересборки `build-release.sh --use-current-version` зафиксировать regenerated tracked webview bundle, чтобы source state совпадал со свежим VSIX, опубликованным в GitHub release (scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`; expected commit: `build(webview): refresh bundled react-chat output`).
-4. [DONE] Git Commit: `build(webview): refresh bundled react-chat output` (hash: `ebcb0a32`)
-5. [DONE] Зафиксировать session report по GitHub release publication, записать release URL/итоговый статус и синхронизировать execution-plan (scope: `doc/Sessions/Session081.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record GitHub release publication`).
-6. [DONE] Git Commit: `docs(session): record GitHub release publication` (hash: `8c4c507d`)
+---
 
-### Stream: GitHub release rollback for active development
-1. [DONE] По явному запросу пользователя удалить ошибочно опубликованный GitHub release `v1.1.730` и связанный remote tag, чтобы development line снова не имела публичного release во время активной разработки (scope: GitHub release metadata + remote tag; expected commit: no commit).
-2. [DONE] Зафиксировать session report по rollback-у GitHub release и синхронизировать execution-plan под текущее состояние без опубликованного release (scope: `doc/Sessions/Session082.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record GitHub release rollback`).
-3. [IN_PROGRESS] Git Commit: `docs(session): record GitHub release rollback` (hash: TBD)
+## Phase 4 — semantic editing for Diagram Facades (owner: Oleksandr, updated: 2026-03-16)
+
+### Stream: Facade semantic patch pipeline
+1. [TODO] Реализовать facade patch model и `applyFacadeDomainPatch()` для add/update/delete facade операций (scope: `src/client/project-manager/components/diagram-editor/facade-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-domain-patch.test.ts`; expected commit: `feat(diagram-facades): add facade patch pipeline`).
+2. [TODO] Git Commit: `feat(diagram-facades): add facade patch pipeline` (hash: TBD)
+3. [TODO] Реализовать facade relation patch model и patch application для add/update/delete facade relation (scope: `src/client/project-manager/components/diagram-editor/facade-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-facade-relation-patch.test.ts`; expected commit: `feat(diagram-facades): add facade relation patch pipeline`).
+4. [TODO] Git Commit: `feat(diagram-facades): add facade relation patch pipeline` (hash: TBD)
+
+### Stream: Facade UI semantic editing
+1. [TODO] Добавить UI controls для facade create/update/delete и autosave в `facade-map.md` (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/use-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`; expected commit: `feat(diagram-facades): add facade editing ui`).
+2. [TODO] Git Commit: `feat(diagram-facades): add facade editing ui` (hash: TBD)
+3. [TODO] Добавить UI editing для methods/ports и facade relation операций без выхода за canonical DSL rules (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/facade-methods-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-ports-editor.tsx`; expected commit: `feat(diagram-facades): add methods and ports editing`).
+4. [TODO] Git Commit: `feat(diagram-facades): add methods and ports editing` (hash: TBD)
+
+### Stream: Facade conflict handling
+1. [TODO] Реализовать baseline-driven merge для `facade-map.md` и facade-specific change summary consumption (scope: `src/client/project-manager/components/diagram-editor/facade-conflict-merge.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.test.ts`; expected commit: `feat(diagram-facades): add baseline driven merges`).
+2. [TODO] Git Commit: `feat(diagram-facades): add baseline driven merges` (hash: TBD)
+3. [TODO] Привязать `Diagram Facades` к invalidation от `module-map.md` и save/conflict UX в facade panel (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/use-diagram-facades-artifact-availability.ts`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`; expected commit: `feat(diagram-facades): add invalidation and save states`).
+4. [TODO] Git Commit: `feat(diagram-facades): add invalidation and save states` (hash: TBD)
+
+### Stream: Phase 4 release build and verification
+1. [TODO] Синхронизировать release-facing docs под full roundtrip для `Diagram Facades`: methods/ports, facade relations, autosave и повторный запуск facade-agent поверх user edits (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram facades semantic editing release`).
+2. [TODO] Git Commit: `docs(release): prep diagram facades semantic editing release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist Phase 4 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram facades semantic editing release`).
+4. [TODO] Git Commit: `chore(release): build diagram facades semantic editing release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: построение `facade-map.md` из `module-map.md`, редактирование methods/ports, создание facade relation, повторный запуск facade-agent с сохранением user changes, проверка `Diagram Facades = OUTDATED` после изменения `module-map.md` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram facades semantic editing release`).
+6. [TODO] Git Commit: `docs(session): record diagram facades semantic editing release` (hash: TBD)
+
+---
+
+## Phase 5 — hardening, tests and workflow stabilization (owner: Oleksandr, updated: 2026-03-16)
+
+### Stream: Core and runtime hardening
+1. [TODO] Добавить интеграционные тесты concurrent agent/UI writes и baseline-driven merge invariants вне foundation unit-тестов (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.test.ts`; expected commit: `test(diagrams): cover concurrent merge scenarios`).
+2. [TODO] Git Commit: `test(diagrams): cover concurrent merge scenarios` (hash: TBD)
+3. [TODO] Закрыть edge-case parser/serializer/runtime regressions, обнаруженные в фазах 1-4, и синхронизировать hardening contracts (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `fix(core): harden diagram artifact runtime edge cases`).
+4. [TODO] Git Commit: `fix(core): harden diagram artifact runtime edge cases` (hash: TBD)
+
+### Stream: UX stabilization
+1. [TODO] Довести UX/error states в shared diagram editor: empty states, parse errors, conflict affordances, reopen/resume stability без монолитного компонента (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`; expected commit: `fix(ui): harden shared diagram editor ux`).
+2. [TODO] Git Commit: `fix(ui): harden shared diagram editor ux` (hash: TBD)
+3. [TODO] Довести workflow stage UX вокруг diagram branches и availability states после semantic editing (scope: `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.ts`, `src/client/project-manager/components/layout/use-diagram-facades-artifact-availability.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix(ui): harden diagram workflow availability states`).
+4. [TODO] Git Commit: `fix(ui): harden diagram workflow availability states` (hash: TBD)
+
+### Stream: Phase 5 release build and final verification
+1. [TODO] Синхронизировать финальные release-facing docs под устойчивый workflow шагов 3-4 и зафиксировать полный manual verification flow в `README.md`, `CHANGELOG.md` и execution-plan (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep interactive diagram workflow stabilization release`).
+2. [TODO] Git Commit: `docs(release): prep interactive diagram workflow stabilization release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить финальный release checklist через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build interactive diagram workflow stabilization release`).
+4. [TODO] Git Commit: `chore(release): build interactive diagram workflow stabilization release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать финальный session report и полный checklist ручной проверки: end-to-end flow `Description -> Virtual Simulation -> Diagram Modules -> Diagram Facades`, reopen/resume, autosave, conflict UX, repeated agent runs, gating/OUTDATED propagation и отсутствие regressions в release build (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record interactive diagram workflow stabilization release`).
+6. [TODO] Git Commit: `docs(session): record interactive diagram workflow stabilization release` (hash: TBD)
+
+---
+
+## Notes
+- Planning doc for this scope: `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- Session reports to review before the first implementation stream: `doc/Sessions/Session078.md`, `doc/Sessions/Session079.md`, `doc/Sessions/Session080.md`, `doc/Sessions/Session081.md`, `doc/Sessions/Session082.md`
+- Target verification principle for the whole scope: после каждой Phase должен существовать новый локальный релиз, в котором пользователь может проверить либо новый artifact/gating behavior, либо новый visual layer, либо новый semantic roundtrip, а не ждать финала всего scope
