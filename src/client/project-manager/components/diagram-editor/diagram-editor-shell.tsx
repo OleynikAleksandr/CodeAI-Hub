@@ -1,0 +1,117 @@
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import type {
+  DiagramFlowNode,
+  DiagramFlowProjection,
+} from "./adapters/domain-model-to-react-flow.types";
+import { DiagramEditorFacade } from "./diagram-editor-facade";
+import { applyDiagramAutoLayout } from "./diagram-layout-facade";
+import {
+  SaveStatusIndicator,
+  type DiagramSaveState,
+} from "./save-status-indicator";
+
+type DiagramEditorShellProps = {
+  readonly projection: DiagramFlowProjection;
+  readonly title: string;
+  readonly subtitle?: string;
+  readonly initialNodes?: readonly DiagramFlowNode[];
+  readonly saveState?: DiagramSaveState;
+  readonly onNodesChange?: (
+    nodes: readonly DiagramFlowNode[]
+  ) => void | Promise<void>;
+};
+
+const hasMeaningfulPositions = (nodes: readonly DiagramFlowNode[]): boolean =>
+  nodes.some((node) => node.position.x !== 0 || node.position.y !== 0);
+
+export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
+  projection,
+  title,
+  subtitle,
+  initialNodes,
+  saveState = "idle",
+  onNodesChange,
+}) => {
+  const [nodes, setNodes] = useState<readonly DiagramFlowNode[]>(
+    initialNodes ?? projection.nodes
+  );
+  const [isAutoLayoutPending, setIsAutoLayoutPending] = useState(false);
+  const initialLayoutDoneRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    setNodes(initialNodes ?? projection.nodes);
+  }, [initialNodes, projection.nodes, projection.revision]);
+
+  useEffect(() => {
+    if (initialLayoutDoneRef.current === projection.revision) {
+      return;
+    }
+    if (initialNodes && hasMeaningfulPositions(initialNodes)) {
+      initialLayoutDoneRef.current = projection.revision;
+      return;
+    }
+
+    let cancelled = false;
+    initialLayoutDoneRef.current = projection.revision;
+    setIsAutoLayoutPending(true);
+
+    applyDiagramAutoLayout({
+      nodes: projection.nodes,
+      edges: projection.edges,
+    })
+      .then(async (nextNodes) => {
+        if (cancelled) {
+          return;
+        }
+        setNodes(nextNodes);
+        await onNodesChange?.(nextNodes);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsAutoLayoutPending(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    initialNodes,
+    onNodesChange,
+    projection.edges,
+    projection.nodes,
+    projection.revision,
+  ]);
+
+  const handleAutoLayout = async (): Promise<void> => {
+    setIsAutoLayoutPending(true);
+    try {
+      const nextNodes = await applyDiagramAutoLayout({
+        nodes,
+        edges: projection.edges,
+      });
+      setNodes(nextNodes);
+      await onNodesChange?.(nextNodes);
+    } finally {
+      setIsAutoLayoutPending(false);
+    }
+  };
+
+  return (
+    <div style={{ display: "grid", gap: 12 }}>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <SaveStatusIndicator
+          state={isAutoLayoutPending ? "saving" : saveState}
+        />
+      </div>
+      <DiagramEditorFacade
+        edges={projection.edges}
+        nodes={nodes}
+        onAutoLayout={handleAutoLayout}
+        subtitle={subtitle}
+        title={title}
+      />
+    </div>
+  );
+};

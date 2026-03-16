@@ -110,8 +110,8 @@
 1. [DONE] Подключить `@xyflow/react` и `elkjs`, а также обновить build surface Project Manager для инъекции React Flow CSS без runtime import hacks (scope: `package.json`, `package-lock.json`, `scripts/build-project-manager.js`; expected commit: `build(ui): add diagram editor dependencies`).
 2. [DONE] Git Commit: `build(ui): add diagram editor dependencies` (hash: `9f11087a`)
 3. [DONE] Создать shared `DiagramEditorFacade` и `DiagramLayoutFacade` как изолирующий слой поверх внешних библиотек (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-layout-facade.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `feat(ui): add shared diagram editor facade`).
-4. [TODO] Git Commit: `feat(ui): add shared diagram editor facade` (hash: TBD)
-5. [TODO] Реализовать read-only diagram shell с ELK first-layout и кнопкой `Auto-layout` (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/auto-layout-button.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`; expected commit: `feat(ui): add diagram editor visual shell`).
+4. [DONE] Git Commit: `feat(ui): add shared diagram editor facade` (hash: `57941a08`)
+5. [DONE] Реализовать read-only diagram shell с ELK first-layout и кнопкой `Auto-layout` (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/auto-layout-button.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`; expected commit: `feat(ui): add diagram editor visual shell`).
 6. [TODO] Git Commit: `feat(ui): add diagram editor visual shell` (hash: TBD)
 
 ### Stream: Flow sidecar persistence and panels
