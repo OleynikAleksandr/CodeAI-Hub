@@ -5,8 +5,8 @@
     "darwin-arm64": {
       "coreVersion": "1.1.732",
       "package": "codeai-hub-core-darwin-arm64-1.1.732.tar.bz2",
-      "size": 37566635,
-      "sha1": "001606c2a3442b5f39690a954a2dd7606abe3beb"
+      "size": 37569486,
+      "sha1": "76e40cae48e9b805f3abbf7135d940910a578c0b"
     },
     "darwin-x64": {
       "coreVersion": "0.1.0",
