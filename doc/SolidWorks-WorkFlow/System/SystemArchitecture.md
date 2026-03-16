@@ -150,6 +150,26 @@
 - `doc/TODO/todo-plan.md`
 - `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 
+## 6.4) Facade Semantic Editing Boundary (Phase 4, 2026-03-16)
+
+- `Diagram Facades` получает semantic editing поверх visual shell, но сам graph canvas остаётся read-only projection layer.
+- Источник semantic truth не меняется:
+  - пользовательские операции apply-ятся как facade domain patches;
+  - результат сериализуется обратно только в `facade-map.md`;
+  - `facade-map.flow.json` не содержит semantic edits.
+- Facade editing surface обязана покрывать не только CRUD самих facade entities, но и semantic подструктуры:
+  - methods;
+  - ports;
+  - facade relations.
+- Локальные semantic edits обязаны сохранять provenance:
+  - новый facade/relation, созданный пользователем, получает `origin: user`;
+  - изменение agent-generated facade/relation переводит `origin` в `merged`.
+- При incoming remote refresh facade panel должна пытаться reapply локальную очередь патчей поверх новой модели и, при частичной неудаче, явно показывать warnings с preserved local edit summary.
+
+Канонические документы:
+- `doc/TODO/todo-plan.md`
+- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
 - `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.

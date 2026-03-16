@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.735
-- `Diagram Modules` now supports semantic editing directly in Project Manager: create, update, and delete modules plus module relations without leaving the visual shell workflow surface.
-- Semantic edits autosave back into canonical `module-map.md`; the visual layout still persists separately in `module-map.flow.json`, so semantic SSOT and visual sidecar remain split.
-- Local user edits now keep `Origin: agent -> merged` when modifying agent-generated entities and relations, preserving provenance inside the Markdown DSL instead of silently rewriting everything as pure user-owned state.
-- A local merge/conflict loop now reapplies pending module semantic patches when an external diagram artifact refresh arrives during the same UI session, surfacing conflict warnings instead of dropping local edits immediately.
+## Current Release — v1.1.736
+- `Diagram Facades` now supports semantic editing directly in Project Manager: create, update, and delete facades plus methods, ports, and facade relations without leaving the visual shell workflow surface.
+- Semantic facade edits autosave back into canonical `facade-map.md`; visual layout still persists separately in `facade-map.flow.json`, so semantic SSOT and visual sidecar remain split.
+- Local user edits preserve provenance by converting modified agent-owned facades and relations from `origin: agent` to `origin: merged`, matching the semantic editing rules already used for `Diagram Modules`.
+- A facade-specific merge/conflict loop now reapplies pending semantic patches when an external facade artifact refresh arrives during the same UI session, surfacing preserved-edit warnings instead of silently dropping local changes.
 - Known follow-up remains unchanged: starting a fresh toolbar session for `Diagram Modules` / `Diagram Facades` is still a separate deferred blocker. This release targets semantic roundtrip on existing diagram artifacts.
 
 Previous releases (summary): the `1.1.57x–1.1.734` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, and the first visual shell release before semantic editing.
