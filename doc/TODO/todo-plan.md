@@ -30,12 +30,12 @@
 1. [DONE] Реализовать baseline diff service и типы structured `ChangeSummary` для `module-map.md` (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add module map baseline diff service`).
 2. [DONE] Git Commit: `feat(core): add module map baseline diff service` (hash: `3a7f1f98`)
 3. [DONE] Расширить baseline diff service под `facade-map.md` и field-level modified summaries (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add facade map change summaries`).
-4. [DONE] Git Commit: `feat(core): add facade map change summaries` (hash: TBD)
+4. [DONE] Git Commit: `feat(core): add facade map change summaries` (hash: `20c7a858`)
 
 ### Stream: Agent stubs and prompt pack assembly
-1. [TODO] Создать facade stubs для `diagram-modules-agent` и `diagram-facades-agent`, чтобы runtime имел явные точки входа под будущие asset packs (scope: `packages/agents/diagram-modules-agent/src/facade.ts`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit: `feat(agents): add diagram agent facades`).
-2. [TODO] Git Commit: `feat(agents): add diagram agent facades` (hash: TBD)
-3. [TODO] Завести оставшийся facade stub и подключить diagram prompt pack assembly с change summary в runtime builder, читая agent assets из `packages/agents/*/assets/` (scope: `packages/agents/diagram-facades-agent/src/index.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `feat(runtime): assemble diagram prompt packs with change summary`).
+1. [DONE] Создать facade stubs для `diagram-modules-agent` и `diagram-facades-agent`, чтобы runtime имел явные точки входа под будущие asset packs (scope: `packages/agents/diagram-modules-agent/src/facade.ts`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit: `feat(agents): add diagram agent facades`).
+2. [DONE] Git Commit: `feat(agents): add diagram agent facades` (hash: TBD)
+3. [IN_PROGRESS] Завести оставшийся facade stub и подключить diagram prompt pack assembly с change summary в runtime builder, читая agent assets из `packages/agents/*/assets/` (scope: `packages/agents/diagram-facades-agent/src/index.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `feat(runtime): assemble diagram prompt packs with change summary`).
 4. [TODO] Git Commit: `feat(runtime): assemble diagram prompt packs with change summary` (hash: TBD)
 
 ### Stream: Artifact path migration and templates
