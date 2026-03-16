@@ -68,7 +68,17 @@
 
 ---
 
-## Phase 2 — visual shell with React Flow and ELK (owner: Oleksandr, updated: 2026-03-16)
+## Phase 2 — PM/UI contract alignment and visual shell (owner: Oleksandr, updated: 2026-03-16)
+
+### Stream: Post-release diagram contract alignment
+1. [TODO] Синхронизировать workflow gating и PM start-service под `module-map.md` / `facade-map.md`, чтобы кнопки запуска шагов 3-4 снова создавали agent sessions по новому artifact contract (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit: `fix(workflow): align diagram stage gating with markdown dsl`).
+2. [TODO] Git Commit: `fix(workflow): align diagram stage gating with markdown dsl` (hash: TBD)
+3. [TODO] Перевести artifact availability hooks и tree blocking copy с Mermaid filenames на canonical DSL filenames (scope: `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.ts`, `src/client/project-manager/components/layout/use-diagram-facades-artifact-availability.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; expected commit: `fix(ui): align diagram artifact availability with markdown dsl`).
+4. [TODO] Git Commit: `fix(ui): align diagram artifact availability with markdown dsl` (hash: TBD)
+5. [TODO] Синхронизировать diagram panels/help/tree nodes с `module-map.md` / `facade-map.md`, чтобы пользователь видел корректные пути и labels до visual shell (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix(ui): sync diagram panels with markdown dsl artifacts`).
+6. [TODO] Git Commit: `fix(ui): sync diagram panels with markdown dsl artifacts` (hash: TBD)
+7. [TODO] Закрыть остаточные help-copy references на Mermaid contract и проверить запуск Diagram Modules/Facades вручную таргетными сборками PM/UI (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`, `doc/TODO/todo-plan.md`; expected commit: `docs(ui): remove mermaid references from diagram workflow help`).
+8. [TODO] Git Commit: `docs(ui): remove mermaid references from diagram workflow help` (hash: TBD)
 
 ### Stream: Graph adapters
 1. [TODO] Реализовать `domainModelToReactFlow()` adapter для module map и тесты на nodes/edges projection (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add module graph adapter`).
