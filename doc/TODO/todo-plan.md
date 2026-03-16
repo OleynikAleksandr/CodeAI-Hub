@@ -177,8 +177,8 @@
 ## Phase 5 — hardening, tests and workflow stabilization (owner: Oleksandr, updated: 2026-03-16)
 
 ### Stream: Core and runtime hardening
-1. [TODO] Добавить интеграционные тесты concurrent agent/UI writes и baseline-driven merge invariants вне foundation unit-тестов (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.test.ts`; expected commit: `test(diagrams): cover concurrent merge scenarios`).
-2. [TODO] Git Commit: `test(diagrams): cover concurrent merge scenarios` (hash: TBD)
+1. [DONE] Добавить интеграционные тесты concurrent agent/UI writes и baseline-driven merge invariants вне foundation unit-тестов (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.test.ts`; expected commit: `test(diagrams): cover concurrent merge scenarios`).
+2. [DONE] Git Commit: `test(diagrams): cover concurrent merge scenarios` (hash: TBD)
 3. [TODO] Закрыть edge-case parser/serializer/runtime regressions, обнаруженные в фазах 1-4, и синхронизировать hardening contracts (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `fix(core): harden diagram artifact runtime edge cases`).
 4. [TODO] Git Commit: `fix(core): harden diagram artifact runtime edge cases` (hash: TBD)
 

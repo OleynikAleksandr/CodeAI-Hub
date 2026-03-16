@@ -297,3 +297,32 @@ test("buildFacadeMapChangeSummary tracks facade field-level changes", () => {
     },
   ]);
 });
+
+test("buildFacadeMapChangeSummary includes origin and status changes for merged facade handoff", () => {
+  const current: FacadeMapModel = {
+    ...FACADE_MAP_BASELINE,
+    revision: "face9999",
+    facades: [
+      {
+        ...FACADE_MAP_BASELINE.facades[0],
+        origin: "merged",
+        status: "accepted",
+        notes: "User kept local edit after agent rerun.",
+      },
+      ...FACADE_MAP_BASELINE.facades.slice(1),
+    ],
+    relations: FACADE_MAP_BASELINE.relations,
+  };
+
+  const summary = buildFacadeMapChangeSummary(current, FACADE_MAP_BASELINE);
+
+  assert.deepEqual(summary.changes, [
+    {
+      entityType: "facade",
+      entityId: "auth-facade",
+      action: "modified",
+      modifiedFields: ["Origin", "Status", "Notes"],
+      summary: "Facade: auth-facade — fields changed: Origin, Status, Notes",
+    },
+  ]);
+});

@@ -1402,3 +1402,11 @@ test("SessionRequestHandler source keeps description cleanup invariants", async 
   assert.equal(source.includes("collectorSession"), false);
   assert.equal(source.includes("description restart"), false);
 });
+
+test("SessionRequestHandler source keeps continuity normalization for diagram stages", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes('trimmed === "diagram_modules"'), true);
+  assert.equal(source.includes('trimmed === "diagram_facades"'), true);
+  assert.equal(source.includes("private normalizeContinuityStageId"), true);
+});

@@ -89,3 +89,61 @@ test("mergeFacadeConflicts collects replay errors and preserved edit summary", (
     true
   );
 });
+
+test("mergeFacadeConflicts reapplies local facade edits over incoming agent refresh", () => {
+  const incoming: FacadeMapModel = {
+    ...FIXTURE,
+    revision: "facemerge-next",
+    facades: [
+      {
+        ...FIXTURE.facades[0],
+        methods: [
+          "login(credentials): AuthToken",
+          "refresh(token): AuthToken",
+        ],
+        notes: "Agent refreshed the facade surface.",
+      },
+    ],
+  };
+
+  const result = mergeFacadeConflicts({
+    incoming,
+    patches: [
+      {
+        type: "update-facade",
+        facadeId: "auth-facade",
+        changes: {
+          visibility: "internal",
+          origin: "merged",
+        },
+      },
+      {
+        type: "add-facade-relation",
+        relation: {
+          id: "auth-facade__async-event__auth-service",
+          from: "auth-facade",
+          to: "auth-service",
+          type: "async-event",
+        },
+      },
+    ],
+  });
+
+  assert.equal(result.conflicts.length, 0);
+  assert.deepEqual(result.model.facades[0], {
+    ...incoming.facades[0],
+    visibility: "internal",
+    origin: "merged",
+    rationale: undefined,
+  });
+  assert.deepEqual(result.model.relations[0], {
+    id: "auth-facade__async-event__auth-service",
+    from: "auth-facade",
+    to: "auth-service",
+    type: "async-event",
+    label: undefined,
+    notes: undefined,
+    origin: "user",
+    status: "accepted",
+  });
+});
