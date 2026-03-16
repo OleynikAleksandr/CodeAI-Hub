@@ -29,8 +29,8 @@ type WorkflowArtifactPaths = {
 const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
-  diagram_modules: "modules-diagram.mmd",
-  diagram_facades: "facades-graph.mmd",
+  diagram_modules: "module-map.md",
+  diagram_facades: "facade-map.md",
 };
 
 const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {

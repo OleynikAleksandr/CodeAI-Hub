@@ -60,25 +60,25 @@ const resolveAgentAssetPath = (
 ): string => path.join(AGENT_ROOT_PATH, agentName, "assets", assetFileName);
 
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: [
-    resolveAgentAssetPath("diagram-modules-agent", "module-map-prompt.md"),
-    "diagram_modules/modules-diagram-prompt.md",
-  ],
-  template: [
-    resolveAgentAssetPath("diagram-modules-agent", "module-map-template.md"),
-    "diagram_modules/modules-diagram-template.mmd",
-  ],
+  prompt: resolveAgentAssetPath(
+    "diagram-modules-agent",
+    "module-map-prompt.md"
+  ),
+  template: resolveAgentAssetPath(
+    "diagram-modules-agent",
+    "module-map-template.md"
+  ),
 };
 
 const DIAGRAM_FACADES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: [
-    resolveAgentAssetPath("diagram-facades-agent", "facade-map-prompt.md"),
-    "diagram_facades/facades-graph-prompt.md",
-  ],
-  template: [
-    resolveAgentAssetPath("diagram-facades-agent", "facade-map-template.md"),
-    "diagram_facades/facades-graph-template.mmd",
-  ],
+  prompt: resolveAgentAssetPath(
+    "diagram-facades-agent",
+    "facade-map-prompt.md"
+  ),
+  template: resolveAgentAssetPath(
+    "diagram-facades-agent",
+    "facade-map-template.md"
+  ),
 };
 
 const readTextFile = async (filePath: string): Promise<string | null> => {
