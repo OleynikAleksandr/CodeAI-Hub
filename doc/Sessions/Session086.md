@@ -17,6 +17,7 @@
   - `./scripts/build-all.sh` поднял версию до `1.1.733` и пересобрал provider/core/ui/launcher artifacts;
   - `./scripts/build-release.sh --use-current-version` завершился успешно;
   - VSIX собран: `codeai-hub-1.1.733.vsix`.
+- После ручной проверки `1.1.733` подтверждено, что `Virtual Simulation` остаётся валидным upstream шагом, но bootstrap новой agent session для `Diagram Modules` всё ещё не стартует. Этот blocker зафиксирован как отложенный: дальнейшая диагностика session bootstrap path переносится после продвижения `Phase 2`.
 
 ## Manual verification checklist for 1.1.733
 - Установить `codeai-hub-1.1.733.vsix` и полностью перезапустить VS Code, чтобы `TemplateSyncService` отработал на старом home cache.
@@ -46,6 +47,6 @@
 7. `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 
 ## Plans for next session
-- Получить ручной feedback по релизу `1.1.733` и подтвердить, что corrective stream действительно снял runtime/template blockers для diagram workflow.
-- Если `Diagram Modules` / `Diagram Facades` начинают сессии корректно, вернуться к `Phase 2 — visual shell with React Flow and ELK` со stream `Graph adapters`.
-- Если после `1.1.733` старт всё ещё не работает, локализовать следующий blocker уже в session bootstrap / provider binding path и зафиксировать его отдельным corrective stream до visual shell.
+- Ручной feedback по `1.1.733` уже получен: template/runtime fixes дошли, но bootstrap `Diagram Modules` / `Diagram Facades` остаётся сломанным.
+- Не тратить следующий стрим на повторную диагностику запуска; продолжить `Phase 2 — visual shell with React Flow and ELK` со stream `Graph adapters`.
+- После продвижения visual shell вернуться к session bootstrap blocker и оформить отдельный список багов/недоработок по diagram workflow.
