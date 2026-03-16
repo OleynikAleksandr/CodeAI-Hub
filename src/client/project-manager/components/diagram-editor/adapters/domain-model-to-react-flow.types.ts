@@ -2,6 +2,9 @@ import type {
   Criticality,
   EntityOrigin,
   EntityStatus,
+  FacadeMapModel,
+  FacadePort,
+  FacadeVisibility,
   ModuleKind,
   ModuleMapModel,
   RelationType,
@@ -12,7 +15,9 @@ export type DiagramFlowPosition = {
   readonly y: number;
 };
 
-export type DiagramFlowNodeType = "cluster" | "module";
+export type DiagramFlowStage = ModuleMapModel["stage"] | FacadeMapModel["stage"];
+
+export type DiagramFlowNodeType = "cluster" | "module" | "facade";
 
 export type DiagramFlowEdgeType = "relation";
 
@@ -38,7 +43,23 @@ export type ModuleFlowNodeData = {
   readonly outputCount: number;
 };
 
-export type DiagramFlowNodeData = ClusterFlowNodeData | ModuleFlowNodeData;
+export type FacadeFlowNodeData = {
+  readonly stage: "diagram_facades";
+  readonly nodeKind: "facade";
+  readonly facadeId: string;
+  readonly moduleId: string;
+  readonly visibility: FacadeVisibility;
+  readonly methodCount: number;
+  readonly methods: readonly string[];
+  readonly ports: readonly FacadePort[];
+  readonly status: EntityStatus;
+  readonly origin: EntityOrigin;
+};
+
+export type DiagramFlowNodeData =
+  | ClusterFlowNodeData
+  | ModuleFlowNodeData
+  | FacadeFlowNodeData;
 
 export type DiagramFlowNode = {
   readonly id: string;
@@ -50,7 +71,7 @@ export type DiagramFlowNode = {
 };
 
 export type DiagramFlowEdgeData = {
-  readonly stage: "diagram_modules";
+  readonly stage: DiagramFlowStage;
   readonly edgeKind: "relation";
   readonly relationId: string;
   readonly relationType: RelationType;
@@ -70,7 +91,7 @@ export type DiagramFlowEdge = {
 };
 
 export type DiagramFlowProjection = {
-  readonly stage: ModuleMapModel["stage"];
+  readonly stage: DiagramFlowStage;
   readonly revision: string;
   readonly nodes: readonly DiagramFlowNode[];
   readonly edges: readonly DiagramFlowEdge[];

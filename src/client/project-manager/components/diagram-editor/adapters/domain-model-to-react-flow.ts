@@ -1,4 +1,7 @@
 import type {
+  FacadeEntity,
+  FacadeMapModel,
+  FacadeRelation,
   ModuleEntity,
   ModuleMapModel,
   ModuleRelation,
@@ -18,8 +21,10 @@ const UNGROUPED_X = 0;
 
 const toClusterNodeId = (clusterId: string): string => `cluster:${clusterId}`;
 
-const compareById = <T extends { readonly id: string }>(left: T, right: T): number =>
-  left.id.localeCompare(right.id);
+const compareById = <T extends { readonly id: string }>(
+  left: T,
+  right: T
+): number => left.id.localeCompare(right.id);
 
 const compareText = (left: string, right: string): number =>
   left.localeCompare(right);
@@ -141,14 +146,86 @@ const buildRelationEdge = (relation: ModuleRelation): DiagramFlowEdge => ({
   },
 });
 
+const buildFacadeNode = (
+  facade: FacadeEntity,
+  options: {
+    readonly moduleIndex: number;
+    readonly indexWithinModule: number;
+  }
+): DiagramFlowNode => ({
+  id: facade.id,
+  type: "facade",
+  position: {
+    x: options.moduleIndex * CLUSTER_X_STEP,
+    y: MODULE_Y_OFFSET + options.indexWithinModule * MODULE_Y_STEP,
+  },
+  data: {
+    stage: "diagram_facades",
+    nodeKind: "facade",
+    facadeId: facade.id,
+    moduleId: facade.module,
+    visibility: facade.visibility,
+    methodCount: facade.methods.length,
+    methods: facade.methods,
+    ports: facade.ports,
+    status: facade.status,
+    origin: facade.origin,
+  },
+});
+
+const buildFacadeNodes = (
+  facades: readonly FacadeEntity[]
+): readonly DiagramFlowNode[] => {
+  const facadesByModule = new Map<string, FacadeEntity[]>();
+
+  for (const facade of [...facades].sort(compareById)) {
+    const items = facadesByModule.get(facade.module) ?? [];
+    items.push(facade);
+    facadesByModule.set(facade.module, items);
+  }
+
+  return Array.from(facadesByModule.entries())
+    .sort(([left], [right]) => compareText(left, right))
+    .flatMap(([_, items], moduleIndex) =>
+      items.map((facade, indexWithinModule) =>
+        buildFacadeNode(facade, { moduleIndex, indexWithinModule })
+      )
+    );
+};
+
+const buildFacadeRelationEdge = (relation: FacadeRelation): DiagramFlowEdge => ({
+  id: relation.id,
+  type: "relation",
+  source: relation.from,
+  target: relation.to,
+  label: relation.label,
+  data: {
+    stage: "diagram_facades",
+    edgeKind: "relation",
+    relationId: relation.id,
+    relationType: relation.type,
+    criticality: undefined,
+    label: relation.label,
+    origin: relation.origin,
+    status: relation.status,
+  },
+});
+
 export const domainModelToReactFlow = (
-  model: ModuleMapModel
+  model: ModuleMapModel | FacadeMapModel
 ): DiagramFlowProjection => {
+  if (model.stage === "diagram_facades") {
+    return {
+      stage: model.stage,
+      revision: model.revision,
+      nodes: buildFacadeNodes(model.facades),
+      edges: [...model.relations].sort(compareById).map(buildFacadeRelationEdge),
+    };
+  }
+
   const clusterNodes = buildClusterNodes(model.modules);
   const moduleNodes = buildModuleNodes(model.modules);
-  const edges = [...model.relations]
-    .sort(compareById)
-    .map(buildRelationEdge);
+  const edges = [...model.relations].sort(compareById).map(buildRelationEdge);
 
   return {
     stage: model.stage,

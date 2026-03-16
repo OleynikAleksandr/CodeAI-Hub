@@ -102,8 +102,8 @@
 
 ### Stream: Graph adapters
 1. [DONE] Реализовать `domainModelToReactFlow()` adapter для module map и тесты на nodes/edges projection (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add module graph adapter`).
-2. [TODO] Git Commit: `feat(ui): add module graph adapter` (hash: TBD)
-3. [TODO] Расширить graph adapter под facade map и общий stage-aware transform contract (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add facade graph adapter`).
+2. [DONE] Git Commit: `feat(ui): add module graph adapter` (hash: `11a937a3`)
+3. [DONE] Расширить graph adapter под facade map и общий stage-aware transform contract (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add facade graph adapter`).
 4. [TODO] Git Commit: `feat(ui): add facade graph adapter` (hash: TBD)
 
 ### Stream: Editor shell and layout facade
