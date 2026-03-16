@@ -25,6 +25,7 @@ export const DiagramFacadesPanel: React.FC<{
       workspaceSlug: props.workspaceSlug,
     });
   const { saveState, persistNodes } = useDiagramPersistence({
+    artifactPath,
     flowSidecarPath,
     stage: "diagram_facades",
     workspacePath: props.workspacePath,

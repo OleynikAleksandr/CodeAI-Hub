@@ -5,6 +5,8 @@ import {
   joinUrl,
 } from "../../services/description-questionnaire-utils";
 import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramMapModel } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
+import { serializeDiagramMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer";
 import {
   buildFlowSidecarDocument,
   serializeFlowSidecar,
@@ -65,6 +67,7 @@ export const useDiagramPersistence = (params: {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
   readonly stage: DiagramEditorStage;
+  readonly artifactPath: string;
   readonly flowSidecarPath: string;
 }): {
   readonly saveState: DiagramSaveState;
@@ -72,8 +75,34 @@ export const useDiagramPersistence = (params: {
     readonly revision: string;
     readonly nodes: readonly DiagramFlowNode[];
   }) => Promise<void>;
+  readonly persistModel: (model: DiagramMapModel) => Promise<void>;
+  readonly markConflict: () => void;
+  readonly clearConflict: () => void;
 } => {
   const [saveState, setSaveState] = useState<DiagramSaveState>("idle");
+
+  const writeWorkspaceFile = async (
+    sessionId: string,
+    path: string,
+    content: string
+  ): Promise<boolean> => {
+    const httpUrl = api.getHttpUrl();
+    if (!httpUrl) {
+      return false;
+    }
+
+    const response = await fetch(joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId,
+        path,
+        content,
+      }),
+    });
+
+    return response.ok;
+  };
 
   const persistNodes = async (payload: {
     readonly revision: string;
@@ -98,20 +127,36 @@ export const useDiagramPersistence = (params: {
         nodes: payload.nodes,
       });
 
-      const response = await fetch(
-        joinUrl(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
-            path: params.flowSidecarPath,
-            content: serializeFlowSidecar(document),
-          }),
-        }
+      const ok = await writeWorkspaceFile(
+        sessionId,
+        params.flowSidecarPath,
+        serializeFlowSidecar(document)
       );
+      setSaveState(ok ? "saved" : "error");
+    } catch {
+      setSaveState("error");
+    }
+  };
 
-      setSaveState(response.ok ? "saved" : "error");
+  const persistModel = async (model: DiagramMapModel): Promise<void> => {
+    setSaveState("saving");
+    const sessionId = await ensureWorkspaceSession({
+      workspacePath: params.workspacePath,
+      workspaceSlug: params.workspaceSlug,
+      stage: params.stage,
+    });
+    if (!sessionId) {
+      setSaveState("error");
+      return;
+    }
+
+    try {
+      const ok = await writeWorkspaceFile(
+        sessionId,
+        params.artifactPath,
+        serializeDiagramMapDsl(model)
+      );
+      setSaveState(ok ? "saved" : "error");
     } catch {
       setSaveState("error");
     }
@@ -120,5 +165,12 @@ export const useDiagramPersistence = (params: {
   return {
     saveState,
     persistNodes,
+    persistModel,
+    markConflict: () => {
+      setSaveState("conflict");
+    },
+    clearConflict: () => {
+      setSaveState((current) => (current === "conflict" ? "idle" : current));
+    },
   };
 };

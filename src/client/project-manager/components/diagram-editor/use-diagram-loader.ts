@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { DiagramMapModel } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import { parseFacadeMapDsl, parseModuleMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-parser";
 import { api } from "../../api";
 import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
@@ -86,6 +87,7 @@ export type DiagramLoaderResult = {
   readonly status: DiagramLoaderStatus;
   readonly content: string | null;
   readonly error: string | null;
+  readonly model: DiagramMapModel | null;
   readonly projection: DiagramFlowProjection | null;
   readonly flowDocument: FlowSidecarDocument | null;
   readonly artifactPath: string;
@@ -104,6 +106,7 @@ export const useDiagramLoader = (params: {
   const [projection, setProjection] = useState<DiagramFlowProjection | null>(
     null
   );
+  const [model, setModel] = useState<DiagramMapModel | null>(null);
   const [flowDocument, setFlowDocument] = useState<FlowSidecarDocument | null>(
     null
   );
@@ -128,6 +131,7 @@ export const useDiagramLoader = (params: {
     setContent(null);
     setError(null);
     setProjection(null);
+    setModel(null);
     setFlowDocument(null);
 
     const httpUrl = api.getHttpUrl();
@@ -193,6 +197,7 @@ export const useDiagramLoader = (params: {
           : null;
 
       setContent(artifactResult.content);
+      setModel(parseResult.value);
       setFlowDocument(nextFlowDocument);
       setProjection({
         ...baseProjection,
@@ -223,6 +228,7 @@ export const useDiagramLoader = (params: {
     status,
     content,
     error,
+    model,
     projection,
     flowDocument,
     artifactPath: paths.artifactPath,

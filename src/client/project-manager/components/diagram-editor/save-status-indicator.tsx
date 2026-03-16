@@ -1,12 +1,18 @@
 import type React from "react";
 
-export type DiagramSaveState = "idle" | "saving" | "saved" | "error";
+export type DiagramSaveState =
+  | "idle"
+  | "saving"
+  | "saved"
+  | "error"
+  | "conflict";
 
 const SAVE_STATUS_COPY: Record<DiagramSaveState, string> = {
   idle: "Layout not saved yet",
   saving: "Saving layout...",
   saved: "Layout saved",
   error: "Layout save failed",
+  conflict: "Conflict requires review",
 };
 
 const SAVE_STATUS_COLOR: Record<DiagramSaveState, string> = {
@@ -14,6 +20,7 @@ const SAVE_STATUS_COLOR: Record<DiagramSaveState, string> = {
   saving: "var(--pm-accent-strong)",
   saved: "var(--pm-success-text)",
   error: "var(--pm-danger-text)",
+  conflict: "var(--pm-warning-text)",
 };
 
 export const SaveStatusIndicator: React.FC<{

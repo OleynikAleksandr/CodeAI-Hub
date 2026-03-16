@@ -1,8 +1,20 @@
 import type React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { domainModelToReactFlow } from "../diagram-editor/adapters/domain-model-to-react-flow";
+import { applyModuleDomainPatch } from "../diagram-editor/apply-module-domain-patch";
+import { applyModuleRelationPatch } from "../diagram-editor/apply-module-relation-patch";
 import { DiagramEditorShell } from "../diagram-editor/diagram-editor-shell";
+import {
+  mergeModuleConflicts,
+  type ModuleSemanticPatch,
+} from "../diagram-editor/module-conflict-merge";
+import { ModuleEntityEditor } from "../diagram-editor/module-entity-editor";
+import type { ModuleDomainPatch } from "../diagram-editor/module-domain-patches";
+import { resolveLocalEditOrigin } from "../diagram-editor/module-origin-rules";
+import { ModuleRelationEditor } from "../diagram-editor/module-relation-editor";
+import { useDomainPatch } from "../diagram-editor/use-domain-patch";
 import { useDiagramLoader } from "../diagram-editor/use-diagram-loader";
 import { useDiagramPersistence } from "../diagram-editor/use-diagram-persistence";
 import { StageArtifactFixButton } from "../shared/stage-artifact-fix-button";
@@ -17,18 +29,52 @@ export const DiagramModulesPanel: React.FC<{
   readonly workspaceSlug: string;
   readonly refreshKey?: number;
 }> = (props) => {
-  const { status, content, error, projection, artifactPath, flowSidecarPath } =
+  const {
+    status,
+    content,
+    error,
+    model,
+    projection,
+    artifactPath,
+    flowSidecarPath,
+  } =
     useDiagramLoader({
       refreshKey: props.refreshKey,
       stage: "diagram_modules",
       workspacePath: props.workspacePath,
       workspaceSlug: props.workspaceSlug,
     });
-  const { saveState, persistNodes } = useDiagramPersistence({
+  const {
+    saveState,
+    persistNodes,
+    persistModel,
+    markConflict,
+    clearConflict,
+  } = useDiagramPersistence({
+    artifactPath,
     flowSidecarPath,
     stage: "diagram_modules",
     workspacePath: props.workspacePath,
     workspaceSlug: props.workspaceSlug,
+  });
+  const {
+    model: editableModel,
+    conflicts,
+    applyDomainPatch,
+    clearConflicts,
+  } = useDomainPatch<
+    Extract<typeof model, { readonly stage: "diagram_modules" }>,
+    ModuleSemanticPatch
+  >({
+    baseModel: model?.stage === "diagram_modules" ? model : null,
+    applyPatch: (currentModel, patch) =>
+      patch.type === "add-module" ||
+      patch.type === "update-module" ||
+      patch.type === "delete-module"
+        ? applyModuleDomainPatch(currentModel, patch as ModuleDomainPatch)
+        : applyModuleRelationPatch(currentModel, patch),
+    mergeIncoming: (incoming, patches) => mergeModuleConflicts({ incoming, patches }),
+    persistModel,
   });
 
   const handleFixStart = useCallback(
@@ -45,6 +91,14 @@ export const DiagramModulesPanel: React.FC<{
     },
     []
   );
+
+  useEffect(() => {
+    if (conflicts.length > 0) {
+      markConflict();
+      return;
+    }
+    clearConflict();
+  }, [clearConflict, conflicts.length, markConflict]);
 
   if (status === "loading") {
     return <div className="pm-placeholder">Загружаем Diagram Modules…</div>;
@@ -73,7 +127,9 @@ export const DiagramModulesPanel: React.FC<{
     );
   }
 
-  if (status === "ready" && projection) {
+  if (status === "ready" && projection && editableModel) {
+    const visualProjection = domainModelToReactFlow(editableModel);
+
     return (
       <div className="pm-details" style={{ display: "grid", gap: 12 }}>
         <div style={{ display: "grid", gap: 4 }}>
@@ -83,12 +139,101 @@ export const DiagramModulesPanel: React.FC<{
             layout сохраняется в <code>module-map.flow.json</code>.
           </span>
         </div>
+        <ModuleEntityEditor
+          modules={editableModel.modules}
+          onAddModule={async (draft) => {
+            await applyDomainPatch({
+              type: "add-module",
+              module: draft,
+            });
+          }}
+          onDeleteModule={async (moduleId) => {
+            await applyDomainPatch({
+              type: "delete-module",
+              moduleId,
+            });
+          }}
+          onUpdateModule={async (moduleId, draft) => {
+            const current = editableModel.modules.find(
+              (entity) => entity.id === moduleId
+            );
+            if (!current) {
+              return;
+            }
+            await applyDomainPatch({
+              type: "update-module",
+              moduleId,
+              changes: {
+                kind: draft.kind,
+                title: draft.title,
+                responsibility: draft.responsibility,
+                cluster: draft.cluster,
+                inputs: draft.inputs,
+                outputs: draft.outputs,
+                specTarget: draft.specTarget,
+                contractTargets: draft.contractTargets,
+                codeTargets: draft.codeTargets,
+                notes: draft.notes,
+                rationale: draft.rationale,
+                origin: resolveLocalEditOrigin(current.origin),
+              },
+            });
+          }}
+        />
+        <ModuleRelationEditor
+          modules={editableModel.modules}
+          onAddRelation={async (draft) => {
+            await applyDomainPatch({
+              type: "add-relation",
+              relation: draft,
+            });
+          }}
+          onDeleteRelation={async (relationId) => {
+            await applyDomainPatch({
+              type: "delete-relation",
+              relationId,
+            });
+          }}
+          onUpdateRelation={async (relationId, draft) => {
+            const current = editableModel.relations.find(
+              (relation) => relation.id === relationId
+            );
+            if (!current) {
+              return;
+            }
+            await applyDomainPatch({
+              type: "update-relation",
+              relationId,
+              changes: {
+                from: draft.from,
+                to: draft.to,
+                type: draft.type,
+                label: draft.label,
+                criticality: draft.criticality,
+                notes: draft.notes,
+                origin: resolveLocalEditOrigin(current.origin),
+              },
+            });
+          }}
+          relations={editableModel.relations}
+        />
+        {conflicts.length > 0 ? (
+          <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
+            <strong>Conflict merge warnings</strong>
+            {conflicts.map((message) => (
+              <div key={message}>{message}</div>
+            ))}
+            <button type="button" onClick={clearConflicts}>
+              Dismiss warnings
+            </button>
+          </div>
+        ) : null}
         <DiagramEditorShell
           initialNodes={projection.nodes}
           onNodesChange={async (nodes) => {
-            await persistNodes({ nodes, revision: projection.revision });
+            await persistNodes({ nodes, revision: visualProjection.revision });
           }}
-          projection={projection}
+          projection={visualProjection}
           saveState={saveState}
           subtitle={`${artifactPath} -> ${flowSidecarPath}`}
           title="Diagram Modules"
