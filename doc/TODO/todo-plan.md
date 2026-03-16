@@ -133,9 +133,9 @@
 ## Phase 3 — semantic editing for Diagram Modules (owner: Oleksandr, updated: 2026-03-16)
 
 ### Stream: Module semantic patch pipeline
-1. [TODO] Реализовать module patch model и `applyModuleDomainPatch()` для add/update/delete module операций (scope: `src/client/project-manager/components/diagram-editor/module-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.test.ts`; expected commit: `feat(diagram-modules): add module patch pipeline`).
-2. [TODO] Git Commit: `feat(diagram-modules): add module patch pipeline` (hash: TBD)
-3. [TODO] Реализовать relation patch model и `applyModuleRelationPatch()` для add/update/delete relation операций (scope: `src/client/project-manager/components/diagram-editor/module-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.test.ts`; expected commit: `feat(diagram-modules): add relation patch pipeline`).
+1. [DONE] Реализовать module patch model и `applyModuleDomainPatch()` для add/update/delete module операций (scope: `src/client/project-manager/components/diagram-editor/module-domain-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-domain-patch.test.ts`; expected commit: `feat(diagram-modules): add module patch pipeline`).
+2. [DONE] Git Commit: `feat(diagram-modules): add module patch pipeline` (hash: TBD)
+3. [IN_PROGRESS] Реализовать relation patch model и `applyModuleRelationPatch()` для add/update/delete relation операций (scope: `src/client/project-manager/components/diagram-editor/module-relation-patches.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.ts`, `src/client/project-manager/components/diagram-editor/apply-module-relation-patch.test.ts`; expected commit: `feat(diagram-modules): add relation patch pipeline`).
 4. [TODO] Git Commit: `feat(diagram-modules): add relation patch pipeline` (hash: TBD)
 
 ### Stream: Module UI semantic editing
