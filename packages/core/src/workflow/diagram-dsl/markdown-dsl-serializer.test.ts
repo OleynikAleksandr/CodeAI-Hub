@@ -212,3 +212,25 @@ test("serializeDiagramMapDsl routes by stage", () => {
     )
   );
 });
+
+test("serializeModuleMapDsl normalizes multiline CRLF text blocks", () => {
+  const model = parseDiagram(MODULE_MAP_FIXTURE) as Extract<
+    DiagramMapModel,
+    { stage: "diagram_modules" }
+  >;
+  const serialized = serializeModuleMapDsl({
+    ...model,
+    modules: [
+      {
+        ...model.modules[0],
+        notes: "Line one\r\nLine two",
+        rationale: "Reason one\r\nReason two",
+      },
+      ...model.modules.slice(1),
+    ],
+  });
+
+  assert.equal(serialized.includes("\r"), false);
+  assert.equal(serialized.includes("Line one\nLine two"), true);
+  assert.equal(serialized.includes("Reason one\nReason two"), true);
+});

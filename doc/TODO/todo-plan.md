@@ -180,9 +180,9 @@
 1. [DONE] Добавить интеграционные тесты concurrent agent/UI writes и baseline-driven merge invariants вне foundation unit-тестов (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/diagram-editor/facade-conflict-merge.test.ts`; expected commit: `test(diagrams): cover concurrent merge scenarios`).
 2. [DONE] Git Commit: `test(diagrams): cover concurrent merge scenarios` (hash: `143d4abd`)
 3. [DONE] Закрыть parser edge cases для BOM / normalized metadata parsing в Markdown DSL (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts`; expected commit: `fix(core): harden diagram parser edge cases`).
-4. [DONE] Git Commit: `fix(core): harden diagram parser edge cases` (hash: TBD)
-5. [TODO] Закрыть serializer edge cases для multiline CRLF values и canonical output normalization (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`; expected commit: `fix(core): harden diagram serializer edge cases`).
-6. [TODO] Git Commit: `fix(core): harden diagram serializer edge cases` (hash: TBD)
+4. [DONE] Git Commit: `fix(core): harden diagram parser edge cases` (hash: `6b3abc08`)
+5. [DONE] Закрыть serializer edge cases для multiline CRLF values и canonical output normalization (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`; expected commit: `fix(core): harden diagram serializer edge cases`).
+6. [DONE] Git Commit: `fix(core): harden diagram serializer edge cases` (hash: TBD)
 
 ### Stream: UX stabilization
 1. [TODO] Довести UX/error states в shared diagram editor: empty states, parse errors, conflict affordances, reopen/resume stability без монолитного компонента (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`; expected commit: `fix(ui): harden shared diagram editor ux`).

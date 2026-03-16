@@ -49,7 +49,7 @@ const pushTextBlock = (
   if (!value) {
     return;
   }
-  lines.push("", `${label}:`, ...value.split("\n"));
+  lines.push("", `${label}:`, ...value.replace(/\r\n?/g, "\n").split("\n"));
 };
 
 const buildMetadataLines = (
