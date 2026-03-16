@@ -24,12 +24,12 @@
 3. [DONE] Расширить parser под `Facade Map` и strict error policy для unknown/duplicate/missing-field cases: `diagram-dsl-types.ts`, `markdown-dsl-shared.ts`, `markdown-dsl-parser.ts`, `module-map-parser.ts`, `facade-map-parser.ts`, `markdown-dsl-parser.test.ts`, `facade-map-parser.test.ts` (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.ts`, `packages/core/src/workflow/diagram-dsl/module-map-parser.ts`, `packages/core/src/workflow/diagram-dsl/facade-map-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`, `packages/core/src/workflow/diagram-dsl/facade-map-parser.test.ts`; expected commit: `feat(core): add facade map parser validation rules`).
 4. [DONE] Git Commit: `feat(core): add facade map parser validation rules` (hash: `094d4133`)
 5. [DONE] Добавить serializer и revision service для детерминированного Markdown-DSL output (scope: `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `packages/core/src/workflow/diagram-dsl/diagram-revision.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`; expected commit: `feat(core): add diagram dsl serializer and revision`).
-6. [DONE] Git Commit: `feat(core): add diagram dsl serializer and revision` (hash: TBD)
+6. [DONE] Git Commit: `feat(core): add diagram dsl serializer and revision` (hash: `3a567d25`)
 
 ### Stream: Baseline diff and change summary
-1. [TODO] Реализовать baseline diff service и типы structured `ChangeSummary` для `module-map.md` (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add module map baseline diff service`).
-2. [TODO] Git Commit: `feat(core): add module map baseline diff service` (hash: TBD)
-3. [TODO] Расширить baseline diff service под `facade-map.md` и field-level modified summaries (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add facade map change summaries`).
+1. [DONE] Реализовать baseline diff service и типы structured `ChangeSummary` для `module-map.md` (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add module map baseline diff service`).
+2. [DONE] Git Commit: `feat(core): add module map baseline diff service` (hash: TBD)
+3. [IN_PROGRESS] Расширить baseline diff service под `facade-map.md` и field-level modified summaries (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add facade map change summaries`).
 4. [TODO] Git Commit: `feat(core): add facade map change summaries` (hash: TBD)
 
 ### Stream: Agent stubs and prompt pack assembly
