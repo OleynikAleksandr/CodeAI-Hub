@@ -15,14 +15,21 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "diagram_facades",
 ]);
 
-const WORKFLOW_STAGE_FILES = new Map<WorkflowStageId, WorkflowArtifactFileName>(
+const WORKFLOW_STAGE_FILES = new Map<
+  WorkflowStageId,
+  readonly WorkflowArtifactFileName[]
+>([
+  ["description", ["Final_Description.md"]],
+  ["virtual_simulation", ["virtual-simulation.md"]],
   [
-    ["description", "Final_Description.md"],
-    ["virtual_simulation", "virtual-simulation.md"],
-    ["diagram_modules", "modules-diagram.mmd"],
-    ["diagram_facades", "facades-graph.mmd"],
-  ]
-);
+    "diagram_modules",
+    ["module-map.md", "module-map.flow.json", "module-map.agent-baseline.md"],
+  ],
+  [
+    "diagram_facades",
+    ["facade-map.md", "facade-map.flow.json", "facade-map.agent-baseline.md"],
+  ],
+]);
 
 const isWorkflowStage = (value: string): value is WorkflowStageId =>
   WORKFLOW_STAGE_SET.has(value as WorkflowStageId);
@@ -76,11 +83,11 @@ export const resolveWorkflowArtifactPaths = (
     return { ok: false, error: "Invalid workspaceSlug" };
   }
 
-  const expectedFileName = WORKFLOW_STAGE_FILES.get(params.stage);
-  if (!expectedFileName) {
+  const allowedFileNames = WORKFLOW_STAGE_FILES.get(params.stage);
+  if (!allowedFileNames) {
     return { ok: false, error: "Unsupported workflow stage" };
   }
-  if (expectedFileName !== params.fileName) {
+  if (!allowedFileNames.includes(params.fileName)) {
     return {
       ok: false,
       error: `File ${params.fileName} is not allowed for stage ${params.stage}`,

@@ -6,6 +6,10 @@ import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import {
+  parseFacadeMapDsl,
+  parseModuleMapDsl,
+} from "../../workflow/diagram-dsl/markdown-dsl-parser";
+import {
   buildDescriptionContract,
   buildDiagramFacadesContract,
   buildDiagramModulesContract,
@@ -56,9 +60,9 @@ const DESCRIPTION_PATH_RE =
 const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?modules-diagram\.mmd$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:module-map\.md|module-map\.flow\.json|module-map\.agent-baseline\.md)$/;
 const DIAGRAM_FACADES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?facades-graph\.mmd$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:facade-map\.md|facade-map\.flow\.json|facade-map\.agent-baseline\.md)$/;
 
 export type RouterDependencies = {
   readonly app: Express;
@@ -464,8 +468,12 @@ type WorkflowStageId =
 type WorkflowArtifactFileName =
   | "Final_Description.md"
   | "virtual-simulation.md"
-  | "modules-diagram.mmd"
-  | "facades-graph.mmd";
+  | "module-map.md"
+  | "module-map.flow.json"
+  | "module-map.agent-baseline.md"
+  | "facade-map.md"
+  | "facade-map.flow.json"
+  | "facade-map.agent-baseline.md";
 
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
@@ -486,13 +494,23 @@ const WORKFLOW_STAGE_SLOTS = new Map<
     "workspace.virtual_simulation",
     { stage: "virtual_simulation", fileName: "virtual-simulation.md" },
   ],
+  ["diagram.modules", { stage: "diagram_modules", fileName: "module-map.md" }],
   [
-    "diagram.modules",
-    { stage: "diagram_modules", fileName: "modules-diagram.mmd" },
+    "diagram.modules.flow",
+    { stage: "diagram_modules", fileName: "module-map.flow.json" },
   ],
   [
-    "diagram.facades",
-    { stage: "diagram_facades", fileName: "facades-graph.mmd" },
+    "diagram.modules.baseline",
+    { stage: "diagram_modules", fileName: "module-map.agent-baseline.md" },
+  ],
+  ["diagram.facades", { stage: "diagram_facades", fileName: "facade-map.md" }],
+  [
+    "diagram.facades.flow",
+    { stage: "diagram_facades", fileName: "facade-map.flow.json" },
+  ],
+  [
+    "diagram.facades.baseline",
+    { stage: "diagram_facades", fileName: "facade-map.agent-baseline.md" },
   ],
 ]);
 
@@ -705,7 +723,6 @@ type PayloadParseResult<T> =
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
-const MERMAID_FLOWCHART_RE = /^\s*flowchart\s+/m;
 
 const normalizeArtifactContent = (content: string): string =>
   content.endsWith("\n") ? content : `${content}\n`;
@@ -723,12 +740,23 @@ const resolveWorkflowStageValidationError = (params: {
         params.content,
         params.shouldValidate
       );
-    case "modules-diagram.mmd":
-    case "facades-graph.mmd":
-      return validateMermaidDiagramMarkdown(
-        params.content,
-        params.shouldValidate
-      );
+    case "module-map.md":
+    case "module-map.agent-baseline.md":
+      return validateMarkdownDslDiagram({
+        content: params.content,
+        parser: parseModuleMapDsl,
+        shouldValidate: params.shouldValidate,
+      });
+    case "facade-map.md":
+    case "facade-map.agent-baseline.md":
+      return validateMarkdownDslDiagram({
+        content: params.content,
+        parser: parseFacadeMapDsl,
+        shouldValidate: params.shouldValidate,
+      });
+    case "module-map.flow.json":
+    case "facade-map.flow.json":
+      return validateDiagramFlowSidecar(params.content, params.shouldValidate);
     default:
       return "Unsupported artifact file";
   }
@@ -774,7 +802,22 @@ const validateVirtualSimulationMarkdown = (
   return null;
 };
 
-const validateMermaidDiagramMarkdown = (
+const validateMarkdownDslDiagram = (params: {
+  readonly content: string;
+  readonly parser: typeof parseModuleMapDsl | typeof parseFacadeMapDsl;
+  readonly shouldValidate: boolean;
+}): string | null => {
+  if (!params.shouldValidate) {
+    return null;
+  }
+  if (params.content.trim().length === 0) {
+    return "Diagram DSL markdown is empty";
+  }
+  const result = params.parser(params.content);
+  return result.ok ? null : result.error.message;
+};
+
+const validateDiagramFlowSidecar = (
   content: string,
   shouldValidate: boolean
 ): string | null => {
@@ -782,12 +825,18 @@ const validateMermaidDiagramMarkdown = (
     return null;
   }
   if (content.trim().length === 0) {
-    return "Diagram markdown is empty";
+    return "Diagram flow sidecar is empty";
   }
-  if (!MERMAID_FLOWCHART_RE.test(content)) {
-    return "Diagram markdown is missing 'flowchart' declaration";
+  try {
+    const parsed = JSON.parse(content) as unknown;
+    return typeof parsed === "object" &&
+      parsed !== null &&
+      !Array.isArray(parsed)
+      ? null
+      : "Diagram flow sidecar must be a JSON object";
+  } catch {
+    return "Diagram flow sidecar is not valid JSON";
   }
-  return null;
 };
 
 type ArtifactBackup = {

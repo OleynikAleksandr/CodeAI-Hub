@@ -4,8 +4,12 @@ export type WorkflowArtifactFileName =
   | "Final_Description.md"
   | "description.md"
   | "virtual-simulation.md"
-  | "modules-diagram.mmd"
-  | "facades-graph.mmd";
+  | "module-map.md"
+  | "module-map.flow.json"
+  | "module-map.agent-baseline.md"
+  | "facade-map.md"
+  | "facade-map.flow.json"
+  | "facade-map.agent-baseline.md";
 
 export type WorkflowArtifactPath = {
   readonly stage: WorkflowStageId;
