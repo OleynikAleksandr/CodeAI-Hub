@@ -1,41 +1,35 @@
 import type React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
-import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
+import { DiagramEditorShell } from "../diagram-editor/diagram-editor-shell";
+import { useDiagramLoader } from "../diagram-editor/use-diagram-loader";
+import { useDiagramPersistence } from "../diagram-editor/use-diagram-persistence";
+import { StageArtifactFixButton } from "../shared/stage-artifact-fix-button";
 import {
   StageArtifactPendingLayout,
-  StageArtifactStateView,
 } from "../shared/stage-artifact-stage-panel";
-
-const validateModuleMapContent = (content: string): string | null => {
-  if (content.trim().length === 0) {
-    return "Файл пустой.";
-  }
-  return null;
-};
 
 const startService = new WorkflowStepStartService();
 
 export const DiagramModulesPanel: React.FC<{
   readonly workspacePath: string;
   readonly workspaceSlug: string;
+  readonly refreshKey?: number;
 }> = (props) => {
-  const artifactPath = useMemo(
-    () => `.codeai-hub/${props.workspaceSlug}/diagram_modules/module-map.md`,
-    [props.workspaceSlug]
-  );
-  const { status, content, error } = useStageArtifactLoader({
+  const { status, content, error, projection, artifactPath, flowSidecarPath } =
+    useDiagramLoader({
+      refreshKey: props.refreshKey,
+      stage: "diagram_modules",
+      workspacePath: props.workspacePath,
+      workspaceSlug: props.workspaceSlug,
+    });
+  const { saveState, persistNodes } = useDiagramPersistence({
+    flowSidecarPath,
+    stage: "diagram_modules",
     workspacePath: props.workspacePath,
     workspaceSlug: props.workspaceSlug,
-    artifactPath,
-    stageLabel: "Diagram Modules",
   });
-
-  const validationError = useMemo(
-    () => (content ? validateModuleMapContent(content) : null),
-    [content]
-  );
 
   const handleFixStart = useCallback(
     async (p: {
@@ -52,22 +46,55 @@ export const DiagramModulesPanel: React.FC<{
     []
   );
 
-  const stateView = (
-    <StageArtifactStateView
-      artifactPath={artifactPath}
-      content={content}
-      displayFileName="module-map.md"
-      error={error}
-      errorFallback="Не удалось загрузить Diagram Modules."
-      onFixStart={handleFixStart}
-      status={status}
-      validationError={validationError}
-      workspacePath={props.workspacePath}
-      workspaceSlug={props.workspaceSlug}
-    />
-  );
-  if (stateView !== null) {
-    return stateView;
+  if (status === "loading") {
+    return <div className="pm-placeholder">Загружаем Diagram Modules…</div>;
+  }
+
+  if (status === "error") {
+    return (
+      <div className="pm-details">
+        <div style={{ display: "grid", gap: 12 }}>
+          <div className="pm-placeholder">
+            {error ?? "Не удалось загрузить Diagram Modules."}
+          </div>
+          <StageArtifactFixButton
+            onStart={handleFixStart}
+            workspacePath={props.workspacePath}
+            workspaceSlug={props.workspaceSlug}
+          />
+          {content ? (
+            <div style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
+              Артефакт загружен, но не прошёл parse/validation check:
+              <code style={{ marginLeft: 6 }}>module-map.md</code>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "ready" && projection) {
+    return (
+      <div className="pm-details" style={{ display: "grid", gap: 12 }}>
+        <div style={{ display: "grid", gap: 4 }}>
+          <strong>Diagram Modules</strong>
+          <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
+            <code>module-map.md</code> рендерится в read-only visual shell;
+            layout сохраняется в <code>module-map.flow.json</code>.
+          </span>
+        </div>
+        <DiagramEditorShell
+          initialNodes={projection.nodes}
+          onNodesChange={async (nodes) => {
+            await persistNodes({ nodes, revision: projection.revision });
+          }}
+          projection={projection}
+          saveState={saveState}
+          subtitle={`${artifactPath} -> ${flowSidecarPath}`}
+          title="Diagram Modules"
+        />
+      </div>
+    );
   }
 
   return (
@@ -80,9 +107,14 @@ export const DiagramModulesPanel: React.FC<{
           Здесь отображается canonical module map: какие модули существуют, как они сгруппированы и какие связи между ними зафиксированы в Markdown DSL.
         </div>
         <div>
-          Вы можете править <code>module-map.md</code> вручную в редакторе или через агента. Visual shell появится в следующем этапе, но canonical artifact уже здесь.
+          После появления <code>module-map.md</code> панель автоматически переключится на visual shell и создаст sidecar <code>module-map.flow.json</code> для layout.
         </div>
         <div>Любые изменения пометят следующие шаги как требующие синхронизации.</div>
+        <StageArtifactFixButton
+          onStart={handleFixStart}
+          workspacePath={props.workspacePath}
+          workspaceSlug={props.workspaceSlug}
+        />
       </div>
     </StageArtifactPendingLayout>
   );

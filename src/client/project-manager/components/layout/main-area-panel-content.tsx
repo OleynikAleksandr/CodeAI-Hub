@@ -19,12 +19,21 @@ interface SelectedArtifact {
 }
 
 export const renderStagePanel = (
-  Panel: React.FC<{ readonly workspacePath: string; readonly workspaceSlug: string }>,
+  Panel: React.FC<{
+    readonly workspacePath: string;
+    readonly workspaceSlug: string;
+    readonly refreshKey?: number;
+  }>,
   activeWorkspacePath: string | undefined,
-  activeWorkspaceSlug: string | null
+  activeWorkspaceSlug: string | null,
+  refreshKey?: number
 ): React.ReactNode =>
   activeWorkspacePath && activeWorkspaceSlug ? (
-    <Panel workspacePath={activeWorkspacePath} workspaceSlug={activeWorkspaceSlug} />
+    <Panel
+      refreshKey={refreshKey}
+      workspacePath={activeWorkspacePath}
+      workspaceSlug={activeWorkspaceSlug}
+    />
   ) : (
     <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>
   );
@@ -115,13 +124,27 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     );
   }
   if (activeTool === VIRTUAL_SIMULATION_TOOL_LABEL) {
-    return renderStagePanel(VirtualSimulationPanel, activeWorkspacePath, activeWorkspaceSlug);
+    return renderStagePanel(
+      VirtualSimulationPanel,
+      activeWorkspacePath,
+      activeWorkspaceSlug
+    );
   }
   if (activeTool === "Diagram Modules") {
-    return renderStagePanel(DiagramModulesPanel, activeWorkspacePath, activeWorkspaceSlug);
+    return renderStagePanel(
+      DiagramModulesPanel,
+      activeWorkspacePath,
+      activeWorkspaceSlug,
+      artifactRefreshKey
+    );
   }
   if (activeTool === "Diagram Facades") {
-    return renderStagePanel(DiagramFacadesPanel, activeWorkspacePath, activeWorkspaceSlug);
+    return renderStagePanel(
+      DiagramFacadesPanel,
+      activeWorkspacePath,
+      activeWorkspaceSlug,
+      artifactRefreshKey
+    );
   }
   if (activeTool === "Description" && hasDescriptionSession && selectedArtifact === null) {
     return <div className="pm-placeholder">Выберите артефакт Description в дереве workflow.</div>;

@@ -116,8 +116,8 @@
 
 ### Stream: Flow sidecar persistence and panels
 1. [DONE] Реализовать `*.flow.json` loader/persistence для positions/viewport без semantic writes в canonical `.md` (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`; expected commit: `feat(ui): persist diagram flow sidecar state`).
-2. [TODO] Git Commit: `feat(ui): persist diagram flow sidecar state` (hash: TBD)
-3. [TODO] Перевести панели `Diagram Modules` и `Diagram Facades` с Mermaid-text view на read-only visual shell (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit: `feat(ui): render diagram stages via visual shell`).
+2. [DONE] Git Commit: `feat(ui): persist diagram flow sidecar state` (hash: `2d9439e9`)
+3. [DONE] Перевести панели `Diagram Modules` и `Diagram Facades` с Mermaid-text view на read-only visual shell, а также закрыть browser-safe parser seam для PM bundle (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts`; expected commit: `feat(ui): render diagram stages via visual shell`).
 4. [TODO] Git Commit: `feat(ui): render diagram stages via visual shell` (hash: TBD)
 
 ### Stream: Phase 2 release build and verification
