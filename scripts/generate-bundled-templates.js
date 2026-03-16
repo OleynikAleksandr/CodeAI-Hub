@@ -14,8 +14,7 @@ const OUTPUT = path.join(
 );
 
 // Manifest: id, source asset path (relative to repo root), destination path (relative to home dir).
-// Source files for active agents live in packages/agents/*/assets/.
-// Source files for deleted agents live in packages/core/src/templates/source/.
+// Diagram workflow assets now live in dedicated agent packages and are not bundled into core templates.
 const TEMPLATES = [
   {
     id: "description-collector-prompt",
@@ -38,26 +37,6 @@ const TEMPLATES = [
     id: "virtual-simulation-prompt",
     source: "packages/core/src/templates/source/virtual-simulation-prompt.md",
     dest: ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
-  },
-  {
-    id: "modules-diagram-prompt",
-    source: "packages/core/src/templates/source/modules-diagram-prompt.md",
-    dest: ".codeai-hub/templates/diagram_modules/modules-diagram-prompt.md",
-  },
-  {
-    id: "modules-diagram-template",
-    source: "packages/core/src/templates/source/modules-diagram-template.mmd",
-    dest: ".codeai-hub/templates/diagram_modules/modules-diagram-template.mmd",
-  },
-  {
-    id: "facades-graph-prompt",
-    source: "packages/core/src/templates/source/facades-graph-prompt.md",
-    dest: ".codeai-hub/templates/diagram_facades/facades-graph-prompt.md",
-  },
-  {
-    id: "facades-graph-template",
-    source: "packages/core/src/templates/source/facades-graph-template.mmd",
-    dest: ".codeai-hub/templates/diagram_facades/facades-graph-template.mmd",
   },
 ];
 
