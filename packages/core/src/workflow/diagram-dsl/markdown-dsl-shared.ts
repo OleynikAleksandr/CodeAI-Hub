@@ -8,7 +8,13 @@ import type {
 const SECTION_RE = /^## (.+)$/;
 const KEY_VALUE_RE = /^- ([^:]+):\s*(.*)$/;
 const LIST_ITEM_RE = /^ {2}- (.+)$/;
-const KNOWN_SECTIONS = new Set(["Metadata", "Modules", "Relations"]);
+const KNOWN_SECTIONS = new Set([
+  "Metadata",
+  "Modules",
+  "Relations",
+  "Facades",
+  "Facade Relations",
+]);
 
 export type Line = { readonly number: number; readonly text: string };
 export type Block = {
