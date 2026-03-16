@@ -186,9 +186,9 @@
 
 ### Stream: UX stabilization
 1. [DONE] Довести UX/error states в shared diagram editor: empty states, parse errors, conflict affordances, reopen/resume stability без монолитного компонента (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/save-status-indicator.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`; expected commit: `fix(ui): harden shared diagram editor ux`).
-2. [DONE] Git Commit: `fix(ui): harden shared diagram editor ux` (hash: TBD)
-3. [TODO] Довести workflow stage UX вокруг diagram branches и availability states после semantic editing (scope: `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.ts`, `src/client/project-manager/components/layout/use-diagram-facades-artifact-availability.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix(ui): harden diagram workflow availability states`).
-4. [TODO] Git Commit: `fix(ui): harden diagram workflow availability states` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): harden shared diagram editor ux` (hash: `b4bc784f`)
+3. [DONE] Довести workflow stage UX вокруг diagram branches и availability states после semantic editing, сохранив реальные `blocked/outdated` child-node statuses и targeted coverage (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`; expected commit: `fix(ui): harden diagram workflow availability states`).
+4. [DONE] Git Commit: `fix(ui): harden diagram workflow availability states` (hash: TBD)
 
 ### Stream: Phase 5 release build and final verification
 1. [TODO] Синхронизировать финальные release-facing docs под устойчивый workflow шагов 3-4 и зафиксировать полный manual verification flow в `README.md`, `CHANGELOG.md` и execution-plan (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep interactive diagram workflow stabilization release`).

@@ -2,7 +2,12 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { StageSyncPayload } from "./workspace-tree-branch-nodes";
-import type { TreeNode } from "./workspace-tree-model";
+import {
+  WORKFLOW_STAGE_BLOCKED_TITLES,
+  WORKFLOW_STAGE_OUTDATED_TITLE,
+  resolveTreeStatus,
+  type TreeNode,
+} from "./workspace-tree-model";
 
 const resolveProviderTitle = (providerId: string): string =>
   providerId === "claudeCodeCli" || providerId === "codexCli" || providerId === "geminiCli"
@@ -35,6 +40,41 @@ const resolveLatestDiagramChain = (
   }
   return best;
 };
+
+const resolveDiagramNodeVisuals = (
+  workflowState: WorkflowStateSnapshot,
+  stage: "diagram_modules" | "diagram_facades"
+): { readonly status: TreeNode["status"]; readonly title?: string } => {
+  const status = workflowState.stages[stage] ?? "idle";
+  const blocked = workflowState.gating.blocked[stage] ?? false;
+  return {
+    status: resolveTreeStatus(status, blocked),
+    title:
+      status === "outdated"
+        ? WORKFLOW_STAGE_OUTDATED_TITLE
+        : blocked
+          ? WORKFLOW_STAGE_BLOCKED_TITLES[stage]
+          : undefined,
+  };
+};
+
+const buildSessionIntent = (params: {
+  readonly last: NonNullable<
+    ReturnType<typeof resolveLatestDiagramChain>
+  >["segments"][number];
+  readonly stage: "diagram_modules" | "diagram_facades";
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): SessionResumeIntent => ({
+  providerId: params.last.providerId,
+  providerSessionId: params.last.providerSessionId,
+  workspacePath: params.workspacePath,
+  workspaceSlug: params.workspaceSlug,
+  initiativeSlug: params.workspaceSlug,
+  stage: params.stage,
+  sessionKind: "collector",
+  runSlug: null,
+});
 
 export const resolveDiagramStageSyncPayload = (options: {
   readonly stage: "diagram_modules" | "diagram_facades";
@@ -110,6 +150,7 @@ export const buildDiagramModulesBranchNodes = (options: {
 
   const nodes: TreeNode[] = [];
   const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`;
+  const nodeVisuals = resolveDiagramNodeVisuals(workflowState, "diagram_modules");
 
   const chain = resolveLatestDiagramChain(
     workflowState.continuity.chains,
@@ -121,24 +162,23 @@ export const buildDiagramModulesBranchNodes = (options: {
     nodes.push({
       id: "workflow:diagram_modules:artifact",
       label: "module-map.md",
-      title: dmArtifactPath,
-      status: "active",
+      title: nodeVisuals.title
+        ? `${dmArtifactPath}\n${nodeVisuals.title}`
+        : dmArtifactPath,
+      status: nodeVisuals.status,
       visualDepth: 2,
       onSelect: () => {
         dispatchStageActivated("diagram_modules");
         options.selectArtifact(dmArtifactPath, "module-map.md");
-        // Sync: open the session for the same stage
         if (last) {
-          options.dispatchDialogOpenIntent({
-            providerId: last.providerId,
-            providerSessionId: last.providerSessionId,
-            workspacePath,
-            workspaceSlug,
-            initiativeSlug: workspaceSlug,
-            stage: "diagram_modules",
-            sessionKind: "collector",
-            runSlug: null,
-          });
+          options.dispatchDialogOpenIntent(
+            buildSessionIntent({
+              last,
+              workspacePath,
+              workspaceSlug,
+              stage: "diagram_modules",
+            })
+          );
         }
       },
     });
@@ -152,21 +192,19 @@ export const buildDiagramModulesBranchNodes = (options: {
   nodes.push({
     id: `workflow:diagram_modules:session:${chain.rootSessionId}`,
     label: `Diagram Modules ${providerTitle}`,
-    status: "active",
+    status: nodeVisuals.status,
+    title: nodeVisuals.title,
     visualDepth: 2,
     onSelect: () => {
       dispatchStageActivated("diagram_modules");
-      options.dispatchDialogOpenIntent({
-        providerId: last.providerId,
-        providerSessionId: last.providerSessionId,
-        workspacePath,
-        workspaceSlug,
-        initiativeSlug: workspaceSlug,
-        stage: "diagram_modules",
-        sessionKind: "collector",
-        runSlug: null,
-      });
-      // Sync: select the artifact for the same stage, or show DM placeholder
+      options.dispatchDialogOpenIntent(
+        buildSessionIntent({
+          last,
+          workspacePath,
+          workspaceSlug,
+          stage: "diagram_modules",
+        })
+      );
       if (options.diagramModulesArtifactAvailable) {
         options.selectArtifact(dmArtifactPath, "module-map.md");
       } else {
@@ -196,6 +234,7 @@ export const buildDiagramFacadesBranchNodes = (options: {
 
   const nodes: TreeNode[] = [];
   const dfArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.md`;
+  const nodeVisuals = resolveDiagramNodeVisuals(workflowState, "diagram_facades");
 
   const chain = resolveLatestDiagramChain(
     workflowState.continuity.chains,
@@ -207,24 +246,23 @@ export const buildDiagramFacadesBranchNodes = (options: {
     nodes.push({
       id: "workflow:diagram_facades:artifact",
       label: "facade-map.md",
-      title: dfArtifactPath,
-      status: "active",
+      title: nodeVisuals.title
+        ? `${dfArtifactPath}\n${nodeVisuals.title}`
+        : dfArtifactPath,
+      status: nodeVisuals.status,
       visualDepth: 2,
       onSelect: () => {
         dispatchStageActivated("diagram_facades");
         options.selectArtifact(dfArtifactPath, "facade-map.md");
-        // Sync: open the session for the same stage
         if (last) {
-          options.dispatchDialogOpenIntent({
-            providerId: last.providerId,
-            providerSessionId: last.providerSessionId,
-            workspacePath,
-            workspaceSlug,
-            initiativeSlug: workspaceSlug,
-            stage: "diagram_facades",
-            sessionKind: "collector",
-            runSlug: null,
-          });
+          options.dispatchDialogOpenIntent(
+            buildSessionIntent({
+              last,
+              workspacePath,
+              workspaceSlug,
+              stage: "diagram_facades",
+            })
+          );
         }
       },
     });
@@ -238,21 +276,19 @@ export const buildDiagramFacadesBranchNodes = (options: {
   nodes.push({
     id: `workflow:diagram_facades:session:${chain.rootSessionId}`,
     label: `Diagram Facades ${providerTitle}`,
-    status: "active",
+    status: nodeVisuals.status,
+    title: nodeVisuals.title,
     visualDepth: 2,
     onSelect: () => {
       dispatchStageActivated("diagram_facades");
-      options.dispatchDialogOpenIntent({
-        providerId: last.providerId,
-        providerSessionId: last.providerSessionId,
-        workspacePath,
-        workspaceSlug,
-        initiativeSlug: workspaceSlug,
-        stage: "diagram_facades",
-        sessionKind: "collector",
-        runSlug: null,
-      });
-      // Sync: select the artifact for the same stage, or show DF placeholder
+      options.dispatchDialogOpenIntent(
+        buildSessionIntent({
+          last,
+          workspacePath,
+          workspaceSlug,
+          stage: "diagram_facades",
+        })
+      );
       if (options.diagramFacadesArtifactAvailable) {
         options.selectArtifact(dfArtifactPath, "facade-map.md");
       } else {
