@@ -192,9 +192,9 @@
 
 ### Stream: Phase 5 release build and final verification
 1. [DONE] Синхронизировать финальные release-facing docs под устойчивый workflow шагов 3-4 и зафиксировать полный manual verification flow в `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и execution-plan (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep interactive diagram workflow stabilization release`).
-2. [DONE] Git Commit: `docs(release): prep interactive diagram workflow stabilization release` (hash: TBD)
-3. [TODO] На чистом дереве выполнить финальный release checklist через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build interactive diagram workflow stabilization release`).
-4. [TODO] Git Commit: `chore(release): build interactive diagram workflow stabilization release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prep interactive diagram workflow stabilization release` (hash: `1e6d0693`)
+3. [DONE] На чистом дереве выполнить финальный release checklist через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build interactive diagram workflow stabilization release`).
+4. [DONE] Git Commit: `chore(release): build interactive diagram workflow stabilization release` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать финальный session report и полный checklist ручной проверки: end-to-end flow `Description -> Virtual Simulation -> Diagram Modules -> Diagram Facades`, reopen/resume, autosave, conflict UX, repeated agent runs, gating/OUTDATED propagation и отсутствие regressions в release build (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record interactive diagram workflow stabilization release`).
 6. [TODO] Git Commit: `docs(session): record interactive diagram workflow stabilization release` (hash: TBD)
 
