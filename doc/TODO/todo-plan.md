@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/Sessions/Session082.md`
+- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/Sessions/Session083.md`
 - Execution-plan основан на planning-доке `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 - TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи
 - Каждая микро-задача затрагивает не более 3 файлов или пакетов
@@ -50,11 +50,11 @@
 9. [DONE] Создать facade-agent merge-rules asset и удалить legacy facade Mermaid source files, чтобы orphaned `.mmd` не оставались в репозитории (scope: `packages/agents/diagram-facades-agent/assets/facade-map-merge-rules.md`, `packages/core/src/templates/source/facades-graph-prompt.md`, `packages/core/src/templates/source/facades-graph-template.mmd`; expected commit: `refactor(agents): replace facade mermaid assets with agent pack`).
 10. [DONE] Git Commit: `refactor(agents): replace facade mermaid assets with agent pack` (hash: `84255881`)
 11. [DONE] Обновить template registry/runtime references после удаления Mermaid assets и перевода diagram prompts на agent packages (scope: `packages/core/src/templates/bundled-templates.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(runtime): point diagram template registry to agent asset packs`).
-12. [DONE] Git Commit: `refactor(runtime): point diagram template registry to agent asset packs` (hash: TBD)
+12. [DONE] Git Commit: `refactor(runtime): point diagram template registry to agent asset packs` (hash: `820c6dad`)
 
 ### Stream: SSOT migration
-1. [TODO] Обновить SSOT шагов 3-4 и workflow artifact contract под `module-map.md` / `facade-map.md` / `*.agent-baseline.md` (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(workflow): sync diagram dsl artifact contract`).
-2. [TODO] Git Commit: `docs(workflow): sync diagram dsl artifact contract` (hash: TBD)
+1. [DONE] Обновить SSOT шагов 3-4 и workflow artifact contract под `module-map.md` / `facade-map.md` / `*.agent-baseline.md` (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(workflow): sync diagram dsl artifact contract`).
+2. [DONE] Git Commit: `docs(workflow): sync diagram dsl artifact contract` (hash: TBD)
 
 ### Stream: Phase 1 release build and verification
 1. [TODO] Подготовить release-facing docs под Phase 1 foundation: новые canonical artifacts, baseline diff, prompt pack assets, отсутствие `.mmd` в workflow (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram dsl foundation release`).

@@ -1,7 +1,7 @@
 # Workflow Steps & Watcher — Contract (SSOT)
 
 **Status:** Active
-**Updated:** 2026-03-01
+**Updated:** 2026-03-16
 **Owner:** Oleksandr + Codex
 
 ---
@@ -22,8 +22,8 @@
 
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
-3. `Diagram Modules` → артефакт: `modules-diagram.mmd`
-4. `Diagram Facades` → артефакт: `facades-graph.mmd`
+3. `Diagram Modules` → артефакты: `module-map.md`, `module-map.flow.json`, `module-map.agent-baseline.md`
+4. `Diagram Facades` → артефакты: `facade-map.md`, `facade-map.flow.json`, `facade-map.agent-baseline.md`
 
 ---
 
@@ -37,9 +37,13 @@
 - `Virtual Simulation`:
   - `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
 - `Diagram Modules`:
-  - `.codeai-hub/<workspaceSlug>/diagram_modules/modules-diagram.mmd`
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.md` (canonical semantic SSOT)
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json` (layout/view sidecar)
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.agent-baseline.md` (agent baseline for diff/merge)
 - `Diagram Facades`:
-  - `.codeai-hub/<workspaceSlug>/diagram_facades/facades-graph.mmd`
+  - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.md` (canonical semantic SSOT)
+  - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.flow.json` (layout/view sidecar)
+  - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.agent-baseline.md` (agent baseline for diff/merge)
 
 Legacy `description.md` допускается только для compat и не участвует в gating новых workflow.
 
@@ -60,7 +64,7 @@ Legacy `description.md` допускается только для compat и н�
 - `Description`: шаг может быть `READY` сразу (upstream не требуется).
 - `Virtual Simulation`: требует `Final_Description.md`.
 - `Diagram Modules`: требует `virtual-simulation.md` в статусе `DONE`.
-- `Diagram Facades`: требует `modules-diagram.mmd` в статусе `DONE`.
+- `Diagram Facades`: требует `module-map.md` в статусе `DONE`.
 
 ---
 
@@ -71,8 +75,10 @@ Watcher обязан отслеживать canonical артефакты и пу
 Минимум:
 - `Final_Description.md` created/changed
 - `virtual-simulation.md` created/changed
-- `modules-diagram.mmd` created/changed
-- `facades-graph.mmd` created/changed
+- `module-map.md` created/changed
+- `module-map.agent-baseline.md` created/changed
+- `facade-map.md` created/changed
+- `facade-map.agent-baseline.md` created/changed
 
 Требования:
 - событие содержит `workspaceSlug` + canonical path;
@@ -85,7 +91,9 @@ Watcher обязан отслеживать canonical артефакты и пу
 
 - Изменение `Final_Description.md` после `DONE` шага `Virtual Simulation` → `Virtual Simulation = OUTDATED`.
 - Изменение `virtual-simulation.md` → `Diagram Modules = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
-- Изменение `modules-diagram.mmd` → `Diagram Facades = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
+- Изменение `module-map.md` или `module-map.agent-baseline.md` → `Diagram Facades = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
+
+`*.flow.json` не участвуют в semantic gating: это view-only sidecar, их изменение не должно менять `READY/DONE/OUTDATED`.
 
 Рекомендация: propagation транзитивный.
 

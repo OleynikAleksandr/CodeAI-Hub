@@ -99,6 +99,23 @@
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 
+## 6.1) Diagram DSL Artifact Boundary (Phase 1, 2026-03-16)
+
+- Workflow шаги `Diagram Modules` и `Diagram Facades` больше не используют Mermaid `.mmd` как SSOT.
+- Канонические semantic artifacts:
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.md`
+  - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.md`
+- Канонические auxiliary artifacts:
+  - `*.flow.json` для layout/view state;
+  - `*.agent-baseline.md` для baseline diff, generated change summary и последующего safe merge.
+- Agent instructions и templates для этих шагов поставляются из `packages/agents/diagram-modules-agent/assets/` и `packages/agents/diagram-facades-agent/assets/`, а не из `packages/core/src/templates/source/*.mmd`.
+- Runtime обязан считать `.md` artifact единственным product-visible SSOT, а `*.flow.json` трактовать как non-semantic sidecar.
+
+Канонические документы:
+- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
 - `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.

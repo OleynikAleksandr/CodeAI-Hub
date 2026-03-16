@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-03-01
+**Updated:** 2026-03-16
 **Owner:** Oleksandr
 
 ---
@@ -115,7 +115,13 @@ Manual start из PM + resume-сессия агента:
 
 ### Артефакт
 
-- `.codeai-hub/<workspaceSlug>/diagram_modules/modules-diagram.mmd`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.md`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.agent-baseline.md`
+
+`module-map.md` является canonical SSOT для semantic content.
+`module-map.flow.json` хранит только layout/view state визуального редактора.
+`module-map.agent-baseline.md` фиксирует последний agent-baseline для baseline diff и change summary.
 
 ---
 
@@ -129,12 +135,17 @@ Manual start из PM + resume-сессия агента:
 
 - `Final_Description.md`
 - `virtual-simulation.md`
-- `modules-diagram.mmd`
+- `module-map.md`
 
 ### Артефакты
 
-- `.codeai-hub/<workspaceSlug>/diagram_facades/facades-graph.mmd`
-- `.codeai-hub/<workspaceSlug>/diagram_facades/facades-description.md`
+- `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.md`
+- `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.flow.json`
+- `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.agent-baseline.md`
+
+`facade-map.md` является canonical SSOT для semantic content.
+`facade-map.flow.json` хранит только layout/view state визуального редактора.
+`facade-map.agent-baseline.md` фиксирует baseline для change summary и безопасного merge после повторных agent runs.
 
 ---
 
@@ -170,8 +181,8 @@ Manual start из PM + resume-сессия агента:
 
 - Изменение `Final_Description.md` → `Virtual Simulation = OUTDATED`.
 - Изменение `virtual-simulation.md` → `Diagram Modules = OUTDATED`.
-- Изменение `modules-diagram.mmd` → `Diagram Facades = OUTDATED`.
-- Изменение `facades-graph.mmd`/спецификаций → downstream шаги получают `OUTDATED`.
+- Изменение `module-map.md` или `module-map.agent-baseline.md` → `Diagram Facades = OUTDATED`.
+- Изменение `facade-map.md` или `facade-map.agent-baseline.md`/спецификаций → downstream шаги получают `OUTDATED`.
 
 ### Resume-by-default для workflow шагов
 
@@ -188,6 +199,11 @@ Manual start из PM + resume-сессия агента:
 - bundled только `virtual-simulation-prompt.md`;
 - отдельный artifact template не поставляется и не отправляется агенту;
 - структура `virtual-simulation.md` задаётся контрактом шага и минимальными инвариантами валидации.
+
+Шаги `Diagram Modules` и `Diagram Facades` работают через agent asset packs:
+- prompt и template живут в `packages/agents/diagram-modules-agent/assets/` и `packages/agents/diagram-facades-agent/assets/`;
+- runtime отправляет агенту canonical `.md` артефакт и generated `Change Summary`;
+- Mermaid `.mmd` больше не является workflow SSOT.
 
 ---
 
