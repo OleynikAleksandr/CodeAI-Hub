@@ -96,9 +96,9 @@
 5. [DONE] Подготовить release-facing docs под corrective release: diagram contracts в core runtime, cleanup legacy template cache, ожидаемая ручная проверка запуска `Diagram Modules` / `Diagram Facades` в установленном VSIX (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram contract corrective release`).
 6. [DONE] Git Commit: `docs(release): prep diagram contract corrective release` (hash: `f0a1175b`)
 7. [DONE] На чистом дереве выполнить release checklist для corrective test release, зафиксировать version bump и refreshed artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram contract corrective release`).
-8. [TODO] Git Commit: `chore(release): build diagram contract corrective release` (hash: TBD)
-9. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки corrective release перед возвратом к visual shell (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram contract corrective release`).
-10. [TODO] Git Commit: `docs(session): record diagram contract corrective release` (hash: TBD)
+8. [DONE] Git Commit: `chore(release): build diagram contract corrective release` (hash: `60f6c07d`)
+9. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки corrective release перед возвратом к visual shell (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram contract corrective release`).
+10. [DONE] Git Commit: `docs(session): record diagram contract corrective release` (hash: TBD)
 
 ### Stream: Graph adapters
 1. [TODO] Реализовать `domainModelToReactFlow()` adapter для module map и тесты на nodes/edges projection (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add module graph adapter`).
