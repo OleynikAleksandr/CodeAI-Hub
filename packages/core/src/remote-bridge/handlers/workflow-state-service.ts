@@ -254,7 +254,7 @@ const resolveWorkflowBlockedStages = (params: {
   const diagramModulesDone = isStageDone({
     state: params.state,
     stage: "diagram_modules",
-    fileName: "modules-diagram.mmd",
+    fileName: "module-map.md",
   });
   const diagramModulesSatisfied = virtualSimulationDone && diagramModulesDone;
 

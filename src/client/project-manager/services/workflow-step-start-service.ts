@@ -103,11 +103,11 @@ export class WorkflowStepStartService {
       return existingSessionId;
     }
 
-    const dmArtifactPath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/modules-diagram.mmd`;
+    const dmArtifactPath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.md`;
     const dmStatus = state?.stages.diagram_modules;
     const facadesBlocked = state?.gating?.blocked?.diagram_facades ?? true;
     if (facadesBlocked || dmStatus !== "completed") {
-      throw new Error("Missing modules-diagram.mmd. Complete Diagram Modules step first.");
+      throw new Error("Missing module-map.md. Complete Diagram Modules step first.");
     }
     return this.submitService.submitQuestionnaire({
       workspaceName: params.workspaceName,
