@@ -170,6 +170,22 @@
 - `doc/TODO/todo-plan.md`
 - `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 
+## 6.5) Diagram Workflow Stabilization Boundary (Phase 5, 2026-03-16)
+
+- Markdown DSL runtime обязан быть tolerant к platform-level text variance:
+  - parser принимает UTF-8 BOM и CRLF line endings;
+  - serializer нормализует multiline semantic blocks к canonical LF output.
+- Shared diagram editor UX обязан сохранять визуальную непрерывность:
+  - background refresh не должен очищать уже загруженный graph перед следующим успешным parse/load;
+  - empty semantic graph обязан показывать explicit placeholder вместо silent blank canvas;
+  - ошибки auto-layout обязаны попадать в общий save/error indicator, а не теряться.
+- Workflow tree child nodes для `Diagram Modules` и `Diagram Facades` обязаны наследовать актуальные stage-level `blocked/outdated` сигналы; поддеревья диаграмм не могут маскировать реальный gating state как постоянный `active`.
+- Fresh toolbar bootstrap blocker для шагов `Diagram Modules` / `Diagram Facades` остаётся внешним follow-up и не меняет Phase 5 boundary: текущая стабилизация относится к существующим diagram artifacts, semantic merge loop и workflow visualization.
+
+Канонические документы:
+- `doc/TODO/todo-plan.md`
+- `doc/Sessions/Session090.md`
+
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
 - `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.
