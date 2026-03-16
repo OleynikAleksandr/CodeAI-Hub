@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildModuleMapChangeSummary } from "./baseline-diff-service";
-import type { ModuleMapModel } from "./diagram-dsl-types";
+import {
+  buildFacadeMapChangeSummary,
+  buildModuleMapChangeSummary,
+} from "./baseline-diff-service";
+import type { FacadeMapModel, ModuleMapModel } from "./diagram-dsl-types";
 
 const MODULE_MAP_BASELINE: ModuleMapModel = {
   version: 1,
@@ -48,6 +51,55 @@ const MODULE_MAP_BASELINE: ModuleMapModel = {
       type: "sync-call",
       label: "authenticate()",
       criticality: "high",
+      origin: "agent",
+      status: "proposed",
+      notes: undefined,
+    },
+  ],
+};
+
+const FACADE_MAP_BASELINE: FacadeMapModel = {
+  version: 1,
+  stage: "diagram_facades",
+  revision: "face1234",
+  updated: "2026-03-16T15:00:00Z",
+  facades: [
+    {
+      id: "auth-facade",
+      module: "auth-service",
+      kind: "class",
+      visibility: "public",
+      methods: ["login(credentials): AuthToken"],
+      ports: [{ direction: "In", type: "http", target: "api-gateway" }],
+      contractTargets: ["contracts/auth-facade.md"],
+      codeTargets: ["packages/auth-service/src/auth-facade.ts"],
+      origin: "agent",
+      status: "proposed",
+      notes: undefined,
+      rationale: undefined,
+    },
+    {
+      id: "legacy-facade",
+      module: "legacy-adapter",
+      kind: "class",
+      visibility: "internal",
+      methods: [],
+      ports: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "accepted",
+      notes: undefined,
+      rationale: undefined,
+    },
+  ],
+  relations: [
+    {
+      id: "api-gateway__sync-call__auth-facade",
+      from: "api-gateway",
+      to: "auth-facade",
+      type: "sync-call",
+      label: "authenticate()",
       origin: "agent",
       status: "proposed",
       notes: undefined,
@@ -148,6 +200,100 @@ test("buildModuleMapChangeSummary tracks module and relation additions removals 
       entityId: "auth-service__async-event__notification-service",
       action: "added",
       summary: "Relation: auth-service__async-event__notification-service",
+    },
+  ]);
+});
+
+test("buildFacadeMapChangeSummary tracks facade field-level changes", () => {
+  const current: FacadeMapModel = {
+    ...FACADE_MAP_BASELINE,
+    revision: "face5678",
+    facades: [
+      {
+        ...FACADE_MAP_BASELINE.facades[0],
+        methods: ["login(credentials): AuthToken", "refresh(token): AuthToken"],
+        ports: [
+          { direction: "In", type: "http", target: "api-gateway" },
+          { direction: "Out", type: "event", target: "audit-log" },
+        ],
+      },
+      {
+        id: "billing-facade",
+        module: "billing-service",
+        kind: "class",
+        visibility: "internal",
+        methods: ["createInvoice(input): Invoice"],
+        ports: [{ direction: "In", type: "sync-call", target: "auth-facade" }],
+        contractTargets: ["contracts/billing-facade.md"],
+        codeTargets: ["packages/billing-service/src/billing-facade.ts"],
+        origin: "user",
+        status: "proposed",
+        notes: undefined,
+        rationale: undefined,
+      },
+    ],
+    relations: [
+      {
+        ...FACADE_MAP_BASELINE.relations[0],
+        label: "POST /login",
+      },
+      {
+        id: "auth-facade__sync-call__billing-facade",
+        from: "auth-facade",
+        to: "billing-facade",
+        type: "sync-call",
+        label: "createInvoice()",
+        origin: "user",
+        status: "proposed",
+        notes: undefined,
+      },
+    ],
+  };
+
+  const summary = buildFacadeMapChangeSummary(current, FACADE_MAP_BASELINE);
+
+  assert.equal(summary.baselineRevision, "face1234");
+  assert.equal(summary.currentRevision, "face5678");
+  assert.deepEqual(
+    buildFacadeMapChangeSummary(FACADE_MAP_BASELINE, null).changes.map(
+      (change) => change.entityType
+    ),
+    ["facade", "facade", "facade-relation"]
+  );
+  assert.deepEqual(summary.changes, [
+    {
+      entityType: "facade",
+      entityId: "auth-facade",
+      action: "modified",
+      modifiedFields: ["Methods", "Ports"],
+      summary: "Facade: auth-facade — fields changed: Methods, Ports",
+    },
+    {
+      entityType: "facade",
+      entityId: "billing-facade",
+      action: "added",
+      summary:
+        "Facade: billing-facade (Module: billing-service, Visibility: internal)",
+    },
+    {
+      entityType: "facade",
+      entityId: "legacy-facade",
+      action: "removed",
+      summary: "Facade: legacy-facade",
+    },
+    {
+      entityType: "facade-relation",
+      entityId: "api-gateway__sync-call__auth-facade",
+      action: "modified",
+      modifiedFields: ["Label"],
+      summary:
+        "Facade Relation: api-gateway__sync-call__auth-facade — fields changed: Label",
+    },
+    {
+      entityType: "facade-relation",
+      entityId: "auth-facade__sync-call__billing-facade",
+      action: "added",
+      summary: "Facade Relation: auth-facade__sync-call__billing-facade",
     },
   ]);
 });

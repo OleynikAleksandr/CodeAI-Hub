@@ -1,4 +1,8 @@
-export type ChangeSummaryEntityType = "module" | "relation";
+export type ChangeSummaryEntityType =
+  | "module"
+  | "relation"
+  | "facade"
+  | "facade-relation";
 
 export type ChangeSummaryAction = "added" | "removed" | "modified";
 

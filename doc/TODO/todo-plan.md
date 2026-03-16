@@ -28,9 +28,9 @@
 
 ### Stream: Baseline diff and change summary
 1. [DONE] Реализовать baseline diff service и типы structured `ChangeSummary` для `module-map.md` (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add module map baseline diff service`).
-2. [DONE] Git Commit: `feat(core): add module map baseline diff service` (hash: TBD)
-3. [IN_PROGRESS] Расширить baseline diff service под `facade-map.md` и field-level modified summaries (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add facade map change summaries`).
-4. [TODO] Git Commit: `feat(core): add facade map change summaries` (hash: TBD)
+2. [DONE] Git Commit: `feat(core): add module map baseline diff service` (hash: `3a7f1f98`)
+3. [DONE] Расширить baseline diff service под `facade-map.md` и field-level modified summaries (scope: `packages/core/src/workflow/diagram-dsl/baseline-diff-service.ts`, `packages/core/src/workflow/diagram-dsl/change-summary-types.ts`, `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts`; expected commit: `feat(core): add facade map change summaries`).
+4. [DONE] Git Commit: `feat(core): add facade map change summaries` (hash: TBD)
 
 ### Stream: Agent stubs and prompt pack assembly
 1. [TODO] Создать facade stubs для `diagram-modules-agent` и `diagram-facades-agent`, чтобы runtime имел явные точки входа под будущие asset packs (scope: `packages/agents/diagram-modules-agent/src/facade.ts`, `packages/agents/diagram-modules-agent/src/index.ts`, `packages/agents/diagram-facades-agent/src/facade.ts`; expected commit: `feat(agents): add diagram agent facades`).
