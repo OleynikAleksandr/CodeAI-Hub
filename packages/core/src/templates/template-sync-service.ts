@@ -23,6 +23,10 @@ const LEGACY_TEMPLATE_RELATIVE_PATHS = [
   ".codeai-hub/templates/description/reviewer-prompt.md",
   ".codeai-hub/templates/description/reviewer-template.md",
   ".codeai-hub/templates/virtual_simulation/virtual-simulation-template.md",
+  ".codeai-hub/templates/diagram_modules/modules-diagram-prompt.md",
+  ".codeai-hub/templates/diagram_modules/modules-diagram-template.mmd",
+  ".codeai-hub/templates/diagram_facades/facades-graph-prompt.md",
+  ".codeai-hub/templates/diagram_facades/facades-graph-template.mmd",
 ] as const;
 
 export class TemplateSyncService {

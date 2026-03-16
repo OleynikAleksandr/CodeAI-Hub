@@ -90,8 +90,8 @@
 
 ### Stream: Diagram agent packaging and cache cleanup
 1. [DONE] Добавить corrective stream после test release: diagram agent assets должны попадать в workspace/release surface, иначе contract endpoints в установленном VSIX не находят `module-map-prompt.md` / `facade-map-prompt.md` (scope: `package.json`, `scripts/build-core.sh`, `doc/TODO/todo-plan.md`; expected commit: `fix(release): ship diagram agent assets with core runtime`).
-2. [TODO] Git Commit: `fix(release): ship diagram agent assets with core runtime` (hash: TBD)
-3. [TODO] Удалить stale legacy diagram templates из `~/.codeai-hub/templates`, чтобы локальный cache не продолжал показывать `modules-diagram-prompt.md` и `modules-diagram-template.mmd` после перехода на Markdown DSL (scope: `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(core): clean up legacy diagram templates`).
+2. [DONE] Git Commit: `fix(release): ship diagram agent assets with core runtime` (hash: `9c35f4ad`)
+3. [DONE] Удалить stale legacy diagram templates из `~/.codeai-hub/templates`, чтобы локальный cache не продолжал показывать `modules-diagram-prompt.md` и `modules-diagram-template.mmd` после перехода на Markdown DSL (scope: `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(core): clean up legacy diagram templates`).
 4. [TODO] Git Commit: `fix(core): clean up legacy diagram templates` (hash: TBD)
 5. [TODO] Выполнить таргетную проверку release/runtime surface для diagram contracts и зафиксировать corrective session notes перед возвратом к visual shell (scope: `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`, `codeai-hub-<version>.vsix`; expected commit: `docs(session): record diagram contract corrective stream`).
 6. [TODO] Git Commit: `docs(session): record diagram contract corrective stream` (hash: TBD)
