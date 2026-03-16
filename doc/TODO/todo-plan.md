@@ -78,7 +78,15 @@
 5. [DONE] Синхронизировать diagram panels/help/tree nodes с `module-map.md` / `facade-map.md`, чтобы пользователь видел корректные пути и labels до visual shell (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix(ui): sync diagram panels with markdown dsl artifacts`).
 6. [DONE] Git Commit: `fix(ui): sync diagram panels with markdown dsl artifacts` (hash: `f9bfe14e`)
 7. [DONE] Закрыть остаточные help-copy references на Mermaid contract и проверить запуск Diagram Modules/Facades вручную таргетными сборками PM/UI (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`, `doc/TODO/todo-plan.md`; expected commit: `docs(ui): remove mermaid references from diagram workflow help`).
-8. [DONE] Git Commit: `docs(ui): remove mermaid references from diagram workflow help` (hash: TBD)
+8. [DONE] Git Commit: `docs(ui): remove mermaid references from diagram workflow help` (hash: `9a3d84b5`)
+
+### Stream: Contract alignment test release
+1. [DONE] Подготовить release-facing docs под PM/UI alignment для diagram workflow: запуск шагов 3-4, canonical `.md` artifacts в tree/panels/help, отсутствие активных Mermaid references в PM (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram contract alignment release`).
+2. [DONE] Git Commit: `docs(release): prep diagram contract alignment release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist для test release через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram contract alignment release`).
+4. [TODO] Git Commit: `chore(release): build diagram contract alignment release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: toolbar start для `Diagram Modules`, toolbar start для `Diagram Facades`, открытие `module-map.md` / `facade-map.md` из tree, отсутствие `.mmd` labels в PM (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram contract alignment release`).
+6. [TODO] Git Commit: `docs(session): record diagram contract alignment release` (hash: TBD)
 
 ### Stream: Graph adapters
 1. [TODO] Реализовать `domainModelToReactFlow()` adapter для module map и тесты на nodes/edges projection (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(ui): add module graph adapter`).
