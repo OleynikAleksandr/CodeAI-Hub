@@ -73,8 +73,17 @@ async function run() {
       "media",
       "session-view.css"
     );
+    const reactFlowStylesPath = path.join(
+      projectRoot,
+      "node_modules",
+      "@xyflow",
+      "react",
+      "dist",
+      "style.css"
+    );
     let projectManagerCss = "";
     let sessionCss = "";
+    let reactFlowCss = "";
     try {
       projectManagerCss = await fs.readFile(projectManagerStylesPath, "utf8");
     } catch (_e) {
@@ -87,10 +96,16 @@ async function run() {
         "No session-view.css found, skipping session style injection"
       );
     }
+    try {
+      reactFlowCss = await fs.readFile(reactFlowStylesPath, "utf8");
+    } catch (_e) {
+      console.warn("No React Flow stylesheet found, skipping injection");
+    }
 
     const themeBlock = [
       `<style id="codeai-hub-theme">\n${projectManagerCss}\n</style>`,
       `<style id="codeai-hub-session-theme">\n${sessionCss}\n</style>`,
+      `<style id="codeai-hub-react-flow-theme">\n${reactFlowCss}\n</style>`,
     ].join("\n");
     let htmlOutput;
     if (htmlTemplate.includes("<!--theme:inject-->")) {
