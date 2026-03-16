@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.732
-- PM/UI contract for workflow diagrams is now aligned with the Markdown DSL runtime contract: stage gating, toolbar start, tree nodes, artifact availability, and help/panel copy no longer depend on legacy Mermaid filenames.
-- `Diagram Modules` now resolves against `module-map.md`, and `Diagram Facades` now resolves against `facade-map.md`, so the next test release can validate stage launch behavior in the real UI instead of foundation-only runtime changes.
+## Current Release — v1.1.733
+- Corrective release for diagram workflow delivery: the packaged core runtime now ships both `diagram-modules-agent` and `diagram-facades-agent` asset directories, so installed contract endpoints can resolve the Markdown DSL prompt/template files instead of silently missing them.
+- Template sync now removes stale home-cache artifacts `modules-diagram-prompt.md`, `modules-diagram-template.mmd`, `facades-graph-prompt.md`, and `facades-graph-template.mmd`, so local `~/.codeai-hub/templates/**` no longer advertises the removed Mermaid workflow files after the DSL migration.
+- PM/UI contract from `1.1.732` remains the expected user-facing surface: stage gating, toolbar start, tree nodes, artifact availability, and help/panel copy target `module-map.md` / `facade-map.md`.
 - Workflow diagrams still use Markdown DSL as the canonical runtime format, with the same artifact triplet: canonical `.md`, visual-layout sidecar `*.flow.json`, and agent baseline `*.agent-baseline.md`.
-- Core/runtime foundation from `1.1.731` remains intact: strict parser rules, deterministic serializer output, baseline diff/change-summary generation, and agent-owned prompt/template assets.
-- Release pipeline: local `build-all` must raise the unified version to `1.1.732` and rebuild provider/core/ui/launcher artifacts on top of that baseline.
+- Release pipeline: local `build-all` must raise the unified version to `1.1.733` and rebuild provider/core/ui/launcher artifacts on top of the corrective runtime baseline.
 
 Previous releases (summary): the `1.1.57x–1.1.731` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, and PM/UI contract cleanup before the future visual shell release.
 
