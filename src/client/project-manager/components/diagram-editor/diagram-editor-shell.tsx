@@ -6,7 +6,11 @@ import type {
   DiagramFlowProjection,
 } from "./adapters/domain-model-to-react-flow.types";
 import { DiagramEditorFacade } from "./diagram-editor-facade";
-import { applyDiagramAutoLayout } from "./diagram-layout-facade";
+import {
+  applyDiagramAutoLayout,
+  DIAGRAM_LAYOUT_PROFILE_OPTIONS,
+  type DiagramLayoutProfileId,
+} from "./diagram-layout-facade";
 import {
   SaveStatusIndicator,
   type DiagramSaveState,
@@ -39,13 +43,47 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   );
   const [isAutoLayoutPending, setIsAutoLayoutPending] = useState(false);
   const [layoutError, setLayoutError] = useState<string | null>(null);
+  const [layoutProfile, setLayoutProfile] =
+    useState<DiagramLayoutProfileId>("vertical");
+  const [layoutViewport, setLayoutViewport] = useState<{
+    readonly width: number;
+    readonly height: number;
+  } | null>(null);
   const [viewportRefreshToken, setViewportRefreshToken] = useState(0);
+  const shellRef = useRef<HTMLDivElement | null>(null);
   const initialLayoutDoneRef = useRef<string | null>(null);
   const effectiveSaveState =
     layoutError && saveState !== "conflict" ? "error" : saveState;
+  const supportsLayoutProfiles = projection.stage === "diagram_modules";
+  const resolvedLayoutProfile: DiagramLayoutProfileId = supportsLayoutProfiles
+    ? layoutProfile
+    : "vertical";
 
   const requestViewportRefresh = useCallback(() => {
     setViewportRefreshToken((current) => current + 1);
+  }, []);
+
+  useEffect(() => {
+    const container = shellRef.current;
+    if (!container || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) {
+        return;
+      }
+      setLayoutViewport({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
+    });
+
+    observer.observe(container);
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -72,6 +110,8 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     applyDiagramAutoLayout({
       nodes: projection.nodes,
       edges: projection.edges,
+      profile: resolvedLayoutProfile,
+      viewport: layoutViewport ?? undefined,
     })
       .then(async (nextNodes) => {
         if (cancelled) {
@@ -104,6 +144,8 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     projection.nodes,
     projection.revision,
     requestViewportRefresh,
+    resolvedLayoutProfile,
+    layoutViewport,
   ]);
 
   const handleAutoLayout = async (): Promise<void> => {
@@ -113,6 +155,8 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       const nextNodes = await applyDiagramAutoLayout({
         nodes,
         edges: projection.edges,
+        profile: resolvedLayoutProfile,
+        viewport: layoutViewport ?? undefined,
       });
       setNodes(nextNodes);
       requestViewportRefresh();
@@ -152,7 +196,10 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   );
 
   return (
-    <div style={{ display: "grid", gap: 12 }}>
+    <div
+      ref={shellRef}
+      style={{ display: "grid", gap: 12 }}
+    >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <SaveStatusIndicator
           detail={layoutError}
@@ -169,6 +216,13 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
         edges={projection.edges}
         nodes={nodes}
         onAutoLayout={handleAutoLayout}
+        layoutProfile={supportsLayoutProfiles ? layoutProfile : undefined}
+        layoutProfileOptions={
+          supportsLayoutProfiles ? DIAGRAM_LAYOUT_PROFILE_OPTIONS : undefined
+        }
+        onLayoutProfileChange={
+          supportsLayoutProfiles ? setLayoutProfile : undefined
+        }
         onNodesChange={handleFlowNodesChange}
         subtitle={subtitle}
         title={title}

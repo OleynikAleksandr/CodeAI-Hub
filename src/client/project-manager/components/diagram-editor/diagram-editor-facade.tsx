@@ -14,11 +14,18 @@ import type {
   DiagramFlowEdge,
   DiagramFlowNode,
 } from "./adapters/domain-model-to-react-flow.types";
+import type {
+  DiagramLayoutProfileId,
+  DiagramLayoutProfileOption,
+} from "./diagram-layout-facade";
 
 type DiagramEditorFacadeProps = {
   readonly nodes: readonly DiagramFlowNode[];
   readonly edges: readonly DiagramFlowEdge[];
   readonly onAutoLayout?: () => void | Promise<void>;
+  readonly layoutProfile?: DiagramLayoutProfileId;
+  readonly layoutProfileOptions?: readonly DiagramLayoutProfileOption[];
+  readonly onLayoutProfileChange?: (profile: DiagramLayoutProfileId) => void;
   readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
   readonly title: string;
   readonly subtitle?: string;
@@ -81,6 +88,9 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
   edges,
   onAutoLayout,
+  layoutProfile,
+  layoutProfileOptions,
+  onLayoutProfileChange,
   onNodesChange,
   title,
   subtitle,
@@ -109,24 +119,51 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
           </span>
         ) : null}
       </div>
-      <button
-        type="button"
-        onClick={() => {
-          void onAutoLayout?.();
-        }}
-        style={{
-          height: 32,
-          padding: "0 12px",
-          borderRadius: 999,
-          border: "1px solid var(--pm-border-strong)",
-          background: "rgba(66, 201, 162, 0.12)",
-          color: "var(--pm-accent-strong)",
-          cursor: onAutoLayout ? "pointer" : "default",
-          opacity: onAutoLayout ? 1 : 0.6,
-        }}
-      >
-        Auto-layout
-      </button>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {layoutProfileOptions && layoutProfile ? (
+          <select
+            aria-label="Diagram layout profile"
+            onChange={(event) => {
+              onLayoutProfileChange?.(
+                event.target.value as DiagramLayoutProfileId
+              );
+            }}
+            style={{
+              height: 32,
+              padding: "0 10px",
+              borderRadius: 999,
+              border: "1px solid var(--pm-border-strong)",
+              background: "rgba(255, 255, 255, 0.04)",
+              color: "var(--pm-text-primary)",
+            }}
+            value={layoutProfile}
+          >
+            {layoutProfileOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => {
+            void onAutoLayout?.();
+          }}
+          style={{
+            height: 32,
+            padding: "0 12px",
+            borderRadius: 999,
+            border: "1px solid var(--pm-border-strong)",
+            background: "rgba(66, 201, 162, 0.12)",
+            color: "var(--pm-accent-strong)",
+            cursor: onAutoLayout ? "pointer" : "default",
+            opacity: onAutoLayout ? 1 : 0.6,
+          }}
+        >
+          Auto-layout
+        </button>
+      </div>
     </div>
     <div style={{ position: "relative", minHeight: 0 }}>
       <ReactFlowProvider>
