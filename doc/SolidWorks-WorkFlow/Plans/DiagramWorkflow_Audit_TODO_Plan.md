@@ -502,3 +502,48 @@ That was acceptable while the product path was broken and rapid iteration matter
 
 - A new execution phase must explicitly own repository-wide duplication debt reduction.
 - Diagram feature work should not continue piling onto the same clone clusters before this phase is closed.
+
+---
+
+## 17. Seventh Audit Finding - Auto-layout persists but does not refresh the live canvas
+
+### Scope
+
+- `Diagram Modules` visual shell
+- shared React Flow facade/shell used by both diagram stages
+- auto-layout action after first load and after explicit button click
+
+### Evidence
+
+- Manual verification on `v1.1.742` showed that `Auto-layout` did not visibly rearrange the current canvas in-place.
+- The same action did persist different node positions, because after leaving the stage and reopening it, the diagram appeared in a different arrangement.
+- Code inspection confirmed that the shared diagram shell recalculated node positions and persisted them to `*.flow.json`, but no live viewport refresh (`fitView`) happened after the new layout was applied.
+- The current React Flow surface only received `fitView` on mount, so the user could see the updated layout only after a remount/reopen.
+
+### Root cause
+
+The shared diagram editor treated auto-layout as a data update only:
+
+- nodes were recalculated;
+- sidecar positions were persisted;
+- but the active canvas viewport was left untouched.
+
+Because of that, the user-visible graph stayed on the stale camera framing until the stage was remounted and React Flow ran its initial `fitView` again.
+
+### Implemented correction
+
+- The shared diagram shell now emits a dedicated viewport refresh signal whenever auto-layout finishes.
+- The shared React Flow facade listens for that signal and performs an in-place `fitView` after the new node positions are ready.
+- This applies both to:
+  - the first automatic layout on load when no meaningful positions exist yet;
+  - explicit clicks on the `Auto-layout` button.
+
+### Verdict
+
+- User expectation "auto-layout must visibly rearrange the graph immediately in the current screen" = `confirmed`
+- Previous shared editor behavior for auto-layout visibility = `disproved`
+
+### Rewrite instruction for the main TODO
+
+- Add a dedicated follow-up stream for real-time auto-layout refresh and live viewport refit.
+- Future diagram readability work must assume that auto-layout feedback is immediate, not reopen-dependent.

@@ -264,7 +264,21 @@
 5. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump до `1.1.742` и release artifacts для provider/core/ui/launcher перед финальной VSIX упаковкой (scope: release manifests, `package.json`, `package-lock.json`, `assets/**/manifest.json`, `media/react-chat.js`; expected commit: `chore(release): build duplication debt reduction release`).
 6. [DONE] Git Commit: `chore(release): build duplication debt reduction release` (hash: `5881cc02`)
 7. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, убедиться что repository-wide duplication больше не выдаёт advisory, затем оформить session report с точным `jscpd` result и checklist ручной проверки локального VSIX (scope: `codeai-hub-1.1.742.vsix`, `doc/Sessions/Session095.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record duplication debt reduction release`).
-8. [TODO] Git Commit: `docs(session): record duplication debt reduction release` (hash: TBD)
+8. [DONE] Git Commit: `docs(session): record duplication debt reduction release` (hash: `7765f7ed`)
+
+---
+
+## Phase 8 — diagram auto-layout realtime refresh (owner: Oleksandr, updated: 2026-03-18)
+
+### Stream: Live viewport refit after auto-layout
+1. [DONE] Зафиксировать corrective scope для auto-layout visibility bug: подтвердить, что shared diagram shell сохраняет новый layout в `*.flow.json`, но не обновляет live React Flow viewport, из-за чего пользователь видит результат только после reopen/remount stage (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram auto-layout realtime refresh`).
+2. [TODO] Git Commit: `docs(plan): scope diagram auto-layout realtime refresh` (hash: TBD)
+3. [DONE] Исправить shared auto-layout feedback loop: после первичной авто-раскладки и после явного клика `Auto-layout` canvas должен сразу перестраиваться в текущем экране через live viewport refit, без ухода на другой шаг и без remount diagram stage (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `fix(ui): refresh diagram viewport after auto-layout`).
+4. [TODO] Git Commit: `fix(ui): refresh diagram viewport after auto-layout` (hash: TBD)
+5. [TODO] Прогнать таргетную verification цепочку для shared diagram editor: `diagram-editor-facade.test.tsx`, `typecheck:webview`, `build:webview`, затем подготовить manual checklist для повторной проверки `Diagram Modules` / `Diagram Facades` в локальном релизе (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prep diagram auto-layout refresh verification`).
+6. [TODO] Git Commit: `docs(release): prep diagram auto-layout refresh verification` (hash: TBD)
+7. [TODO] Выполнить release checklist для этого corrective stream: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, затем оформить новый session report с checklist ручной проверки realtime `Auto-layout` в `Diagram Modules` / `Diagram Facades` (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram auto-layout refresh release`).
+8. [TODO] Git Commit: `docs(session): record diagram auto-layout refresh release` (hash: TBD)
 
 ---
 
