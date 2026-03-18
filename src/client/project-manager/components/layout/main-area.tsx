@@ -5,6 +5,11 @@ import type { WorkspaceProject } from "../../types";
 import { type WorkflowEvent, startWorkflowEventPolling } from "../../services/workflow-events-client";
 import { dispatchStageActivated, resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
 import { MainAreaArtifactContent, MainAreaSessionContent } from "./main-area-panel-content";
+import {
+  normalizeArtifactHeaderMode,
+  resolveArtifactHeaderModes,
+  type ArtifactHeaderMode,
+} from "./stage-artifact-mode";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
@@ -52,9 +57,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [pendingSessionCreate, setPendingSessionCreate] = useState<{
     readonly providerTitle: string;
   } | null>(null);
-  const [artifactHeaderMode, setArtifactHeaderMode] = useState<
-    "artifacts" | "help"
-  >("artifacts");
+  const [artifactHeaderMode, setArtifactHeaderMode] =
+    useState<ArtifactHeaderMode>("artifacts");
   const handleToolSelect = useWorkflowToolSelect({
     activeWorkspace,
     setActiveTool,
@@ -86,6 +90,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
       const nextTool = resolveToolByStage(stage);
       if (nextTool) {
         setActiveTool(nextTool);
+        setArtifactHeaderMode("artifacts");
       }
     };
     window.addEventListener("pm:artifact:selected", onSelected);
@@ -112,6 +117,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
     }
     setActiveTool("Description");
   }, [activeWorkspace?.id]);
+
+  useEffect(() => {
+    setArtifactHeaderMode((current) =>
+      normalizeArtifactHeaderMode(activeTool, current)
+    );
+  }, [activeTool]);
 
   const handleWorkflowEvents = useCallback(
     (events: readonly WorkflowEvent[]) => {
@@ -210,12 +221,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
     selectedArtifact?.workspaceSlug,
   ]);
 
-  useEffect(() => {
-    if (!activeTool && artifactHeaderMode === "help") {
-      setArtifactHeaderMode("artifacts");
-    }
-  }, [activeTool, artifactHeaderMode]);
-
   const isDescriptionActive = activeTool === "Description";
   const activeWorkspaceSlug = activeWorkspace
     ? resolveWorkspaceSlug(activeWorkspace)
@@ -226,12 +231,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
       selectedArtifact.workspaceSlug === activeWorkspaceSlug &&
       !hasDescriptionSession
   );
-  const showHelpInRightPanel = Boolean(activeTool && artifactHeaderMode === "help");
   const hasDescriptionSessionPending = pendingSessionCreate !== null;
   const showDescriptionHelpInSessionPanel =
     isDescriptionActive &&
     !hasDescriptionSession &&
     !hasDescriptionSessionPending;
+  const artifactHeaderModes = resolveArtifactHeaderModes(activeTool);
   const artifactHeaderTitle =
     activeTool === VIRTUAL_SIMULATION_TOOL_LABEL
       ? "Virtual Simulation"
@@ -253,7 +258,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             activeWorkspaceSlug={activeWorkspaceSlug}
             artifactRefreshKey={artifactRefreshKey}
             descriptionDocumentExists={descriptionDocument !== null}
-            helpMode={showHelpInRightPanel}
+            headerMode={artifactHeaderMode}
             hasDescriptionSession={hasDescriptionSession}
             onDescriptionSessionCreated={handleIdeaSessionCreated}
             onPendingSessionCreateChange={setPendingSessionCreate}
@@ -267,6 +272,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
         artifactHeaderContent={
           artifactHeaderTitle ? (
             <StageArtifactHeaderToggle
+              availableModes={artifactHeaderModes}
               mode={artifactHeaderMode}
               onModeChange={setArtifactHeaderMode}
               title={artifactHeaderTitle}

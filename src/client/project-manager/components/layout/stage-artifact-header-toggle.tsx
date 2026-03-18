@@ -1,10 +1,18 @@
 import type React from "react";
+import type { ArtifactHeaderMode } from "./stage-artifact-mode";
 
 interface StageArtifactHeaderToggleProps {
-  readonly mode: "artifacts" | "help";
-  readonly onModeChange: (mode: "artifacts" | "help") => void;
+  readonly availableModes: readonly ArtifactHeaderMode[];
+  readonly mode: ArtifactHeaderMode;
+  readonly onModeChange: (mode: ArtifactHeaderMode) => void;
   readonly title: string;
 }
+
+const MODE_LABELS: Readonly<Record<ArtifactHeaderMode, string>> = {
+  artifacts: "Artifacts",
+  help: "Help",
+  source: "Source",
+};
 
 const resolveToggleButtonStyle = (
   isActive: boolean
@@ -20,7 +28,7 @@ const resolveToggleButtonStyle = (
 
 export const StageArtifactHeaderToggle: React.FC<
   StageArtifactHeaderToggleProps
-> = ({ mode, onModeChange, title }) => (
+> = ({ availableModes, mode, onModeChange, title }) => (
   <div
     style={{
       alignItems: "center",
@@ -31,22 +39,17 @@ export const StageArtifactHeaderToggle: React.FC<
   >
     <span>{title}</span>
     <div style={{ display: "inline-flex", gap: 6 }}>
-      <button
-        aria-pressed={mode === "artifacts"}
-        onClick={() => onModeChange("artifacts")}
-        style={resolveToggleButtonStyle(mode === "artifacts")}
-        type="button"
-      >
-        Artifacts
-      </button>
-      <button
-        aria-pressed={mode === "help"}
-        onClick={() => onModeChange("help")}
-        style={resolveToggleButtonStyle(mode === "help")}
-        type="button"
-      >
-        Help
-      </button>
+      {availableModes.map((nextMode) => (
+        <button
+          key={nextMode}
+          aria-pressed={mode === nextMode}
+          onClick={() => onModeChange(nextMode)}
+          style={resolveToggleButtonStyle(mode === nextMode)}
+          type="button"
+        >
+          {MODE_LABELS[nextMode]}
+        </button>
+      ))}
     </div>
   </div>
 );

@@ -8,6 +8,11 @@ import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
+import {
+  isDiagramTool,
+  resolveDiagramSourceArtifact,
+  type ArtifactHeaderMode,
+} from "./stage-artifact-mode";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
 
@@ -45,7 +50,7 @@ interface ArtifactContentProps {
   readonly activeWorkspaceSlug: string | null;
   readonly artifactRefreshKey: number;
   readonly descriptionDocumentExists: boolean;
-  readonly helpMode: boolean;
+  readonly headerMode: ArtifactHeaderMode;
   readonly hasDescriptionSession: boolean;
   readonly onDescriptionSessionCreated: (sessionId: string) => void;
   readonly onPendingSessionCreateChange: (
@@ -65,7 +70,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   activeWorkspaceSlug,
   artifactRefreshKey,
   descriptionDocumentExists,
-  helpMode,
+  headerMode,
   hasDescriptionSession,
   onDescriptionSessionCreated,
   onPendingSessionCreateChange,
@@ -75,12 +80,24 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   selectedArtifact,
   shouldShowQuestionnaireEditor,
 }) => {
+  const sourceArtifact = resolveDiagramSourceArtifact({
+    activeTool,
+    workspacePath: activeWorkspacePath,
+    workspaceSlug: activeWorkspaceSlug,
+  });
+  const helpMode = headerMode === "help";
+  const showSourceViewer =
+    headerMode === "source" && sourceArtifact !== null;
   const showArtifactViewer =
-    selectedArtifact !== null && !shouldShowQuestionnaireEditor && !helpMode;
+    selectedArtifact !== null &&
+    !shouldShowQuestionnaireEditor &&
+    headerMode === "artifacts" &&
+    !isDiagramTool(activeTool);
   const showDescriptionQuestionnaire =
     activeTool === "Description" &&
-    !helpMode &&
+    headerMode === "artifacts" &&
     !showArtifactViewer &&
+    !showSourceViewer &&
     (shouldShowQuestionnaireEditor || (!descriptionDocumentExists && !questionnaireDocumentExists));
 
   if (helpMode) {
@@ -98,6 +115,18 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     if (activeTool === "Diagram Facades") {
       return <DiagramFacadesHelp />;
     }
+  }
+  if (showSourceViewer && sourceArtifact) {
+    return (
+      <WorkflowArtifactViewer
+        label={sourceArtifact.label}
+        onClose={onSelectedArtifactClear}
+        path={sourceArtifact.path}
+        refreshKey={artifactRefreshKey}
+        workspacePath={sourceArtifact.workspacePath}
+        workspaceSlug={sourceArtifact.workspaceSlug}
+      />
+    );
   }
   if (showArtifactViewer && selectedArtifact) {
     return (
