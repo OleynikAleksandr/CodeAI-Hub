@@ -2,6 +2,19 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.741] - 2026-03-18
+### Changed
+- Project Manager diagram stages now expose an explicit `Artifacts | Source | Help` contract: `Artifacts` keeps the visual diagram primary, `Source` shows read-only canonical Markdown, and `Help` remains separate guidance.
+- `Diagram Modules` and `Diagram Facades` reopen back into the visual diagram instead of silently replacing the right panel with raw `module-map.md` / `facade-map.md`.
+- Both diagram panels are now diagram-first surfaces: the canvas renders before semantic editing controls, internal `artifact -> sidecar` path chrome is removed from the default UI, and `*.flow.json` stays hidden as a runtime-only sidecar.
+- The shared React Flow shell now supports manual node repositioning in addition to optional `Auto-layout`, and those layout changes persist across reopen/resume without changing semantic Markdown DSL content.
+
+### Added
+- Regression coverage for the new diagram header/source contract and updated facade-shell chrome.
+
+### Known Issues
+- Dense diagrams can still require manual layout cleanup after the first automatic placement; this release makes that path available and persistent, but does not yet redesign the graph projection itself.
+
 ## [1.1.740] - 2026-03-18
 ### Fixed
 - Diagram workflow contract delivery: `Diagram Modules` / `Diagram Facades` now inject their strict field-reference and merge-rules assets directly into the emitted prompt, so the provider sees the canonical DSL enum constraints before generating the first artifact.
@@ -12,7 +25,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 - Synchronized `SystemArchitecture`, the audit plan, and the recovered `todo-plan` around the stricter diagram contract requirement: fresh stage success now means both `session` launch and immediate PM parseability of the first artifact.
 
 ### Known Issues
-- The next manual check is still required in the live PM: verify that a fresh `Diagram Modules` run in the audit workspaces both starts and renders a parseable `module-map.md` without using `Fix with agent`.
+- This release fixed prompt-contract parseability but still left the user-facing surface unfinished; the follow-up `1.1.741` release moves the diagram itself back to the primary panel and adds `Source` as the explicit secondary debug view.
 
 ## [1.1.739] - 2026-03-18
 ### Fixed

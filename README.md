@@ -7,13 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.740
-- Diagram workflow contract recovery now injects strict field-reference and merge-rules assets into the live `Diagram Modules` / `Diagram Facades` prompt surface instead of exposing only the base prompt and template path.
-- Freshly generated diagram artifacts are therefore constrained by the canonical Markdown-DSL enum contract before the first write, preventing invalid values like `Kind: application` from breaking the Project Manager visual shell immediately after session launch.
-- Behavioral regression coverage now verifies that both diagram-stage contracts embed their field-reference and merge-rules text into the emitted prompt.
-- This release follows the bootstrap/gating recovery from `v1.1.739`: session launch is now recovered, and the next live validation step is to confirm that the first generated artifact renders in PM without manual repair.
+## Current Release — v1.1.741
+- Diagram stages now follow a user-facing `Artifacts | Source | Help` contract in Project Manager: `Artifacts` keeps the visual diagram primary, `Source` exposes the canonical Markdown DSL only on demand, and `Help` remains the workflow guidance surface.
+- Returning to `Diagram Modules` or `Diagram Facades` no longer drops the right panel back into raw `module-map.md` / `facade-map.md`; the default reopen surface stays the diagram itself.
+- Both diagram stage panels are now diagram-first: the React Flow canvas appears before semantic editing forms, technical `artifact -> sidecar` strings are removed from the default chrome, and `*.flow.json` stays hidden as an internal persistence sidecar.
+- Users can manually refine node placement directly in the visual shell, while `Auto-layout` remains optional; these layout changes persist in `*.flow.json` without mutating the canonical semantic Markdown artifacts.
 
-Previous releases (summary): the `1.1.57x–1.1.739` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and bootstrap/gating recovery for fresh diagram-stage launch.
+Previous releases (summary): the `1.1.57x–1.1.740` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and bootstrap/gating + parseability recovery for fresh diagram-stage launch.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
