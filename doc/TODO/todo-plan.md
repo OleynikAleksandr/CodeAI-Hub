@@ -232,10 +232,10 @@
 
 ### Stream: Phase 6 release build and verification
 1. [DONE] Подготовить release-facing docs под diagram user surface recovery: новый `Artifacts / Source / Help` contract, diagram-first reopen behavior, скрытый `*.flow.json`, manual layout correction и обновлённый checklist ручной проверки (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram user surface recovery release`).
-2. [TODO] Git Commit: `docs(release): prep diagram user surface recovery release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prep diagram user surface recovery release` (hash: `583a7424`)
 3. [DONE] На чистом дереве выполнить release checklist для Phase 6 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram user surface recovery release`).
-4. [TODO] Git Commit: `chore(release): build diagram user surface recovery release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: `Artifacts` по умолчанию открывает diagram, `Source` показывает canonical `.md`, возврат на diagram stage не подменяет surface на raw markdown, ручной layout сохраняется после reopen/resume, `*.flow.json` нигде не показывается пользователю (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram user surface recovery release`).
+4. [DONE] Git Commit: `chore(release): build diagram user surface recovery release` (hash: `e9ae8b3b`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: `Artifacts` по умолчанию открывает diagram, `Source` показывает canonical `.md`, возврат на diagram stage не подменяет surface на raw markdown, ручной layout сохраняется после reopen/resume, `*.flow.json` нигде не показывается пользователю (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram user surface recovery release`).
 6. [TODO] Git Commit: `docs(session): record diagram user surface recovery release` (hash: TBD)
 
 ---
