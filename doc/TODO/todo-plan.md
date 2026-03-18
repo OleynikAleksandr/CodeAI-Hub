@@ -296,8 +296,8 @@
 
 ### Stream: Phase 9 release build and verification
 1. [DONE] На чистом дереве выполнить release checklist для `Diagram Modules` layout profiles/full-height surface через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts для `v1.1.744` (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram modules layout profiles release`).
-2. [TODO] Git Commit: `chore(release): build diagram modules layout profiles release` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: выбор `Vertical/Horizontal/Compact/Fill space`, realtime перестроение после `Auto-layout`, сохранение layout после reopen и full-height behavior artifact panel без нижней пустой зоны (scope: `codeai-hub-1.1.744.vsix`, `doc/Sessions/Session097.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules layout profiles release`).
+2. [DONE] Git Commit: `chore(release): build diagram modules layout profiles release` (hash: `f1dea5e2`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: выбор `Vertical/Horizontal/Compact/Fill space`, realtime перестроение после `Auto-layout`, сохранение layout после reopen и full-height behavior artifact panel без нижней пустой зоны (scope: `codeai-hub-1.1.744.vsix`, `doc/Sessions/Session097.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules layout profiles release`).
 4. [TODO] Git Commit: `docs(session): record diagram modules layout profiles release` (hash: TBD)
 
 ---
