@@ -292,7 +292,13 @@
 5. [DONE] Растянуть modules diagram stage на всю высоту artifact panel: canvas должен забирать свободную вертикаль, а collapsed `Edit modules` / `Edit relations` оставаться прижатыми к нижней части общей stage surface без мёртвого пустого поля снизу (scope: `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`; expected commit: `fix(diagram-modules): stretch stage surface vertically`).
 6. [DONE] Git Commit: `fix(diagram-modules): stretch stage surface vertically` (hash: `c281dbc7`)
 7. [DONE] Прогнать таргетную verification цепочку для modules layout stream: обновить targeted coverage при необходимости, затем выполнить `typecheck:webview` и `build:webview`, после чего подготовить новый release checklist только для `Diagram Modules` layout profiles/full-height surface (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prep diagram modules layout profiles verification`).
-8. [TODO] Git Commit: `docs(release): prep diagram modules layout profiles verification` (hash: TBD)
+8. [DONE] Git Commit: `docs(release): prep diagram modules layout profiles verification` (hash: `1f6ab6f3`)
+
+### Stream: Phase 9 release build and verification
+1. [DONE] На чистом дереве выполнить release checklist для `Diagram Modules` layout profiles/full-height surface через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts для `v1.1.744` (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram modules layout profiles release`).
+2. [TODO] Git Commit: `chore(release): build diagram modules layout profiles release` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: выбор `Vertical/Horizontal/Compact/Fill space`, realtime перестроение после `Auto-layout`, сохранение layout после reopen и full-height behavior artifact panel без нижней пустой зоны (scope: `codeai-hub-1.1.744.vsix`, `doc/Sessions/Session097.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules layout profiles release`).
+4. [TODO] Git Commit: `docs(session): record diagram modules layout profiles release` (hash: TBD)
 
 ---
 
