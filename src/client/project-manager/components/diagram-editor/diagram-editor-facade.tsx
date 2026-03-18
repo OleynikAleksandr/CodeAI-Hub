@@ -6,7 +6,10 @@ import {
   MiniMap,
   ReactFlow,
   ReactFlowProvider,
+  useNodesInitialized,
+  useReactFlow,
 } from "@xyflow/react";
+import { useEffect } from "react";
 import type {
   DiagramFlowEdge,
   DiagramFlowNode,
@@ -19,6 +22,7 @@ type DiagramEditorFacadeProps = {
   readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
   readonly title: string;
   readonly subtitle?: string;
+  readonly viewportRefreshToken?: number;
 };
 
 const toolbarStyle: React.CSSProperties = {
@@ -45,6 +49,34 @@ const miniMapStyle: React.CSSProperties = {
   borderRadius: 12,
 };
 
+const FIT_VIEW_OPTIONS = {
+  duration: 240,
+  padding: 0.16,
+} as const;
+
+const DiagramViewportSync: React.FC<{
+  readonly viewportRefreshToken: number;
+}> = ({ viewportRefreshToken }) => {
+  const nodesInitialized = useNodesInitialized();
+  const { fitView } = useReactFlow();
+
+  useEffect(() => {
+    if (viewportRefreshToken === 0 || !nodesInitialized) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      void fitView(FIT_VIEW_OPTIONS);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+    };
+  }, [fitView, nodesInitialized, viewportRefreshToken]);
+
+  return null;
+};
+
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
   edges,
@@ -52,6 +84,7 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   onNodesChange,
   title,
   subtitle,
+  viewportRefreshToken = 0,
 }) => (
   <div
     style={{
@@ -109,6 +142,7 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
           zoomOnDoubleClick={false}
           style={canvasStyle}
         >
+          <DiagramViewportSync viewportRefreshToken={viewportRefreshToken} />
           <Background gap={24} size={1} />
           <Controls showInteractive={false} />
           <MiniMap pannable zoomable style={miniMapStyle} />

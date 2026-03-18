@@ -39,9 +39,14 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   );
   const [isAutoLayoutPending, setIsAutoLayoutPending] = useState(false);
   const [layoutError, setLayoutError] = useState<string | null>(null);
+  const [viewportRefreshToken, setViewportRefreshToken] = useState(0);
   const initialLayoutDoneRef = useRef<string | null>(null);
   const effectiveSaveState =
     layoutError && saveState !== "conflict" ? "error" : saveState;
+
+  const requestViewportRefresh = useCallback(() => {
+    setViewportRefreshToken((current) => current + 1);
+  }, []);
 
   useEffect(() => {
     setNodes(initialNodes ?? projection.nodes);
@@ -73,6 +78,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
           return;
         }
         setNodes(nextNodes);
+        requestViewportRefresh();
         await onNodesChange?.(nextNodes);
       })
       .catch((error) => {
@@ -97,6 +103,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     projection.edges,
     projection.nodes,
     projection.revision,
+    requestViewportRefresh,
   ]);
 
   const handleAutoLayout = async (): Promise<void> => {
@@ -108,6 +115,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
         edges: projection.edges,
       });
       setNodes(nextNodes);
+      requestViewportRefresh();
       await onNodesChange?.(nextNodes);
     } catch (error) {
       setLayoutError(
@@ -164,6 +172,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
         onNodesChange={handleFlowNodesChange}
         subtitle={subtitle}
         title={title}
+        viewportRefreshToken={viewportRefreshToken}
       />
     </div>
   );

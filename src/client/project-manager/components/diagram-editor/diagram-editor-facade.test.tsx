@@ -8,6 +8,10 @@ const FACADE_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx"
 );
+const SHELL_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx"
+);
 
 test("applyDiagramAutoLayout returns positioned nodes for a simple graph", async () => {
   const nodes = [
@@ -82,8 +86,19 @@ test("diagram-editor-facade keeps React Flow provider and diagnostics widgets en
   const source = await readFile(FACADE_SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("ReactFlowProvider"), true);
+  assert.equal(source.includes("useReactFlow"), true);
+  assert.equal(source.includes("useNodesInitialized"), true);
+  assert.equal(source.includes("fitView(FIT_VIEW_OPTIONS)"), true);
   assert.equal(source.includes("<Controls showInteractive={false} />"), true);
   assert.equal(source.includes("<MiniMap pannable zoomable style={miniMapStyle} />"), true);
   assert.equal(source.includes("nodesDraggable={Boolean(onNodesChange)}"), true);
   assert.equal(source.includes("Auto-layout"), true);
+});
+
+test("diagram-editor-shell requests viewport refresh after auto-layout", async () => {
+  const source = await readFile(SHELL_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("setViewportRefreshToken"), true);
+  assert.equal(source.includes("requestViewportRefresh();"), true);
+  assert.equal(source.includes("viewportRefreshToken={viewportRefreshToken}"), true);
 });
