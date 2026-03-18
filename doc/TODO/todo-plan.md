@@ -260,9 +260,11 @@
 1. [DONE] После фактического снижения repository-wide `jscpd` ниже `3%` выровнять duplication gate между `check-architecture.sh` и `check:dup`, чтобы pre-commit и release проверяли одну и ту же source surface (scope: `scripts/check-architecture.sh`, `package.json`, `doc/TODO/todo-plan.md`; expected commit: `chore(quality): align duplication gates`).
 2. [DONE] Git Commit: `chore(quality): align duplication gates` (hash: `e67413de`)
 3. [DONE] Подготовить release-facing docs под debt-reduction phase: зафиксировать, что duplication advisory снят, какие shared scaffolds появились и что release pipeline снова чист по repository-wide `jscpd` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep duplication debt reduction release`).
-4. [TODO] Git Commit: `docs(release): prep duplication debt reduction release` (hash: TBD)
-5. [TODO] На чистом дереве выполнить release checklist для Phase 7 через `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, убедиться что repository-wide duplication больше не выдаёт advisory, и оформить session report с точным `jscpd` result (scope: release manifests, `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record duplication debt reduction release`).
-6. [TODO] Git Commit: `docs(session): record duplication debt reduction release` (hash: TBD)
+4. [DONE] Git Commit: `docs(release): prep duplication debt reduction release` (hash: `724dfcd6`)
+5. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump до `1.1.742` и release artifacts для provider/core/ui/launcher перед финальной VSIX упаковкой (scope: release manifests, `package.json`, `package-lock.json`, `assets/**/manifest.json`, `media/react-chat.js`; expected commit: `chore(release): build duplication debt reduction release`).
+6. [TODO] Git Commit: `chore(release): build duplication debt reduction release` (hash: TBD)
+7. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, убедиться что repository-wide duplication больше не выдаёт advisory, затем оформить session report с точным `jscpd` result и checklist ручной проверки локального VSIX (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record duplication debt reduction release`).
+8. [TODO] Git Commit: `docs(session): record duplication debt reduction release` (hash: TBD)
 
 ---
 
