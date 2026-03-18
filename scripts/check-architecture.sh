@@ -126,15 +126,7 @@ echo "-----------------------------------"
 
 DUPLICATION_THRESHOLD=3
 
-npx jscpd \
-  --threshold "$DUPLICATION_THRESHOLD" \
-  --silent \
-  --reporters console \
-  src/core \
-  src/extension-module \
-  src/client/ui/src \
-  src/types \
-  scripts
+npm run -s check:dup:repo
 
 if [ $? -ne 0 ]; then
   echo -e "${RED}❌ Duplication threshold (${DUPLICATION_THRESHOLD}%) exceeded${NC}"

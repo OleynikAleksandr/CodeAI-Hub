@@ -254,10 +254,10 @@
 5. [DONE] Вынести общий relation editor scaffold для module/facade relation editing, сохранив stage-specific поля поверх shared add-update-delete flow (scope: `src/client/project-manager/components/diagram-editor/relation-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/module-relation-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-relation-editor.tsx`; expected commit: `refactor(diagrams): share relation editor scaffold`).
 6. [DONE] Git Commit: `refactor(diagrams): share relation editor scaffold` (hash: `fa0ae1f0`)
 7. [DONE] Если repository-wide duplication всё ещё выше `3%`, схлопнуть следующий крупный cross-surface helper cluster без изменения product contract, начиная с `dialog-segment-meta` shared extraction (scope: `src/client/shared/dialog-segment-meta.ts`, `src/client/project-manager/components/sessions/dialog-segment-meta.ts`, `src/client/ui/src/session/dialog-segment-meta.ts`; expected commit: `refactor(session): share dialog segment meta helpers`).
-8. [TODO] Git Commit: `refactor(session): share dialog segment meta helpers` (hash: TBD)
+8. [DONE] Git Commit: `refactor(session): share dialog segment meta helpers` (hash: `eaf4ab8c`)
 
 ### Stream: Duplication gate alignment and release
-1. [TODO] После фактического снижения repository-wide `jscpd` ниже `3%` выровнять duplication gate между `check-architecture.sh` и `check:dup`, чтобы pre-commit и release проверяли одну и ту же source surface (scope: `scripts/check-architecture.sh`, `package.json`, `doc/TODO/todo-plan.md`; expected commit: `chore(quality): align duplication gates`).
+1. [DONE] После фактического снижения repository-wide `jscpd` ниже `3%` выровнять duplication gate между `check-architecture.sh` и `check:dup`, чтобы pre-commit и release проверяли одну и ту же source surface (scope: `scripts/check-architecture.sh`, `package.json`, `doc/TODO/todo-plan.md`; expected commit: `chore(quality): align duplication gates`).
 2. [TODO] Git Commit: `chore(quality): align duplication gates` (hash: TBD)
 3. [TODO] Подготовить release-facing docs под debt-reduction phase: зафиксировать, что duplication advisory снят, какие shared scaffolds появились и что release pipeline снова чист по repository-wide `jscpd` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep duplication debt reduction release`).
 4. [TODO] Git Commit: `docs(release): prep duplication debt reduction release` (hash: TBD)
