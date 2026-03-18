@@ -7,13 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.738
-- Diagram workflow bootstrap recovery: Project Manager now launches fresh `Diagram Modules` and `Diagram Facades` sessions from the top toolbar whenever the required upstream canonical artifact already exists; start no longer depends on the previous stage being marked exactly `completed`.
-- Behavioral regression coverage now verifies that both diagram stages can start from artifact availability alone while still rejecting launches when workflow gating remains blocked.
-- Workflow SSOT is synchronized around the same contract: `Workflow_CLI`, `WorkflowSteps_Overview`, and `SystemArchitecture` now describe diagram-stage launch in terms of upstream artifact readiness instead of a stricter stage-status requirement.
-- This release is the first recovery step in the diagram workflow audit. Deeper verification of `session:create -> session:created -> session:binding -> sendSessionMessage` remains part of the ongoing follow-up investigation.
+## Current Release — v1.1.739
+- Diagram workflow bootstrap recovery now restores the real gating source on cold start: `/workflow-state` hydrates canonical artifacts from disk before validation and downstream blocking are computed.
+- Manual toolbar transitions `Virtual Simulation -> Diagram Modules` and `Diagram Modules -> Diagram Facades` now unlock from the presence of the previous canonical artifact, even if the upstream stage is currently marked `invalid` or `outdated`.
+- Behavioral regression coverage now protects both cases: existing cold-start artifacts must reopen downstream steps, while validation state remains visible for diagnostics instead of silently blocking the next manual step.
+- This release closes the three confirmed gating/bootstrap blockers. Deeper verification of `session:create -> session:created -> session:binding -> sendSessionMessage` in the live UI remains part of the ongoing audit.
 
-Previous releases (summary): the `1.1.57x–1.1.737` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and hardening of the shared diagram editor/runtime normalization paths.
+Previous releases (summary): the `1.1.57x–1.1.738` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and the first bootstrap-recovery iteration.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

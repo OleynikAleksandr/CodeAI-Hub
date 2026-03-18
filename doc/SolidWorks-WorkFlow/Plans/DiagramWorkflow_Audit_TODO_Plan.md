@@ -287,3 +287,88 @@ That stricter rule blocked fresh toolbar bootstrap even though the user-facing w
 
 - During `build-release.sh`, the repository-wide `jscpd` duplication check reported `4.17%` duplicated lines over the configured `3%` threshold.
 - The script treated that result as advisory, continued packaging, restored development dependencies, and finished successfully.
+
+---
+
+## 12. Second Audit Finding - Workflow state cold-start hydration gap
+
+### Scope
+
+- `workflow-state` HTTP read path
+- PM toolbar start pre-check for `Diagram Modules`
+- PM toolbar start pre-check for `Diagram Facades`
+
+### Evidence
+
+- In the affected workspaces, the canonical upstream artifact `virtual-simulation.md` already existed on disk.
+- The toolbar click still produced no visible action because PM returned early on `workflowState.gating.blocked.diagram_modules === true`.
+- Core computed that `blocked` value from in-memory `WorkflowState` artifacts only.
+- Existing artifacts created before the current Core/watchers lifetime were not hydrated back into `WorkflowState` during `/workflow-state` reads.
+
+### Root cause
+
+The first bootstrap fix removed the wrong PM-side `stage === completed` requirement, but the source-of-truth feeding PM remained incomplete.
+
+`WorkflowState` after cold start depended on watcher-memory instead of canonical disk state:
+- if `virtual-simulation.md` or `module-map.md` already existed before the current watcher lifetime;
+- and no fresh filesystem event replayed them into memory;
+- PM still received `blocked=true` and aborted before `session:create`.
+
+### Implemented correction
+
+- Core `WorkflowStateService` now hydrates canonical artifacts from disk during `/workflow-state` reads before validation and gating are computed.
+- The hydration keeps artifact paths aligned with watcher-state conventions (`stage/file-name`) so existing validators continue to resolve files correctly.
+- Added behavioral regression coverage for:
+  - cold-start workspace with existing valid `virtual-simulation.md` / `module-map.md`;
+  - cold-start workspace with invalid `virtual-simulation.md`, which must stay blocked.
+
+### Verdict
+
+- Legacy claim "artifact exists, therefore toolbar start was already verified" = `disproved`
+- Second real root cause for the broken toolbar bootstrap = `confirmed`
+
+### Rewrite instruction for the main TODO
+
+- Any remaining recovery stream around diagram bootstrap must explicitly include cold-start `workflow-state` hydration, not only PM click handlers or session binding logic.
+- Manual verification for `Diagram Modules` / `Diagram Facades` must be re-run after this fix in workspaces where the upstream artifacts already existed before PM launch.
+
+---
+
+## 13. Third Audit Finding - Upstream invalid/outdated state over-blocked manual step start
+
+### Scope
+
+- Core workflow gating for `diagram_modules`
+- Core workflow gating for `diagram_facades`
+- Product contract for manual toolbar transitions
+
+### Evidence
+
+- After the cold-start hydration fix, `workflow-state` for `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude` still returned `gating.blocked.diagram_modules === true` even though `virtual-simulation.md` existed on disk.
+- The remaining blocker was not artifact absence anymore; it was `virtual_simulation.status === invalid`.
+- This contradicted the agreed product rule for toolbar transitions: like `Description -> Virtual Simulation`, the next step should unlock from the presence of the previous canonical artifact, while the user decides whether that artifact is good enough.
+
+### Root cause
+
+`resolveWorkflowBlockedStages()` treated `invalid` / `outdated` upstream statuses as hard blockers for downstream manual start instead of diagnostic state only.
+
+That made the Diagram workflow stricter than the `Description -> Virtual Simulation` transition and stricter than the intended user-driven progression model.
+
+### Implemented correction
+
+- Downstream gating for `diagram_modules` now checks only the presence of `virtual-simulation.md`.
+- Downstream gating for `diagram_facades` now checks only the presence of `module-map.md`.
+- Upstream `invalid` / `outdated` statuses remain visible in the stage snapshot, but they no longer prevent manual launch of the next stage.
+- Regression coverage now asserts that an invalid `virtual-simulation.md` still leaves `diagram_modules` launchable when the artifact exists.
+
+### Verdict
+
+- Legacy assumption "invalid upstream stage must block next manual diagram step" = `disproved`
+- Third real root cause for "toolbar click does nothing" = `confirmed`
+
+### Rewrite instruction for the main TODO
+
+- Remaining recovery work must treat stage validation state and stage-start gating as separate concerns.
+- Manual verification must now be repeated specifically in:
+  - workspaces where upstream artifact already existed before PM launch;
+  - workspaces where upstream artifact exists but stage status is `invalid` or `outdated`.

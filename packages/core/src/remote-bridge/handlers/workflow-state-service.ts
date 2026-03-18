@@ -15,6 +15,7 @@ import type {
   WorkflowStageId,
   WorkflowWatcherEvent,
 } from "../../workflow/watcher/watcher-types";
+import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
@@ -97,25 +98,33 @@ export class WorkflowStateService {
         const description = descriptionSnapshot
           ? buildDescriptionBranchSnapshot(descriptionSnapshot)
           : null;
-        return applyVirtualSimulationValidation({
+        return hydrateWorkflowStateFromFilesystem({
           state,
           workspaceRoot,
           workspaceSlug: workspaceSlugResult.value,
-        }).then((validatedState) => {
-          const gating = {
-            blocked: resolveWorkflowBlockedStages({
+        })
+          .then((hydratedState) =>
+            applyVirtualSimulationValidation({
+              state: hydratedState,
+              workspaceRoot,
+              workspaceSlug: workspaceSlugResult.value,
+            })
+          )
+          .then((validatedState) => {
+            const gating = {
+              blocked: resolveWorkflowBlockedStages({
+                state: validatedState,
+                description,
+              }),
+            };
+            res.json({
               state: validatedState,
+              continuity: { chains },
               description,
-            }),
-          };
-          res.json({
-            state: validatedState,
-            continuity: { chains },
-            description,
-            lastActive,
-            gating,
+              lastActive,
+              gating,
+            });
           });
-        });
       })
       .catch((error) => {
         this.logger.warn("Failed to read workflow metadata", {
@@ -222,18 +231,6 @@ const stageHasArtifact = (params: {
     normalizeArtifactPath(artifact.path).endsWith(`/${params.fileName}`)
   );
 
-const isStageDone = (params: {
-  readonly state: WorkflowState;
-  readonly stage: WorkflowStageId;
-  readonly fileName: string;
-}): boolean => {
-  const stageState = params.state.stages[params.stage];
-  if (stageState.status === "outdated" || stageState.status === "invalid") {
-    return false;
-  }
-  return stageHasArtifact(params);
-};
-
 const resolveWorkflowBlockedStages = (params: {
   readonly state: WorkflowState;
   readonly description: {
@@ -244,24 +241,21 @@ const resolveWorkflowBlockedStages = (params: {
   const descriptionDone = Boolean(
     params.description?.finalPath ?? params.description?.draftPath
   );
-  const virtualSimulationDone =
-    descriptionDone &&
-    isStageDone({
-      state: params.state,
-      stage: "virtual_simulation",
-      fileName: "virtual-simulation.md",
-    });
-  const diagramModulesDone = isStageDone({
+  const virtualSimulationArtifactAvailable = stageHasArtifact({
+    state: params.state,
+    stage: "virtual_simulation",
+    fileName: "virtual-simulation.md",
+  });
+  const diagramModulesArtifactAvailable = stageHasArtifact({
     state: params.state,
     stage: "diagram_modules",
     fileName: "module-map.md",
   });
-  const diagramModulesSatisfied = virtualSimulationDone && diagramModulesDone;
 
   return {
     description: false,
     virtual_simulation: !descriptionDone,
-    diagram_modules: !virtualSimulationDone,
-    diagram_facades: !diagramModulesSatisfied,
+    diagram_modules: !virtualSimulationArtifactAvailable,
+    diagram_facades: !diagramModulesArtifactAvailable,
   };
 };
