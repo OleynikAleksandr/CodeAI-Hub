@@ -372,3 +372,43 @@ That made the Diagram workflow stricter than the `Description -> Virtual Simulat
 - Manual verification must now be repeated specifically in:
   - workspaces where upstream artifact already existed before PM launch;
   - workspaces where upstream artifact exists but stage status is `invalid` or `outdated`.
+
+---
+
+## 14. Fourth Audit Finding - Diagram contract omitted strict field reference / merge rules
+
+### Scope
+
+- Diagram Modules workflow contract assembly
+- Diagram Facades workflow contract assembly
+- PM visual-shell parseability of freshly generated diagram artifacts
+
+### Evidence
+
+- In `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude`, the toolbar click finally launched a real `Diagram Modules` session, but the resulting `module-map.md` failed to render in PM.
+- The generated artifact contained `Kind: application` for module `project-manager`, while the DSL parser accepts only `service`, `library`, `adapter`, `gateway`, `store`, `external`.
+- Agent asset packs already contained the missing constraints in `module-map-field-reference.md` / `facade-map-field-reference.md` and merge guidance in `*-merge-rules.md`.
+- Runtime contract delivery passed only base `prompt` and `template`, so the agent never received those strict enum/merge references in the final prompt surface.
+
+### Root cause
+
+The bootstrap path was fixed, but the diagram-generation contract remained under-specified.
+
+For diagram stages, the runtime exposed agent-owned reference assets on disk yet did not inject them into the prompt payload sent to the collector session. That left the model free to invent enum values such as `application`, which made the generated artifact unreadable by PM's Markdown DSL parser.
+
+### Implemented correction
+
+- Diagram Modules / Diagram Facades contracts now append field-reference and merge-rules asset contents directly into the emitted `prompt`.
+- The appendix is marked as mandatory so enum fields and merge behavior are treated as strict contract, not optional guidance.
+- Added regression coverage proving both diagram-stage contracts embed their field-reference and merge-rules text into the final prompt.
+
+### Verdict
+
+- Legacy assumption "diagram asset pack is shipped, therefore the agent receives the full contract" = `disproved`
+- Fourth real root cause for "session started but artifact did not render" = `confirmed`
+
+### Rewrite instruction for the main TODO
+
+- Remaining audit on `Diagram Modules` must verify both halves of success:
+  - session launch reaches provider binding;
+  - the first generated artifact is parseable by PM visual shell without manual repair.

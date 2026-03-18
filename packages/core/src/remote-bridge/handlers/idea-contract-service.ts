@@ -4,11 +4,16 @@
  * Builds contracts for the split workflow steps using the synced templates
  * stored under ~/.codeai-hub/templates/<step>/.
  */
-
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import {
+  appendDiagramPromptAppendix,
+  DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS,
+  DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
+  resolveDiagramAgentAssetPath,
+} from "./diagram-contract-prompt-assets";
 
 type WorkflowContractPayload = {
   readonly prompt: string;
@@ -32,6 +37,7 @@ type WorkflowContractPaths = {
   readonly schema?: WorkflowContractPathSource;
   readonly template?: WorkflowContractPathSource;
   readonly questionnaire?: WorkflowContractPathSource;
+  readonly promptAppendix?: WorkflowContractPathSource;
 };
 
 type ResolvedWorkflowContractPaths = {
@@ -39,10 +45,10 @@ type ResolvedWorkflowContractPaths = {
   readonly schema: readonly string[];
   readonly template: readonly string[];
   readonly questionnaire: readonly string[];
+  readonly promptAppendix: readonly string[];
 };
 
 const TEMPLATE_ROOT_SEGMENTS = [".codeai-hub", "templates"];
-const AGENT_ROOT_PATH = path.resolve(__dirname, "../../../../agents");
 
 const DESCRIPTION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "description/description-collector-prompt.md",
@@ -54,31 +60,28 @@ const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "virtual_simulation/virtual-simulation-prompt.md",
 };
 
-const resolveAgentAssetPath = (
-  agentName: string,
-  assetFileName: string
-): string => path.join(AGENT_ROOT_PATH, agentName, "assets", assetFileName);
-
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: resolveAgentAssetPath(
+  prompt: resolveDiagramAgentAssetPath(
     "diagram-modules-agent",
     "module-map-prompt.md"
   ),
-  template: resolveAgentAssetPath(
+  template: resolveDiagramAgentAssetPath(
     "diagram-modules-agent",
     "module-map-template.md"
   ),
+  promptAppendix: DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
 };
 
 const DIAGRAM_FACADES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: resolveAgentAssetPath(
+  prompt: resolveDiagramAgentAssetPath(
     "diagram-facades-agent",
     "facade-map-prompt.md"
   ),
-  template: resolveAgentAssetPath(
+  template: resolveDiagramAgentAssetPath(
     "diagram-facades-agent",
     "facade-map-template.md"
   ),
+  promptAppendix: DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS,
 };
 
 const readTextFile = async (filePath: string): Promise<string | null> => {
@@ -140,6 +143,7 @@ const resolveWorkflowContractPaths = (
   schema: resolveWorkflowContractPathCandidates(paths.schema),
   template: resolveWorkflowContractPathCandidates(paths.template),
   questionnaire: resolveWorkflowContractPathCandidates(paths.questionnaire),
+  promptAppendix: resolveWorkflowContractPathCandidates(paths.promptAppendix),
 });
 
 const readFirstAvailableTextFile = async (
@@ -177,6 +181,7 @@ const readWorkflowContractInputs = async (resolved: {
   readonly schema: readonly string[];
   readonly template: readonly string[];
   readonly questionnaire: readonly string[];
+  readonly promptAppendix: readonly string[];
 }): Promise<{
   readonly promptPath: string | null;
   readonly prompt: string | null;
@@ -186,13 +191,18 @@ const readWorkflowContractInputs = async (resolved: {
   readonly template: string | null;
   readonly questionnairePath: string | null;
   readonly questionnaireTemplate: string | null;
+  readonly promptAppendix: readonly string[];
 }> => {
-  const [prompt, schema, template, questionnaireTemplate] = await Promise.all([
-    readFirstAvailableTextFile(resolved.prompt),
-    readFirstAvailableJsonFile(resolved.schema),
-    readFirstAvailableTextFile(resolved.template),
-    readFirstAvailableTextFile(resolved.questionnaire),
-  ]);
+  const [prompt, schema, template, questionnaireTemplate, promptAppendix] =
+    await Promise.all([
+      readFirstAvailableTextFile(resolved.prompt),
+      readFirstAvailableJsonFile(resolved.schema),
+      readFirstAvailableTextFile(resolved.template),
+      readFirstAvailableTextFile(resolved.questionnaire),
+      Promise.all(
+        resolved.promptAppendix.map((filePath) => readTextFile(filePath))
+      ),
+    ]);
   return {
     promptPath: prompt.path,
     prompt: prompt.content,
@@ -202,6 +212,9 @@ const readWorkflowContractInputs = async (resolved: {
     template: template.content,
     questionnairePath: questionnaireTemplate.path,
     questionnaireTemplate: questionnaireTemplate.content,
+    promptAppendix: promptAppendix.filter(
+      (entry): entry is string => typeof entry === "string" && entry.length > 0
+    ),
   };
 };
 
@@ -222,11 +235,13 @@ const buildWorkflowContract = async (
     templatePath,
     questionnairePath,
     questionnaireTemplate,
+    promptAppendix,
   } = await readWorkflowContractInputs({
     prompt: resolved.prompt,
     schema: resolved.schema,
     template: resolved.template,
     questionnaire: resolved.questionnaire,
+    promptAppendix: resolved.promptAppendix,
   });
 
   if (!prompt) {
@@ -237,10 +252,11 @@ const buildWorkflowContract = async (
   }
   const resolvedSchema = schema ?? {};
   const resolvedTemplate = template ?? "";
+  const resolvedPrompt = appendDiagramPromptAppendix(prompt, promptAppendix);
 
   const questionnaireMarkdown = questionnaireTemplate ?? "";
   const versionSeed = JSON.stringify({
-    prompt,
+    prompt: resolvedPrompt,
     schema: resolvedSchema,
     template: resolvedTemplate,
     questionnaire: questionnaireMarkdown,
@@ -248,7 +264,7 @@ const buildWorkflowContract = async (
   const version = createHash("sha256").update(versionSeed).digest("hex");
 
   return {
-    prompt,
+    prompt: resolvedPrompt,
     schema: resolvedSchema,
     template: resolvedTemplate,
     paths: {

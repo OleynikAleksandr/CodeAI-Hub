@@ -7,13 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.739
-- Diagram workflow bootstrap recovery now restores the real gating source on cold start: `/workflow-state` hydrates canonical artifacts from disk before validation and downstream blocking are computed.
-- Manual toolbar transitions `Virtual Simulation -> Diagram Modules` and `Diagram Modules -> Diagram Facades` now unlock from the presence of the previous canonical artifact, even if the upstream stage is currently marked `invalid` or `outdated`.
-- Behavioral regression coverage now protects both cases: existing cold-start artifacts must reopen downstream steps, while validation state remains visible for diagnostics instead of silently blocking the next manual step.
-- This release closes the three confirmed gating/bootstrap blockers. Deeper verification of `session:create -> session:created -> session:binding -> sendSessionMessage` in the live UI remains part of the ongoing audit.
+## Current Release — v1.1.740
+- Diagram workflow contract recovery now injects strict field-reference and merge-rules assets into the live `Diagram Modules` / `Diagram Facades` prompt surface instead of exposing only the base prompt and template path.
+- Freshly generated diagram artifacts are therefore constrained by the canonical Markdown-DSL enum contract before the first write, preventing invalid values like `Kind: application` from breaking the Project Manager visual shell immediately after session launch.
+- Behavioral regression coverage now verifies that both diagram-stage contracts embed their field-reference and merge-rules text into the emitted prompt.
+- This release follows the bootstrap/gating recovery from `v1.1.739`: session launch is now recovered, and the next live validation step is to confirm that the first generated artifact renders in PM without manual repair.
 
-Previous releases (summary): the `1.1.57x–1.1.738` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and the first bootstrap-recovery iteration.
+Previous releases (summary): the `1.1.57x–1.1.739` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and bootstrap/gating recovery for fresh diagram-stage launch.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
