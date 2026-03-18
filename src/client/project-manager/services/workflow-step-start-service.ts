@@ -12,6 +12,16 @@ type StartWorkflowStepParams = {
 
 type ContinuityStageId = "virtual_simulation" | "diagram_modules" | "diagram_facades";
 
+type WorkflowStateGetter = (
+  workspaceSlug: string,
+  workspacePath?: string
+) => ReturnType<typeof api.getWorkflowState>;
+
+type SubmitQuestionnaireService = Pick<
+  IdeaCollectorSubmitService,
+  "submitQuestionnaire"
+>;
+
 const resolveMostRecentContinuitySessionId = (options: {
   readonly state: Awaited<ReturnType<typeof api.getWorkflowState>> | null;
   readonly stage: ContinuityStageId;
@@ -36,10 +46,24 @@ const resolveMostRecentContinuitySessionId = (options: {
 };
 
 export class WorkflowStepStartService {
-  private readonly submitService = new IdeaCollectorSubmitService();
+  private readonly getWorkflowState: WorkflowStateGetter;
+  private readonly submitService: SubmitQuestionnaireService;
+
+  constructor(options?: {
+    readonly getWorkflowState?: WorkflowStateGetter;
+    readonly submitService?: SubmitQuestionnaireService;
+  }) {
+    this.getWorkflowState =
+      options?.getWorkflowState ?? api.getWorkflowState.bind(api);
+    this.submitService =
+      options?.submitService ?? new IdeaCollectorSubmitService();
+  }
 
   async startVirtualSimulation(params: StartWorkflowStepParams): Promise<string> {
-    const state = await api.getWorkflowState(params.workspaceSlug, params.workspacePath);
+    const state = await this.getWorkflowState(
+      params.workspaceSlug,
+      params.workspacePath
+    );
     const existingSessionId = resolveMostRecentContinuitySessionId({
       state,
       stage: "virtual_simulation",
@@ -65,7 +89,10 @@ export class WorkflowStepStartService {
   }
 
   async startDiagramModules(params: StartWorkflowStepParams): Promise<string> {
-    const state = await api.getWorkflowState(params.workspaceSlug, params.workspacePath);
+    const state = await this.getWorkflowState(
+      params.workspaceSlug,
+      params.workspacePath
+    );
     const existingSessionId = resolveMostRecentContinuitySessionId({
       state,
       stage: "diagram_modules",
@@ -76,9 +103,8 @@ export class WorkflowStepStartService {
     }
 
     const vsArtifactPath = `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
-    const vsStatus = state?.stages.virtual_simulation;
     const modulesBlocked = state?.gating?.blocked?.diagram_modules ?? true;
-    if (modulesBlocked || vsStatus !== "completed") {
+    if (modulesBlocked) {
       throw new Error("Missing virtual-simulation.md. Complete Virtual Simulation step first.");
     }
     return this.submitService.submitQuestionnaire({
@@ -93,7 +119,10 @@ export class WorkflowStepStartService {
   }
 
   async startDiagramFacades(params: StartWorkflowStepParams): Promise<string> {
-    const state = await api.getWorkflowState(params.workspaceSlug, params.workspacePath);
+    const state = await this.getWorkflowState(
+      params.workspaceSlug,
+      params.workspacePath
+    );
     const existingSessionId = resolveMostRecentContinuitySessionId({
       state,
       stage: "diagram_facades",
@@ -104,9 +133,8 @@ export class WorkflowStepStartService {
     }
 
     const dmArtifactPath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.md`;
-    const dmStatus = state?.stages.diagram_modules;
     const facadesBlocked = state?.gating?.blocked?.diagram_facades ?? true;
-    if (facadesBlocked || dmStatus !== "completed") {
+    if (facadesBlocked) {
       throw new Error("Missing module-map.md. Complete Diagram Modules step first.");
     }
     return this.submitService.submitQuestionnaire({
