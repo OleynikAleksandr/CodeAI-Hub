@@ -83,12 +83,12 @@
 10. [DONE] Git Commit: `fix(workflow): restore diagram bootstrap gating source` (hash: `e2d91aa5`)
 11. [DONE] Выполнить release cycle для recovery audit fix (`build-all.sh` + `build-release.sh --use-current-version`) и собрать локальный VSIX `v1.1.739` (scope: release manifests, `package.json`, `package-lock.json`, `codeai-hub-1.1.739.vsix`; commit: `chore(release): build diagram bootstrap audit release`).
 12. [DONE] Git Commit: `chore(release): build diagram bootstrap audit release` (hash: `57b34220`)
-13. [BLOCKED] Повторно проверить в живом PM на `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude` и `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`, что toolbar click `Diagram Modules` теперь проходит дальше gating и действительно доходит до `session:create -> session:created -> session:binding`; если нет, продолжить audit уже в session-binding/runtime path, а не в artifact gating (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, PM/Core runtime traces, `doc/TODO/todo-plan.md`; expected commit: `docs(audit): record live diagram bootstrap verification`).
+13. [DONE] Повторно проверить в живом PM на `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude` и `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`, что toolbar click `Diagram Modules` теперь проходит дальше gating и действительно доходит до `session:create -> session:created -> session:binding` (manual verification 2026-03-18: `v1.1.740` подтвердил, что `Diagram Modules` и `Diagram Facades` теперь действительно стартуют из top toolbar и создают новые collector sessions).
 14. [DONE] Ужесточить diagram contract delivery: встроить `module-map-field-reference.md` / `facade-map-field-reference.md` и `*-merge-rules.md` прямо в prompt для collector-сессий, чтобы агент не генерировал невалидные DSL enum values вроде `Kind: application` и свежий артефакт сразу рендерился в PM (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `fix(workflow): embed strict diagram contract references`).
 15. [DONE] Git Commit: `fix(workflow): embed strict diagram contract references` (hash: `52408187`)
 16. [DONE] Выполнить release cycle для strict diagram contract fix (`build-all.sh` + `build-release.sh --use-current-version`) и собрать локальный VSIX `v1.1.740`, чтобы пользователь мог сразу перепроверить fresh `Diagram Modules` run на реальном PM после ужесточения prompt contract (scope: release manifests, `package.json`, `package-lock.json`, `codeai-hub-1.1.740.vsix`; commit: `chore(release): build strict diagram contract release`).
 17. [DONE] Git Commit: `chore(release): build strict diagram contract release` (hash: `b7cc7420`)
-18. [BLOCKED] Перепроверить на живом PM в `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude`, что новый `Diagram Modules` запуск не только стартует, но и создаёт parseable `module-map.md`; если visual shell снова падает, продолжить audit уже по содержимому prompt/template output и repeated-agent repair path (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, PM visual-shell traces, `doc/TODO/todo-plan.md`; expected commit: `docs(audit): record diagram artifact parse verification`).
+18. [DONE] Перепроверить на живом PM в `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude`, что новый `Diagram Modules` запуск не только стартует, но и создаёт parseable `module-map.md` (manual verification 2026-03-18: `v1.1.740` подтвердил parseable `module-map.md` и рабочий переход дальше к `Diagram Facades`; текущий открытый дефект уже не в parseability, а в user-surface contract и читаемости диаграмм).
 
 ### Stream: Contract alignment test release
 1. [DONE] Подготовить release-facing docs под PM/UI alignment для diagram workflow: запуск шагов 3-4, canonical `.md` artifacts в tree/panels/help, отсутствие активных Mermaid references в PM (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram contract alignment release`).
@@ -210,7 +210,38 @@
 
 ---
 
+## Phase 6 — diagram user surface recovery (owner: Oleksandr, updated: 2026-03-18)
+
+### Stream: Planning and audit rewrite
+1. [IN_PROGRESS] Зафиксировать новый user-surface contract для `Diagram Modules` / `Diagram Facades`: `Artifacts = diagram`, `Source = raw markdown`, `Help = guidance`; при этом канонические `module-map.md` / `facade-map.md` остаются SSOT для runtime, но не default UI, а `*.flow.json` скрывается как internal sidecar (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram user surface recovery`).
+2. [TODO] Git Commit: `docs(plan): scope diagram user surface recovery` (hash: TBD)
+3. [TODO] Синхронизировать SSOT и release-facing docs под новый contract, в котором успешный diagram stage означает visual diagram как primary surface, `Source` как secondary debug view и ручную корректировку layout как допустимый path alongside auto-layout (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`, `CHANGELOG.md`; expected commit: `docs(workflow): define diagram user surface contract`).
+4. [TODO] Git Commit: `docs(workflow): define diagram user surface contract` (hash: TBD)
+
+### Stream: Artifacts / Source / Help contract in PM
+1. [TODO] Расширить header-mode model для правой панели: для diagram stages добавить `Source`, удержать `Artifacts` дефолтным режимом при toolbar/tree reopen и перестать трактовать internal artifact selection как причину показывать raw `.md` вместо diagram surface (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`; expected commit: `feat(ui): add diagram source mode toggle`).
+2. [TODO] Git Commit: `feat(ui): add diagram source mode toggle` (hash: TBD)
+3. [TODO] Перенаправить diagram-stage source rendering в отдельный secondary view: `Artifacts` должен всегда открывать visual panel для `Diagram Modules` / `Diagram Facades`, а `Source` должен показывать read-only canonical `.md` без раскрытия `*.flow.json` и без перехвата default reopen behavior (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `fix(ui): keep diagrams primary and source secondary`).
+4. [TODO] Git Commit: `fix(ui): keep diagrams primary and source secondary` (hash: TBD)
+
+### Stream: Diagram-first stage panels and layout editing
+1. [TODO] Переделать `Diagram Modules` panel в diagram-first surface: canvas сверху, internal path/sidecar chrome скрыт, semantic editing переведён во вторичные collapsible sections, а ручная корректировка node layout сохраняется как first-class user action (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-section.tsx`; expected commit: `feat(diagram-modules): prioritize visual surface`).
+2. [TODO] Git Commit: `feat(diagram-modules): prioritize visual surface` (hash: TBD)
+3. [TODO] Переделать `Diagram Facades` panel и shared canvas chrome под тот же contract: diagram-first rendering, compact secondary editing groups, читаемый minimap/canvas chrome и persistence ручного layout после reopen/resume (scope: `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `feat(diagram-facades): prioritize visual surface`).
+4. [TODO] Git Commit: `feat(diagram-facades): prioritize visual surface` (hash: TBD)
+
+### Stream: Phase 6 release build and verification
+1. [TODO] Подготовить release-facing docs под diagram user surface recovery: новый `Artifacts / Source / Help` contract, diagram-first reopen behavior, скрытый `*.flow.json`, manual layout correction и обновлённый checklist ручной проверки (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram user surface recovery release`).
+2. [TODO] Git Commit: `docs(release): prep diagram user surface recovery release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist для Phase 6 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram user surface recovery release`).
+4. [TODO] Git Commit: `chore(release): build diagram user surface recovery release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: `Artifacts` по умолчанию открывает diagram, `Source` показывает canonical `.md`, возврат на diagram stage не подменяет surface на raw markdown, ручной layout сохраняется после reopen/resume, `*.flow.json` нигде не показывается пользователю (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram user surface recovery release`).
+6. [TODO] Git Commit: `docs(session): record diagram user surface recovery release` (hash: TBD)
+
+---
+
 ## Notes
 - Planning doc for this scope: `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- Active recovery planning docs: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - Session reports to review before the first implementation stream: `doc/Sessions/Session078.md`, `doc/Sessions/Session079.md`, `doc/Sessions/Session080.md`, `doc/Sessions/Session081.md`, `doc/Sessions/Session082.md`
 - Target verification principle for the whole scope: после каждой Phase должен существовать новый локальный релиз, в котором пользователь может проверить либо новый artifact/gating behavior, либо новый visual layer, либо новый semantic roundtrip, а не ждать финала всего scope

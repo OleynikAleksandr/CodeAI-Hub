@@ -412,3 +412,46 @@ For diagram stages, the runtime exposed agent-owned reference assets on disk yet
 - Remaining audit on `Diagram Modules` must verify both halves of success:
   - session launch reaches provider binding;
   - the first generated artifact is parseable by PM visual shell without manual repair.
+
+---
+
+## 15. Fifth Audit Finding - Diagram user surface still exposes runtime source as primary artifact
+
+### Scope
+
+- PM right-panel header contract for `Diagram Modules` / `Diagram Facades`
+- Diagram stage reopen/resume behavior
+- Diagram-stage visual readability and default information density
+
+### Evidence
+
+- Manual verification on `v1.1.740` confirmed that both diagram stages now start correctly and produce parseable artifacts.
+- The first visible surface for diagram stages is still cluttered with large semantic editing forms before the user reaches the diagram itself.
+- After navigating away and back, PM can still show raw `module-map.md` / `facade-map.md` in the right panel instead of reopening the diagram as the primary surface.
+- The current diagram chrome also exposes internal runtime details such as artifact-to-sidecar path strings, which are useful for implementation diagnostics but not for the user-facing workflow.
+
+### Root cause
+
+The bootstrap recovery fixed execution and parseability, but PM still uses the old artifact-centric contract:
+
+- the layout header only distinguishes `Artifacts` vs `Help`;
+- internal stage sync keeps selecting canonical `.md` artifacts as if they were the primary user surface;
+- diagram stage panels place the canvas below editing forms instead of treating the diagram as the main deliverable of the step.
+
+### Approved correction plan
+
+- Introduce a diagram-stage-only `Source` mode in the right-panel header.
+- Redefine `Artifacts` for `Diagram Modules` / `Diagram Facades` as the visual diagram, not raw Markdown.
+- Keep canonical `.md` files available only in the secondary `Source` view.
+- Remove `*.flow.json` and other runtime-only details from the default visible UI.
+- Promote the canvas to the first visible object and demote semantic editing controls into secondary sections.
+
+### Verdict
+
+- Legacy assumption "diagram stage artifact panel may safely show raw Markdown because the source file is the artifact" = `disproved`
+- Fifth real recovery target after bootstrap + parseability = `confirmed`
+
+### Rewrite instruction for the main TODO
+
+- The next execution phase must focus on diagram user-surface recovery, not on bootstrap gating.
+- Release verification must explicitly confirm the `Artifacts / Source / Help` contract and diagram-first reopen behavior.
