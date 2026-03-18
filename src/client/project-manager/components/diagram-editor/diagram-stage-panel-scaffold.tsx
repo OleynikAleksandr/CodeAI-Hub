@@ -86,33 +86,52 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
 
   if (status === "ready" && projection) {
     return (
-      <div className="pm-details" style={{ display: "grid", gap: 12 }}>
+      <div
+        className="pm-details"
+        style={{
+          display: "grid",
+          gap: 12,
+          minHeight: "100%",
+          gridTemplateRows: "auto minmax(0, 1fr)",
+        }}
+      >
         <div style={{ display: "grid", gap: 4 }}>
           <strong>{title}</strong>
           <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
             {introText}
           </span>
         </div>
-        <DiagramEditorShell
-          initialNodes={initialNodes}
-          onNodesChange={onNodesChange}
-          projection={projection}
-          saveState={saveState}
-          title={title}
-        />
-        {conflicts.length > 0 ? (
-          <DiagramEditorSection defaultOpen title="Conflict merge warnings">
-            <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
-              {conflicts.map((message) => (
-                <div key={message}>{message}</div>
-              ))}
-              <button type="button" onClick={onDismissConflicts}>
-                Dismiss warnings
-              </button>
-            </div>
-          </DiagramEditorSection>
-        ) : null}
-        {children}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            minHeight: 0,
+          }}
+        >
+          <div style={{ display: "flex", flex: "1 1 auto", minHeight: 0 }}>
+            <DiagramEditorShell
+              initialNodes={initialNodes}
+              onNodesChange={onNodesChange}
+              projection={projection}
+              saveState={saveState}
+              title={title}
+            />
+          </div>
+          {conflicts.length > 0 ? (
+            <DiagramEditorSection defaultOpen title="Conflict merge warnings">
+              <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
+                {conflicts.map((message) => (
+                  <div key={message}>{message}</div>
+                ))}
+                <button type="button" onClick={onDismissConflicts}>
+                  Dismiss warnings
+                </button>
+              </div>
+            </DiagramEditorSection>
+          ) : null}
+          {children}
+        </div>
       </div>
     );
   }

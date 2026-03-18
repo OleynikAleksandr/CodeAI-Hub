@@ -198,7 +198,13 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   return (
     <div
       ref={shellRef}
-      style={{ display: "grid", gap: 12 }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+        flex: "1 1 auto",
+        minHeight: 0,
+      }}
     >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <SaveStatusIndicator
@@ -212,22 +218,24 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
           or rerun the stage to populate the graph.
         </div>
       ) : null}
-      <DiagramEditorFacade
-        edges={projection.edges}
-        nodes={nodes}
-        onAutoLayout={handleAutoLayout}
-        layoutProfile={supportsLayoutProfiles ? layoutProfile : undefined}
-        layoutProfileOptions={
-          supportsLayoutProfiles ? DIAGRAM_LAYOUT_PROFILE_OPTIONS : undefined
-        }
-        onLayoutProfileChange={
-          supportsLayoutProfiles ? setLayoutProfile : undefined
-        }
-        onNodesChange={handleFlowNodesChange}
-        subtitle={subtitle}
-        title={title}
-        viewportRefreshToken={viewportRefreshToken}
-      />
+      <div style={{ display: "flex", flex: "1 1 auto", minHeight: 420 }}>
+        <DiagramEditorFacade
+          edges={projection.edges}
+          nodes={nodes}
+          onAutoLayout={handleAutoLayout}
+          layoutProfile={supportsLayoutProfiles ? layoutProfile : undefined}
+          layoutProfileOptions={
+            supportsLayoutProfiles ? DIAGRAM_LAYOUT_PROFILE_OPTIONS : undefined
+          }
+          onLayoutProfileChange={
+            supportsLayoutProfiles ? setLayoutProfile : undefined
+          }
+          onNodesChange={handleFlowNodesChange}
+          subtitle={subtitle}
+          title={title}
+          viewportRefreshToken={viewportRefreshToken}
+        />
+      </div>
     </div>
   );
 };
