@@ -7,14 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.737
-- Interactive diagram workflow hardening: Markdown DSL parser/serializer now tolerates UTF-8 BOM and CRLF input, while canonical output normalizes multiline text blocks before roundtrip back into `module-map.md` / `facade-map.md`.
-- Project Manager visual shell is more stable during reopen/resume and background refresh: the diagram loader keeps the current graph visible while polling, empty diagrams show an explicit placeholder, and auto-layout failures surface in the shared save-status chip instead of failing silently.
-- Workflow tree stability: child nodes under `Diagram Modules` and `Diagram Facades` now preserve real `OUTDATED` and `BLOCKED` statuses instead of always rendering as active, so manual verification of gating propagation is visible directly in the sidebar.
-- Hardening coverage now includes concurrent merge scenarios, continuity-stage normalization guards for diagram stages, parser BOM/CRLF regression checks, serializer normalization checks, and targeted tree-node status tests.
-- Known follow-up remains unchanged: starting a fresh toolbar session for `Diagram Modules` / `Diagram Facades` is still a separate deferred blocker. This release focuses on workflow stabilization once diagram artifacts already exist.
+## Current Release — v1.1.738
+- Diagram workflow bootstrap recovery: Project Manager now launches fresh `Diagram Modules` and `Diagram Facades` sessions from the top toolbar whenever the required upstream canonical artifact already exists; start no longer depends on the previous stage being marked exactly `completed`.
+- Behavioral regression coverage now verifies that both diagram stages can start from artifact availability alone while still rejecting launches when workflow gating remains blocked.
+- Workflow SSOT is synchronized around the same contract: `Workflow_CLI`, `WorkflowSteps_Overview`, and `SystemArchitecture` now describe diagram-stage launch in terms of upstream artifact readiness instead of a stricter stage-status requirement.
+- This release is the first recovery step in the diagram workflow audit. Deeper verification of `session:create -> session:created -> session:binding -> sendSessionMessage` remains part of the ongoing follow-up investigation.
 
-Previous releases (summary): the `1.1.57x–1.1.736` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, and semantic editing for both diagram stages.
+Previous releases (summary): the `1.1.57x–1.1.737` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and hardening of the shared diagram editor/runtime normalization paths.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

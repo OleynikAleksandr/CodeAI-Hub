@@ -180,7 +180,7 @@
   - empty semantic graph обязан показывать explicit placeholder вместо silent blank canvas;
   - ошибки auto-layout обязаны попадать в общий save/error indicator, а не теряться.
 - Workflow tree child nodes для `Diagram Modules` и `Diagram Facades` обязаны наследовать актуальные stage-level `blocked/outdated` сигналы; поддеревья диаграмм не могут маскировать реальный gating state как постоянный `active`.
-- Fresh toolbar bootstrap blocker для шагов `Diagram Modules` / `Diagram Facades` остаётся внешним follow-up и не меняет Phase 5 boundary: текущая стабилизация относится к существующим diagram artifacts, semantic merge loop и workflow visualization.
+- Fresh toolbar bootstrap для шагов `Diagram Modules` / `Diagram Facades` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует и workflow gating не блокирует старт, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed`.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
