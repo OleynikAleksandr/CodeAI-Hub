@@ -119,6 +119,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   if (showSourceViewer && sourceArtifact) {
     return (
       <WorkflowArtifactViewer
+        description="Source shows the canonical Markdown artifact used by runtime and agents. Layout sidecars stay hidden from the user-facing surface."
         label={sourceArtifact.label}
         onClose={onSelectedArtifactClear}
         path={sourceArtifact.path}

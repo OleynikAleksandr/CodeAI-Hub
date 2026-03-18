@@ -4,6 +4,7 @@ import { api } from "../../api";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
 
 export const WorkflowArtifactViewer: React.FC<{
+  readonly description?: React.ReactNode;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
   readonly path: string;
@@ -71,6 +72,17 @@ export const WorkflowArtifactViewer: React.FC<{
       <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
         <strong title={props.path}>{props.label}</strong>
       </div>
+      {props.description ? (
+        <div
+          style={{
+            marginBottom: 12,
+            fontSize: 12,
+            color: "var(--pm-text-muted)",
+          }}
+        >
+          {props.description}
+        </div>
+      ) : null}
       {error ? <div className="pm-placeholder">{error}</div> : null}
       {!error && content === null ? (
         <div className="pm-placeholder">Загружаем артефакт...</div>
