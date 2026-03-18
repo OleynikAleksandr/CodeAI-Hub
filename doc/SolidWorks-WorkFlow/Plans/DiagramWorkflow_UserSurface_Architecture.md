@@ -119,3 +119,22 @@ The new active execution scope is:
 - recover the product-facing diagram surface;
 - keep source artifacts available only as a secondary debug view;
 - ship a new release that validates the revised `Artifacts / Source / Help` contract.
+
+---
+
+## 8. Approved Follow-up - Diagram Modules layout profiles first
+
+After the user-surface recovery shipped, manual verification exposed the next UX gap:
+
+- the current ELK auto-layout can collapse `Diagram Modules` into a single long horizontal line;
+- the button now refreshes in real time, but the algorithm itself is still too naive;
+- the artifact panel also leaves unused vertical space below the diagram sections.
+
+Approved next step:
+
+- improve `Diagram Modules` first, before touching `Diagram Facades`;
+- expose several concrete ELK layout profiles next to `Auto-layout`;
+- include one profile that explicitly tries to occupy the available canvas area instead of staying overly compact;
+- stretch the diagram surface vertically so the canvas plus collapsed editing sections occupy the full right-side artifact panel height.
+
+`Diagram Facades` stays intentionally out of this stream. It should reuse the learned layout infrastructure later, but with its own readability tuning.

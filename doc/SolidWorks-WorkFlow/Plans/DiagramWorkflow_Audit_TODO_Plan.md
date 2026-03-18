@@ -547,3 +547,49 @@ Because of that, the user-visible graph stayed on the stale camera framing until
 
 - Add a dedicated follow-up stream for real-time auto-layout refresh and live viewport refit.
 - Future diagram readability work must assume that auto-layout feedback is immediate, not reopen-dependent.
+
+---
+
+## 18. Eighth Audit Finding - Diagram Modules needs layout profiles, not one hard-coded ELK mode
+
+### Scope
+
+- `Diagram Modules` visual auto-layout
+- right-panel vertical occupancy for the diagram stage
+- next-step readability work before `Diagram Facades`
+
+### Evidence
+
+- `v1.1.743` fixed live auto-layout refresh, but manual verification showed that the current ELK profile can still place many module nodes into one long horizontal band.
+- The current layout contract is effectively one hard-coded mode:
+  - layered algorithm
+  - fixed direction
+  - fixed spacing
+  - no user-visible profile selection
+- The artifact panel still leaves a large unused area below the collapsed `Edit modules` / `Edit relations` sections instead of letting the diagram stage occupy the full available height.
+
+### Root cause
+
+The shared diagram editor currently exposes auto-layout as a single action, but not as a controllable layout strategy.
+
+That is too weak even for the simpler `Diagram Modules` graph:
+- different graph shapes need different layout profiles;
+- a single layered configuration cannot serve vertical readability, horizontal tracing, compact grouping, and area-filling spread at the same time;
+- the stage container itself is not yet modeled as a full-height artifact surface.
+
+### Approved correction plan
+
+- Improve `Diagram Modules` first, before tuning `Diagram Facades`.
+- Add several explicit ELK-backed layout profiles next to the existing `Auto-layout` action.
+- Include one profile that spreads nodes across the available canvas area rather than optimizing for compactness only.
+- Stretch the diagram stage vertically so the canvas and collapsed editing sections occupy the whole right artifact panel.
+
+### Verdict
+
+- Current assumption "one hard-coded ELK auto-layout mode is enough for Diagram Modules readability" = `disproved`
+- Next real recovery target after realtime refresh = `confirmed`
+
+### Rewrite instruction for the main TODO
+
+- Open a new execution phase focused on `Diagram Modules` layout profiles and full-height diagram surface.
+- Keep `Diagram Facades` out of the first implementation slice until the simpler module graph is behaving acceptably.

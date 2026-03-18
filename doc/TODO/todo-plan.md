@@ -278,7 +278,21 @@
 5. [DONE] Прогнать таргетную verification цепочку для shared diagram editor: `diagram-editor-facade.test.tsx`, `typecheck:webview`, `build:webview`, затем подготовить manual checklist для повторной проверки `Diagram Modules` / `Diagram Facades` в локальном релизе (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prep diagram auto-layout refresh verification`).
 6. [DONE] Git Commit: `docs(release): prep diagram auto-layout refresh verification` (hash: `f234ffc8`)
 7. [DONE] Выполнить release checklist для этого corrective stream: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, затем оформить новый session report с checklist ручной проверки realtime `Auto-layout` в `Diagram Modules` / `Diagram Facades` (scope: `codeai-hub-1.1.743.vsix`, `doc/Sessions/Session096.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram auto-layout refresh release`).
-8. [TODO] Git Commit: `docs(session): record diagram auto-layout refresh release` (hash: TBD)
+8. [DONE] Git Commit: `docs(session): record diagram auto-layout refresh release` (hash: `8dc94043`)
+
+---
+
+## Phase 9 — diagram modules layout profiles and full-height surface (owner: Oleksandr, updated: 2026-03-18)
+
+### Stream: Planning and modules-first corrective scope
+1. [DONE] Зафиксировать modules-first corrective scope: текущий `Auto-layout` уже обновляет canvas в реальном времени, но всё ещё держится на одном hard-coded ELK mode, который может схлопывать `Diagram Modules` в одну горизонтальную линию; одновременно stage-panel должен занять всю вертикальную площадь artifact column до нижней границы Project Manager (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram modules layout profiles`).
+2. [TODO] Git Commit: `docs(plan): scope diagram modules layout profiles` (hash: TBD)
+3. [TODO] Добавить несколько concrete ELK profiles для `Diagram Modules` рядом с `Auto-layout`: как минимум `Vertical`, `Horizontal`, `Compact`, `Fill space`, где `Fill space` пытается использовать всю доступную площадь canvas вместо одной компактной полосы (scope: `src/client/project-manager/components/diagram-editor/diagram-layout-facade.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`; expected commit: `feat(diagram-modules): add layout profiles`).
+4. [TODO] Git Commit: `feat(diagram-modules): add layout profiles` (hash: TBD)
+5. [TODO] Растянуть modules diagram stage на всю высоту artifact panel: canvas должен забирать свободную вертикаль, а collapsed `Edit modules` / `Edit relations` оставаться прижатыми к нижней части общей stage surface без мёртвого пустого поля снизу (scope: `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`; expected commit: `fix(diagram-modules): stretch stage surface vertically`).
+6. [TODO] Git Commit: `fix(diagram-modules): stretch stage surface vertically` (hash: TBD)
+7. [TODO] Прогнать таргетную verification цепочку для modules layout stream: обновить targeted coverage при необходимости, затем выполнить `typecheck:webview` и `build:webview`, после чего подготовить новый release checklist только для `Diagram Modules` layout profiles/full-height surface (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prep diagram modules layout profiles verification`).
+8. [TODO] Git Commit: `docs(release): prep diagram modules layout profiles verification` (hash: TBD)
 
 ---
 
