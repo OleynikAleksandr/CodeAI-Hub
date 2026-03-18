@@ -236,12 +236,38 @@
 3. [DONE] На чистом дереве выполнить release checklist для Phase 6 через `./scripts/build-all.sh`, зафиксировать version bump и artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram user surface recovery release`).
 4. [DONE] Git Commit: `chore(release): build diagram user surface recovery release` (hash: `e9ae8b3b`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем зафиксировать session report и checklist ручной проверки: `Artifacts` по умолчанию открывает diagram, `Source` показывает canonical `.md`, возврат на diagram stage не подменяет surface на raw markdown, ручной layout сохраняется после reopen/resume, `*.flow.json` нигде не показывается пользователю (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram user surface recovery release`).
-6. [TODO] Git Commit: `docs(session): record diagram user surface recovery release` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record diagram user surface recovery release` (hash: `b06f6e8d`)
+
+---
+
+## Phase 7 — repository duplication debt reduction (owner: Oleksandr, updated: 2026-03-18)
+
+### Stream: Planning and audit scoping
+1. [TODO] Зафиксировать отдельный recovery scope для repository-wide duplication debt: описать mismatch между `check-architecture.sh` и `check:dup`, зафиксировать top clone clusters и утвердить structural reduction strategy вместо threshold/ignore обходов (scope: `doc/SolidWorks-WorkFlow/Plans/RepositoryDuplicationDebt_Reduction_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope duplication debt reduction`).
+2. [TODO] Git Commit: `docs(plan): scope duplication debt reduction` (hash: TBD)
+
+### Stream: High-value structural clone extraction
+1. [TODO] Вынести shared provider option dialog shell для Codex/Gemini reasoning-thinking модалок, сохранив текущее поведение и сократив самый крупный settings clone cluster (scope: `src/client/ui/src/components/settings/shared/provider-option-dialog.tsx`, `src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx`, `src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx`; expected commit: `refactor(settings): share provider option dialog shell`).
+2. [TODO] Git Commit: `refactor(settings): share provider option dialog shell` (hash: TBD)
+3. [TODO] Вынести общий scaffold для `Diagram Modules` / `Diagram Facades`, чтобы loading/error/pending/visual-surface shell и conflict chrome не дублировались в двух stage panels (scope: `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`; expected commit: `refactor(diagrams): share stage panel scaffold`).
+4. [TODO] Git Commit: `refactor(diagrams): share stage panel scaffold` (hash: TBD)
+5. [TODO] Вынести общий relation editor scaffold для module/facade relation editing, сохранив stage-specific поля поверх shared add-update-delete flow (scope: `src/client/project-manager/components/diagram-editor/relation-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/module-relation-editor.tsx`, `src/client/project-manager/components/diagram-editor/facade-relation-editor.tsx`; expected commit: `refactor(diagrams): share relation editor scaffold`).
+6. [TODO] Git Commit: `refactor(diagrams): share relation editor scaffold` (hash: TBD)
+7. [TODO] Если repository-wide duplication всё ещё выше `3%`, схлопнуть следующий крупный cross-surface helper cluster без изменения product contract, начиная с `dialog-segment-meta` shared extraction (scope: `src/client/shared/dialog-segment-meta.ts`, `src/client/project-manager/components/sessions/dialog-segment-meta.ts`, `src/client/ui/src/session/dialog-segment-meta.ts`; expected commit: `refactor(session): share dialog segment meta helpers`).
+8. [TODO] Git Commit: `refactor(session): share dialog segment meta helpers` (hash: TBD)
+
+### Stream: Duplication gate alignment and release
+1. [TODO] После фактического снижения repository-wide `jscpd` ниже `3%` выровнять duplication gate между `check-architecture.sh` и `check:dup`, чтобы pre-commit и release проверяли одну и ту же source surface (scope: `scripts/check-architecture.sh`, `package.json`, `doc/TODO/todo-plan.md`; expected commit: `chore(quality): align duplication gates`).
+2. [TODO] Git Commit: `chore(quality): align duplication gates` (hash: TBD)
+3. [TODO] Подготовить release-facing docs под debt-reduction phase: зафиксировать, что duplication advisory снят, какие shared scaffolds появились и что release pipeline снова чист по repository-wide `jscpd` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep duplication debt reduction release`).
+4. [TODO] Git Commit: `docs(release): prep duplication debt reduction release` (hash: TBD)
+5. [TODO] На чистом дереве выполнить release checklist для Phase 7 через `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, убедиться что repository-wide duplication больше не выдаёт advisory, и оформить session report с точным `jscpd` result (scope: release manifests, `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record duplication debt reduction release`).
+6. [TODO] Git Commit: `docs(session): record duplication debt reduction release` (hash: TBD)
 
 ---
 
 ## Notes
 - Planning doc for this scope: `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
-- Active recovery planning docs: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- Active recovery planning docs: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/RepositoryDuplicationDebt_Reduction_Architecture.md`
 - Session reports to review before the first implementation stream: `doc/Sessions/Session078.md`, `doc/Sessions/Session079.md`, `doc/Sessions/Session080.md`, `doc/Sessions/Session081.md`, `doc/Sessions/Session082.md`
 - Target verification principle for the whole scope: после каждой Phase должен существовать новый локальный релиз, в котором пользователь может проверить либо новый artifact/gating behavior, либо новый visual layer, либо новый semantic roundtrip, а не ждать финала всего scope

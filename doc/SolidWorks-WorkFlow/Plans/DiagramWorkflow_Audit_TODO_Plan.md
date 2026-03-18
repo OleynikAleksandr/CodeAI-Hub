@@ -455,3 +455,50 @@ The bootstrap recovery fixed execution and parseability, but PM still uses the o
 
 - The next execution phase must focus on diagram user-surface recovery, not on bootstrap gating.
 - Release verification must explicitly confirm the `Artifacts / Source / Help` contract and diagram-first reopen behavior.
+
+---
+
+## 16. Sixth Audit Finding - Repository duplication debt now threatens diagram delivery
+
+### Scope
+
+- repository-wide `jscpd` gate used by release packaging
+- diagram-related symmetry introduced by separate Modules / Facades surfaces
+- mismatch between pre-commit architecture duplication scan and release duplication scan
+
+### Evidence
+
+- `build-release.sh` still completes, but repeatedly reports repository-wide duplication above the enforced `3%` threshold.
+- The latest repository-wide scan on `src` reports `1824` duplicated lines out of `43414`, which is `4.2%`.
+- The largest live clone clusters now include:
+  - provider settings dialogs
+  - diagram stage panels
+  - diagram relation editors
+- `scripts/check-architecture.sh` scans a narrower subset than `npm run check:dup`, so local architecture feedback is greener than the release-stage duplication feedback.
+
+### Root cause
+
+The diagram recovery work restored correct behavior, but it kept a set of intentionally parallel UI surfaces as separate implementations.
+
+That was acceptable while the product path was broken and rapid iteration mattered more than structural reuse. It is no longer acceptable now that release delivery keeps carrying an advisory duplication warning and every follow-up diagram improvement compounds the same debt.
+
+### Approved correction plan
+
+- Create a dedicated duplication-debt reduction phase instead of treating this as incidental cleanup.
+- Collapse the highest-value clones first:
+  - shared provider option dialog shell
+  - shared diagram stage panel scaffold
+  - shared relation editor scaffold
+  - shared PM/UI helper extraction if needed
+- Re-measure repository-wide duplication after each extraction.
+- Only after duplication drops below `3%`, align `check-architecture.sh` with the repository-wide duplication gate used by release packaging.
+
+### Verdict
+
+- Legacy assumption "release duplication debt can stay advisory while diagram work continues" = `disproved`
+- Sixth real recovery target after bootstrap, parseability, and user surface = `confirmed`
+
+### Rewrite instruction for the main TODO
+
+- A new execution phase must explicitly own repository-wide duplication debt reduction.
+- Diagram feature work should not continue piling onto the same clone clusters before this phase is closed.
