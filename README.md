@@ -7,13 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.741
-- Diagram stages now follow a user-facing `Artifacts | Source | Help` contract in Project Manager: `Artifacts` keeps the visual diagram primary, `Source` exposes the canonical Markdown DSL only on demand, and `Help` remains the workflow guidance surface.
-- Returning to `Diagram Modules` or `Diagram Facades` no longer drops the right panel back into raw `module-map.md` / `facade-map.md`; the default reopen surface stays the diagram itself.
-- Both diagram stage panels are now diagram-first: the React Flow canvas appears before semantic editing forms, technical `artifact -> sidecar` strings are removed from the default chrome, and `*.flow.json` stays hidden as an internal persistence sidecar.
-- Users can manually refine node placement directly in the visual shell, while `Auto-layout` remains optional; these layout changes persist in `*.flow.json` without mutating the canonical semantic Markdown artifacts.
+## Current Release — v1.1.742
+- Repository-wide duplication debt is now back under the enforced threshold: the shared `jscpd` gate reports `2.8%`, and both pre-commit architecture checks and release packaging use that same repo-wide scan surface.
+- The largest recent clone clusters were collapsed into shared scaffolds instead of being hidden behind ignores or a raised threshold: provider option dialogs, diagram stage panels, relation editors, and dialog-segment helpers now reuse common client code.
+- Diagram stages keep the `Artifacts | Source | Help` contract introduced in `v1.1.741`, but the release pipeline no longer carries the old duplication advisory that had been shadowing follow-up diagram work.
+- Manual diagram layout persistence, diagram-first reopening, and the hidden `*.flow.json` sidecar behavior remain unchanged after the structural refactor.
 
-Previous releases (summary): the `1.1.57x–1.1.740` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, and bootstrap/gating + parseability recovery for fresh diagram-stage launch.
+Previous releases (summary): the `1.1.57x–1.1.741` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, and the diagram user-surface recovery that restored `Artifacts | Source | Help` as the user-facing contract.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

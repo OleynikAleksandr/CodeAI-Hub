@@ -2,6 +2,19 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.742] - 2026-03-18
+### Changed
+- Repository-wide duplication debt is back under control: `jscpd` now reports `1207` duplicated lines out of `447` scanned sources, or `2.8%`, which is below the enforced `3%` threshold.
+- The duplication gate is now single-source: `check-architecture.sh`, `npm run check:dup`, and release packaging all run the same repo-wide duplication command instead of disagreeing about the scanned surface.
+- The largest diagram-related clone clusters were collapsed into shared building blocks:
+  - shared provider option dialog shell for Codex/Gemini settings
+  - shared diagram stage scaffold for `Diagram Modules` / `Diagram Facades`
+  - shared relation editor shell for module/facade relation editing
+  - shared dialog-segment meta helper across PM and UI surfaces
+
+### Fixed
+- Release builds no longer emit the recurring repository-wide duplication advisory that had been hovering around `4.17%` to `4.25%` in recent diagram releases.
+
 ## [1.1.741] - 2026-03-18
 ### Changed
 - Project Manager diagram stages now expose an explicit `Artifacts | Source | Help` contract: `Artifacts` keeps the visual diagram primary, `Source` shows read-only canonical Markdown, and `Help` remains separate guidance.

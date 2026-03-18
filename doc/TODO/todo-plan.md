@@ -258,8 +258,8 @@
 
 ### Stream: Duplication gate alignment and release
 1. [DONE] После фактического снижения repository-wide `jscpd` ниже `3%` выровнять duplication gate между `check-architecture.sh` и `check:dup`, чтобы pre-commit и release проверяли одну и ту же source surface (scope: `scripts/check-architecture.sh`, `package.json`, `doc/TODO/todo-plan.md`; expected commit: `chore(quality): align duplication gates`).
-2. [TODO] Git Commit: `chore(quality): align duplication gates` (hash: TBD)
-3. [TODO] Подготовить release-facing docs под debt-reduction phase: зафиксировать, что duplication advisory снят, какие shared scaffolds появились и что release pipeline снова чист по repository-wide `jscpd` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep duplication debt reduction release`).
+2. [DONE] Git Commit: `chore(quality): align duplication gates` (hash: `e67413de`)
+3. [DONE] Подготовить release-facing docs под debt-reduction phase: зафиксировать, что duplication advisory снят, какие shared scaffolds появились и что release pipeline снова чист по repository-wide `jscpd` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep duplication debt reduction release`).
 4. [TODO] Git Commit: `docs(release): prep duplication debt reduction release` (hash: TBD)
 5. [TODO] На чистом дереве выполнить release checklist для Phase 7 через `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, убедиться что repository-wide duplication больше не выдаёт advisory, и оформить session report с точным `jscpd` result (scope: release manifests, `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record duplication debt reduction release`).
 6. [TODO] Git Commit: `docs(session): record duplication debt reduction release` (hash: TBD)
