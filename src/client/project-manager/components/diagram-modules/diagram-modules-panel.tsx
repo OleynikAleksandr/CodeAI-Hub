@@ -5,6 +5,7 @@ import { WorkflowStepStartService } from "../../services/workflow-step-start-ser
 import { domainModelToReactFlow } from "../diagram-editor/adapters/domain-model-to-react-flow";
 import { applyModuleDomainPatch } from "../diagram-editor/apply-module-domain-patch";
 import { applyModuleRelationPatch } from "../diagram-editor/apply-module-relation-patch";
+import { DiagramEditorSection } from "../diagram-editor/diagram-editor-section";
 import { DiagramEditorShell } from "../diagram-editor/diagram-editor-shell";
 import {
   mergeModuleConflicts,
@@ -135,10 +136,36 @@ export const DiagramModulesPanel: React.FC<{
         <div style={{ display: "grid", gap: 4 }}>
           <strong>Diagram Modules</strong>
           <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
-            <code>module-map.md</code> рендерится в read-only visual shell;
-            layout сохраняется в <code>module-map.flow.json</code>.
+            Artifacts shows the visual module map. Use Source for the canonical
+            Markdown artifact.
           </span>
         </div>
+        <DiagramEditorShell
+          initialNodes={projection.nodes}
+          onNodesChange={async (nodes) => {
+            await persistNodes({ nodes, revision: visualProjection.revision });
+          }}
+          projection={visualProjection}
+          saveState={saveState}
+          title="Diagram Modules"
+        />
+        {conflicts.length > 0 ? (
+          <DiagramEditorSection defaultOpen title="Conflict merge warnings">
+            <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
+              {conflicts.map((message) => (
+                <div key={message}>{message}</div>
+              ))}
+              <button type="button" onClick={clearConflicts}>
+                Dismiss warnings
+              </button>
+            </div>
+          </DiagramEditorSection>
+        ) : null}
+        <DiagramEditorSection
+          defaultOpen={editableModel.modules.length === 0}
+          description="Add, update, or remove modules after reviewing the diagram."
+          title="Edit modules"
+        >
         <ModuleEntityEditor
           modules={editableModel.modules}
           onAddModule={async (draft) => {
@@ -180,6 +207,12 @@ export const DiagramModulesPanel: React.FC<{
             });
           }}
         />
+        </DiagramEditorSection>
+        <DiagramEditorSection
+          defaultOpen={editableModel.relations.length === 0}
+          description="Manage module dependencies without leaving the visual surface."
+          title="Edit relations"
+        >
         <ModuleRelationEditor
           modules={editableModel.modules}
           onAddRelation={async (draft) => {
@@ -217,27 +250,7 @@ export const DiagramModulesPanel: React.FC<{
           }}
           relations={editableModel.relations}
         />
-        {conflicts.length > 0 ? (
-          <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
-            <strong>Conflict merge warnings</strong>
-            {conflicts.map((message) => (
-              <div key={message}>{message}</div>
-            ))}
-            <button type="button" onClick={clearConflicts}>
-              Dismiss warnings
-            </button>
-          </div>
-        ) : null}
-        <DiagramEditorShell
-          initialNodes={projection.nodes}
-          onNodesChange={async (nodes) => {
-            await persistNodes({ nodes, revision: visualProjection.revision });
-          }}
-          projection={visualProjection}
-          saveState={saveState}
-          subtitle={`${artifactPath} -> ${flowSidecarPath}`}
-          title="Diagram Modules"
-        />
+        </DiagramEditorSection>
       </div>
     );
   }
@@ -249,10 +262,12 @@ export const DiagramModulesPanel: React.FC<{
     >
       <div style={{ display: "grid", gap: 10 }}>
         <div>
-          Здесь отображается canonical module map: какие модули существуют, как они сгруппированы и какие связи между ними зафиксированы в Markdown DSL.
+          Здесь отображается visual module diagram. Canonical Markdown source
+          доступен через вкладку <code>Source</code>.
         </div>
         <div>
-          После появления <code>module-map.md</code> панель автоматически переключится на visual shell и создаст sidecar <code>module-map.flow.json</code> для layout.
+          После появления <code>module-map.md</code> панель автоматически
+          откроет diagram-first surface.
         </div>
         <div>Любые изменения пометят следующие шаги как требующие синхронизации.</div>
         <StageArtifactFixButton
