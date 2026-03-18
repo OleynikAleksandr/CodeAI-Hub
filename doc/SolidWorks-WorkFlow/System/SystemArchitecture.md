@@ -118,15 +118,20 @@
 
 ## 6.2) Diagram Visual Shell Boundary (Phase 2, 2026-03-16)
 
-- Project Manager для `Diagram Modules` и `Diagram Facades` теперь рендерит канонические DSL artifacts через read-only visual shell на базе React Flow.
+- Project Manager для `Diagram Modules` и `Diagram Facades` теперь рендерит канонические DSL artifacts через diagram-first visual shell на базе React Flow.
+- Правый panel contract для diagram stages = `Artifacts | Source | Help`:
+  - `Artifacts` показывает саму диаграмму;
+  - `Source` показывает read-only canonical `.md`;
+  - `Help` показывает guidance по шагу.
 - Visual shell не владеет semantic state:
   - source of truth остаётся `module-map.md` / `facade-map.md`;
-  - shell работает только как projection layer `Markdown DSL -> domain model -> flow nodes/edges`.
+  - shell работает как projection layer `Markdown DSL -> domain model -> flow nodes/edges`, но владеет только layout/view state.
 - `*.flow.json` остаётся non-semantic sidecar:
   - хранит positions/viewport для visual shell;
   - пишется отдельно через `workspace-file-write`;
-  - не меняет содержимое канонического `.md`.
-- Если sidecar отсутствует или не совпадает по `Revision`, shell обязан построить ELK first-layout и затем сохранить новый `*.flow.json`.
+  - не меняет содержимое канонического `.md`;
+  - не показывается пользователю как primary artifact.
+- Если sidecar отсутствует или не совпадает по `Revision`, shell обязан построить ELK first-layout и затем сохранить новый `*.flow.json`; после этого пользователь может вручную корректировать layout прямо в React Flow.
 - Browser/UI bundle не должен зависеть от Node-only imports ради рендера diagram artifacts; для `Revision` browser-safe parsing path может переиспользовать уже записанное поле `- Revision:` из канонического Markdown DSL.
 
 Канонические документы:
@@ -135,11 +140,12 @@
 
 ## 6.3) Module Semantic Editing Boundary (Phase 3, 2026-03-16)
 
-- `Diagram Modules` получает semantic editing поверх visual shell, но сам graph canvas остаётся read-only projection layer.
+- `Diagram Modules` получает semantic editing вокруг visual shell, но semantic truth по-прежнему не принадлежит graph canvas.
 - Источник semantic truth не меняется:
   - пользовательские операции apply-ятся как domain patches;
   - результат сериализуется обратно только в `module-map.md`;
   - `module-map.flow.json` не содержит semantic edits.
+- Graph canvas допускает ручную корректировку layout, но эти изменения сохраняются только в `module-map.flow.json` и не меняют semantic DSL content.
 - Локальные semantic edits обязаны сохранять provenance:
   - новый entity/relation, созданный пользователем, получает `origin: user`;
   - изменение agent-generated entity/relation переводит `origin` в `merged`.
@@ -152,11 +158,12 @@
 
 ## 6.4) Facade Semantic Editing Boundary (Phase 4, 2026-03-16)
 
-- `Diagram Facades` получает semantic editing поверх visual shell, но сам graph canvas остаётся read-only projection layer.
+- `Diagram Facades` получает semantic editing вокруг visual shell, но semantic truth по-прежнему не принадлежит graph canvas.
 - Источник semantic truth не меняется:
   - пользовательские операции apply-ятся как facade domain patches;
   - результат сериализуется обратно только в `facade-map.md`;
   - `facade-map.flow.json` не содержит semantic edits.
+- Graph canvas допускает ручную корректировку layout, но эти изменения сохраняются только в `facade-map.flow.json` и не меняют semantic DSL content.
 - Facade editing surface обязана покрывать не только CRUD самих facade entities, но и semantic подструктуры:
   - methods;
   - ports;
@@ -183,6 +190,7 @@
 - Fresh toolbar bootstrap для шагов `Diagram Modules` / `Diagram Facades` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-map.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан встраивать в prompt strict field-reference и merge-rules из agent asset pack, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
+- Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
