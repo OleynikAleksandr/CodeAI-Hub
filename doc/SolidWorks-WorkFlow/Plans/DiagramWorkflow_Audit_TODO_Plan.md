@@ -247,3 +247,43 @@ That stricter rule blocked fresh toolbar bootstrap even though the user-facing w
 
 - Reopen any old stream that claimed the toolbar bootstrap was already repaired or manually verified.
 - Preserve the historical git hashes, but do not keep those streams marked as truthful `DONE`.
+
+---
+
+## 11. Recovery Release Candidate - v1.1.738
+
+### Built outputs
+
+- Recovery commits landed:
+  - `48bef62d fix(workflow): restore diagram stage bootstrap gating`
+  - `ca7a9b10 docs(workflow): align diagram stage artifact gating`
+  - `1abecd46 docs(release): prep diagram bootstrap recovery release`
+  - `110bd337 chore(release): build diagram bootstrap recovery release`
+- `./scripts/build-all.sh` completed successfully and raised the unified version to `1.1.738`.
+- `./scripts/build-release.sh --use-current-version` completed successfully and produced `codeai-hub-1.1.738.vsix`.
+- Tarball artifacts are present in both `~/.codeai-hub/releases/` and `doc/tmp/releases/`.
+
+### Release notes for the audit
+
+- This release only closes the first confirmed PM-side bootstrap blocker: the diagram-stage toolbar start no longer depends on `upstream stage === completed` when the required upstream artifact already exists.
+- The deeper audit remains open for the downstream path:
+  - `session:create`
+  - `session:created`
+  - `session:binding`
+  - `sendSessionMessage`
+
+### Manual verification priority
+
+1. Install `codeai-hub-1.1.738.vsix` and fully restart VS Code / Project Manager.
+2. Open a workspace where `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` already exists.
+3. Click `Diagram Modules` in the top toolbar and verify that a fresh session now starts.
+4. If the start still fails, record the exact failing boundary:
+   - no visible reaction at click time;
+   - session is created but not bound;
+   - session is bound but the initial message/prompt does not send.
+5. Where possible, repeat the same check for `Diagram Facades` from an existing `module-map.md`.
+
+### Build caveat
+
+- During `build-release.sh`, the repository-wide `jscpd` duplication check reported `4.17%` duplicated lines over the configured `3%` threshold.
+- The script treated that result as advisory, continued packaging, restored development dependencies, and finished successfully.
