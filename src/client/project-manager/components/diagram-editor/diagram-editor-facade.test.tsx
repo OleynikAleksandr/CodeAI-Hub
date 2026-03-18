@@ -83,6 +83,7 @@ test("diagram-editor-facade keeps React Flow provider and diagnostics widgets en
 
   assert.equal(source.includes("ReactFlowProvider"), true);
   assert.equal(source.includes("<Controls showInteractive={false} />"), true);
-  assert.equal(source.includes("<MiniMap pannable zoomable />"), true);
+  assert.equal(source.includes("<MiniMap pannable zoomable style={miniMapStyle} />"), true);
+  assert.equal(source.includes("nodesDraggable={Boolean(onNodesChange)}"), true);
   assert.equal(source.includes("Auto-layout"), true);
 });

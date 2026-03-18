@@ -1,5 +1,6 @@
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { applyNodeChanges, type NodeChange } from "@xyflow/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   DiagramFlowNode,
   DiagramFlowProjection,
@@ -117,6 +118,31 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     }
   };
 
+  const handleFlowNodesChange = useCallback(
+    (changes: readonly NodeChange[]): void => {
+      const shouldPersist = changes.some(
+        (change) => change.type === "position" && change.dragging === false
+      );
+      let nextNodesSnapshot: readonly DiagramFlowNode[] | null = null;
+
+      setNodes((current) => {
+        const nextNodes = applyNodeChanges(
+          changes as NodeChange[],
+          current as never
+        ) as DiagramFlowNode[];
+        if (shouldPersist) {
+          nextNodesSnapshot = nextNodes;
+        }
+        return nextNodes;
+      });
+
+      if (nextNodesSnapshot) {
+        void onNodesChange?.(nextNodesSnapshot);
+      }
+    },
+    [onNodesChange]
+  );
+
   return (
     <div style={{ display: "grid", gap: 12 }}>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -135,6 +161,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
         edges={projection.edges}
         nodes={nodes}
         onAutoLayout={handleAutoLayout}
+        onNodesChange={handleFlowNodesChange}
         subtitle={subtitle}
         title={title}
       />

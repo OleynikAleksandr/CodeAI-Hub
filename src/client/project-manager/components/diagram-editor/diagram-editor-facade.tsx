@@ -2,6 +2,7 @@ import type React from "react";
 import {
   Background,
   Controls,
+  type NodeChange,
   MiniMap,
   ReactFlow,
   ReactFlowProvider,
@@ -15,6 +16,7 @@ type DiagramEditorFacadeProps = {
   readonly nodes: readonly DiagramFlowNode[];
   readonly edges: readonly DiagramFlowEdge[];
   readonly onAutoLayout?: () => void | Promise<void>;
+  readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
   readonly title: string;
   readonly subtitle?: string;
 };
@@ -35,10 +37,19 @@ const canvasStyle: React.CSSProperties = {
   height: "100%",
 };
 
+const miniMapStyle: React.CSSProperties = {
+  width: 144,
+  height: 88,
+  background: "rgba(15, 23, 34, 0.92)",
+  border: "1px solid var(--pm-border-color)",
+  borderRadius: 12,
+};
+
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
   edges,
   onAutoLayout,
+  onNodesChange,
   title,
   subtitle,
 }) => (
@@ -90,16 +101,17 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
           fitView
           edges={edges as never}
           nodes={nodes as never}
-          nodesDraggable={false}
+          onNodesChange={onNodesChange as never}
+          nodesDraggable={Boolean(onNodesChange)}
           nodesConnectable={false}
-          elementsSelectable={false}
+          elementsSelectable={Boolean(onNodesChange)}
           panOnDrag
           zoomOnDoubleClick={false}
           style={canvasStyle}
         >
           <Background gap={24} size={1} />
           <Controls showInteractive={false} />
-          <MiniMap pannable zoomable />
+          <MiniMap pannable zoomable style={miniMapStyle} />
         </ReactFlow>
       </ReactFlowProvider>
     </div>

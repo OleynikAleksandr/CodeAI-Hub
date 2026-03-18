@@ -5,6 +5,7 @@ import { WorkflowStepStartService } from "../../services/workflow-step-start-ser
 import { domainModelToReactFlow } from "../diagram-editor/adapters/domain-model-to-react-flow";
 import { applyFacadeDomainPatch } from "../diagram-editor/apply-facade-domain-patch";
 import { applyFacadeRelationPatch } from "../diagram-editor/apply-facade-relation-patch";
+import { DiagramEditorSection } from "../diagram-editor/diagram-editor-section";
 import { DiagramEditorShell } from "../diagram-editor/diagram-editor-shell";
 import {
   mergeFacadeConflicts,
@@ -20,9 +21,7 @@ import { useDomainPatch } from "../diagram-editor/use-domain-patch";
 import { useDiagramLoader } from "../diagram-editor/use-diagram-loader";
 import { useDiagramPersistence } from "../diagram-editor/use-diagram-persistence";
 import { StageArtifactFixButton } from "../shared/stage-artifact-fix-button";
-import {
-  StageArtifactPendingLayout,
-} from "../shared/stage-artifact-stage-panel";
+import { StageArtifactPendingLayout } from "../shared/stage-artifact-stage-panel";
 
 const startService = new WorkflowStepStartService();
 
@@ -40,11 +39,11 @@ export const DiagramFacadesPanel: React.FC<{
     artifactPath,
     flowSidecarPath,
   } = useDiagramLoader({
-      refreshKey: props.refreshKey,
-      stage: "diagram_facades",
-      workspacePath: props.workspacePath,
-      workspaceSlug: props.workspaceSlug,
-    });
+    refreshKey: props.refreshKey,
+    stage: "diagram_facades",
+    workspacePath: props.workspacePath,
+    workspaceSlug: props.workspaceSlug,
+  });
   const {
     saveState,
     persistNodes,
@@ -136,124 +135,10 @@ export const DiagramFacadesPanel: React.FC<{
         <div style={{ display: "grid", gap: 4 }}>
           <strong>Diagram Facades</strong>
           <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
-            <code>facade-map.md</code> рендерится в semantic visual shell;
-            layout сохраняется в <code>facade-map.flow.json</code>.
+            Artifacts shows the visual facade diagram. Use Source for the canonical
+            Markdown artifact.
           </span>
         </div>
-        <FacadeEntityEditor
-          facades={editableModel.facades}
-          onAddFacade={async (draft) => {
-            await applyDomainPatch({
-              type: "add-facade",
-              facade: draft,
-            });
-          }}
-          onDeleteFacade={async (facadeId) => {
-            await applyDomainPatch({
-              type: "delete-facade",
-              facadeId,
-            });
-          }}
-          onUpdateFacade={async (facadeId, draft) => {
-            const current = editableModel.facades.find((entity) => entity.id === facadeId);
-            if (!current) {
-              return;
-            }
-            await applyDomainPatch({
-              type: "update-facade",
-              facadeId,
-              changes: {
-                module: draft.module,
-                visibility: draft.visibility,
-                contractTargets: draft.contractTargets,
-                codeTargets: draft.codeTargets,
-                notes: draft.notes,
-                rationale: draft.rationale,
-                origin: resolveLocalEditOrigin(current.origin),
-              },
-            });
-          }}
-        />
-        <FacadeMethodsEditor
-          facades={editableModel.facades}
-          onSaveMethods={async (facadeId, methods) => {
-            const current = editableModel.facades.find((entity) => entity.id === facadeId);
-            if (!current) {
-              return;
-            }
-            await applyDomainPatch({
-              type: "update-facade",
-              facadeId,
-              changes: {
-                methods,
-                origin: resolveLocalEditOrigin(current.origin),
-              },
-            });
-          }}
-        />
-        <FacadePortsEditor
-          facades={editableModel.facades}
-          onSavePorts={async (facadeId, ports) => {
-            const current = editableModel.facades.find((entity) => entity.id === facadeId);
-            if (!current) {
-              return;
-            }
-            await applyDomainPatch({
-              type: "update-facade",
-              facadeId,
-              changes: {
-                ports,
-                origin: resolveLocalEditOrigin(current.origin),
-              },
-            });
-          }}
-        />
-        <FacadeRelationEditor
-          onAddRelation={async (draft) => {
-            await applyDomainPatch({
-              type: "add-facade-relation",
-              relation: draft,
-            });
-          }}
-          onDeleteRelation={async (relationId) => {
-            await applyDomainPatch({
-              type: "delete-facade-relation",
-              relationId,
-            });
-          }}
-          onUpdateRelation={async (relationId, draft) => {
-            const current = editableModel.relations.find(
-              (relation) => relation.id === relationId
-            );
-            if (!current) {
-              return;
-            }
-            await applyDomainPatch({
-              type: "update-facade-relation",
-              relationId,
-              changes: {
-                from: draft.from,
-                to: draft.to,
-                type: draft.type,
-                label: draft.label,
-                notes: draft.notes,
-                origin: resolveLocalEditOrigin(current.origin),
-              },
-            });
-          }}
-          relations={editableModel.relations}
-        />
-        {conflicts.length > 0 ? (
-          <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
-            <strong>Conflict merge warnings</strong>
-            {conflicts.map((message) => (
-              <div key={message}>{message}</div>
-            ))}
-            <button type="button" onClick={clearConflicts}>
-              Dismiss warnings
-            </button>
-          </div>
-        ) : null}
         <DiagramEditorShell
           initialNodes={projection.nodes}
           onNodesChange={async (nodes) => {
@@ -261,9 +146,122 @@ export const DiagramFacadesPanel: React.FC<{
           }}
           projection={visualProjection}
           saveState={saveState}
-          subtitle={`${artifactPath} -> ${flowSidecarPath}`}
           title="Diagram Facades"
         />
+        {conflicts.length > 0 ? (
+          <DiagramEditorSection defaultOpen title="Conflict merge warnings">
+            <div className="pm-placeholder" style={{ display: "grid", gap: 6 }}>
+              {conflicts.map((message) => (
+                <div key={message}>{message}</div>
+              ))}
+              <button type="button" onClick={clearConflicts}>
+                Dismiss warnings
+              </button>
+            </div>
+          </DiagramEditorSection>
+        ) : null}
+        <DiagramEditorSection
+          defaultOpen={editableModel.facades.length === 0}
+          description="Add, update, or remove facades after reviewing the diagram."
+          title="Edit facades"
+        >
+          <FacadeEntityEditor
+            facades={editableModel.facades}
+            onAddFacade={async (draft) => {
+              await applyDomainPatch({ type: "add-facade", facade: draft });
+            }}
+            onDeleteFacade={async (facadeId) => {
+              await applyDomainPatch({ type: "delete-facade", facadeId });
+            }}
+            onUpdateFacade={async (facadeId, draft) => {
+              const current = editableModel.facades.find((entity) => entity.id === facadeId);
+              if (!current) {
+                return;
+              }
+              await applyDomainPatch({
+                type: "update-facade",
+                facadeId,
+                changes: {
+                  module: draft.module,
+                  visibility: draft.visibility,
+                  contractTargets: draft.contractTargets,
+                  codeTargets: draft.codeTargets,
+                  notes: draft.notes,
+                  rationale: draft.rationale,
+                  origin: resolveLocalEditOrigin(current.origin),
+                },
+              });
+            }}
+          />
+        </DiagramEditorSection>
+        <DiagramEditorSection
+          description="Methods and ports stay secondary to the visual diagram."
+          title="Edit methods and ports"
+        >
+          <FacadeMethodsEditor
+            facades={editableModel.facades}
+            onSaveMethods={async (facadeId, methods) => {
+              const current = editableModel.facades.find((entity) => entity.id === facadeId);
+              if (!current) {
+                return;
+              }
+              await applyDomainPatch({
+                type: "update-facade",
+                facadeId,
+                changes: { methods, origin: resolveLocalEditOrigin(current.origin) },
+              });
+            }}
+          />
+          <FacadePortsEditor
+            facades={editableModel.facades}
+            onSavePorts={async (facadeId, ports) => {
+              const current = editableModel.facades.find((entity) => entity.id === facadeId);
+              if (!current) {
+                return;
+              }
+              await applyDomainPatch({
+                type: "update-facade",
+                facadeId,
+                changes: { ports, origin: resolveLocalEditOrigin(current.origin) },
+              });
+            }}
+          />
+        </DiagramEditorSection>
+        <DiagramEditorSection
+          defaultOpen={editableModel.relations.length === 0}
+          description="Manage facade-level dependencies without leaving the visual surface."
+          title="Edit relations"
+        >
+          <FacadeRelationEditor
+            onAddRelation={async (draft) => {
+              await applyDomainPatch({ type: "add-facade-relation", relation: draft });
+            }}
+            onDeleteRelation={async (relationId) => {
+              await applyDomainPatch({ type: "delete-facade-relation", relationId });
+            }}
+            onUpdateRelation={async (relationId, draft) => {
+              const current = editableModel.relations.find(
+                (relation) => relation.id === relationId
+              );
+              if (!current) {
+                return;
+              }
+              await applyDomainPatch({
+                type: "update-facade-relation",
+                relationId,
+                changes: {
+                  from: draft.from,
+                  to: draft.to,
+                  type: draft.type,
+                  label: draft.label,
+                  notes: draft.notes,
+                  origin: resolveLocalEditOrigin(current.origin),
+                },
+              });
+            }}
+            relations={editableModel.relations}
+          />
+        </DiagramEditorSection>
       </div>
     );
   }
@@ -275,10 +273,12 @@ export const DiagramFacadesPanel: React.FC<{
     >
       <div style={{ display: "grid", gap: 10 }}>
         <div>
-          Здесь отображается canonical facade map: фасады модулей, типы взаимодействий и зависимости между ними в Markdown DSL.
+          Здесь отображается visual facade diagram. Canonical Markdown source доступен
+          через вкладку <code>Source</code>.
         </div>
         <div>
-          После появления <code>facade-map.md</code> панель автоматически переключится на visual shell и создаст sidecar <code>facade-map.flow.json</code> для layout.
+          После появления <code>facade-map.md</code> панель автоматически откроет
+          diagram-first surface.
         </div>
         <div>Любые изменения пометят следующие шаги как требующие синхронизации.</div>
         <StageArtifactFixButton
