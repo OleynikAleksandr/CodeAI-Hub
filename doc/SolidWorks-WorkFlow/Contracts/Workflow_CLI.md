@@ -63,8 +63,8 @@ Legacy `description.md` допускается только для compat и н�
 
 - `Description`: шаг может быть `READY` сразу (upstream не требуется).
 - `Virtual Simulation`: требует `Final_Description.md`.
-- `Diagram Modules`: требует `virtual-simulation.md` в статусе `DONE`.
-- `Diagram Facades`: требует `module-map.md` в статусе `DONE`.
+- `Diagram Modules`: требует доступный canonical artifact `virtual-simulation.md`; пользователь вручную запускает шаг, когда считает upstream artifact достаточным, и PM не должен требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
+- `Diagram Facades`: требует доступный canonical artifact `module-map.md`; пользователь вручную запускает шаг, когда считает upstream artifact достаточным, и PM не должен требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
 
 ---
 

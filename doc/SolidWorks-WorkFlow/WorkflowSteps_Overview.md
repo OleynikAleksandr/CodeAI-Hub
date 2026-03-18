@@ -108,6 +108,13 @@ Manual start из PM + resume-сессия агента:
 
 Преобразовать сценарии в карту модулей/кластеров и связей.
 
+### Подход
+
+Manual start из верхнего toolbar PM:
+- пользователь сам решает, когда `virtual-simulation.md` уже достаточно хороший для перехода на следующий шаг;
+- запуск требует доступный canonical upstream artifact `virtual-simulation.md`;
+- PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
+
 ### Входы
 
 - `Final_Description.md`
@@ -130,6 +137,13 @@ Manual start из PM + resume-сессия агента:
 ### Цель
 
 Зафиксировать фасады модулей, типы взаимодействий и зависимости.
+
+### Подход
+
+Manual start из верхнего toolbar PM:
+- пользователь сам решает, когда `module-map.md` уже достаточно хороший для перехода на следующий шаг;
+- запуск требует доступный canonical upstream artifact `module-map.md`;
+- PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
 
 ### Входы
 
