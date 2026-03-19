@@ -57,3 +57,27 @@
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase13-diagram-workflow-2026-03-19.md`
 - Active planning doc for this phase: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - Current implemented diagram SSOT remains in `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (`6.1`-`6.5`) until Phase 14 is implemented and synced
+
+---
+
+## Phase 15 — Diagram Modules Inventory-First Regression Repair (owner: Oleksandr, updated: 2026-03-19)
+
+### Stream: Prompt and visible templates
+1. [IN_PROGRESS] Исправить visible templates contract для `diagram_modules`, чтобы synced templates включали `module-inventory-*` assets и root contract резолвил prompt/template из `~/.codeai-hub/templates/...` с package assets только как fallback (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `fix(templates): sync diagram modules inventory templates`).
+2. [TODO] Git Commit: `fix(templates): sync diagram modules inventory templates` (hash: TBD)
+3. [TODO] Починить PM prompt-pack для `Diagram Modules`: целевой файл должен быть `module-inventory.md`, prompt обязан явно перечислять `Final_Description.md` + `virtual-simulation.md` и проговаривать фазы `read -> discuss inventory -> derive module map` (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`; expected commit: `fix(diagram-modules): repair inventory-first prompt pack`).
+4. [TODO] Git Commit: `fix(diagram-modules): repair inventory-first prompt pack` (hash: TBD)
+
+### Stream: Repair flow and derived artifacts
+1. [TODO] Починить `Fix with agent`, чтобы кнопка открывала dialog session нужного stage и передавала в агент parse/validation ошибку как follow-up repair prompt (scope: `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`, `src/client/project-manager/components/shared/stage-artifact-content-view.tsx`, `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`; expected commit: `fix(pm): forward artifact validation errors to agent`).
+2. [TODO] Git Commit: `fix(pm): forward artifact validation errors to agent` (hash: TBD)
+3. [TODO] Довести panel callbacks до repair-flow: `Fix with agent` должен возвращать `sessionId` для follow-up prompt и работать для `Virtual Simulation`, `Diagram Modules`, `Diagram Facades` (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`; expected commit: `fix(pm): reuse workflow sessions for artifact repair`).
+4. [TODO] Git Commit: `fix(pm): reuse workflow sessions for artifact repair` (hash: TBD)
+5. [TODO] После сохранения `module-inventory.md` автоматически материализовать derived `module-map.md`, чтобы `Diagram Modules` не застревал без canonical downstream artifact и `Diagram Facades` мог стартовать на согласованной карте модулей (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; expected commit: `fix(diagram-modules): materialize module map from inventory upload`).
+6. [TODO] Git Commit: `fix(diagram-modules): materialize module map from inventory upload` (hash: TBD)
+
+### Stream: Verification and release
+1. [TODO] Синхронизировать release docs и session report под regression-fix scope для `Diagram Modules` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session103.md`; expected commit: `docs(release): prep diagram modules regression fix release`).
+2. [TODO] Git Commit: `docs(release): prep diagram modules regression fix release` (hash: TBD)
+3. [TODO] Собрать и проверить новый релиз с inventory-first repair flow, закрыть Phase 15 в плане и зафиксировать новый VSIX (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build diagram modules regression fix release`).
+4. [TODO] Git Commit: `chore(release): build diagram modules regression fix release` (hash: TBD)
