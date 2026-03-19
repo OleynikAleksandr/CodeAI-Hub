@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.751
-- `Diagram Modules` now starts from an explicit inventory-first prompt contract: the agent sees both `Final_Description.md` and `virtual-simulation.md`, targets `module-inventory.md`, and is instructed to follow `read -> discuss inventory -> derive module map`.
-- `Fix with agent` now opens the correct dialog session for the active workflow stage and forwards the current parse/validation error into that session as a repair prompt.
-- Saving `module-inventory.md` now automatically materializes the derived `module-map.md`, so downstream gating and `Diagram Facades` keep consuming a canonical module map without manual duplication.
+## Current Release — v1.1.752
+- `Diagram Modules` now follows a strict inventory-only contract: `module-inventory.md` is the only semantic workspace artifact for the stage, while `module-map.flow.json` remains a layout-only sidecar.
+- `Diagram Facades` now consumes `module-inventory.md` as its upstream module context, so downstream gating and fresh starts no longer depend on a separate `module-map.md`.
+- Project Manager, runtime prompts, help copy, and workflow gating no longer advertise or wait for a raw `module-map.md` file in the workspace.
 - `Diagram Modules` and `Diagram Facades` still use a visual-only manual-layout surface: `Auto-layout`, profile buttons, `Edit Modules`, `Edit Relations`, and the old layout-status chrome are removed from the visible UI.
 - `module-map.flow.json` / `facade-map.flow.json` continue to persist only user-owned node positions instead of ELK-specific profile state, while React Flow remains the interactive surface for manual correction.
 - Semantic changes now flow through agent-driven updates or direct canonical Markdown editing, so the main canvas stays focused on structure and manual layout rather than inline CRUD forms.

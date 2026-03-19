@@ -147,7 +147,7 @@
 
 - `Diagram Modules` keeps semantic truth in `module-inventory.md`, not in the visible graph canvas.
 - Видимый UI больше не содержит inline-редакторов для module entities и relations.
-- `module-inventory.md` is the canonical semantic SSOT for `Diagram Modules`; runtime строит visual projection напрямую из inventory и не требует отдельный workspace artifact `module-map.md` или `module-map.agent-baseline.md`.
+- `module-inventory.md` is the canonical semantic SSOT for `Diagram Modules`; runtime строит visual projection напрямую из inventory и не требует отдельный raw map artifact в workspace.
 - Graph canvas continues to allow manual layout edits, and those changes remain in `module-map.flow.json` only.
 - Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
