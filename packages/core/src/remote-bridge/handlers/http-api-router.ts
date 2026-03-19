@@ -9,6 +9,7 @@ import {
   parseFacadeMapDsl,
   parseModuleMapDsl,
 } from "../../workflow/diagram-dsl/markdown-dsl-parser";
+import { materializeModuleMapFromInventoryDsl } from "../../workflow/diagram-dsl/module-inventory-parser";
 import {
   buildDescriptionContract,
   buildDiagramFacadesContract,
@@ -686,7 +687,81 @@ const buildWorkflowStageArtifactUpsertPlan = async (params: {
     });
   }
 
-  return { ok: true, value: { upserts } };
+  const derivedUpsertsResult = await buildDerivedDiagramModulesUpserts({
+    context,
+    upserts,
+  });
+  if (!derivedUpsertsResult.ok) {
+    return { ok: false, error: derivedUpsertsResult.error };
+  }
+
+  return { ok: true, value: { upserts: derivedUpsertsResult.value } };
+};
+
+const buildDerivedDiagramModulesUpserts = async (params: {
+  readonly context: WorkflowStageUpsertContext;
+  readonly upserts: WorkflowStageArtifactUpsertPlan["upserts"];
+}): Promise<PayloadParseResult<WorkflowStageArtifactUpsertPlan["upserts"]>> => {
+  if (
+    params.context.stage !== "diagram_modules" ||
+    params.upserts.some((upsert) => upsert.slot === "diagram.modules")
+  ) {
+    return { ok: true, value: params.upserts };
+  }
+
+  const inventoryUpsert = params.upserts.find(
+    (upsert) => upsert.slot === "diagram.modules.inventory"
+  );
+  if (!inventoryUpsert) {
+    return { ok: true, value: params.upserts };
+  }
+
+  const materialization = materializeModuleMapFromInventoryDsl(
+    inventoryUpsert.content
+  );
+  if (!materialization.ok) {
+    return {
+      ok: false,
+      error: `Unable to derive module-map.md: line ${materialization.error.line}, ${materialization.error.message}`,
+    };
+  }
+
+  const targetResult = resolveWorkflowStageUpsertTarget({
+    context: params.context,
+    slot: "diagram.modules",
+  });
+  if (!targetResult.ok) {
+    return targetResult;
+  }
+
+  const contentResult = normalizeAndValidateWorkflowStageUpsertMarkdown({
+    fileName: targetResult.value.fileName,
+    markdown: materialization.content,
+  });
+  if (!contentResult.ok) {
+    return { ok: false, error: contentResult.error };
+  }
+
+  const existingContent = await readArtifactFile(
+    targetResult.value.artifactPath
+  );
+  const normalizedExisting =
+    existingContent === null ? null : normalizeArtifactContent(existingContent);
+
+  return {
+    ok: true,
+    value: [
+      ...params.upserts,
+      {
+        slot: "diagram.modules",
+        relativePath: targetResult.value.relativePath,
+        artifactPath: targetResult.value.artifactPath,
+        content: contentResult.value,
+        existingContent,
+        changed: normalizedExisting !== contentResult.value,
+      },
+    ],
+  };
 };
 
 const writeArtifactUpsertPlan = async (
