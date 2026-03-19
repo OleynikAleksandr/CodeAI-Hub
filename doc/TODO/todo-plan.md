@@ -363,17 +363,17 @@
 ## Phase 13 — diagram surface simplification (owner: Oleksandr, updated: 2026-03-19)
 
 ### Stream: Remove inline semantic editors and minimap
-1. [TODO] Update diagram workflow planning docs and SSOT to remove visible semantic editors from `Diagram Modules` / `Diagram Facades` and drop the bottom-right minimap while preserving agent-driven semantic updates and manual layout controls (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram surface simplification`).
-2. [TODO] Git Commit: `docs(plan): scope diagram surface simplification` (hash: TBD)
-3. [TODO] Remove `Edit Modules` / `Edit Relations` and facade editing sections from the diagram panels, and remove the `MiniMap` from the shared React Flow shell while keeping `Controls` and manual drag persistence (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`; expected commit: `refactor(diagrams): remove semantic editors and minimap`).
-4. [TODO] Git Commit: `refactor(diagrams): remove semantic editors and minimap` (hash: TBD)
+1. [DONE] Update diagram workflow planning docs and SSOT to remove visible semantic editors from `Diagram Modules` / `Diagram Facades` and drop the bottom-right minimap while preserving agent-driven semantic updates and manual layout controls (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram surface simplification`).
+2. [DONE] Git Commit: `docs(plan): scope diagram surface simplification` (hash: `bad254d8`)
+3. [DONE] Remove `Edit Modules` / `Edit Relations` and facade editing sections from the diagram panels, and remove the `MiniMap` from the shared React Flow shell while keeping `Controls` and manual drag persistence (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`; expected commit: `refactor(diagrams): remove semantic editors and minimap`).
+4. [DONE] Git Commit: `refactor(diagrams): remove semantic editors and minimap` (hash: `7bb7a330`)
 
 ### Stream: Phase 13 release build and verification
-1. [TODO] Sync release-facing docs and version notes for the diagram surface simplification, now that visible inline semantic editors are gone and the canvas is manual-layout-only (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram surface simplification release`).
-2. [TODO] Git Commit: `docs(release): prep diagram surface simplification release` (hash: TBD)
-3. [TODO] On a clean tree run `./scripts/build-all.sh` and record the new version bump + release manifests for the simplified diagram surface (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build diagram surface simplification release`).
-4. [TODO] Git Commit: `chore(release): build diagram surface simplification release` (hash: TBD)
-5. [TODO] Run `./scripts/build-release.sh --use-current-version` and capture the session report with manual checklist: diagram toolbar has no `Auto-layout`/profile chrome, no visible semantic editors under the diagram, and the bottom-right minimap is gone while the left-bottom zoom controls remain (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram surface simplification release`).
+1. [DONE] Sync release-facing docs and version notes for the diagram surface simplification, now that visible inline semantic editors are gone and the canvas is manual-layout-only (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep diagram surface simplification release`).
+2. [DONE] Git Commit: `docs(release): prep diagram surface simplification release` (hash: `15e32479`)
+3. [DONE] On a clean tree run `./scripts/build-all.sh` and record the new version bump + release manifests for the simplified diagram surface (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build diagram surface simplification release`).
+4. [DONE] Git Commit: `chore(release): build diagram surface simplification release` (hash: `028f1686`)
+5. [DONE] Run `./scripts/build-release.sh --use-current-version` and capture the session report with manual checklist: diagram toolbar has no `Auto-layout`/profile chrome, no visible semantic editors under the diagram, and the bottom-right minimap is gone while the left-bottom zoom controls remain (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram surface simplification release`).
 6. [TODO] Git Commit: `docs(session): record diagram surface simplification release` (hash: TBD)
 
 ## Notes
