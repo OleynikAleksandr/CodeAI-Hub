@@ -7,13 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.750
-- `Diagram Modules` now derives the visible `module-map.md` from `module-inventory.md` before React Flow projection, so the inventory stays the first agreement layer and `Source` remains the review surface.
+## Current Release — v1.1.751
+- `Diagram Modules` now starts from an explicit inventory-first prompt contract: the agent sees both `Final_Description.md` and `virtual-simulation.md`, targets `module-inventory.md`, and is instructed to follow `read -> discuss inventory -> derive module map`.
+- `Fix with agent` now opens the correct dialog session for the active workflow stage and forwards the current parse/validation error into that session as a repair prompt.
+- Saving `module-inventory.md` now automatically materializes the derived `module-map.md`, so downstream gating and `Diagram Facades` keep consuming a canonical module map without manual duplication.
 - `Diagram Modules` and `Diagram Facades` still use a visual-only manual-layout surface: `Auto-layout`, profile buttons, `Edit Modules`, `Edit Relations`, and the old layout-status chrome are removed from the visible UI.
 - `module-map.flow.json` / `facade-map.flow.json` continue to persist only user-owned node positions instead of ELK-specific profile state, while React Flow remains the interactive surface for manual correction.
 - Semantic changes now flow through agent-driven updates or direct canonical Markdown editing, so the main canvas stays focused on structure and manual layout rather than inline CRUD forms.
 
-Previous releases (summary): the `1.1.57x–1.1.743` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, and realtime auto-layout refresh without reopen/remount.
+Previous releases (summary): the `1.1.57x–1.1.750` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, and the first inventory-derived diagram release.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
