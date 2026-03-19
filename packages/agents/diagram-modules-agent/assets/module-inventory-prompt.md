@@ -15,4 +15,4 @@ Requirements:
 - Emit valid Markdown-DSL with `# Module Inventory`, `## Metadata`, `## Clusters`, `## Standalone Modules`, `## Simple Relations`, and `## Assumptions / Open Questions`.
 - Keep entity IDs stable and deterministic.
 - Use `Origin: agent` only for entities introduced or rewritten by the agent.
-- Do not emit `module-map.md`, Mermaid, JSON, or prose outside the canonical inventory structure.
+- Do not emit extra Markdown artifacts, Mermaid, JSON, or prose outside the canonical inventory structure.
