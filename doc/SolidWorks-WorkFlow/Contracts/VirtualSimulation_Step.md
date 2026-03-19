@@ -27,7 +27,7 @@ UI описывается *концептуально*: экран/панель 
 
 1) `Description` (финал: `Final_Description.md`)
 2) `Virtual Simulation` (результат: `virtual-simulation.md`)
-3) `Diagram Modules` (результат: `module-map.md` + diagram sidecars)
+3) `Diagram Modules` (результат: `module-inventory.md` + diagram sidecar)
 4) `Diagram Facades` (результат: `facade-map.md` + diagram sidecars)
 
 На момент выполнения Virtual Simulation диаграмм **ещё нет**.
@@ -188,7 +188,7 @@ CodeAI Hub превращает идею в цепочку артефактов,
 Шаг считается готовым, когда пользователь явно подтвердил (`ОК` / `утверждаю` / `approve`), а `virtual-simulation.md`:
 - содержит связный сценарный baseline без внутренних противоречий;
 - покрывает продуктовую суть из `Final_Description.md` без потери ключевых ограничений;
-- даёт следующему агенту достаточную основу для построения `module-map.md` и `facade-map.md` без переписывания контекста с нуля.
+- даёт следующему агенту достаточную основу для построения `module-inventory.md` и `facade-map.md` без переписывания контекста с нуля.
 ```
 
 ### 8.2 Минимальные инварианты артефакта (без жёсткого template)

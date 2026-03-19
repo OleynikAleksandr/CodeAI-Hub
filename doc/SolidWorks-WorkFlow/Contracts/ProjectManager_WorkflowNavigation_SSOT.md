@@ -61,7 +61,7 @@
 - `Help` — guidance panel.
 
 For `Diagram Modules` inventory-first flow:
-- `Artifacts` opens the visual projection derived from `module-map.md`.
+- `Artifacts` opens the visual projection derived from `module-inventory.md`.
 - `Source` opens `module-inventory.md`.
 - `Diagram Facades` still uses `facade-map.md` as its `Source` surface for now.
 

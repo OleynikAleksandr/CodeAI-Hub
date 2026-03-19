@@ -87,7 +87,7 @@
 
 Это не заменяет глобальный граф, а прикладывается как «быстрый трейс» для конкретного шага.
 
-Для runtime-шагов `Diagram Modules` / `Diagram Facades` такой trace должен ссылаться на канонические Markdown DSL artifacts (`module-map.md`, `facade-map.md`), а не на legacy Mermaid-файлы.
+Для runtime-шагов `Diagram Modules` / `Diagram Facades` такой trace должен ссылаться на канонические Markdown DSL artifacts (`module-inventory.md`, `facade-map.md`), а не на legacy Mermaid-файлы.
 
 ---
 
@@ -183,7 +183,7 @@ PR считается завершённым только если:
 ## 7) Формат диаграмм (актуальная рекомендация)
 
 - Для runtime workflow шагов `Diagram Modules` / `Diagram Facades` канонический формат — Markdown DSL:
-  - `module-map.md` / `facade-map.md` как semantic SSOT;
+  - `module-inventory.md` / `facade-map.md` как semantic SSOT;
   - `*.flow.json` как manual-layout/view sidecar;
   - React Flow rendering в PM как user-facing surface.
 - `Mermaid` допустим только для explanatory documentation, временных investigation notes или одноразовых design sketches вне runtime workflow.
