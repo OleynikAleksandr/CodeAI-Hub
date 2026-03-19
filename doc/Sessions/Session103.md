@@ -1,6 +1,6 @@
-# Session 103 — Inventory-First Routing Checkpoint
+# Session 103 — Inventory-First Regression Repair
 
-**Date:** 2026-03-19 15:02 (CET)
+**Date:** 2026-03-19 15:32 (CET)
 **Branch:** main
 **Version:** 1.1.750
 
@@ -9,6 +9,12 @@
 # 1. Work Done in This Session
 
 ## Work summary
+- Открыл `Phase 15` под regression-repair для `Diagram Modules`, чтобы исправить разъехавшийся inventory-first runtime contract уже после релиза `v1.1.750`.
+- Починил visible templates / root prompt resolution для `diagram_modules`: synced home templates снова содержат `module-inventory-*`, а core читает root prompt/template из `~/.codeai-hub/templates/...` прежде, чем fallback-иться в package assets.
+- Исправил PM prompt-pack: `Diagram Modules` теперь стартует в `module-inventory.md`, явно видит `Final_Description.md` и `virtual-simulation.md`, и получает три фазы `read -> discuss inventory -> derive module map`.
+- Починил `Fix with agent`: shared repair flow открывает dialog session нужного stage и досылает туда parse/validation ошибку как follow-up repair prompt.
+- Добавил automatic materialization: когда runtime сохраняет `module-inventory.md`, core сразу выводит и записывает derived `module-map.md`, чтобы downstream gating и `Diagram Facades` не зависели от ручного дублирования canonical map.
+- Синхронизировал `todo-plan.md` и `SystemArchitecture.md` под regression-fix contract и закрыл два stream-а `Phase 15`.
 - Вернул `diagram_modules` и `diagram_facades` в visible templates contract: их prompt/template-файлы теперь синкаются через bundled manifest в `~/.codeai-hub/templates/...`.
 - Перевёл diagram prompt appendix resolution на templates-first path: synced visible templates читаются первыми, а package assets остаются только fallback.
 - Добавил тестовое покрытие, которое проверяет, что visible diagram templates действительно устанавливаются в home templates после sync.
@@ -35,6 +41,10 @@
 - Собрал релиз `v1.1.750` через `build-all.sh` и `build-release.sh --use-current-version`; `codeai-hub-1.1.750.vsix` создан успешно.
 
 ## Verification
+- `node --test --import tsx src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts` прошёл успешно после PM prompt-pack repair.
+- `npm run typecheck:webview` прошёл успешно после repair-flow изменений в PM shared components.
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts` прошёл успешно и подтвердил, что `artifact-upsert` пишет `module-inventory.md` и derived `module-map.md`.
+- `npm run build --workspace @codeai-hub/core` прошёл успешно после automatic materialization changes в `http-api-router.ts`.
 - Commit hooks прошли на всех микро-коммитах этой сессии: `test`, `check-architecture`, `check:tsprune`, `jscpd`, `check:links`.
 - Таргетный контрактный тест `node --test --import tsx packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts` прошёл успешно.
 - Smoke-check через `node --import tsx --input-type=module` подтвердил, что `resolveWorkflowArtifactPaths(...)` принимает `diagram_modules/module-inventory.md`.
@@ -67,6 +77,14 @@
 - `af6b5585 docs(plan): record module inventory diagram release`
 - `71de7e5f docs(plan): start module inventory release build`
 - `7c346ad0 chore(release): build module inventory diagram release`
+- `e873ddeb docs(plan): start diagram modules regression repair`
+- `6973c732 fix(templates): sync diagram modules inventory templates`
+- `8d412a62 fix(templates): prefer synced root diagram contracts`
+- `f6248cd7 fix(diagram-modules): repair inventory-first prompt pack`
+- `2d53cedf docs(plan): record inventory-first prompt pack repair`
+- `23916bed fix(pm): forward artifact validation errors to agent`
+- `0740fd1f fix(diagram-modules): materialize module map from inventory upload`
+- `ba8b9ed8 docs(plan): record repair flow and derived artifact fixes`
 
 ---
 
@@ -81,7 +99,9 @@
 6. `doc/Sessions/Session103.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
+> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 15` из `doc/TODO/todo-plan.md`, начиная с release-docs и нового regression-fix release build.
 
 ## Plans for next session
-- Если появится новый scope, открыть следующий planning doc для продолжения diagram workflow follow-up.
-- Если потребуется, отдельно дочистить runtime hydration / availability под `module-inventory.md`.
+- Синхронизировать `README.md`, `CHANGELOG.md` и этот session report под regression-fix scope.
+- Выполнить release build для следующей версии после `v1.1.750` и зафиксировать новый VSIX.
+- После релиза проверить, что `Diagram Modules` действительно начинает с user dialogue по `module-inventory.md`, а `Fix with agent` досылает parse/validation ошибку в диалог.
