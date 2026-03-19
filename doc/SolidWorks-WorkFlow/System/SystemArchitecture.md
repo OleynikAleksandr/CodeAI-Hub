@@ -147,7 +147,7 @@
 
 - `Diagram Modules` keeps semantic truth in the canonical Markdown artifact, not in the visible graph canvas.
 - Видимый UI больше не содержит inline-редакторов для module entities и relations.
-- `module-inventory.md` is the human-readable agreement layer for `Diagram Modules`; semantic changes are expected to come from agent runs or direct canonical Markdown editing, then serialize back to `module-map.md` only after inventory agreement.
+- `module-inventory.md` is the human-readable agreement layer for `Diagram Modules`; semantic changes are expected to come from agent runs or direct canonical Markdown editing, then serialize back to `module-map.md` only after inventory agreement, and the loader can materialize the visible `module-map.md` projection from inventory before React Flow rendering.
 - Graph canvas continues to allow manual layout edits, and those changes remain in `module-map.flow.json` only.
 - Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
@@ -181,7 +181,7 @@
 - Fresh toolbar bootstrap для шагов `Diagram Modules` / `Diagram Facades` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-map.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан сначала читать strict field-reference и merge-rules из synced visible templates под `~/.codeai-hub/templates/...`, а package assets использовать только как bundled-source fallback, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
-- Для `Diagram Modules` первый semantic checkpoint теперь `module-inventory.md`; `module-map.md` должен появляться только после согласования inventory, чтобы cluster membership и standalone modules были явно видны до React Flow projection.
+- Для `Diagram Modules` первый semantic checkpoint теперь `module-inventory.md`; `module-map.md` должен появляться только после согласования inventory, чтобы cluster membership и standalone modules были явно видны до React Flow projection, а visible shell мог materialize the derived diagram directly from inventory.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
 - `Diagram Modules` и `Diagram Facades` больше не должны навязывать пользователю inline semantic editors или bottom-right minimap. Product UX обязан опираться на:
   - AI-generated semantic structure в canonical `.md`;
