@@ -92,8 +92,8 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     );
     await writeWorkspaceFile(
       workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`,
-      "# Module Map\n"
+      `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,
+      "# Module Inventory\n"
     );
 
     const service = new WorkflowStateService({
@@ -134,7 +134,7 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     );
     assert.equal(
       payload.state.stages.diagram_modules?.artifacts.some(
-        (artifact) => artifact.path === "diagram_modules/module-map.md"
+        (artifact) => artifact.path === "diagram_modules/module-inventory.md"
       ),
       true
     );

@@ -249,7 +249,7 @@ const resolveWorkflowBlockedStages = (params: {
   const diagramModulesArtifactAvailable = stageHasArtifact({
     state: params.state,
     stage: "diagram_modules",
-    fileName: "module-map.md",
+    fileName: "module-inventory.md",
   });
 
   return {
