@@ -10,6 +10,7 @@
 
 ## Work summary
 - Синхронизировал release docs под `v1.1.751` и собрал regression-fix release: unified version поднята до `1.1.751`, VSIX успешно создан как `codeai-hub-1.1.751.vsix`.
+- Пользователь вручную проверил `v1.1.751`: агент теперь создаёт `module-inventory.md`, sidecar `module-map.flow.json`, а `Diagram Modules` рендерит визуальную карту без регрессии стартового inventory-first flow.
 - `Phase 15` доведена до конца: inventory-first prompt repair, shared repair-flow, automatic `module-map.md` materialization и release verification закрыты в `todo-plan.md`.
 - Открыл `Phase 15` под regression-repair для `Diagram Modules`, чтобы исправить разъехавшийся inventory-first runtime contract уже после релиза `v1.1.750`.
 - Починил visible templates / root prompt resolution для `diagram_modules`: synced home templates снова содержат `module-inventory-*`, а core читает root prompt/template из `~/.codeai-hub/templates/...` прежде, чем fallback-иться в package assets.
@@ -43,6 +44,7 @@
 - Собрал релиз `v1.1.750` через `build-all.sh` и `build-release.sh --use-current-version`; `codeai-hub-1.1.750.vsix` создан успешно.
 
 ## Verification
+- Пользовательский smoke-test `v1.1.751` в живом PM подтвердил, что `Diagram Modules` создаёт `module-inventory.md` и `module-map.flow.json`, а диаграмма рендерится в `Artifacts`.
 - `npm run build:webview` прошёл успешно перед релизом.
 - `npm run build:project-manager` прошёл успешно перед релизом.
 - `./scripts/build-all.sh` успешно собрал unified artifacts и поднял версию до `1.1.751`.
@@ -110,6 +112,6 @@
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md` и этот отчёт, затем решить, архивируем ли закрытый `Phase 15` и открываем ли новый planning doc под следующий diagram follow-up.
 
 ## Plans for next session
-- После пользовательской проверки `v1.1.751` либо закрыть/архивировать текущий `todo-plan.md`, либо открыть новый plan/doc под следующий diagram scope.
-- Перепроверить в живом UI два критичных regression-path: inventory-first start dialogue и `Fix with agent` с пересылкой parse/validation ошибки.
-- Если появится новый scope по диаграммам, вынести его сначала в новый planning doc, а уже потом нарезать в новый `todo-plan.md`.
+- Разобрать quality gaps первого inventory-derived diagram draft: рендер простых связей, перегруженность storage/runtime-модулей и визуальное/семантическое положение `selected-ai-provider`.
+- Решить, нужен ли возврат `CEF Launcher` как явного модуля верхнего уровня или его исключение должно быть закреплено как канонический контракт для `Diagram Modules`.
+- После согласования нового scope вынести его сначала в planning doc, затем открыть новый `todo-plan.md` и только после этого идти в код.
