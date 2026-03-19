@@ -1,6 +1,6 @@
-# Session 103 — Inventory-First Prompt Contract
+# Session 103 — Inventory-First Routing Checkpoint
 
-**Date:** 2026-03-19 14:13 (CET)
+**Date:** 2026-03-19 14:42 (CET)
 **Branch:** main
 **Version:** 1.1.749
 
@@ -23,10 +23,16 @@
 - Перенастроил prompt appendix resolution для `Diagram Modules` на `module-inventory-field-reference.md` и `module-inventory-merge-rules.md`.
 - Обновил `todo-plan.md`, чтобы он отражал новый dual-input inventory prompt contract и актуальные target files в core.
 - Сохранил закрытие микрошагa отдельным docs commit, чтобы hash `36cef261` был зафиксирован в плане.
+- Зарегистрировал `module-inventory.md` как отдельный workflow artifact path для `diagram_modules`, не ломая `module-map.md` и его sidecars.
+- Добавил слот `diagram.modules.inventory` и простую validation rule для `module-inventory.md` в artifact upsert router.
+- Расширил `WORKFLOW_STAGE_FILES` / path contract так, чтобы `resolveWorkflowArtifactPaths(...)` принимал `module-inventory.md` как canonical diagram artifact.
+- Синхронизировал `todo-plan.md`, чтобы item 5 был закрыт и hash `c1b0fb5d` оказался записан в плане.
 
 ## Verification
 - Commit hooks прошли на всех микро-коммитах этой сессии: `test`, `check-architecture`, `check:tsprune`, `jscpd`, `check:links`.
 - Таргетный контрактный тест `node --test --import tsx packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts` прошёл успешно.
+- Smoke-check через `node --import tsx --input-type=module` подтвердил, что `resolveWorkflowArtifactPaths(...)` принимает `diagram_modules/module-inventory.md`.
+- Smoke-check импорта `packages/core/src/remote-bridge/handlers/http-api-router.ts` прошёл успешно.
 - Таргетные build-команды для этого шага не запускались, потому что изменения затронули только templates/runtime contract и документацию.
 
 ## Git commits
@@ -43,6 +49,8 @@
 - `5356bebb docs(plan): record module inventory templates`
 - `36cef261 refactor(diagram-modules): add dual-input inventory prompt contract`
 - `f05776c9 docs(plan): record dual-input inventory prompt contract`
+- `c1b0fb5d feat(diagram-modules): register module inventory artifact`
+- `fddced4d docs(plan): record module inventory artifact routing`
 
 ---
 
@@ -59,6 +67,6 @@
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
 
 ## Plans for next session
-- Ввести `module-inventory.md` в workflow artifact contract и watcher/runtime routing, не ломая существующие `module-map.md` и `module-map.flow.json`.
 - Продолжить `Phase 14` по следующему стриму: PM UX `Source = module-inventory.md`, `Artifacts = module-map.md`, без поломки `Diagram Facades`.
 - Оставаться на inventory-first контракте: `Final_Description.md` + `virtual-simulation.md` → `module-inventory.md` → `module-map.md`.
+- Если будет нужна холодная гидрация `module-inventory.md`, добавить её в filesystem/state hydration отдельным следующим микрошагом.
