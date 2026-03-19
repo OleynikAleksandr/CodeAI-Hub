@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import type { DiagramMapModel } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
+import type {
+  DiagramMapModel,
+} from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
+import { materializeModuleMapFromInventoryDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/module-inventory-parser";
 import { parseFacadeMapDsl, parseModuleMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-parser";
 import { api } from "../../api";
 import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
@@ -12,13 +15,12 @@ import {
 
 export type DiagramLoaderStatus = "loading" | "missing" | "ready" | "error";
 export type DiagramEditorStage = "diagram_modules" | "diagram_facades";
-
 type DiagramPaths = {
   readonly artifactPath: string;
+  readonly inventoryArtifactPath?: string;
   readonly flowSidecarPath: string;
   readonly label: string;
 };
-
 const resolveDiagramPaths = (
   workspaceSlug: string,
   stage: DiagramEditorStage
@@ -26,6 +28,7 @@ const resolveDiagramPaths = (
   stage === "diagram_modules"
     ? {
         artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`,
+        inventoryArtifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,
         flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
         label: "Diagram Modules",
       }
@@ -34,7 +37,6 @@ const resolveDiagramPaths = (
         flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.flow.json`,
         label: "Diagram Facades",
       };
-
 const readWorkflowArtifact = async (params: {
   readonly httpUrl: string;
   readonly workspacePath: string;
@@ -51,38 +53,22 @@ const readWorkflowArtifact = async (params: {
     path: params.path,
     maxBytes: "300000",
   });
-
   try {
     const response = await fetch(
       `${params.httpUrl}/api/v1/orchestrator/workflow-artifact?${query.toString()}`,
       { method: "GET" }
     );
-    if (response.status === 404) {
-      return { status: "missing" };
-    }
-    if (!response.ok) {
-      return { status: "error", error: "Endpoint недоступен." };
-    }
-    const payload = (await response.json()) as unknown;
-    if (!payload || typeof payload !== "object") {
-      return { status: "error", error: "Неверный ответ Core." };
-    }
-    const content =
-      typeof (payload as Record<string, unknown>).content === "string"
-        ? ((payload as Record<string, unknown>).content as string)
-        : null;
-    if (content === null) {
-      return { status: "error", error: "Контент отсутствует." };
-    }
-    return { status: "ok", content };
+    if (response.status === 404) return { status: "missing" };
+    if (!response.ok) return { status: "error", error: "Endpoint недоступен." };
+    const payload = (await response.json()) as Record<string, unknown> | null;
+    const content = typeof payload?.content === "string" ? payload.content : null;
+    return content === null
+      ? { status: "error", error: "Контент отсутствует." }
+      : { status: "ok", content };
   } catch (error) {
-    return {
-      status: "error",
-      error: error instanceof Error ? error.message : String(error),
-    };
+    return { status: "error", error: error instanceof Error ? error.message : String(error) };
   }
 };
-
 export type DiagramLoaderResult = {
   readonly status: DiagramLoaderStatus;
   readonly content: string | null;
@@ -93,7 +79,6 @@ export type DiagramLoaderResult = {
   readonly artifactPath: string;
   readonly flowSidecarPath: string;
 };
-
 export const useDiagramLoader = (params: {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -113,7 +98,6 @@ export const useDiagramLoader = (params: {
   const [pollTick, setPollTick] = useState(0);
   const paths = resolveDiagramPaths(params.workspaceSlug, params.stage);
   const contextKey = `${params.workspacePath}::${params.workspaceSlug}::${params.stage}`;
-
   useEffect(() => {
     if (status !== "missing") {
       return;
@@ -150,6 +134,69 @@ export const useDiagramLoader = (params: {
     }
 
     void (async () => {
+      if (params.stage === "diagram_modules" && paths.inventoryArtifactPath) {
+        const inventoryResult = await readWorkflowArtifact({
+          httpUrl,
+          workspacePath: params.workspacePath,
+          workspaceSlug: params.workspaceSlug,
+          path: paths.inventoryArtifactPath,
+        });
+
+        if (cancelled) {
+          return;
+        }
+
+        if (inventoryResult.status === "ok") {
+          const inventoryMaterialization = materializeModuleMapFromInventoryDsl(
+            inventoryResult.content
+          );
+          if (!inventoryMaterialization.ok) {
+            setModel(null);
+            setProjection(null);
+            setFlowDocument(null);
+            setStatus("error");
+            setError(
+              `Не удалось разобрать ${paths.label}: строка ${inventoryMaterialization.error.line}, ${inventoryMaterialization.error.message}`
+            );
+            setContent(inventoryResult.content);
+            return;
+          }
+
+          const baseProjection = domainModelToReactFlow(
+            inventoryMaterialization.value
+          );
+          const sidecarResult = await readWorkflowArtifact({
+            httpUrl,
+            workspacePath: params.workspacePath,
+            workspaceSlug: params.workspaceSlug,
+            path: paths.flowSidecarPath,
+          });
+
+          if (cancelled) {
+            return;
+          }
+
+          const nextFlowDocument =
+            sidecarResult.status === "ok"
+              ? parseFlowSidecar(sidecarResult.content)
+              : null;
+
+          setContent(inventoryMaterialization.content);
+          setModel(inventoryMaterialization.value);
+          setFlowDocument(nextFlowDocument);
+          setProjection({
+            ...baseProjection,
+            nodes: applyFlowSidecarPositions({
+              nodes: baseProjection.nodes,
+              document: nextFlowDocument,
+              revision: baseProjection.revision,
+            }),
+          });
+          setStatus("ready");
+          return;
+        }
+      }
+
       const artifactResult = await readWorkflowArtifact({
         httpUrl,
         workspacePath: params.workspacePath,
