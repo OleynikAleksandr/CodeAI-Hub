@@ -7,18 +7,23 @@ export const DiagramModulesHelp: React.FC = () => (
     </div>
     <div style={{ display: "grid", gap: 10 }}>
       <div>
-        Шаг выделяет модули системы и связи между ними на основе
-        <code> virtual-simulation.md</code>.
+        Шаг строит человекочитаемый перечень модулей и кластеров на основе
+        <code> Final_Description.md</code> и <code> virtual-simulation.md</code>.
       </div>
       <div>
-        Диаграмма должна показывать зоны ответственности, зависимости и
-        минимально необходимые интеграции между модулями.
+        Сначала согласуется <code>module-inventory.md</code>: кластеры, их
+        состав, отдельные модули и простые связи между ними.
       </div>
       <div>
-        Canonical artifact шага теперь хранится в Markdown DSL, а не в Mermaid.
+        После этого визуальная диаграмма строится уже из согласованного
+        inventory, а не напрямую из сценариев.
       </div>
       <div>
-        Итоговый артефакт:{" "}
+        В панели <code>Source</code> открыт
+        <code>module-inventory.md</code>, а не raw <code>module-map.md</code>.
+      </div>
+      <div>
+        Итоговая визуализация шага:{" "}
         <code>
           .codeai-hub/&lt;workspace&gt;/diagram_modules/module-map.md
         </code>

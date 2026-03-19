@@ -68,6 +68,8 @@ test("diagram modules panel persists manual node positions without layout profil
   );
   assert.equal(source.includes("Edit modules"), false);
   assert.equal(source.includes("Edit relations"), false);
+  assert.equal(source.includes("module-inventory.md"), true);
+  assert.equal(source.includes("derived visual module map"), true);
   assert.equal(source.includes("useDomainPatch"), false);
   assert.equal(source.includes("ModuleEntityEditor"), false);
   assert.equal(source.includes("ModuleRelationEditor"), false);

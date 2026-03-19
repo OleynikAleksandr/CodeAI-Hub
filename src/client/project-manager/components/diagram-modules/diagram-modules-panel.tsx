@@ -61,7 +61,7 @@ export const DiagramModulesPanel: React.FC<{
       content={content}
       error={error}
       initialNodes={projection?.nodes}
-      introText="Artifacts shows the visual module map. Use Source for the canonical Markdown artifact."
+      introText="Artifacts shows the derived visual module map. Use Source to review module-inventory.md before the diagram is rendered."
       onDismissConflicts={() => {}}
       onNodesChange={async (nodes) => {
         if (!visualProjection) {
@@ -73,15 +73,17 @@ export const DiagramModulesPanel: React.FC<{
       pendingContent={
         <div style={{ display: "grid", gap: 10 }}>
           <div>
-            Здесь отображается visual module diagram. Canonical Markdown source
-            доступен через вкладку <code>Source</code>.
+            Здесь отображается visual module diagram, собранная из
+            <code>module-inventory.md</code>.
           </div>
           <div>
-            После появления <code>module-map.md</code> панель автоматически
-            откроет diagram-first surface.
+            Сначала согласуйте кластеры, состав модулей и простые связи в
+            <code>Source</code>, затем диаграмма станет доступна в
+            <code>Artifacts</code>.
           </div>
           <div>
-            Любые изменения пометят следующие шаги как требующие синхронизации.
+            После согласования inventory runtime сформирует производный
+            <code>module-map.md</code> для визуального слоя.
           </div>
         </div>
       }
