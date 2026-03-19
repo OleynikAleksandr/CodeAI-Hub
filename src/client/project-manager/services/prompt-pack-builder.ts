@@ -29,7 +29,7 @@ type WorkflowArtifactPaths = {
 const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
-  diagram_modules: "module-map.md",
+  diagram_modules: "module-inventory.md",
   diagram_facades: "facade-map.md",
 };
 
@@ -84,10 +84,7 @@ const resolveProviderSlug = (providerId: string): string => {
 
 const resolveAgentRoleSlug = (role: string | null): string => {
   const normalized = role ? sanitizeSlugToken(role.trim().toLowerCase()) : "";
-  if (normalized.length === 0) {
-    return "agent";
-  }
-  return normalized;
+  return normalized.length === 0 ? "agent" : normalized;
 };
 
 export const buildDescriptionCollectorRunSlug = (
@@ -101,13 +98,7 @@ export const buildDescriptionCollectorRunSlug = (
   );
 
 const resolveRunSlug = (value: string | undefined): string | null => {
-  if (!value) {
-    return null;
-  }
-  const trimmed = value.trim();
-  if (!trimmed) {
-    return null;
-  }
+  const trimmed = value?.trim() ?? "";
   return RUN_SLUG_RE.test(trimmed) ? trimmed : null;
 };
 
@@ -122,6 +113,20 @@ const joinPath = (base: string, relative: string): string => {
   return `${trimmedBase}${separator}${cleanedRelative}`;
 };
 
+const buildWorkflowRelativePath = (params: {
+  readonly workspaceSlug: string;
+  readonly stage: WorkflowStageId;
+  readonly fileName: string;
+  readonly runSlug?: string;
+}): string => {
+  const runSlug =
+    params.stage === "description" ? null : resolveRunSlug(params.runSlug);
+  const runSegment = runSlug ? `runs/${runSlug}/` : "";
+  return normalizeRelativePath(
+    `.codeai-hub/${params.workspaceSlug}/${params.stage}/${runSegment}${params.fileName}`
+  );
+};
+
 const resolveWorkflowArtifactPaths = (params: {
   readonly stage: WorkflowStageId;
   readonly workspacePath: string;
@@ -129,12 +134,12 @@ const resolveWorkflowArtifactPaths = (params: {
   readonly runSlug?: string;
 }): WorkflowArtifactPaths => {
   const fileName = WORKFLOW_STAGE_FILES[params.stage];
-  const runSlug =
-    params.stage === "description" ? null : resolveRunSlug(params.runSlug);
-  const runSegment = runSlug ? `runs/${runSlug}/` : "";
-  const relativePath = normalizeRelativePath(
-    `.codeai-hub/${params.workspaceSlug}/${params.stage}/${runSegment}${fileName}`
-  );
+  const relativePath = buildWorkflowRelativePath({
+    workspaceSlug: params.workspaceSlug,
+    stage: params.stage,
+    fileName,
+    runSlug: params.runSlug,
+  });
   return {
     relativePath,
     absolutePath: joinPath(params.workspacePath, relativePath),
@@ -158,6 +163,25 @@ const buildStageInputLines = (params: {
       `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
     ];
   }
+  if (params.stage === "diagram_modules") {
+    const finalRelativePath = normalizeRelativePath(
+      `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`
+    );
+    const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
+    const simulationRelativePath = normalizeRelativePath(
+      `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`
+    );
+    const simulationAbsolutePath = joinPath(
+      params.workspacePath,
+      simulationRelativePath
+    );
+    return [
+      `Final_Description.md (relative): \`${finalRelativePath}\``,
+      `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
+      `virtual-simulation.md (relative): \`${simulationRelativePath}\``,
+      `virtual-simulation.md (absolute): \`${simulationAbsolutePath}\``,
+    ];
+  }
   const questionnaireRelativePath = normalizeRelativePath(params.questionnairePath);
   const questionnaireAbsolutePath = joinPath(
     params.workspacePath,
@@ -167,6 +191,21 @@ const buildStageInputLines = (params: {
   return [
     `${label} (relative): \`${questionnaireRelativePath}\``,
     `${label} (absolute): \`${questionnaireAbsolutePath}\``,
+  ];
+};
+
+const buildStagePhaseLines = (
+  stage: WorkflowStageId,
+  targetFileName: string
+): readonly string[] => {
+  if (stage !== "diagram_modules") {
+    return [];
+  }
+  return [
+    "Фазы работы:",
+    "- Phase 1: прочитай `Final_Description.md` и `virtual-simulation.md`, затем восстанови кандидатов в кластеры, standalone modules и простые связи.",
+    `- Phase 2: начни короткий диалог с пользователем и согласуй содержимое \`${targetFileName}\`; не переходи к визуальной карте, пока пользователь не подтвердит inventory или не попросит черновик сразу.`,
+    "- Phase 3: после согласования inventory перейди к derived artifacts `module-map.md` и `module-map.flow.json`, чтобы диаграмма могла отрисоваться в React surface.",
   ];
 };
 
@@ -191,6 +230,28 @@ export const buildWorkflowPromptPack = (
     workspaceSlug: params.workspaceSlug,
     runSlug: params.runSlug,
   });
+  const additionalArtifacts =
+    params.stage === "diagram_modules"
+      ? [
+          ["Derived module map", "module-map.md"],
+          ["Derived layout", "module-map.flow.json"],
+        ].flatMap(([label, derivedFileName]) => {
+          const derivedRelativePath = buildWorkflowRelativePath({
+            workspaceSlug: params.workspaceSlug,
+            stage: params.stage,
+            fileName: derivedFileName,
+            runSlug: params.runSlug,
+          });
+          return [
+            `${label} (relative): \`${derivedRelativePath}\``,
+            `${label} (absolute): \`${joinPath(
+              params.workspacePath,
+              derivedRelativePath
+            )}\``,
+          ];
+        })
+      : [];
+
   const defaultPrompt =
     params.stage === "virtual_simulation"
       ? "Собери артефакт на основе `Final_Description.md`."
@@ -210,6 +271,8 @@ export const buildWorkflowPromptPack = (
     params.stage !== "virtual_simulation" && params.templatePath
       ? `Шаблон (absolute): \`${params.templatePath}\``
       : null,
+    ...buildStagePhaseLines(params.stage, fileName),
+    ...additionalArtifacts,
   ];
   const instructions = instructionLines
     .filter((entry): entry is string => Boolean(entry))
