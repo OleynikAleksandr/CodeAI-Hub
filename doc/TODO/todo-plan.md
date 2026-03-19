@@ -50,7 +50,7 @@
 2. [DONE] Git Commit: `refactor(diagram-modules): derive module map from inventory` (hash: `628d69e2`)
 3. [DONE] Синхронизировать release docs и SSOT после реализации inventory-first `Diagram Modules` и visible diagram templates contract (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep module inventory diagram release`).
 4. [DONE] Git Commit: `docs(release): prep module inventory diagram release` (hash: `43132504`)
-5. [TODO] После ручной проверки собрать новый релиз, записать session report и закрыть хеши Phase 14 (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build module inventory diagram release`).
+5. [IN_PROGRESS] После ручной проверки собрать новый релиз, записать session report и закрыть хеши Phase 14 (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build module inventory diagram release`).
 6. [TODO] Git Commit: `chore(release): build module inventory diagram release` (hash: TBD)
 
 ## Notes
