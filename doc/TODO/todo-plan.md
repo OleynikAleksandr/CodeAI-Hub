@@ -350,6 +350,14 @@
 3. [DONE] Удалить ELK-driven product UX и runtime pipeline: убрать `Auto-layout`, layout profiles, `Layout saved` chip, удалить `diagram-layout-facade`/`auto-layout-button`/`save-status-indicator`, вычистить sidecar profile contract и снять зависимость `elkjs`, сохранив только manual drag positions в `*.flow.json`; подтвердить поведение таргетными проверками `flow-sidecar-types.test.ts`, `diagram-editor-facade.test.tsx`, `typecheck:webview`, `build:webview`, `build:project-manager` (scope: `src/client/project-manager/components/diagram-editor/**`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `package.json`, `package-lock.json`; expected commit: `refactor(diagrams): remove elk auto-layout pipeline`).
 4. [DONE] Git Commit: `refactor(diagrams): remove elk auto-layout pipeline` (hash: `fdeb958e`)
 
+### Stream: Phase 12 release build and verification
+1. [TODO] Синхронизировать release-facing docs под manual-layout-first contract: диаграммы больше не зависят от ELK, `*.flow.json` хранит только пользовательские позиции, а `Edit Modules` / `Edit Relations` остаются вторичными inline editors beneath the visual canvas (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep manual-layout first release`).
+2. [TODO] Git Commit: `docs(release): prep manual-layout first release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist для manual-layout cleanup через `./scripts/build-all.sh`, зафиксировать version bump до `1.1.748` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build manual-layout first release`).
+4. [TODO] Git Commit: `chore(release): build manual-layout first release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: diagram toolbar без `Auto-layout`/profiles, ручной drag по-прежнему сохраняется в `*.flow.json`, `Source` остаётся вторичным raw Markdown view, а inline секции `Edit Modules` / `Edit Relations` продолжают редактировать canonical DSL без ELK fallback path (scope: `codeai-hub-1.1.748.vsix`, `doc/Sessions/Session101.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record manual-layout first release`).
+6. [TODO] Git Commit: `docs(session): record manual-layout first release` (hash: TBD)
+
 ---
 
 ## Notes
