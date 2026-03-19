@@ -373,8 +373,8 @@
 2. [DONE] Git Commit: `docs(release): prep diagram surface simplification release` (hash: `15e32479`)
 3. [DONE] On a clean tree run `./scripts/build-all.sh` and record the new version bump + release manifests for the simplified diagram surface (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build diagram surface simplification release`).
 4. [DONE] Git Commit: `chore(release): build diagram surface simplification release` (hash: `028f1686`)
-5. [DONE] Run `./scripts/build-release.sh --use-current-version` and capture the session report with manual checklist: diagram toolbar has no `Auto-layout`/profile chrome, no visible semantic editors under the diagram, and the bottom-right minimap is gone while the left-bottom zoom controls remain (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/SessionXXX.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram surface simplification release`).
-6. [TODO] Git Commit: `docs(session): record diagram surface simplification release` (hash: TBD)
+5. [DONE] Run `./scripts/build-release.sh --use-current-version` and capture the session report with manual checklist: diagram toolbar has no `Auto-layout`/profile chrome, no visible semantic editors under the diagram, and the bottom-right minimap is gone while the left-bottom zoom controls remain (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session102.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram surface simplification release`).
+6. [DONE] Git Commit: `docs(session): record diagram surface simplification release` (hash: `9d7f852d`)
 
 ## Notes
 - Planning doc for this scope: `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
