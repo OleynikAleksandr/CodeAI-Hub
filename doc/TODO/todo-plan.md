@@ -20,8 +20,8 @@
 ### Stream: Live contracts
 1. [DONE] Зафиксировать в живых архитектурных документах новый contract для `Diagram Modules`: обязательные входы `Final_Description.md` + `virtual-simulation.md`, `module-inventory.md` как человекочитаемый semantic bridge, `module-map.md` как derived diagram artifact (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`; expected commit: `docs(architecture): add module inventory bridge contract`).
 2. [DONE] Git Commit: `docs(architecture): add module inventory bridge contract` (hash: `d4d5486a`)
-3. [TODO] Синхронизировать живой PM UX contract под `Source = module-inventory.md` для `Diagram Modules` и новую policy видимых diagram templates (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`; expected commit: `docs(pm): sync module inventory source contract`).
-4. [TODO] Git Commit: `docs(pm): sync module inventory source contract` (hash: TBD)
+3. [DONE] Синхронизировать живой PM UX contract под `Source = module-inventory.md` для `Diagram Modules` и новую policy видимых diagram templates (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`; expected commit: `docs(pm): sync module inventory source contract`).
+4. [DONE] Git Commit: `docs(pm): sync module inventory source contract` (hash: `7d7203f1`)
 
 ### Stream: Visible templates
 1. [DONE] Вернуть diagram prompt/template contract в visible templates sync, чтобы `diagram_modules` и `diagram_facades` жили в `~/.codeai-hub/templates/...` через bundled manifest (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit: `refactor(templates): sync diagram workflow templates`).
