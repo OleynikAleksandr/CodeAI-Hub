@@ -5,6 +5,7 @@ import type { FileDropService } from "../../file-drop/file-drop-service";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import type { MarkdownDslParseResult } from "../../workflow/diagram-dsl/diagram-dsl-types";
 import { parseFacadeMapDsl } from "../../workflow/diagram-dsl/markdown-dsl-parser";
 import {
   buildDescriptionContract,
@@ -814,7 +815,7 @@ const validateModuleInventoryMarkdown = (
 
 const validateMarkdownDslDiagram = (params: {
   readonly content: string;
-  readonly parser: typeof parseModuleMapDsl | typeof parseFacadeMapDsl;
+  readonly parser: (content: string) => MarkdownDslParseResult;
   readonly shouldValidate: boolean;
 }): string | null => {
   if (!params.shouldValidate) {
