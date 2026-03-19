@@ -20,8 +20,8 @@ export const DiagramModulesHelp: React.FC = () => (
       </div>
       <div>
         В панели <code>Source</code> открыт
-        <code>module-inventory.md</code>; отдельный raw <code>module-map.md</code>
-        больше не является пользовательским артефактом этого шага.
+        <code>module-inventory.md</code> как единственный semantic artifact
+        этого шага.
       </div>
       <div>
         Layout sidecar шага:

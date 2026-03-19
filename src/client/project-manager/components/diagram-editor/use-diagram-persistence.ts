@@ -146,6 +146,10 @@ export const useDiagramPersistence = (params: {
 
   const persistModel = async (model: DiagramMapModel): Promise<void> => {
     setSaveState("saving");
+    if (params.stage === "diagram_modules") {
+      setSaveState("error");
+      return;
+    }
     const sessionId = await ensureWorkspaceSession({
       workspacePath: params.workspacePath,
       workspaceSlug: params.workspaceSlug,

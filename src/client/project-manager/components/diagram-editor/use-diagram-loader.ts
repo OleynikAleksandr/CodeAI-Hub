@@ -17,7 +17,6 @@ export type DiagramLoaderStatus = "loading" | "missing" | "ready" | "error";
 export type DiagramEditorStage = "diagram_modules" | "diagram_facades";
 type DiagramPaths = {
   readonly artifactPath: string;
-  readonly inventoryArtifactPath?: string;
   readonly flowSidecarPath: string;
   readonly label: string;
 };
@@ -27,8 +26,7 @@ const resolveDiagramPaths = (
 ): DiagramPaths =>
   stage === "diagram_modules"
     ? {
-        artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`,
-        inventoryArtifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,
+        artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,
         flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
         label: "Diagram Modules",
       }
@@ -88,26 +86,18 @@ export const useDiagramLoader = (params: {
   const [status, setStatus] = useState<DiagramLoaderStatus>("loading");
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [projection, setProjection] = useState<DiagramFlowProjection | null>(
-    null
-  );
+  const [projection, setProjection] = useState<DiagramFlowProjection | null>(null);
   const [model, setModel] = useState<DiagramMapModel | null>(null);
-  const [flowDocument, setFlowDocument] = useState<FlowSidecarDocument | null>(
-    null
-  );
+  const [flowDocument, setFlowDocument] = useState<FlowSidecarDocument | null>(null);
   const [pollTick, setPollTick] = useState(0);
   const paths = resolveDiagramPaths(params.workspaceSlug, params.stage);
   const contextKey = `${params.workspacePath}::${params.workspaceSlug}::${params.stage}`;
   useEffect(() => {
-    if (status !== "missing") {
-      return;
-    }
+    if (status !== "missing") return;
     const timer = window.setTimeout(() => {
       setPollTick((current) => current + 1);
     }, 5_000);
-    return () => {
-      window.clearTimeout(timer);
-    };
+    return () => window.clearTimeout(timer);
   }, [status]);
 
   useEffect(() => {
@@ -123,6 +113,11 @@ export const useDiagramLoader = (params: {
     let cancelled = false;
     setStatus((current) => (current === "ready" ? current : "loading"));
     setError(null);
+    const clearDiagram = () => {
+      setModel(null);
+      setProjection(null);
+      setFlowDocument(null);
+    };
 
     const httpUrl = api.getHttpUrl();
     if (!httpUrl) {
@@ -134,12 +129,12 @@ export const useDiagramLoader = (params: {
     }
 
     void (async () => {
-      if (params.stage === "diagram_modules" && paths.inventoryArtifactPath) {
+      if (params.stage === "diagram_modules") {
         const inventoryResult = await readWorkflowArtifact({
           httpUrl,
           workspacePath: params.workspacePath,
           workspaceSlug: params.workspaceSlug,
-          path: paths.inventoryArtifactPath,
+          path: paths.artifactPath,
         });
 
         if (cancelled) {
@@ -151,9 +146,7 @@ export const useDiagramLoader = (params: {
             inventoryResult.content
           );
           if (!inventoryMaterialization.ok) {
-            setModel(null);
-            setProjection(null);
-            setFlowDocument(null);
+            clearDiagram();
             setStatus("error");
             setError(
               `Не удалось разобрать ${paths.label}: строка ${inventoryMaterialization.error.line}, ${inventoryMaterialization.error.message}`
@@ -195,6 +188,19 @@ export const useDiagramLoader = (params: {
           setStatus("ready");
           return;
         }
+
+        if (inventoryResult.status === "missing") {
+          setContent(null);
+          clearDiagram();
+          setStatus("missing");
+          return;
+        }
+        if (inventoryResult.status === "error") {
+          clearDiagram();
+          setStatus("error");
+          setError(`Не удалось загрузить ${paths.label}: ${inventoryResult.error}`);
+          return;
+        }
       }
 
       const artifactResult = await readWorkflowArtifact({
@@ -210,16 +216,12 @@ export const useDiagramLoader = (params: {
 
       if (artifactResult.status === "missing") {
         setContent(null);
-        setModel(null);
-        setProjection(null);
-        setFlowDocument(null);
+        clearDiagram();
         setStatus("missing");
         return;
       }
       if (artifactResult.status === "error") {
-        setModel(null);
-        setProjection(null);
-        setFlowDocument(null);
+        clearDiagram();
         setStatus("error");
         setError(`Не удалось загрузить ${paths.label}: ${artifactResult.error}`);
         return;
@@ -231,9 +233,7 @@ export const useDiagramLoader = (params: {
           : parseFacadeMapDsl(artifactResult.content);
 
       if (!parseResult.ok) {
-        setModel(null);
-        setProjection(null);
-        setFlowDocument(null);
+        clearDiagram();
         setStatus("error");
         setError(
           `Не удалось разобрать ${paths.label}: строка ${parseResult.error.line}, ${parseResult.error.message}`
