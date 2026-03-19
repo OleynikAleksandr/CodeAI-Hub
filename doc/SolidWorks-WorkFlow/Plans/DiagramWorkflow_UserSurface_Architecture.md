@@ -1,190 +1,218 @@
 # Архитектура пользовательской поверхности Diagram Workflow
 
-**Статус:** Черновик - scope восстановления утверждён
-**Дата:** 2026-03-18
-**Охват:** пользовательский UI-контракт для `Diagram Modules` и `Diagram Facades`
+**Статус:** Черновик - scope `module-inventory.md` утверждён
+**Дата:** 2026-03-19
+**Охват:** следующий UX/runtime-контракт для `Diagram Modules` и policy-рефакторинг шаблонов для diagram steps
 
 **Связанные документы:**
-- `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/TODO/todo-plan.md`
-- `doc/Sessions/Session093.md`
+- `doc/Sessions/Session102.md`
 
 ---
 
 ## 1. Проблема
 
-Путь начальной загрузки для `Diagram Modules` и `Diagram Facades` снова работает, но пользовательская поверхность шага всё ещё устроена неправильно.
+Текущая реализация `Diagram Modules` уже умеет показывать диаграмму, ручную раскладку и сохранять `*.flow.json`, но product-contract шага всё ещё неполный.
 
-Сейчас в одной и той же правой панели смешаны три разные зоны ответственности:
-- диаграмма, на которую должен смотреть пользователь;
-- исходный Markdown-артефакт, которым владеет runtime (`module-map.md`, `facade-map.md`);
-- плотные формы семантического редактирования и технические детали раскладки (`*.flow.json`).
+Главный разрыв сейчас такой:
+- `Final_Description.md` содержит продуктовые границы, базовые подсистемы и ключевые сущности;
+- `virtual-simulation.md` содержит 2-4 сценария и точки взаимодействия;
+- runtime шага `Diagram Modules` сегодня фактически опирается на `virtual-simulation.md` как на единственный прямой upstream-вход;
+- агент сразу пытается построить `module-map.md`, хотя перед диаграммой пользователю нужен более простой и человекочитаемый semantic artifact.
 
-Из-за этого шаг выглядит ненадёжным даже тогда, когда сама сессия и артефакты технически корректны.
+Из-за этого возникают две проблемы:
+- модульная диаграмма получается слишком сценарно-зависимой и может пропускать кластеры, standalone modules и важные зоны ответственности, которые не попали в 2-4 сценария;
+- пользователю негде быстро увидеть и поправить сам список кластеров и модулей до того, как они превратятся в visual graph.
+
+Отдельная проблема контракта разработки:
+- для `Description` и `Virtual Simulation` живые prompt/template-файлы лежат в `~/.codeai-hub/templates/...`;
+- для `Diagram Modules` и `Diagram Facades` текущий runtime читает prompt/template из package assets, поэтому разработчик не видит живой template-contract рядом с остальными workflow steps.
 
 ---
 
 ## 2. Решение на уровне продукта
 
-Для шагов диаграмм основной пользовательской поверхностью должна быть сама диаграмма.
+`Diagram Modules` должен стать двухфазным шагом внутри того же workflow stage, без вынесения в отдельный этап.
 
-### Финальный UX-контракт
+Новый контракт:
+- прямые upstream-входы для `Diagram Modules`: `Final_Description.md` и `virtual-simulation.md`;
+- новый человекочитаемый semantic artifact: `module-inventory.md`;
+- `module-map.md` становится производным diagram DSL artifact, который строится уже по согласованному inventory;
+- `module-map.flow.json` остаётся только layout/view sidecar.
 
-- `Artifacts` показывает визуальную диаграмму, а не сырой Markdown.
-- `Source` показывает канонический Markdown-артефакт в режиме только чтения.
+Смысл ролей:
+- `Final_Description.md` отвечает за продуктовые границы и крупные зоны ответственности;
+- `virtual-simulation.md` отвечает за сценарии, interactions и кандидатов в связи;
+- `module-inventory.md` фиксирует кластеры, состав кластеров, standalone modules и короткие ответственности;
+- `module-map.md` нужен для visual shell и диаграммы, а не как главная surface для чтения человеком.
+
+Дополнительное решение по developer-contract:
+- prompt/template-файлы для diagram steps нужно вернуть в `~/.codeai-hub/templates/diagram_modules/` и `~/.codeai-hub/templates/diagram_facades/`;
+- package assets должны оставаться bundled source для sync, но не скрытым единственным местом, где живёт runtime-contract.
+
+---
+
+## 3. Финальный UX-контракт
+
+### `Diagram Modules`
+
+- `Artifacts` показывает визуальную диаграмму, построенную из `module-map.md`.
+- `Source` показывает `module-inventory.md` как основной человекочитаемый semantic artifact шага.
 - `Help` остаётся поясняющей панелью.
-- `module-map.md` / `facade-map.md` остаются каноническим runtime SSOT, но не являются поверхностью по умолчанию.
-- `*.flow.json` остаётся внутренним sidecar-файлом для сохранения состояния и не должен показываться пользователю как артефакт.
-- Возврат на шаг диаграммы должен снова открывать именно представление диаграммы, а не сырой `.md`-источник.
+- Возврат на шаг должен снова открывать `Artifacts`, а не `Source`.
+- Raw `module-map.md` не должен быть основной user-facing surface.
+
+### `Diagram Facades`
+
+- В этом scope шаг не получает отдельный `facade-inventory.md`.
+- Текущий UI contract `Artifacts / Source / Help` остаётся.
+- `Source` пока продолжает показывать `facade-map.md`.
+- Но template visibility policy должна стать такой же, как у остальных шагов: живые prompt/template-файлы должны быть видны в `~/.codeai-hub/templates/diagram_facades/`.
 
 ---
 
-## 3. Модель взаимодействия
+## 4. Роли артефактов для `Diagram Modules`
 
-### Режимы в заголовке
+### `Final_Description.md`
 
-Для `Diagram Modules` и `Diagram Facades` заголовок артефактов должен показывать:
-- `Artifacts`
-- `Source`
-- `Help`
+- Источник продуктовых границ.
+- Источник верхнеуровневых подсистем и обязанностей.
+- Не должен теряться при переходе к диаграмме.
 
-Для недиаграммных шагов текущий контракт остаётся без изменений:
-- `Artifacts`
-- `Help`
+### `virtual-simulation.md`
 
-### Режим диаграммы
+- Источник сценариев, interactions и candidate relations.
+- Даёт динамику поведения, но не заменяет полного inventory системы.
 
-- Полотно диаграммы является первым видимым объектом в правой панели.
-- Технические подписи вроде `artifact -> flow sidecar` удаляются из UI по умолчанию.
-- Элементы редактирования остаются доступными, но становятся явно вторичными по отношению к диаграмме.
-- Пользователь должен иметь возможность вручную дорабатывать раскладку в React Flow и сохранять её между открытиями.
+### `module-inventory.md`
 
-### Режим `Source`
+Это новый semantic SSOT для пользовательского чтения внутри шага `Diagram Modules`.
 
-- Показывает только сырой `module-map.md` или `facade-map.md`.
-- По умолчанию работает в режиме только чтения.
-- Используется для отладки, инспекции или сценариев копирования и экспорта.
-- Не раскрывает `*.flow.json`.
+Минимальная структура:
+- `## Clusters`
+- для каждого кластера:
+  - короткое назначение кластера;
+  - входящие модули;
+  - короткая ответственность каждого модуля;
+- `## Standalone Modules`
+- `## Simple Relations`
+- `## Assumptions / Open Questions`
 
----
+Этот артефакт нужен, чтобы пользователь мог быстро:
+- увидеть лишние или отсутствующие кластеры;
+- поправить состав кластеров;
+- уточнить responsibility конкретных модулей;
+- поймать неправильные границы до генерации диаграммы.
 
-## 4. Срезы реализации
+### `module-map.md`
 
-### Срез A - контракт заголовка `MainArea`
+- Канонический diagram DSL artifact для visual shell.
+- Производится по согласованному `module-inventory.md`, а не напрямую из сценариев.
+- Содержит cluster membership, standalone modules и простые relations в форме, пригодной для React Flow projection.
 
-- Расширить модель режимов заголовка правой панели, добавив `source`, но только для шагов диаграмм.
-- Оставить `artifacts` режимом по умолчанию после навигации из toolbar, синхронизации с деревом workspace и повторного открытия шага.
-- Не позволять шагам диаграмм автоматически откатываться в сырой Markdown только потому, что канонический артефакт был внутренне выбран для синхронизации.
+### `module-map.flow.json`
 
-### Срез B - маршрутизация источника диаграммы
-
-- Разрешать канонический источник диаграммы от активного шага (`module-map.md`, `facade-map.md`), но не считать его основной пользовательской поверхностью.
-- Переиспользовать существующий просмотрщик Markdown-артефактов как вторичный режим `Source`.
-
-### Срез C - панели шагов в режиме diagram-first
-
-- Перестроить панели шагов диаграмм так, чтобы визуальная оболочка была первичной.
-- Убрать из панели по умолчанию внутренний служебный chrome с путями и sidecar-деталями.
-- Перевести элементы семантического редактирования во вторичные или сворачиваемые секции.
-- Повысить читаемость раскладки за счёт того, что ручная расстановка узлов становится основным сценарием наряду с optional auto-layout.
+- Только user-owned geometry и viewport.
+- Не участвует в semantic contract шага.
 
 ---
 
-## 5. Что не входит в этот этап восстановления
+## 5. Контракт шаблонов
 
-- Замена Markdown DSL как канонического SSOT.
-- Построение полноценного отдельного редактора диаграмм с inspector-driven UX в рамках этой фазы.
-- Показ runtime/internal files сверх канонического `.md`-источника.
+Новая policy для diagram steps:
+- все product-visible prompt/template-файлы должны синкаться в `~/.codeai-hub/templates/...`, как это уже сделано для первых шагов workflow;
+- runtime должен сначала резолвить шаблоны из `~/.codeai-hub/templates/...`;
+- package assets остаются bundled source для sync и fallback, но не должны быть единственным visible source of truth.
 
----
+Для `Diagram Modules` в visible template-contract должны появиться:
+- `module-inventory-prompt.md`
+- `module-inventory-template.md`
+- `module-inventory-field-reference.md`
+- `module-inventory-merge-rules.md`
+- `module-map-prompt.md`
+- `module-map-template.md`
+- `module-map-field-reference.md`
+- `module-map-merge-rules.md`
 
-## 6. Верификация
+Для `Diagram Facades` visible template-contract должен включать как минимум:
+- `facade-map-prompt.md`
+- `facade-map-template.md`
+- `facade-map-field-reference.md`
+- `facade-map-merge-rules.md`
 
-Ручная проверка для этой фазы должна подтвердить следующее:
-
-1. Клик по `Diagram Modules` или `Diagram Facades` открывает шаг с выбранным `Artifacts` и видимой диаграммой.
-2. Переключение на другой шаг и возврат назад снова открывают диаграмму, а не сырой Markdown.
-3. Клик по `Source` показывает канонический `.md`-артефакт в режиме только чтения.
-4. Правая панель никогда не показывает `*.flow.json`.
-5. Ручное перемещение узлов сохраняется после повторного открытия или восстановления сессии.
-
----
-
-## 7. Инструкция по переписыванию основного TODO
-
-Восстановленный execution plan должен перестать считать `module-map.md` / `facade-map.md` пользовательской поверхностью артефакта для шагов диаграмм.
-
-Новый активный execution scope:
-- восстановить product-facing поверхность диаграммы;
-- оставить source artifacts только как вторичный debug view;
-- выпустить новый релиз, который подтверждает обновлённый контракт `Artifacts / Source / Help`.
-
----
-
-## 8. Устаревший follow-up — сначала профили раскладки для `Diagram Modules`
-
-После релиза восстановления пользовательской поверхности ручная проверка показала следующий UX-gap:
-
-- текущий ELK auto-layout может сворачивать `Diagram Modules` в одну длинную горизонтальную линию;
-- кнопка уже обновляла результат в реальном времени, но сам алгоритм оставался слишком наивным;
-- панель артефакта также оставляла неиспользованное вертикальное пространство под секциями диаграммы.
-
-Этот follow-up был реализован экспериментально, но позднее ручная валидация показала, что ELK-driven профили раскладки не дают нужной продуктовой ценности.
-
-Старый следующий шаг выглядел так:
-
-- сначала улучшить `Diagram Modules`, не трогая `Diagram Facades`;
-- показать рядом с `Auto-layout` несколько конкретных ELK-профилей раскладки;
-- добавить хотя бы один профиль, который явно пытается занять доступную площадь полотна, а не оставаться слишком компактным;
-- растянуть поверхность диаграммы по вертикали так, чтобы полотно вместе со свёрнутыми секциями редактирования занимало всю высоту правой панели артефактов.
-
-`Diagram Facades` намеренно не входил в этот stream. Он не должен был наследовать удалённый ELK-driven UX как основную модель взаимодействия.
+Отдельное требование к root prompt, который формируется runtime:
+- для `Diagram Modules` он обязан явно перечислять оба upstream-артефакта;
+- он обязан указывать целевой semantic artifact `module-inventory.md`;
+- он не должен описывать шаг как построение diagram только "по анкете и шаблону".
 
 ---
 
-## 9. Устаревший follow-up — launcher-safe control для профилей раскладки
+## 6. Срезы реализации
 
-Первый релиз профилей раскладки для `Diagram Modules` выявил платформенно-специфическую проблему:
+### Срез A - контракты и документы
 
-- сама возможность выбора раскладки полезна и, казалось, должна остаться в продукте;
-- launcher на macOS падал, когда выбор профиля проходил через нативный popup HTML `<select>`;
-- это была проблема поверхности launcher, а не проблема алгоритма ELK.
+- Зафиксировать `module-inventory.md` как новый semantic bridge внутри `Diagram Modules`.
+- Зафиксировать dual-input contract: `Final_Description.md` + `virtual-simulation.md`.
+- Зафиксировать `module-map.md` как derived diagram artifact, а не как primary reading surface.
 
-Этот follow-up устранил падение launcher, но вся поверхность профилей раскладки теперь также устарела вместе с `Auto-layout`.
+### Срез B - visible templates для diagram steps
 
-Старый следующий шаг выглядел так:
+- Вернуть diagram prompts/templates в `~/.codeai-hub/templates/diagram_modules/` и `.../diagram_facades/`.
+- Синкать туда и основные prompt/template-файлы, и appendix-файлы с field reference/merge rules.
+- Перестроить runtime на templates-first resolution path.
 
-- сохранить четыре утверждённых профиля: `Vertical`, `Horizontal`, `Compact`, `Fill space`;
-- заменить нативный `<select>` на кастомный launcher-safe control, который рендерится прямо в toolbar;
-- оставить выбор профиля явным UI-решением рядом с `Auto-layout`;
-- пока не расширять этот corrective stream на `Diagram Facades`;
-- выпустить узкий релиз, который сначала возвращает стабильность launcher, а уже потом позволяет продолжать настройку качества layout.
+### Срез C - runtime prompt contract
+
+- Изменить start/prompt-pack contract для `Diagram Modules`, чтобы агент получал оба upstream-path.
+- Изменить стартовый prompt шага так, чтобы первая цель сессии была `module-inventory.md`.
+- Сохранить merge-safe поведение при повторных запусках и существующих user edits.
+
+### Срез D - Project Manager UX
+
+- `Source` для `Diagram Modules` должен показывать `module-inventory.md`.
+- `Artifacts` должен продолжать показывать диаграмму.
+- Raw `module-map.md` должен уйти из primary UX surface.
+
+### Срез E - diagram generation path
+
+- После согласования inventory runtime/agent формирует `module-map.md`.
+- В диаграмме должны быть явные cluster nodes, модули внутри кластеров, standalone modules и простые relations.
+- Visual shell продолжает владеть только layout/view state.
 
 ---
 
-## 10. Утверждённый follow-up — убрать ELK из product UX
+## 7. Что не входит в этот scope
 
-Ручная валидация показала, что ELK является неправильным product primitive для этих шагов диаграмм:
+- Новый отдельный workflow step между `Virtual Simulation` и `Diagram Modules`.
+- Анализ существующей кодовой базы как обязательный источник диаграммы.
+- Полный аналогичный inventory-bridge для `Diagram Facades` в этом же релизе.
+- Inspector-driven diagram editor или возврат inline semantic editors.
 
-- итоговая читаемость графа зависит гораздо сильнее от semantic artifact, сгенерированного AI, чем от алгоритмической раскладки;
-- даже когда ELK корректно пересчитывает позиции, визуальный результат всё равно недостаточно надёжен как пользовательское архитектурное представление;
-- `Auto-layout` и кнопки профилей занимают место в toolbar, создают ложные ожидания и могут разрушить вручную выправленную композицию.
+---
 
-Утверждённый следующий шаг:
+## 8. Верификация
 
-- убрать `Auto-layout` и все profile controls из видимого diagram UX;
-- убрать `Edit Modules` / `Edit Relations` и секции семантического редактирования facade с видимой поверхности;
-- перестать считать ELK источником композиции диаграммы;
-- сохранить `module-map.md` / `facade-map.md` как semantic SSOT;
-- оставить `*.flow.json` только как сохраняемую геометрию, принадлежащую пользователю;
-- сохранить и улучшить ручное редактирование в React Flow;
-- оставить `Source` вторичным artifact view в режиме только чтения;
-- оставить только левый нижний zoom/fit control block и убрать minimap справа снизу;
-- использовать agents для semantic changes, когда нужен новый module, facade, relation, method или port.
+Ручная и контрактная проверка этого scope должна подтвердить следующее:
 
-Целевой product contract:
+1. `Diagram Modules` стартует с prompt-pack, в котором явно присутствуют и `Final_Description.md`, и `virtual-simulation.md`.
+2. Первый согласуемый semantic output шага — `module-inventory.md`.
+3. Пользователь в `Source` видит именно `module-inventory.md`, а не raw `module-map.md`.
+4. После согласования inventory диаграмма в `Artifacts` показывает кластеры, модули внутри кластеров, standalone modules и простые relations.
+5. `module-map.md` не навязывается как primary reading surface.
+6. `module-map.flow.json` по-прежнему хранит только layout/view state.
+7. Живые diagram templates доступны в `~/.codeai-hub/templates/diagram_modules/` и `.../diagram_facades/`.
+8. Reopen/resume по-прежнему возвращает пользователя в `Artifacts`, а ручная раскладка сохраняется.
 
-- AI определяет semantic structure;
-- пользователь вручную уточняет визуальную композицию;
-- Project Manager сохраняет эту композицию без повторного навязывания automatic layout pass.
+---
+
+## 9. Инструкция для нового TODO
+
+Новый execution plan должен охватывать четыре обязательных изменения:
+
+- ввести `module-inventory.md` как semantic bridge для `Diagram Modules`;
+- изменить runtime prompt contract так, чтобы шаг использовал оба upstream-артефакта;
+- вернуть diagram templates в visible templates contract;
+- выпустить новый релиз, который валидирует inventory-first flow для `Diagram Modules`.

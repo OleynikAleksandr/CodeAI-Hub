@@ -2,9 +2,8 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед разворачиванием нового diagram scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/Sessions/Session102.md`
-- Реализованная diagram-архитектура уже консолидирована в `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (разделы `6.1`-`6.5`); этот файл пока является только execution-plan stub для следующего follow-up scope
-- Новый execution-plan разворачивается только после утверждения следующего delta-scope
+- Перед каждым фиксом для этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/Sessions/Session102.md`
+- Активный scope этой фазы: `Diagram Modules` должен получить dual-input contract (`Final_Description.md` + `virtual-simulation.md`), новый semantic bridge `module-inventory.md`, inventory-first `Source`, и visible templates contract для diagram steps
 - TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи
 - Каждая микро-задача затрагивает не более 3 файлов или пакетов
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
@@ -12,19 +11,47 @@
 - Husky gates не обходить (`--no-verify` запрещен)
 - Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
 - Таргетные сборки выполнять перед закрытием затронутого Stream/Phase
-- После полной реализации этого stub-плана перенести его в `doc/TODO/Archive/` и создать новый `todo-plan.md` под следующий scope
+- После завершения фазы: обновить release docs, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, записать результаты в `doc/Sessions/`
 
 ---
 
-## Phase 14 — next diagram steps follow-up (owner: Oleksandr, updated: 2026-03-19)
+## Phase 14 — Module Inventory Bridge And Visible Diagram Templates (owner: Oleksandr, updated: 2026-03-19)
 
-### Stream: Scope intake stub
-1. [TODO] Утвердить следующий follow-up scope для `Diagram Modules` / `Diagram Facades` поверх уже реализованного контракта из `SystemArchitecture.md`; первыми кандидатами считать `module-map.md` golden reference и manual alignment tools (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope next diagram follow-up`).
-2. [TODO] Git Commit: `docs(plan): scope next diagram follow-up` (hash: TBD)
-3. [TODO] После user approval развернуть эту болванку в micro-task execution plan с ограничением `<= 3 files` на задачу и обязательными commit-строками после каждой микро-задачи (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): expand next diagram follow-up execution plan`).
-4. [TODO] Git Commit: `docs(plan): expand next diagram follow-up execution plan` (hash: TBD)
+### Stream: Live contracts
+1. [TODO] Зафиксировать в живых архитектурных документах новый contract для `Diagram Modules`: обязательные входы `Final_Description.md` + `virtual-simulation.md`, `module-inventory.md` как человекочитаемый semantic bridge, `module-map.md` как derived diagram artifact (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`; expected commit: `docs(architecture): add module inventory bridge contract`).
+2. [TODO] Git Commit: `docs(architecture): add module inventory bridge contract` (hash: TBD)
+3. [TODO] Синхронизировать живой PM UX contract под `Source = module-inventory.md` для `Diagram Modules` и новую policy видимых diagram templates (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`; expected commit: `docs(pm): sync module inventory source contract`).
+4. [TODO] Git Commit: `docs(pm): sync module inventory source contract` (hash: TBD)
+
+### Stream: Visible templates
+1. [TODO] Вернуть diagram prompt/template contract в visible templates sync, чтобы `diagram_modules` и `diagram_facades` жили в `~/.codeai-hub/templates/...`, а не только в package assets (scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(templates): sync diagram workflow templates`).
+2. [TODO] Git Commit: `refactor(templates): sync diagram workflow templates` (hash: TBD)
+3. [TODO] Перевести diagram prompt appendix resolution на templates-first path и оставить package assets только bundled-source fallback (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `refactor(templates): prefer synced diagram prompt appendices`).
+4. [TODO] Git Commit: `refactor(templates): prefer synced diagram prompt appendices` (hash: TBD)
+
+### Stream: Diagram Modules inventory contract
+1. [TODO] Добавить inventory-first prompt/template assets для `Diagram Modules`, чтобы первый semantic output шага был `module-inventory.md` с кластерами, составом кластеров, standalone modules и простыми relations (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`; expected commit: `feat(diagram-modules): add module inventory templates`).
+2. [TODO] Git Commit: `feat(diagram-modules): add module inventory templates` (hash: TBD)
+3. [TODO] Добавить merge-rules для inventory и перестроить root prompt, который runtime формирует в начале сессии, чтобы он явно перечислял `Final_Description.md` и `virtual-simulation.md` и вел сессию к `module-inventory.md` (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `refactor(diagram-modules): add dual-input inventory prompt contract`).
+4. [TODO] Git Commit: `refactor(diagram-modules): add dual-input inventory prompt contract` (hash: TBD)
+5. [TODO] Ввести `module-inventory.md` в workflow artifact contract и watcher/runtime routing, не ломая существующие `module-map.md` и `module-map.flow.json` (scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `feat(diagram-modules): register module inventory artifact`).
+6. [TODO] Git Commit: `feat(diagram-modules): register module inventory artifact` (hash: TBD)
+
+### Stream: Project Manager user surface
+1. [TODO] Переключить `Diagram Modules` на inventory-first UX: `Artifacts` открывает диаграмму, `Source` показывает `module-inventory.md`, raw `module-map.md` уходит из primary surface (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `refactor(pm): route diagram modules source to inventory`).
+2. [TODO] Git Commit: `refactor(pm): route diagram modules source to inventory` (hash: TBD)
+3. [TODO] Обновить help/empty-state под inventory-first flow и объяснить пользователю, что перечень согласуется до генерации визуальной диаграммы (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `docs(pm): explain module inventory flow`).
+4. [TODO] Git Commit: `docs(pm): explain module inventory flow` (hash: TBD)
+
+### Stream: Diagram projection and release
+1. [TODO] Перестроить diagram generation path так, чтобы `module-map.md` производился из согласованного `module-inventory.md` и сохранял cluster membership, standalone modules и простые relations для React Flow projection (scope: `packages/core/src/workflow/diagram-dsl/module-map-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`; expected commit: `refactor(diagram-modules): derive module map from inventory`).
+2. [TODO] Git Commit: `refactor(diagram-modules): derive module map from inventory` (hash: TBD)
+3. [TODO] Синхронизировать release docs и SSOT после реализации inventory-first `Diagram Modules` и visible diagram templates contract (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep module inventory diagram release`).
+4. [TODO] Git Commit: `docs(release): prep module inventory diagram release` (hash: TBD)
+5. [TODO] После ручной проверки собрать новый релиз, записать session report и закрыть хеши Phase 14 (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build module inventory diagram release`).
+6. [TODO] Git Commit: `chore(release): build module inventory diagram release` (hash: TBD)
 
 ## Notes
-- Archived completed diagram rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase13-diagram-workflow-2026-03-19.md`
-- Consolidated implemented diagram architecture: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (`6.1`-`6.5`)
-- Active follow-up planning doc: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase13-diagram-workflow-2026-03-19.md`
+- Active planning doc for this phase: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- Current implemented diagram SSOT remains in `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (`6.1`-`6.5`) until Phase 14 is implemented and synced
