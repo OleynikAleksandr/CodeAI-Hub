@@ -2,7 +2,7 @@
 
 Facade fields:
 - `Id`: stable kebab-case identifier.
-- `Module`: parent module ID from `module-map.md`.
+- `Module`: parent module ID from `module-inventory.md`.
 - `Kind`: currently `class`.
 - `Visibility`: `public` or `internal`.
 - `Methods`: optional list of facade method signatures.
