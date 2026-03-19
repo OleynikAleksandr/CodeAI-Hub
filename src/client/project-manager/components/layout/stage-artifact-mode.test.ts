@@ -43,8 +43,8 @@ test("diagram source artifact resolves to the canonical markdown path", () => {
       workspaceSlug: "workspace-slug",
     }),
     {
-      label: "module-map.md",
-      path: ".codeai-hub/workspace-slug/diagram_modules/module-map.md",
+      label: "module-inventory.md",
+      path: ".codeai-hub/workspace-slug/diagram_modules/module-inventory.md",
       workspacePath: "/tmp/workspace",
       workspaceSlug: "workspace-slug",
     }

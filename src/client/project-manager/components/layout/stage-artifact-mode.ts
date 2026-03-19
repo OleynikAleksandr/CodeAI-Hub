@@ -6,8 +6,8 @@ const DIAGRAM_TOOL_SOURCE: Readonly<
   Record<DiagramTool, { readonly label: string; readonly path: string }>
 > = {
   "Diagram Modules": {
-    label: "module-map.md",
-    path: "diagram_modules/module-map.md",
+    label: "module-inventory.md",
+    path: "diagram_modules/module-inventory.md",
   },
   "Diagram Facades": {
     label: "facade-map.md",

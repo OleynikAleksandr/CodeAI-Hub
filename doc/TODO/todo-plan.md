@@ -40,7 +40,7 @@
 6. [DONE] Git Commit: `feat(diagram-modules): register module inventory artifact` (hash: `c1b0fb5d`)
 
 ### Stream: Project Manager user surface
-1. [TODO] Переключить `Diagram Modules` на inventory-first UX: `Artifacts` открывает диаграмму, `Source` показывает `module-inventory.md`, raw `module-map.md` уходит из primary surface (scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `refactor(pm): route diagram modules source to inventory`).
+1. [IN_PROGRESS] Переключить `Diagram Modules` на inventory-first UX: `Artifacts` открывает диаграмму, `Source` показывает `module-inventory.md`, raw `module-map.md` уходит из primary surface (scope: `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `refactor(pm): route diagram modules source to inventory`).
 2. [TODO] Git Commit: `refactor(pm): route diagram modules source to inventory` (hash: TBD)
 3. [TODO] Обновить help/empty-state под inventory-first flow и объяснить пользователю, что перечень согласуется до генерации визуальной диаграммы (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `docs(pm): explain module inventory flow`).
 4. [TODO] Git Commit: `docs(pm): explain module inventory flow` (hash: TBD)
