@@ -334,10 +334,10 @@
 
 ### Stream: Phase 11 release build and verification
 1. [DONE] Синхронизировать release-facing docs под реальную причину `v1.1.746`: ELK profiles уже считались, но visual shell `Diagram Modules` рендерил сломанный cluster/module projection, поэтому новый релиз `v1.1.747` должен явно описывать восстановленный renderer contract и видимый effect на canvas (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep visible layout profile effect release`).
-2. [TODO] Git Commit: `docs(release): prep visible layout profile effect release` (hash: TBD)
-3. [TODO] На чистом дереве выполнить release checklist для renderer-corrected `Diagram Modules`, зафиксировать version bump до `1.1.747` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build visible layout profile effect release`).
-4. [TODO] Git Commit: `chore(release): build visible layout profile effect release` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile switch реально меняет diagram canvas без reopen, выбранный режим переживает reopen/restart, и launcher-safe toolbar остаётся стабильным (scope: `codeai-hub-1.1.747.vsix`, `doc/Sessions/Session100.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record visible layout profile effect release`).
+2. [DONE] Git Commit: `docs(release): prep visible layout profile effect release` (hash: `9cffa2c4`)
+3. [DONE] На чистом дереве выполнить release checklist для renderer-corrected `Diagram Modules`, зафиксировать version bump до `1.1.747` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build visible layout profile effect release`).
+4. [DONE] Git Commit: `chore(release): build visible layout profile effect release` (hash: `80f64f4e`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile switch реально меняет diagram canvas без reopen, выбранный режим переживает reopen/restart, и launcher-safe toolbar остаётся стабильным (scope: `codeai-hub-1.1.747.vsix`, `doc/Sessions/Session100.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record visible layout profile effect release`).
 6. [TODO] Git Commit: `docs(session): record visible layout profile effect release` (hash: TBD)
 
 ---
