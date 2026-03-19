@@ -322,7 +322,23 @@
 3. [DONE] На чистом дереве выполнить release checklist для immediate layout apply и persistence profile через `./scripts/build-all.sh`, зафиксировать version bump до `1.1.746` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build layout profile persistence release`).
 4. [DONE] Git Commit: `chore(release): build layout profile persistence release` (hash: `5fc65c2d`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile buttons не падают, переключение `Vertical/Horizontal/Compact/Fill space` немедленно перестраивает текущий graph и выбранный режим восстанавливается после reopen/restart `Diagram Modules` (scope: `codeai-hub-1.1.746.vsix`, `doc/Sessions/Session099.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record layout profile persistence release`).
-6. [TODO] Git Commit: `docs(session): record layout profile persistence release` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record layout profile persistence release` (hash: `c1ca457f`)
+
+---
+
+## Phase 11 — diagram modules visible layout effect recovery (owner: Oleksandr, updated: 2026-03-19)
+
+### Stream: Runtime projection and renderer correction
+1. [DONE] Убрать ложную parent/child семантику cluster->module для `Diagram Modules`, которая мешала React Flow корректно применять новые ELK coordinates, и вернуть явный visual renderer contract через `nodeTypes`, чтобы переключение `Vertical` / `Horizontal` / `Compact` / `Fill space` меняло именно текущий canvas, а не только sidecar state (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `fix(diagram-modules): restore visible layout profile effect`).
+2. [TODO] Git Commit: `fix(diagram-modules): restore visible layout profile effect` (hash: TBD)
+
+### Stream: Phase 11 release build and verification
+1. [TODO] Синхронизировать release-facing docs под реальную причину `v1.1.746`: ELK profiles уже считались, но visual shell `Diagram Modules` рендерил сломанный cluster/module projection, поэтому новый релиз `v1.1.747` должен явно описывать восстановленный renderer contract и видимый effect на canvas (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep visible layout profile effect release`).
+2. [TODO] Git Commit: `docs(release): prep visible layout profile effect release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist для renderer-corrected `Diagram Modules`, зафиксировать version bump до `1.1.747` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build visible layout profile effect release`).
+4. [TODO] Git Commit: `chore(release): build visible layout profile effect release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile switch реально меняет diagram canvas без reopen, выбранный режим переживает reopen/restart, и launcher-safe toolbar остаётся стабильным (scope: `codeai-hub-1.1.747.vsix`, `doc/Sessions/Session100.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record visible layout profile effect release`).
+6. [TODO] Git Commit: `docs(session): record visible layout profile effect release` (hash: TBD)
 
 ---
 

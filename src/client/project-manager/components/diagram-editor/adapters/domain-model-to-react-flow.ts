@@ -69,9 +69,8 @@ const buildModuleNode = (
   }
 ): DiagramFlowNode => {
   const hasCluster = typeof options.clusterIndex === "number" && Boolean(module.cluster);
-  const parentId = hasCluster && module.cluster ? toClusterNodeId(module.cluster) : undefined;
   const x = hasCluster
-    ? MODULE_X_OFFSET
+    ? options.clusterIndex * CLUSTER_X_STEP + MODULE_X_OFFSET
     : options.indexWithinBucket * CLUSTER_X_STEP + UNGROUPED_X;
   const y = MODULE_Y_OFFSET + options.indexWithinBucket * MODULE_Y_STEP;
 
@@ -79,8 +78,6 @@ const buildModuleNode = (
     id: module.id,
     type: "module",
     position: { x, y },
-    parentId,
-    extent: parentId ? "parent" : undefined,
     data: {
       stage: "diagram_modules",
       nodeKind: "module",

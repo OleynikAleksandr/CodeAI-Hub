@@ -120,7 +120,7 @@ const FACADE_MAP_FIXTURE: FacadeMapModel = {
   ],
 };
 
-test("domainModelToReactFlow projects module map into cluster/module nodes and relation edges", () => {
+test("domainModelToReactFlow projects module map into top-level cluster/module nodes and relation edges", () => {
   const result = domainModelToReactFlow(MODULE_MAP_FIXTURE);
 
   assert.equal(result.stage, "diagram_modules");
@@ -151,8 +151,8 @@ test("domainModelToReactFlow projects module map into cluster/module nodes and r
 
   const gatewayNode = result.nodes[2];
   assert.equal(gatewayNode.type, "module");
-  assert.equal(gatewayNode.parentId, "cluster:delivery");
-  assert.equal(gatewayNode.extent, "parent");
+  assert.equal(gatewayNode.parentId, undefined);
+  assert.equal(gatewayNode.extent, undefined);
   assert.deepEqual(gatewayNode.position, { x: 32, y: 72 });
   assert.deepEqual(gatewayNode.data, {
     stage: "diagram_modules",
@@ -167,6 +167,13 @@ test("domainModelToReactFlow projects module map into cluster/module nodes and r
     inputCount: 1,
     outputCount: 1,
   });
+
+  assert.equal(
+    result.nodes
+      .filter((node) => node.type === "module")
+      .every((node) => node.parentId === undefined && node.extent === undefined),
+    true
+  );
 
   const ungroupedNode = result.nodes[4];
   assert.equal(ungroupedNode.parentId, undefined);

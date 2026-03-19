@@ -196,6 +196,7 @@
   - chooser не может использовать native HTML `<select>` path внутри CEF/AppKit;
   - выбор `Vertical` / `Horizontal` / `Compact` / `Fill space` обязан немедленно запускать новый layout pass на текущем graph;
   - выбранный profile обязан сохраняться в `module-map.flow.json` вместе с node positions и восстанавливаться после reopen/restart.
+  - сам `Diagram Modules` canvas не может рассчитывать на fake parent/child cluster nesting без полноценного custom-node contract; module nodes обязаны рендериться как top-level visual nodes с явными `nodeTypes`, иначе разные ELK profiles могут математически давать разные coordinates, но визуально оставаться неотличимыми на canvas.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
