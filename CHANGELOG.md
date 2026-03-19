@@ -13,6 +13,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 ### Added
 - Targeted coverage for layout-profile restore flow: sidecar parse/serialize now covers `layoutProfile`, and source-level checks verify that `Diagram Modules` restores the profile from sidecar and auto-applies it through the shared shell.
 
+## [1.1.747] - 2026-03-19
+### Fixed
+- `Diagram Modules` no longer renders module nodes through a broken cluster-parent nesting path that could hide real ELK coordinate changes from the visible React Flow canvas.
+- Layout profile switching (`Vertical`, `Horizontal`, `Compact`, `Fill space`) should now change the actual diagram surface instead of only updating persisted flow-state.
+
+### Changed
+- The diagram shell now uses explicit node renderers for `cluster`, `module`, and `facade`, so the canvas reflects the corrected runtime projection rather than React Flow fallback rendering.
+- `Diagram Modules` clustered modules are now projected as top-level visual nodes, which keeps profile-driven layout changes visible and avoids fake parent geometry interfering with React Flow placement.
+
+### Added
+- Targeted projection coverage proving that `Diagram Modules` clustered modules no longer rely on `parentId` / `extent="parent"` for their visual layout contract.
+
 ## [1.1.745] - 2026-03-19
 ### Fixed
 - `Diagram Modules` no longer uses a native HTML `<select>` for layout profile choice inside the Project Manager launcher.

@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.746
-- `Diagram Modules` layout profiles are now not only launcher-safe, but also active behavior: clicking `Vertical`, `Horizontal`, `Compact`, or `Fill space` immediately re-runs layout on the current graph instead of waiting for a reopen or a separate hidden state transition.
-- The chosen profile is now persisted in `module-map.flow.json` together with node positions, so reopen/restart restores both the diagram layout and the active layout mode instead of silently snapping back to the default vertical mode.
-- The launcher-safe custom button-group remains in place, so profile selection no longer goes through the macOS CEF/AppKit native `<select>` popup path that crashed `v1.1.744`.
+## Current Release — v1.1.747
+- `Diagram Modules` layout profiles now affect the visible canvas for real: the stage no longer renders modules through a broken cluster-parent nesting path that allowed ELK to compute different coordinates while React Flow still looked unchanged.
+- The diagram surface now uses explicit node renderers for `cluster`, `module`, and `facade`, so the current graph reflects profile changes immediately instead of hiding them behind fallback node rendering.
+- The chosen profile is still persisted in `module-map.flow.json`, and the launcher-safe custom button-group remains in place, so reopen/restart should restore the active mode without touching the native macOS CEF/AppKit `<select>` popup path.
 - The `Diagram Modules` stage still stretches vertically to fill the right-side artifact panel, and repository-wide duplication remains below the enforced `3%` threshold.
 
 Previous releases (summary): the `1.1.57x–1.1.743` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, and realtime auto-layout refresh without reopen/remount.

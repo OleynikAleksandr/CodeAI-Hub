@@ -330,10 +330,10 @@
 
 ### Stream: Runtime projection and renderer correction
 1. [DONE] Убрать ложную parent/child семантику cluster->module для `Diagram Modules`, которая мешала React Flow корректно применять новые ELK coordinates, и вернуть явный visual renderer contract через `nodeTypes`, чтобы переключение `Vertical` / `Horizontal` / `Compact` / `Fill space` меняло именно текущий canvas, а не только sidecar state (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `fix(diagram-modules): restore visible layout profile effect`).
-2. [TODO] Git Commit: `fix(diagram-modules): restore visible layout profile effect` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-modules): restore visible layout profile effect` (hash: `bdbc516d`)
 
 ### Stream: Phase 11 release build and verification
-1. [TODO] Синхронизировать release-facing docs под реальную причину `v1.1.746`: ELK profiles уже считались, но visual shell `Diagram Modules` рендерил сломанный cluster/module projection, поэтому новый релиз `v1.1.747` должен явно описывать восстановленный renderer contract и видимый effect на canvas (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep visible layout profile effect release`).
+1. [DONE] Синхронизировать release-facing docs под реальную причину `v1.1.746`: ELK profiles уже считались, но visual shell `Diagram Modules` рендерил сломанный cluster/module projection, поэтому новый релиз `v1.1.747` должен явно описывать восстановленный renderer contract и видимый effect на canvas (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep visible layout profile effect release`).
 2. [TODO] Git Commit: `docs(release): prep visible layout profile effect release` (hash: TBD)
 3. [TODO] На чистом дереве выполнить release checklist для renderer-corrected `Diagram Modules`, зафиксировать version bump до `1.1.747` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build visible layout profile effect release`).
 4. [TODO] Git Commit: `chore(release): build visible layout profile effect release` (hash: TBD)
