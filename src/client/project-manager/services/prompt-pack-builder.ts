@@ -205,7 +205,7 @@ const buildStagePhaseLines = (
     "Фазы работы:",
     "- Phase 1: прочитай `Final_Description.md` и `virtual-simulation.md`, затем восстанови кандидатов в кластеры, standalone modules и простые связи.",
     `- Phase 2: начни короткий диалог с пользователем и согласуй содержимое \`${targetFileName}\`; не переходи к визуальной карте, пока пользователь не подтвердит inventory или не попросит черновик сразу.`,
-    "- Phase 3: после согласования inventory перейди к derived artifacts `module-map.md` и `module-map.flow.json`, чтобы диаграмма могла отрисоваться в React surface.",
+    "- Phase 3: заверши шаг согласованным `module-inventory.md`; visual diagram и `module-map.flow.json` поддерживаются runtime отдельно и не требуют дополнительного Markdown-артефакта от агента.",
   ];
 };
 
@@ -230,27 +230,7 @@ export const buildWorkflowPromptPack = (
     workspaceSlug: params.workspaceSlug,
     runSlug: params.runSlug,
   });
-  const additionalArtifacts =
-    params.stage === "diagram_modules"
-      ? [
-          ["Derived module map", "module-map.md"],
-          ["Derived layout", "module-map.flow.json"],
-        ].flatMap(([label, derivedFileName]) => {
-          const derivedRelativePath = buildWorkflowRelativePath({
-            workspaceSlug: params.workspaceSlug,
-            stage: params.stage,
-            fileName: derivedFileName,
-            runSlug: params.runSlug,
-          });
-          return [
-            `${label} (relative): \`${derivedRelativePath}\``,
-            `${label} (absolute): \`${joinPath(
-              params.workspacePath,
-              derivedRelativePath
-            )}\``,
-          ];
-        })
-      : [];
+  const additionalArtifacts: readonly string[] = [];
 
   const defaultPrompt =
     params.stage === "virtual_simulation"

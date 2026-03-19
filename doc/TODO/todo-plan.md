@@ -91,9 +91,9 @@
 2. [DONE] Git Commit: `docs(plan): scope inventory-only diagram cleanup` (hash: `46f436d7`)
 
 ### Stream: Visible templates and prompts
-1. [IN_PROGRESS] Убрать legacy `module-map-*` из visible template sync для `diagram_modules`, чтобы в `~/.codeai-hub/templates/diagram_modules/` остались только inventory-first assets (scope: `packages/core/src/templates/bundled-templates.ts`, `scripts/generate-bundled-templates.js`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `refactor(templates): drop legacy module map sync`).
-2. [TODO] Git Commit: `refactor(templates): drop legacy module map sync` (hash: TBD)
-3. [TODO] Очистить стартовый prompt contract `Diagram Modules`: убрать из runtime prompt и agent prompt упоминания о переходе к `module-map.md`, оставить только inventory-first dialogue и `module-map.flow.json` как layout sidecar (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `refactor(diagram-modules): remove module map prompt tail`).
+1. [DONE] Убрать legacy `module-map-*` из visible template sync для `diagram_modules`, чтобы в `~/.codeai-hub/templates/diagram_modules/` остались только inventory-first assets (scope: `packages/core/src/templates/bundled-templates.ts`, `scripts/generate-bundled-templates.js`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `refactor(templates): drop legacy module map sync`).
+2. [DONE] Git Commit: `refactor(templates): drop legacy module map sync` (hash: `a8961374`)
+3. [IN_PROGRESS] Очистить стартовый prompt contract `Diagram Modules`: убрать из runtime prompt и agent prompt упоминания о переходе к `module-map.md`, оставить только inventory-first dialogue и `module-map.flow.json` как layout sidecar (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `refactor(diagram-modules): remove module map prompt tail`).
 4. [TODO] Git Commit: `refactor(diagram-modules): remove module map prompt tail` (hash: TBD)
 
 ### Stream: Project Manager surface cleanup

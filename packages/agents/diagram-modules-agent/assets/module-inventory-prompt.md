@@ -4,9 +4,9 @@ Produce the canonical `module-inventory.md` artifact for workflow stage `diagram
 
 Workflow:
 1. Read `Final_Description.md` and `virtual-simulation.md` before proposing any structure.
-2. Start with a short user dialogue about clusters, cluster membership, standalone modules, and obvious relations. Do not jump straight to `module-map.md`.
+2. Start with a short user dialogue about clusters, cluster membership, standalone modules, and obvious relations.
 3. Draft and refine `module-inventory.md` first. Treat it as the user-facing semantic source of truth for this step.
-4. Only after the inventory is accepted should the stage move on to the derived `module-map.md` and `module-map.flow.json` artifacts used by the diagram surface.
+4. Stop after the agreed `module-inventory.md`; runtime will render the visual diagram from that inventory and manage layout sidecars separately.
 
 Requirements:
 - Read the upstream context and preserve user-authored changes described in the runtime change summary block.

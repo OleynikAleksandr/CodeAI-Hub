@@ -71,15 +71,11 @@ test("diagram modules prompt pack targets inventory and includes phased inputs",
   assert.equal(pack.content.includes("Phase 2: начни короткий диалог с пользователем"), true);
   assert.equal(
     pack.content.includes(
-      "Derived module map (relative): `.codeai-hub/demo-workspace/diagram_modules/module-map.md`"
+      "Phase 3: заверши шаг согласованным `module-inventory.md`"
     ),
     true
   );
-  assert.equal(
-    pack.content.includes(
-      "Derived layout (relative): `.codeai-hub/demo-workspace/diagram_modules/module-map.flow.json`"
-    ),
-    true
-  );
+  assert.equal(pack.content.includes("Derived module map"), false);
+  assert.equal(pack.content.includes("module-map.md"), false);
   assert.equal(pack.content.includes("Имя выходного файла: `module-inventory.md`"), true);
 });
