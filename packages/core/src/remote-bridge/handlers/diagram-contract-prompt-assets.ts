@@ -7,23 +7,36 @@ export const resolveDiagramAgentAssetPath = (
   assetFileName: string
 ): string => path.join(AGENT_ROOT_PATH, agentName, "assets", assetFileName);
 
+const resolveSyncedDiagramTemplateCandidates = (
+  templateRelativePath: string,
+  fallbackAgentName: string,
+  fallbackAssetFileName: string
+): readonly string[] => [
+  templateRelativePath,
+  resolveDiagramAgentAssetPath(fallbackAgentName, fallbackAssetFileName),
+];
+
 export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
-  resolveDiagramAgentAssetPath(
+  ...resolveSyncedDiagramTemplateCandidates(
+    "diagram_modules/module-map-field-reference.md",
     "diagram-modules-agent",
     "module-map-field-reference.md"
   ),
-  resolveDiagramAgentAssetPath(
+  ...resolveSyncedDiagramTemplateCandidates(
+    "diagram_modules/module-map-merge-rules.md",
     "diagram-modules-agent",
     "module-map-merge-rules.md"
   ),
 ] as const;
 
 export const DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS = [
-  resolveDiagramAgentAssetPath(
+  ...resolveSyncedDiagramTemplateCandidates(
+    "diagram_facades/facade-map-field-reference.md",
     "diagram-facades-agent",
     "facade-map-field-reference.md"
   ),
-  resolveDiagramAgentAssetPath(
+  ...resolveSyncedDiagramTemplateCandidates(
+    "diagram_facades/facade-map-merge-rules.md",
     "diagram-facades-agent",
     "facade-map-merge-rules.md"
   ),

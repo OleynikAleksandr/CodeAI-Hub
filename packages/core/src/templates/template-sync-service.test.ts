@@ -13,6 +13,17 @@ const LEGACY_DIAGRAM_TEMPLATE_PATHS = [
   ".codeai-hub/templates/diagram_facades/facades-graph-template.mmd",
 ] as const;
 
+const VISIBLE_DIAGRAM_TEMPLATE_PATHS = [
+  ".codeai-hub/templates/diagram_modules/module-map-prompt.md",
+  ".codeai-hub/templates/diagram_modules/module-map-template.md",
+  ".codeai-hub/templates/diagram_modules/module-map-field-reference.md",
+  ".codeai-hub/templates/diagram_modules/module-map-merge-rules.md",
+  ".codeai-hub/templates/diagram_facades/facade-map-prompt.md",
+  ".codeai-hub/templates/diagram_facades/facade-map-template.md",
+  ".codeai-hub/templates/diagram_facades/facade-map-field-reference.md",
+  ".codeai-hub/templates/diagram_facades/facade-map-merge-rules.md",
+] as const;
+
 test("TemplateSyncService removes legacy diagram templates during sync", async () => {
   const tempHome = await mkdtemp(path.join(os.tmpdir(), "template-sync-"));
   const previousHome = process.env.HOME;
@@ -31,6 +42,29 @@ test("TemplateSyncService removes legacy diagram templates during sync", async (
     for (const relativePath of LEGACY_DIAGRAM_TEMPLATE_PATHS) {
       const absolutePath = path.join(tempHome, relativePath);
       await assert.rejects(access(absolutePath));
+    }
+  } finally {
+    if (previousHome === undefined) {
+      process.env.HOME = undefined;
+    } else {
+      process.env.HOME = previousHome;
+    }
+    await rm(tempHome, { recursive: true, force: true });
+  }
+});
+
+test("TemplateSyncService installs visible diagram templates for appendix resolution", async () => {
+  const tempHome = await mkdtemp(path.join(os.tmpdir(), "template-sync-"));
+  const previousHome = process.env.HOME;
+  process.env.HOME = tempHome;
+
+  try {
+    const service = new TemplateSyncService(new Logger("error"));
+    await service.sync();
+
+    for (const relativePath of VISIBLE_DIAGRAM_TEMPLATE_PATHS) {
+      const absolutePath = path.join(tempHome, relativePath);
+      await assert.doesNotReject(access(absolutePath));
     }
   } finally {
     if (previousHome === undefined) {
