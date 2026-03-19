@@ -2,6 +2,18 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.745] - 2026-03-19
+### Fixed
+- `Diagram Modules` no longer uses a native HTML `<select>` for layout profile choice inside the Project Manager launcher.
+- This closes the new macOS launcher crash from `v1.1.744`, where opening the profile chooser and selecting `Vertical` could collapse the whole CEF window through an AppKit exception path outside the React/ELK layer.
+
+### Changed
+- The four approved profiles `Vertical`, `Horizontal`, `Compact`, and `Fill space` are now exposed through a custom toolbar button-group next to `Auto-layout`.
+- The layout algorithms themselves are unchanged in this corrective release; the scope is launcher stability and safe profile selection.
+
+### Added
+- Targeted regression coverage proving that the diagram toolbar no longer renders a native `<select>` for layout profiles.
+
 ## [1.1.744] - 2026-03-18
 ### Changed
 - `Diagram Modules` now exposes multiple concrete layout profiles next to `Auto-layout`: `Vertical`, `Horizontal`, `Compact`, and `Fill space`.
