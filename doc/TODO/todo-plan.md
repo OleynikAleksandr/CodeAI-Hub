@@ -63,8 +63,8 @@
 ## Phase 15 — Diagram Modules Inventory-First Regression Repair (owner: Oleksandr, updated: 2026-03-19)
 
 ### Stream: Prompt and visible templates
-1. [IN_PROGRESS] Исправить visible templates contract для `diagram_modules`, чтобы synced templates включали `module-inventory-*` assets и root contract резолвил prompt/template из `~/.codeai-hub/templates/...` с package assets только как fallback (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `fix(templates): sync diagram modules inventory templates`).
-2. [TODO] Git Commit: `fix(templates): sync diagram modules inventory templates` (hash: TBD)
+1. [DONE] Исправить visible templates contract для `diagram_modules`, чтобы synced templates включали `module-inventory-*` assets и root contract резолвил prompt/template из `~/.codeai-hub/templates/...` с package assets только как fallback (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `fix(templates): sync diagram modules inventory templates`).
+2. [DONE] Git Commit: `fix(templates): sync diagram modules inventory templates` (hash: `6973c732`)
 3. [TODO] Починить PM prompt-pack для `Diagram Modules`: целевой файл должен быть `module-inventory.md`, prompt обязан явно перечислять `Final_Description.md` + `virtual-simulation.md` и проговаривать фазы `read -> discuss inventory -> derive module map` (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`; expected commit: `fix(diagram-modules): repair inventory-first prompt pack`).
 4. [TODO] Git Commit: `fix(diagram-modules): repair inventory-first prompt pack` (hash: TBD)
 
