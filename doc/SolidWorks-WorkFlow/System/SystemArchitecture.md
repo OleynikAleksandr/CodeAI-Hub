@@ -192,6 +192,10 @@
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-map.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан встраивать в prompt strict field-reference и merge-rules из agent asset pack, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
+- `Diagram Modules` layout profiles обязаны быть частью launcher-safe visual contract:
+  - chooser не может использовать native HTML `<select>` path внутри CEF/AppKit;
+  - выбор `Vertical` / `Horizontal` / `Compact` / `Fill space` обязан немедленно запускать новый layout pass на текущем graph;
+  - выбранный profile обязан сохраняться в `module-map.flow.json` вместе с node positions и восстанавливаться после reopen/restart.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
