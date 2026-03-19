@@ -10,6 +10,14 @@ test("diagram modules contract embeds field reference and merge rules into promp
 
   assert.notEqual(contract, null);
   assert.equal(
+    contract?.paths.prompt.endsWith("module-inventory-prompt.md"),
+    true
+  );
+  assert.equal(
+    contract?.paths.template?.endsWith("module-inventory-template.md"),
+    true
+  );
+  assert.equal(
     contract?.prompt.includes(
       "one of `service`, `library`, `adapter`, `gateway`, `store`, `external`"
     ),
@@ -27,6 +35,11 @@ test("diagram facades contract embeds field reference and merge rules into promp
   const contract = await buildDiagramFacadesContract();
 
   assert.notEqual(contract, null);
+  assert.equal(contract?.paths.prompt.endsWith("facade-map-prompt.md"), true);
+  assert.equal(
+    contract?.paths.template?.endsWith("facade-map-template.md"),
+    true
+  );
   assert.equal(contract?.prompt.includes("Kind`: currently `class`."), true);
   assert.equal(
     contract?.prompt.includes(

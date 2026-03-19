@@ -7,7 +7,7 @@ export const resolveDiagramAgentAssetPath = (
   assetFileName: string
 ): string => path.join(AGENT_ROOT_PATH, agentName, "assets", assetFileName);
 
-const resolveSyncedDiagramTemplateCandidates = (
+export const resolveSyncedDiagramTemplateCandidates = (
   templateRelativePath: string,
   fallbackAgentName: string,
   fallbackAssetFileName: string

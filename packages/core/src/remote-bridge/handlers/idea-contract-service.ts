@@ -12,7 +12,7 @@ import {
   appendDiagramPromptAppendix,
   DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS,
   DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
-  resolveDiagramAgentAssetPath,
+  resolveSyncedDiagramTemplateCandidates,
 } from "./diagram-contract-prompt-assets";
 
 type WorkflowContractPayload = {
@@ -61,11 +61,13 @@ const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
 };
 
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: resolveDiagramAgentAssetPath(
+  prompt: resolveSyncedDiagramTemplateCandidates(
+    "diagram_modules/module-inventory-prompt.md",
     "diagram-modules-agent",
     "module-inventory-prompt.md"
   ),
-  template: resolveDiagramAgentAssetPath(
+  template: resolveSyncedDiagramTemplateCandidates(
+    "diagram_modules/module-inventory-template.md",
     "diagram-modules-agent",
     "module-inventory-template.md"
   ),
@@ -73,11 +75,13 @@ const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
 };
 
 const DIAGRAM_FACADES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: resolveDiagramAgentAssetPath(
+  prompt: resolveSyncedDiagramTemplateCandidates(
+    "diagram_facades/facade-map-prompt.md",
     "diagram-facades-agent",
     "facade-map-prompt.md"
   ),
-  template: resolveDiagramAgentAssetPath(
+  template: resolveSyncedDiagramTemplateCandidates(
+    "diagram_facades/facade-map-template.md",
     "diagram-facades-agent",
     "facade-map-template.md"
   ),
