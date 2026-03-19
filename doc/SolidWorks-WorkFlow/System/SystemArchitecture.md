@@ -139,8 +139,9 @@
 - Browser/UI bundle не должен зависеть от Node-only imports ради рендера diagram artifacts; для `Revision` browser-safe parsing path может переиспользовать уже записанное поле `- Revision:` из канонического Markdown DSL.
 
 Канонические документы:
-- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
-- `doc/TODO/todo-plan.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
+- `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 
 ## 6.3) Module Semantic Source Boundary (Phase 3, 2026-03-16)
 
@@ -151,8 +152,8 @@
 - Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
 Канонические документы:
-- `doc/TODO/todo-plan.md`
-- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 
 ## 6.4) Facade Semantic Source Boundary (Phase 4, 2026-03-16)
 
@@ -163,8 +164,8 @@
 - Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
 Канонические документы:
-- `doc/TODO/todo-plan.md`
-- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 
 ## 6.5) Diagram Workflow Stabilization Boundary (Phase 5, 2026-03-16)
 
@@ -189,8 +190,9 @@
   - agent-driven semantic updates when new semantic content is needed.
 
 Канонические документы:
-- `doc/TODO/todo-plan.md`
-- `doc/Sessions/Session090.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
+- `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
