@@ -81,3 +81,39 @@
 2. [DONE] Git Commit: `docs(release): prep diagram modules regression fix release` (hash: `d68266cd`)
 3. [DONE] Собрать и проверить новый релиз с inventory-first repair flow, закрыть Phase 15 в плане и зафиксировать новый VSIX (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build diagram modules regression fix release`).
 4. [DONE] Git Commit: `chore(release): build diagram modules regression fix release` (hash: `aece7a29`)
+
+---
+
+## Phase 16 — Diagram Modules Inventory-Only Contract Cleanup (owner: Oleksandr, updated: 2026-03-19)
+
+### Stream: Planning and contract reset
+1. [IN_PROGRESS] Зафиксировать в planning doc и в execution plan новый inventory-only contract: `module-map.md` больше не является workspace artifact, visible template и gating dependency для `Diagram Modules`; `Diagram Facades` должен читать upstream module context из `module-inventory.md` (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope inventory-only diagram cleanup`).
+2. [TODO] Git Commit: `docs(plan): scope inventory-only diagram cleanup` (hash: TBD)
+
+### Stream: Visible templates and prompts
+1. [TODO] Убрать legacy `module-map-*` из visible template sync для `diagram_modules`, чтобы в `~/.codeai-hub/templates/diagram_modules/` остались только inventory-first assets (scope: `packages/core/src/templates/bundled-templates.ts`, `scripts/generate-bundled-templates.js`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `refactor(templates): drop legacy module map sync`).
+2. [TODO] Git Commit: `refactor(templates): drop legacy module map sync` (hash: TBD)
+3. [TODO] Очистить стартовый prompt contract `Diagram Modules`: убрать из runtime prompt и agent prompt упоминания о переходе к `module-map.md`, оставить только inventory-first dialogue и `module-map.flow.json` как layout sidecar (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `refactor(diagram-modules): remove module map prompt tail`).
+4. [TODO] Git Commit: `refactor(diagram-modules): remove module map prompt tail` (hash: TBD)
+
+### Stream: Project Manager surface cleanup
+1. [TODO] Убрать `module-map.md` из help/pending/tree contract для `Diagram Modules`, чтобы UI везде опирался на `module-inventory.md` и visual diagram, а не на отсутствующий raw map file (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `refactor(pm): remove module map references from diagram modules`).
+2. [TODO] Git Commit: `refactor(pm): remove module map references from diagram modules` (hash: TBD)
+3. [TODO] Перевести availability/title contract и blocked messaging на inventory-only semantics, чтобы `Diagram Modules` и `Diagram Facades` не ожидали `module-map.md` на диске (scope: `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit: `refactor(pm): align inventory-only gating messaging`).
+4. [TODO] Git Commit: `refactor(pm): align inventory-only gating messaging` (hash: TBD)
+
+### Stream: Runtime and downstream contract cleanup
+1. [TODO] Перевести stage start и workflow gating на `module-inventory.md`: `Diagram Facades` должен стартовать от inventory, filesystem hydration и blocked gates должны считать canonical artifact именно inventory (scope: `src/client/project-manager/services/workflow-step-start-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit: `refactor(workflow): gate diagrams on module inventory`).
+2. [TODO] Git Commit: `refactor(workflow): gate diagrams on module inventory` (hash: TBD)
+3. [TODO] Убрать `module-map.md` из workflow artifact path contract и artifact-upsert pipeline для `diagram_modules`, оставив только `module-inventory.md` и `module-map.flow.json` как workspace files этого шага (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `refactor(workflow): remove module map workspace artifact`).
+4. [TODO] Git Commit: `refactor(workflow): remove module map workspace artifact` (hash: TBD)
+5. [TODO] Перевести `Diagram Facades` prompt/tests на upstream `module-inventory.md` вместо `module-map.md` и подтвердить, что контрактные тесты проходят (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; expected commit: `refactor(diagram-facades): consume module inventory upstream`).
+6. [TODO] Git Commit: `refactor(diagram-facades): consume module inventory upstream` (hash: TBD)
+
+### Stream: SSOT sync and release
+1. [TODO] Синхронизировать живые архитектурные документы под inventory-only contract для diagrams и downstream facades input (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`; expected commit: `docs(architecture): sync inventory-only diagram contract`).
+2. [TODO] Git Commit: `docs(architecture): sync inventory-only diagram contract` (hash: TBD)
+3. [TODO] Синхронизировать PM cluster/overview docs и release docs перед сборкой релиза (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prep inventory-only diagram cleanup release`).
+4. [TODO] Git Commit: `docs(release): prep inventory-only diagram cleanup release` (hash: TBD)
+5. [TODO] После ручной проверки собрать новый релиз, обновить `todo-plan.md`, создать новый session report и зафиксировать итоговый VSIX (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session104.md`; expected commit: `chore(release): build inventory-only diagram cleanup release`).
+6. [TODO] Git Commit: `chore(release): build inventory-only diagram cleanup release` (hash: TBD)

@@ -1,6 +1,6 @@
 # Архитектура пользовательской поверхности Diagram Workflow
 
-**Статус:** Черновик - scope `module-inventory.md` утверждён
+**Статус:** Черновик - scope `module-inventory.md` утверждён, inventory-only cleanup добавлен
 **Дата:** 2026-03-19
 **Охват:** следующий UX/runtime-контракт для `Diagram Modules` и policy-рефакторинг шаблонов для diagram steps
 
@@ -40,14 +40,15 @@
 Новый контракт:
 - прямые upstream-входы для `Diagram Modules`: `Final_Description.md` и `virtual-simulation.md`;
 - новый человекочитаемый semantic artifact: `module-inventory.md`;
-- `module-map.md` становится производным diagram DSL artifact, который строится уже по согласованному inventory;
+- `module-map.md` больше не является workspace artifact, visible template или user-facing contract;
+- visual projection строится в runtime напрямую из согласованного inventory, без отдельного Markdown-артефакта `module-map.md` на диске;
 - `module-map.flow.json` остаётся только layout/view sidecar.
 
 Смысл ролей:
 - `Final_Description.md` отвечает за продуктовые границы и крупные зоны ответственности;
 - `virtual-simulation.md` отвечает за сценарии, interactions и кандидатов в связи;
 - `module-inventory.md` фиксирует кластеры, состав кластеров, standalone modules и короткие ответственности;
-- `module-map.md` нужен для visual shell и диаграммы, а не как главная surface для чтения человеком.
+- runtime projection нужен для visual shell и диаграммы, но не оформляется отдельным Markdown-файлом в workspace.
 
 Дополнительное решение по developer-contract:
 - prompt/template-файлы для diagram steps нужно вернуть в `~/.codeai-hub/templates/diagram_modules/` и `~/.codeai-hub/templates/diagram_facades/`;
@@ -59,11 +60,11 @@
 
 ### `Diagram Modules`
 
-- `Artifacts` показывает визуальную диаграмму, построенную из `module-map.md`.
+- `Artifacts` показывает визуальную диаграмму, построенную напрямую из `module-inventory.md`.
 - `Source` показывает `module-inventory.md` как основной человекочитаемый semantic artifact шага.
 - `Help` остаётся поясняющей панелью.
 - Возврат на шаг должен снова открывать `Artifacts`, а не `Source`.
-- Raw `module-map.md` не должен быть основной user-facing surface.
+- `module-map.md` не должен упоминаться пользователю как ожидаемый файл этого шага.
 
 ### `Diagram Facades`
 
@@ -71,6 +72,7 @@
 - Текущий UI contract `Artifacts / Source / Help` остаётся.
 - `Source` пока продолжает показывать `facade-map.md`.
 - Но template visibility policy должна стать такой же, как у остальных шагов: живые prompt/template-файлы должны быть видны в `~/.codeai-hub/templates/diagram_facades/`.
+- Upstream semantic input для `Diagram Facades` должен быть `module-inventory.md`, а не `module-map.md`.
 
 ---
 
@@ -107,11 +109,11 @@
 - уточнить responsibility конкретных модулей;
 - поймать неправильные границы до генерации диаграммы.
 
-### `module-map.md`
+### Runtime projection
 
-- Канонический diagram DSL artifact для visual shell.
-- Производится по согласованному `module-inventory.md`, а не напрямую из сценариев.
-- Содержит cluster membership, standalone modules и простые relations в форме, пригодной для React Flow projection.
+- React Flow projection строится в памяти по согласованному `module-inventory.md`.
+- Workspace не должен требовать отдельный Markdown-файл `module-map.md`.
+- Для downstream шага `Diagram Facades` каноническим upstream-контекстом должен стать сам `module-inventory.md`.
 
 ### `module-map.flow.json`
 
@@ -132,10 +134,6 @@
 - `module-inventory-template.md`
 - `module-inventory-field-reference.md`
 - `module-inventory-merge-rules.md`
-- `module-map-prompt.md`
-- `module-map-template.md`
-- `module-map-field-reference.md`
-- `module-map-merge-rules.md`
 
 Для `Diagram Facades` visible template-contract должен включать как минимум:
 - `facade-map-prompt.md`
@@ -146,7 +144,7 @@
 Отдельное требование к root prompt, который формируется runtime:
 - для `Diagram Modules` он обязан явно перечислять оба upstream-артефакта;
 - он обязан указывать целевой semantic artifact `module-inventory.md`;
-- он не должен описывать шаг как построение diagram только "по анкете и шаблону".
+- он не должен описывать шаг как создание `module-map.md` или как переход к отдельному derived Markdown artifact.
 
 ---
 
@@ -156,7 +154,7 @@
 
 - Зафиксировать `module-inventory.md` как новый semantic bridge внутри `Diagram Modules`.
 - Зафиксировать dual-input contract: `Final_Description.md` + `virtual-simulation.md`.
-- Зафиксировать `module-map.md` как derived diagram artifact, а не как primary reading surface.
+- Зафиксировать inventory-only contract: без `module-map.md` как workspace artifact, gating dependency или visible template.
 
 ### Срез B - visible templates для diagram steps
 
@@ -174,12 +172,13 @@
 
 - `Source` для `Diagram Modules` должен показывать `module-inventory.md`.
 - `Artifacts` должен продолжать показывать диаграмму.
-- Raw `module-map.md` должен уйти из primary UX surface.
+- Любые help/pending/tree тексты не должны навязывать пользователю `module-map.md` как ожидаемый файл шага.
 
 ### Срез E - diagram generation path
 
-- После согласования inventory runtime/agent формирует `module-map.md`.
+- После согласования inventory runtime строит projection напрямую из `module-inventory.md`.
 - В диаграмме должны быть явные cluster nodes, модули внутри кластеров, standalone modules и простые relations.
+- `Diagram Facades` читает upstream module context из `module-inventory.md`.
 - Visual shell продолжает владеть только layout/view state.
 
 ---
@@ -201,7 +200,7 @@
 2. Первый согласуемый semantic output шага — `module-inventory.md`.
 3. Пользователь в `Source` видит именно `module-inventory.md`, а не raw `module-map.md`.
 4. После согласования inventory диаграмма в `Artifacts` показывает кластеры, модули внутри кластеров, standalone modules и простые relations.
-5. `module-map.md` не навязывается как primary reading surface.
+5. `module-map.md` не упоминается пользователю и не требуется как workspace artifact этого шага.
 6. `module-map.flow.json` по-прежнему хранит только layout/view state.
 7. Живые diagram templates доступны в `~/.codeai-hub/templates/diagram_modules/` и `.../diagram_facades/`.
 8. Reopen/resume по-прежнему возвращает пользователя в `Artifacts`, а ручная раскладка сохраняется.
@@ -214,5 +213,6 @@
 
 - ввести `module-inventory.md` как semantic bridge для `Diagram Modules`;
 - изменить runtime prompt contract так, чтобы шаг использовал оба upstream-артефакта;
-- вернуть diagram templates в visible templates contract;
+- вернуть diagram templates в visible templates contract и убрать из него legacy `module-map-*` для `Diagram Modules`;
+- перевести downstream gating и `Diagram Facades` с `module-map.md` на `module-inventory.md`;
 - выпустить новый релиз, который валидирует inventory-first flow для `Diagram Modules`.
