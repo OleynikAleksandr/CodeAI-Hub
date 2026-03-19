@@ -43,7 +43,7 @@ test("diagram facades contract embeds field reference and merge rules into promp
   assert.equal(contract?.prompt.includes("Kind`: currently `class`."), true);
   assert.equal(
     contract?.prompt.includes(
-      "Keep facade ownership aligned with the current `module-map.md`"
+      "Keep facade ownership aligned with the current `module-inventory.md`"
     ),
     true
   );
