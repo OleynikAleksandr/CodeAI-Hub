@@ -89,10 +89,10 @@ export const resolveDiagramStageSyncPayload = (options: {
   if (stage === "diagram_modules") {
     const chain = resolveLatestDiagramChain(workflowState.continuity.chains, "diagram_modules");
     const last = chain?.segments.at(-1) ?? null;
-    const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`;
+    const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`;
     const available = options.diagramModulesArtifactAvailable ?? false;
     return {
-      artifact: available ? { path: dmArtifactPath, label: "module-map.md" } : null,
+      artifact: available ? { path: dmArtifactPath, label: "module-inventory.md" } : null,
       clearTool: available ? null : "Diagram Modules",
       session: last
         ? {
@@ -149,7 +149,7 @@ export const buildDiagramModulesBranchNodes = (options: {
   }
 
   const nodes: TreeNode[] = [];
-  const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`;
+  const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`;
   const nodeVisuals = resolveDiagramNodeVisuals(workflowState, "diagram_modules");
 
   const chain = resolveLatestDiagramChain(
@@ -161,7 +161,7 @@ export const buildDiagramModulesBranchNodes = (options: {
   if (options.diagramModulesArtifactAvailable) {
     nodes.push({
       id: "workflow:diagram_modules:artifact",
-      label: "module-map.md",
+      label: "module-inventory.md",
       title: nodeVisuals.title
         ? `${dmArtifactPath}\n${nodeVisuals.title}`
         : dmArtifactPath,
@@ -169,7 +169,7 @@ export const buildDiagramModulesBranchNodes = (options: {
       visualDepth: 2,
       onSelect: () => {
         dispatchStageActivated("diagram_modules");
-        options.selectArtifact(dmArtifactPath, "module-map.md");
+        options.selectArtifact(dmArtifactPath, "module-inventory.md");
         if (last) {
           options.dispatchDialogOpenIntent(
             buildSessionIntent({
@@ -206,7 +206,7 @@ export const buildDiagramModulesBranchNodes = (options: {
         })
       );
       if (options.diagramModulesArtifactAvailable) {
-        options.selectArtifact(dmArtifactPath, "module-map.md");
+        options.selectArtifact(dmArtifactPath, "module-inventory.md");
       } else {
         options.clearArtifactWithTool("Diagram Modules");
       }

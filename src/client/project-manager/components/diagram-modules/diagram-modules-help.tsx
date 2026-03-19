@@ -20,12 +20,13 @@ export const DiagramModulesHelp: React.FC = () => (
       </div>
       <div>
         В панели <code>Source</code> открыт
-        <code>module-inventory.md</code>, а не raw <code>module-map.md</code>.
+        <code>module-inventory.md</code>; отдельный raw <code>module-map.md</code>
+        больше не является пользовательским артефактом этого шага.
       </div>
       <div>
-        Итоговая визуализация шага:{" "}
+        Layout sidecar шага:
         <code>
-          .codeai-hub/&lt;workspace&gt;/diagram_modules/module-map.md
+          .codeai-hub/&lt;workspace&gt;/diagram_modules/module-map.flow.json
         </code>
         .
       </div>

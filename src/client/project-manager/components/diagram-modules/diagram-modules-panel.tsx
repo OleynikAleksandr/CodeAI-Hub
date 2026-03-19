@@ -13,6 +13,7 @@ export const DiagramModulesPanel: React.FC<{
   readonly workspaceSlug: string;
   readonly refreshKey?: number;
 }> = (props) => {
+  const inventoryArtifactPath = `.codeai-hub/${props.workspaceSlug}/diagram_modules/module-inventory.md`;
   const {
     status,
     content,
@@ -54,8 +55,8 @@ export const DiagramModulesPanel: React.FC<{
 
   return (
     <DiagramStagePanelScaffold
-      artifactFileName="module-map.md"
-      artifactPath={artifactPath}
+      artifactFileName="module-inventory.md"
+      artifactPath={inventoryArtifactPath}
       children={null}
       conflicts={[]}
       content={content}
@@ -82,8 +83,9 @@ export const DiagramModulesPanel: React.FC<{
             <code>Artifacts</code>.
           </div>
           <div>
-            После согласования inventory runtime сформирует производный
-            <code>module-map.md</code> для визуального слоя.
+            Visual surface строится runtime напрямую из согласованного
+            <code>module-inventory.md</code> и не требует отдельного raw map
+            файла в workspace.
           </div>
         </div>
       }
