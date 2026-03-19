@@ -1,14 +1,16 @@
 # Session 103 — Inventory-First Regression Repair
 
-**Date:** 2026-03-19 15:32 (CET)
+**Date:** 2026-03-19 15:40 (CET)
 **Branch:** main
-**Version:** 1.1.750
+**Version:** 1.1.751
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
+- Синхронизировал release docs под `v1.1.751` и собрал regression-fix release: unified version поднята до `1.1.751`, VSIX успешно создан как `codeai-hub-1.1.751.vsix`.
+- `Phase 15` доведена до конца: inventory-first prompt repair, shared repair-flow, automatic `module-map.md` materialization и release verification закрыты в `todo-plan.md`.
 - Открыл `Phase 15` под regression-repair для `Diagram Modules`, чтобы исправить разъехавшийся inventory-first runtime contract уже после релиза `v1.1.750`.
 - Починил visible templates / root prompt resolution для `diagram_modules`: synced home templates снова содержат `module-inventory-*`, а core читает root prompt/template из `~/.codeai-hub/templates/...` прежде, чем fallback-иться в package assets.
 - Исправил PM prompt-pack: `Diagram Modules` теперь стартует в `module-inventory.md`, явно видит `Final_Description.md` и `virtual-simulation.md`, и получает три фазы `read -> discuss inventory -> derive module map`.
@@ -41,6 +43,10 @@
 - Собрал релиз `v1.1.750` через `build-all.sh` и `build-release.sh --use-current-version`; `codeai-hub-1.1.750.vsix` создан успешно.
 
 ## Verification
+- `npm run build:webview` прошёл успешно перед релизом.
+- `npm run build:project-manager` прошёл успешно перед релизом.
+- `./scripts/build-all.sh` успешно собрал unified artifacts и поднял версию до `1.1.751`.
+- `./scripts/build-release.sh --use-current-version` успешно создал `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.751.vsix`.
 - `node --test --import tsx src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts` прошёл успешно после PM prompt-pack repair.
 - `npm run typecheck:webview` прошёл успешно после repair-flow изменений в PM shared components.
 - `node --test --import tsx packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts` прошёл успешно и подтвердил, что `artifact-upsert` пишет `module-inventory.md` и derived `module-map.md`.
@@ -85,6 +91,8 @@
 - `23916bed fix(pm): forward artifact validation errors to agent`
 - `0740fd1f fix(diagram-modules): materialize module map from inventory upload`
 - `ba8b9ed8 docs(plan): record repair flow and derived artifact fixes`
+- `d68266cd docs(release): prep diagram modules regression fix release`
+- `aece7a29 chore(release): build diagram modules regression fix release`
 
 ---
 
@@ -99,9 +107,9 @@
 6. `doc/Sessions/Session103.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
-> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 15` из `doc/TODO/todo-plan.md`, начиная с release-docs и нового regression-fix release build.
+> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md` и этот отчёт, затем решить, архивируем ли закрытый `Phase 15` и открываем ли новый planning doc под следующий diagram follow-up.
 
 ## Plans for next session
-- Синхронизировать `README.md`, `CHANGELOG.md` и этот session report под regression-fix scope.
-- Выполнить release build для следующей версии после `v1.1.750` и зафиксировать новый VSIX.
-- После релиза проверить, что `Diagram Modules` действительно начинает с user dialogue по `module-inventory.md`, а `Fix with agent` досылает parse/validation ошибку в диалог.
+- После пользовательской проверки `v1.1.751` либо закрыть/архивировать текущий `todo-plan.md`, либо открыть новый plan/doc под следующий diagram scope.
+- Перепроверить в живом UI два критичных regression-path: inventory-first start dialogue и `Fix with agent` с пересылкой parse/validation ошибки.
+- Если появится новый scope по диаграммам, вынести его сначала в новый planning doc, а уже потом нарезать в новый `todo-plan.md`.

@@ -77,7 +77,7 @@
 4. [DONE] Git Commit: `fix(diagram-modules): materialize module map from inventory upload` (hash: `0740fd1f`)
 
 ### Stream: Verification and release
-1. [TODO] Синхронизировать release docs и session report под regression-fix scope для `Diagram Modules` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session103.md`; expected commit: `docs(release): prep diagram modules regression fix release`).
-2. [TODO] Git Commit: `docs(release): prep diagram modules regression fix release` (hash: TBD)
-3. [TODO] Собрать и проверить новый релиз с inventory-first repair flow, закрыть Phase 15 в плане и зафиксировать новый VSIX (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build diagram modules regression fix release`).
-4. [TODO] Git Commit: `chore(release): build diagram modules regression fix release` (hash: TBD)
+1. [DONE] Синхронизировать release docs и session report под regression-fix scope для `Diagram Modules` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session103.md`; expected commit: `docs(release): prep diagram modules regression fix release`).
+2. [DONE] Git Commit: `docs(release): prep diagram modules regression fix release` (hash: `d68266cd`)
+3. [DONE] Собрать и проверить новый релиз с inventory-first repair flow, закрыть Phase 15 в плане и зафиксировать новый VSIX (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build diagram modules regression fix release`).
+4. [DONE] Git Commit: `chore(release): build diagram modules regression fix release` (hash: `aece7a29`)
