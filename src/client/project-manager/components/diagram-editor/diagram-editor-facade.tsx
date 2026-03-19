@@ -56,6 +56,35 @@ const miniMapStyle: React.CSSProperties = {
   borderRadius: 12,
 };
 
+const layoutProfileGroupStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 4,
+  padding: 4,
+  borderRadius: 999,
+  border: "1px solid var(--pm-border-strong)",
+  background: "rgba(255, 255, 255, 0.04)",
+  flexWrap: "wrap",
+};
+
+const getLayoutProfileButtonStyle = (
+  isActive: boolean
+): React.CSSProperties => ({
+  height: 24,
+  padding: "0 10px",
+  borderRadius: 999,
+  border: "none",
+  background: isActive
+    ? "rgba(66, 201, 162, 0.16)"
+    : "transparent",
+  color: isActive
+    ? "var(--pm-accent-strong)"
+    : "var(--pm-text-muted)",
+  cursor: "pointer",
+  fontSize: 12,
+  fontWeight: isActive ? 600 : 500,
+});
+
 const FIT_VIEW_OPTIONS = {
   duration: 240,
   padding: 0.16,
@@ -119,31 +148,37 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
           </span>
         ) : null}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          flexWrap: "wrap",
+          justifyContent: "flex-end",
+        }}
+      >
         {layoutProfileOptions && layoutProfile ? (
-          <select
+          <div
             aria-label="Diagram layout profile"
-            onChange={(event) => {
-              onLayoutProfileChange?.(
-                event.target.value as DiagramLayoutProfileId
-              );
-            }}
-            style={{
-              height: 32,
-              padding: "0 10px",
-              borderRadius: 999,
-              border: "1px solid var(--pm-border-strong)",
-              background: "rgba(255, 255, 255, 0.04)",
-              color: "var(--pm-text-primary)",
-            }}
-            value={layoutProfile}
+            role="group"
+            style={layoutProfileGroupStyle}
           >
             {layoutProfileOptions.map((option) => (
-              <option key={option.id} value={option.id}>
+              <button
+                aria-pressed={option.id === layoutProfile}
+                key={option.id}
+                onClick={() => {
+                  onLayoutProfileChange?.(option.id);
+                }}
+                style={getLayoutProfileButtonStyle(
+                  option.id === layoutProfile
+                )}
+                type="button"
+              >
                 {option.label}
-              </option>
+              </button>
             ))}
-          </select>
+          </div>
         ) : null}
         <button
           type="button"

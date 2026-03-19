@@ -218,6 +218,9 @@ test("diagram-editor-facade keeps React Flow provider and diagnostics widgets en
   assert.equal(source.includes("nodesDraggable={Boolean(onNodesChange)}"), true);
   assert.equal(source.includes("Diagram layout profile"), true);
   assert.equal(source.includes("layoutProfileOptions.map"), true);
+  assert.equal(source.includes("role=\"group\""), true);
+  assert.equal(source.includes("aria-pressed={option.id === layoutProfile}"), true);
+  assert.equal(source.includes("<select"), false);
   assert.equal(source.includes("Auto-layout"), true);
 });
 
