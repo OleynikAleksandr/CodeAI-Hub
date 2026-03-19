@@ -18,8 +18,8 @@
 ## Phase 14 — Module Inventory Bridge And Visible Diagram Templates (owner: Oleksandr, updated: 2026-03-19)
 
 ### Stream: Live contracts
-1. [TODO] Зафиксировать в живых архитектурных документах новый contract для `Diagram Modules`: обязательные входы `Final_Description.md` + `virtual-simulation.md`, `module-inventory.md` как человекочитаемый semantic bridge, `module-map.md` как derived diagram artifact (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`; expected commit: `docs(architecture): add module inventory bridge contract`).
-2. [TODO] Git Commit: `docs(architecture): add module inventory bridge contract` (hash: TBD)
+1. [DONE] Зафиксировать в живых архитектурных документах новый contract для `Diagram Modules`: обязательные входы `Final_Description.md` + `virtual-simulation.md`, `module-inventory.md` как человекочитаемый semantic bridge, `module-map.md` как derived diagram artifact (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`; expected commit: `docs(architecture): add module inventory bridge contract`).
+2. [DONE] Git Commit: `docs(architecture): add module inventory bridge contract` (hash: `d4d5486a`)
 3. [TODO] Синхронизировать живой PM UX contract под `Source = module-inventory.md` для `Diagram Modules` и новую policy видимых diagram templates (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`; expected commit: `docs(pm): sync module inventory source contract`).
 4. [TODO] Git Commit: `docs(pm): sync module inventory source contract` (hash: TBD)
 
