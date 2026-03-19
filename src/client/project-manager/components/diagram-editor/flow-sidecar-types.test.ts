@@ -6,7 +6,7 @@ import {
   serializeFlowSidecar,
 } from "./flow-sidecar-types";
 
-test("flow sidecar preserves layout profile during serialization", () => {
+test("flow sidecar serializes manual node positions", () => {
   const document = buildFlowSidecarDocument({
     revision: "rev-1",
     nodes: [
@@ -29,17 +29,15 @@ test("flow sidecar preserves layout profile during serialization", () => {
         },
       },
     ],
-    layoutProfile: "fill_space",
   });
 
   const parsed = parseFlowSidecar(serializeFlowSidecar(document));
 
   assert.notEqual(parsed, null);
-  assert.equal(parsed?.layoutProfile, "fill_space");
   assert.deepEqual(parsed?.nodes["module-a"], { x: 120, y: 240 });
 });
 
-test("flow sidecar ignores unknown layout profile values", () => {
+test("flow sidecar ignores legacy layout profile fields", () => {
   const parsed = parseFlowSidecar(
     JSON.stringify({
       version: 1,
@@ -48,10 +46,11 @@ test("flow sidecar ignores unknown layout profile values", () => {
       nodes: {
         "module-a": { x: 0, y: 0 },
       },
-      layoutProfile: "diagonal",
+      layoutProfile: "fill_space",
     })
   );
 
   assert.notEqual(parsed, null);
-  assert.equal(parsed?.layoutProfile, undefined);
+  assert.equal("layoutProfile" in (parsed ?? {}), false);
+  assert.deepEqual(parsed?.nodes["module-a"], { x: 0, y: 0 });
 });

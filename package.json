@@ -112,7 +112,6 @@
   "dependencies": {
     "@codeai-hub/core-supervisor": "file:packages/core-supervisor",
     "@xyflow/react": "^12.10.1",
-    "elkjs": "^0.11.1",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "ws": "^8.18.3"

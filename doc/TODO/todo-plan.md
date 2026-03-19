@@ -346,7 +346,7 @@
 
 ### Stream: Product contract rewrite and ELK removal
 1. [DONE] Зафиксировать новый product contract для diagram steps: `module-map.md` / `facade-map.md` определяют semantic structure, а `*.flow.json` хранит только пользовательскую геометрию; `Auto-layout` и profile chooser больше не считаются частью основного UX (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope manual-layout first diagrams`).
-2. [TODO] Git Commit: `docs(plan): scope manual-layout first diagrams` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): scope manual-layout first diagrams` (hash: `dce318fc`)
 3. [DONE] Удалить ELK-driven product UX и runtime pipeline: убрать `Auto-layout`, layout profiles, `Layout saved` chip, удалить `diagram-layout-facade`/`auto-layout-button`/`save-status-indicator`, вычистить sidecar profile contract и снять зависимость `elkjs`, сохранив только manual drag positions в `*.flow.json`; подтвердить поведение таргетными проверками `flow-sidecar-types.test.ts`, `diagram-editor-facade.test.tsx`, `typecheck:webview`, `build:webview`, `build:project-manager` (scope: `src/client/project-manager/components/diagram-editor/**`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`, `package.json`, `package-lock.json`; expected commit: `refactor(diagrams): remove elk auto-layout pipeline`).
 4. [TODO] Git Commit: `refactor(diagrams): remove elk auto-layout pipeline` (hash: TBD)
 

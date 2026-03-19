@@ -43,7 +43,6 @@ export const DiagramFacadesPanel: React.FC<{
     workspaceSlug: props.workspaceSlug,
   });
   const {
-    saveState,
     persistNodes,
     persistModel,
     markConflict,
@@ -134,7 +133,6 @@ export const DiagramFacadesPanel: React.FC<{
         </div>
       }
       projection={visualProjection}
-      saveState={saveState}
       status={status}
       title="Diagram Facades"
       workspacePath={props.workspacePath}
