@@ -36,7 +36,7 @@
 2. [DONE] Git Commit: `feat(diagram-modules): add module inventory templates` (hash: `6b8a3281`)
 3. [DONE] Добавить merge-rules для inventory и перестроить root prompt, который runtime формирует в начале сессии, чтобы он явно перечислял `Final_Description.md` и `virtual-simulation.md` и вел сессию к `module-inventory.md` (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`, `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(diagram-modules): add dual-input inventory prompt contract`).
 4. [DONE] Git Commit: `refactor(diagram-modules): add dual-input inventory prompt contract` (hash: `36cef261`)
-5. [TODO] Ввести `module-inventory.md` в workflow artifact contract и watcher/runtime routing, не ломая существующие `module-map.md` и `module-map.flow.json` (scope: `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `feat(diagram-modules): register module inventory artifact`).
+5. [IN_PROGRESS] Ввести `module-inventory.md` в workflow artifact contract и runtime routing, не ломая существующие `module-map.md` и `module-map.flow.json` (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `feat(diagram-modules): register module inventory artifact`).
 6. [TODO] Git Commit: `feat(diagram-modules): register module inventory artifact` (hash: TBD)
 
 ### Stream: Project Manager user surface

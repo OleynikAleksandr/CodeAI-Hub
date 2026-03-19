@@ -60,7 +60,7 @@ const DESCRIPTION_PATH_RE =
 const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:module-map\.md|module-map\.flow\.json|module-map\.agent-baseline\.md)$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:module-inventory\.md|module-map\.md|module-map\.flow\.json|module-map\.agent-baseline\.md)$/;
 const DIAGRAM_FACADES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:facade-map\.md|facade-map\.flow\.json|facade-map\.agent-baseline\.md)$/;
 
@@ -468,6 +468,7 @@ type WorkflowStageId =
 type WorkflowArtifactFileName =
   | "Final_Description.md"
   | "virtual-simulation.md"
+  | "module-inventory.md"
   | "module-map.md"
   | "module-map.flow.json"
   | "module-map.agent-baseline.md"
@@ -493,6 +494,10 @@ const WORKFLOW_STAGE_SLOTS = new Map<
   [
     "workspace.virtual_simulation",
     { stage: "virtual_simulation", fileName: "virtual-simulation.md" },
+  ],
+  [
+    "diagram.modules.inventory",
+    { stage: "diagram_modules", fileName: "module-inventory.md" },
   ],
   ["diagram.modules", { stage: "diagram_modules", fileName: "module-map.md" }],
   [
@@ -722,6 +727,7 @@ type PayloadParseResult<T> =
   | { readonly ok: false; readonly error: string };
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
+const MODULE_INVENTORY_TITLE_RE = /^#\s+Module Inventory/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 
 const normalizeArtifactContent = (content: string): string =>
@@ -737,6 +743,11 @@ const resolveWorkflowStageValidationError = (params: {
       return validateDescriptionMarkdown(params.content, params.shouldValidate);
     case "virtual-simulation.md":
       return validateVirtualSimulationMarkdown(
+        params.content,
+        params.shouldValidate
+      );
+    case "module-inventory.md":
+      return validateModuleInventoryMarkdown(
         params.content,
         params.shouldValidate
       );
@@ -798,6 +809,22 @@ const validateVirtualSimulationMarkdown = (
   }
   if (scenarioCount > 4) {
     return "virtual-simulation markdown must include at most 4 scenarios";
+  }
+  return null;
+};
+
+const validateModuleInventoryMarkdown = (
+  content: string,
+  shouldValidate: boolean
+): string | null => {
+  if (!shouldValidate) {
+    return null;
+  }
+  if (content.trim().length === 0) {
+    return "Module inventory markdown is empty";
+  }
+  if (!MODULE_INVENTORY_TITLE_RE.test(content)) {
+    return "Module inventory markdown is missing '# Module Inventory' header";
   }
   return null;
 };
