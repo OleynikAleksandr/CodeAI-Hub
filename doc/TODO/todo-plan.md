@@ -46,8 +46,8 @@
 4. [DONE] Git Commit: `docs(pm): explain module inventory flow` (hash: `28f131c5`)
 
 ### Stream: Diagram projection and release
-1. [TODO] Перестроить diagram generation path так, чтобы `module-map.md` производился из согласованного `module-inventory.md` и сохранял cluster membership, standalone modules и простые relations для React Flow projection (scope: `packages/core/src/workflow/diagram-dsl/module-map-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`; expected commit: `refactor(diagram-modules): derive module map from inventory`).
-2. [TODO] Git Commit: `refactor(diagram-modules): derive module map from inventory` (hash: TBD)
+1. [DONE] Перестроить diagram generation path так, чтобы `module-map.md` производился из согласованного `module-inventory.md` и сохранял cluster membership, standalone modules и простые relations для React Flow projection (scope: `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `refactor(diagram-modules): derive module map from inventory`).
+2. [DONE] Git Commit: `refactor(diagram-modules): derive module map from inventory` (hash: `628d69e2`)
 3. [TODO] Синхронизировать release docs и SSOT после реализации inventory-first `Diagram Modules` и visible diagram templates contract (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep module inventory diagram release`).
 4. [TODO] Git Commit: `docs(release): prep module inventory diagram release` (hash: TBD)
 5. [TODO] После ручной проверки собрать новый релиз, записать session report и закрыть хеши Phase 14 (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build module inventory diagram release`).
