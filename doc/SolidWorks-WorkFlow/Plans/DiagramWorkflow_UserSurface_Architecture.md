@@ -122,7 +122,7 @@ The new active execution scope is:
 
 ---
 
-## 8. Approved Follow-up - Diagram Modules layout profiles first
+## 8. Superseded Follow-up - Diagram Modules layout profiles first
 
 After the user-surface recovery shipped, manual verification exposed the next UX gap:
 
@@ -130,18 +130,20 @@ After the user-surface recovery shipped, manual verification exposed the next UX
 - the button now refreshes in real time, but the algorithm itself is still too naive;
 - the artifact panel also leaves unused vertical space below the diagram sections.
 
-Approved next step:
+This follow-up was implemented experimentally, but later manual validation disproved the product value of ELK-driven layout profiles.
+
+The old next step was:
 
 - improve `Diagram Modules` first, before touching `Diagram Facades`;
 - expose several concrete ELK layout profiles next to `Auto-layout`;
 - include one profile that explicitly tries to occupy the available canvas area instead of staying overly compact;
 - stretch the diagram surface vertically so the canvas plus collapsed editing sections occupy the full right-side artifact panel height.
 
-`Diagram Facades` stays intentionally out of this stream. It should reuse the learned layout infrastructure later, but with its own readability tuning.
+`Diagram Facades` stays intentionally out of this stream. It should not inherit the removed ELK-driven UX as a primary interaction model.
 
 ---
 
-## 9. Approved Follow-up - Launcher-safe layout profile control
+## 9. Superseded Follow-up - Launcher-safe layout profile control
 
 The first `Diagram Modules` layout-profile release exposed a platform-specific failure:
 
@@ -149,10 +151,37 @@ The first `Diagram Modules` layout-profile release exposed a platform-specific f
 - the macOS launcher crashes when the profile chooser goes through a native HTML `<select>` popup;
 - this is a launcher-surface problem, not an ELK algorithm problem.
 
-Approved next step:
+This follow-up solved a launcher crash, but the whole layout-profile surface is now superseded together with `Auto-layout`.
+
+The old next step was:
 
 - preserve the four approved profiles: `Vertical`, `Horizontal`, `Compact`, `Fill space`;
 - replace the native `<select>` with a custom launcher-safe control rendered directly in the toolbar;
 - keep profile selection as an explicit UI choice next to `Auto-layout`;
 - do not broaden this corrective stream into `Diagram Facades` yet;
 - ship a focused release that restores launcher stability before any further layout-quality tuning.
+
+---
+
+## 10. Approved Follow-up - Remove ELK from product UX
+
+Manual validation showed that ELK is the wrong product primitive for these diagram steps:
+
+- the final readability of the graph depends much more on the AI-produced semantic artifact than on algorithmic layout;
+- even when ELK recomputes positions correctly, the visual result is still not trustworthy as a user-facing architecture view;
+- `Auto-layout` and profile buttons consume toolbar space, create false expectations, and can destroy a manually corrected composition.
+
+Approved next step:
+
+- remove `Auto-layout` and all profile controls from the visible diagram UX;
+- stop treating ELK as the source of the diagram composition;
+- keep `module-map.md` / `facade-map.md` as semantic SSOT;
+- keep `*.flow.json` as user-owned persisted geometry only;
+- preserve and improve manual editing in React Flow;
+- keep `Edit Modules` / `Edit Relations` as secondary inline editors for semantic DSL changes, not as the primary user artifact.
+
+Target product contract:
+
+- AI defines semantic structure;
+- the user refines the visual arrangement;
+- Project Manager persists that arrangement without re-imposing an automatic layout pass.

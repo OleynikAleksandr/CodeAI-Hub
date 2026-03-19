@@ -131,7 +131,11 @@
   - пишется отдельно через `workspace-file-write`;
   - не меняет содержимое канонического `.md`;
   - не показывается пользователю как primary artifact.
-- Если sidecar отсутствует или не совпадает по `Revision`, shell обязан построить ELK first-layout и затем сохранить новый `*.flow.json`; после этого пользователь может вручную корректировать layout прямо в React Flow.
+- Если sidecar отсутствует или не совпадает по `Revision`, shell обязан взять стартовые координаты из собственной domain projection и затем позволить пользователю вручную корректировать layout прямо в React Flow.
+- Product contract для diagram layout теперь `manual-layout first`:
+  - AI/DSL задаёт semantic structure диаграммы;
+  - пользовательская композиция принадлежит `*.flow.json`;
+  - автоматический layout engine не определяет финальный пользовательский вид диаграммы.
 - Browser/UI bundle не должен зависеть от Node-only imports ради рендера diagram artifacts; для `Revision` browser-safe parsing path может переиспользовать уже записанное поле `- Revision:` из канонического Markdown DSL.
 
 Канонические документы:
@@ -192,11 +196,11 @@
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-map.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан встраивать в prompt strict field-reference и merge-rules из agent asset pack, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
-- `Diagram Modules` layout profiles обязаны быть частью launcher-safe visual contract:
-  - chooser не может использовать native HTML `<select>` path внутри CEF/AppKit;
-  - выбор `Vertical` / `Horizontal` / `Compact` / `Fill space` обязан немедленно запускать новый layout pass на текущем graph;
-  - выбранный profile обязан сохраняться в `module-map.flow.json` вместе с node positions и восстанавливаться после reopen/restart.
-  - сам `Diagram Modules` canvas не может рассчитывать на fake parent/child cluster nesting без полноценного custom-node contract; module nodes обязаны рендериться как top-level visual nodes с явными `nodeTypes`, иначе разные ELK profiles могут математически давать разные coordinates, но визуально оставаться неотличимыми на canvas.
+- `Diagram Modules` и `Diagram Facades` больше не должны навязывать пользователю auto-layout chrome. Product UX обязан опираться на:
+  - AI-generated semantic structure в canonical `.md`;
+  - top-level visual nodes с явными `nodeTypes`, без fake parent/child cluster nesting;
+  - manual drag/editing внутри React Flow;
+  - persisted user-owned positions в `module-map.flow.json` / `facade-map.flow.json`.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
