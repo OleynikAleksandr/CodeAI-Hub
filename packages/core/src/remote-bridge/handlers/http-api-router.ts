@@ -5,11 +5,7 @@ import type { FileDropService } from "../../file-drop/file-drop-service";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import {
-  parseFacadeMapDsl,
-  parseModuleMapDsl,
-} from "../../workflow/diagram-dsl/markdown-dsl-parser";
-import { materializeModuleMapFromInventoryDsl } from "../../workflow/diagram-dsl/module-inventory-parser";
+import { parseFacadeMapDsl } from "../../workflow/diagram-dsl/markdown-dsl-parser";
 import {
   buildDescriptionContract,
   buildDiagramFacadesContract,
@@ -61,7 +57,7 @@ const DESCRIPTION_PATH_RE =
 const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:module-inventory\.md|module-map\.md|module-map\.flow\.json|module-map\.agent-baseline\.md)$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:module-inventory\.md|module-map\.flow\.json)$/;
 const DIAGRAM_FACADES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:facade-map\.md|facade-map\.flow\.json|facade-map\.agent-baseline\.md)$/;
 
@@ -470,9 +466,7 @@ type WorkflowArtifactFileName =
   | "Final_Description.md"
   | "virtual-simulation.md"
   | "module-inventory.md"
-  | "module-map.md"
   | "module-map.flow.json"
-  | "module-map.agent-baseline.md"
   | "facade-map.md"
   | "facade-map.flow.json"
   | "facade-map.agent-baseline.md";
@@ -500,14 +494,9 @@ const WORKFLOW_STAGE_SLOTS = new Map<
     "diagram.modules.inventory",
     { stage: "diagram_modules", fileName: "module-inventory.md" },
   ],
-  ["diagram.modules", { stage: "diagram_modules", fileName: "module-map.md" }],
   [
     "diagram.modules.flow",
     { stage: "diagram_modules", fileName: "module-map.flow.json" },
-  ],
-  [
-    "diagram.modules.baseline",
-    { stage: "diagram_modules", fileName: "module-map.agent-baseline.md" },
   ],
   ["diagram.facades", { stage: "diagram_facades", fileName: "facade-map.md" }],
   [
@@ -687,81 +676,7 @@ const buildWorkflowStageArtifactUpsertPlan = async (params: {
     });
   }
 
-  const derivedUpsertsResult = await buildDerivedDiagramModulesUpserts({
-    context,
-    upserts,
-  });
-  if (!derivedUpsertsResult.ok) {
-    return { ok: false, error: derivedUpsertsResult.error };
-  }
-
-  return { ok: true, value: { upserts: derivedUpsertsResult.value } };
-};
-
-const buildDerivedDiagramModulesUpserts = async (params: {
-  readonly context: WorkflowStageUpsertContext;
-  readonly upserts: WorkflowStageArtifactUpsertPlan["upserts"];
-}): Promise<PayloadParseResult<WorkflowStageArtifactUpsertPlan["upserts"]>> => {
-  if (
-    params.context.stage !== "diagram_modules" ||
-    params.upserts.some((upsert) => upsert.slot === "diagram.modules")
-  ) {
-    return { ok: true, value: params.upserts };
-  }
-
-  const inventoryUpsert = params.upserts.find(
-    (upsert) => upsert.slot === "diagram.modules.inventory"
-  );
-  if (!inventoryUpsert) {
-    return { ok: true, value: params.upserts };
-  }
-
-  const materialization = materializeModuleMapFromInventoryDsl(
-    inventoryUpsert.content
-  );
-  if (!materialization.ok) {
-    return {
-      ok: false,
-      error: `Unable to derive module-map.md: line ${materialization.error.line}, ${materialization.error.message}`,
-    };
-  }
-
-  const targetResult = resolveWorkflowStageUpsertTarget({
-    context: params.context,
-    slot: "diagram.modules",
-  });
-  if (!targetResult.ok) {
-    return targetResult;
-  }
-
-  const contentResult = normalizeAndValidateWorkflowStageUpsertMarkdown({
-    fileName: targetResult.value.fileName,
-    markdown: materialization.content,
-  });
-  if (!contentResult.ok) {
-    return { ok: false, error: contentResult.error };
-  }
-
-  const existingContent = await readArtifactFile(
-    targetResult.value.artifactPath
-  );
-  const normalizedExisting =
-    existingContent === null ? null : normalizeArtifactContent(existingContent);
-
-  return {
-    ok: true,
-    value: [
-      ...params.upserts,
-      {
-        slot: "diagram.modules",
-        relativePath: targetResult.value.relativePath,
-        artifactPath: targetResult.value.artifactPath,
-        content: contentResult.value,
-        existingContent,
-        changed: normalizedExisting !== contentResult.value,
-      },
-    ],
-  };
+  return { ok: true, value: { upserts } };
 };
 
 const writeArtifactUpsertPlan = async (
@@ -826,13 +741,6 @@ const resolveWorkflowStageValidationError = (params: {
         params.content,
         params.shouldValidate
       );
-    case "module-map.md":
-    case "module-map.agent-baseline.md":
-      return validateMarkdownDslDiagram({
-        content: params.content,
-        parser: parseModuleMapDsl,
-        shouldValidate: params.shouldValidate,
-      });
     case "facade-map.md":
     case "facade-map.agent-baseline.md":
       return validateMarkdownDslDiagram({

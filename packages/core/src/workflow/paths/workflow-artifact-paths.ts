@@ -21,15 +21,7 @@ const WORKFLOW_STAGE_FILES = new Map<
 >([
   ["description", ["Final_Description.md"]],
   ["virtual_simulation", ["virtual-simulation.md"]],
-  [
-    "diagram_modules",
-    [
-      "module-inventory.md",
-      "module-map.md",
-      "module-map.flow.json",
-      "module-map.agent-baseline.md",
-    ],
-  ],
+  ["diagram_modules", ["module-inventory.md", "module-map.flow.json"]],
   [
     "diagram_facades",
     ["facade-map.md", "facade-map.flow.json", "facade-map.agent-baseline.md"],

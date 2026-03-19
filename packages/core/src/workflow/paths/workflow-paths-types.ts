@@ -5,9 +5,7 @@ export type WorkflowArtifactFileName =
   | "description.md"
   | "virtual-simulation.md"
   | "module-inventory.md"
-  | "module-map.md"
   | "module-map.flow.json"
-  | "module-map.agent-baseline.md"
   | "facade-map.md"
   | "facade-map.flow.json"
   | "facade-map.agent-baseline.md";

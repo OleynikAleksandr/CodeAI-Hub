@@ -58,7 +58,7 @@ const MODULE_INVENTORY_MARKDOWN = [
   "",
 ].join("\n");
 
-test("artifact upsert derives module-map.md from module-inventory.md", async () => {
+test("artifact upsert saves module-inventory.md without derived module-map.md", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "http-api-router-artifact-upsert-")
   );
@@ -134,29 +134,18 @@ test("artifact upsert derives module-map.md from module-inventory.md", async () 
     assert.equal(result.statusCode, 200);
     assert.deepEqual(
       result.payload.saved.map((entry) => entry.slot),
-      ["diagram.modules.inventory", "diagram.modules"]
+      ["diagram.modules.inventory"]
     );
 
     const inventoryPath = path.join(
       workspaceRoot,
       `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`
     );
-    const moduleMapPath = path.join(
-      workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.md`
-    );
-
     await mkdir(path.dirname(inventoryPath), { recursive: true });
 
     const inventoryContent = await readFile(inventoryPath, "utf8");
-    const moduleMapContent = await readFile(moduleMapPath, "utf8");
 
     assert.equal(inventoryContent, MODULE_INVENTORY_MARKDOWN);
-    assert.equal(moduleMapContent.includes("# Module Map"), true);
-    assert.equal(
-      moduleMapContent.includes("### Module: workspace-shell"),
-      true
-    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
