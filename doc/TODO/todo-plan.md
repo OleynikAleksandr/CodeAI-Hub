@@ -2,8 +2,8 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/Sessions/Session083.md`
-- Execution-plan основан на planning-доке `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/Sessions/Session102.md`
+- Для следующего diagram UI scope рабочей planning-basis остаётся `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи
 - Каждая микро-задача затрагивает не более 3 файлов или пакетов
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
@@ -213,7 +213,7 @@
 ## Phase 6 — diagram user surface recovery (owner: Oleksandr, updated: 2026-03-18)
 
 ### Stream: Planning and audit rewrite
-1. [DONE] Зафиксировать новый user-surface contract для `Diagram Modules` / `Diagram Facades`: `Artifacts = diagram`, `Source = raw markdown`, `Help = guidance`; при этом канонические `module-map.md` / `facade-map.md` остаются SSOT для runtime, но не default UI, а `*.flow.json` скрывается как internal sidecar (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram user surface recovery`).
+1. [DONE] Зафиксировать новый user-surface contract для `Diagram Modules` / `Diagram Facades`: `Artifacts = diagram`, `Source = raw markdown`, `Help = guidance`; при этом канонические `module-map.md` / `facade-map.md` остаются SSOT для runtime, но не default UI, а `*.flow.json` скрывается как internal sidecar (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram user surface recovery`).
 2. [DONE] Git Commit: `docs(plan): scope diagram user surface recovery` (hash: `5cc54c10`)
 3. [DONE] Синхронизировать SSOT и release-facing docs под новый contract, в котором успешный diagram stage означает visual diagram как primary surface, `Source` как secondary debug view и ручную корректировку layout как допустимый path alongside auto-layout (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`, `CHANGELOG.md`; expected commit: `docs(workflow): define diagram user surface contract`).
 4. [DONE] Git Commit: `docs(workflow): define diagram user surface contract` (hash: `562b3edf`)
@@ -243,7 +243,7 @@
 ## Phase 7 — repository duplication debt reduction (owner: Oleksandr, updated: 2026-03-18)
 
 ### Stream: Planning and audit scoping
-1. [DONE] Зафиксировать отдельный recovery scope для repository-wide duplication debt: описать mismatch между `check-architecture.sh` и `check:dup`, зафиксировать top clone clusters и утвердить structural reduction strategy вместо threshold/ignore обходов (scope: `doc/SolidWorks-WorkFlow/Plans/RepositoryDuplicationDebt_Reduction_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope duplication debt reduction`).
+1. [DONE] Зафиксировать отдельный recovery scope для repository-wide duplication debt: описать mismatch между `check-architecture.sh` и `check:dup`, зафиксировать top clone clusters и утвердить structural reduction strategy вместо threshold/ignore обходов (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/RepositoryDuplicationDebt_Reduction_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope duplication debt reduction`).
 2. [DONE] Git Commit: `docs(plan): scope duplication debt reduction` (hash: `322f65b6`)
 
 ### Stream: High-value structural clone extraction
@@ -271,7 +271,7 @@
 ## Phase 8 — diagram auto-layout realtime refresh (owner: Oleksandr, updated: 2026-03-18)
 
 ### Stream: Live viewport refit after auto-layout
-1. [DONE] Зафиксировать corrective scope для auto-layout visibility bug: подтвердить, что shared diagram shell сохраняет новый layout в `*.flow.json`, но не обновляет live React Flow viewport, из-за чего пользователь видит результат только после reopen/remount stage (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram auto-layout realtime refresh`).
+1. [DONE] Зафиксировать corrective scope для auto-layout visibility bug: подтвердить, что shared diagram shell сохраняет новый layout в `*.flow.json`, но не обновляет live React Flow viewport, из-за чего пользователь видит результат только после reopen/remount stage (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram auto-layout realtime refresh`).
 2. [DONE] Git Commit: `docs(plan): scope diagram auto-layout realtime refresh` (hash: `e09630a2`)
 3. [DONE] Исправить shared auto-layout feedback loop: после первичной авто-раскладки и после явного клика `Auto-layout` canvas должен сразу перестраиваться в текущем экране через live viewport refit, без ухода на другой шаг и без remount diagram stage (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `fix(ui): refresh diagram viewport after auto-layout`).
 4. [DONE] Git Commit: `fix(ui): refresh diagram viewport after auto-layout` (hash: `2811a78b`)
@@ -285,7 +285,7 @@
 ## Phase 9 — diagram modules layout profiles and full-height surface (owner: Oleksandr, updated: 2026-03-18)
 
 ### Stream: Planning and modules-first corrective scope
-1. [DONE] Зафиксировать modules-first corrective scope: текущий `Auto-layout` уже обновляет canvas в реальном времени, но всё ещё держится на одном hard-coded ELK mode, который может схлопывать `Diagram Modules` в одну горизонтальную линию; одновременно stage-panel должен занять всю вертикальную площадь artifact column до нижней границы Project Manager (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram modules layout profiles`).
+1. [DONE] Зафиксировать modules-first corrective scope: текущий `Auto-layout` уже обновляет canvas в реальном времени, но всё ещё держится на одном hard-coded ELK mode, который может схлопывать `Diagram Modules` в одну горизонтальную линию; одновременно stage-panel должен занять всю вертикальную площадь artifact column до нижней границы Project Manager (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope diagram modules layout profiles`).
 2. [DONE] Git Commit: `docs(plan): scope diagram modules layout profiles` (hash: `b7c43537`)
 3. [DONE] Добавить несколько concrete ELK profiles для `Diagram Modules` рядом с `Auto-layout`: как минимум `Vertical`, `Horizontal`, `Compact`, `Fill space`, где `Fill space` пытается использовать всю доступную площадь canvas вместо одной компактной полосы (scope: `src/client/project-manager/components/diagram-editor/diagram-layout-facade.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`; expected commit: `feat(diagram-modules): add layout profiles`).
 4. [DONE] Git Commit: `feat(diagram-modules): add layout profiles` (hash: `ced1a8b0`)
@@ -305,7 +305,7 @@
 ## Phase 10 — launcher-safe diagram layout profile control (owner: Oleksandr, updated: 2026-03-19)
 
 ### Stream: Crash audit and control replacement
-1. [DONE] Зафиксировать corrective scope после manual verification `v1.1.744`: падение launcher происходит не в ELK, а в native HTML `<select>` popup path внутри macOS CEF/AppKit, поэтому профильный selector для `Diagram Modules` нужно заменить на launcher-safe custom control без native dropdown (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope launcher-safe layout profile control`).
+1. [DONE] Зафиксировать corrective scope после manual verification `v1.1.744`: падение launcher происходит не в ELK, а в native HTML `<select>` popup path внутри macOS CEF/AppKit, поэтому профильный selector для `Diagram Modules` нужно заменить на launcher-safe custom control без native dropdown (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope launcher-safe layout profile control`).
 2. [DONE] Git Commit: `docs(plan): scope launcher-safe layout profile control` (hash: `ba94fabe`)
 3. [DONE] Заменить toolbar `<select>` для layout profiles на launcher-safe button group / segmented control, сохранив выбор `Vertical`, `Horizontal`, `Compact`, `Fill space` рядом с `Auto-layout`, и добавить regression coverage на отсутствие native select path (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `fix(diagram-modules): replace layout profile select`).
 4. [DONE] Git Commit: `fix(diagram-modules): replace layout profile select` (hash: `a062884b`)
@@ -377,7 +377,7 @@
 6. [DONE] Git Commit: `docs(session): record diagram surface simplification release` (hash: `9d7f852d`)
 
 ## Notes
-- Planning doc for this scope: `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
-- Active recovery planning docs: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/RepositoryDuplicationDebt_Reduction_Architecture.md`
+- Planning doc for the next follow-up scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- Historical archived planning docs for the completed diagram rollout: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/RepositoryDuplicationDebt_Reduction_Architecture.md`
 - Session reports to review before the first implementation stream: `doc/Sessions/Session078.md`, `doc/Sessions/Session079.md`, `doc/Sessions/Session080.md`, `doc/Sessions/Session081.md`, `doc/Sessions/Session082.md`
 - Target verification principle for the whole scope: после каждой Phase должен существовать новый локальный релиз, в котором пользователь может проверить либо новый artifact/gating behavior, либо новый visual layer, либо новый semantic roundtrip, а не ждать финала всего scope

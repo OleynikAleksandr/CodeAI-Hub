@@ -52,7 +52,7 @@
 6. **Response-mode diagnostics split**: shaping live Codex turn-ов (`strict` / `hybrid` / `debug_raw`) не может быть единственным местом, где существует provider output; raw provider logs остаются диагностическим SSOT до любых UI/history фильтров.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`.
 7. **Provider dialog segment preservation**: если provider runtime фактически отдает несколько assistant-replies внутри одного пользовательского turn-а, provider normalization layer не имеет права схлопывать их в один post-factum blob; допустим только fallback aggregate-path, когда streamed segment boundaries не были отданы вообще.
-   - Канон: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/Plans/Gemini_DialogSegmentation_Architecture.md`.
+   - Канон: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`.
 8. **Workspace-scoped stream replay**: stateful session signals (`token_usage`, `usage_limits`), которые могут прийти до attach/rebind workspace scope, обязаны иметь replay-safe transport path после websocket connect и после смены scope; single-shot delivery для таких сигналов недопустим.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`.
 9. **Provider-order-safe continuity arbitration**: Core обязан одинаково корректно обрабатывать оба event order-а (`token_usage -> turn_completed` и `turn_completed -> token_usage`); trailing usage может завершать уже начатую post-turn arbitration, а cached usage обязан быть turn-scoped и очищаться после решения.
@@ -112,7 +112,7 @@
 - Runtime обязан считать `.md` artifact единственным product-visible SSOT, а `*.flow.json` трактовать как non-semantic sidecar.
 
 Канонические документы:
-- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 
@@ -139,26 +139,20 @@
 - Browser/UI bundle не должен зависеть от Node-only imports ради рендера diagram artifacts; для `Revision` browser-safe parsing path может переиспользовать уже записанное поле `- Revision:` из канонического Markdown DSL.
 
 Канонические документы:
-- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - `doc/TODO/todo-plan.md`
 
-## 6.3) Module Semantic Editing Boundary (Phase 3, 2026-03-16)
+## 6.3) Module Semantic Source Boundary (Phase 3, 2026-03-16)
 
-- `Diagram Modules` получает semantic editing вокруг visual shell, но semantic truth по-прежнему не принадлежит graph canvas.
-- Источник semantic truth не меняется:
-  - пользовательские операции apply-ятся как domain patches;
-  - результат сериализуется обратно только в `module-map.md`;
-  - `module-map.flow.json` не содержит semantic edits.
-- Graph canvas допускает ручную корректировку layout, но эти изменения сохраняются только в `module-map.flow.json` и не меняют semantic DSL content.
-- Локальные semantic edits обязаны сохранять provenance:
-  - новый entity/relation, созданный пользователем, получает `origin: user`;
-  - изменение agent-generated entity/relation переводит `origin` в `merged`.
-- UI обязан держать локальную очередь semantic patches до тех пор, пока incoming remote refresh не будет либо совпадать с текущей локальной ревизией, либо безопасно перемержен поверх локальных патчей.
-- При конфликте patch reapply пользователь должен видеть explicit warning state; silent drop локальных semantic edits недопустим.
+- `Diagram Modules` keeps semantic truth in the canonical Markdown artifact, not in the visible graph canvas.
+- Видимый UI больше не содержит inline-редакторов для module entities и relations.
+- Semantic changes are expected to come from agent runs or direct canonical Markdown editing, then serialize back only into `module-map.md`.
+- Graph canvas continues to allow manual layout edits, and those changes remain in `module-map.flow.json` only.
+- Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
-- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 
 ## 6.4) Facade Semantic Source Boundary (Phase 4, 2026-03-16)
 
@@ -170,7 +164,7 @@
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
-- `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 
 ## 6.5) Diagram Workflow Stabilization Boundary (Phase 5, 2026-03-16)
 

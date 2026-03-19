@@ -5,7 +5,7 @@
 **Scope:** Product-facing UI contract for `Diagram Modules` and `Diagram Facades`
 
 **Related documents:**
-- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/TODO/todo-plan.md`
 - `doc/Sessions/Session093.md`
