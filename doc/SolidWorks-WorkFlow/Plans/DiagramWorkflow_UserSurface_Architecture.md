@@ -1,10 +1,10 @@
-# Diagram Workflow User Surface Architecture
+# Архитектура пользовательской поверхности Diagram Workflow
 
-**Status:** DRAFT - approved recovery scope
-**Date:** 2026-03-18
-**Scope:** Product-facing UI contract for `Diagram Modules` and `Diagram Facades`
+**Статус:** Черновик - scope восстановления утверждён
+**Дата:** 2026-03-18
+**Охват:** пользовательский UI-контракт для `Diagram Modules` и `Diagram Facades`
 
-**Related documents:**
+**Связанные документы:**
 - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/TODO/todo-plan.md`
@@ -12,179 +12,179 @@
 
 ---
 
-## 1. Problem
+## 1. Проблема
 
-The bootstrap path for `Diagram Modules` and `Diagram Facades` is now working again, but the user-facing surface is still wrong.
+Путь начальной загрузки для `Diagram Modules` и `Diagram Facades` снова работает, но пользовательская поверхность шага всё ещё устроена неправильно.
 
-Current behavior mixes three different concerns in the same right panel:
-- the human-facing diagram;
-- the runtime-owned Markdown source artifact (`module-map.md`, `facade-map.md`);
-- dense semantic editing forms and technical layout details (`*.flow.json`).
+Сейчас в одной и той же правой панели смешаны три разные зоны ответственности:
+- диаграмма, на которую должен смотреть пользователь;
+- исходный Markdown-артефакт, которым владеет runtime (`module-map.md`, `facade-map.md`);
+- плотные формы семантического редактирования и технические детали раскладки (`*.flow.json`).
 
-That makes the stage feel unreliable even when the session and artifacts are technically correct.
-
----
-
-## 2. Product Decision
-
-For diagram stages, the primary user surface must be the diagram itself.
-
-### Final UX contract
-
-- `Artifacts` shows the visual diagram, not raw Markdown.
-- `Source` shows the canonical Markdown artifact in read-only mode.
-- `Help` remains the explanatory panel.
-- `module-map.md` / `facade-map.md` remain the canonical runtime SSOT, but they are not the default surface.
-- `*.flow.json` remains an internal persistence sidecar and must not be shown as a user artifact.
-- Returning to a diagram stage must reopen the diagram view, not the raw `.md` source.
+Из-за этого шаг выглядит ненадёжным даже тогда, когда сама сессия и артефакты технически корректны.
 
 ---
 
-## 3. Interaction Model
+## 2. Решение на уровне продукта
 
-### Header modes
+Для шагов диаграмм основной пользовательской поверхностью должна быть сама диаграмма.
 
-For `Diagram Modules` and `Diagram Facades`, the artifact header must expose:
+### Финальный UX-контракт
+
+- `Artifacts` показывает визуальную диаграмму, а не сырой Markdown.
+- `Source` показывает канонический Markdown-артефакт в режиме только чтения.
+- `Help` остаётся поясняющей панелью.
+- `module-map.md` / `facade-map.md` остаются каноническим runtime SSOT, но не являются поверхностью по умолчанию.
+- `*.flow.json` остаётся внутренним sidecar-файлом для сохранения состояния и не должен показываться пользователю как артефакт.
+- Возврат на шаг диаграммы должен снова открывать именно представление диаграммы, а не сырой `.md`-источник.
+
+---
+
+## 3. Модель взаимодействия
+
+### Режимы в заголовке
+
+Для `Diagram Modules` и `Diagram Facades` заголовок артефактов должен показывать:
 - `Artifacts`
 - `Source`
 - `Help`
 
-For non-diagram stages, the existing contract remains unchanged:
+Для недиаграммных шагов текущий контракт остаётся без изменений:
 - `Artifacts`
 - `Help`
 
-### Diagram mode
+### Режим диаграммы
 
-- The canvas is the first visible object in the right panel.
-- Technical subtitles such as `artifact -> flow sidecar` are removed from the default UI.
-- Editing controls stay available, but they become clearly secondary to the diagram.
-- The user must be able to manually refine layout in React Flow and keep that layout persisted.
+- Полотно диаграммы является первым видимым объектом в правой панели.
+- Технические подписи вроде `artifact -> flow sidecar` удаляются из UI по умолчанию.
+- Элементы редактирования остаются доступными, но становятся явно вторичными по отношению к диаграмме.
+- Пользователь должен иметь возможность вручную дорабатывать раскладку в React Flow и сохранять её между открытиями.
 
-### Source mode
+### Режим `Source`
 
-- Shows only raw `module-map.md` or `facade-map.md`.
-- Read-only by default.
-- Used for debugging, inspection, or copy/export workflows.
-- Does not expose `*.flow.json`.
-
----
-
-## 4. Implementation Slices
-
-### Slice A - MainArea header contract
-
-- Extend the right-panel header mode model to include `source` for diagram stages only.
-- Keep `artifacts` as the default mode after toolbar navigation, workspace-tree sync, and stage reopen.
-- Prevent diagram stages from auto-falling back to raw Markdown just because a canonical artifact was selected internally for sync.
-
-### Slice B - Diagram source routing
-
-- Resolve canonical diagram source from the active stage (`module-map.md`, `facade-map.md`) instead of treating it as the primary artifact surface.
-- Reuse the existing Markdown artifact viewer as a secondary `Source` view.
-
-### Slice C - Diagram-first stage panels
-
-- Reorder diagram stage panels so the visual shell is primary.
-- Remove internal path/sidecar chrome from the default panel.
-- Demote semantic editing controls into secondary/collapsible sections.
-- Improve layout readability by making manual node arrangement a first-class path alongside optional auto-layout.
+- Показывает только сырой `module-map.md` или `facade-map.md`.
+- По умолчанию работает в режиме только чтения.
+- Используется для отладки, инспекции или сценариев копирования и экспорта.
+- Не раскрывает `*.flow.json`.
 
 ---
 
-## 5. Non-goals For This Recovery Phase
+## 4. Срезы реализации
 
-- Replacing Markdown DSL as the canonical SSOT.
-- Building a full dedicated inspector-driven diagram editor in this phase.
-- Exposing runtime/internal files beyond the canonical `.md` source.
+### Срез A - контракт заголовка `MainArea`
 
----
+- Расширить модель режимов заголовка правой панели, добавив `source`, но только для шагов диаграмм.
+- Оставить `artifacts` режимом по умолчанию после навигации из toolbar, синхронизации с деревом workspace и повторного открытия шага.
+- Не позволять шагам диаграмм автоматически откатываться в сырой Markdown только потому, что канонический артефакт был внутренне выбран для синхронизации.
 
-## 6. Verification
+### Срез B - маршрутизация источника диаграммы
 
-Manual verification for this phase must prove:
+- Разрешать канонический источник диаграммы от активного шага (`module-map.md`, `facade-map.md`), но не считать его основной пользовательской поверхностью.
+- Переиспользовать существующий просмотрщик Markdown-артефактов как вторичный режим `Source`.
 
-1. Clicking `Diagram Modules` or `Diagram Facades` opens the stage with `Artifacts` selected and the diagram visible.
-2. Switching to another stage and back still reopens the diagram, not raw Markdown.
-3. Clicking `Source` shows the canonical `.md` artifact in read-only mode.
-4. The right panel never exposes `*.flow.json`.
-5. Manual node movement persists after reopen/resume.
+### Срез C - панели шагов в режиме diagram-first
 
----
-
-## 7. Rewrite Instruction For Main TODO
-
-The recovered execution plan must stop treating `module-map.md` / `facade-map.md` as the user artifact surface for diagram stages.
-
-The new active execution scope is:
-- recover the product-facing diagram surface;
-- keep source artifacts available only as a secondary debug view;
-- ship a new release that validates the revised `Artifacts / Source / Help` contract.
+- Перестроить панели шагов диаграмм так, чтобы визуальная оболочка была первичной.
+- Убрать из панели по умолчанию внутренний служебный chrome с путями и sidecar-деталями.
+- Перевести элементы семантического редактирования во вторичные или сворачиваемые секции.
+- Повысить читаемость раскладки за счёт того, что ручная расстановка узлов становится основным сценарием наряду с optional auto-layout.
 
 ---
 
-## 8. Superseded Follow-up - Diagram Modules layout profiles first
+## 5. Что не входит в этот этап восстановления
 
-After the user-surface recovery shipped, manual verification exposed the next UX gap:
-
-- the current ELK auto-layout can collapse `Diagram Modules` into a single long horizontal line;
-- the button now refreshes in real time, but the algorithm itself is still too naive;
-- the artifact panel also leaves unused vertical space below the diagram sections.
-
-This follow-up was implemented experimentally, but later manual validation disproved the product value of ELK-driven layout profiles.
-
-The old next step was:
-
-- improve `Diagram Modules` first, before touching `Diagram Facades`;
-- expose several concrete ELK layout profiles next to `Auto-layout`;
-- include one profile that explicitly tries to occupy the available canvas area instead of staying overly compact;
-- stretch the diagram surface vertically so the canvas plus collapsed editing sections occupy the full right-side artifact panel height.
-
-`Diagram Facades` stays intentionally out of this stream. It should not inherit the removed ELK-driven UX as a primary interaction model.
+- Замена Markdown DSL как канонического SSOT.
+- Построение полноценного отдельного редактора диаграмм с inspector-driven UX в рамках этой фазы.
+- Показ runtime/internal files сверх канонического `.md`-источника.
 
 ---
 
-## 9. Superseded Follow-up - Launcher-safe layout profile control
+## 6. Верификация
 
-The first `Diagram Modules` layout-profile release exposed a platform-specific failure:
+Ручная проверка для этой фазы должна подтвердить следующее:
 
-- the layout choice itself is useful and should stay in the product;
-- the macOS launcher crashes when the profile chooser goes through a native HTML `<select>` popup;
-- this is a launcher-surface problem, not an ELK algorithm problem.
-
-This follow-up solved a launcher crash, but the whole layout-profile surface is now superseded together with `Auto-layout`.
-
-The old next step was:
-
-- preserve the four approved profiles: `Vertical`, `Horizontal`, `Compact`, `Fill space`;
-- replace the native `<select>` with a custom launcher-safe control rendered directly in the toolbar;
-- keep profile selection as an explicit UI choice next to `Auto-layout`;
-- do not broaden this corrective stream into `Diagram Facades` yet;
-- ship a focused release that restores launcher stability before any further layout-quality tuning.
+1. Клик по `Diagram Modules` или `Diagram Facades` открывает шаг с выбранным `Artifacts` и видимой диаграммой.
+2. Переключение на другой шаг и возврат назад снова открывают диаграмму, а не сырой Markdown.
+3. Клик по `Source` показывает канонический `.md`-артефакт в режиме только чтения.
+4. Правая панель никогда не показывает `*.flow.json`.
+5. Ручное перемещение узлов сохраняется после повторного открытия или восстановления сессии.
 
 ---
 
-## 10. Approved Follow-up - Remove ELK from product UX
+## 7. Инструкция по переписыванию основного TODO
 
-Manual validation showed that ELK is the wrong product primitive for these diagram steps:
+Восстановленный execution plan должен перестать считать `module-map.md` / `facade-map.md` пользовательской поверхностью артефакта для шагов диаграмм.
 
-- the final readability of the graph depends much more on the AI-produced semantic artifact than on algorithmic layout;
-- even when ELK recomputes positions correctly, the visual result is still not trustworthy as a user-facing architecture view;
-- `Auto-layout` and profile buttons consume toolbar space, create false expectations, and can destroy a manually corrected composition.
+Новый активный execution scope:
+- восстановить product-facing поверхность диаграммы;
+- оставить source artifacts только как вторичный debug view;
+- выпустить новый релиз, который подтверждает обновлённый контракт `Artifacts / Source / Help`.
 
-Approved next step:
+---
 
-- remove `Auto-layout` and all profile controls from the visible diagram UX;
-- remove `Edit Modules` / `Edit Relations` and facade semantic editing sections from the visible surface;
-- stop treating ELK as the source of the diagram composition;
-- keep `module-map.md` / `facade-map.md` as semantic SSOT;
-- keep `*.flow.json` as user-owned persisted geometry only;
-- preserve and improve manual editing in React Flow;
-- keep `Source` as the secondary read-only artifact view;
-- keep only the left-bottom zoom/fit controls and remove the bottom-right minimap;
-- use agents for semantic changes when a new module, facade, relation, method, or port is needed.
+## 8. Устаревший follow-up — сначала профили раскладки для `Diagram Modules`
 
-Target product contract:
+После релиза восстановления пользовательской поверхности ручная проверка показала следующий UX-gap:
 
-- AI defines semantic structure;
-- the user refines the visual arrangement;
-- Project Manager persists that arrangement without re-imposing an automatic layout pass.
+- текущий ELK auto-layout может сворачивать `Diagram Modules` в одну длинную горизонтальную линию;
+- кнопка уже обновляла результат в реальном времени, но сам алгоритм оставался слишком наивным;
+- панель артефакта также оставляла неиспользованное вертикальное пространство под секциями диаграммы.
+
+Этот follow-up был реализован экспериментально, но позднее ручная валидация показала, что ELK-driven профили раскладки не дают нужной продуктовой ценности.
+
+Старый следующий шаг выглядел так:
+
+- сначала улучшить `Diagram Modules`, не трогая `Diagram Facades`;
+- показать рядом с `Auto-layout` несколько конкретных ELK-профилей раскладки;
+- добавить хотя бы один профиль, который явно пытается занять доступную площадь полотна, а не оставаться слишком компактным;
+- растянуть поверхность диаграммы по вертикали так, чтобы полотно вместе со свёрнутыми секциями редактирования занимало всю высоту правой панели артефактов.
+
+`Diagram Facades` намеренно не входил в этот stream. Он не должен был наследовать удалённый ELK-driven UX как основную модель взаимодействия.
+
+---
+
+## 9. Устаревший follow-up — launcher-safe control для профилей раскладки
+
+Первый релиз профилей раскладки для `Diagram Modules` выявил платформенно-специфическую проблему:
+
+- сама возможность выбора раскладки полезна и, казалось, должна остаться в продукте;
+- launcher на macOS падал, когда выбор профиля проходил через нативный popup HTML `<select>`;
+- это была проблема поверхности launcher, а не проблема алгоритма ELK.
+
+Этот follow-up устранил падение launcher, но вся поверхность профилей раскладки теперь также устарела вместе с `Auto-layout`.
+
+Старый следующий шаг выглядел так:
+
+- сохранить четыре утверждённых профиля: `Vertical`, `Horizontal`, `Compact`, `Fill space`;
+- заменить нативный `<select>` на кастомный launcher-safe control, который рендерится прямо в toolbar;
+- оставить выбор профиля явным UI-решением рядом с `Auto-layout`;
+- пока не расширять этот corrective stream на `Diagram Facades`;
+- выпустить узкий релиз, который сначала возвращает стабильность launcher, а уже потом позволяет продолжать настройку качества layout.
+
+---
+
+## 10. Утверждённый follow-up — убрать ELK из product UX
+
+Ручная валидация показала, что ELK является неправильным product primitive для этих шагов диаграмм:
+
+- итоговая читаемость графа зависит гораздо сильнее от semantic artifact, сгенерированного AI, чем от алгоритмической раскладки;
+- даже когда ELK корректно пересчитывает позиции, визуальный результат всё равно недостаточно надёжен как пользовательское архитектурное представление;
+- `Auto-layout` и кнопки профилей занимают место в toolbar, создают ложные ожидания и могут разрушить вручную выправленную композицию.
+
+Утверждённый следующий шаг:
+
+- убрать `Auto-layout` и все profile controls из видимого diagram UX;
+- убрать `Edit Modules` / `Edit Relations` и секции семантического редактирования facade с видимой поверхности;
+- перестать считать ELK источником композиции диаграммы;
+- сохранить `module-map.md` / `facade-map.md` как semantic SSOT;
+- оставить `*.flow.json` только как сохраняемую геометрию, принадлежащую пользователю;
+- сохранить и улучшить ручное редактирование в React Flow;
+- оставить `Source` вторичным artifact view в режиме только чтения;
+- оставить только левый нижний zoom/fit control block и убрать minimap справа снизу;
+- использовать agents для semantic changes, когда нужен новый module, facade, relation, method или port.
+
+Целевой product contract:
+
+- AI определяет semantic structure;
+- пользователь вручную уточняет визуальную композицию;
+- Project Manager сохраняет эту композицию без повторного навязывания automatic layout pass.
