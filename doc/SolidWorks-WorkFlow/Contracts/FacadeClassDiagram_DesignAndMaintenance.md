@@ -1,10 +1,10 @@
 # Диаграмма классов фасадов (Facade Class Diagram)
 
 **Status:** Active (process)
-**Updated:** 2026-02-17 (release 1.1.622)
+**Updated:** 2026-03-19 (release 1.1.749)
 **Owner:** Oleksandr + Codex
-**Validated for:** 1.1.622
-**Validated on:** 2026-02-17
+**Validated for:** 1.1.749
+**Validated on:** 2026-03-19
 
 
 ## Реальный пример: спиннер загрузки UI Сессии (v1.1.622)
@@ -43,6 +43,12 @@
 - какие **фасады** являются единственными точками входа,
 - какие **взаимодействия** между фасадами допустимы и реально происходят.
 
+Для текущего diagram workflow это означает:
+- semantic SSOT шага `Diagram Facades` хранится в `facade-map.md`;
+- визуальная композиция хранится отдельно в `facade-map.flow.json`;
+- Project Manager рендерит диаграмму из Markdown DSL через React Flow;
+- visible runtime surface больше не использует Mermaid как source-of-truth, не показывает inline semantic editors и не держит bottom-right minimap.
+
 ---
 
 ## 1) Что именно мы считаем «фасадом»
@@ -80,6 +86,8 @@
 - «кто инициирует действие» → «какой фасад принимает» → «какие фасады/контуры участвуют» → «какой артефакт/событие является сигналом завершения».
 
 Это не заменяет глобальный граф, а прикладывается как «быстрый трейс» для конкретного шага.
+
+Для runtime-шагов `Diagram Modules` / `Diagram Facades` такой trace должен ссылаться на канонические Markdown DSL artifacts (`module-map.md`, `facade-map.md`), а не на legacy Mermaid-файлы.
 
 ---
 
@@ -172,19 +180,14 @@ PR считается завершённым только если:
 
 ---
 
-## 7) Формат диаграмм (рекомендация)
+## 7) Формат диаграмм (актуальная рекомендация)
 
-- Для глобального графа: `Mermaid` (`graph LR`) + отдельный machine-readable формат (например, JSON), если будет генерация.
-- Для шагов workflow: `Mermaid sequenceDiagram` или `flowchart`.
-
-Пример (условный фрагмент):
-
-```mermaid
-graph LR
-  PM["Project Manager UI"] -->|ws:event| Core["Core Orchestrator"]
-  Core -->|proc| Provider["Provider Module"]
-  Core -->|fs:jsonl| Sessions["~/.codeai-hub/sessions/*.jsonl"]
-```
+- Для runtime workflow шагов `Diagram Modules` / `Diagram Facades` канонический формат — Markdown DSL:
+  - `module-map.md` / `facade-map.md` как semantic SSOT;
+  - `*.flow.json` как manual-layout/view sidecar;
+  - React Flow rendering в PM как user-facing surface.
+- `Mermaid` допустим только для explanatory documentation, временных investigation notes или одноразовых design sketches вне runtime workflow.
+- Если в документации используется `Mermaid`, он не должен рассматриваться как source-of-truth для PM rendering, watcher gating или agent merge path.
 
 ---
 

@@ -1,7 +1,7 @@
 # Project Manager — Workflow Navigation SSOT
 
 **Status:** Active SSOT  
-**Updated:** 2026-03-05  
+**Updated:** 2026-03-19  
 **Owner:** Oleksandr + Codex
 
 ---
@@ -43,8 +43,8 @@
 `activeStage` обязан детерминировать:
 - `dialogIntent.stage` (если открывается session);
 - `selectedArtifact` (если артефакт существует);
-- `headerMode` правой панели (`artifacts`/`help`);
-- заголовок правой панели (`<Step Name>` + toggle `Artifacts/Help`).
+- `headerMode` правой панели (step-specific: `artifacts`/`help` или `artifacts`/`source`/`help`);
+- заголовок правой панели (`<Step Name>` + соответствующий stage toggle).
 
 ### 4.1 Матрица `activeStage → UI`
 
@@ -52,8 +52,13 @@
 |---|---|---|---|---|
 | `description` | `Description` | `Description` | `Artifacts/Help` | `stage=description` |
 | `virtual_simulation` | `VIRTUAL SIMULATION` | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
-| `diagram_modules` | `Diagram Modules` | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
-| `diagram_facades` | `Diagram Facades` | `Diagram Facades` | `Artifacts/Help` | `stage=diagram_facades` |
+| `diagram_modules` | `Diagram Modules` | `Diagram Modules` | `Artifacts/Source/Help` | `stage=diagram_modules` |
+| `diagram_facades` | `Diagram Facades` | `Diagram Facades` | `Artifacts/Source/Help` | `stage=diagram_facades` |
+
+Для diagram stages:
+- `Artifacts` — default visual React Flow surface;
+- `Source` — read-only canonical Markdown artifact;
+- `Help` — guidance panel.
 
 ## 5) Инварианты
 
@@ -75,7 +80,7 @@
 
 1. Любой клик в Toolbar/Tree/auto-select приводит к одному и тому же stage-состоянию UI.
 2. Header правой панели всегда соответствует текущему stage.
-3. Для всех stage доступен единый toggle `Artifacts/Help`.
+3. Для всех stage доступен `Help`; для diagram stages дополнительно доступен `Source`.
 4. Переходы между stage не оставляют «залипших» артефактов/сессий предыдущего шага.
 
 ## 8) Связанные документы

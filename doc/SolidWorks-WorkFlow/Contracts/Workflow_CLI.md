@@ -1,7 +1,7 @@
 # Workflow Steps & Watcher — Contract (SSOT)
 
 **Status:** Active
-**Updated:** 2026-03-16
+**Updated:** 2026-03-19
 **Owner:** Oleksandr + Codex
 
 ---
@@ -22,8 +22,8 @@
 
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
-3. `Diagram Modules` → артефакты: `module-map.md`, `module-map.flow.json`, `module-map.agent-baseline.md`
-4. `Diagram Facades` → артефакты: `facade-map.md`, `facade-map.flow.json`, `facade-map.agent-baseline.md`
+3. `Diagram Modules` → canonical output: `module-map.md` + sidecars `module-map.flow.json`, `module-map.agent-baseline.md`
+4. `Diagram Facades` → canonical output: `facade-map.md` + sidecars `facade-map.flow.json`, `facade-map.agent-baseline.md`
 
 ---
 
@@ -46,6 +46,18 @@
   - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.agent-baseline.md` (agent baseline for diff/merge)
 
 Legacy `description.md` допускается только для compat и не участвует в gating новых workflow.
+
+### 3.1 Diagram runtime / user-surface contract
+
+- `module-map.md` и `facade-map.md` — единственный semantic SSOT для diagram steps.
+- `*.agent-baseline.md` используется только для agent diff/merge path и не является primary user surface.
+- `*.flow.json` хранит только layout/view state и не участвует в semantic gating.
+- Project Manager для `Diagram Modules` / `Diagram Facades` использует user surface `Artifacts/Source/Help`:
+  - `Artifacts` по умолчанию открывает visual React Flow projection;
+  - `Source` показывает read-only canonical `.md`;
+  - `Help` показывает guidance по шагу.
+- Visible PM surface для diagram steps не должна требовать `Auto-layout`, layout profiles, inline semantic editors или bottom-right minimap.
+- Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact.
 
 ---
 
@@ -110,6 +122,8 @@ Manual start не отменяет watcher:
 Для `Virtual Simulation` runtime-контракт prompt-only:
 - отсутствие `templatePath`/artifact template не влияет на запуск шага и пересчёт статусов;
 - источником инструкций для агента является `virtual-simulation-prompt.md`.
+
+Для `Diagram Modules` / `Diagram Facades` default PM route после открытия шага обязан возвращать пользователя в `Artifacts`, а не в raw Markdown source.
 
 ---
 
