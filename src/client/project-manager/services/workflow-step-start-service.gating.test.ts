@@ -93,7 +93,7 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
   });
 });
 
-test("startDiagramFacades starts from module-map artifact without completed status", async () => {
+test("startDiagramFacades starts from module-inventory artifact without completed status", async () => {
   installWindowStub();
   const { WorkflowStepStartService } = await import("./workflow-step-start-service");
 
@@ -134,7 +134,8 @@ test("startDiagramFacades starts from module-map artifact without completed stat
 
   assert.equal(sessionId, "df-session");
   assert.deepEqual(captured, {
-    questionnairePath: ".codeai-hub/demo-workspace/diagram_modules/module-map.md",
+    questionnairePath:
+      ".codeai-hub/demo-workspace/diagram_modules/module-inventory.md",
     stage: "diagram_facades",
   });
 });

@@ -132,10 +132,10 @@ export class WorkflowStepStartService {
       return existingSessionId;
     }
 
-    const dmArtifactPath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.md`;
+    const dmArtifactPath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/module-inventory.md`;
     const facadesBlocked = state?.gating?.blocked?.diagram_facades ?? true;
     if (facadesBlocked) {
-      throw new Error("Missing module-map.md. Complete Diagram Modules step first.");
+      throw new Error("Missing module-inventory.md. Complete Diagram Modules step first.");
     }
     return this.submitService.submitQuestionnaire({
       workspaceName: params.workspaceName,
