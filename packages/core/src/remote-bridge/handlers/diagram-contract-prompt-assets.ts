@@ -18,14 +18,14 @@ const resolveSyncedDiagramTemplateCandidates = (
 
 export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
   ...resolveSyncedDiagramTemplateCandidates(
-    "diagram_modules/module-map-field-reference.md",
+    "diagram_modules/module-inventory-field-reference.md",
     "diagram-modules-agent",
-    "module-map-field-reference.md"
+    "module-inventory-field-reference.md"
   ),
   ...resolveSyncedDiagramTemplateCandidates(
-    "diagram_modules/module-map-merge-rules.md",
+    "diagram_modules/module-inventory-merge-rules.md",
     "diagram-modules-agent",
-    "module-map-merge-rules.md"
+    "module-inventory-merge-rules.md"
   ),
 ] as const;
 

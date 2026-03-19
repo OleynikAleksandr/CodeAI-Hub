@@ -63,11 +63,11 @@ const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: resolveDiagramAgentAssetPath(
     "diagram-modules-agent",
-    "module-map-prompt.md"
+    "module-inventory-prompt.md"
   ),
   template: resolveDiagramAgentAssetPath(
     "diagram-modules-agent",
-    "module-map-template.md"
+    "module-inventory-template.md"
   ),
   promptAppendix: DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
 };
