@@ -74,8 +74,7 @@
 
 Явная snapshot-модель `inputLock.active/reason/updatedAt` пока **не реализована** на текущем `main`.
 
-Её future-target design перенесён в planning-док:
-- `doc/SolidWorks-WorkFlow/Plans/SessionInputLock_TargetState_Architecture.md`
+Отдельный future-target planning-док для этой модели был удалён во время cleanup `Plans/`; активного design-track по второй фазе input-lock rewrite сейчас нет.
 
 До реализации этой модели живой код обязан опираться на:
 - инкрементальные правила из разделов `3.1` и `3.2`;
@@ -89,4 +88,3 @@
 - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md` (happy path)
 - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md` (snapshot SSOT)
 - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md` (dialogId/sessionId/providerSessionId)
-- `doc/SolidWorks-WorkFlow/Plans/SessionInputLock_TargetState_Architecture.md` (future-target design)

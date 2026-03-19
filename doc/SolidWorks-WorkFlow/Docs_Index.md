@@ -49,10 +49,8 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/DiagramWorkflow_UserSurface_Architecture.md` — active follow-up план для diagram user surface и следующих UI-улучшений.
 - `Plans/StandaloneReviewer_Module.md` — draft deferred-модуля standalone reviewer (manual-only, вне базового chain 1→6).
-- `Plans/ProviderSessionHome_IsolationAndRecovery.md` — deferred target-architecture для per-session provider HOME + resume/snapshot recovery.
-- `Plans/ProviderSessionHome_SnapshotEngine_Design.md` — draft implementation design для deferred session-home architecture.
-- `Plans/SessionInputLock_TargetState_Architecture.md` — target-state design для явной snapshot-модели `inputLock.*`.
 - `Plans/Archive/` — завершённые или снятые planning-доки, сохраняемые только как история.
 
 ## 2) Runtime templates (Description)
