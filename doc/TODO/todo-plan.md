@@ -87,11 +87,11 @@
 ## Phase 16 — Diagram Modules Inventory-Only Contract Cleanup (owner: Oleksandr, updated: 2026-03-19)
 
 ### Stream: Planning and contract reset
-1. [IN_PROGRESS] Зафиксировать в planning doc и в execution plan новый inventory-only contract: `module-map.md` больше не является workspace artifact, visible template и gating dependency для `Diagram Modules`; `Diagram Facades` должен читать upstream module context из `module-inventory.md` (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope inventory-only diagram cleanup`).
-2. [TODO] Git Commit: `docs(plan): scope inventory-only diagram cleanup` (hash: TBD)
+1. [DONE] Зафиксировать в planning doc и в execution plan новый inventory-only contract: `module-map.md` больше не является workspace artifact, visible template и gating dependency для `Diagram Modules`; `Diagram Facades` должен читать upstream module context из `module-inventory.md` (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope inventory-only diagram cleanup`).
+2. [DONE] Git Commit: `docs(plan): scope inventory-only diagram cleanup` (hash: `46f436d7`)
 
 ### Stream: Visible templates and prompts
-1. [TODO] Убрать legacy `module-map-*` из visible template sync для `diagram_modules`, чтобы в `~/.codeai-hub/templates/diagram_modules/` остались только inventory-first assets (scope: `packages/core/src/templates/bundled-templates.ts`, `scripts/generate-bundled-templates.js`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `refactor(templates): drop legacy module map sync`).
+1. [IN_PROGRESS] Убрать legacy `module-map-*` из visible template sync для `diagram_modules`, чтобы в `~/.codeai-hub/templates/diagram_modules/` остались только inventory-first assets (scope: `packages/core/src/templates/bundled-templates.ts`, `scripts/generate-bundled-templates.js`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `refactor(templates): drop legacy module map sync`).
 2. [TODO] Git Commit: `refactor(templates): drop legacy module map sync` (hash: TBD)
 3. [TODO] Очистить стартовый prompt contract `Diagram Modules`: убрать из runtime prompt и agent prompt упоминания о переходе к `module-map.md`, оставить только inventory-first dialogue и `module-map.flow.json` как layout sidecar (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `refactor(diagram-modules): remove module map prompt tail`).
 4. [TODO] Git Commit: `refactor(diagram-modules): remove module map prompt tail` (hash: TBD)

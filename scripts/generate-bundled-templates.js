@@ -63,29 +63,6 @@ const TEMPLATES = [
     dest: ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
   },
   {
-    id: "module-map-prompt",
-    source: "packages/agents/diagram-modules-agent/assets/module-map-prompt.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-map-prompt.md",
-  },
-  {
-    id: "module-map-template",
-    source:
-      "packages/agents/diagram-modules-agent/assets/module-map-template.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-map-template.md",
-  },
-  {
-    id: "module-map-field-reference",
-    source:
-      "packages/agents/diagram-modules-agent/assets/module-map-field-reference.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-map-field-reference.md",
-  },
-  {
-    id: "module-map-merge-rules",
-    source:
-      "packages/agents/diagram-modules-agent/assets/module-map-merge-rules.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-map-merge-rules.md",
-  },
-  {
     id: "facade-map-prompt",
     source: "packages/agents/diagram-facades-agent/assets/facade-map-prompt.md",
     dest: ".codeai-hub/templates/diagram_facades/facade-map-prompt.md",
