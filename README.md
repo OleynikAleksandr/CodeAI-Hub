@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.748
-- `Diagram Modules` and `Diagram Facades` now use a manual-layout-first surface: `Auto-layout`, profile buttons, and the old layout-status chrome are removed from the visible UI.
+## Current Release — v1.1.749
+- `Diagram Modules` and `Diagram Facades` now use a visual-only manual-layout surface: `Auto-layout`, profile buttons, `Edit Modules`, `Edit Relations`, and the old layout-status chrome are removed from the visible UI.
 - The semantic diagram still comes from canonical `module-map.md` / `facade-map.md`, while `module-map.flow.json` / `facade-map.flow.json` now persist only user-owned node positions instead of ELK-specific profile state.
-- React Flow remains the interactive surface for manual correction, and inline editors `Edit Modules` / `Edit Relations` stay available as secondary semantic editors below the diagram instead of competing with the main canvas.
-- The release also removes the runtime `elkjs` dependency, keeping the diagram UX focused on AI-generated structure plus explicit user refinement.
+- React Flow remains the interactive surface for manual correction, the bottom-right minimap is gone, and the left-bottom zoom/fit controls stay in place for navigation.
+- Semantic changes now flow through agent-driven updates or direct canonical Markdown editing, so the main canvas stays focused on structure and manual layout rather than inline CRUD forms.
 
 Previous releases (summary): the `1.1.57x–1.1.743` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, and realtime auto-layout refresh without reopen/remount.
 
