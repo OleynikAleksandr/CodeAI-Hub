@@ -14,7 +14,7 @@ const OUTPUT = path.join(
 );
 
 // Manifest: id, source asset path (relative to repo root), destination path (relative to home dir).
-// Diagram workflow assets now live in dedicated agent packages and are not bundled into core templates.
+// Diagram workflow assets are bundled from dedicated agent packages into visible home templates.
 const TEMPLATES = [
   {
     id: "description-collector-prompt",
@@ -37,6 +37,52 @@ const TEMPLATES = [
     id: "virtual-simulation-prompt",
     source: "packages/core/src/templates/source/virtual-simulation-prompt.md",
     dest: ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
+  },
+  {
+    id: "module-map-prompt",
+    source: "packages/agents/diagram-modules-agent/assets/module-map-prompt.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-map-prompt.md",
+  },
+  {
+    id: "module-map-template",
+    source:
+      "packages/agents/diagram-modules-agent/assets/module-map-template.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-map-template.md",
+  },
+  {
+    id: "module-map-field-reference",
+    source:
+      "packages/agents/diagram-modules-agent/assets/module-map-field-reference.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-map-field-reference.md",
+  },
+  {
+    id: "module-map-merge-rules",
+    source:
+      "packages/agents/diagram-modules-agent/assets/module-map-merge-rules.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-map-merge-rules.md",
+  },
+  {
+    id: "facade-map-prompt",
+    source: "packages/agents/diagram-facades-agent/assets/facade-map-prompt.md",
+    dest: ".codeai-hub/templates/diagram_facades/facade-map-prompt.md",
+  },
+  {
+    id: "facade-map-template",
+    source:
+      "packages/agents/diagram-facades-agent/assets/facade-map-template.md",
+    dest: ".codeai-hub/templates/diagram_facades/facade-map-template.md",
+  },
+  {
+    id: "facade-map-field-reference",
+    source:
+      "packages/agents/diagram-facades-agent/assets/facade-map-field-reference.md",
+    dest: ".codeai-hub/templates/diagram_facades/facade-map-field-reference.md",
+  },
+  {
+    id: "facade-map-merge-rules",
+    source:
+      "packages/agents/diagram-facades-agent/assets/facade-map-merge-rules.md",
+    dest: ".codeai-hub/templates/diagram_facades/facade-map-merge-rules.md",
   },
 ];
 
