@@ -7,6 +7,7 @@ import type {
 } from "./adapters/domain-model-to-react-flow.types";
 import { DiagramEditorSection } from "./diagram-editor-section";
 import { DiagramEditorShell } from "./diagram-editor-shell";
+import type { DiagramLayoutProfileId } from "./diagram-layout-facade";
 import type { DiagramSaveState } from "./save-status-indicator";
 import type { DiagramLoaderStatus } from "./use-diagram-loader";
 
@@ -24,11 +25,17 @@ type DiagramStagePanelScaffoldProps = {
   readonly content: string | null;
   readonly error: string | null;
   readonly initialNodes?: readonly DiagramFlowNode[];
+  readonly initialLayoutProfile?: DiagramLayoutProfileId;
   readonly introText: string;
   readonly onDismissConflicts: () => void;
-  readonly onNodesChange: (
+  readonly onNodesChange?: (
     nodes: readonly DiagramFlowNode[]
   ) => void | Promise<void>;
+  readonly onFlowStateChange?: (payload: {
+    readonly nodes: readonly DiagramFlowNode[];
+    readonly revision: string;
+    readonly layoutProfile?: DiagramLayoutProfileId;
+  }) => void | Promise<void>;
   readonly onStartFix: (params: FixStartParams) => Promise<void>;
   readonly pendingContent: React.ReactNode;
   readonly projection: DiagramFlowProjection | null;
@@ -47,9 +54,11 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
   content,
   error,
   initialNodes,
+  initialLayoutProfile,
   introText,
   onDismissConflicts,
   onNodesChange,
+  onFlowStateChange,
   onStartFix,
   pendingContent,
   projection,
@@ -111,7 +120,9 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
         >
           <div style={{ display: "flex", flex: "1 1 auto", minHeight: 0 }}>
             <DiagramEditorShell
+              initialLayoutProfile={initialLayoutProfile}
               initialNodes={initialNodes}
+              onFlowStateChange={onFlowStateChange}
               onNodesChange={onNodesChange}
               projection={projection}
               saveState={saveState}

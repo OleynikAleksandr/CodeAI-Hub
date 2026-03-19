@@ -21,10 +21,16 @@ type DiagramEditorShellProps = {
   readonly title: string;
   readonly subtitle?: string;
   readonly initialNodes?: readonly DiagramFlowNode[];
+  readonly initialLayoutProfile?: DiagramLayoutProfileId;
   readonly saveState?: DiagramSaveState;
   readonly onNodesChange?: (
     nodes: readonly DiagramFlowNode[]
   ) => void | Promise<void>;
+  readonly onFlowStateChange?: (payload: {
+    readonly nodes: readonly DiagramFlowNode[];
+    readonly revision: string;
+    readonly layoutProfile?: DiagramLayoutProfileId;
+  }) => void | Promise<void>;
 };
 
 const hasMeaningfulPositions = (nodes: readonly DiagramFlowNode[]): boolean =>
@@ -35,8 +41,10 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   title,
   subtitle,
   initialNodes,
+  initialLayoutProfile,
   saveState = "idle",
   onNodesChange,
+  onFlowStateChange,
 }) => {
   const [nodes, setNodes] = useState<readonly DiagramFlowNode[]>(
     initialNodes ?? projection.nodes
@@ -44,7 +52,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   const [isAutoLayoutPending, setIsAutoLayoutPending] = useState(false);
   const [layoutError, setLayoutError] = useState<string | null>(null);
   const [layoutProfile, setLayoutProfile] =
-    useState<DiagramLayoutProfileId>("vertical");
+    useState<DiagramLayoutProfileId>(initialLayoutProfile ?? "vertical");
   const [layoutViewport, setLayoutViewport] = useState<{
     readonly width: number;
     readonly height: number;
@@ -91,8 +99,30 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   }, [initialNodes, projection.nodes, projection.revision]);
 
   useEffect(() => {
+    setLayoutProfile(initialLayoutProfile ?? "vertical");
+  }, [initialLayoutProfile, projection.revision]);
+
+  useEffect(() => {
     setLayoutError(null);
   }, [projection.revision]);
+
+  const persistFlowState = useCallback(
+    async (
+      nextNodes: readonly DiagramFlowNode[],
+      nextLayoutProfile: DiagramLayoutProfileId
+    ): Promise<void> => {
+      if (onFlowStateChange) {
+        await onFlowStateChange({
+          nodes: nextNodes,
+          revision: projection.revision,
+          layoutProfile: nextLayoutProfile,
+        });
+        return;
+      }
+      await onNodesChange?.(nextNodes);
+    },
+    [onFlowStateChange, onNodesChange, projection.revision]
+  );
 
   useEffect(() => {
     if (initialLayoutDoneRef.current === projection.revision) {
@@ -119,7 +149,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
         }
         setNodes(nextNodes);
         requestViewportRefresh();
-        await onNodesChange?.(nextNodes);
+        await persistFlowState(nextNodes, resolvedLayoutProfile);
       })
       .catch((error) => {
         if (!cancelled) {
@@ -139,7 +169,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     };
   }, [
     initialNodes,
-    onNodesChange,
+    persistFlowState,
     projection.edges,
     projection.nodes,
     projection.revision,
@@ -160,7 +190,35 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       });
       setNodes(nextNodes);
       requestViewportRefresh();
-      await onNodesChange?.(nextNodes);
+      await persistFlowState(nextNodes, resolvedLayoutProfile);
+    } catch (error) {
+      setLayoutError(
+        error instanceof Error ? error.message : "Auto-layout failed"
+      );
+    } finally {
+      setIsAutoLayoutPending(false);
+    }
+  };
+
+  const handleLayoutProfileChange = async (
+    nextProfile: DiagramLayoutProfileId
+  ): Promise<void> => {
+    if (nextProfile === layoutProfile) {
+      return;
+    }
+    setLayoutProfile(nextProfile);
+    setIsAutoLayoutPending(true);
+    setLayoutError(null);
+    try {
+      const nextNodes = await applyDiagramAutoLayout({
+        nodes,
+        edges: projection.edges,
+        profile: nextProfile,
+        viewport: layoutViewport ?? undefined,
+      });
+      setNodes(nextNodes);
+      requestViewportRefresh();
+      await persistFlowState(nextNodes, nextProfile);
     } catch (error) {
       setLayoutError(
         error instanceof Error ? error.message : "Auto-layout failed"
@@ -189,10 +247,10 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       });
 
       if (nextNodesSnapshot) {
-        void onNodesChange?.(nextNodesSnapshot);
+        void persistFlowState(nextNodesSnapshot, resolvedLayoutProfile);
       }
     },
-    [onNodesChange]
+    [persistFlowState, resolvedLayoutProfile]
   );
 
   return (
@@ -228,7 +286,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
             supportsLayoutProfiles ? DIAGRAM_LAYOUT_PROFILE_OPTIONS : undefined
           }
           onLayoutProfileChange={
-            supportsLayoutProfiles ? setLayoutProfile : undefined
+            supportsLayoutProfiles ? handleLayoutProfileChange : undefined
           }
           onNodesChange={handleFlowNodesChange}
           subtitle={subtitle}

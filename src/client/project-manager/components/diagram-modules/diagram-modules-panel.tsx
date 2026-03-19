@@ -32,6 +32,7 @@ export const DiagramModulesPanel: React.FC<{
     error,
     model,
     projection,
+    flowDocument,
     artifactPath,
     flowSidecarPath,
   } =
@@ -107,14 +108,12 @@ export const DiagramModulesPanel: React.FC<{
       conflicts={conflicts}
       content={content}
       error={error}
+      initialLayoutProfile={flowDocument?.layoutProfile}
       initialNodes={projection?.nodes}
       introText="Artifacts shows the visual module map. Use Source for the canonical Markdown artifact."
       onDismissConflicts={clearConflicts}
-      onNodesChange={async (nodes) => {
-        if (!visualProjection) {
-          return;
-        }
-        await persistNodes({ nodes, revision: visualProjection.revision });
+      onFlowStateChange={async (payload) => {
+        await persistNodes(payload);
       }}
       onStartFix={handleFixStart}
       pendingContent={
