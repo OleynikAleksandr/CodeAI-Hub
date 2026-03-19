@@ -1,6 +1,6 @@
 # Session 103 — Inventory-First Routing Checkpoint
 
-**Date:** 2026-03-19 14:42 (CET)
+**Date:** 2026-03-19 14:55 (CET)
 **Branch:** main
 **Version:** 1.1.749
 
@@ -27,12 +27,18 @@
 - Добавил слот `diagram.modules.inventory` и простую validation rule для `module-inventory.md` в artifact upsert router.
 - Расширил `WORKFLOW_STAGE_FILES` / path contract так, чтобы `resolveWorkflowArtifactPaths(...)` принимал `module-inventory.md` как canonical diagram artifact.
 - Синхронизировал `todo-plan.md`, чтобы item 5 был закрыт и hash `c1b0fb5d` оказался записан в плане.
+- Уточнил help/pending copy для `Diagram Modules`, чтобы пользователю было явно видно inventory-first flow: сначала согласуется `module-inventory.md`, затем строится производная визуальная карта.
+- Добавил `module-inventory-parser.ts` и перевёл `use-diagram-loader.ts` на inventory-first materialization path: `module-map.md` теперь строится из inventory и подаётся в React Flow projection.
+- Обновил test coverage для `diagram-editor-facade.tsx`, чтобы проверить inventory-first loader path и runtime parsing `module-inventory.md`.
+- Синхронизировал `todo-plan.md` под inventory-derived module map projection и зафиксировал hash `628d69e2`.
 
 ## Verification
 - Commit hooks прошли на всех микро-коммитах этой сессии: `test`, `check-architecture`, `check:tsprune`, `jscpd`, `check:links`.
 - Таргетный контрактный тест `node --test --import tsx packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts` прошёл успешно.
 - Smoke-check через `node --import tsx --input-type=module` подтвердил, что `resolveWorkflowArtifactPaths(...)` принимает `diagram_modules/module-inventory.md`.
 - Smoke-check импорта `packages/core/src/remote-bridge/handlers/http-api-router.ts` прошёл успешно.
+- `npm run typecheck:webview` прошёл успешно после inventory-loader changes.
+- `node --test --import tsx src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx` прошёл успешно после inventory-first runtime changes.
 - Таргетные build-команды для этого шага не запускались, потому что изменения затронули только templates/runtime contract и документацию.
 
 ## Git commits
@@ -51,6 +57,10 @@
 - `f05776c9 docs(plan): record dual-input inventory prompt contract`
 - `c1b0fb5d feat(diagram-modules): register module inventory artifact`
 - `fddced4d docs(plan): record module inventory artifact routing`
+- `28f131c5 docs(pm): explain module inventory flow`
+- `d572d69b docs(plan): record inventory-first help flow`
+- `628d69e2 refactor(diagram-modules): derive module map from inventory`
+- `f20eb845 docs(plan): record inventory-derived module map projection`
 
 ---
 
@@ -67,6 +77,6 @@
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
 
 ## Plans for next session
-- Продолжить `Phase 14` по следующему стриму: PM UX `Source = module-inventory.md`, `Artifacts = module-map.md`, без поломки `Diagram Facades`.
-- Оставаться на inventory-first контракте: `Final_Description.md` + `virtual-simulation.md` → `module-inventory.md` → `module-map.md`.
-- Если будет нужна холодная гидрация `module-inventory.md`, добавить её в filesystem/state hydration отдельным следующим микрошагом.
+- Синхронизировать `README.md`, `CHANGELOG.md` и `SystemArchitecture.md` под inventory-derived `Diagram Modules` flow.
+- После этого собрать релиз `v1.1.750` через `build-all.sh` и `build-release.sh --use-current-version`.
+- Если потребуется, потом отдельно дочистить runtime hydration / availability под `module-inventory.md`, но это уже следующий микрошаг после релиза.
