@@ -302,6 +302,24 @@
 
 ---
 
+## Phase 10 — launcher-safe diagram layout profile control (owner: Oleksandr, updated: 2026-03-19)
+
+### Stream: Crash audit and control replacement
+1. [TODO] Зафиксировать corrective scope после manual verification `v1.1.744`: падение launcher происходит не в ELK, а в native HTML `<select>` popup path внутри macOS CEF/AppKit, поэтому профильный selector для `Diagram Modules` нужно заменить на launcher-safe custom control без native dropdown (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope launcher-safe layout profile control`).
+2. [TODO] Git Commit: `docs(plan): scope launcher-safe layout profile control` (hash: TBD)
+3. [TODO] Заменить toolbar `<select>` для layout profiles на launcher-safe button group / segmented control, сохранив выбор `Vertical`, `Horizontal`, `Compact`, `Fill space` рядом с `Auto-layout`, и добавить regression coverage на отсутствие native select path (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `fix(diagram-modules): replace layout profile select`).
+4. [TODO] Git Commit: `fix(diagram-modules): replace layout profile select` (hash: TBD)
+
+### Stream: Phase 10 release build and verification
+1. [TODO] Синхронизировать release-facing docs под launcher-safe profile control и manual verification без native dropdown crash path (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep launcher-safe layout profile release`).
+2. [TODO] Git Commit: `docs(release): prep launcher-safe layout profile release` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release checklist для launcher-safe profile control через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build launcher-safe layout profile release`).
+4. [TODO] Git Commit: `chore(release): build launcher-safe layout profile release` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: launcher больше не падает при выборе profile control, `Auto-layout` всё ещё работает, а `Diagram Modules` сохраняет full-height surface behavior (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session098.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record launcher-safe layout profile release`).
+6. [TODO] Git Commit: `docs(session): record launcher-safe layout profile release` (hash: TBD)
+
+---
+
 ## Notes
 - Planning doc for this scope: `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 - Active recovery planning docs: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/RepositoryDuplicationDebt_Reduction_Architecture.md`

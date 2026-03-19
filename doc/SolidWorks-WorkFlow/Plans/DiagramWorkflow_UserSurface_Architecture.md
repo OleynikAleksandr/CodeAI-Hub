@@ -138,3 +138,21 @@ Approved next step:
 - stretch the diagram surface vertically so the canvas plus collapsed editing sections occupy the full right-side artifact panel height.
 
 `Diagram Facades` stays intentionally out of this stream. It should reuse the learned layout infrastructure later, but with its own readability tuning.
+
+---
+
+## 9. Approved Follow-up - Launcher-safe layout profile control
+
+The first `Diagram Modules` layout-profile release exposed a platform-specific failure:
+
+- the layout choice itself is useful and should stay in the product;
+- the macOS launcher crashes when the profile chooser goes through a native HTML `<select>` popup;
+- this is a launcher-surface problem, not an ELK algorithm problem.
+
+Approved next step:
+
+- preserve the four approved profiles: `Vertical`, `Horizontal`, `Compact`, `Fill space`;
+- replace the native `<select>` with a custom launcher-safe control rendered directly in the toolbar;
+- keep profile selection as an explicit UI choice next to `Auto-layout`;
+- do not broaden this corrective stream into `Diagram Facades` yet;
+- ship a focused release that restores launcher stability before any further layout-quality tuning.

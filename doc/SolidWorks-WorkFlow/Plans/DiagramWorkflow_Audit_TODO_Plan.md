@@ -593,3 +593,42 @@ That is too weak even for the simpler `Diagram Modules` graph:
 
 - Open a new execution phase focused on `Diagram Modules` layout profiles and full-height diagram surface.
 - Keep `Diagram Facades` out of the first implementation slice until the simpler module graph is behaving acceptably.
+
+---
+
+## 19. Ninth Audit Finding - Native HTML select crashes the macOS launcher for Diagram Modules layout profiles
+
+### Scope
+
+- `Diagram Modules` layout profile control in the Project Manager launcher
+- macOS CEF/AppKit runtime path for profile selection
+- release hardening after `v1.1.744`
+
+### Evidence
+
+- Manual verification of `v1.1.744` showed that attempting to open the layout-profile chooser and pick `Vertical` collapses the Project Manager window at the OS level.
+- The crash is not accompanied by a JavaScript error in `chrome_debug.log`.
+- The macOS diagnostic report `CodeAIHubLauncher-2026-03-19-085247.ips` records `NSInvalidArgumentException` with `-[NSApplication ...]: unrecognized selector sent to instance`, inside the Chromium Embedded Framework main-thread path.
+
+### Root cause
+
+The newly added layout-profile chooser is implemented as a native HTML `<select>`.
+
+That control is safe in the browser/webview path, but in the macOS launcher it enters a native CEF/AppKit popup flow that is currently unstable and crashes outside the React/TypeScript layer. The failure therefore happens before any ELK profile logic can run.
+
+### Approved correction plan
+
+- Remove the native `<select>` from the diagram toolbar.
+- Replace it with a launcher-safe custom control rendered entirely by the app surface itself.
+- Keep the product contract unchanged: users still choose between `Vertical`, `Horizontal`, `Compact`, and `Fill space`, but selection must no longer require the native popup path.
+- Add targeted regression coverage that proves the toolbar no longer renders a `<select>` for layout profiles.
+
+### Verdict
+
+- Current assumption "the profile selector can safely be a native HTML select in the launcher" = `disproved`
+- Root cause location "launcher-safe control chrome, not ELK" = `confirmed`
+
+### Rewrite instruction for the main TODO
+
+- Open a new corrective execution phase dedicated to replacing the native profile selector with a launcher-safe control.
+- Keep layout algorithms unchanged in the first fix; restore launcher stability first, then continue readability tuning.
