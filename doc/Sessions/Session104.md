@@ -52,6 +52,7 @@
 - `d31a3b19 docs(release): prep inventory-only diagram cleanup release`
 - `56160cfd fix(core): remove stale module map parser type reference`
 - `ebf9c72d chore(release): prepare inventory-only diagram cleanup build`
+- `781bdf77 chore(release): build inventory-only diagram cleanup release`
 
 ---
 

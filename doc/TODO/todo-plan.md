@@ -130,4 +130,4 @@
 5. [DONE] Синхронизировать release docs под inventory-only cleanup release и убрать из SSOT последние формулировки про обязательный raw `module-map.md` в workspace (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep inventory-only diagram cleanup release`).
 6. [DONE] Git Commit: `docs(release): prep inventory-only diagram cleanup release` (hash: `d31a3b19`)
 7. [DONE] После ручной проверки собрать новый релиз, обновить `todo-plan.md`, создать новый session report и зафиксировать итоговый VSIX `codeai-hub-1.1.752.vsix` (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session104.md`; expected commit: `chore(release): build inventory-only diagram cleanup release`).
-8. [TODO] Git Commit: `chore(release): build inventory-only diagram cleanup release` (hash: TBD)
+8. [DONE] Git Commit: `chore(release): build inventory-only diagram cleanup release` (hash: `781bdf77`)
