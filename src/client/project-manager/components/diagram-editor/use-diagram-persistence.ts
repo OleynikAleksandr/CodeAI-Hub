@@ -13,6 +13,7 @@ import {
 } from "./flow-sidecar-types";
 import type { DiagramEditorStage } from "./use-diagram-loader";
 import type { DiagramSaveState } from "./save-status-indicator";
+import type { DiagramLayoutProfileId } from "./diagram-layout-facade";
 
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
@@ -74,6 +75,7 @@ export const useDiagramPersistence = (params: {
   readonly persistNodes: (payload: {
     readonly revision: string;
     readonly nodes: readonly DiagramFlowNode[];
+    readonly layoutProfile?: DiagramLayoutProfileId;
   }) => Promise<void>;
   readonly persistModel: (model: DiagramMapModel) => Promise<void>;
   readonly markConflict: () => void;
@@ -107,6 +109,7 @@ export const useDiagramPersistence = (params: {
   const persistNodes = async (payload: {
     readonly revision: string;
     readonly nodes: readonly DiagramFlowNode[];
+    readonly layoutProfile?: DiagramLayoutProfileId;
   }): Promise<void> => {
     setSaveState("saving");
     const sessionId = await ensureWorkspaceSession({
@@ -125,6 +128,7 @@ export const useDiagramPersistence = (params: {
       const document = buildFlowSidecarDocument({
         revision: payload.revision,
         nodes: payload.nodes,
+        layoutProfile: payload.layoutProfile,
       });
 
       const ok = await writeWorkspaceFile(

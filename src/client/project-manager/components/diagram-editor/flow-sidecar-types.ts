@@ -1,4 +1,5 @@
 import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramLayoutProfileId } from "./diagram-layout-facade";
 
 export type FlowSidecarViewport = {
   readonly x: number;
@@ -6,12 +7,20 @@ export type FlowSidecarViewport = {
   readonly zoom: number;
 };
 
+const FLOW_LAYOUT_PROFILE_IDS = [
+  "vertical",
+  "horizontal",
+  "compact",
+  "fill_space",
+] as const satisfies readonly DiagramLayoutProfileId[];
+
 export type FlowSidecarDocument = {
   readonly version: 1;
   readonly revision: string;
   readonly updated: string;
   readonly nodes: Readonly<Record<string, { readonly x: number; readonly y: number }>>;
   readonly viewport?: FlowSidecarViewport;
+  readonly layoutProfile?: DiagramLayoutProfileId;
 };
 
 const isFiniteNumber = (value: unknown): value is number =>
@@ -19,6 +28,10 @@ const isFiniteNumber = (value: unknown): value is number =>
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isLayoutProfileId = (value: unknown): value is DiagramLayoutProfileId =>
+  typeof value === "string"
+  && FLOW_LAYOUT_PROFILE_IDS.includes(value as DiagramLayoutProfileId);
 
 export const parseFlowSidecar = (
   content: string
@@ -58,6 +71,9 @@ export const parseFlowSidecar = (
           zoom: parsed.viewport.zoom,
         }
       : undefined;
+    const layoutProfile = isLayoutProfileId(parsed.layoutProfile)
+      ? parsed.layoutProfile
+      : undefined;
 
     return {
       version: 1,
@@ -65,6 +81,7 @@ export const parseFlowSidecar = (
       updated: parsed.updated,
       nodes,
       viewport,
+      layoutProfile,
     };
   } catch {
     return null;
@@ -78,6 +95,7 @@ export const buildFlowSidecarDocument = (params: {
   readonly revision: string;
   readonly nodes: readonly DiagramFlowNode[];
   readonly viewport?: FlowSidecarViewport;
+  readonly layoutProfile?: DiagramLayoutProfileId;
 }): FlowSidecarDocument => ({
   version: 1,
   revision: params.revision,
@@ -92,6 +110,7 @@ export const buildFlowSidecarDocument = (params: {
     ])
   ),
   viewport: params.viewport,
+  layoutProfile: params.layoutProfile,
 });
 
 export const applyFlowSidecarPositions = (params: {
