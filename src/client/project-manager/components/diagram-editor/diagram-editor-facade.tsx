@@ -2,7 +2,6 @@ import type React from "react";
 import {
   Background,
   Controls,
-  MiniMap,
   ReactFlow,
   type NodeChange,
   type NodeTypes,
@@ -35,14 +34,6 @@ const toolbarStyle: React.CSSProperties = {
 const canvasStyle: React.CSSProperties = {
   width: "100%",
   height: "100%",
-};
-
-const miniMapStyle: React.CSSProperties = {
-  width: 144,
-  height: 88,
-  background: "rgba(15, 23, 34, 0.92)",
-  border: "1px solid var(--pm-border-color)",
-  borderRadius: 12,
 };
 
 const nodeCardStyle: React.CSSProperties = {
@@ -182,7 +173,6 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
       >
         <Background gap={24} size={1} />
         <Controls showInteractive={false} />
-        <MiniMap pannable zoomable style={miniMapStyle} />
       </ReactFlow>
     </div>
   </div>
