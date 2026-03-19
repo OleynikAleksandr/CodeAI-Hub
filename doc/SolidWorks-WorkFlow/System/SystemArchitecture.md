@@ -103,11 +103,11 @@
 
 - Workflow шаги `Diagram Modules` и `Diagram Facades` больше не используют Mermaid `.mmd` как SSOT.
 - Канонические semantic artifacts:
-  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.md`
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md`
   - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.md`
 - Канонические auxiliary artifacts:
   - `*.flow.json` для layout/view state;
-  - `*.agent-baseline.md` для baseline diff, generated change summary и последующего safe merge.
+  - `facade-map.agent-baseline.md` для facade diff/merge path.
 - Agent instructions и templates для этих шагов поставляются из `packages/agents/diagram-modules-agent/assets/` и `packages/agents/diagram-facades-agent/assets/`, а не из `packages/core/src/templates/source/*.mmd`.
 - Runtime обязан считать `.md` artifact единственным product-visible SSOT, а `*.flow.json` трактовать как non-semantic sidecar.
 
@@ -124,7 +124,7 @@
   - `Source` показывает read-only canonical `.md`;
   - `Help` показывает guidance по шагу.
 - Visual shell не владеет semantic state:
-  - source of truth остаётся `module-map.md` / `facade-map.md`;
+  - source of truth остаётся `module-inventory.md` / `facade-map.md`;
   - shell работает как projection layer `Markdown DSL -> domain model -> flow nodes/edges`, но владеет только layout/view state.
 - `*.flow.json` остаётся non-semantic sidecar:
   - хранит positions/viewport для visual shell;
@@ -145,9 +145,9 @@
 
 ## 6.3) Module Semantic Source Boundary (Phase 3, 2026-03-16)
 
-- `Diagram Modules` keeps semantic truth in the canonical Markdown artifact, not in the visible graph canvas.
+- `Diagram Modules` keeps semantic truth in `module-inventory.md`, not in the visible graph canvas.
 - Видимый UI больше не содержит inline-редакторов для module entities и relations.
-- `module-inventory.md` is the human-readable agreement layer for `Diagram Modules`; semantic changes are expected to come from agent runs or direct canonical Markdown editing, then serialize back to `module-map.md` only after inventory agreement. On artifact upload, Core must materialize and persist the derived `module-map.md` automatically so downstream gating and `Diagram Facades` continue to consume a canonical module map from disk, while the loader can still render directly from inventory before React Flow rendering.
+- `module-inventory.md` is the canonical semantic SSOT for `Diagram Modules`; runtime строит visual projection напрямую из inventory и не требует отдельный workspace artifact `module-map.md` или `module-map.agent-baseline.md`.
 - Graph canvas continues to allow manual layout edits, and those changes remain in `module-map.flow.json` only.
 - Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
@@ -179,9 +179,9 @@
   - visual shell не показывает auto-layout chrome или bottom-right minimap; из persistent controls остаются только drag для layout и левый нижний zoom/fit controls.
 - Workflow tree child nodes для `Diagram Modules` и `Diagram Facades` обязаны наследовать актуальные stage-level `blocked/outdated` сигналы; поддеревья диаграмм не могут маскировать реальный gating state как постоянный `active`.
 - Fresh toolbar bootstrap для шагов `Diagram Modules` / `Diagram Facades` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
-- `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-map.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
+- `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-inventory.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан сначала читать strict field-reference и merge-rules из synced visible templates под `~/.codeai-hub/templates/...`, а package assets использовать только как bundled-source fallback, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
-- Для `Diagram Modules` первый semantic checkpoint теперь `module-inventory.md`; после его сохранения Core обязан автоматически вывести и записать derived `module-map.md`, чтобы cluster membership и standalone modules были явно видны до React Flow projection, а downstream шаги не зависели от ручного дублирования canonical module map.
+- Для `Diagram Modules` canonical semantic checkpoint теперь `module-inventory.md`; downstream gating и `Diagram Facades` должны читать именно inventory, а visual graph обязан materialize cluster membership и standalone modules напрямую из него.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
 - `Diagram Modules` и `Diagram Facades` больше не должны навязывать пользователю inline semantic editors или bottom-right minimap. Product UX обязан опираться на:
   - AI-generated semantic structure в canonical `.md`;

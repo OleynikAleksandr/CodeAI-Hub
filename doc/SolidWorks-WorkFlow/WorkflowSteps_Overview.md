@@ -122,13 +122,12 @@ Manual start из верхнего toolbar PM:
 
 ### Артефакт
 
-- `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.md`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md`
 - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json`
-- `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.agent-baseline.md`
 
-`module-map.md` является canonical SSOT для semantic content.
+`module-inventory.md` является canonical SSOT для semantic content.
 `module-map.flow.json` хранит только layout/view state визуального редактора.
-`module-map.agent-baseline.md` фиксирует последний agent-baseline для baseline diff и change summary.
+Visual diagram материализуется runtime напрямую из inventory и не требует отдельного raw map-файла в workspace.
 
 ---
 
@@ -141,15 +140,15 @@ Manual start из верхнего toolbar PM:
 ### Подход
 
 Manual start из верхнего toolbar PM:
-- пользователь сам решает, когда `module-map.md` уже достаточно хороший для перехода на следующий шаг;
-- запуск требует доступный canonical upstream artifact `module-map.md`;
+- пользователь сам решает, когда `module-inventory.md` уже достаточно хороший для перехода на следующий шаг;
+- запуск требует доступный canonical upstream artifact `module-inventory.md`;
 - PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
 
 ### Входы
 
 - `Final_Description.md`
 - `virtual-simulation.md`
-- `module-map.md`
+- `module-inventory.md`
 
 ### Артефакты
 
@@ -195,7 +194,7 @@ Manual start из верхнего toolbar PM:
 
 - Изменение `Final_Description.md` → `Virtual Simulation = OUTDATED`.
 - Изменение `virtual-simulation.md` → `Diagram Modules = OUTDATED`.
-- Изменение `module-map.md` или `module-map.agent-baseline.md` → `Diagram Facades = OUTDATED`.
+- Изменение `module-inventory.md` → `Diagram Facades = OUTDATED`.
 - Изменение `facade-map.md` или `facade-map.agent-baseline.md`/спецификаций → downstream шаги получают `OUTDATED`.
 
 ### Resume-by-default для workflow шагов
