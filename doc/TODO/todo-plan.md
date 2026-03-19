@@ -352,8 +352,8 @@
 
 ### Stream: Phase 12 release build and verification
 1. [TODO] Синхронизировать release-facing docs под manual-layout-first contract: диаграммы больше не зависят от ELK, `*.flow.json` хранит только пользовательские позиции, а `Edit Modules` / `Edit Relations` остаются вторичными inline editors beneath the visual canvas (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep manual-layout first release`).
-2. [TODO] Git Commit: `docs(release): prep manual-layout first release` (hash: TBD)
-3. [TODO] На чистом дереве выполнить release checklist для manual-layout cleanup через `./scripts/build-all.sh`, зафиксировать version bump до `1.1.748` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build manual-layout first release`).
+2. [DONE] Git Commit: `docs(release): prep manual-layout first release` (hash: `9e38fc01`)
+3. [DONE] На чистом дереве выполнить release checklist для manual-layout cleanup через `./scripts/build-all.sh`, зафиксировать version bump до `1.1.748` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build manual-layout first release`).
 4. [TODO] Git Commit: `chore(release): build manual-layout first release` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: diagram toolbar без `Auto-layout`/profiles, ручной drag по-прежнему сохраняется в `*.flow.json`, `Source` остаётся вторичным raw Markdown view, а inline секции `Edit Modules` / `Edit Relations` продолжают редактировать canonical DSL без ELK fallback path (scope: `codeai-hub-1.1.748.vsix`, `doc/Sessions/Session101.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record manual-layout first release`).
 6. [TODO] Git Commit: `docs(session): record manual-layout first release` (hash: TBD)
