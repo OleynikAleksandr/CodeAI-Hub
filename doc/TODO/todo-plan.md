@@ -24,7 +24,7 @@
 4. [TODO] Git Commit: `docs(pm): sync module inventory source contract` (hash: TBD)
 
 ### Stream: Visible templates
-1. [TODO] Вернуть diagram prompt/template contract в visible templates sync, чтобы `diagram_modules` и `diagram_facades` жили в `~/.codeai-hub/templates/...`, а не только в package assets (scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(templates): sync diagram workflow templates`).
+1. [IN_PROGRESS] Вернуть diagram prompt/template contract в visible templates sync, чтобы `diagram_modules` и `diagram_facades` жили в `~/.codeai-hub/templates/...`, а не только в package assets (scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(templates): sync diagram workflow templates`).
 2. [TODO] Git Commit: `refactor(templates): sync diagram workflow templates` (hash: TBD)
 3. [TODO] Перевести diagram prompt appendix resolution на templates-first path и оставить package assets только bundled-source fallback (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `refactor(templates): prefer synced diagram prompt appendices`).
 4. [TODO] Git Commit: `refactor(templates): prefer synced diagram prompt appendices` (hash: TBD)
