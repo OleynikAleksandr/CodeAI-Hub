@@ -318,11 +318,11 @@
 
 ### Stream: Phase 10 release build and verification
 1. [DONE] Синхронизировать release-facing docs под launcher-safe profile control, immediate layout apply и persistence в `module-map.flow.json`, плюс manual verification без native dropdown crash path и без silent revert к vertical after reopen/restart (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prep layout profile persistence release`).
-2. [TODO] Git Commit: `docs(release): prep layout profile persistence release` (hash: TBD)
-3. [DONE] На чистом дереве выполнить release checklist для launcher-safe profile control через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build launcher-safe layout profile release`).
-4. [DONE] Git Commit: `chore(release): build launcher-safe layout profile release` (hash: `57c943b0`)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: launcher больше не падает при выборе profile control, `Auto-layout` всё ещё работает, а `Diagram Modules` сохраняет full-height surface behavior (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session098.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record launcher-safe layout profile release`).
-6. [TODO] Git Commit: `docs(session): record launcher-safe layout profile release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prep layout profile persistence release` (hash: `4a7817b2`)
+3. [DONE] На чистом дереве выполнить release checklist для immediate layout apply и persistence profile через `./scripts/build-all.sh`, зафиксировать version bump до `1.1.746` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build layout profile persistence release`).
+4. [DONE] Git Commit: `chore(release): build layout profile persistence release` (hash: `5fc65c2d`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile buttons не падают, переключение `Vertical/Horizontal/Compact/Fill space` немедленно перестраивает текущий graph и выбранный режим восстанавливается после reopen/restart `Diagram Modules` (scope: `codeai-hub-1.1.746.vsix`, `doc/Sessions/Session099.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record layout profile persistence release`).
+6. [TODO] Git Commit: `docs(session): record layout profile persistence release` (hash: TBD)
 
 ---
 
