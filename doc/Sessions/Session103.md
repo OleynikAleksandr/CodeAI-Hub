@@ -1,6 +1,6 @@
 # Session 103 — Inventory-First Routing Checkpoint
 
-**Date:** 2026-03-19 14:55 (CET)
+**Date:** 2026-03-19 14:58 (CET)
 **Branch:** main
 **Version:** 1.1.749
 
@@ -31,6 +31,7 @@
 - Добавил `module-inventory-parser.ts` и перевёл `use-diagram-loader.ts` на inventory-first materialization path: `module-map.md` теперь строится из inventory и подаётся в React Flow projection.
 - Обновил test coverage для `diagram-editor-facade.tsx`, чтобы проверить inventory-first loader path и runtime parsing `module-inventory.md`.
 - Синхронизировал `todo-plan.md` под inventory-derived module map projection и зафиксировал hash `628d69e2`.
+- Синхронизировал `README.md`, `CHANGELOG.md` и `SystemArchitecture.md` под inventory-derived `Diagram Modules` flow и подготовил release docs к `v1.1.750`.
 
 ## Verification
 - Commit hooks прошли на всех микро-коммитах этой сессии: `test`, `check-architecture`, `check:tsprune`, `jscpd`, `check:links`.
@@ -61,6 +62,7 @@
 - `d572d69b docs(plan): record inventory-first help flow`
 - `628d69e2 refactor(diagram-modules): derive module map from inventory`
 - `f20eb845 docs(plan): record inventory-derived module map projection`
+- `43132504 docs(release): prep module inventory diagram release`
 
 ---
 
@@ -77,6 +79,5 @@
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
 
 ## Plans for next session
-- Синхронизировать `README.md`, `CHANGELOG.md` и `SystemArchitecture.md` под inventory-derived `Diagram Modules` flow.
-- После этого собрать релиз `v1.1.750` через `build-all.sh` и `build-release.sh --use-current-version`.
+- Собрать релиз `v1.1.750` через `build-all.sh` и `build-release.sh --use-current-version`.
 - Если потребуется, потом отдельно дочистить runtime hydration / availability под `module-inventory.md`, но это уже следующий микрошаг после релиза.
