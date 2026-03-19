@@ -60,6 +60,11 @@
 - `Source` — read-only canonical Markdown artifact;
 - `Help` — guidance panel.
 
+For `Diagram Modules` inventory-first flow:
+- `Artifacts` opens the visual projection derived from `module-map.md`.
+- `Source` opens `module-inventory.md`.
+- `Diagram Facades` still uses `facade-map.md` as its `Source` surface for now.
+
 ## 5) Инварианты
 
 1. Нельзя открывать session/artifact в stage `X`, оставляя Toolbar на stage `Y`.
@@ -80,7 +85,7 @@
 
 1. Любой клик в Toolbar/Tree/auto-select приводит к одному и тому же stage-состоянию UI.
 2. Header правой панели всегда соответствует текущему stage.
-3. Для всех stage доступен `Help`; для diagram stages дополнительно доступен `Source`.
+3. Для всех stage доступен `Help`; для diagram stages дополнительно доступен `Source`, а для `Diagram Modules` `Source` должен открывать `module-inventory.md`.
 4. Переходы между stage не оставляют «залипших» артефактов/сессий предыдущего шага.
 
 ## 8) Связанные документы

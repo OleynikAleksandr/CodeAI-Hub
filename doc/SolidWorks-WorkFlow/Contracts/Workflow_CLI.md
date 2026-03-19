@@ -22,7 +22,7 @@
 
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
-3. `Diagram Modules` → canonical output: `module-map.md` + sidecars `module-map.flow.json`, `module-map.agent-baseline.md`
+3. `Diagram Modules` → first semantic output: `module-inventory.md`, then canonical output: `module-map.md` + sidecars `module-map.flow.json`, `module-map.agent-baseline.md`
 4. `Diagram Facades` → canonical output: `facade-map.md` + sidecars `facade-map.flow.json`, `facade-map.agent-baseline.md`
 
 ---
@@ -37,6 +37,7 @@
 - `Virtual Simulation`:
   - `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
 - `Diagram Modules`:
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md` (human-readable semantic bridge)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.md` (canonical semantic SSOT)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json` (layout/view sidecar)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.agent-baseline.md` (agent baseline for diff/merge)
@@ -49,12 +50,13 @@ Legacy `description.md` допускается только для compat и н�
 
 ### 3.1 Diagram runtime / user-surface contract
 
-- `module-map.md` и `facade-map.md` — единственный semantic SSOT для diagram steps.
+- `module-inventory.md` — human-readable bridge for `Diagram Modules`; it is the first agreement layer before `module-map.md`.
+- `module-map.md` и `facade-map.md` — canonical semantic SSOT для diagram steps.
 - `*.agent-baseline.md` используется только для agent diff/merge path и не является primary user surface.
 - `*.flow.json` хранит только layout/view state и не участвует в semantic gating.
 - Project Manager для `Diagram Modules` / `Diagram Facades` использует user surface `Artifacts/Source/Help`:
   - `Artifacts` по умолчанию открывает visual React Flow projection;
-  - `Source` показывает read-only canonical `.md`;
+  - `Source` показывает read-only canonical `.md` (`module-inventory.md` для `Diagram Modules`, `facade-map.md` для `Diagram Facades`);
   - `Help` показывает guidance по шагу.
 - Visible PM surface для diagram steps не должна требовать `Auto-layout`, layout profiles, inline semantic editors или bottom-right minimap.
 - Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact.
@@ -75,7 +77,7 @@ Legacy `description.md` допускается только для compat и н�
 
 - `Description`: шаг может быть `READY` сразу (upstream не требуется).
 - `Virtual Simulation`: требует `Final_Description.md`.
-- `Diagram Modules`: требует доступный canonical artifact `virtual-simulation.md`; пользователь вручную запускает шаг, когда считает upstream artifact достаточным, и PM не должен требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
+- `Diagram Modules`: требует доступные canonical artifacts `Final_Description.md` и `virtual-simulation.md`; runtime сначала формирует `module-inventory.md`, а затем `module-map.md`, и пользователь вручную запускает шаг, когда считает upstream artifacts достаточными, если gating не блокирует старт.
 - `Diagram Facades`: требует доступный canonical artifact `module-map.md`; пользователь вручную запускает шаг, когда считает upstream artifact достаточным, и PM не должен требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
 
 ---
@@ -87,6 +89,7 @@ Watcher обязан отслеживать canonical артефакты и пу
 Минимум:
 - `Final_Description.md` created/changed
 - `virtual-simulation.md` created/changed
+- `module-inventory.md` created/changed
 - `module-map.md` created/changed
 - `module-map.agent-baseline.md` created/changed
 - `facade-map.md` created/changed
@@ -102,7 +105,8 @@ Watcher обязан отслеживать canonical артефакты и пу
 ## 7) OUTDATED propagation (upstream → downstream)
 
 - Изменение `Final_Description.md` после `DONE` шага `Virtual Simulation` → `Virtual Simulation = OUTDATED`.
-- Изменение `virtual-simulation.md` → `Diagram Modules = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
+- Изменение `Final_Description.md` или `virtual-simulation.md` после `DONE` шага `Diagram Modules` → `Diagram Modules = OUTDATED` (или `BLOCKED`, если артефакта ещё нет); `module-inventory.md` и затем `module-map.md` должны быть пересобраны в этом порядке.
+- Изменение `module-inventory.md` → `module-map.md = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
 - Изменение `module-map.md` или `module-map.agent-baseline.md` → `Diagram Facades = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
 
 `*.flow.json` не участвуют в semantic gating: это view-only sidecar, их изменение не должно менять `READY/DONE/OUTDATED`.
