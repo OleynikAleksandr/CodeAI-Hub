@@ -12,6 +12,10 @@ const SHELL_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx"
 );
+const MODULES_PANEL_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx"
+);
 const SCAFFOLD_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx"
@@ -230,6 +234,10 @@ test("diagram-editor-shell requests viewport refresh after auto-layout", async (
   assert.equal(source.includes("setViewportRefreshToken"), true);
   assert.equal(source.includes("requestViewportRefresh();"), true);
   assert.equal(source.includes("projection.stage === \"diagram_modules\""), true);
+  assert.equal(source.includes("initialLayoutProfile"), true);
+  assert.equal(source.includes("onFlowStateChange"), true);
+  assert.equal(source.includes("handleLayoutProfileChange"), true);
+  assert.equal(source.includes("await persistFlowState(nextNodes, nextProfile);"), true);
   assert.equal(source.includes("viewportRefreshToken={viewportRefreshToken}"), true);
 });
 
@@ -239,4 +247,12 @@ test("diagram stage scaffold keeps the visual shell stretched to full panel heig
   assert.equal(source.includes("minHeight: \"100%\""), true);
   assert.equal(source.includes("gridTemplateRows: \"auto minmax(0, 1fr)\""), true);
   assert.equal(source.includes("flex: \"1 1 auto\""), true);
+});
+
+test("diagram modules panel restores layout profile from flow sidecar", async () => {
+  const source = await readFile(MODULES_PANEL_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("flowDocument?.layoutProfile"), true);
+  assert.equal(source.includes("onFlowStateChange={async (payload) => {"), true);
+  assert.equal(source.includes("await persistNodes(payload);"), true);
 });
