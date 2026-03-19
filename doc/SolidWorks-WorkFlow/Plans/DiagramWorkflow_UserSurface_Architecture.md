@@ -174,11 +174,14 @@ Manual validation showed that ELK is the wrong product primitive for these diagr
 Approved next step:
 
 - remove `Auto-layout` and all profile controls from the visible diagram UX;
+- remove `Edit Modules` / `Edit Relations` and facade semantic editing sections from the visible surface;
 - stop treating ELK as the source of the diagram composition;
 - keep `module-map.md` / `facade-map.md` as semantic SSOT;
 - keep `*.flow.json` as user-owned persisted geometry only;
 - preserve and improve manual editing in React Flow;
-- keep `Edit Modules` / `Edit Relations` as secondary inline editors for semantic DSL changes, not as the primary user artifact.
+- keep `Source` as the secondary read-only artifact view;
+- keep only the left-bottom zoom/fit controls and remove the bottom-right minimap;
+- use agents for semantic changes when a new module, facade, relation, method, or port is needed.
 
 Target product contract:
 

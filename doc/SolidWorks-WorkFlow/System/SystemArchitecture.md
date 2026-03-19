@@ -160,22 +160,13 @@
 - `doc/TODO/todo-plan.md`
 - `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 
-## 6.4) Facade Semantic Editing Boundary (Phase 4, 2026-03-16)
+## 6.4) Facade Semantic Source Boundary (Phase 4, 2026-03-16)
 
-- `Diagram Facades` получает semantic editing вокруг visual shell, но semantic truth по-прежнему не принадлежит graph canvas.
-- Источник semantic truth не меняется:
-  - пользовательские операции apply-ятся как facade domain patches;
-  - результат сериализуется обратно только в `facade-map.md`;
-  - `facade-map.flow.json` не содержит semantic edits.
-- Graph canvas допускает ручную корректировку layout, но эти изменения сохраняются только в `facade-map.flow.json` и не меняют semantic DSL content.
-- Facade editing surface обязана покрывать не только CRUD самих facade entities, но и semantic подструктуры:
-  - methods;
-  - ports;
-  - facade relations.
-- Локальные semantic edits обязаны сохранять provenance:
-  - новый facade/relation, созданный пользователем, получает `origin: user`;
-  - изменение agent-generated facade/relation переводит `origin` в `merged`.
-- При incoming remote refresh facade panel должна пытаться reapply локальную очередь патчей поверх новой модели и, при частичной неудаче, явно показывать warnings с preserved local edit summary.
+- `Diagram Facades` keeps semantic truth in the canonical Markdown artifact, not in the visible graph canvas.
+- Видимый UI больше не содержит inline-редакторов для facade entities, methods, ports и relations.
+- Semantic changes are expected to come from agent runs or direct canonical Markdown editing, then serialize back only into `facade-map.md`.
+- Graph canvas continues to allow manual layout edits, and those changes remain in `facade-map.flow.json` only.
+- Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
@@ -189,18 +180,19 @@
 - Shared diagram editor UX обязан сохранять визуальную непрерывность:
   - background refresh не должен очищать уже загруженный graph перед следующим успешным parse/load;
   - empty semantic graph обязан показывать explicit placeholder вместо silent blank canvas;
-  - ошибки auto-layout обязаны попадать в общий save/error indicator, а не теряться.
-  - auto-layout обязан перестраивать текущий React Flow canvas в реальном времени: после пересчёта node positions Project Manager должен сразу делать viewport refit (`fitView`) на активной диаграмме, а не требовать уход со stage и повторный вход для визуального обновления.
+  - manual drag changes обязаны обновлять текущий React Flow canvas в реальном времени и сохраняться в `*.flow.json`;
+  - visual shell не показывает auto-layout chrome или bottom-right minimap; из persistent controls остаются только drag для layout и левый нижний zoom/fit controls.
 - Workflow tree child nodes для `Diagram Modules` и `Diagram Facades` обязаны наследовать актуальные stage-level `blocked/outdated` сигналы; поддеревья диаграмм не могут маскировать реальный gating state как постоянный `active`.
 - Fresh toolbar bootstrap для шагов `Diagram Modules` / `Diagram Facades` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-map.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан встраивать в prompt strict field-reference и merge-rules из agent asset pack, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
-- `Diagram Modules` и `Diagram Facades` больше не должны навязывать пользователю auto-layout chrome. Product UX обязан опираться на:
+- `Diagram Modules` и `Diagram Facades` больше не должны навязывать пользователю inline semantic editors или bottom-right minimap. Product UX обязан опираться на:
   - AI-generated semantic structure в canonical `.md`;
   - top-level visual nodes с явными `nodeTypes`, без fake parent/child cluster nesting;
   - manual drag/editing внутри React Flow;
-  - persisted user-owned positions в `module-map.flow.json` / `facade-map.flow.json`.
+  - persisted user-owned positions в `module-map.flow.json` / `facade-map.flow.json`;
+  - agent-driven semantic updates when new semantic content is needed.
 
 Канонические документы:
 - `doc/TODO/todo-plan.md`
