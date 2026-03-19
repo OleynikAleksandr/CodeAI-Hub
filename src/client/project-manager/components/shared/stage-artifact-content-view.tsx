@@ -2,6 +2,30 @@ import type React from "react";
 import MarkdownContent from "../../../ui/src/session/markdown-content";
 import { StageArtifactFixButton } from "./stage-artifact-fix-button";
 
+const buildArtifactRepairPrompt = (params: {
+  readonly artifactPath: string;
+  readonly displayFileName: string;
+  readonly validationError: string;
+}): string =>
+  [
+    `Исправь артефакт \`${params.displayFileName}\` по пути \`${params.artifactPath}\`.`,
+    "Нужно сохранить пользовательские правки, если они не противоречат текущему контракту stage.",
+    "Сначала устрани parse/validation ошибку, затем перезапиши файл в валидном формате.",
+    `Ошибка: ${params.validationError}`,
+  ].join("\n");
+
+const resolveArtifactStage = (
+  artifactPath: string
+): "virtual_simulation" | "diagram_modules" | "diagram_facades" => {
+  if (artifactPath.includes("/diagram_modules/")) {
+    return "diagram_modules";
+  }
+  if (artifactPath.includes("/diagram_facades/")) {
+    return "diagram_facades";
+  }
+  return "virtual_simulation";
+};
+
 /**
  * Shared content renderer for "ready" state of stage artifact panels.
  * Handles both valid content and validation-error content with "Fix with agent" button.
@@ -31,6 +55,12 @@ export const StageArtifactContentView: React.FC<{
           </div>
           <StageArtifactFixButton
             onStart={props.onFixStart}
+            repairPrompt={buildArtifactRepairPrompt({
+              artifactPath: props.artifactPath,
+              displayFileName: props.displayFileName,
+              validationError: props.validationError,
+            })}
+            stage={resolveArtifactStage(props.artifactPath)}
             workspacePath={props.workspacePath}
             workspaceSlug={props.workspaceSlug}
           />

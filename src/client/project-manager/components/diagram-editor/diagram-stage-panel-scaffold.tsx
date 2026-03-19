@@ -9,6 +9,25 @@ import { DiagramEditorSection } from "./diagram-editor-section";
 import { DiagramEditorShell } from "./diagram-editor-shell";
 import type { DiagramLoaderStatus } from "./use-diagram-loader";
 
+const resolveDiagramStageId = (
+  artifactPath: string
+): "diagram_modules" | "diagram_facades" =>
+  artifactPath.includes("/diagram_facades/")
+    ? "diagram_facades"
+    : "diagram_modules";
+
+const buildDiagramRepairPrompt = (params: {
+  readonly artifactFileName: string;
+  readonly artifactPath: string;
+  readonly error: string;
+}): string =>
+  [
+    `Исправь артефакт \`${params.artifactFileName}\` по пути \`${params.artifactPath}\`.`,
+    "Нужно сохранить валидные пользовательские правки, если они есть.",
+    "Устрани parse/validation ошибку и верни корректный canonical artifact для этого stage.",
+    `Ошибка: ${params.error}`,
+  ].join("\n");
+
 type FixStartParams = {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -67,6 +86,16 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
           <div className="pm-placeholder">{error ?? `Не удалось загрузить ${title}.`}</div>
           <StageArtifactFixButton
             onStart={onStartFix}
+            repairPrompt={
+              error
+                ? buildDiagramRepairPrompt({
+                    artifactFileName,
+                    artifactPath,
+                    error,
+                  })
+                : null
+            }
+            stage={resolveDiagramStageId(artifactPath)}
             workspacePath={workspacePath}
             workspaceSlug={workspaceSlug}
           />
