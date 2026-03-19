@@ -39,6 +39,30 @@ const TEMPLATES = [
     dest: ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
   },
   {
+    id: "module-inventory-prompt",
+    source:
+      "packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
+  },
+  {
+    id: "module-inventory-template",
+    source:
+      "packages/agents/diagram-modules-agent/assets/module-inventory-template.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
+  },
+  {
+    id: "module-inventory-field-reference",
+    source:
+      "packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
+  },
+  {
+    id: "module-inventory-merge-rules",
+    source:
+      "packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md",
+    dest: ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
+  },
+  {
     id: "module-map-prompt",
     source: "packages/agents/diagram-modules-agent/assets/module-map-prompt.md",
     dest: ".codeai-hub/templates/diagram_modules/module-map-prompt.md",

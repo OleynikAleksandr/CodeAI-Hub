@@ -14,6 +14,10 @@ const LEGACY_DIAGRAM_TEMPLATE_PATHS = [
 ] as const;
 
 const VISIBLE_DIAGRAM_TEMPLATE_PATHS = [
+  ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
+  ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
+  ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
+  ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
   ".codeai-hub/templates/diagram_modules/module-map-prompt.md",
   ".codeai-hub/templates/diagram_modules/module-map-template.md",
   ".codeai-hub/templates/diagram_modules/module-map-field-reference.md",
