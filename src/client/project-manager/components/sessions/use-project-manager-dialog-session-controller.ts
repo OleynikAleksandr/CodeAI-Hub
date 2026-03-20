@@ -49,6 +49,7 @@ export const useProjectManagerDialogSessionController = (
   const dialogCursorRef = useRef(new Map<string, number>());
   const pendingHistoryCursorRef = useRef(new Map<string, number>());
   const queuedHistoryRefreshRef = useRef(new Set<string>());
+  const restoreRequestInFlightRef = useRef(new Map<string, number>());
   const pendingIntentRef = useRef<DialogOpenIntent | null>(null);
   const dialogIdRef = useRef<string | null>(null);
 
@@ -129,6 +130,7 @@ export const useProjectManagerDialogSessionController = (
     dialogCursorRef.current.clear();
     pendingHistoryCursorRef.current.clear();
     queuedHistoryRefreshRef.current.clear();
+    restoreRequestInFlightRef.current.clear();
     setSession(null);
     setSnapshots({});
     setTokenDebugSummaryOverride(undefined);
@@ -272,6 +274,7 @@ export const useProjectManagerDialogSessionController = (
     dialogCursorRef,
     pendingHistoryCursorRef,
     queuedHistoryRefreshRef,
+    restoreRequestInFlightRef,
     setSession,
     setSnapshots,
     setTokenDebugSummaryOverride,

@@ -5,15 +5,18 @@ import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import {
-  createInitialSnapshot,
   mergeHistoryIntoSnapshots,
   type SessionSnapshots,
 } from "../../../ui/src/session/helpers";
 import { buildTokenDebugSummaryFromMessages } from "./dialog-segment-meta";
+import {
+  buildDialogRestoreRequestKey,
+  createDialogBootstrapSnapshots,
+  shouldCreateRuntimeRestore,
+} from "./dialog-session-bootstrap";
 import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe";
 import {
   buildDialogSessionRecord,
-  buildProviderLabels,
   convertHistoryToMessages,
   createDialogSystemMessage,
   readDialogCursor,
@@ -25,7 +28,6 @@ import {
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
 import { resolveRuntimeSessionFromWorkspaceSnapshot } from "./dialog-runtime-session-resolver";
-import { applyWorkspaceSnapshotToSnapshots } from "./session-stream";
 
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
@@ -49,6 +51,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
   readonly dialogCursorRef: MutableRefObject<Map<string, number>>;
   readonly pendingHistoryCursorRef: MutableRefObject<Map<string, number>>;
   readonly queuedHistoryRefreshRef: MutableRefObject<Set<string>>;
+  readonly restoreRequestInFlightRef: MutableRefObject<Map<string, number>>;
   readonly setSession: Dispatch<SetStateAction<SessionRecord | null>>;
   readonly setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>;
   readonly setTokenDebugSummaryOverride: Dispatch<SetStateAction<string | undefined>>;
@@ -62,7 +65,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (workspaceSlug === null || !Array.isArray(dialogs)) {
           return;
         }
-
         const parsed: DialogIndexEntry[] = [];
         for (const entry of dialogs) {
           const sanitized = sanitizeDialogIndexEntry(entry);
@@ -70,17 +72,14 @@ export const useProjectManagerDialogCoreEvents = (options: {
             parsed.push(sanitized);
           }
         }
-
         const intent = options.pendingIntentRef.current;
         if (!intent || intent.workspaceSlug !== workspaceSlug) {
           return;
         }
-
         const match = resolveDialogMatch({ intent, dialogs: parsed });
         if (!match) {
           return;
         }
-
         const providerId = resolveProviderId(match.providerId);
         const preferredRuntimeSessionId =
           match.latestSessionId ?? match.rootSessionId;
@@ -101,7 +100,20 @@ export const useProjectManagerDialogCoreEvents = (options: {
           providerSessionId: match.providerSessionId,
           intent,
         });
-        if (match.providerSessionId && !runtimeSession.hasRuntimeSession) {
+        const restoreKey = buildDialogRestoreRequestKey({
+          workspacePath: intent.workspacePath,
+          dialogId: match.dialogId,
+          providerSessionId: match.providerSessionId,
+        });
+        if (
+          match.providerSessionId &&
+          shouldCreateRuntimeRestore({
+            requests: options.restoreRequestInFlightRef.current,
+            restoreKey,
+            hasRuntimeSession: runtimeSession.hasRuntimeSession,
+            now: Date.now(),
+          })
+        ) {
           api.createSession({
             providerId: match.providerId ?? intent.providerId,
             providerSessionId: match.providerSessionId,
@@ -115,23 +127,15 @@ export const useProjectManagerDialogCoreEvents = (options: {
         options.dialogIdRef.current = match.dialogId;
         options.sessionRef.current = nextSession;
         options.setSession(nextSession);
-        options.setSnapshots((previous) => {
-          if (previous[nextSession.id]) {
-            return previous;
-          }
-          const labelsForSnapshot = buildProviderLabels(providerId);
-          const base = createInitialSnapshot(
+        options.setSnapshots((previous) =>
+          createDialogBootstrapSnapshots({
+            previous,
             nextSession,
-            labelsForSnapshot,
-            options.settingsRef.current
-          );
-          let next: SessionSnapshots = { ...previous, [nextSession.id]: base };
-          const latest = options.latestWorkspaceSnapshotRef.current;
-          if (latest && latest.workspaceRoot === nextSession.workspacePath) {
-            next = applyWorkspaceSnapshotToSnapshots(next, latest);
-          }
-          return next;
-        });
+            providerId,
+            settings: options.settingsRef.current,
+            latestSnapshot: options.latestWorkspaceSnapshotRef.current,
+          })
+        );
         options.requestDialogHistory(intent, match.dialogId);
         return;
       }
@@ -145,7 +149,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (workspaceSlug === null || dialogId === null || !Array.isArray(messages)) {
           return;
         }
-
         const intent = options.pendingIntentRef.current;
         const currentDialogId = options.dialogIdRef.current;
         const currentSession = options.sessionRef.current;
@@ -158,7 +161,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (!currentSession) {
           return;
         }
-
         const requestedCursor = options.pendingHistoryCursorRef.current.get(dialogId) ?? 0;
         options.pendingHistoryCursorRef.current.delete(dialogId);
         const isTail = requestedCursor > 0;
@@ -173,7 +175,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
         } else if (!isTail) {
           options.setTokenDebugSummaryOverride(undefined);
         }
-
         if (!isTail) {
           options.setSnapshots((previous) =>
             mergeHistoryIntoSnapshots(previous, {
@@ -193,7 +194,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
             return updated;
           });
         }
-
         if (options.queuedHistoryRefreshRef.current.has(dialogId)) {
           options.queuedHistoryRefreshRef.current.delete(dialogId);
           const cursor = options.dialogCursorRef.current.get(dialogId) ?? 0;
@@ -209,7 +209,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (workspaceSlug === null || dialogId === null) {
           return;
         }
-
         const intent = options.pendingIntentRef.current;
         const currentDialogId = options.dialogIdRef.current;
         if (!intent || intent.workspaceSlug !== workspaceSlug) {
@@ -218,7 +217,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (currentDialogId && currentDialogId !== dialogId) {
           return;
         }
-
         if (payload?.status === "sent") {
           const cursor = options.dialogCursorRef.current.get(dialogId) ?? 0;
           options.requestDialogHistory(intent, dialogId, cursor, { force: cursor <= 0 });
@@ -248,13 +246,11 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (incomingDialogId === null) {
           return;
         }
-
         const currentSession = options.sessionRef.current;
         const currentDialogId = options.dialogIdRef.current;
         if (!currentSession || !currentDialogId || incomingDialogId !== currentDialogId) {
           return;
         }
-
         const intent = options.pendingIntentRef.current;
         if (!intent) {
           return;
@@ -293,6 +289,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
     options.dialogCursorRef,
     options.pendingHistoryCursorRef,
     options.queuedHistoryRefreshRef,
+    options.restoreRequestInFlightRef,
     options.setSession,
     options.setSnapshots,
     options.setTokenDebugSummaryOverride,

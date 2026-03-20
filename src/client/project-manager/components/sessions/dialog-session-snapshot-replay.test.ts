@@ -12,6 +12,10 @@ const CORE_EVENTS_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts"
 );
+const BOOTSTRAP_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/dialog-session-bootstrap.ts"
+);
 const RUNTIME_RESOLVER_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/dialog-runtime-session-resolver.ts"
@@ -40,18 +44,21 @@ test("dialog session controller caches workspace snapshots for replay", async ()
 });
 
 test("dialog core events replay workspace snapshot after creating base snapshot", async () => {
-  const source = await readFile(CORE_EVENTS_SOURCE_PATH, "utf8");
-  const resolverSource = await readFile(RUNTIME_RESOLVER_SOURCE_PATH, "utf8");
+  const [source, bootstrapSource, resolverSource] = await Promise.all([
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+    readFile(BOOTSTRAP_SOURCE_PATH, "utf8"),
+    readFile(RUNTIME_RESOLVER_SOURCE_PATH, "utf8"),
+  ]);
 
   assert.equal(
-    source.includes("options.latestWorkspaceSnapshotRef.current"),
+    source.includes("createDialogBootstrapSnapshots"),
     true,
-    "dialog core events must consult latest workspace snapshot ref"
+    "dialog core events must delegate bootstrap snapshot creation to helper"
   );
   assert.equal(
-    source.includes("applyWorkspaceSnapshotToSnapshots"),
+    bootstrapSource.includes("applyWorkspaceSnapshotToSnapshots"),
     true,
-    "dialog core events must replay lock state from workspace snapshot"
+    "bootstrap helper must replay lock state from workspace snapshot"
   );
   assert.equal(
     source.includes("resolveRuntimeSessionFromWorkspaceSnapshot"),
@@ -65,28 +72,36 @@ test("dialog core events replay workspace snapshot after creating base snapshot"
   );
 });
 
-test("dialog core events ensure resumed dialogs have a runtime session for snapshots", async () => {
-  const source = await readFile(CORE_EVENTS_SOURCE_PATH, "utf8");
+test("dialog core events dedupe resumed dialog runtime restore requests", async () => {
+  const [source, bootstrapSource] = await Promise.all([
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+    readFile(BOOTSTRAP_SOURCE_PATH, "utf8"),
+  ]);
 
   assert.equal(
-    source.includes("api.createSession({"),
+    source.includes("buildDialogRestoreRequestKey"),
     true,
-    "dialog open must request runtime session creation so lock/timers hydrate after cold start"
+    "dialog open must build a restore request key per continuity entry"
   );
   assert.equal(
-    source.includes("resolveRuntimeSessionFromWorkspaceSnapshot"),
+    source.includes("shouldCreateRuntimeRestore"),
     true,
-    "dialog open should consult workspace snapshots to detect missing runtime sessions"
+    "dialog open must consult restore dedupe helper before createSession"
   );
   assert.equal(
-    source.includes("match.providerSessionId"),
+    source.includes("options.restoreRequestInFlightRef.current"),
     true,
-    "dialog open must resume provider sessions using providerSessionId identity"
+    "dialog open must track in-flight restore requests in a stable ref"
   );
   assert.equal(
-    source.includes("!runtimeSession.hasRuntimeSession"),
+    bootstrapSource.includes("RUNTIME_RESTORE_IN_FLIGHT_TTL_MS = 30_000"),
     true,
-    "dialog open should request runtime resume when snapshot lacks runtime session"
+    "restore dedupe helper must expire stale requests after bounded TTL"
+  );
+  assert.equal(
+    bootstrapSource.includes("options.requests.has(options.restoreKey)"),
+    true,
+    "restore dedupe helper must suppress duplicate restore requests for the same dialog continuity entry"
   );
 });
 
@@ -112,6 +127,26 @@ test("dialog first-open hydration binds session identity before requesting histo
     sessionRefBindIndex >= 0 && firstHistoryRequestIndex > sessionRefBindIndex,
     true,
     "dialog list handler must bind sessionRef before the first history request"
+  );
+});
+
+test("dialog controller keeps restore dedupe state across cold-open retries", async () => {
+  const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("const restoreRequestInFlightRef = useRef(new Map<string, number>())"),
+    true,
+    "controller must keep restore request dedupe state across repeated dialog:list results"
+  );
+  assert.equal(
+    source.includes("restoreRequestInFlightRef.current.clear();"),
+    true,
+    "controller must clear restore dedupe state when dialog intent changes"
+  );
+  assert.equal(
+    source.includes("restoreRequestInFlightRef,"),
+    true,
+    "controller must pass restore dedupe ref into dialog core events"
   );
 });
 
