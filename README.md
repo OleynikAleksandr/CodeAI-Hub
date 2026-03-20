@@ -7,15 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.753
-- `Codex gpt-5.4` now follows normal resume semantics on reopen/recovery instead of unconditionally starting a fresh thread for every resumed dialog.
-- Core now normalizes continuity immediately after a freshly rebound runtime session is registered, so `dialog:list` and continuity/index stop drifting behind the new provider binding.
-- Project Manager now deduplicates repeated cold-open runtime restore requests for the same dialog continuity entry, preventing stale `createSession(old providerSessionId)` reopen loops.
-- `Diagram Modules` still follows the inventory-only contract: `module-inventory.md` remains the only semantic workspace artifact for the stage, while `module-map.flow.json` stays a layout-only sidecar.
-- `Diagram Facades` still consumes `module-inventory.md` as its upstream module context, so downstream gating and fresh starts no longer depend on a separate `module-map.md`.
-- Semantic changes still flow through agent-driven updates or direct canonical Markdown editing, so the main canvas stays focused on structure and manual layout rather than inline CRUD forms.
+## Current Release — v1.1.754
+- The greenfield polygon prompt grammar now starts earlier in the workflow: `Description` explicitly captures application archetype, visible system contours, and candidate boundaries instead of only narrative product text.
+- `Virtual Simulation` now translates scenarios into `archetype-aware shell constraints`, candidate clusters, standalone modules, and simple boundary-sensitive interactions that downstream diagram stages can reuse.
+- `Diagram Modules` prompt grammar now pushes agents toward real subsystem containers with nested modules, standalone modules outside clusters, and sparse user-readable relations instead of loose analytical labels.
+- Template sync and contract tests now verify that the visible prompt surface actually delivers this polygon grammar to runtime sessions.
 
-Previous releases (summary): the `1.1.57x–1.1.752` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, and the inventory-only cleanup release.
+Previous releases (summary): the `1.1.57x–1.1.753` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, and the resume/recovery stabilization release for `Codex gpt-5.4`.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
