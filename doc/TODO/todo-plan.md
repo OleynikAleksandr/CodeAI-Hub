@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session106.md`, `doc/Sessions/Session107.md`, `doc/SolidWorks-WorkFlow/Plans/Codex_GPT54_Resume_Recovery_Architecture.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`, `doc/Sessions/Session106.md`, `doc/Sessions/Session107.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -12,36 +12,21 @@
 
 ---
 
-## Phase 17 — Codex GPT-5.4 Resume Recovery Repair (owner: Oleksandr, updated: 2026-03-20)
+## Phase 18 — Diagram User-Facing Layout And Format (owner: Oleksandr, updated: 2026-03-20)
 
 ### Stream: Planning baseline
-1. [DONE] Зафиксировать reproduction, root cause, границы фикса и verification target в planning doc; заархивировать завершенный `Phase 16` execution plan и переключить active execution SSOT на новый Phase 17 (scope: `doc/SolidWorks-WorkFlow/Plans/Codex_GPT54_Resume_Recovery_Architecture.md`, `doc/TODO/Archive/todo-plan-up-to-phase16-inventory-only-diagram-cleanup-2026-03-20.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(recovery): record codex resume loop fix`).
-2. [DONE] Git Commit: `docs(recovery): record codex resume loop fix` (hash: `d257ab65`)
-
-### Stream: Codex provider resume semantics
-1. [DONE] Убрать unconditional `gpt-5.4 => fresh thread on resume` path и добавить regression test, который подтверждает reuse existing thread id в ordinary reopen/recovery (scope: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/sdk/codex-sdk-manager.test.ts`; expected commit: `fix(codex): restore gpt54 resume semantics`).
-2. [DONE] Git Commit: `fix(codex): restore gpt54 resume semantics` (hash: `63b66804`)
-
-### Stream: Core continuity normalization
-1. [DONE] Немедленно нормализовать continuity/index для freshly bound runtime session в `session-request-handler` и покрыть eager-tracking regression test (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix(core): normalize resumed codex continuity state`).
-2. [DONE] Git Commit: `fix(core): normalize resumed codex continuity state` (hash: `a812549d`)
-
-### Stream: Project Manager reopen behavior
-1. [DONE] Добавить dedupe для cold-open runtime restore requests по одному continuity entry и вынести bootstrap helper, чтобы `use-project-manager-dialog-core-events.ts` остался в архитектурном лимите (scope: `src/client/project-manager/components/sessions/dialog-session-bootstrap.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `fix(pm): stop stale codex dialog reopen retries`).
-2. [DONE] Git Commit: `fix(pm): stop stale codex dialog reopen retries` (hash: `04cb574a`)
-3. [DONE] Исправить release-time type-check regression в `dialog-session-bootstrap.ts`, чтобы bootstrap helper передавал `ProviderStackId | null`, а не `string | null` (scope: `src/client/project-manager/components/sessions/dialog-session-bootstrap.ts`; expected commit: `fix(pm): narrow dialog bootstrap provider typing`).
-4. [DONE] Git Commit: `fix(pm): narrow dialog bootstrap provider typing` (hash: `40332e59`)
-
-### Stream: Docs and verification
-1. [DONE] Синхронизировать release-facing docs и SSOT под новый recovery bugfix: `README`, `CHANGELOG`, `BugRegistry`, `SystemArchitecture`, session reports и active `todo-plan` должны отражать root cause, fix boundary и target release `1.1.753` (scope: `README.md`, `CHANGELOG.md`, `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session106.md`, `doc/Sessions/Session107.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(recovery): record codex resume loop fix`).
-2. [DONE] Git Commit: `docs(recovery): record codex resume loop fix` (hash: `d257ab65`)
-3. [DONE] Выполнить таргетные проверки и собрать новый релиз `1.1.753` через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем зафиксировать version/manifests changes и release artifacts (scope: `release manifests/scripts`, package versions, build outputs; expected commit: `chore(release): build codex resume recovery release`).
-4. [DONE] Git Commit: `chore(release): build codex resume recovery release` (hash: `9e872284`)
-5. [DONE] После релизной сборки дописать фактические release hashes / verification notes в `todo-plan`, `BugRegistry` и `Session107`, чтобы следующий старт восстанавливал уже post-release context, а не pre-release worktree state (scope: `doc/TODO/todo-plan.md`, `doc/BugRegistry.md`, `doc/Sessions/Session107.md`; expected commit: `docs(session): record codex resume recovery verification`).
-6. [TODO] Git Commit: `docs(session): record codex resume recovery verification` (hash: TBD)
+1. [DONE] Заархивировать завершенный `Phase 17` execution plan, создать planning docs для user-facing layout/format diagram stages и для формальной module/cluster-facade grammar платформы, затем зафиксировать confirmed baseline: текущая диаграмма слабо полезна пользователю не только из-за layout overlap, но и из-за отсутствия внятно materialized formal entities в кодовой базе (scope: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram layout and format scope`).
+2. [TODO] Git Commit: `docs(plan): start diagram layout and format scope` (hash: TBD)
 
 ## Notes
-- Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase16-inventory-only-diagram-cleanup-2026-03-20.md`
-- Active planning doc for this phase: `doc/SolidWorks-WorkFlow/Plans/Codex_GPT54_Resume_Recovery_Architecture.md`
-- Reproduction workspace: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4`
-- Target bugfix release: `1.1.753`
+- Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
+- Active planning docs for this phase:
+  - `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`
+- Active mirrored workspace artifact:
+  - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules/module-inventory.md`
+- Confirmed current defect baseline:
+  - first-open diagram remains visible without `module-map.flow.json`, but fallback positions can overlap cards and reduce readability
+  - current `cluster` / `module` semantics are not yet strict enough to produce a diagram that is self-explanatory for a non-programmer user
+- Implementation streams will be added after planning decisions on lane model, card format, and fallback-layout rules are approved.
