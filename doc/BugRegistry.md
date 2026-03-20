@@ -72,7 +72,9 @@
 - `63b66804 fix(codex): restore gpt54 resume semantics`
 - `a812549d fix(core): normalize resumed codex continuity state`
 - `04cb574a fix(pm): stop stale codex dialog reopen retries`
-- Release/docs hashes будут дописаны финальным session commit этой сессии.
+- `d257ab65 docs(recovery): record codex resume loop fix`
+- `9e872284 chore(release): build codex resume recovery release`
+- `40332e59 fix(pm): narrow dialog bootstrap provider typing`
 
 **Release:** `1.1.753`
 

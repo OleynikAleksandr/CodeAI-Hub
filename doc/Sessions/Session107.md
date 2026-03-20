@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-20 09:56 (CET)
 **Branch:** main
-**Version:** 1.1.752
+**Version:** 1.1.753
 
 ---
 
@@ -15,7 +15,10 @@
 - Подтверждено, что проблема не связана с account switch / auth failure; корневая причина локализована в recovery-loop между PM continuity recovery, Core dialog/session recovery и special-case `Codex gpt-5.4 resume => fresh thread`.
 - Реализован фикс в трех контурах: `Codex_Module` снова резюмирует `gpt-5.4` thread по обычному reopen path, core немедленно нормализует continuity для freshly rebound runtime session, PM дедуплицирует repeated restore requests по одному continuity entry.
 - Выполнены таргетные проверки для `@codeai-hub/codex-module`, `@codeai-hub/core` и PM dialog snapshot replay; локальные regression tests и сборки прошли успешно.
-- Подготовлен release-facing doc sync под новый bugfix release `v1.1.753`.
+- Синхронизированы release-facing docs и SSOT под новый bugfix release `v1.1.753`: `README`, `CHANGELOG`, `BugRegistry`, `SystemArchitecture`, `todo-plan`, planning/session reports.
+- Выполнен `./scripts/build-all.sh`: собраны и упакованы provider modules, core, UI bundles и CEF launcher для `1.1.753`.
+- Выполнен `./scripts/build-release.sh --use-current-version`: собран `codeai-hub-1.1.753.vsix`, release tail прошел через `Verifying SDK exclusions`, artefact validation, dev-deps prune/restore и `✅ Package created`.
+- Во время первого `build-release` найден и исправлен дополнительный PM type-check regression в `dialog-session-bootstrap.ts` (`ProviderStackId | null` вместо слишком широкого `string | null`).
 - Зафиксирован новый planning-doc под срочный bugfix и создан новый `todo-plan.md` (`Phase 17`) под реализацию фикса.
 - Предыдущий полностью завершенный execution plan, доведенный до `Phase 16`, заархивирован.
 
@@ -275,9 +278,6 @@ Created:
 - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT54_Resume_Recovery_Architecture.md`
 - `doc/TODO/Archive/todo-plan-up-to-phase16-inventory-only-diagram-cleanup-2026-03-20.md` (archived by move from active todo plan path)
 - `doc/TODO/todo-plan.md`
-
-Existing uncommitted report still present in worktree:
-
 - `doc/Sessions/Session106.md`
 
 ## Git commits
@@ -285,11 +285,16 @@ Existing uncommitted report still present in worktree:
 - `63b66804 fix(codex): restore gpt54 resume semantics`
 - `a812549d fix(core): normalize resumed codex continuity state`
 - `04cb574a fix(pm): stop stale codex dialog reopen retries`
+- `d257ab65 docs(recovery): record codex resume loop fix`
+- `9e872284 chore(release): build codex resume recovery release`
+- `40332e59 fix(pm): narrow dialog bootstrap provider typing`
 
-Session state at this checkpoint:
+Release verification state at the end of this session:
 
-- implementation for provider/core/PM streams is committed;
-- release-facing docs sync and release build are still pending in the current worktree state.
+- `build-all` completed successfully for `1.1.753`;
+- `build-release --use-current-version` completed successfully;
+- VSIX artifact: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.753.vsix` (`1.4M`);
+- local release caches updated under `~/.codeai-hub/releases/`.
 
 ---
 
@@ -306,7 +311,7 @@ Session state at this checkpoint:
 7. `doc/SolidWorks-WorkFlow/Plans/Codex_GPT54_Resume_Recovery_Architecture.md`
 8. `doc/TODO/todo-plan.md`
 
-> Далее: для реализации открыть нужные файлы из `packages/Codex_Module/src/sdk/`, `packages/core/src/remote-bridge/handlers/`, `packages/core/src/session-continuity/`, `src/client/project-manager/components/sessions/`.
+> Далее: если понадобится повторно разбирать этот bugfix, открыть прежде всего `packages/Codex_Module/src/sdk/`, `packages/core/src/remote-bridge/handlers/`, `src/client/project-manager/components/sessions/`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`.
 
 ## Critical logs and runtime artifacts to keep in mind
 
@@ -325,30 +330,27 @@ Session state at this checkpoint:
 7. PM chromium log with queue symptom:
    - `/Users/oleksandroliinyk/.codeai-hub/data/project-manager/chrome_debug.log`
 
-## Files on the critical path for remaining work
+## Release artifacts and critical references
 
-### Release-facing docs / reports
+### Release artifact
 
-1. `README.md`
-2. `CHANGELOG.md`
-3. `doc/BugRegistry.md`
-4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session107.md`
+1. `codeai-hub-1.1.753.vsix`
 
-### Release/build path
+### Key docs and code touched by the fix
 
-1. `./scripts/build-all.sh`
-2. `./scripts/build-release.sh --use-current-version`
-3. root `package.json` version bump / generated release manifests
+1. `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`
+2. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+3. `src/client/project-manager/components/sessions/dialog-session-bootstrap.ts`
+4. `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`
+5. `doc/BugRegistry.md`
+6. `doc/TODO/todo-plan.md`
+7. `doc/Sessions/Session107.md`
 
-## Current worktree status before release
+## Current repository state after release build
 
-At this point implementation commits are already present, but release docs / reports still need to be committed before the tree can be cleaned for `build-all`.
+At the moment of writing this report the release build itself is complete. One final docs/session commit is still being prepared to record these verification results and hashes into `todo-plan` / `BugRegistry` / `Session107`.
 
 ## Plans for next session
 
-- Commit release-facing docs sync (`README`, `CHANGELOG`, `BugRegistry`, `SystemArchitecture`, `todo-plan`, session reports) so the tree becomes clean before release packaging.
-- Run `./scripts/build-all.sh` and then `./scripts/build-release.sh --use-current-version` for target release `1.1.753`.
-- Perform the intended manual recovery smoke-check in the reproduced `diagram_modules` workspace if the user wants live product validation in addition to automated guards.
-- Update `doc/TODO/todo-plan.md`, `doc/BugRegistry.md` and this report with final release hash / verification results, then close the phase with a session-doc commit.
+- Если пользователю нужен live product smoke-check, повторить reproduction в mirrored workspace и убедиться, что reopen `diagram_modules` больше не застревает в perpetual `Agent is working…`.
+- Если live smoke-check не требуется, следующий рабочий старт можно делать уже от baseline `v1.1.753` и выбирать новый scope поверх этого bugfix release.
