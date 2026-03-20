@@ -64,3 +64,4 @@
   - не рефакторинг основного repo, а greenfield-полигон на пустых репозиториях
   - первый practical target — prompt/template grammar для `Description`, `Virtual Simulation`, `Diagram Modules`
   - success criterion — `Diagram Modules` должна стать понятной пользователю диаграммой состава системы, а не повторением folder chaos
+  - локальный release runtime для этого полигона уже собран как `1.1.754`; следующий шаг — прогон пустого репозитория через реальное установленное приложение

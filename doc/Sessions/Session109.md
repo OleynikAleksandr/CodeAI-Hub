@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-20 18:32 (CET)
 **Branch:** main
-**Version:** 1.1.753
+**Version:** 1.1.754
 **HEAD at session start:** `7edec9bc docs(session): record formal module cluster discussion`
 
 ---
@@ -46,6 +46,18 @@
   - `node --test dist/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.js`
   - `node --test dist/remote-bridge/handlers/idea-contract-service.diagram-stages.test.js`
   - `node --test dist/templates/template-sync-service.test.js`
+- Подготовлены release-facing документы для локального релиза `1.1.754`:
+  - обновлены `README.md` и `CHANGELOG.md`;
+  - собран unified release cycle:
+    - `./scripts/build-all.sh`
+    - `./scripts/build-release.sh --use-current-version`
+- В результате получены локальные релизные артефакты:
+  - `codeai-hub-1.1.754.vsix`
+  - provider/core/ui/launcher tarballs в `doc/tmp/releases/`
+- Подтверждено:
+  - `build-all.sh` завершился успешно;
+  - `build-release.sh --use-current-version` создал VSIX для `1.1.754`;
+  - дерево после релизного цикла осталось чистым.
 
 ## Main architectural outcome
 
@@ -71,6 +83,8 @@ Created:
 
 Updated:
 
+- `README.md`
+- `CHANGELOG.md`
 - `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`
 - `doc/TODO/todo-plan.md`
 - `packages/agents/description-agent/assets/questionnaire-template.md`
@@ -91,10 +105,13 @@ Updated:
 - `080a7351 docs(plan): formalize greenfield polygon grammar`
 - `df20c495 docs(prompt): align description and simulation polygon grammar`
 - `ad0dc26b docs(prompt): align diagram modules polygon grammar`
+- `21f75460 docs(session): record polygon prompt rollout`
+- `cdc573aa docs(release): prepare 1.1.754 notes`
+- `0557f3a0 chore(release): build greenfield polygon prompt release`
 
 Текущий активный implementation step после обновления отчёта:
-- решить, делаем ли сразу локальный релиз для прогона на пустом репозитории;
-- либо сначала вручную прогнать первый greenfield-полигон через обновлённый prompt surface.
+- использовать локальный релиз `1.1.754` как первый runtime для прогона пустого greenfield-репозитория;
+- проверить `Description` -> `Virtual Simulation` -> `Diagram Modules` уже через реальный установленный пакет, а не только через template/tests.
 
 ---
 
@@ -117,12 +134,12 @@ Updated:
 
 Следующий practical focus после этого отчёта:
 
-1. Sync/release decision для обновлённого prompt-pack.
-2. Прогон пустого greenfield-репозитория через:
+1. Прогон пустого greenfield-репозитория через локальный релиз `1.1.754`:
    - `Description`
    - `Virtual Simulation`
    - `Diagram Modules`
-3. Оценка артефактов как user-facing polygon output, а не как внутренней markdown-формальности.
+2. Оценка артефактов как user-facing polygon output, а не как внутренней markdown-формальности.
+3. Выявление новых instruction gaps до перехода к следующей диаграмме/спецификациям.
 
 ## Key constraint to preserve
 
@@ -145,5 +162,6 @@ Updated:
 
 Ближайшая проверка:
 
-- понять, достаточно ли текущего prompt surface для первого реального полигона;
-- если да, собрать локальный релиз и протестировать flow на пустом репозитории.
+- использовать уже собранный локальный релиз `1.1.754`;
+- протестировать flow на пустом репозитории;
+- исправлять дальше не артефакты вручную, а prompts/templates/instructions.
