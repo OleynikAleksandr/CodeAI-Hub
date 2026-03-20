@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { access, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -22,6 +29,52 @@ const VISIBLE_DIAGRAM_TEMPLATE_PATHS = [
   ".codeai-hub/templates/diagram_facades/facade-map-template.md",
   ".codeai-hub/templates/diagram_facades/facade-map-field-reference.md",
   ".codeai-hub/templates/diagram_facades/facade-map-merge-rules.md",
+] as const;
+
+const POLYGON_TEMPLATE_CONTENT_CHECKS = [
+  {
+    relativePath:
+      ".codeai-hub/templates/description/description-collector-prompt.md",
+    snippets: [
+      "Archetype / Archetype Shell",
+      "Candidate clusters and standalone modules",
+    ],
+  },
+  {
+    relativePath: ".codeai-hub/templates/description/questionnaire-template.md",
+    snippets: [
+      "Какой это тип приложения / платформа",
+      "Какие границы или самостоятельные части уже точно видны",
+    ],
+  },
+  {
+    relativePath: ".codeai-hub/templates/description/description-template.md",
+    snippets: [
+      "понятная пользователю диаграмма модулей",
+      "крупные части системы и важные границы",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
+    snippets: [
+      "Archetype / shell constraints",
+      "Candidate clusters and standalone modules",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
+    snippets: ["formal subsystem container", "secondary classification"],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
+    snippets: [
+      "### Cluster: example-user-workspace",
+      "#### Module: workspace-intake",
+    ],
+  },
 ] as const;
 
 test("TemplateSyncService removes legacy diagram templates during sync", async () => {
@@ -65,6 +118,14 @@ test("TemplateSyncService installs visible diagram templates for appendix resolu
     for (const relativePath of VISIBLE_DIAGRAM_TEMPLATE_PATHS) {
       const absolutePath = path.join(tempHome, relativePath);
       await assert.doesNotReject(access(absolutePath));
+    }
+
+    for (const check of POLYGON_TEMPLATE_CONTENT_CHECKS) {
+      const absolutePath = path.join(tempHome, check.relativePath);
+      const content = await readFile(absolutePath, "utf8");
+      for (const snippet of check.snippets) {
+        assert.equal(content.includes(snippet), true);
+      }
     }
   } finally {
     if (previousHome === undefined) {

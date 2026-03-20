@@ -8,57 +8,85 @@
 
 ## Clusters
 
-### Cluster: example-cluster
-- Id: example-cluster
-- Purpose: Short one-line purpose statement
+### Cluster: example-user-workspace
+- Id: example-user-workspace
+- Purpose: Coordinates how the user enters, opens, and works inside a project workspace
 - Modules:
-  - example-cluster-module
-- Notes: Optional cluster note
+  - workspace-intake
+  - workspace-session-state
+- Notes: A cluster is a real subsystem container with modules inside it, not just a visual label
 
-#### Module: example-cluster-module
-- Id: example-cluster-module
+#### Module: workspace-intake
+- Id: workspace-intake
 - Kind: service
-- Title: Example Cluster Module
-- Responsibility: Short one-line responsibility statement
-- Cluster: example-cluster
+- Title: Workspace Intake
+- Responsibility: Starts and validates workspace entry into the application
+- Cluster: example-user-workspace
 - Inputs:
-  - inbound-event
+  - user-open-workspace-request
 - Outputs:
-  - outbound-event
+  - workspace-opened
 - Contract Targets:
-  - contracts/example-cluster-module.md
+  - contracts/workspace-intake.md
 - Code Targets:
-  - packages/example-cluster-module/
+  - packages/example-user-workspace/
+- Origin: agent
+- Status: proposed
+
+#### Module: workspace-session-state
+- Id: workspace-session-state
+- Kind: store
+- Title: Workspace Session State
+- Responsibility: Keeps the current workspace session readable and consistent for the rest of the product
+- Cluster: example-user-workspace
+- Inputs:
+  - workspace-opened
+- Outputs:
+  - workspace-session-summary
+- Contract Targets:
+  - contracts/workspace-session-state.md
+- Code Targets:
+  - packages/example-user-workspace/
 - Origin: agent
 - Status: proposed
 
 ## Standalone Modules
 
-### Module: example-standalone-module
-- Id: example-standalone-module
+### Module: activity-timeline
+- Id: activity-timeline
 - Kind: adapter
-- Title: Example Standalone Module
-- Responsibility: Short one-line responsibility statement
+- Title: Activity Timeline
+- Responsibility: Shows the user a readable timeline of important project activity outside the workspace subsystem
 - Inputs:
-  - inbound-event
+  - workspace-session-summary
 - Outputs:
-  - outbound-event
+  - timeline-updated
 - Contract Targets:
-  - contracts/example-standalone-module.md
+  - contracts/activity-timeline.md
 - Code Targets:
-  - packages/example-standalone-module/
+  - packages/activity-timeline/
 - Origin: agent
 - Status: proposed
 
 ## Simple Relations
 
-### Relation: source-module__sync-call__example-cluster-module
-- Id: source-module__sync-call__example-cluster-module
-- From: source-module
-- To: example-cluster-module
-- Type: sync-call
-- Label: execute()
+### Relation: workspace-intake__async-event__workspace-session-state
+- Id: workspace-intake__async-event__workspace-session-state
+- From: workspace-intake
+- To: workspace-session-state
+- Type: async-event
+- Label: workspace-opened
 - Criticality: medium
+- Origin: agent
+- Status: proposed
+
+### Relation: workspace-session-state__async-event__activity-timeline
+- Id: workspace-session-state__async-event__activity-timeline
+- From: workspace-session-state
+- To: activity-timeline
+- Type: async-event
+- Label: workspace-session-summary
+- Criticality: low
 - Origin: agent
 - Status: proposed
 
