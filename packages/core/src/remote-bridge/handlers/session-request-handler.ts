@@ -1356,6 +1356,10 @@ export class SessionRequestHandler {
       providerSessionId,
       rootSessionId: continuityRootSessionId,
     });
+    await this.continuity.ensureTrackedOnOutboundMessage({
+      sessionId: session.id,
+      providerSessionId,
+    });
 
     const workspaceSlug = session.initiativeSlug;
     const stageId = session.stage;
@@ -1441,6 +1445,10 @@ export class SessionRequestHandler {
       session,
       providerSessionId,
       rootSessionId: shell.continuityRootSessionId,
+    });
+    await this.continuity.ensureTrackedOnOutboundMessage({
+      sessionId: session.id,
+      providerSessionId,
     });
 
     const workspaceSlug = session.initiativeSlug;

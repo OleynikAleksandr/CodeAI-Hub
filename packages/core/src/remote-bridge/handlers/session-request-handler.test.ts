@@ -34,6 +34,7 @@ type HandlerHarness = {
   readonly events: BridgeEvent[];
   readonly promoted: BindingUpdate[];
   readonly continuityUpdates: BindingUpdate[];
+  readonly continuityTracked: BindingUpdate[];
   readonly runtimeLockUpdates: RuntimeLockUpdate[];
 };
 
@@ -58,6 +59,7 @@ const createHarness = (): HandlerHarness => {
   const events: BridgeEvent[] = [];
   const promoted: BindingUpdate[] = [];
   const continuityUpdates: BindingUpdate[] = [];
+  const continuityTracked: BindingUpdate[] = [];
   const runtimeLockUpdates: RuntimeLockUpdate[] = [];
 
   const handler = Object.create(
@@ -67,6 +69,7 @@ const createHarness = (): HandlerHarness => {
   Object.assign(handler, {
     providerSessions,
     sessionManager,
+    continuityRootBySessionId: new Map(),
     flowNodeRolloverInFlight: new Set(),
     flowNodeRolloverStarted: new Set(),
     flowNodeTokenUsageSnapshots: new Map(),
@@ -83,7 +86,14 @@ const createHarness = (): HandlerHarness => {
     },
     continuity: {
       handleProviderEvent: async () => Promise.resolve(),
-      ensureTrackedOnOutboundMessage: async () => Promise.resolve(),
+      ensureTrackedOnOutboundMessage: ({
+        sessionId,
+        providerSessionId,
+      }: BindingUpdate) => {
+        continuityTracked.push({ sessionId, providerSessionId });
+        return Promise.resolve();
+      },
+      registerSession: noop,
       updateProviderSessionId: (
         sessionId: string,
         providerSessionId: string
@@ -148,6 +158,7 @@ const createHarness = (): HandlerHarness => {
     events,
     promoted,
     continuityUpdates,
+    continuityTracked,
     runtimeLockUpdates,
   };
 };
@@ -369,6 +380,67 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
       ?.providerSessionId,
     "real-session-123"
   );
+});
+
+test("SessionRequestHandler eagerly tracks freshly bound provider sessions", async () => {
+  const harness = createHarness();
+  Object.assign(harness.handler as unknown as Record<string, unknown>, {
+    resolveContinuityRootSessionId: async () => "root-session-created",
+    resolveDescriptionDialog: async () => null,
+    maybePromoteLegacyDescriptionDialogHistory: noop,
+    maybeBackfillDescriptionDialogHistory: async () => Promise.resolve(),
+    updateDescriptionSessionRef: async () => Promise.resolve(),
+    broadcastSessionBinding: noop,
+  });
+  Object.assign((harness.handler as any).sessionStorage, {
+    register: noop,
+  });
+
+  const createOptions = {
+    providerId: "codex",
+    workspacePath: "/tmp/core-continuity-created",
+    adapter: {
+      subscribe: () => noop,
+    },
+    silent: true,
+    context: {
+      initiativeSlug: "demo",
+      stage: "diagram_modules",
+      runSlug: null,
+      providerSessionId: null,
+    },
+  };
+
+  const createdSession = await (harness.handler as any).createBoundSession(
+    createOptions,
+    "provider-created-1",
+    true
+  );
+
+  const shellSession = harness.sessionManager.createSession(
+    "codex",
+    "/tmp/core-continuity-shell"
+  );
+  await (harness.handler as any).bindShellSession(
+    createOptions,
+    {
+      session: shellSession,
+      continuityRootSessionId: "root-session-shell",
+    },
+    "provider-shell-2",
+    true
+  );
+
+  assert.deepEqual(harness.continuityTracked, [
+    {
+      sessionId: createdSession.id,
+      providerSessionId: "provider-created-1",
+    },
+    {
+      sessionId: shellSession.id,
+      providerSessionId: "provider-shell-2",
+    },
+  ]);
 });
 
 test("SessionRequestHandler unlocks continuity lock after bootstrap turn completion", async () => {
