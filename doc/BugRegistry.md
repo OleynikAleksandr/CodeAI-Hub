@@ -44,8 +44,51 @@
 | BUG-2026-03-05-03 | FIXED | PM/UI | Первое открытие Workspace: dialog history не подтягивается до повторного клика по stage | 1.1.711 |
 | BUG-2026-03-13-01 | FIXED | Codex Runtime | `Debug/Raw`: raw provider log полный, но unified-session/dialog JSONL пуст от агента | 1.1.722 |
 | BUG-2026-03-14-01 | FIXED | Codex Runtime | saved `gpt-5.4` default model пересиливается stale `CODEX_DEFAULT_MODEL=gpt-5.3-codex` | 1.1.726 |
+| BUG-2026-03-20-01 | FIXED | Codex/Core/PM | reopen/recovery цикл держит `diagram_modules` dialog в вечном `Agent is working...` после restart Core / PM | 1.1.753 |
 
 ---
+
+## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
+
+**Status:** FIXED
+
+**Symptom:**
+- После restart `Project Manager` / `Core` reopened `diagram_modules` dialog мог застревать в `Agent is working… Please wait.` даже когда предыдущий turn уже завершился вопросами к пользователю.
+- Пользовательские ответы уходили в queue, а PM повторно и повторно пытался восстановить тот же stale `providerSessionId`.
+- Сценарий особенно стабильно воспроизводился до появления `module-inventory.md`, когда шаг сильнее зависел от continuity/dialog recovery, чем от downstream artifact state.
+
+**Root cause (confirmed):**
+- PM при cold-open вызывал `createSession(old providerSessionId)`, если не видел runtime session для continuity entry.
+- `Codex_Module` для `gpt-5.4` имел unconditional special-case: при `resumeSession()` он пропускал обычный resume и silently стартовал fresh thread.
+- Core не нормализовал freshly rebound runtime binding в continuity/index до следующего outbound turn, поэтому dialog recovery продолжал ссылаться на старый `providerSessionId`.
+- В результате reopen path превращался в цикл `PM restore -> fresh thread substitution -> stale continuity -> PM restore`.
+
+**Fix:**
+- `Codex_Module`: убран unconditional `gpt-5.4 => fresh thread on resume`; ordinary reopen/recovery снова резюмирует исходный thread id.
+- Core: `session-request-handler` теперь immediately tracks freshly bound provider session in continuity right after session registration/binding.
+- PM: dialog cold-open bootstrap теперь deduplicates runtime restore requests per continuity entry и не спамит repeated `createSession(...)` для того же stale dialog binding.
+
+**Commits:**
+- `63b66804 fix(codex): restore gpt54 resume semantics`
+- `a812549d fix(core): normalize resumed codex continuity state`
+- `04cb574a fix(pm): stop stale codex dialog reopen retries`
+- Release/docs hashes будут дописаны финальным session commit этой сессии.
+
+**Release:** `1.1.753`
+
+**Guards required:**
+- Regression test на `Codex_Module.resumeSession()` для `gpt-5.4`, который подтверждает reuse existing thread id.
+- Regression guard на eager continuity tracking для freshly bound runtime session.
+- Regression guard на PM restore dedupe / snapshot bootstrap path для repeated cold-open dialog:list recovery.
+- Таргетные сборки `@codeai-hub/codex-module`, `@codeai-hub/core`, `build:project-manager`.
+
+**Guards delivered:**
+- `node --test --import tsx packages/Codex_Module/src/sdk/codex-sdk-manager.test.ts`
+- `npm run build --workspace=@codeai-hub/codex-module`
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test --import tsx src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+- `npm run build:project-manager`
 
 ## BUG-2026-03-13-01 — Codex Runtime: `Debug/Raw` теряет agent messages после `thread.started` promotion
 

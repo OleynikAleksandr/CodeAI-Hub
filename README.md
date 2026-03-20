@@ -7,15 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.752
-- `Diagram Modules` now follows a strict inventory-only contract: `module-inventory.md` is the only semantic workspace artifact for the stage, while `module-map.flow.json` remains a layout-only sidecar.
-- `Diagram Facades` now consumes `module-inventory.md` as its upstream module context, so downstream gating and fresh starts no longer depend on a separate `module-map.md`.
-- Project Manager, runtime prompts, help copy, and workflow gating no longer advertise or wait for a raw `module-map.md` file in the workspace.
-- `Diagram Modules` and `Diagram Facades` still use a visual-only manual-layout surface: `Auto-layout`, profile buttons, `Edit Modules`, `Edit Relations`, and the old layout-status chrome are removed from the visible UI.
-- `module-map.flow.json` / `facade-map.flow.json` continue to persist only user-owned node positions instead of ELK-specific profile state, while React Flow remains the interactive surface for manual correction.
-- Semantic changes now flow through agent-driven updates or direct canonical Markdown editing, so the main canvas stays focused on structure and manual layout rather than inline CRUD forms.
+## Current Release — v1.1.753
+- `Codex gpt-5.4` now follows normal resume semantics on reopen/recovery instead of unconditionally starting a fresh thread for every resumed dialog.
+- Core now normalizes continuity immediately after a freshly rebound runtime session is registered, so `dialog:list` and continuity/index stop drifting behind the new provider binding.
+- Project Manager now deduplicates repeated cold-open runtime restore requests for the same dialog continuity entry, preventing stale `createSession(old providerSessionId)` reopen loops.
+- `Diagram Modules` still follows the inventory-only contract: `module-inventory.md` remains the only semantic workspace artifact for the stage, while `module-map.flow.json` stays a layout-only sidecar.
+- `Diagram Facades` still consumes `module-inventory.md` as its upstream module context, so downstream gating and fresh starts no longer depend on a separate `module-map.md`.
+- Semantic changes still flow through agent-driven updates or direct canonical Markdown editing, so the main canvas stays focused on structure and manual layout rather than inline CRUD forms.
 
-Previous releases (summary): the `1.1.57x–1.1.750` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, and the first inventory-derived diagram release.
+Previous releases (summary): the `1.1.57x–1.1.752` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, and the inventory-only cleanup release.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
