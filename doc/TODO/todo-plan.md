@@ -22,29 +22,29 @@
 
 ### Stream: Polygon baseline
 1. [DONE] Зафиксировать greenfield-полигон как активный execution scope: привязать новый planning-doc к active TODO и подтвердить, что ближайшая practical цель — не рефакторинг основного repo, а переписывание prompt/template grammar для `Description`, `Virtual Simulation` и `Diagram Modules` на пустых репозиториях (scope: `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start greenfield architecture polygon`).
-2. [TODO] Git Commit: `docs(plan): start greenfield architecture polygon` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): formalize greenfield polygon grammar` (hash: `080a7351`)
 
 ### Stream: Description grammar
 1. [DONE] Переписать user-facing `Description` templates так, чтобы шаг начал собирать archetype приложения, deployable/runtime contours и язык formal boundaries, не превращаясь в низкоуровневую спецификацию; затем регенерировать bundled templates (scope: `packages/agents/description-agent/assets/questionnaire-template.md`, `packages/agents/description-agent/assets/description-template.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): align description user templates with polygon grammar`).
-2. [TODO] Git Commit: `docs(prompt): align description user templates with polygon grammar` (hash: TBD)
+2. [DONE] Git Commit: `docs(prompt): align description and simulation polygon grammar` (hash: `df20c495`)
 3. [DONE] Переписать `description-collector-prompt.md`, чтобы агент `Final_Description.md` уже оперировал `Archetype Shell`, `Archetype Profile`, `Package / Deployable Unit`, `Cluster`, `Module`, `Module Facade`, `Cluster Facade`; затем регенерировать bundled templates (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): teach description agent formal architecture grammar`).
-4. [TODO] Git Commit: `docs(prompt): teach description agent formal architecture grammar` (hash: TBD)
+4. [DONE] Git Commit: `docs(prompt): align description and simulation polygon grammar` (hash: `df20c495`)
 
 ### Stream: Virtual Simulation grammar
 1. [DONE] Переписать `virtual-simulation-prompt.md`, чтобы сценарии порождали formal boundaries, archetype-aware shell constraints и простые user-readable interactions между будущими clusters/modules; затем регенерировать bundled templates и обновить prompt-only contract test (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `docs(prompt): align virtual simulation with formal boundaries`).
-2. [TODO] Git Commit: `docs(prompt): align virtual simulation with formal boundaries` (hash: TBD)
+2. [DONE] Git Commit: `docs(prompt): align description and simulation polygon grammar` (hash: `df20c495`)
 
 ### Stream: Diagram Modules grammar
 1. [DONE] Переписать `module-inventory` prompt/template так, чтобы `Diagram Modules` строилась из formal clusters и formal modules: cluster отображается как container с вложенными module-nodes, standalone modules остаются отдельными node-ами, а связи остаются простыми и user-readable; затем регенерировать bundled templates (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): align diagram modules inventory grammar`).
-2. [TODO] Git Commit: `docs(prompt): align diagram modules inventory grammar` (hash: TBD)
+2. [DONE] Git Commit: `docs(prompt): align diagram modules polygon grammar` (hash: `ad0dc26b`)
 3. [DONE] Переписать field-reference и merge-rules для `module-inventory`, чтобы grammar требовала formal clusters/modules, запрещала loose analytical labels и сохраняла user-approved boundaries; затем регенерировать bundled templates (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): lock diagram modules formal grammar`).
-4. [TODO] Git Commit: `docs(prompt): lock diagram modules formal grammar` (hash: TBD)
+4. [DONE] Git Commit: `docs(prompt): align diagram modules polygon grammar` (hash: `ad0dc26b`)
 5. [DONE] Обновить diagram-stage contract test, чтобы prompt-pack для `Diagram Modules` проверял новую polygon grammar и appendix invariants для formal clusters/modules (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `test(prompt): cover diagram modules polygon grammar`).
-6. [TODO] Git Commit: `test(prompt): cover diagram modules polygon grammar` (hash: TBD)
+6. [DONE] Git Commit: `docs(prompt): align diagram modules polygon grammar` (hash: `ad0dc26b`)
 
 ### Stream: Prompt-pack verification
 1. [DONE] Расширить template-sync / visible-template checks так, чтобы `Description`, `Virtual Simulation` и `Diagram Modules` гарантированно поставляли пользователю актуальный polygon prompt surface через existing template-sync path (scope: `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `test(prompt): verify polygon template sync surface`).
-2. [TODO] Git Commit: `test(prompt): verify polygon template sync surface` (hash: TBD)
+2. [DONE] Git Commit: `docs(prompt): align diagram modules polygon grammar` (hash: `ad0dc26b`)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
