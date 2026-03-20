@@ -1,4 +1,5 @@
 import type { SessionRecord } from "../../../../types/session";
+import type { ProviderStackId } from "../../../../types/provider";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import {
@@ -58,7 +59,7 @@ export const shouldCreateRuntimeRestore = (options: {
 export const createDialogBootstrapSnapshots = (options: {
   readonly previous: SessionSnapshots;
   readonly nextSession: SessionRecord;
-  readonly providerId: string | null;
+  readonly providerId: ProviderStackId | null;
   readonly settings: Settings | null;
   readonly latestSnapshot: WorkspaceSnapshotPushPayload | null;
 }): SessionSnapshots => {
