@@ -294,24 +294,6 @@ export class CodexSDKManager {
       workspacePath ?? this.deps.workspace.workspacePath;
     const logger = new CodexSessionLogger();
 
-    // Codex CLI treats the original thread model as sticky. In particular, when resuming a
-    // `gpt-5.3-codex` thread, passing `--model gpt-5.4` is not sufficient to force a downgrade.
-    // If the user selected `gpt-5.4` in Settings, prefer starting a fresh thread so the choice
-    // is respected.
-    if (this.workspaceDefaults.defaultModel === CODEX_MIGRATION_FROM) {
-      this.deps.reporter?.info?.(
-        `Codex resume skipped for thread ${threadId} because defaultModel=${CODEX_MIGRATION_FROM}; starting a new thread instead`
-      );
-      const { tempId, session: newSession } = this.deps.sessions.createSession(
-        actualWorkspacePath,
-        logger
-      );
-      const thread = this.createThread(newSession);
-      newSession.thread = thread;
-      this.deps.processor.initializeSession(newSession, thread);
-      return tempId;
-    }
-
     const session = this.deps.sessions.createResumedSession(
       actualWorkspacePath,
       threadId,
