@@ -63,6 +63,12 @@ test("virtual simulation contract is prompt-only (no artifact template path)", a
       contract?.prompt.includes("достаточное количество ключевых сценариев"),
       true
     );
+    assert.equal(
+      contract?.prompt.includes(
+        "этот технический лимит не отменяет требования покрыть систему"
+      ),
+      true
+    );
   } finally {
     if (previousHome === undefined) {
       process.env.HOME = undefined;

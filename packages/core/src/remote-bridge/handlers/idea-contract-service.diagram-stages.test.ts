@@ -52,6 +52,13 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
     assert.equal(contract?.paths.template, templatePath);
     assert.equal(contract?.prompt.includes("formal subsystem container"), true);
     assert.equal(contract?.prompt.includes("secondary classification"), true);
+    assert.equal(contract?.prompt.includes("module-map.flow.json"), true);
+    assert.equal(
+      contract?.prompt.includes(
+        ".codeai-hub/templates/diagram_modules/module-inventory-template.md"
+      ),
+      true
+    );
     assert.equal(
       contract?.prompt.includes(
         "Do not silently convert standalone modules into cluster members"
@@ -64,6 +71,12 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
     );
     assert.equal(
       contract?.template.includes("#### Module: workspace-intake"),
+      true
+    );
+    assert.equal(
+      contract?.template.includes(
+        "This inventory is the semantic source of truth for the step"
+      ),
       true
     );
   } finally {

@@ -66,11 +66,11 @@
 3. [DONE] Выровнять field reference и merge-rules `Diagram Modules` под ownership-preserving grammar и подготовить переход к `Product Part` ownership layer без потери user-approved boundaries (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): prepare diagram modules ownership migration`).
 4. [DONE] Git Commit: `docs(prompt): prepare diagram modules ownership migration` (hash: `4befb729`)
 5. [DONE] Выровнять user-facing help `Diagram Modules` под runtime template references, glossary, semantic/layout split и объяснение роли `module-map.flow.json` как layout sidecar (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`; expected commit: `docs(help): align diagram modules step help`).
-6. [IN_PROGRESS] Git Commit: `docs(help): align diagram modules step help` (hash: TBD)
+6. [DONE] Git Commit: `docs(help): align diagram modules step help` (hash: `c6bd9798`)
 
 ### Stream: Prompt-pack verification
-1. [TODO] Обновить prompt-pack / template-sync проверки так, чтобы runtime surface для `Description`, `Virtual Simulation` и `Diagram Modules` гарантированно поставлял новые compact prompts, template references и coverage/ownership language (scope: `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `test(prompt): verify ownership-aware prompt surface`).
-2. [TODO] Git Commit: `test(prompt): verify ownership-aware prompt surface` (hash: TBD)
+1. [DONE] Обновить prompt-pack / template-sync проверки так, чтобы runtime surface для `Description`, `Virtual Simulation` и `Diagram Modules` гарантированно поставлял новые compact prompts, template references и coverage/ownership language (scope: `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `test(prompt): verify ownership-aware prompt surface`).
+2. [IN_PROGRESS] Git Commit: `test(prompt): verify ownership-aware prompt surface` (hash: TBD)
 
 ## Phase 21 — Diagram Modules Product Part DSL Migration (owner: Oleksandr, updated: 2026-03-21)
 

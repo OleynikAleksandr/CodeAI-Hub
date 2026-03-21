@@ -36,8 +36,8 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     relativePath:
       ".codeai-hub/templates/description/description-collector-prompt.md",
     snippets: [
-      "Archetype / Archetype Shell",
-      "Candidate clusters and standalone modules",
+      "Все продукты в CodeAI Hub по умолчанию трактуются как кластерно-модульные",
+      "Твоя задача на этом шаге — на основе анкеты",
     ],
   },
   {
@@ -60,12 +60,16 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     snippets: [
       "Archetype / shell constraints",
       "Candidate clusters and standalone modules",
+      "достаточное количество ключевых сценариев",
     ],
   },
   {
     relativePath:
       ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
-    snippets: ["formal subsystem container", "secondary classification"],
+    snippets: [
+      "formal subsystem container",
+      ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
+    ],
   },
   {
     relativePath:
