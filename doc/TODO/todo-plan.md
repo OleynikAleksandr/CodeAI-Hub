@@ -62,9 +62,9 @@
 
 ### Stream: Diagram Modules prompt/help alignment
 1. [DONE] Имплементировать согласованный rewrite prompt/template surface для `Diagram Modules`: убрать язык `significant/insignificant`, привязать форму артефакта к runtime templates и зафиксировать inventory как semantic source of truth, а не layout artifact (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): align diagram modules runtime surface`).
-2. [IN_PROGRESS] Git Commit: `docs(prompt): align diagram modules runtime surface` (hash: TBD)
-3. [TODO] Выровнять field reference и merge-rules `Diagram Modules` под ownership-preserving grammar и подготовить переход к `Product Part` ownership layer без потери user-approved boundaries (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): prepare diagram modules ownership migration`).
-4. [TODO] Git Commit: `docs(prompt): prepare diagram modules ownership migration` (hash: TBD)
+2. [DONE] Git Commit: `docs(prompt): align diagram modules runtime surface` (hash: `cb061550`)
+3. [DONE] Выровнять field reference и merge-rules `Diagram Modules` под ownership-preserving grammar и подготовить переход к `Product Part` ownership layer без потери user-approved boundaries (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): prepare diagram modules ownership migration`).
+4. [IN_PROGRESS] Git Commit: `docs(prompt): prepare diagram modules ownership migration` (hash: TBD)
 5. [TODO] Выровнять user-facing help `Diagram Modules` под runtime template references, glossary, semantic/layout split и объяснение роли `module-map.flow.json` как layout sidecar (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`; expected commit: `docs(help): align diagram modules step help`).
 6. [TODO] Git Commit: `docs(help): align diagram modules step help` (hash: TBD)
 
