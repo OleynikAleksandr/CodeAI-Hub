@@ -162,11 +162,20 @@ Relations должны оставаться простыми и sparse:
 
 Документ должен:
 - начинаться с заголовка `# Module Inventory`;
-- содержать обязательные секции `## Metadata`, `## Clusters`, `## Standalone Modules`, `## Simple Relations`, `## Assumptions / Open Questions`;
+- содержать обязательные секции `## Metadata`, `## Product Parts`, `## Simple Relations`, `## Assumptions / Open Questions`;
 - использовать стабильные и детерминированные IDs;
+- держать `Product Part`, `Cluster` и standalone `Module` в ownership-aware hierarchy текущего DSL;
 - держать cluster modules внутри соответствующего cluster блока;
-- не смешивать standalone modules с cluster members;
+- не смешивать standalone modules с cluster members и не откатываться к legacy flat inventory, если верхнеуровневые `Product Part` уже видны из подтверждённого контекста;
 - не содержать extra Markdown artifacts, Mermaid, JSON или произвольный prose вне канонического DSL.
+
+Parser-critical rules:
+- для каждого `### Product Part: ...` поля `Clusters:` и `Standalone Modules:` должны в точности совпадать с реально вложенными блоками этого же `Product Part`;
+- не перечисляй cluster или standalone module в полях `Product Part`, если соответствующего nested блока нет в этой секции;
+- не создавай nested `### Cluster:` или standalone `### Module:` блоки внутри `Product Part`, не обновив поля `Clusters:` / `Standalone Modules:`;
+- каждый nested `Cluster` обязан явно объявлять тот же `Product Part`, внутри которого он находится;
+- каждый standalone `Module`, лежащий напрямую внутри `Product Part`, обязан явно объявлять тот же `Product Part`;
+- если runtime уже вернул parse/validation error по ownership lists, исправляй exact mismatch между полями `Product Part` и nested blocks, а не упрощай inventory до более плоской формы.
 
 Даже если входных данных мало, ты всё равно обязан создать такой `module-inventory.md`, который уже даёт осмысленный фундамент для следующих шагов.
 Не оставляй inventory пустым или формальным.
