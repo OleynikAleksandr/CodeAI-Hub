@@ -7,6 +7,7 @@ const PRODUCT_PART_PADDING_BOTTOM = 28;
 const PRODUCT_PART_SECTION_GAP = 36;
 const PRODUCT_PART_ROW_GAP = 48;
 const PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3;
+const PRODUCT_PART_EXTERNAL_GAP = 72;
 const CLUSTER_X_STEP = 320;
 const CLUSTER_MIN_HEIGHT = 168;
 const CLUSTER_PADDING_X = 24;
@@ -19,18 +20,10 @@ const MODULE_CARD_WIDTH = 240;
 const MODULE_CARD_HEIGHT = 120;
 const DEFAULT_PRODUCT_PART_ID = "default-product-part";
 
-const toProductPartNodeId = (productPartId: string): string =>
-  `product-part:${productPartId}`;
-
+const toProductPartNodeId = (productPartId: string): string => `product-part:${productPartId}`;
 const toClusterNodeId = (clusterId: string): string => `cluster:${clusterId}`;
-
-const compareById = <T extends { readonly id: string }>(
-  left: T,
-  right: T
-): number => left.id.localeCompare(right.id);
-
-const compareText = (left: string, right: string): number =>
-  left.localeCompare(right);
+const compareById = <T extends { readonly id: string }>(left: T, right: T): number =>
+  left.id.localeCompare(right.id);
 
 const humanizeIdentifier = (value: string): string =>
   value
@@ -45,6 +38,40 @@ const getClusterHeight = (moduleCount: number): number =>
     CLUSTER_PADDING_TOP + moduleCount * MODULE_Y_STEP + CLUSTER_PADDING_BOTTOM
   );
 
+const buildModuleNode = ({
+  module,
+  position,
+  productPart,
+  cluster,
+  parentId,
+}: {
+  readonly module: ModuleMapModel["modules"][number];
+  readonly position: { readonly x: number; readonly y: number };
+  readonly productPart: string;
+  readonly cluster?: string;
+  readonly parentId?: string;
+}): DiagramFlowNode => ({
+  id: module.id,
+  type: "module",
+  position,
+  parentId,
+  extent: parentId ? ("parent" as const) : undefined,
+  data: {
+    stage: "diagram_modules",
+    nodeKind: "module",
+    moduleId: module.id,
+    title: module.title,
+    kind: module.kind,
+    responsibility: module.responsibility,
+    status: module.status,
+    origin: module.origin,
+    productPart,
+    cluster,
+    inputCount: module.inputs.length,
+    outputCount: module.outputs.length,
+  },
+});
+
 const buildFallbackClusters = (
   model: ModuleMapModel
 ): ReadonlyMap<
@@ -53,7 +80,7 @@ const buildFallbackClusters = (
 > =>
   new Map(
     [...new Set(model.modules.flatMap((module) => (module.cluster ? [module.cluster] : [])))]
-      .sort(compareText)
+      .sort((left, right) => left.localeCompare(right))
       .map((clusterId) => [
         clusterId,
         {
@@ -129,6 +156,12 @@ export const buildModuleStageNodes = (
             )
             .map((module) => module.id)
     ).filter((moduleId) => modulesById.has(moduleId));
+    const externalStandaloneModuleIds = standaloneModuleIds.filter(
+      (moduleId) => modulesById.get(moduleId)?.kind === "external"
+    );
+    const internalStandaloneModuleIds = standaloneModuleIds.filter(
+      (moduleId) => !externalStandaloneModuleIds.includes(moduleId)
+    );
     const clusterHeights = clusterIds.map((clusterId) =>
       getClusterHeight(clustersById.get(clusterId)?.moduleIds.length ?? 0)
     );
@@ -142,38 +175,31 @@ export const buildModuleStageNodes = (
         ? clusterIds.length
         : Math.min(
             PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS,
-            Math.max(standaloneModuleIds.length, 1)
+            Math.max(internalStandaloneModuleIds.length, 1)
           )
     );
     const standaloneRowCount =
-      standaloneModuleIds.length > 0
-        ? Math.ceil(standaloneModuleIds.length / standaloneColumnCount)
+      internalStandaloneModuleIds.length > 0
+        ? Math.ceil(internalStandaloneModuleIds.length / standaloneColumnCount)
         : 0;
     const standaloneSectionHeight =
       standaloneRowCount > 0
         ? MODULE_CARD_HEIGHT + (standaloneRowCount - 1) * MODULE_Y_STEP
         : 0;
+    const externalSectionHeight =
+      externalStandaloneModuleIds.length > 0
+        ? MODULE_CARD_HEIGHT +
+          (externalStandaloneModuleIds.length - 1) * MODULE_Y_STEP
+        : 0;
     const productPartColumnCount = Math.max(clusterIds.length, standaloneColumnCount, 1);
-    const productPartWidth = Math.max(
-      720,
-      PRODUCT_PART_PADDING_X * 2 +
-        Math.max(
-          productPartColumnCount * CLUSTER_X_STEP,
-          MODULE_CARD_WIDTH
-        )
-    );
-    const productPartHeight = Math.max(
-      260,
-      standaloneY + standaloneSectionHeight + PRODUCT_PART_PADDING_BOTTOM
-    );
+    const productPartWidth = Math.max(720, PRODUCT_PART_PADDING_X * 2 + Math.max(productPartColumnCount * CLUSTER_X_STEP, MODULE_CARD_WIDTH));
+    const productPartHeight = Math.max(260, standaloneY + standaloneSectionHeight + PRODUCT_PART_PADDING_BOTTOM);
+    const productPartRowHeight = Math.max(productPartHeight, standaloneY + externalSectionHeight);
     const productPartNode: DiagramFlowNode = {
       id: toProductPartNodeId(productPart.id),
       type: "cluster",
       position: { x: 0, y: productPartY },
-      style: {
-        width: productPartWidth,
-        height: productPartHeight,
-      },
+      style: { width: productPartWidth, height: productPartHeight },
       data: {
         stage: "diagram_modules",
         nodeKind: "productPart",
@@ -214,41 +240,26 @@ export const buildModuleStageNodes = (
         const module = modulesById.get(moduleId);
         return module
           ? [
-              {
-                id: module.id,
-                type: "module",
+              buildModuleNode({
+                module,
                 position: {
                   x: MODULE_X_OFFSET,
                   y: MODULE_Y_OFFSET + moduleIndex * MODULE_Y_STEP,
                 },
                 parentId: toClusterNodeId(clusterId),
-                extent: "parent" as const,
-                data: {
-                  stage: "diagram_modules",
-                  nodeKind: "module",
-                  moduleId: module.id,
-                  title: module.title,
-                  kind: module.kind,
-                  responsibility: module.responsibility,
-                  status: module.status,
-                  origin: module.origin,
-                  productPart: productPart.id,
-                  cluster: clusterId,
-                  inputCount: module.inputs.length,
-                  outputCount: module.outputs.length,
-                },
-              } satisfies DiagramFlowNode,
+                productPart: productPart.id,
+                cluster: clusterId,
+              }),
             ]
           : [];
       })
     );
-    const standaloneNodes = standaloneModuleIds.flatMap((moduleId, moduleIndex) => {
+    const standaloneNodes = internalStandaloneModuleIds.flatMap((moduleId, moduleIndex) => {
       const module = modulesById.get(moduleId);
       return module
         ? [
-            {
-              id: module.id,
-              type: "module",
+            buildModuleNode({
+              module,
               position: {
                 x:
                   PRODUCT_PART_PADDING_X +
@@ -258,27 +269,28 @@ export const buildModuleStageNodes = (
                   Math.floor(moduleIndex / standaloneColumnCount) * MODULE_Y_STEP,
               },
               parentId: toProductPartNodeId(productPart.id),
-              extent: "parent" as const,
-              data: {
-                stage: "diagram_modules",
-                nodeKind: "module",
-                moduleId: module.id,
-                title: module.title,
-                kind: module.kind,
-                responsibility: module.responsibility,
-                status: module.status,
-                origin: module.origin,
-                productPart: productPart.id,
-                cluster: undefined,
-                inputCount: module.inputs.length,
-                outputCount: module.outputs.length,
-              },
-            } satisfies DiagramFlowNode,
+              productPart: productPart.id,
+            }),
           ]
         : [];
     });
-    const nodes = [productPartNode, ...clusterNodes, ...clusteredModules, ...standaloneNodes];
-    productPartY += productPartHeight + PRODUCT_PART_ROW_GAP;
+    const externalNodes = externalStandaloneModuleIds.flatMap((moduleId, moduleIndex) => {
+      const module = modulesById.get(moduleId);
+      return module
+        ? [
+            buildModuleNode({
+              module,
+              position: {
+                x: productPartWidth + PRODUCT_PART_EXTERNAL_GAP,
+                y: productPartY + standaloneY + moduleIndex * MODULE_Y_STEP,
+              },
+              productPart: productPart.id,
+            }),
+          ]
+        : [];
+    });
+    const nodes = [productPartNode, ...clusterNodes, ...clusteredModules, ...standaloneNodes, ...externalNodes];
+    productPartY += productPartRowHeight + PRODUCT_PART_ROW_GAP;
     return nodes;
   });
 };

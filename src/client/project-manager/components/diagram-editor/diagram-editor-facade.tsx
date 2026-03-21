@@ -141,6 +141,16 @@ const ModuleNode = ({ data }: { readonly data: ModuleFlowNodeData }) => (
       >
         {data.cluster}
       </div>
+    ) : data.kind === "external" ? (
+      <div
+        style={{
+          marginTop: 8,
+          fontSize: 11,
+          color: "var(--pm-accent-strong)",
+        }}
+      >
+        External to {data.productPart}
+      </div>
     ) : (
       <div
         style={{

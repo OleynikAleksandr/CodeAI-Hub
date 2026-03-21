@@ -110,10 +110,10 @@
 
 ### Stream: Standalone module band stabilization
 1. [DONE] Нормализовать размещение standalone modules внутри `Product Part`: вынести их в отдельную предсказуемую band/row внутри контейнера product part, чтобы standalone-карточки не ломали cluster grid и не выталкивали cluster containers в overlap при first-open layout; покрыть это ownership-aware fixture и sidecar-stability проверкой (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; expected commit: `fix(diagram-layout): stabilize standalone module band`).
-2. [TODO] Git Commit: `fix(diagram-layout): stabilize standalone module band` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-layout): stabilize standalone module band` (hash: `996ad9ef`)
 
 ### Stream: External boundary readability
-1. [TODO] Вернуть читаемую внешнюю boundary для выбранного AI provider и проверить, что gateway/external nodes не визуализируются как внутренние элементы `Product Part`; при необходимости развести materialization/layout rules для ownership-free external nodes и закрепить renderer expectation на уровне тестов (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix(diagram-layout): keep external provider outside product parts`).
+1. [DONE] Вернуть читаемую внешнюю boundary для выбранного AI provider и проверить, что gateway/external nodes не визуализируются как внутренние элементы `Product Part`; при необходимости развести materialization/layout rules для ownership-free external nodes и закрепить renderer expectation на уровне тестов (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix(diagram-layout): keep external provider outside product parts`).
 2. [TODO] Git Commit: `fix(diagram-layout): keep external provider outside product parts` (hash: TBD)
 
 ### Stream: Release build after Phase 22 and Phase 23

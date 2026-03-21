@@ -19,6 +19,10 @@ export const DiagramModulesHelp: React.FC = () => (
         здесь только один: <code>module-inventory.md</code>.
       </div>
       <div>
+        В visual hierarchy этого шага ownership читается как{" "}
+        <code>Product Part -&gt; Cluster -&gt; Module</code>.
+      </div>
+      <div>
         Что полезнее всего уточнять в диалоге:
         <ul style={{ marginTop: 6 }}>
           <li>какие части продукта действительно существуют;</li>
