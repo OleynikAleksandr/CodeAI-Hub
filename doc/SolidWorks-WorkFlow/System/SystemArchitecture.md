@@ -148,6 +148,8 @@
 - `Diagram Modules` keeps semantic truth in `module-inventory.md`, not in the visible graph canvas.
 - Видимый UI больше не содержит inline-редакторов для module entities и relations.
 - `module-inventory.md` is the canonical semantic SSOT for `Diagram Modules`; runtime строит visual projection напрямую из inventory и не требует отдельный raw map artifact в workspace.
+- Начиная с ownership-aware migration (`2026-03-21`), canonical inventory model для `Diagram Modules` включает явный верхний уровень `Product Part -> Cluster -> Module`.
+- Parser/runtime обязаны поддерживать dual-read migration path: новый hierarchical DSL читает explicit `Product Parts`, а legacy flat inventories временно materialize synthetic `default-product-part`, чтобы старые workspace artifacts оставались parseable без ручной миграции.
 - Graph canvas continues to allow manual layout edits, and those changes remain in `module-map.flow.json` only.
 - Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
@@ -181,12 +183,12 @@
 - Fresh toolbar bootstrap для шагов `Diagram Modules` / `Diagram Facades` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-inventory.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан сначала читать strict field-reference и merge-rules из synced visible templates под `~/.codeai-hub/templates/...`, а package assets использовать только как bundled-source fallback, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
-- Для `Diagram Modules` canonical semantic checkpoint теперь `module-inventory.md`; downstream gating и `Diagram Facades` должны читать именно inventory, а visual graph обязан materialize cluster membership и standalone modules напрямую из него.
+- Для `Diagram Modules` canonical semantic checkpoint теперь `module-inventory.md`; downstream gating и `Diagram Facades` должны читать именно inventory, а visual graph обязан materialize ownership hierarchy `Product Part -> Cluster -> Module` напрямую из него.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
 - Ordinary dialog reopen/recovery contract обязан сохранять identity continuity между PM, Core continuity и provider runtime. Если runtime по любой причине создает fresh provider session вместо обычного resume, новый binding должен быть immediately normalized в continuity/index до следующего outbound user turn, а PM не имеет права бесконечно повторять `createSession(old providerSessionId)` для того же continuity entry.
 - `Diagram Modules` и `Diagram Facades` больше не должны навязывать пользователю inline semantic editors или bottom-right minimap. Product UX обязан опираться на:
   - AI-generated semantic structure в canonical `.md`;
-  - top-level visual nodes с явными `nodeTypes`, без fake parent/child cluster nesting;
+  - nested ownership containers для `Diagram Modules`, где `Product Part` = top-level container, `Cluster` = child container, `Module` = child node внутри cluster или напрямую внутри owning product part;
   - manual drag/editing внутри React Flow;
   - persisted user-owned positions в `module-map.flow.json` / `facade-map.flow.json`;
   - agent-driven semantic updates when new semantic content is needed.
@@ -195,6 +197,31 @@
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+
+## 6.6) Diagram Modules Ownership Hierarchy Boundary (Phase 6, 2026-03-21)
+
+- `Diagram Modules` больше не ограничивается semantic baseline вида `cluster + standalone module`.
+- Канонический semantic runtime contract для module stage теперь включает `ProductPartEntity[]`, `ClusterEntity[]`, `ModuleEntity[]` и `ModuleRelation[]`.
+- `Product Part` является верхним ownership layer для user-facing diagram:
+  - имеет `role`, `title`, `purpose`, ordered `clusterIds`, ordered `standaloneModuleIds`;
+  - не может быть пустым;
+  - не может использоваться как relation endpoint.
+- `Cluster` обязан принадлежать ровно одному `Product Part`, а `Module` обязан принадлежать ровно одному `Product Part` и максимум одному `Cluster`.
+- React Flow projection для `Diagram Modules` обязан использовать nested container model:
+  - product part node = top-level container;
+  - cluster node = child container через `parentId` / `extent: "parent"`;
+  - module node = child node внутри cluster или напрямую внутри product part, если модуль standalone.
+- `module-map.flow.json` остаётся non-semantic layout sidecar даже после введения ownership hierarchy:
+  - хранит только geometry/positions;
+  - не переносит ownership semantics;
+  - применяется только если `Revision` sidecar совпадает с текущим semantic artifact.
+
+Канонические документы:
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+
+Связанный planning-док:
+- `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
 
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
