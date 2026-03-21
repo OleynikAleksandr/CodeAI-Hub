@@ -209,3 +209,20 @@ test("parseModuleMapDsl accepts UTF-8 BOM and CRLF line endings", () => {
   assert.equal(result.value.stage, "diagram_modules");
   assert.equal(result.value.modules[0].id, "auth-service");
 });
+
+test("parseModuleMapDsl ignores optional Product Part scalar on legacy module blocks", () => {
+  const result = parseModuleMapDsl(
+    MODULE_MAP_FIXTURE.replace(
+      "- Cluster: security\n",
+      "- Product Part: default-product-part\n- Cluster: security\n"
+    )
+  );
+
+  assert.equal(result.ok, true);
+  if (!result.ok) {
+    return;
+  }
+
+  assert.equal(result.value.modules[0].cluster, "security");
+  assert.equal("productPart" in result.value.modules[0], false);
+});

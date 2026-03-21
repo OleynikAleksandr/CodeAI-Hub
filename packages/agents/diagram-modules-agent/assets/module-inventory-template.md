@@ -66,7 +66,7 @@
 - Origin: agent
 - Status: proposed
 
-#### Module: activity-timeline
+### Module: activity-timeline
 - Id: activity-timeline
 - Kind: adapter
 - Title: Activity Timeline

@@ -28,10 +28,8 @@ const SCAFFOLD_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx"
 );
-
 test("diagram-editor-facade keeps React Flow diagnostics widgets but no auto-layout controls", async () => {
   const source = await readFile(FACADE_SOURCE_PATH, "utf8");
-
   assert.equal(source.includes("<Controls showInteractive={false} />"), true);
   assert.equal(source.includes("<MiniMap"), false);
   assert.equal(source.includes("nodesDraggable={Boolean(onNodesChange)}"), true);
@@ -41,10 +39,8 @@ test("diagram-editor-facade keeps React Flow diagnostics widgets but no auto-lay
   assert.equal(source.includes("Auto-layout"), false);
   assert.equal(source.includes("layoutProfileOptions"), false);
 });
-
 test("diagram-editor-shell is now user-owned layout only", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");
-
   assert.equal(source.includes("applyNodeChanges"), true);
   assert.equal(source.includes("handleFlowNodesChange"), true);
   assert.equal(source.includes("void onNodesChange?.(nextNodesSnapshot);"), true);
@@ -54,10 +50,8 @@ test("diagram-editor-shell is now user-owned layout only", async () => {
   assert.equal(source.includes("initialLayoutProfile"), false);
   assert.equal(source.includes("Auto-layout"), false);
 });
-
 test("diagram stage scaffold keeps the visual shell stretched to full panel height", async () => {
   const source = await readFile(SCAFFOLD_SOURCE_PATH, "utf8");
-
   assert.equal(source.includes("minHeight: \"100%\""), true);
   assert.equal(source.includes("gridTemplateRows: \"auto minmax(0, 1fr)\""), true);
   assert.equal(source.includes("flex: \"1 1 auto\""), true);
@@ -84,7 +78,12 @@ test("diagram modules loader prefers module inventory before module map", async 
   const source = await readFile(MODULES_LOADER_SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("materializeModuleMapFromInventoryDsl"), true);
-  assert.equal(source.includes("inventoryArtifactPath"), true);
+  assert.equal(
+    source.includes(
+      "artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,"
+    ),
+    true
+  );
   assert.equal(source.includes("module-inventory.md"), true);
 });
 
@@ -169,15 +168,113 @@ test("module inventory parser converts clusters and standalone modules into a mo
 
   assert.equal(result.value.stage, "diagram_modules");
   assert.equal(result.value.modules.length, 3);
+  assert.equal(result.value.productParts?.length, 1);
+  assert.equal(result.value.productParts?.[0]?.id, "default-product-part");
   assert.deepEqual(
     result.value.modules.map((module) => module.id),
     ["session-manager", "audit-trail", "export-adapter"]
   );
   assert.equal(result.value.modules[0].cluster, "core-platform");
+  assert.equal(result.value.modules[0].productPart, "default-product-part");
   assert.equal(result.value.modules[2].cluster, undefined);
+  assert.equal(result.value.modules[2].productPart, "default-product-part");
   assert.equal(result.value.relations.length, 1);
   assert.equal(result.value.relations[0].from, "session-manager");
   assert.equal(result.value.relations[0].to, "export-adapter");
+});
+
+test("module inventory parser reads product part hierarchy without flattening ownership", () => {
+  const result = parseModuleInventoryDsl(`# Module Inventory
+
+## Metadata
+- Version: 2
+- Stage: diagram_modules
+- Revision: deadbeef
+- Updated: 2026-03-21T00:00:00Z
+
+## Product Parts
+
+### Product Part: ide-shell
+- Id: ide-shell
+- Role: shell
+- Title: IDE Shell
+- Purpose: Gives the user entry into the product
+- Clusters:
+  - workspace-core
+- Standalone Modules:
+  - activity-timeline
+
+### Cluster: workspace-core
+- Id: workspace-core
+- Title: Workspace Core
+- Purpose: Coordinates workspace behavior
+- Product Part: ide-shell
+- Modules:
+  - workspace-intake
+  - session-state
+
+#### Module: workspace-intake
+- Id: workspace-intake
+- Kind: service
+- Title: Workspace Intake
+- Responsibility: Starts workspace flow
+- Product Part: ide-shell
+- Cluster: workspace-core
+- Origin: agent
+- Status: proposed
+
+#### Module: session-state
+- Id: session-state
+- Kind: store
+- Title: Session State
+- Responsibility: Keeps workspace state readable
+- Product Part: ide-shell
+- Cluster: workspace-core
+- Origin: user
+- Status: accepted
+
+### Module: activity-timeline
+- Id: activity-timeline
+- Kind: adapter
+- Title: Activity Timeline
+- Responsibility: Shows activity outside the workspace cluster
+- Product Part: ide-shell
+- Origin: agent
+- Status: proposed
+
+## Simple Relations
+
+### Relation: workspace-intake__async-event__activity-timeline
+- Id: workspace-intake__async-event__activity-timeline
+- From: workspace-intake
+- To: activity-timeline
+- Type: async-event
+- Label: workspace-opened
+- Origin: agent
+- Status: proposed
+
+## Assumptions / Open Questions
+- None
+`);
+
+  assert.equal(result.ok, true);
+  if (!result.ok) {
+    return;
+  }
+
+  assert.equal(result.value.productParts?.length, 1);
+  assert.equal(result.value.productParts?.[0]?.id, "ide-shell");
+  assert.equal(result.value.productParts?.[0]?.clusterIds[0], "workspace-core");
+  assert.equal(
+    result.value.productParts?.[0]?.standaloneModuleIds[0],
+    "activity-timeline"
+  );
+  assert.equal(result.value.clusters?.length, 1);
+  assert.equal(result.value.clusters?.[0]?.productPart, "ide-shell");
+  assert.equal(result.value.modules.length, 3);
+  assert.equal(result.value.modules[0]?.productPart, "ide-shell");
+  assert.equal(result.value.modules[0]?.cluster, "workspace-core");
+  assert.equal(result.value.modules[2]?.cluster, undefined);
 });
 
 test("diagram facades panel is visual-only and keeps semantic edits out of the surface", async () => {
