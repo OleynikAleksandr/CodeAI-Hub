@@ -70,13 +70,13 @@
 
 ### Stream: Prompt-pack verification
 1. [DONE] Обновить prompt-pack / template-sync проверки так, чтобы runtime surface для `Description`, `Virtual Simulation` и `Diagram Modules` гарантированно поставлял новые compact prompts, template references и coverage/ownership language (scope: `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `test(prompt): verify ownership-aware prompt surface`).
-2. [IN_PROGRESS] Git Commit: `test(prompt): verify ownership-aware prompt surface` (hash: TBD)
+2. [DONE] Git Commit: `test(prompt): verify ownership-aware prompt surface` (hash: `15221623`)
 
 ## Phase 21 — Diagram Modules Product Part DSL Migration (owner: Oleksandr, updated: 2026-03-21)
 
 ### Stream: DSL model and parser migration
-1. [TODO] Ввести `Product Part` ownership layer в diagram DSL types и serializer contract, чтобы `Module` и `Cluster` больше не жили как сущности без top-level product ownership (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`; expected commit: `feat(diagram-modules): define product part DSL contract`).
-2. [TODO] Git Commit: `feat(diagram-modules): define product part DSL contract` (hash: TBD)
+1. [DONE] Ввести `Product Part` ownership layer в diagram DSL types и serializer contract, чтобы `Module` и `Cluster` больше не жили как сущности без top-level product ownership (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`; expected commit: `feat(diagram-modules): define product part DSL contract`).
+2. [IN_PROGRESS] Git Commit: `feat(diagram-modules): define product part DSL contract` (hash: TBD)
 3. [TODO] Научить parser `module-inventory.md` читать hierarchical DSL `Product Part -> Cluster -> Module` и временно поддерживать legacy flat inventories через dual-read / synthetic default ownership path (scope: `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `feat(diagram-modules): parse product part hierarchy`).
 4. [TODO] Git Commit: `feat(diagram-modules): parse product part hierarchy` (hash: TBD)
 

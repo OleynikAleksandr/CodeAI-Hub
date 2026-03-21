@@ -1,4 +1,5 @@
 import type {
+  ClusterEntity,
   DiagramMapModel,
   FacadeEntity,
   FacadeMapModel,
@@ -6,6 +7,7 @@ import type {
   ModuleEntity,
   ModuleMapModel,
   ModuleRelation,
+  ProductPartEntity,
 } from "./diagram-dsl-types";
 import {
   DIAGRAM_REVISION_PLACEHOLDER,
@@ -64,14 +66,18 @@ const buildMetadataLines = (
   `- Updated: ${updated}`,
 ];
 
-const buildModuleBlock = (entity: ModuleEntity): readonly string[] => {
+const buildModuleBlock = (
+  entity: ModuleEntity,
+  headingLevel: "###" | "####" | "#####"
+): readonly string[] => {
   const lines = [
-    `### Module: ${entity.id}`,
+    `${headingLevel} Module: ${entity.id}`,
     `- Id: ${entity.id}`,
     `- Kind: ${entity.kind}`,
     `- Title: ${entity.title}`,
     `- Responsibility: ${entity.responsibility}`,
   ];
+  pushScalar(lines, "Product Part", entity.productPart);
   pushScalar(lines, "Cluster", entity.cluster);
   pushList(lines, "Inputs", entity.inputs);
   pushList(lines, "Outputs", entity.outputs);
@@ -82,6 +88,67 @@ const buildModuleBlock = (entity: ModuleEntity): readonly string[] => {
   pushTextBlock(lines, "Notes", entity.notes);
   pushTextBlock(lines, "Rationale", entity.rationale);
   return lines;
+};
+
+const buildClusterBlock = (
+  cluster: ClusterEntity,
+  modules: readonly ModuleEntity[]
+): readonly string[] => {
+  const lines = [
+    `### Cluster: ${cluster.id}`,
+    `- Id: ${cluster.id}`,
+    `- Title: ${cluster.title}`,
+    `- Purpose: ${cluster.purpose}`,
+    `- Product Part: ${cluster.productPart}`,
+  ];
+  pushList(lines, "Modules", cluster.moduleIds);
+  pushTextBlock(lines, "Notes", cluster.notes);
+  if (modules.length === 0) {
+    return lines;
+  }
+  return [
+    ...lines,
+    "",
+    ...joinBlocks(modules.map((module) => buildModuleBlock(module, "####"))),
+  ];
+};
+
+const buildProductPartBlock = (
+  productPart: ProductPartEntity,
+  clustersById: ReadonlyMap<string, ClusterEntity>,
+  modulesById: ReadonlyMap<string, ModuleEntity>
+): readonly string[] => {
+  const lines = [
+    `### Product Part: ${productPart.id}`,
+    `- Id: ${productPart.id}`,
+    `- Role: ${productPart.role}`,
+    `- Title: ${productPart.title}`,
+    `- Purpose: ${productPart.purpose}`,
+  ];
+  pushList(lines, "Clusters", productPart.clusterIds);
+  pushList(lines, "Standalone Modules", productPart.standaloneModuleIds);
+  pushTextBlock(lines, "Notes", productPart.notes);
+
+  const blocks: (readonly string[])[] = [];
+  for (const clusterId of productPart.clusterIds) {
+    const cluster = clustersById.get(clusterId);
+    if (!cluster) {
+      continue;
+    }
+    const modules = cluster.moduleIds
+      .map((moduleId) => modulesById.get(moduleId))
+      .filter((module): module is ModuleEntity => Boolean(module));
+    blocks.push(buildClusterBlock(cluster, modules));
+  }
+  for (const moduleId of productPart.standaloneModuleIds) {
+    const module = modulesById.get(moduleId);
+    if (!module) {
+      continue;
+    }
+    blocks.push(buildModuleBlock(module, "####"));
+  }
+
+  return blocks.length === 0 ? lines : [...lines, "", ...joinBlocks(blocks)];
 };
 
 const buildModuleRelationBlock = (
@@ -143,19 +210,56 @@ const buildFacadeRelationBlock = (
 };
 
 const serializeModuleMapBody = (model: ModuleMapModel): string =>
-  [
-    "# Module Map",
-    "",
-    ...buildMetadataLines(model.version, model.stage, model.updated),
-    "",
-    "## Modules",
-    "",
-    ...joinBlocks(model.modules.map(buildModuleBlock)),
-    "",
-    "## Relations",
-    "",
-    ...joinBlocks(model.relations.map(buildModuleRelationBlock)),
-  ].join("\n");
+  (() => {
+    const hasOwnershipHierarchy =
+      (model.productParts?.length ?? 0) > 0 &&
+      (model.clusters?.length ?? 0) > 0;
+    if (!hasOwnershipHierarchy) {
+      return [
+        "# Module Map",
+        "",
+        ...buildMetadataLines(model.version, model.stage, model.updated),
+        "",
+        "## Modules",
+        "",
+        ...joinBlocks(
+          model.modules.map((module) => buildModuleBlock(module, "###"))
+        ),
+        ...joinBlocks(
+          model.modules.map((module) => buildModuleBlock(module, "###"))
+        ),
+        "",
+        "## Relations",
+        "",
+        ...joinBlocks(model.relations.map(buildModuleRelationBlock)),
+      ].join("\n");
+    }
+
+    const clustersById = new Map(
+      (model.clusters ?? []).map((cluster) => [cluster.id, cluster] as const)
+    );
+    const modulesById = new Map(
+      model.modules.map((module) => [module.id, module] as const)
+    );
+
+    return [
+      "# Module Map",
+      "",
+      ...buildMetadataLines(model.version, model.stage, model.updated),
+      "",
+      "## Product Parts",
+      "",
+      ...joinBlocks(
+        (model.productParts ?? []).map((productPart) =>
+          buildProductPartBlock(productPart, clustersById, modulesById)
+        )
+      ),
+      "",
+      "## Relations",
+      "",
+      ...joinBlocks(model.relations.map(buildModuleRelationBlock)),
+    ].join("\n");
+  })();
 
 const serializeFacadeMapBody = (model: FacadeMapModel): string =>
   [

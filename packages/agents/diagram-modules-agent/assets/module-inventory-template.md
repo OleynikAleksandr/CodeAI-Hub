@@ -1,16 +1,29 @@
 # Module Inventory
 
 ## Metadata
-- Version: 1
+- Version: 2
 - Stage: diagram_modules
 - Revision: 00000000
-- Updated: 2026-03-19T00:00:00Z
+- Updated: 2026-03-21T00:00:00Z
 
-## Clusters
+## Product Parts
+
+### Product Part: example-ide-shell
+- Id: example-ide-shell
+- Role: shell
+- Title: IDE Shell
+- Purpose: Gives the user entry into the product from inside the IDE
+- Clusters:
+  - example-user-workspace
+- Standalone Modules:
+  - activity-timeline
+- Notes: Product Part is the top-level ownership layer for clusters and standalone modules
 
 ### Cluster: example-user-workspace
 - Id: example-user-workspace
+- Title: User Workspace
 - Purpose: Coordinates how the user enters, opens, and works inside a project workspace
+- Product Part: example-ide-shell
 - Modules:
   - workspace-intake
   - workspace-session-state
@@ -21,6 +34,7 @@
 - Kind: service
 - Title: Workspace Intake
 - Responsibility: Starts and validates workspace entry into the application
+- Product Part: example-ide-shell
 - Cluster: example-user-workspace
 - Inputs:
   - user-open-workspace-request
@@ -39,6 +53,7 @@
 - Kind: store
 - Title: Workspace Session State
 - Responsibility: Keeps the current workspace session readable and consistent for the rest of the product
+- Product Part: example-ide-shell
 - Cluster: example-user-workspace
 - Inputs:
   - workspace-opened
@@ -51,13 +66,12 @@
 - Origin: agent
 - Status: proposed
 
-## Standalone Modules
-
-### Module: activity-timeline
+#### Module: activity-timeline
 - Id: activity-timeline
 - Kind: adapter
 - Title: Activity Timeline
 - Responsibility: Shows the user a readable timeline of important project activity outside the workspace subsystem
+- Product Part: example-ide-shell
 - Inputs:
   - workspace-session-summary
 - Outputs:
@@ -94,4 +108,4 @@
 
 ## Assumptions / Open Questions
 - This inventory is the semantic source of truth for the step; runtime layout is generated separately.
-- If a top-level ownership contour is visible but the current DSL cannot express it directly, preserve real clusters and modules here and record the contour as an assumption instead of inventing a decorative cluster.
+- If a top-level ownership contour is visible but the current DSL cannot express it directly, preserve real product parts, clusters, and modules instead of inventing decorative boundaries.
