@@ -117,10 +117,12 @@
 2. [DONE] Git Commit: `fix(diagram-layout): keep external provider outside product parts` (hash: `2e7be37f`)
 
 ### Stream: Release build after Phase 22 and Phase 23
-1. [IN_PROGRESS] Зафиксировать checkpoint после закрытия `Phase 22` и `Phase 23`: обновить session docs, синхронизировать `todo-plan.md` и очистить дерево перед release build (scope: `doc/Sessions/Session114.md`, `doc/Sessions/Session115.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): checkpoint phase22-phase23 rollout`).
-2. [TODO] Git Commit: `docs(session): checkpoint phase22-phase23 rollout` (hash: TBD)
-3. [TODO] На чистом дереве выполнить release-oriented verification и собрать новый локальный релиз по стандартному checklist: таргетные проверки затронутых webview/diagram packages, затем `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, зафиксировать новую версию артефактов и handoff для следующего regression pass на свежем VSIX (scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/Session116.md`; expected commit: `chore(release): build post-layout regression package`).
-4. [TODO] Git Commit: `chore(release): build post-layout regression package` (hash: TBD)
+1. [DONE] Зафиксировать checkpoint после закрытия `Phase 22` и `Phase 23`: обновить session docs, синхронизировать `todo-plan.md` и очистить дерево перед release build (scope: `doc/Sessions/Session114.md`, `doc/Sessions/Session115.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): checkpoint phase22-phase23 rollout`).
+2. [DONE] Git Commit: `docs(session): checkpoint phase22-phase23 rollout` (hash: `40f26cd5`)
+3. [DONE] Синхронизировать release docs с итогом `Phase 22` / `Phase 23`, затем на чистом checkpoint выполнить таргетную verification для diagram/webview surface и `./scripts/build-all.sh`, чтобы получить локальные артефакты `1.1.756` и version/manifest refresh для релиза (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `package.json`, `package-lock.json`, `assets/**/manifest.json`, `packages/*/package.json`; expected commit: `chore(release): build 1.1.756 artifacts`).
+4. [DONE] Git Commit: `chore(release): build 1.1.756 artifacts` (hash: `8ad8e4a7`)
+5. [DONE] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball'ы, затем обновить `doc/Sessions/` и handoff для следующего regression pass на свежем релизе `1.1.756` (scope: `scripts/build-release.sh`, `doc/Sessions/Session116.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.756 release build`).
+6. [TODO] Git Commit: `docs(session): record 1.1.756 release build` (hash: TBD)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
@@ -134,16 +136,18 @@
   - `doc/Sessions/Session109.md`
   - `doc/Sessions/Session110.md`
   - `doc/Sessions/Session111.md`
+  - `doc/Sessions/Session115.md`
 - Active mirrored workspace artifact:
   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules/module-inventory.md`
 - Current verified baseline:
   - prompt/help/template rewrites для `Description`, `Virtual Simulation`, `Diagram Modules` уже закоммичены и вошли в локальный релиз `1.1.755`
   - `Diagram Modules` уже переведён на ownership-aware hierarchy `Product Part -> Cluster -> Module`
   - `module-map.flow.json` подтверждён как non-semantic layout sidecar и для новой nested hierarchy
+  - локальный release package `1.1.756` собран после `Phase 22` / `Phase 23`, включая updated prompt/template guardrails и first-open Product Part auto-layout stabilization
 - Current remaining validation focus:
-  - greenfield regression для `Description` и `Virtual Simulation` на локальном релизе `1.1.755` уже пройден; следующий активный этап — `Diagram Modules`
+  - greenfield regression для `Description` и `Virtual Simulation` на локальном релизе `1.1.755` уже пройден; следующий активный шаг на свежем `1.1.756` — повторный regression pass через `Diagram Modules`
   - после `Diagram Modules` продолжить regression-цепочку через `Diagram Facades`
-  - при переходе к diagram stages проверить, насколько first-open diagram читается без sidecar и где fallback positions всё ещё ухудшают user readability
+  - при переходе к diagram stages проверить, достаточно ли `Phase 23` улучшила first-open readability без sidecar и какие остаточные layout gaps требуют следующего execution plan
   - после regression-pass решить, архивировать ли текущий completed `todo-plan.md` и с каким новым scope открывать следующий execution plan
 - Current greenfield regression artifact baseline:
   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
