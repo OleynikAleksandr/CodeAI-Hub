@@ -78,14 +78,15 @@ export const DiagramModulesPanel: React.FC<{
             <code>module-inventory.md</code>.
           </div>
           <div>
-            Сначала согласуйте кластеры, состав модулей и простые связи в
-            <code>Source</code>, затем диаграмма станет доступна в
-            <code>Artifacts</code>.
+            Сначала согласуйте самостоятельные части продукта, кластеры,
+            состав модулей и простые связи в <code>Source</code>, затем
+            диаграмма станет доступна в <code>Artifacts</code>.
           </div>
           <div>
             Visual surface строится runtime напрямую из согласованного
-            <code>module-inventory.md</code> и не требует отдельного raw map
-            файла в workspace.
+            <code>module-inventory.md</code> и показывает ownership hierarchy
+            <code>Product Part -&gt; Cluster -&gt; Module</code> без отдельного
+            raw map файла в workspace.
           </div>
         </div>
       }

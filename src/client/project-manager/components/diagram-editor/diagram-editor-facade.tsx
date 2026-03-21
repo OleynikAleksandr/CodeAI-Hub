@@ -12,6 +12,7 @@ import type {
   DiagramFlowNode,
   FacadeFlowNodeData,
   ModuleFlowNodeData,
+  ProductPartFlowNodeData,
 } from "./adapters/domain-model-to-react-flow.types";
 
 type DiagramEditorFacadeProps = {
@@ -54,22 +55,65 @@ const nodeCaptionStyle: React.CSSProperties = {
   color: "var(--pm-text-muted)",
 };
 
-const clusterCardStyle: React.CSSProperties = {
-  minWidth: 150,
-  borderRadius: 999,
-  border: "1px dashed rgba(66, 201, 162, 0.45)",
-  background: "rgba(66, 201, 162, 0.08)",
-  color: "var(--pm-accent-strong)",
-  padding: "8px 12px",
-  boxShadow: "0 8px 18px rgba(0, 0, 0, 0.18)",
+const productPartCardStyle: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  borderRadius: 28,
+  border: "1px solid rgba(92, 134, 190, 0.35)",
+  background:
+    "linear-gradient(180deg, rgba(19, 30, 48, 0.92), rgba(13, 20, 32, 0.88))",
+  boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.03)",
+  padding: "18px 18px 22px",
 };
 
-const ClusterNode = ({ data }: { readonly data: ClusterFlowNodeData }) => (
-  <div style={clusterCardStyle}>
-    <div style={nodeCaptionStyle}>Cluster</div>
-    <strong style={{ fontSize: 13 }}>{data.title}</strong>
-  </div>
-);
+const clusterCardStyle: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  borderRadius: 22,
+  border: "1px dashed rgba(66, 201, 162, 0.48)",
+  background:
+    "linear-gradient(180deg, rgba(11, 41, 36, 0.18), rgba(9, 20, 24, 0.1))",
+  boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.02)",
+  padding: "14px 14px 18px",
+};
+
+const containerHeaderStyle: React.CSSProperties = {
+  display: "grid",
+  gap: 4,
+  alignContent: "start",
+};
+
+const ContainerNode = ({
+  data,
+}: {
+  readonly data: ClusterFlowNodeData | ProductPartFlowNodeData;
+}) => {
+  if (data.nodeKind === "productPart") {
+    return (
+      <div style={productPartCardStyle}>
+        <div style={containerHeaderStyle}>
+          <div style={nodeCaptionStyle}>Product Part</div>
+          <strong style={{ fontSize: 15 }}>{data.title}</strong>
+          <div style={{ fontSize: 12, color: "var(--pm-accent-strong)" }}>
+            Role: {data.role}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={clusterCardStyle}>
+      <div style={containerHeaderStyle}>
+        <div style={nodeCaptionStyle}>Cluster</div>
+        <strong style={{ fontSize: 13 }}>{data.title}</strong>
+        <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
+          Modules: {data.moduleIds.length}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ModuleNode = ({ data }: { readonly data: ModuleFlowNodeData }) => (
   <div style={nodeCardStyle}>
@@ -97,7 +141,17 @@ const ModuleNode = ({ data }: { readonly data: ModuleFlowNodeData }) => (
       >
         {data.cluster}
       </div>
-    ) : null}
+    ) : (
+      <div
+        style={{
+          marginTop: 8,
+          fontSize: 11,
+          color: "var(--pm-text-muted)",
+        }}
+      >
+        Standalone in {data.productPart}
+      </div>
+    )}
   </div>
 );
 
@@ -123,7 +177,7 @@ const FacadeNode = ({ data }: { readonly data: FacadeFlowNodeData }) => (
 );
 
 const NODE_TYPES = {
-  cluster: ClusterNode as React.ComponentType,
+  cluster: ContainerNode as React.ComponentType,
   module: ModuleNode as React.ComponentType,
   facade: FacadeNode as React.ComponentType,
 } as unknown as NodeTypes;
