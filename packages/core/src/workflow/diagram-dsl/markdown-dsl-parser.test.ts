@@ -207,6 +207,9 @@ test("parseModuleMapDsl accepts UTF-8 BOM and CRLF line endings", () => {
   }
 
   assert.equal(result.value.stage, "diagram_modules");
+  if (result.value.stage !== "diagram_modules") {
+    return;
+  }
   assert.equal(result.value.modules[0].id, "auth-service");
 });
 
@@ -223,6 +226,9 @@ test("parseModuleMapDsl ignores optional Product Part scalar on legacy module bl
     return;
   }
 
+  if (result.value.stage !== "diagram_modules") {
+    return;
+  }
   assert.equal(result.value.modules[0].cluster, "security");
   assert.equal("productPart" in result.value.modules[0], false);
 });
