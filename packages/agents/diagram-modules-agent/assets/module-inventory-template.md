@@ -14,7 +14,7 @@
 - Modules:
   - workspace-intake
   - workspace-session-state
-- Notes: A cluster is a real subsystem container with modules inside it, not just a visual label
+- Notes: A cluster is a real subsystem container with modules inside it, not just a visual label or a hidden ownership workaround
 
 #### Module: workspace-intake
 - Id: workspace-intake
@@ -32,6 +32,7 @@
   - packages/example-user-workspace/
 - Origin: agent
 - Status: proposed
+- Notes: This module stays inside the cluster because it is part of the same workspace subsystem boundary
 
 #### Module: workspace-session-state
 - Id: workspace-session-state
@@ -67,6 +68,7 @@
   - packages/activity-timeline/
 - Origin: agent
 - Status: proposed
+- Notes: This module remains standalone because the current inventory does not justify grouping it into a larger subsystem
 
 ## Simple Relations
 
@@ -91,4 +93,5 @@
 - Status: proposed
 
 ## Assumptions / Open Questions
-- None
+- This inventory is the semantic source of truth for the step; runtime layout is generated separately.
+- If a top-level ownership contour is visible but the current DSL cannot express it directly, preserve real clusters and modules here and record the contour as an assumption instead of inventing a decorative cluster.
