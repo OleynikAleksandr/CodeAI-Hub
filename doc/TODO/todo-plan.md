@@ -104,11 +104,11 @@
   - `doc/Sessions/Session111.md`
 - Active mirrored workspace artifact:
   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules/module-inventory.md`
-- Confirmed current defect baseline:
-  - first-open diagram remains visible without `module-map.flow.json`, but fallback positions can overlap cards and reduce readability
-  - current `cluster` / `module` semantics are not yet strict enough to produce a diagram that is self-explanatory for a non-programmer user
-  - current DSL still lacks a formal `Product Part` ownership layer, so runtime flattens top-level product contours too aggressively
-- Current active execution focus:
-  - имплементировать согласованные prompt/help/template rewrites для `Description`, `Virtual Simulation`, `Diagram Modules`
-  - затем перевести `Diagram Modules` с flat DSL на ownership-aware hierarchy `Product Part -> Cluster -> Module`
-  - success criterion — пользователь видит не плоский список карточек, а ясную диаграмму состава продукта с top-level ownership и вложенными cluster/module boundaries
+- Current verified baseline:
+  - prompt/help/template rewrites для `Description`, `Virtual Simulation`, `Diagram Modules` уже закоммичены и вошли в локальный релиз `1.1.755`
+  - `Diagram Modules` уже переведён на ownership-aware hierarchy `Product Part -> Cluster -> Module`
+  - `module-map.flow.json` подтверждён как non-semantic layout sidecar и для новой nested hierarchy
+- Current remaining validation focus:
+  - прогнать end-to-end greenfield regression на локальном релизе `1.1.755`
+  - проверить, насколько first-open diagram читается без sidecar и где fallback positions всё ещё ухудшают user readability
+  - после regression-pass решить, архивировать ли текущий completed `todo-plan.md` и с каким новым scope открывать следующий execution plan
