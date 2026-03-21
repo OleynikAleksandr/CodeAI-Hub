@@ -183,8 +183,10 @@
 - Fresh toolbar bootstrap для шагов `Diagram Modules` / `Diagram Facades` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-inventory.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан сначала читать strict field-reference и merge-rules из synced visible templates под `~/.codeai-hub/templates/...`, а package assets использовать только как bundled-source fallback, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
+- Для empty-workspace greenfield сессий agent source boundary обязан оставаться project-local: `Virtual Simulation` и `Diagram Modules` читают только canonical artifacts текущего проекта внутри `.codeai-hub/<workspaceSlug>/...`, continuity files текущего stage и файлы, которые пользователь явно назвал для этого проекта. Исходники CodeAI Hub, parser/runtime implementation и чужие repo-level docs не могут выступать источником архитектурных решений для artifact generation.
 - Для `Diagram Modules` canonical semantic checkpoint теперь `module-inventory.md`; downstream gating и `Diagram Facades` должны читать именно inventory, а visual graph обязан materialize ownership hierarchy `Product Part -> Cluster -> Module` напрямую из него.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
+- Пока canonical artifact ещё не создан, `Artifacts` panel для workflow stage обязан показывать тот же help-content, что и вкладка `Help`; отдельный pending-intro prose вне help SSOT не допускается.
 - Ordinary dialog reopen/recovery contract обязан сохранять identity continuity между PM, Core continuity и provider runtime. Если runtime по любой причине создает fresh provider session вместо обычного resume, новый binding должен быть immediately normalized в continuity/index до следующего outbound user turn, а PM не имеет права бесконечно повторять `createSession(old providerSessionId)` для того же continuity entry.
 - `Diagram Modules` и `Diagram Facades` больше не должны навязывать пользователю inline semantic editors или bottom-right minimap. Product UX обязан опираться на:
   - AI-generated semantic structure в canonical `.md`;
@@ -211,6 +213,10 @@
   - product part node = top-level container;
   - cluster node = child container через `parentId` / `extent: "parent"`;
   - module node = child node внутри cluster или напрямую внутри product part, если модуль standalone.
+- First-open auto-layout для ownership-aware `Diagram Modules` обязан оставаться readable без user drag:
+  - top-level `Product Part` containers раскладываются как независимые row/lane sections и не могут overlap друг с другом;
+  - internal standalone modules группируются в отдельную предсказуемую band внутри owning product part и не могут хаотично расширять cluster grid;
+  - ownership-free external modules/boundaries (например выбранный AI provider) визуализируются вне product-part container, а не как внутренние элементы его ownership layer.
 - `module-map.flow.json` остаётся non-semantic layout sidecar даже после введения ownership hierarchy:
   - хранит только geometry/positions;
   - не переносит ownership semantics;
