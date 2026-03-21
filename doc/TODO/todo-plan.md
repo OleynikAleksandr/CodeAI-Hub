@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`, `doc/Sessions/Session106.md`, `doc/Sessions/Session107.md`, `doc/Sessions/Session108.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`, `doc/Sessions/Session109.md`, `doc/Sessions/Session110.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -46,6 +46,50 @@
 1. [DONE] Расширить template-sync / visible-template checks так, чтобы `Description`, `Virtual Simulation` и `Diagram Modules` гарантированно поставляли пользователю актуальный polygon prompt surface через existing template-sync path (scope: `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `test(prompt): verify polygon template sync surface`).
 2. [DONE] Git Commit: `docs(prompt): align diagram modules polygon grammar` (hash: `ad0dc26b`)
 
+## Phase 20 — Runtime Polygon Prompt And Help Alignment (owner: Oleksandr, updated: 2026-03-21)
+
+### Stream: Description prompt/help alignment
+1. [IN_PROGRESS] Имплементировать согласованный compact rewrite для `Description`: связать задачу агента напрямую с анкетой, встроить кластерно-модульный baseline, glossary и правила stop-questioning без повторения структуры questionnaire (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `packages/agents/description-agent/assets/questionnaire-template.md`; expected commit: `docs(prompt): align description runtime surface`).
+2. [IN_PROGRESS] Git Commit: `docs(prompt): align description runtime surface` (hash: TBD)
+3. [TODO] Выровнять user-facing help `Description` под согласованный glossary и двойной контракт артефакта: документ одновременно читаем пользователю и служит базой для следующего шага (scope: `src/client/project-manager/components/description/description-step-help.tsx`; expected commit: `docs(help): align description step help`).
+4. [TODO] Git Commit: `docs(help): align description step help` (hash: TBD)
+
+### Stream: Virtual Simulation prompt/help alignment
+1. [TODO] Имплементировать согласованный rewrite для `Virtual Simulation`: базировать шаг на `Final_Description.md`, требовать достаточное количество сценариев и scenario coverage всей системы, а не пересказ только 2-4 user flows (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `docs(prompt): align virtual simulation coverage grammar`).
+2. [TODO] Git Commit: `docs(prompt): align virtual simulation coverage grammar` (hash: TBD)
+3. [TODO] Выровнять user-facing help `Virtual Simulation` под language of coverage, artifact-as-baseline и stop-questioning contract без управления переходом пользователя между шагами (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`; expected commit: `docs(help): align virtual simulation step help`).
+4. [TODO] Git Commit: `docs(help): align virtual simulation step help` (hash: TBD)
+
+### Stream: Diagram Modules prompt/help alignment
+1. [TODO] Имплементировать согласованный rewrite prompt/template surface для `Diagram Modules`: убрать язык `significant/insignificant`, привязать форму артефакта к runtime templates и зафиксировать inventory как semantic source of truth, а не layout artifact (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): align diagram modules runtime surface`).
+2. [TODO] Git Commit: `docs(prompt): align diagram modules runtime surface` (hash: TBD)
+3. [TODO] Выровнять field reference и merge-rules `Diagram Modules` под ownership-preserving grammar и подготовить переход к `Product Part` ownership layer без потери user-approved boundaries (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): prepare diagram modules ownership migration`).
+4. [TODO] Git Commit: `docs(prompt): prepare diagram modules ownership migration` (hash: TBD)
+5. [TODO] Выровнять user-facing help `Diagram Modules` под runtime template references, glossary, semantic/layout split и объяснение роли `module-map.flow.json` как layout sidecar (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`; expected commit: `docs(help): align diagram modules step help`).
+6. [TODO] Git Commit: `docs(help): align diagram modules step help` (hash: TBD)
+
+### Stream: Prompt-pack verification
+1. [TODO] Обновить prompt-pack / template-sync проверки так, чтобы runtime surface для `Description`, `Virtual Simulation` и `Diagram Modules` гарантированно поставлял новые compact prompts, template references и coverage/ownership language (scope: `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `test(prompt): verify ownership-aware prompt surface`).
+2. [TODO] Git Commit: `test(prompt): verify ownership-aware prompt surface` (hash: TBD)
+
+## Phase 21 — Diagram Modules Product Part DSL Migration (owner: Oleksandr, updated: 2026-03-21)
+
+### Stream: DSL model and parser migration
+1. [TODO] Ввести `Product Part` ownership layer в diagram DSL types и serializer contract, чтобы `Module` и `Cluster` больше не жили как сущности без top-level product ownership (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`; expected commit: `feat(diagram-modules): define product part DSL contract`).
+2. [TODO] Git Commit: `feat(diagram-modules): define product part DSL contract` (hash: TBD)
+3. [TODO] Научить parser `module-inventory.md` читать hierarchical DSL `Product Part -> Cluster -> Module` и временно поддерживать legacy flat inventories через dual-read / synthetic default ownership path (scope: `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-parser.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `feat(diagram-modules): parse product part hierarchy`).
+4. [TODO] Git Commit: `feat(diagram-modules): parse product part hierarchy` (hash: TBD)
+
+### Stream: React Flow hierarchy projection
+1. [TODO] Перевести projection `Diagram Modules` на nested container model: `Product Part` как top-level container, `Cluster` как child container, `Module` как child node через `parentId` / `extent`, с явным различением cluster members и standalone modules внутри product part (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `feat(diagram-modules): project product part hierarchy to react flow`).
+2. [TODO] Git Commit: `feat(diagram-modules): project product part hierarchy to react flow` (hash: TBD)
+3. [TODO] Обновить React Flow renderer `Diagram Modules`, чтобы `Product Part` и `Cluster` отображались как разные container layers, а модульные карточки оставались user-readable и совместимыми с текущим редактированием (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`; expected commit: `feat(diagram-modules): render nested ownership containers`).
+4. [TODO] Git Commit: `feat(diagram-modules): render nested ownership containers` (hash: TBD)
+
+### Stream: Sidecar and runtime verification
+1. [TODO] Проверить, что `module-map.flow.json` остаётся non-semantic layout sidecar и корректно переживает container hierarchy без потери пользовательских drag-позиций и revision guard поведения (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; expected commit: `test(diagram-modules): keep sidecar stable for nested hierarchy`).
+2. [TODO] Git Commit: `test(diagram-modules): keep sidecar stable for nested hierarchy` (hash: TBD)
+
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
 - Active planning docs for this phase:
@@ -53,15 +97,18 @@
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
 - Session handoff report:
-  - `doc/Sessions/Session108.md`
+  - `doc/Sessions/Session109.md`
+  - `doc/Sessions/Session110.md`
+  - `doc/Sessions/Session111.md`
 - Active mirrored workspace artifact:
   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules/module-inventory.md`
 - Confirmed current defect baseline:
   - first-open diagram remains visible without `module-map.flow.json`, but fallback positions can overlap cards and reduce readability
   - current `cluster` / `module` semantics are not yet strict enough to produce a diagram that is self-explanatory for a non-programmer user
+  - current DSL still lacks a formal `Product Part` ownership layer, so runtime flattens top-level product contours too aggressively
 - Current active execution focus:
-  - не рефакторинг основного repo, а greenfield-полигон на пустых репозиториях
-  - первый practical target — prompt/template grammar для `Description`, `Virtual Simulation`, `Diagram Modules`
-  - success criterion — `Diagram Modules` должна стать понятной пользователю диаграммой состава системы, а не повторением folder chaos
-  - локальный release runtime для этого полигона уже собран как `1.1.754`; следующий шаг — прогон пустого репозитория через реальное установленное приложение
+  - имплементировать согласованные prompt/help/template rewrites для `Description`, `Virtual Simulation`, `Diagram Modules`
+  - затем перевести `Diagram Modules` с flat DSL на ownership-aware hierarchy `Product Part -> Cluster -> Module`
+  - success criterion — пользователь видит не плоский список карточек, а ясную диаграмму состава продукта с top-level ownership и вложенными cluster/module boundaries
