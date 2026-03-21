@@ -17,7 +17,7 @@
   - example-user-workspace
 - Standalone Modules:
   - activity-timeline
-- Notes: Product Part is the top-level ownership layer for clusters and standalone modules
+- Notes: Product Part is the top-level ownership layer for clusters and standalone modules, and its lists must exactly match the nested blocks below
 
 ### Cluster: example-user-workspace
 - Id: example-user-workspace
@@ -108,4 +108,13 @@
 
 ## Assumptions / Open Questions
 - This inventory is the semantic source of truth for the step; runtime layout is generated separately.
-- If a top-level ownership contour is visible but the current DSL cannot express it directly, preserve real product parts, clusters, and modules instead of inventing decorative boundaries.
+- If a top-level ownership contour is already known, materialize it as a real `Product Part` instead of hiding it in notes or decorative boundaries.
+
+<!--
+Authoring checklist before finalizing:
+- Product Part header matches Product Part Id
+- Product Part Clusters list exactly matches nested Cluster blocks
+- Product Part Standalone Modules list exactly matches standalone Module blocks directly inside that Product Part
+- Every Cluster declares the same Product Part as its owner
+- Every Module declares Product Part and, when applicable, Cluster consistent with its position
+-->
