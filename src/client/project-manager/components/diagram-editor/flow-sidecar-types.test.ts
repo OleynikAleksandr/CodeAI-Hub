@@ -23,6 +23,7 @@ test("flow sidecar serializes manual node positions", () => {
           responsibility: "A",
           status: "accepted",
           origin: "agent",
+          productPart: "default-product-part",
           cluster: undefined,
           inputCount: 0,
           outputCount: 1,

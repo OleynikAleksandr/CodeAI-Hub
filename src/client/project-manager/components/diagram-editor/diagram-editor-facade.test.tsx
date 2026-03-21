@@ -261,6 +261,9 @@ test("module inventory parser reads product part hierarchy without flattening ow
   if (!result.ok) {
     return;
   }
+  if (result.value.stage !== "diagram_modules") {
+    return;
+  }
 
   assert.equal(result.value.productParts?.length, 1);
   assert.equal(result.value.productParts?.[0]?.id, "ide-shell");

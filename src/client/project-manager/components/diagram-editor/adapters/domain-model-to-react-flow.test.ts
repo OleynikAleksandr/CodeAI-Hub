@@ -1,7 +1,4 @@
-import type {
-  FacadeMapModel,
-  ModuleMapModel,
-} from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
+import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { domainModelToReactFlow } from "./domain-model-to-react-flow";
@@ -11,12 +8,39 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
   stage: "diagram_modules",
   revision: "deadbeef",
   updated: "2026-03-16T18:30:00Z",
+  productParts: [
+    {
+      id: "control-shell",
+      role: "shell",
+      title: "Control Shell",
+      purpose: "Owns the operator-facing surface and runtime entrypoint.",
+      clusterIds: ["delivery", "security"],
+      standaloneModuleIds: ["config-store"],
+    },
+  ],
+  clusters: [
+    {
+      id: "delivery",
+      title: "Delivery",
+      purpose: "Owns request delivery into the product.",
+      productPart: "control-shell",
+      moduleIds: ["api-gateway"],
+    },
+    {
+      id: "security",
+      title: "Security",
+      purpose: "Owns authentication and session protection.",
+      productPart: "control-shell",
+      moduleIds: ["auth-service"],
+    },
+  ],
   modules: [
     {
       id: "api-gateway",
       kind: "gateway",
       title: "API Gateway",
       responsibility: "Routes external requests into the platform.",
+      productPart: "control-shell",
       cluster: "delivery",
       inputs: ["http-request"],
       outputs: ["command"],
@@ -30,6 +54,7 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
       kind: "service",
       title: "Auth Service",
       responsibility: "Authenticates operators and sessions.",
+      productPart: "control-shell",
       cluster: "security",
       inputs: ["credentials"],
       outputs: ["access-token"],
@@ -43,6 +68,7 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
       kind: "store",
       title: "Config Store",
       responsibility: "Stores deployment configuration.",
+      productPart: "control-shell",
       inputs: ["config-write"],
       outputs: ["config-read"],
       contractTargets: [],
@@ -73,64 +99,18 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
   ],
 };
 
-const FACADE_MAP_FIXTURE: FacadeMapModel = {
-  version: 1,
-  stage: "diagram_facades",
-  revision: "cafebabe",
-  updated: "2026-03-16T18:45:00Z",
-  facades: [
-    {
-      id: "auth-facade",
-      module: "auth-service",
-      kind: "class",
-      visibility: "public",
-      methods: ["login(credentials): AuthToken", "logout(sessionId): void"],
-      ports: [
-        { direction: "In", type: "http", target: "api-gateway" },
-        { direction: "Out", type: "event", target: "audit-log" },
-      ],
-      contractTargets: ["contracts/auth-facade.md"],
-      codeTargets: ["packages/auth-service/src/auth-facade.ts"],
-      origin: "agent",
-      status: "proposed",
-    },
-    {
-      id: "billing-facade",
-      module: "billing-service",
-      kind: "class",
-      visibility: "internal",
-      methods: ["charge(invoiceId): ChargeResult"],
-      ports: [{ direction: "In", type: "event", target: "billing-queue" }],
-      contractTargets: ["contracts/billing-facade.md"],
-      codeTargets: ["packages/billing-service/src/billing-facade.ts"],
-      origin: "user",
-      status: "accepted",
-    },
-  ],
-  relations: [
-    {
-      id: "api-gateway__sync-call__auth-facade",
-      from: "api-gateway",
-      to: "auth-facade",
-      type: "sync-call",
-      label: "POST /login",
-      origin: "agent",
-      status: "proposed",
-    },
-  ],
-};
-
-test("domainModelToReactFlow projects module map into top-level cluster/module nodes and relation edges", () => {
+test("domainModelToReactFlow projects module map into product part, cluster, and module hierarchy", () => {
   const result = domainModelToReactFlow(MODULE_MAP_FIXTURE);
 
   assert.equal(result.stage, "diagram_modules");
   assert.equal(result.revision, "deadbeef");
-  assert.equal(result.nodes.length, 5);
+  assert.equal(result.nodes.length, 6);
   assert.equal(result.edges.length, 2);
 
   assert.deepEqual(
     result.nodes.map((node) => node.id),
     [
+      "product-part:control-shell",
       "cluster:delivery",
       "cluster:security",
       "api-gateway",
@@ -139,21 +119,39 @@ test("domainModelToReactFlow projects module map into top-level cluster/module n
     ]
   );
 
-  const deliveryCluster = result.nodes[0];
+  const productPartNode = result.nodes[0];
+  assert.equal(productPartNode.type, "cluster");
+  assert.equal(productPartNode.parentId, undefined);
+  assert.equal(productPartNode.extent, undefined);
+  assert.equal(productPartNode.style?.width, 720);
+  assert.deepEqual(productPartNode.data, {
+    stage: "diagram_modules",
+    nodeKind: "productPart",
+    productPartId: "control-shell",
+    title: "Control Shell",
+    role: "shell",
+    clusterIds: ["delivery", "security"],
+    standaloneModuleIds: ["config-store"],
+  });
+
+  const deliveryCluster = result.nodes[1];
   assert.equal(deliveryCluster.type, "cluster");
+  assert.equal(deliveryCluster.parentId, "product-part:control-shell");
+  assert.equal(deliveryCluster.extent, "parent");
   assert.deepEqual(deliveryCluster.data, {
     stage: "diagram_modules",
     nodeKind: "cluster",
     clusterId: "delivery",
-    title: "delivery",
+    productPartId: "control-shell",
+    title: "Delivery",
     moduleIds: ["api-gateway"],
   });
 
-  const gatewayNode = result.nodes[2];
+  const gatewayNode = result.nodes[3];
   assert.equal(gatewayNode.type, "module");
-  assert.equal(gatewayNode.parentId, undefined);
-  assert.equal(gatewayNode.extent, undefined);
-  assert.deepEqual(gatewayNode.position, { x: 32, y: 72 });
+  assert.equal(gatewayNode.parentId, "cluster:delivery");
+  assert.equal(gatewayNode.extent, "parent");
+  assert.deepEqual(gatewayNode.position, { x: 24, y: 72 });
   assert.deepEqual(gatewayNode.data, {
     stage: "diagram_modules",
     nodeKind: "module",
@@ -163,6 +161,7 @@ test("domainModelToReactFlow projects module map into top-level cluster/module n
     responsibility: "Routes external requests into the platform.",
     status: "proposed",
     origin: "agent",
+    productPart: "control-shell",
     cluster: "delivery",
     inputCount: 1,
     outputCount: 1,
@@ -171,14 +170,14 @@ test("domainModelToReactFlow projects module map into top-level cluster/module n
   assert.equal(
     result.nodes
       .filter((node) => node.type === "module")
-      .every((node) => node.parentId === undefined && node.extent === undefined),
+      .every((node) => typeof node.parentId === "string" && node.extent === "parent"),
     true
   );
 
-  const ungroupedNode = result.nodes[4];
-  assert.equal(ungroupedNode.parentId, undefined);
-  assert.equal(ungroupedNode.extent, undefined);
-  assert.deepEqual(ungroupedNode.position, { x: 0, y: 72 });
+  const standaloneNode = result.nodes[5];
+  assert.equal(standaloneNode.parentId, "product-part:control-shell");
+  assert.equal(standaloneNode.extent, "parent");
+  assert.deepEqual(standaloneNode.position, { x: 24, y: 328 });
 
   assert.deepEqual(result.edges, [
     {
@@ -213,60 +212,6 @@ test("domainModelToReactFlow projects module map into top-level cluster/module n
         label: undefined,
         origin: "user",
         status: "accepted",
-      },
-    },
-  ]);
-});
-
-test("domainModelToReactFlow projects facade map into stage-aware facade nodes and edges", () => {
-  const result = domainModelToReactFlow(FACADE_MAP_FIXTURE);
-
-  assert.equal(result.stage, "diagram_facades");
-  assert.equal(result.revision, "cafebabe");
-  assert.equal(result.nodes.length, 2);
-  assert.equal(result.edges.length, 1);
-  assert.deepEqual(
-    result.nodes.map((node) => node.id),
-    ["auth-facade", "billing-facade"]
-  );
-
-  assert.deepEqual(result.nodes[0], {
-    id: "auth-facade",
-    type: "facade",
-    position: { x: 0, y: 72 },
-    data: {
-      stage: "diagram_facades",
-      nodeKind: "facade",
-      facadeId: "auth-facade",
-      moduleId: "auth-service",
-      visibility: "public",
-      methodCount: 2,
-      methods: ["login(credentials): AuthToken", "logout(sessionId): void"],
-      ports: [
-        { direction: "In", type: "http", target: "api-gateway" },
-        { direction: "Out", type: "event", target: "audit-log" },
-      ],
-      status: "proposed",
-      origin: "agent",
-    },
-  });
-
-  assert.deepEqual(result.edges, [
-    {
-      id: "api-gateway__sync-call__auth-facade",
-      type: "relation",
-      source: "api-gateway",
-      target: "auth-facade",
-      label: "POST /login",
-      data: {
-        stage: "diagram_facades",
-        edgeKind: "relation",
-        relationId: "api-gateway__sync-call__auth-facade",
-        relationType: "sync-call",
-        criticality: undefined,
-        label: "POST /login",
-        origin: "agent",
-        status: "proposed",
       },
     },
   ]);
