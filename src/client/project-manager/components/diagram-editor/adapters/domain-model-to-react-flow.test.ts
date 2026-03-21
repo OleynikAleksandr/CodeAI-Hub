@@ -99,6 +99,7 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
   ],
 };
 
+
 test("domainModelToReactFlow projects module map into product part, cluster, and module hierarchy", () => {
   const result = domainModelToReactFlow(MODULE_MAP_FIXTURE);
 

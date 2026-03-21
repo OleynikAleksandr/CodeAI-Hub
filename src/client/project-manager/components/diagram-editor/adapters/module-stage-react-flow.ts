@@ -1,11 +1,11 @@
 import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import type { DiagramFlowNode } from "./domain-model-to-react-flow.types";
 
-const PRODUCT_PART_X_STEP = 980;
 const PRODUCT_PART_PADDING_X = 24;
 const PRODUCT_PART_PADDING_TOP = 72;
 const PRODUCT_PART_PADDING_BOTTOM = 28;
 const PRODUCT_PART_SECTION_GAP = 36;
+const PRODUCT_PART_ROW_GAP = 48;
 const CLUSTER_X_STEP = 320;
 const CLUSTER_MIN_HEIGHT = 168;
 const CLUSTER_PADDING_X = 24;
@@ -100,7 +100,9 @@ export const buildModuleStageNodes = (
     ]),
   ].sort(compareById);
 
-  return productParts.flatMap((productPart, productPartIndex) => {
+  let productPartY = 0;
+
+  return productParts.flatMap((productPart) => {
     const clusterIds = (
       productPart.clusterIds.length > 0
         ? productPart.clusterIds
@@ -133,26 +135,28 @@ export const buildModuleStageNodes = (
     const standaloneY =
       PRODUCT_PART_PADDING_TOP +
       (clusterIds.length > 0 ? clusterSectionHeight + PRODUCT_PART_SECTION_GAP : 0);
+    const productPartWidth = Math.max(
+      720,
+      PRODUCT_PART_PADDING_X * 2 +
+        Math.max(
+          clusterIds.length * CLUSTER_X_STEP,
+          standaloneModuleIds.length * CLUSTER_X_STEP,
+          MODULE_CARD_WIDTH
+        )
+    );
+    const productPartHeight = Math.max(
+      260,
+      standaloneY +
+        (standaloneModuleIds.length > 0 ? MODULE_CARD_HEIGHT : 0) +
+        PRODUCT_PART_PADDING_BOTTOM
+    );
     const productPartNode: DiagramFlowNode = {
       id: toProductPartNodeId(productPart.id),
       type: "cluster",
-      position: { x: productPartIndex * PRODUCT_PART_X_STEP, y: 0 },
+      position: { x: 0, y: productPartY },
       style: {
-        width: Math.max(
-          720,
-          PRODUCT_PART_PADDING_X * 2 +
-            Math.max(
-              clusterIds.length * CLUSTER_X_STEP,
-              standaloneModuleIds.length * CLUSTER_X_STEP,
-              MODULE_CARD_WIDTH
-            )
-        ),
-        height: Math.max(
-          260,
-          standaloneY +
-            (standaloneModuleIds.length > 0 ? MODULE_CARD_HEIGHT : 0) +
-            PRODUCT_PART_PADDING_BOTTOM
-        ),
+        width: productPartWidth,
+        height: productPartHeight,
       },
       data: {
         stage: "diagram_modules",
@@ -253,6 +257,8 @@ export const buildModuleStageNodes = (
           ]
         : [];
     });
-    return [productPartNode, ...clusterNodes, ...clusteredModules, ...standaloneNodes];
+    const nodes = [productPartNode, ...clusterNodes, ...clusteredModules, ...standaloneNodes];
+    productPartY += productPartHeight + PRODUCT_PART_ROW_GAP;
+    return nodes;
   });
 };
