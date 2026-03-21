@@ -9,8 +9,11 @@
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
 - `doc/Sessions/Session106.md`
 - `doc/Sessions/Session107.md`
+- `doc/Sessions/Session109.md`
+- `doc/Sessions/Session110.md`
 - `doc/TODO/todo-plan.md`
 
 ---
@@ -81,6 +84,29 @@
 
 Это правильный контракт, и менять его на semantic artifact нельзя.
 
+### 2.5. Greenfield runtime-полигон подтвердил ещё один class defects
+
+Во время прогона пустого greenfield-workspace через локальный релиз `1.1.754` подтвердилось:
+- upstream agents уже начали лучше materialize-ить `shell`, `cluster`, `module`, provider peer modules и ownership;
+- но visual runtime по-прежнему flatten-ит всё в одну плоскость `cluster + module + standalone module`;
+- ownership/host placement пока можно зафиксировать только текстом в artifact notes, но не структурированной visual hierarchy.
+
+Из этого следует:
+- часть проблем действительно решается prompt grammar;
+- но часть уже перешла в interpreter/runtime scope;
+- user-facing diagram больше не должна ограничиваться только уровнями `cluster` и `module`.
+
+### 2.6. Какие короткие discriminator-rules должны появиться в prompts
+
+Runtime-полигон показал, что агентам не нужны длинные лекции. Им нужны короткие правила разведения смыслов:
+- `shell / distribution / installer layer` против `whole product`;
+- `host/runtime ownership` против `cluster/module membership`;
+- `family of peer modules with a shared contract` против `artificial cluster`;
+- `orchestration owner` против `participating modules`;
+- `workflow mechanics` против `user-facing modules`.
+
+Эти правила не заменяют layout work, но должны заранее уменьшать semantic noise ещё до рендера диаграммы.
+
 ---
 
 ## 3. Требование уровня продукта
@@ -150,6 +176,24 @@
 
 Значит scope должен покрывать не только placement algorithm, но и format contract самих node cards.
 
+### 5.5. Diagram runtime должен перейти к иерархии host/runtime -> cluster -> module
+
+Текущий visual baseline:
+- cluster рисуется как отдельная pill-header плашка;
+- modules рисуются отдельными карточками рядом под ней;
+- standalone modules оказываются просто вне cluster headers.
+
+Новый целевой baseline:
+- верхний container: `shell / application / runtime`;
+- внутри него: `cluster` как большой rounded rectangle container;
+- внутри cluster: `module` cards;
+- standalone modules должны жить не "в пустоте", а внутри своего верхнего host/runtime container.
+
+Следствие для runtime:
+- одного только `cluster?: string` уже недостаточно для user-facing diagram;
+- interpreter должен начать materialize-ить хотя бы минимальный top-level ownership layer;
+- layout engine должен рассчитывать размеры cluster container и host/runtime container по количеству и размеру дочерних cards.
+
 ---
 
 ## 6. Открытые решения для обсуждения
@@ -167,6 +211,11 @@
 3. Нужно ли выравнивать clusters по общей сетке высот или разрешить каждой lane жить собственной вертикальной жизнью.
 4. Должен ли `Diagram Facades` получить тот же layout engine сразу или после стабилизации `Diagram Modules`.
 5. Нужен ли отдельный visual contract для store/gateway/service/adapters, или пока достаточно текущего отличия по caption.
+6. Нужно ли top-level visual сущность называть `host`, `runtime`, `application` или materialize-ить её из уже согласованного `Package / Deployable Unit` без нового пользовательского термина.
+7. Как именно показывать ownership:
+   - отдельным контейнером;
+   - подписью host/runtime в шапке cluster;
+   - комбинированной моделью, где верхний container можно сворачивать для простых приложений.
 
 ---
 
@@ -191,6 +240,8 @@
 - Перестроить default placement algorithm.
 - Исключить standalone/cluster overlap.
 - Исключить vertical overlap при variable-height cards.
+- Добавить container-model для `host/runtime -> cluster -> module`.
+- Научить projection использовать вложенность React Flow (`parentId` / `extent: "parent"`), а не только плоские координаты.
 
 ### Slice D — Verification
 
@@ -203,6 +254,7 @@
 ## 8. Что не входит в этот scope
 
 - Пересмотр semantic структуры `module-inventory.md` как таковой.
+- Полный redesign prompt grammar вместо коротких discriminator-rules.
 - Возврат inline semantic editing в canvas.
 - Изменение смысла `*.flow.json` с layout sidecar на semantic artifact.
 - Полный redesign всего Project Manager вне правой панели diagram stages.

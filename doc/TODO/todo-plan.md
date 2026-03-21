@@ -51,12 +51,12 @@
 ### Stream: Description prompt/help alignment
 1. [DONE] Имплементировать согласованный compact rewrite для `Description`: связать задачу агента напрямую с анкетой, встроить кластерно-модульный baseline, glossary и правила stop-questioning без повторения структуры questionnaire (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `packages/agents/description-agent/assets/questionnaire-template.md`; expected commit: `docs(prompt): align description runtime surface`).
 2. [DONE] Git Commit: `docs(prompt): align description runtime surface` (hash: `921b0198`)
-3. [IN_PROGRESS] Выровнять user-facing help `Description` под согласованный glossary и двойной контракт артефакта: документ одновременно читаем пользователю и служит базой для следующего шага (scope: `src/client/project-manager/components/description/description-step-help.tsx`; expected commit: `docs(help): align description step help`).
-4. [IN_PROGRESS] Git Commit: `docs(help): align description step help` (hash: TBD)
+3. [DONE] Выровнять user-facing help `Description` под согласованный glossary и двойной контракт артефакта: документ одновременно читаем пользователю и служит базой для следующего шага (scope: `src/client/project-manager/components/description/description-step-help.tsx`; expected commit: `docs(help): align description step help`).
+4. [DONE] Git Commit: `docs(help): align description step help` (hash: `a977a922`)
 
 ### Stream: Virtual Simulation prompt/help alignment
-1. [TODO] Имплементировать согласованный rewrite для `Virtual Simulation`: базировать шаг на `Final_Description.md`, требовать достаточное количество сценариев и scenario coverage всей системы, а не пересказ только 2-4 user flows (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `docs(prompt): align virtual simulation coverage grammar`).
-2. [TODO] Git Commit: `docs(prompt): align virtual simulation coverage grammar` (hash: TBD)
+1. [IN_PROGRESS] Имплементировать согласованный rewrite для `Virtual Simulation`: базировать шаг на `Final_Description.md`, требовать достаточное количество сценариев и scenario coverage всей системы, а не пересказ только 2-4 user flows (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `docs(prompt): align virtual simulation coverage grammar`).
+2. [IN_PROGRESS] Git Commit: `docs(prompt): align virtual simulation coverage grammar` (hash: TBD)
 3. [TODO] Выровнять user-facing help `Virtual Simulation` под language of coverage, artifact-as-baseline и stop-questioning contract без управления переходом пользователя между шагами (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`; expected commit: `docs(help): align virtual simulation step help`).
 4. [TODO] Git Commit: `docs(help): align virtual simulation step help` (hash: TBD)
 

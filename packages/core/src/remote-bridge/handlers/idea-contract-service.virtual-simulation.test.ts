@@ -53,6 +53,16 @@ test("virtual simulation contract is prompt-only (no artifact template path)", a
       contract?.prompt.includes("Boundary-sensitive interactions"),
       true
     );
+    assert.equal(
+      contract?.prompt.includes(
+        "Сценарии из анкеты и `Final_Description.md` — это только начальная база"
+      ),
+      true
+    );
+    assert.equal(
+      contract?.prompt.includes("достаточное количество ключевых сценариев"),
+      true
+    );
   } finally {
     if (previousHome === undefined) {
       process.env.HOME = undefined;
