@@ -114,11 +114,13 @@
 
 ### Stream: External boundary readability
 1. [DONE] Вернуть читаемую внешнюю boundary для выбранного AI provider и проверить, что gateway/external nodes не визуализируются как внутренние элементы `Product Part`; при необходимости развести materialization/layout rules для ownership-free external nodes и закрепить renderer expectation на уровне тестов (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix(diagram-layout): keep external provider outside product parts`).
-2. [TODO] Git Commit: `fix(diagram-layout): keep external provider outside product parts` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-layout): keep external provider outside product parts` (hash: `2e7be37f`)
 
 ### Stream: Release build after Phase 22 and Phase 23
-1. [TODO] После закрытия всех micro-task `Phase 22` и `Phase 23` выполнить release-oriented verification и собрать новый локальный релиз по стандартному checklist: таргетные проверки затронутых webview/diagram packages, затем на чистом дереве `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, зафиксировать новую версию артефактов и handoff для следующего regression pass на свежем VSIX (scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/Session115.md`; expected commit: `chore(release): build post-layout regression package`).
-2. [TODO] Git Commit: `chore(release): build post-layout regression package` (hash: TBD)
+1. [IN_PROGRESS] Зафиксировать checkpoint после закрытия `Phase 22` и `Phase 23`: обновить session docs, синхронизировать `todo-plan.md` и очистить дерево перед release build (scope: `doc/Sessions/Session114.md`, `doc/Sessions/Session115.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): checkpoint phase22-phase23 rollout`).
+2. [TODO] Git Commit: `docs(session): checkpoint phase22-phase23 rollout` (hash: TBD)
+3. [TODO] На чистом дереве выполнить release-oriented verification и собрать новый локальный релиз по стандартному checklist: таргетные проверки затронутых webview/diagram packages, затем `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, зафиксировать новую версию артефактов и handoff для следующего regression pass на свежем VSIX (scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/Session116.md`; expected commit: `chore(release): build post-layout regression package`).
+4. [TODO] Git Commit: `chore(release): build post-layout regression package` (hash: TBD)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
