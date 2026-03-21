@@ -88,7 +88,7 @@
 
 ### Stream: Sidecar and runtime verification
 1. [DONE] Проверить, что `module-map.flow.json` остаётся non-semantic layout sidecar и корректно переживает container hierarchy без потери пользовательских drag-позиций и revision guard поведения; если production-код менять не нужно, зафиксировать это явными runtime tests и ownership-aware fixture'ами (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; expected commit: `test(diagram-modules): keep sidecar stable for nested hierarchy`).
-2. [IN_PROGRESS] Git Commit: `test(diagram-modules): keep sidecar stable for nested hierarchy` (hash: TBD)
+2. [DONE] Git Commit: `test(diagram-modules): keep sidecar stable for nested hierarchy` (hash: `5b3e9528`)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
