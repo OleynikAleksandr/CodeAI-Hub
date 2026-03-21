@@ -5,6 +5,7 @@ import { WorkflowStepStartService } from "../../services/workflow-step-start-ser
 import { DiagramStagePanelScaffold } from "../diagram-editor/diagram-stage-panel-scaffold";
 import { useDiagramLoader } from "../diagram-editor/use-diagram-loader";
 import { useDiagramPersistence } from "../diagram-editor/use-diagram-persistence";
+import { DiagramModulesHelp } from "./diagram-modules-help";
 
 const startService = new WorkflowStepStartService();
 
@@ -53,6 +54,10 @@ export const DiagramModulesPanel: React.FC<{
 
   const visualProjection = status === "ready" ? projection : null;
 
+  if (status === "missing") {
+    return <DiagramModulesHelp />;
+  }
+
   return (
     <DiagramStagePanelScaffold
       artifactFileName="module-inventory.md"
@@ -71,25 +76,7 @@ export const DiagramModulesPanel: React.FC<{
         await persistNodes({ nodes, revision: visualProjection.revision });
       }}
       onStartFix={handleFixStart}
-      pendingContent={
-        <div style={{ display: "grid", gap: 10 }}>
-          <div>
-            Здесь отображается visual module diagram, собранная из
-            <code>module-inventory.md</code>.
-          </div>
-          <div>
-            Сначала согласуйте самостоятельные части продукта, кластеры,
-            состав модулей и простые связи в <code>Source</code>, затем
-            диаграмма станет доступна в <code>Artifacts</code>.
-          </div>
-          <div>
-            Visual surface строится runtime напрямую из согласованного
-            <code>module-inventory.md</code> и показывает ownership hierarchy
-            <code>Product Part -&gt; Cluster -&gt; Module</code> без отдельного
-            raw map файла в workspace.
-          </div>
-        </div>
-      }
+      pendingContent={<DiagramModulesHelp />}
       projection={visualProjection}
       status={status}
       title="Diagram Modules"

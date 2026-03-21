@@ -4,6 +4,7 @@ import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
 import { StageArtifactContentView } from "../shared/stage-artifact-content-view";
+import { VirtualSimulationHelp } from "./virtual-simulation-help";
 
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE =
@@ -82,30 +83,5 @@ export const VirtualSimulationPanel: React.FC<{
     return <div className="pm-placeholder">{error ?? "Не удалось загрузить Virtual Simulation."}</div>;
   }
 
-  return (
-    <div className="pm-details">
-      <div style={{ marginBottom: 12 }}>
-        <strong>Virtual Simulation</strong>
-      </div>
-      <div className="pm-placeholder" style={{ marginBottom: 12 }}>
-        Ожидаем артефакт: <code>{artifactPath}</code>
-      </div>
-      <div style={{ display: "grid", gap: 10 }}>
-        <div>
-          Здесь мы фиксируем 2–4 сценария: действие → реакция UI → что должно произойти в системе → как проверить.
-        </div>
-        <div>
-          Вы можете править <code>virtual-simulation.md</code> вручную в редакторе или через агента (он задаст до 3 уточнений и обновит файл после вашего "ОК").
-        </div>
-        <div>
-          Вы также можете прямо в диалоге:
-          <ul style={{ marginTop: 6 }}>
-            <li>задать вопросы;</li>
-            <li>приложить любые заранее подготовленные документы (или вставить текст), чтобы агент учёл их в следующей версии.</li>
-          </ul>
-        </div>
-        <div>Любые изменения пометят следующие шаги как требующие синхронизации.</div>
-      </div>
-    </div>
-  );
+  return <VirtualSimulationHelp />;
 };

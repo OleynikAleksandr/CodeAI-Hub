@@ -90,6 +90,36 @@
 1. [DONE] Проверить, что `module-map.flow.json` остаётся non-semantic layout sidecar и корректно переживает container hierarchy без потери пользовательских drag-позиций и revision guard поведения; если production-код менять не нужно, зафиксировать это явными runtime tests и ownership-aware fixture'ами (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; expected commit: `test(diagram-modules): keep sidecar stable for nested hierarchy`).
 2. [DONE] Git Commit: `test(diagram-modules): keep sidecar stable for nested hierarchy` (hash: `5b3e9528`)
 
+## Phase 22 — Greenfield Runtime Prompt Scope And Help SSOT (owner: Oleksandr, updated: 2026-03-21)
+
+### Stream: Empty-workspace guardrails and help SSOT
+1. [IN_PROGRESS] Ужесточить greenfield source-scope в runtime prompt surface для `Virtual Simulation` и `Diagram Modules`: явно ограничить чтение только project-local artifacts внутри `.codeai-hub/<workspaceSlug>/...`, continuity-файлами текущего stage и файлами, которые пользователь явно указал для текущего проекта; отдельно запретить использовать implementation/parser code самого CodeAI Hub как источник архитектурных решений для empty-workspace сессий; затем регенерировать bundled templates (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): restrict greenfield stages to project artifacts`).
+2. [TODO] Git Commit: `docs(prompt): restrict greenfield stages to project artifacts` (hash: TBD)
+3. [TODO] Дописать parser-critical invariants для `Diagram Modules` прямо в user-facing prompt surface: отдельно зафиксировать, что в каждом `Product Part` поля `Clusters:` и `Standalone Modules:` должны в точности совпадать с реально вложенными `### Cluster:` / standalone `### Module:` блоками этого же `Product Part`; заодно убрать устаревшее описание обязательных секций `## Clusters` / `## Standalone Modules` и заменить его на текущий DSL с `## Product Parts`; затем регенерировать bundled templates (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): clarify product part parser invariants`).
+4. [TODO] Git Commit: `docs(prompt): clarify product part parser invariants` (hash: TBD)
+5. [TODO] Синхронизировать `Diagram Modules` runtime reference/template с новым ownership-aware DSL: добавить в field reference явное описание `Product Part` как top-level ownership layer, полей `Clusters` / `Standalone Modules` и правила exact match с nested blocks; в template добавить authoring checklist перед завершением (`Product Part Id/header match`, exact match списков и nested blocks, корректный ownership у cluster/module) и вычистить legacy-ориентированные формулировки; затем регенерировать bundled templates (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(template): codify product part authoring checklist`).
+6. [TODO] Git Commit: `docs(template): codify product part authoring checklist` (hash: TBD)
+7. [DONE] Свести empty artifact surfaces к единому SSOT на базе help-компонентов: пока canonical artifact ещё не создан, `Artifacts` panel для `Virtual Simulation`, `Diagram Modules` и `Diagram Facades` должна показывать тот же help-текст, что и вкладка `Help`, без отдельного diverging intro/pending prose (scope: `src/client/project-manager/components/virtual-simulation/virtual-simulation-panel.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`; expected commit: `fix(ui): reuse stage help before artifact creation`).
+8. [TODO] Git Commit: `fix(ui): reuse stage help before artifact creation` (hash: TBD)
+
+## Phase 23 — Следующий шаг: Diagram Modules Product Part Auto-Layout Stabilization (owner: Oleksandr, updated: 2026-03-21)
+
+### Stream: Product Part lane placement
+1. [TODO] Пересобрать first-open auto-layout для `Diagram Modules`, чтобы top-level `Product Part` раскладывались как независимые lane/row containers после расчёта реальных child bounds, а не паковались как обычные соседние узлы с наложением друг на друга; зафиксировать regression test на ownership-aware inventory без `module-map.flow.json`, чтобы overlap крупных parent containers больше не возвращался (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; expected commit: `fix(diagram-layout): separate product part containers`).
+2. [TODO] Git Commit: `fix(diagram-layout): separate product part containers` (hash: TBD)
+
+### Stream: Standalone module band stabilization
+1. [TODO] Нормализовать размещение standalone modules внутри `Product Part`: вынести их в отдельную предсказуемую band/row внутри контейнера product part, чтобы standalone-карточки не ломали cluster grid и не выталкивали cluster containers в overlap при first-open layout; покрыть это ownership-aware fixture и sidecar-stability проверкой (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; expected commit: `fix(diagram-layout): stabilize standalone module band`).
+2. [TODO] Git Commit: `fix(diagram-layout): stabilize standalone module band` (hash: TBD)
+
+### Stream: External boundary readability
+1. [TODO] Вернуть читаемую внешнюю boundary для выбранного AI provider и проверить, что gateway/external nodes не визуализируются как внутренние элементы `Product Part`; при необходимости развести materialization/layout rules для ownership-free external nodes и закрепить renderer expectation на уровне тестов (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix(diagram-layout): keep external provider outside product parts`).
+2. [TODO] Git Commit: `fix(diagram-layout): keep external provider outside product parts` (hash: TBD)
+
+### Stream: Release build after Phase 22 and Phase 23
+1. [TODO] После закрытия всех micro-task `Phase 22` и `Phase 23` выполнить release-oriented verification и собрать новый локальный релиз по стандартному checklist: таргетные проверки затронутых webview/diagram packages, затем на чистом дереве `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, зафиксировать новую версию артефактов и handoff для следующего regression pass на свежем VSIX (scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/Sessions/Session115.md`; expected commit: `chore(release): build post-layout regression package`).
+2. [TODO] Git Commit: `chore(release): build post-layout regression package` (hash: TBD)
+
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
 - Active planning docs for this phase:
@@ -109,6 +139,14 @@
   - `Diagram Modules` уже переведён на ownership-aware hierarchy `Product Part -> Cluster -> Module`
   - `module-map.flow.json` подтверждён как non-semantic layout sidecar и для новой nested hierarchy
 - Current remaining validation focus:
-  - прогнать end-to-end greenfield regression на локальном релизе `1.1.755`
-  - проверить, насколько first-open diagram читается без sidecar и где fallback positions всё ещё ухудшают user readability
+  - greenfield regression для `Description` и `Virtual Simulation` на локальном релизе `1.1.755` уже пройден; следующий активный этап — `Diagram Modules`
+  - после `Diagram Modules` продолжить regression-цепочку через `Diagram Facades`
+  - при переходе к diagram stages проверить, насколько first-open diagram читается без sidecar и где fallback positions всё ещё ухудшают user readability
   - после regression-pass решить, архивировать ли текущий completed `todo-plan.md` и с каким новым scope открывать следующий execution plan
+- Current greenfield regression artifact baseline:
+  - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
+  - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
+  - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`
+- Questionnaire filling lesson from `Description` regression:
+  - если ключевые product facts уже известны заранее, их лучше писать в анкету сразу: primary shell `Standalone Project Manager`, MVP-роль `VS Code extension`, известные workflow stages вроде `Description -> Virtual Simulation -> Diagram Modules -> Diagram Facades`
+  - если такой уверенности нет, лучше оставить поле пустым и дать агенту задать уточняющие вопросы, потому что частично заданная, но архитектурно неточная анкета сильно удлиняет corrective dialogue

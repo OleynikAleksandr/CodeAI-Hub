@@ -5,6 +5,7 @@ import { WorkflowStepStartService } from "../../services/workflow-step-start-ser
 import { DiagramStagePanelScaffold } from "../diagram-editor/diagram-stage-panel-scaffold";
 import { useDiagramLoader } from "../diagram-editor/use-diagram-loader";
 import { useDiagramPersistence } from "../diagram-editor/use-diagram-persistence";
+import { DiagramFacadesHelp } from "./diagram-facades-help";
 
 const startService = new WorkflowStepStartService();
 
@@ -51,6 +52,10 @@ export const DiagramFacadesPanel: React.FC<{
 
   const visualProjection = status === "ready" ? projection : null;
 
+  if (status === "missing") {
+    return <DiagramFacadesHelp />;
+  }
+
   return (
     <DiagramStagePanelScaffold
       artifactFileName="facade-map.md"
@@ -69,21 +74,7 @@ export const DiagramFacadesPanel: React.FC<{
         await persistNodes({ nodes, revision: visualProjection.revision });
       }}
       onStartFix={handleFixStart}
-      pendingContent={
-        <div style={{ display: "grid", gap: 10 }}>
-          <div>
-            Здесь отображается visual facade diagram. Canonical Markdown source
-            доступен через вкладку <code>Source</code>.
-          </div>
-          <div>
-            После появления <code>facade-map.md</code> панель автоматически
-            откроет diagram-first surface.
-          </div>
-          <div>
-            Любые изменения пометят следующие шаги как требующие синхронизации.
-          </div>
-        </div>
-      }
+      pendingContent={<DiagramFacadesHelp />}
       projection={visualProjection}
       status={status}
       title="Diagram Facades"
