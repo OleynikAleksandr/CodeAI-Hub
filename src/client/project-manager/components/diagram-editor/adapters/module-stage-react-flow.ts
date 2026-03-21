@@ -6,6 +6,7 @@ const PRODUCT_PART_PADDING_TOP = 72;
 const PRODUCT_PART_PADDING_BOTTOM = 28;
 const PRODUCT_PART_SECTION_GAP = 36;
 const PRODUCT_PART_ROW_GAP = 48;
+const PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3;
 const CLUSTER_X_STEP = 320;
 const CLUSTER_MIN_HEIGHT = 168;
 const CLUSTER_PADDING_X = 24;
@@ -135,20 +136,35 @@ export const buildModuleStageNodes = (
     const standaloneY =
       PRODUCT_PART_PADDING_TOP +
       (clusterIds.length > 0 ? clusterSectionHeight + PRODUCT_PART_SECTION_GAP : 0);
+    const standaloneColumnCount = Math.max(
+      1,
+      clusterIds.length > 0
+        ? clusterIds.length
+        : Math.min(
+            PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS,
+            Math.max(standaloneModuleIds.length, 1)
+          )
+    );
+    const standaloneRowCount =
+      standaloneModuleIds.length > 0
+        ? Math.ceil(standaloneModuleIds.length / standaloneColumnCount)
+        : 0;
+    const standaloneSectionHeight =
+      standaloneRowCount > 0
+        ? MODULE_CARD_HEIGHT + (standaloneRowCount - 1) * MODULE_Y_STEP
+        : 0;
+    const productPartColumnCount = Math.max(clusterIds.length, standaloneColumnCount, 1);
     const productPartWidth = Math.max(
       720,
       PRODUCT_PART_PADDING_X * 2 +
         Math.max(
-          clusterIds.length * CLUSTER_X_STEP,
-          standaloneModuleIds.length * CLUSTER_X_STEP,
+          productPartColumnCount * CLUSTER_X_STEP,
           MODULE_CARD_WIDTH
         )
     );
     const productPartHeight = Math.max(
       260,
-      standaloneY +
-        (standaloneModuleIds.length > 0 ? MODULE_CARD_HEIGHT : 0) +
-        PRODUCT_PART_PADDING_BOTTOM
+      standaloneY + standaloneSectionHeight + PRODUCT_PART_PADDING_BOTTOM
     );
     const productPartNode: DiagramFlowNode = {
       id: toProductPartNodeId(productPart.id),
@@ -234,8 +250,12 @@ export const buildModuleStageNodes = (
               id: module.id,
               type: "module",
               position: {
-                x: PRODUCT_PART_PADDING_X + moduleIndex * CLUSTER_X_STEP,
-                y: standaloneY,
+                x:
+                  PRODUCT_PART_PADDING_X +
+                  (moduleIndex % standaloneColumnCount) * CLUSTER_X_STEP,
+                y:
+                  standaloneY +
+                  Math.floor(moduleIndex / standaloneColumnCount) * MODULE_Y_STEP,
               },
               parentId: toProductPartNodeId(productPart.id),
               extent: "parent" as const,

@@ -130,6 +130,7 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
+
 test("domainModelToReactFlow stacks wide product parts into separate rows without overlap", () => {
   const result = domainModelToReactFlow(MULTI_PRODUCT_PART_FIXTURE);
 

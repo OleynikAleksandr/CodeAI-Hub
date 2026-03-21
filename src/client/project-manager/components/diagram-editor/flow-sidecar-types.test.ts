@@ -111,12 +111,56 @@ test("flow sidecar preserves nested ownership node positions as layout-only data
           outputCount: 1,
         },
       },
+      {
+        id: "config-store",
+        type: "module",
+        position: { x: 24, y: 328 },
+        parentId: "product-part:control-shell",
+        extent: "parent",
+        data: {
+          stage: "diagram_modules",
+          nodeKind: "module",
+          moduleId: "config-store",
+          title: "Config Store",
+          kind: "store",
+          responsibility: "Keeps runtime configuration readable.",
+          status: "proposed",
+          origin: "agent",
+          productPart: "control-shell",
+          cluster: undefined,
+          inputCount: 1,
+          outputCount: 1,
+        },
+      },
+      {
+        id: "activity-log",
+        type: "module",
+        position: { x: 344, y: 328 },
+        parentId: "product-part:control-shell",
+        extent: "parent",
+        data: {
+          stage: "diagram_modules",
+          nodeKind: "module",
+          moduleId: "activity-log",
+          title: "Activity Log",
+          kind: "store",
+          responsibility: "Stores user-visible activity history.",
+          status: "proposed",
+          origin: "agent",
+          productPart: "control-shell",
+          cluster: undefined,
+          inputCount: 1,
+          outputCount: 1,
+        },
+      },
     ],
   });
 
   assert.deepEqual(document.nodes["product-part:control-shell"], { x: 40, y: 24 });
   assert.deepEqual(document.nodes["cluster:security"], { x: 24, y: 72 });
   assert.deepEqual(document.nodes["auth-service"], { x: 24, y: 72 });
+  assert.deepEqual(document.nodes["config-store"], { x: 24, y: 328 });
+  assert.deepEqual(document.nodes["activity-log"], { x: 344, y: 328 });
 });
 
 test("flow sidecar applies saved positions only when the diagram revision matches", () => {
