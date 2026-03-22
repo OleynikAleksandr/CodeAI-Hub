@@ -9,10 +9,6 @@
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
-  var __export = (target, all2) => {
-    for (var name2 in all2)
-      __defProp(target, name2, { get: all2[name2], enumerable: true });
-  };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
       for (let key of __getOwnPropNames(from))
@@ -2119,7 +2115,7 @@
       }
       var pe = null;
       var qe = null;
-      function re2(a) {
+      function re(a) {
         se(a, 0);
       }
       function te(a) {
@@ -2152,7 +2148,7 @@
         if ("value" === a.propertyName && te(qe)) {
           var b = [];
           ne(b, qe, a, xb(a));
-          Jb(re2, b);
+          Jb(re, b);
         }
       }
       function Ce(a, b, c) {
@@ -5764,7 +5760,7 @@
       var lk = Math.ceil;
       var mk = ua.ReactCurrentDispatcher;
       var nk = ua.ReactCurrentOwner;
-      var ok3 = ua.ReactCurrentBatchConfig;
+      var ok = ua.ReactCurrentBatchConfig;
       var K = 0;
       var Q = null;
       var Y = null;
@@ -6012,11 +6008,11 @@
         null !== wk && 0 === wk.tag && 0 === (K & 6) && Hk();
         var b = K;
         K |= 1;
-        var c = ok3.transition, d = C;
+        var c = ok.transition, d = C;
         try {
-          if (ok3.transition = null, C = 1, a) return a();
+          if (ok.transition = null, C = 1, a) return a();
         } finally {
-          C = d, ok3.transition = c, K = b, 0 === (K & 6) && jg();
+          C = d, ok.transition = c, K = b, 0 === (K & 6) && jg();
         }
       }
       function Hj() {
@@ -6264,11 +6260,11 @@
         0 === T && (T = 5);
       }
       function Pk(a, b, c) {
-        var d = C, e = ok3.transition;
+        var d = C, e = ok.transition;
         try {
-          ok3.transition = null, C = 1, Wk(a, b, c, d);
+          ok.transition = null, C = 1, Wk(a, b, c, d);
         } finally {
-          ok3.transition = e, C = d;
+          ok.transition = e, C = d;
         }
         return null;
       }
@@ -6294,8 +6290,8 @@
         }));
         f = 0 !== (c.flags & 15990);
         if (0 !== (c.subtreeFlags & 15990) || f) {
-          f = ok3.transition;
-          ok3.transition = null;
+          f = ok.transition;
+          ok.transition = null;
           var g = C;
           C = 1;
           var h = K;
@@ -6311,7 +6307,7 @@
           dc();
           K = h;
           C = g;
-          ok3.transition = f;
+          ok.transition = f;
         } else a.current = c;
         vk && (vk = false, wk = a, xk = e);
         f = a.pendingLanes;
@@ -6328,9 +6324,9 @@
       }
       function Hk() {
         if (null !== wk) {
-          var a = Dc(xk), b = ok3.transition, c = C;
+          var a = Dc(xk), b = ok.transition, c = C;
           try {
-            ok3.transition = null;
+            ok.transition = null;
             C = 16 > a ? 16 : a;
             if (null === wk) var d = false;
             else {
@@ -6447,7 +6443,7 @@
             }
             return d;
           } finally {
-            C = c, ok3.transition = b;
+            C = c, ok.transition = b;
           }
         }
         return false;
@@ -7279,563 +7275,1046 @@
     }
   });
 
-  // node_modules/inline-style-parser/cjs/index.js
-  var require_cjs = __commonJS({
-    "node_modules/inline-style-parser/cjs/index.js"(exports, module) {
-      "use strict";
-      var COMMENT_REGEX = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
-      var NEWLINE_REGEX = /\n/g;
-      var WHITESPACE_REGEX = /^\s*/;
-      var PROPERTY_REGEX = /^(\*?[-#/*\\\w]+(\[[0-9a-z_-]+\])?)\s*/;
-      var COLON_REGEX = /^:\s*/;
-      var VALUE_REGEX = /^((?:'(?:\\'|.)*?'|"(?:\\"|.)*?"|\([^)]*?\)|[^};])+)/;
-      var SEMICOLON_REGEX = /^[;\s]*/;
-      var TRIM_REGEX = /^\s+|\s+$/g;
-      var NEWLINE = "\n";
-      var FORWARD_SLASH = "/";
-      var ASTERISK = "*";
-      var EMPTY_STRING = "";
-      var TYPE_COMMENT = "comment";
-      var TYPE_DECLARATION = "declaration";
-      function index2(style, options) {
-        if (typeof style !== "string") {
-          throw new TypeError("First argument must be a string");
-        }
-        if (!style) return [];
-        options = options || {};
-        var lineno = 1;
-        var column = 1;
-        function updatePosition(str) {
-          var lines = str.match(NEWLINE_REGEX);
-          if (lines) lineno += lines.length;
-          var i = str.lastIndexOf(NEWLINE);
-          column = ~i ? str.length - i : column + str.length;
-        }
-        function position3() {
-          var start2 = { line: lineno, column };
-          return function(node2) {
-            node2.position = new Position(start2);
-            whitespace2();
-            return node2;
-          };
-        }
-        function Position(start2) {
-          this.start = start2;
-          this.end = { line: lineno, column };
-          this.source = options.source;
-        }
-        Position.prototype.content = style;
-        function error(msg) {
-          var err = new Error(
-            options.source + ":" + lineno + ":" + column + ": " + msg
-          );
-          err.reason = msg;
-          err.filename = options.source;
-          err.line = lineno;
-          err.column = column;
-          err.source = style;
-          if (options.silent) ;
-          else {
-            throw err;
-          }
-        }
-        function match(re2) {
-          var m = re2.exec(style);
-          if (!m) return;
-          var str = m[0];
-          updatePosition(str);
-          style = style.slice(str.length);
-          return m;
-        }
-        function whitespace2() {
-          match(WHITESPACE_REGEX);
-        }
-        function comments(rules) {
-          var c;
-          rules = rules || [];
-          while (c = comment()) {
-            if (c !== false) {
-              rules.push(c);
-            }
-          }
-          return rules;
-        }
-        function comment() {
-          var pos = position3();
-          if (FORWARD_SLASH != style.charAt(0) || ASTERISK != style.charAt(1)) return;
-          var i = 2;
-          while (EMPTY_STRING != style.charAt(i) && (ASTERISK != style.charAt(i) || FORWARD_SLASH != style.charAt(i + 1))) {
-            ++i;
-          }
-          i += 2;
-          if (EMPTY_STRING === style.charAt(i - 1)) {
-            return error("End of comment missing");
-          }
-          var str = style.slice(2, i - 2);
-          column += 2;
-          updatePosition(str);
-          style = style.slice(i);
-          column += 2;
-          return pos({
-            type: TYPE_COMMENT,
-            comment: str
-          });
-        }
-        function declaration() {
-          var pos = position3();
-          var prop = match(PROPERTY_REGEX);
-          if (!prop) return;
-          comment();
-          if (!match(COLON_REGEX)) return error("property missing ':'");
-          var val = match(VALUE_REGEX);
-          var ret = pos({
-            type: TYPE_DECLARATION,
-            property: trim(prop[0].replace(COMMENT_REGEX, EMPTY_STRING)),
-            value: val ? trim(val[0].replace(COMMENT_REGEX, EMPTY_STRING)) : EMPTY_STRING
-          });
-          match(SEMICOLON_REGEX);
-          return ret;
-        }
-        function declarations() {
-          var decls = [];
-          comments(decls);
-          var decl;
-          while (decl = declaration()) {
-            if (decl !== false) {
-              decls.push(decl);
-              comments(decls);
-            }
-          }
-          return decls;
-        }
-        whitespace2();
-        return declarations();
-      }
-      function trim(str) {
-        return str ? str.replace(TRIM_REGEX, EMPTY_STRING) : EMPTY_STRING;
-      }
-      module.exports = index2;
-    }
-  });
-
-  // node_modules/style-to-object/cjs/index.js
-  var require_cjs2 = __commonJS({
-    "node_modules/style-to-object/cjs/index.js"(exports) {
-      "use strict";
-      var __importDefault = exports && exports.__importDefault || function(mod) {
-        return mod && mod.__esModule ? mod : { "default": mod };
-      };
-      Object.defineProperty(exports, "__esModule", { value: true });
-      exports.default = StyleToObject;
-      var inline_style_parser_1 = __importDefault(require_cjs());
-      function StyleToObject(style, iterator) {
-        let styleObject = null;
-        if (!style || typeof style !== "string") {
-          return styleObject;
-        }
-        const declarations = (0, inline_style_parser_1.default)(style);
-        const hasIterator = typeof iterator === "function";
-        declarations.forEach((declaration) => {
-          if (declaration.type !== "declaration") {
-            return;
-          }
-          const { property, value } = declaration;
-          if (hasIterator) {
-            iterator(property, value, declaration);
-          } else if (value) {
-            styleObject = styleObject || {};
-            styleObject[property] = value;
-          }
-        });
-        return styleObject;
-      }
-    }
-  });
-
-  // node_modules/style-to-js/cjs/utilities.js
-  var require_utilities = __commonJS({
-    "node_modules/style-to-js/cjs/utilities.js"(exports) {
-      "use strict";
-      Object.defineProperty(exports, "__esModule", { value: true });
-      exports.camelCase = void 0;
-      var CUSTOM_PROPERTY_REGEX = /^--[a-zA-Z0-9_-]+$/;
-      var HYPHEN_REGEX = /-([a-z])/g;
-      var NO_HYPHEN_REGEX = /^[^-]+$/;
-      var VENDOR_PREFIX_REGEX = /^-(webkit|moz|ms|o|khtml)-/;
-      var MS_VENDOR_PREFIX_REGEX = /^-(ms)-/;
-      var skipCamelCase = function(property) {
-        return !property || NO_HYPHEN_REGEX.test(property) || CUSTOM_PROPERTY_REGEX.test(property);
-      };
-      var capitalize = function(match, character) {
-        return character.toUpperCase();
-      };
-      var trimHyphen = function(match, prefix) {
-        return "".concat(prefix, "-");
-      };
-      var camelCase = function(property, options) {
-        if (options === void 0) {
-          options = {};
-        }
-        if (skipCamelCase(property)) {
-          return property;
-        }
-        property = property.toLowerCase();
-        if (options.reactCompat) {
-          property = property.replace(MS_VENDOR_PREFIX_REGEX, trimHyphen);
-        } else {
-          property = property.replace(VENDOR_PREFIX_REGEX, trimHyphen);
-        }
-        return property.replace(HYPHEN_REGEX, capitalize);
-      };
-      exports.camelCase = camelCase;
-    }
-  });
-
-  // node_modules/style-to-js/cjs/index.js
-  var require_cjs3 = __commonJS({
-    "node_modules/style-to-js/cjs/index.js"(exports, module) {
-      "use strict";
-      var __importDefault = exports && exports.__importDefault || function(mod) {
-        return mod && mod.__esModule ? mod : { "default": mod };
-      };
-      var style_to_object_1 = __importDefault(require_cjs2());
-      var utilities_1 = require_utilities();
-      function StyleToJS(style, options) {
-        var output = {};
-        if (!style || typeof style !== "string") {
-          return output;
-        }
-        (0, style_to_object_1.default)(style, function(property, value) {
-          if (property && value) {
-            output[(0, utilities_1.camelCase)(property, options)] = value;
-          }
-        });
-        return output;
-      }
-      StyleToJS.default = StyleToJS;
-      module.exports = StyleToJS;
-    }
-  });
-
-  // node_modules/extend/index.js
-  var require_extend = __commonJS({
-    "node_modules/extend/index.js"(exports, module) {
-      "use strict";
-      var hasOwn = Object.prototype.hasOwnProperty;
-      var toStr = Object.prototype.toString;
-      var defineProperty = Object.defineProperty;
-      var gOPD = Object.getOwnPropertyDescriptor;
-      var isArray = function isArray2(arr) {
-        if (typeof Array.isArray === "function") {
-          return Array.isArray(arr);
-        }
-        return toStr.call(arr) === "[object Array]";
-      };
-      var isPlainObject2 = function isPlainObject3(obj) {
-        if (!obj || toStr.call(obj) !== "[object Object]") {
-          return false;
-        }
-        var hasOwnConstructor = hasOwn.call(obj, "constructor");
-        var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, "isPrototypeOf");
-        if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
-          return false;
-        }
-        var key;
-        for (key in obj) {
-        }
-        return typeof key === "undefined" || hasOwn.call(obj, key);
-      };
-      var setProperty = function setProperty2(target, options) {
-        if (defineProperty && options.name === "__proto__") {
-          defineProperty(target, options.name, {
-            enumerable: true,
-            configurable: true,
-            value: options.newValue,
-            writable: true
-          });
-        } else {
-          target[options.name] = options.newValue;
-        }
-      };
-      var getProperty = function getProperty2(obj, name2) {
-        if (name2 === "__proto__") {
-          if (!hasOwn.call(obj, name2)) {
-            return void 0;
-          } else if (gOPD) {
-            return gOPD(obj, name2).value;
-          }
-        }
-        return obj[name2];
-      };
-      module.exports = function extend2() {
-        var options, name2, src, copy, copyIsArray, clone;
-        var target = arguments[0];
-        var i = 1;
-        var length = arguments.length;
-        var deep = false;
-        if (typeof target === "boolean") {
-          deep = target;
-          target = arguments[1] || {};
-          i = 2;
-        }
-        if (target == null || typeof target !== "object" && typeof target !== "function") {
-          target = {};
-        }
-        for (; i < length; ++i) {
-          options = arguments[i];
-          if (options != null) {
-            for (name2 in options) {
-              src = getProperty(target, name2);
-              copy = getProperty(options, name2);
-              if (target !== copy) {
-                if (deep && copy && (isPlainObject2(copy) || (copyIsArray = isArray(copy)))) {
-                  if (copyIsArray) {
-                    copyIsArray = false;
-                    clone = src && isArray(src) ? src : [];
-                  } else {
-                    clone = src && isPlainObject2(src) ? src : {};
-                  }
-                  setProperty(target, { name: name2, newValue: extend2(deep, clone, copy) });
-                } else if (typeof copy !== "undefined") {
-                  setProperty(target, { name: name2, newValue: copy });
-                }
-              }
-            }
-          }
-        }
-        return target;
-      };
-    }
-  });
-
   // src/client/ui/src/index.tsx
-  var import_react41 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
-  // src/client/ui/src/app-host.tsx
-  var import_react40 = __toESM(require_react());
+  // src/client/ui/src/app-host/settings-only-host.tsx
+  var import_react17 = __toESM(require_react());
 
-  // src/client/ui/src/app-host/loading-messages.ts
-  var MESSAGE_ORDER = [
-    "core",
-    "claude",
-    "codex",
-    "gemini"
-  ];
-  var MESSAGE_ROTATION_INTERVAL_MS = 2800;
-  var DEFAULT_MESSAGES = {
-    core: {
-      id: "core",
-      status: "Checking CodeAI Hub services...",
-      detail: "Validating local components."
-    },
-    claude: {
-      id: "claude",
-      status: "Preparing Claude tools...",
-      detail: "Making sure everything is authenticated."
-    },
-    codex: {
-      id: "codex",
-      status: "Preparing Codex tools...",
-      detail: "Verifying your CLI installation."
-    },
-    gemini: {
-      id: "gemini",
-      status: "Preparing Gemini tools...",
-      detail: "This may take a little longer the first time."
-    }
+  // src/client/ui/src/components/settings/style-tokens.ts
+  var settingsColorTokens = {
+    surface: "#1e1e1e",
+    surfaceElevated: "#252526",
+    borderSubtle: "#2d2d30",
+    borderStrong: "#3c3c3c",
+    textPrimary: "#ffffff",
+    textSecondary: "#cccccc",
+    textMuted: "#9aa0a6",
+    actionPrimary: "#0e639c",
+    actionPrimaryText: "#ffffff"
   };
-  var createDefaultMessages = () => ({
-    core: { ...DEFAULT_MESSAGES.core },
-    claude: { ...DEFAULT_MESSAGES.claude },
-    codex: { ...DEFAULT_MESSAGES.codex },
-    gemini: { ...DEFAULT_MESSAGES.gemini }
-  });
-  var resolveMessageId = (scope, phase) => {
-    if (!scope) {
-      return phase === "provider" ? "core" : "core";
-    }
-    if (scope === "core" || scope === "providers") {
-      return "core";
-    }
-    if (scope.includes("claude")) {
-      return "claude";
-    }
-    if (scope.includes("codex")) {
-      return "codex";
-    }
-    if (scope.includes("gemini")) {
-      return "gemini";
-    }
-    return null;
+  var settingsSpacingTokens = {
+    pagePadding: "20px",
+    cardPadding: "24px",
+    tabPadding: "10px 14px",
+    containerGap: "16px"
+  };
+  var settingsRadiusTokens = {
+    card: "16px",
+    panel: "10px",
+    control: "6px"
+  };
+  var settingsTypographyTokens = {
+    tabFontSize: "12px",
+    bodyFontSize: "12px",
+    titleFontSize: "13px",
+    hostTitleFontSize: "20px",
+    hostBodyFontSize: "14px"
   };
 
-  // src/client/ui/src/app-host/provider-picker-state.ts
-  var import_react2 = __toESM(require_react());
+  // src/client/ui/src/components/settings-view.tsx
+  var import_react14 = __toESM(require_react());
 
-  // src/client/ui/src/provider-picker.tsx
+  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
   var import_react = __toESM(require_react());
+
+  // src/types/claude-model-registry.ts
+  var CLAUDE_MODEL_ALIASES = [
+    {
+      alias: "sonnet",
+      displayName: "Sonnet 4.5",
+      description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
+      status: "active"
+    },
+    {
+      alias: "opus",
+      displayName: "Opus 4.5",
+      description: "Most capable for complex, agentic workloads.",
+      status: "active"
+    },
+    {
+      alias: "haiku",
+      displayName: "Haiku 4.5",
+      description: "Fastest alias for quick answers and prototyping.",
+      status: "active"
+    }
+  ];
+  var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
+    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
+  ]);
+  var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
+
+  // src/client/ui/src/components/settings/settings-card.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
-  var defaultPickerState = {
-    visible: false,
-    providers: []
+  var cardStyles = {
+    background: settingsColorTokens.surfaceElevated,
+    borderRadius: settingsRadiusTokens.control,
+    padding: "16px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
   };
-  var RADIO_GROUP_NAME = "provider-picker";
-  var ProviderOption = ({
-    provider,
-    checked,
-    onToggle,
-    inputRef
+  var headerStyles = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "12px"
+  };
+  var titleStyles = {
+    fontSize: "14px",
+    fontWeight: 600,
+    margin: 0,
+    color: settingsColorTokens.textPrimary
+  };
+  var SettingsCard = ({
+    title,
+    action,
+    children
+  }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: cardStyles, children: [
+    title ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: headerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: titleStyles, children: title }),
+      action
+    ] }) : null,
+    children
+  ] });
+  var settings_card_default = SettingsCard;
+
+  // src/client/ui/src/components/settings/shared-model-card-styles.ts
+  var descriptionStyles = {
+    margin: 0,
+    color: settingsColorTokens.textSecondary,
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+  var noteStyles = {
+    margin: 0,
+    fontSize: "11px",
+    color: "#8f8f8f"
+  };
+  var listStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var rowBaseStyles = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: "#2f2f2f",
+    borderRadius: "6px",
+    padding: "12px",
+    background: settingsColorTokens.surfaceElevated,
+    cursor: "pointer",
+    transition: "border-color 0.15s, background 0.15s",
+    outline: "none",
+    boxShadow: "none"
+  };
+  var rowSelectedStyles = {
+    borderColor: settingsColorTokens.actionPrimary,
+    background: "#1f2a33"
+  };
+  var rowHoverStyles = {
+    borderColor: "#4a4a4a"
+  };
+  var rowButtonResetStyles = {
+    appearance: "none",
+    outline: "none",
+    textAlign: "left"
+  };
+  var modelInfoStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  };
+  var modelTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: settingsColorTokens.textPrimary
+  };
+  var aliasStyles = {
+    fontSize: "11px",
+    color: "#9b9b9b"
+  };
+  var modelDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    color: "#a7a7a7",
+    lineHeight: 1.4
+  };
+  var modelBodyStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    flex: 1
+  };
+  var modelIdStyles = {
+    fontSize: "11px",
+    color: "#8c8c8c"
+  };
+  var modelControlRowStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    paddingLeft: "28px"
+  };
+  var modelControlLabelStyles = {
+    fontSize: "11px",
+    color: "#8f8f8f"
+  };
+  var modelControlButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "4px 10px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "11px"
+  };
+  var modelControlButtonHoverStyles = {
+    borderColor: "#5a5a5a",
+    background: "#2b2f33",
+    color: "#ffffff"
+  };
+  var modelControlButtonActiveStyles = {
+    borderColor: "#0e639c",
+    background: "#0e639c",
+    color: "#ffffff"
+  };
+  var radioCircleStyles = {
+    width: "16px",
+    height: "16px",
+    minWidth: "16px",
+    borderRadius: "50%",
+    borderWidth: "2px",
+    borderStyle: "solid",
+    borderColor: "#5a5a5a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "3px",
+    transition: "border-color 0.15s",
+    outline: "none",
+    boxShadow: "none"
+  };
+  var radioCircleSelectedStyles = {
+    borderColor: settingsColorTokens.actionPrimary
+  };
+  var radioCircleInnerStyles = {
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    background: settingsColorTokens.actionPrimary
+  };
+
+  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var ClaudeDefaultModelCard = ({
+    defaultModel,
+    onDefaultModelChange
   }) => {
-    const disabled = !provider.connected;
-    const statusLabel = provider.connected ? "Available" : "Unavailable";
-    const statusClassName = provider.connected ? "provider-picker__label-status provider-picker__label-status--connected" : "provider-picker__label-status provider-picker__label-status--disconnected";
-    const warning = provider.statusMessage;
-    const handleChange = () => {
-      onToggle(provider.id);
+    const [hoveredAlias, setHoveredAlias] = (0, import_react.useState)(
+      null
+    );
+    const handleRowClick = (model) => {
+      onDefaultModelChange(model);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-      "label",
-      {
-        "aria-disabled": disabled,
-        className: disabled ? "provider-picker__option provider-picker__option--disabled" : "provider-picker__option",
-        htmlFor: provider.id,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "input",
+    const handleRowKeyDown = (event, model) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(model);
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(settings_card_default, { title: "Claude Default model", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
+        const isSelected = defaultModel === model.alias;
+        const rowStyle = {
+          ...rowBaseStyles,
+          ...rowButtonResetStyles,
+          ...isSelected ? rowSelectedStyles : {},
+          ...!isSelected && hoveredAlias === model.alias ? rowHoverStyles : {}
+        };
+        return (
+          // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+            "div",
             {
-              checked,
-              className: "provider-picker__checkbox",
-              disabled,
-              id: provider.id,
-              name: RADIO_GROUP_NAME,
-              onChange: handleChange,
-              ref: inputRef,
-              type: "radio"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label-title", children: [
-              provider.title,
-              provider.description ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "provider-picker__label-description-inline", children: [
-                " ",
-                "(",
-                provider.description,
-                ")"
-              ] }) : null
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: statusClassName, children: statusLabel }),
-            warning ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "provider-picker__warning", children: warning }) : null
-          ] })
-        ]
-      }
-    );
-  };
-  var ProviderPicker = ({
-    visible,
-    providers,
-    onConfirm,
-    onSecondary,
-    secondaryLabel = "Cancel"
-  }) => {
-    const [selected, setSelected] = (0, import_react.useState)(
-      () => /* @__PURE__ */ new Set()
-    );
-    const firstOptionRef = (0, import_react.useRef)(null);
-    (0, import_react.useEffect)(() => {
-      if (visible && firstOptionRef.current) {
-        firstOptionRef.current.focus();
-      }
-    }, [visible]);
-    (0, import_react.useEffect)(() => {
-      if (visible) {
-        setSelected(/* @__PURE__ */ new Set());
-      }
-    }, [visible]);
-    const toggleProvider = (providerId) => {
-      setSelected(/* @__PURE__ */ new Set([providerId]));
-    };
-    const selectedIds = (0, import_react.useMemo)(() => Array.from(selected.values()), [selected]);
-    const selectedProvider = (0, import_react.useMemo)(
-      () => providers.find((provider) => selectedIds[0] === provider.id),
-      [providers, selectedIds]
-    );
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      if (selectedIds.length === 0) {
-        return;
-      }
-      onConfirm(selectedIds);
-    };
-    const handleCancel = () => {
-      onSecondary();
-    };
-    if (!visible) {
-      return null;
-    }
-    const renderOption = (provider, index2) => {
-      const refCallback = index2 === 0 ? (element3) => {
-        firstOptionRef.current = element3;
-      } : void 0;
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-        ProviderOption,
-        {
-          checked: selected.has(provider.id),
-          inputRef: refCallback,
-          onToggle: toggleProvider,
-          provider
-        },
-        provider.id
-      );
-    };
-    const isSubmitDisabled = selectedIds.length === 0;
-    const primaryButtonLabel = "Start session";
-    let selectionMessage = "Select a provider to continue.";
-    if (!isSubmitDisabled) {
-      selectionMessage = `${selectedProvider?.title ?? "Provider"} selected.`;
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-      "section",
-      {
-        "aria-labelledby": "provider-picker-heading",
-        className: "provider-picker",
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "provider-picker__title", id: "provider-picker-heading", children: "Choose providers" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "provider-picker__description", children: "Select exactly one provider for your new session. Install and authenticate each CLI before continuing." }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", { className: "provider-picker__form", onSubmit: handleSubmit, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("fieldset", { className: "provider-picker__fieldset", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("legend", { className: "provider-picker__legend", children: "Connected provider stacks" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { "aria-hidden": "true", className: "provider-picker__spacer" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "provider-picker__options", children: providers.map((provider, index2) => renderOption(provider, index2)) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: selectionMessage }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "provider-picker__action-buttons", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                  "button",
+              "aria-checked": isSelected,
+              onClick: () => handleRowClick(model.alias),
+              onKeyDown: (event) => handleRowKeyDown(event, model.alias),
+              onMouseEnter: () => setHoveredAlias(model.alias),
+              onMouseLeave: () => setHoveredAlias(null),
+              role: "radio",
+              style: rowStyle,
+              tabIndex: -1,
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                  "div",
                   {
-                    className: "provider-picker__secondary",
-                    onClick: handleCancel,
-                    type: "button",
-                    children: secondaryLabel
+                    style: {
+                      ...radioCircleStyles,
+                      ...isSelected ? radioCircleSelectedStyles : {}
+                    },
+                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: radioCircleInnerStyles }) : null
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                  "button",
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: modelInfoStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: aliasStyles, children: model.alias }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                ] })
+              ]
+            },
+            model.alias
+          )
+        );
+      }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
+    ] });
+  };
+  var claude_default_model_card_default = (0, import_react.memo)(ClaudeDefaultModelCard);
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
+  var import_react3 = __toESM(require_react());
+
+  // src/types/codex-model-registry.ts
+  var CODEX_RECOMMENDED_MODELS = [
+    {
+      id: "gpt-5.3-codex",
+      displayName: "GPT-5.3-Codex",
+      description: "Most advanced agentic coding model for real-world engineering",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "flagship"
+    },
+    {
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    }
+  ];
+  var CODEX_SETTINGS_MODELS = [
+    {
+      id: "gpt-5.3-codex",
+      displayName: "GPT-5.3-Codex",
+      description: "Most advanced agentic coding model for real-world engineering",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "flagship"
+    },
+    {
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    }
+  ];
+  var CODEX_LEGACY_MODELS = [];
+  var CODEX_ALL_MODELS = [
+    ...CODEX_RECOMMENDED_MODELS,
+    ...CODEX_LEGACY_MODELS
+  ];
+  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
+  var CODEX_REASONING_LEVELS = [
+    {
+      name: "low",
+      description: "Fast responses with lighter reasoning",
+      useCase: "Quick tasks, simple queries",
+      default: false
+    },
+    {
+      name: "medium",
+      description: "Balances speed and reasoning depth for everyday tasks",
+      useCase: "Most development tasks",
+      default: true
+    },
+    {
+      name: "high",
+      description: "Greater reasoning depth for complex problems",
+      useCase: "Complex refactoring, architecture decisions",
+      default: false
+    },
+    {
+      name: "xhigh",
+      description: "Extra high reasoning depth for complex problems",
+      useCase: "Very complex problems requiring deep analysis",
+      default: false
+    }
+  ];
+  var DEFAULT_CODEX_REASONING_LEVEL = "medium";
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts
+  var warningStyles = {
+    background: "#3a2a1f",
+    border: "1px solid #9b6b3d",
+    color: "#ffd7a3",
+    borderRadius: "4px",
+    padding: "8px 10px",
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
+  var import_react2 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/shared/provider-option-dialog.tsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  var overlayStyles = {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0, 0, 0, 0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1e3
+  };
+  var dialogStyles = {
+    width: "560px",
+    maxWidth: "90vw",
+    maxHeight: "85vh",
+    overflowY: "auto",
+    background: "#1e1e1e",
+    borderRadius: "8px",
+    border: "1px solid #3c3c3c",
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px"
+  };
+  var headerStyles2 = {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: "12px"
+  };
+  var titleStyles2 = {
+    fontSize: "16px",
+    margin: 0,
+    color: "#ffffff"
+  };
+  var subtitleStyles = {
+    fontSize: "12px",
+    color: "#a0a0a0",
+    margin: 0
+  };
+  var closeButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    borderRadius: "4px",
+    padding: "4px 10px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var optionListStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var optionRowStyles = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    border: "1px solid #2f2f2f",
+    borderRadius: "6px",
+    padding: "12px",
+    background: "#252526",
+    cursor: "pointer"
+  };
+  var optionSelectedStyles = {
+    borderColor: "#0e639c",
+    background: "#1f2a33"
+  };
+  var radioStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var optionTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: "#e5e5e5",
+    marginBottom: "4px",
+    textTransform: "uppercase"
+  };
+  var defaultBadgeStyles = {
+    fontSize: "10px",
+    color: "#0e639c",
+    background: "rgba(14, 99, 156, 0.2)",
+    borderRadius: "4px",
+    padding: "2px 6px",
+    marginLeft: "8px",
+    textTransform: "none"
+  };
+  var optionDescriptionStyles = {
+    fontSize: "12px",
+    color: "#b6b6b6",
+    margin: 0,
+    lineHeight: 1.4
+  };
+  var optionUseCaseStyles = {
+    fontSize: "12px",
+    color: "#8f8f8f",
+    margin: "6px 0 0"
+  };
+  var footerStyles = {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "10px"
+  };
+  var cancelButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "8px 14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var saveButtonStyles = {
+    border: "1px solid #0e639c",
+    background: "#0e639c",
+    color: "#ffffff",
+    padding: "8px 14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var ProviderOptionDialog = ({
+    ariaLabel,
+    closeLabel = "Close",
+    footer,
+    name,
+    onCancel,
+    onChange,
+    options,
+    selectedValue,
+    subtitle,
+    title
+  }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+    "div",
+    {
+      "aria-label": ariaLabel,
+      "aria-modal": "true",
+      role: "dialog",
+      style: dialogStyles,
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: headerStyles2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { style: titleStyles2, children: title }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: subtitleStyles, children: subtitle })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: closeLabel })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: optionListStyles, children: options.map((option) => {
+          const isSelected = option.value === selectedValue;
+          return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+            "label",
+            {
+              style: {
+                ...optionRowStyles,
+                ...isSelected ? optionSelectedStyles : null
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                  "input",
                   {
-                    className: "provider-picker__primary",
-                    disabled: isSubmitDisabled,
-                    type: "submit",
-                    children: primaryButtonLabel
+                    checked: isSelected,
+                    name,
+                    onChange: () => onChange(option.value),
+                    style: radioStyles,
+                    type: "radio"
                   }
-                )
-              ] })
-            ] })
-          ] })
-        ]
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: optionTitleStyles, children: [
+                    option.label,
+                    option.isDefault ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: optionDescriptionStyles, children: option.description }),
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { style: optionUseCaseStyles, children: [
+                    "Use case: ",
+                    option.useCase
+                  ] })
+                ] })
+              ]
+            },
+            option.value
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: footerStyles, children: footer ?? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { style: saveButtonStyles, type: "button", children: "Save" })
+        ] }) })
+      ]
+    }
+  ) });
+  var providerOptionDialogButtonStyles = {
+    cancelButtonStyles,
+    saveButtonStyles
+  };
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var CodexReasoningDialog = ({
+    model,
+    initialReasoning,
+    onSave,
+    onCancel
+  }) => {
+    const [selectedReasoning, setSelectedReasoning] = (0, import_react2.useState)(initialReasoning);
+    const options = CODEX_REASONING_LEVELS.map((level) => ({
+      value: level.name,
+      label: level.name,
+      description: level.description,
+      useCase: level.useCase,
+      isDefault: level.default
+    }));
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      ProviderOptionDialog,
+      {
+        ariaLabel: `Reasoning effort for ${model.displayName}`,
+        footer: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "button",
+            {
+              onClick: () => onSave(selectedReasoning),
+              style: saveButtonStyles2,
+              type: "button",
+              children: "Save"
+            }
+          )
+        ] }),
+        name: "codex-reasoning",
+        onCancel,
+        onChange: setSelectedReasoning,
+        options,
+        selectedValue: selectedReasoning,
+        subtitle: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session.",
+        title: `${model.displayName} reasoning`
       }
     );
   };
+  var { cancelButtonStyles: cancelButtonStyles2, saveButtonStyles: saveButtonStyles2 } = providerOptionDialogButtonStyles;
+  var codex_reasoning_dialog_default = CodexReasoningDialog;
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    "div",
+    {
+      style: {
+        ...radioCircleStyles,
+        ...checked ? radioCircleSelectedStyles : {}
+      },
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: radioCircleInnerStyles }) : null
+    }
+  );
+  var CodexDefaultModelCard = ({
+    defaultModel,
+    reasoningByModel,
+    onDefaultModelChange,
+    onReasoningChange
+  }) => {
+    const [activeModelId, setActiveModelId] = (0, import_react3.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react3.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react3.useState)(
+      null
+    );
+    const [pressedButtonId, setPressedButtonId] = (0, import_react3.useState)(
+      null
+    );
+    const recommendedModelIds = (0, import_react3.useMemo)(
+      () => new Set(CODEX_SETTINGS_MODELS.map((model) => model.id)),
+      []
+    );
+    const fallbackModelDisplayName = CODEX_SETTINGS_MODELS.find((model) => model.id === DEFAULT_CODEX_MODEL_ID)?.displayName ?? DEFAULT_CODEX_MODEL_ID;
+    const selectedModelId = recommendedModelIds.has(defaultModel) ? defaultModel : DEFAULT_CODEX_MODEL_ID;
+    const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
+    const activeModel = CODEX_SETTINGS_MODELS.find(
+      (model) => model.id === activeModelId
+    );
+    const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
+    const handleRowClick = (modelId) => {
+      onDefaultModelChange(modelId);
+    };
+    const handleRowKeyDown = (event, modelId) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(modelId);
+      }
+    };
+    const handleReasoningButtonClick = (event, modelId) => {
+      event.stopPropagation();
+      setActiveModelId(modelId);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(settings_card_default, { title: "Codex Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: warningStyles, children: [
+          "The saved default model is no longer available. Falling back to",
+          ` ${fallbackModelDisplayName}.`
+        ] }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: listStyles, children: CODEX_SETTINGS_MODELS.map((model) => {
+          const isSelected = selectedModelId === model.id;
+          const isRowHovered = hoveredRowId === model.id;
+          const reasoningLevel = resolveReasoning(model.id);
+          const isButtonHovered = hoveredButtonId === model.id;
+          const isButtonPressed = pressedButtonId === model.id;
+          let reasoningStateStyles = {};
+          if (isButtonPressed) {
+            reasoningStateStyles = modelControlButtonActiveStyles;
+          } else if (isButtonHovered) {
+            reasoningStateStyles = modelControlButtonHoverStyles;
+          }
+          const rowStyle = {
+            ...rowBaseStyles,
+            ...rowButtonResetStyles,
+            ...isSelected ? rowSelectedStyles : {},
+            ...!isSelected && isRowHovered ? rowHoverStyles : {}
+          };
+          return (
+            // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+              "div",
+              {
+                "aria-checked": isSelected,
+                onClick: () => handleRowClick(model.id),
+                onKeyDown: (e) => handleRowKeyDown(e, model.id),
+                onMouseEnter: () => setHoveredRowId(model.id),
+                onMouseLeave: () => setHoveredRowId(null),
+                role: "radio",
+                style: rowStyle,
+                tabIndex: -1,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RadioCircle, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelControlRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: modelControlLabelStyles, children: "Configure reasoning:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                        "button",
+                        {
+                          onClick: (e) => handleReasoningButtonClick(e, model.id),
+                          onMouseDown: () => setPressedButtonId(model.id),
+                          onMouseEnter: () => setHoveredButtonId(model.id),
+                          onMouseLeave: () => {
+                            setHoveredButtonId(null);
+                            setPressedButtonId(null);
+                          },
+                          onMouseUp: () => setPressedButtonId(null),
+                          style: {
+                            ...modelControlButtonStyles,
+                            ...reasoningStateStyles
+                          },
+                          type: "button",
+                          children: reasoningLevel
+                        }
+                      )
+                    ] })
+                  ] })
+                ]
+              },
+              model.id
+            )
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
+      ] }),
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        codex_reasoning_dialog_default,
+        {
+          initialReasoning: resolveReasoning(activeModel.id),
+          model: activeModel,
+          onCancel: () => setActiveModelId(null),
+          onSave: (reasoning) => {
+            onReasoningChange(activeModel.id, reasoning);
+            setActiveModelId(null);
+          }
+        }
+      ) : null
+    ] });
+  };
+  var codex_default_model_card_default = (0, import_react3.memo)(CodexDefaultModelCard);
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
+  var import_react5 = __toESM(require_react());
+
+  // src/types/gemini-model-registry.ts
+  var GEMINI_RECOMMENDED_MODELS = [
+    {
+      id: "gemini-3-pro-preview",
+      displayName: "Gemini 3 Pro Preview",
+      description: "Most advanced reasoning Gemini model for complex problems.",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["low", "high"]
+    },
+    {
+      id: "gemini-3-flash-preview",
+      displayName: "Gemini 3 Flash Preview",
+      description: "Pro-grade reasoning with Flash-level latency and cost.",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["minimal", "low", "medium", "high"]
+    },
+    {
+      id: "gemini-2.5-pro",
+      displayName: "Gemini 2.5 Pro",
+      description: "Deep reasoning model with Think mode for complex use cases.",
+      status: "generally_available",
+      family: "gemini-2.5",
+      supportedThinkingLevels: ["low", "high"]
+    },
+    {
+      id: "gemini-2.5-flash",
+      displayName: "Gemini 2.5 Flash",
+      description: "High-throughput model for enterprise tasks.",
+      status: "generally_available",
+      family: "gemini-2.5",
+      supportedThinkingLevels: ["low", "high"]
+    },
+    {
+      id: "gemini-2.5-flash-lite",
+      displayName: "Gemini 2.5 Flash Lite",
+      description: "Most cost-efficient and fastest 2.5 model.",
+      status: "generally_available",
+      family: "gemini-2.5",
+      supportedThinkingLevels: ["low", "high"]
+    }
+  ];
+  var GEMINI_MODEL_ID_SET = new Set(
+    GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
+  );
+  var DEFAULT_GEMINI_MODEL_ID = "gemini-3-pro-preview";
+  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
+  var GEMINI_THINKING_LEVELS = [
+    {
+      name: "off",
+      description: "Disable model's internal thinking process.",
+      useCase: "Basic tasks, fastest response."
+    },
+    {
+      name: "minimal",
+      description: "Absolute minimum reasoning tokens.",
+      useCase: "Low-complexity tasks, very low latency."
+    },
+    {
+      name: "low",
+      description: "Balanced reasoning for simpler tasks.",
+      useCase: "General coding and quick queries."
+    },
+    {
+      name: "medium",
+      description: "Advanced reasoning for moderate complexity.",
+      useCase: "Standard development and problem solving."
+    },
+    {
+      name: "high",
+      description: "Maximum reasoning depth.",
+      useCase: "Complex refactoring and PhD-level research."
+    }
+  ];
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
+  var import_react4 = __toESM(require_react());
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var GeminiThinkingDialog = ({
+    model,
+    initialLevel,
+    onSave,
+    onCancel
+  }) => {
+    const [selectedLevel, setSelectedLevel] = (0, import_react4.useState)(initialLevel);
+    const options = GEMINI_THINKING_LEVELS.filter(
+      (level) => model.supportedThinkingLevels.includes(level.name)
+    ).map((level) => ({
+      value: level.name,
+      label: level.name,
+      description: level.description,
+      useCase: level.useCase,
+      isDefault: level.name === DEFAULT_GEMINI_THINKING_LEVEL
+    }));
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      ProviderOptionDialog,
+      {
+        ariaLabel: `Thinking level for ${model.displayName}`,
+        footer: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: onCancel, style: cancelButtonStyles3, type: "button", children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            "button",
+            {
+              onClick: () => onSave(selectedLevel),
+              style: saveButtonStyles3,
+              type: "button",
+              children: "Save"
+            }
+          )
+        ] }),
+        name: "gemini-thinking",
+        onCancel,
+        onChange: setSelectedLevel,
+        options,
+        selectedValue: selectedLevel,
+        subtitle: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session.",
+        title: `${model.displayName} thinking`
+      }
+    );
+  };
+  var { cancelButtonStyles: cancelButtonStyles3, saveButtonStyles: saveButtonStyles3 } = providerOptionDialogButtonStyles;
+  var gemini_thinking_dialog_default = GeminiThinkingDialog;
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+    "div",
+    {
+      style: {
+        ...radioCircleStyles,
+        ...checked ? radioCircleSelectedStyles : {}
+      },
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: radioCircleInnerStyles }) : null
+    }
+  );
+  var GeminiDefaultModelCard = ({
+    defaultModel,
+    thinkingLevelByModel,
+    onDefaultModelChange,
+    onThinkingChange
+  }) => {
+    const [activeModelId, setActiveModelId] = (0, import_react5.useState)(
+      null
+    );
+    const [hoveredRowId, setHoveredRowId] = (0, import_react5.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react5.useState)(
+      null
+    );
+    const [pressedButtonId, setPressedButtonId] = (0, import_react5.useState)(
+      null
+    );
+    const activeModel = GEMINI_RECOMMENDED_MODELS.find(
+      (model) => model.id === activeModelId
+    );
+    const resolveThinkingLevel = (modelId) => thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
+    const handleRowClick = (model) => {
+      onDefaultModelChange(model);
+    };
+    const handleRowKeyDown = (event, model) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(model);
+      }
+    };
+    const handleThinkingButtonClick = (event, modelId) => {
+      event.stopPropagation();
+      setActiveModelId(modelId);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
+          const isSelected = defaultModel === model.id;
+          const isRowHovered = hoveredRowId === model.id;
+          const thinkingLevel = resolveThinkingLevel(model.id);
+          const isButtonHovered = hoveredButtonId === model.id;
+          const isButtonPressed = pressedButtonId === model.id;
+          let thinkingStateStyles = {};
+          if (isButtonPressed) {
+            thinkingStateStyles = modelControlButtonActiveStyles;
+          } else if (isButtonHovered) {
+            thinkingStateStyles = modelControlButtonHoverStyles;
+          }
+          const rowStyle = {
+            ...rowBaseStyles,
+            ...rowButtonResetStyles,
+            ...isSelected ? rowSelectedStyles : {},
+            ...!isSelected && isRowHovered ? rowHoverStyles : {}
+          };
+          return (
+            // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+              "div",
+              {
+                "aria-checked": isSelected,
+                onClick: () => handleRowClick(model.id),
+                onKeyDown: (event) => handleRowKeyDown(event, model.id),
+                onMouseEnter: () => setHoveredRowId(model.id),
+                onMouseLeave: () => setHoveredRowId(null),
+                role: "radio",
+                style: rowStyle,
+                tabIndex: -1,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(RadioCircle2, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelControlRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: modelControlLabelStyles, children: "Configure thinking:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                        "button",
+                        {
+                          onClick: (e) => handleThinkingButtonClick(e, model.id),
+                          onMouseDown: () => setPressedButtonId(model.id),
+                          onMouseEnter: () => setHoveredButtonId(model.id),
+                          onMouseLeave: () => {
+                            setHoveredButtonId(null);
+                            setPressedButtonId(null);
+                          },
+                          onMouseUp: () => setPressedButtonId(null),
+                          style: {
+                            ...modelControlButtonStyles,
+                            ...thinkingStateStyles
+                          },
+                          type: "button",
+                          children: thinkingLevel
+                        }
+                      )
+                    ] })
+                  ] })
+                ]
+              },
+              model.id
+            )
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+      ] }),
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        gemini_thinking_dialog_default,
+        {
+          initialLevel: resolveThinkingLevel(activeModel.id),
+          model: activeModel,
+          onCancel: () => setActiveModelId(null),
+          onSave: (level) => {
+            onThinkingChange(activeModel.id, level);
+            setActiveModelId(null);
+          }
+        }
+      ) : null
+    ] });
+  };
+  var gemini_default_model_card_default = (0, import_react5.memo)(GeminiDefaultModelCard);
+
+  // src/client/ui/src/components/settings/general-settings.tsx
+  var import_react8 = __toESM(require_react());
 
   // src/types/provider.ts
   var PROVIDER_TITLE_MAP = {
@@ -7850,495 +8329,6 @@
     geminiCli: "Using your authentication Gemini CLI"
   };
   var getDefaultProviderDescription = (providerId) => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";
-
-  // src/client/ui/src/session/model-info-builder.ts
-  var PROVIDER_ID_TO_KEY = {
-    claudeCodeCli: "claude",
-    codexCli: "codex",
-    geminiCli: "gemini"
-  };
-  var SINGLE_DIGIT_REGEX = /^\d+$/;
-  var DECIMAL_VERSION_REGEX = /^\d+\.\d+$/;
-  var VERSION_JOIN_REGEX = /(\d+)\s+(\d+)/g;
-  var formatClaudeSessionModelDisplayName = (modelId) => {
-    if (modelId === "default" || modelId === "sonnet") {
-      return "Sonnet";
-    }
-    return formatModelDisplayName(modelId);
-  };
-  var formatModelDisplayName = (modelId) => {
-    return modelId.split("-").map((part, index2) => {
-      if (SINGLE_DIGIT_REGEX.test(part)) {
-        return part;
-      }
-      if (DECIMAL_VERSION_REGEX.test(part)) {
-        return part;
-      }
-      return index2 === 0 || part.length > 2 ? part.charAt(0).toUpperCase() + part.slice(1) : part.toUpperCase();
-    }).join(" ").replace(VERSION_JOIN_REGEX, "$1.$2");
-  };
-  var buildModelInfoList = (providerIds, settings) => {
-    if (!settings) {
-      return providerIds.map((providerId) => ({
-        providerId,
-        providerName: getDefaultProviderTitle(providerId),
-        modelId: "unknown",
-        modelDisplayName: getDefaultProviderTitle(providerId)
-      }));
-    }
-    return providerIds.map((providerId) => {
-      const providerKey = PROVIDER_ID_TO_KEY[providerId];
-      const providerName = getDefaultProviderTitle(providerId);
-      const providerSettings = settings.providers[providerKey];
-      const modelId = providerSettings.defaultModel;
-      const modelDisplayName = providerKey === "claude" ? formatClaudeSessionModelDisplayName(modelId) : formatModelDisplayName(modelId);
-      let reasoning;
-      if (providerKey === "claude") {
-        const claudeSettings = settings.providers.claude;
-        reasoning = claudeSettings.thinking.enabled ? "thinking on" : "thinking off";
-      } else if (providerKey === "codex") {
-        const codexSettings = settings.providers.codex;
-        reasoning = codexSettings.reasoningByModel[modelId];
-      } else if (providerKey === "gemini") {
-        const geminiSettings = settings.providers.gemini;
-        reasoning = geminiSettings.thinkingLevelByModel[modelId];
-      }
-      return {
-        providerId,
-        providerName,
-        modelId,
-        modelDisplayName,
-        reasoning
-      };
-    });
-  };
-
-  // src/client/ui/src/session/token-usage-cache.ts
-  var TOKEN_USAGE_STORAGE_PREFIX = "codeaihub:lastTokenUsage:";
-  var getLocalStorage = () => {
-    try {
-      return "localStorage" in globalThis ? globalThis.localStorage : null;
-    } catch {
-      return null;
-    }
-  };
-  var isRecord = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var readNumber = (value) => typeof value === "number" && Number.isFinite(value) ? value : null;
-  var parseStoredTokenUsage = (raw) => {
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      return null;
-    }
-    if (!isRecord(parsed)) {
-      return null;
-    }
-    const used = readNumber(parsed.used);
-    const limit = readNumber(parsed.limit);
-    const updatedAt = readNumber(parsed.updatedAt);
-    if (used === null || limit === null || updatedAt === null) {
-      return null;
-    }
-    if (used < 0 || limit <= 0 || updatedAt <= 0) {
-      return null;
-    }
-    return { used, limit, updatedAt };
-  };
-  var readLastKnownTokenUsage = (providerSessionId) => {
-    const storage = getLocalStorage();
-    if (!storage) {
-      return null;
-    }
-    const key = `${TOKEN_USAGE_STORAGE_PREFIX}${providerSessionId}`;
-    const raw = storage.getItem(key);
-    if (!raw) {
-      return null;
-    }
-    const stored = parseStoredTokenUsage(raw);
-    return stored ? { used: stored.used, limit: stored.limit } : null;
-  };
-  var writeLastKnownTokenUsage = (providerSessionId, tokenUsage) => {
-    const storage = getLocalStorage();
-    if (!storage) {
-      return;
-    }
-    if (!(Number.isFinite(tokenUsage.used) && Number.isFinite(tokenUsage.limit))) {
-      return;
-    }
-    if (tokenUsage.used < 0 || tokenUsage.limit <= 0) {
-      return;
-    }
-    const key = `${TOKEN_USAGE_STORAGE_PREFIX}${providerSessionId}`;
-    const payload = {
-      used: tokenUsage.used,
-      limit: tokenUsage.limit,
-      updatedAt: Date.now()
-    };
-    try {
-      storage.setItem(key, JSON.stringify(payload));
-    } catch {
-    }
-  };
-
-  // src/client/ui/src/session/usage-limits-cache.ts
-  var USAGE_LIMITS_STORAGE_PREFIX = "codeaihub:lastUsageLimitsByProvider:";
-  var getLocalStorage2 = () => {
-    try {
-      return "localStorage" in globalThis ? globalThis.localStorage : null;
-    } catch {
-      return null;
-    }
-  };
-  var isRecord2 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var normalizeStorageKey = (value) => value?.trim().toLowerCase() ?? "";
-  var resolveStorageKeys = (providerScopeKey, legacyProviderSummary) => {
-    const keys2 = [];
-    for (const candidate of [providerScopeKey, legacyProviderSummary]) {
-      const normalized = normalizeStorageKey(candidate);
-      if (normalized && !keys2.includes(normalized)) {
-        keys2.push(normalized);
-      }
-    }
-    return keys2;
-  };
-  var readNumber2 = (value) => typeof value === "number" && Number.isFinite(value) ? value : null;
-  var readString = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-  var parseLabels = (value) => {
-    if (!isRecord2(value)) {
-      return null;
-    }
-    const labels = {
-      currentSession: readString(value.currentSession),
-      currentWeekAllModels: readString(value.currentWeekAllModels),
-      currentWeekSonnetOnly: readString(value.currentWeekSonnetOnly)
-    };
-    return Object.values(labels).some((label) => Boolean(label)) ? labels : null;
-  };
-  var parseBucket = (value) => {
-    if (!isRecord2(value)) {
-      return null;
-    }
-    const percentUsed = readNumber2(value.percentUsed);
-    if (percentUsed === null) {
-      return null;
-    }
-    return {
-      percentUsed,
-      resetsAt: readString(value.resetsAt)
-    };
-  };
-  var parseUsageLimits = (value) => {
-    if (!isRecord2(value)) {
-      return null;
-    }
-    const parsed = {
-      currentSession: parseBucket(value.currentSession),
-      currentWeekAllModels: parseBucket(value.currentWeekAllModels),
-      currentWeekSonnetOnly: parseBucket(value.currentWeekSonnetOnly)
-    };
-    if (!(parsed.currentSession || parsed.currentWeekAllModels || parsed.currentWeekSonnetOnly)) {
-      return null;
-    }
-    return parsed;
-  };
-  var parseStoredUsageLimits = (raw) => {
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      return null;
-    }
-    if (!isRecord2(parsed)) {
-      return null;
-    }
-    const usageLimits = parseUsageLimits(parsed.usageLimits);
-    const usageLimitLabels = parseLabels(parsed.usageLimitLabels);
-    const updatedAt = readNumber2(parsed.updatedAt);
-    if (!usageLimits || updatedAt === null || updatedAt <= 0) {
-      return null;
-    }
-    return {
-      usageLimits,
-      ...usageLimitLabels ? { usageLimitLabels } : {},
-      updatedAt
-    };
-  };
-  var readLastKnownUsageLimitsState = (providerScopeKey, legacyProviderSummary) => {
-    const storage = getLocalStorage2();
-    if (!storage) {
-      return null;
-    }
-    for (const providerKey of resolveStorageKeys(
-      providerScopeKey,
-      legacyProviderSummary
-    )) {
-      const raw = storage.getItem(`${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`);
-      if (!raw) {
-        continue;
-      }
-      const stored = parseStoredUsageLimits(raw);
-      if (stored?.usageLimits) {
-        return stored;
-      }
-    }
-    return null;
-  };
-  var readLastKnownUsageLimits = (providerScopeKey, legacyProviderSummary) => readLastKnownUsageLimitsState(providerScopeKey, legacyProviderSummary)?.usageLimits ?? null;
-  var writeLastKnownUsageLimits = (providerScopeKey, usageLimits, legacyProviderSummary, usageLimitLabels) => {
-    const storage = getLocalStorage2();
-    if (!storage) {
-      return;
-    }
-    const providerKey = resolveStorageKeys(
-      providerScopeKey,
-      legacyProviderSummary
-    )[0];
-    if (!providerKey) {
-      return;
-    }
-    const parsed = parseUsageLimits(usageLimits);
-    if (!parsed) {
-      return;
-    }
-    try {
-      const parsedLabels = parseLabels(usageLimitLabels);
-      storage.setItem(
-        `${USAGE_LIMITS_STORAGE_PREFIX}${providerKey}`,
-        JSON.stringify({
-          usageLimits: parsed,
-          ...parsedLabels ? { usageLimitLabels: parsedLabels } : {},
-          updatedAt: Date.now()
-        })
-      );
-    } catch {
-    }
-  };
-
-  // src/client/ui/src/session/session-candidates.ts
-  var providerIdSet = /* @__PURE__ */ new Set([
-    "claudeCodeCli",
-    "codexCli",
-    "geminiCli"
-  ]);
-  var isProviderDescriptorCandidate = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (typeof candidate.id !== "string") {
-      return false;
-    }
-    const providerId = candidate.id;
-    if (!providerIdSet.has(providerId)) {
-      return false;
-    }
-    const hasValidStatusMessage = candidate.statusMessage === void 0 || candidate.statusMessage === null || typeof candidate.statusMessage === "string";
-    return typeof candidate.title === "string" && typeof candidate.description === "string" && typeof candidate.connected === "boolean" && hasValidStatusMessage;
-  };
-  var parseProviderList = (candidates) => {
-    if (!Array.isArray(candidates)) {
-      return [];
-    }
-    const result = [];
-    for (const candidate of candidates) {
-      if (isProviderDescriptorCandidate(candidate)) {
-        result.push(candidate);
-      }
-    }
-    return result;
-  };
-  var isSessionRecordCandidate = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (typeof candidate.id !== "string" || typeof candidate.title !== "string" || typeof candidate.createdAt !== "number" || !Array.isArray(candidate.providerIds)) {
-      return false;
-    }
-    for (const providerId of candidate.providerIds) {
-      if (!providerIdSet.has(providerId)) {
-        return false;
-      }
-    }
-    if (!candidate.binding || typeof candidate.binding !== "object" || !("status" in candidate.binding)) {
-      return false;
-    }
-    const binding = candidate.binding;
-    if (binding.providerSessionId !== null && typeof binding.providerSessionId !== "string") {
-      return false;
-    }
-    return binding.status === "pending" || binding.status === "ready" || binding.status === "failed";
-  };
-
-  // src/client/ui/src/session/helpers.ts
-  var mergeCatalog = (catalog, providers) => {
-    const nextCatalog = { ...catalog };
-    for (const provider of providers) {
-      nextCatalog[provider.id] = provider;
-    }
-    return nextCatalog;
-  };
-  var createDefaultBinding = () => ({
-    providerSessionId: null,
-    status: "pending"
-  });
-  var USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX = "global";
-  var mapUsageLimitProviderId = (providerId) => {
-    switch (providerId) {
-      case "claudeCodeCli":
-        return "claude";
-      case "codexCli":
-        return "codex";
-      case "geminiCli":
-        return "gemini";
-      default:
-        return null;
-    }
-  };
-  var buildUsageLimitScopeKey = (providerId, providerSessionId) => {
-    const usageLimitProviderId = mapUsageLimitProviderId(providerId);
-    if (!usageLimitProviderId) {
-      return null;
-    }
-    return `${usageLimitProviderId}:${providerSessionId?.trim() || USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX}`;
-  };
-  var normalizeBinding = (binding) => {
-    if (!binding) {
-      return createDefaultBinding();
-    }
-    return {
-      providerSessionId: binding.providerSessionId ?? null,
-      status: binding.status === "ready" || binding.status === "failed" ? binding.status : "pending"
-    };
-  };
-  var resolveSessionUsageLimitScopeKey = (session) => buildUsageLimitScopeKey(
-    session.providerIds[0] ?? null,
-    session.binding.providerSessionId
-  );
-  var resolveStatusUsageLimitScopeKey = (status, binding) => status.providerScopeKey?.trim().toLowerCase() || buildUsageLimitScopeKey(
-    status.models?.[0]?.providerId,
-    binding?.providerSessionId ?? null
-  );
-  var buildProviderLabels = (catalog) => {
-    const entries = Object.entries(catalog);
-    return new Map(
-      entries.map(([id, descriptor]) => [
-        id,
-        descriptor.title ?? getDefaultProviderTitle(id)
-      ])
-    );
-  };
-  var createInitialSnapshot = (session, providerLabels, settings) => {
-    const providersSummary = session.providerIds.map(
-      (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
-    ).join(" + ");
-    const now = Date.now();
-    const models = buildModelInfoList(session.providerIds, settings ?? null);
-    const providerScopeKey = resolveSessionUsageLimitScopeKey(session);
-    const cachedTokenUsage = session.binding.providerSessionId ? readLastKnownTokenUsage(session.binding.providerSessionId) : null;
-    const cachedUsageLimits = readLastKnownUsageLimits(
-      providerScopeKey,
-      providersSummary
-    );
-    const status = {
-      providerSummary: providersSummary,
-      ...providerScopeKey ? { providerScopeKey } : {},
-      models,
-      tokenUsage: {
-        used: cachedTokenUsage?.used ?? 0,
-        limit: cachedTokenUsage?.limit ?? 2e5
-      },
-      ...cachedUsageLimits ? { usageLimits: cachedUsageLimits } : {},
-      continuityLock: {
-        active: false,
-        updatedAt: now
-      },
-      // All workflow sessions (stage + sessionKind set) start with a Core-initiated
-      // prompt, so input must be locked immediately to prevent user interference
-      // before the first turn completes.
-      // NOTE: If future implementation/planning stages require a different initial
-      // state (e.g., user-initiated first message), add explicit exceptions here
-      // by checking session.stage or session.runSlug.
-      connectionState: session.stage != null && session.sessionKind != null ? "running" : "idle",
-      updatedAt: now
-    };
-    return {
-      messages: [],
-      todos: [],
-      status,
-      binding: normalizeBinding(session.binding),
-      draft: ""
-    };
-  };
-  var removeSnapshot = (snapshots, sessionId) => {
-    const { [sessionId]: _discarded, ...rest } = snapshots;
-    return rest;
-  };
-  var appendMessageToSnapshots = (snapshots, payload) => {
-    const snapshot = snapshots[payload.sessionId];
-    if (!snapshot) {
-      return snapshots;
-    }
-    return {
-      ...snapshots,
-      [payload.sessionId]: {
-        ...snapshot,
-        messages: [...snapshot.messages, payload.message]
-      }
-    };
-  };
-  var mergeHistoryIntoSnapshots = (snapshots, payload) => {
-    const snapshot = snapshots[payload.sessionId];
-    if (!snapshot) {
-      return snapshots;
-    }
-    const merged = /* @__PURE__ */ new Map();
-    for (const message of snapshot.messages) {
-      merged.set(message.id, message);
-    }
-    for (const message of payload.messages) {
-      merged.set(message.id, message);
-    }
-    const ordered = Array.from(merged.values()).sort(
-      (a, b) => a.createdAt - b.createdAt
-    );
-    return {
-      ...snapshots,
-      [payload.sessionId]: {
-        ...snapshot,
-        messages: ordered
-      }
-    };
-  };
-  var mapProviderTheme = (providerId) => {
-    switch (providerId) {
-      case "claudeCodeCli":
-        return "claude";
-      case "codexCli":
-        return "codex";
-      case "geminiCli":
-        return "gemini";
-      default:
-        return null;
-    }
-  };
-  var resolveProviderWaitColor = (providerTheme, alpha = 0.7) => {
-    const clampedAlpha = Math.max(0, Math.min(1, alpha));
-    const [r, g, b] = (() => {
-      switch (providerTheme) {
-        case "claude":
-          return [255, 145, 5];
-        case "codex":
-          return [1, 240, 216];
-        case "gemini":
-          return [171, 52, 203];
-        default:
-          return [127, 140, 141];
-      }
-    })();
-    return `rgba(${r}, ${g}, ${b}, ${clampedAlpha})`;
-  };
 
   // src/client/ui/src/core-bridge/constants.ts
   var DEFAULT_CONFIG = {
@@ -8426,8 +8416,79 @@
     }, options.reconnectDelayMs);
   };
 
+  // src/client/ui/src/session/session-candidates.ts
+  var providerIdSet = /* @__PURE__ */ new Set([
+    "claudeCodeCli",
+    "codexCli",
+    "geminiCli"
+  ]);
+  var isProviderDescriptorCandidate = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.id !== "string") {
+      return false;
+    }
+    const providerId = candidate.id;
+    if (!providerIdSet.has(providerId)) {
+      return false;
+    }
+    const hasValidStatusMessage = candidate.statusMessage === void 0 || candidate.statusMessage === null || typeof candidate.statusMessage === "string";
+    return typeof candidate.title === "string" && typeof candidate.description === "string" && typeof candidate.connected === "boolean" && hasValidStatusMessage;
+  };
+  var parseProviderList = (candidates) => {
+    if (!Array.isArray(candidates)) {
+      return [];
+    }
+    const result = [];
+    for (const candidate of candidates) {
+      if (isProviderDescriptorCandidate(candidate)) {
+        result.push(candidate);
+      }
+    }
+    return result;
+  };
+  var isSessionRecordCandidate = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.id !== "string" || typeof candidate.title !== "string" || typeof candidate.createdAt !== "number" || !Array.isArray(candidate.providerIds)) {
+      return false;
+    }
+    for (const providerId of candidate.providerIds) {
+      if (!providerIdSet.has(providerId)) {
+        return false;
+      }
+    }
+    if (!candidate.binding || typeof candidate.binding !== "object" || !("status" in candidate.binding)) {
+      return false;
+    }
+    const binding = candidate.binding;
+    if (binding.providerSessionId !== null && typeof binding.providerSessionId !== "string") {
+      return false;
+    }
+    return binding.status === "pending" || binding.status === "ready" || binding.status === "failed";
+  };
+
+  // src/client/ui/src/session/helpers.ts
+  var createDefaultBinding = () => ({
+    providerSessionId: null,
+    status: "pending"
+  });
+  var normalizeBinding = (binding) => {
+    if (!binding) {
+      return createDefaultBinding();
+    }
+    return {
+      providerSessionId: binding.providerSessionId ?? null,
+      status: binding.status === "ready" || binding.status === "failed" ? binding.status : "pending"
+    };
+  };
+
   // src/client/ui/src/core-bridge/normalizers.ts
-  var isRecord3 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp = (value) => {
     const parsed = value ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
@@ -8472,12 +8533,12 @@
     }
     return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   };
-  var extractIdeaCollectorResponse = (content3) => {
-    if (!content3.trim().startsWith("{")) {
+  var extractIdeaCollectorResponse = (content) => {
+    if (!content.trim().startsWith("{")) {
       return null;
     }
     try {
-      const parsed = JSON.parse(content3);
+      const parsed = JSON.parse(content);
       if (!parsed || typeof parsed !== "object") {
         return null;
       }
@@ -8534,10 +8595,10 @@
     };
   };
   var sanitizeSessionMessagePayload = (payload) => {
-    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
-    const messageSource = isRecord3(payload.message) ? {
+    const messageSource = isRecord(payload.message) ? {
       sessionId: payload.sessionId,
       ...payload.message
     } : payload;
@@ -8548,7 +8609,7 @@
     return { sessionId: payload.sessionId, message: normalized };
   };
   var sanitizeSessionBindingPayload = (payload) => {
-    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerSessionId = payload.providerSessionId === null || typeof payload.providerSessionId === "string" ? payload.providerSessionId : null;
@@ -8559,7 +8620,7 @@
     };
   };
   var sanitizeSessionErrorPayload = (payload) => {
-    if (!isRecord3(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerLabel = typeof payload.providerId === "string" && payload.providerId.trim().length > 0 ? `[${payload.providerId.trim()}] ` : "";
@@ -8569,23 +8630,12 @@
       message: `${providerLabel}${message}`
     };
   };
-  var createSystemSessionMessage = (content3) => ({
+  var createSystemSessionMessage = (content) => ({
     id: generateLocalMessageId(),
     role: "system",
-    content: content3,
+    content,
     createdAt: Date.now()
   });
-  var extractIdeaContractQuestionnaireTemplate = (contract) => {
-    if (!contract) {
-      return null;
-    }
-    const questionnaire = isRecord3(contract.questionnaire) ? contract.questionnaire : null;
-    if (!questionnaire) {
-      return null;
-    }
-    const templateMarkdown = questionnaire.templateMarkdown;
-    return typeof templateMarkdown === "string" && templateMarkdown.trim().length > 0 ? templateMarkdown : null;
-  };
 
   // src/client/ui/src/core-bridge/server-message-handler.ts
   var parseEnvelope = (raw) => {
@@ -8659,7 +8709,7 @@
         }
       });
     };
-    const handlers2 = {
+    const handlers = {
       "session:message": handleSessionMessage,
       "session:created": handleSessionCreated,
       "session:deleted": handleSessionDeleted,
@@ -8687,7 +8737,7 @@
       if (!envelope) {
         return;
       }
-      const handler = handlers2[envelope.type];
+      const handler = handlers[envelope.type];
       handler(envelope.payload);
     };
   };
@@ -8697,22 +8747,22 @@
     if (typeof document === "undefined") {
       return null;
     }
-    const element3 = document.getElementById("initiative");
-    if (!(element3 instanceof HTMLSelectElement)) {
+    const element = document.getElementById("initiative");
+    if (!(element instanceof HTMLSelectElement)) {
       return null;
     }
-    const value = element3.value.trim();
+    const value = element.value.trim();
     return value.length > 0 ? value : null;
   };
   var resolveSelectedProviderSessionId = () => {
     if (typeof document === "undefined") {
       return null;
     }
-    const element3 = document.getElementById("providerSessionId");
-    if (!(element3 instanceof HTMLInputElement)) {
+    const element = document.getElementById("providerSessionId");
+    if (!(element instanceof HTMLInputElement)) {
       return null;
     }
-    const value = element3.value.trim();
+    const value = element.value.trim();
     return value.length > 0 ? value : null;
   };
 
@@ -8924,27 +8974,6 @@
       }
     });
   };
-  var sendChatMessage = (sessionId, content3, turnOptions) => {
-    if (!content3.trim()) {
-      return;
-    }
-    const messageContent = turnOptions ? { text: content3, turnOptions } : content3;
-    enqueueMessage({
-      type: "session:message",
-      payload: {
-        sessionId,
-        content: messageContent
-      }
-    });
-  };
-  var deleteSession = (sessionId) => {
-    enqueueMessage({
-      type: "session:delete",
-      payload: {
-        sessionId
-      }
-    });
-  };
   var handleOutgoingVsCodeMessage = (message) => {
     if (!message || typeof message !== "object") {
       return false;
@@ -9000,15 +9029,15 @@
     if (cachedApi) {
       return cachedApi;
     }
-    const globalScope3 = window;
-    if (globalScope3.vscode) {
-      cachedApi = globalScope3.vscode;
+    const globalScope2 = window;
+    if (globalScope2.vscode) {
+      cachedApi = globalScope2.vscode;
       return cachedApi;
     }
-    if (typeof globalScope3.acquireVsCodeApi === "function") {
+    if (typeof globalScope2.acquireVsCodeApi === "function") {
       try {
-        cachedApi = globalScope3.acquireVsCodeApi();
-        globalScope3.vscode = cachedApi;
+        cachedApi = globalScope2.acquireVsCodeApi();
+        globalScope2.vscode = cachedApi;
         return cachedApi;
       } catch (_error) {
         return cachedApi;
@@ -9034,19345 +9063,11 @@
   var vscode = vscodeInstance ?? fallbackApi;
   var vscode_default = vscode;
 
-  // src/client/ui/src/app-host/provider-picker-state.ts
-  var useProviderPickerState = () => {
-    const [pickerState, setPickerState] = (0, import_react2.useState)(defaultPickerState);
-    const [catalog, setCatalog] = (0, import_react2.useState)({});
-    const [selectedStage, setSelectedStage] = (0, import_react2.useState)(null);
-    const [stageSelectionLocked, setStageSelectionLocked] = (0, import_react2.useState)(false);
-    const providerLabels = (0, import_react2.useMemo)(() => buildProviderLabels(catalog), [catalog]);
-    const resetPicker = (0, import_react2.useCallback)(() => {
-      setPickerState(defaultPickerState);
-      setSelectedStage(null);
-      setStageSelectionLocked(false);
-    }, []);
-    const openPicker = (0, import_react2.useCallback)(
-      (providers) => {
-        setCatalog((previous3) => mergeCatalog(previous3, providers));
-        setPickerState({
-          visible: true,
-          providers
-        });
-        setSelectedStage(null);
-        setStageSelectionLocked(false);
-      },
-      []
-    );
-    const selectStage = (0, import_react2.useCallback)((stage) => {
-      setSelectedStage(stage);
-    }, []);
-    const clearStageSelection = (0, import_react2.useCallback)(() => {
-      setSelectedStage(null);
-    }, []);
-    const lockStageSelection = (0, import_react2.useCallback)(() => {
-      setStageSelectionLocked(true);
-    }, []);
-    const confirmSelection = (0, import_react2.useCallback)(
-      (providerIds) => {
-        postVsCodeMessage({
-          type: "providerPicker:confirm",
-          payload: { providerIds }
-        });
-        resetPicker();
-      },
-      [resetPicker]
-    );
-    const cancelSelection = (0, import_react2.useCallback)(() => {
-      postVsCodeMessage({ type: "providerPicker:cancel" });
-      resetPicker();
-    }, [resetPicker]);
-    return {
-      pickerState,
-      providerLabels,
-      selectedStage,
-      stageSelectionLocked,
-      openPicker,
-      confirmSelection,
-      cancelSelection,
-      resetPicker,
-      selectStage,
-      clearStageSelection,
-      lockStageSelection
-    };
-  };
-
-  // src/client/ui/src/app-host/session-region.tsx
-  var import_react15 = __toESM(require_react());
-
-  // src/client/ui/src/session/dialog-panel.tsx
-  var import_react4 = __toESM(require_react());
-
-  // src/client/ui/src/session/dialog-panel-message-utils.ts
-  var SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
-  var isSegmentBoundaryMessage = (message) => message.role === "system" && (message.id.startsWith("segment-boundary:") || message.content.trimStart().startsWith(SEGMENT_BOUNDARY_MARKER));
-  var extractSegmentBoundaryLabel = (content3) => {
-    const lines = content3.split("\n").map((line) => line.trim());
-    if (lines.length === 0) {
-      return "";
-    }
-    if (lines[0] !== SEGMENT_BOUNDARY_MARKER) {
-      return content3;
-    }
-    return lines[1] ?? "\u041D\u043E\u0432\u0430\u044F \u0441\u0435\u0441\u0441\u0438\u044F";
-  };
-  var buildMessageClassNames = (message, providerTheme) => {
-    const classes = [
-      "session-dialog__message",
-      `session-dialog__message--${message.role}`
-    ];
-    if (message.role === "assistant" && providerTheme) {
-      classes.push(`session-dialog__message--assistant-${providerTheme}`);
-    }
-    return classes.join(" ");
-  };
-  var resolveRoleLabel = (message, providerLabel) => {
-    if (message.role === "assistant") {
-      return providerLabel ?? "Assistant";
-    }
-    if (message.role === "user") {
-      return "User";
-    }
-    if (message.role === "thinking") {
-      return "Thinking";
-    }
-    return "System";
-  };
-  var mergeThinkingMessages = (source) => {
-    const result = [];
-    for (const message of source) {
-      if (message.role === "thinking") {
-        const previous3 = result.at(-1);
-        if (previous3?.role === "thinking") {
-          result[result.length - 1] = {
-            ...previous3,
-            content: `${previous3.content}
-${message.content}`
-          };
-          continue;
-        }
-        result.push({ ...message });
-        continue;
-      }
-      result.push(message);
-    }
-    return result;
-  };
-
-  // node_modules/devlop/lib/default.js
-  function ok() {
-  }
-  function unreachable() {
-  }
-
-  // node_modules/comma-separated-tokens/index.js
-  function stringify(values, options) {
-    const settings = options || {};
-    const input = values[values.length - 1] === "" ? [...values, ""] : values;
-    return input.join(
-      (settings.padRight ? " " : "") + "," + (settings.padLeft === false ? "" : " ")
-    ).trim();
-  }
-
-  // node_modules/estree-util-is-identifier-name/lib/index.js
-  var nameRe = /^[$_\p{ID_Start}][$_\u{200C}\u{200D}\p{ID_Continue}]*$/u;
-  var nameReJsx = /^[$_\p{ID_Start}][-$_\u{200C}\u{200D}\p{ID_Continue}]*$/u;
-  var emptyOptions = {};
-  function name(name2, options) {
-    const settings = options || emptyOptions;
-    const re2 = settings.jsx ? nameReJsx : nameRe;
-    return re2.test(name2);
-  }
-
-  // node_modules/hast-util-whitespace/lib/index.js
-  var re = /[ \t\n\f\r]/g;
-  function whitespace(thing) {
-    return typeof thing === "object" ? thing.type === "text" ? empty(thing.value) : false : empty(thing);
-  }
-  function empty(value) {
-    return value.replace(re, "") === "";
-  }
-
-  // node_modules/property-information/lib/util/schema.js
-  var Schema = class {
-    /**
-     * @param {SchemaType['property']} property
-     *   Property.
-     * @param {SchemaType['normal']} normal
-     *   Normal.
-     * @param {Space | undefined} [space]
-     *   Space.
-     * @returns
-     *   Schema.
-     */
-    constructor(property, normal, space2) {
-      this.normal = normal;
-      this.property = property;
-      if (space2) {
-        this.space = space2;
-      }
-    }
-  };
-  Schema.prototype.normal = {};
-  Schema.prototype.property = {};
-  Schema.prototype.space = void 0;
-
-  // node_modules/property-information/lib/util/merge.js
-  function merge(definitions, space2) {
-    const property = {};
-    const normal = {};
-    for (const definition3 of definitions) {
-      Object.assign(property, definition3.property);
-      Object.assign(normal, definition3.normal);
-    }
-    return new Schema(property, normal, space2);
-  }
-
-  // node_modules/property-information/lib/normalize.js
-  function normalize(value) {
-    return value.toLowerCase();
-  }
-
-  // node_modules/property-information/lib/util/info.js
-  var Info = class {
-    /**
-     * @param {string} property
-     *   Property.
-     * @param {string} attribute
-     *   Attribute.
-     * @returns
-     *   Info.
-     */
-    constructor(property, attribute) {
-      this.attribute = attribute;
-      this.property = property;
-    }
-  };
-  Info.prototype.attribute = "";
-  Info.prototype.booleanish = false;
-  Info.prototype.boolean = false;
-  Info.prototype.commaOrSpaceSeparated = false;
-  Info.prototype.commaSeparated = false;
-  Info.prototype.defined = false;
-  Info.prototype.mustUseProperty = false;
-  Info.prototype.number = false;
-  Info.prototype.overloadedBoolean = false;
-  Info.prototype.property = "";
-  Info.prototype.spaceSeparated = false;
-  Info.prototype.space = void 0;
-
-  // node_modules/property-information/lib/util/types.js
-  var types_exports = {};
-  __export(types_exports, {
-    boolean: () => boolean,
-    booleanish: () => booleanish,
-    commaOrSpaceSeparated: () => commaOrSpaceSeparated,
-    commaSeparated: () => commaSeparated,
-    number: () => number,
-    overloadedBoolean: () => overloadedBoolean,
-    spaceSeparated: () => spaceSeparated
-  });
-  var powers = 0;
-  var boolean = increment();
-  var booleanish = increment();
-  var overloadedBoolean = increment();
-  var number = increment();
-  var spaceSeparated = increment();
-  var commaSeparated = increment();
-  var commaOrSpaceSeparated = increment();
-  function increment() {
-    return 2 ** ++powers;
-  }
-
-  // node_modules/property-information/lib/util/defined-info.js
-  var checks = (
-    /** @type {ReadonlyArray<keyof typeof types>} */
-    Object.keys(types_exports)
-  );
-  var DefinedInfo = class extends Info {
-    /**
-     * @constructor
-     * @param {string} property
-     *   Property.
-     * @param {string} attribute
-     *   Attribute.
-     * @param {number | null | undefined} [mask]
-     *   Mask.
-     * @param {Space | undefined} [space]
-     *   Space.
-     * @returns
-     *   Info.
-     */
-    constructor(property, attribute, mask, space2) {
-      let index2 = -1;
-      super(property, attribute);
-      mark(this, "space", space2);
-      if (typeof mask === "number") {
-        while (++index2 < checks.length) {
-          const check = checks[index2];
-          mark(this, checks[index2], (mask & types_exports[check]) === types_exports[check]);
-        }
-      }
-    }
-  };
-  DefinedInfo.prototype.defined = true;
-  function mark(values, key, value) {
-    if (value) {
-      values[key] = value;
-    }
-  }
-
-  // node_modules/property-information/lib/util/create.js
-  function create(definition3) {
-    const properties = {};
-    const normals = {};
-    for (const [property, value] of Object.entries(definition3.properties)) {
-      const info = new DefinedInfo(
-        property,
-        definition3.transform(definition3.attributes || {}, property),
-        value,
-        definition3.space
-      );
-      if (definition3.mustUseProperty && definition3.mustUseProperty.includes(property)) {
-        info.mustUseProperty = true;
-      }
-      properties[property] = info;
-      normals[normalize(property)] = property;
-      normals[normalize(info.attribute)] = property;
-    }
-    return new Schema(properties, normals, definition3.space);
-  }
-
-  // node_modules/property-information/lib/aria.js
-  var aria = create({
-    properties: {
-      ariaActiveDescendant: null,
-      ariaAtomic: booleanish,
-      ariaAutoComplete: null,
-      ariaBusy: booleanish,
-      ariaChecked: booleanish,
-      ariaColCount: number,
-      ariaColIndex: number,
-      ariaColSpan: number,
-      ariaControls: spaceSeparated,
-      ariaCurrent: null,
-      ariaDescribedBy: spaceSeparated,
-      ariaDetails: null,
-      ariaDisabled: booleanish,
-      ariaDropEffect: spaceSeparated,
-      ariaErrorMessage: null,
-      ariaExpanded: booleanish,
-      ariaFlowTo: spaceSeparated,
-      ariaGrabbed: booleanish,
-      ariaHasPopup: null,
-      ariaHidden: booleanish,
-      ariaInvalid: null,
-      ariaKeyShortcuts: null,
-      ariaLabel: null,
-      ariaLabelledBy: spaceSeparated,
-      ariaLevel: number,
-      ariaLive: null,
-      ariaModal: booleanish,
-      ariaMultiLine: booleanish,
-      ariaMultiSelectable: booleanish,
-      ariaOrientation: null,
-      ariaOwns: spaceSeparated,
-      ariaPlaceholder: null,
-      ariaPosInSet: number,
-      ariaPressed: booleanish,
-      ariaReadOnly: booleanish,
-      ariaRelevant: null,
-      ariaRequired: booleanish,
-      ariaRoleDescription: spaceSeparated,
-      ariaRowCount: number,
-      ariaRowIndex: number,
-      ariaRowSpan: number,
-      ariaSelected: booleanish,
-      ariaSetSize: number,
-      ariaSort: null,
-      ariaValueMax: number,
-      ariaValueMin: number,
-      ariaValueNow: number,
-      ariaValueText: null,
-      role: null
-    },
-    transform(_, property) {
-      return property === "role" ? property : "aria-" + property.slice(4).toLowerCase();
-    }
-  });
-
-  // node_modules/property-information/lib/util/case-sensitive-transform.js
-  function caseSensitiveTransform(attributes, attribute) {
-    return attribute in attributes ? attributes[attribute] : attribute;
-  }
-
-  // node_modules/property-information/lib/util/case-insensitive-transform.js
-  function caseInsensitiveTransform(attributes, property) {
-    return caseSensitiveTransform(attributes, property.toLowerCase());
-  }
-
-  // node_modules/property-information/lib/html.js
-  var html = create({
-    attributes: {
-      acceptcharset: "accept-charset",
-      classname: "class",
-      htmlfor: "for",
-      httpequiv: "http-equiv"
-    },
-    mustUseProperty: ["checked", "multiple", "muted", "selected"],
-    properties: {
-      // Standard Properties.
-      abbr: null,
-      accept: commaSeparated,
-      acceptCharset: spaceSeparated,
-      accessKey: spaceSeparated,
-      action: null,
-      allow: null,
-      allowFullScreen: boolean,
-      allowPaymentRequest: boolean,
-      allowUserMedia: boolean,
-      alt: null,
-      as: null,
-      async: boolean,
-      autoCapitalize: null,
-      autoComplete: spaceSeparated,
-      autoFocus: boolean,
-      autoPlay: boolean,
-      blocking: spaceSeparated,
-      capture: null,
-      charSet: null,
-      checked: boolean,
-      cite: null,
-      className: spaceSeparated,
-      cols: number,
-      colSpan: null,
-      content: null,
-      contentEditable: booleanish,
-      controls: boolean,
-      controlsList: spaceSeparated,
-      coords: number | commaSeparated,
-      crossOrigin: null,
-      data: null,
-      dateTime: null,
-      decoding: null,
-      default: boolean,
-      defer: boolean,
-      dir: null,
-      dirName: null,
-      disabled: boolean,
-      download: overloadedBoolean,
-      draggable: booleanish,
-      encType: null,
-      enterKeyHint: null,
-      fetchPriority: null,
-      form: null,
-      formAction: null,
-      formEncType: null,
-      formMethod: null,
-      formNoValidate: boolean,
-      formTarget: null,
-      headers: spaceSeparated,
-      height: number,
-      hidden: overloadedBoolean,
-      high: number,
-      href: null,
-      hrefLang: null,
-      htmlFor: spaceSeparated,
-      httpEquiv: spaceSeparated,
-      id: null,
-      imageSizes: null,
-      imageSrcSet: null,
-      inert: boolean,
-      inputMode: null,
-      integrity: null,
-      is: null,
-      isMap: boolean,
-      itemId: null,
-      itemProp: spaceSeparated,
-      itemRef: spaceSeparated,
-      itemScope: boolean,
-      itemType: spaceSeparated,
-      kind: null,
-      label: null,
-      lang: null,
-      language: null,
-      list: null,
-      loading: null,
-      loop: boolean,
-      low: number,
-      manifest: null,
-      max: null,
-      maxLength: number,
-      media: null,
-      method: null,
-      min: null,
-      minLength: number,
-      multiple: boolean,
-      muted: boolean,
-      name: null,
-      nonce: null,
-      noModule: boolean,
-      noValidate: boolean,
-      onAbort: null,
-      onAfterPrint: null,
-      onAuxClick: null,
-      onBeforeMatch: null,
-      onBeforePrint: null,
-      onBeforeToggle: null,
-      onBeforeUnload: null,
-      onBlur: null,
-      onCancel: null,
-      onCanPlay: null,
-      onCanPlayThrough: null,
-      onChange: null,
-      onClick: null,
-      onClose: null,
-      onContextLost: null,
-      onContextMenu: null,
-      onContextRestored: null,
-      onCopy: null,
-      onCueChange: null,
-      onCut: null,
-      onDblClick: null,
-      onDrag: null,
-      onDragEnd: null,
-      onDragEnter: null,
-      onDragExit: null,
-      onDragLeave: null,
-      onDragOver: null,
-      onDragStart: null,
-      onDrop: null,
-      onDurationChange: null,
-      onEmptied: null,
-      onEnded: null,
-      onError: null,
-      onFocus: null,
-      onFormData: null,
-      onHashChange: null,
-      onInput: null,
-      onInvalid: null,
-      onKeyDown: null,
-      onKeyPress: null,
-      onKeyUp: null,
-      onLanguageChange: null,
-      onLoad: null,
-      onLoadedData: null,
-      onLoadedMetadata: null,
-      onLoadEnd: null,
-      onLoadStart: null,
-      onMessage: null,
-      onMessageError: null,
-      onMouseDown: null,
-      onMouseEnter: null,
-      onMouseLeave: null,
-      onMouseMove: null,
-      onMouseOut: null,
-      onMouseOver: null,
-      onMouseUp: null,
-      onOffline: null,
-      onOnline: null,
-      onPageHide: null,
-      onPageShow: null,
-      onPaste: null,
-      onPause: null,
-      onPlay: null,
-      onPlaying: null,
-      onPopState: null,
-      onProgress: null,
-      onRateChange: null,
-      onRejectionHandled: null,
-      onReset: null,
-      onResize: null,
-      onScroll: null,
-      onScrollEnd: null,
-      onSecurityPolicyViolation: null,
-      onSeeked: null,
-      onSeeking: null,
-      onSelect: null,
-      onSlotChange: null,
-      onStalled: null,
-      onStorage: null,
-      onSubmit: null,
-      onSuspend: null,
-      onTimeUpdate: null,
-      onToggle: null,
-      onUnhandledRejection: null,
-      onUnload: null,
-      onVolumeChange: null,
-      onWaiting: null,
-      onWheel: null,
-      open: boolean,
-      optimum: number,
-      pattern: null,
-      ping: spaceSeparated,
-      placeholder: null,
-      playsInline: boolean,
-      popover: null,
-      popoverTarget: null,
-      popoverTargetAction: null,
-      poster: null,
-      preload: null,
-      readOnly: boolean,
-      referrerPolicy: null,
-      rel: spaceSeparated,
-      required: boolean,
-      reversed: boolean,
-      rows: number,
-      rowSpan: number,
-      sandbox: spaceSeparated,
-      scope: null,
-      scoped: boolean,
-      seamless: boolean,
-      selected: boolean,
-      shadowRootClonable: boolean,
-      shadowRootDelegatesFocus: boolean,
-      shadowRootMode: null,
-      shape: null,
-      size: number,
-      sizes: null,
-      slot: null,
-      span: number,
-      spellCheck: booleanish,
-      src: null,
-      srcDoc: null,
-      srcLang: null,
-      srcSet: null,
-      start: number,
-      step: null,
-      style: null,
-      tabIndex: number,
-      target: null,
-      title: null,
-      translate: null,
-      type: null,
-      typeMustMatch: boolean,
-      useMap: null,
-      value: booleanish,
-      width: number,
-      wrap: null,
-      writingSuggestions: null,
-      // Legacy.
-      // See: https://html.spec.whatwg.org/#other-elements,-attributes-and-apis
-      align: null,
-      // Several. Use CSS `text-align` instead,
-      aLink: null,
-      // `<body>`. Use CSS `a:active {color}` instead
-      archive: spaceSeparated,
-      // `<object>`. List of URIs to archives
-      axis: null,
-      // `<td>` and `<th>`. Use `scope` on `<th>`
-      background: null,
-      // `<body>`. Use CSS `background-image` instead
-      bgColor: null,
-      // `<body>` and table elements. Use CSS `background-color` instead
-      border: number,
-      // `<table>`. Use CSS `border-width` instead,
-      borderColor: null,
-      // `<table>`. Use CSS `border-color` instead,
-      bottomMargin: number,
-      // `<body>`
-      cellPadding: null,
-      // `<table>`
-      cellSpacing: null,
-      // `<table>`
-      char: null,
-      // Several table elements. When `align=char`, sets the character to align on
-      charOff: null,
-      // Several table elements. When `char`, offsets the alignment
-      classId: null,
-      // `<object>`
-      clear: null,
-      // `<br>`. Use CSS `clear` instead
-      code: null,
-      // `<object>`
-      codeBase: null,
-      // `<object>`
-      codeType: null,
-      // `<object>`
-      color: null,
-      // `<font>` and `<hr>`. Use CSS instead
-      compact: boolean,
-      // Lists. Use CSS to reduce space between items instead
-      declare: boolean,
-      // `<object>`
-      event: null,
-      // `<script>`
-      face: null,
-      // `<font>`. Use CSS instead
-      frame: null,
-      // `<table>`
-      frameBorder: null,
-      // `<iframe>`. Use CSS `border` instead
-      hSpace: number,
-      // `<img>` and `<object>`
-      leftMargin: number,
-      // `<body>`
-      link: null,
-      // `<body>`. Use CSS `a:link {color: *}` instead
-      longDesc: null,
-      // `<frame>`, `<iframe>`, and `<img>`. Use an `<a>`
-      lowSrc: null,
-      // `<img>`. Use a `<picture>`
-      marginHeight: number,
-      // `<body>`
-      marginWidth: number,
-      // `<body>`
-      noResize: boolean,
-      // `<frame>`
-      noHref: boolean,
-      // `<area>`. Use no href instead of an explicit `nohref`
-      noShade: boolean,
-      // `<hr>`. Use background-color and height instead of borders
-      noWrap: boolean,
-      // `<td>` and `<th>`
-      object: null,
-      // `<applet>`
-      profile: null,
-      // `<head>`
-      prompt: null,
-      // `<isindex>`
-      rev: null,
-      // `<link>`
-      rightMargin: number,
-      // `<body>`
-      rules: null,
-      // `<table>`
-      scheme: null,
-      // `<meta>`
-      scrolling: booleanish,
-      // `<frame>`. Use overflow in the child context
-      standby: null,
-      // `<object>`
-      summary: null,
-      // `<table>`
-      text: null,
-      // `<body>`. Use CSS `color` instead
-      topMargin: number,
-      // `<body>`
-      valueType: null,
-      // `<param>`
-      version: null,
-      // `<html>`. Use a doctype.
-      vAlign: null,
-      // Several. Use CSS `vertical-align` instead
-      vLink: null,
-      // `<body>`. Use CSS `a:visited {color}` instead
-      vSpace: number,
-      // `<img>` and `<object>`
-      // Non-standard Properties.
-      allowTransparency: null,
-      autoCorrect: null,
-      autoSave: null,
-      disablePictureInPicture: boolean,
-      disableRemotePlayback: boolean,
-      prefix: null,
-      property: null,
-      results: number,
-      security: null,
-      unselectable: null
-    },
-    space: "html",
-    transform: caseInsensitiveTransform
-  });
-
-  // node_modules/property-information/lib/svg.js
-  var svg = create({
-    attributes: {
-      accentHeight: "accent-height",
-      alignmentBaseline: "alignment-baseline",
-      arabicForm: "arabic-form",
-      baselineShift: "baseline-shift",
-      capHeight: "cap-height",
-      className: "class",
-      clipPath: "clip-path",
-      clipRule: "clip-rule",
-      colorInterpolation: "color-interpolation",
-      colorInterpolationFilters: "color-interpolation-filters",
-      colorProfile: "color-profile",
-      colorRendering: "color-rendering",
-      crossOrigin: "crossorigin",
-      dataType: "datatype",
-      dominantBaseline: "dominant-baseline",
-      enableBackground: "enable-background",
-      fillOpacity: "fill-opacity",
-      fillRule: "fill-rule",
-      floodColor: "flood-color",
-      floodOpacity: "flood-opacity",
-      fontFamily: "font-family",
-      fontSize: "font-size",
-      fontSizeAdjust: "font-size-adjust",
-      fontStretch: "font-stretch",
-      fontStyle: "font-style",
-      fontVariant: "font-variant",
-      fontWeight: "font-weight",
-      glyphName: "glyph-name",
-      glyphOrientationHorizontal: "glyph-orientation-horizontal",
-      glyphOrientationVertical: "glyph-orientation-vertical",
-      hrefLang: "hreflang",
-      horizAdvX: "horiz-adv-x",
-      horizOriginX: "horiz-origin-x",
-      horizOriginY: "horiz-origin-y",
-      imageRendering: "image-rendering",
-      letterSpacing: "letter-spacing",
-      lightingColor: "lighting-color",
-      markerEnd: "marker-end",
-      markerMid: "marker-mid",
-      markerStart: "marker-start",
-      navDown: "nav-down",
-      navDownLeft: "nav-down-left",
-      navDownRight: "nav-down-right",
-      navLeft: "nav-left",
-      navNext: "nav-next",
-      navPrev: "nav-prev",
-      navRight: "nav-right",
-      navUp: "nav-up",
-      navUpLeft: "nav-up-left",
-      navUpRight: "nav-up-right",
-      onAbort: "onabort",
-      onActivate: "onactivate",
-      onAfterPrint: "onafterprint",
-      onBeforePrint: "onbeforeprint",
-      onBegin: "onbegin",
-      onCancel: "oncancel",
-      onCanPlay: "oncanplay",
-      onCanPlayThrough: "oncanplaythrough",
-      onChange: "onchange",
-      onClick: "onclick",
-      onClose: "onclose",
-      onCopy: "oncopy",
-      onCueChange: "oncuechange",
-      onCut: "oncut",
-      onDblClick: "ondblclick",
-      onDrag: "ondrag",
-      onDragEnd: "ondragend",
-      onDragEnter: "ondragenter",
-      onDragExit: "ondragexit",
-      onDragLeave: "ondragleave",
-      onDragOver: "ondragover",
-      onDragStart: "ondragstart",
-      onDrop: "ondrop",
-      onDurationChange: "ondurationchange",
-      onEmptied: "onemptied",
-      onEnd: "onend",
-      onEnded: "onended",
-      onError: "onerror",
-      onFocus: "onfocus",
-      onFocusIn: "onfocusin",
-      onFocusOut: "onfocusout",
-      onHashChange: "onhashchange",
-      onInput: "oninput",
-      onInvalid: "oninvalid",
-      onKeyDown: "onkeydown",
-      onKeyPress: "onkeypress",
-      onKeyUp: "onkeyup",
-      onLoad: "onload",
-      onLoadedData: "onloadeddata",
-      onLoadedMetadata: "onloadedmetadata",
-      onLoadStart: "onloadstart",
-      onMessage: "onmessage",
-      onMouseDown: "onmousedown",
-      onMouseEnter: "onmouseenter",
-      onMouseLeave: "onmouseleave",
-      onMouseMove: "onmousemove",
-      onMouseOut: "onmouseout",
-      onMouseOver: "onmouseover",
-      onMouseUp: "onmouseup",
-      onMouseWheel: "onmousewheel",
-      onOffline: "onoffline",
-      onOnline: "ononline",
-      onPageHide: "onpagehide",
-      onPageShow: "onpageshow",
-      onPaste: "onpaste",
-      onPause: "onpause",
-      onPlay: "onplay",
-      onPlaying: "onplaying",
-      onPopState: "onpopstate",
-      onProgress: "onprogress",
-      onRateChange: "onratechange",
-      onRepeat: "onrepeat",
-      onReset: "onreset",
-      onResize: "onresize",
-      onScroll: "onscroll",
-      onSeeked: "onseeked",
-      onSeeking: "onseeking",
-      onSelect: "onselect",
-      onShow: "onshow",
-      onStalled: "onstalled",
-      onStorage: "onstorage",
-      onSubmit: "onsubmit",
-      onSuspend: "onsuspend",
-      onTimeUpdate: "ontimeupdate",
-      onToggle: "ontoggle",
-      onUnload: "onunload",
-      onVolumeChange: "onvolumechange",
-      onWaiting: "onwaiting",
-      onZoom: "onzoom",
-      overlinePosition: "overline-position",
-      overlineThickness: "overline-thickness",
-      paintOrder: "paint-order",
-      panose1: "panose-1",
-      pointerEvents: "pointer-events",
-      referrerPolicy: "referrerpolicy",
-      renderingIntent: "rendering-intent",
-      shapeRendering: "shape-rendering",
-      stopColor: "stop-color",
-      stopOpacity: "stop-opacity",
-      strikethroughPosition: "strikethrough-position",
-      strikethroughThickness: "strikethrough-thickness",
-      strokeDashArray: "stroke-dasharray",
-      strokeDashOffset: "stroke-dashoffset",
-      strokeLineCap: "stroke-linecap",
-      strokeLineJoin: "stroke-linejoin",
-      strokeMiterLimit: "stroke-miterlimit",
-      strokeOpacity: "stroke-opacity",
-      strokeWidth: "stroke-width",
-      tabIndex: "tabindex",
-      textAnchor: "text-anchor",
-      textDecoration: "text-decoration",
-      textRendering: "text-rendering",
-      transformOrigin: "transform-origin",
-      typeOf: "typeof",
-      underlinePosition: "underline-position",
-      underlineThickness: "underline-thickness",
-      unicodeBidi: "unicode-bidi",
-      unicodeRange: "unicode-range",
-      unitsPerEm: "units-per-em",
-      vAlphabetic: "v-alphabetic",
-      vHanging: "v-hanging",
-      vIdeographic: "v-ideographic",
-      vMathematical: "v-mathematical",
-      vectorEffect: "vector-effect",
-      vertAdvY: "vert-adv-y",
-      vertOriginX: "vert-origin-x",
-      vertOriginY: "vert-origin-y",
-      wordSpacing: "word-spacing",
-      writingMode: "writing-mode",
-      xHeight: "x-height",
-      // These were camelcased in Tiny. Now lowercased in SVG 2
-      playbackOrder: "playbackorder",
-      timelineBegin: "timelinebegin"
-    },
-    properties: {
-      about: commaOrSpaceSeparated,
-      accentHeight: number,
-      accumulate: null,
-      additive: null,
-      alignmentBaseline: null,
-      alphabetic: number,
-      amplitude: number,
-      arabicForm: null,
-      ascent: number,
-      attributeName: null,
-      attributeType: null,
-      azimuth: number,
-      bandwidth: null,
-      baselineShift: null,
-      baseFrequency: null,
-      baseProfile: null,
-      bbox: null,
-      begin: null,
-      bias: number,
-      by: null,
-      calcMode: null,
-      capHeight: number,
-      className: spaceSeparated,
-      clip: null,
-      clipPath: null,
-      clipPathUnits: null,
-      clipRule: null,
-      color: null,
-      colorInterpolation: null,
-      colorInterpolationFilters: null,
-      colorProfile: null,
-      colorRendering: null,
-      content: null,
-      contentScriptType: null,
-      contentStyleType: null,
-      crossOrigin: null,
-      cursor: null,
-      cx: null,
-      cy: null,
-      d: null,
-      dataType: null,
-      defaultAction: null,
-      descent: number,
-      diffuseConstant: number,
-      direction: null,
-      display: null,
-      dur: null,
-      divisor: number,
-      dominantBaseline: null,
-      download: boolean,
-      dx: null,
-      dy: null,
-      edgeMode: null,
-      editable: null,
-      elevation: number,
-      enableBackground: null,
-      end: null,
-      event: null,
-      exponent: number,
-      externalResourcesRequired: null,
-      fill: null,
-      fillOpacity: number,
-      fillRule: null,
-      filter: null,
-      filterRes: null,
-      filterUnits: null,
-      floodColor: null,
-      floodOpacity: null,
-      focusable: null,
-      focusHighlight: null,
-      fontFamily: null,
-      fontSize: null,
-      fontSizeAdjust: null,
-      fontStretch: null,
-      fontStyle: null,
-      fontVariant: null,
-      fontWeight: null,
-      format: null,
-      fr: null,
-      from: null,
-      fx: null,
-      fy: null,
-      g1: commaSeparated,
-      g2: commaSeparated,
-      glyphName: commaSeparated,
-      glyphOrientationHorizontal: null,
-      glyphOrientationVertical: null,
-      glyphRef: null,
-      gradientTransform: null,
-      gradientUnits: null,
-      handler: null,
-      hanging: number,
-      hatchContentUnits: null,
-      hatchUnits: null,
-      height: null,
-      href: null,
-      hrefLang: null,
-      horizAdvX: number,
-      horizOriginX: number,
-      horizOriginY: number,
-      id: null,
-      ideographic: number,
-      imageRendering: null,
-      initialVisibility: null,
-      in: null,
-      in2: null,
-      intercept: number,
-      k: number,
-      k1: number,
-      k2: number,
-      k3: number,
-      k4: number,
-      kernelMatrix: commaOrSpaceSeparated,
-      kernelUnitLength: null,
-      keyPoints: null,
-      // SEMI_COLON_SEPARATED
-      keySplines: null,
-      // SEMI_COLON_SEPARATED
-      keyTimes: null,
-      // SEMI_COLON_SEPARATED
-      kerning: null,
-      lang: null,
-      lengthAdjust: null,
-      letterSpacing: null,
-      lightingColor: null,
-      limitingConeAngle: number,
-      local: null,
-      markerEnd: null,
-      markerMid: null,
-      markerStart: null,
-      markerHeight: null,
-      markerUnits: null,
-      markerWidth: null,
-      mask: null,
-      maskContentUnits: null,
-      maskUnits: null,
-      mathematical: null,
-      max: null,
-      media: null,
-      mediaCharacterEncoding: null,
-      mediaContentEncodings: null,
-      mediaSize: number,
-      mediaTime: null,
-      method: null,
-      min: null,
-      mode: null,
-      name: null,
-      navDown: null,
-      navDownLeft: null,
-      navDownRight: null,
-      navLeft: null,
-      navNext: null,
-      navPrev: null,
-      navRight: null,
-      navUp: null,
-      navUpLeft: null,
-      navUpRight: null,
-      numOctaves: null,
-      observer: null,
-      offset: null,
-      onAbort: null,
-      onActivate: null,
-      onAfterPrint: null,
-      onBeforePrint: null,
-      onBegin: null,
-      onCancel: null,
-      onCanPlay: null,
-      onCanPlayThrough: null,
-      onChange: null,
-      onClick: null,
-      onClose: null,
-      onCopy: null,
-      onCueChange: null,
-      onCut: null,
-      onDblClick: null,
-      onDrag: null,
-      onDragEnd: null,
-      onDragEnter: null,
-      onDragExit: null,
-      onDragLeave: null,
-      onDragOver: null,
-      onDragStart: null,
-      onDrop: null,
-      onDurationChange: null,
-      onEmptied: null,
-      onEnd: null,
-      onEnded: null,
-      onError: null,
-      onFocus: null,
-      onFocusIn: null,
-      onFocusOut: null,
-      onHashChange: null,
-      onInput: null,
-      onInvalid: null,
-      onKeyDown: null,
-      onKeyPress: null,
-      onKeyUp: null,
-      onLoad: null,
-      onLoadedData: null,
-      onLoadedMetadata: null,
-      onLoadStart: null,
-      onMessage: null,
-      onMouseDown: null,
-      onMouseEnter: null,
-      onMouseLeave: null,
-      onMouseMove: null,
-      onMouseOut: null,
-      onMouseOver: null,
-      onMouseUp: null,
-      onMouseWheel: null,
-      onOffline: null,
-      onOnline: null,
-      onPageHide: null,
-      onPageShow: null,
-      onPaste: null,
-      onPause: null,
-      onPlay: null,
-      onPlaying: null,
-      onPopState: null,
-      onProgress: null,
-      onRateChange: null,
-      onRepeat: null,
-      onReset: null,
-      onResize: null,
-      onScroll: null,
-      onSeeked: null,
-      onSeeking: null,
-      onSelect: null,
-      onShow: null,
-      onStalled: null,
-      onStorage: null,
-      onSubmit: null,
-      onSuspend: null,
-      onTimeUpdate: null,
-      onToggle: null,
-      onUnload: null,
-      onVolumeChange: null,
-      onWaiting: null,
-      onZoom: null,
-      opacity: null,
-      operator: null,
-      order: null,
-      orient: null,
-      orientation: null,
-      origin: null,
-      overflow: null,
-      overlay: null,
-      overlinePosition: number,
-      overlineThickness: number,
-      paintOrder: null,
-      panose1: null,
-      path: null,
-      pathLength: number,
-      patternContentUnits: null,
-      patternTransform: null,
-      patternUnits: null,
-      phase: null,
-      ping: spaceSeparated,
-      pitch: null,
-      playbackOrder: null,
-      pointerEvents: null,
-      points: null,
-      pointsAtX: number,
-      pointsAtY: number,
-      pointsAtZ: number,
-      preserveAlpha: null,
-      preserveAspectRatio: null,
-      primitiveUnits: null,
-      propagate: null,
-      property: commaOrSpaceSeparated,
-      r: null,
-      radius: null,
-      referrerPolicy: null,
-      refX: null,
-      refY: null,
-      rel: commaOrSpaceSeparated,
-      rev: commaOrSpaceSeparated,
-      renderingIntent: null,
-      repeatCount: null,
-      repeatDur: null,
-      requiredExtensions: commaOrSpaceSeparated,
-      requiredFeatures: commaOrSpaceSeparated,
-      requiredFonts: commaOrSpaceSeparated,
-      requiredFormats: commaOrSpaceSeparated,
-      resource: null,
-      restart: null,
-      result: null,
-      rotate: null,
-      rx: null,
-      ry: null,
-      scale: null,
-      seed: null,
-      shapeRendering: null,
-      side: null,
-      slope: null,
-      snapshotTime: null,
-      specularConstant: number,
-      specularExponent: number,
-      spreadMethod: null,
-      spacing: null,
-      startOffset: null,
-      stdDeviation: null,
-      stemh: null,
-      stemv: null,
-      stitchTiles: null,
-      stopColor: null,
-      stopOpacity: null,
-      strikethroughPosition: number,
-      strikethroughThickness: number,
-      string: null,
-      stroke: null,
-      strokeDashArray: commaOrSpaceSeparated,
-      strokeDashOffset: null,
-      strokeLineCap: null,
-      strokeLineJoin: null,
-      strokeMiterLimit: number,
-      strokeOpacity: number,
-      strokeWidth: null,
-      style: null,
-      surfaceScale: number,
-      syncBehavior: null,
-      syncBehaviorDefault: null,
-      syncMaster: null,
-      syncTolerance: null,
-      syncToleranceDefault: null,
-      systemLanguage: commaOrSpaceSeparated,
-      tabIndex: number,
-      tableValues: null,
-      target: null,
-      targetX: number,
-      targetY: number,
-      textAnchor: null,
-      textDecoration: null,
-      textRendering: null,
-      textLength: null,
-      timelineBegin: null,
-      title: null,
-      transformBehavior: null,
-      type: null,
-      typeOf: commaOrSpaceSeparated,
-      to: null,
-      transform: null,
-      transformOrigin: null,
-      u1: null,
-      u2: null,
-      underlinePosition: number,
-      underlineThickness: number,
-      unicode: null,
-      unicodeBidi: null,
-      unicodeRange: null,
-      unitsPerEm: number,
-      values: null,
-      vAlphabetic: number,
-      vMathematical: number,
-      vectorEffect: null,
-      vHanging: number,
-      vIdeographic: number,
-      version: null,
-      vertAdvY: number,
-      vertOriginX: number,
-      vertOriginY: number,
-      viewBox: null,
-      viewTarget: null,
-      visibility: null,
-      width: null,
-      widths: null,
-      wordSpacing: null,
-      writingMode: null,
-      x: null,
-      x1: null,
-      x2: null,
-      xChannelSelector: null,
-      xHeight: number,
-      y: null,
-      y1: null,
-      y2: null,
-      yChannelSelector: null,
-      z: null,
-      zoomAndPan: null
-    },
-    space: "svg",
-    transform: caseSensitiveTransform
-  });
-
-  // node_modules/property-information/lib/xlink.js
-  var xlink = create({
-    properties: {
-      xLinkActuate: null,
-      xLinkArcRole: null,
-      xLinkHref: null,
-      xLinkRole: null,
-      xLinkShow: null,
-      xLinkTitle: null,
-      xLinkType: null
-    },
-    space: "xlink",
-    transform(_, property) {
-      return "xlink:" + property.slice(5).toLowerCase();
-    }
-  });
-
-  // node_modules/property-information/lib/xmlns.js
-  var xmlns = create({
-    attributes: { xmlnsxlink: "xmlns:xlink" },
-    properties: { xmlnsXLink: null, xmlns: null },
-    space: "xmlns",
-    transform: caseInsensitiveTransform
-  });
-
-  // node_modules/property-information/lib/xml.js
-  var xml = create({
-    properties: { xmlBase: null, xmlLang: null, xmlSpace: null },
-    space: "xml",
-    transform(_, property) {
-      return "xml:" + property.slice(3).toLowerCase();
-    }
-  });
-
-  // node_modules/property-information/lib/hast-to-react.js
-  var hastToReact = {
-    classId: "classID",
-    dataType: "datatype",
-    itemId: "itemID",
-    strokeDashArray: "strokeDasharray",
-    strokeDashOffset: "strokeDashoffset",
-    strokeLineCap: "strokeLinecap",
-    strokeLineJoin: "strokeLinejoin",
-    strokeMiterLimit: "strokeMiterlimit",
-    typeOf: "typeof",
-    xLinkActuate: "xlinkActuate",
-    xLinkArcRole: "xlinkArcrole",
-    xLinkHref: "xlinkHref",
-    xLinkRole: "xlinkRole",
-    xLinkShow: "xlinkShow",
-    xLinkTitle: "xlinkTitle",
-    xLinkType: "xlinkType",
-    xmlnsXLink: "xmlnsXlink"
-  };
-
-  // node_modules/property-information/lib/find.js
-  var cap = /[A-Z]/g;
-  var dash = /-[a-z]/g;
-  var valid = /^data[-\w.:]+$/i;
-  function find(schema, value) {
-    const normal = normalize(value);
-    let property = value;
-    let Type = Info;
-    if (normal in schema.normal) {
-      return schema.property[schema.normal[normal]];
-    }
-    if (normal.length > 4 && normal.slice(0, 4) === "data" && valid.test(value)) {
-      if (value.charAt(4) === "-") {
-        const rest = value.slice(5).replace(dash, camelcase);
-        property = "data" + rest.charAt(0).toUpperCase() + rest.slice(1);
-      } else {
-        const rest = value.slice(4);
-        if (!dash.test(rest)) {
-          let dashes = rest.replace(cap, kebab);
-          if (dashes.charAt(0) !== "-") {
-            dashes = "-" + dashes;
-          }
-          value = "data" + dashes;
-        }
-      }
-      Type = DefinedInfo;
-    }
-    return new Type(property, value);
-  }
-  function kebab($0) {
-    return "-" + $0.toLowerCase();
-  }
-  function camelcase($0) {
-    return $0.charAt(1).toUpperCase();
-  }
-
-  // node_modules/property-information/index.js
-  var html2 = merge([aria, html, xlink, xmlns, xml], "html");
-  var svg2 = merge([aria, svg, xlink, xmlns, xml], "svg");
-
-  // node_modules/space-separated-tokens/index.js
-  function stringify2(values) {
-    return values.join(" ").trim();
-  }
-
-  // node_modules/hast-util-to-jsx-runtime/lib/index.js
-  var import_style_to_js = __toESM(require_cjs3(), 1);
-
-  // node_modules/unist-util-position/lib/index.js
-  var pointEnd = point("end");
-  var pointStart = point("start");
-  function point(type) {
-    return point4;
-    function point4(node2) {
-      const point5 = node2 && node2.position && node2.position[type] || {};
-      if (typeof point5.line === "number" && point5.line > 0 && typeof point5.column === "number" && point5.column > 0) {
-        return {
-          line: point5.line,
-          column: point5.column,
-          offset: typeof point5.offset === "number" && point5.offset > -1 ? point5.offset : void 0
-        };
-      }
-    }
-  }
-  function position(node2) {
-    const start2 = pointStart(node2);
-    const end = pointEnd(node2);
-    if (start2 && end) {
-      return { start: start2, end };
-    }
-  }
-
-  // node_modules/unist-util-stringify-position/lib/index.js
-  function stringifyPosition(value) {
-    if (!value || typeof value !== "object") {
-      return "";
-    }
-    if ("position" in value || "type" in value) {
-      return position2(value.position);
-    }
-    if ("start" in value || "end" in value) {
-      return position2(value);
-    }
-    if ("line" in value || "column" in value) {
-      return point2(value);
-    }
-    return "";
-  }
-  function point2(point4) {
-    return index(point4 && point4.line) + ":" + index(point4 && point4.column);
-  }
-  function position2(pos) {
-    return point2(pos && pos.start) + "-" + point2(pos && pos.end);
-  }
-  function index(value) {
-    return value && typeof value === "number" ? value : 1;
-  }
-
-  // node_modules/vfile-message/lib/index.js
-  var VFileMessage = class extends Error {
-    /**
-     * Create a message for `reason`.
-     *
-     * > 🪦 **Note**: also has obsolete signatures.
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Options | null | undefined} [options]
-     * @returns
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns
-     *
-     * @overload
-     * @param {string} reason
-     * @param {string | null | undefined} [origin]
-     * @returns
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {string | null | undefined} [origin]
-     * @returns
-     *
-     * @param {Error | VFileMessage | string} causeOrReason
-     *   Reason for message, should use markdown.
-     * @param {Node | NodeLike | Options | Point | Position | string | null | undefined} [optionsOrParentOrPlace]
-     *   Configuration (optional).
-     * @param {string | null | undefined} [origin]
-     *   Place in code where the message originates (example:
-     *   `'my-package:my-rule'` or `'my-rule'`).
-     * @returns
-     *   Instance of `VFileMessage`.
-     */
-    // eslint-disable-next-line complexity
-    constructor(causeOrReason, optionsOrParentOrPlace, origin) {
-      super();
-      if (typeof optionsOrParentOrPlace === "string") {
-        origin = optionsOrParentOrPlace;
-        optionsOrParentOrPlace = void 0;
-      }
-      let reason = "";
-      let options = {};
-      let legacyCause = false;
-      if (optionsOrParentOrPlace) {
-        if ("line" in optionsOrParentOrPlace && "column" in optionsOrParentOrPlace) {
-          options = { place: optionsOrParentOrPlace };
-        } else if ("start" in optionsOrParentOrPlace && "end" in optionsOrParentOrPlace) {
-          options = { place: optionsOrParentOrPlace };
-        } else if ("type" in optionsOrParentOrPlace) {
-          options = {
-            ancestors: [optionsOrParentOrPlace],
-            place: optionsOrParentOrPlace.position
-          };
-        } else {
-          options = { ...optionsOrParentOrPlace };
-        }
-      }
-      if (typeof causeOrReason === "string") {
-        reason = causeOrReason;
-      } else if (!options.cause && causeOrReason) {
-        legacyCause = true;
-        reason = causeOrReason.message;
-        options.cause = causeOrReason;
-      }
-      if (!options.ruleId && !options.source && typeof origin === "string") {
-        const index2 = origin.indexOf(":");
-        if (index2 === -1) {
-          options.ruleId = origin;
-        } else {
-          options.source = origin.slice(0, index2);
-          options.ruleId = origin.slice(index2 + 1);
-        }
-      }
-      if (!options.place && options.ancestors && options.ancestors) {
-        const parent = options.ancestors[options.ancestors.length - 1];
-        if (parent) {
-          options.place = parent.position;
-        }
-      }
-      const start2 = options.place && "start" in options.place ? options.place.start : options.place;
-      this.ancestors = options.ancestors || void 0;
-      this.cause = options.cause || void 0;
-      this.column = start2 ? start2.column : void 0;
-      this.fatal = void 0;
-      this.file = "";
-      this.message = reason;
-      this.line = start2 ? start2.line : void 0;
-      this.name = stringifyPosition(options.place) || "1:1";
-      this.place = options.place || void 0;
-      this.reason = this.message;
-      this.ruleId = options.ruleId || void 0;
-      this.source = options.source || void 0;
-      this.stack = legacyCause && options.cause && typeof options.cause.stack === "string" ? options.cause.stack : "";
-      this.actual = void 0;
-      this.expected = void 0;
-      this.note = void 0;
-      this.url = void 0;
-    }
-  };
-  VFileMessage.prototype.file = "";
-  VFileMessage.prototype.name = "";
-  VFileMessage.prototype.reason = "";
-  VFileMessage.prototype.message = "";
-  VFileMessage.prototype.stack = "";
-  VFileMessage.prototype.column = void 0;
-  VFileMessage.prototype.line = void 0;
-  VFileMessage.prototype.ancestors = void 0;
-  VFileMessage.prototype.cause = void 0;
-  VFileMessage.prototype.fatal = void 0;
-  VFileMessage.prototype.place = void 0;
-  VFileMessage.prototype.ruleId = void 0;
-  VFileMessage.prototype.source = void 0;
-
-  // node_modules/hast-util-to-jsx-runtime/lib/index.js
-  var own = {}.hasOwnProperty;
-  var emptyMap = /* @__PURE__ */ new Map();
-  var cap2 = /[A-Z]/g;
-  var tableElements = /* @__PURE__ */ new Set(["table", "tbody", "thead", "tfoot", "tr"]);
-  var tableCellElement = /* @__PURE__ */ new Set(["td", "th"]);
-  var docs = "https://github.com/syntax-tree/hast-util-to-jsx-runtime";
-  function toJsxRuntime(tree, options) {
-    if (!options || options.Fragment === void 0) {
-      throw new TypeError("Expected `Fragment` in options");
-    }
-    const filePath = options.filePath || void 0;
-    let create2;
-    if (options.development) {
-      if (typeof options.jsxDEV !== "function") {
-        throw new TypeError(
-          "Expected `jsxDEV` in options when `development: true`"
-        );
-      }
-      create2 = developmentCreate(filePath, options.jsxDEV);
-    } else {
-      if (typeof options.jsx !== "function") {
-        throw new TypeError("Expected `jsx` in production options");
-      }
-      if (typeof options.jsxs !== "function") {
-        throw new TypeError("Expected `jsxs` in production options");
-      }
-      create2 = productionCreate(filePath, options.jsx, options.jsxs);
-    }
-    const state = {
-      Fragment: options.Fragment,
-      ancestors: [],
-      components: options.components || {},
-      create: create2,
-      elementAttributeNameCase: options.elementAttributeNameCase || "react",
-      evaluater: options.createEvaluater ? options.createEvaluater() : void 0,
-      filePath,
-      ignoreInvalidStyle: options.ignoreInvalidStyle || false,
-      passKeys: options.passKeys !== false,
-      passNode: options.passNode || false,
-      schema: options.space === "svg" ? svg2 : html2,
-      stylePropertyNameCase: options.stylePropertyNameCase || "dom",
-      tableCellAlignToStyle: options.tableCellAlignToStyle !== false
-    };
-    const result = one(state, tree, void 0);
-    if (result && typeof result !== "string") {
-      return result;
-    }
-    return state.create(
-      tree,
-      state.Fragment,
-      { children: result || void 0 },
-      void 0
-    );
-  }
-  function one(state, node2, key) {
-    if (node2.type === "element") {
-      return element(state, node2, key);
-    }
-    if (node2.type === "mdxFlowExpression" || node2.type === "mdxTextExpression") {
-      return mdxExpression(state, node2);
-    }
-    if (node2.type === "mdxJsxFlowElement" || node2.type === "mdxJsxTextElement") {
-      return mdxJsxElement(state, node2, key);
-    }
-    if (node2.type === "mdxjsEsm") {
-      return mdxEsm(state, node2);
-    }
-    if (node2.type === "root") {
-      return root(state, node2, key);
-    }
-    if (node2.type === "text") {
-      return text(state, node2);
-    }
-  }
-  function element(state, node2, key) {
-    const parentSchema = state.schema;
-    let schema = parentSchema;
-    if (node2.tagName.toLowerCase() === "svg" && parentSchema.space === "html") {
-      schema = svg2;
-      state.schema = schema;
-    }
-    state.ancestors.push(node2);
-    const type = findComponentFromName(state, node2.tagName, false);
-    const props = createElementProps(state, node2);
-    let children = createChildren(state, node2);
-    if (tableElements.has(node2.tagName)) {
-      children = children.filter(function(child) {
-        return typeof child === "string" ? !whitespace(child) : true;
-      });
-    }
-    addNode(state, props, type, node2);
-    addChildren(props, children);
-    state.ancestors.pop();
-    state.schema = parentSchema;
-    return state.create(node2, type, props, key);
-  }
-  function mdxExpression(state, node2) {
-    if (node2.data && node2.data.estree && state.evaluater) {
-      const program = node2.data.estree;
-      const expression = program.body[0];
-      ok(expression.type === "ExpressionStatement");
-      return (
-        /** @type {Child | undefined} */
-        state.evaluater.evaluateExpression(expression.expression)
-      );
-    }
-    crashEstree(state, node2.position);
-  }
-  function mdxEsm(state, node2) {
-    if (node2.data && node2.data.estree && state.evaluater) {
-      return (
-        /** @type {Child | undefined} */
-        state.evaluater.evaluateProgram(node2.data.estree)
-      );
-    }
-    crashEstree(state, node2.position);
-  }
-  function mdxJsxElement(state, node2, key) {
-    const parentSchema = state.schema;
-    let schema = parentSchema;
-    if (node2.name === "svg" && parentSchema.space === "html") {
-      schema = svg2;
-      state.schema = schema;
-    }
-    state.ancestors.push(node2);
-    const type = node2.name === null ? state.Fragment : findComponentFromName(state, node2.name, true);
-    const props = createJsxElementProps(state, node2);
-    const children = createChildren(state, node2);
-    addNode(state, props, type, node2);
-    addChildren(props, children);
-    state.ancestors.pop();
-    state.schema = parentSchema;
-    return state.create(node2, type, props, key);
-  }
-  function root(state, node2, key) {
-    const props = {};
-    addChildren(props, createChildren(state, node2));
-    return state.create(node2, state.Fragment, props, key);
-  }
-  function text(_, node2) {
-    return node2.value;
-  }
-  function addNode(state, props, type, node2) {
-    if (typeof type !== "string" && type !== state.Fragment && state.passNode) {
-      props.node = node2;
-    }
-  }
-  function addChildren(props, children) {
-    if (children.length > 0) {
-      const value = children.length > 1 ? children : children[0];
-      if (value) {
-        props.children = value;
-      }
-    }
-  }
-  function productionCreate(_, jsx49, jsxs43) {
-    return create2;
-    function create2(_2, type, props, key) {
-      const isStaticChildren = Array.isArray(props.children);
-      const fn = isStaticChildren ? jsxs43 : jsx49;
-      return key ? fn(type, props, key) : fn(type, props);
-    }
-  }
-  function developmentCreate(filePath, jsxDEV) {
-    return create2;
-    function create2(node2, type, props, key) {
-      const isStaticChildren = Array.isArray(props.children);
-      const point4 = pointStart(node2);
-      return jsxDEV(
-        type,
-        props,
-        key,
-        isStaticChildren,
-        {
-          columnNumber: point4 ? point4.column - 1 : void 0,
-          fileName: filePath,
-          lineNumber: point4 ? point4.line : void 0
-        },
-        void 0
-      );
-    }
-  }
-  function createElementProps(state, node2) {
-    const props = {};
-    let alignValue;
-    let prop;
-    for (prop in node2.properties) {
-      if (prop !== "children" && own.call(node2.properties, prop)) {
-        const result = createProperty(state, prop, node2.properties[prop]);
-        if (result) {
-          const [key, value] = result;
-          if (state.tableCellAlignToStyle && key === "align" && typeof value === "string" && tableCellElement.has(node2.tagName)) {
-            alignValue = value;
-          } else {
-            props[key] = value;
-          }
-        }
-      }
-    }
-    if (alignValue) {
-      const style = (
-        /** @type {Style} */
-        props.style || (props.style = {})
-      );
-      style[state.stylePropertyNameCase === "css" ? "text-align" : "textAlign"] = alignValue;
-    }
-    return props;
-  }
-  function createJsxElementProps(state, node2) {
-    const props = {};
-    for (const attribute of node2.attributes) {
-      if (attribute.type === "mdxJsxExpressionAttribute") {
-        if (attribute.data && attribute.data.estree && state.evaluater) {
-          const program = attribute.data.estree;
-          const expression = program.body[0];
-          ok(expression.type === "ExpressionStatement");
-          const objectExpression = expression.expression;
-          ok(objectExpression.type === "ObjectExpression");
-          const property = objectExpression.properties[0];
-          ok(property.type === "SpreadElement");
-          Object.assign(
-            props,
-            state.evaluater.evaluateExpression(property.argument)
-          );
-        } else {
-          crashEstree(state, node2.position);
-        }
-      } else {
-        const name2 = attribute.name;
-        let value;
-        if (attribute.value && typeof attribute.value === "object") {
-          if (attribute.value.data && attribute.value.data.estree && state.evaluater) {
-            const program = attribute.value.data.estree;
-            const expression = program.body[0];
-            ok(expression.type === "ExpressionStatement");
-            value = state.evaluater.evaluateExpression(expression.expression);
-          } else {
-            crashEstree(state, node2.position);
-          }
-        } else {
-          value = attribute.value === null ? true : attribute.value;
-        }
-        props[name2] = /** @type {Props[keyof Props]} */
-        value;
-      }
-    }
-    return props;
-  }
-  function createChildren(state, node2) {
-    const children = [];
-    let index2 = -1;
-    const countsByName = state.passKeys ? /* @__PURE__ */ new Map() : emptyMap;
-    while (++index2 < node2.children.length) {
-      const child = node2.children[index2];
-      let key;
-      if (state.passKeys) {
-        const name2 = child.type === "element" ? child.tagName : child.type === "mdxJsxFlowElement" || child.type === "mdxJsxTextElement" ? child.name : void 0;
-        if (name2) {
-          const count = countsByName.get(name2) || 0;
-          key = name2 + "-" + count;
-          countsByName.set(name2, count + 1);
-        }
-      }
-      const result = one(state, child, key);
-      if (result !== void 0) children.push(result);
-    }
-    return children;
-  }
-  function createProperty(state, prop, value) {
-    const info = find(state.schema, prop);
-    if (value === null || value === void 0 || typeof value === "number" && Number.isNaN(value)) {
-      return;
-    }
-    if (Array.isArray(value)) {
-      value = info.commaSeparated ? stringify(value) : stringify2(value);
-    }
-    if (info.property === "style") {
-      let styleObject = typeof value === "object" ? value : parseStyle(state, String(value));
-      if (state.stylePropertyNameCase === "css") {
-        styleObject = transformStylesToCssCasing(styleObject);
-      }
-      return ["style", styleObject];
-    }
-    return [
-      state.elementAttributeNameCase === "react" && info.space ? hastToReact[info.property] || info.property : info.attribute,
-      value
-    ];
-  }
-  function parseStyle(state, value) {
-    try {
-      return (0, import_style_to_js.default)(value, { reactCompat: true });
-    } catch (error) {
-      if (state.ignoreInvalidStyle) {
-        return {};
-      }
-      const cause = (
-        /** @type {Error} */
-        error
-      );
-      const message = new VFileMessage("Cannot parse `style` attribute", {
-        ancestors: state.ancestors,
-        cause,
-        ruleId: "style",
-        source: "hast-util-to-jsx-runtime"
-      });
-      message.file = state.filePath || void 0;
-      message.url = docs + "#cannot-parse-style-attribute";
-      throw message;
-    }
-  }
-  function findComponentFromName(state, name2, allowExpression) {
-    let result;
-    if (!allowExpression) {
-      result = { type: "Literal", value: name2 };
-    } else if (name2.includes(".")) {
-      const identifiers = name2.split(".");
-      let index2 = -1;
-      let node2;
-      while (++index2 < identifiers.length) {
-        const prop = name(identifiers[index2]) ? { type: "Identifier", name: identifiers[index2] } : { type: "Literal", value: identifiers[index2] };
-        node2 = node2 ? {
-          type: "MemberExpression",
-          object: node2,
-          property: prop,
-          computed: Boolean(index2 && prop.type === "Literal"),
-          optional: false
-        } : prop;
-      }
-      ok(node2, "always a result");
-      result = node2;
-    } else {
-      result = name(name2) && !/^[a-z]/.test(name2) ? { type: "Identifier", name: name2 } : { type: "Literal", value: name2 };
-    }
-    if (result.type === "Literal") {
-      const name3 = (
-        /** @type {string | number} */
-        result.value
-      );
-      return own.call(state.components, name3) ? state.components[name3] : name3;
-    }
-    if (state.evaluater) {
-      return state.evaluater.evaluateExpression(result);
-    }
-    crashEstree(state);
-  }
-  function crashEstree(state, place) {
-    const message = new VFileMessage(
-      "Cannot handle MDX estrees without `createEvaluater`",
-      {
-        ancestors: state.ancestors,
-        place,
-        ruleId: "mdx-estree",
-        source: "hast-util-to-jsx-runtime"
-      }
-    );
-    message.file = state.filePath || void 0;
-    message.url = docs + "#cannot-handle-mdx-estrees-without-createevaluater";
-    throw message;
-  }
-  function transformStylesToCssCasing(domCasing) {
-    const cssCasing = {};
-    let from;
-    for (from in domCasing) {
-      if (own.call(domCasing, from)) {
-        cssCasing[transformStyleToCssCasing(from)] = domCasing[from];
-      }
-    }
-    return cssCasing;
-  }
-  function transformStyleToCssCasing(from) {
-    let to = from.replace(cap2, toDash);
-    if (to.slice(0, 3) === "ms-") to = "-" + to;
-    return to;
-  }
-  function toDash($0) {
-    return "-" + $0.toLowerCase();
-  }
-
-  // node_modules/html-url-attributes/lib/index.js
-  var urlAttributes = {
-    action: ["form"],
-    cite: ["blockquote", "del", "ins", "q"],
-    data: ["object"],
-    formAction: ["button", "input"],
-    href: ["a", "area", "base", "link"],
-    icon: ["menuitem"],
-    itemId: null,
-    manifest: ["html"],
-    ping: ["a", "area"],
-    poster: ["video"],
-    src: [
-      "audio",
-      "embed",
-      "iframe",
-      "img",
-      "input",
-      "script",
-      "source",
-      "track",
-      "video"
-    ]
-  };
-
-  // node_modules/react-markdown/lib/index.js
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
-  var import_react3 = __toESM(require_react(), 1);
-
-  // node_modules/mdast-util-to-string/lib/index.js
-  var emptyOptions2 = {};
-  function toString(value, options) {
-    const settings = options || emptyOptions2;
-    const includeImageAlt = typeof settings.includeImageAlt === "boolean" ? settings.includeImageAlt : true;
-    const includeHtml = typeof settings.includeHtml === "boolean" ? settings.includeHtml : true;
-    return one2(value, includeImageAlt, includeHtml);
-  }
-  function one2(value, includeImageAlt, includeHtml) {
-    if (node(value)) {
-      if ("value" in value) {
-        return value.type === "html" && !includeHtml ? "" : value.value;
-      }
-      if (includeImageAlt && "alt" in value && value.alt) {
-        return value.alt;
-      }
-      if ("children" in value) {
-        return all(value.children, includeImageAlt, includeHtml);
-      }
-    }
-    if (Array.isArray(value)) {
-      return all(value, includeImageAlt, includeHtml);
-    }
-    return "";
-  }
-  function all(values, includeImageAlt, includeHtml) {
-    const result = [];
-    let index2 = -1;
-    while (++index2 < values.length) {
-      result[index2] = one2(values[index2], includeImageAlt, includeHtml);
-    }
-    return result.join("");
-  }
-  function node(value) {
-    return Boolean(value && typeof value === "object");
-  }
-
-  // node_modules/decode-named-character-reference/index.dom.js
-  var element2 = document.createElement("i");
-  function decodeNamedCharacterReference(value) {
-    const characterReference2 = "&" + value + ";";
-    element2.innerHTML = characterReference2;
-    const character = element2.textContent;
-    if (
-      // @ts-expect-error: TypeScript is wrong that `textContent` on elements can
-      // yield `null`.
-      character.charCodeAt(character.length - 1) === 59 && value !== "semi"
-    ) {
-      return false;
-    }
-    return character === characterReference2 ? false : character;
-  }
-
-  // node_modules/micromark-util-chunked/index.js
-  function splice(list4, start2, remove, items) {
-    const end = list4.length;
-    let chunkStart = 0;
-    let parameters;
-    if (start2 < 0) {
-      start2 = -start2 > end ? 0 : end + start2;
-    } else {
-      start2 = start2 > end ? end : start2;
-    }
-    remove = remove > 0 ? remove : 0;
-    if (items.length < 1e4) {
-      parameters = Array.from(items);
-      parameters.unshift(start2, remove);
-      list4.splice(...parameters);
-    } else {
-      if (remove) list4.splice(start2, remove);
-      while (chunkStart < items.length) {
-        parameters = items.slice(chunkStart, chunkStart + 1e4);
-        parameters.unshift(start2, 0);
-        list4.splice(...parameters);
-        chunkStart += 1e4;
-        start2 += 1e4;
-      }
-    }
-  }
-  function push(list4, items) {
-    if (list4.length > 0) {
-      splice(list4, list4.length, 0, items);
-      return list4;
-    }
-    return items;
-  }
-
-  // node_modules/micromark-util-combine-extensions/index.js
-  var hasOwnProperty = {}.hasOwnProperty;
-  function combineExtensions(extensions) {
-    const all2 = {};
-    let index2 = -1;
-    while (++index2 < extensions.length) {
-      syntaxExtension(all2, extensions[index2]);
-    }
-    return all2;
-  }
-  function syntaxExtension(all2, extension2) {
-    let hook;
-    for (hook in extension2) {
-      const maybe = hasOwnProperty.call(all2, hook) ? all2[hook] : void 0;
-      const left = maybe || (all2[hook] = {});
-      const right = extension2[hook];
-      let code4;
-      if (right) {
-        for (code4 in right) {
-          if (!hasOwnProperty.call(left, code4)) left[code4] = [];
-          const value = right[code4];
-          constructs(
-            // @ts-expect-error Looks like a list.
-            left[code4],
-            Array.isArray(value) ? value : value ? [value] : []
-          );
-        }
-      }
-    }
-  }
-  function constructs(existing, list4) {
-    let index2 = -1;
-    const before = [];
-    while (++index2 < list4.length) {
-      ;
-      (list4[index2].add === "after" ? existing : before).push(list4[index2]);
-    }
-    splice(existing, 0, 0, before);
-  }
-
-  // node_modules/micromark-util-decode-numeric-character-reference/index.js
-  function decodeNumericCharacterReference(value, base) {
-    const code4 = Number.parseInt(value, base);
-    if (
-      // C0 except for HT, LF, FF, CR, space.
-      code4 < 9 || code4 === 11 || code4 > 13 && code4 < 32 || // Control character (DEL) of C0, and C1 controls.
-      code4 > 126 && code4 < 160 || // Lone high surrogates and low surrogates.
-      code4 > 55295 && code4 < 57344 || // Noncharacters.
-      code4 > 64975 && code4 < 65008 || /* eslint-disable no-bitwise */
-      (code4 & 65535) === 65535 || (code4 & 65535) === 65534 || /* eslint-enable no-bitwise */
-      // Out of range
-      code4 > 1114111
-    ) {
-      return "\uFFFD";
-    }
-    return String.fromCodePoint(code4);
-  }
-
-  // node_modules/micromark-util-normalize-identifier/index.js
-  function normalizeIdentifier(value) {
-    return value.replace(/[\t\n\r ]+/g, " ").replace(/^ | $/g, "").toLowerCase().toUpperCase();
-  }
-
-  // node_modules/micromark-util-character/index.js
-  var asciiAlpha = regexCheck(/[A-Za-z]/);
-  var asciiAlphanumeric = regexCheck(/[\dA-Za-z]/);
-  var asciiAtext = regexCheck(/[#-'*+\--9=?A-Z^-~]/);
-  function asciiControl(code4) {
-    return (
-      // Special whitespace codes (which have negative values), C0 and Control
-      // character DEL
-      code4 !== null && (code4 < 32 || code4 === 127)
-    );
-  }
-  var asciiDigit = regexCheck(/\d/);
-  var asciiHexDigit = regexCheck(/[\dA-Fa-f]/);
-  var asciiPunctuation = regexCheck(/[!-/:-@[-`{-~]/);
-  function markdownLineEnding(code4) {
-    return code4 !== null && code4 < -2;
-  }
-  function markdownLineEndingOrSpace(code4) {
-    return code4 !== null && (code4 < 0 || code4 === 32);
-  }
-  function markdownSpace(code4) {
-    return code4 === -2 || code4 === -1 || code4 === 32;
-  }
-  var unicodePunctuation = regexCheck(/\p{P}|\p{S}/u);
-  var unicodeWhitespace = regexCheck(/\s/);
-  function regexCheck(regex) {
-    return check;
-    function check(code4) {
-      return code4 !== null && code4 > -1 && regex.test(String.fromCharCode(code4));
-    }
-  }
-
-  // node_modules/micromark-util-sanitize-uri/index.js
-  function normalizeUri(value) {
-    const result = [];
-    let index2 = -1;
-    let start2 = 0;
-    let skip = 0;
-    while (++index2 < value.length) {
-      const code4 = value.charCodeAt(index2);
-      let replace2 = "";
-      if (code4 === 37 && asciiAlphanumeric(value.charCodeAt(index2 + 1)) && asciiAlphanumeric(value.charCodeAt(index2 + 2))) {
-        skip = 2;
-      } else if (code4 < 128) {
-        if (!/[!#$&-;=?-Z_a-z~]/.test(String.fromCharCode(code4))) {
-          replace2 = String.fromCharCode(code4);
-        }
-      } else if (code4 > 55295 && code4 < 57344) {
-        const next = value.charCodeAt(index2 + 1);
-        if (code4 < 56320 && next > 56319 && next < 57344) {
-          replace2 = String.fromCharCode(code4, next);
-          skip = 1;
-        } else {
-          replace2 = "\uFFFD";
-        }
-      } else {
-        replace2 = String.fromCharCode(code4);
-      }
-      if (replace2) {
-        result.push(value.slice(start2, index2), encodeURIComponent(replace2));
-        start2 = index2 + skip + 1;
-        replace2 = "";
-      }
-      if (skip) {
-        index2 += skip;
-        skip = 0;
-      }
-    }
-    return result.join("") + value.slice(start2);
-  }
-
-  // node_modules/micromark-factory-space/index.js
-  function factorySpace(effects, ok3, type, max) {
-    const limit = max ? max - 1 : Number.POSITIVE_INFINITY;
-    let size = 0;
-    return start2;
-    function start2(code4) {
-      if (markdownSpace(code4)) {
-        effects.enter(type);
-        return prefix(code4);
-      }
-      return ok3(code4);
-    }
-    function prefix(code4) {
-      if (markdownSpace(code4) && size++ < limit) {
-        effects.consume(code4);
-        return prefix;
-      }
-      effects.exit(type);
-      return ok3(code4);
-    }
-  }
-
-  // node_modules/micromark/lib/initialize/content.js
-  var content = {
-    tokenize: initializeContent
-  };
-  function initializeContent(effects) {
-    const contentStart = effects.attempt(this.parser.constructs.contentInitial, afterContentStartConstruct, paragraphInitial);
-    let previous3;
-    return contentStart;
-    function afterContentStartConstruct(code4) {
-      if (code4 === null) {
-        effects.consume(code4);
-        return;
-      }
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return factorySpace(effects, contentStart, "linePrefix");
-    }
-    function paragraphInitial(code4) {
-      effects.enter("paragraph");
-      return lineStart(code4);
-    }
-    function lineStart(code4) {
-      const token = effects.enter("chunkText", {
-        contentType: "text",
-        previous: previous3
-      });
-      if (previous3) {
-        previous3.next = token;
-      }
-      previous3 = token;
-      return data(code4);
-    }
-    function data(code4) {
-      if (code4 === null) {
-        effects.exit("chunkText");
-        effects.exit("paragraph");
-        effects.consume(code4);
-        return;
-      }
-      if (markdownLineEnding(code4)) {
-        effects.consume(code4);
-        effects.exit("chunkText");
-        return lineStart;
-      }
-      effects.consume(code4);
-      return data;
-    }
-  }
-
-  // node_modules/micromark/lib/initialize/document.js
-  var document2 = {
-    tokenize: initializeDocument
-  };
-  var containerConstruct = {
-    tokenize: tokenizeContainer
-  };
-  function initializeDocument(effects) {
-    const self2 = this;
-    const stack = [];
-    let continued = 0;
-    let childFlow;
-    let childToken;
-    let lineStartOffset;
-    return start2;
-    function start2(code4) {
-      if (continued < stack.length) {
-        const item = stack[continued];
-        self2.containerState = item[1];
-        return effects.attempt(item[0].continuation, documentContinue, checkNewContainers)(code4);
-      }
-      return checkNewContainers(code4);
-    }
-    function documentContinue(code4) {
-      continued++;
-      if (self2.containerState._closeFlow) {
-        self2.containerState._closeFlow = void 0;
-        if (childFlow) {
-          closeFlow();
-        }
-        const indexBeforeExits = self2.events.length;
-        let indexBeforeFlow = indexBeforeExits;
-        let point4;
-        while (indexBeforeFlow--) {
-          if (self2.events[indexBeforeFlow][0] === "exit" && self2.events[indexBeforeFlow][1].type === "chunkFlow") {
-            point4 = self2.events[indexBeforeFlow][1].end;
-            break;
-          }
-        }
-        exitContainers(continued);
-        let index2 = indexBeforeExits;
-        while (index2 < self2.events.length) {
-          self2.events[index2][1].end = {
-            ...point4
-          };
-          index2++;
-        }
-        splice(self2.events, indexBeforeFlow + 1, 0, self2.events.slice(indexBeforeExits));
-        self2.events.length = index2;
-        return checkNewContainers(code4);
-      }
-      return start2(code4);
-    }
-    function checkNewContainers(code4) {
-      if (continued === stack.length) {
-        if (!childFlow) {
-          return documentContinued(code4);
-        }
-        if (childFlow.currentConstruct && childFlow.currentConstruct.concrete) {
-          return flowStart(code4);
-        }
-        self2.interrupt = Boolean(childFlow.currentConstruct && !childFlow._gfmTableDynamicInterruptHack);
-      }
-      self2.containerState = {};
-      return effects.check(containerConstruct, thereIsANewContainer, thereIsNoNewContainer)(code4);
-    }
-    function thereIsANewContainer(code4) {
-      if (childFlow) closeFlow();
-      exitContainers(continued);
-      return documentContinued(code4);
-    }
-    function thereIsNoNewContainer(code4) {
-      self2.parser.lazy[self2.now().line] = continued !== stack.length;
-      lineStartOffset = self2.now().offset;
-      return flowStart(code4);
-    }
-    function documentContinued(code4) {
-      self2.containerState = {};
-      return effects.attempt(containerConstruct, containerContinue, flowStart)(code4);
-    }
-    function containerContinue(code4) {
-      continued++;
-      stack.push([self2.currentConstruct, self2.containerState]);
-      return documentContinued(code4);
-    }
-    function flowStart(code4) {
-      if (code4 === null) {
-        if (childFlow) closeFlow();
-        exitContainers(0);
-        effects.consume(code4);
-        return;
-      }
-      childFlow = childFlow || self2.parser.flow(self2.now());
-      effects.enter("chunkFlow", {
-        _tokenizer: childFlow,
-        contentType: "flow",
-        previous: childToken
-      });
-      return flowContinue(code4);
-    }
-    function flowContinue(code4) {
-      if (code4 === null) {
-        writeToChild(effects.exit("chunkFlow"), true);
-        exitContainers(0);
-        effects.consume(code4);
-        return;
-      }
-      if (markdownLineEnding(code4)) {
-        effects.consume(code4);
-        writeToChild(effects.exit("chunkFlow"));
-        continued = 0;
-        self2.interrupt = void 0;
-        return start2;
-      }
-      effects.consume(code4);
-      return flowContinue;
-    }
-    function writeToChild(token, endOfFile) {
-      const stream = self2.sliceStream(token);
-      if (endOfFile) stream.push(null);
-      token.previous = childToken;
-      if (childToken) childToken.next = token;
-      childToken = token;
-      childFlow.defineSkip(token.start);
-      childFlow.write(stream);
-      if (self2.parser.lazy[token.start.line]) {
-        let index2 = childFlow.events.length;
-        while (index2--) {
-          if (
-            // The token starts before the line ending…
-            childFlow.events[index2][1].start.offset < lineStartOffset && // …and either is not ended yet…
-            (!childFlow.events[index2][1].end || // …or ends after it.
-            childFlow.events[index2][1].end.offset > lineStartOffset)
-          ) {
-            return;
-          }
-        }
-        const indexBeforeExits = self2.events.length;
-        let indexBeforeFlow = indexBeforeExits;
-        let seen;
-        let point4;
-        while (indexBeforeFlow--) {
-          if (self2.events[indexBeforeFlow][0] === "exit" && self2.events[indexBeforeFlow][1].type === "chunkFlow") {
-            if (seen) {
-              point4 = self2.events[indexBeforeFlow][1].end;
-              break;
-            }
-            seen = true;
-          }
-        }
-        exitContainers(continued);
-        index2 = indexBeforeExits;
-        while (index2 < self2.events.length) {
-          self2.events[index2][1].end = {
-            ...point4
-          };
-          index2++;
-        }
-        splice(self2.events, indexBeforeFlow + 1, 0, self2.events.slice(indexBeforeExits));
-        self2.events.length = index2;
-      }
-    }
-    function exitContainers(size) {
-      let index2 = stack.length;
-      while (index2-- > size) {
-        const entry = stack[index2];
-        self2.containerState = entry[1];
-        entry[0].exit.call(self2, effects);
-      }
-      stack.length = size;
-    }
-    function closeFlow() {
-      childFlow.write([null]);
-      childToken = void 0;
-      childFlow = void 0;
-      self2.containerState._closeFlow = void 0;
-    }
-  }
-  function tokenizeContainer(effects, ok3, nok) {
-    return factorySpace(effects, effects.attempt(this.parser.constructs.document, ok3, nok), "linePrefix", this.parser.constructs.disable.null.includes("codeIndented") ? void 0 : 4);
-  }
-
-  // node_modules/micromark-util-classify-character/index.js
-  function classifyCharacter(code4) {
-    if (code4 === null || markdownLineEndingOrSpace(code4) || unicodeWhitespace(code4)) {
-      return 1;
-    }
-    if (unicodePunctuation(code4)) {
-      return 2;
-    }
-  }
-
-  // node_modules/micromark-util-resolve-all/index.js
-  function resolveAll(constructs2, events, context) {
-    const called = [];
-    let index2 = -1;
-    while (++index2 < constructs2.length) {
-      const resolve = constructs2[index2].resolveAll;
-      if (resolve && !called.includes(resolve)) {
-        events = resolve(events, context);
-        called.push(resolve);
-      }
-    }
-    return events;
-  }
-
-  // node_modules/micromark-core-commonmark/lib/attention.js
-  var attention = {
-    name: "attention",
-    resolveAll: resolveAllAttention,
-    tokenize: tokenizeAttention
-  };
-  function resolveAllAttention(events, context) {
-    let index2 = -1;
-    let open;
-    let group;
-    let text7;
-    let openingSequence;
-    let closingSequence;
-    let use;
-    let nextEvents;
-    let offset;
-    while (++index2 < events.length) {
-      if (events[index2][0] === "enter" && events[index2][1].type === "attentionSequence" && events[index2][1]._close) {
-        open = index2;
-        while (open--) {
-          if (events[open][0] === "exit" && events[open][1].type === "attentionSequence" && events[open][1]._open && // If the markers are the same:
-          context.sliceSerialize(events[open][1]).charCodeAt(0) === context.sliceSerialize(events[index2][1]).charCodeAt(0)) {
-            if ((events[open][1]._close || events[index2][1]._open) && (events[index2][1].end.offset - events[index2][1].start.offset) % 3 && !((events[open][1].end.offset - events[open][1].start.offset + events[index2][1].end.offset - events[index2][1].start.offset) % 3)) {
-              continue;
-            }
-            use = events[open][1].end.offset - events[open][1].start.offset > 1 && events[index2][1].end.offset - events[index2][1].start.offset > 1 ? 2 : 1;
-            const start2 = {
-              ...events[open][1].end
-            };
-            const end = {
-              ...events[index2][1].start
-            };
-            movePoint(start2, -use);
-            movePoint(end, use);
-            openingSequence = {
-              type: use > 1 ? "strongSequence" : "emphasisSequence",
-              start: start2,
-              end: {
-                ...events[open][1].end
-              }
-            };
-            closingSequence = {
-              type: use > 1 ? "strongSequence" : "emphasisSequence",
-              start: {
-                ...events[index2][1].start
-              },
-              end
-            };
-            text7 = {
-              type: use > 1 ? "strongText" : "emphasisText",
-              start: {
-                ...events[open][1].end
-              },
-              end: {
-                ...events[index2][1].start
-              }
-            };
-            group = {
-              type: use > 1 ? "strong" : "emphasis",
-              start: {
-                ...openingSequence.start
-              },
-              end: {
-                ...closingSequence.end
-              }
-            };
-            events[open][1].end = {
-              ...openingSequence.start
-            };
-            events[index2][1].start = {
-              ...closingSequence.end
-            };
-            nextEvents = [];
-            if (events[open][1].end.offset - events[open][1].start.offset) {
-              nextEvents = push(nextEvents, [["enter", events[open][1], context], ["exit", events[open][1], context]]);
-            }
-            nextEvents = push(nextEvents, [["enter", group, context], ["enter", openingSequence, context], ["exit", openingSequence, context], ["enter", text7, context]]);
-            nextEvents = push(nextEvents, resolveAll(context.parser.constructs.insideSpan.null, events.slice(open + 1, index2), context));
-            nextEvents = push(nextEvents, [["exit", text7, context], ["enter", closingSequence, context], ["exit", closingSequence, context], ["exit", group, context]]);
-            if (events[index2][1].end.offset - events[index2][1].start.offset) {
-              offset = 2;
-              nextEvents = push(nextEvents, [["enter", events[index2][1], context], ["exit", events[index2][1], context]]);
-            } else {
-              offset = 0;
-            }
-            splice(events, open - 1, index2 - open + 3, nextEvents);
-            index2 = open + nextEvents.length - offset - 2;
-            break;
-          }
-        }
-      }
-    }
-    index2 = -1;
-    while (++index2 < events.length) {
-      if (events[index2][1].type === "attentionSequence") {
-        events[index2][1].type = "data";
-      }
-    }
-    return events;
-  }
-  function tokenizeAttention(effects, ok3) {
-    const attentionMarkers2 = this.parser.constructs.attentionMarkers.null;
-    const previous3 = this.previous;
-    const before = classifyCharacter(previous3);
-    let marker;
-    return start2;
-    function start2(code4) {
-      marker = code4;
-      effects.enter("attentionSequence");
-      return inside(code4);
-    }
-    function inside(code4) {
-      if (code4 === marker) {
-        effects.consume(code4);
-        return inside;
-      }
-      const token = effects.exit("attentionSequence");
-      const after = classifyCharacter(code4);
-      const open = !after || after === 2 && before || attentionMarkers2.includes(code4);
-      const close = !before || before === 2 && after || attentionMarkers2.includes(previous3);
-      token._open = Boolean(marker === 42 ? open : open && (before || !close));
-      token._close = Boolean(marker === 42 ? close : close && (after || !open));
-      return ok3(code4);
-    }
-  }
-  function movePoint(point4, offset) {
-    point4.column += offset;
-    point4.offset += offset;
-    point4._bufferIndex += offset;
-  }
-
-  // node_modules/micromark-core-commonmark/lib/autolink.js
-  var autolink = {
-    name: "autolink",
-    tokenize: tokenizeAutolink
-  };
-  function tokenizeAutolink(effects, ok3, nok) {
-    let size = 0;
-    return start2;
-    function start2(code4) {
-      effects.enter("autolink");
-      effects.enter("autolinkMarker");
-      effects.consume(code4);
-      effects.exit("autolinkMarker");
-      effects.enter("autolinkProtocol");
-      return open;
-    }
-    function open(code4) {
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        return schemeOrEmailAtext;
-      }
-      if (code4 === 64) {
-        return nok(code4);
-      }
-      return emailAtext(code4);
-    }
-    function schemeOrEmailAtext(code4) {
-      if (code4 === 43 || code4 === 45 || code4 === 46 || asciiAlphanumeric(code4)) {
-        size = 1;
-        return schemeInsideOrEmailAtext(code4);
-      }
-      return emailAtext(code4);
-    }
-    function schemeInsideOrEmailAtext(code4) {
-      if (code4 === 58) {
-        effects.consume(code4);
-        size = 0;
-        return urlInside;
-      }
-      if ((code4 === 43 || code4 === 45 || code4 === 46 || asciiAlphanumeric(code4)) && size++ < 32) {
-        effects.consume(code4);
-        return schemeInsideOrEmailAtext;
-      }
-      size = 0;
-      return emailAtext(code4);
-    }
-    function urlInside(code4) {
-      if (code4 === 62) {
-        effects.exit("autolinkProtocol");
-        effects.enter("autolinkMarker");
-        effects.consume(code4);
-        effects.exit("autolinkMarker");
-        effects.exit("autolink");
-        return ok3;
-      }
-      if (code4 === null || code4 === 32 || code4 === 60 || asciiControl(code4)) {
-        return nok(code4);
-      }
-      effects.consume(code4);
-      return urlInside;
-    }
-    function emailAtext(code4) {
-      if (code4 === 64) {
-        effects.consume(code4);
-        return emailAtSignOrDot;
-      }
-      if (asciiAtext(code4)) {
-        effects.consume(code4);
-        return emailAtext;
-      }
-      return nok(code4);
-    }
-    function emailAtSignOrDot(code4) {
-      return asciiAlphanumeric(code4) ? emailLabel(code4) : nok(code4);
-    }
-    function emailLabel(code4) {
-      if (code4 === 46) {
-        effects.consume(code4);
-        size = 0;
-        return emailAtSignOrDot;
-      }
-      if (code4 === 62) {
-        effects.exit("autolinkProtocol").type = "autolinkEmail";
-        effects.enter("autolinkMarker");
-        effects.consume(code4);
-        effects.exit("autolinkMarker");
-        effects.exit("autolink");
-        return ok3;
-      }
-      return emailValue(code4);
-    }
-    function emailValue(code4) {
-      if ((code4 === 45 || asciiAlphanumeric(code4)) && size++ < 63) {
-        const next = code4 === 45 ? emailValue : emailLabel;
-        effects.consume(code4);
-        return next;
-      }
-      return nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/blank-line.js
-  var blankLine = {
-    partial: true,
-    tokenize: tokenizeBlankLine
-  };
-  function tokenizeBlankLine(effects, ok3, nok) {
-    return start2;
-    function start2(code4) {
-      return markdownSpace(code4) ? factorySpace(effects, after, "linePrefix")(code4) : after(code4);
-    }
-    function after(code4) {
-      return code4 === null || markdownLineEnding(code4) ? ok3(code4) : nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/block-quote.js
-  var blockQuote = {
-    continuation: {
-      tokenize: tokenizeBlockQuoteContinuation
-    },
-    exit,
-    name: "blockQuote",
-    tokenize: tokenizeBlockQuoteStart
-  };
-  function tokenizeBlockQuoteStart(effects, ok3, nok) {
-    const self2 = this;
-    return start2;
-    function start2(code4) {
-      if (code4 === 62) {
-        const state = self2.containerState;
-        if (!state.open) {
-          effects.enter("blockQuote", {
-            _container: true
-          });
-          state.open = true;
-        }
-        effects.enter("blockQuotePrefix");
-        effects.enter("blockQuoteMarker");
-        effects.consume(code4);
-        effects.exit("blockQuoteMarker");
-        return after;
-      }
-      return nok(code4);
-    }
-    function after(code4) {
-      if (markdownSpace(code4)) {
-        effects.enter("blockQuotePrefixWhitespace");
-        effects.consume(code4);
-        effects.exit("blockQuotePrefixWhitespace");
-        effects.exit("blockQuotePrefix");
-        return ok3;
-      }
-      effects.exit("blockQuotePrefix");
-      return ok3(code4);
-    }
-  }
-  function tokenizeBlockQuoteContinuation(effects, ok3, nok) {
-    const self2 = this;
-    return contStart;
-    function contStart(code4) {
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, contBefore, "linePrefix", self2.parser.constructs.disable.null.includes("codeIndented") ? void 0 : 4)(code4);
-      }
-      return contBefore(code4);
-    }
-    function contBefore(code4) {
-      return effects.attempt(blockQuote, ok3, nok)(code4);
-    }
-  }
-  function exit(effects) {
-    effects.exit("blockQuote");
-  }
-
-  // node_modules/micromark-core-commonmark/lib/character-escape.js
-  var characterEscape = {
-    name: "characterEscape",
-    tokenize: tokenizeCharacterEscape
-  };
-  function tokenizeCharacterEscape(effects, ok3, nok) {
-    return start2;
-    function start2(code4) {
-      effects.enter("characterEscape");
-      effects.enter("escapeMarker");
-      effects.consume(code4);
-      effects.exit("escapeMarker");
-      return inside;
-    }
-    function inside(code4) {
-      if (asciiPunctuation(code4)) {
-        effects.enter("characterEscapeValue");
-        effects.consume(code4);
-        effects.exit("characterEscapeValue");
-        effects.exit("characterEscape");
-        return ok3;
-      }
-      return nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/character-reference.js
-  var characterReference = {
-    name: "characterReference",
-    tokenize: tokenizeCharacterReference
-  };
-  function tokenizeCharacterReference(effects, ok3, nok) {
-    const self2 = this;
-    let size = 0;
-    let max;
-    let test;
-    return start2;
-    function start2(code4) {
-      effects.enter("characterReference");
-      effects.enter("characterReferenceMarker");
-      effects.consume(code4);
-      effects.exit("characterReferenceMarker");
-      return open;
-    }
-    function open(code4) {
-      if (code4 === 35) {
-        effects.enter("characterReferenceMarkerNumeric");
-        effects.consume(code4);
-        effects.exit("characterReferenceMarkerNumeric");
-        return numeric;
-      }
-      effects.enter("characterReferenceValue");
-      max = 31;
-      test = asciiAlphanumeric;
-      return value(code4);
-    }
-    function numeric(code4) {
-      if (code4 === 88 || code4 === 120) {
-        effects.enter("characterReferenceMarkerHexadecimal");
-        effects.consume(code4);
-        effects.exit("characterReferenceMarkerHexadecimal");
-        effects.enter("characterReferenceValue");
-        max = 6;
-        test = asciiHexDigit;
-        return value;
-      }
-      effects.enter("characterReferenceValue");
-      max = 7;
-      test = asciiDigit;
-      return value(code4);
-    }
-    function value(code4) {
-      if (code4 === 59 && size) {
-        const token = effects.exit("characterReferenceValue");
-        if (test === asciiAlphanumeric && !decodeNamedCharacterReference(self2.sliceSerialize(token))) {
-          return nok(code4);
-        }
-        effects.enter("characterReferenceMarker");
-        effects.consume(code4);
-        effects.exit("characterReferenceMarker");
-        effects.exit("characterReference");
-        return ok3;
-      }
-      if (test(code4) && size++ < max) {
-        effects.consume(code4);
-        return value;
-      }
-      return nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/code-fenced.js
-  var nonLazyContinuation = {
-    partial: true,
-    tokenize: tokenizeNonLazyContinuation
-  };
-  var codeFenced = {
-    concrete: true,
-    name: "codeFenced",
-    tokenize: tokenizeCodeFenced
-  };
-  function tokenizeCodeFenced(effects, ok3, nok) {
-    const self2 = this;
-    const closeStart = {
-      partial: true,
-      tokenize: tokenizeCloseStart
-    };
-    let initialPrefix = 0;
-    let sizeOpen = 0;
-    let marker;
-    return start2;
-    function start2(code4) {
-      return beforeSequenceOpen(code4);
-    }
-    function beforeSequenceOpen(code4) {
-      const tail = self2.events[self2.events.length - 1];
-      initialPrefix = tail && tail[1].type === "linePrefix" ? tail[2].sliceSerialize(tail[1], true).length : 0;
-      marker = code4;
-      effects.enter("codeFenced");
-      effects.enter("codeFencedFence");
-      effects.enter("codeFencedFenceSequence");
-      return sequenceOpen(code4);
-    }
-    function sequenceOpen(code4) {
-      if (code4 === marker) {
-        sizeOpen++;
-        effects.consume(code4);
-        return sequenceOpen;
-      }
-      if (sizeOpen < 3) {
-        return nok(code4);
-      }
-      effects.exit("codeFencedFenceSequence");
-      return markdownSpace(code4) ? factorySpace(effects, infoBefore, "whitespace")(code4) : infoBefore(code4);
-    }
-    function infoBefore(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("codeFencedFence");
-        return self2.interrupt ? ok3(code4) : effects.check(nonLazyContinuation, atNonLazyBreak, after)(code4);
-      }
-      effects.enter("codeFencedFenceInfo");
-      effects.enter("chunkString", {
-        contentType: "string"
-      });
-      return info(code4);
-    }
-    function info(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("chunkString");
-        effects.exit("codeFencedFenceInfo");
-        return infoBefore(code4);
-      }
-      if (markdownSpace(code4)) {
-        effects.exit("chunkString");
-        effects.exit("codeFencedFenceInfo");
-        return factorySpace(effects, metaBefore, "whitespace")(code4);
-      }
-      if (code4 === 96 && code4 === marker) {
-        return nok(code4);
-      }
-      effects.consume(code4);
-      return info;
-    }
-    function metaBefore(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        return infoBefore(code4);
-      }
-      effects.enter("codeFencedFenceMeta");
-      effects.enter("chunkString", {
-        contentType: "string"
-      });
-      return meta(code4);
-    }
-    function meta(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("chunkString");
-        effects.exit("codeFencedFenceMeta");
-        return infoBefore(code4);
-      }
-      if (code4 === 96 && code4 === marker) {
-        return nok(code4);
-      }
-      effects.consume(code4);
-      return meta;
-    }
-    function atNonLazyBreak(code4) {
-      return effects.attempt(closeStart, after, contentBefore)(code4);
-    }
-    function contentBefore(code4) {
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return contentStart;
-    }
-    function contentStart(code4) {
-      return initialPrefix > 0 && markdownSpace(code4) ? factorySpace(effects, beforeContentChunk, "linePrefix", initialPrefix + 1)(code4) : beforeContentChunk(code4);
-    }
-    function beforeContentChunk(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        return effects.check(nonLazyContinuation, atNonLazyBreak, after)(code4);
-      }
-      effects.enter("codeFlowValue");
-      return contentChunk(code4);
-    }
-    function contentChunk(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("codeFlowValue");
-        return beforeContentChunk(code4);
-      }
-      effects.consume(code4);
-      return contentChunk;
-    }
-    function after(code4) {
-      effects.exit("codeFenced");
-      return ok3(code4);
-    }
-    function tokenizeCloseStart(effects2, ok4, nok2) {
-      let size = 0;
-      return startBefore;
-      function startBefore(code4) {
-        effects2.enter("lineEnding");
-        effects2.consume(code4);
-        effects2.exit("lineEnding");
-        return start3;
-      }
-      function start3(code4) {
-        effects2.enter("codeFencedFence");
-        return markdownSpace(code4) ? factorySpace(effects2, beforeSequenceClose, "linePrefix", self2.parser.constructs.disable.null.includes("codeIndented") ? void 0 : 4)(code4) : beforeSequenceClose(code4);
-      }
-      function beforeSequenceClose(code4) {
-        if (code4 === marker) {
-          effects2.enter("codeFencedFenceSequence");
-          return sequenceClose(code4);
-        }
-        return nok2(code4);
-      }
-      function sequenceClose(code4) {
-        if (code4 === marker) {
-          size++;
-          effects2.consume(code4);
-          return sequenceClose;
-        }
-        if (size >= sizeOpen) {
-          effects2.exit("codeFencedFenceSequence");
-          return markdownSpace(code4) ? factorySpace(effects2, sequenceCloseAfter, "whitespace")(code4) : sequenceCloseAfter(code4);
-        }
-        return nok2(code4);
-      }
-      function sequenceCloseAfter(code4) {
-        if (code4 === null || markdownLineEnding(code4)) {
-          effects2.exit("codeFencedFence");
-          return ok4(code4);
-        }
-        return nok2(code4);
-      }
-    }
-  }
-  function tokenizeNonLazyContinuation(effects, ok3, nok) {
-    const self2 = this;
-    return start2;
-    function start2(code4) {
-      if (code4 === null) {
-        return nok(code4);
-      }
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return lineStart;
-    }
-    function lineStart(code4) {
-      return self2.parser.lazy[self2.now().line] ? nok(code4) : ok3(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/code-indented.js
-  var codeIndented = {
-    name: "codeIndented",
-    tokenize: tokenizeCodeIndented
-  };
-  var furtherStart = {
-    partial: true,
-    tokenize: tokenizeFurtherStart
-  };
-  function tokenizeCodeIndented(effects, ok3, nok) {
-    const self2 = this;
-    return start2;
-    function start2(code4) {
-      effects.enter("codeIndented");
-      return factorySpace(effects, afterPrefix, "linePrefix", 4 + 1)(code4);
-    }
-    function afterPrefix(code4) {
-      const tail = self2.events[self2.events.length - 1];
-      return tail && tail[1].type === "linePrefix" && tail[2].sliceSerialize(tail[1], true).length >= 4 ? atBreak(code4) : nok(code4);
-    }
-    function atBreak(code4) {
-      if (code4 === null) {
-        return after(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        return effects.attempt(furtherStart, atBreak, after)(code4);
-      }
-      effects.enter("codeFlowValue");
-      return inside(code4);
-    }
-    function inside(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("codeFlowValue");
-        return atBreak(code4);
-      }
-      effects.consume(code4);
-      return inside;
-    }
-    function after(code4) {
-      effects.exit("codeIndented");
-      return ok3(code4);
-    }
-  }
-  function tokenizeFurtherStart(effects, ok3, nok) {
-    const self2 = this;
-    return furtherStart2;
-    function furtherStart2(code4) {
-      if (self2.parser.lazy[self2.now().line]) {
-        return nok(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        effects.enter("lineEnding");
-        effects.consume(code4);
-        effects.exit("lineEnding");
-        return furtherStart2;
-      }
-      return factorySpace(effects, afterPrefix, "linePrefix", 4 + 1)(code4);
-    }
-    function afterPrefix(code4) {
-      const tail = self2.events[self2.events.length - 1];
-      return tail && tail[1].type === "linePrefix" && tail[2].sliceSerialize(tail[1], true).length >= 4 ? ok3(code4) : markdownLineEnding(code4) ? furtherStart2(code4) : nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/code-text.js
-  var codeText = {
-    name: "codeText",
-    previous,
-    resolve: resolveCodeText,
-    tokenize: tokenizeCodeText
-  };
-  function resolveCodeText(events) {
-    let tailExitIndex = events.length - 4;
-    let headEnterIndex = 3;
-    let index2;
-    let enter;
-    if ((events[headEnterIndex][1].type === "lineEnding" || events[headEnterIndex][1].type === "space") && (events[tailExitIndex][1].type === "lineEnding" || events[tailExitIndex][1].type === "space")) {
-      index2 = headEnterIndex;
-      while (++index2 < tailExitIndex) {
-        if (events[index2][1].type === "codeTextData") {
-          events[headEnterIndex][1].type = "codeTextPadding";
-          events[tailExitIndex][1].type = "codeTextPadding";
-          headEnterIndex += 2;
-          tailExitIndex -= 2;
-          break;
-        }
-      }
-    }
-    index2 = headEnterIndex - 1;
-    tailExitIndex++;
-    while (++index2 <= tailExitIndex) {
-      if (enter === void 0) {
-        if (index2 !== tailExitIndex && events[index2][1].type !== "lineEnding") {
-          enter = index2;
-        }
-      } else if (index2 === tailExitIndex || events[index2][1].type === "lineEnding") {
-        events[enter][1].type = "codeTextData";
-        if (index2 !== enter + 2) {
-          events[enter][1].end = events[index2 - 1][1].end;
-          events.splice(enter + 2, index2 - enter - 2);
-          tailExitIndex -= index2 - enter - 2;
-          index2 = enter + 2;
-        }
-        enter = void 0;
-      }
-    }
-    return events;
-  }
-  function previous(code4) {
-    return code4 !== 96 || this.events[this.events.length - 1][1].type === "characterEscape";
-  }
-  function tokenizeCodeText(effects, ok3, nok) {
-    const self2 = this;
-    let sizeOpen = 0;
-    let size;
-    let token;
-    return start2;
-    function start2(code4) {
-      effects.enter("codeText");
-      effects.enter("codeTextSequence");
-      return sequenceOpen(code4);
-    }
-    function sequenceOpen(code4) {
-      if (code4 === 96) {
-        effects.consume(code4);
-        sizeOpen++;
-        return sequenceOpen;
-      }
-      effects.exit("codeTextSequence");
-      return between(code4);
-    }
-    function between(code4) {
-      if (code4 === null) {
-        return nok(code4);
-      }
-      if (code4 === 32) {
-        effects.enter("space");
-        effects.consume(code4);
-        effects.exit("space");
-        return between;
-      }
-      if (code4 === 96) {
-        token = effects.enter("codeTextSequence");
-        size = 0;
-        return sequenceClose(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        effects.enter("lineEnding");
-        effects.consume(code4);
-        effects.exit("lineEnding");
-        return between;
-      }
-      effects.enter("codeTextData");
-      return data(code4);
-    }
-    function data(code4) {
-      if (code4 === null || code4 === 32 || code4 === 96 || markdownLineEnding(code4)) {
-        effects.exit("codeTextData");
-        return between(code4);
-      }
-      effects.consume(code4);
-      return data;
-    }
-    function sequenceClose(code4) {
-      if (code4 === 96) {
-        effects.consume(code4);
-        size++;
-        return sequenceClose;
-      }
-      if (size === sizeOpen) {
-        effects.exit("codeTextSequence");
-        effects.exit("codeText");
-        return ok3(code4);
-      }
-      token.type = "codeTextData";
-      return data(code4);
-    }
-  }
-
-  // node_modules/micromark-util-subtokenize/lib/splice-buffer.js
-  var SpliceBuffer = class {
-    /**
-     * @param {ReadonlyArray<T> | null | undefined} [initial]
-     *   Initial items (optional).
-     * @returns
-     *   Splice buffer.
-     */
-    constructor(initial) {
-      this.left = initial ? [...initial] : [];
-      this.right = [];
-    }
-    /**
-     * Array access;
-     * does not move the cursor.
-     *
-     * @param {number} index
-     *   Index.
-     * @return {T}
-     *   Item.
-     */
-    get(index2) {
-      if (index2 < 0 || index2 >= this.left.length + this.right.length) {
-        throw new RangeError("Cannot access index `" + index2 + "` in a splice buffer of size `" + (this.left.length + this.right.length) + "`");
-      }
-      if (index2 < this.left.length) return this.left[index2];
-      return this.right[this.right.length - index2 + this.left.length - 1];
-    }
-    /**
-     * The length of the splice buffer, one greater than the largest index in the
-     * array.
-     */
-    get length() {
-      return this.left.length + this.right.length;
-    }
-    /**
-     * Remove and return `list[0]`;
-     * moves the cursor to `0`.
-     *
-     * @returns {T | undefined}
-     *   Item, optional.
-     */
-    shift() {
-      this.setCursor(0);
-      return this.right.pop();
-    }
-    /**
-     * Slice the buffer to get an array;
-     * does not move the cursor.
-     *
-     * @param {number} start
-     *   Start.
-     * @param {number | null | undefined} [end]
-     *   End (optional).
-     * @returns {Array<T>}
-     *   Array of items.
-     */
-    slice(start2, end) {
-      const stop = end === null || end === void 0 ? Number.POSITIVE_INFINITY : end;
-      if (stop < this.left.length) {
-        return this.left.slice(start2, stop);
-      }
-      if (start2 > this.left.length) {
-        return this.right.slice(this.right.length - stop + this.left.length, this.right.length - start2 + this.left.length).reverse();
-      }
-      return this.left.slice(start2).concat(this.right.slice(this.right.length - stop + this.left.length).reverse());
-    }
-    /**
-     * Mimics the behavior of Array.prototype.splice() except for the change of
-     * interface necessary to avoid segfaults when patching in very large arrays.
-     *
-     * This operation moves cursor is moved to `start` and results in the cursor
-     * placed after any inserted items.
-     *
-     * @param {number} start
-     *   Start;
-     *   zero-based index at which to start changing the array;
-     *   negative numbers count backwards from the end of the array and values
-     *   that are out-of bounds are clamped to the appropriate end of the array.
-     * @param {number | null | undefined} [deleteCount=0]
-     *   Delete count (default: `0`);
-     *   maximum number of elements to delete, starting from start.
-     * @param {Array<T> | null | undefined} [items=[]]
-     *   Items to include in place of the deleted items (default: `[]`).
-     * @return {Array<T>}
-     *   Any removed items.
-     */
-    splice(start2, deleteCount, items) {
-      const count = deleteCount || 0;
-      this.setCursor(Math.trunc(start2));
-      const removed = this.right.splice(this.right.length - count, Number.POSITIVE_INFINITY);
-      if (items) chunkedPush(this.left, items);
-      return removed.reverse();
-    }
-    /**
-     * Remove and return the highest-numbered item in the array, so
-     * `list[list.length - 1]`;
-     * Moves the cursor to `length`.
-     *
-     * @returns {T | undefined}
-     *   Item, optional.
-     */
-    pop() {
-      this.setCursor(Number.POSITIVE_INFINITY);
-      return this.left.pop();
-    }
-    /**
-     * Inserts a single item to the high-numbered side of the array;
-     * moves the cursor to `length`.
-     *
-     * @param {T} item
-     *   Item.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    push(item) {
-      this.setCursor(Number.POSITIVE_INFINITY);
-      this.left.push(item);
-    }
-    /**
-     * Inserts many items to the high-numbered side of the array.
-     * Moves the cursor to `length`.
-     *
-     * @param {Array<T>} items
-     *   Items.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    pushMany(items) {
-      this.setCursor(Number.POSITIVE_INFINITY);
-      chunkedPush(this.left, items);
-    }
-    /**
-     * Inserts a single item to the low-numbered side of the array;
-     * Moves the cursor to `0`.
-     *
-     * @param {T} item
-     *   Item.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    unshift(item) {
-      this.setCursor(0);
-      this.right.push(item);
-    }
-    /**
-     * Inserts many items to the low-numbered side of the array;
-     * moves the cursor to `0`.
-     *
-     * @param {Array<T>} items
-     *   Items.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    unshiftMany(items) {
-      this.setCursor(0);
-      chunkedPush(this.right, items.reverse());
-    }
-    /**
-     * Move the cursor to a specific position in the array. Requires
-     * time proportional to the distance moved.
-     *
-     * If `n < 0`, the cursor will end up at the beginning.
-     * If `n > length`, the cursor will end up at the end.
-     *
-     * @param {number} n
-     *   Position.
-     * @return {undefined}
-     *   Nothing.
-     */
-    setCursor(n) {
-      if (n === this.left.length || n > this.left.length && this.right.length === 0 || n < 0 && this.left.length === 0) return;
-      if (n < this.left.length) {
-        const removed = this.left.splice(n, Number.POSITIVE_INFINITY);
-        chunkedPush(this.right, removed.reverse());
-      } else {
-        const removed = this.right.splice(this.left.length + this.right.length - n, Number.POSITIVE_INFINITY);
-        chunkedPush(this.left, removed.reverse());
-      }
-    }
-  };
-  function chunkedPush(list4, right) {
-    let chunkStart = 0;
-    if (right.length < 1e4) {
-      list4.push(...right);
-    } else {
-      while (chunkStart < right.length) {
-        list4.push(...right.slice(chunkStart, chunkStart + 1e4));
-        chunkStart += 1e4;
-      }
-    }
-  }
-
-  // node_modules/micromark-util-subtokenize/index.js
-  function subtokenize(eventsArray) {
-    const jumps = {};
-    let index2 = -1;
-    let event;
-    let lineIndex;
-    let otherIndex;
-    let otherEvent;
-    let parameters;
-    let subevents;
-    let more;
-    const events = new SpliceBuffer(eventsArray);
-    while (++index2 < events.length) {
-      while (index2 in jumps) {
-        index2 = jumps[index2];
-      }
-      event = events.get(index2);
-      if (index2 && event[1].type === "chunkFlow" && events.get(index2 - 1)[1].type === "listItemPrefix") {
-        subevents = event[1]._tokenizer.events;
-        otherIndex = 0;
-        if (otherIndex < subevents.length && subevents[otherIndex][1].type === "lineEndingBlank") {
-          otherIndex += 2;
-        }
-        if (otherIndex < subevents.length && subevents[otherIndex][1].type === "content") {
-          while (++otherIndex < subevents.length) {
-            if (subevents[otherIndex][1].type === "content") {
-              break;
-            }
-            if (subevents[otherIndex][1].type === "chunkText") {
-              subevents[otherIndex][1]._isInFirstContentOfListItem = true;
-              otherIndex++;
-            }
-          }
-        }
-      }
-      if (event[0] === "enter") {
-        if (event[1].contentType) {
-          Object.assign(jumps, subcontent(events, index2));
-          index2 = jumps[index2];
-          more = true;
-        }
-      } else if (event[1]._container) {
-        otherIndex = index2;
-        lineIndex = void 0;
-        while (otherIndex--) {
-          otherEvent = events.get(otherIndex);
-          if (otherEvent[1].type === "lineEnding" || otherEvent[1].type === "lineEndingBlank") {
-            if (otherEvent[0] === "enter") {
-              if (lineIndex) {
-                events.get(lineIndex)[1].type = "lineEndingBlank";
-              }
-              otherEvent[1].type = "lineEnding";
-              lineIndex = otherIndex;
-            }
-          } else if (otherEvent[1].type === "linePrefix" || otherEvent[1].type === "listItemIndent") {
-          } else {
-            break;
-          }
-        }
-        if (lineIndex) {
-          event[1].end = {
-            ...events.get(lineIndex)[1].start
-          };
-          parameters = events.slice(lineIndex, index2);
-          parameters.unshift(event);
-          events.splice(lineIndex, index2 - lineIndex + 1, parameters);
-        }
-      }
-    }
-    splice(eventsArray, 0, Number.POSITIVE_INFINITY, events.slice(0));
-    return !more;
-  }
-  function subcontent(events, eventIndex) {
-    const token = events.get(eventIndex)[1];
-    const context = events.get(eventIndex)[2];
-    let startPosition = eventIndex - 1;
-    const startPositions = [];
-    let tokenizer = token._tokenizer;
-    if (!tokenizer) {
-      tokenizer = context.parser[token.contentType](token.start);
-      if (token._contentTypeTextTrailing) {
-        tokenizer._contentTypeTextTrailing = true;
-      }
-    }
-    const childEvents = tokenizer.events;
-    const jumps = [];
-    const gaps = {};
-    let stream;
-    let previous3;
-    let index2 = -1;
-    let current = token;
-    let adjust = 0;
-    let start2 = 0;
-    const breaks = [start2];
-    while (current) {
-      while (events.get(++startPosition)[1] !== current) {
-      }
-      startPositions.push(startPosition);
-      if (!current._tokenizer) {
-        stream = context.sliceStream(current);
-        if (!current.next) {
-          stream.push(null);
-        }
-        if (previous3) {
-          tokenizer.defineSkip(current.start);
-        }
-        if (current._isInFirstContentOfListItem) {
-          tokenizer._gfmTasklistFirstContentOfListItem = true;
-        }
-        tokenizer.write(stream);
-        if (current._isInFirstContentOfListItem) {
-          tokenizer._gfmTasklistFirstContentOfListItem = void 0;
-        }
-      }
-      previous3 = current;
-      current = current.next;
-    }
-    current = token;
-    while (++index2 < childEvents.length) {
-      if (
-        // Find a void token that includes a break.
-        childEvents[index2][0] === "exit" && childEvents[index2 - 1][0] === "enter" && childEvents[index2][1].type === childEvents[index2 - 1][1].type && childEvents[index2][1].start.line !== childEvents[index2][1].end.line
-      ) {
-        start2 = index2 + 1;
-        breaks.push(start2);
-        current._tokenizer = void 0;
-        current.previous = void 0;
-        current = current.next;
-      }
-    }
-    tokenizer.events = [];
-    if (current) {
-      current._tokenizer = void 0;
-      current.previous = void 0;
-    } else {
-      breaks.pop();
-    }
-    index2 = breaks.length;
-    while (index2--) {
-      const slice = childEvents.slice(breaks[index2], breaks[index2 + 1]);
-      const start3 = startPositions.pop();
-      jumps.push([start3, start3 + slice.length - 1]);
-      events.splice(start3, 2, slice);
-    }
-    jumps.reverse();
-    index2 = -1;
-    while (++index2 < jumps.length) {
-      gaps[adjust + jumps[index2][0]] = adjust + jumps[index2][1];
-      adjust += jumps[index2][1] - jumps[index2][0] - 1;
-    }
-    return gaps;
-  }
-
-  // node_modules/micromark-core-commonmark/lib/content.js
-  var content2 = {
-    resolve: resolveContent,
-    tokenize: tokenizeContent
-  };
-  var continuationConstruct = {
-    partial: true,
-    tokenize: tokenizeContinuation
-  };
-  function resolveContent(events) {
-    subtokenize(events);
-    return events;
-  }
-  function tokenizeContent(effects, ok3) {
-    let previous3;
-    return chunkStart;
-    function chunkStart(code4) {
-      effects.enter("content");
-      previous3 = effects.enter("chunkContent", {
-        contentType: "content"
-      });
-      return chunkInside(code4);
-    }
-    function chunkInside(code4) {
-      if (code4 === null) {
-        return contentEnd(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        return effects.check(continuationConstruct, contentContinue, contentEnd)(code4);
-      }
-      effects.consume(code4);
-      return chunkInside;
-    }
-    function contentEnd(code4) {
-      effects.exit("chunkContent");
-      effects.exit("content");
-      return ok3(code4);
-    }
-    function contentContinue(code4) {
-      effects.consume(code4);
-      effects.exit("chunkContent");
-      previous3.next = effects.enter("chunkContent", {
-        contentType: "content",
-        previous: previous3
-      });
-      previous3 = previous3.next;
-      return chunkInside;
-    }
-  }
-  function tokenizeContinuation(effects, ok3, nok) {
-    const self2 = this;
-    return startLookahead;
-    function startLookahead(code4) {
-      effects.exit("chunkContent");
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return factorySpace(effects, prefixed, "linePrefix");
-    }
-    function prefixed(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        return nok(code4);
-      }
-      const tail = self2.events[self2.events.length - 1];
-      if (!self2.parser.constructs.disable.null.includes("codeIndented") && tail && tail[1].type === "linePrefix" && tail[2].sliceSerialize(tail[1], true).length >= 4) {
-        return ok3(code4);
-      }
-      return effects.interrupt(self2.parser.constructs.flow, nok, ok3)(code4);
-    }
-  }
-
-  // node_modules/micromark-factory-destination/index.js
-  function factoryDestination(effects, ok3, nok, type, literalType, literalMarkerType, rawType, stringType, max) {
-    const limit = max || Number.POSITIVE_INFINITY;
-    let balance = 0;
-    return start2;
-    function start2(code4) {
-      if (code4 === 60) {
-        effects.enter(type);
-        effects.enter(literalType);
-        effects.enter(literalMarkerType);
-        effects.consume(code4);
-        effects.exit(literalMarkerType);
-        return enclosedBefore;
-      }
-      if (code4 === null || code4 === 32 || code4 === 41 || asciiControl(code4)) {
-        return nok(code4);
-      }
-      effects.enter(type);
-      effects.enter(rawType);
-      effects.enter(stringType);
-      effects.enter("chunkString", {
-        contentType: "string"
-      });
-      return raw(code4);
-    }
-    function enclosedBefore(code4) {
-      if (code4 === 62) {
-        effects.enter(literalMarkerType);
-        effects.consume(code4);
-        effects.exit(literalMarkerType);
-        effects.exit(literalType);
-        effects.exit(type);
-        return ok3;
-      }
-      effects.enter(stringType);
-      effects.enter("chunkString", {
-        contentType: "string"
-      });
-      return enclosed(code4);
-    }
-    function enclosed(code4) {
-      if (code4 === 62) {
-        effects.exit("chunkString");
-        effects.exit(stringType);
-        return enclosedBefore(code4);
-      }
-      if (code4 === null || code4 === 60 || markdownLineEnding(code4)) {
-        return nok(code4);
-      }
-      effects.consume(code4);
-      return code4 === 92 ? enclosedEscape : enclosed;
-    }
-    function enclosedEscape(code4) {
-      if (code4 === 60 || code4 === 62 || code4 === 92) {
-        effects.consume(code4);
-        return enclosed;
-      }
-      return enclosed(code4);
-    }
-    function raw(code4) {
-      if (!balance && (code4 === null || code4 === 41 || markdownLineEndingOrSpace(code4))) {
-        effects.exit("chunkString");
-        effects.exit(stringType);
-        effects.exit(rawType);
-        effects.exit(type);
-        return ok3(code4);
-      }
-      if (balance < limit && code4 === 40) {
-        effects.consume(code4);
-        balance++;
-        return raw;
-      }
-      if (code4 === 41) {
-        effects.consume(code4);
-        balance--;
-        return raw;
-      }
-      if (code4 === null || code4 === 32 || code4 === 40 || asciiControl(code4)) {
-        return nok(code4);
-      }
-      effects.consume(code4);
-      return code4 === 92 ? rawEscape : raw;
-    }
-    function rawEscape(code4) {
-      if (code4 === 40 || code4 === 41 || code4 === 92) {
-        effects.consume(code4);
-        return raw;
-      }
-      return raw(code4);
-    }
-  }
-
-  // node_modules/micromark-factory-label/index.js
-  function factoryLabel(effects, ok3, nok, type, markerType, stringType) {
-    const self2 = this;
-    let size = 0;
-    let seen;
-    return start2;
-    function start2(code4) {
-      effects.enter(type);
-      effects.enter(markerType);
-      effects.consume(code4);
-      effects.exit(markerType);
-      effects.enter(stringType);
-      return atBreak;
-    }
-    function atBreak(code4) {
-      if (size > 999 || code4 === null || code4 === 91 || code4 === 93 && !seen || // To do: remove in the future once we’ve switched from
-      // `micromark-extension-footnote` to `micromark-extension-gfm-footnote`,
-      // which doesn’t need this.
-      // Hidden footnotes hook.
-      /* c8 ignore next 3 */
-      code4 === 94 && !size && "_hiddenFootnoteSupport" in self2.parser.constructs) {
-        return nok(code4);
-      }
-      if (code4 === 93) {
-        effects.exit(stringType);
-        effects.enter(markerType);
-        effects.consume(code4);
-        effects.exit(markerType);
-        effects.exit(type);
-        return ok3;
-      }
-      if (markdownLineEnding(code4)) {
-        effects.enter("lineEnding");
-        effects.consume(code4);
-        effects.exit("lineEnding");
-        return atBreak;
-      }
-      effects.enter("chunkString", {
-        contentType: "string"
-      });
-      return labelInside(code4);
-    }
-    function labelInside(code4) {
-      if (code4 === null || code4 === 91 || code4 === 93 || markdownLineEnding(code4) || size++ > 999) {
-        effects.exit("chunkString");
-        return atBreak(code4);
-      }
-      effects.consume(code4);
-      if (!seen) seen = !markdownSpace(code4);
-      return code4 === 92 ? labelEscape : labelInside;
-    }
-    function labelEscape(code4) {
-      if (code4 === 91 || code4 === 92 || code4 === 93) {
-        effects.consume(code4);
-        size++;
-        return labelInside;
-      }
-      return labelInside(code4);
-    }
-  }
-
-  // node_modules/micromark-factory-title/index.js
-  function factoryTitle(effects, ok3, nok, type, markerType, stringType) {
-    let marker;
-    return start2;
-    function start2(code4) {
-      if (code4 === 34 || code4 === 39 || code4 === 40) {
-        effects.enter(type);
-        effects.enter(markerType);
-        effects.consume(code4);
-        effects.exit(markerType);
-        marker = code4 === 40 ? 41 : code4;
-        return begin;
-      }
-      return nok(code4);
-    }
-    function begin(code4) {
-      if (code4 === marker) {
-        effects.enter(markerType);
-        effects.consume(code4);
-        effects.exit(markerType);
-        effects.exit(type);
-        return ok3;
-      }
-      effects.enter(stringType);
-      return atBreak(code4);
-    }
-    function atBreak(code4) {
-      if (code4 === marker) {
-        effects.exit(stringType);
-        return begin(marker);
-      }
-      if (code4 === null) {
-        return nok(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        effects.enter("lineEnding");
-        effects.consume(code4);
-        effects.exit("lineEnding");
-        return factorySpace(effects, atBreak, "linePrefix");
-      }
-      effects.enter("chunkString", {
-        contentType: "string"
-      });
-      return inside(code4);
-    }
-    function inside(code4) {
-      if (code4 === marker || code4 === null || markdownLineEnding(code4)) {
-        effects.exit("chunkString");
-        return atBreak(code4);
-      }
-      effects.consume(code4);
-      return code4 === 92 ? escape : inside;
-    }
-    function escape(code4) {
-      if (code4 === marker || code4 === 92) {
-        effects.consume(code4);
-        return inside;
-      }
-      return inside(code4);
-    }
-  }
-
-  // node_modules/micromark-factory-whitespace/index.js
-  function factoryWhitespace(effects, ok3) {
-    let seen;
-    return start2;
-    function start2(code4) {
-      if (markdownLineEnding(code4)) {
-        effects.enter("lineEnding");
-        effects.consume(code4);
-        effects.exit("lineEnding");
-        seen = true;
-        return start2;
-      }
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, start2, seen ? "linePrefix" : "lineSuffix")(code4);
-      }
-      return ok3(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/definition.js
-  var definition = {
-    name: "definition",
-    tokenize: tokenizeDefinition
-  };
-  var titleBefore = {
-    partial: true,
-    tokenize: tokenizeTitleBefore
-  };
-  function tokenizeDefinition(effects, ok3, nok) {
-    const self2 = this;
-    let identifier;
-    return start2;
-    function start2(code4) {
-      effects.enter("definition");
-      return before(code4);
-    }
-    function before(code4) {
-      return factoryLabel.call(
-        self2,
-        effects,
-        labelAfter,
-        // Note: we don’t need to reset the way `markdown-rs` does.
-        nok,
-        "definitionLabel",
-        "definitionLabelMarker",
-        "definitionLabelString"
-      )(code4);
-    }
-    function labelAfter(code4) {
-      identifier = normalizeIdentifier(self2.sliceSerialize(self2.events[self2.events.length - 1][1]).slice(1, -1));
-      if (code4 === 58) {
-        effects.enter("definitionMarker");
-        effects.consume(code4);
-        effects.exit("definitionMarker");
-        return markerAfter;
-      }
-      return nok(code4);
-    }
-    function markerAfter(code4) {
-      return markdownLineEndingOrSpace(code4) ? factoryWhitespace(effects, destinationBefore)(code4) : destinationBefore(code4);
-    }
-    function destinationBefore(code4) {
-      return factoryDestination(
-        effects,
-        destinationAfter,
-        // Note: we don’t need to reset the way `markdown-rs` does.
-        nok,
-        "definitionDestination",
-        "definitionDestinationLiteral",
-        "definitionDestinationLiteralMarker",
-        "definitionDestinationRaw",
-        "definitionDestinationString"
-      )(code4);
-    }
-    function destinationAfter(code4) {
-      return effects.attempt(titleBefore, after, after)(code4);
-    }
-    function after(code4) {
-      return markdownSpace(code4) ? factorySpace(effects, afterWhitespace, "whitespace")(code4) : afterWhitespace(code4);
-    }
-    function afterWhitespace(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("definition");
-        self2.parser.defined.push(identifier);
-        return ok3(code4);
-      }
-      return nok(code4);
-    }
-  }
-  function tokenizeTitleBefore(effects, ok3, nok) {
-    return titleBefore2;
-    function titleBefore2(code4) {
-      return markdownLineEndingOrSpace(code4) ? factoryWhitespace(effects, beforeMarker)(code4) : nok(code4);
-    }
-    function beforeMarker(code4) {
-      return factoryTitle(effects, titleAfter, nok, "definitionTitle", "definitionTitleMarker", "definitionTitleString")(code4);
-    }
-    function titleAfter(code4) {
-      return markdownSpace(code4) ? factorySpace(effects, titleAfterOptionalWhitespace, "whitespace")(code4) : titleAfterOptionalWhitespace(code4);
-    }
-    function titleAfterOptionalWhitespace(code4) {
-      return code4 === null || markdownLineEnding(code4) ? ok3(code4) : nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/hard-break-escape.js
-  var hardBreakEscape = {
-    name: "hardBreakEscape",
-    tokenize: tokenizeHardBreakEscape
-  };
-  function tokenizeHardBreakEscape(effects, ok3, nok) {
-    return start2;
-    function start2(code4) {
-      effects.enter("hardBreakEscape");
-      effects.consume(code4);
-      return after;
-    }
-    function after(code4) {
-      if (markdownLineEnding(code4)) {
-        effects.exit("hardBreakEscape");
-        return ok3(code4);
-      }
-      return nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/heading-atx.js
-  var headingAtx = {
-    name: "headingAtx",
-    resolve: resolveHeadingAtx,
-    tokenize: tokenizeHeadingAtx
-  };
-  function resolveHeadingAtx(events, context) {
-    let contentEnd = events.length - 2;
-    let contentStart = 3;
-    let content3;
-    let text7;
-    if (events[contentStart][1].type === "whitespace") {
-      contentStart += 2;
-    }
-    if (contentEnd - 2 > contentStart && events[contentEnd][1].type === "whitespace") {
-      contentEnd -= 2;
-    }
-    if (events[contentEnd][1].type === "atxHeadingSequence" && (contentStart === contentEnd - 1 || contentEnd - 4 > contentStart && events[contentEnd - 2][1].type === "whitespace")) {
-      contentEnd -= contentStart + 1 === contentEnd ? 2 : 4;
-    }
-    if (contentEnd > contentStart) {
-      content3 = {
-        type: "atxHeadingText",
-        start: events[contentStart][1].start,
-        end: events[contentEnd][1].end
-      };
-      text7 = {
-        type: "chunkText",
-        start: events[contentStart][1].start,
-        end: events[contentEnd][1].end,
-        contentType: "text"
-      };
-      splice(events, contentStart, contentEnd - contentStart + 1, [["enter", content3, context], ["enter", text7, context], ["exit", text7, context], ["exit", content3, context]]);
-    }
-    return events;
-  }
-  function tokenizeHeadingAtx(effects, ok3, nok) {
-    let size = 0;
-    return start2;
-    function start2(code4) {
-      effects.enter("atxHeading");
-      return before(code4);
-    }
-    function before(code4) {
-      effects.enter("atxHeadingSequence");
-      return sequenceOpen(code4);
-    }
-    function sequenceOpen(code4) {
-      if (code4 === 35 && size++ < 6) {
-        effects.consume(code4);
-        return sequenceOpen;
-      }
-      if (code4 === null || markdownLineEndingOrSpace(code4)) {
-        effects.exit("atxHeadingSequence");
-        return atBreak(code4);
-      }
-      return nok(code4);
-    }
-    function atBreak(code4) {
-      if (code4 === 35) {
-        effects.enter("atxHeadingSequence");
-        return sequenceFurther(code4);
-      }
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("atxHeading");
-        return ok3(code4);
-      }
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, atBreak, "whitespace")(code4);
-      }
-      effects.enter("atxHeadingText");
-      return data(code4);
-    }
-    function sequenceFurther(code4) {
-      if (code4 === 35) {
-        effects.consume(code4);
-        return sequenceFurther;
-      }
-      effects.exit("atxHeadingSequence");
-      return atBreak(code4);
-    }
-    function data(code4) {
-      if (code4 === null || code4 === 35 || markdownLineEndingOrSpace(code4)) {
-        effects.exit("atxHeadingText");
-        return atBreak(code4);
-      }
-      effects.consume(code4);
-      return data;
-    }
-  }
-
-  // node_modules/micromark-util-html-tag-name/index.js
-  var htmlBlockNames = [
-    "address",
-    "article",
-    "aside",
-    "base",
-    "basefont",
-    "blockquote",
-    "body",
-    "caption",
-    "center",
-    "col",
-    "colgroup",
-    "dd",
-    "details",
-    "dialog",
-    "dir",
-    "div",
-    "dl",
-    "dt",
-    "fieldset",
-    "figcaption",
-    "figure",
-    "footer",
-    "form",
-    "frame",
-    "frameset",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "head",
-    "header",
-    "hr",
-    "html",
-    "iframe",
-    "legend",
-    "li",
-    "link",
-    "main",
-    "menu",
-    "menuitem",
-    "nav",
-    "noframes",
-    "ol",
-    "optgroup",
-    "option",
-    "p",
-    "param",
-    "search",
-    "section",
-    "summary",
-    "table",
-    "tbody",
-    "td",
-    "tfoot",
-    "th",
-    "thead",
-    "title",
-    "tr",
-    "track",
-    "ul"
-  ];
-  var htmlRawNames = ["pre", "script", "style", "textarea"];
-
-  // node_modules/micromark-core-commonmark/lib/html-flow.js
-  var htmlFlow = {
-    concrete: true,
-    name: "htmlFlow",
-    resolveTo: resolveToHtmlFlow,
-    tokenize: tokenizeHtmlFlow
-  };
-  var blankLineBefore = {
-    partial: true,
-    tokenize: tokenizeBlankLineBefore
-  };
-  var nonLazyContinuationStart = {
-    partial: true,
-    tokenize: tokenizeNonLazyContinuationStart
-  };
-  function resolveToHtmlFlow(events) {
-    let index2 = events.length;
-    while (index2--) {
-      if (events[index2][0] === "enter" && events[index2][1].type === "htmlFlow") {
-        break;
-      }
-    }
-    if (index2 > 1 && events[index2 - 2][1].type === "linePrefix") {
-      events[index2][1].start = events[index2 - 2][1].start;
-      events[index2 + 1][1].start = events[index2 - 2][1].start;
-      events.splice(index2 - 2, 2);
-    }
-    return events;
-  }
-  function tokenizeHtmlFlow(effects, ok3, nok) {
-    const self2 = this;
-    let marker;
-    let closingTag;
-    let buffer;
-    let index2;
-    let markerB;
-    return start2;
-    function start2(code4) {
-      return before(code4);
-    }
-    function before(code4) {
-      effects.enter("htmlFlow");
-      effects.enter("htmlFlowData");
-      effects.consume(code4);
-      return open;
-    }
-    function open(code4) {
-      if (code4 === 33) {
-        effects.consume(code4);
-        return declarationOpen;
-      }
-      if (code4 === 47) {
-        effects.consume(code4);
-        closingTag = true;
-        return tagCloseStart;
-      }
-      if (code4 === 63) {
-        effects.consume(code4);
-        marker = 3;
-        return self2.interrupt ? ok3 : continuationDeclarationInside;
-      }
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        buffer = String.fromCharCode(code4);
-        return tagName;
-      }
-      return nok(code4);
-    }
-    function declarationOpen(code4) {
-      if (code4 === 45) {
-        effects.consume(code4);
-        marker = 2;
-        return commentOpenInside;
-      }
-      if (code4 === 91) {
-        effects.consume(code4);
-        marker = 5;
-        index2 = 0;
-        return cdataOpenInside;
-      }
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        marker = 4;
-        return self2.interrupt ? ok3 : continuationDeclarationInside;
-      }
-      return nok(code4);
-    }
-    function commentOpenInside(code4) {
-      if (code4 === 45) {
-        effects.consume(code4);
-        return self2.interrupt ? ok3 : continuationDeclarationInside;
-      }
-      return nok(code4);
-    }
-    function cdataOpenInside(code4) {
-      const value = "CDATA[";
-      if (code4 === value.charCodeAt(index2++)) {
-        effects.consume(code4);
-        if (index2 === value.length) {
-          return self2.interrupt ? ok3 : continuation;
-        }
-        return cdataOpenInside;
-      }
-      return nok(code4);
-    }
-    function tagCloseStart(code4) {
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        buffer = String.fromCharCode(code4);
-        return tagName;
-      }
-      return nok(code4);
-    }
-    function tagName(code4) {
-      if (code4 === null || code4 === 47 || code4 === 62 || markdownLineEndingOrSpace(code4)) {
-        const slash = code4 === 47;
-        const name2 = buffer.toLowerCase();
-        if (!slash && !closingTag && htmlRawNames.includes(name2)) {
-          marker = 1;
-          return self2.interrupt ? ok3(code4) : continuation(code4);
-        }
-        if (htmlBlockNames.includes(buffer.toLowerCase())) {
-          marker = 6;
-          if (slash) {
-            effects.consume(code4);
-            return basicSelfClosing;
-          }
-          return self2.interrupt ? ok3(code4) : continuation(code4);
-        }
-        marker = 7;
-        return self2.interrupt && !self2.parser.lazy[self2.now().line] ? nok(code4) : closingTag ? completeClosingTagAfter(code4) : completeAttributeNameBefore(code4);
-      }
-      if (code4 === 45 || asciiAlphanumeric(code4)) {
-        effects.consume(code4);
-        buffer += String.fromCharCode(code4);
-        return tagName;
-      }
-      return nok(code4);
-    }
-    function basicSelfClosing(code4) {
-      if (code4 === 62) {
-        effects.consume(code4);
-        return self2.interrupt ? ok3 : continuation;
-      }
-      return nok(code4);
-    }
-    function completeClosingTagAfter(code4) {
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return completeClosingTagAfter;
-      }
-      return completeEnd(code4);
-    }
-    function completeAttributeNameBefore(code4) {
-      if (code4 === 47) {
-        effects.consume(code4);
-        return completeEnd;
-      }
-      if (code4 === 58 || code4 === 95 || asciiAlpha(code4)) {
-        effects.consume(code4);
-        return completeAttributeName;
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return completeAttributeNameBefore;
-      }
-      return completeEnd(code4);
-    }
-    function completeAttributeName(code4) {
-      if (code4 === 45 || code4 === 46 || code4 === 58 || code4 === 95 || asciiAlphanumeric(code4)) {
-        effects.consume(code4);
-        return completeAttributeName;
-      }
-      return completeAttributeNameAfter(code4);
-    }
-    function completeAttributeNameAfter(code4) {
-      if (code4 === 61) {
-        effects.consume(code4);
-        return completeAttributeValueBefore;
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return completeAttributeNameAfter;
-      }
-      return completeAttributeNameBefore(code4);
-    }
-    function completeAttributeValueBefore(code4) {
-      if (code4 === null || code4 === 60 || code4 === 61 || code4 === 62 || code4 === 96) {
-        return nok(code4);
-      }
-      if (code4 === 34 || code4 === 39) {
-        effects.consume(code4);
-        markerB = code4;
-        return completeAttributeValueQuoted;
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return completeAttributeValueBefore;
-      }
-      return completeAttributeValueUnquoted(code4);
-    }
-    function completeAttributeValueQuoted(code4) {
-      if (code4 === markerB) {
-        effects.consume(code4);
-        markerB = null;
-        return completeAttributeValueQuotedAfter;
-      }
-      if (code4 === null || markdownLineEnding(code4)) {
-        return nok(code4);
-      }
-      effects.consume(code4);
-      return completeAttributeValueQuoted;
-    }
-    function completeAttributeValueUnquoted(code4) {
-      if (code4 === null || code4 === 34 || code4 === 39 || code4 === 47 || code4 === 60 || code4 === 61 || code4 === 62 || code4 === 96 || markdownLineEndingOrSpace(code4)) {
-        return completeAttributeNameAfter(code4);
-      }
-      effects.consume(code4);
-      return completeAttributeValueUnquoted;
-    }
-    function completeAttributeValueQuotedAfter(code4) {
-      if (code4 === 47 || code4 === 62 || markdownSpace(code4)) {
-        return completeAttributeNameBefore(code4);
-      }
-      return nok(code4);
-    }
-    function completeEnd(code4) {
-      if (code4 === 62) {
-        effects.consume(code4);
-        return completeAfter;
-      }
-      return nok(code4);
-    }
-    function completeAfter(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        return continuation(code4);
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return completeAfter;
-      }
-      return nok(code4);
-    }
-    function continuation(code4) {
-      if (code4 === 45 && marker === 2) {
-        effects.consume(code4);
-        return continuationCommentInside;
-      }
-      if (code4 === 60 && marker === 1) {
-        effects.consume(code4);
-        return continuationRawTagOpen;
-      }
-      if (code4 === 62 && marker === 4) {
-        effects.consume(code4);
-        return continuationClose;
-      }
-      if (code4 === 63 && marker === 3) {
-        effects.consume(code4);
-        return continuationDeclarationInside;
-      }
-      if (code4 === 93 && marker === 5) {
-        effects.consume(code4);
-        return continuationCdataInside;
-      }
-      if (markdownLineEnding(code4) && (marker === 6 || marker === 7)) {
-        effects.exit("htmlFlowData");
-        return effects.check(blankLineBefore, continuationAfter, continuationStart)(code4);
-      }
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("htmlFlowData");
-        return continuationStart(code4);
-      }
-      effects.consume(code4);
-      return continuation;
-    }
-    function continuationStart(code4) {
-      return effects.check(nonLazyContinuationStart, continuationStartNonLazy, continuationAfter)(code4);
-    }
-    function continuationStartNonLazy(code4) {
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return continuationBefore;
-    }
-    function continuationBefore(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        return continuationStart(code4);
-      }
-      effects.enter("htmlFlowData");
-      return continuation(code4);
-    }
-    function continuationCommentInside(code4) {
-      if (code4 === 45) {
-        effects.consume(code4);
-        return continuationDeclarationInside;
-      }
-      return continuation(code4);
-    }
-    function continuationRawTagOpen(code4) {
-      if (code4 === 47) {
-        effects.consume(code4);
-        buffer = "";
-        return continuationRawEndTag;
-      }
-      return continuation(code4);
-    }
-    function continuationRawEndTag(code4) {
-      if (code4 === 62) {
-        const name2 = buffer.toLowerCase();
-        if (htmlRawNames.includes(name2)) {
-          effects.consume(code4);
-          return continuationClose;
-        }
-        return continuation(code4);
-      }
-      if (asciiAlpha(code4) && buffer.length < 8) {
-        effects.consume(code4);
-        buffer += String.fromCharCode(code4);
-        return continuationRawEndTag;
-      }
-      return continuation(code4);
-    }
-    function continuationCdataInside(code4) {
-      if (code4 === 93) {
-        effects.consume(code4);
-        return continuationDeclarationInside;
-      }
-      return continuation(code4);
-    }
-    function continuationDeclarationInside(code4) {
-      if (code4 === 62) {
-        effects.consume(code4);
-        return continuationClose;
-      }
-      if (code4 === 45 && marker === 2) {
-        effects.consume(code4);
-        return continuationDeclarationInside;
-      }
-      return continuation(code4);
-    }
-    function continuationClose(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("htmlFlowData");
-        return continuationAfter(code4);
-      }
-      effects.consume(code4);
-      return continuationClose;
-    }
-    function continuationAfter(code4) {
-      effects.exit("htmlFlow");
-      return ok3(code4);
-    }
-  }
-  function tokenizeNonLazyContinuationStart(effects, ok3, nok) {
-    const self2 = this;
-    return start2;
-    function start2(code4) {
-      if (markdownLineEnding(code4)) {
-        effects.enter("lineEnding");
-        effects.consume(code4);
-        effects.exit("lineEnding");
-        return after;
-      }
-      return nok(code4);
-    }
-    function after(code4) {
-      return self2.parser.lazy[self2.now().line] ? nok(code4) : ok3(code4);
-    }
-  }
-  function tokenizeBlankLineBefore(effects, ok3, nok) {
-    return start2;
-    function start2(code4) {
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return effects.attempt(blankLine, ok3, nok);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/html-text.js
-  var htmlText = {
-    name: "htmlText",
-    tokenize: tokenizeHtmlText
-  };
-  function tokenizeHtmlText(effects, ok3, nok) {
-    const self2 = this;
-    let marker;
-    let index2;
-    let returnState;
-    return start2;
-    function start2(code4) {
-      effects.enter("htmlText");
-      effects.enter("htmlTextData");
-      effects.consume(code4);
-      return open;
-    }
-    function open(code4) {
-      if (code4 === 33) {
-        effects.consume(code4);
-        return declarationOpen;
-      }
-      if (code4 === 47) {
-        effects.consume(code4);
-        return tagCloseStart;
-      }
-      if (code4 === 63) {
-        effects.consume(code4);
-        return instruction;
-      }
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        return tagOpen;
-      }
-      return nok(code4);
-    }
-    function declarationOpen(code4) {
-      if (code4 === 45) {
-        effects.consume(code4);
-        return commentOpenInside;
-      }
-      if (code4 === 91) {
-        effects.consume(code4);
-        index2 = 0;
-        return cdataOpenInside;
-      }
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        return declaration;
-      }
-      return nok(code4);
-    }
-    function commentOpenInside(code4) {
-      if (code4 === 45) {
-        effects.consume(code4);
-        return commentEnd;
-      }
-      return nok(code4);
-    }
-    function comment(code4) {
-      if (code4 === null) {
-        return nok(code4);
-      }
-      if (code4 === 45) {
-        effects.consume(code4);
-        return commentClose;
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = comment;
-        return lineEndingBefore(code4);
-      }
-      effects.consume(code4);
-      return comment;
-    }
-    function commentClose(code4) {
-      if (code4 === 45) {
-        effects.consume(code4);
-        return commentEnd;
-      }
-      return comment(code4);
-    }
-    function commentEnd(code4) {
-      return code4 === 62 ? end(code4) : code4 === 45 ? commentClose(code4) : comment(code4);
-    }
-    function cdataOpenInside(code4) {
-      const value = "CDATA[";
-      if (code4 === value.charCodeAt(index2++)) {
-        effects.consume(code4);
-        return index2 === value.length ? cdata : cdataOpenInside;
-      }
-      return nok(code4);
-    }
-    function cdata(code4) {
-      if (code4 === null) {
-        return nok(code4);
-      }
-      if (code4 === 93) {
-        effects.consume(code4);
-        return cdataClose;
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = cdata;
-        return lineEndingBefore(code4);
-      }
-      effects.consume(code4);
-      return cdata;
-    }
-    function cdataClose(code4) {
-      if (code4 === 93) {
-        effects.consume(code4);
-        return cdataEnd;
-      }
-      return cdata(code4);
-    }
-    function cdataEnd(code4) {
-      if (code4 === 62) {
-        return end(code4);
-      }
-      if (code4 === 93) {
-        effects.consume(code4);
-        return cdataEnd;
-      }
-      return cdata(code4);
-    }
-    function declaration(code4) {
-      if (code4 === null || code4 === 62) {
-        return end(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = declaration;
-        return lineEndingBefore(code4);
-      }
-      effects.consume(code4);
-      return declaration;
-    }
-    function instruction(code4) {
-      if (code4 === null) {
-        return nok(code4);
-      }
-      if (code4 === 63) {
-        effects.consume(code4);
-        return instructionClose;
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = instruction;
-        return lineEndingBefore(code4);
-      }
-      effects.consume(code4);
-      return instruction;
-    }
-    function instructionClose(code4) {
-      return code4 === 62 ? end(code4) : instruction(code4);
-    }
-    function tagCloseStart(code4) {
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        return tagClose;
-      }
-      return nok(code4);
-    }
-    function tagClose(code4) {
-      if (code4 === 45 || asciiAlphanumeric(code4)) {
-        effects.consume(code4);
-        return tagClose;
-      }
-      return tagCloseBetween(code4);
-    }
-    function tagCloseBetween(code4) {
-      if (markdownLineEnding(code4)) {
-        returnState = tagCloseBetween;
-        return lineEndingBefore(code4);
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return tagCloseBetween;
-      }
-      return end(code4);
-    }
-    function tagOpen(code4) {
-      if (code4 === 45 || asciiAlphanumeric(code4)) {
-        effects.consume(code4);
-        return tagOpen;
-      }
-      if (code4 === 47 || code4 === 62 || markdownLineEndingOrSpace(code4)) {
-        return tagOpenBetween(code4);
-      }
-      return nok(code4);
-    }
-    function tagOpenBetween(code4) {
-      if (code4 === 47) {
-        effects.consume(code4);
-        return end;
-      }
-      if (code4 === 58 || code4 === 95 || asciiAlpha(code4)) {
-        effects.consume(code4);
-        return tagOpenAttributeName;
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = tagOpenBetween;
-        return lineEndingBefore(code4);
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return tagOpenBetween;
-      }
-      return end(code4);
-    }
-    function tagOpenAttributeName(code4) {
-      if (code4 === 45 || code4 === 46 || code4 === 58 || code4 === 95 || asciiAlphanumeric(code4)) {
-        effects.consume(code4);
-        return tagOpenAttributeName;
-      }
-      return tagOpenAttributeNameAfter(code4);
-    }
-    function tagOpenAttributeNameAfter(code4) {
-      if (code4 === 61) {
-        effects.consume(code4);
-        return tagOpenAttributeValueBefore;
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = tagOpenAttributeNameAfter;
-        return lineEndingBefore(code4);
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return tagOpenAttributeNameAfter;
-      }
-      return tagOpenBetween(code4);
-    }
-    function tagOpenAttributeValueBefore(code4) {
-      if (code4 === null || code4 === 60 || code4 === 61 || code4 === 62 || code4 === 96) {
-        return nok(code4);
-      }
-      if (code4 === 34 || code4 === 39) {
-        effects.consume(code4);
-        marker = code4;
-        return tagOpenAttributeValueQuoted;
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = tagOpenAttributeValueBefore;
-        return lineEndingBefore(code4);
-      }
-      if (markdownSpace(code4)) {
-        effects.consume(code4);
-        return tagOpenAttributeValueBefore;
-      }
-      effects.consume(code4);
-      return tagOpenAttributeValueUnquoted;
-    }
-    function tagOpenAttributeValueQuoted(code4) {
-      if (code4 === marker) {
-        effects.consume(code4);
-        marker = void 0;
-        return tagOpenAttributeValueQuotedAfter;
-      }
-      if (code4 === null) {
-        return nok(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        returnState = tagOpenAttributeValueQuoted;
-        return lineEndingBefore(code4);
-      }
-      effects.consume(code4);
-      return tagOpenAttributeValueQuoted;
-    }
-    function tagOpenAttributeValueUnquoted(code4) {
-      if (code4 === null || code4 === 34 || code4 === 39 || code4 === 60 || code4 === 61 || code4 === 96) {
-        return nok(code4);
-      }
-      if (code4 === 47 || code4 === 62 || markdownLineEndingOrSpace(code4)) {
-        return tagOpenBetween(code4);
-      }
-      effects.consume(code4);
-      return tagOpenAttributeValueUnquoted;
-    }
-    function tagOpenAttributeValueQuotedAfter(code4) {
-      if (code4 === 47 || code4 === 62 || markdownLineEndingOrSpace(code4)) {
-        return tagOpenBetween(code4);
-      }
-      return nok(code4);
-    }
-    function end(code4) {
-      if (code4 === 62) {
-        effects.consume(code4);
-        effects.exit("htmlTextData");
-        effects.exit("htmlText");
-        return ok3;
-      }
-      return nok(code4);
-    }
-    function lineEndingBefore(code4) {
-      effects.exit("htmlTextData");
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return lineEndingAfter;
-    }
-    function lineEndingAfter(code4) {
-      return markdownSpace(code4) ? factorySpace(effects, lineEndingAfterPrefix, "linePrefix", self2.parser.constructs.disable.null.includes("codeIndented") ? void 0 : 4)(code4) : lineEndingAfterPrefix(code4);
-    }
-    function lineEndingAfterPrefix(code4) {
-      effects.enter("htmlTextData");
-      return returnState(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/label-end.js
-  var labelEnd = {
-    name: "labelEnd",
-    resolveAll: resolveAllLabelEnd,
-    resolveTo: resolveToLabelEnd,
-    tokenize: tokenizeLabelEnd
-  };
-  var resourceConstruct = {
-    tokenize: tokenizeResource
-  };
-  var referenceFullConstruct = {
-    tokenize: tokenizeReferenceFull
-  };
-  var referenceCollapsedConstruct = {
-    tokenize: tokenizeReferenceCollapsed
-  };
-  function resolveAllLabelEnd(events) {
-    let index2 = -1;
-    const newEvents = [];
-    while (++index2 < events.length) {
-      const token = events[index2][1];
-      newEvents.push(events[index2]);
-      if (token.type === "labelImage" || token.type === "labelLink" || token.type === "labelEnd") {
-        const offset = token.type === "labelImage" ? 4 : 2;
-        token.type = "data";
-        index2 += offset;
-      }
-    }
-    if (events.length !== newEvents.length) {
-      splice(events, 0, events.length, newEvents);
-    }
-    return events;
-  }
-  function resolveToLabelEnd(events, context) {
-    let index2 = events.length;
-    let offset = 0;
-    let token;
-    let open;
-    let close;
-    let media;
-    while (index2--) {
-      token = events[index2][1];
-      if (open) {
-        if (token.type === "link" || token.type === "labelLink" && token._inactive) {
-          break;
-        }
-        if (events[index2][0] === "enter" && token.type === "labelLink") {
-          token._inactive = true;
-        }
-      } else if (close) {
-        if (events[index2][0] === "enter" && (token.type === "labelImage" || token.type === "labelLink") && !token._balanced) {
-          open = index2;
-          if (token.type !== "labelLink") {
-            offset = 2;
-            break;
-          }
-        }
-      } else if (token.type === "labelEnd") {
-        close = index2;
-      }
-    }
-    const group = {
-      type: events[open][1].type === "labelLink" ? "link" : "image",
-      start: {
-        ...events[open][1].start
-      },
-      end: {
-        ...events[events.length - 1][1].end
-      }
-    };
-    const label = {
-      type: "label",
-      start: {
-        ...events[open][1].start
-      },
-      end: {
-        ...events[close][1].end
-      }
-    };
-    const text7 = {
-      type: "labelText",
-      start: {
-        ...events[open + offset + 2][1].end
-      },
-      end: {
-        ...events[close - 2][1].start
-      }
-    };
-    media = [["enter", group, context], ["enter", label, context]];
-    media = push(media, events.slice(open + 1, open + offset + 3));
-    media = push(media, [["enter", text7, context]]);
-    media = push(media, resolveAll(context.parser.constructs.insideSpan.null, events.slice(open + offset + 4, close - 3), context));
-    media = push(media, [["exit", text7, context], events[close - 2], events[close - 1], ["exit", label, context]]);
-    media = push(media, events.slice(close + 1));
-    media = push(media, [["exit", group, context]]);
-    splice(events, open, events.length, media);
-    return events;
-  }
-  function tokenizeLabelEnd(effects, ok3, nok) {
-    const self2 = this;
-    let index2 = self2.events.length;
-    let labelStart;
-    let defined;
-    while (index2--) {
-      if ((self2.events[index2][1].type === "labelImage" || self2.events[index2][1].type === "labelLink") && !self2.events[index2][1]._balanced) {
-        labelStart = self2.events[index2][1];
-        break;
-      }
-    }
-    return start2;
-    function start2(code4) {
-      if (!labelStart) {
-        return nok(code4);
-      }
-      if (labelStart._inactive) {
-        return labelEndNok(code4);
-      }
-      defined = self2.parser.defined.includes(normalizeIdentifier(self2.sliceSerialize({
-        start: labelStart.end,
-        end: self2.now()
-      })));
-      effects.enter("labelEnd");
-      effects.enter("labelMarker");
-      effects.consume(code4);
-      effects.exit("labelMarker");
-      effects.exit("labelEnd");
-      return after;
-    }
-    function after(code4) {
-      if (code4 === 40) {
-        return effects.attempt(resourceConstruct, labelEndOk, defined ? labelEndOk : labelEndNok)(code4);
-      }
-      if (code4 === 91) {
-        return effects.attempt(referenceFullConstruct, labelEndOk, defined ? referenceNotFull : labelEndNok)(code4);
-      }
-      return defined ? labelEndOk(code4) : labelEndNok(code4);
-    }
-    function referenceNotFull(code4) {
-      return effects.attempt(referenceCollapsedConstruct, labelEndOk, labelEndNok)(code4);
-    }
-    function labelEndOk(code4) {
-      return ok3(code4);
-    }
-    function labelEndNok(code4) {
-      labelStart._balanced = true;
-      return nok(code4);
-    }
-  }
-  function tokenizeResource(effects, ok3, nok) {
-    return resourceStart;
-    function resourceStart(code4) {
-      effects.enter("resource");
-      effects.enter("resourceMarker");
-      effects.consume(code4);
-      effects.exit("resourceMarker");
-      return resourceBefore;
-    }
-    function resourceBefore(code4) {
-      return markdownLineEndingOrSpace(code4) ? factoryWhitespace(effects, resourceOpen)(code4) : resourceOpen(code4);
-    }
-    function resourceOpen(code4) {
-      if (code4 === 41) {
-        return resourceEnd(code4);
-      }
-      return factoryDestination(effects, resourceDestinationAfter, resourceDestinationMissing, "resourceDestination", "resourceDestinationLiteral", "resourceDestinationLiteralMarker", "resourceDestinationRaw", "resourceDestinationString", 32)(code4);
-    }
-    function resourceDestinationAfter(code4) {
-      return markdownLineEndingOrSpace(code4) ? factoryWhitespace(effects, resourceBetween)(code4) : resourceEnd(code4);
-    }
-    function resourceDestinationMissing(code4) {
-      return nok(code4);
-    }
-    function resourceBetween(code4) {
-      if (code4 === 34 || code4 === 39 || code4 === 40) {
-        return factoryTitle(effects, resourceTitleAfter, nok, "resourceTitle", "resourceTitleMarker", "resourceTitleString")(code4);
-      }
-      return resourceEnd(code4);
-    }
-    function resourceTitleAfter(code4) {
-      return markdownLineEndingOrSpace(code4) ? factoryWhitespace(effects, resourceEnd)(code4) : resourceEnd(code4);
-    }
-    function resourceEnd(code4) {
-      if (code4 === 41) {
-        effects.enter("resourceMarker");
-        effects.consume(code4);
-        effects.exit("resourceMarker");
-        effects.exit("resource");
-        return ok3;
-      }
-      return nok(code4);
-    }
-  }
-  function tokenizeReferenceFull(effects, ok3, nok) {
-    const self2 = this;
-    return referenceFull;
-    function referenceFull(code4) {
-      return factoryLabel.call(self2, effects, referenceFullAfter, referenceFullMissing, "reference", "referenceMarker", "referenceString")(code4);
-    }
-    function referenceFullAfter(code4) {
-      return self2.parser.defined.includes(normalizeIdentifier(self2.sliceSerialize(self2.events[self2.events.length - 1][1]).slice(1, -1))) ? ok3(code4) : nok(code4);
-    }
-    function referenceFullMissing(code4) {
-      return nok(code4);
-    }
-  }
-  function tokenizeReferenceCollapsed(effects, ok3, nok) {
-    return referenceCollapsedStart;
-    function referenceCollapsedStart(code4) {
-      effects.enter("reference");
-      effects.enter("referenceMarker");
-      effects.consume(code4);
-      effects.exit("referenceMarker");
-      return referenceCollapsedOpen;
-    }
-    function referenceCollapsedOpen(code4) {
-      if (code4 === 93) {
-        effects.enter("referenceMarker");
-        effects.consume(code4);
-        effects.exit("referenceMarker");
-        effects.exit("reference");
-        return ok3;
-      }
-      return nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/label-start-image.js
-  var labelStartImage = {
-    name: "labelStartImage",
-    resolveAll: labelEnd.resolveAll,
-    tokenize: tokenizeLabelStartImage
-  };
-  function tokenizeLabelStartImage(effects, ok3, nok) {
-    const self2 = this;
-    return start2;
-    function start2(code4) {
-      effects.enter("labelImage");
-      effects.enter("labelImageMarker");
-      effects.consume(code4);
-      effects.exit("labelImageMarker");
-      return open;
-    }
-    function open(code4) {
-      if (code4 === 91) {
-        effects.enter("labelMarker");
-        effects.consume(code4);
-        effects.exit("labelMarker");
-        effects.exit("labelImage");
-        return after;
-      }
-      return nok(code4);
-    }
-    function after(code4) {
-      return code4 === 94 && "_hiddenFootnoteSupport" in self2.parser.constructs ? nok(code4) : ok3(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/label-start-link.js
-  var labelStartLink = {
-    name: "labelStartLink",
-    resolveAll: labelEnd.resolveAll,
-    tokenize: tokenizeLabelStartLink
-  };
-  function tokenizeLabelStartLink(effects, ok3, nok) {
-    const self2 = this;
-    return start2;
-    function start2(code4) {
-      effects.enter("labelLink");
-      effects.enter("labelMarker");
-      effects.consume(code4);
-      effects.exit("labelMarker");
-      effects.exit("labelLink");
-      return after;
-    }
-    function after(code4) {
-      return code4 === 94 && "_hiddenFootnoteSupport" in self2.parser.constructs ? nok(code4) : ok3(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/line-ending.js
-  var lineEnding = {
-    name: "lineEnding",
-    tokenize: tokenizeLineEnding
-  };
-  function tokenizeLineEnding(effects, ok3) {
-    return start2;
-    function start2(code4) {
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      return factorySpace(effects, ok3, "linePrefix");
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/thematic-break.js
-  var thematicBreak = {
-    name: "thematicBreak",
-    tokenize: tokenizeThematicBreak
-  };
-  function tokenizeThematicBreak(effects, ok3, nok) {
-    let size = 0;
-    let marker;
-    return start2;
-    function start2(code4) {
-      effects.enter("thematicBreak");
-      return before(code4);
-    }
-    function before(code4) {
-      marker = code4;
-      return atBreak(code4);
-    }
-    function atBreak(code4) {
-      if (code4 === marker) {
-        effects.enter("thematicBreakSequence");
-        return sequence(code4);
-      }
-      if (size >= 3 && (code4 === null || markdownLineEnding(code4))) {
-        effects.exit("thematicBreak");
-        return ok3(code4);
-      }
-      return nok(code4);
-    }
-    function sequence(code4) {
-      if (code4 === marker) {
-        effects.consume(code4);
-        size++;
-        return sequence;
-      }
-      effects.exit("thematicBreakSequence");
-      return markdownSpace(code4) ? factorySpace(effects, atBreak, "whitespace")(code4) : atBreak(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/list.js
-  var list = {
-    continuation: {
-      tokenize: tokenizeListContinuation
-    },
-    exit: tokenizeListEnd,
-    name: "list",
-    tokenize: tokenizeListStart
-  };
-  var listItemPrefixWhitespaceConstruct = {
-    partial: true,
-    tokenize: tokenizeListItemPrefixWhitespace
-  };
-  var indentConstruct = {
-    partial: true,
-    tokenize: tokenizeIndent
-  };
-  function tokenizeListStart(effects, ok3, nok) {
-    const self2 = this;
-    const tail = self2.events[self2.events.length - 1];
-    let initialSize = tail && tail[1].type === "linePrefix" ? tail[2].sliceSerialize(tail[1], true).length : 0;
-    let size = 0;
-    return start2;
-    function start2(code4) {
-      const kind = self2.containerState.type || (code4 === 42 || code4 === 43 || code4 === 45 ? "listUnordered" : "listOrdered");
-      if (kind === "listUnordered" ? !self2.containerState.marker || code4 === self2.containerState.marker : asciiDigit(code4)) {
-        if (!self2.containerState.type) {
-          self2.containerState.type = kind;
-          effects.enter(kind, {
-            _container: true
-          });
-        }
-        if (kind === "listUnordered") {
-          effects.enter("listItemPrefix");
-          return code4 === 42 || code4 === 45 ? effects.check(thematicBreak, nok, atMarker)(code4) : atMarker(code4);
-        }
-        if (!self2.interrupt || code4 === 49) {
-          effects.enter("listItemPrefix");
-          effects.enter("listItemValue");
-          return inside(code4);
-        }
-      }
-      return nok(code4);
-    }
-    function inside(code4) {
-      if (asciiDigit(code4) && ++size < 10) {
-        effects.consume(code4);
-        return inside;
-      }
-      if ((!self2.interrupt || size < 2) && (self2.containerState.marker ? code4 === self2.containerState.marker : code4 === 41 || code4 === 46)) {
-        effects.exit("listItemValue");
-        return atMarker(code4);
-      }
-      return nok(code4);
-    }
-    function atMarker(code4) {
-      effects.enter("listItemMarker");
-      effects.consume(code4);
-      effects.exit("listItemMarker");
-      self2.containerState.marker = self2.containerState.marker || code4;
-      return effects.check(
-        blankLine,
-        // Can’t be empty when interrupting.
-        self2.interrupt ? nok : onBlank,
-        effects.attempt(listItemPrefixWhitespaceConstruct, endOfPrefix, otherPrefix)
-      );
-    }
-    function onBlank(code4) {
-      self2.containerState.initialBlankLine = true;
-      initialSize++;
-      return endOfPrefix(code4);
-    }
-    function otherPrefix(code4) {
-      if (markdownSpace(code4)) {
-        effects.enter("listItemPrefixWhitespace");
-        effects.consume(code4);
-        effects.exit("listItemPrefixWhitespace");
-        return endOfPrefix;
-      }
-      return nok(code4);
-    }
-    function endOfPrefix(code4) {
-      self2.containerState.size = initialSize + self2.sliceSerialize(effects.exit("listItemPrefix"), true).length;
-      return ok3(code4);
-    }
-  }
-  function tokenizeListContinuation(effects, ok3, nok) {
-    const self2 = this;
-    self2.containerState._closeFlow = void 0;
-    return effects.check(blankLine, onBlank, notBlank);
-    function onBlank(code4) {
-      self2.containerState.furtherBlankLines = self2.containerState.furtherBlankLines || self2.containerState.initialBlankLine;
-      return factorySpace(effects, ok3, "listItemIndent", self2.containerState.size + 1)(code4);
-    }
-    function notBlank(code4) {
-      if (self2.containerState.furtherBlankLines || !markdownSpace(code4)) {
-        self2.containerState.furtherBlankLines = void 0;
-        self2.containerState.initialBlankLine = void 0;
-        return notInCurrentItem(code4);
-      }
-      self2.containerState.furtherBlankLines = void 0;
-      self2.containerState.initialBlankLine = void 0;
-      return effects.attempt(indentConstruct, ok3, notInCurrentItem)(code4);
-    }
-    function notInCurrentItem(code4) {
-      self2.containerState._closeFlow = true;
-      self2.interrupt = void 0;
-      return factorySpace(effects, effects.attempt(list, ok3, nok), "linePrefix", self2.parser.constructs.disable.null.includes("codeIndented") ? void 0 : 4)(code4);
-    }
-  }
-  function tokenizeIndent(effects, ok3, nok) {
-    const self2 = this;
-    return factorySpace(effects, afterPrefix, "listItemIndent", self2.containerState.size + 1);
-    function afterPrefix(code4) {
-      const tail = self2.events[self2.events.length - 1];
-      return tail && tail[1].type === "listItemIndent" && tail[2].sliceSerialize(tail[1], true).length === self2.containerState.size ? ok3(code4) : nok(code4);
-    }
-  }
-  function tokenizeListEnd(effects) {
-    effects.exit(this.containerState.type);
-  }
-  function tokenizeListItemPrefixWhitespace(effects, ok3, nok) {
-    const self2 = this;
-    return factorySpace(effects, afterPrefix, "listItemPrefixWhitespace", self2.parser.constructs.disable.null.includes("codeIndented") ? void 0 : 4 + 1);
-    function afterPrefix(code4) {
-      const tail = self2.events[self2.events.length - 1];
-      return !markdownSpace(code4) && tail && tail[1].type === "listItemPrefixWhitespace" ? ok3(code4) : nok(code4);
-    }
-  }
-
-  // node_modules/micromark-core-commonmark/lib/setext-underline.js
-  var setextUnderline = {
-    name: "setextUnderline",
-    resolveTo: resolveToSetextUnderline,
-    tokenize: tokenizeSetextUnderline
-  };
-  function resolveToSetextUnderline(events, context) {
-    let index2 = events.length;
-    let content3;
-    let text7;
-    let definition3;
-    while (index2--) {
-      if (events[index2][0] === "enter") {
-        if (events[index2][1].type === "content") {
-          content3 = index2;
-          break;
-        }
-        if (events[index2][1].type === "paragraph") {
-          text7 = index2;
-        }
-      } else {
-        if (events[index2][1].type === "content") {
-          events.splice(index2, 1);
-        }
-        if (!definition3 && events[index2][1].type === "definition") {
-          definition3 = index2;
-        }
-      }
-    }
-    const heading3 = {
-      type: "setextHeading",
-      start: {
-        ...events[content3][1].start
-      },
-      end: {
-        ...events[events.length - 1][1].end
-      }
-    };
-    events[text7][1].type = "setextHeadingText";
-    if (definition3) {
-      events.splice(text7, 0, ["enter", heading3, context]);
-      events.splice(definition3 + 1, 0, ["exit", events[content3][1], context]);
-      events[content3][1].end = {
-        ...events[definition3][1].end
-      };
-    } else {
-      events[content3][1] = heading3;
-    }
-    events.push(["exit", heading3, context]);
-    return events;
-  }
-  function tokenizeSetextUnderline(effects, ok3, nok) {
-    const self2 = this;
-    let marker;
-    return start2;
-    function start2(code4) {
-      let index2 = self2.events.length;
-      let paragraph3;
-      while (index2--) {
-        if (self2.events[index2][1].type !== "lineEnding" && self2.events[index2][1].type !== "linePrefix" && self2.events[index2][1].type !== "content") {
-          paragraph3 = self2.events[index2][1].type === "paragraph";
-          break;
-        }
-      }
-      if (!self2.parser.lazy[self2.now().line] && (self2.interrupt || paragraph3)) {
-        effects.enter("setextHeadingLine");
-        marker = code4;
-        return before(code4);
-      }
-      return nok(code4);
-    }
-    function before(code4) {
-      effects.enter("setextHeadingLineSequence");
-      return inside(code4);
-    }
-    function inside(code4) {
-      if (code4 === marker) {
-        effects.consume(code4);
-        return inside;
-      }
-      effects.exit("setextHeadingLineSequence");
-      return markdownSpace(code4) ? factorySpace(effects, after, "lineSuffix")(code4) : after(code4);
-    }
-    function after(code4) {
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("setextHeadingLine");
-        return ok3(code4);
-      }
-      return nok(code4);
-    }
-  }
-
-  // node_modules/micromark/lib/initialize/flow.js
-  var flow = {
-    tokenize: initializeFlow
-  };
-  function initializeFlow(effects) {
-    const self2 = this;
-    const initial = effects.attempt(
-      // Try to parse a blank line.
-      blankLine,
-      atBlankEnding,
-      // Try to parse initial flow (essentially, only code).
-      effects.attempt(this.parser.constructs.flowInitial, afterConstruct, factorySpace(effects, effects.attempt(this.parser.constructs.flow, afterConstruct, effects.attempt(content2, afterConstruct)), "linePrefix"))
-    );
-    return initial;
-    function atBlankEnding(code4) {
-      if (code4 === null) {
-        effects.consume(code4);
-        return;
-      }
-      effects.enter("lineEndingBlank");
-      effects.consume(code4);
-      effects.exit("lineEndingBlank");
-      self2.currentConstruct = void 0;
-      return initial;
-    }
-    function afterConstruct(code4) {
-      if (code4 === null) {
-        effects.consume(code4);
-        return;
-      }
-      effects.enter("lineEnding");
-      effects.consume(code4);
-      effects.exit("lineEnding");
-      self2.currentConstruct = void 0;
-      return initial;
-    }
-  }
-
-  // node_modules/micromark/lib/initialize/text.js
-  var resolver = {
-    resolveAll: createResolver()
-  };
-  var string = initializeFactory("string");
-  var text2 = initializeFactory("text");
-  function initializeFactory(field) {
-    return {
-      resolveAll: createResolver(field === "text" ? resolveAllLineSuffixes : void 0),
-      tokenize: initializeText
-    };
-    function initializeText(effects) {
-      const self2 = this;
-      const constructs2 = this.parser.constructs[field];
-      const text7 = effects.attempt(constructs2, start2, notText);
-      return start2;
-      function start2(code4) {
-        return atBreak(code4) ? text7(code4) : notText(code4);
-      }
-      function notText(code4) {
-        if (code4 === null) {
-          effects.consume(code4);
-          return;
-        }
-        effects.enter("data");
-        effects.consume(code4);
-        return data;
-      }
-      function data(code4) {
-        if (atBreak(code4)) {
-          effects.exit("data");
-          return text7(code4);
-        }
-        effects.consume(code4);
-        return data;
-      }
-      function atBreak(code4) {
-        if (code4 === null) {
-          return true;
-        }
-        const list4 = constructs2[code4];
-        let index2 = -1;
-        if (list4) {
-          while (++index2 < list4.length) {
-            const item = list4[index2];
-            if (!item.previous || item.previous.call(self2, self2.previous)) {
-              return true;
-            }
-          }
-        }
-        return false;
-      }
-    }
-  }
-  function createResolver(extraResolver) {
-    return resolveAllText;
-    function resolveAllText(events, context) {
-      let index2 = -1;
-      let enter;
-      while (++index2 <= events.length) {
-        if (enter === void 0) {
-          if (events[index2] && events[index2][1].type === "data") {
-            enter = index2;
-            index2++;
-          }
-        } else if (!events[index2] || events[index2][1].type !== "data") {
-          if (index2 !== enter + 2) {
-            events[enter][1].end = events[index2 - 1][1].end;
-            events.splice(enter + 2, index2 - enter - 2);
-            index2 = enter + 2;
-          }
-          enter = void 0;
-        }
-      }
-      return extraResolver ? extraResolver(events, context) : events;
-    }
-  }
-  function resolveAllLineSuffixes(events, context) {
-    let eventIndex = 0;
-    while (++eventIndex <= events.length) {
-      if ((eventIndex === events.length || events[eventIndex][1].type === "lineEnding") && events[eventIndex - 1][1].type === "data") {
-        const data = events[eventIndex - 1][1];
-        const chunks = context.sliceStream(data);
-        let index2 = chunks.length;
-        let bufferIndex = -1;
-        let size = 0;
-        let tabs;
-        while (index2--) {
-          const chunk = chunks[index2];
-          if (typeof chunk === "string") {
-            bufferIndex = chunk.length;
-            while (chunk.charCodeAt(bufferIndex - 1) === 32) {
-              size++;
-              bufferIndex--;
-            }
-            if (bufferIndex) break;
-            bufferIndex = -1;
-          } else if (chunk === -2) {
-            tabs = true;
-            size++;
-          } else if (chunk === -1) {
-          } else {
-            index2++;
-            break;
-          }
-        }
-        if (context._contentTypeTextTrailing && eventIndex === events.length) {
-          size = 0;
-        }
-        if (size) {
-          const token = {
-            type: eventIndex === events.length || tabs || size < 2 ? "lineSuffix" : "hardBreakTrailing",
-            start: {
-              _bufferIndex: index2 ? bufferIndex : data.start._bufferIndex + bufferIndex,
-              _index: data.start._index + index2,
-              line: data.end.line,
-              column: data.end.column - size,
-              offset: data.end.offset - size
-            },
-            end: {
-              ...data.end
-            }
-          };
-          data.end = {
-            ...token.start
-          };
-          if (data.start.offset === data.end.offset) {
-            Object.assign(data, token);
-          } else {
-            events.splice(eventIndex, 0, ["enter", token, context], ["exit", token, context]);
-            eventIndex += 2;
-          }
-        }
-        eventIndex++;
-      }
-    }
-    return events;
-  }
-
-  // node_modules/micromark/lib/constructs.js
-  var constructs_exports = {};
-  __export(constructs_exports, {
-    attentionMarkers: () => attentionMarkers,
-    contentInitial: () => contentInitial,
-    disable: () => disable,
-    document: () => document3,
-    flow: () => flow2,
-    flowInitial: () => flowInitial,
-    insideSpan: () => insideSpan,
-    string: () => string2,
-    text: () => text3
-  });
-  var document3 = {
-    [42]: list,
-    [43]: list,
-    [45]: list,
-    [48]: list,
-    [49]: list,
-    [50]: list,
-    [51]: list,
-    [52]: list,
-    [53]: list,
-    [54]: list,
-    [55]: list,
-    [56]: list,
-    [57]: list,
-    [62]: blockQuote
-  };
-  var contentInitial = {
-    [91]: definition
-  };
-  var flowInitial = {
-    [-2]: codeIndented,
-    [-1]: codeIndented,
-    [32]: codeIndented
-  };
-  var flow2 = {
-    [35]: headingAtx,
-    [42]: thematicBreak,
-    [45]: [setextUnderline, thematicBreak],
-    [60]: htmlFlow,
-    [61]: setextUnderline,
-    [95]: thematicBreak,
-    [96]: codeFenced,
-    [126]: codeFenced
-  };
-  var string2 = {
-    [38]: characterReference,
-    [92]: characterEscape
-  };
-  var text3 = {
-    [-5]: lineEnding,
-    [-4]: lineEnding,
-    [-3]: lineEnding,
-    [33]: labelStartImage,
-    [38]: characterReference,
-    [42]: attention,
-    [60]: [autolink, htmlText],
-    [91]: labelStartLink,
-    [92]: [hardBreakEscape, characterEscape],
-    [93]: labelEnd,
-    [95]: attention,
-    [96]: codeText
-  };
-  var insideSpan = {
-    null: [attention, resolver]
-  };
-  var attentionMarkers = {
-    null: [42, 95]
-  };
-  var disable = {
-    null: []
-  };
-
-  // node_modules/micromark/lib/create-tokenizer.js
-  function createTokenizer(parser, initialize, from) {
-    let point4 = {
-      _bufferIndex: -1,
-      _index: 0,
-      line: from && from.line || 1,
-      column: from && from.column || 1,
-      offset: from && from.offset || 0
-    };
-    const columnStart = {};
-    const resolveAllConstructs = [];
-    let chunks = [];
-    let stack = [];
-    let consumed = true;
-    const effects = {
-      attempt: constructFactory(onsuccessfulconstruct),
-      check: constructFactory(onsuccessfulcheck),
-      consume,
-      enter,
-      exit: exit3,
-      interrupt: constructFactory(onsuccessfulcheck, {
-        interrupt: true
-      })
-    };
-    const context = {
-      code: null,
-      containerState: {},
-      defineSkip,
-      events: [],
-      now,
-      parser,
-      previous: null,
-      sliceSerialize,
-      sliceStream,
-      write
-    };
-    let state = initialize.tokenize.call(context, effects);
-    let expectedCode;
-    if (initialize.resolveAll) {
-      resolveAllConstructs.push(initialize);
-    }
-    return context;
-    function write(slice) {
-      chunks = push(chunks, slice);
-      main();
-      if (chunks[chunks.length - 1] !== null) {
-        return [];
-      }
-      addResult(initialize, 0);
-      context.events = resolveAll(resolveAllConstructs, context.events, context);
-      return context.events;
-    }
-    function sliceSerialize(token, expandTabs) {
-      return serializeChunks(sliceStream(token), expandTabs);
-    }
-    function sliceStream(token) {
-      return sliceChunks(chunks, token);
-    }
-    function now() {
-      const {
-        _bufferIndex,
-        _index,
-        line,
-        column,
-        offset
-      } = point4;
-      return {
-        _bufferIndex,
-        _index,
-        line,
-        column,
-        offset
-      };
-    }
-    function defineSkip(value) {
-      columnStart[value.line] = value.column;
-      accountForPotentialSkip();
-    }
-    function main() {
-      let chunkIndex;
-      while (point4._index < chunks.length) {
-        const chunk = chunks[point4._index];
-        if (typeof chunk === "string") {
-          chunkIndex = point4._index;
-          if (point4._bufferIndex < 0) {
-            point4._bufferIndex = 0;
-          }
-          while (point4._index === chunkIndex && point4._bufferIndex < chunk.length) {
-            go(chunk.charCodeAt(point4._bufferIndex));
-          }
-        } else {
-          go(chunk);
-        }
-      }
-    }
-    function go(code4) {
-      consumed = void 0;
-      expectedCode = code4;
-      state = state(code4);
-    }
-    function consume(code4) {
-      if (markdownLineEnding(code4)) {
-        point4.line++;
-        point4.column = 1;
-        point4.offset += code4 === -3 ? 2 : 1;
-        accountForPotentialSkip();
-      } else if (code4 !== -1) {
-        point4.column++;
-        point4.offset++;
-      }
-      if (point4._bufferIndex < 0) {
-        point4._index++;
-      } else {
-        point4._bufferIndex++;
-        if (point4._bufferIndex === // Points w/ non-negative `_bufferIndex` reference
-        // strings.
-        /** @type {string} */
-        chunks[point4._index].length) {
-          point4._bufferIndex = -1;
-          point4._index++;
-        }
-      }
-      context.previous = code4;
-      consumed = true;
-    }
-    function enter(type, fields) {
-      const token = fields || {};
-      token.type = type;
-      token.start = now();
-      context.events.push(["enter", token, context]);
-      stack.push(token);
-      return token;
-    }
-    function exit3(type) {
-      const token = stack.pop();
-      token.end = now();
-      context.events.push(["exit", token, context]);
-      return token;
-    }
-    function onsuccessfulconstruct(construct, info) {
-      addResult(construct, info.from);
-    }
-    function onsuccessfulcheck(_, info) {
-      info.restore();
-    }
-    function constructFactory(onreturn, fields) {
-      return hook;
-      function hook(constructs2, returnState, bogusState) {
-        let listOfConstructs;
-        let constructIndex;
-        let currentConstruct;
-        let info;
-        return Array.isArray(constructs2) ? (
-          /* c8 ignore next 1 */
-          handleListOfConstructs(constructs2)
-        ) : "tokenize" in constructs2 ? (
-          // Looks like a construct.
-          handleListOfConstructs([
-            /** @type {Construct} */
-            constructs2
-          ])
-        ) : handleMapOfConstructs(constructs2);
-        function handleMapOfConstructs(map3) {
-          return start2;
-          function start2(code4) {
-            const left = code4 !== null && map3[code4];
-            const all2 = code4 !== null && map3.null;
-            const list4 = [
-              // To do: add more extension tests.
-              /* c8 ignore next 2 */
-              ...Array.isArray(left) ? left : left ? [left] : [],
-              ...Array.isArray(all2) ? all2 : all2 ? [all2] : []
-            ];
-            return handleListOfConstructs(list4)(code4);
-          }
-        }
-        function handleListOfConstructs(list4) {
-          listOfConstructs = list4;
-          constructIndex = 0;
-          if (list4.length === 0) {
-            return bogusState;
-          }
-          return handleConstruct(list4[constructIndex]);
-        }
-        function handleConstruct(construct) {
-          return start2;
-          function start2(code4) {
-            info = store();
-            currentConstruct = construct;
-            if (!construct.partial) {
-              context.currentConstruct = construct;
-            }
-            if (construct.name && context.parser.constructs.disable.null.includes(construct.name)) {
-              return nok(code4);
-            }
-            return construct.tokenize.call(
-              // If we do have fields, create an object w/ `context` as its
-              // prototype.
-              // This allows a “live binding”, which is needed for `interrupt`.
-              fields ? Object.assign(Object.create(context), fields) : context,
-              effects,
-              ok3,
-              nok
-            )(code4);
-          }
-        }
-        function ok3(code4) {
-          consumed = true;
-          onreturn(currentConstruct, info);
-          return returnState;
-        }
-        function nok(code4) {
-          consumed = true;
-          info.restore();
-          if (++constructIndex < listOfConstructs.length) {
-            return handleConstruct(listOfConstructs[constructIndex]);
-          }
-          return bogusState;
-        }
-      }
-    }
-    function addResult(construct, from2) {
-      if (construct.resolveAll && !resolveAllConstructs.includes(construct)) {
-        resolveAllConstructs.push(construct);
-      }
-      if (construct.resolve) {
-        splice(context.events, from2, context.events.length - from2, construct.resolve(context.events.slice(from2), context));
-      }
-      if (construct.resolveTo) {
-        context.events = construct.resolveTo(context.events, context);
-      }
-    }
-    function store() {
-      const startPoint = now();
-      const startPrevious = context.previous;
-      const startCurrentConstruct = context.currentConstruct;
-      const startEventsIndex = context.events.length;
-      const startStack = Array.from(stack);
-      return {
-        from: startEventsIndex,
-        restore
-      };
-      function restore() {
-        point4 = startPoint;
-        context.previous = startPrevious;
-        context.currentConstruct = startCurrentConstruct;
-        context.events.length = startEventsIndex;
-        stack = startStack;
-        accountForPotentialSkip();
-      }
-    }
-    function accountForPotentialSkip() {
-      if (point4.line in columnStart && point4.column < 2) {
-        point4.column = columnStart[point4.line];
-        point4.offset += columnStart[point4.line] - 1;
-      }
-    }
-  }
-  function sliceChunks(chunks, token) {
-    const startIndex = token.start._index;
-    const startBufferIndex = token.start._bufferIndex;
-    const endIndex = token.end._index;
-    const endBufferIndex = token.end._bufferIndex;
-    let view;
-    if (startIndex === endIndex) {
-      view = [chunks[startIndex].slice(startBufferIndex, endBufferIndex)];
-    } else {
-      view = chunks.slice(startIndex, endIndex);
-      if (startBufferIndex > -1) {
-        const head = view[0];
-        if (typeof head === "string") {
-          view[0] = head.slice(startBufferIndex);
-        } else {
-          view.shift();
-        }
-      }
-      if (endBufferIndex > 0) {
-        view.push(chunks[endIndex].slice(0, endBufferIndex));
-      }
-    }
-    return view;
-  }
-  function serializeChunks(chunks, expandTabs) {
-    let index2 = -1;
-    const result = [];
-    let atTab;
-    while (++index2 < chunks.length) {
-      const chunk = chunks[index2];
-      let value;
-      if (typeof chunk === "string") {
-        value = chunk;
-      } else switch (chunk) {
-        case -5: {
-          value = "\r";
-          break;
-        }
-        case -4: {
-          value = "\n";
-          break;
-        }
-        case -3: {
-          value = "\r\n";
-          break;
-        }
-        case -2: {
-          value = expandTabs ? " " : "	";
-          break;
-        }
-        case -1: {
-          if (!expandTabs && atTab) continue;
-          value = " ";
-          break;
-        }
-        default: {
-          value = String.fromCharCode(chunk);
-        }
-      }
-      atTab = chunk === -2;
-      result.push(value);
-    }
-    return result.join("");
-  }
-
-  // node_modules/micromark/lib/parse.js
-  function parse(options) {
-    const settings = options || {};
-    const constructs2 = (
-      /** @type {FullNormalizedExtension} */
-      combineExtensions([constructs_exports, ...settings.extensions || []])
-    );
-    const parser = {
-      constructs: constructs2,
-      content: create2(content),
-      defined: [],
-      document: create2(document2),
-      flow: create2(flow),
-      lazy: {},
-      string: create2(string),
-      text: create2(text2)
-    };
-    return parser;
-    function create2(initial) {
-      return creator;
-      function creator(from) {
-        return createTokenizer(parser, initial, from);
-      }
-    }
-  }
-
-  // node_modules/micromark/lib/postprocess.js
-  function postprocess(events) {
-    while (!subtokenize(events)) {
-    }
-    return events;
-  }
-
-  // node_modules/micromark/lib/preprocess.js
-  var search = /[\0\t\n\r]/g;
-  function preprocess() {
-    let column = 1;
-    let buffer = "";
-    let start2 = true;
-    let atCarriageReturn;
-    return preprocessor;
-    function preprocessor(value, encoding, end) {
-      const chunks = [];
-      let match;
-      let next;
-      let startPosition;
-      let endPosition;
-      let code4;
-      value = buffer + (typeof value === "string" ? value.toString() : new TextDecoder(encoding || void 0).decode(value));
-      startPosition = 0;
-      buffer = "";
-      if (start2) {
-        if (value.charCodeAt(0) === 65279) {
-          startPosition++;
-        }
-        start2 = void 0;
-      }
-      while (startPosition < value.length) {
-        search.lastIndex = startPosition;
-        match = search.exec(value);
-        endPosition = match && match.index !== void 0 ? match.index : value.length;
-        code4 = value.charCodeAt(endPosition);
-        if (!match) {
-          buffer = value.slice(startPosition);
-          break;
-        }
-        if (code4 === 10 && startPosition === endPosition && atCarriageReturn) {
-          chunks.push(-3);
-          atCarriageReturn = void 0;
-        } else {
-          if (atCarriageReturn) {
-            chunks.push(-5);
-            atCarriageReturn = void 0;
-          }
-          if (startPosition < endPosition) {
-            chunks.push(value.slice(startPosition, endPosition));
-            column += endPosition - startPosition;
-          }
-          switch (code4) {
-            case 0: {
-              chunks.push(65533);
-              column++;
-              break;
-            }
-            case 9: {
-              next = Math.ceil(column / 4) * 4;
-              chunks.push(-2);
-              while (column++ < next) chunks.push(-1);
-              break;
-            }
-            case 10: {
-              chunks.push(-4);
-              column = 1;
-              break;
-            }
-            default: {
-              atCarriageReturn = true;
-              column = 1;
-            }
-          }
-        }
-        startPosition = endPosition + 1;
-      }
-      if (end) {
-        if (atCarriageReturn) chunks.push(-5);
-        if (buffer) chunks.push(buffer);
-        chunks.push(null);
-      }
-      return chunks;
-    }
-  }
-
-  // node_modules/micromark-util-decode-string/index.js
-  var characterEscapeOrReference = /\\([!-/:-@[-`{-~])|&(#(?:\d{1,7}|x[\da-f]{1,6})|[\da-z]{1,31});/gi;
-  function decodeString(value) {
-    return value.replace(characterEscapeOrReference, decode);
-  }
-  function decode($0, $1, $2) {
-    if ($1) {
-      return $1;
-    }
-    const head = $2.charCodeAt(0);
-    if (head === 35) {
-      const head2 = $2.charCodeAt(1);
-      const hex = head2 === 120 || head2 === 88;
-      return decodeNumericCharacterReference($2.slice(hex ? 2 : 1), hex ? 16 : 10);
-    }
-    return decodeNamedCharacterReference($2) || $0;
-  }
-
-  // node_modules/mdast-util-from-markdown/lib/index.js
-  var own2 = {}.hasOwnProperty;
-  function fromMarkdown(value, encoding, options) {
-    if (typeof encoding !== "string") {
-      options = encoding;
-      encoding = void 0;
-    }
-    return compiler(options)(postprocess(parse(options).document().write(preprocess()(value, encoding, true))));
-  }
-  function compiler(options) {
-    const config = {
-      transforms: [],
-      canContainEols: ["emphasis", "fragment", "heading", "paragraph", "strong"],
-      enter: {
-        autolink: opener(link3),
-        autolinkProtocol: onenterdata,
-        autolinkEmail: onenterdata,
-        atxHeading: opener(heading3),
-        blockQuote: opener(blockQuote2),
-        characterEscape: onenterdata,
-        characterReference: onenterdata,
-        codeFenced: opener(codeFlow),
-        codeFencedFenceInfo: buffer,
-        codeFencedFenceMeta: buffer,
-        codeIndented: opener(codeFlow, buffer),
-        codeText: opener(codeText2, buffer),
-        codeTextData: onenterdata,
-        data: onenterdata,
-        codeFlowValue: onenterdata,
-        definition: opener(definition3),
-        definitionDestinationString: buffer,
-        definitionLabelString: buffer,
-        definitionTitleString: buffer,
-        emphasis: opener(emphasis3),
-        hardBreakEscape: opener(hardBreak3),
-        hardBreakTrailing: opener(hardBreak3),
-        htmlFlow: opener(html5, buffer),
-        htmlFlowData: onenterdata,
-        htmlText: opener(html5, buffer),
-        htmlTextData: onenterdata,
-        image: opener(image3),
-        label: buffer,
-        link: opener(link3),
-        listItem: opener(listItem3),
-        listItemValue: onenterlistitemvalue,
-        listOrdered: opener(list4, onenterlistordered),
-        listUnordered: opener(list4),
-        paragraph: opener(paragraph3),
-        reference: onenterreference,
-        referenceString: buffer,
-        resourceDestinationString: buffer,
-        resourceTitleString: buffer,
-        setextHeading: opener(heading3),
-        strong: opener(strong3),
-        thematicBreak: opener(thematicBreak4)
-      },
-      exit: {
-        atxHeading: closer(),
-        atxHeadingSequence: onexitatxheadingsequence,
-        autolink: closer(),
-        autolinkEmail: onexitautolinkemail,
-        autolinkProtocol: onexitautolinkprotocol,
-        blockQuote: closer(),
-        characterEscapeValue: onexitdata,
-        characterReferenceMarkerHexadecimal: onexitcharacterreferencemarker,
-        characterReferenceMarkerNumeric: onexitcharacterreferencemarker,
-        characterReferenceValue: onexitcharacterreferencevalue,
-        characterReference: onexitcharacterreference,
-        codeFenced: closer(onexitcodefenced),
-        codeFencedFence: onexitcodefencedfence,
-        codeFencedFenceInfo: onexitcodefencedfenceinfo,
-        codeFencedFenceMeta: onexitcodefencedfencemeta,
-        codeFlowValue: onexitdata,
-        codeIndented: closer(onexitcodeindented),
-        codeText: closer(onexitcodetext),
-        codeTextData: onexitdata,
-        data: onexitdata,
-        definition: closer(),
-        definitionDestinationString: onexitdefinitiondestinationstring,
-        definitionLabelString: onexitdefinitionlabelstring,
-        definitionTitleString: onexitdefinitiontitlestring,
-        emphasis: closer(),
-        hardBreakEscape: closer(onexithardbreak),
-        hardBreakTrailing: closer(onexithardbreak),
-        htmlFlow: closer(onexithtmlflow),
-        htmlFlowData: onexitdata,
-        htmlText: closer(onexithtmltext),
-        htmlTextData: onexitdata,
-        image: closer(onexitimage),
-        label: onexitlabel,
-        labelText: onexitlabeltext,
-        lineEnding: onexitlineending,
-        link: closer(onexitlink),
-        listItem: closer(),
-        listOrdered: closer(),
-        listUnordered: closer(),
-        paragraph: closer(),
-        referenceString: onexitreferencestring,
-        resourceDestinationString: onexitresourcedestinationstring,
-        resourceTitleString: onexitresourcetitlestring,
-        resource: onexitresource,
-        setextHeading: closer(onexitsetextheading),
-        setextHeadingLineSequence: onexitsetextheadinglinesequence,
-        setextHeadingText: onexitsetextheadingtext,
-        strong: closer(),
-        thematicBreak: closer()
-      }
-    };
-    configure(config, (options || {}).mdastExtensions || []);
-    const data = {};
-    return compile;
-    function compile(events) {
-      let tree = {
-        type: "root",
-        children: []
-      };
-      const context = {
-        stack: [tree],
-        tokenStack: [],
-        config,
-        enter,
-        exit: exit3,
-        buffer,
-        resume,
-        data
-      };
-      const listStack = [];
-      let index2 = -1;
-      while (++index2 < events.length) {
-        if (events[index2][1].type === "listOrdered" || events[index2][1].type === "listUnordered") {
-          if (events[index2][0] === "enter") {
-            listStack.push(index2);
-          } else {
-            const tail = listStack.pop();
-            index2 = prepareList(events, tail, index2);
-          }
-        }
-      }
-      index2 = -1;
-      while (++index2 < events.length) {
-        const handler = config[events[index2][0]];
-        if (own2.call(handler, events[index2][1].type)) {
-          handler[events[index2][1].type].call(Object.assign({
-            sliceSerialize: events[index2][2].sliceSerialize
-          }, context), events[index2][1]);
-        }
-      }
-      if (context.tokenStack.length > 0) {
-        const tail = context.tokenStack[context.tokenStack.length - 1];
-        const handler = tail[1] || defaultOnError;
-        handler.call(context, void 0, tail[0]);
-      }
-      tree.position = {
-        start: point3(events.length > 0 ? events[0][1].start : {
-          line: 1,
-          column: 1,
-          offset: 0
-        }),
-        end: point3(events.length > 0 ? events[events.length - 2][1].end : {
-          line: 1,
-          column: 1,
-          offset: 0
-        })
-      };
-      index2 = -1;
-      while (++index2 < config.transforms.length) {
-        tree = config.transforms[index2](tree) || tree;
-      }
-      return tree;
-    }
-    function prepareList(events, start2, length) {
-      let index2 = start2 - 1;
-      let containerBalance = -1;
-      let listSpread = false;
-      let listItem4;
-      let lineIndex;
-      let firstBlankLineIndex;
-      let atMarker;
-      while (++index2 <= length) {
-        const event = events[index2];
-        switch (event[1].type) {
-          case "listUnordered":
-          case "listOrdered":
-          case "blockQuote": {
-            if (event[0] === "enter") {
-              containerBalance++;
-            } else {
-              containerBalance--;
-            }
-            atMarker = void 0;
-            break;
-          }
-          case "lineEndingBlank": {
-            if (event[0] === "enter") {
-              if (listItem4 && !atMarker && !containerBalance && !firstBlankLineIndex) {
-                firstBlankLineIndex = index2;
-              }
-              atMarker = void 0;
-            }
-            break;
-          }
-          case "linePrefix":
-          case "listItemValue":
-          case "listItemMarker":
-          case "listItemPrefix":
-          case "listItemPrefixWhitespace": {
-            break;
-          }
-          default: {
-            atMarker = void 0;
-          }
-        }
-        if (!containerBalance && event[0] === "enter" && event[1].type === "listItemPrefix" || containerBalance === -1 && event[0] === "exit" && (event[1].type === "listUnordered" || event[1].type === "listOrdered")) {
-          if (listItem4) {
-            let tailIndex = index2;
-            lineIndex = void 0;
-            while (tailIndex--) {
-              const tailEvent = events[tailIndex];
-              if (tailEvent[1].type === "lineEnding" || tailEvent[1].type === "lineEndingBlank") {
-                if (tailEvent[0] === "exit") continue;
-                if (lineIndex) {
-                  events[lineIndex][1].type = "lineEndingBlank";
-                  listSpread = true;
-                }
-                tailEvent[1].type = "lineEnding";
-                lineIndex = tailIndex;
-              } else if (tailEvent[1].type === "linePrefix" || tailEvent[1].type === "blockQuotePrefix" || tailEvent[1].type === "blockQuotePrefixWhitespace" || tailEvent[1].type === "blockQuoteMarker" || tailEvent[1].type === "listItemIndent") {
-              } else {
-                break;
-              }
-            }
-            if (firstBlankLineIndex && (!lineIndex || firstBlankLineIndex < lineIndex)) {
-              listItem4._spread = true;
-            }
-            listItem4.end = Object.assign({}, lineIndex ? events[lineIndex][1].start : event[1].end);
-            events.splice(lineIndex || index2, 0, ["exit", listItem4, event[2]]);
-            index2++;
-            length++;
-          }
-          if (event[1].type === "listItemPrefix") {
-            const item = {
-              type: "listItem",
-              _spread: false,
-              start: Object.assign({}, event[1].start),
-              // @ts-expect-error: we’ll add `end` in a second.
-              end: void 0
-            };
-            listItem4 = item;
-            events.splice(index2, 0, ["enter", item, event[2]]);
-            index2++;
-            length++;
-            firstBlankLineIndex = void 0;
-            atMarker = true;
-          }
-        }
-      }
-      events[start2][1]._spread = listSpread;
-      return length;
-    }
-    function opener(create2, and) {
-      return open;
-      function open(token) {
-        enter.call(this, create2(token), token);
-        if (and) and.call(this, token);
-      }
-    }
-    function buffer() {
-      this.stack.push({
-        type: "fragment",
-        children: []
-      });
-    }
-    function enter(node2, token, errorHandler) {
-      const parent = this.stack[this.stack.length - 1];
-      const siblings = parent.children;
-      siblings.push(node2);
-      this.stack.push(node2);
-      this.tokenStack.push([token, errorHandler || void 0]);
-      node2.position = {
-        start: point3(token.start),
-        // @ts-expect-error: `end` will be patched later.
-        end: void 0
-      };
-    }
-    function closer(and) {
-      return close;
-      function close(token) {
-        if (and) and.call(this, token);
-        exit3.call(this, token);
-      }
-    }
-    function exit3(token, onExitError) {
-      const node2 = this.stack.pop();
-      const open = this.tokenStack.pop();
-      if (!open) {
-        throw new Error("Cannot close `" + token.type + "` (" + stringifyPosition({
-          start: token.start,
-          end: token.end
-        }) + "): it\u2019s not open");
-      } else if (open[0].type !== token.type) {
-        if (onExitError) {
-          onExitError.call(this, token, open[0]);
-        } else {
-          const handler = open[1] || defaultOnError;
-          handler.call(this, token, open[0]);
-        }
-      }
-      node2.position.end = point3(token.end);
-    }
-    function resume() {
-      return toString(this.stack.pop());
-    }
-    function onenterlistordered() {
-      this.data.expectingFirstListItemValue = true;
-    }
-    function onenterlistitemvalue(token) {
-      if (this.data.expectingFirstListItemValue) {
-        const ancestor = this.stack[this.stack.length - 2];
-        ancestor.start = Number.parseInt(this.sliceSerialize(token), 10);
-        this.data.expectingFirstListItemValue = void 0;
-      }
-    }
-    function onexitcodefencedfenceinfo() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.lang = data2;
-    }
-    function onexitcodefencedfencemeta() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.meta = data2;
-    }
-    function onexitcodefencedfence() {
-      if (this.data.flowCodeInside) return;
-      this.buffer();
-      this.data.flowCodeInside = true;
-    }
-    function onexitcodefenced() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.value = data2.replace(/^(\r?\n|\r)|(\r?\n|\r)$/g, "");
-      this.data.flowCodeInside = void 0;
-    }
-    function onexitcodeindented() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.value = data2.replace(/(\r?\n|\r)$/g, "");
-    }
-    function onexitdefinitionlabelstring(token) {
-      const label = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.label = label;
-      node2.identifier = normalizeIdentifier(this.sliceSerialize(token)).toLowerCase();
-    }
-    function onexitdefinitiontitlestring() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.title = data2;
-    }
-    function onexitdefinitiondestinationstring() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.url = data2;
-    }
-    function onexitatxheadingsequence(token) {
-      const node2 = this.stack[this.stack.length - 1];
-      if (!node2.depth) {
-        const depth = this.sliceSerialize(token).length;
-        node2.depth = depth;
-      }
-    }
-    function onexitsetextheadingtext() {
-      this.data.setextHeadingSlurpLineEnding = true;
-    }
-    function onexitsetextheadinglinesequence(token) {
-      const node2 = this.stack[this.stack.length - 1];
-      node2.depth = this.sliceSerialize(token).codePointAt(0) === 61 ? 1 : 2;
-    }
-    function onexitsetextheading() {
-      this.data.setextHeadingSlurpLineEnding = void 0;
-    }
-    function onenterdata(token) {
-      const node2 = this.stack[this.stack.length - 1];
-      const siblings = node2.children;
-      let tail = siblings[siblings.length - 1];
-      if (!tail || tail.type !== "text") {
-        tail = text7();
-        tail.position = {
-          start: point3(token.start),
-          // @ts-expect-error: we’ll add `end` later.
-          end: void 0
-        };
-        siblings.push(tail);
-      }
-      this.stack.push(tail);
-    }
-    function onexitdata(token) {
-      const tail = this.stack.pop();
-      tail.value += this.sliceSerialize(token);
-      tail.position.end = point3(token.end);
-    }
-    function onexitlineending(token) {
-      const context = this.stack[this.stack.length - 1];
-      if (this.data.atHardBreak) {
-        const tail = context.children[context.children.length - 1];
-        tail.position.end = point3(token.end);
-        this.data.atHardBreak = void 0;
-        return;
-      }
-      if (!this.data.setextHeadingSlurpLineEnding && config.canContainEols.includes(context.type)) {
-        onenterdata.call(this, token);
-        onexitdata.call(this, token);
-      }
-    }
-    function onexithardbreak() {
-      this.data.atHardBreak = true;
-    }
-    function onexithtmlflow() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.value = data2;
-    }
-    function onexithtmltext() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.value = data2;
-    }
-    function onexitcodetext() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.value = data2;
-    }
-    function onexitlink() {
-      const node2 = this.stack[this.stack.length - 1];
-      if (this.data.inReference) {
-        const referenceType = this.data.referenceType || "shortcut";
-        node2.type += "Reference";
-        node2.referenceType = referenceType;
-        delete node2.url;
-        delete node2.title;
-      } else {
-        delete node2.identifier;
-        delete node2.label;
-      }
-      this.data.referenceType = void 0;
-    }
-    function onexitimage() {
-      const node2 = this.stack[this.stack.length - 1];
-      if (this.data.inReference) {
-        const referenceType = this.data.referenceType || "shortcut";
-        node2.type += "Reference";
-        node2.referenceType = referenceType;
-        delete node2.url;
-        delete node2.title;
-      } else {
-        delete node2.identifier;
-        delete node2.label;
-      }
-      this.data.referenceType = void 0;
-    }
-    function onexitlabeltext(token) {
-      const string3 = this.sliceSerialize(token);
-      const ancestor = this.stack[this.stack.length - 2];
-      ancestor.label = decodeString(string3);
-      ancestor.identifier = normalizeIdentifier(string3).toLowerCase();
-    }
-    function onexitlabel() {
-      const fragment = this.stack[this.stack.length - 1];
-      const value = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      this.data.inReference = true;
-      if (node2.type === "link") {
-        const children = fragment.children;
-        node2.children = children;
-      } else {
-        node2.alt = value;
-      }
-    }
-    function onexitresourcedestinationstring() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.url = data2;
-    }
-    function onexitresourcetitlestring() {
-      const data2 = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.title = data2;
-    }
-    function onexitresource() {
-      this.data.inReference = void 0;
-    }
-    function onenterreference() {
-      this.data.referenceType = "collapsed";
-    }
-    function onexitreferencestring(token) {
-      const label = this.resume();
-      const node2 = this.stack[this.stack.length - 1];
-      node2.label = label;
-      node2.identifier = normalizeIdentifier(this.sliceSerialize(token)).toLowerCase();
-      this.data.referenceType = "full";
-    }
-    function onexitcharacterreferencemarker(token) {
-      this.data.characterReferenceType = token.type;
-    }
-    function onexitcharacterreferencevalue(token) {
-      const data2 = this.sliceSerialize(token);
-      const type = this.data.characterReferenceType;
-      let value;
-      if (type) {
-        value = decodeNumericCharacterReference(data2, type === "characterReferenceMarkerNumeric" ? 10 : 16);
-        this.data.characterReferenceType = void 0;
-      } else {
-        const result = decodeNamedCharacterReference(data2);
-        value = result;
-      }
-      const tail = this.stack[this.stack.length - 1];
-      tail.value += value;
-    }
-    function onexitcharacterreference(token) {
-      const tail = this.stack.pop();
-      tail.position.end = point3(token.end);
-    }
-    function onexitautolinkprotocol(token) {
-      onexitdata.call(this, token);
-      const node2 = this.stack[this.stack.length - 1];
-      node2.url = this.sliceSerialize(token);
-    }
-    function onexitautolinkemail(token) {
-      onexitdata.call(this, token);
-      const node2 = this.stack[this.stack.length - 1];
-      node2.url = "mailto:" + this.sliceSerialize(token);
-    }
-    function blockQuote2() {
-      return {
-        type: "blockquote",
-        children: []
-      };
-    }
-    function codeFlow() {
-      return {
-        type: "code",
-        lang: null,
-        meta: null,
-        value: ""
-      };
-    }
-    function codeText2() {
-      return {
-        type: "inlineCode",
-        value: ""
-      };
-    }
-    function definition3() {
-      return {
-        type: "definition",
-        identifier: "",
-        label: null,
-        title: null,
-        url: ""
-      };
-    }
-    function emphasis3() {
-      return {
-        type: "emphasis",
-        children: []
-      };
-    }
-    function heading3() {
-      return {
-        type: "heading",
-        // @ts-expect-error `depth` will be set later.
-        depth: 0,
-        children: []
-      };
-    }
-    function hardBreak3() {
-      return {
-        type: "break"
-      };
-    }
-    function html5() {
-      return {
-        type: "html",
-        value: ""
-      };
-    }
-    function image3() {
-      return {
-        type: "image",
-        title: null,
-        url: "",
-        alt: null
-      };
-    }
-    function link3() {
-      return {
-        type: "link",
-        title: null,
-        url: "",
-        children: []
-      };
-    }
-    function list4(token) {
-      return {
-        type: "list",
-        ordered: token.type === "listOrdered",
-        start: null,
-        spread: token._spread,
-        children: []
-      };
-    }
-    function listItem3(token) {
-      return {
-        type: "listItem",
-        spread: token._spread,
-        checked: null,
-        children: []
-      };
-    }
-    function paragraph3() {
-      return {
-        type: "paragraph",
-        children: []
-      };
-    }
-    function strong3() {
-      return {
-        type: "strong",
-        children: []
-      };
-    }
-    function text7() {
-      return {
-        type: "text",
-        value: ""
-      };
-    }
-    function thematicBreak4() {
-      return {
-        type: "thematicBreak"
-      };
-    }
-  }
-  function point3(d) {
-    return {
-      line: d.line,
-      column: d.column,
-      offset: d.offset
-    };
-  }
-  function configure(combined, extensions) {
-    let index2 = -1;
-    while (++index2 < extensions.length) {
-      const value = extensions[index2];
-      if (Array.isArray(value)) {
-        configure(combined, value);
-      } else {
-        extension(combined, value);
-      }
-    }
-  }
-  function extension(combined, extension2) {
-    let key;
-    for (key in extension2) {
-      if (own2.call(extension2, key)) {
-        switch (key) {
-          case "canContainEols": {
-            const right = extension2[key];
-            if (right) {
-              combined[key].push(...right);
-            }
-            break;
-          }
-          case "transforms": {
-            const right = extension2[key];
-            if (right) {
-              combined[key].push(...right);
-            }
-            break;
-          }
-          case "enter":
-          case "exit": {
-            const right = extension2[key];
-            if (right) {
-              Object.assign(combined[key], right);
-            }
-            break;
-          }
-        }
-      }
-    }
-  }
-  function defaultOnError(left, right) {
-    if (left) {
-      throw new Error("Cannot close `" + left.type + "` (" + stringifyPosition({
-        start: left.start,
-        end: left.end
-      }) + "): a different token (`" + right.type + "`, " + stringifyPosition({
-        start: right.start,
-        end: right.end
-      }) + ") is open");
-    } else {
-      throw new Error("Cannot close document, a token (`" + right.type + "`, " + stringifyPosition({
-        start: right.start,
-        end: right.end
-      }) + ") is still open");
-    }
-  }
-
-  // node_modules/remark-parse/lib/index.js
-  function remarkParse(options) {
-    const self2 = this;
-    self2.parser = parser;
-    function parser(doc) {
-      return fromMarkdown(doc, {
-        ...self2.data("settings"),
-        ...options,
-        // Note: these options are not in the readme.
-        // The goal is for them to be set by plugins on `data` instead of being
-        // passed by users.
-        extensions: self2.data("micromarkExtensions") || [],
-        mdastExtensions: self2.data("fromMarkdownExtensions") || []
-      });
-    }
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/blockquote.js
-  function blockquote(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "blockquote",
-      properties: {},
-      children: state.wrap(state.all(node2), true)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/break.js
-  function hardBreak(state, node2) {
-    const result = { type: "element", tagName: "br", properties: {}, children: [] };
-    state.patch(node2, result);
-    return [state.applyData(node2, result), { type: "text", value: "\n" }];
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/code.js
-  function code(state, node2) {
-    const value = node2.value ? node2.value + "\n" : "";
-    const properties = {};
-    const language = node2.lang ? node2.lang.split(/\s+/) : [];
-    if (language.length > 0) {
-      properties.className = ["language-" + language[0]];
-    }
-    let result = {
-      type: "element",
-      tagName: "code",
-      properties,
-      children: [{ type: "text", value }]
-    };
-    if (node2.meta) {
-      result.data = { meta: node2.meta };
-    }
-    state.patch(node2, result);
-    result = state.applyData(node2, result);
-    result = { type: "element", tagName: "pre", properties: {}, children: [result] };
-    state.patch(node2, result);
-    return result;
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/delete.js
-  function strikethrough(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "del",
-      properties: {},
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/emphasis.js
-  function emphasis(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "em",
-      properties: {},
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/footnote-reference.js
-  function footnoteReference(state, node2) {
-    const clobberPrefix = typeof state.options.clobberPrefix === "string" ? state.options.clobberPrefix : "user-content-";
-    const id = String(node2.identifier).toUpperCase();
-    const safeId = normalizeUri(id.toLowerCase());
-    const index2 = state.footnoteOrder.indexOf(id);
-    let counter;
-    let reuseCounter = state.footnoteCounts.get(id);
-    if (reuseCounter === void 0) {
-      reuseCounter = 0;
-      state.footnoteOrder.push(id);
-      counter = state.footnoteOrder.length;
-    } else {
-      counter = index2 + 1;
-    }
-    reuseCounter += 1;
-    state.footnoteCounts.set(id, reuseCounter);
-    const link3 = {
-      type: "element",
-      tagName: "a",
-      properties: {
-        href: "#" + clobberPrefix + "fn-" + safeId,
-        id: clobberPrefix + "fnref-" + safeId + (reuseCounter > 1 ? "-" + reuseCounter : ""),
-        dataFootnoteRef: true,
-        ariaDescribedBy: ["footnote-label"]
-      },
-      children: [{ type: "text", value: String(counter) }]
-    };
-    state.patch(node2, link3);
-    const sup = {
-      type: "element",
-      tagName: "sup",
-      properties: {},
-      children: [link3]
-    };
-    state.patch(node2, sup);
-    return state.applyData(node2, sup);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/heading.js
-  function heading(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "h" + node2.depth,
-      properties: {},
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/html.js
-  function html3(state, node2) {
-    if (state.options.allowDangerousHtml) {
-      const result = { type: "raw", value: node2.value };
-      state.patch(node2, result);
-      return state.applyData(node2, result);
-    }
-    return void 0;
-  }
-
-  // node_modules/mdast-util-to-hast/lib/revert.js
-  function revert(state, node2) {
-    const subtype = node2.referenceType;
-    let suffix = "]";
-    if (subtype === "collapsed") {
-      suffix += "[]";
-    } else if (subtype === "full") {
-      suffix += "[" + (node2.label || node2.identifier) + "]";
-    }
-    if (node2.type === "imageReference") {
-      return [{ type: "text", value: "![" + node2.alt + suffix }];
-    }
-    const contents = state.all(node2);
-    const head = contents[0];
-    if (head && head.type === "text") {
-      head.value = "[" + head.value;
-    } else {
-      contents.unshift({ type: "text", value: "[" });
-    }
-    const tail = contents[contents.length - 1];
-    if (tail && tail.type === "text") {
-      tail.value += suffix;
-    } else {
-      contents.push({ type: "text", value: suffix });
-    }
-    return contents;
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/image-reference.js
-  function imageReference(state, node2) {
-    const id = String(node2.identifier).toUpperCase();
-    const definition3 = state.definitionById.get(id);
-    if (!definition3) {
-      return revert(state, node2);
-    }
-    const properties = { src: normalizeUri(definition3.url || ""), alt: node2.alt };
-    if (definition3.title !== null && definition3.title !== void 0) {
-      properties.title = definition3.title;
-    }
-    const result = { type: "element", tagName: "img", properties, children: [] };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/image.js
-  function image(state, node2) {
-    const properties = { src: normalizeUri(node2.url) };
-    if (node2.alt !== null && node2.alt !== void 0) {
-      properties.alt = node2.alt;
-    }
-    if (node2.title !== null && node2.title !== void 0) {
-      properties.title = node2.title;
-    }
-    const result = { type: "element", tagName: "img", properties, children: [] };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/inline-code.js
-  function inlineCode(state, node2) {
-    const text7 = { type: "text", value: node2.value.replace(/\r?\n|\r/g, " ") };
-    state.patch(node2, text7);
-    const result = {
-      type: "element",
-      tagName: "code",
-      properties: {},
-      children: [text7]
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/link-reference.js
-  function linkReference(state, node2) {
-    const id = String(node2.identifier).toUpperCase();
-    const definition3 = state.definitionById.get(id);
-    if (!definition3) {
-      return revert(state, node2);
-    }
-    const properties = { href: normalizeUri(definition3.url || "") };
-    if (definition3.title !== null && definition3.title !== void 0) {
-      properties.title = definition3.title;
-    }
-    const result = {
-      type: "element",
-      tagName: "a",
-      properties,
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/link.js
-  function link(state, node2) {
-    const properties = { href: normalizeUri(node2.url) };
-    if (node2.title !== null && node2.title !== void 0) {
-      properties.title = node2.title;
-    }
-    const result = {
-      type: "element",
-      tagName: "a",
-      properties,
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/list-item.js
-  function listItem(state, node2, parent) {
-    const results = state.all(node2);
-    const loose = parent ? listLoose(parent) : listItemLoose(node2);
-    const properties = {};
-    const children = [];
-    if (typeof node2.checked === "boolean") {
-      const head = results[0];
-      let paragraph3;
-      if (head && head.type === "element" && head.tagName === "p") {
-        paragraph3 = head;
-      } else {
-        paragraph3 = { type: "element", tagName: "p", properties: {}, children: [] };
-        results.unshift(paragraph3);
-      }
-      if (paragraph3.children.length > 0) {
-        paragraph3.children.unshift({ type: "text", value: " " });
-      }
-      paragraph3.children.unshift({
-        type: "element",
-        tagName: "input",
-        properties: { type: "checkbox", checked: node2.checked, disabled: true },
-        children: []
-      });
-      properties.className = ["task-list-item"];
-    }
-    let index2 = -1;
-    while (++index2 < results.length) {
-      const child = results[index2];
-      if (loose || index2 !== 0 || child.type !== "element" || child.tagName !== "p") {
-        children.push({ type: "text", value: "\n" });
-      }
-      if (child.type === "element" && child.tagName === "p" && !loose) {
-        children.push(...child.children);
-      } else {
-        children.push(child);
-      }
-    }
-    const tail = results[results.length - 1];
-    if (tail && (loose || tail.type !== "element" || tail.tagName !== "p")) {
-      children.push({ type: "text", value: "\n" });
-    }
-    const result = { type: "element", tagName: "li", properties, children };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-  function listLoose(node2) {
-    let loose = false;
-    if (node2.type === "list") {
-      loose = node2.spread || false;
-      const children = node2.children;
-      let index2 = -1;
-      while (!loose && ++index2 < children.length) {
-        loose = listItemLoose(children[index2]);
-      }
-    }
-    return loose;
-  }
-  function listItemLoose(node2) {
-    const spread = node2.spread;
-    return spread === null || spread === void 0 ? node2.children.length > 1 : spread;
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/list.js
-  function list2(state, node2) {
-    const properties = {};
-    const results = state.all(node2);
-    let index2 = -1;
-    if (typeof node2.start === "number" && node2.start !== 1) {
-      properties.start = node2.start;
-    }
-    while (++index2 < results.length) {
-      const child = results[index2];
-      if (child.type === "element" && child.tagName === "li" && child.properties && Array.isArray(child.properties.className) && child.properties.className.includes("task-list-item")) {
-        properties.className = ["contains-task-list"];
-        break;
-      }
-    }
-    const result = {
-      type: "element",
-      tagName: node2.ordered ? "ol" : "ul",
-      properties,
-      children: state.wrap(results, true)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/paragraph.js
-  function paragraph(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "p",
-      properties: {},
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/root.js
-  function root2(state, node2) {
-    const result = { type: "root", children: state.wrap(state.all(node2)) };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/strong.js
-  function strong(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "strong",
-      properties: {},
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/table.js
-  function table(state, node2) {
-    const rows = state.all(node2);
-    const firstRow = rows.shift();
-    const tableContent = [];
-    if (firstRow) {
-      const head = {
-        type: "element",
-        tagName: "thead",
-        properties: {},
-        children: state.wrap([firstRow], true)
-      };
-      state.patch(node2.children[0], head);
-      tableContent.push(head);
-    }
-    if (rows.length > 0) {
-      const body = {
-        type: "element",
-        tagName: "tbody",
-        properties: {},
-        children: state.wrap(rows, true)
-      };
-      const start2 = pointStart(node2.children[1]);
-      const end = pointEnd(node2.children[node2.children.length - 1]);
-      if (start2 && end) body.position = { start: start2, end };
-      tableContent.push(body);
-    }
-    const result = {
-      type: "element",
-      tagName: "table",
-      properties: {},
-      children: state.wrap(tableContent, true)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/table-row.js
-  function tableRow(state, node2, parent) {
-    const siblings = parent ? parent.children : void 0;
-    const rowIndex = siblings ? siblings.indexOf(node2) : 1;
-    const tagName = rowIndex === 0 ? "th" : "td";
-    const align = parent && parent.type === "table" ? parent.align : void 0;
-    const length = align ? align.length : node2.children.length;
-    let cellIndex = -1;
-    const cells = [];
-    while (++cellIndex < length) {
-      const cell = node2.children[cellIndex];
-      const properties = {};
-      const alignValue = align ? align[cellIndex] : void 0;
-      if (alignValue) {
-        properties.align = alignValue;
-      }
-      let result2 = { type: "element", tagName, properties, children: [] };
-      if (cell) {
-        result2.children = state.all(cell);
-        state.patch(cell, result2);
-        result2 = state.applyData(cell, result2);
-      }
-      cells.push(result2);
-    }
-    const result = {
-      type: "element",
-      tagName: "tr",
-      properties: {},
-      children: state.wrap(cells, true)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/table-cell.js
-  function tableCell(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "td",
-      // Assume body cell.
-      properties: {},
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/trim-lines/index.js
-  var tab = 9;
-  var space = 32;
-  function trimLines(value) {
-    const source = String(value);
-    const search2 = /\r?\n|\r/g;
-    let match = search2.exec(source);
-    let last = 0;
-    const lines = [];
-    while (match) {
-      lines.push(
-        trimLine(source.slice(last, match.index), last > 0, true),
-        match[0]
-      );
-      last = match.index + match[0].length;
-      match = search2.exec(source);
-    }
-    lines.push(trimLine(source.slice(last), last > 0, false));
-    return lines.join("");
-  }
-  function trimLine(value, start2, end) {
-    let startIndex = 0;
-    let endIndex = value.length;
-    if (start2) {
-      let code4 = value.codePointAt(startIndex);
-      while (code4 === tab || code4 === space) {
-        startIndex++;
-        code4 = value.codePointAt(startIndex);
-      }
-    }
-    if (end) {
-      let code4 = value.codePointAt(endIndex - 1);
-      while (code4 === tab || code4 === space) {
-        endIndex--;
-        code4 = value.codePointAt(endIndex - 1);
-      }
-    }
-    return endIndex > startIndex ? value.slice(startIndex, endIndex) : "";
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/text.js
-  function text4(state, node2) {
-    const result = { type: "text", value: trimLines(String(node2.value)) };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/thematic-break.js
-  function thematicBreak2(state, node2) {
-    const result = {
-      type: "element",
-      tagName: "hr",
-      properties: {},
-      children: []
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/handlers/index.js
-  var handlers = {
-    blockquote,
-    break: hardBreak,
-    code,
-    delete: strikethrough,
-    emphasis,
-    footnoteReference,
-    heading,
-    html: html3,
-    imageReference,
-    image,
-    inlineCode,
-    linkReference,
-    link,
-    listItem,
-    list: list2,
-    paragraph,
-    // @ts-expect-error: root is different, but hard to type.
-    root: root2,
-    strong,
-    table,
-    tableCell,
-    tableRow,
-    text: text4,
-    thematicBreak: thematicBreak2,
-    toml: ignore,
-    yaml: ignore,
-    definition: ignore,
-    footnoteDefinition: ignore
-  };
-  function ignore() {
-    return void 0;
-  }
-
-  // node_modules/@ungap/structured-clone/esm/types.js
-  var VOID = -1;
-  var PRIMITIVE = 0;
-  var ARRAY = 1;
-  var OBJECT = 2;
-  var DATE = 3;
-  var REGEXP = 4;
-  var MAP = 5;
-  var SET = 6;
-  var ERROR = 7;
-  var BIGINT = 8;
-
-  // node_modules/@ungap/structured-clone/esm/deserialize.js
-  var env = typeof self === "object" ? self : globalThis;
-  var deserializer = ($, _) => {
-    const as = (out, index2) => {
-      $.set(index2, out);
-      return out;
-    };
-    const unpair = (index2) => {
-      if ($.has(index2))
-        return $.get(index2);
-      const [type, value] = _[index2];
-      switch (type) {
-        case PRIMITIVE:
-        case VOID:
-          return as(value, index2);
-        case ARRAY: {
-          const arr = as([], index2);
-          for (const index3 of value)
-            arr.push(unpair(index3));
-          return arr;
-        }
-        case OBJECT: {
-          const object = as({}, index2);
-          for (const [key, index3] of value)
-            object[unpair(key)] = unpair(index3);
-          return object;
-        }
-        case DATE:
-          return as(new Date(value), index2);
-        case REGEXP: {
-          const { source, flags } = value;
-          return as(new RegExp(source, flags), index2);
-        }
-        case MAP: {
-          const map3 = as(/* @__PURE__ */ new Map(), index2);
-          for (const [key, index3] of value)
-            map3.set(unpair(key), unpair(index3));
-          return map3;
-        }
-        case SET: {
-          const set = as(/* @__PURE__ */ new Set(), index2);
-          for (const index3 of value)
-            set.add(unpair(index3));
-          return set;
-        }
-        case ERROR: {
-          const { name: name2, message } = value;
-          return as(new env[name2](message), index2);
-        }
-        case BIGINT:
-          return as(BigInt(value), index2);
-        case "BigInt":
-          return as(Object(BigInt(value)), index2);
-        case "ArrayBuffer":
-          return as(new Uint8Array(value).buffer, value);
-        case "DataView": {
-          const { buffer } = new Uint8Array(value);
-          return as(new DataView(buffer), value);
-        }
-      }
-      return as(new env[type](value), index2);
-    };
-    return unpair;
-  };
-  var deserialize = (serialized) => deserializer(/* @__PURE__ */ new Map(), serialized)(0);
-
-  // node_modules/@ungap/structured-clone/esm/serialize.js
-  var EMPTY = "";
-  var { toString: toString2 } = {};
-  var { keys } = Object;
-  var typeOf = (value) => {
-    const type = typeof value;
-    if (type !== "object" || !value)
-      return [PRIMITIVE, type];
-    const asString = toString2.call(value).slice(8, -1);
-    switch (asString) {
-      case "Array":
-        return [ARRAY, EMPTY];
-      case "Object":
-        return [OBJECT, EMPTY];
-      case "Date":
-        return [DATE, EMPTY];
-      case "RegExp":
-        return [REGEXP, EMPTY];
-      case "Map":
-        return [MAP, EMPTY];
-      case "Set":
-        return [SET, EMPTY];
-      case "DataView":
-        return [ARRAY, asString];
-    }
-    if (asString.includes("Array"))
-      return [ARRAY, asString];
-    if (asString.includes("Error"))
-      return [ERROR, asString];
-    return [OBJECT, asString];
-  };
-  var shouldSkip = ([TYPE, type]) => TYPE === PRIMITIVE && (type === "function" || type === "symbol");
-  var serializer = (strict, json, $, _) => {
-    const as = (out, value) => {
-      const index2 = _.push(out) - 1;
-      $.set(value, index2);
-      return index2;
-    };
-    const pair = (value) => {
-      if ($.has(value))
-        return $.get(value);
-      let [TYPE, type] = typeOf(value);
-      switch (TYPE) {
-        case PRIMITIVE: {
-          let entry = value;
-          switch (type) {
-            case "bigint":
-              TYPE = BIGINT;
-              entry = value.toString();
-              break;
-            case "function":
-            case "symbol":
-              if (strict)
-                throw new TypeError("unable to serialize " + type);
-              entry = null;
-              break;
-            case "undefined":
-              return as([VOID], value);
-          }
-          return as([TYPE, entry], value);
-        }
-        case ARRAY: {
-          if (type) {
-            let spread = value;
-            if (type === "DataView") {
-              spread = new Uint8Array(value.buffer);
-            } else if (type === "ArrayBuffer") {
-              spread = new Uint8Array(value);
-            }
-            return as([type, [...spread]], value);
-          }
-          const arr = [];
-          const index2 = as([TYPE, arr], value);
-          for (const entry of value)
-            arr.push(pair(entry));
-          return index2;
-        }
-        case OBJECT: {
-          if (type) {
-            switch (type) {
-              case "BigInt":
-                return as([type, value.toString()], value);
-              case "Boolean":
-              case "Number":
-              case "String":
-                return as([type, value.valueOf()], value);
-            }
-          }
-          if (json && "toJSON" in value)
-            return pair(value.toJSON());
-          const entries = [];
-          const index2 = as([TYPE, entries], value);
-          for (const key of keys(value)) {
-            if (strict || !shouldSkip(typeOf(value[key])))
-              entries.push([pair(key), pair(value[key])]);
-          }
-          return index2;
-        }
-        case DATE:
-          return as([TYPE, value.toISOString()], value);
-        case REGEXP: {
-          const { source, flags } = value;
-          return as([TYPE, { source, flags }], value);
-        }
-        case MAP: {
-          const entries = [];
-          const index2 = as([TYPE, entries], value);
-          for (const [key, entry] of value) {
-            if (strict || !(shouldSkip(typeOf(key)) || shouldSkip(typeOf(entry))))
-              entries.push([pair(key), pair(entry)]);
-          }
-          return index2;
-        }
-        case SET: {
-          const entries = [];
-          const index2 = as([TYPE, entries], value);
-          for (const entry of value) {
-            if (strict || !shouldSkip(typeOf(entry)))
-              entries.push(pair(entry));
-          }
-          return index2;
-        }
-      }
-      const { message } = value;
-      return as([TYPE, { name: type, message }], value);
-    };
-    return pair;
-  };
-  var serialize = (value, { json, lossy } = {}) => {
-    const _ = [];
-    return serializer(!(json || lossy), !!json, /* @__PURE__ */ new Map(), _)(value), _;
-  };
-
-  // node_modules/@ungap/structured-clone/esm/index.js
-  var esm_default = typeof structuredClone === "function" ? (
-    /* c8 ignore start */
-    (any, options) => options && ("json" in options || "lossy" in options) ? deserialize(serialize(any, options)) : structuredClone(any)
-  ) : (any, options) => deserialize(serialize(any, options));
-
-  // node_modules/mdast-util-to-hast/lib/footer.js
-  function defaultFootnoteBackContent(_, rereferenceIndex) {
-    const result = [{ type: "text", value: "\u21A9" }];
-    if (rereferenceIndex > 1) {
-      result.push({
-        type: "element",
-        tagName: "sup",
-        properties: {},
-        children: [{ type: "text", value: String(rereferenceIndex) }]
-      });
-    }
-    return result;
-  }
-  function defaultFootnoteBackLabel(referenceIndex, rereferenceIndex) {
-    return "Back to reference " + (referenceIndex + 1) + (rereferenceIndex > 1 ? "-" + rereferenceIndex : "");
-  }
-  function footer(state) {
-    const clobberPrefix = typeof state.options.clobberPrefix === "string" ? state.options.clobberPrefix : "user-content-";
-    const footnoteBackContent = state.options.footnoteBackContent || defaultFootnoteBackContent;
-    const footnoteBackLabel = state.options.footnoteBackLabel || defaultFootnoteBackLabel;
-    const footnoteLabel = state.options.footnoteLabel || "Footnotes";
-    const footnoteLabelTagName = state.options.footnoteLabelTagName || "h2";
-    const footnoteLabelProperties = state.options.footnoteLabelProperties || {
-      className: ["sr-only"]
-    };
-    const listItems = [];
-    let referenceIndex = -1;
-    while (++referenceIndex < state.footnoteOrder.length) {
-      const definition3 = state.footnoteById.get(
-        state.footnoteOrder[referenceIndex]
-      );
-      if (!definition3) {
-        continue;
-      }
-      const content3 = state.all(definition3);
-      const id = String(definition3.identifier).toUpperCase();
-      const safeId = normalizeUri(id.toLowerCase());
-      let rereferenceIndex = 0;
-      const backReferences = [];
-      const counts = state.footnoteCounts.get(id);
-      while (counts !== void 0 && ++rereferenceIndex <= counts) {
-        if (backReferences.length > 0) {
-          backReferences.push({ type: "text", value: " " });
-        }
-        let children = typeof footnoteBackContent === "string" ? footnoteBackContent : footnoteBackContent(referenceIndex, rereferenceIndex);
-        if (typeof children === "string") {
-          children = { type: "text", value: children };
-        }
-        backReferences.push({
-          type: "element",
-          tagName: "a",
-          properties: {
-            href: "#" + clobberPrefix + "fnref-" + safeId + (rereferenceIndex > 1 ? "-" + rereferenceIndex : ""),
-            dataFootnoteBackref: "",
-            ariaLabel: typeof footnoteBackLabel === "string" ? footnoteBackLabel : footnoteBackLabel(referenceIndex, rereferenceIndex),
-            className: ["data-footnote-backref"]
-          },
-          children: Array.isArray(children) ? children : [children]
-        });
-      }
-      const tail = content3[content3.length - 1];
-      if (tail && tail.type === "element" && tail.tagName === "p") {
-        const tailTail = tail.children[tail.children.length - 1];
-        if (tailTail && tailTail.type === "text") {
-          tailTail.value += " ";
-        } else {
-          tail.children.push({ type: "text", value: " " });
-        }
-        tail.children.push(...backReferences);
-      } else {
-        content3.push(...backReferences);
-      }
-      const listItem3 = {
-        type: "element",
-        tagName: "li",
-        properties: { id: clobberPrefix + "fn-" + safeId },
-        children: state.wrap(content3, true)
-      };
-      state.patch(definition3, listItem3);
-      listItems.push(listItem3);
-    }
-    if (listItems.length === 0) {
-      return;
-    }
-    return {
-      type: "element",
-      tagName: "section",
-      properties: { dataFootnotes: true, className: ["footnotes"] },
-      children: [
-        {
-          type: "element",
-          tagName: footnoteLabelTagName,
-          properties: {
-            ...esm_default(footnoteLabelProperties),
-            id: "footnote-label"
-          },
-          children: [{ type: "text", value: footnoteLabel }]
-        },
-        { type: "text", value: "\n" },
-        {
-          type: "element",
-          tagName: "ol",
-          properties: {},
-          children: state.wrap(listItems, true)
-        },
-        { type: "text", value: "\n" }
-      ]
-    };
-  }
-
-  // node_modules/unist-util-is/lib/index.js
-  var convert = (
-    // Note: overloads in JSDoc can’t yet use different `@template`s.
-    /**
-     * @type {(
-     *   (<Condition extends string>(test: Condition) => (node: unknown, index?: number | null | undefined, parent?: Parent | null | undefined, context?: unknown) => node is Node & {type: Condition}) &
-     *   (<Condition extends Props>(test: Condition) => (node: unknown, index?: number | null | undefined, parent?: Parent | null | undefined, context?: unknown) => node is Node & Condition) &
-     *   (<Condition extends TestFunction>(test: Condition) => (node: unknown, index?: number | null | undefined, parent?: Parent | null | undefined, context?: unknown) => node is Node & Predicate<Condition, Node>) &
-     *   ((test?: null | undefined) => (node?: unknown, index?: number | null | undefined, parent?: Parent | null | undefined, context?: unknown) => node is Node) &
-     *   ((test?: Test) => Check)
-     * )}
-     */
-    /**
-     * @param {Test} [test]
-     * @returns {Check}
-     */
-    (function(test) {
-      if (test === null || test === void 0) {
-        return ok2;
-      }
-      if (typeof test === "function") {
-        return castFactory(test);
-      }
-      if (typeof test === "object") {
-        return Array.isArray(test) ? anyFactory(test) : (
-          // Cast because `ReadonlyArray` goes into the above but `isArray`
-          // narrows to `Array`.
-          propertiesFactory(
-            /** @type {Props} */
-            test
-          )
-        );
-      }
-      if (typeof test === "string") {
-        return typeFactory(test);
-      }
-      throw new Error("Expected function, string, or object as test");
-    })
-  );
-  function anyFactory(tests) {
-    const checks2 = [];
-    let index2 = -1;
-    while (++index2 < tests.length) {
-      checks2[index2] = convert(tests[index2]);
-    }
-    return castFactory(any);
-    function any(...parameters) {
-      let index3 = -1;
-      while (++index3 < checks2.length) {
-        if (checks2[index3].apply(this, parameters)) return true;
-      }
-      return false;
-    }
-  }
-  function propertiesFactory(check) {
-    const checkAsRecord = (
-      /** @type {Record<string, unknown>} */
-      check
-    );
-    return castFactory(all2);
-    function all2(node2) {
-      const nodeAsRecord = (
-        /** @type {Record<string, unknown>} */
-        /** @type {unknown} */
-        node2
-      );
-      let key;
-      for (key in check) {
-        if (nodeAsRecord[key] !== checkAsRecord[key]) return false;
-      }
-      return true;
-    }
-  }
-  function typeFactory(check) {
-    return castFactory(type);
-    function type(node2) {
-      return node2 && node2.type === check;
-    }
-  }
-  function castFactory(testFunction) {
-    return check;
-    function check(value, index2, parent) {
-      return Boolean(
-        looksLikeANode(value) && testFunction.call(
-          this,
-          value,
-          typeof index2 === "number" ? index2 : void 0,
-          parent || void 0
-        )
-      );
-    }
-  }
-  function ok2() {
-    return true;
-  }
-  function looksLikeANode(value) {
-    return value !== null && typeof value === "object" && "type" in value;
-  }
-
-  // node_modules/unist-util-visit-parents/lib/color.js
-  function color(d) {
-    return d;
-  }
-
-  // node_modules/unist-util-visit-parents/lib/index.js
-  var empty2 = [];
-  var CONTINUE = true;
-  var EXIT = false;
-  var SKIP = "skip";
-  function visitParents(tree, test, visitor, reverse) {
-    let check;
-    if (typeof test === "function" && typeof visitor !== "function") {
-      reverse = visitor;
-      visitor = test;
-    } else {
-      check = test;
-    }
-    const is2 = convert(check);
-    const step = reverse ? -1 : 1;
-    factory(tree, void 0, [])();
-    function factory(node2, index2, parents) {
-      const value = (
-        /** @type {Record<string, unknown>} */
-        node2 && typeof node2 === "object" ? node2 : {}
-      );
-      if (typeof value.type === "string") {
-        const name2 = (
-          // `hast`
-          typeof value.tagName === "string" ? value.tagName : (
-            // `xast`
-            typeof value.name === "string" ? value.name : void 0
-          )
-        );
-        Object.defineProperty(visit2, "name", {
-          value: "node (" + color(node2.type + (name2 ? "<" + name2 + ">" : "")) + ")"
-        });
-      }
-      return visit2;
-      function visit2() {
-        let result = empty2;
-        let subresult;
-        let offset;
-        let grandparents;
-        if (!test || is2(node2, index2, parents[parents.length - 1] || void 0)) {
-          result = toResult(visitor(node2, parents));
-          if (result[0] === EXIT) {
-            return result;
-          }
-        }
-        if ("children" in node2 && node2.children) {
-          const nodeAsParent = (
-            /** @type {UnistParent} */
-            node2
-          );
-          if (nodeAsParent.children && result[0] !== SKIP) {
-            offset = (reverse ? nodeAsParent.children.length : -1) + step;
-            grandparents = parents.concat(nodeAsParent);
-            while (offset > -1 && offset < nodeAsParent.children.length) {
-              const child = nodeAsParent.children[offset];
-              subresult = factory(child, offset, grandparents)();
-              if (subresult[0] === EXIT) {
-                return subresult;
-              }
-              offset = typeof subresult[1] === "number" ? subresult[1] : offset + step;
-            }
-          }
-        }
-        return result;
-      }
-    }
-  }
-  function toResult(value) {
-    if (Array.isArray(value)) {
-      return value;
-    }
-    if (typeof value === "number") {
-      return [CONTINUE, value];
-    }
-    return value === null || value === void 0 ? empty2 : [value];
-  }
-
-  // node_modules/unist-util-visit/lib/index.js
-  function visit(tree, testOrVisitor, visitorOrReverse, maybeReverse) {
-    let reverse;
-    let test;
-    let visitor;
-    if (typeof testOrVisitor === "function" && typeof visitorOrReverse !== "function") {
-      test = void 0;
-      visitor = testOrVisitor;
-      reverse = visitorOrReverse;
-    } else {
-      test = testOrVisitor;
-      visitor = visitorOrReverse;
-      reverse = maybeReverse;
-    }
-    visitParents(tree, test, overload, reverse);
-    function overload(node2, parents) {
-      const parent = parents[parents.length - 1];
-      const index2 = parent ? parent.children.indexOf(node2) : void 0;
-      return visitor(node2, index2, parent);
-    }
-  }
-
-  // node_modules/mdast-util-to-hast/lib/state.js
-  var own3 = {}.hasOwnProperty;
-  var emptyOptions3 = {};
-  function createState(tree, options) {
-    const settings = options || emptyOptions3;
-    const definitionById = /* @__PURE__ */ new Map();
-    const footnoteById = /* @__PURE__ */ new Map();
-    const footnoteCounts = /* @__PURE__ */ new Map();
-    const handlers2 = { ...handlers, ...settings.handlers };
-    const state = {
-      all: all2,
-      applyData,
-      definitionById,
-      footnoteById,
-      footnoteCounts,
-      footnoteOrder: [],
-      handlers: handlers2,
-      one: one3,
-      options: settings,
-      patch,
-      wrap
-    };
-    visit(tree, function(node2) {
-      if (node2.type === "definition" || node2.type === "footnoteDefinition") {
-        const map3 = node2.type === "definition" ? definitionById : footnoteById;
-        const id = String(node2.identifier).toUpperCase();
-        if (!map3.has(id)) {
-          map3.set(id, node2);
-        }
-      }
-    });
-    return state;
-    function one3(node2, parent) {
-      const type = node2.type;
-      const handle2 = state.handlers[type];
-      if (own3.call(state.handlers, type) && handle2) {
-        return handle2(state, node2, parent);
-      }
-      if (state.options.passThrough && state.options.passThrough.includes(type)) {
-        if ("children" in node2) {
-          const { children, ...shallow } = node2;
-          const result = esm_default(shallow);
-          result.children = state.all(node2);
-          return result;
-        }
-        return esm_default(node2);
-      }
-      const unknown = state.options.unknownHandler || defaultUnknownHandler;
-      return unknown(state, node2, parent);
-    }
-    function all2(parent) {
-      const values = [];
-      if ("children" in parent) {
-        const nodes = parent.children;
-        let index2 = -1;
-        while (++index2 < nodes.length) {
-          const result = state.one(nodes[index2], parent);
-          if (result) {
-            if (index2 && nodes[index2 - 1].type === "break") {
-              if (!Array.isArray(result) && result.type === "text") {
-                result.value = trimMarkdownSpaceStart(result.value);
-              }
-              if (!Array.isArray(result) && result.type === "element") {
-                const head = result.children[0];
-                if (head && head.type === "text") {
-                  head.value = trimMarkdownSpaceStart(head.value);
-                }
-              }
-            }
-            if (Array.isArray(result)) {
-              values.push(...result);
-            } else {
-              values.push(result);
-            }
-          }
-        }
-      }
-      return values;
-    }
-  }
-  function patch(from, to) {
-    if (from.position) to.position = position(from);
-  }
-  function applyData(from, to) {
-    let result = to;
-    if (from && from.data) {
-      const hName = from.data.hName;
-      const hChildren = from.data.hChildren;
-      const hProperties = from.data.hProperties;
-      if (typeof hName === "string") {
-        if (result.type === "element") {
-          result.tagName = hName;
-        } else {
-          const children = "children" in result ? result.children : [result];
-          result = { type: "element", tagName: hName, properties: {}, children };
-        }
-      }
-      if (result.type === "element" && hProperties) {
-        Object.assign(result.properties, esm_default(hProperties));
-      }
-      if ("children" in result && result.children && hChildren !== null && hChildren !== void 0) {
-        result.children = hChildren;
-      }
-    }
-    return result;
-  }
-  function defaultUnknownHandler(state, node2) {
-    const data = node2.data || {};
-    const result = "value" in node2 && !(own3.call(data, "hProperties") || own3.call(data, "hChildren")) ? { type: "text", value: node2.value } : {
-      type: "element",
-      tagName: "div",
-      properties: {},
-      children: state.all(node2)
-    };
-    state.patch(node2, result);
-    return state.applyData(node2, result);
-  }
-  function wrap(nodes, loose) {
-    const result = [];
-    let index2 = -1;
-    if (loose) {
-      result.push({ type: "text", value: "\n" });
-    }
-    while (++index2 < nodes.length) {
-      if (index2) result.push({ type: "text", value: "\n" });
-      result.push(nodes[index2]);
-    }
-    if (loose && nodes.length > 0) {
-      result.push({ type: "text", value: "\n" });
-    }
-    return result;
-  }
-  function trimMarkdownSpaceStart(value) {
-    let index2 = 0;
-    let code4 = value.charCodeAt(index2);
-    while (code4 === 9 || code4 === 32) {
-      index2++;
-      code4 = value.charCodeAt(index2);
-    }
-    return value.slice(index2);
-  }
-
-  // node_modules/mdast-util-to-hast/lib/index.js
-  function toHast(tree, options) {
-    const state = createState(tree, options);
-    const node2 = state.one(tree, void 0);
-    const foot = footer(state);
-    const result = Array.isArray(node2) ? { type: "root", children: node2 } : node2 || { type: "root", children: [] };
-    if (foot) {
-      ok("children" in result);
-      result.children.push({ type: "text", value: "\n" }, foot);
-    }
-    return result;
-  }
-
-  // node_modules/remark-rehype/lib/index.js
-  function remarkRehype(destination, options) {
-    if (destination && "run" in destination) {
-      return async function(tree, file) {
-        const hastTree = (
-          /** @type {HastRoot} */
-          toHast(tree, { file, ...options })
-        );
-        await destination.run(hastTree, file);
-      };
-    }
-    return function(tree, file) {
-      return (
-        /** @type {HastRoot} */
-        toHast(tree, { file, ...destination || options })
-      );
-    };
-  }
-
-  // node_modules/bail/index.js
-  function bail(error) {
-    if (error) {
-      throw error;
-    }
-  }
-
-  // node_modules/unified/lib/index.js
-  var import_extend = __toESM(require_extend(), 1);
-
-  // node_modules/is-plain-obj/index.js
-  function isPlainObject(value) {
-    if (typeof value !== "object" || value === null) {
-      return false;
-    }
-    const prototype = Object.getPrototypeOf(value);
-    return (prototype === null || prototype === Object.prototype || Object.getPrototypeOf(prototype) === null) && !(Symbol.toStringTag in value) && !(Symbol.iterator in value);
-  }
-
-  // node_modules/trough/lib/index.js
-  function trough() {
-    const fns = [];
-    const pipeline = { run, use };
-    return pipeline;
-    function run(...values) {
-      let middlewareIndex = -1;
-      const callback = values.pop();
-      if (typeof callback !== "function") {
-        throw new TypeError("Expected function as last argument, not " + callback);
-      }
-      next(null, ...values);
-      function next(error, ...output) {
-        const fn = fns[++middlewareIndex];
-        let index2 = -1;
-        if (error) {
-          callback(error);
-          return;
-        }
-        while (++index2 < values.length) {
-          if (output[index2] === null || output[index2] === void 0) {
-            output[index2] = values[index2];
-          }
-        }
-        values = output;
-        if (fn) {
-          wrap2(fn, next)(...output);
-        } else {
-          callback(null, ...output);
-        }
-      }
-    }
-    function use(middelware) {
-      if (typeof middelware !== "function") {
-        throw new TypeError(
-          "Expected `middelware` to be a function, not " + middelware
-        );
-      }
-      fns.push(middelware);
-      return pipeline;
-    }
-  }
-  function wrap2(middleware, callback) {
-    let called;
-    return wrapped;
-    function wrapped(...parameters) {
-      const fnExpectsCallback = middleware.length > parameters.length;
-      let result;
-      if (fnExpectsCallback) {
-        parameters.push(done);
-      }
-      try {
-        result = middleware.apply(this, parameters);
-      } catch (error) {
-        const exception = (
-          /** @type {Error} */
-          error
-        );
-        if (fnExpectsCallback && called) {
-          throw exception;
-        }
-        return done(exception);
-      }
-      if (!fnExpectsCallback) {
-        if (result && result.then && typeof result.then === "function") {
-          result.then(then, done);
-        } else if (result instanceof Error) {
-          done(result);
-        } else {
-          then(result);
-        }
-      }
-    }
-    function done(error, ...output) {
-      if (!called) {
-        called = true;
-        callback(error, ...output);
-      }
-    }
-    function then(value) {
-      done(null, value);
-    }
-  }
-
-  // node_modules/vfile/lib/minpath.browser.js
-  var minpath = { basename, dirname, extname, join, sep: "/" };
-  function basename(path2, extname2) {
-    if (extname2 !== void 0 && typeof extname2 !== "string") {
-      throw new TypeError('"ext" argument must be a string');
-    }
-    assertPath(path2);
-    let start2 = 0;
-    let end = -1;
-    let index2 = path2.length;
-    let seenNonSlash;
-    if (extname2 === void 0 || extname2.length === 0 || extname2.length > path2.length) {
-      while (index2--) {
-        if (path2.codePointAt(index2) === 47) {
-          if (seenNonSlash) {
-            start2 = index2 + 1;
-            break;
-          }
-        } else if (end < 0) {
-          seenNonSlash = true;
-          end = index2 + 1;
-        }
-      }
-      return end < 0 ? "" : path2.slice(start2, end);
-    }
-    if (extname2 === path2) {
-      return "";
-    }
-    let firstNonSlashEnd = -1;
-    let extnameIndex = extname2.length - 1;
-    while (index2--) {
-      if (path2.codePointAt(index2) === 47) {
-        if (seenNonSlash) {
-          start2 = index2 + 1;
-          break;
-        }
-      } else {
-        if (firstNonSlashEnd < 0) {
-          seenNonSlash = true;
-          firstNonSlashEnd = index2 + 1;
-        }
-        if (extnameIndex > -1) {
-          if (path2.codePointAt(index2) === extname2.codePointAt(extnameIndex--)) {
-            if (extnameIndex < 0) {
-              end = index2;
-            }
-          } else {
-            extnameIndex = -1;
-            end = firstNonSlashEnd;
-          }
-        }
-      }
-    }
-    if (start2 === end) {
-      end = firstNonSlashEnd;
-    } else if (end < 0) {
-      end = path2.length;
-    }
-    return path2.slice(start2, end);
-  }
-  function dirname(path2) {
-    assertPath(path2);
-    if (path2.length === 0) {
-      return ".";
-    }
-    let end = -1;
-    let index2 = path2.length;
-    let unmatchedSlash;
-    while (--index2) {
-      if (path2.codePointAt(index2) === 47) {
-        if (unmatchedSlash) {
-          end = index2;
-          break;
-        }
-      } else if (!unmatchedSlash) {
-        unmatchedSlash = true;
-      }
-    }
-    return end < 0 ? path2.codePointAt(0) === 47 ? "/" : "." : end === 1 && path2.codePointAt(0) === 47 ? "//" : path2.slice(0, end);
-  }
-  function extname(path2) {
-    assertPath(path2);
-    let index2 = path2.length;
-    let end = -1;
-    let startPart = 0;
-    let startDot = -1;
-    let preDotState = 0;
-    let unmatchedSlash;
-    while (index2--) {
-      const code4 = path2.codePointAt(index2);
-      if (code4 === 47) {
-        if (unmatchedSlash) {
-          startPart = index2 + 1;
-          break;
-        }
-        continue;
-      }
-      if (end < 0) {
-        unmatchedSlash = true;
-        end = index2 + 1;
-      }
-      if (code4 === 46) {
-        if (startDot < 0) {
-          startDot = index2;
-        } else if (preDotState !== 1) {
-          preDotState = 1;
-        }
-      } else if (startDot > -1) {
-        preDotState = -1;
-      }
-    }
-    if (startDot < 0 || end < 0 || // We saw a non-dot character immediately before the dot.
-    preDotState === 0 || // The (right-most) trimmed path component is exactly `..`.
-    preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
-      return "";
-    }
-    return path2.slice(startDot, end);
-  }
-  function join(...segments) {
-    let index2 = -1;
-    let joined;
-    while (++index2 < segments.length) {
-      assertPath(segments[index2]);
-      if (segments[index2]) {
-        joined = joined === void 0 ? segments[index2] : joined + "/" + segments[index2];
-      }
-    }
-    return joined === void 0 ? "." : normalize2(joined);
-  }
-  function normalize2(path2) {
-    assertPath(path2);
-    const absolute = path2.codePointAt(0) === 47;
-    let value = normalizeString(path2, !absolute);
-    if (value.length === 0 && !absolute) {
-      value = ".";
-    }
-    if (value.length > 0 && path2.codePointAt(path2.length - 1) === 47) {
-      value += "/";
-    }
-    return absolute ? "/" + value : value;
-  }
-  function normalizeString(path2, allowAboveRoot) {
-    let result = "";
-    let lastSegmentLength = 0;
-    let lastSlash = -1;
-    let dots = 0;
-    let index2 = -1;
-    let code4;
-    let lastSlashIndex;
-    while (++index2 <= path2.length) {
-      if (index2 < path2.length) {
-        code4 = path2.codePointAt(index2);
-      } else if (code4 === 47) {
-        break;
-      } else {
-        code4 = 47;
-      }
-      if (code4 === 47) {
-        if (lastSlash === index2 - 1 || dots === 1) {
-        } else if (lastSlash !== index2 - 1 && dots === 2) {
-          if (result.length < 2 || lastSegmentLength !== 2 || result.codePointAt(result.length - 1) !== 46 || result.codePointAt(result.length - 2) !== 46) {
-            if (result.length > 2) {
-              lastSlashIndex = result.lastIndexOf("/");
-              if (lastSlashIndex !== result.length - 1) {
-                if (lastSlashIndex < 0) {
-                  result = "";
-                  lastSegmentLength = 0;
-                } else {
-                  result = result.slice(0, lastSlashIndex);
-                  lastSegmentLength = result.length - 1 - result.lastIndexOf("/");
-                }
-                lastSlash = index2;
-                dots = 0;
-                continue;
-              }
-            } else if (result.length > 0) {
-              result = "";
-              lastSegmentLength = 0;
-              lastSlash = index2;
-              dots = 0;
-              continue;
-            }
-          }
-          if (allowAboveRoot) {
-            result = result.length > 0 ? result + "/.." : "..";
-            lastSegmentLength = 2;
-          }
-        } else {
-          if (result.length > 0) {
-            result += "/" + path2.slice(lastSlash + 1, index2);
-          } else {
-            result = path2.slice(lastSlash + 1, index2);
-          }
-          lastSegmentLength = index2 - lastSlash - 1;
-        }
-        lastSlash = index2;
-        dots = 0;
-      } else if (code4 === 46 && dots > -1) {
-        dots++;
-      } else {
-        dots = -1;
-      }
-    }
-    return result;
-  }
-  function assertPath(path2) {
-    if (typeof path2 !== "string") {
-      throw new TypeError(
-        "Path must be a string. Received " + JSON.stringify(path2)
-      );
-    }
-  }
-
-  // node_modules/vfile/lib/minproc.browser.js
-  var minproc = { cwd };
-  function cwd() {
-    return "/";
-  }
-
-  // node_modules/vfile/lib/minurl.shared.js
-  function isUrl(fileUrlOrPath) {
-    return Boolean(
-      fileUrlOrPath !== null && typeof fileUrlOrPath === "object" && "href" in fileUrlOrPath && fileUrlOrPath.href && "protocol" in fileUrlOrPath && fileUrlOrPath.protocol && // @ts-expect-error: indexing is fine.
-      fileUrlOrPath.auth === void 0
-    );
-  }
-
-  // node_modules/vfile/lib/minurl.browser.js
-  function urlToPath(path2) {
-    if (typeof path2 === "string") {
-      path2 = new URL(path2);
-    } else if (!isUrl(path2)) {
-      const error = new TypeError(
-        'The "path" argument must be of type string or an instance of URL. Received `' + path2 + "`"
-      );
-      error.code = "ERR_INVALID_ARG_TYPE";
-      throw error;
-    }
-    if (path2.protocol !== "file:") {
-      const error = new TypeError("The URL must be of scheme file");
-      error.code = "ERR_INVALID_URL_SCHEME";
-      throw error;
-    }
-    return getPathFromURLPosix(path2);
-  }
-  function getPathFromURLPosix(url) {
-    if (url.hostname !== "") {
-      const error = new TypeError(
-        'File URL host must be "localhost" or empty on darwin'
-      );
-      error.code = "ERR_INVALID_FILE_URL_HOST";
-      throw error;
-    }
-    const pathname = url.pathname;
-    let index2 = -1;
-    while (++index2 < pathname.length) {
-      if (pathname.codePointAt(index2) === 37 && pathname.codePointAt(index2 + 1) === 50) {
-        const third = pathname.codePointAt(index2 + 2);
-        if (third === 70 || third === 102) {
-          const error = new TypeError(
-            "File URL path must not include encoded / characters"
-          );
-          error.code = "ERR_INVALID_FILE_URL_PATH";
-          throw error;
-        }
-      }
-    }
-    return decodeURIComponent(pathname);
-  }
-
-  // node_modules/vfile/lib/index.js
-  var order = (
-    /** @type {const} */
-    [
-      "history",
-      "path",
-      "basename",
-      "stem",
-      "extname",
-      "dirname"
-    ]
-  );
-  var VFile = class {
-    /**
-     * Create a new virtual file.
-     *
-     * `options` is treated as:
-     *
-     * *   `string` or `Uint8Array` — `{value: options}`
-     * *   `URL` — `{path: options}`
-     * *   `VFile` — shallow copies its data over to the new file
-     * *   `object` — all fields are shallow copied over to the new file
-     *
-     * Path related fields are set in the following order (least specific to
-     * most specific): `history`, `path`, `basename`, `stem`, `extname`,
-     * `dirname`.
-     *
-     * You cannot set `dirname` or `extname` without setting either `history`,
-     * `path`, `basename`, or `stem` too.
-     *
-     * @param {Compatible | null | undefined} [value]
-     *   File value.
-     * @returns
-     *   New instance.
-     */
-    constructor(value) {
-      let options;
-      if (!value) {
-        options = {};
-      } else if (isUrl(value)) {
-        options = { path: value };
-      } else if (typeof value === "string" || isUint8Array(value)) {
-        options = { value };
-      } else {
-        options = value;
-      }
-      this.cwd = "cwd" in options ? "" : minproc.cwd();
-      this.data = {};
-      this.history = [];
-      this.messages = [];
-      this.value;
-      this.map;
-      this.result;
-      this.stored;
-      let index2 = -1;
-      while (++index2 < order.length) {
-        const field2 = order[index2];
-        if (field2 in options && options[field2] !== void 0 && options[field2] !== null) {
-          this[field2] = field2 === "history" ? [...options[field2]] : options[field2];
-        }
-      }
-      let field;
-      for (field in options) {
-        if (!order.includes(field)) {
-          this[field] = options[field];
-        }
-      }
-    }
-    /**
-     * Get the basename (including extname) (example: `'index.min.js'`).
-     *
-     * @returns {string | undefined}
-     *   Basename.
-     */
-    get basename() {
-      return typeof this.path === "string" ? minpath.basename(this.path) : void 0;
-    }
-    /**
-     * Set basename (including extname) (`'index.min.js'`).
-     *
-     * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
-     * on windows).
-     * Cannot be nullified (use `file.path = file.dirname` instead).
-     *
-     * @param {string} basename
-     *   Basename.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    set basename(basename2) {
-      assertNonEmpty(basename2, "basename");
-      assertPart(basename2, "basename");
-      this.path = minpath.join(this.dirname || "", basename2);
-    }
-    /**
-     * Get the parent path (example: `'~'`).
-     *
-     * @returns {string | undefined}
-     *   Dirname.
-     */
-    get dirname() {
-      return typeof this.path === "string" ? minpath.dirname(this.path) : void 0;
-    }
-    /**
-     * Set the parent path (example: `'~'`).
-     *
-     * Cannot be set if there’s no `path` yet.
-     *
-     * @param {string | undefined} dirname
-     *   Dirname.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    set dirname(dirname2) {
-      assertPath2(this.basename, "dirname");
-      this.path = minpath.join(dirname2 || "", this.basename);
-    }
-    /**
-     * Get the extname (including dot) (example: `'.js'`).
-     *
-     * @returns {string | undefined}
-     *   Extname.
-     */
-    get extname() {
-      return typeof this.path === "string" ? minpath.extname(this.path) : void 0;
-    }
-    /**
-     * Set the extname (including dot) (example: `'.js'`).
-     *
-     * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
-     * on windows).
-     * Cannot be set if there’s no `path` yet.
-     *
-     * @param {string | undefined} extname
-     *   Extname.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    set extname(extname2) {
-      assertPart(extname2, "extname");
-      assertPath2(this.dirname, "extname");
-      if (extname2) {
-        if (extname2.codePointAt(0) !== 46) {
-          throw new Error("`extname` must start with `.`");
-        }
-        if (extname2.includes(".", 1)) {
-          throw new Error("`extname` cannot contain multiple dots");
-        }
-      }
-      this.path = minpath.join(this.dirname, this.stem + (extname2 || ""));
-    }
-    /**
-     * Get the full path (example: `'~/index.min.js'`).
-     *
-     * @returns {string}
-     *   Path.
-     */
-    get path() {
-      return this.history[this.history.length - 1];
-    }
-    /**
-     * Set the full path (example: `'~/index.min.js'`).
-     *
-     * Cannot be nullified.
-     * You can set a file URL (a `URL` object with a `file:` protocol) which will
-     * be turned into a path with `url.fileURLToPath`.
-     *
-     * @param {URL | string} path
-     *   Path.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    set path(path2) {
-      if (isUrl(path2)) {
-        path2 = urlToPath(path2);
-      }
-      assertNonEmpty(path2, "path");
-      if (this.path !== path2) {
-        this.history.push(path2);
-      }
-    }
-    /**
-     * Get the stem (basename w/o extname) (example: `'index.min'`).
-     *
-     * @returns {string | undefined}
-     *   Stem.
-     */
-    get stem() {
-      return typeof this.path === "string" ? minpath.basename(this.path, this.extname) : void 0;
-    }
-    /**
-     * Set the stem (basename w/o extname) (example: `'index.min'`).
-     *
-     * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
-     * on windows).
-     * Cannot be nullified (use `file.path = file.dirname` instead).
-     *
-     * @param {string} stem
-     *   Stem.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    set stem(stem) {
-      assertNonEmpty(stem, "stem");
-      assertPart(stem, "stem");
-      this.path = minpath.join(this.dirname || "", stem + (this.extname || ""));
-    }
-    // Normal prototypal methods.
-    /**
-     * Create a fatal message for `reason` associated with the file.
-     *
-     * The `fatal` field of the message is set to `true` (error; file not usable)
-     * and the `file` field is set to the current file path.
-     * The message is added to the `messages` field on `file`.
-     *
-     * > 🪦 **Note**: also has obsolete signatures.
-     *
-     * @overload
-     * @param {string} reason
-     * @param {MessageOptions | null | undefined} [options]
-     * @returns {never}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns {never}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns {never}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {string | null | undefined} [origin]
-     * @returns {never}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns {never}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns {never}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {string | null | undefined} [origin]
-     * @returns {never}
-     *
-     * @param {Error | VFileMessage | string} causeOrReason
-     *   Reason for message, should use markdown.
-     * @param {Node | NodeLike | MessageOptions | Point | Position | string | null | undefined} [optionsOrParentOrPlace]
-     *   Configuration (optional).
-     * @param {string | null | undefined} [origin]
-     *   Place in code where the message originates (example:
-     *   `'my-package:my-rule'` or `'my-rule'`).
-     * @returns {never}
-     *   Never.
-     * @throws {VFileMessage}
-     *   Message.
-     */
-    fail(causeOrReason, optionsOrParentOrPlace, origin) {
-      const message = this.message(causeOrReason, optionsOrParentOrPlace, origin);
-      message.fatal = true;
-      throw message;
-    }
-    /**
-     * Create an info message for `reason` associated with the file.
-     *
-     * The `fatal` field of the message is set to `undefined` (info; change
-     * likely not needed) and the `file` field is set to the current file path.
-     * The message is added to the `messages` field on `file`.
-     *
-     * > 🪦 **Note**: also has obsolete signatures.
-     *
-     * @overload
-     * @param {string} reason
-     * @param {MessageOptions | null | undefined} [options]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @param {Error | VFileMessage | string} causeOrReason
-     *   Reason for message, should use markdown.
-     * @param {Node | NodeLike | MessageOptions | Point | Position | string | null | undefined} [optionsOrParentOrPlace]
-     *   Configuration (optional).
-     * @param {string | null | undefined} [origin]
-     *   Place in code where the message originates (example:
-     *   `'my-package:my-rule'` or `'my-rule'`).
-     * @returns {VFileMessage}
-     *   Message.
-     */
-    info(causeOrReason, optionsOrParentOrPlace, origin) {
-      const message = this.message(causeOrReason, optionsOrParentOrPlace, origin);
-      message.fatal = void 0;
-      return message;
-    }
-    /**
-     * Create a message for `reason` associated with the file.
-     *
-     * The `fatal` field of the message is set to `false` (warning; change may be
-     * needed) and the `file` field is set to the current file path.
-     * The message is added to the `messages` field on `file`.
-     *
-     * > 🪦 **Note**: also has obsolete signatures.
-     *
-     * @overload
-     * @param {string} reason
-     * @param {MessageOptions | null | undefined} [options]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {string} reason
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Node | NodeLike | null | undefined} parent
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {Point | Position | null | undefined} place
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @overload
-     * @param {Error | VFileMessage} cause
-     * @param {string | null | undefined} [origin]
-     * @returns {VFileMessage}
-     *
-     * @param {Error | VFileMessage | string} causeOrReason
-     *   Reason for message, should use markdown.
-     * @param {Node | NodeLike | MessageOptions | Point | Position | string | null | undefined} [optionsOrParentOrPlace]
-     *   Configuration (optional).
-     * @param {string | null | undefined} [origin]
-     *   Place in code where the message originates (example:
-     *   `'my-package:my-rule'` or `'my-rule'`).
-     * @returns {VFileMessage}
-     *   Message.
-     */
-    message(causeOrReason, optionsOrParentOrPlace, origin) {
-      const message = new VFileMessage(
-        // @ts-expect-error: the overloads are fine.
-        causeOrReason,
-        optionsOrParentOrPlace,
-        origin
-      );
-      if (this.path) {
-        message.name = this.path + ":" + message.name;
-        message.file = this.path;
-      }
-      message.fatal = false;
-      this.messages.push(message);
-      return message;
-    }
-    /**
-     * Serialize the file.
-     *
-     * > **Note**: which encodings are supported depends on the engine.
-     * > For info on Node.js, see:
-     * > <https://nodejs.org/api/util.html#whatwg-supported-encodings>.
-     *
-     * @param {string | null | undefined} [encoding='utf8']
-     *   Character encoding to understand `value` as when it’s a `Uint8Array`
-     *   (default: `'utf-8'`).
-     * @returns {string}
-     *   Serialized file.
-     */
-    toString(encoding) {
-      if (this.value === void 0) {
-        return "";
-      }
-      if (typeof this.value === "string") {
-        return this.value;
-      }
-      const decoder = new TextDecoder(encoding || void 0);
-      return decoder.decode(this.value);
-    }
-  };
-  function assertPart(part, name2) {
-    if (part && part.includes(minpath.sep)) {
-      throw new Error(
-        "`" + name2 + "` cannot be a path: did not expect `" + minpath.sep + "`"
-      );
-    }
-  }
-  function assertNonEmpty(part, name2) {
-    if (!part) {
-      throw new Error("`" + name2 + "` cannot be empty");
-    }
-  }
-  function assertPath2(path2, name2) {
-    if (!path2) {
-      throw new Error("Setting `" + name2 + "` requires `path` to be set too");
-    }
-  }
-  function isUint8Array(value) {
-    return Boolean(
-      value && typeof value === "object" && "byteLength" in value && "byteOffset" in value
-    );
-  }
-
-  // node_modules/unified/lib/callable-instance.js
-  var CallableInstance = (
-    /**
-     * @type {new <Parameters extends Array<unknown>, Result>(property: string | symbol) => (...parameters: Parameters) => Result}
-     */
-    /** @type {unknown} */
-    /**
-     * @this {Function}
-     * @param {string | symbol} property
-     * @returns {(...parameters: Array<unknown>) => unknown}
-     */
-    (function(property) {
-      const self2 = this;
-      const constr = self2.constructor;
-      const proto = (
-        /** @type {Record<string | symbol, Function>} */
-        // Prototypes do exist.
-        // type-coverage:ignore-next-line
-        constr.prototype
-      );
-      const value = proto[property];
-      const apply = function() {
-        return value.apply(apply, arguments);
-      };
-      Object.setPrototypeOf(apply, proto);
-      return apply;
-    })
-  );
-
-  // node_modules/unified/lib/index.js
-  var own4 = {}.hasOwnProperty;
-  var Processor = class _Processor extends CallableInstance {
-    /**
-     * Create a processor.
-     */
-    constructor() {
-      super("copy");
-      this.Compiler = void 0;
-      this.Parser = void 0;
-      this.attachers = [];
-      this.compiler = void 0;
-      this.freezeIndex = -1;
-      this.frozen = void 0;
-      this.namespace = {};
-      this.parser = void 0;
-      this.transformers = trough();
-    }
-    /**
-     * Copy a processor.
-     *
-     * @deprecated
-     *   This is a private internal method and should not be used.
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *   New *unfrozen* processor ({@linkcode Processor}) that is
-     *   configured to work the same as its ancestor.
-     *   When the descendant processor is configured in the future it does not
-     *   affect the ancestral processor.
-     */
-    copy() {
-      const destination = (
-        /** @type {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>} */
-        new _Processor()
-      );
-      let index2 = -1;
-      while (++index2 < this.attachers.length) {
-        const attacher = this.attachers[index2];
-        destination.use(...attacher);
-      }
-      destination.data((0, import_extend.default)(true, {}, this.namespace));
-      return destination;
-    }
-    /**
-     * Configure the processor with info available to all plugins.
-     * Information is stored in an object.
-     *
-     * Typically, options can be given to a specific plugin, but sometimes it
-     * makes sense to have information shared with several plugins.
-     * For example, a list of HTML elements that are self-closing, which is
-     * needed during all phases.
-     *
-     * > **Note**: setting information cannot occur on *frozen* processors.
-     * > Call the processor first to create a new unfrozen processor.
-     *
-     * > **Note**: to register custom data in TypeScript, augment the
-     * > {@linkcode Data} interface.
-     *
-     * @example
-     *   This example show how to get and set info:
-     *
-     *   ```js
-     *   import {unified} from 'unified'
-     *
-     *   const processor = unified().data('alpha', 'bravo')
-     *
-     *   processor.data('alpha') // => 'bravo'
-     *
-     *   processor.data() // => {alpha: 'bravo'}
-     *
-     *   processor.data({charlie: 'delta'})
-     *
-     *   processor.data() // => {charlie: 'delta'}
-     *   ```
-     *
-     * @template {keyof Data} Key
-     *
-     * @overload
-     * @returns {Data}
-     *
-     * @overload
-     * @param {Data} dataset
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *
-     * @overload
-     * @param {Key} key
-     * @returns {Data[Key]}
-     *
-     * @overload
-     * @param {Key} key
-     * @param {Data[Key]} value
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *
-     * @param {Data | Key} [key]
-     *   Key to get or set, or entire dataset to set, or nothing to get the
-     *   entire dataset (optional).
-     * @param {Data[Key]} [value]
-     *   Value to set (optional).
-     * @returns {unknown}
-     *   The current processor when setting, the value at `key` when getting, or
-     *   the entire dataset when getting without key.
-     */
-    data(key, value) {
-      if (typeof key === "string") {
-        if (arguments.length === 2) {
-          assertUnfrozen("data", this.frozen);
-          this.namespace[key] = value;
-          return this;
-        }
-        return own4.call(this.namespace, key) && this.namespace[key] || void 0;
-      }
-      if (key) {
-        assertUnfrozen("data", this.frozen);
-        this.namespace = key;
-        return this;
-      }
-      return this.namespace;
-    }
-    /**
-     * Freeze a processor.
-     *
-     * Frozen processors are meant to be extended and not to be configured
-     * directly.
-     *
-     * When a processor is frozen it cannot be unfrozen.
-     * New processors working the same way can be created by calling the
-     * processor.
-     *
-     * It’s possible to freeze processors explicitly by calling `.freeze()`.
-     * Processors freeze automatically when `.parse()`, `.run()`, `.runSync()`,
-     * `.stringify()`, `.process()`, or `.processSync()` are called.
-     *
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *   The current processor.
-     */
-    freeze() {
-      if (this.frozen) {
-        return this;
-      }
-      const self2 = (
-        /** @type {Processor} */
-        /** @type {unknown} */
-        this
-      );
-      while (++this.freezeIndex < this.attachers.length) {
-        const [attacher, ...options] = this.attachers[this.freezeIndex];
-        if (options[0] === false) {
-          continue;
-        }
-        if (options[0] === true) {
-          options[0] = void 0;
-        }
-        const transformer = attacher.call(self2, ...options);
-        if (typeof transformer === "function") {
-          this.transformers.use(transformer);
-        }
-      }
-      this.frozen = true;
-      this.freezeIndex = Number.POSITIVE_INFINITY;
-      return this;
-    }
-    /**
-     * Parse text to a syntax tree.
-     *
-     * > **Note**: `parse` freezes the processor if not already *frozen*.
-     *
-     * > **Note**: `parse` performs the parse phase, not the run phase or other
-     * > phases.
-     *
-     * @param {Compatible | undefined} [file]
-     *   file to parse (optional); typically `string` or `VFile`; any value
-     *   accepted as `x` in `new VFile(x)`.
-     * @returns {ParseTree extends undefined ? Node : ParseTree}
-     *   Syntax tree representing `file`.
-     */
-    parse(file) {
-      this.freeze();
-      const realFile = vfile(file);
-      const parser = this.parser || this.Parser;
-      assertParser("parse", parser);
-      return parser(String(realFile), realFile);
-    }
-    /**
-     * Process the given file as configured on the processor.
-     *
-     * > **Note**: `process` freezes the processor if not already *frozen*.
-     *
-     * > **Note**: `process` performs the parse, run, and stringify phases.
-     *
-     * @overload
-     * @param {Compatible | undefined} file
-     * @param {ProcessCallback<VFileWithOutput<CompileResult>>} done
-     * @returns {undefined}
-     *
-     * @overload
-     * @param {Compatible | undefined} [file]
-     * @returns {Promise<VFileWithOutput<CompileResult>>}
-     *
-     * @param {Compatible | undefined} [file]
-     *   File (optional); typically `string` or `VFile`]; any value accepted as
-     *   `x` in `new VFile(x)`.
-     * @param {ProcessCallback<VFileWithOutput<CompileResult>> | undefined} [done]
-     *   Callback (optional).
-     * @returns {Promise<VFile> | undefined}
-     *   Nothing if `done` is given.
-     *   Otherwise a promise, rejected with a fatal error or resolved with the
-     *   processed file.
-     *
-     *   The parsed, transformed, and compiled value is available at
-     *   `file.value` (see note).
-     *
-     *   > **Note**: unified typically compiles by serializing: most
-     *   > compilers return `string` (or `Uint8Array`).
-     *   > Some compilers, such as the one configured with
-     *   > [`rehype-react`][rehype-react], return other values (in this case, a
-     *   > React tree).
-     *   > If you’re using a compiler that doesn’t serialize, expect different
-     *   > result values.
-     *   >
-     *   > To register custom results in TypeScript, add them to
-     *   > {@linkcode CompileResultMap}.
-     *
-     *   [rehype-react]: https://github.com/rehypejs/rehype-react
-     */
-    process(file, done) {
-      const self2 = this;
-      this.freeze();
-      assertParser("process", this.parser || this.Parser);
-      assertCompiler("process", this.compiler || this.Compiler);
-      return done ? executor(void 0, done) : new Promise(executor);
-      function executor(resolve, reject) {
-        const realFile = vfile(file);
-        const parseTree = (
-          /** @type {HeadTree extends undefined ? Node : HeadTree} */
-          /** @type {unknown} */
-          self2.parse(realFile)
-        );
-        self2.run(parseTree, realFile, function(error, tree, file2) {
-          if (error || !tree || !file2) {
-            return realDone(error);
-          }
-          const compileTree = (
-            /** @type {CompileTree extends undefined ? Node : CompileTree} */
-            /** @type {unknown} */
-            tree
-          );
-          const compileResult = self2.stringify(compileTree, file2);
-          if (looksLikeAValue(compileResult)) {
-            file2.value = compileResult;
-          } else {
-            file2.result = compileResult;
-          }
-          realDone(
-            error,
-            /** @type {VFileWithOutput<CompileResult>} */
-            file2
-          );
-        });
-        function realDone(error, file2) {
-          if (error || !file2) {
-            reject(error);
-          } else if (resolve) {
-            resolve(file2);
-          } else {
-            ok(done, "`done` is defined if `resolve` is not");
-            done(void 0, file2);
-          }
-        }
-      }
-    }
-    /**
-     * Process the given file as configured on the processor.
-     *
-     * An error is thrown if asynchronous transforms are configured.
-     *
-     * > **Note**: `processSync` freezes the processor if not already *frozen*.
-     *
-     * > **Note**: `processSync` performs the parse, run, and stringify phases.
-     *
-     * @param {Compatible | undefined} [file]
-     *   File (optional); typically `string` or `VFile`; any value accepted as
-     *   `x` in `new VFile(x)`.
-     * @returns {VFileWithOutput<CompileResult>}
-     *   The processed file.
-     *
-     *   The parsed, transformed, and compiled value is available at
-     *   `file.value` (see note).
-     *
-     *   > **Note**: unified typically compiles by serializing: most
-     *   > compilers return `string` (or `Uint8Array`).
-     *   > Some compilers, such as the one configured with
-     *   > [`rehype-react`][rehype-react], return other values (in this case, a
-     *   > React tree).
-     *   > If you’re using a compiler that doesn’t serialize, expect different
-     *   > result values.
-     *   >
-     *   > To register custom results in TypeScript, add them to
-     *   > {@linkcode CompileResultMap}.
-     *
-     *   [rehype-react]: https://github.com/rehypejs/rehype-react
-     */
-    processSync(file) {
-      let complete = false;
-      let result;
-      this.freeze();
-      assertParser("processSync", this.parser || this.Parser);
-      assertCompiler("processSync", this.compiler || this.Compiler);
-      this.process(file, realDone);
-      assertDone("processSync", "process", complete);
-      ok(result, "we either bailed on an error or have a tree");
-      return result;
-      function realDone(error, file2) {
-        complete = true;
-        bail(error);
-        result = file2;
-      }
-    }
-    /**
-     * Run *transformers* on a syntax tree.
-     *
-     * > **Note**: `run` freezes the processor if not already *frozen*.
-     *
-     * > **Note**: `run` performs the run phase, not other phases.
-     *
-     * @overload
-     * @param {HeadTree extends undefined ? Node : HeadTree} tree
-     * @param {RunCallback<TailTree extends undefined ? Node : TailTree>} done
-     * @returns {undefined}
-     *
-     * @overload
-     * @param {HeadTree extends undefined ? Node : HeadTree} tree
-     * @param {Compatible | undefined} file
-     * @param {RunCallback<TailTree extends undefined ? Node : TailTree>} done
-     * @returns {undefined}
-     *
-     * @overload
-     * @param {HeadTree extends undefined ? Node : HeadTree} tree
-     * @param {Compatible | undefined} [file]
-     * @returns {Promise<TailTree extends undefined ? Node : TailTree>}
-     *
-     * @param {HeadTree extends undefined ? Node : HeadTree} tree
-     *   Tree to transform and inspect.
-     * @param {(
-     *   RunCallback<TailTree extends undefined ? Node : TailTree> |
-     *   Compatible
-     * )} [file]
-     *   File associated with `node` (optional); any value accepted as `x` in
-     *   `new VFile(x)`.
-     * @param {RunCallback<TailTree extends undefined ? Node : TailTree>} [done]
-     *   Callback (optional).
-     * @returns {Promise<TailTree extends undefined ? Node : TailTree> | undefined}
-     *   Nothing if `done` is given.
-     *   Otherwise, a promise rejected with a fatal error or resolved with the
-     *   transformed tree.
-     */
-    run(tree, file, done) {
-      assertNode(tree);
-      this.freeze();
-      const transformers = this.transformers;
-      if (!done && typeof file === "function") {
-        done = file;
-        file = void 0;
-      }
-      return done ? executor(void 0, done) : new Promise(executor);
-      function executor(resolve, reject) {
-        ok(
-          typeof file !== "function",
-          "`file` can\u2019t be a `done` anymore, we checked"
-        );
-        const realFile = vfile(file);
-        transformers.run(tree, realFile, realDone);
-        function realDone(error, outputTree, file2) {
-          const resultingTree = (
-            /** @type {TailTree extends undefined ? Node : TailTree} */
-            outputTree || tree
-          );
-          if (error) {
-            reject(error);
-          } else if (resolve) {
-            resolve(resultingTree);
-          } else {
-            ok(done, "`done` is defined if `resolve` is not");
-            done(void 0, resultingTree, file2);
-          }
-        }
-      }
-    }
-    /**
-     * Run *transformers* on a syntax tree.
-     *
-     * An error is thrown if asynchronous transforms are configured.
-     *
-     * > **Note**: `runSync` freezes the processor if not already *frozen*.
-     *
-     * > **Note**: `runSync` performs the run phase, not other phases.
-     *
-     * @param {HeadTree extends undefined ? Node : HeadTree} tree
-     *   Tree to transform and inspect.
-     * @param {Compatible | undefined} [file]
-     *   File associated with `node` (optional); any value accepted as `x` in
-     *   `new VFile(x)`.
-     * @returns {TailTree extends undefined ? Node : TailTree}
-     *   Transformed tree.
-     */
-    runSync(tree, file) {
-      let complete = false;
-      let result;
-      this.run(tree, file, realDone);
-      assertDone("runSync", "run", complete);
-      ok(result, "we either bailed on an error or have a tree");
-      return result;
-      function realDone(error, tree2) {
-        bail(error);
-        result = tree2;
-        complete = true;
-      }
-    }
-    /**
-     * Compile a syntax tree.
-     *
-     * > **Note**: `stringify` freezes the processor if not already *frozen*.
-     *
-     * > **Note**: `stringify` performs the stringify phase, not the run phase
-     * > or other phases.
-     *
-     * @param {CompileTree extends undefined ? Node : CompileTree} tree
-     *   Tree to compile.
-     * @param {Compatible | undefined} [file]
-     *   File associated with `node` (optional); any value accepted as `x` in
-     *   `new VFile(x)`.
-     * @returns {CompileResult extends undefined ? Value : CompileResult}
-     *   Textual representation of the tree (see note).
-     *
-     *   > **Note**: unified typically compiles by serializing: most compilers
-     *   > return `string` (or `Uint8Array`).
-     *   > Some compilers, such as the one configured with
-     *   > [`rehype-react`][rehype-react], return other values (in this case, a
-     *   > React tree).
-     *   > If you’re using a compiler that doesn’t serialize, expect different
-     *   > result values.
-     *   >
-     *   > To register custom results in TypeScript, add them to
-     *   > {@linkcode CompileResultMap}.
-     *
-     *   [rehype-react]: https://github.com/rehypejs/rehype-react
-     */
-    stringify(tree, file) {
-      this.freeze();
-      const realFile = vfile(file);
-      const compiler2 = this.compiler || this.Compiler;
-      assertCompiler("stringify", compiler2);
-      assertNode(tree);
-      return compiler2(tree, realFile);
-    }
-    /**
-     * Configure the processor to use a plugin, a list of usable values, or a
-     * preset.
-     *
-     * If the processor is already using a plugin, the previous plugin
-     * configuration is changed based on the options that are passed in.
-     * In other words, the plugin is not added a second time.
-     *
-     * > **Note**: `use` cannot be called on *frozen* processors.
-     * > Call the processor first to create a new unfrozen processor.
-     *
-     * @example
-     *   There are many ways to pass plugins to `.use()`.
-     *   This example gives an overview:
-     *
-     *   ```js
-     *   import {unified} from 'unified'
-     *
-     *   unified()
-     *     // Plugin with options:
-     *     .use(pluginA, {x: true, y: true})
-     *     // Passing the same plugin again merges configuration (to `{x: true, y: false, z: true}`):
-     *     .use(pluginA, {y: false, z: true})
-     *     // Plugins:
-     *     .use([pluginB, pluginC])
-     *     // Two plugins, the second with options:
-     *     .use([pluginD, [pluginE, {}]])
-     *     // Preset with plugins and settings:
-     *     .use({plugins: [pluginF, [pluginG, {}]], settings: {position: false}})
-     *     // Settings only:
-     *     .use({settings: {position: false}})
-     *   ```
-     *
-     * @template {Array<unknown>} [Parameters=[]]
-     * @template {Node | string | undefined} [Input=undefined]
-     * @template [Output=Input]
-     *
-     * @overload
-     * @param {Preset | null | undefined} [preset]
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *
-     * @overload
-     * @param {PluggableList} list
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *
-     * @overload
-     * @param {Plugin<Parameters, Input, Output>} plugin
-     * @param {...(Parameters | [boolean])} parameters
-     * @returns {UsePlugin<ParseTree, HeadTree, TailTree, CompileTree, CompileResult, Input, Output>}
-     *
-     * @param {PluggableList | Plugin | Preset | null | undefined} value
-     *   Usable value.
-     * @param {...unknown} parameters
-     *   Parameters, when a plugin is given as a usable value.
-     * @returns {Processor<ParseTree, HeadTree, TailTree, CompileTree, CompileResult>}
-     *   Current processor.
-     */
-    use(value, ...parameters) {
-      const attachers = this.attachers;
-      const namespace = this.namespace;
-      assertUnfrozen("use", this.frozen);
-      if (value === null || value === void 0) {
-      } else if (typeof value === "function") {
-        addPlugin(value, parameters);
-      } else if (typeof value === "object") {
-        if (Array.isArray(value)) {
-          addList(value);
-        } else {
-          addPreset(value);
-        }
-      } else {
-        throw new TypeError("Expected usable value, not `" + value + "`");
-      }
-      return this;
-      function add(value2) {
-        if (typeof value2 === "function") {
-          addPlugin(value2, []);
-        } else if (typeof value2 === "object") {
-          if (Array.isArray(value2)) {
-            const [plugin, ...parameters2] = (
-              /** @type {PluginTuple<Array<unknown>>} */
-              value2
-            );
-            addPlugin(plugin, parameters2);
-          } else {
-            addPreset(value2);
-          }
-        } else {
-          throw new TypeError("Expected usable value, not `" + value2 + "`");
-        }
-      }
-      function addPreset(result) {
-        if (!("plugins" in result) && !("settings" in result)) {
-          throw new Error(
-            "Expected usable value but received an empty preset, which is probably a mistake: presets typically come with `plugins` and sometimes with `settings`, but this has neither"
-          );
-        }
-        addList(result.plugins);
-        if (result.settings) {
-          namespace.settings = (0, import_extend.default)(true, namespace.settings, result.settings);
-        }
-      }
-      function addList(plugins) {
-        let index2 = -1;
-        if (plugins === null || plugins === void 0) {
-        } else if (Array.isArray(plugins)) {
-          while (++index2 < plugins.length) {
-            const thing = plugins[index2];
-            add(thing);
-          }
-        } else {
-          throw new TypeError("Expected a list of plugins, not `" + plugins + "`");
-        }
-      }
-      function addPlugin(plugin, parameters2) {
-        let index2 = -1;
-        let entryIndex = -1;
-        while (++index2 < attachers.length) {
-          if (attachers[index2][0] === plugin) {
-            entryIndex = index2;
-            break;
-          }
-        }
-        if (entryIndex === -1) {
-          attachers.push([plugin, ...parameters2]);
-        } else if (parameters2.length > 0) {
-          let [primary, ...rest] = parameters2;
-          const currentPrimary = attachers[entryIndex][1];
-          if (isPlainObject(currentPrimary) && isPlainObject(primary)) {
-            primary = (0, import_extend.default)(true, currentPrimary, primary);
-          }
-          attachers[entryIndex] = [plugin, primary, ...rest];
-        }
-      }
-    }
-  };
-  var unified = new Processor().freeze();
-  function assertParser(name2, value) {
-    if (typeof value !== "function") {
-      throw new TypeError("Cannot `" + name2 + "` without `parser`");
-    }
-  }
-  function assertCompiler(name2, value) {
-    if (typeof value !== "function") {
-      throw new TypeError("Cannot `" + name2 + "` without `compiler`");
-    }
-  }
-  function assertUnfrozen(name2, frozen) {
-    if (frozen) {
-      throw new Error(
-        "Cannot call `" + name2 + "` on a frozen processor.\nCreate a new processor first, by calling it: use `processor()` instead of `processor`."
-      );
-    }
-  }
-  function assertNode(node2) {
-    if (!isPlainObject(node2) || typeof node2.type !== "string") {
-      throw new TypeError("Expected node, got `" + node2 + "`");
-    }
-  }
-  function assertDone(name2, asyncName, complete) {
-    if (!complete) {
-      throw new Error(
-        "`" + name2 + "` finished async. Use `" + asyncName + "` instead"
-      );
-    }
-  }
-  function vfile(value) {
-    return looksLikeAVFile(value) ? value : new VFile(value);
-  }
-  function looksLikeAVFile(value) {
-    return Boolean(
-      value && typeof value === "object" && "message" in value && "messages" in value
-    );
-  }
-  function looksLikeAValue(value) {
-    return typeof value === "string" || isUint8Array2(value);
-  }
-  function isUint8Array2(value) {
-    return Boolean(
-      value && typeof value === "object" && "byteLength" in value && "byteOffset" in value
-    );
-  }
-
-  // node_modules/react-markdown/lib/index.js
-  var changelog = "https://github.com/remarkjs/react-markdown/blob/main/changelog.md";
-  var emptyPlugins = [];
-  var emptyRemarkRehypeOptions = { allowDangerousHtml: true };
-  var safeProtocol = /^(https?|ircs?|mailto|xmpp)$/i;
-  var deprecations = [
-    { from: "astPlugins", id: "remove-buggy-html-in-markdown-parser" },
-    { from: "allowDangerousHtml", id: "remove-buggy-html-in-markdown-parser" },
-    {
-      from: "allowNode",
-      id: "replace-allownode-allowedtypes-and-disallowedtypes",
-      to: "allowElement"
-    },
-    {
-      from: "allowedTypes",
-      id: "replace-allownode-allowedtypes-and-disallowedtypes",
-      to: "allowedElements"
-    },
-    { from: "className", id: "remove-classname" },
-    {
-      from: "disallowedTypes",
-      id: "replace-allownode-allowedtypes-and-disallowedtypes",
-      to: "disallowedElements"
-    },
-    { from: "escapeHtml", id: "remove-buggy-html-in-markdown-parser" },
-    { from: "includeElementIndex", id: "#remove-includeelementindex" },
-    {
-      from: "includeNodeIndex",
-      id: "change-includenodeindex-to-includeelementindex"
-    },
-    { from: "linkTarget", id: "remove-linktarget" },
-    { from: "plugins", id: "change-plugins-to-remarkplugins", to: "remarkPlugins" },
-    { from: "rawSourcePos", id: "#remove-rawsourcepos" },
-    { from: "renderers", id: "change-renderers-to-components", to: "components" },
-    { from: "source", id: "change-source-to-children", to: "children" },
-    { from: "sourcePos", id: "#remove-sourcepos" },
-    { from: "transformImageUri", id: "#add-urltransform", to: "urlTransform" },
-    { from: "transformLinkUri", id: "#add-urltransform", to: "urlTransform" }
-  ];
-  function Markdown(options) {
-    const processor = createProcessor(options);
-    const file = createFile(options);
-    return post(processor.runSync(processor.parse(file), file), options);
-  }
-  function createProcessor(options) {
-    const rehypePlugins = options.rehypePlugins || emptyPlugins;
-    const remarkPlugins = options.remarkPlugins || emptyPlugins;
-    const remarkRehypeOptions = options.remarkRehypeOptions ? { ...options.remarkRehypeOptions, ...emptyRemarkRehypeOptions } : emptyRemarkRehypeOptions;
-    const processor = unified().use(remarkParse).use(remarkPlugins).use(remarkRehype, remarkRehypeOptions).use(rehypePlugins);
-    return processor;
-  }
-  function createFile(options) {
-    const children = options.children || "";
-    const file = new VFile();
-    if (typeof children === "string") {
-      file.value = children;
-    } else {
-      unreachable(
-        "Unexpected value `" + children + "` for `children` prop, expected `string`"
-      );
-    }
-    return file;
-  }
-  function post(tree, options) {
-    const allowedElements = options.allowedElements;
-    const allowElement = options.allowElement;
-    const components = options.components;
-    const disallowedElements = options.disallowedElements;
-    const skipHtml = options.skipHtml;
-    const unwrapDisallowed = options.unwrapDisallowed;
-    const urlTransform = options.urlTransform || defaultUrlTransform;
-    for (const deprecation of deprecations) {
-      if (Object.hasOwn(options, deprecation.from)) {
-        unreachable(
-          "Unexpected `" + deprecation.from + "` prop, " + (deprecation.to ? "use `" + deprecation.to + "` instead" : "remove it") + " (see <" + changelog + "#" + deprecation.id + "> for more info)"
-        );
-      }
-    }
-    if (allowedElements && disallowedElements) {
-      unreachable(
-        "Unexpected combined `allowedElements` and `disallowedElements`, expected one or the other"
-      );
-    }
-    visit(tree, transform);
-    return toJsxRuntime(tree, {
-      Fragment: import_jsx_runtime2.Fragment,
-      components,
-      ignoreInvalidStyle: true,
-      jsx: import_jsx_runtime2.jsx,
-      jsxs: import_jsx_runtime2.jsxs,
-      passKeys: true,
-      passNode: true
-    });
-    function transform(node2, index2, parent) {
-      if (node2.type === "raw" && parent && typeof index2 === "number") {
-        if (skipHtml) {
-          parent.children.splice(index2, 1);
-        } else {
-          parent.children[index2] = { type: "text", value: node2.value };
-        }
-        return index2;
-      }
-      if (node2.type === "element") {
-        let key;
-        for (key in urlAttributes) {
-          if (Object.hasOwn(urlAttributes, key) && Object.hasOwn(node2.properties, key)) {
-            const value = node2.properties[key];
-            const test = urlAttributes[key];
-            if (test === null || test.includes(node2.tagName)) {
-              node2.properties[key] = urlTransform(String(value || ""), key, node2);
-            }
-          }
-        }
-      }
-      if (node2.type === "element") {
-        let remove = allowedElements ? !allowedElements.includes(node2.tagName) : disallowedElements ? disallowedElements.includes(node2.tagName) : false;
-        if (!remove && allowElement && typeof index2 === "number") {
-          remove = !allowElement(node2, index2, parent);
-        }
-        if (remove && parent && typeof index2 === "number") {
-          if (unwrapDisallowed && node2.children) {
-            parent.children.splice(index2, 1, ...node2.children);
-          } else {
-            parent.children.splice(index2, 1);
-          }
-          return index2;
-        }
-      }
-    }
-  }
-  function defaultUrlTransform(value) {
-    const colon = value.indexOf(":");
-    const questionMark = value.indexOf("?");
-    const numberSign = value.indexOf("#");
-    const slash = value.indexOf("/");
-    if (
-      // If there is no protocol, it’s relative.
-      colon === -1 || // If the first colon is after a `?`, `#`, or `/`, it’s not a protocol.
-      slash !== -1 && colon > slash || questionMark !== -1 && colon > questionMark || numberSign !== -1 && colon > numberSign || // It is a protocol, it should be allowed.
-      safeProtocol.test(value.slice(0, colon))
-    ) {
-      return value;
-    }
-    return "";
-  }
-
-  // node_modules/ccount/index.js
-  function ccount(value, character) {
-    const source = String(value);
-    if (typeof character !== "string") {
-      throw new TypeError("Expected character");
-    }
-    let count = 0;
-    let index2 = source.indexOf(character);
-    while (index2 !== -1) {
-      count++;
-      index2 = source.indexOf(character, index2 + character.length);
-    }
-    return count;
-  }
-
-  // node_modules/mdast-util-find-and-replace/node_modules/escape-string-regexp/index.js
-  function escapeStringRegexp(string3) {
-    if (typeof string3 !== "string") {
-      throw new TypeError("Expected a string");
-    }
-    return string3.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&").replace(/-/g, "\\x2d");
-  }
-
-  // node_modules/mdast-util-find-and-replace/lib/index.js
-  function findAndReplace(tree, list4, options) {
-    const settings = options || {};
-    const ignored = convert(settings.ignore || []);
-    const pairs = toPairs(list4);
-    let pairIndex = -1;
-    while (++pairIndex < pairs.length) {
-      visitParents(tree, "text", visitor);
-    }
-    function visitor(node2, parents) {
-      let index2 = -1;
-      let grandparent;
-      while (++index2 < parents.length) {
-        const parent = parents[index2];
-        const siblings = grandparent ? grandparent.children : void 0;
-        if (ignored(
-          parent,
-          siblings ? siblings.indexOf(parent) : void 0,
-          grandparent
-        )) {
-          return;
-        }
-        grandparent = parent;
-      }
-      if (grandparent) {
-        return handler(node2, parents);
-      }
-    }
-    function handler(node2, parents) {
-      const parent = parents[parents.length - 1];
-      const find2 = pairs[pairIndex][0];
-      const replace2 = pairs[pairIndex][1];
-      let start2 = 0;
-      const siblings = parent.children;
-      const index2 = siblings.indexOf(node2);
-      let change = false;
-      let nodes = [];
-      find2.lastIndex = 0;
-      let match = find2.exec(node2.value);
-      while (match) {
-        const position3 = match.index;
-        const matchObject = {
-          index: match.index,
-          input: match.input,
-          stack: [...parents, node2]
-        };
-        let value = replace2(...match, matchObject);
-        if (typeof value === "string") {
-          value = value.length > 0 ? { type: "text", value } : void 0;
-        }
-        if (value === false) {
-          find2.lastIndex = position3 + 1;
-        } else {
-          if (start2 !== position3) {
-            nodes.push({
-              type: "text",
-              value: node2.value.slice(start2, position3)
-            });
-          }
-          if (Array.isArray(value)) {
-            nodes.push(...value);
-          } else if (value) {
-            nodes.push(value);
-          }
-          start2 = position3 + match[0].length;
-          change = true;
-        }
-        if (!find2.global) {
-          break;
-        }
-        match = find2.exec(node2.value);
-      }
-      if (change) {
-        if (start2 < node2.value.length) {
-          nodes.push({ type: "text", value: node2.value.slice(start2) });
-        }
-        parent.children.splice(index2, 1, ...nodes);
-      } else {
-        nodes = [node2];
-      }
-      return index2 + nodes.length;
-    }
-  }
-  function toPairs(tupleOrList) {
-    const result = [];
-    if (!Array.isArray(tupleOrList)) {
-      throw new TypeError("Expected find and replace tuple or list of tuples");
-    }
-    const list4 = !tupleOrList[0] || Array.isArray(tupleOrList[0]) ? tupleOrList : [tupleOrList];
-    let index2 = -1;
-    while (++index2 < list4.length) {
-      const tuple = list4[index2];
-      result.push([toExpression(tuple[0]), toFunction(tuple[1])]);
-    }
-    return result;
-  }
-  function toExpression(find2) {
-    return typeof find2 === "string" ? new RegExp(escapeStringRegexp(find2), "g") : find2;
-  }
-  function toFunction(replace2) {
-    return typeof replace2 === "function" ? replace2 : function() {
-      return replace2;
-    };
-  }
-
-  // node_modules/mdast-util-gfm-autolink-literal/lib/index.js
-  var inConstruct = "phrasing";
-  var notInConstruct = ["autolink", "link", "image", "label"];
-  function gfmAutolinkLiteralFromMarkdown() {
-    return {
-      transforms: [transformGfmAutolinkLiterals],
-      enter: {
-        literalAutolink: enterLiteralAutolink,
-        literalAutolinkEmail: enterLiteralAutolinkValue,
-        literalAutolinkHttp: enterLiteralAutolinkValue,
-        literalAutolinkWww: enterLiteralAutolinkValue
-      },
-      exit: {
-        literalAutolink: exitLiteralAutolink,
-        literalAutolinkEmail: exitLiteralAutolinkEmail,
-        literalAutolinkHttp: exitLiteralAutolinkHttp,
-        literalAutolinkWww: exitLiteralAutolinkWww
-      }
-    };
-  }
-  function gfmAutolinkLiteralToMarkdown() {
-    return {
-      unsafe: [
-        {
-          character: "@",
-          before: "[+\\-.\\w]",
-          after: "[\\-.\\w]",
-          inConstruct,
-          notInConstruct
-        },
-        {
-          character: ".",
-          before: "[Ww]",
-          after: "[\\-.\\w]",
-          inConstruct,
-          notInConstruct
-        },
-        {
-          character: ":",
-          before: "[ps]",
-          after: "\\/",
-          inConstruct,
-          notInConstruct
-        }
-      ]
-    };
-  }
-  function enterLiteralAutolink(token) {
-    this.enter({ type: "link", title: null, url: "", children: [] }, token);
-  }
-  function enterLiteralAutolinkValue(token) {
-    this.config.enter.autolinkProtocol.call(this, token);
-  }
-  function exitLiteralAutolinkHttp(token) {
-    this.config.exit.autolinkProtocol.call(this, token);
-  }
-  function exitLiteralAutolinkWww(token) {
-    this.config.exit.data.call(this, token);
-    const node2 = this.stack[this.stack.length - 1];
-    ok(node2.type === "link");
-    node2.url = "http://" + this.sliceSerialize(token);
-  }
-  function exitLiteralAutolinkEmail(token) {
-    this.config.exit.autolinkEmail.call(this, token);
-  }
-  function exitLiteralAutolink(token) {
-    this.exit(token);
-  }
-  function transformGfmAutolinkLiterals(tree) {
-    findAndReplace(
-      tree,
-      [
-        [/(https?:\/\/|www(?=\.))([-.\w]+)([^ \t\r\n]*)/gi, findUrl],
-        [/(?<=^|\s|\p{P}|\p{S})([-.\w+]+)@([-\w]+(?:\.[-\w]+)+)/gu, findEmail]
-      ],
-      { ignore: ["link", "linkReference"] }
-    );
-  }
-  function findUrl(_, protocol, domain2, path2, match) {
-    let prefix = "";
-    if (!previous2(match)) {
-      return false;
-    }
-    if (/^w/i.test(protocol)) {
-      domain2 = protocol + domain2;
-      protocol = "";
-      prefix = "http://";
-    }
-    if (!isCorrectDomain(domain2)) {
-      return false;
-    }
-    const parts = splitUrl(domain2 + path2);
-    if (!parts[0]) return false;
-    const result = {
-      type: "link",
-      title: null,
-      url: prefix + protocol + parts[0],
-      children: [{ type: "text", value: protocol + parts[0] }]
-    };
-    if (parts[1]) {
-      return [result, { type: "text", value: parts[1] }];
-    }
-    return result;
-  }
-  function findEmail(_, atext, label, match) {
-    if (
-      // Not an expected previous character.
-      !previous2(match, true) || // Label ends in not allowed character.
-      /[-\d_]$/.test(label)
-    ) {
-      return false;
-    }
-    return {
-      type: "link",
-      title: null,
-      url: "mailto:" + atext + "@" + label,
-      children: [{ type: "text", value: atext + "@" + label }]
-    };
-  }
-  function isCorrectDomain(domain2) {
-    const parts = domain2.split(".");
-    if (parts.length < 2 || parts[parts.length - 1] && (/_/.test(parts[parts.length - 1]) || !/[a-zA-Z\d]/.test(parts[parts.length - 1])) || parts[parts.length - 2] && (/_/.test(parts[parts.length - 2]) || !/[a-zA-Z\d]/.test(parts[parts.length - 2]))) {
-      return false;
-    }
-    return true;
-  }
-  function splitUrl(url) {
-    const trailExec = /[!"&'),.:;<>?\]}]+$/.exec(url);
-    if (!trailExec) {
-      return [url, void 0];
-    }
-    url = url.slice(0, trailExec.index);
-    let trail2 = trailExec[0];
-    let closingParenIndex = trail2.indexOf(")");
-    const openingParens = ccount(url, "(");
-    let closingParens = ccount(url, ")");
-    while (closingParenIndex !== -1 && openingParens > closingParens) {
-      url += trail2.slice(0, closingParenIndex + 1);
-      trail2 = trail2.slice(closingParenIndex + 1);
-      closingParenIndex = trail2.indexOf(")");
-      closingParens++;
-    }
-    return [url, trail2];
-  }
-  function previous2(match, email) {
-    const code4 = match.input.charCodeAt(match.index - 1);
-    return (match.index === 0 || unicodeWhitespace(code4) || unicodePunctuation(code4)) && // If it’s an email, the previous character should not be a slash.
-    (!email || code4 !== 47);
-  }
-
-  // node_modules/mdast-util-gfm-footnote/lib/index.js
-  footnoteReference2.peek = footnoteReferencePeek;
-  function enterFootnoteCallString() {
-    this.buffer();
-  }
-  function enterFootnoteCall(token) {
-    this.enter({ type: "footnoteReference", identifier: "", label: "" }, token);
-  }
-  function enterFootnoteDefinitionLabelString() {
-    this.buffer();
-  }
-  function enterFootnoteDefinition(token) {
-    this.enter(
-      { type: "footnoteDefinition", identifier: "", label: "", children: [] },
-      token
-    );
-  }
-  function exitFootnoteCallString(token) {
-    const label = this.resume();
-    const node2 = this.stack[this.stack.length - 1];
-    ok(node2.type === "footnoteReference");
-    node2.identifier = normalizeIdentifier(
-      this.sliceSerialize(token)
-    ).toLowerCase();
-    node2.label = label;
-  }
-  function exitFootnoteCall(token) {
-    this.exit(token);
-  }
-  function exitFootnoteDefinitionLabelString(token) {
-    const label = this.resume();
-    const node2 = this.stack[this.stack.length - 1];
-    ok(node2.type === "footnoteDefinition");
-    node2.identifier = normalizeIdentifier(
-      this.sliceSerialize(token)
-    ).toLowerCase();
-    node2.label = label;
-  }
-  function exitFootnoteDefinition(token) {
-    this.exit(token);
-  }
-  function footnoteReferencePeek() {
-    return "[";
-  }
-  function footnoteReference2(node2, _, state, info) {
-    const tracker = state.createTracker(info);
-    let value = tracker.move("[^");
-    const exit3 = state.enter("footnoteReference");
-    const subexit = state.enter("reference");
-    value += tracker.move(
-      state.safe(state.associationId(node2), { after: "]", before: value })
-    );
-    subexit();
-    exit3();
-    value += tracker.move("]");
-    return value;
-  }
-  function gfmFootnoteFromMarkdown() {
-    return {
-      enter: {
-        gfmFootnoteCallString: enterFootnoteCallString,
-        gfmFootnoteCall: enterFootnoteCall,
-        gfmFootnoteDefinitionLabelString: enterFootnoteDefinitionLabelString,
-        gfmFootnoteDefinition: enterFootnoteDefinition
-      },
-      exit: {
-        gfmFootnoteCallString: exitFootnoteCallString,
-        gfmFootnoteCall: exitFootnoteCall,
-        gfmFootnoteDefinitionLabelString: exitFootnoteDefinitionLabelString,
-        gfmFootnoteDefinition: exitFootnoteDefinition
-      }
-    };
-  }
-  function gfmFootnoteToMarkdown(options) {
-    let firstLineBlank = false;
-    if (options && options.firstLineBlank) {
-      firstLineBlank = true;
-    }
-    return {
-      handlers: { footnoteDefinition, footnoteReference: footnoteReference2 },
-      // This is on by default already.
-      unsafe: [{ character: "[", inConstruct: ["label", "phrasing", "reference"] }]
-    };
-    function footnoteDefinition(node2, _, state, info) {
-      const tracker = state.createTracker(info);
-      let value = tracker.move("[^");
-      const exit3 = state.enter("footnoteDefinition");
-      const subexit = state.enter("label");
-      value += tracker.move(
-        state.safe(state.associationId(node2), { before: value, after: "]" })
-      );
-      subexit();
-      value += tracker.move("]:");
-      if (node2.children && node2.children.length > 0) {
-        tracker.shift(4);
-        value += tracker.move(
-          (firstLineBlank ? "\n" : " ") + state.indentLines(
-            state.containerFlow(node2, tracker.current()),
-            firstLineBlank ? mapAll : mapExceptFirst
-          )
-        );
-      }
-      exit3();
-      return value;
-    }
-  }
-  function mapExceptFirst(line, index2, blank) {
-    return index2 === 0 ? line : mapAll(line, index2, blank);
-  }
-  function mapAll(line, index2, blank) {
-    return (blank ? "" : "    ") + line;
-  }
-
-  // node_modules/mdast-util-gfm-strikethrough/lib/index.js
-  var constructsWithoutStrikethrough = [
-    "autolink",
-    "destinationLiteral",
-    "destinationRaw",
-    "reference",
-    "titleQuote",
-    "titleApostrophe"
-  ];
-  handleDelete.peek = peekDelete;
-  function gfmStrikethroughFromMarkdown() {
-    return {
-      canContainEols: ["delete"],
-      enter: { strikethrough: enterStrikethrough },
-      exit: { strikethrough: exitStrikethrough }
-    };
-  }
-  function gfmStrikethroughToMarkdown() {
-    return {
-      unsafe: [
-        {
-          character: "~",
-          inConstruct: "phrasing",
-          notInConstruct: constructsWithoutStrikethrough
-        }
-      ],
-      handlers: { delete: handleDelete }
-    };
-  }
-  function enterStrikethrough(token) {
-    this.enter({ type: "delete", children: [] }, token);
-  }
-  function exitStrikethrough(token) {
-    this.exit(token);
-  }
-  function handleDelete(node2, _, state, info) {
-    const tracker = state.createTracker(info);
-    const exit3 = state.enter("strikethrough");
-    let value = tracker.move("~~");
-    value += state.containerPhrasing(node2, {
-      ...tracker.current(),
-      before: value,
-      after: "~"
-    });
-    value += tracker.move("~~");
-    exit3();
-    return value;
-  }
-  function peekDelete() {
-    return "~";
-  }
-
-  // node_modules/mdast-util-gfm-table/node_modules/markdown-table/index.js
-  function defaultStringLength(value) {
-    return value.length;
-  }
-  function markdownTable(table2, options) {
-    const settings = options || {};
-    const align = (settings.align || []).concat();
-    const stringLength = settings.stringLength || defaultStringLength;
-    const alignments = [];
-    const cellMatrix = [];
-    const sizeMatrix = [];
-    const longestCellByColumn = [];
-    let mostCellsPerRow = 0;
-    let rowIndex = -1;
-    while (++rowIndex < table2.length) {
-      const row2 = [];
-      const sizes2 = [];
-      let columnIndex2 = -1;
-      if (table2[rowIndex].length > mostCellsPerRow) {
-        mostCellsPerRow = table2[rowIndex].length;
-      }
-      while (++columnIndex2 < table2[rowIndex].length) {
-        const cell = serialize2(table2[rowIndex][columnIndex2]);
-        if (settings.alignDelimiters !== false) {
-          const size = stringLength(cell);
-          sizes2[columnIndex2] = size;
-          if (longestCellByColumn[columnIndex2] === void 0 || size > longestCellByColumn[columnIndex2]) {
-            longestCellByColumn[columnIndex2] = size;
-          }
-        }
-        row2.push(cell);
-      }
-      cellMatrix[rowIndex] = row2;
-      sizeMatrix[rowIndex] = sizes2;
-    }
-    let columnIndex = -1;
-    if (typeof align === "object" && "length" in align) {
-      while (++columnIndex < mostCellsPerRow) {
-        alignments[columnIndex] = toAlignment(align[columnIndex]);
-      }
-    } else {
-      const code4 = toAlignment(align);
-      while (++columnIndex < mostCellsPerRow) {
-        alignments[columnIndex] = code4;
-      }
-    }
-    columnIndex = -1;
-    const row = [];
-    const sizes = [];
-    while (++columnIndex < mostCellsPerRow) {
-      const code4 = alignments[columnIndex];
-      let before = "";
-      let after = "";
-      if (code4 === 99) {
-        before = ":";
-        after = ":";
-      } else if (code4 === 108) {
-        before = ":";
-      } else if (code4 === 114) {
-        after = ":";
-      }
-      let size = settings.alignDelimiters === false ? 1 : Math.max(
-        1,
-        longestCellByColumn[columnIndex] - before.length - after.length
-      );
-      const cell = before + "-".repeat(size) + after;
-      if (settings.alignDelimiters !== false) {
-        size = before.length + size + after.length;
-        if (size > longestCellByColumn[columnIndex]) {
-          longestCellByColumn[columnIndex] = size;
-        }
-        sizes[columnIndex] = size;
-      }
-      row[columnIndex] = cell;
-    }
-    cellMatrix.splice(1, 0, row);
-    sizeMatrix.splice(1, 0, sizes);
-    rowIndex = -1;
-    const lines = [];
-    while (++rowIndex < cellMatrix.length) {
-      const row2 = cellMatrix[rowIndex];
-      const sizes2 = sizeMatrix[rowIndex];
-      columnIndex = -1;
-      const line = [];
-      while (++columnIndex < mostCellsPerRow) {
-        const cell = row2[columnIndex] || "";
-        let before = "";
-        let after = "";
-        if (settings.alignDelimiters !== false) {
-          const size = longestCellByColumn[columnIndex] - (sizes2[columnIndex] || 0);
-          const code4 = alignments[columnIndex];
-          if (code4 === 114) {
-            before = " ".repeat(size);
-          } else if (code4 === 99) {
-            if (size % 2) {
-              before = " ".repeat(size / 2 + 0.5);
-              after = " ".repeat(size / 2 - 0.5);
-            } else {
-              before = " ".repeat(size / 2);
-              after = before;
-            }
-          } else {
-            after = " ".repeat(size);
-          }
-        }
-        if (settings.delimiterStart !== false && !columnIndex) {
-          line.push("|");
-        }
-        if (settings.padding !== false && // Don’t add the opening space if we’re not aligning and the cell is
-        // empty: there will be a closing space.
-        !(settings.alignDelimiters === false && cell === "") && (settings.delimiterStart !== false || columnIndex)) {
-          line.push(" ");
-        }
-        if (settings.alignDelimiters !== false) {
-          line.push(before);
-        }
-        line.push(cell);
-        if (settings.alignDelimiters !== false) {
-          line.push(after);
-        }
-        if (settings.padding !== false) {
-          line.push(" ");
-        }
-        if (settings.delimiterEnd !== false || columnIndex !== mostCellsPerRow - 1) {
-          line.push("|");
-        }
-      }
-      lines.push(
-        settings.delimiterEnd === false ? line.join("").replace(/ +$/, "") : line.join("")
-      );
-    }
-    return lines.join("\n");
-  }
-  function serialize2(value) {
-    return value === null || value === void 0 ? "" : String(value);
-  }
-  function toAlignment(value) {
-    const code4 = typeof value === "string" ? value.codePointAt(0) : 0;
-    return code4 === 67 || code4 === 99 ? 99 : code4 === 76 || code4 === 108 ? 108 : code4 === 82 || code4 === 114 ? 114 : 0;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/blockquote.js
-  function blockquote2(node2, _, state, info) {
-    const exit3 = state.enter("blockquote");
-    const tracker = state.createTracker(info);
-    tracker.move("> ");
-    tracker.shift(2);
-    const value = state.indentLines(
-      state.containerFlow(node2, tracker.current()),
-      map
-    );
-    exit3();
-    return value;
-  }
-  function map(line, _, blank) {
-    return ">" + (blank ? "" : " ") + line;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/pattern-in-scope.js
-  function patternInScope(stack, pattern) {
-    return listInScope(stack, pattern.inConstruct, true) && !listInScope(stack, pattern.notInConstruct, false);
-  }
-  function listInScope(stack, list4, none) {
-    if (typeof list4 === "string") {
-      list4 = [list4];
-    }
-    if (!list4 || list4.length === 0) {
-      return none;
-    }
-    let index2 = -1;
-    while (++index2 < list4.length) {
-      if (stack.includes(list4[index2])) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/break.js
-  function hardBreak2(_, _1, state, info) {
-    let index2 = -1;
-    while (++index2 < state.unsafe.length) {
-      if (state.unsafe[index2].character === "\n" && patternInScope(state.stack, state.unsafe[index2])) {
-        return /[ \t]/.test(info.before) ? "" : " ";
-      }
-    }
-    return "\\\n";
-  }
-
-  // node_modules/longest-streak/index.js
-  function longestStreak(value, substring) {
-    const source = String(value);
-    let index2 = source.indexOf(substring);
-    let expected = index2;
-    let count = 0;
-    let max = 0;
-    if (typeof substring !== "string") {
-      throw new TypeError("Expected substring");
-    }
-    while (index2 !== -1) {
-      if (index2 === expected) {
-        if (++count > max) {
-          max = count;
-        }
-      } else {
-        count = 1;
-      }
-      expected = index2 + substring.length;
-      index2 = source.indexOf(substring, expected);
-    }
-    return max;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/format-code-as-indented.js
-  function formatCodeAsIndented(node2, state) {
-    return Boolean(
-      state.options.fences === false && node2.value && // If there’s no info…
-      !node2.lang && // And there’s a non-whitespace character…
-      /[^ \r\n]/.test(node2.value) && // And the value doesn’t start or end in a blank…
-      !/^[\t ]*(?:[\r\n]|$)|(?:^|[\r\n])[\t ]*$/.test(node2.value)
-    );
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-fence.js
-  function checkFence(state) {
-    const marker = state.options.fence || "`";
-    if (marker !== "`" && marker !== "~") {
-      throw new Error(
-        "Cannot serialize code with `" + marker + "` for `options.fence`, expected `` ` `` or `~`"
-      );
-    }
-    return marker;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/code.js
-  function code2(node2, _, state, info) {
-    const marker = checkFence(state);
-    const raw = node2.value || "";
-    const suffix = marker === "`" ? "GraveAccent" : "Tilde";
-    if (formatCodeAsIndented(node2, state)) {
-      const exit4 = state.enter("codeIndented");
-      const value2 = state.indentLines(raw, map2);
-      exit4();
-      return value2;
-    }
-    const tracker = state.createTracker(info);
-    const sequence = marker.repeat(Math.max(longestStreak(raw, marker) + 1, 3));
-    const exit3 = state.enter("codeFenced");
-    let value = tracker.move(sequence);
-    if (node2.lang) {
-      const subexit = state.enter(`codeFencedLang${suffix}`);
-      value += tracker.move(
-        state.safe(node2.lang, {
-          before: value,
-          after: " ",
-          encode: ["`"],
-          ...tracker.current()
-        })
-      );
-      subexit();
-    }
-    if (node2.lang && node2.meta) {
-      const subexit = state.enter(`codeFencedMeta${suffix}`);
-      value += tracker.move(" ");
-      value += tracker.move(
-        state.safe(node2.meta, {
-          before: value,
-          after: "\n",
-          encode: ["`"],
-          ...tracker.current()
-        })
-      );
-      subexit();
-    }
-    value += tracker.move("\n");
-    if (raw) {
-      value += tracker.move(raw + "\n");
-    }
-    value += tracker.move(sequence);
-    exit3();
-    return value;
-  }
-  function map2(line, _, blank) {
-    return (blank ? "" : "    ") + line;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-quote.js
-  function checkQuote(state) {
-    const marker = state.options.quote || '"';
-    if (marker !== '"' && marker !== "'") {
-      throw new Error(
-        "Cannot serialize title with `" + marker + "` for `options.quote`, expected `\"`, or `'`"
-      );
-    }
-    return marker;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/definition.js
-  function definition2(node2, _, state, info) {
-    const quote = checkQuote(state);
-    const suffix = quote === '"' ? "Quote" : "Apostrophe";
-    const exit3 = state.enter("definition");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info);
-    let value = tracker.move("[");
-    value += tracker.move(
-      state.safe(state.associationId(node2), {
-        before: value,
-        after: "]",
-        ...tracker.current()
-      })
-    );
-    value += tracker.move("]: ");
-    subexit();
-    if (
-      // If there’s no url, or…
-      !node2.url || // If there are control characters or whitespace.
-      /[\0- \u007F]/.test(node2.url)
-    ) {
-      subexit = state.enter("destinationLiteral");
-      value += tracker.move("<");
-      value += tracker.move(
-        state.safe(node2.url, { before: value, after: ">", ...tracker.current() })
-      );
-      value += tracker.move(">");
-    } else {
-      subexit = state.enter("destinationRaw");
-      value += tracker.move(
-        state.safe(node2.url, {
-          before: value,
-          after: node2.title ? " " : "\n",
-          ...tracker.current()
-        })
-      );
-    }
-    subexit();
-    if (node2.title) {
-      subexit = state.enter(`title${suffix}`);
-      value += tracker.move(" " + quote);
-      value += tracker.move(
-        state.safe(node2.title, {
-          before: value,
-          after: quote,
-          ...tracker.current()
-        })
-      );
-      value += tracker.move(quote);
-      subexit();
-    }
-    exit3();
-    return value;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-emphasis.js
-  function checkEmphasis(state) {
-    const marker = state.options.emphasis || "*";
-    if (marker !== "*" && marker !== "_") {
-      throw new Error(
-        "Cannot serialize emphasis with `" + marker + "` for `options.emphasis`, expected `*`, or `_`"
-      );
-    }
-    return marker;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/encode-character-reference.js
-  function encodeCharacterReference(code4) {
-    return "&#x" + code4.toString(16).toUpperCase() + ";";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/encode-info.js
-  function encodeInfo(outside, inside, marker) {
-    const outsideKind = classifyCharacter(outside);
-    const insideKind = classifyCharacter(inside);
-    if (outsideKind === void 0) {
-      return insideKind === void 0 ? (
-        // Letter inside:
-        // we have to encode *both* letters for `_` as it is looser.
-        // it already forms for `*` (and GFMs `~`).
-        marker === "_" ? { inside: true, outside: true } : { inside: false, outside: false }
-      ) : insideKind === 1 ? (
-        // Whitespace inside: encode both (letter, whitespace).
-        { inside: true, outside: true }
-      ) : (
-        // Punctuation inside: encode outer (letter)
-        { inside: false, outside: true }
-      );
-    }
-    if (outsideKind === 1) {
-      return insideKind === void 0 ? (
-        // Letter inside: already forms.
-        { inside: false, outside: false }
-      ) : insideKind === 1 ? (
-        // Whitespace inside: encode both (whitespace).
-        { inside: true, outside: true }
-      ) : (
-        // Punctuation inside: already forms.
-        { inside: false, outside: false }
-      );
-    }
-    return insideKind === void 0 ? (
-      // Letter inside: already forms.
-      { inside: false, outside: false }
-    ) : insideKind === 1 ? (
-      // Whitespace inside: encode inner (whitespace).
-      { inside: true, outside: false }
-    ) : (
-      // Punctuation inside: already forms.
-      { inside: false, outside: false }
-    );
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/emphasis.js
-  emphasis2.peek = emphasisPeek;
-  function emphasis2(node2, _, state, info) {
-    const marker = checkEmphasis(state);
-    const exit3 = state.enter("emphasis");
-    const tracker = state.createTracker(info);
-    const before = tracker.move(marker);
-    let between = tracker.move(
-      state.containerPhrasing(node2, {
-        after: marker,
-        before,
-        ...tracker.current()
-      })
-    );
-    const betweenHead = between.charCodeAt(0);
-    const open = encodeInfo(
-      info.before.charCodeAt(info.before.length - 1),
-      betweenHead,
-      marker
-    );
-    if (open.inside) {
-      between = encodeCharacterReference(betweenHead) + between.slice(1);
-    }
-    const betweenTail = between.charCodeAt(between.length - 1);
-    const close = encodeInfo(info.after.charCodeAt(0), betweenTail, marker);
-    if (close.inside) {
-      between = between.slice(0, -1) + encodeCharacterReference(betweenTail);
-    }
-    const after = tracker.move(marker);
-    exit3();
-    state.attentionEncodeSurroundingInfo = {
-      after: close.outside,
-      before: open.outside
-    };
-    return before + between + after;
-  }
-  function emphasisPeek(_, _1, state) {
-    return state.options.emphasis || "*";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/format-heading-as-setext.js
-  function formatHeadingAsSetext(node2, state) {
-    let literalWithBreak = false;
-    visit(node2, function(node3) {
-      if ("value" in node3 && /\r?\n|\r/.test(node3.value) || node3.type === "break") {
-        literalWithBreak = true;
-        return EXIT;
-      }
-    });
-    return Boolean(
-      (!node2.depth || node2.depth < 3) && toString(node2) && (state.options.setext || literalWithBreak)
-    );
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/heading.js
-  function heading2(node2, _, state, info) {
-    const rank = Math.max(Math.min(6, node2.depth || 1), 1);
-    const tracker = state.createTracker(info);
-    if (formatHeadingAsSetext(node2, state)) {
-      const exit4 = state.enter("headingSetext");
-      const subexit2 = state.enter("phrasing");
-      const value2 = state.containerPhrasing(node2, {
-        ...tracker.current(),
-        before: "\n",
-        after: "\n"
-      });
-      subexit2();
-      exit4();
-      return value2 + "\n" + (rank === 1 ? "=" : "-").repeat(
-        // The whole size…
-        value2.length - // Minus the position of the character after the last EOL (or
-        // 0 if there is none)…
-        (Math.max(value2.lastIndexOf("\r"), value2.lastIndexOf("\n")) + 1)
-      );
-    }
-    const sequence = "#".repeat(rank);
-    const exit3 = state.enter("headingAtx");
-    const subexit = state.enter("phrasing");
-    tracker.move(sequence + " ");
-    let value = state.containerPhrasing(node2, {
-      before: "# ",
-      after: "\n",
-      ...tracker.current()
-    });
-    if (/^[\t ]/.test(value)) {
-      value = encodeCharacterReference(value.charCodeAt(0)) + value.slice(1);
-    }
-    value = value ? sequence + " " + value : sequence;
-    if (state.options.closeAtx) {
-      value += " " + sequence;
-    }
-    subexit();
-    exit3();
-    return value;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/html.js
-  html4.peek = htmlPeek;
-  function html4(node2) {
-    return node2.value || "";
-  }
-  function htmlPeek() {
-    return "<";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/image.js
-  image2.peek = imagePeek;
-  function image2(node2, _, state, info) {
-    const quote = checkQuote(state);
-    const suffix = quote === '"' ? "Quote" : "Apostrophe";
-    const exit3 = state.enter("image");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info);
-    let value = tracker.move("![");
-    value += tracker.move(
-      state.safe(node2.alt, { before: value, after: "]", ...tracker.current() })
-    );
-    value += tracker.move("](");
-    subexit();
-    if (
-      // If there’s no url but there is a title…
-      !node2.url && node2.title || // If there are control characters or whitespace.
-      /[\0- \u007F]/.test(node2.url)
-    ) {
-      subexit = state.enter("destinationLiteral");
-      value += tracker.move("<");
-      value += tracker.move(
-        state.safe(node2.url, { before: value, after: ">", ...tracker.current() })
-      );
-      value += tracker.move(">");
-    } else {
-      subexit = state.enter("destinationRaw");
-      value += tracker.move(
-        state.safe(node2.url, {
-          before: value,
-          after: node2.title ? " " : ")",
-          ...tracker.current()
-        })
-      );
-    }
-    subexit();
-    if (node2.title) {
-      subexit = state.enter(`title${suffix}`);
-      value += tracker.move(" " + quote);
-      value += tracker.move(
-        state.safe(node2.title, {
-          before: value,
-          after: quote,
-          ...tracker.current()
-        })
-      );
-      value += tracker.move(quote);
-      subexit();
-    }
-    value += tracker.move(")");
-    exit3();
-    return value;
-  }
-  function imagePeek() {
-    return "!";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/image-reference.js
-  imageReference2.peek = imageReferencePeek;
-  function imageReference2(node2, _, state, info) {
-    const type = node2.referenceType;
-    const exit3 = state.enter("imageReference");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info);
-    let value = tracker.move("![");
-    const alt = state.safe(node2.alt, {
-      before: value,
-      after: "]",
-      ...tracker.current()
-    });
-    value += tracker.move(alt + "][");
-    subexit();
-    const stack = state.stack;
-    state.stack = [];
-    subexit = state.enter("reference");
-    const reference = state.safe(state.associationId(node2), {
-      before: value,
-      after: "]",
-      ...tracker.current()
-    });
-    subexit();
-    state.stack = stack;
-    exit3();
-    if (type === "full" || !alt || alt !== reference) {
-      value += tracker.move(reference + "]");
-    } else if (type === "shortcut") {
-      value = value.slice(0, -1);
-    } else {
-      value += tracker.move("]");
-    }
-    return value;
-  }
-  function imageReferencePeek() {
-    return "!";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/inline-code.js
-  inlineCode2.peek = inlineCodePeek;
-  function inlineCode2(node2, _, state) {
-    let value = node2.value || "";
-    let sequence = "`";
-    let index2 = -1;
-    while (new RegExp("(^|[^`])" + sequence + "([^`]|$)").test(value)) {
-      sequence += "`";
-    }
-    if (/[^ \r\n]/.test(value) && (/^[ \r\n]/.test(value) && /[ \r\n]$/.test(value) || /^`|`$/.test(value))) {
-      value = " " + value + " ";
-    }
-    while (++index2 < state.unsafe.length) {
-      const pattern = state.unsafe[index2];
-      const expression = state.compilePattern(pattern);
-      let match;
-      if (!pattern.atBreak) continue;
-      while (match = expression.exec(value)) {
-        let position3 = match.index;
-        if (value.charCodeAt(position3) === 10 && value.charCodeAt(position3 - 1) === 13) {
-          position3--;
-        }
-        value = value.slice(0, position3) + " " + value.slice(match.index + 1);
-      }
-    }
-    return sequence + value + sequence;
-  }
-  function inlineCodePeek() {
-    return "`";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/format-link-as-autolink.js
-  function formatLinkAsAutolink(node2, state) {
-    const raw = toString(node2);
-    return Boolean(
-      !state.options.resourceLink && // If there’s a url…
-      node2.url && // And there’s a no title…
-      !node2.title && // And the content of `node` is a single text node…
-      node2.children && node2.children.length === 1 && node2.children[0].type === "text" && // And if the url is the same as the content…
-      (raw === node2.url || "mailto:" + raw === node2.url) && // And that starts w/ a protocol…
-      /^[a-z][a-z+.-]+:/i.test(node2.url) && // And that doesn’t contain ASCII control codes (character escapes and
-      // references don’t work), space, or angle brackets…
-      !/[\0- <>\u007F]/.test(node2.url)
-    );
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/link.js
-  link2.peek = linkPeek;
-  function link2(node2, _, state, info) {
-    const quote = checkQuote(state);
-    const suffix = quote === '"' ? "Quote" : "Apostrophe";
-    const tracker = state.createTracker(info);
-    let exit3;
-    let subexit;
-    if (formatLinkAsAutolink(node2, state)) {
-      const stack = state.stack;
-      state.stack = [];
-      exit3 = state.enter("autolink");
-      let value2 = tracker.move("<");
-      value2 += tracker.move(
-        state.containerPhrasing(node2, {
-          before: value2,
-          after: ">",
-          ...tracker.current()
-        })
-      );
-      value2 += tracker.move(">");
-      exit3();
-      state.stack = stack;
-      return value2;
-    }
-    exit3 = state.enter("link");
-    subexit = state.enter("label");
-    let value = tracker.move("[");
-    value += tracker.move(
-      state.containerPhrasing(node2, {
-        before: value,
-        after: "](",
-        ...tracker.current()
-      })
-    );
-    value += tracker.move("](");
-    subexit();
-    if (
-      // If there’s no url but there is a title…
-      !node2.url && node2.title || // If there are control characters or whitespace.
-      /[\0- \u007F]/.test(node2.url)
-    ) {
-      subexit = state.enter("destinationLiteral");
-      value += tracker.move("<");
-      value += tracker.move(
-        state.safe(node2.url, { before: value, after: ">", ...tracker.current() })
-      );
-      value += tracker.move(">");
-    } else {
-      subexit = state.enter("destinationRaw");
-      value += tracker.move(
-        state.safe(node2.url, {
-          before: value,
-          after: node2.title ? " " : ")",
-          ...tracker.current()
-        })
-      );
-    }
-    subexit();
-    if (node2.title) {
-      subexit = state.enter(`title${suffix}`);
-      value += tracker.move(" " + quote);
-      value += tracker.move(
-        state.safe(node2.title, {
-          before: value,
-          after: quote,
-          ...tracker.current()
-        })
-      );
-      value += tracker.move(quote);
-      subexit();
-    }
-    value += tracker.move(")");
-    exit3();
-    return value;
-  }
-  function linkPeek(node2, _, state) {
-    return formatLinkAsAutolink(node2, state) ? "<" : "[";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/link-reference.js
-  linkReference2.peek = linkReferencePeek;
-  function linkReference2(node2, _, state, info) {
-    const type = node2.referenceType;
-    const exit3 = state.enter("linkReference");
-    let subexit = state.enter("label");
-    const tracker = state.createTracker(info);
-    let value = tracker.move("[");
-    const text7 = state.containerPhrasing(node2, {
-      before: value,
-      after: "]",
-      ...tracker.current()
-    });
-    value += tracker.move(text7 + "][");
-    subexit();
-    const stack = state.stack;
-    state.stack = [];
-    subexit = state.enter("reference");
-    const reference = state.safe(state.associationId(node2), {
-      before: value,
-      after: "]",
-      ...tracker.current()
-    });
-    subexit();
-    state.stack = stack;
-    exit3();
-    if (type === "full" || !text7 || text7 !== reference) {
-      value += tracker.move(reference + "]");
-    } else if (type === "shortcut") {
-      value = value.slice(0, -1);
-    } else {
-      value += tracker.move("]");
-    }
-    return value;
-  }
-  function linkReferencePeek() {
-    return "[";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-bullet.js
-  function checkBullet(state) {
-    const marker = state.options.bullet || "*";
-    if (marker !== "*" && marker !== "+" && marker !== "-") {
-      throw new Error(
-        "Cannot serialize items with `" + marker + "` for `options.bullet`, expected `*`, `+`, or `-`"
-      );
-    }
-    return marker;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-bullet-other.js
-  function checkBulletOther(state) {
-    const bullet = checkBullet(state);
-    const bulletOther = state.options.bulletOther;
-    if (!bulletOther) {
-      return bullet === "*" ? "-" : "*";
-    }
-    if (bulletOther !== "*" && bulletOther !== "+" && bulletOther !== "-") {
-      throw new Error(
-        "Cannot serialize items with `" + bulletOther + "` for `options.bulletOther`, expected `*`, `+`, or `-`"
-      );
-    }
-    if (bulletOther === bullet) {
-      throw new Error(
-        "Expected `bullet` (`" + bullet + "`) and `bulletOther` (`" + bulletOther + "`) to be different"
-      );
-    }
-    return bulletOther;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-bullet-ordered.js
-  function checkBulletOrdered(state) {
-    const marker = state.options.bulletOrdered || ".";
-    if (marker !== "." && marker !== ")") {
-      throw new Error(
-        "Cannot serialize items with `" + marker + "` for `options.bulletOrdered`, expected `.` or `)`"
-      );
-    }
-    return marker;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-rule.js
-  function checkRule(state) {
-    const marker = state.options.rule || "*";
-    if (marker !== "*" && marker !== "-" && marker !== "_") {
-      throw new Error(
-        "Cannot serialize rules with `" + marker + "` for `options.rule`, expected `*`, `-`, or `_`"
-      );
-    }
-    return marker;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/list.js
-  function list3(node2, parent, state, info) {
-    const exit3 = state.enter("list");
-    const bulletCurrent = state.bulletCurrent;
-    let bullet = node2.ordered ? checkBulletOrdered(state) : checkBullet(state);
-    const bulletOther = node2.ordered ? bullet === "." ? ")" : "." : checkBulletOther(state);
-    let useDifferentMarker = parent && state.bulletLastUsed ? bullet === state.bulletLastUsed : false;
-    if (!node2.ordered) {
-      const firstListItem = node2.children ? node2.children[0] : void 0;
-      if (
-        // Bullet could be used as a thematic break marker:
-        (bullet === "*" || bullet === "-") && // Empty first list item:
-        firstListItem && (!firstListItem.children || !firstListItem.children[0]) && // Directly in two other list items:
-        state.stack[state.stack.length - 1] === "list" && state.stack[state.stack.length - 2] === "listItem" && state.stack[state.stack.length - 3] === "list" && state.stack[state.stack.length - 4] === "listItem" && // That are each the first child.
-        state.indexStack[state.indexStack.length - 1] === 0 && state.indexStack[state.indexStack.length - 2] === 0 && state.indexStack[state.indexStack.length - 3] === 0
-      ) {
-        useDifferentMarker = true;
-      }
-      if (checkRule(state) === bullet && firstListItem) {
-        let index2 = -1;
-        while (++index2 < node2.children.length) {
-          const item = node2.children[index2];
-          if (item && item.type === "listItem" && item.children && item.children[0] && item.children[0].type === "thematicBreak") {
-            useDifferentMarker = true;
-            break;
-          }
-        }
-      }
-    }
-    if (useDifferentMarker) {
-      bullet = bulletOther;
-    }
-    state.bulletCurrent = bullet;
-    const value = state.containerFlow(node2, info);
-    state.bulletLastUsed = bullet;
-    state.bulletCurrent = bulletCurrent;
-    exit3();
-    return value;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-list-item-indent.js
-  function checkListItemIndent(state) {
-    const style = state.options.listItemIndent || "one";
-    if (style !== "tab" && style !== "one" && style !== "mixed") {
-      throw new Error(
-        "Cannot serialize items with `" + style + "` for `options.listItemIndent`, expected `tab`, `one`, or `mixed`"
-      );
-    }
-    return style;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/list-item.js
-  function listItem2(node2, parent, state, info) {
-    const listItemIndent = checkListItemIndent(state);
-    let bullet = state.bulletCurrent || checkBullet(state);
-    if (parent && parent.type === "list" && parent.ordered) {
-      bullet = (typeof parent.start === "number" && parent.start > -1 ? parent.start : 1) + (state.options.incrementListMarker === false ? 0 : parent.children.indexOf(node2)) + bullet;
-    }
-    let size = bullet.length + 1;
-    if (listItemIndent === "tab" || listItemIndent === "mixed" && (parent && parent.type === "list" && parent.spread || node2.spread)) {
-      size = Math.ceil(size / 4) * 4;
-    }
-    const tracker = state.createTracker(info);
-    tracker.move(bullet + " ".repeat(size - bullet.length));
-    tracker.shift(size);
-    const exit3 = state.enter("listItem");
-    const value = state.indentLines(
-      state.containerFlow(node2, tracker.current()),
-      map3
-    );
-    exit3();
-    return value;
-    function map3(line, index2, blank) {
-      if (index2) {
-        return (blank ? "" : " ".repeat(size)) + line;
-      }
-      return (blank ? bullet : bullet + " ".repeat(size - bullet.length)) + line;
-    }
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/paragraph.js
-  function paragraph2(node2, _, state, info) {
-    const exit3 = state.enter("paragraph");
-    const subexit = state.enter("phrasing");
-    const value = state.containerPhrasing(node2, info);
-    subexit();
-    exit3();
-    return value;
-  }
-
-  // node_modules/mdast-util-phrasing/lib/index.js
-  var phrasing = (
-    /** @type {(node?: unknown) => node is Exclude<PhrasingContent, Html>} */
-    convert([
-      "break",
-      "delete",
-      "emphasis",
-      // To do: next major: removed since footnotes were added to GFM.
-      "footnote",
-      "footnoteReference",
-      "image",
-      "imageReference",
-      "inlineCode",
-      // Enabled by `mdast-util-math`:
-      "inlineMath",
-      "link",
-      "linkReference",
-      // Enabled by `mdast-util-mdx`:
-      "mdxJsxTextElement",
-      // Enabled by `mdast-util-mdx`:
-      "mdxTextExpression",
-      "strong",
-      "text",
-      // Enabled by `mdast-util-directive`:
-      "textDirective"
-    ])
-  );
-
-  // node_modules/mdast-util-to-markdown/lib/handle/root.js
-  function root3(node2, _, state, info) {
-    const hasPhrasing = node2.children.some(function(d) {
-      return phrasing(d);
-    });
-    const container = hasPhrasing ? state.containerPhrasing : state.containerFlow;
-    return container.call(state, node2, info);
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-strong.js
-  function checkStrong(state) {
-    const marker = state.options.strong || "*";
-    if (marker !== "*" && marker !== "_") {
-      throw new Error(
-        "Cannot serialize strong with `" + marker + "` for `options.strong`, expected `*`, or `_`"
-      );
-    }
-    return marker;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/strong.js
-  strong2.peek = strongPeek;
-  function strong2(node2, _, state, info) {
-    const marker = checkStrong(state);
-    const exit3 = state.enter("strong");
-    const tracker = state.createTracker(info);
-    const before = tracker.move(marker + marker);
-    let between = tracker.move(
-      state.containerPhrasing(node2, {
-        after: marker,
-        before,
-        ...tracker.current()
-      })
-    );
-    const betweenHead = between.charCodeAt(0);
-    const open = encodeInfo(
-      info.before.charCodeAt(info.before.length - 1),
-      betweenHead,
-      marker
-    );
-    if (open.inside) {
-      between = encodeCharacterReference(betweenHead) + between.slice(1);
-    }
-    const betweenTail = between.charCodeAt(between.length - 1);
-    const close = encodeInfo(info.after.charCodeAt(0), betweenTail, marker);
-    if (close.inside) {
-      between = between.slice(0, -1) + encodeCharacterReference(betweenTail);
-    }
-    const after = tracker.move(marker + marker);
-    exit3();
-    state.attentionEncodeSurroundingInfo = {
-      after: close.outside,
-      before: open.outside
-    };
-    return before + between + after;
-  }
-  function strongPeek(_, _1, state) {
-    return state.options.strong || "*";
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/text.js
-  function text5(node2, _, state, info) {
-    return state.safe(node2.value, info);
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/util/check-rule-repetition.js
-  function checkRuleRepetition(state) {
-    const repetition = state.options.ruleRepetition || 3;
-    if (repetition < 3) {
-      throw new Error(
-        "Cannot serialize rules with repetition `" + repetition + "` for `options.ruleRepetition`, expected `3` or more"
-      );
-    }
-    return repetition;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/thematic-break.js
-  function thematicBreak3(_, _1, state) {
-    const value = (checkRule(state) + (state.options.ruleSpaces ? " " : "")).repeat(checkRuleRepetition(state));
-    return state.options.ruleSpaces ? value.slice(0, -1) : value;
-  }
-
-  // node_modules/mdast-util-to-markdown/lib/handle/index.js
-  var handle = {
-    blockquote: blockquote2,
-    break: hardBreak2,
-    code: code2,
-    definition: definition2,
-    emphasis: emphasis2,
-    hardBreak: hardBreak2,
-    heading: heading2,
-    html: html4,
-    image: image2,
-    imageReference: imageReference2,
-    inlineCode: inlineCode2,
-    link: link2,
-    linkReference: linkReference2,
-    list: list3,
-    listItem: listItem2,
-    paragraph: paragraph2,
-    root: root3,
-    strong: strong2,
-    text: text5,
-    thematicBreak: thematicBreak3
-  };
-
-  // node_modules/mdast-util-gfm-table/lib/index.js
-  function gfmTableFromMarkdown() {
-    return {
-      enter: {
-        table: enterTable,
-        tableData: enterCell,
-        tableHeader: enterCell,
-        tableRow: enterRow
-      },
-      exit: {
-        codeText: exitCodeText,
-        table: exitTable,
-        tableData: exit2,
-        tableHeader: exit2,
-        tableRow: exit2
-      }
-    };
-  }
-  function enterTable(token) {
-    const align = token._align;
-    ok(align, "expected `_align` on table");
-    this.enter(
-      {
-        type: "table",
-        align: align.map(function(d) {
-          return d === "none" ? null : d;
-        }),
-        children: []
-      },
-      token
-    );
-    this.data.inTable = true;
-  }
-  function exitTable(token) {
-    this.exit(token);
-    this.data.inTable = void 0;
-  }
-  function enterRow(token) {
-    this.enter({ type: "tableRow", children: [] }, token);
-  }
-  function exit2(token) {
-    this.exit(token);
-  }
-  function enterCell(token) {
-    this.enter({ type: "tableCell", children: [] }, token);
-  }
-  function exitCodeText(token) {
-    let value = this.resume();
-    if (this.data.inTable) {
-      value = value.replace(/\\([\\|])/g, replace);
-    }
-    const node2 = this.stack[this.stack.length - 1];
-    ok(node2.type === "inlineCode");
-    node2.value = value;
-    this.exit(token);
-  }
-  function replace($0, $1) {
-    return $1 === "|" ? $1 : $0;
-  }
-  function gfmTableToMarkdown(options) {
-    const settings = options || {};
-    const padding = settings.tableCellPadding;
-    const alignDelimiters = settings.tablePipeAlign;
-    const stringLength = settings.stringLength;
-    const around = padding ? " " : "|";
-    return {
-      unsafe: [
-        { character: "\r", inConstruct: "tableCell" },
-        { character: "\n", inConstruct: "tableCell" },
-        // A pipe, when followed by a tab or space (padding), or a dash or colon
-        // (unpadded delimiter row), could result in a table.
-        { atBreak: true, character: "|", after: "[	 :-]" },
-        // A pipe in a cell must be encoded.
-        { character: "|", inConstruct: "tableCell" },
-        // A colon must be followed by a dash, in which case it could start a
-        // delimiter row.
-        { atBreak: true, character: ":", after: "-" },
-        // A delimiter row can also start with a dash, when followed by more
-        // dashes, a colon, or a pipe.
-        // This is a stricter version than the built in check for lists, thematic
-        // breaks, and setex heading underlines though:
-        // <https://github.com/syntax-tree/mdast-util-to-markdown/blob/51a2038/lib/unsafe.js#L57>
-        { atBreak: true, character: "-", after: "[:|-]" }
-      ],
-      handlers: {
-        inlineCode: inlineCodeWithTable,
-        table: handleTable,
-        tableCell: handleTableCell,
-        tableRow: handleTableRow
-      }
-    };
-    function handleTable(node2, _, state, info) {
-      return serializeData(handleTableAsData(node2, state, info), node2.align);
-    }
-    function handleTableRow(node2, _, state, info) {
-      const row = handleTableRowAsData(node2, state, info);
-      const value = serializeData([row]);
-      return value.slice(0, value.indexOf("\n"));
-    }
-    function handleTableCell(node2, _, state, info) {
-      const exit3 = state.enter("tableCell");
-      const subexit = state.enter("phrasing");
-      const value = state.containerPhrasing(node2, {
-        ...info,
-        before: around,
-        after: around
-      });
-      subexit();
-      exit3();
-      return value;
-    }
-    function serializeData(matrix, align) {
-      return markdownTable(matrix, {
-        align,
-        // @ts-expect-error: `markdown-table` types should support `null`.
-        alignDelimiters,
-        // @ts-expect-error: `markdown-table` types should support `null`.
-        padding,
-        // @ts-expect-error: `markdown-table` types should support `null`.
-        stringLength
-      });
-    }
-    function handleTableAsData(node2, state, info) {
-      const children = node2.children;
-      let index2 = -1;
-      const result = [];
-      const subexit = state.enter("table");
-      while (++index2 < children.length) {
-        result[index2] = handleTableRowAsData(children[index2], state, info);
-      }
-      subexit();
-      return result;
-    }
-    function handleTableRowAsData(node2, state, info) {
-      const children = node2.children;
-      let index2 = -1;
-      const result = [];
-      const subexit = state.enter("tableRow");
-      while (++index2 < children.length) {
-        result[index2] = handleTableCell(children[index2], node2, state, info);
-      }
-      subexit();
-      return result;
-    }
-    function inlineCodeWithTable(node2, parent, state) {
-      let value = handle.inlineCode(node2, parent, state);
-      if (state.stack.includes("tableCell")) {
-        value = value.replace(/\|/g, "\\$&");
-      }
-      return value;
-    }
-  }
-
-  // node_modules/mdast-util-gfm-task-list-item/lib/index.js
-  function gfmTaskListItemFromMarkdown() {
-    return {
-      exit: {
-        taskListCheckValueChecked: exitCheck,
-        taskListCheckValueUnchecked: exitCheck,
-        paragraph: exitParagraphWithTaskListItem
-      }
-    };
-  }
-  function gfmTaskListItemToMarkdown() {
-    return {
-      unsafe: [{ atBreak: true, character: "-", after: "[:|-]" }],
-      handlers: { listItem: listItemWithTaskListItem }
-    };
-  }
-  function exitCheck(token) {
-    const node2 = this.stack[this.stack.length - 2];
-    ok(node2.type === "listItem");
-    node2.checked = token.type === "taskListCheckValueChecked";
-  }
-  function exitParagraphWithTaskListItem(token) {
-    const parent = this.stack[this.stack.length - 2];
-    if (parent && parent.type === "listItem" && typeof parent.checked === "boolean") {
-      const node2 = this.stack[this.stack.length - 1];
-      ok(node2.type === "paragraph");
-      const head = node2.children[0];
-      if (head && head.type === "text") {
-        const siblings = parent.children;
-        let index2 = -1;
-        let firstParaghraph;
-        while (++index2 < siblings.length) {
-          const sibling = siblings[index2];
-          if (sibling.type === "paragraph") {
-            firstParaghraph = sibling;
-            break;
-          }
-        }
-        if (firstParaghraph === node2) {
-          head.value = head.value.slice(1);
-          if (head.value.length === 0) {
-            node2.children.shift();
-          } else if (node2.position && head.position && typeof head.position.start.offset === "number") {
-            head.position.start.column++;
-            head.position.start.offset++;
-            node2.position.start = Object.assign({}, head.position.start);
-          }
-        }
-      }
-    }
-    this.exit(token);
-  }
-  function listItemWithTaskListItem(node2, parent, state, info) {
-    const head = node2.children[0];
-    const checkable = typeof node2.checked === "boolean" && head && head.type === "paragraph";
-    const checkbox = "[" + (node2.checked ? "x" : " ") + "] ";
-    const tracker = state.createTracker(info);
-    if (checkable) {
-      tracker.move(checkbox);
-    }
-    let value = handle.listItem(node2, parent, state, {
-      ...info,
-      ...tracker.current()
-    });
-    if (checkable) {
-      value = value.replace(/^(?:[*+-]|\d+\.)([\r\n]| {1,3})/, check);
-    }
-    return value;
-    function check($0) {
-      return $0 + checkbox;
-    }
-  }
-
-  // node_modules/mdast-util-gfm/lib/index.js
-  function gfmFromMarkdown() {
-    return [
-      gfmAutolinkLiteralFromMarkdown(),
-      gfmFootnoteFromMarkdown(),
-      gfmStrikethroughFromMarkdown(),
-      gfmTableFromMarkdown(),
-      gfmTaskListItemFromMarkdown()
-    ];
-  }
-  function gfmToMarkdown(options) {
-    return {
-      extensions: [
-        gfmAutolinkLiteralToMarkdown(),
-        gfmFootnoteToMarkdown(options),
-        gfmStrikethroughToMarkdown(),
-        gfmTableToMarkdown(options),
-        gfmTaskListItemToMarkdown()
-      ]
-    };
-  }
-
-  // node_modules/micromark-extension-gfm-autolink-literal/lib/syntax.js
-  var wwwPrefix = {
-    tokenize: tokenizeWwwPrefix,
-    partial: true
-  };
-  var domain = {
-    tokenize: tokenizeDomain,
-    partial: true
-  };
-  var path = {
-    tokenize: tokenizePath,
-    partial: true
-  };
-  var trail = {
-    tokenize: tokenizeTrail,
-    partial: true
-  };
-  var emailDomainDotTrail = {
-    tokenize: tokenizeEmailDomainDotTrail,
-    partial: true
-  };
-  var wwwAutolink = {
-    name: "wwwAutolink",
-    tokenize: tokenizeWwwAutolink,
-    previous: previousWww
-  };
-  var protocolAutolink = {
-    name: "protocolAutolink",
-    tokenize: tokenizeProtocolAutolink,
-    previous: previousProtocol
-  };
-  var emailAutolink = {
-    name: "emailAutolink",
-    tokenize: tokenizeEmailAutolink,
-    previous: previousEmail
-  };
-  var text6 = {};
-  function gfmAutolinkLiteral() {
-    return {
-      text: text6
-    };
-  }
-  var code3 = 48;
-  while (code3 < 123) {
-    text6[code3] = emailAutolink;
-    code3++;
-    if (code3 === 58) code3 = 65;
-    else if (code3 === 91) code3 = 97;
-  }
-  text6[43] = emailAutolink;
-  text6[45] = emailAutolink;
-  text6[46] = emailAutolink;
-  text6[95] = emailAutolink;
-  text6[72] = [emailAutolink, protocolAutolink];
-  text6[104] = [emailAutolink, protocolAutolink];
-  text6[87] = [emailAutolink, wwwAutolink];
-  text6[119] = [emailAutolink, wwwAutolink];
-  function tokenizeEmailAutolink(effects, ok3, nok) {
-    const self2 = this;
-    let dot;
-    let data;
-    return start2;
-    function start2(code4) {
-      if (!gfmAtext(code4) || !previousEmail.call(self2, self2.previous) || previousUnbalanced(self2.events)) {
-        return nok(code4);
-      }
-      effects.enter("literalAutolink");
-      effects.enter("literalAutolinkEmail");
-      return atext(code4);
-    }
-    function atext(code4) {
-      if (gfmAtext(code4)) {
-        effects.consume(code4);
-        return atext;
-      }
-      if (code4 === 64) {
-        effects.consume(code4);
-        return emailDomain;
-      }
-      return nok(code4);
-    }
-    function emailDomain(code4) {
-      if (code4 === 46) {
-        return effects.check(emailDomainDotTrail, emailDomainAfter, emailDomainDot)(code4);
-      }
-      if (code4 === 45 || code4 === 95 || asciiAlphanumeric(code4)) {
-        data = true;
-        effects.consume(code4);
-        return emailDomain;
-      }
-      return emailDomainAfter(code4);
-    }
-    function emailDomainDot(code4) {
-      effects.consume(code4);
-      dot = true;
-      return emailDomain;
-    }
-    function emailDomainAfter(code4) {
-      if (data && dot && asciiAlpha(self2.previous)) {
-        effects.exit("literalAutolinkEmail");
-        effects.exit("literalAutolink");
-        return ok3(code4);
-      }
-      return nok(code4);
-    }
-  }
-  function tokenizeWwwAutolink(effects, ok3, nok) {
-    const self2 = this;
-    return wwwStart;
-    function wwwStart(code4) {
-      if (code4 !== 87 && code4 !== 119 || !previousWww.call(self2, self2.previous) || previousUnbalanced(self2.events)) {
-        return nok(code4);
-      }
-      effects.enter("literalAutolink");
-      effects.enter("literalAutolinkWww");
-      return effects.check(wwwPrefix, effects.attempt(domain, effects.attempt(path, wwwAfter), nok), nok)(code4);
-    }
-    function wwwAfter(code4) {
-      effects.exit("literalAutolinkWww");
-      effects.exit("literalAutolink");
-      return ok3(code4);
-    }
-  }
-  function tokenizeProtocolAutolink(effects, ok3, nok) {
-    const self2 = this;
-    let buffer = "";
-    let seen = false;
-    return protocolStart;
-    function protocolStart(code4) {
-      if ((code4 === 72 || code4 === 104) && previousProtocol.call(self2, self2.previous) && !previousUnbalanced(self2.events)) {
-        effects.enter("literalAutolink");
-        effects.enter("literalAutolinkHttp");
-        buffer += String.fromCodePoint(code4);
-        effects.consume(code4);
-        return protocolPrefixInside;
-      }
-      return nok(code4);
-    }
-    function protocolPrefixInside(code4) {
-      if (asciiAlpha(code4) && buffer.length < 5) {
-        buffer += String.fromCodePoint(code4);
-        effects.consume(code4);
-        return protocolPrefixInside;
-      }
-      if (code4 === 58) {
-        const protocol = buffer.toLowerCase();
-        if (protocol === "http" || protocol === "https") {
-          effects.consume(code4);
-          return protocolSlashesInside;
-        }
-      }
-      return nok(code4);
-    }
-    function protocolSlashesInside(code4) {
-      if (code4 === 47) {
-        effects.consume(code4);
-        if (seen) {
-          return afterProtocol;
-        }
-        seen = true;
-        return protocolSlashesInside;
-      }
-      return nok(code4);
-    }
-    function afterProtocol(code4) {
-      return code4 === null || asciiControl(code4) || markdownLineEndingOrSpace(code4) || unicodeWhitespace(code4) || unicodePunctuation(code4) ? nok(code4) : effects.attempt(domain, effects.attempt(path, protocolAfter), nok)(code4);
-    }
-    function protocolAfter(code4) {
-      effects.exit("literalAutolinkHttp");
-      effects.exit("literalAutolink");
-      return ok3(code4);
-    }
-  }
-  function tokenizeWwwPrefix(effects, ok3, nok) {
-    let size = 0;
-    return wwwPrefixInside;
-    function wwwPrefixInside(code4) {
-      if ((code4 === 87 || code4 === 119) && size < 3) {
-        size++;
-        effects.consume(code4);
-        return wwwPrefixInside;
-      }
-      if (code4 === 46 && size === 3) {
-        effects.consume(code4);
-        return wwwPrefixAfter;
-      }
-      return nok(code4);
-    }
-    function wwwPrefixAfter(code4) {
-      return code4 === null ? nok(code4) : ok3(code4);
-    }
-  }
-  function tokenizeDomain(effects, ok3, nok) {
-    let underscoreInLastSegment;
-    let underscoreInLastLastSegment;
-    let seen;
-    return domainInside;
-    function domainInside(code4) {
-      if (code4 === 46 || code4 === 95) {
-        return effects.check(trail, domainAfter, domainAtPunctuation)(code4);
-      }
-      if (code4 === null || markdownLineEndingOrSpace(code4) || unicodeWhitespace(code4) || code4 !== 45 && unicodePunctuation(code4)) {
-        return domainAfter(code4);
-      }
-      seen = true;
-      effects.consume(code4);
-      return domainInside;
-    }
-    function domainAtPunctuation(code4) {
-      if (code4 === 95) {
-        underscoreInLastSegment = true;
-      } else {
-        underscoreInLastLastSegment = underscoreInLastSegment;
-        underscoreInLastSegment = void 0;
-      }
-      effects.consume(code4);
-      return domainInside;
-    }
-    function domainAfter(code4) {
-      if (underscoreInLastLastSegment || underscoreInLastSegment || !seen) {
-        return nok(code4);
-      }
-      return ok3(code4);
-    }
-  }
-  function tokenizePath(effects, ok3) {
-    let sizeOpen = 0;
-    let sizeClose = 0;
-    return pathInside;
-    function pathInside(code4) {
-      if (code4 === 40) {
-        sizeOpen++;
-        effects.consume(code4);
-        return pathInside;
-      }
-      if (code4 === 41 && sizeClose < sizeOpen) {
-        return pathAtPunctuation(code4);
-      }
-      if (code4 === 33 || code4 === 34 || code4 === 38 || code4 === 39 || code4 === 41 || code4 === 42 || code4 === 44 || code4 === 46 || code4 === 58 || code4 === 59 || code4 === 60 || code4 === 63 || code4 === 93 || code4 === 95 || code4 === 126) {
-        return effects.check(trail, ok3, pathAtPunctuation)(code4);
-      }
-      if (code4 === null || markdownLineEndingOrSpace(code4) || unicodeWhitespace(code4)) {
-        return ok3(code4);
-      }
-      effects.consume(code4);
-      return pathInside;
-    }
-    function pathAtPunctuation(code4) {
-      if (code4 === 41) {
-        sizeClose++;
-      }
-      effects.consume(code4);
-      return pathInside;
-    }
-  }
-  function tokenizeTrail(effects, ok3, nok) {
-    return trail2;
-    function trail2(code4) {
-      if (code4 === 33 || code4 === 34 || code4 === 39 || code4 === 41 || code4 === 42 || code4 === 44 || code4 === 46 || code4 === 58 || code4 === 59 || code4 === 63 || code4 === 95 || code4 === 126) {
-        effects.consume(code4);
-        return trail2;
-      }
-      if (code4 === 38) {
-        effects.consume(code4);
-        return trailCharacterReferenceStart;
-      }
-      if (code4 === 93) {
-        effects.consume(code4);
-        return trailBracketAfter;
-      }
-      if (
-        // `<` is an end.
-        code4 === 60 || // So is whitespace.
-        code4 === null || markdownLineEndingOrSpace(code4) || unicodeWhitespace(code4)
-      ) {
-        return ok3(code4);
-      }
-      return nok(code4);
-    }
-    function trailBracketAfter(code4) {
-      if (code4 === null || code4 === 40 || code4 === 91 || markdownLineEndingOrSpace(code4) || unicodeWhitespace(code4)) {
-        return ok3(code4);
-      }
-      return trail2(code4);
-    }
-    function trailCharacterReferenceStart(code4) {
-      return asciiAlpha(code4) ? trailCharacterReferenceInside(code4) : nok(code4);
-    }
-    function trailCharacterReferenceInside(code4) {
-      if (code4 === 59) {
-        effects.consume(code4);
-        return trail2;
-      }
-      if (asciiAlpha(code4)) {
-        effects.consume(code4);
-        return trailCharacterReferenceInside;
-      }
-      return nok(code4);
-    }
-  }
-  function tokenizeEmailDomainDotTrail(effects, ok3, nok) {
-    return start2;
-    function start2(code4) {
-      effects.consume(code4);
-      return after;
-    }
-    function after(code4) {
-      return asciiAlphanumeric(code4) ? nok(code4) : ok3(code4);
-    }
-  }
-  function previousWww(code4) {
-    return code4 === null || code4 === 40 || code4 === 42 || code4 === 95 || code4 === 91 || code4 === 93 || code4 === 126 || markdownLineEndingOrSpace(code4);
-  }
-  function previousProtocol(code4) {
-    return !asciiAlpha(code4);
-  }
-  function previousEmail(code4) {
-    return !(code4 === 47 || gfmAtext(code4));
-  }
-  function gfmAtext(code4) {
-    return code4 === 43 || code4 === 45 || code4 === 46 || code4 === 95 || asciiAlphanumeric(code4);
-  }
-  function previousUnbalanced(events) {
-    let index2 = events.length;
-    let result = false;
-    while (index2--) {
-      const token = events[index2][1];
-      if ((token.type === "labelLink" || token.type === "labelImage") && !token._balanced) {
-        result = true;
-        break;
-      }
-      if (token._gfmAutolinkLiteralWalkedInto) {
-        result = false;
-        break;
-      }
-    }
-    if (events.length > 0 && !result) {
-      events[events.length - 1][1]._gfmAutolinkLiteralWalkedInto = true;
-    }
-    return result;
-  }
-
-  // node_modules/micromark-extension-gfm-footnote/lib/syntax.js
-  var indent = {
-    tokenize: tokenizeIndent2,
-    partial: true
-  };
-  function gfmFootnote() {
-    return {
-      document: {
-        [91]: {
-          name: "gfmFootnoteDefinition",
-          tokenize: tokenizeDefinitionStart,
-          continuation: {
-            tokenize: tokenizeDefinitionContinuation
-          },
-          exit: gfmFootnoteDefinitionEnd
-        }
-      },
-      text: {
-        [91]: {
-          name: "gfmFootnoteCall",
-          tokenize: tokenizeGfmFootnoteCall
-        },
-        [93]: {
-          name: "gfmPotentialFootnoteCall",
-          add: "after",
-          tokenize: tokenizePotentialGfmFootnoteCall,
-          resolveTo: resolveToPotentialGfmFootnoteCall
-        }
-      }
-    };
-  }
-  function tokenizePotentialGfmFootnoteCall(effects, ok3, nok) {
-    const self2 = this;
-    let index2 = self2.events.length;
-    const defined = self2.parser.gfmFootnotes || (self2.parser.gfmFootnotes = []);
-    let labelStart;
-    while (index2--) {
-      const token = self2.events[index2][1];
-      if (token.type === "labelImage") {
-        labelStart = token;
-        break;
-      }
-      if (token.type === "gfmFootnoteCall" || token.type === "labelLink" || token.type === "label" || token.type === "image" || token.type === "link") {
-        break;
-      }
-    }
-    return start2;
-    function start2(code4) {
-      if (!labelStart || !labelStart._balanced) {
-        return nok(code4);
-      }
-      const id = normalizeIdentifier(self2.sliceSerialize({
-        start: labelStart.end,
-        end: self2.now()
-      }));
-      if (id.codePointAt(0) !== 94 || !defined.includes(id.slice(1))) {
-        return nok(code4);
-      }
-      effects.enter("gfmFootnoteCallLabelMarker");
-      effects.consume(code4);
-      effects.exit("gfmFootnoteCallLabelMarker");
-      return ok3(code4);
-    }
-  }
-  function resolveToPotentialGfmFootnoteCall(events, context) {
-    let index2 = events.length;
-    let labelStart;
-    while (index2--) {
-      if (events[index2][1].type === "labelImage" && events[index2][0] === "enter") {
-        labelStart = events[index2][1];
-        break;
-      }
-    }
-    events[index2 + 1][1].type = "data";
-    events[index2 + 3][1].type = "gfmFootnoteCallLabelMarker";
-    const call = {
-      type: "gfmFootnoteCall",
-      start: Object.assign({}, events[index2 + 3][1].start),
-      end: Object.assign({}, events[events.length - 1][1].end)
-    };
-    const marker = {
-      type: "gfmFootnoteCallMarker",
-      start: Object.assign({}, events[index2 + 3][1].end),
-      end: Object.assign({}, events[index2 + 3][1].end)
-    };
-    marker.end.column++;
-    marker.end.offset++;
-    marker.end._bufferIndex++;
-    const string3 = {
-      type: "gfmFootnoteCallString",
-      start: Object.assign({}, marker.end),
-      end: Object.assign({}, events[events.length - 1][1].start)
-    };
-    const chunk = {
-      type: "chunkString",
-      contentType: "string",
-      start: Object.assign({}, string3.start),
-      end: Object.assign({}, string3.end)
-    };
-    const replacement = [
-      // Take the `labelImageMarker` (now `data`, the `!`)
-      events[index2 + 1],
-      events[index2 + 2],
-      ["enter", call, context],
-      // The `[`
-      events[index2 + 3],
-      events[index2 + 4],
-      // The `^`.
-      ["enter", marker, context],
-      ["exit", marker, context],
-      // Everything in between.
-      ["enter", string3, context],
-      ["enter", chunk, context],
-      ["exit", chunk, context],
-      ["exit", string3, context],
-      // The ending (`]`, properly parsed and labelled).
-      events[events.length - 2],
-      events[events.length - 1],
-      ["exit", call, context]
-    ];
-    events.splice(index2, events.length - index2 + 1, ...replacement);
-    return events;
-  }
-  function tokenizeGfmFootnoteCall(effects, ok3, nok) {
-    const self2 = this;
-    const defined = self2.parser.gfmFootnotes || (self2.parser.gfmFootnotes = []);
-    let size = 0;
-    let data;
-    return start2;
-    function start2(code4) {
-      effects.enter("gfmFootnoteCall");
-      effects.enter("gfmFootnoteCallLabelMarker");
-      effects.consume(code4);
-      effects.exit("gfmFootnoteCallLabelMarker");
-      return callStart;
-    }
-    function callStart(code4) {
-      if (code4 !== 94) return nok(code4);
-      effects.enter("gfmFootnoteCallMarker");
-      effects.consume(code4);
-      effects.exit("gfmFootnoteCallMarker");
-      effects.enter("gfmFootnoteCallString");
-      effects.enter("chunkString").contentType = "string";
-      return callData;
-    }
-    function callData(code4) {
-      if (
-        // Too long.
-        size > 999 || // Closing brace with nothing.
-        code4 === 93 && !data || // Space or tab is not supported by GFM for some reason.
-        // `\n` and `[` not being supported makes sense.
-        code4 === null || code4 === 91 || markdownLineEndingOrSpace(code4)
-      ) {
-        return nok(code4);
-      }
-      if (code4 === 93) {
-        effects.exit("chunkString");
-        const token = effects.exit("gfmFootnoteCallString");
-        if (!defined.includes(normalizeIdentifier(self2.sliceSerialize(token)))) {
-          return nok(code4);
-        }
-        effects.enter("gfmFootnoteCallLabelMarker");
-        effects.consume(code4);
-        effects.exit("gfmFootnoteCallLabelMarker");
-        effects.exit("gfmFootnoteCall");
-        return ok3;
-      }
-      if (!markdownLineEndingOrSpace(code4)) {
-        data = true;
-      }
-      size++;
-      effects.consume(code4);
-      return code4 === 92 ? callEscape : callData;
-    }
-    function callEscape(code4) {
-      if (code4 === 91 || code4 === 92 || code4 === 93) {
-        effects.consume(code4);
-        size++;
-        return callData;
-      }
-      return callData(code4);
-    }
-  }
-  function tokenizeDefinitionStart(effects, ok3, nok) {
-    const self2 = this;
-    const defined = self2.parser.gfmFootnotes || (self2.parser.gfmFootnotes = []);
-    let identifier;
-    let size = 0;
-    let data;
-    return start2;
-    function start2(code4) {
-      effects.enter("gfmFootnoteDefinition")._container = true;
-      effects.enter("gfmFootnoteDefinitionLabel");
-      effects.enter("gfmFootnoteDefinitionLabelMarker");
-      effects.consume(code4);
-      effects.exit("gfmFootnoteDefinitionLabelMarker");
-      return labelAtMarker;
-    }
-    function labelAtMarker(code4) {
-      if (code4 === 94) {
-        effects.enter("gfmFootnoteDefinitionMarker");
-        effects.consume(code4);
-        effects.exit("gfmFootnoteDefinitionMarker");
-        effects.enter("gfmFootnoteDefinitionLabelString");
-        effects.enter("chunkString").contentType = "string";
-        return labelInside;
-      }
-      return nok(code4);
-    }
-    function labelInside(code4) {
-      if (
-        // Too long.
-        size > 999 || // Closing brace with nothing.
-        code4 === 93 && !data || // Space or tab is not supported by GFM for some reason.
-        // `\n` and `[` not being supported makes sense.
-        code4 === null || code4 === 91 || markdownLineEndingOrSpace(code4)
-      ) {
-        return nok(code4);
-      }
-      if (code4 === 93) {
-        effects.exit("chunkString");
-        const token = effects.exit("gfmFootnoteDefinitionLabelString");
-        identifier = normalizeIdentifier(self2.sliceSerialize(token));
-        effects.enter("gfmFootnoteDefinitionLabelMarker");
-        effects.consume(code4);
-        effects.exit("gfmFootnoteDefinitionLabelMarker");
-        effects.exit("gfmFootnoteDefinitionLabel");
-        return labelAfter;
-      }
-      if (!markdownLineEndingOrSpace(code4)) {
-        data = true;
-      }
-      size++;
-      effects.consume(code4);
-      return code4 === 92 ? labelEscape : labelInside;
-    }
-    function labelEscape(code4) {
-      if (code4 === 91 || code4 === 92 || code4 === 93) {
-        effects.consume(code4);
-        size++;
-        return labelInside;
-      }
-      return labelInside(code4);
-    }
-    function labelAfter(code4) {
-      if (code4 === 58) {
-        effects.enter("definitionMarker");
-        effects.consume(code4);
-        effects.exit("definitionMarker");
-        if (!defined.includes(identifier)) {
-          defined.push(identifier);
-        }
-        return factorySpace(effects, whitespaceAfter, "gfmFootnoteDefinitionWhitespace");
-      }
-      return nok(code4);
-    }
-    function whitespaceAfter(code4) {
-      return ok3(code4);
-    }
-  }
-  function tokenizeDefinitionContinuation(effects, ok3, nok) {
-    return effects.check(blankLine, ok3, effects.attempt(indent, ok3, nok));
-  }
-  function gfmFootnoteDefinitionEnd(effects) {
-    effects.exit("gfmFootnoteDefinition");
-  }
-  function tokenizeIndent2(effects, ok3, nok) {
-    const self2 = this;
-    return factorySpace(effects, afterPrefix, "gfmFootnoteDefinitionIndent", 4 + 1);
-    function afterPrefix(code4) {
-      const tail = self2.events[self2.events.length - 1];
-      return tail && tail[1].type === "gfmFootnoteDefinitionIndent" && tail[2].sliceSerialize(tail[1], true).length === 4 ? ok3(code4) : nok(code4);
-    }
-  }
-
-  // node_modules/micromark-extension-gfm-strikethrough/lib/syntax.js
-  function gfmStrikethrough(options) {
-    const options_ = options || {};
-    let single = options_.singleTilde;
-    const tokenizer = {
-      name: "strikethrough",
-      tokenize: tokenizeStrikethrough,
-      resolveAll: resolveAllStrikethrough
-    };
-    if (single === null || single === void 0) {
-      single = true;
-    }
-    return {
-      text: {
-        [126]: tokenizer
-      },
-      insideSpan: {
-        null: [tokenizer]
-      },
-      attentionMarkers: {
-        null: [126]
-      }
-    };
-    function resolveAllStrikethrough(events, context) {
-      let index2 = -1;
-      while (++index2 < events.length) {
-        if (events[index2][0] === "enter" && events[index2][1].type === "strikethroughSequenceTemporary" && events[index2][1]._close) {
-          let open = index2;
-          while (open--) {
-            if (events[open][0] === "exit" && events[open][1].type === "strikethroughSequenceTemporary" && events[open][1]._open && // If the sizes are the same:
-            events[index2][1].end.offset - events[index2][1].start.offset === events[open][1].end.offset - events[open][1].start.offset) {
-              events[index2][1].type = "strikethroughSequence";
-              events[open][1].type = "strikethroughSequence";
-              const strikethrough2 = {
-                type: "strikethrough",
-                start: Object.assign({}, events[open][1].start),
-                end: Object.assign({}, events[index2][1].end)
-              };
-              const text7 = {
-                type: "strikethroughText",
-                start: Object.assign({}, events[open][1].end),
-                end: Object.assign({}, events[index2][1].start)
-              };
-              const nextEvents = [["enter", strikethrough2, context], ["enter", events[open][1], context], ["exit", events[open][1], context], ["enter", text7, context]];
-              const insideSpan2 = context.parser.constructs.insideSpan.null;
-              if (insideSpan2) {
-                splice(nextEvents, nextEvents.length, 0, resolveAll(insideSpan2, events.slice(open + 1, index2), context));
-              }
-              splice(nextEvents, nextEvents.length, 0, [["exit", text7, context], ["enter", events[index2][1], context], ["exit", events[index2][1], context], ["exit", strikethrough2, context]]);
-              splice(events, open - 1, index2 - open + 3, nextEvents);
-              index2 = open + nextEvents.length - 2;
-              break;
-            }
-          }
-        }
-      }
-      index2 = -1;
-      while (++index2 < events.length) {
-        if (events[index2][1].type === "strikethroughSequenceTemporary") {
-          events[index2][1].type = "data";
-        }
-      }
-      return events;
-    }
-    function tokenizeStrikethrough(effects, ok3, nok) {
-      const previous3 = this.previous;
-      const events = this.events;
-      let size = 0;
-      return start2;
-      function start2(code4) {
-        if (previous3 === 126 && events[events.length - 1][1].type !== "characterEscape") {
-          return nok(code4);
-        }
-        effects.enter("strikethroughSequenceTemporary");
-        return more(code4);
-      }
-      function more(code4) {
-        const before = classifyCharacter(previous3);
-        if (code4 === 126) {
-          if (size > 1) return nok(code4);
-          effects.consume(code4);
-          size++;
-          return more;
-        }
-        if (size < 2 && !single) return nok(code4);
-        const token = effects.exit("strikethroughSequenceTemporary");
-        const after = classifyCharacter(code4);
-        token._open = !after || after === 2 && Boolean(before);
-        token._close = !before || before === 2 && Boolean(after);
-        return ok3(code4);
-      }
-    }
-  }
-
-  // node_modules/micromark-extension-gfm-table/lib/edit-map.js
-  var EditMap = class {
-    /**
-     * Create a new edit map.
-     */
-    constructor() {
-      this.map = [];
-    }
-    /**
-     * Create an edit: a remove and/or add at a certain place.
-     *
-     * @param {number} index
-     * @param {number} remove
-     * @param {Array<Event>} add
-     * @returns {undefined}
-     */
-    add(index2, remove, add) {
-      addImplementation(this, index2, remove, add);
-    }
-    // To do: add this when moving to `micromark`.
-    // /**
-    //  * Create an edit: but insert `add` before existing additions.
-    //  *
-    //  * @param {number} index
-    //  * @param {number} remove
-    //  * @param {Array<Event>} add
-    //  * @returns {undefined}
-    //  */
-    // addBefore(index, remove, add) {
-    //   addImplementation(this, index, remove, add, true)
-    // }
-    /**
-     * Done, change the events.
-     *
-     * @param {Array<Event>} events
-     * @returns {undefined}
-     */
-    consume(events) {
-      this.map.sort(function(a, b) {
-        return a[0] - b[0];
-      });
-      if (this.map.length === 0) {
-        return;
-      }
-      let index2 = this.map.length;
-      const vecs = [];
-      while (index2 > 0) {
-        index2 -= 1;
-        vecs.push(events.slice(this.map[index2][0] + this.map[index2][1]), this.map[index2][2]);
-        events.length = this.map[index2][0];
-      }
-      vecs.push(events.slice());
-      events.length = 0;
-      let slice = vecs.pop();
-      while (slice) {
-        for (const element3 of slice) {
-          events.push(element3);
-        }
-        slice = vecs.pop();
-      }
-      this.map.length = 0;
-    }
-  };
-  function addImplementation(editMap, at, remove, add) {
-    let index2 = 0;
-    if (remove === 0 && add.length === 0) {
-      return;
-    }
-    while (index2 < editMap.map.length) {
-      if (editMap.map[index2][0] === at) {
-        editMap.map[index2][1] += remove;
-        editMap.map[index2][2].push(...add);
-        return;
-      }
-      index2 += 1;
-    }
-    editMap.map.push([at, remove, add]);
-  }
-
-  // node_modules/micromark-extension-gfm-table/lib/infer.js
-  function gfmTableAlign(events, index2) {
-    let inDelimiterRow = false;
-    const align = [];
-    while (index2 < events.length) {
-      const event = events[index2];
-      if (inDelimiterRow) {
-        if (event[0] === "enter") {
-          if (event[1].type === "tableContent") {
-            align.push(events[index2 + 1][1].type === "tableDelimiterMarker" ? "left" : "none");
-          }
-        } else if (event[1].type === "tableContent") {
-          if (events[index2 - 1][1].type === "tableDelimiterMarker") {
-            const alignIndex = align.length - 1;
-            align[alignIndex] = align[alignIndex] === "left" ? "center" : "right";
-          }
-        } else if (event[1].type === "tableDelimiterRow") {
-          break;
-        }
-      } else if (event[0] === "enter" && event[1].type === "tableDelimiterRow") {
-        inDelimiterRow = true;
-      }
-      index2 += 1;
-    }
-    return align;
-  }
-
-  // node_modules/micromark-extension-gfm-table/lib/syntax.js
-  function gfmTable() {
-    return {
-      flow: {
-        null: {
-          name: "table",
-          tokenize: tokenizeTable,
-          resolveAll: resolveTable
-        }
-      }
-    };
-  }
-  function tokenizeTable(effects, ok3, nok) {
-    const self2 = this;
-    let size = 0;
-    let sizeB = 0;
-    let seen;
-    return start2;
-    function start2(code4) {
-      let index2 = self2.events.length - 1;
-      while (index2 > -1) {
-        const type = self2.events[index2][1].type;
-        if (type === "lineEnding" || // Note: markdown-rs uses `whitespace` instead of `linePrefix`
-        type === "linePrefix") index2--;
-        else break;
-      }
-      const tail = index2 > -1 ? self2.events[index2][1].type : null;
-      const next = tail === "tableHead" || tail === "tableRow" ? bodyRowStart : headRowBefore;
-      if (next === bodyRowStart && self2.parser.lazy[self2.now().line]) {
-        return nok(code4);
-      }
-      return next(code4);
-    }
-    function headRowBefore(code4) {
-      effects.enter("tableHead");
-      effects.enter("tableRow");
-      return headRowStart(code4);
-    }
-    function headRowStart(code4) {
-      if (code4 === 124) {
-        return headRowBreak(code4);
-      }
-      seen = true;
-      sizeB += 1;
-      return headRowBreak(code4);
-    }
-    function headRowBreak(code4) {
-      if (code4 === null) {
-        return nok(code4);
-      }
-      if (markdownLineEnding(code4)) {
-        if (sizeB > 1) {
-          sizeB = 0;
-          self2.interrupt = true;
-          effects.exit("tableRow");
-          effects.enter("lineEnding");
-          effects.consume(code4);
-          effects.exit("lineEnding");
-          return headDelimiterStart;
-        }
-        return nok(code4);
-      }
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, headRowBreak, "whitespace")(code4);
-      }
-      sizeB += 1;
-      if (seen) {
-        seen = false;
-        size += 1;
-      }
-      if (code4 === 124) {
-        effects.enter("tableCellDivider");
-        effects.consume(code4);
-        effects.exit("tableCellDivider");
-        seen = true;
-        return headRowBreak;
-      }
-      effects.enter("data");
-      return headRowData(code4);
-    }
-    function headRowData(code4) {
-      if (code4 === null || code4 === 124 || markdownLineEndingOrSpace(code4)) {
-        effects.exit("data");
-        return headRowBreak(code4);
-      }
-      effects.consume(code4);
-      return code4 === 92 ? headRowEscape : headRowData;
-    }
-    function headRowEscape(code4) {
-      if (code4 === 92 || code4 === 124) {
-        effects.consume(code4);
-        return headRowData;
-      }
-      return headRowData(code4);
-    }
-    function headDelimiterStart(code4) {
-      self2.interrupt = false;
-      if (self2.parser.lazy[self2.now().line]) {
-        return nok(code4);
-      }
-      effects.enter("tableDelimiterRow");
-      seen = false;
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, headDelimiterBefore, "linePrefix", self2.parser.constructs.disable.null.includes("codeIndented") ? void 0 : 4)(code4);
-      }
-      return headDelimiterBefore(code4);
-    }
-    function headDelimiterBefore(code4) {
-      if (code4 === 45 || code4 === 58) {
-        return headDelimiterValueBefore(code4);
-      }
-      if (code4 === 124) {
-        seen = true;
-        effects.enter("tableCellDivider");
-        effects.consume(code4);
-        effects.exit("tableCellDivider");
-        return headDelimiterCellBefore;
-      }
-      return headDelimiterNok(code4);
-    }
-    function headDelimiterCellBefore(code4) {
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, headDelimiterValueBefore, "whitespace")(code4);
-      }
-      return headDelimiterValueBefore(code4);
-    }
-    function headDelimiterValueBefore(code4) {
-      if (code4 === 58) {
-        sizeB += 1;
-        seen = true;
-        effects.enter("tableDelimiterMarker");
-        effects.consume(code4);
-        effects.exit("tableDelimiterMarker");
-        return headDelimiterLeftAlignmentAfter;
-      }
-      if (code4 === 45) {
-        sizeB += 1;
-        return headDelimiterLeftAlignmentAfter(code4);
-      }
-      if (code4 === null || markdownLineEnding(code4)) {
-        return headDelimiterCellAfter(code4);
-      }
-      return headDelimiterNok(code4);
-    }
-    function headDelimiterLeftAlignmentAfter(code4) {
-      if (code4 === 45) {
-        effects.enter("tableDelimiterFiller");
-        return headDelimiterFiller(code4);
-      }
-      return headDelimiterNok(code4);
-    }
-    function headDelimiterFiller(code4) {
-      if (code4 === 45) {
-        effects.consume(code4);
-        return headDelimiterFiller;
-      }
-      if (code4 === 58) {
-        seen = true;
-        effects.exit("tableDelimiterFiller");
-        effects.enter("tableDelimiterMarker");
-        effects.consume(code4);
-        effects.exit("tableDelimiterMarker");
-        return headDelimiterRightAlignmentAfter;
-      }
-      effects.exit("tableDelimiterFiller");
-      return headDelimiterRightAlignmentAfter(code4);
-    }
-    function headDelimiterRightAlignmentAfter(code4) {
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, headDelimiterCellAfter, "whitespace")(code4);
-      }
-      return headDelimiterCellAfter(code4);
-    }
-    function headDelimiterCellAfter(code4) {
-      if (code4 === 124) {
-        return headDelimiterBefore(code4);
-      }
-      if (code4 === null || markdownLineEnding(code4)) {
-        if (!seen || size !== sizeB) {
-          return headDelimiterNok(code4);
-        }
-        effects.exit("tableDelimiterRow");
-        effects.exit("tableHead");
-        return ok3(code4);
-      }
-      return headDelimiterNok(code4);
-    }
-    function headDelimiterNok(code4) {
-      return nok(code4);
-    }
-    function bodyRowStart(code4) {
-      effects.enter("tableRow");
-      return bodyRowBreak(code4);
-    }
-    function bodyRowBreak(code4) {
-      if (code4 === 124) {
-        effects.enter("tableCellDivider");
-        effects.consume(code4);
-        effects.exit("tableCellDivider");
-        return bodyRowBreak;
-      }
-      if (code4 === null || markdownLineEnding(code4)) {
-        effects.exit("tableRow");
-        return ok3(code4);
-      }
-      if (markdownSpace(code4)) {
-        return factorySpace(effects, bodyRowBreak, "whitespace")(code4);
-      }
-      effects.enter("data");
-      return bodyRowData(code4);
-    }
-    function bodyRowData(code4) {
-      if (code4 === null || code4 === 124 || markdownLineEndingOrSpace(code4)) {
-        effects.exit("data");
-        return bodyRowBreak(code4);
-      }
-      effects.consume(code4);
-      return code4 === 92 ? bodyRowEscape : bodyRowData;
-    }
-    function bodyRowEscape(code4) {
-      if (code4 === 92 || code4 === 124) {
-        effects.consume(code4);
-        return bodyRowData;
-      }
-      return bodyRowData(code4);
-    }
-  }
-  function resolveTable(events, context) {
-    let index2 = -1;
-    let inFirstCellAwaitingPipe = true;
-    let rowKind = 0;
-    let lastCell = [0, 0, 0, 0];
-    let cell = [0, 0, 0, 0];
-    let afterHeadAwaitingFirstBodyRow = false;
-    let lastTableEnd = 0;
-    let currentTable;
-    let currentBody;
-    let currentCell;
-    const map3 = new EditMap();
-    while (++index2 < events.length) {
-      const event = events[index2];
-      const token = event[1];
-      if (event[0] === "enter") {
-        if (token.type === "tableHead") {
-          afterHeadAwaitingFirstBodyRow = false;
-          if (lastTableEnd !== 0) {
-            flushTableEnd(map3, context, lastTableEnd, currentTable, currentBody);
-            currentBody = void 0;
-            lastTableEnd = 0;
-          }
-          currentTable = {
-            type: "table",
-            start: Object.assign({}, token.start),
-            // Note: correct end is set later.
-            end: Object.assign({}, token.end)
-          };
-          map3.add(index2, 0, [["enter", currentTable, context]]);
-        } else if (token.type === "tableRow" || token.type === "tableDelimiterRow") {
-          inFirstCellAwaitingPipe = true;
-          currentCell = void 0;
-          lastCell = [0, 0, 0, 0];
-          cell = [0, index2 + 1, 0, 0];
-          if (afterHeadAwaitingFirstBodyRow) {
-            afterHeadAwaitingFirstBodyRow = false;
-            currentBody = {
-              type: "tableBody",
-              start: Object.assign({}, token.start),
-              // Note: correct end is set later.
-              end: Object.assign({}, token.end)
-            };
-            map3.add(index2, 0, [["enter", currentBody, context]]);
-          }
-          rowKind = token.type === "tableDelimiterRow" ? 2 : currentBody ? 3 : 1;
-        } else if (rowKind && (token.type === "data" || token.type === "tableDelimiterMarker" || token.type === "tableDelimiterFiller")) {
-          inFirstCellAwaitingPipe = false;
-          if (cell[2] === 0) {
-            if (lastCell[1] !== 0) {
-              cell[0] = cell[1];
-              currentCell = flushCell(map3, context, lastCell, rowKind, void 0, currentCell);
-              lastCell = [0, 0, 0, 0];
-            }
-            cell[2] = index2;
-          }
-        } else if (token.type === "tableCellDivider") {
-          if (inFirstCellAwaitingPipe) {
-            inFirstCellAwaitingPipe = false;
-          } else {
-            if (lastCell[1] !== 0) {
-              cell[0] = cell[1];
-              currentCell = flushCell(map3, context, lastCell, rowKind, void 0, currentCell);
-            }
-            lastCell = cell;
-            cell = [lastCell[1], index2, 0, 0];
-          }
-        }
-      } else if (token.type === "tableHead") {
-        afterHeadAwaitingFirstBodyRow = true;
-        lastTableEnd = index2;
-      } else if (token.type === "tableRow" || token.type === "tableDelimiterRow") {
-        lastTableEnd = index2;
-        if (lastCell[1] !== 0) {
-          cell[0] = cell[1];
-          currentCell = flushCell(map3, context, lastCell, rowKind, index2, currentCell);
-        } else if (cell[1] !== 0) {
-          currentCell = flushCell(map3, context, cell, rowKind, index2, currentCell);
-        }
-        rowKind = 0;
-      } else if (rowKind && (token.type === "data" || token.type === "tableDelimiterMarker" || token.type === "tableDelimiterFiller")) {
-        cell[3] = index2;
-      }
-    }
-    if (lastTableEnd !== 0) {
-      flushTableEnd(map3, context, lastTableEnd, currentTable, currentBody);
-    }
-    map3.consume(context.events);
-    index2 = -1;
-    while (++index2 < context.events.length) {
-      const event = context.events[index2];
-      if (event[0] === "enter" && event[1].type === "table") {
-        event[1]._align = gfmTableAlign(context.events, index2);
-      }
-    }
-    return events;
-  }
-  function flushCell(map3, context, range, rowKind, rowEnd, previousCell) {
-    const groupName = rowKind === 1 ? "tableHeader" : rowKind === 2 ? "tableDelimiter" : "tableData";
-    const valueName = "tableContent";
-    if (range[0] !== 0) {
-      previousCell.end = Object.assign({}, getPoint(context.events, range[0]));
-      map3.add(range[0], 0, [["exit", previousCell, context]]);
-    }
-    const now = getPoint(context.events, range[1]);
-    previousCell = {
-      type: groupName,
-      start: Object.assign({}, now),
-      // Note: correct end is set later.
-      end: Object.assign({}, now)
-    };
-    map3.add(range[1], 0, [["enter", previousCell, context]]);
-    if (range[2] !== 0) {
-      const relatedStart = getPoint(context.events, range[2]);
-      const relatedEnd = getPoint(context.events, range[3]);
-      const valueToken = {
-        type: valueName,
-        start: Object.assign({}, relatedStart),
-        end: Object.assign({}, relatedEnd)
-      };
-      map3.add(range[2], 0, [["enter", valueToken, context]]);
-      if (rowKind !== 2) {
-        const start2 = context.events[range[2]];
-        const end = context.events[range[3]];
-        start2[1].end = Object.assign({}, end[1].end);
-        start2[1].type = "chunkText";
-        start2[1].contentType = "text";
-        if (range[3] > range[2] + 1) {
-          const a = range[2] + 1;
-          const b = range[3] - range[2] - 1;
-          map3.add(a, b, []);
-        }
-      }
-      map3.add(range[3] + 1, 0, [["exit", valueToken, context]]);
-    }
-    if (rowEnd !== void 0) {
-      previousCell.end = Object.assign({}, getPoint(context.events, rowEnd));
-      map3.add(rowEnd, 0, [["exit", previousCell, context]]);
-      previousCell = void 0;
-    }
-    return previousCell;
-  }
-  function flushTableEnd(map3, context, index2, table2, tableBody) {
-    const exits = [];
-    const related = getPoint(context.events, index2);
-    if (tableBody) {
-      tableBody.end = Object.assign({}, related);
-      exits.push(["exit", tableBody, context]);
-    }
-    table2.end = Object.assign({}, related);
-    exits.push(["exit", table2, context]);
-    map3.add(index2 + 1, 0, exits);
-  }
-  function getPoint(events, index2) {
-    const event = events[index2];
-    const side = event[0] === "enter" ? "start" : "end";
-    return event[1][side];
-  }
-
-  // node_modules/micromark-extension-gfm-task-list-item/lib/syntax.js
-  var tasklistCheck = {
-    name: "tasklistCheck",
-    tokenize: tokenizeTasklistCheck
-  };
-  function gfmTaskListItem() {
-    return {
-      text: {
-        [91]: tasklistCheck
-      }
-    };
-  }
-  function tokenizeTasklistCheck(effects, ok3, nok) {
-    const self2 = this;
-    return open;
-    function open(code4) {
-      if (
-        // Exit if there’s stuff before.
-        self2.previous !== null || // Exit if not in the first content that is the first child of a list
-        // item.
-        !self2._gfmTasklistFirstContentOfListItem
-      ) {
-        return nok(code4);
-      }
-      effects.enter("taskListCheck");
-      effects.enter("taskListCheckMarker");
-      effects.consume(code4);
-      effects.exit("taskListCheckMarker");
-      return inside;
-    }
-    function inside(code4) {
-      if (markdownLineEndingOrSpace(code4)) {
-        effects.enter("taskListCheckValueUnchecked");
-        effects.consume(code4);
-        effects.exit("taskListCheckValueUnchecked");
-        return close;
-      }
-      if (code4 === 88 || code4 === 120) {
-        effects.enter("taskListCheckValueChecked");
-        effects.consume(code4);
-        effects.exit("taskListCheckValueChecked");
-        return close;
-      }
-      return nok(code4);
-    }
-    function close(code4) {
-      if (code4 === 93) {
-        effects.enter("taskListCheckMarker");
-        effects.consume(code4);
-        effects.exit("taskListCheckMarker");
-        effects.exit("taskListCheck");
-        return after;
-      }
-      return nok(code4);
-    }
-    function after(code4) {
-      if (markdownLineEnding(code4)) {
-        return ok3(code4);
-      }
-      if (markdownSpace(code4)) {
-        return effects.check({
-          tokenize: spaceThenNonSpace
-        }, ok3, nok)(code4);
-      }
-      return nok(code4);
-    }
-  }
-  function spaceThenNonSpace(effects, ok3, nok) {
-    return factorySpace(effects, after, "whitespace");
-    function after(code4) {
-      return code4 === null ? nok(code4) : ok3(code4);
-    }
-  }
-
-  // node_modules/micromark-extension-gfm/index.js
-  function gfm(options) {
-    return combineExtensions([
-      gfmAutolinkLiteral(),
-      gfmFootnote(),
-      gfmStrikethrough(options),
-      gfmTable(),
-      gfmTaskListItem()
-    ]);
-  }
-
-  // node_modules/remark-gfm/lib/index.js
-  var emptyOptions4 = {};
-  function remarkGfm(options) {
-    const self2 = (
-      /** @type {Processor<Root>} */
-      this
-    );
-    const settings = options || emptyOptions4;
-    const data = self2.data();
-    const micromarkExtensions = data.micromarkExtensions || (data.micromarkExtensions = []);
-    const fromMarkdownExtensions = data.fromMarkdownExtensions || (data.fromMarkdownExtensions = []);
-    const toMarkdownExtensions = data.toMarkdownExtensions || (data.toMarkdownExtensions = []);
-    micromarkExtensions.push(gfm(settings));
-    fromMarkdownExtensions.push(gfmFromMarkdown());
-    toMarkdownExtensions.push(gfmToMarkdown(settings));
-  }
-
-  // src/client/ui/src/session/markdown-content.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  var MarkdownContent = ({
-    className,
-    content: content3,
-    id,
-    allowEmphasis = true
-  }) => {
-    const renderPlainText = ({
-      node: _node,
-      ...props
-    }) => {
-      const { style: _ignoredStyle, ...rest } = props;
-      return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        "span",
-        {
-          ...rest,
-          style: {
-            fontStyle: "normal",
-            fontWeight: 200
-          }
-        }
-      );
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className, id, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-      Markdown,
-      {
-        components: {
-          a: ({ node: _node, href, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("a", { ...props, href: href ?? "#", rel: "noreferrer", target: "_blank" }),
-          p: ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { ...props }),
-          strong: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { ...props }) : renderPlainText,
-          em: allowEmphasis ? ({ node: _node, ...props }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("em", { ...props }) : renderPlainText
-        },
-        remarkPlugins: [remarkGfm],
-        skipHtml: true,
-        children: content3
-      }
-    ) });
-  };
-  var markdown_content_default = MarkdownContent;
-
-  // src/client/ui/src/session/dialog-panel.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-  var AUTO_SCROLL_EPSILON = 32;
-  var DialogPanel = ({
-    messages,
-    providerTheme = null,
-    providerLabel = null
-  }) => {
-    const scrollContainerRef = (0, import_react4.useRef)(null);
-    const displayMessages = (0, import_react4.useMemo)(
-      () => mergeThinkingMessages(messages),
-      [messages]
-    );
-    const [expandedThinking, setExpandedThinking] = (0, import_react4.useState)({});
-    const [pinnedToBottom, setPinnedToBottom] = (0, import_react4.useState)(true);
-    (0, import_react4.useEffect)(() => {
-      setExpandedThinking((previous3) => {
-        let hasChanges = false;
-        const nextState = { ...previous3 };
-        for (const message of displayMessages) {
-          if (message.role === "thinking" && nextState[message.id] === void 0) {
-            nextState[message.id] = false;
-            hasChanges = true;
-          }
-        }
-        return hasChanges ? nextState : previous3;
-      });
-    }, [displayMessages]);
-    const toggleThinking = (messageId) => {
-      setExpandedThinking((previous3) => ({
-        ...previous3,
-        [messageId]: !previous3[messageId]
-      }));
-    };
-    const updatePinnedState = () => {
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
-      const distanceFromBottom = container.scrollHeight - (container.scrollTop + container.clientHeight);
-      const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
-      setPinnedToBottom(
-        (current) => current === nextPinned ? current : nextPinned
-      );
-    };
-    const messageCount = displayMessages.length;
-    (0, import_react4.useLayoutEffect)(() => {
-      if (!pinnedToBottom) {
-        return;
-      }
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
-      if (messageCount === 0) {
-        container.scrollTop = 0;
-        return;
-      }
-      container.scrollTop = container.scrollHeight;
-    }, [messageCount, pinnedToBottom]);
-    if (displayMessages.length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "session-dialog__empty", children: "No messages yet." }) });
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "session-dialog session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-      "div",
-      {
-        className: "session-dialog__scroll",
-        onScroll: updatePinnedState,
-        ref: scrollContainerRef,
-        children: displayMessages.map((message, index2) => {
-          if (isSegmentBoundaryMessage(message)) {
-            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-              "div",
-              {
-                className: "session-dialog__segment-boundary",
-                children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__segment-boundary-label", children: extractSegmentBoundaryLabel(message.content) })
-              },
-              message.id
-            );
-          }
-          const next = displayMessages[index2 + 1] ?? null;
-          const isTerminalThinking = message.role === "thinking" && next && (isSegmentBoundaryMessage(next) || next.role !== "assistant");
-          const classNameBase = buildMessageClassNames(message, providerTheme);
-          const className = isTerminalThinking ? `${classNameBase} session-dialog__message--thinking-terminal` : classNameBase;
-          const label = resolveRoleLabel(message, providerLabel);
-          if (message.role === "thinking") {
-            const expanded = expandedThinking[message.id] ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-              ThinkingMessage,
-              {
-                className,
-                expanded,
-                label,
-                message,
-                onToggle: toggleThinking
-              },
-              message.id
-            );
-          }
-          return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            StandardMessage,
-            {
-              className,
-              label,
-              message
-            },
-            message.id
-          );
-        })
-      }
-    ) });
-  };
-  var dialog_panel_default = DialogPanel;
-  var ThinkingMessage = ({
-    message,
-    expanded,
-    onToggle,
-    label,
-    className
-  }) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("article", { className, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("header", { className: "session-dialog__message-header session-dialog__message-header--thinking", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        "button",
-        {
-          "aria-controls": `thinking-${message.id}`,
-          "aria-expanded": expanded,
-          className: expanded ? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded" : "session-dialog__thinking-toggle",
-          onClick: () => onToggle(message.id),
-          title: expanded ? "Hide reasoning" : "Show reasoning",
-          type: "button",
-          children: expanded ? "\u25BE" : "\u25B8"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__role", children: label })
-    ] }),
-    expanded ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-      markdown_content_default,
-      {
-        allowEmphasis: false,
-        className: "session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded",
-        content: message.content,
-        id: `thinking-${message.id}`
-      }
-    ) : null
-  ] });
-  var StandardMessage = ({
-    message,
-    label,
-    className
-  }) => {
-    const messageDate = new Date(message.createdAt);
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("article", { className, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("header", { className: "session-dialog__message-header", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "session-dialog__role", children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-          "time",
-          {
-            className: "session-dialog__timestamp",
-            dateTime: messageDate.toISOString(),
-            children: messageDate.toLocaleTimeString()
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        markdown_content_default,
-        {
-          className: "session-dialog__content",
-          content: message.content
-        }
-      )
-    ] });
-  };
-
-  // src/client/shared/dialog-segment-meta.ts
-  var SEGMENT_BOUNDARY_MARKER2 = "__CODEAIHUB_SEGMENT_BOUNDARY__";
-  var SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
-  var clampPercent = (value) => Math.max(0, Math.min(100, Math.round(value)));
-  var isSegmentSummaryPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const record = value;
-    if (record.kind !== "segment_summary" || !Array.isArray(record.segments)) {
-      return false;
-    }
-    for (const segment of record.segments) {
-      if (!segment || typeof segment !== "object") {
-        return false;
-      }
-      const candidate = segment;
-      if (typeof candidate.index !== "number" || !Number.isFinite(candidate.index)) {
-        return false;
-      }
-      if (candidate.remainingPercent !== void 0 && (typeof candidate.remainingPercent !== "number" || !Number.isFinite(candidate.remainingPercent))) {
-        return false;
-      }
-    }
-    return true;
-  };
-  var tryParseSegmentSummaryPayloadFromContent = (content3) => {
-    const lines = content3.split("\n").map((line) => line.trim());
-    if (lines[0] !== SEGMENT_BOUNDARY_MARKER2) {
-      return null;
-    }
-    const metaLine = lines.find((line) => line.startsWith(SEGMENT_META_MARKER));
-    if (!metaLine) {
-      return null;
-    }
-    const json = metaLine.slice(SEGMENT_META_MARKER.length).trim();
-    if (!json) {
-      return null;
-    }
-    try {
-      const parsed = JSON.parse(json);
-      return isSegmentSummaryPayload(parsed) ? parsed : null;
-    } catch {
-      return null;
-    }
-  };
-  var buildTokenDebugSummaryFromMessages = (messages) => {
-    let latestPayload = null;
-    for (const message of messages) {
-      if (message.role !== "system") {
-        continue;
-      }
-      const payload = tryParseSegmentSummaryPayloadFromContent(message.content);
-      if (payload) {
-        latestPayload = payload;
-      }
-    }
-    if (!latestPayload) {
-      return null;
-    }
-    const parts = [];
-    for (const segment of latestPayload.segments) {
-      const index2 = Number.isFinite(segment.index) ? segment.index : null;
-      if (index2 === null) {
-        continue;
-      }
-      const remaining = typeof segment.remainingPercent === "number" && Number.isFinite(segment.remainingPercent) ? `${clampPercent(segment.remainingPercent)}%` : "\u2014";
-      parts.push(`#${index2} (${remaining})`);
-    }
-    return parts.length > 0 ? parts.join(" | ") : null;
-  };
-
-  // src/client/ui/src/session/empty-state.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-  var EmptyState = (props) => {
-    if (props.pending) {
-      return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("output", { "aria-busy": "true", "aria-live": "polite", className: "session-empty", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { "aria-hidden": "true", className: "session-spinner" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Creating session\u2026" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: "This can take 5\u201310 seconds. Please wait." })
-      ] });
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "session-empty", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { className: "session-empty__title", children: "Start with the Description questionnaire" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "session-empty__description", children: 'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.' })
-    ] });
-  };
-  var empty_state_default = EmptyState;
-
-  // src/client/ui/src/session/input-panel.tsx
-  var import_react9 = __toESM(require_react());
-
-  // src/client/ui/src/core-bridge/core-shutdown.ts
-  var globalScope2 = window;
-  var requestCoreShutdown = async () => {
-    const httpUrl = typeof globalScope2.__CODEAI_CORE_CONFIG?.httpUrl === "string" ? globalScope2.__CODEAI_CORE_CONFIG.httpUrl : DEFAULT_CONFIG.httpUrl;
-    try {
-      const response = await fetch(`${httpUrl}/api/v1/shutdown`, {
-        method: "POST"
-      });
-      return response.ok;
-    } catch {
-      return false;
-    }
-  };
-
-  // src/client/ui/src/session/input-panel-placeholders.ts
-  var resolveInputPlaceholder = (options) => {
-    if (options.isQueued) {
-      return "Message queued. Sending as soon as it is ready\u2026";
-    }
-    if (options.terminalNoResume) {
-      return "This session is complete and read-only.";
-    }
-    if (options.connectionState === "running") {
-      return "Agent is working\u2026 Please wait.";
-    }
-    if (options.continuityLockActive || options.connectionState === "blocked") {
-      return "Agent is resuming your session\u2026 Please wait.";
-    }
-    if (options.continuityErrorCopy) {
-      return `Continuity failed: ${options.continuityErrorCopy}`;
-    }
-    return "Type your request or drag files with Shift held...";
-  };
-
-  // src/client/ui/src/session/input-play-stop-button.tsx
-  var import_react5 = __toESM(require_react());
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var InputPlayStopButton = ({
-    stopActive,
-    onClick
-  }) => {
-    const showStop = stopActive;
-    const label = showStop ? "Stop (stop core)" : "Send message (Enter)";
-    const iconModifierClass = showStop ? "session-input__action-icon--stop" : "session-input__action-icon--play";
-    const iconClassName = ["session-input__action-icon", iconModifierClass].filter(Boolean).join(" ");
-    const iconContent = showStop ? null : "\u25B6";
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "session-input__action", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-      "button",
-      {
-        "aria-label": label,
-        className: [
-          "session-input__action-button",
-          showStop ? "session-input__action-button--stop" : ""
-        ].filter(Boolean).join(" "),
-        onClick,
-        title: label,
-        type: "button",
-        children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { "aria-hidden": "true", className: iconClassName, children: iconContent })
-      }
-    ) });
-  };
-  var input_play_stop_button_default = (0, import_react5.memo)(InputPlayStopButton);
-
-  // src/client/ui/src/session/input-textarea.tsx
+  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
   var import_react7 = __toESM(require_react());
 
-  // src/client/ui/src/session/input-dnd.ts
-  var import_react6 = __toESM(require_react());
-
-  // src/client/ui/src/modules/drag-drop-module/data-transfer-file-extractor.ts
-  var WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
-  var LINE_SPLIT_REGEX = /\r?\n/;
-  var normalizeCandidate = (rawValue) => {
-    const value = rawValue.trim();
-    if (!value) {
-      return null;
-    }
-    if (value.startsWith("file://")) {
-      const withoutScheme = value.replace("file://", "");
-      try {
-        return decodeURIComponent(withoutScheme);
-      } catch {
-        return withoutScheme;
-      }
-    }
-    if (value.startsWith("/") || WINDOWS_PATH_PATTERN.test(value)) {
-      return value;
-    }
-    return null;
-  };
-  var forEachEntry = (raw, handler) => {
-    if (!raw) {
-      return;
-    }
-    const lines = raw.split(LINE_SPLIT_REGEX);
-    for (const line of lines) {
-      if (line.trim()) {
-        handler(line);
-      }
-    }
-  };
-  var extractFilePathsFromDataTransfer = (dataTransfer, options = {}) => {
-    if (!dataTransfer) {
-      return [];
-    }
-    const { logger, debug = false, logPrefix = "[DropDataExtractor]" } = options;
-    const seen = /* @__PURE__ */ new Set();
-    const results = [];
-    const logDebug = (message, ...details) => {
-      if (debug && logger) {
-        logger(`${logPrefix} ${message}`, ...details);
-      }
-    };
-    const acceptCandidate = (candidate, source) => {
-      if (!seen.has(candidate)) {
-        seen.add(candidate);
-        results.push(candidate);
-        logDebug(`accepted ${candidate} from ${source}`);
-      }
-    };
-    const inspectType = (mime) => {
-      try {
-        const payload = dataTransfer.getData(mime);
-        logDebug(`DataTransfer[${mime}]`, payload);
-        return payload;
-      } catch (error) {
-        logDebug(`failed to read DataTransfer[${mime}]`, error);
-        return null;
-      }
-    };
-    const mimeTypes = [
-      "application/vnd.code.uri-list",
-      "text/plain",
-      "text/uri-list"
-    ];
-    for (const mime of mimeTypes) {
-      const payload = inspectType(mime);
-      forEachEntry(payload, (entry) => {
-        const candidate = normalizeCandidate(entry);
-        if (candidate) {
-          acceptCandidate(candidate, mime);
-        } else {
-          logDebug(`ignored entry from ${mime}`, entry);
-        }
-      });
-    }
-    if (dataTransfer.files && dataTransfer.files.length > 0) {
-      for (const file of Array.from(dataTransfer.files)) {
-        const candidate = file.path;
-        if (!candidate) {
-          continue;
-        }
-        const normalised = normalizeCandidate(candidate);
-        if (normalised) {
-          acceptCandidate(normalised, "FileList");
-        } else {
-          logDebug("ignored FileList entry", candidate);
-        }
-      }
-    }
-    logDebug("extraction result", results);
-    return results;
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/drag-drop-handler.ts
-  var DragDropHandler = class {
-    constructor(options = {}) {
-      this.container = null;
-      this.callbacks = {};
-      this.logger = options.logger;
-      this.handleDragEnter = this.handleDragEnter.bind(this);
-      this.handleDragOver = this.handleDragOver.bind(this);
-      this.handleDragLeave = this.handleDragLeave.bind(this);
-      this.handleDrop = this.handleDrop.bind(this);
-    }
-    attach(container, callbacks) {
-      this.container = container;
-      this.callbacks = callbacks;
-      container.addEventListener("dragenter", this.handleDragEnter);
-      container.addEventListener("dragover", this.handleDragOver);
-      container.addEventListener("dragleave", this.handleDragLeave);
-      container.addEventListener("drop", this.handleDrop);
-    }
-    detach() {
-      if (!this.container) {
-        return;
-      }
-      this.container.removeEventListener("dragenter", this.handleDragEnter);
-      this.container.removeEventListener("dragover", this.handleDragOver);
-      this.container.removeEventListener("dragleave", this.handleDragLeave);
-      this.container.removeEventListener("drop", this.handleDrop);
-      this.container = null;
-      this.callbacks = {};
-    }
-    handleDragEnter(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-      this.callbacks.onDragEnter?.(true);
-      this.logger?.("dragenter", event.dataTransfer?.types ?? []);
-    }
-    handleDragOver(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    handleDragLeave(event) {
-      const relatedTarget = event.relatedTarget;
-      if (this.container && relatedTarget && this.container.contains(relatedTarget)) {
-        return;
-      }
-      this.callbacks.onDragLeave?.();
-    }
-    handleDrop(event) {
-      if (!event.shiftKey) {
-        return;
-      }
-      event.preventDefault();
-      const filePaths = extractFilePathsFromDataTransfer(event.dataTransfer, {
-        debug: Boolean(this.logger),
-        logger: this.logger,
-        logPrefix: "[DragDropHandler]"
-      });
-      if (filePaths.length > 0) {
-        this.callbacks.onFileDrop?.(filePaths);
-      } else {
-        this.callbacks.onFallbackRequest?.();
-      }
-      this.callbacks.onDragLeave?.();
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/file-path-processor.ts
-  var WINDOWS_PATH_PATTERN2 = /^[a-zA-Z]:\\/;
-  var WINDOWS_POSIX_PATTERN = /^[a-zA-Z]:\//;
-  var FilePathProcessor = class {
-    constructor() {
-      this.lastInsertedPath = "";
-      this.lastInsertTime = 0;
-      this.duplicateThresholdMs = 1e3;
-    }
-    formatPaths(paths) {
-      if (paths.length === 0) {
-        return "";
-      }
-      const formattedPaths = paths.map((path2) => `"${path2}"`).join("\n");
-      return `${formattedPaths}
-`;
-    }
-    mergePaths(currentValue, formattedPaths) {
-      if (!formattedPaths) {
-        return currentValue;
-      }
-      if (currentValue && !currentValue.endsWith("\n")) {
-        return `${currentValue}
-${formattedPaths}`;
-      }
-      return currentValue + formattedPaths;
-    }
-    isDuplicate(path2) {
-      const now = Date.now();
-      return path2 === this.lastInsertedPath && now - this.lastInsertTime < this.duplicateThresholdMs;
-    }
-    recordInsertion(path2) {
-      this.lastInsertedPath = path2;
-      this.lastInsertTime = Date.now();
-    }
-    processSinglePath(path2, currentValue) {
-      if (!this.isValidPath(path2) || this.isDuplicate(path2)) {
-        return null;
-      }
-      this.recordInsertion(path2);
-      const formatted = this.formatPaths([path2]);
-      return this.mergePaths(currentValue, formatted);
-    }
-    processMultiplePaths(paths, currentValue) {
-      if (paths.length === 0) {
-        return null;
-      }
-      const validPaths = paths.filter((path2) => this.isValidPath(path2));
-      if (validPaths.length === 0) {
-        return null;
-      }
-      this.recordInsertion(validPaths[0]);
-      const formatted = this.formatPaths(validPaths);
-      return this.mergePaths(currentValue, formatted);
-    }
-    clear() {
-      this.lastInsertedPath = "";
-      this.lastInsertTime = 0;
-    }
-    isValidPath(path2) {
-      if (!path2) {
-        return false;
-      }
-      return path2.startsWith("/") || WINDOWS_PATH_PATTERN2.test(path2) || WINDOWS_POSIX_PATTERN.test(path2);
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/launcher-file-drop-bridge.ts
-  var resolveLauncherBridge = () => {
-    const globalScope3 = window;
-    return globalScope3.codeaiLauncher ?? null;
-  };
-  var requestLauncherFileDrop = (logger) => {
-    const bridge = resolveLauncherBridge();
-    if (!bridge || typeof bridge.requestFileDrop !== "function") {
-      return false;
-    }
-    try {
-      bridge.requestFileDrop();
-      logger?.("message-handler:launcher-file-drop-request");
-      return true;
-    } catch (error) {
-      logger?.("message-handler:launcher-file-drop-request-error", error);
-      return false;
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/message-handler.ts
-  var FILE_DROP_ENDPOINT = "/api/v1/file-drop";
-  var MAX_CAPTURE_ATTEMPTS = 4;
-  var CAPTURE_RETRY_DELAY_MS = 120;
-  var isRecord4 = (value) => typeof value === "object" && value !== null;
-  var resolveCoreHttpUrl = () => {
-    const globalScope3 = window;
-    const primaryUrl = globalScope3.__CODEAI_CORE_CONFIG?.httpUrl;
-    if (typeof primaryUrl === "string" && primaryUrl.length > 0) {
-      return primaryUrl;
-    }
-    const fallbackUrl = globalScope3.codeaiBridgeConfig?.httpUrl;
-    if (typeof fallbackUrl === "string" && fallbackUrl.length > 0) {
-      return fallbackUrl;
-    }
-    return null;
-  };
-  var hasLauncherBridgeHttpConfig = () => {
-    const globalScope3 = window;
-    return typeof globalScope3.codeaiBridgeConfig?.httpUrl === "string" && globalScope3.codeaiBridgeConfig.httpUrl.length > 0;
-  };
-  var joinUrl = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
-  var MessageHandler = class {
-    constructor(logger) {
-      this.callbacks = {};
-      this.messageListener = null;
-      this.logger = logger;
-    }
-    startListening(callbacks) {
-      this.callbacks = callbacks;
-      this.messageListener = (event) => {
-        this.handleMessage(event.data);
-      };
-      window.addEventListener("message", this.messageListener);
-      this.logger?.("message-handler:start");
-    }
-    stopListening() {
-      if (this.messageListener) {
-        window.removeEventListener("message", this.messageListener);
-        this.messageListener = null;
-      }
-      this.callbacks = {};
-      this.logger?.("message-handler:stop");
-    }
-    requestFilePathGrab() {
-      const timestamp = Date.now();
-      this.sendMessage("grabFilePathFromDrop", { timestamp }).catch((error) => {
-        this.logger?.("message-handler:request-file-path-grab-error", error);
-      });
-    }
-    clearClipboards() {
-      this.sendMessage("clearAllClipboards").catch((error) => {
-        this.logger?.("message-handler:clear-clipboards-error", error);
-      });
-    }
-    async sendMessage(command, payload) {
-      const message = { command };
-      if (payload) {
-        Object.assign(message, payload);
-      }
-      if (command === "grabFilePathFromDrop" && requestLauncherFileDrop(this.logger)) {
-        return;
-      }
-      const forceHttpFallback = hasLauncherBridgeHttpConfig();
-      if (forceHttpFallback) {
-        this.logger?.(
-          "message-handler:launcher-http-fallback",
-          command,
-          payload ?? null
-        );
-        if (command === "grabFilePathFromDrop") {
-          await this.captureFileDropViaHttp();
-          return;
-        }
-        await this.clearFileDropViaHttp();
-        return;
-      }
-      const vscodeApi = getVsCodeApi();
-      if (vscodeApi) {
-        this.logger?.("message-handler:send", command, payload ?? null);
-        vscodeApi.postMessage(message);
-        return;
-      }
-      this.logger?.("message-handler:fallback-send", command, payload ?? null);
-      if (command === "grabFilePathFromDrop") {
-        await this.captureFileDropViaHttp();
-        return;
-      }
-      await this.clearFileDropViaHttp();
-    }
-    handleMessage(message) {
-      if (!isRecord4(message) || typeof message.command !== "string") {
-        return;
-      }
-      if (message.command === "insertPath") {
-        this.handleInsertPath(
-          typeof message.path === "string" ? message.path : ""
-        );
-        return;
-      }
-      if (message.command === "clipboardContent") {
-        this.handleClipboardContent(
-          typeof message.content === "string" ? message.content : ""
-        );
-      }
-    }
-    handleInsertPath(path2) {
-      if (!path2) {
-        return;
-      }
-      this.logger?.("message-handler:insert-path", path2);
-      this.callbacks.onPathInsert?.(path2);
-      this.clearClipboards();
-    }
-    handleClipboardContent(content3) {
-      if (!content3) {
-        return;
-      }
-      this.logger?.("message-handler:clipboard", content3);
-      this.callbacks.onClipboardContent?.(content3);
-      this.clearClipboards();
-    }
-    async captureFileDropViaHttp() {
-      const fileDropUrl = this.resolveFileDropUrl();
-      if (!fileDropUrl) {
-        return;
-      }
-      for (let attempt = 1; attempt <= MAX_CAPTURE_ATTEMPTS; attempt += 1) {
-        const captureResult = await this.captureFileDropAttempt(
-          fileDropUrl,
-          attempt
-        );
-        if (captureResult === "abort") {
-          return;
-        }
-        if (captureResult) {
-          this.handleInsertPath(captureResult);
-          return;
-        }
-      }
-    }
-    async clearFileDropViaHttp() {
-      const fileDropUrl = this.resolveFileDropUrl();
-      if (!fileDropUrl) {
-        return;
-      }
-      try {
-        await fetch(fileDropUrl, { method: "DELETE" });
-      } catch (error) {
-        this.logger?.("message-handler:fallback-clear-error", error);
-      }
-    }
-    resolveFileDropUrl() {
-      const httpUrl = resolveCoreHttpUrl();
-      return httpUrl ? joinUrl(httpUrl, FILE_DROP_ENDPOINT) : null;
-    }
-    async captureFileDropAttempt(fileDropUrl, attempt) {
-      try {
-        const response = await fetch(fileDropUrl, {
-          method: "POST"
-        });
-        if (response.status === 204) {
-          await this.waitForNextCaptureAttempt(attempt);
-          return null;
-        }
-        if (!response.ok) {
-          return "abort";
-        }
-        const payload = await response.json();
-        const formatted = this.resolveFormattedPathPayload(payload);
-        if (formatted) {
-          return formatted;
-        }
-        await this.waitForNextCaptureAttempt(attempt);
-        return null;
-      } catch (error) {
-        if (attempt >= MAX_CAPTURE_ATTEMPTS) {
-          this.logger?.("message-handler:fallback-capture-error", error);
-          return "abort";
-        }
-        await this.waitForNextCaptureAttempt(attempt);
-        return null;
-      }
-    }
-    async waitForNextCaptureAttempt(attempt) {
-      if (attempt >= MAX_CAPTURE_ATTEMPTS) {
-        return;
-      }
-      await this.delay(CAPTURE_RETRY_DELAY_MS);
-    }
-    async delay(ms) {
-      await new Promise((resolve) => {
-        window.setTimeout(resolve, ms);
-      });
-    }
-    resolveFormattedPathPayload(payload) {
-      if (typeof payload.formatted === "string" && payload.formatted.length > 0) {
-        return payload.formatted;
-      }
-      if (!Array.isArray(payload.paths) || payload.paths.length === 0) {
-        return "";
-      }
-      const normalizedPaths = payload.paths.filter(
-        (path2) => typeof path2 === "string" && path2.length > 0
-      );
-      if (normalizedPaths.length === 0) {
-        return "";
-      }
-      return `${normalizedPaths.map((path2) => `"${path2}"`).join("\n")}
-`;
-    }
-  };
-
-  // src/client/ui/src/modules/drag-drop-module/drag-drop-facade.ts
-  var DragDropFacade = class {
-    constructor(logger) {
-      this.config = null;
-      this.isDragging = false;
-      this.dragHandler = new DragDropHandler({ logger });
-      this.pathProcessor = new FilePathProcessor();
-      this.messageHandler = new MessageHandler(logger);
-    }
-    initialize(config) {
-      this.config = config;
-      const callbacks = {
-        onDragEnter: (isShiftPressed) => this.handleDragEnter(isShiftPressed),
-        onDragLeave: () => this.handleDragLeave(),
-        onFileDrop: (paths) => this.handleFileDrop(paths),
-        onFallbackRequest: () => this.handleFallbackRequest()
-      };
-      this.dragHandler.attach(config.container, callbacks);
-      this.messageHandler.startListening({
-        onPathInsert: (path2) => this.handlePathInsert(path2),
-        onClipboardContent: (content3) => this.handleClipboardContent(content3)
-      });
-    }
-    destroy() {
-      this.dragHandler.detach();
-      this.messageHandler.stopListening();
-      this.pathProcessor.clear();
-      this.config = null;
-      this.isDragging = false;
-    }
-    getIsDragging() {
-      return this.isDragging;
-    }
-    handleDragEnter(isShiftPressed) {
-      if (!isShiftPressed) {
-        return;
-      }
-      this.isDragging = true;
-      this.config?.onDragStateChange?.(true);
-    }
-    handleDragLeave() {
-      this.isDragging = false;
-      this.config?.onDragStateChange?.(false);
-    }
-    handleFileDrop(paths) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      const newValue = this.pathProcessor.processMultiplePaths(
-        paths,
-        currentValue
-      );
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-    handleFallbackRequest() {
-      this.messageHandler.requestFilePathGrab();
-    }
-    handlePathInsert(path2) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      if (path2.includes('"') && path2.includes("\n")) {
-        const mergedValue = currentValue ? `${currentValue}
-${path2}` : path2;
-        this.config.onValueChange(mergedValue);
-        return;
-      }
-      const newValue = this.pathProcessor.processSinglePath(path2, currentValue);
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-    handleClipboardContent(content3) {
-      if (!this.config) {
-        return;
-      }
-      const currentValue = this.config.getCurrentValue();
-      const newValue = this.pathProcessor.processSinglePath(
-        content3,
-        currentValue
-      );
-      if (newValue !== null) {
-        this.config.onValueChange(newValue);
-      }
-    }
-  };
-
-  // src/client/ui/src/session/input-dnd.ts
-  var DEFAULT_DRAG_OVERLAY_LABEL = "Drop files here while holding Shift";
-  var useInputDragDrop = ({
-    containerRef,
-    textareaRef,
-    onValueChange
-  }) => {
-    const [isDragging, setIsDragging] = (0, import_react6.useState)(false);
-    const dragDropFacadeRef = (0, import_react6.useRef)(null);
-    (0, import_react6.useEffect)(() => {
-      const container = containerRef.current;
-      const textarea = textareaRef.current;
-      if (!(container && textarea)) {
-        return;
-      }
-      const dragDropFacade = new DragDropFacade();
-      dragDropFacadeRef.current = dragDropFacade;
-      dragDropFacade.initialize({
-        container,
-        onValueChange,
-        getCurrentValue: () => textarea.value,
-        onDragStateChange: setIsDragging
-      });
-      return () => {
-        dragDropFacade.destroy();
-        dragDropFacadeRef.current = null;
-      };
-    }, [containerRef, onValueChange, textareaRef]);
-    return { isDragging };
-  };
-
-  // src/client/ui/src/session/input-panel-clipboard.ts
-  var WINDOWS_PATH_PATTERN3 = /^[a-zA-Z]:[\\/]/;
-  var LINE_SPLIT_REGEX2 = /\r?\n/;
-  var normalizePathCandidate = (rawValue) => {
-    const value = rawValue.trim();
-    if (!value) {
-      return null;
-    }
-    if (value.startsWith("file://")) {
-      const withoutScheme = value.replace("file://", "");
-      try {
-        return decodeURIComponent(withoutScheme);
-      } catch {
-        return withoutScheme;
-      }
-    }
-    if (value.startsWith("/") || value.startsWith("~") || value.startsWith("./") || value.startsWith("../") || WINDOWS_PATH_PATTERN3.test(value)) {
-      return value;
-    }
-    return null;
-  };
-  var formatPathsForInsertion = (paths) => {
-    if (paths.length === 0) {
-      return "";
-    }
-    return `${paths.map((path2) => `"${path2}"`).join("\n")}
-`;
-  };
-  var pushUnique = (target, value) => {
-    if (!target.includes(value)) {
-      target.push(value);
-    }
-  };
-  var collectPathsFromUriList = (results, payload) => {
-    for (const line of payload.split(LINE_SPLIT_REGEX2)) {
-      const normalized = normalizePathCandidate(line);
-      if (normalized) {
-        pushUnique(results, normalized);
-      }
-    }
-  };
-  var collectPathsFromFileList = (results, files) => {
-    if (!files || files.length === 0) {
-      return;
-    }
-    for (const file of Array.from(files)) {
-      const candidate = file.path;
-      if (!candidate) {
-        continue;
-      }
-      const normalized = normalizePathCandidate(candidate);
-      if (normalized) {
-        pushUnique(results, normalized);
-      }
-    }
-  };
-  var collectPathsFromItems = (results, items) => {
-    if (typeof items === "undefined") {
-      return;
-    }
-    for (const item of Array.from(items)) {
-      if (item.kind !== "file") {
-        continue;
-      }
-      const file = item.getAsFile();
-      const candidate = file?.path;
-      if (!candidate) {
-        continue;
-      }
-      const normalized = normalizePathCandidate(candidate);
-      if (normalized) {
-        pushUnique(results, normalized);
-      }
-    }
-  };
-  var extractFilePathsFromClipboardData = (dataTransfer) => {
-    const results = [];
-    const uriListPayload = dataTransfer.getData("application/vnd.code.uri-list") || dataTransfer.getData("text/uri-list");
-    if (uriListPayload) {
-      collectPathsFromUriList(results, uriListPayload);
-    }
-    collectPathsFromFileList(results, dataTransfer.files);
-    collectPathsFromItems(results, dataTransfer.items);
-    return results;
-  };
-  var handlePlainTextPaste = (event, insertText) => {
-    const dataTransfer = event.clipboardData;
-    if (!dataTransfer) {
-      return false;
-    }
-    const filePaths = extractFilePathsFromClipboardData(dataTransfer);
-    if (filePaths.length > 0) {
-      event.preventDefault();
-      insertText(formatPathsForInsertion(filePaths));
-      return true;
-    }
-    const plainText = dataTransfer.getData("text/plain");
-    if (plainText) {
-      const normalized = normalizePathCandidate(plainText);
-      if (normalized) {
-        event.preventDefault();
-        insertText(formatPathsForInsertion([normalized]));
-        return true;
-      }
-      event.preventDefault();
-      insertText(plainText);
-      return true;
-    }
-    if (typeof dataTransfer.items !== "undefined") {
-      const stringItem = Array.from(dataTransfer.items).find(
-        (item) => item.kind === "string"
-      );
-      if (stringItem) {
-        event.preventDefault();
-        stringItem.getAsString((text7) => {
-          if (text7) {
-            insertText(text7);
-          }
-        });
-        return true;
-      }
-    }
-    return false;
-  };
-  var tryReadFromNavigator = async (insertText) => {
-    if (typeof navigator === "undefined" || !navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
-      return false;
-    }
-    try {
-      const text7 = await navigator.clipboard.readText();
-      if (text7) {
-        insertText(text7);
-        return true;
-      }
-    } catch {
-      return false;
-    }
-    return false;
-  };
-  var copySelectionToClipboard = (event, textarea, selection) => {
-    if (event.clipboardData) {
-      event.preventDefault();
-      event.clipboardData.setData("text/plain", selection);
-      return;
-    }
-    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-      event.preventDefault();
-      navigator.clipboard.writeText(selection).catch(() => {
-      });
-      return;
-    }
-    textarea.select();
-  };
-  var createClipboardHandlers = ({
-    textareaRef,
-    insertTextAtSelection,
-    syncTextareaValue
-  }) => {
-    const handlePaste = (event) => {
-      const handled = handlePlainTextPaste(event, insertTextAtSelection);
-      if (handled) {
-        return;
-      }
-      tryReadFromNavigator(insertTextAtSelection).then((success) => {
-        if (success) {
-          return;
-        }
-        requestAnimationFrame(syncTextareaValue);
-      }).catch(() => {
-        requestAnimationFrame(syncTextareaValue);
-      });
-    };
-    const handleCopy = (event) => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      const start2 = textarea.selectionStart ?? 0;
-      const end = textarea.selectionEnd ?? 0;
-      if (start2 === end) {
-        return;
-      }
-      const selection = textarea.value.slice(start2, end);
-      if (!selection) {
-        return;
-      }
-      copySelectionToClipboard(event, textarea, selection);
-    };
-    return {
-      handlePaste,
-      handleCopy
-    };
-  };
-
-  // src/client/ui/src/session/input-textarea.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  var DEFAULT_CLASSES = {
-    container: "",
-    containerDragging: "",
-    textarea: "",
-    textareaFocused: "",
-    overlay: ""
-  };
-  var adjustTextareaHeight = (textarea, maxHeight) => {
-    if (!textarea) {
-      return;
-    }
-    const element3 = textarea;
-    element3.style.height = "auto";
-    const { scrollHeight } = element3;
-    const targetHeight = typeof maxHeight === "number" ? Math.min(scrollHeight, maxHeight) : scrollHeight;
-    element3.style.height = `${targetHeight}px`;
-  };
-  var focusTextareaEnd = (textarea) => {
-    if (!textarea) {
-      return;
-    }
-    const element3 = textarea;
-    element3.focus();
-    const length = element3.value.length;
-    element3.setSelectionRange(length, length);
-  };
-  var InputTextarea = ({
-    value,
-    onValueChange,
-    onSubmit,
-    placeholder,
-    rows = 1,
-    maxHeight,
-    overlayLabel = DEFAULT_DRAG_OVERLAY_LABEL,
-    overlaySlot,
-    classes
-  }) => {
-    const [isFocused, setIsFocused] = (0, import_react7.useState)(false);
-    const textareaRef = (0, import_react7.useRef)(null);
-    const dropContainerRef = (0, import_react7.useRef)(null);
-    const resolvedClasses = { ...DEFAULT_CLASSES, ...classes };
-    const applyExternalValue = (0, import_react7.useCallback)(
-      (newValue) => {
-        onValueChange(newValue);
-        requestAnimationFrame(() => {
-          focusTextareaEnd(textareaRef.current);
-          adjustTextareaHeight(textareaRef.current, maxHeight);
-        });
-      },
-      [maxHeight, onValueChange]
-    );
-    const { isDragging } = useInputDragDrop({
-      containerRef: dropContainerRef,
-      textareaRef,
-      onValueChange: applyExternalValue
-    });
-    const handleChange = (0, import_react7.useCallback)(
-      (event) => {
-        onValueChange(event.target.value);
-      },
-      [onValueChange]
-    );
-    const handleKeyDown = (0, import_react7.useCallback)(
-      (event) => {
-        if (!onSubmit || event.key !== "Enter") {
-          return;
-        }
-        if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) {
-          return;
-        }
-        const nativeEvent = event.nativeEvent;
-        if (nativeEvent.isComposing) {
-          return;
-        }
-        event.preventDefault();
-        onSubmit();
-      },
-      [onSubmit]
-    );
-    const insertTextAtSelection = (0, import_react7.useCallback)(
-      (text7) => {
-        const textarea = textareaRef.current;
-        if (!textarea) {
-          return;
-        }
-        const [selectionStart, selectionEnd] = [
-          textarea.selectionStart ?? textarea.value.length,
-          textarea.selectionEnd ?? textarea.value.length
-        ];
-        const currentValue = textarea.value;
-        const nextValue = currentValue.slice(0, selectionStart) + text7 + currentValue.slice(selectionEnd);
-        onValueChange(nextValue);
-        requestAnimationFrame(() => {
-          const position3 = selectionStart + text7.length;
-          textarea.selectionStart = position3;
-          textarea.selectionEnd = position3;
-          adjustTextareaHeight(textarea, maxHeight);
-          textarea.focus();
-        });
-      },
-      [maxHeight, onValueChange]
-    );
-    const syncTextareaValue = (0, import_react7.useCallback)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      onValueChange(textarea.value);
-    }, [onValueChange]);
-    const { handlePaste, handleCopy } = (0, import_react7.useMemo)(
-      () => createClipboardHandlers({
-        textareaRef,
-        insertTextAtSelection,
-        syncTextareaValue
-      }),
-      [insertTextAtSelection, syncTextareaValue]
-    );
-    (0, import_react7.useEffect)(() => {
-      const nextValue = value;
-      requestAnimationFrame(() => {
-        const textarea = textareaRef.current;
-        if (!textarea || textarea.value !== nextValue) {
-          return;
-        }
-        adjustTextareaHeight(textarea, maxHeight);
-      });
-    }, [maxHeight, value]);
-    const containerClassName = [
-      resolvedClasses.container,
-      isDragging ? resolvedClasses.containerDragging : ""
-    ].filter(Boolean).join(" ");
-    const textareaClassName = [
-      resolvedClasses.textarea,
-      isFocused ? resolvedClasses.textareaFocused : ""
-    ].filter(Boolean).join(" ");
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: containerClassName, ref: dropContainerRef, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-        "textarea",
-        {
-          "aria-multiline": "true",
-          className: textareaClassName,
-          onBlur: () => setIsFocused(false),
-          onChange: handleChange,
-          onCopy: handleCopy,
-          onFocus: () => setIsFocused(true),
-          onKeyDown: handleKeyDown,
-          onPaste: handlePaste,
-          placeholder,
-          ref: textareaRef,
-          rows,
-          value
-        }
-      ),
-      overlaySlot,
-      isDragging && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("output", { className: resolvedClasses.overlay, children: overlayLabel })
-    ] });
-  };
-
-  // src/client/ui/src/session/task-timer.tsx
-  var import_react8 = __toESM(require_react());
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
-  var TICK_MS = 1e3;
-  var pad2 = (value) => String(value).padStart(2, "0");
-  var formatHmsShort = (totalSeconds) => {
-    const clamped = Math.max(0, Math.floor(totalSeconds));
-    const hours = Math.floor(clamped / 3600);
-    const minutes = Math.floor(clamped % 3600 / 60);
-    const seconds = clamped % 60;
-    const hoursText = hours < 100 ? pad2(hours) : String(hours);
-    return `${hoursText}h ${pad2(minutes)}m ${pad2(seconds)}s`;
-  };
-  var TaskTimer = ({
-    timer,
-    active,
-    placement,
-    mode = "total",
-    theme = null
-  }) => {
-    const [nowMs, setNowMs] = (0, import_react8.useState)(() => Date.now());
-    const runningSinceMs = timer?.runningSinceMs ?? null;
-    (0, import_react8.useEffect)(() => {
-      if (mode !== "turn" || !active || runningSinceMs === null) {
-        return;
-      }
-      if (typeof window === "undefined") {
-        return;
-      }
-      setNowMs(Date.now());
-      const intervalId = window.setInterval(() => {
-        setNowMs(Date.now());
-      }, TICK_MS);
-      return () => window.clearInterval(intervalId);
-    }, [active, mode, runningSinceMs]);
-    const displaySeconds = (0, import_react8.useMemo)(() => {
-      if (mode === "total") {
-        return Math.max(0, Math.floor(timer?.totalSeconds ?? 0));
-      }
-      if (!active || runningSinceMs === null) {
-        return 0;
-      }
-      return Math.max(0, Math.floor((nowMs - runningSinceMs) / 1e3));
-    }, [active, mode, nowMs, runningSinceMs, timer?.totalSeconds]);
-    const formatted = (0, import_react8.useMemo)(
-      () => formatHmsShort(displaySeconds),
-      [displaySeconds]
-    );
-    const rootClasses = [
-      "task-timer",
-      active ? "task-timer--active" : "",
-      placement === "overlay" ? "task-timer--overlay" : "task-timer--footer",
-      theme ? `task-timer--${theme}` : ""
-    ].filter(Boolean).join(" ");
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("output", { className: rootClasses, children: formatted });
-  };
-
-  // src/client/ui/src/session/input-panel.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var MAX_TEXTAREA_HEIGHT = 200;
-  var CORE_START_DELAY_MS = 2e3;
-  var InputPanel = ({
-    draft,
-    connectionState = "idle",
-    continuityLockActive = false,
-    continuityErrorCopy = null,
-    isQueued = false,
-    providerTheme = null,
-    terminalNoResume = false,
-    taskTimer = null,
-    onSubmit
-  }) => {
-    const [forceUnlocked, setForceUnlocked] = (0, import_react9.useState)(false);
-    const [optimisticStopActive, setOptimisticStopActive] = (0, import_react9.useState)(false);
-    const stopStartTimerRef = (0, import_react9.useRef)(null);
-    const inputLocked = (connectionState !== "idle" || continuityLockActive || isQueued || terminalNoResume) && !forceUnlocked;
-    const agentBusy = !terminalNoResume && (connectionState !== "idle" || continuityLockActive || isQueued);
-    const waitCopyActive = inputLocked && !isQueued && !terminalNoResume;
-    const waitCopyColor = resolveProviderWaitColor(providerTheme, 0.7);
-    const waitCopySolidColor = resolveProviderWaitColor(providerTheme, 1);
-    const formClassName = [
-      "session-input",
-      "session-panel",
-      waitCopyActive ? "session-input--wait-copy" : ""
-    ].filter(Boolean).join(" ");
-    const placeholder = forceUnlocked ? "Core stopped. Type message and press Enter/\u25B6 to restart and send." : resolveInputPlaceholder({
-      isQueued,
-      terminalNoResume,
-      connectionState,
-      continuityLockActive,
-      continuityErrorCopy
-    });
-    const [value, setValue] = (0, import_react9.useState)(draft);
-    const formRef = (0, import_react9.useRef)(null);
-    const waitCopyOverlayActive = waitCopyActive && value.length === 0;
-    (0, import_react9.useEffect)(
-      () => () => {
-        const timer = stopStartTimerRef.current;
-        if (timer !== null) {
-          window.clearTimeout(timer);
-        }
-      },
-      []
-    );
-    (0, import_react9.useEffect)(() => {
-      setValue(draft);
-    }, [draft]);
-    (0, import_react9.useEffect)(() => {
-      if (optimisticStopActive && agentBusy) {
-        setOptimisticStopActive(false);
-        return;
-      }
-      if (optimisticStopActive && connectionState === "idle" && !continuityLockActive && !isQueued) {
-        setOptimisticStopActive(false);
-      }
-    }, [
-      agentBusy,
-      connectionState,
-      continuityLockActive,
-      isQueued,
-      optimisticStopActive
-    ]);
-    (0, import_react9.useEffect)(() => {
-      const form = formRef.current;
-      if (!form) {
-        return;
-      }
-      form.style.setProperty("--session-input-wait-color", waitCopyColor);
-      form.style.setProperty(
-        "--session-input-wait-solid-color",
-        waitCopySolidColor
-      );
-      const textarea = form.querySelector(
-        ".session-input__textarea"
-      );
-      if (!textarea) {
-        return;
-      }
-      if (!waitCopyActive) {
-        textarea.style.removeProperty("color");
-        textarea.style.removeProperty("caret-color");
-        return;
-      }
-      textarea.style.setProperty("color", waitCopyColor);
-      textarea.style.setProperty("caret-color", waitCopyColor);
-    }, [waitCopyActive, waitCopyColor, waitCopySolidColor]);
-    const sendMessage = (0, import_react9.useCallback)(() => {
-      if (inputLocked) {
-        return;
-      }
-      const trimmed = value.trim();
-      if (!trimmed) {
-        return;
-      }
-      if (stopStartTimerRef.current !== null) {
-        window.clearTimeout(stopStartTimerRef.current);
-        stopStartTimerRef.current = null;
-      }
-      setForceUnlocked(false);
-      setOptimisticStopActive(true);
-      setValue("");
-      if (isCoreStopRequestedByUser()) {
-        requestCoreFromSupervisor("ensure-started");
-        stopStartTimerRef.current = window.setTimeout(() => {
-          stopStartTimerRef.current = null;
-          onSubmit(trimmed);
-        }, CORE_START_DELAY_MS);
-        return;
-      }
-      onSubmit(trimmed);
-    }, [inputLocked, onSubmit, value]);
-    const handleSubmit = (0, import_react9.useCallback)(
-      (event) => {
-        event.preventDefault();
-        sendMessage();
-      },
-      [sendMessage]
-    );
-    const renderOverlayTimer = () => {
-      if (!(inputLocked && agentBusy)) {
-        return null;
-      }
-      if (taskTimer?.runningSinceMs == null) {
-        return null;
-      }
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-        TaskTimer,
-        {
-          active: agentBusy,
-          mode: "turn",
-          placement: "overlay",
-          theme: providerTheme,
-          timer: taskTimer
-        }
-      );
-    };
-    const renderWaitCopyOverlay = () => {
-      if (!waitCopyOverlayActive) {
-        return null;
-      }
-      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("output", { "aria-hidden": "true", className: "session-input__wait-copy-overlay", children: placeholder });
-    };
-    const renderFooterTotal = () => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "session-input__total", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: "session-input__total-label", children: "total:\xA0\xA0" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-        TaskTimer,
-        {
-          active: agentBusy,
-          mode: "total",
-          placement: "footer",
-          theme: providerTheme,
-          timer: taskTimer
-        }
-      )
-    ] });
-    const stopActive = (agentBusy || optimisticStopActive) && !forceUnlocked;
-    const handleActionClick = (0, import_react9.useCallback)(() => {
-      if (stopActive) {
-        requestCoreFromSupervisor("stop");
-        requestCoreShutdown().catch(() => false);
-        setForceUnlocked(true);
-        setOptimisticStopActive(false);
-        return;
-      }
-      sendMessage();
-    }, [sendMessage, stopActive]);
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
-      "form",
-      {
-        "aria-label": "Message input",
-        className: formClassName,
-        onSubmit: handleSubmit,
-        ref: formRef,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "session-input__row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-              "fieldset",
-              {
-                disabled: inputLocked,
-                style: {
-                  border: 0,
-                  padding: 0,
-                  margin: 0,
-                  flex: "1 1 auto",
-                  minWidth: 0
-                },
-                children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-                  InputTextarea,
-                  {
-                    classes: {
-                      container: "session-input__container",
-                      containerDragging: "session-input__container--dragging",
-                      textarea: "session-input__textarea",
-                      textareaFocused: "session-input__textarea--focused",
-                      overlay: "session-input__overlay"
-                    },
-                    maxHeight: MAX_TEXTAREA_HEIGHT,
-                    onSubmit: sendMessage,
-                    onValueChange: setValue,
-                    overlaySlot: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-                      renderOverlayTimer(),
-                      renderWaitCopyOverlay()
-                    ] }),
-                    placeholder,
-                    value
-                  }
-                )
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-              input_play_stop_button_default,
-              {
-                onClick: handleActionClick,
-                stopActive
-              }
-            )
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "session-input__footer", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-              "span",
-              {
-                className: "session-input__hint",
-                style: inputLocked ? { visibility: "hidden" } : void 0,
-                children: "Press Enter to send, Shift+Enter for a new line"
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "session-input__footer-right", children: renderFooterTotal() })
-          ] })
-        ]
-      }
-    );
-  };
-  var input_panel_default = InputPanel;
-
-  // src/client/ui/src/session/session-id-bar-reset-format.ts
-  var TIMEZONE_SUFFIX_PATTERN = /^(.*)\s+\([^)]+\)\s*$/u;
-  var UTC_RESET_PATTERN = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})(?::(\d{2}))?\s*\((UTC|GMT)\)$/iu;
-  var stripTimeZoneSuffix = (value) => {
-    const trimmed = value.trim();
-    const match = TIMEZONE_SUFFIX_PATTERN.exec(trimmed);
-    return match?.[1]?.trim() ? match[1].trim() : trimmed;
-  };
-  var parseDate = (value) => {
-    const timestamp = Date.parse(value);
-    if (!Number.isFinite(timestamp)) {
-      return null;
-    }
-    return new Date(timestamp);
-  };
-  var parseResetDate = (value) => {
-    const utcMatch = UTC_RESET_PATTERN.exec(value);
-    if (utcMatch) {
-      const [, datePart, hhmmPart, secondsPart] = utcMatch;
-      const normalizedSeconds = secondsPart ?? "00";
-      return parseDate(`${datePart}T${hhmmPart}:${normalizedSeconds}Z`);
-    }
-    const direct = parseDate(value);
-    if (direct) {
-      return direct;
-    }
-    const stripped = stripTimeZoneSuffix(value);
-    if (stripped !== value) {
-      return parseDate(stripped);
-    }
-    return null;
-  };
-  var resolveLocale = (options) => options.locale ?? "en-US";
-  var resolveTimeZone = (options) => options.timeZone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
-  var formatMonthDay = (date, options) => new Intl.DateTimeFormat(resolveLocale(options), {
-    month: "short",
-    day: "numeric",
-    timeZone: resolveTimeZone(options)
-  }).format(date);
-  var readNumericPart = (parts, partType) => {
-    const value = parts.find((part) => part.type === partType)?.value ?? "0";
-    const parsed = Number.parseInt(value, 10);
-    return Number.isFinite(parsed) ? parsed : 0;
-  };
-  var formatClock = (date, options) => {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-      timeZone: resolveTimeZone(options)
-    }).formatToParts(date);
-    const hour24 = readNumericPart(parts, "hour");
-    const minute = readNumericPart(parts, "minute");
-    const meridiem = hour24 >= 12 ? "pm" : "am";
-    const hour12 = hour24 % 12 || 12;
-    if (minute === 0) {
-      return `${hour12}${meridiem}`;
-    }
-    return `${hour12}:${String(minute).padStart(2, "0")}${meridiem}`;
-  };
-  var buildResetLabel = (rawValue, options = {}) => {
-    const trimmed = rawValue.trim();
-    if (!trimmed) {
-      return "Resets";
-    }
-    const parsed = parseResetDate(trimmed);
-    if (!parsed) {
-      return `Resets ${stripTimeZoneSuffix(trimmed)}`;
-    }
-    return `Resets ${formatMonthDay(parsed, options)} at ${formatClock(
-      parsed,
-      options
-    )}`;
-  };
-
-  // src/client/ui/src/session/session-id-bar.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var SESSION_ID_PREFIX_LENGTH = 8;
-  var resolveIdLabel = (binding) => {
-    if (binding.providerSessionId) {
-      const shortId = binding.providerSessionId.slice(
-        0,
-        SESSION_ID_PREFIX_LENGTH
-      );
-      return `ID: ${shortId}-...`;
-    }
-    if (binding.status === "pending") {
-      return "ID: pending...";
-    }
-    return "ID: unavailable";
-  };
-  var clampPercent2 = (value) => {
-    if (value < 0) {
-      return 0;
-    }
-    if (value > 100) {
-      return 100;
-    }
-    return value;
-  };
-  var renderLimitLabel = (payload) => [
-    payload.percentUsed === null ? payload.label : `${payload.label} ${payload.percentUsed}%`,
-    payload.resetLabel ? `(${payload.resetLabel})` : null
-  ].filter((value) => Boolean(value)).join(" ");
-  var readProviderLabelPrefix = (status, binding) => {
-    const scopeKey = resolveStatusUsageLimitScopeKey(status, binding);
-    const providerId = scopeKey?.split(":")[0]?.trim().toLowerCase();
-    if (providerId) {
-      return providerId;
-    }
-    switch (status.models?.[0]?.providerId) {
-      case "claudeCodeCli":
-        return "claude";
-      case "codexCli":
-        return "codex";
-      case "geminiCli":
-        return "gemini";
-      default:
-        return null;
-    }
-  };
-  var buildFallbackLabels = (status, binding) => {
-    switch (readProviderLabelPrefix(status, binding)) {
-      case "gemini":
-        return {
-          currentSession: "Primary",
-          currentWeekAllModels: "Secondary",
-          currentWeekSonnetOnly: "Tertiary"
-        };
-      default:
-        return {
-          currentSession: "Session",
-          currentWeekAllModels: "Weekly",
-          currentWeekSonnetOnly: "Model Weekly"
-        };
-    }
-  };
-  var SessionIdBar = ({ binding, status }) => {
-    const providerScopeKey = resolveStatusUsageLimitScopeKey(status, binding);
-    const cachedUsageLimitsState = readLastKnownUsageLimitsState(
-      providerScopeKey,
-      status.providerSummary
-    );
-    const resolvedUsageLimits = status.usageLimits ?? cachedUsageLimitsState?.usageLimits ?? null;
-    const resolvedUsageLimitLabels = status.usageLimitLabels ?? cachedUsageLimitsState?.usageLimitLabels ?? buildFallbackLabels(status, binding);
-    const sessionPercent = resolvedUsageLimits?.currentSession?.percentUsed ?? null;
-    const sessionResetsAt = resolvedUsageLimits?.currentSession?.resetsAt ?? null;
-    const weeklyPercent = resolvedUsageLimits?.currentWeekAllModels?.percentUsed ?? null;
-    const weeklyResetsAt = resolvedUsageLimits?.currentWeekAllModels?.resetsAt ?? null;
-    const sessionResetLabel = sessionResetsAt ? buildResetLabel(sessionResetsAt) : null;
-    const weeklyResetLabel = weeklyResetsAt ? buildResetLabel(weeklyResetsAt) : null;
-    const sessionFillStyle = sessionPercent === null ? void 0 : {
-      "--limit-fill": `${clampPercent2(sessionPercent)}%`
-    };
-    const weeklyFillStyle = weeklyPercent === null ? void 0 : {
-      "--limit-fill": `${clampPercent2(weeklyPercent)}%`
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
-      "section",
-      {
-        "aria-label": `Session identifier ${resolveIdLabel(binding)}`,
-        className: "session-panel session-id-bar",
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-id-bar__id", children: resolveIdLabel(binding) }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { "aria-hidden": true, className: "session-id-bar__limits", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
-              "div",
-              {
-                className: "session-id-bar__limit-row",
-                title: sessionResetLabel ?? void 0,
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-id-bar__limit-label", children: renderLimitLabel({
-                    label: resolvedUsageLimitLabels.currentSession ?? "Session",
-                    percentUsed: sessionPercent,
-                    resetLabel: sessionResetLabel
-                  }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-                    "span",
-                    {
-                      className: "session-id-bar__limit-bar",
-                      style: sessionFillStyle
-                    }
-                  )
-                ]
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
-              "div",
-              {
-                className: "session-id-bar__limit-row",
-                title: weeklyResetLabel ?? void 0,
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-id-bar__limit-label", children: renderLimitLabel({
-                    label: resolvedUsageLimitLabels.currentWeekAllModels ?? "Weekly",
-                    percentUsed: weeklyPercent,
-                    resetLabel: weeklyResetLabel
-                  }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: "session-id-bar__limit-bar", style: weeklyFillStyle })
-                ]
-              }
-            )
-          ] })
-        ]
-      }
-    );
-  };
-  var session_id_bar_default = SessionIdBar;
-
-  // src/client/ui/src/session/session-view-helpers.tsx
-  var import_react11 = __toESM(require_react());
-
-  // src/client/ui/src/session/virtual-conversation.tsx
-  var import_react10 = __toESM(require_react());
-
-  // src/client/ui/src/session/continuity-internal-message.ts
-  var CONTINUITY_INTERNAL_ACK = "Ready to continue working.";
-  var LEGACY_CONTINUITY_INTERNAL_ACK = "__CODEAIHUB_INTERNAL_CONTINUITY_ACK__";
-  var CONTINUITY_INTERNAL_MESSAGES = /* @__PURE__ */ new Set([
-    CONTINUITY_INTERNAL_ACK,
-    LEGACY_CONTINUITY_INTERNAL_ACK
-  ]);
-  var INLINE_MARKDOWN_CODE_PATTERN = /^`([^`]+)`$/;
-  var JSON_CODE_FENCE_PATTERN = /```(?:json)?\s*([\s\S]*?)\s*```/gi;
-  var normalizeContinuityInternalContent = (content3) => {
-    const trimmed = content3.trim();
-    return INLINE_MARKDOWN_CODE_PATTERN.exec(trimmed)?.[1]?.trim() ?? trimmed;
-  };
-  var tryParseContinuityInternalAck = (content3) => {
-    const normalized = normalizeContinuityInternalContent(content3);
-    if (CONTINUITY_INTERNAL_MESSAGES.has(normalized)) {
-      return normalized;
-    }
-    const trimmed = content3.trim();
-    if (trimmed.includes(LEGACY_CONTINUITY_INTERNAL_ACK)) {
-      return LEGACY_CONTINUITY_INTERNAL_ACK;
-    }
-    const tryParseJson = (candidate) => {
-      const json = candidate.trim();
-      if (!(json.startsWith("{") && json.endsWith("}"))) {
-        return null;
-      }
-      try {
-        const parsed = JSON.parse(json);
-        if (!parsed || typeof parsed !== "object") {
-          return null;
-        }
-        const record = parsed;
-        if (typeof record.answer !== "string") {
-          return null;
-        }
-        const answer = record.answer.trim();
-        return CONTINUITY_INTERNAL_MESSAGES.has(answer) ? answer : null;
-      } catch {
-        return null;
-      }
-    };
-    const directJsonAck = tryParseJson(trimmed);
-    if (directJsonAck) {
-      return directJsonAck;
-    }
-    for (const match of trimmed.matchAll(JSON_CODE_FENCE_PATTERN)) {
-      const fenceBody = match[1];
-      if (typeof fenceBody !== "string") {
-        continue;
-      }
-      const fencedAck = tryParseJson(fenceBody);
-      if (fencedAck) {
-        return fencedAck;
-      }
-    }
-    return null;
-  };
-  var isContinuityInternalMessage = (message) => (message.role === "assistant" || message.role === "thinking") && tryParseContinuityInternalAck(message.content) !== null;
-
-  // src/client/ui/src/session/session-tabs.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-  var formatWorkflowStageLabel = (stage) => {
-    const normalized = stage.replace(/[-_]+/g, " ").trim();
-    if (!normalized) {
-      return stage;
-    }
-    return normalized.split(" ").filter(Boolean).map((token) => token.charAt(0).toUpperCase() + token.slice(1)).join(" ");
-  };
-  var getAgentLabel = (sessionKind, stage) => {
-    if (stage && stage !== "description") {
-      return formatWorkflowStageLabel(stage);
-    }
-    if (stage === "description") {
-      return "Description";
-    }
-    if (sessionKind === "collector") {
-      return "Agent";
-    }
-    if (stage) {
-      return formatWorkflowStageLabel(stage);
-    }
-    return null;
-  };
-  var buildTabDisplayData = (session, providerLabels, isActive) => {
-    const agentLabel = getAgentLabel(session.sessionKind, session.stage);
-    const providerNames = session.providerIds.map((providerId) => {
-      const label = providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId);
-      const [primaryToken] = label.split(" ");
-      return primaryToken ?? label;
-    });
-    const hasTwoProviders = providerNames.length === 2;
-    let primaryLineLength;
-    if (hasTwoProviders) {
-      primaryLineLength = 2;
-    } else if (providerNames.length <= 2) {
-      primaryLineLength = 1;
-    } else {
-      primaryLineLength = Math.ceil(providerNames.length / 2);
-    }
-    const providerLine = providerNames.slice(0, primaryLineLength).join("+");
-    const primaryLine = agentLabel ? `${agentLabel} ${providerLine}` : providerLine;
-    const secondaryTokens = providerNames.slice(primaryLineLength);
-    const secondaryLine = secondaryTokens.length > 0 ? `+${secondaryTokens.join("+")}` : "";
-    const displaySummary = secondaryLine ? [primaryLine, secondaryLine] : [primaryLine];
-    const spokenSummary = agentLabel ? `${agentLabel} ${providerNames.join(", ")}` : providerNames.join(", ");
-    const providerFullNames = session.providerIds.map(
-      (providerId) => providerLabels.get(providerId) ?? getDefaultProviderTitle(providerId)
-    ).join(" + ");
-    const fullSummary = agentLabel ? `${agentLabel}: ${providerFullNames}` : providerFullNames;
-    const primaryProviderId = session.providerIds[0] ?? null;
-    const tabProviderTheme = mapProviderTheme(primaryProviderId);
-    const tabClassName = [
-      "session-tab",
-      isActive ? "session-tab--active" : null,
-      tabProviderTheme ? `session-tab--${tabProviderTheme}` : null
-    ].filter(Boolean).join(" ");
-    return { displaySummary, spokenSummary, fullSummary, tabClassName };
-  };
-  var SessionTabs = ({
-    sessions,
-    providerLabels,
-    activeSessionId,
-    onSelect,
-    onClose
-  }) => {
-    if (sessions.length === 0) {
-      return null;
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "session-tabs", children: sessions.map((session) => {
-      const isActive = session.id === activeSessionId;
-      const { displaySummary, spokenSummary, fullSummary, tabClassName } = buildTabDisplayData(session, providerLabels, isActive);
-      return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: tabClassName, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          "button",
-          {
-            "aria-label": `Activate session for ${spokenSummary}`,
-            className: "session-tab__select",
-            onClick: () => onSelect(session.id),
-            title: fullSummary,
-            type: "button",
-            children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "session-tab__providers", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-tab__providers-line session-tab__providers-line--primary", children: displaySummary[0] }),
-              displaySummary[1] ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: "session-tab__providers-line", children: displaySummary[1] }) : null
-            ] })
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          "button",
-          {
-            "aria-label": `Close session for ${spokenSummary}`,
-            className: "session-tab__close",
-            onClick: () => onClose(session.id),
-            type: "button",
-            children: "\xD7"
-          }
-        )
-      ] }, session.id);
-    }) });
-  };
-  var session_tabs_default = SessionTabs;
-
-  // src/client/ui/src/session/virtual-conversation-message-utils.ts
-  var SYSTEM_PROMPT_PREFIXES = ["# System Prompt", "System Prompt \u2014"];
-  var isSystemPromptBootstrapMessage = (message) => {
-    if (message.role !== "user") {
-      return false;
-    }
-    const trimmed = message.content.trimStart();
-    return SYSTEM_PROMPT_PREFIXES.some((prefix) => trimmed.startsWith(prefix));
-  };
-  var dedupeVirtualConversationMessages = (messages) => {
-    const seen = /* @__PURE__ */ new Set();
-    const unique = [];
-    for (const message of messages) {
-      const key = `${message.role}|${message.createdAt}|${message.content}`;
-      if (seen.has(key)) {
-        continue;
-      }
-      seen.add(key);
-      unique.push(message);
-    }
-    return unique;
-  };
-  var resolveChainSegmentStartIndex = (options) => {
-    if (options.segmentIndex === 0) {
-      return 0;
-    }
-    const firstUserIndex = options.snapshot.messages.findIndex(
-      (message) => message.role === "user"
-    );
-    if (firstUserIndex < 0) {
-      return null;
-    }
-    let startIndex = firstUserIndex;
-    while (startIndex < options.snapshot.messages.length) {
-      const message = options.snapshot.messages[startIndex];
-      if (message && isSystemPromptBootstrapMessage(message)) {
-        startIndex += 1;
-        continue;
-      }
-      break;
-    }
-    return startIndex < options.snapshot.messages.length ? startIndex : null;
-  };
-  var collectChainSegmentMessages = (options) => {
-    const startIndex = resolveChainSegmentStartIndex({
-      snapshot: options.snapshot,
-      segmentIndex: options.segmentIndex
-    }) ?? null;
-    if (startIndex === null) {
-      return [];
-    }
-    const shouldSuppressThinking = options.segmentIndex < options.lastSegmentIndex;
-    const sliced = options.snapshot.messages.slice(startIndex);
-    if (!shouldSuppressThinking) {
-      return sliced;
-    }
-    return sliced.filter((message) => message.role !== "thinking");
-  };
-
-  // src/client/ui/src/session/token-debug-summary.ts
-  var buildTokenDebugSummary = (params) => {
-    if (params.chain.length <= 1) {
-      return null;
-    }
-    const formatRemainingPercent = (options) => {
-      if (!(Number.isFinite(options.used) && Number.isFinite(options.limit))) {
-        return "\u2014";
-      }
-      if (options.limit <= 0) {
-        return "\u2014";
-      }
-      const usedPercentage = Math.max(
-        0,
-        Math.min(100, Math.round(options.used / options.limit * 100))
-      );
-      const remainingPercentage = Math.max(
-        0,
-        Math.min(100, 100 - usedPercentage)
-      );
-      return `${remainingPercentage}%`;
-    };
-    const parts = [];
-    for (const [index2, segment] of params.chain.entries()) {
-      const snapshot = params.snapshots[segment.id];
-      if (!snapshot) {
-        continue;
-      }
-      const label = `#${index2 + 1}`;
-      const remainingPercent = formatRemainingPercent({
-        used: snapshot.status.tokenUsage.used,
-        limit: snapshot.status.tokenUsage.limit
-      });
-      parts.push(`${label} (${remainingPercent})`);
-    }
-    return parts.length > 0 ? parts.join(" | ") : null;
-  };
-
-  // src/client/ui/src/session/virtual-conversation.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var filterContinuityInternalSegmentMessages = (segment) => {
-    if (segment.length === 0) {
-      return segment;
-    }
-    const containsInternalAck = segment.some(
-      (message) => isContinuityInternalMessage(message)
-    );
-    const withoutInternalAck = containsInternalAck ? segment.filter((message) => !isContinuityInternalMessage(message)) : segment;
-    if (!containsInternalAck) {
-      return withoutInternalAck;
-    }
-    const firstUserIndex = withoutInternalAck.findIndex(
-      (message) => message.role === "user"
-    );
-    if (firstUserIndex < 0) {
-      return withoutInternalAck.filter(
-        (message) => message.role !== "assistant" && message.role !== "thinking"
-      );
-    }
-    const prefix = withoutInternalAck.slice(0, firstUserIndex).filter(
-      (message) => message.role !== "assistant" && message.role !== "thinking"
-    );
-    if (prefix.length === 0) {
-      return withoutInternalAck;
-    }
-    return [...prefix, ...withoutInternalAck.slice(firstUserIndex)];
-  };
-  var filterContinuityInternalMessages = (messages) => {
-    if (!messages.some((message) => isContinuityInternalMessage(message))) {
-      return messages;
-    }
-    const next = [];
-    let segment = [];
-    for (const message of messages) {
-      if (isSegmentBoundaryMessage(message)) {
-        next.push(...filterContinuityInternalSegmentMessages(segment));
-        segment = [];
-        next.push(message);
-        continue;
-      }
-      segment.push(message);
-    }
-    next.push(...filterContinuityInternalSegmentMessages(segment));
-    return next;
-  };
-  var resolveActiveSessionSnapshot = (options) => {
-    if (!options.activeSessionId) {
-      return null;
-    }
-    const snapshot = options.snapshots[options.activeSessionId];
-    return snapshot ?? null;
-  };
-  var SessionHeader = ({
-    sessions,
-    providerLabels,
-    activeSessionId,
-    onSelectSession,
-    onCloseSession
-  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "session-app__header", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-    session_tabs_default,
-    {
-      activeSessionId,
-      onClose: onCloseSession,
-      onSelect: onSelectSession,
-      providerLabels,
-      sessions
-    }
-  ) });
-  var resolveProviderDisplayLabel = (options) => {
-    if (!options.providerId) {
-      return null;
-    }
-    return options.providerLabels.get(options.providerId) ?? getDefaultProviderTitle(options.providerId);
-  };
-  var compareMessageIds = (left, right) => {
-    if (left < right) {
-      return -1;
-    }
-    if (left > right) {
-      return 1;
-    }
-    return 0;
-  };
-  var resolveContinuationChain = (params) => {
-    const sessionsById = new Map(
-      params.sessions.map((session) => [session.id, session])
-    );
-    const active = sessionsById.get(params.activeSessionId);
-    if (!active) {
-      return [];
-    }
-    const chain = [];
-    const visited = /* @__PURE__ */ new Set();
-    let cursor = active;
-    while (cursor) {
-      if (visited.has(cursor.id)) {
-        break;
-      }
-      visited.add(cursor.id);
-      chain.push(cursor);
-      if (!cursor.continuationParentId) {
-        break;
-      }
-      cursor = sessionsById.get(cursor.continuationParentId);
-    }
-    chain.reverse();
-    return chain;
-  };
-  var buildVirtualConversationMessages = (params) => {
-    const collected = [];
-    const lastSegmentIndex = Math.max(0, params.chain.length - 1);
-    for (const [segmentIndex, segment] of params.chain.entries()) {
-      const snapshot = params.snapshots[segment.id];
-      if (!snapshot) {
-        continue;
-      }
-      const messages = collectChainSegmentMessages({
-        snapshot,
-        segmentIndex,
-        lastSegmentIndex
-      });
-      for (const message of messages) {
-        collected.push({ message, segmentIndex });
-      }
-    }
-    collected.sort((left, right) => {
-      if (left.message.createdAt !== right.message.createdAt) {
-        return left.message.createdAt - right.message.createdAt;
-      }
-      if (left.segmentIndex !== right.segmentIndex) {
-        return left.segmentIndex - right.segmentIndex;
-      }
-      return compareMessageIds(left.message.id, right.message.id);
-    });
-    return dedupeVirtualConversationMessages(
-      filterContinuityInternalMessages(collected.map((entry) => entry.message))
-    );
-  };
-
-  // src/client/ui/src/session/session-view-helpers.tsx
-  var useQueuedSend = (options) => {
-    const [queuedMessage, setQueuedMessage] = (0, import_react11.useState)(null);
-    (0, import_react11.useEffect)(() => {
-      if (!(queuedMessage && options.connectionState === "idle" && options.activeSessionId)) {
-        return;
-      }
-      const message = queuedMessage;
-      setQueuedMessage(null);
-      options.onSendMessage(options.activeSessionId, message);
-    }, [
-      options.activeSessionId,
-      options.connectionState,
-      options.onSendMessage,
-      queuedMessage
-    ]);
-    return {
-      queuedMessage,
-      isQueued: queuedMessage !== null,
-      clearQueuedMessage: () => setQueuedMessage(null),
-      submitMessage: (text7) => {
-        if (!options.activeSessionId) {
-          return;
-        }
-        if (options.connectionState !== "idle") {
-          setQueuedMessage((previous3) => previous3 ?? text7);
-          return;
-        }
-        options.onSendMessage(options.activeSessionId, text7);
-      }
-    };
-  };
-  var resolveContinuationChainOrEmpty = (options) => {
-    if (!options.activeSessionId) {
-      return [];
-    }
-    return resolveContinuationChain({
-      sessions: options.sessions,
-      activeSessionId: options.activeSessionId
-    });
-  };
-  var resolveVirtualConversationMessages = (options) => {
-    const base = options.activeSession && options.activeSessionId && options.continuationChain.length > 1 ? buildVirtualConversationMessages({
-      chain: options.continuationChain,
-      snapshots: options.snapshots
-    }) : options.activeSession?.messages ?? [];
-    const shouldSuppressRolloverThinking = options.activeSession?.status.connectionState === "blocked";
-    const filtered = shouldSuppressRolloverThinking && base.length > 0 ? base.filter((message) => message.role !== "thinking") : base;
-    return filterContinuityInternalMessages(filtered);
-  };
-
-  // src/client/ui/src/session/status-panel.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  var MAX_PERCENTAGE = 100;
-  var MIN_TOKEN_LIMIT = 1;
-  var PERCENT_SCALE = 100;
-  var SUPERVISOR_LABEL = "Core Supervisor";
-  var STATUS_SEPARATOR = "\xA0\xA0|\xA0\xA0";
-  var formatModelSummary = (models) => models.map((model) => {
-    const base = model.modelDisplayName;
-    return model.reasoning ? `${base} (${model.reasoning})` : base;
-  }).join(", ");
-  var StatusPanel = ({
-    status,
-    connectionStatus,
-    connectionDetail,
-    tokenDebugSummary
-  }) => {
-    if (!status || connectionStatus !== "ready") {
-      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "session-status session-panel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-input__hint session-status__label", children: SUPERVISOR_LABEL }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-input__hint session-status__value", children: describeConnectionStatus(connectionStatus) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "session-status__row session-status__row--reserved", children: connectionDetail ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-input__hint session-status__value", children: connectionDetail }) : null })
-      ] });
-    }
-    const { providerSummary, models, tokenUsage } = status;
-    const tokenLimit = tokenUsage.limit > 0 ? tokenUsage.limit : null;
-    const usedPercentage = Math.max(
-      0,
-      Math.min(
-        MAX_PERCENTAGE,
-        Math.round(
-          tokenUsage.used / Math.max(tokenLimit ?? MIN_TOKEN_LIMIT, MIN_TOKEN_LIMIT) * PERCENT_SCALE
-        )
-      )
-    );
-    const remainingPercentage = Math.max(
-      0,
-      Math.min(MAX_PERCENTAGE, MAX_PERCENTAGE - usedPercentage)
-    );
-    const modelsSummary = models && models.length > 0 ? formatModelSummary(models) : providerSummary;
-    const tokensSummary = `${tokenUsage.used.toLocaleString()} (${remainingPercentage}%)`;
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("section", { className: "session-status session-status--single-line session-panel", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "session-status__row session-status__row--single-line", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "session-input__hint session-status__value session-status__value--primary", children: `Models: ${modelsSummary}${STATUS_SEPARATOR}Tokens: ${tokensSummary}` }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-        "span",
-        {
-          className: `session-input__hint session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`,
-          children: tokenDebugSummary ?? "#1 \u2014"
-        }
-      )
-    ] }) });
-  };
-  var status_panel_default = StatusPanel;
-  var describeConnectionStatus = (status) => {
-    switch (status) {
-      case "ready":
-        return "Core online";
-      case "error":
-        return "Core unavailable";
-      default:
-        return "Starting core\u2026";
-    }
-  };
-
-  // src/client/ui/src/session/session-view.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
-  var RESUMING_LOCK_REASONS = /* @__PURE__ */ new Set([
-    "context_check_pending",
-    "threshold_reached",
-    "report_in_progress",
-    "resume_bootstrap"
-  ]);
-  var resolveInputConnectionState = (options) => {
-    if (options.connectionState !== "running") {
-      return options.connectionState;
-    }
-    if (options.bindingStatus === "pending") {
-      return "blocked";
-    }
-    if (options.continuityLockActive && options.continuityLockReason && RESUMING_LOCK_REASONS.has(options.continuityLockReason)) {
-      return "blocked";
-    }
-    return options.connectionState;
-  };
-  var resolveContinuityErrorCopy = (activeSession) => {
-    if (activeSession?.status.rollover?.phase !== "failed") {
-      return null;
-    }
-    return activeSession.status.rollover?.error ?? "Rollover failed.";
-  };
-  var SessionViewBody = ({
-    sessions,
-    allSessions: allSessionsProp,
-    providerLabels,
-    activeSessionId,
-    snapshots,
-    coreConnectionStatus,
-    coreConnectionDetail,
-    tokenDebugSummaryOverride,
-    onSelectSession,
-    onCloseSession,
-    onSendMessage
-  }) => {
-    const allSessions = allSessionsProp ?? sessions;
-    const activeSession = resolveActiveSessionSnapshot({
-      activeSessionId,
-      snapshots
-    });
-    const activeRecord = allSessions.find(
-      (session) => session.id === activeSessionId
-    );
-    const primaryProviderId = activeRecord?.providerIds[0] ?? null;
-    const providerTheme = mapProviderTheme(primaryProviderId);
-    const providerDisplayLabel = resolveProviderDisplayLabel({
-      providerId: primaryProviderId,
-      providerLabels
-    });
-    const header = /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-      SessionHeader,
-      {
-        activeSessionId,
-        onCloseSession,
-        onSelectSession,
-        providerLabels,
-        sessions
-      }
-    );
-    const connectionState = activeSession?.status.connectionState ?? "idle";
-    const continuityLockReason = activeSession?.status.continuityLock?.reason;
-    const terminalNoResume = continuityLockReason === "terminal_no_resume";
-    const continuityLockActive = activeSession?.status.continuityLock?.active === true || connectionState === "blocked" || terminalNoResume;
-    const inputConnectionState = resolveInputConnectionState({
-      connectionState,
-      bindingStatus: activeSession?.binding.status ?? null,
-      continuityLockActive,
-      continuityLockReason
-    });
-    const effectiveContinuityLockActive = continuityLockActive;
-    const queueConnectionState = effectiveContinuityLockActive && connectionState !== "running" ? "blocked" : connectionState;
-    const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
-    const { isQueued, submitMessage } = useQueuedSend({
-      activeSessionId,
-      connectionState: queueConnectionState,
-      onSendMessage
-    });
-    const continuationChain = resolveContinuationChainOrEmpty({
-      sessions: allSessions,
-      activeSessionId
-    });
-    const virtualConversationMessages = resolveVirtualConversationMessages({
-      activeSessionId,
-      activeSession,
-      continuationChain,
-      snapshots
-    });
-    if (!(activeSession && activeSessionId)) {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app", "data-session-style-source": "canonical", children: [
-        header,
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-app__content" })
-      ] });
-    }
-    const tokenDebugSummary = tokenDebugSummaryOverride ?? buildTokenDebugSummary({
-      chain: continuationChain,
-      snapshots,
-      activeSessionId
-    }) ?? buildTokenDebugSummaryFromMessages(virtualConversationMessages) ?? void 0;
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app", "data-session-style-source": "canonical", children: [
-      header,
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-        session_id_bar_default,
-        {
-          binding: activeSession.binding,
-          status: activeSession.status
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app__content", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-app__dialog", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-          dialog_panel_default,
-          {
-            messages: virtualConversationMessages,
-            providerLabel: providerDisplayLabel,
-            providerTheme
-          }
-        ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "session-app__rails", children: [
-          terminalNoResume ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-input__hint", children: "This session is complete and read-only." }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            input_panel_default,
-            {
-              connectionState: inputConnectionState,
-              continuityErrorCopy,
-              continuityLockActive: effectiveContinuityLockActive,
-              draft: activeSession.draft,
-              isQueued,
-              onSubmit: submitMessage,
-              providerTheme,
-              taskTimer: activeSession.status.taskTimer ?? null,
-              terminalNoResume
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            status_panel_default,
-            {
-              connectionDetail: coreConnectionDetail,
-              connectionStatus: coreConnectionStatus,
-              status: activeSession.status,
-              tokenDebugSummary
-            }
-          )
-        ] })
-      ] })
-    ] });
-  };
-  var SessionView = (props) => {
-    if (props.sessions.length === 0 && props.showEmptyState) {
-      return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "session-app", "data-session-style-source": "canonical", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(empty_state_default, { pending: props.emptyStatePending === true }) });
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SessionViewBody, { ...props });
-  };
-  var session_view_default = SessionView;
-
-  // src/client/ui/src/components/flow-wizard/flow-stage.tsx
-  var import_react12 = __toESM(require_react());
-
-  // src/client/ui/src/components/flow-wizard/styles.ts
-  var flowWizardContainerStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: "#2f2f2f",
-    borderRadius: "8px",
-    padding: "12px",
-    background: "#252526"
-  };
-  var flowWizardHeadingStyles = {
-    margin: 0,
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#e5e5e5"
-  };
-  var flowWizardStagesRowStyles = {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-    gap: "10px"
-  };
-  var flowStageButtonBaseStyles = {
-    appearance: "none",
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: "#2f2f2f",
-    borderRadius: "8px",
-    padding: "12px 10px",
-    background: "#1e1e1e",
-    color: "#e5e5e5",
-    cursor: "pointer",
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px",
-    minHeight: "72px",
-    textAlign: "left",
-    outline: "none",
-    boxShadow: "none",
-    transition: "border-color 0.15s, background 0.15s, opacity 0.15s"
-  };
-  var flowStageButtonActiveStyles = {
-    borderColor: "#0e639c",
-    background: "#1f2a33"
-  };
-  var flowStageButtonActiveHoverStyles = {
-    borderColor: "#2b88d8"
-  };
-  var flowStageButtonHoverStyles = {
-    borderColor: "#4a4a4a",
-    background: "#242424"
-  };
-  var flowStageButtonDisabledStyles = {
-    opacity: 0.55,
-    cursor: "not-allowed",
-    color: "#b0b0b0"
-  };
-  var flowStageTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600
-  };
-  var flowStageSubtitleStyles = {
-    fontSize: "11px",
-    color: "#a7a7a7",
-    lineHeight: 1.4,
-    margin: 0
-  };
-
-  // src/client/ui/src/components/flow-wizard/flow-stage.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
-  var FlowStage = ({
-    id,
-    title,
-    subtitle,
-    active,
-    disabled,
-    onStageClick
-  }) => {
-    const [hovered, setHovered] = (0, import_react12.useState)(false);
-    const [focused, setFocused] = (0, import_react12.useState)(false);
-    const interactive = !disabled;
-    const showHoverStyles = interactive && (hovered || focused);
-    let hoverStyles = {};
-    if (showHoverStyles) {
-      hoverStyles = active ? flowStageButtonActiveHoverStyles : flowStageButtonHoverStyles;
-    }
-    const buttonStyles5 = {
-      ...flowStageButtonBaseStyles,
-      ...active ? flowStageButtonActiveStyles : {},
-      ...hoverStyles,
-      ...disabled ? flowStageButtonDisabledStyles : {}
-    };
-    const handleClick = () => {
-      if (disabled) {
-        return;
-      }
-      onStageClick(id);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
-      "button",
-      {
-        "aria-current": active ? "step" : void 0,
-        "aria-disabled": disabled,
-        disabled,
-        onBlur: () => {
-          setFocused(false);
-        },
-        onClick: handleClick,
-        onFocus: () => {
-          setFocused(true);
-        },
-        onMouseEnter: () => {
-          setHovered(true);
-        },
-        onMouseLeave: () => {
-          setHovered(false);
-        },
-        style: buttonStyles5,
-        type: "button",
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { style: flowStageTitleStyles, children: title }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: flowStageSubtitleStyles, children: subtitle })
-        ]
-      }
-    );
-  };
-
-  // src/client/ui/src/components/flow-wizard/index.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
-  var STAGES = [
-    { id: "chat", title: "Simple Chat", subtitle: "Just talk to the assistant" },
-    { id: "idea", title: "Idea", subtitle: "Collect requirements" },
-    { id: "spec", title: "Spec", subtitle: "Define architecture" },
-    { id: "plan", title: "Plan", subtitle: "Break work into tasks" },
-    { id: "execute", title: "Execute", subtitle: "Run the plan" }
-  ];
-  var FlowWizard = ({
-    activeStage,
-    onStageClick,
-    disabledStages
-  }) => {
-    const headingStyles = flowWizardHeadingStyles;
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
-      "section",
-      {
-        "aria-label": "Development flow wizard",
-        style: flowWizardContainerStyles,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { style: headingStyles, children: "Start" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: flowWizardStagesRowStyles, children: STAGES.map((stage) => {
-            const active = stage.id === activeStage;
-            const disabled = disabledStages?.has(stage.id) ?? false;
-            return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-              FlowStage,
-              {
-                active,
-                disabled,
-                id: stage.id,
-                onStageClick,
-                subtitle: stage.subtitle,
-                title: stage.title
-              },
-              stage.id
-            );
-          }) })
-        ]
-      }
-    );
-  };
-
-  // src/client/ui/src/app-host/flow-wizard-picker.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
-  var FlowWizardPicker = ({
-    providers,
-    selectedStage,
-    onCancel,
-    onStageClick,
-    visible
-  }) => {
-    if (!visible) {
-      return null;
-    }
-    const flowProviderAvailable = providers.some(
-      (provider) => provider.id === "codexCli" || provider.id === "claudeCodeCli"
-    );
-    const disabledStages = flowProviderAvailable ? void 0 : /* @__PURE__ */ new Set(["idea", "spec", "plan", "execute"]);
-    const statusMessage = flowProviderAvailable ? "Select a start mode to continue." : "Only Simple Chat is available (connect Codex or Claude for Flow steps).";
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-        FlowWizard,
-        {
-          activeStage: selectedStage,
-          disabledStages,
-          onStageClick
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "provider-picker__actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("output", { "aria-live": "polite", className: "provider-picker__status", children: statusMessage }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "provider-picker__action-buttons", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-          "button",
-          {
-            className: "provider-picker__secondary",
-            onClick: onCancel,
-            type: "button",
-            children: "Cancel"
-          }
-        ) })
-      ] })
-    ] });
-  };
-
-  // src/client/ui/src/app-host/idea-questionnaire-panel.tsx
-  var import_react14 = __toESM(require_react());
-
-  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
-  var import_react13 = __toESM(require_react());
-
-  // src/client/ui/src/components/idea-questionnaire/styles.ts
-  var questionnairePageStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-    height: "100%",
-    overflowY: "auto",
-    padding: "20px",
-    boxSizing: "border-box",
-    background: "linear-gradient(180deg, #1b1d21 0%, #16181b 100%)",
-    color: "#e5e5e5"
-  };
-  var questionnaireHeaderStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px"
-  };
-  var questionnaireTitleStyles = {
-    margin: 0,
-    fontSize: "18px",
-    fontWeight: 600
-  };
-  var questionnaireDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    color: "#a7a7a7",
-    lineHeight: 1.6
-  };
-  var questionnaireListStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px"
-  };
-  var questionnaireFooterStyles = {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "12px",
-    paddingBottom: "16px"
-  };
-  var questionnaireCancelButtonStyles = {
-    appearance: "none",
-    border: "1px solid #3a3f46",
-    borderRadius: "8px",
-    background: "transparent",
-    color: "#d5d7db",
-    fontSize: "13px",
-    fontWeight: 600,
-    padding: "10px 16px",
-    cursor: "pointer"
-  };
-  var questionnaireSubmitButtonStyles = {
-    appearance: "none",
-    border: "1px solid #0e639c",
-    borderRadius: "8px",
-    background: "#0e639c",
-    color: "#ffffff",
-    fontSize: "13px",
-    fontWeight: 600,
-    padding: "10px 16px",
-    cursor: "pointer",
-    boxShadow: "0 6px 16px rgba(14, 99, 156, 0.35)"
-  };
-  var questionCardStyles = {
-    background: "#1f2125",
-    border: "1px solid #2a2d33",
-    borderRadius: "12px",
-    padding: "16px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    boxShadow: "0 8px 18px rgba(0, 0, 0, 0.25)"
-  };
-  var questionHeaderStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px"
-  };
-  var questionTitleRowStyles = {
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "baseline",
-    gap: "8px"
-  };
-  var questionTitleStyles = {
-    fontSize: "14px",
-    fontWeight: 600,
-    color: "#f0f0f0"
-  };
-  var questionTitleHintStyles = {
-    fontSize: "12px",
-    fontStyle: "italic",
-    color: "#9aa0a6"
-  };
-  var questionDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    color: "#9aa0a6",
-    lineHeight: 1.5,
-    whiteSpace: "pre-wrap"
-  };
-  var questionHintStyles = {
-    margin: 0,
-    fontSize: "11px",
-    color: "#7f868e",
-    lineHeight: 1.5,
-    whiteSpace: "pre-wrap"
-  };
-  var questionInputShellStyles = {
-    position: "relative",
-    border: "1px solid #2c2f36",
-    borderRadius: "8px",
-    padding: "10px",
-    background: "#16181b"
-  };
-  var questionInputShellDraggingStyles = {
-    borderColor: "#2b88d8",
-    background: "#1e2a35"
-  };
-  var questionInputShellFocusedStyles = {
-    borderColor: "#0e639c",
-    boxShadow: "0 0 0 2px rgba(14, 99, 156, 0.2)"
-  };
-  var questionTextareaStyles = {
-    width: "100%",
-    border: "none",
-    outline: "none",
-    background: "transparent",
-    color: "#e5e5e5",
-    fontSize: "13px",
-    lineHeight: 1.6,
-    resize: "vertical",
-    overflow: "hidden",
-    padding: 0,
-    margin: 0,
-    boxSizing: "border-box"
-  };
-  var questionOverlayStyles = {
-    position: "absolute",
-    inset: "0",
-    borderRadius: "8px",
-    background: "rgba(14, 99, 156, 0.2)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#e5f4ff",
-    fontSize: "12px",
-    letterSpacing: "0.2px",
-    pointerEvents: "none"
-  };
-
-  // src/client/ui/src/components/idea-questionnaire/question-block.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
-  var BASE_MIN_HEIGHT = 96;
-  var focusTextareaEnd2 = (textarea) => {
-    if (!textarea) {
-      return;
-    }
-    const element3 = textarea;
-    element3.focus();
-    const length = element3.value.length;
-    element3.setSelectionRange(length, length);
-  };
-  var QuestionBlock = ({
-    question,
-    value,
-    onChange
-  }) => {
-    const [isFocused, setIsFocused] = (0, import_react13.useState)(false);
-    const [userMinHeight, setUserMinHeight] = (0, import_react13.useState)(null);
-    const textareaRef = (0, import_react13.useRef)(null);
-    const containerRef = (0, import_react13.useRef)(null);
-    const lastWidthRef = (0, import_react13.useRef)(null);
-    const adjustTextareaHeight2 = (0, import_react13.useCallback)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      const minHeight = userMinHeight ?? BASE_MIN_HEIGHT;
-      textarea.style.height = "auto";
-      textarea.style.minHeight = `${minHeight}px`;
-      const targetHeight = Math.max(textarea.scrollHeight, minHeight);
-      textarea.style.height = `${targetHeight}px`;
-    }, [userMinHeight]);
-    const applyExternalValue = (0, import_react13.useCallback)(
-      (nextValue) => {
-        onChange(question.id, nextValue);
-        requestAnimationFrame(() => {
-          focusTextareaEnd2(textareaRef.current);
-          adjustTextareaHeight2();
-        });
-      },
-      [adjustTextareaHeight2, onChange, question.id]
-    );
-    const { isDragging } = useInputDragDrop({
-      containerRef,
-      textareaRef,
-      onValueChange: applyExternalValue
-    });
-    const handleChange = (0, import_react13.useCallback)(
-      (event) => {
-        onChange(question.id, event.target.value);
-      },
-      [onChange, question.id]
-    );
-    const handleResizeCommit = (0, import_react13.useCallback)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      const nextMinHeight = Math.max(
-        userMinHeight ?? BASE_MIN_HEIGHT,
-        textarea.offsetHeight
-      );
-      if (nextMinHeight !== (userMinHeight ?? BASE_MIN_HEIGHT)) {
-        setUserMinHeight(nextMinHeight);
-      }
-    }, [userMinHeight]);
-    const insertTextAtSelection = (0, import_react13.useCallback)(
-      (text7) => {
-        const textarea = textareaRef.current;
-        if (!textarea) {
-          return;
-        }
-        const [selectionStart, selectionEnd] = [
-          textarea.selectionStart ?? textarea.value.length,
-          textarea.selectionEnd ?? textarea.value.length
-        ];
-        const currentValue = textarea.value;
-        const nextValue = currentValue.slice(0, selectionStart) + text7 + currentValue.slice(selectionEnd);
-        onChange(question.id, nextValue);
-        requestAnimationFrame(() => {
-          const position3 = selectionStart + text7.length;
-          textarea.selectionStart = position3;
-          textarea.selectionEnd = position3;
-          adjustTextareaHeight2();
-          textarea.focus();
-        });
-      },
-      [adjustTextareaHeight2, onChange, question.id]
-    );
-    const syncTextareaValue = (0, import_react13.useCallback)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) {
-        return;
-      }
-      onChange(question.id, textarea.value);
-    }, [onChange, question.id]);
-    const { handlePaste, handleCopy } = (0, import_react13.useMemo)(
-      () => createClipboardHandlers({
-        textareaRef,
-        insertTextAtSelection,
-        syncTextareaValue
-      }),
-      [insertTextAtSelection, syncTextareaValue]
-    );
-    (0, import_react13.useEffect)(() => {
-      const nextValue = value;
-      requestAnimationFrame(() => {
-        const textarea = textareaRef.current;
-        if (!textarea || textarea.value !== nextValue) {
-          return;
-        }
-        adjustTextareaHeight2();
-      });
-    }, [adjustTextareaHeight2, value]);
-    (0, import_react13.useEffect)(() => {
-      const textarea = textareaRef.current;
-      if (!textarea || typeof ResizeObserver === "undefined") {
-        return;
-      }
-      const observer = new ResizeObserver((entries) => {
-        const entry = entries[0];
-        if (!entry) {
-          return;
-        }
-        const nextWidth = entry.contentRect.width;
-        if (lastWidthRef.current !== nextWidth) {
-          lastWidthRef.current = nextWidth;
-          adjustTextareaHeight2();
-        }
-      });
-      observer.observe(textarea);
-      return () => observer.disconnect();
-    }, [adjustTextareaHeight2]);
-    const inputShellStyles = {
-      ...questionInputShellStyles,
-      ...isDragging ? questionInputShellDraggingStyles : {},
-      ...isFocused ? questionInputShellFocusedStyles : {}
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { style: questionCardStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: questionHeaderStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: questionTitleRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { style: questionTitleStyles, children: question.title }),
-          question.titleHint ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { style: questionTitleHintStyles, children: question.titleHint }) : null
-        ] }),
-        question.description ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { style: questionDescriptionStyles, children: question.description }) : null,
-        question.hint ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { style: questionHintStyles, children: question.hint }) : null
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { ref: containerRef, style: inputShellStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-          "textarea",
-          {
-            "aria-label": question.title,
-            onBlur: () => {
-              setIsFocused(false);
-              handleResizeCommit();
-            },
-            onChange: handleChange,
-            onCopy: handleCopy,
-            onFocus: () => setIsFocused(true),
-            onMouseUp: handleResizeCommit,
-            onPaste: handlePaste,
-            onTouchEnd: handleResizeCommit,
-            ref: textareaRef,
-            rows: 1,
-            style: questionTextareaStyles,
-            value
-          }
-        ),
-        isDragging ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("output", { style: questionOverlayStyles, children: DEFAULT_DRAG_OVERLAY_LABEL }) : null
-      ] })
-    ] });
-  };
-
-  // src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
-  var IdeaQuestionnaireView = ({
-    title,
-    description,
-    questions,
-    answers,
-    submitLabel,
-    cancelLabel,
-    onAnswerChange,
-    onSubmit,
-    onCancel
-  }) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { "aria-label": "Idea questionnaire", style: questionnairePageStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("header", { style: questionnaireHeaderStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { style: questionnaireTitleStyles, children: title }),
-      description ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { style: questionnaireDescriptionStyles, children: description }) : null
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: questionnaireListStyles, children: questions.map((question) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-      QuestionBlock,
-      {
-        onChange: onAnswerChange,
-        question,
-        value: answers[question.id] ?? ""
-      },
-      question.id
-    )) }),
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: questionnaireFooterStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-        "button",
-        {
-          onClick: onCancel,
-          style: questionnaireCancelButtonStyles,
-          type: "button",
-          children: cancelLabel
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-        "button",
-        {
-          onClick: onSubmit,
-          style: questionnaireSubmitButtonStyles,
-          type: "button",
-          children: submitLabel
-        }
-      )
-    ] })
-  ] });
-
-  // src/client/ui/src/services/idea-collector-artifact.ts
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var readStringField = (record, key) => typeof record[key] === "string" ? record[key] : null;
-  var readNextAction = (data) => {
-    let nextAction = null;
-    if (typeof data.nextAction === "string") {
-      nextAction = data.nextAction;
-    } else if (typeof data.next_action === "string") {
-      nextAction = data.next_action;
-    }
-    if (nextAction === "finalize" || nextAction === "revise_artifacts") {
-      return nextAction;
-    }
-    return null;
-  };
-  var readSuggestedResponse = (data) => readStringField(data, "suggested_response") ?? readStringField(data, "suggestedResponse");
-  var readArtifactPayload = (artifact) => {
-    const ideaPath = readStringField(artifact, "ideaPath") ?? readStringField(artifact, "idea_path") ?? readStringField(artifact, "path");
-    const virtualSimulationPath = readStringField(artifact, "virtualSimulationPath") ?? readStringField(artifact, "virtual_simulation_path");
-    const ideaMarkdown = readStringField(artifact, "ideaMarkdown") ?? readStringField(artifact, "idea_markdown");
-    const virtualSimulationMarkdown = readStringField(artifact, "virtualSimulationMarkdown") ?? readStringField(artifact, "virtual_simulation_markdown");
-    return {
-      ideaPath,
-      virtualSimulationPath,
-      ideaMarkdown,
-      virtualSimulationMarkdown
-    };
-  };
-  var readArtifactsList = (data) => {
-    if (!Array.isArray(data.artifacts)) {
-      return null;
-    }
-    const artifacts = [];
-    for (const entry of data.artifacts) {
-      if (!isRecord5(entry)) {
-        return null;
-      }
-      const slot = readStringField(entry, "slot");
-      const markdown = readStringField(entry, "markdown");
-      if (!(slot && markdown)) {
-        return null;
-      }
-      artifacts.push({ slot, markdown });
-    }
-    return artifacts;
-  };
-  var extractIdeaCollectorArtifact = (event) => {
-    if (!isRecord5(event)) {
-      return null;
-    }
-    const data = event.data;
-    if (!isRecord5(data) || data.kind !== "structured_output") {
-      return null;
-    }
-    const suggestedResponse = readSuggestedResponse(data);
-    const variantBArtifacts = readArtifactsList(data);
-    if (variantBArtifacts && variantBArtifacts.length > 0) {
-      return { suggestedResponse, artifacts: variantBArtifacts };
-    }
-    const nextAction = readNextAction(data);
-    if (!nextAction) {
-      return null;
-    }
-    const artifact = data.artifact;
-    if (!isRecord5(artifact)) {
-      return null;
-    }
-    const { ideaMarkdown, virtualSimulationMarkdown } = readArtifactPayload(artifact);
-    const legacyArtifacts = [];
-    if (ideaMarkdown) {
-      legacyArtifacts.push({
-        slot: "workspace.description",
-        markdown: ideaMarkdown
-      });
-    }
-    if (virtualSimulationMarkdown) {
-      legacyArtifacts.push({
-        slot: "workspace.virtual_simulation",
-        markdown: virtualSimulationMarkdown
-      });
-    }
-    if (legacyArtifacts.length === 0) {
-      return null;
-    }
-    return { suggestedResponse, artifacts: legacyArtifacts };
-  };
-
-  // src/client/ui/src/services/idea-collector-support.ts
-  var generateLocalMessageId2 = () => {
-    if (typeof globalThis.crypto !== "undefined" && "randomUUID" in globalThis.crypto) {
-      return globalThis.crypto.randomUUID();
-    }
-    return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  };
-  var resolveCoreHttpUrl2 = () => {
-    const globalScope3 = window;
-    const httpUrl = globalScope3.__CODEAI_CORE_CONFIG?.httpUrl;
-    if (typeof httpUrl !== "string" || httpUrl.length === 0) {
-      return null;
-    }
-    return httpUrl;
-  };
-  var joinUrl2 = (baseUrl, path2) => baseUrl.endsWith("/") ? `${baseUrl.slice(0, -1)}${path2}` : `${baseUrl}${path2}`;
-  var postSystemNotice = (sessionId, content3) => {
-    window.postMessage(
-      {
-        type: "session:message",
-        payload: {
-          sessionId,
-          message: {
-            id: generateLocalMessageId2(),
-            role: "system",
-            content: content3,
-            createdAt: Date.now()
-          }
-        }
-      },
-      "*"
-    );
-  };
-
-  // src/client/ui/src/services/idea-artifact-persistence.ts
-  var ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
-  var isRecord6 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var persistIdeaArtifacts = async (params) => {
-    const payload = {
-      sessionId: params.sessionId,
-      artifacts: params.artifact.artifacts
-    };
-    const response = await fetch(
-      joinUrl2(params.httpUrl, ARTIFACT_UPSERT_ENDPOINT),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }
-    );
-    if (response.status === 204) {
-      return { ok: true, saved: [] };
-    }
-    if (!response.ok) {
-      const errorDetails = await tryReadCoreErrorDetails(response);
-      return {
-        ok: false,
-        error: `HTTP ${response.status}${errorDetails ? `: ${errorDetails}` : ""}`
-      };
-    }
-    const responsePayload = await response.json();
-    const savedEntries = parseSavedArtifactUpserts(responsePayload);
-    return { ok: true, saved: savedEntries ?? [] };
-  };
-  var tryReadCoreErrorDetails = async (response) => {
-    try {
-      const payload = await response.json();
-      if (isRecord6(payload) && typeof payload.error === "string") {
-        return payload.error;
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  };
-  var parseSavedArtifactUpserts = (payload) => {
-    if (!(isRecord6(payload) && Array.isArray(payload.saved))) {
-      return null;
-    }
-    const saved = [];
-    for (const entry of payload.saved) {
-      if (!isRecord6(entry)) {
-        return null;
-      }
-      if (typeof entry.slot !== "string" || typeof entry.path !== "string") {
-        return null;
-      }
-      const changed = typeof entry.changed === "boolean" ? entry.changed : true;
-      saved.push({ slot: entry.slot, path: entry.path, changed });
-    }
-    return saved;
-  };
-
-  // src/client/ui/src/services/idea-collector-artifact-saver.ts
-  var saveIdeaCollectorArtifacts = async (sessionId, artifact) => {
-    const httpUrl = resolveCoreHttpUrl2();
-    if (!httpUrl) {
-      postSystemNotice(
-        sessionId,
-        "\u041D\u0435 \u043C\u043E\u0433\u0443 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B: Core HTTP URL \u043D\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0451\u043D."
-      );
-      return;
-    }
-    try {
-      if (artifact.artifacts.length === 0) {
-        return;
-      }
-      const result = await persistIdeaArtifacts({
-        httpUrl,
-        sessionId,
-        artifact
-      });
-      if (!result.ok) {
-        postSystemNotice(
-          sessionId,
-          `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B (${result.error}).`
-        );
-        return;
-      }
-      const savedSummary = result.saved.length > 0 ? result.saved.map((entry) => entry.path).join(", ") : artifact.artifacts.map((entry) => entry.slot).join(", ");
-      postSystemNotice(
-        sessionId,
-        `\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B \u0432 workspace: ${savedSummary}`
-      );
-    } catch {
-      postSystemNotice(sessionId, "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B: \u043E\u0448\u0438\u0431\u043A\u0430 \u0441\u0435\u0442\u0438.");
-    }
-  };
-
-  // src/client/ui/src/app-host/idea-kickoff-prompt.ts
-  var IDEA_KICKOFF_PROMPT = "\u0422\u044B \u2014 Idea Collector.\n\u041D\u0430\u0447\u043D\u0438 guided conversation (\u0436\u0438\u0432\u0430\u044F \u0431\u0435\u0441\u0435\u0434\u0430, \u043D\u0435 \u0430\u043D\u043A\u0435\u0442\u0430): \u0437\u0430\u0434\u0430\u0439 \u043F\u0435\u0440\u0432\u044B\u0439 \u0432\u043E\u043F\u0440\u043E\u0441 \u043E \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0438, \u0442\u0438\u043F\u0435 \u0438\u0434\u0435\u0438 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0435 (\u043E\u0434\u043D\u043E-\u043C\u043E\u0434\u0443\u043B\u044C\u043D\u0430\u044F \u0438\u043B\u0438 multi-module).\n\u041D\u0435 \u0447\u0438\u0442\u0430\u0439 \u0432\u043D\u0435\u0448\u043D\u0438\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u2014 \u0440\u0430\u0431\u043E\u0442\u0430\u0439 \u0442\u043E\u043B\u044C\u043A\u043E \u0441 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u043E\u043C \u0438 \u0434\u0438\u0430\u043B\u043E\u0433\u043E\u043C.\n\u041A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u044F\u0432\u0438\u043B\u043E\u0441\u044C \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435, \u0432\u044B\u0447\u0438\u0441\u043B\u0438 initiativeSlug (lowercase kebab-case) \u0438 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E \u043F\u0440\u0438 \u0436\u0435\u043B\u0430\u043D\u0438\u0438 \u043E\u0442\u0440\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C.\n\u0412\u0441\u0435\u0433\u0434\u0430 \u043E\u0442\u0432\u0435\u0447\u0430\u0439 JSON, \u0432\u0430\u043B\u0438\u0434\u043D\u044B\u0439 \u043F\u043E schema. \u0412\u043E\u0437\u0432\u0440\u0430\u0449\u0430\u0439 \u0432\u0441\u0435 \u043A\u043B\u044E\u0447\u0438; \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u043D\u0435\u0442 \u2014 \u0437\u0430\u0434\u0430\u0439 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441.\n\u041E\u0446\u0435\u043D\u0438 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0447\u0435\u0440\u0435\u0437 assessment (ready_for_finalize/confidence_percent/missing_info/assumptions/risks).\n\u0412\u0441\u0435\u0433\u0434\u0430 \u0437\u0430\u0434\u0430\u0439 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430 (questions), \u0434\u0430\u0436\u0435 \u0435\u0441\u043B\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E; \u043D\u0430 finalize questions = [].\n\u0422\u0438\u043F \u0438\u0434\u0435\u0438: \u043F\u0440\u043E\u0434\u0443\u043A\u0442 | \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 | \u043A\u043B\u0430\u0441\u0442\u0435\u0440 | \u0444\u0438\u0447\u0430 | \u043C\u043E\u0434\u0443\u043B\u044C | \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u0435 | \u0438\u0441\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u043D\u0438\u0435.\nMulti-module \u043F\u0440\u0430\u0432\u0438\u043B\u043E Flow: \u0435\u0441\u043B\u0438 \u0438\u0434\u0435\u044F \u2014 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0438\u043B\u0438 \u043A\u043B\u0430\u0441\u0442\u0435\u0440 (\u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u043E \u043C\u043E\u0434\u0443\u043B\u0435\u0439), Spec \u0437\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0441\u043B\u0435 Spec.md \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F; Plan \u0441\u043E\u0441\u0442\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E \u0434\u043B\u044F \u043A\u0430\u0436\u0434\u043E\u0433\u043E \u043C\u043E\u0434\u0443\u043B\u044F.\nartifact.idea_markdown \u0438 artifact.virtual_simulation_markdown \u0434\u0435\u0440\u0436\u0438 \u043F\u0443\u0441\u0442\u044B\u043C\u0438 \u0434\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438; \u043D\u0435 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439 \u043F\u043E\u043B\u043D\u044B\u0439 Markdown \u0432 \u0447\u0430\u0442\u0435.\n\u0415\u0441\u043B\u0438 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u043F\u0440\u043E\u0441\u0438\u0442 \u043F\u0440\u0430\u0432\u043A\u0438 \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0445 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u043E\u0432, \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439 \u0434\u0438\u0430\u043B\u043E\u0433 (ask/clarify/summarize), \u0441\u043D\u043E\u0432\u0430 \u0437\u0430\u043F\u0440\u043E\u0441\u0438 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u0437\u0430\u0442\u0435\u043C \u0432\u0435\u0440\u043D\u0438 finalize.\n\u041F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F (\u041E\u041A/\u0443\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u044E) \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043E\u0442\u0432\u0435\u0442 \u043E\u0431\u044F\u0437\u0430\u043D \u0431\u044B\u0442\u044C next_action=finalize: \u043D\u0435 \u0437\u0430\u0434\u0430\u0432\u0430\u0439 \u0432\u043E\u043F\u0440\u043E\u0441\u043E\u0432 \u0438 \u043D\u0435 \u043F\u0440\u043E\u0441\u0438 \xAB\u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C\xBB \u2014 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043B\u0430\u0435\u0442 \u0441\u0438\u0441\u0442\u0435\u043C\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n\u041D\u0430 \u0444\u0438\u043D\u0430\u043B\u0435 \u0432\u0435\u0440\u043D\u0438 \u043F\u043E\u043B\u043D\u044B\u0439 Idea.md \u0438 virtual-simulation.md \u0432 artifact \u0438 \u0432 suggested_response \u043D\u0430\u043F\u0438\u0448\u0438 \u0442\u043E\u043B\u044C\u043A\u043E \u043A\u0440\u0430\u0442\u043A\u0443\u044E \u0432\u044B\u0436\u0438\u043C\u043A\u0443 + \u0447\u0442\u043E \u0444\u0430\u0439\u043B\u044B \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u044B.\nvirtual-simulation.md \u0434\u043E\u043B\u0436\u0435\u043D \u0432\u043A\u043B\u044E\u0447\u0430\u0442\u044C: \u0446\u0435\u043B\u044C \u0441\u0438\u043C\u0443\u043B\u044F\u0446\u0438\u0438, \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0435 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E \u0441\u0446\u0435\u043D\u0430\u0440\u0438\u0435\u0432 \u0434\u043B\u044F \u043F\u043E\u043A\u0440\u044B\u0442\u0438\u044F \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u0430, UI \u2194 Core \u0441\u043E\u0431\u044B\u0442\u0438\u044F, \u043B\u043E\u0433\u0438 \u0438 \u0442\u0435\u043B\u0435\u043C\u0435\u0442\u0440\u0438\u044E, \u043C\u0438\u043D\u0438-\u043C\u0430\u0442\u0440\u0438\u0446\u0443 \u0440\u0438\u0441\u043A\u043E\u0432, must-pass \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 (E2E), \u0432\u044B\u0432\u043E\u0434\u044B.\n\u041F\u0443\u0442\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F: `.codeai-hub/<workspaceSlug>/description/Final_Description.md` \u0438 `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`.";
-
-  // src/client/ui/src/services/idea-collector-fallback-schema.ts
-  var FALLBACK_SCHEMA_JSON = `{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://codeai-hub.local/schemas/idea-collector-schema.json",
-  "title": "Idea Collector \u2014 Structured Output Contract (Variant B)",
-  "description": "\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 Structured Output \u0434\u043B\u044F Idea Collector (Variant B). \u0410\u0433\u0435\u043D\u0442 \u0430\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u043D\u0443\u044E \u0430\u043D\u043A\u0435\u0442\u0443, \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u043A \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0438 \u0437\u0430\u0434\u0430\u0451\u0442 1\u20133 \u0443\u043C\u043D\u044B\u0445 \u0443\u0442\u043E\u0447\u043D\u044F\u044E\u0449\u0438\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430. \u041F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 (\u043F\u043E\u0441\u043B\u0435 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F) \u0430\u0433\u0435\u043D\u0442 \u043E\u0442\u0434\u0430\u0451\u0442 artifacts[] \u043A\u0430\u043A upsert: \u0441\u043F\u0438\u0441\u043E\u043A \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u043E\u0432 {slot, markdown} \u0431\u0435\u0437 \u043F\u0443\u0442\u0435\u0439 \u0438 \u0431\u0435\u0437 next_action. \u041A\u0430\u0436\u0434\u044B\u0439 markdown \u2014 \u043F\u043E\u043B\u043D\u044B\u0439 \u0442\u0435\u043A\u0443\u0449\u0438\u0439 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442 (\u043D\u0435 patch).",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "suggested_response",
-    "assessment",
-    "questions",
-    "artifacts"
-  ],
-  "properties": {
-    "suggested_response": {
-      "type": "string",
-      "description": "\u0422\u0435\u043A\u0441\u0442 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0433\u043E \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F \u0430\u0433\u0435\u043D\u0442\u0430 (\u0432\u043E\u043F\u0440\u043E\u0441/\u0443\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u0435/\u0441\u0432\u043E\u0434\u043A\u0430/\u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F), \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0435\u043C \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044E."
-    },
-    "assessment": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "ready_for_finalize",
-        "confidence_percent",
-        "missing_info",
-        "assumptions",
-        "risks"
-      ],
-      "description": "\u041E\u0446\u0435\u043D\u043A\u0430 \u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E\u0441\u0442\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0430\u043D\u043A\u0435\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0438 Final_Description.md \u0438 virtual-simulation.md.",
-      "properties": {
-        "ready_for_finalize": {
-          "type": "boolean",
-          "description": "\u0413\u043E\u0442\u043E\u0432 \u043B\u0438 \u0430\u0433\u0435\u043D\u0442 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441 (\u043F\u0440\u0438 \u0443\u0441\u043B\u043E\u0432\u0438\u0438 \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F)."
-        },
-        "confidence_percent": {
-          "type": "integer",
-          "description": "\u0423\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0441\u0442\u044C \u0432 \u043F\u043E\u043B\u043D\u043E\u0442\u0435 \u0434\u0430\u043D\u043D\u044B\u0445 (0\u2013100). \u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u043F\u043E\u0440\u043E\u0433 \u0434\u043B\u044F \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438: >= 80."
-        },
-        "missing_info": {
-          "type": "array",
-          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u043F\u0440\u043E\u0431\u0435\u043B\u043E\u0432/\u0434\u0430\u043D\u043D\u044B\u0445, \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u0434\u043B\u044F \u0443\u0432\u0435\u0440\u0435\u043D\u043D\u043E\u0439 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "assumptions": {
-          "type": "array",
-          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0434\u043E\u043F\u0443\u0449\u0435\u043D\u0438\u0439, \u043D\u0430 \u043A\u043E\u0442\u043E\u0440\u044B\u0445 \u0430\u0433\u0435\u043D\u0442 \u0433\u043E\u0442\u043E\u0432 \u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0444\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "risks": {
-          "type": "array",
-          "description": "\u0421\u043F\u0438\u0441\u043E\u043A \u0440\u0438\u0441\u043A\u043E\u0432/\u0441\u043E\u043C\u043D\u0435\u043D\u0438\u0439 \u043F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438.",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "questions": {
-      "type": "array",
-      "description": "1\u20133 \u0442\u043E\u0447\u0435\u0447\u043D\u044B\u0445 \u0432\u043E\u043F\u0440\u043E\u0441\u0430, \u0447\u0442\u043E\u0431\u044B \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043F\u0440\u043E\u0431\u0435\u043B\u044B. \u0414\u043E \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B; \u043F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u2014 \u043F\u0443\u0441\u0442\u043E\u0439 \u0441\u043F\u0438\u0441\u043E\u043A.",
-      "items": {
-        "type": "string"
-      }
-    },
-    "artifacts": {
-      "type": "array",
-      "description": "\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B \u0434\u043B\u044F upsert. \u0414\u043E \u044F\u0432\u043D\u043E\u0433\u043E \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u043E \u043F\u0443\u0441\u0442\u043E\u0439 \u043C\u0430\u0441\u0441\u0438\u0432. \u041F\u0440\u0438 \u0444\u0438\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u0438 \u043E\u0431\u044B\u0447\u043D\u043E \u0432\u043A\u043B\u044E\u0447\u0430\u0439 \u043E\u0431\u0430 \u0441\u043B\u043E\u0442\u0430; \u043F\u0440\u0438 \u0447\u0430\u0441\u0442\u0438\u0447\u043D\u044B\u0445 \u043F\u0440\u0430\u0432\u043A\u0430\u0445 \u0434\u043E\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0441\u044F \u043F\u043E\u0434\u043C\u043D\u043E\u0436\u0435\u0441\u0442\u0432\u043E.",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "slot",
-          "markdown"
-        ],
-        "properties": {
-          "slot": {
-            "type": "string",
-            "description": "\u0421\u043B\u043E\u0442 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430.",
-            "enum": [
-              "workspace.description",
-              "workspace.virtual_simulation"
-            ]
-          },
-          "markdown": {
-            "type": "string",
-            "description": "\u041F\u043E\u043B\u043D\u044B\u0439 markdown \u0434\u043B\u044F \u0443\u043A\u0430\u0437\u0430\u043D\u043D\u043E\u0433\u043E \u0441\u043B\u043E\u0442\u0430 (\u043D\u0435 patch)."
-          }
-        }
-      }
-    }
-  }
-}`;
-  var IDEA_COLLECTOR_FALLBACK_SCHEMA = JSON.parse(
-    FALLBACK_SCHEMA_JSON
-  );
-
-  // src/client/ui/src/services/idea-collector-schema-utils.ts
-  var isRecord7 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var cloneSchema = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
-  var strictifyProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord7(properties)) {
-      return;
-    }
-    schema.required = Object.keys(properties);
-    if (schema.additionalProperties === void 0) {
-      schema.additionalProperties = false;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord7(value)) {
-        strictifySchema(value);
-      }
-    }
-  };
-  var strictifyItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord7(item)) {
-          strictifySchema(item);
-        }
-      }
-      return;
-    }
-    if (isRecord7(items)) {
-      strictifySchema(items);
-    }
-  };
-  var removeCombinatorsFromProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord7(properties)) {
-      return;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord7(value)) {
-        removeCombinators(value);
-      }
-    }
-  };
-  var removeCombinatorsFromItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord7(item)) {
-          removeCombinators(item);
-        }
-      }
-      return;
-    }
-    if (isRecord7(items)) {
-      removeCombinators(items);
-    }
-  };
-  var removeCombinators = (schema) => {
-    removeCombinatorsFromProperties(schema);
-    removeCombinatorsFromItems(schema);
-    for (const key of ["allOf", "anyOf", "oneOf"]) {
-      const entries = schema[key];
-      if (!Array.isArray(entries)) {
-        continue;
-      }
-      for (const entry of entries) {
-        if (isRecord7(entry)) {
-          removeCombinators(entry);
-        }
-      }
-      delete schema[key];
-    }
-  };
-  var strictifySchema = (schema) => {
-    removeCombinators(schema);
-    strictifyProperties(schema);
-    strictifyItems(schema);
-  };
-  var injectTemplateIntoSchema = (schema, template) => {
-    if (!template) {
-      return schema;
-    }
-    const properties = schema.properties;
-    if (!isRecord7(properties)) {
-      return schema;
-    }
-    const artifact = properties.artifact;
-    if (!isRecord7(artifact)) {
-      return schema;
-    }
-    const artifactProperties = artifact.properties;
-    if (!isRecord7(artifactProperties)) {
-      return schema;
-    }
-    const ideaMarkdown = artifactProperties.idea_markdown;
-    if (!isRecord7(ideaMarkdown)) {
-      return schema;
-    }
-    const description = typeof ideaMarkdown.description === "string" ? ideaMarkdown.description : "Final_Description.md markdown output.";
-    ideaMarkdown.description = `${description}
-
-Final_Description.md template:
-${template}`;
-    return schema;
-  };
-  var ALLOWED_SCHEMA_KEYS = /* @__PURE__ */ new Set([
-    "type",
-    "properties",
-    "required",
-    "additionalProperties",
-    "items",
-    "description"
-  ]);
-  var pruneSchemaKeys = (schema) => {
-    for (const key of Object.keys(schema)) {
-      if (!ALLOWED_SCHEMA_KEYS.has(key)) {
-        delete schema[key];
-      }
-    }
-  };
-  var sanitizeSchemaProperties = (schema) => {
-    const properties = schema.properties;
-    if (!isRecord7(properties)) {
-      return;
-    }
-    for (const value of Object.values(properties)) {
-      if (isRecord7(value)) {
-        sanitizeSchemaKeywords(value);
-      }
-    }
-  };
-  var sanitizeSchemaItems = (schema) => {
-    const items = schema.items;
-    if (Array.isArray(items)) {
-      for (const item of items) {
-        if (isRecord7(item)) {
-          sanitizeSchemaKeywords(item);
-        }
-      }
-      return;
-    }
-    if (isRecord7(items)) {
-      sanitizeSchemaKeywords(items);
-    }
-  };
-  var sanitizeSchemaKeywords = (schema) => {
-    pruneSchemaKeys(schema);
-    sanitizeSchemaProperties(schema);
-    sanitizeSchemaItems(schema);
-  };
-  var normalizeIdeaCollectorSchema = (schema, template) => {
-    const next = cloneSchema(schema);
-    strictifySchema(next);
-    sanitizeSchemaKeywords(next);
-    return injectTemplateIntoSchema(next, template);
-  };
-
-  // src/client/ui/src/services/idea-collector-contract.ts
-  var DESCRIPTION_CONTRACT_ENDPOINT = "/api/v1/orchestrator/description-contract";
-  var VIRTUAL_SIMULATION_CONTRACT_ENDPOINT = "/api/v1/orchestrator/virtual-simulation-contract";
-  var FALLBACK_OUTPUT_PATHS = {
-    idea: ".codeai-hub/unknown-workspace/description/Final_Description.md",
-    virtualSimulation: ".codeai-hub/unknown-workspace/virtual_simulation/virtual-simulation.md"
-  };
-  var isRecord8 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isWorkflowContractPayload = (value) => {
-    if (!isRecord8(value)) {
-      return false;
-    }
-    return typeof value.prompt === "string" && value.prompt.length > 0 && isRecord8(value.schema);
-  };
-  var parseVersion = (payload) => typeof payload.version === "string" && payload.version.trim().length > 0 ? payload.version : null;
-  var fetchWorkflowContract = async (endpoint) => {
-    const httpUrl = resolveCoreHttpUrl2();
-    if (!httpUrl) {
-      return null;
-    }
-    try {
-      const response = await fetch(joinUrl2(httpUrl, endpoint));
-      if (!response.ok) {
-        return null;
-      }
-      const payload = await response.json();
-      if (!isWorkflowContractPayload(payload)) {
-        return null;
-      }
-      const template = typeof payload.template === "string" && payload.template.length > 0 ? payload.template : null;
-      const schema = normalizeIdeaCollectorSchema(payload.schema, template);
-      const questionnaireTemplateMarkdown = extractIdeaContractQuestionnaireTemplate(payload) ?? null;
-      return {
-        prompt: payload.prompt,
-        schema,
-        template,
-        questionnaireTemplateMarkdown,
-        version: parseVersion(payload)
-      };
-    } catch {
-      return null;
-    }
-  };
-  var fallbackContract = () => ({
-    prompt: IDEA_KICKOFF_PROMPT,
-    schema: normalizeIdeaCollectorSchema(IDEA_COLLECTOR_FALLBACK_SCHEMA, null),
-    template: null,
-    questionnaireTemplateMarkdown: null,
-    version: null
-  });
-  var loadDescriptionContract = async () => await fetchWorkflowContract(DESCRIPTION_CONTRACT_ENDPOINT) ?? fallbackContract();
-  var loadVirtualSimulationContract = async () => await fetchWorkflowContract(VIRTUAL_SIMULATION_CONTRACT_ENDPOINT) ?? fallbackContract();
-  var loadIdeaContract = async () => {
-    const descriptionContract = await loadDescriptionContract();
-    return {
-      prompt: descriptionContract.prompt,
-      schema: descriptionContract.schema,
-      outputPaths: FALLBACK_OUTPUT_PATHS,
-      questionnaireTemplateMarkdown: descriptionContract.questionnaireTemplateMarkdown
-    };
-  };
-
-  // src/client/ui/src/services/idea-collector-finalize-utils.ts
-  var FINALIZE_TRIGGER_PATTERN = /(^|[\s,.;:!?])(?:ок|ok|утверждаю|approve|approved)(?=$|[\s,.;:!?])/i;
-  var isRecord9 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var cloneSchema2 = (schema) => typeof globalThis.structuredClone === "function" ? globalThis.structuredClone(schema) : JSON.parse(JSON.stringify(schema));
-  var enforceArtifactsRequired = (schema) => {
-    const next = cloneSchema2(schema);
-    const properties = next.properties;
-    if (isRecord9(properties)) {
-      const artifacts = properties.artifacts;
-      if (isRecord9(artifacts)) {
-        artifacts.minItems = 1;
-      }
-      const questions = properties.questions;
-      if (isRecord9(questions)) {
-        questions.maxItems = 0;
-      }
-    }
-    return next;
-  };
-  var isFinalizeTrigger = (content3) => {
-    const normalized = content3.trim().replace(/[\\/]/g, " ");
-    if (!normalized) {
-      return false;
-    }
-    return FINALIZE_TRIGGER_PATTERN.test(normalized);
-  };
-
-  // src/client/ui/src/services/idea-collector-session-state.ts
-  var IdeaCollectorSessionState = class {
-    constructor() {
-      this.activeSessions = /* @__PURE__ */ new Set();
-      this.artifacts = /* @__PURE__ */ new Map();
-      this.noticesSent = /* @__PURE__ */ new Set();
-      this.pendingQuestionnaire = /* @__PURE__ */ new Set();
-      this.lastAssistantMessages = /* @__PURE__ */ new Map();
-      this.outputPathsBySession = /* @__PURE__ */ new Map();
-      this.sessionStages = /* @__PURE__ */ new Map();
-    }
-    isActive(sessionId) {
-      return this.activeSessions.has(sessionId);
-    }
-    markActive(sessionId) {
-      this.activeSessions.add(sessionId);
-    }
-    isQuestionnairePending(sessionId) {
-      return this.pendingQuestionnaire.has(sessionId);
-    }
-    markQuestionnairePending(sessionId) {
-      this.pendingQuestionnaire.add(sessionId);
-    }
-    clearQuestionnairePending(sessionId) {
-      this.pendingQuestionnaire.delete(sessionId);
-    }
-    hasNoticeSent(sessionId) {
-      return this.noticesSent.has(sessionId);
-    }
-    markNoticeSent(sessionId) {
-      this.noticesSent.add(sessionId);
-    }
-    recordArtifact(sessionId, artifact) {
-      this.artifacts.set(sessionId, artifact);
-    }
-    getArtifact(sessionId) {
-      return this.artifacts.get(sessionId) ?? null;
-    }
-    recordAssistantMessage(sessionId, content3) {
-      this.lastAssistantMessages.set(sessionId, content3);
-    }
-    getLastAssistantMessage(sessionId) {
-      return this.lastAssistantMessages.get(sessionId) ?? null;
-    }
-    setOutputPaths(sessionId, outputPaths) {
-      this.outputPathsBySession.set(sessionId, outputPaths);
-    }
-    getOutputPaths(sessionId) {
-      return this.outputPathsBySession.get(sessionId) ?? null;
-    }
-    setStage(sessionId, stage) {
-      this.sessionStages.set(sessionId, stage);
-    }
-    getStage(sessionId) {
-      return this.sessionStages.get(sessionId) ?? "description";
-    }
-  };
-
-  // src/client/ui/src/services/idea-collector-workspace-context.ts
-  var WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
-  var DEFAULT_MAX_BYTES = 3e5;
-  var MAX_FILES = 3;
-  var normalizePathToken = (token) => {
-    const trimmed = token.trim();
-    if (trimmed.length === 0) {
-      return null;
-    }
-    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
-      return trimmed.slice(1, -1).trim() || null;
-    }
-    return trimmed;
-  };
-  var parseWorkspaceReadCommand = (content3) => {
-    const trimmed = content3.trimStart();
-    if (!(trimmed.startsWith("/read") || trimmed.startsWith("/attach"))) {
-      return null;
-    }
-    const lines = trimmed.split("\n");
-    const firstLine = lines[0]?.trim() ?? "";
-    const tokens = firstLine.split(/\s+/g);
-    const command = tokens[0];
-    if (!(command === "/read" || command === "/attach")) {
-      return null;
-    }
-    const paths = tokens.slice(1).map((token) => normalizePathToken(token)).filter(Boolean);
-    const remainingMessage = lines.slice(1).join("\n").trim();
-    return { paths, remainingMessage };
-  };
-  var isRecord10 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isWorkspaceFileResponse = (value) => {
-    if (!isRecord10(value)) {
-      return false;
-    }
-    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
-  };
-  var fetchWorkspaceFile = async (sessionId, relativePath) => {
-    const httpUrl = resolveCoreHttpUrl2();
-    if (!httpUrl) {
-      return null;
-    }
-    try {
-      const response = await fetch(joinUrl2(httpUrl, WORKSPACE_FILE_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          path: relativePath,
-          maxBytes: DEFAULT_MAX_BYTES
-        })
-      });
-      if (!response.ok) {
-        return null;
-      }
-      const payload = await response.json();
-      if (!isWorkspaceFileResponse(payload)) {
-        return null;
-      }
-      return payload;
-    } catch {
-      return null;
-    }
-  };
-  var buildMessageWithWorkspaceContext = async (sessionId, content3) => {
-    const command = parseWorkspaceReadCommand(content3);
-    if (!command) {
-      return null;
-    }
-    if (command.paths.length === 0) {
-      postSystemNotice(
-        sessionId,
-        "\u041A\u043E\u043C\u0430\u043D\u0434\u0430 /read \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043F\u0443\u0442\u044C(\u0438):\n/read doc/Architecture/Architecture.md\n(\u0434\u0430\u043B\u044C\u0448\u0435 \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0445 \u0441\u0442\u0440\u043E\u043A\u0430\u0445 \u043C\u043E\u0436\u043D\u043E \u043D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u0432\u043E\u043F\u0440\u043E\u0441/\u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439)"
-      );
-      return "";
-    }
-    const files = await Promise.all(
-      command.paths.slice(0, MAX_FILES).map(async (relativePath) => ({
-        relativePath,
-        response: await fetchWorkspaceFile(sessionId, relativePath)
-      }))
-    );
-    const resolvedFiles = files.filter((entry) => entry.response);
-    if (resolvedFiles.length === 0) {
-      postSystemNotice(
-        sessionId,
-        "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0442\u044C \u043D\u0438 \u043E\u0434\u0438\u043D \u0444\u0430\u0439\u043B \u0438\u0437 /read. \u041F\u0440\u043E\u0432\u0435\u0440\u044C \u043F\u0443\u0442\u0438 \u0438 \u0447\u0442\u043E Core \u0437\u0430\u043F\u0443\u0449\u0435\u043D."
-      );
-      return "";
-    }
-    const blocks = [];
-    blocks.push(
-      "\u041A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438\u0437 \u0444\u0430\u0439\u043B\u043E\u0432 (workspace). \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u044D\u0442\u043E \u043A\u0430\u043A \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A \u0438\u0441\u0442\u0438\u043D\u044B \u0434\u043B\u044F \u0442\u0435\u043A\u0443\u0449\u0435\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E:"
-    );
-    for (const entry of resolvedFiles) {
-      const payload = entry.response;
-      const truncationNote = payload.truncated ? `
-(\u0444\u0430\u0439\u043B \u043E\u0431\u0440\u0435\u0437\u0430\u043D \u0434\u043E ${payload.maxBytes} \u0431\u0430\u0439\u0442)` : "";
-      blocks.push(
-        `
-[FILE: ${payload.path}]${truncationNote}
-\`\`\`
-${payload.content}
-\`\`\``
-      );
-    }
-    if (command.paths.length > MAX_FILES) {
-      postSystemNotice(
-        sessionId,
-        `\u041E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0438\u0435: \u043F\u0440\u0438\u043A\u0440\u0435\u043F\u043B\u044F\u044E \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C ${MAX_FILES} \u0444\u0430\u0439\u043B\u043E\u0432 \u0437\u0430 \u0440\u0430\u0437.`
-      );
-    }
-    if (command.remainingMessage.length > 0) {
-      blocks.push(`
-\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044F:
-${command.remainingMessage}`);
-    } else {
-      blocks.push(
-        "\n\u0414\u0430\u043B\u0435\u0435: \u0443\u0447\u0442\u0438 \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442 \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438 \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E (\u0437\u0430\u0434\u0430\u0439 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0432\u043E\u043F\u0440\u043E\u0441)."
-      );
-    }
-    return blocks.join("\n");
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-messages.ts
-  var MISSING_IDEA_CONTEXT_MESSAGE = "\u041D\u0435 \u043C\u043E\u0433\u0443 \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative/run \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB.";
-  var buildQuestionnaireSubmissionMessage = (questionnairePath) => `Before reading the questionnaire, review the documents listed in section "0. \u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u0434\u043B\u044F \u0447\u0442\u0435\u043D\u0438\u044F \u043F\u0435\u0440\u0435\u0434 \u0430\u043D\u043A\u0435\u0442\u043E\u0439" (if any). Then review \`${questionnairePath}\` against the contract, ask any clarifying questions, then wait for OK/approve before finalize.`;
-  var notifyMissingIdeaContext = (sessionId) => {
-    postSystemNotice(sessionId, MISSING_IDEA_CONTEXT_MESSAGE);
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-pending-store.ts
-  var QUESTIONNAIRE_PENDING_STORAGE_PREFIX = "codeai-hub:idea-questionnaire:pending:";
-  var QUESTIONNAIRE_PENDING_STORAGE_VALUE = "1";
-  var buildQuestionnairePendingKey = (sessionId) => `${QUESTIONNAIRE_PENDING_STORAGE_PREFIX}${sessionId}`;
-  var readStorageValue = (key) => {
-    try {
-      return window.localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  };
-  var writeStorageValue = (key, value) => {
-    try {
-      window.localStorage.setItem(key, value);
-    } catch {
-    }
-  };
-  var removeStorageValue = (key) => {
-    try {
-      window.localStorage.removeItem(key);
-    } catch {
-    }
-  };
-  var isQuestionnairePendingStored = (sessionId) => readStorageValue(buildQuestionnairePendingKey(sessionId)) === QUESTIONNAIRE_PENDING_STORAGE_VALUE;
-  var markQuestionnairePendingStored = (sessionId) => {
-    writeStorageValue(
-      buildQuestionnairePendingKey(sessionId),
-      QUESTIONNAIRE_PENDING_STORAGE_VALUE
-    );
-  };
-  var clearQuestionnairePendingStored = (sessionId) => {
-    removeStorageValue(buildQuestionnairePendingKey(sessionId));
-  };
-
-  // src/client/ui/src/services/idea-collector-service.ts
-  var loadContractForStage = (stage) => stage === "virtual_simulation" ? loadVirtualSimulationContract() : loadDescriptionContract();
-  var loadLegacyContract = () => loadIdeaContract();
-  var IdeaCollectorService = class {
-    constructor() {
-      this.state = new IdeaCollectorSessionState();
-    }
-    isIdeaCollectorSession(sessionId) {
-      if (this.state.isActive(sessionId)) {
-        return true;
-      }
-      if (this.isQuestionnairePending(sessionId)) {
-        this.state.markActive(sessionId);
-        return true;
-      }
-      return false;
-    }
-    getLatestArtifact(sessionId) {
-      return this.state.getArtifact(sessionId);
-    }
-    recordAssistantMessage(sessionId, content3) {
-      const trimmed = content3.trim();
-      if (trimmed.length === 0) {
-        return;
-      }
-      this.state.recordAssistantMessage(sessionId, trimmed);
-    }
-    getLastAssistantMessage(sessionId) {
-      return this.state.getLastAssistantMessage(sessionId);
-    }
-    getOutputPathsForSessionId(sessionId) {
-      return this.state.getOutputPaths(sessionId);
-    }
-    setSessionStage(sessionId, stage) {
-      this.state.setStage(sessionId, stage);
-    }
-    startCollection(sessionId, stage = "description") {
-      this.state.markActive(sessionId);
-      this.setSessionStage(sessionId, stage);
-      if (stage === "description") {
-        this.markQuestionnairePending(sessionId);
-        if (!this.state.hasNoticeSent(sessionId)) {
-          this.state.markNoticeSent(sessionId);
-          postSystemNotice(
-            sessionId,
-            "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Description. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
-          );
-          postSystemNotice(
-            sessionId,
-            "\u0415\u0441\u043B\u0438 \u043D\u0443\u0436\u043D\u043E \u0443\u0447\u0435\u0441\u0442\u044C \u0444\u0430\u0439\u043B\u044B \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u2014 \u043F\u0440\u043E\u0441\u0442\u043E \u0443\u043A\u0430\u0436\u0438\u0442\u0435 \u043F\u0443\u0442\u0438 \u043A \u043D\u0438\u043C (relative \u0438\u043B\u0438 absolute) \u0432 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0438. \u0410\u0433\u0435\u043D\u0442 \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u0435\u0442 \u0444\u0430\u0439\u043B\u044B \u043D\u0430\u043F\u0440\u044F\u043C\u0443\u044E \u0438 \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442 \u0438\u043D\u0442\u0435\u0440\u0432\u044C\u044E."
-          );
-        }
-        return;
-      }
-      if (!this.state.hasNoticeSent(sessionId)) {
-        this.state.markNoticeSent(sessionId);
-        postSystemNotice(
-          sessionId,
-          "\u0417\u0430\u043F\u0443\u0441\u043A\u0430\u044E Virtual Simulation. \u041F\u0440\u0438 \u043D\u0435\u043E\u0431\u0445\u043E\u0434\u0438\u043C\u043E\u0441\u0442\u0438 \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u0435 Final_Description.md \u0438\u043B\u0438 \u0434\u0440\u0443\u0433\u0438\u0435 \u0444\u0430\u0439\u043B\u044B \u043F\u0440\u043E\u0435\u043A\u0442\u0430."
-        );
-      }
-    }
-    startVirtualSimulation(sessionId) {
-      this.startCollection(sessionId, "virtual_simulation");
-    }
-    async continueConversation(sessionId, content3) {
-      if (!this.isIdeaCollectorSession(sessionId)) {
-        return;
-      }
-      if (this.isQuestionnairePending(sessionId)) {
-        postSystemNotice(
-          sessionId,
-          "\u0410\u043D\u043A\u0435\u0442\u0430 \u0435\u0449\u0451 \u043D\u0435 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430. \u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
-        );
-        return;
-      }
-      const schema = await this.getNormalizedSchemaForSession(sessionId);
-      const augmentedContent = await buildMessageWithWorkspaceContext(
-        sessionId,
-        content3
-      );
-      if (augmentedContent === "") {
-        return;
-      }
-      const outputSchema = isFinalizeTrigger(content3) ? enforceArtifactsRequired(schema) : schema;
-      sendChatMessage(sessionId, augmentedContent ?? content3, {
-        outputSchema
-      });
-    }
-    async beginQuestionnaireReview(sessionId, content3, outputPathsOverride) {
-      if (!this.state.isActive(sessionId)) {
-        this.state.markActive(sessionId);
-      }
-      this.setSessionStage(sessionId, "description");
-      this.clearQuestionnairePending(sessionId);
-      const [prompt, schema] = await Promise.all([
-        this.getPrompt("description"),
-        this.getNormalizedSchema("description")
-      ]);
-      const outputPaths = outputPathsOverride;
-      if (!outputPaths) {
-        notifyMissingIdeaContext(sessionId);
-        return;
-      }
-      this.state.setOutputPaths(sessionId, outputPaths);
-      const promptWithSlots = this.buildPromptWithOutputSlots(
-        prompt,
-        "description"
-      );
-      const combinedContent = `${promptWithSlots}
-
-${content3}`;
-      sendChatMessage(sessionId, combinedContent, { outputSchema: schema });
-    }
-    handleStreamEvent(sessionId, event) {
-      const artifact = extractIdeaCollectorArtifact(event);
-      if (artifact) {
-        this.state.markActive(sessionId);
-        this.state.recordArtifact(sessionId, artifact);
-        saveIdeaCollectorArtifacts(sessionId, artifact).catch(
-          (error) => {
-            const message = error instanceof Error ? error.message : String(error);
-            postSystemNotice(
-              sessionId,
-              `\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u044B: ${message}`
-            );
-          }
-        );
-      }
-    }
-    isQuestionnairePending(sessionId) {
-      if (this.state.isQuestionnairePending(sessionId)) {
-        return true;
-      }
-      if (isQuestionnairePendingStored(sessionId)) {
-        this.state.markQuestionnairePending(sessionId);
-        return true;
-      }
-      return false;
-    }
-    getPrompt(stage) {
-      return this.getContract(stage).then((contract) => contract.prompt);
-    }
-    getNormalizedSchema(stage) {
-      return this.getContract(stage).then((contract) => contract.schema);
-    }
-    getNormalizedSchemaForSession(sessionId) {
-      const stage = this.getSessionStage(sessionId);
-      return this.getNormalizedSchema(stage);
-    }
-    getQuestionnaireTemplateMarkdown() {
-      return loadDescriptionContract().then(
-        (contract) => contract.questionnaireTemplateMarkdown
-      );
-    }
-    getOutputPaths() {
-      return this.getLegacyContract().then((contract) => contract.outputPaths);
-    }
-    getOutputPathsForSession(outputPathsOverride) {
-      if (outputPathsOverride) {
-        return Promise.resolve(outputPathsOverride);
-      }
-      return this.getOutputPaths();
-    }
-    getContract(stage) {
-      return loadContractForStage(stage);
-    }
-    getLegacyContract() {
-      return loadLegacyContract();
-    }
-    getSessionStage(sessionId) {
-      return this.state.getStage(sessionId);
-    }
-    markQuestionnairePending(sessionId) {
-      this.state.markQuestionnairePending(sessionId);
-      markQuestionnairePendingStored(sessionId);
-    }
-    clearQuestionnairePending(sessionId) {
-      this.state.clearQuestionnairePending(sessionId);
-      clearQuestionnairePendingStored(sessionId);
-    }
-    buildPromptWithOutputSlots(prompt, stage) {
-      const slotLines = stage === "virtual_simulation" ? ["- virtual-simulation.md: workspace.virtual_simulation"] : ["- Final_Description.md: workspace.description"];
-      return `${prompt}
-
-\u0421\u043B\u043E\u0442\u044B \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438 (\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439 \u0432 Structured Output):
-${slotLines.join("\n")}`;
-    }
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-agent-qna.ts
-  var AGENT_QNA_FIELD_ID = "system.agent_qna";
-  var AGENT_QNA_SECTION_TITLE = "## 20. \u0412\u043E\u043F\u0440\u043E\u0441\u044B AI \u0410\u0433\u0435\u043D\u0442\u0430 (\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u0435\u043C \u041D\u0415 \u0437\u0430\u043F\u043E\u043B\u043D\u044F\u044E\u0442\u0441\u044F!!!)";
-  var LEGACY_CLARIFICATIONS_HEADER = "## \u0423\u0442\u043E\u0447\u043D\u0435\u043D\u0438\u044F \u0430\u043D\u043A\u0435\u0442\u044B";
-  var formatClarificationEntry = (question, answer) => {
-    const normalizedAnswer = answer.trim();
-    if (normalizedAnswer.length === 0) {
-      return null;
-    }
-    const normalizedQuestion = question?.trim();
-    const questionLine = normalizedQuestion ? `- \u0412\u043E\u043F\u0440\u043E\u0441: ${normalizedQuestion}` : "- \u0412\u043E\u043F\u0440\u043E\u0441: (\u043D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0438\u0442\u044C)";
-    return `${questionLine}
-  \u041E\u0442\u0432\u0435\u0442: ${normalizedAnswer}`.trimEnd();
-  };
-  var ensureAgentQnaSection = (content3) => {
-    if (content3.includes(`<!-- field:${AGENT_QNA_FIELD_ID} -->`)) {
-      return content3;
-    }
-    return `${content3.trimEnd()}
-
----
-
-${AGENT_QNA_SECTION_TITLE}
-
-<!-- field:${AGENT_QNA_FIELD_ID} -->
-
-<!-- /field -->
-`;
-  };
-  var migrateLegacyClarifications = (content3) => {
-    if (content3.includes(`<!-- field:${AGENT_QNA_FIELD_ID} -->`)) {
-      return content3;
-    }
-    const legacyIndex = content3.indexOf(LEGACY_CLARIFICATIONS_HEADER);
-    if (legacyIndex < 0) {
-      return content3;
-    }
-    const before = content3.slice(0, legacyIndex).trimEnd();
-    const afterHeader = content3.slice(legacyIndex);
-    const headerLineEnd = afterHeader.indexOf("\n");
-    const body = headerLineEnd >= 0 ? afterHeader.slice(headerLineEnd + 1).trim() : "";
-    const migrated = ensureAgentQnaSection(before);
-    const escapedFieldId = AGENT_QNA_FIELD_ID.replace(".", "\\.");
-    const fieldRe = new RegExp(
-      `<!--\\s*field:${escapedFieldId}\\s*-->\\n([\\s\\S]*?)\\n<!--\\s*\\/field\\s*-->`,
-      "u"
-    );
-    return migrated.replace(fieldRe, (_match, existingRaw) => {
-      const existing = String(existingRaw ?? "").trim();
-      const next = body.length > 0 ? body : existing;
-      return `<!-- field:${AGENT_QNA_FIELD_ID} -->
-${next}
-<!-- /field -->`;
-    });
-  };
-  var appendClarificationToAgentQnaField = (content3, question, answer) => {
-    const entry = formatClarificationEntry(question, answer);
-    if (!entry) {
-      return content3;
-    }
-    const migrated = migrateLegacyClarifications(content3);
-    const ensured = ensureAgentQnaSection(migrated);
-    const escapedFieldId = AGENT_QNA_FIELD_ID.replace(".", "\\.");
-    const fieldRe = new RegExp(
-      `<!--\\s*field:${escapedFieldId}\\s*-->\\n([\\s\\S]*?)\\n<!--\\s*\\/field\\s*-->`,
-      "u"
-    );
-    const match = fieldRe.exec(ensured);
-    if (!match) {
-      return content3;
-    }
-    const existingRaw = match[1] ?? "";
-    const existing = String(existingRaw).trim();
-    const updatedBody = existing.length > 0 ? `${existing}
-
-${entry}` : entry;
-    return ensured.replace(
-      fieldRe,
-      `<!-- field:${AGENT_QNA_FIELD_ID} -->
-${updatedBody}
-<!-- /field -->`
-    );
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-paths.ts
-  var DESCRIPTION_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/description\.md$/;
-  var DESCRIPTION_RUN_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/description\.md$/;
-  var LEGACY_IDEA_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/idea\/idea\.md$/;
-  var LEGACY_IDEA_RUN_PATH_RE = /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/idea\/idea\.md$/;
-  var FALLBACK_PATH_SEGMENT_RE = /[^/]+$/;
-  var buildCanonicalQuestionnairePath = (workspaceSlug) => `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
-  var resolveCanonicalQuestionnairePath = (descriptionPath) => {
-    const descriptionMatch = DESCRIPTION_PATH_RE.exec(descriptionPath);
-    if (descriptionMatch) {
-      return buildCanonicalQuestionnairePath(descriptionMatch[1]);
-    }
-    const runMatch = DESCRIPTION_RUN_PATH_RE.exec(descriptionPath);
-    if (runMatch) {
-      return buildCanonicalQuestionnairePath(runMatch[1]);
-    }
-    const legacyIdeaMatch = LEGACY_IDEA_PATH_RE.exec(descriptionPath);
-    if (legacyIdeaMatch) {
-      return buildCanonicalQuestionnairePath(legacyIdeaMatch[1]);
-    }
-    const legacyRunMatch = LEGACY_IDEA_RUN_PATH_RE.exec(descriptionPath);
-    if (!legacyRunMatch) {
-      return null;
-    }
-    return buildCanonicalQuestionnairePath(legacyRunMatch[1]);
-  };
-  var resolveFallbackQuestionnairePath = (descriptionPath) => descriptionPath.replace(FALLBACK_PATH_SEGMENT_RE, "questionnaire.md");
-  var resolveQuestionnaireTargets = (descriptionPath) => {
-    const primaryPath = resolveCanonicalQuestionnairePath(descriptionPath) ?? resolveFallbackQuestionnairePath(descriptionPath);
-    return { primaryPath, readFallbackPaths: [] };
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-template.ts
-  var FIELD_REGEX = /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
-  var HEADING_PREFIX_RE = /^#+\s*/;
-  var HEADING_LINE_RE = /^#+\s+.*$/gm;
-  var SINGLE_HINT_TOKEN_RE = /^<[^>\n]{1,80}>$/;
-  var TITLE_HINT_HTML_LINE_RE = /^<small>\s*<i>(?<hint>[\s\S]+?)<\/i>\s*<\/small>$/i;
-  var normalizeDescription = (value) => {
-    const lines = value.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
-    if (lines.length === 0) {
-      return;
-    }
-    return lines.join("\n");
-  };
-  var extractTitleHintFromDescription = (descriptionRaw) => {
-    const lines = descriptionRaw.split("\n").map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith("<!--"));
-    if (lines.length === 0) {
-      return {};
-    }
-    const firstLine = lines[0] ?? "";
-    const hintMatch = TITLE_HINT_HTML_LINE_RE.exec(firstLine);
-    if (!hintMatch?.groups?.hint) {
-      return { description: lines.join("\n") };
-    }
-    const titleHint = hintMatch.groups.hint.trim();
-    const remainder = lines.slice(1).join("\n");
-    const description = remainder.length > 0 ? remainder : void 0;
-    return { titleHint, description };
-  };
-  var resolveFieldMeta = (template, startIndex, fallback) => {
-    const prefix = template.slice(0, startIndex);
-    const headings = Array.from(prefix.matchAll(HEADING_LINE_RE));
-    const lastHeading = headings.at(-1);
-    if (!lastHeading) {
-      return { title: fallback };
-    }
-    const headingIndex = lastHeading.index ?? 0;
-    const headingLine = lastHeading[0] ?? "";
-    const title = headingLine.replace(HEADING_PREFIX_RE, "").trim() || fallback;
-    const descriptionStart = headingIndex + headingLine.length;
-    const rawDescription = template.slice(descriptionStart, startIndex);
-    const extracted = extractTitleHintFromDescription(rawDescription);
-    const description = extracted.description ? normalizeDescription(extracted.description) : void 0;
-    return { title, titleHint: extracted.titleHint, description };
-  };
-  var isHintLikeAnswer = (value) => {
-    const trimmed = value.trim();
-    if (trimmed.length === 0) {
-      return true;
-    }
-    if (trimmed.startsWith("\u041F\u0440\u0438\u043C\u0435\u0440:") || trimmed.startsWith("Example:")) {
-      return true;
-    }
-    if (SINGLE_HINT_TOKEN_RE.test(trimmed)) {
-      return true;
-    }
-    const nonEmptyLines = trimmed.split("\n").map((line) => line.trim()).filter((line) => line.length > 0);
-    if (nonEmptyLines.length > 0 && nonEmptyLines.every((line) => line.startsWith("- <"))) {
-      return true;
-    }
-    return false;
-  };
-  var parseIdeaQuestionnaireTemplateFields = (template) => {
-    const isUserEditableFieldId = (fieldId) => !fieldId.startsWith("system.");
-    const questions = [];
-    const placeholders = {};
-    const matches = template.matchAll(FIELD_REGEX);
-    for (const match of matches) {
-      const fieldId = match[1];
-      if (!fieldId || placeholders[fieldId]) {
-        continue;
-      }
-      const placeholder = (match[2] ?? "").trim();
-      const { title, titleHint, description } = resolveFieldMeta(
-        template,
-        match.index ?? 0,
-        fieldId
-      );
-      placeholders[fieldId] = placeholder;
-      if (isUserEditableFieldId(fieldId)) {
-        questions.push({
-          id: fieldId,
-          title,
-          titleHint,
-          description
-        });
-      }
-    }
-    return { questions, placeholders };
-  };
-  var extractIdeaQuestionnaireAnswers = (content3, placeholders) => {
-    const answers = {};
-    const matches = content3.matchAll(FIELD_REGEX);
-    for (const match of matches) {
-      const fieldId = match[1];
-      if (!fieldId) {
-        continue;
-      }
-      const candidate = (match[2] ?? "").trim();
-      const placeholder = (placeholders[fieldId] ?? "").trim();
-      const shouldClear = isHintLikeAnswer(candidate) || candidate === placeholder && isHintLikeAnswer(placeholder);
-      answers[fieldId] = shouldClear ? "" : candidate;
-    }
-    return answers;
-  };
-  var renderIdeaQuestionnaire = (template, placeholders, answers) => template.replace(FIELD_REGEX, (_match, fieldId, fallback) => {
-    const rawAnswer = answers[fieldId] ?? "";
-    const trimmedAnswer = rawAnswer.trim();
-    const placeholder = placeholders[fieldId] ?? String(fallback ?? "").trim();
-    const replacement = trimmedAnswer.length > 0 ? rawAnswer.trimEnd() : placeholder;
-    return `<!-- field:${fieldId} -->
-${replacement}
-<!-- /field -->`;
-  });
-
-  // src/client/ui/src/services/workspace-file-service.ts
-  var WORKSPACE_FILE_ENDPOINT2 = "/api/v1/orchestrator/workspace-file";
-  var WORKSPACE_FILE_WRITE_ENDPOINT = "/api/v1/orchestrator/workspace-file-write";
-  var isRecord11 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isWorkspaceFileResponse2 = (value) => {
-    if (!isRecord11(value)) {
-      return false;
-    }
-    return typeof value.path === "string" && typeof value.content === "string" && typeof value.truncated === "boolean" && typeof value.maxBytes === "number";
-  };
-  var WorkspaceFileService = class {
-    async read(sessionId, path2, maxBytes) {
-      const httpUrl = resolveCoreHttpUrl2();
-      if (!httpUrl) {
-        return { status: "error" };
-      }
-      try {
-        const response = await fetch(joinUrl2(httpUrl, WORKSPACE_FILE_ENDPOINT2), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, path: path2, maxBytes })
-        });
-        if (!response.ok) {
-          return response.status === 404 ? { status: "missing" } : { status: "error" };
-        }
-        const payload = await response.json();
-        if (!isWorkspaceFileResponse2(payload)) {
-          return { status: "error" };
-        }
-        return { status: "ok", file: payload };
-      } catch {
-        return { status: "error" };
-      }
-    }
-    async write(sessionId, path2, content3) {
-      const httpUrl = resolveCoreHttpUrl2();
-      if (!httpUrl) {
-        return;
-      }
-      await fetch(joinUrl2(httpUrl, WORKSPACE_FILE_WRITE_ENDPOINT), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, path: path2, content: content3 })
-      });
-    }
-  };
-
-  // src/client/ui/src/services/idea-questionnaire-service.ts
-  var DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
-  var SAVE_DEBOUNCE_MS = 400;
-  var QUESTIONNAIRE_READ_MAX_BYTES = 1e6;
-  var normalizeQuestionnaireContent = (content3) => {
-    if (!content3) {
-      return null;
-    }
-    const trimmed = content3.trim();
-    return trimmed.length > 0 ? content3 : null;
-  };
-  var shouldWriteTemplate = (existingStatus, existingContent) => existingStatus === "missing" || existingStatus === "ok" && existingContent === null;
-  var IdeaQuestionnaireService = class {
-    constructor() {
-      this.ideaCollector = new IdeaCollectorService();
-      this.workspaceFiles = new WorkspaceFileService();
-      this.saveTimers = /* @__PURE__ */ new Map();
-    }
-    async readQuestionnaireContent(sessionId, primaryPath, readFallbackPaths) {
-      const existing = await this.workspaceFiles.read(
-        sessionId,
-        primaryPath,
-        QUESTIONNAIRE_READ_MAX_BYTES
-      );
-      const existingContent = existing.status === "ok" ? normalizeQuestionnaireContent(existing.file.content) : null;
-      if (existingContent) {
-        return {
-          existingStatus: existing.status,
-          existingContent,
-          resolvedContent: existingContent
-        };
-      }
-      for (const fallbackPath of readFallbackPaths) {
-        const legacyCopy = await this.workspaceFiles.read(
-          sessionId,
-          fallbackPath,
-          QUESTIONNAIRE_READ_MAX_BYTES
-        );
-        const legacyContent = legacyCopy.status === "ok" ? normalizeQuestionnaireContent(legacyCopy.file.content) : null;
-        if (legacyContent) {
-          return {
-            existingStatus: existing.status,
-            existingContent,
-            resolvedContent: legacyContent
-          };
-        }
-      }
-      return {
-        existingStatus: existing.status,
-        existingContent,
-        resolvedContent: null
-      };
-    }
-    async loadQuestionnaire(sessionId, outputPathsOverride) {
-      const httpUrl = resolveCoreHttpUrl2();
-      if (!httpUrl) {
-        return null;
-      }
-      const templateMarkdown = await this.ideaCollector.getQuestionnaireTemplateMarkdown();
-      const outputPaths = outputPathsOverride;
-      if (!outputPaths) {
-        return null;
-      }
-      const { primaryPath: questionnairePath, readFallbackPaths } = resolveQuestionnaireTargets(outputPaths.idea);
-      const template = templateMarkdown && templateMarkdown.trim().length > 0 ? templateMarkdown : DEFAULT_TEMPLATE;
-      const { questions, placeholders } = parseIdeaQuestionnaireTemplateFields(template);
-      const { existingStatus, existingContent, resolvedContent } = await this.readQuestionnaireContent(
-        sessionId,
-        questionnairePath,
-        readFallbackPaths
-      );
-      const content3 = resolvedContent ?? template;
-      const migratedContent = migrateLegacyClarifications(content3);
-      const shouldWriteMigrated = shouldWriteTemplate(existingStatus, existingContent) || migratedContent !== content3;
-      if (shouldWriteMigrated) {
-        await this.writeQuestionnaire(
-          sessionId,
-          questionnairePath,
-          migratedContent
-        );
-      }
-      const answers = extractIdeaQuestionnaireAnswers(
-        migratedContent,
-        placeholders
-      );
-      return {
-        sessionId,
-        path: questionnairePath,
-        template,
-        placeholders,
-        questions,
-        answers
-      };
-    }
-    renderQuestionnaire(template, placeholders, answers) {
-      return renderIdeaQuestionnaire(template, placeholders, answers);
-    }
-    queueSave(sessionId, path2, content3) {
-      const existing = this.saveTimers.get(sessionId);
-      if (existing) {
-        window.clearTimeout(existing);
-      }
-      const timer = window.setTimeout(() => {
-        this.writeQuestionnaire(sessionId, path2, content3).catch(() => {
-        });
-      }, SAVE_DEBOUNCE_MS);
-      this.saveTimers.set(sessionId, timer);
-    }
-    async flushSave(sessionId, path2, content3) {
-      const existing = this.saveTimers.get(sessionId);
-      if (existing) {
-        window.clearTimeout(existing);
-        this.saveTimers.delete(sessionId);
-      }
-      await this.writeQuestionnaire(sessionId, path2, content3);
-    }
-    async appendClarificationAnswer(sessionId, outputPaths, question, answer) {
-      const { primaryPath: questionnairePath, readFallbackPaths } = resolveQuestionnaireTargets(outputPaths.idea);
-      const { resolvedContent } = await this.readQuestionnaireContent(
-        sessionId,
-        questionnairePath,
-        readFallbackPaths
-      );
-      if (!resolvedContent) {
-        return;
-      }
-      const updated = appendClarificationToAgentQnaField(
-        resolvedContent,
-        question,
-        answer
-      );
-      if (updated === resolvedContent) {
-        return;
-      }
-      await this.writeQuestionnaire(sessionId, questionnairePath, updated);
-    }
-    async writeQuestionnaire(sessionId, path2, content3) {
-      await this.workspaceFiles.write(sessionId, path2, content3);
-    }
-  };
-
-  // src/client/ui/src/app-host/questionnaire-resume-banner.tsx
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
-  var containerStyles = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "12px",
-    margin: "12px 16px",
-    padding: "12px 14px",
-    borderRadius: "10px",
-    border: "1px solid #2a2d33",
-    background: "#1f2125",
-    color: "#e5e5e5"
-  };
-  var buttonStyles = {
-    appearance: "none",
-    border: "1px solid #0e639c",
-    borderRadius: "8px",
-    background: "#0e639c",
-    color: "#ffffff",
-    fontSize: "12px",
-    fontWeight: 600,
-    padding: "8px 12px",
-    cursor: "pointer",
-    whiteSpace: "nowrap"
-  };
-  var QuestionnaireResumeBanner = ({
-    note,
-    resumeLabel,
-    onResume
-  }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: containerStyles, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { children: note }),
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("button", { onClick: onResume, style: buttonStyles, type: "button", children: resumeLabel })
-  ] });
-
-  // src/client/ui/src/app-host/session-region-idea-paths.ts
-  var resolveIdeaOutputPaths = (sessions, sessionId) => {
-    const session = sessions.find((record) => record.id === sessionId);
-    if (!session?.initiativeSlug) {
-      return null;
-    }
-    return {
-      idea: `.codeai-hub/${session.initiativeSlug}/description/Final_Description.md`,
-      virtualSimulation: `.codeai-hub/${session.initiativeSlug}/virtual_simulation/virtual-simulation.md`
-    };
-  };
-  var loadQuestionnaireForSession = (questionnaireService, sessions, sessionId) => {
-    const outputPaths = resolveIdeaOutputPaths(sessions, sessionId);
-    if (!outputPaths) {
-      postSystemNotice(
-        sessionId,
-        "\u041D\u0435 \u043C\u043E\u0433\u0443 \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443: Core \u0435\u0449\u0435 \u043D\u0435 \u0432\u0435\u0440\u043D\u0443\u043B initiative \u043A\u043E\u043D\u0442\u0435\u043A\u0441\u0442. \u041F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB\u0412\u043E\u0437\u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443\xBB."
-      );
-      return Promise.resolve(null);
-    }
-    return questionnaireService.loadQuestionnaire(sessionId, outputPaths);
-  };
-
-  // src/client/ui/src/app-host/session-region-questionnaire-copy.ts
-  var IDEA_QUESTIONNAIRE_COPY = {
-    title: "\u0410\u043D\u043A\u0435\u0442\u0430 \u0438\u0434\u0435\u0438",
-    description: "\u0417\u0430\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u0430\u043D\u043A\u0435\u0442\u0443, \u043F\u0440\u0438\u043B\u043E\u0436\u0438\u0442\u0435 \u0441\u0441\u044B\u043B\u043A\u0438 \u043D\u0430 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u0438 \u043E\u0442\u043F\u0440\u0430\u0432\u044C\u0442\u0435 \u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0443.",
-    submitLabel: "Submit questionnaire",
-    cancelLabel: "Close",
-    resumeLabel: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0430\u043D\u043A\u0435\u0442\u0443",
-    resumeNote: "\u0415\u0441\u0442\u044C \u043D\u0435\u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043D\u0430\u044F \u0430\u043D\u043A\u0435\u0442\u0430 \u0434\u043B\u044F \u044D\u0442\u043E\u0439 \u0441\u0435\u0441\u0441\u0438\u0438. \u041C\u043E\u0436\u043D\u043E \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435."
-  };
-
-  // src/client/ui/src/app-host/idea-questionnaire-panel.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
-  var IdeaQuestionnairePanel = ({
-    activeSessionId,
-    sessions,
-    pendingQuestionnaireRef,
-    pickerVisible,
-    onQuestionnaireVisibleChange
-  }) => {
-    const ideaCollectorRef = (0, import_react14.useRef)(new IdeaCollectorService());
-    const questionnaireServiceRef = (0, import_react14.useRef)(new IdeaQuestionnaireService());
-    const [questionnaireSnapshot, setQuestionnaireSnapshot] = (0, import_react14.useState)(null);
-    const [questionnaireVisible, setQuestionnaireVisible] = (0, import_react14.useState)(false);
-    const ideaCollector = ideaCollectorRef.current;
-    const questionnaireService = questionnaireServiceRef.current;
-    const handleAnswerChange = (0, import_react14.useCallback)(
-      (questionId, value) => {
-        setQuestionnaireSnapshot((current) => {
-          if (!current) {
-            return current;
-          }
-          const answers = { ...current.answers, [questionId]: value };
-          const content3 = questionnaireService.renderQuestionnaire(
-            current.template,
-            current.placeholders,
-            answers
-          );
-          questionnaireService.queueSave(
-            current.sessionId,
-            current.path,
-            content3
-          );
-          return { ...current, answers };
-        });
-      },
-      [questionnaireService]
-    );
-    const handleQuestionnaireSubmit = (0, import_react14.useCallback)(async () => {
-      if (!questionnaireSnapshot) {
-        return;
-      }
-      const content3 = questionnaireService.renderQuestionnaire(
-        questionnaireSnapshot.template,
-        questionnaireSnapshot.placeholders,
-        questionnaireSnapshot.answers
-      );
-      const submissionMessage = buildQuestionnaireSubmissionMessage(
-        questionnaireSnapshot.path
-      );
-      try {
-        await questionnaireService.flushSave(
-          questionnaireSnapshot.sessionId,
-          questionnaireSnapshot.path,
-          content3
-        );
-        const outputPaths = resolveIdeaOutputPaths(
-          sessions,
-          questionnaireSnapshot.sessionId
-        );
-        if (!outputPaths) {
-          notifyMissingIdeaContext(questionnaireSnapshot.sessionId);
-          return;
-        }
-        await ideaCollector.beginQuestionnaireReview(
-          questionnaireSnapshot.sessionId,
-          submissionMessage,
-          outputPaths
-        );
-        setQuestionnaireSnapshot(null);
-        setQuestionnaireVisible(false);
-      } catch {
-      }
-    }, [ideaCollector, questionnaireService, questionnaireSnapshot, sessions]);
-    const handleQuestionnaireCancel = (0, import_react14.useCallback)(() => {
-      if (!questionnaireSnapshot) {
-        setQuestionnaireVisible(false);
-        return;
-      }
-      const content3 = questionnaireService.renderQuestionnaire(
-        questionnaireSnapshot.template,
-        questionnaireSnapshot.placeholders,
-        questionnaireSnapshot.answers
-      );
-      questionnaireService.flushSave(
-        questionnaireSnapshot.sessionId,
-        questionnaireSnapshot.path,
-        content3
-      ).catch(() => {
-      }).finally(() => {
-        setQuestionnaireVisible(false);
-      });
-    }, [questionnaireService, questionnaireSnapshot]);
-    const handleQuestionnaireResume = (0, import_react14.useCallback)(() => {
-      if (!activeSessionId) {
-        return;
-      }
-      if (questionnaireSnapshot?.sessionId === activeSessionId) {
-        setQuestionnaireVisible(true);
-      }
-      loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId).then((snapshot) => {
-        if (snapshot) {
-          setQuestionnaireSnapshot(snapshot);
-          setQuestionnaireVisible(true);
-        }
-      }).catch(() => {
-      });
-    }, [activeSessionId, questionnaireService, questionnaireSnapshot, sessions]);
-    (0, import_react14.useEffect)(() => {
-      if (!activeSessionId) {
-        return;
-      }
-      if (!pendingQuestionnaireRef.current) {
-        return;
-      }
-      pendingQuestionnaireRef.current = false;
-      loadQuestionnaireForSession(questionnaireService, sessions, activeSessionId).then((snapshot) => {
-        if (snapshot) {
-          setQuestionnaireSnapshot(snapshot);
-          setQuestionnaireVisible(true);
-        }
-      }).catch(() => {
-      });
-    }, [
-      activeSessionId,
-      pendingQuestionnaireRef,
-      questionnaireService,
-      sessions
-    ]);
-    const hasPendingQuestionnaire = activeSessionId ? ideaCollector.isQuestionnairePending(activeSessionId) : false;
-    const showQuestionnaire = Boolean(
-      questionnaireVisible && questionnaireSnapshot && activeSessionId && questionnaireSnapshot.sessionId === activeSessionId
-    );
-    const showQuestionnaireResume = Boolean(activeSessionId) && hasPendingQuestionnaire && !showQuestionnaire && !pickerVisible;
-    (0, import_react14.useEffect)(() => {
-      onQuestionnaireVisibleChange(showQuestionnaire);
-    }, [onQuestionnaireVisibleChange, showQuestionnaire]);
-    if (!(showQuestionnaire || showQuestionnaireResume)) {
-      return null;
-    }
-    const questionnaireTitle = IDEA_QUESTIONNAIRE_COPY.title;
-    const questionnaireDescription = IDEA_QUESTIONNAIRE_COPY.description;
-    const questionnaireSubmitLabel = IDEA_QUESTIONNAIRE_COPY.submitLabel;
-    const questionnaireCancelLabel = IDEA_QUESTIONNAIRE_COPY.cancelLabel;
-    const questionnaireResumeLabel = IDEA_QUESTIONNAIRE_COPY.resumeLabel;
-    const questionnaireResumeNote = IDEA_QUESTIONNAIRE_COPY.resumeNote;
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(import_jsx_runtime21.Fragment, { children: [
-      showQuestionnaireResume ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-        QuestionnaireResumeBanner,
-        {
-          note: questionnaireResumeNote,
-          onResume: handleQuestionnaireResume,
-          resumeLabel: questionnaireResumeLabel
-        }
-      ) : null,
-      showQuestionnaire && questionnaireSnapshot ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-        IdeaQuestionnaireView,
-        {
-          answers: questionnaireSnapshot.answers,
-          cancelLabel: questionnaireCancelLabel,
-          description: questionnaireDescription,
-          onAnswerChange: handleAnswerChange,
-          onCancel: handleQuestionnaireCancel,
-          onSubmit: handleQuestionnaireSubmit,
-          questions: questionnaireSnapshot.questions,
-          submitLabel: questionnaireSubmitLabel,
-          title: questionnaireTitle
-        }
-      ) : null
-    ] });
-  };
-
-  // src/client/ui/src/app-host/session-region.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
-  var SessionRegion = ({
-    pickerState,
-    selectedStage,
-    stageSelectionLocked,
-    selectStage,
-    clearStageSelection,
-    confirmSelection,
-    cancelSelection,
-    sessionViewProps
-  }) => {
-    const pendingQuestionnaireRef = (0, import_react15.useRef)(false);
-    const [questionnaireActive, setQuestionnaireActive] = (0, import_react15.useState)(false);
-    const activeSessionId = sessionViewProps.activeSessionId;
-    const handleProviderConfirm = (providerIds) => {
-      if (selectedStage === "idea") {
-        pendingQuestionnaireRef.current = true;
-      }
-      confirmSelection(providerIds);
-    };
-    const handleStageClick = (stage) => selectStage(stage);
-    const showSessionView = !(pickerState.visible || questionnaireActive);
-    const filteredProviders = selectedStage && selectedStage !== "chat" ? pickerState.providers.filter(
-      (provider) => provider.id === "codexCli" || provider.id === "claudeCodeCli"
-    ) : pickerState.providers;
-    const showStagePicker = pickerState.visible && selectedStage === null;
-    const showProviderPicker = pickerState.visible && selectedStage !== null;
-    const providerPickerSecondaryLabel = stageSelectionLocked ? "Cancel" : "Back";
-    const handleProviderPickerSecondary = stageSelectionLocked ? cancelSelection : clearStageSelection;
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "app-shell__session-region", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-        ProviderPicker,
-        {
-          onConfirm: handleProviderConfirm,
-          onSecondary: handleProviderPickerSecondary,
-          providers: filteredProviders,
-          secondaryLabel: providerPickerSecondaryLabel,
-          visible: showProviderPicker
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-        FlowWizardPicker,
-        {
-          onCancel: cancelSelection,
-          onStageClick: handleStageClick,
-          providers: pickerState.providers,
-          selectedStage,
-          visible: showStagePicker
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-        IdeaQuestionnairePanel,
-        {
-          activeSessionId,
-          onQuestionnaireVisibleChange: setQuestionnaireActive,
-          pendingQuestionnaireRef,
-          pickerVisible: pickerState.visible,
-          sessions: sessionViewProps.sessions
-        }
-      ),
-      showSessionView ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-        session_view_default,
-        {
-          activeSessionId: sessionViewProps.activeSessionId,
-          coreConnectionDetail: sessionViewProps.coreConnectionDetail,
-          coreConnectionStatus: sessionViewProps.coreConnectionStatus,
-          onCloseSession: sessionViewProps.onCloseSession,
-          onSelectSession: sessionViewProps.onSelectSession,
-          onSendMessage: sessionViewProps.onSendMessage,
-          providerLabels: sessionViewProps.providerLabels,
-          sessions: sessionViewProps.sessions,
-          showEmptyState: true,
-          snapshots: sessionViewProps.snapshots
-        }
-      ) : null
-    ] });
-  };
-
-  // src/client/ui/src/app-host/session-store.ts
-  var import_react18 = __toESM(require_react());
-
-  // src/client/ui/src/services/idea-collector-schema-cache.ts
-  var cachedSchemas = /* @__PURE__ */ new Map();
-  var pendingSchemas = /* @__PURE__ */ new Map();
-  var loadSchemaCached = (key, loader) => {
-    const cached = cachedSchemas.get(key);
-    if (cached) {
-      return Promise.resolve(cached);
-    }
-    const pending = pendingSchemas.get(key);
-    if (pending) {
-      return pending;
-    }
-    const next = loader().then((schema) => {
-      cachedSchemas.set(key, schema);
-      return schema;
-    }).finally(() => {
-      pendingSchemas.delete(key);
-    });
-    pendingSchemas.set(key, next);
-    return next;
-  };
-  var loadDescriptionSchemaCached = () => loadSchemaCached(
-    "description",
-    () => loadDescriptionContract().then((contract) => contract.schema)
-  );
-  var loadIdeaCollectorSchemaCached = () => loadDescriptionSchemaCached();
-
-  // src/client/ui/src/app-host/use-session-stream-status-sync.ts
-  var import_react16 = __toESM(require_react());
-
-  // src/client/ui/src/session/usage-limit-labels.ts
-  var isRecord12 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var readString2 = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-  var extractUsageLimitLabels = (event) => {
-    if (!isRecord12(event)) {
-      return null;
-    }
-    const data = isRecord12(event.data) ? event.data : null;
-    const candidate = isRecord12(data?.usageLimitLabels) ? data.usageLimitLabels : null;
-    if (!isRecord12(candidate)) {
-      return null;
-    }
-    const labels = {
-      currentSession: readString2(candidate.currentSession),
-      currentWeekAllModels: readString2(candidate.currentWeekAllModels),
-      currentWeekSonnetOnly: readString2(candidate.currentWeekSonnetOnly)
-    };
-    return Object.values(labels).some((value) => Boolean(value)) ? labels : null;
-  };
-  var areUsageLimitLabelsEqual = (left, right) => left?.currentSession === right?.currentSession && left?.currentWeekAllModels === right?.currentWeekAllModels && left?.currentWeekSonnetOnly === right?.currentWeekSonnetOnly;
-
-  // src/client/ui/src/app-host/session-stream-usage-limits-sync.ts
-  var isRecord13 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var readNumber3 = (value) => {
-    if (typeof value === "number" && Number.isFinite(value)) {
-      return value;
-    }
-    if (typeof value === "string") {
-      const normalized = value.replace(/,/g, "").trim();
-      const parsed = Number.parseFloat(normalized);
-      if (Number.isFinite(parsed)) {
-        return parsed;
-      }
-    }
-    return null;
-  };
-  var readString3 = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-  var clampPercent3 = (value) => Math.max(0, Math.min(100, value));
-  var readUsageLimitBucket = (value) => {
-    if (value === null) {
-      return null;
-    }
-    if (!isRecord13(value)) {
-      return null;
-    }
-    const percentUsed = readNumber3(value.percentUsed);
-    if (percentUsed === null) {
-      return null;
-    }
-    return {
-      percentUsed: clampPercent3(Math.round(percentUsed)),
-      resetsAt: readString3(value.resetsAt)
-    };
-  };
-  var extractUsageLimits = (event) => {
-    if (!isRecord13(event)) {
-      return null;
-    }
-    let root4 = null;
-    if (isRecord13(event.usageLimits)) {
-      root4 = event.usageLimits;
-    } else if (isRecord13(event.data)) {
-      root4 = event.data;
-    }
-    const candidate = isRecord13(root4) && isRecord13(root4.usageLimits) ? root4.usageLimits : root4;
-    if (!isRecord13(candidate)) {
-      return null;
-    }
-    const currentSession = readUsageLimitBucket(candidate.currentSession);
-    const currentWeekAllModels = readUsageLimitBucket(
-      candidate.currentWeekAllModels
-    );
-    const currentWeekSonnetOnly = readUsageLimitBucket(
-      candidate.currentWeekSonnetOnly
-    );
-    if (!(currentSession || currentWeekAllModels || currentWeekSonnetOnly)) {
-      return null;
-    }
-    return { currentSession, currentWeekAllModels, currentWeekSonnetOnly };
-  };
-  var areUsageLimitBucketsEqual = (left, right) => left?.percentUsed === right?.percentUsed && left?.resetsAt === right?.resetsAt;
-  var areUsageLimitsEqual = (left, right) => Boolean(
-    left && areUsageLimitBucketsEqual(left.currentSession, right.currentSession) && areUsageLimitBucketsEqual(
-      left.currentWeekAllModels,
-      right.currentWeekAllModels
-    ) && areUsageLimitBucketsEqual(
-      left.currentWeekSonnetOnly,
-      right.currentWeekSonnetOnly
-    )
-  );
-  var normalizeProviderScopeKey = (value) => value?.trim().toLowerCase() ?? "";
-  var extractProviderScopeKey = (event) => {
-    if (!isRecord13(event)) {
-      return "";
-    }
-    const direct = readString3(event.providerScopeKey);
-    if (direct) {
-      return normalizeProviderScopeKey(direct);
-    }
-    const data = isRecord13(event.data) ? event.data : null;
-    return normalizeProviderScopeKey(readString3(data?.providerScopeKey));
-  };
-  var resolveSnapshotProviderScopeKey = (snapshot) => normalizeProviderScopeKey(snapshot.status.providerScopeKey) || normalizeProviderScopeKey(snapshot.status.providerSummary);
-  var resolveUsageLimitsProviderScopeKey = (snapshot, event) => extractProviderScopeKey(event) || resolveSnapshotProviderScopeKey(snapshot);
-  var hasMatchingUsageLimitsState = (snapshot, usageLimits, providerScopeKey, usageLimitLabels) => areUsageLimitsEqual(snapshot.status.usageLimits, usageLimits) && areUsageLimitLabelsEqual(
-    snapshot.status.usageLimitLabels,
-    usageLimitLabels ?? null
-  ) && normalizeProviderScopeKey(snapshot.status.providerScopeKey) === providerScopeKey;
-  var shouldApplyUsageLimitsToCandidate = (params) => {
-    if (params.sessionId !== params.sourceSessionId && (!params.providerScopeKey || resolveSnapshotProviderScopeKey(params.snapshot) !== params.providerScopeKey)) {
-      return false;
-    }
-    return !hasMatchingUsageLimitsState(
-      params.snapshot,
-      params.usageLimits,
-      params.providerScopeKey,
-      params.usageLimitLabels
-    );
-  };
-  var applyUsageLimitsToSnapshot = (params) => ({
-    ...params.snapshot,
-    status: {
-      ...params.snapshot.status,
-      ...params.providerScopeKey ? { providerScopeKey: params.providerScopeKey } : {},
-      usageLimits: params.usageLimits,
-      ...params.usageLimitLabels ? { usageLimitLabels: params.usageLimitLabels } : {},
-      updatedAt: params.updatedAt
-    }
-  });
-  var applyUsageLimitsSyncFromStreamEvent = (payload) => {
-    const usageLimits = extractUsageLimits(payload.event);
-    if (!usageLimits) {
-      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
-    }
-    const usageLimitLabels = extractUsageLimitLabels(payload.event) ?? payload.snapshot.status.usageLimitLabels ?? null;
-    const providerKey = resolveUsageLimitsProviderScopeKey(
-      payload.snapshot,
-      payload.event
-    );
-    if (hasMatchingUsageLimitsState(
-      payload.snapshot,
-      usageLimits,
-      providerKey,
-      usageLimitLabels
-    )) {
-      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
-    }
-    writeLastKnownUsageLimits(
-      providerKey,
-      usageLimits,
-      payload.snapshot.status.providerSummary,
-      usageLimitLabels
-    );
-    const nextSnapshots = { ...payload.snapshots };
-    let changed = false;
-    for (const [sessionId, candidate] of Object.entries(payload.snapshots)) {
-      if (!shouldApplyUsageLimitsToCandidate({
-        sourceSessionId: payload.sessionId,
-        sessionId,
-        snapshot: candidate,
-        usageLimits,
-        providerScopeKey: providerKey,
-        usageLimitLabels
-      })) {
-        continue;
-      }
-      changed = true;
-      nextSnapshots[sessionId] = applyUsageLimitsToSnapshot({
-        snapshot: candidate,
-        usageLimits,
-        providerScopeKey: providerKey,
-        usageLimitLabels,
-        updatedAt: payload.updatedAt
-      });
-    }
-    if (!changed) {
-      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
-    }
-    return {
-      snapshots: nextSnapshots,
-      snapshot: nextSnapshots[payload.sessionId] ?? payload.snapshot
-    };
-  };
-
-  // src/client/ui/src/app-host/session-stream-usage-sync.ts
-  var isRecord14 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var readNumber4 = (value) => {
-    if (typeof value === "number" && Number.isFinite(value)) {
-      return value;
-    }
-    if (typeof value === "string") {
-      const normalized = value.replace(/,/g, "").trim();
-      const parsed = Number.parseFloat(normalized);
-      if (Number.isFinite(parsed)) {
-        return parsed;
-      }
-    }
-    return null;
-  };
-  var readString4 = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-  var readTokenUsage = (value) => {
-    if (!isRecord14(value)) {
-      return null;
-    }
-    const used = readNumber4(value.used);
-    const limit = readNumber4(value.limit);
-    if (used === null || limit === null) {
-      return null;
-    }
-    if (used < 0 || limit <= 0) {
-      return null;
-    }
-    return { used: Math.round(used), limit: Math.round(limit) };
-  };
-  var extractTokenUsage = (event) => {
-    if (!isRecord14(event)) {
-      return null;
-    }
-    const direct = readTokenUsage(event.tokenUsage);
-    if (direct) {
-      return { tokenUsage: direct, threadId: readString4(event.threadId) };
-    }
-    const data = isRecord14(event.data) ? event.data : null;
-    if (!data || data.kind !== "token_usage") {
-      return null;
-    }
-    const tokenUsage = readTokenUsage(data);
-    if (!tokenUsage) {
-      return null;
-    }
-    return { tokenUsage, threadId: readString4(event.threadId) };
-  };
-  var applyTokenUsageSyncFromStreamEvent = (payload) => {
-    const tokenUsagePayload = extractTokenUsage(payload.event);
-    if (!tokenUsagePayload) {
-      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
-    }
-    const currentTokenUsage = payload.snapshot.status.tokenUsage;
-    if (currentTokenUsage.used === tokenUsagePayload.tokenUsage.used && currentTokenUsage.limit === tokenUsagePayload.tokenUsage.limit) {
-      return { snapshots: payload.snapshots, snapshot: payload.snapshot };
-    }
-    const providerSessionId = payload.snapshot.binding.providerSessionId ?? tokenUsagePayload.threadId;
-    if (providerSessionId) {
-      writeLastKnownTokenUsage(providerSessionId, tokenUsagePayload.tokenUsage);
-    }
-    const nextSnapshot = {
-      ...payload.snapshot,
-      status: {
-        ...payload.snapshot.status,
-        tokenUsage: tokenUsagePayload.tokenUsage,
-        updatedAt: payload.updatedAt
-      }
-    };
-    return {
-      snapshots: { ...payload.snapshots, [payload.sessionId]: nextSnapshot },
-      snapshot: nextSnapshot
-    };
-  };
-
-  // src/client/ui/src/app-host/session-stream-snapshot-sync.ts
-  var isRecord15 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var toNumberTimestamp2 = (value) => {
-    const parsed = typeof value === "string" ? Date.parse(value) : Number.NaN;
-    return Number.isNaN(parsed) ? Date.now() : parsed;
-  };
-  var applyFlowNodeRolloverNotificationToSnapshot = (snapshot, event) => {
-    const updatedAt = toNumberTimestamp2(event.timestamp);
-    const phase = typeof event.phase === "string" ? event.phase : "unknown";
-    const remainingPercent = typeof event.remainingPercent === "number" ? event.remainingPercent : null;
-    const thresholdPercent = typeof event.thresholdPercent === "number" ? event.thresholdPercent : null;
-    const reportPath = typeof event.reportPath === "string" ? event.reportPath : null;
-    const error = typeof event.error === "string" ? event.error : null;
-    return {
-      ...snapshot,
-      status: {
-        ...snapshot.status,
-        rollover: {
-          phase,
-          ...remainingPercent !== null ? { remainingPercent } : {},
-          ...thresholdPercent !== null ? { thresholdPercent } : {},
-          ...reportPath ? { reportPath } : {},
-          ...error ? { error } : {},
-          updatedAt
-        },
-        updatedAt
-      }
-    };
-  };
-  var applyTurnStateStreamDataToSnapshot = (snapshot, data, updatedAt) => {
-    const state = data.state;
-    if (state !== "idle" && state !== "running") {
-      return snapshot;
-    }
-    const nextConnectionState = snapshot.status.connectionState === "blocked" && snapshot.status.continuityLock?.active === true ? "blocked" : state;
-    return {
-      ...snapshot,
-      status: {
-        ...snapshot.status,
-        connectionState: nextConnectionState,
-        updatedAt
-      }
-    };
-  };
-  var applyContinuityLockStreamDataToSnapshot = (snapshot, data, updatedAt) => {
-    const active = data.state === "locked";
-    const reason = typeof data.reason === "string" ? data.reason : null;
-    const rolloverId = typeof data.rolloverId === "string" ? data.rolloverId : null;
-    const sourceSessionId = typeof data.sourceSessionId === "string" ? data.sourceSessionId : null;
-    const targetSessionId = typeof data.targetSessionId === "string" ? data.targetSessionId : null;
-    return {
-      ...snapshot,
-      status: {
-        ...snapshot.status,
-        continuityLock: {
-          active,
-          ...rolloverId ? { rolloverId } : {},
-          ...sourceSessionId ? { sourceSessionId } : {},
-          ...targetSessionId ? { targetSessionId } : {},
-          ...reason ? { reason } : {},
-          updatedAt
-        },
-        connectionState: active ? "blocked" : "idle",
-        updatedAt
-      }
-    };
-  };
-  var applyContinuityFailedStreamDataToSnapshot = (snapshot, data, updatedAt) => {
-    const error = typeof data.error === "string" ? data.error : "Unknown error.";
-    return {
-      ...snapshot,
-      status: {
-        ...snapshot.status,
-        rollover: {
-          phase: "failed",
-          error,
-          updatedAt
-        },
-        connectionState: "blocked",
-        updatedAt
-      }
-    };
-  };
-  var applyStreamEventEnvelopeToSnapshot = (snapshot, event) => {
-    if (event.type !== "stream_event") {
-      return snapshot;
-    }
-    const data = event.data;
-    if (!isRecord15(data) || typeof data.kind !== "string") {
-      return snapshot;
-    }
-    const updatedAt = toNumberTimestamp2(event.timestamp ?? data.timestamp);
-    switch (data.kind) {
-      case "turn_state":
-        return applyTurnStateStreamDataToSnapshot(snapshot, data, updatedAt);
-      case "continuity_lock":
-        return applyContinuityLockStreamDataToSnapshot(snapshot, data, updatedAt);
-      case "continuity_failed":
-        return applyContinuityFailedStreamDataToSnapshot(
-          snapshot,
-          data,
-          updatedAt
-        );
-      default:
-        return snapshot;
-    }
-  };
-  var applyStreamEventToSnapshot = (snapshot, event) => {
-    if (!isRecord15(event)) {
-      return snapshot;
-    }
-    if (event.kind === "flow_node_rollover") {
-      return applyFlowNodeRolloverNotificationToSnapshot(snapshot, event);
-    }
-    return applyStreamEventEnvelopeToSnapshot(snapshot, event);
-  };
-  var applySessionStreamUpdateToSnapshots = (snapshots, payload) => {
-    const baseSnapshot = snapshots[payload.sessionId];
-    if (!baseSnapshot) {
-      return snapshots;
-    }
-    const updatedAt = toNumberTimestamp2(
-      isRecord15(payload.event) ? payload.event.timestamp : null
-    );
-    let nextSnapshots = snapshots;
-    let snapshot = baseSnapshot;
-    const streamUpdated = applyStreamEventToSnapshot(snapshot, payload.event);
-    if (streamUpdated !== snapshot) {
-      snapshot = streamUpdated;
-      nextSnapshots = { ...nextSnapshots, [payload.sessionId]: snapshot };
-    }
-    const tokenResult = applyTokenUsageSyncFromStreamEvent({
-      snapshots: nextSnapshots,
-      sessionId: payload.sessionId,
-      snapshot,
-      event: payload.event,
-      updatedAt
-    });
-    nextSnapshots = tokenResult.snapshots;
-    snapshot = tokenResult.snapshot;
-    const usageResult = applyUsageLimitsSyncFromStreamEvent({
-      snapshots: nextSnapshots,
-      sessionId: payload.sessionId,
-      snapshot,
-      event: payload.event,
-      updatedAt
-    });
-    nextSnapshots = usageResult.snapshots;
-    return nextSnapshots;
-  };
-
-  // src/client/ui/src/app-host/use-session-stream-status-sync.ts
-  var isRecord16 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var useSessionStreamStatusSync = (setSnapshots) => {
-    (0, import_react16.useEffect)(() => {
-      const handleIncoming = (event) => {
-        const candidate = event.data;
-        if (candidate.type !== "session:stream" || !isRecord16(candidate.payload)) {
-          return;
-        }
-        const sessionId = candidate.payload.sessionId;
-        if (typeof sessionId !== "string") {
-          return;
-        }
-        const streamEvent = "event" in candidate.payload ? candidate.payload.event : void 0;
-        setSnapshots(
-          (previous3) => applySessionStreamUpdateToSnapshots(previous3, {
-            sessionId,
-            event: streamEvent
-          })
-        );
-      };
-      window.addEventListener("message", handleIncoming);
-      return () => {
-        window.removeEventListener("message", handleIncoming);
-      };
-    }, [setSnapshots]);
-  };
-
-  // src/client/ui/src/app-host/use-settings-models-sync.ts
-  var import_react17 = __toESM(require_react());
-  var useSettingsModelsSync = (sessions, settings, setSnapshots) => {
-    (0, import_react17.useEffect)(() => {
-      if (!settings || sessions.length === 0) {
-        return;
-      }
-      setSnapshots((previous3) => {
-        let hasChanges = false;
-        const next = {};
-        for (const session of sessions) {
-          const snapshot = previous3[session.id];
-          if (!snapshot) {
-            continue;
-          }
-          const newModels = buildModelInfoList(session.providerIds, settings);
-          const modelsChanged = JSON.stringify(newModels) !== JSON.stringify(snapshot.status.models);
-          if (modelsChanged) {
-            hasChanges = true;
-            next[session.id] = {
-              ...snapshot,
-              status: { ...snapshot.status, models: newModels }
-            };
-          } else {
-            next[session.id] = snapshot;
-          }
-        }
-        return hasChanges ? next : previous3;
-      });
-    }, [sessions, settings, setSnapshots]);
-  };
-
-  // src/client/ui/src/app-host/session-store.ts
-  var useSessionStore = (providerLabels, settings) => {
-    const [sessions, setSessions] = (0, import_react18.useState)([]);
-    const [snapshots, setSnapshots] = (0, import_react18.useState)({});
-    const [activeSessionId, setActiveSessionId] = (0, import_react18.useState)(null);
-    const sessionsRef = (0, import_react18.useRef)([]);
-    const pendingBindingsRef = (0, import_react18.useRef)({});
-    const syncSessionsRef = (0, import_react18.useCallback)((current) => {
-      sessionsRef.current = current;
-    }, []);
-    const applyPendingBinding = (0, import_react18.useCallback)(
-      (session) => {
-        const pending = pendingBindingsRef.current[session.id];
-        if (!pending) {
-          return session;
-        }
-        delete pendingBindingsRef.current[session.id];
-        return { ...session, binding: pending };
-      },
-      []
-    );
-    const handleSessionCreated = (0, import_react18.useCallback)(
-      (session) => {
-        const sessionWithBinding = applyPendingBinding(session);
-        setSessions((previous3) => {
-          const next = previous3.some((candidate) => candidate.id === session.id) ? previous3.map(
-            (candidate) => candidate.id === session.id ? sessionWithBinding : candidate
-          ) : [...previous3, sessionWithBinding];
-          syncSessionsRef(next);
-          return next;
-        });
-        setSnapshots((previous3) => {
-          const existing = previous3[session.id];
-          return existing ? {
-            ...previous3,
-            [session.id]: {
-              ...existing,
-              binding: sessionWithBinding.binding
-            }
-          } : {
-            ...previous3,
-            [session.id]: createInitialSnapshot(
-              sessionWithBinding,
-              providerLabels,
-              settings
-            )
-          };
-        });
-        setActiveSessionId(session.id);
-      },
-      [applyPendingBinding, providerLabels, settings, syncSessionsRef]
-    );
-    const hydrateFromCoreState = (0, import_react18.useCallback)(
-      (payload) => {
-        const nextSessions = payload.sessions.map(
-          (record) => applyPendingBinding(record)
-        );
-        syncSessionsRef(nextSessions);
-        setSessions(nextSessions);
-        const nextSnapshots = {};
-        for (const session of nextSessions) {
-          nextSnapshots[session.id] = createInitialSnapshot(
-            session,
-            providerLabels,
-            settings
-          );
-        }
-        setSnapshots(nextSnapshots);
-        setActiveSessionId((current) => {
-          if (current) {
-            return current;
-          }
-          return nextSessions.at(-1)?.id ?? null;
-        });
-      },
-      [applyPendingBinding, providerLabels, settings, syncSessionsRef]
-    );
-    const handleSessionMessageEvent2 = (0, import_react18.useCallback)(
-      (payload) => {
-        setSnapshots((previous3) => appendMessageToSnapshots(previous3, payload));
-      },
-      []
-    );
-    const handleSessionHistoryEvent = (0, import_react18.useCallback)(
-      (payload) => {
-        setSnapshots((previous3) => mergeHistoryIntoSnapshots(previous3, payload));
-      },
-      []
-    );
-    const handleSessionBindingUpdate = (0, import_react18.useCallback)(
-      (payload) => {
-        const binding = normalizeBinding({
-          providerSessionId: payload.providerSessionId,
-          status: payload.status
-        });
-        setSessions((current) => {
-          let updated = false;
-          const next = current.map((session) => {
-            if (session.id !== payload.sessionId) {
-              return session;
-            }
-            updated = true;
-            return { ...session, binding };
-          });
-          if (!updated) {
-            pendingBindingsRef.current[payload.sessionId] = binding;
-            return current;
-          }
-          syncSessionsRef(next);
-          return next;
-        });
-        setSnapshots((previous3) => {
-          const current = previous3[payload.sessionId];
-          if (!current) {
-            pendingBindingsRef.current[payload.sessionId] = binding;
-            return previous3;
-          }
-          return {
-            ...previous3,
-            [payload.sessionId]: {
-              ...current,
-              binding
-            }
-          };
-        });
-      },
-      [syncSessionsRef]
-    );
-    const clearSessions = (0, import_react18.useCallback)(() => {
-      setSessions(() => {
-        syncSessionsRef([]);
-        return [];
-      });
-      setSnapshots({});
-      setActiveSessionId(null);
-    }, [syncSessionsRef]);
-    const focusLastSession = (0, import_react18.useCallback)(() => {
-      const last = sessionsRef.current.at(-1);
-      if (last) {
-        setActiveSessionId(last.id);
-      }
-    }, []);
-    const selectSession = (0, import_react18.useCallback)((sessionId) => {
-      setActiveSessionId(sessionId);
-    }, []);
-    const handleSessionDeleted = (0, import_react18.useCallback)(
-      (payload) => {
-        const { sessionId } = payload;
-        setSessions((previous3) => {
-          const next = previous3.filter((session) => session.id !== sessionId);
-          syncSessionsRef(next);
-          return next;
-        });
-        setSnapshots((previous3) => removeSnapshot(previous3, sessionId));
-        setActiveSessionId((current) => {
-          if (current !== sessionId) {
-            return current;
-          }
-          const remaining = sessionsRef.current.filter(
-            (session) => session.id !== sessionId
-          );
-          const last = remaining.at(-1);
-          return last ? last.id : null;
-        });
-      },
-      [syncSessionsRef]
-    );
-    const closeSession = (0, import_react18.useCallback)((sessionId) => {
-      deleteSession(sessionId);
-    }, []);
-    const sendMessage = (0, import_react18.useCallback)((sessionId, content3) => {
-      setSnapshots((previous3) => {
-        const current = previous3[sessionId];
-        if (!current) {
-          return previous3;
-        }
-        return {
-          ...previous3,
-          [sessionId]: {
-            ...current,
-            draft: ""
-          }
-        };
-      });
-      const record = sessionsRef.current.find(
-        (session) => session.id === sessionId
-      );
-      if (record?.stage !== "idea") {
-        sendChatMessage(sessionId, content3);
-        return;
-      }
-      loadIdeaCollectorSchemaCached().then(
-        (schema) => sendChatMessage(sessionId, content3, { outputSchema: schema })
-      ).catch(() => sendChatMessage(sessionId, content3));
-    }, []);
-    useSettingsModelsSync(sessions, settings, setSnapshots);
-    useSessionStreamStatusSync(setSnapshots);
-    return {
-      sessions,
-      snapshots,
-      activeSessionId,
-      handleSessionCreated,
-      hydrateFromCoreState,
-      handleSessionMessageEvent: handleSessionMessageEvent2,
-      handleSessionHistoryEvent,
-      handleSessionDeleted,
-      handleSessionBindingUpdate,
-      clearSessions,
-      focusLastSession,
-      selectSession,
-      closeSession,
-      sendMessage
-    };
-  };
-
-  // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_react35 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/style-tokens.ts
-  var settingsColorTokens = {
-    surface: "#1e1e1e",
-    surfaceElevated: "#252526",
-    borderSubtle: "#2d2d30",
-    borderStrong: "#3c3c3c",
-    textPrimary: "#ffffff",
-    textSecondary: "#cccccc",
-    textMuted: "#9aa0a6",
-    actionPrimary: "#0e639c",
-    actionPrimaryText: "#ffffff"
-  };
-  var settingsSpacingTokens = {
-    pagePadding: "20px",
-    cardPadding: "24px",
-    tabPadding: "10px 14px",
-    containerGap: "16px"
-  };
-  var settingsRadiusTokens = {
-    card: "16px",
-    panel: "10px",
-    control: "6px"
-  };
-  var settingsTypographyTokens = {
-    tabFontSize: "12px",
-    bodyFontSize: "12px",
-    titleFontSize: "13px",
-    hostTitleFontSize: "20px",
-    hostBodyFontSize: "14px"
-  };
-
-  // src/client/ui/src/components/settings-view.tsx
-  var import_react32 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_react19 = __toESM(require_react());
-
-  // src/types/claude-model-registry.ts
-  var CLAUDE_MODEL_ALIASES = [
-    {
-      alias: "sonnet",
-      displayName: "Sonnet 4.5",
-      description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
-      status: "active"
-    },
-    {
-      alias: "opus",
-      displayName: "Opus 4.5",
-      description: "Most capable for complex, agentic workloads.",
-      status: "active"
-    },
-    {
-      alias: "haiku",
-      displayName: "Haiku 4.5",
-      description: "Fastest alias for quick answers and prototyping.",
-      status: "active"
-    }
-  ];
-  var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
-    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
-  ]);
-  var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
-
-  // src/client/ui/src/components/settings/settings-card.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
-  var cardStyles = {
-    background: settingsColorTokens.surfaceElevated,
-    borderRadius: settingsRadiusTokens.control,
-    padding: "16px",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var headerStyles = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "12px"
-  };
-  var titleStyles = {
-    fontSize: "14px",
-    fontWeight: 600,
-    margin: 0,
-    color: settingsColorTokens.textPrimary
-  };
-  var SettingsCard = ({
-    title,
-    action,
-    children
-  }) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: cardStyles, children: [
-    title ? /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: headerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h3", { style: titleStyles, children: title }),
-      action
-    ] }) : null,
-    children
-  ] });
-  var settings_card_default = SettingsCard;
-
-  // src/client/ui/src/components/settings/shared-model-card-styles.ts
-  var descriptionStyles = {
-    margin: 0,
-    color: settingsColorTokens.textSecondary,
-    fontSize: "12px",
-    lineHeight: 1.5
-  };
-  var noteStyles = {
-    margin: 0,
-    fontSize: "11px",
-    color: "#8f8f8f"
-  };
-  var listStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var rowBaseStyles = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: "#2f2f2f",
-    borderRadius: "6px",
-    padding: "12px",
-    background: settingsColorTokens.surfaceElevated,
-    cursor: "pointer",
-    transition: "border-color 0.15s, background 0.15s",
-    outline: "none",
-    boxShadow: "none"
-  };
-  var rowSelectedStyles = {
-    borderColor: settingsColorTokens.actionPrimary,
-    background: "#1f2a33"
-  };
-  var rowHoverStyles = {
-    borderColor: "#4a4a4a"
-  };
-  var rowButtonResetStyles = {
-    appearance: "none",
-    outline: "none",
-    textAlign: "left"
-  };
-  var modelInfoStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px"
-  };
-  var modelTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: settingsColorTokens.textPrimary
-  };
-  var aliasStyles = {
-    fontSize: "11px",
-    color: "#9b9b9b"
-  };
-  var modelDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    color: "#a7a7a7",
-    lineHeight: 1.4
-  };
-  var modelBodyStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    flex: 1
-  };
-  var modelIdStyles = {
-    fontSize: "11px",
-    color: "#8c8c8c"
-  };
-  var modelControlRowStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    paddingLeft: "28px"
-  };
-  var modelControlLabelStyles = {
-    fontSize: "11px",
-    color: "#8f8f8f"
-  };
-  var modelControlButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    padding: "4px 10px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "11px"
-  };
-  var modelControlButtonHoverStyles = {
-    borderColor: "#5a5a5a",
-    background: "#2b2f33",
-    color: "#ffffff"
-  };
-  var modelControlButtonActiveStyles = {
-    borderColor: "#0e639c",
-    background: "#0e639c",
-    color: "#ffffff"
-  };
-  var radioCircleStyles = {
-    width: "16px",
-    height: "16px",
-    minWidth: "16px",
-    borderRadius: "50%",
-    borderWidth: "2px",
-    borderStyle: "solid",
-    borderColor: "#5a5a5a",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: "3px",
-    transition: "border-color 0.15s",
-    outline: "none",
-    boxShadow: "none"
-  };
-  var radioCircleSelectedStyles = {
-    borderColor: settingsColorTokens.actionPrimary
-  };
-  var radioCircleInnerStyles = {
-    width: "8px",
-    height: "8px",
-    borderRadius: "50%",
-    background: settingsColorTokens.actionPrimary
-  };
-
-  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
-  var ClaudeDefaultModelCard = ({
-    defaultModel,
-    onDefaultModelChange
-  }) => {
-    const [hoveredAlias, setHoveredAlias] = (0, import_react19.useState)(
-      null
-    );
-    const handleRowClick = (model) => {
-      onDefaultModelChange(model);
-    };
-    const handleRowKeyDown = (event, model) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onDefaultModelChange(model);
-      }
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(settings_card_default, { title: "Claude Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md" }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
-        const isSelected = defaultModel === model.alias;
-        const rowStyle = {
-          ...rowBaseStyles,
-          ...rowButtonResetStyles,
-          ...isSelected ? rowSelectedStyles : {},
-          ...!isSelected && hoveredAlias === model.alias ? rowHoverStyles : {}
-        };
-        return (
-          // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(
-            "div",
-            {
-              "aria-checked": isSelected,
-              onClick: () => handleRowClick(model.alias),
-              onKeyDown: (event) => handleRowKeyDown(event, model.alias),
-              onMouseEnter: () => setHoveredAlias(model.alias),
-              onMouseLeave: () => setHoveredAlias(null),
-              role: "radio",
-              style: rowStyle,
-              tabIndex: -1,
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
-                  "div",
-                  {
-                    style: {
-                      ...radioCircleStyles,
-                      ...isSelected ? radioCircleSelectedStyles : {}
-                    },
-                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: radioCircleInnerStyles }) : null
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: modelInfoStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: aliasStyles, children: model.alias }),
-                  /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: modelDescriptionStyles, children: model.description })
-                ] })
-              ]
-            },
-            model.alias
-          )
-        );
-      }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
-    ] });
-  };
-  var claude_default_model_card_default = (0, import_react19.memo)(ClaudeDefaultModelCard);
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_react21 = __toESM(require_react());
-
-  // src/types/codex-model-registry.ts
-  var CODEX_RECOMMENDED_MODELS = [
-    {
-      id: "gpt-5.3-codex",
-      displayName: "GPT-5.3-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "flagship"
-    },
-    {
-      id: "gpt-5.4",
-      displayName: "GPT-5.4",
-      description: "Best general agentic model for tasks across industries",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "general"
-    }
-  ];
-  var CODEX_SETTINGS_MODELS = [
-    {
-      id: "gpt-5.3-codex",
-      displayName: "GPT-5.3-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "flagship"
-    },
-    {
-      id: "gpt-5.4",
-      displayName: "GPT-5.4",
-      description: "Best general agentic model for tasks across industries",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "general"
-    }
-  ];
-  var CODEX_LEGACY_MODELS = [];
-  var CODEX_ALL_MODELS = [
-    ...CODEX_RECOMMENDED_MODELS,
-    ...CODEX_LEGACY_MODELS
-  ];
-  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
-  var CODEX_REASONING_LEVELS = [
-    {
-      name: "low",
-      description: "Fast responses with lighter reasoning",
-      useCase: "Quick tasks, simple queries",
-      default: false
-    },
-    {
-      name: "medium",
-      description: "Balances speed and reasoning depth for everyday tasks",
-      useCase: "Most development tasks",
-      default: true
-    },
-    {
-      name: "high",
-      description: "Greater reasoning depth for complex problems",
-      useCase: "Complex refactoring, architecture decisions",
-      default: false
-    },
-    {
-      name: "xhigh",
-      description: "Extra high reasoning depth for complex problems",
-      useCase: "Very complex problems requiring deep analysis",
-      default: false
-    }
-  ];
-  var DEFAULT_CODEX_REASONING_LEVEL = "medium";
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts
-  var warningStyles = {
-    background: "#3a2a1f",
-    border: "1px solid #9b6b3d",
-    color: "#ffd7a3",
-    borderRadius: "4px",
-    padding: "8px 10px",
-    fontSize: "12px",
-    lineHeight: 1.5
-  };
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_react20 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/shared/provider-option-dialog.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
-  var overlayStyles = {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0, 0, 0, 0.6)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1e3
-  };
-  var dialogStyles = {
-    width: "560px",
-    maxWidth: "90vw",
-    maxHeight: "85vh",
-    overflowY: "auto",
-    background: "#1e1e1e",
-    borderRadius: "8px",
-    border: "1px solid #3c3c3c",
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px"
-  };
-  var headerStyles2 = {
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: "12px"
-  };
-  var titleStyles2 = {
-    fontSize: "16px",
-    margin: 0,
-    color: "#ffffff"
-  };
-  var subtitleStyles = {
-    fontSize: "12px",
-    color: "#a0a0a0",
-    margin: 0
-  };
-  var closeButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    borderRadius: "4px",
-    padding: "4px 10px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var optionListStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var optionRowStyles = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    border: "1px solid #2f2f2f",
-    borderRadius: "6px",
-    padding: "12px",
-    background: "#252526",
-    cursor: "pointer"
-  };
-  var optionSelectedStyles = {
-    borderColor: "#0e639c",
-    background: "#1f2a33"
-  };
-  var radioStyles = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var optionTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#e5e5e5",
-    marginBottom: "4px",
-    textTransform: "uppercase"
-  };
-  var defaultBadgeStyles = {
-    fontSize: "10px",
-    color: "#0e639c",
-    background: "rgba(14, 99, 156, 0.2)",
-    borderRadius: "4px",
-    padding: "2px 6px",
-    marginLeft: "8px",
-    textTransform: "none"
-  };
-  var optionDescriptionStyles = {
-    fontSize: "12px",
-    color: "#b6b6b6",
-    margin: 0,
-    lineHeight: 1.4
-  };
-  var optionUseCaseStyles = {
-    fontSize: "12px",
-    color: "#8f8f8f",
-    margin: "6px 0 0"
-  };
-  var footerStyles = {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "10px"
-  };
-  var cancelButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    padding: "8px 14px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var saveButtonStyles = {
-    border: "1px solid #0e639c",
-    background: "#0e639c",
-    color: "#ffffff",
-    padding: "8px 14px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var ProviderOptionDialog = ({
-    ariaLabel,
-    closeLabel = "Close",
-    footer: footer2,
-    name: name2,
-    onCancel,
-    onChange,
-    options,
-    selectedValue,
-    subtitle,
-    title
-  }) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
-    "div",
-    {
-      "aria-label": ariaLabel,
-      "aria-modal": "true",
-      role: "dialog",
-      style: dialogStyles,
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: headerStyles2, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h3", { style: titleStyles2, children: title }),
-            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: subtitleStyles, children: subtitle })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: closeLabel })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: optionListStyles, children: options.map((option) => {
-          const isSelected = option.value === selectedValue;
-          return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(
-            "label",
-            {
-              style: {
-                ...optionRowStyles,
-                ...isSelected ? optionSelectedStyles : null
-              },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
-                  "input",
-                  {
-                    checked: isSelected,
-                    name: name2,
-                    onChange: () => onChange(option.value),
-                    style: radioStyles,
-                    type: "radio"
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: optionTitleStyles, children: [
-                    option.label,
-                    option.isDefault ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: optionDescriptionStyles, children: option.description }),
-                  /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("p", { style: optionUseCaseStyles, children: [
-                    "Use case: ",
-                    option.useCase
-                  ] })
-                ] })
-              ]
-            },
-            option.value
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: footerStyles, children: footer2 ?? /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(import_jsx_runtime25.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("button", { style: saveButtonStyles, type: "button", children: "Save" })
-        ] }) })
-      ]
-    }
-  ) });
-  var providerOptionDialogButtonStyles = {
-    cancelButtonStyles,
-    saveButtonStyles
-  };
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
-  var CodexReasoningDialog = ({
-    model,
-    initialReasoning,
-    onSave,
-    onCancel
-  }) => {
-    const [selectedReasoning, setSelectedReasoning] = (0, import_react20.useState)(initialReasoning);
-    const options = CODEX_REASONING_LEVELS.map((level) => ({
-      value: level.name,
-      label: level.name,
-      description: level.description,
-      useCase: level.useCase,
-      isDefault: level.default
-    }));
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-      ProviderOptionDialog,
-      {
-        ariaLabel: `Reasoning effort for ${model.displayName}`,
-        footer: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(import_jsx_runtime26.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
-            "button",
-            {
-              onClick: () => onSave(selectedReasoning),
-              style: saveButtonStyles2,
-              type: "button",
-              children: "Save"
-            }
-          )
-        ] }),
-        name: "codex-reasoning",
-        onCancel,
-        onChange: setSelectedReasoning,
-        options,
-        selectedValue: selectedReasoning,
-        subtitle: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session.",
-        title: `${model.displayName} reasoning`
-      }
-    );
-  };
-  var { cancelButtonStyles: cancelButtonStyles2, saveButtonStyles: saveButtonStyles2 } = providerOptionDialogButtonStyles;
-  var codex_reasoning_dialog_default = CodexReasoningDialog;
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
-  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-    "div",
-    {
-      style: {
-        ...radioCircleStyles,
-        ...checked ? radioCircleSelectedStyles : {}
-      },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: radioCircleInnerStyles }) : null
-    }
-  );
-  var CodexDefaultModelCard = ({
-    defaultModel,
-    reasoningByModel,
-    onDefaultModelChange,
-    onReasoningChange
-  }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react21.useState)(null);
-    const [hoveredRowId, setHoveredRowId] = (0, import_react21.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react21.useState)(
-      null
-    );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react21.useState)(
-      null
-    );
-    const recommendedModelIds = (0, import_react21.useMemo)(
-      () => new Set(CODEX_SETTINGS_MODELS.map((model) => model.id)),
-      []
-    );
-    const fallbackModelDisplayName = CODEX_SETTINGS_MODELS.find((model) => model.id === DEFAULT_CODEX_MODEL_ID)?.displayName ?? DEFAULT_CODEX_MODEL_ID;
-    const selectedModelId = recommendedModelIds.has(defaultModel) ? defaultModel : DEFAULT_CODEX_MODEL_ID;
-    const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
-    const activeModel = CODEX_SETTINGS_MODELS.find(
-      (model) => model.id === activeModelId
-    );
-    const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
-    const handleRowClick = (modelId) => {
-      onDefaultModelChange(modelId);
-    };
-    const handleRowKeyDown = (event, modelId) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onDefaultModelChange(modelId);
-      }
-    };
-    const handleReasoningButtonClick = (event, modelId) => {
-      event.stopPropagation();
-      setActiveModelId(modelId);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(settings_card_default, { title: "Codex Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
-        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: warningStyles, children: [
-          "The saved default model is no longer available. Falling back to",
-          ` ${fallbackModelDisplayName}.`
-        ] }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: listStyles, children: CODEX_SETTINGS_MODELS.map((model) => {
-          const isSelected = selectedModelId === model.id;
-          const isRowHovered = hoveredRowId === model.id;
-          const reasoningLevel = resolveReasoning(model.id);
-          const isButtonHovered = hoveredButtonId === model.id;
-          const isButtonPressed = pressedButtonId === model.id;
-          let reasoningStateStyles = {};
-          if (isButtonPressed) {
-            reasoningStateStyles = modelControlButtonActiveStyles;
-          } else if (isButtonHovered) {
-            reasoningStateStyles = modelControlButtonHoverStyles;
-          }
-          const rowStyle = {
-            ...rowBaseStyles,
-            ...rowButtonResetStyles,
-            ...isSelected ? rowSelectedStyles : {},
-            ...!isSelected && isRowHovered ? rowHoverStyles : {}
-          };
-          return (
-            // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
-              "div",
-              {
-                "aria-checked": isSelected,
-                onClick: () => handleRowClick(model.id),
-                onKeyDown: (e) => handleRowKeyDown(e, model.id),
-                onMouseEnter: () => setHoveredRowId(model.id),
-                onMouseLeave: () => setHoveredRowId(null),
-                role: "radio",
-                style: rowStyle,
-                tabIndex: -1,
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(RadioCircle, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: modelDescriptionStyles, children: model.description })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { style: modelControlRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { style: modelControlLabelStyles, children: "Configure reasoning:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-                        "button",
-                        {
-                          onClick: (e) => handleReasoningButtonClick(e, model.id),
-                          onMouseDown: () => setPressedButtonId(model.id),
-                          onMouseEnter: () => setHoveredButtonId(model.id),
-                          onMouseLeave: () => {
-                            setHoveredButtonId(null);
-                            setPressedButtonId(null);
-                          },
-                          onMouseUp: () => setPressedButtonId(null),
-                          style: {
-                            ...modelControlButtonStyles,
-                            ...reasoningStateStyles
-                          },
-                          type: "button",
-                          children: reasoningLevel
-                        }
-                      )
-                    ] })
-                  ] })
-                ]
-              },
-              model.id
-            )
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
-      ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-        codex_reasoning_dialog_default,
-        {
-          initialReasoning: resolveReasoning(activeModel.id),
-          model: activeModel,
-          onCancel: () => setActiveModelId(null),
-          onSave: (reasoning) => {
-            onReasoningChange(activeModel.id, reasoning);
-            setActiveModelId(null);
-          }
-        }
-      ) : null
-    ] });
-  };
-  var codex_default_model_card_default = (0, import_react21.memo)(CodexDefaultModelCard);
-
-  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react23 = __toESM(require_react());
-
-  // src/types/gemini-model-registry.ts
-  var GEMINI_RECOMMENDED_MODELS = [
-    {
-      id: "gemini-3-pro-preview",
-      displayName: "Gemini 3 Pro Preview",
-      description: "Most advanced reasoning Gemini model for complex problems.",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-3-flash-preview",
-      displayName: "Gemini 3 Flash Preview",
-      description: "Pro-grade reasoning with Flash-level latency and cost.",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["minimal", "low", "medium", "high"]
-    },
-    {
-      id: "gemini-2.5-pro",
-      displayName: "Gemini 2.5 Pro",
-      description: "Deep reasoning model with Think mode for complex use cases.",
-      status: "generally_available",
-      family: "gemini-2.5",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-2.5-flash",
-      displayName: "Gemini 2.5 Flash",
-      description: "High-throughput model for enterprise tasks.",
-      status: "generally_available",
-      family: "gemini-2.5",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-2.5-flash-lite",
-      displayName: "Gemini 2.5 Flash Lite",
-      description: "Most cost-efficient and fastest 2.5 model.",
-      status: "generally_available",
-      family: "gemini-2.5",
-      supportedThinkingLevels: ["low", "high"]
-    }
-  ];
-  var GEMINI_MODEL_ID_SET = new Set(
-    GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
-  );
-  var DEFAULT_GEMINI_MODEL_ID = "gemini-3-pro-preview";
-  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
-  var GEMINI_THINKING_LEVELS = [
-    {
-      name: "off",
-      description: "Disable model's internal thinking process.",
-      useCase: "Basic tasks, fastest response."
-    },
-    {
-      name: "minimal",
-      description: "Absolute minimum reasoning tokens.",
-      useCase: "Low-complexity tasks, very low latency."
-    },
-    {
-      name: "low",
-      description: "Balanced reasoning for simpler tasks.",
-      useCase: "General coding and quick queries."
-    },
-    {
-      name: "medium",
-      description: "Advanced reasoning for moderate complexity.",
-      useCase: "Standard development and problem solving."
-    },
-    {
-      name: "high",
-      description: "Maximum reasoning depth.",
-      useCase: "Complex refactoring and PhD-level research."
-    }
-  ];
-
-  // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
-  var import_react22 = __toESM(require_react());
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
-  var GeminiThinkingDialog = ({
-    model,
-    initialLevel,
-    onSave,
-    onCancel
-  }) => {
-    const [selectedLevel, setSelectedLevel] = (0, import_react22.useState)(initialLevel);
-    const options = GEMINI_THINKING_LEVELS.filter(
-      (level) => model.supportedThinkingLevels.includes(level.name)
-    ).map((level) => ({
-      value: level.name,
-      label: level.name,
-      description: level.description,
-      useCase: level.useCase,
-      isDefault: level.name === DEFAULT_GEMINI_THINKING_LEVEL
-    }));
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
-      ProviderOptionDialog,
-      {
-        ariaLabel: `Thinking level for ${model.displayName}`,
-        footer: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(import_jsx_runtime28.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("button", { onClick: onCancel, style: cancelButtonStyles3, type: "button", children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
-            "button",
-            {
-              onClick: () => onSave(selectedLevel),
-              style: saveButtonStyles3,
-              type: "button",
-              children: "Save"
-            }
-          )
-        ] }),
-        name: "gemini-thinking",
-        onCancel,
-        onChange: setSelectedLevel,
-        options,
-        selectedValue: selectedLevel,
-        subtitle: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session.",
-        title: `${model.displayName} thinking`
-      }
-    );
-  };
-  var { cancelButtonStyles: cancelButtonStyles3, saveButtonStyles: saveButtonStyles3 } = providerOptionDialogButtonStyles;
-  var gemini_thinking_dialog_default = GeminiThinkingDialog;
-
-  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime());
-  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
-    "div",
-    {
-      style: {
-        ...radioCircleStyles,
-        ...checked ? radioCircleSelectedStyles : {}
-      },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: radioCircleInnerStyles }) : null
-    }
-  );
-  var GeminiDefaultModelCard = ({
-    defaultModel,
-    thinkingLevelByModel,
-    onDefaultModelChange,
-    onThinkingChange
-  }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react23.useState)(
-      null
-    );
-    const [hoveredRowId, setHoveredRowId] = (0, import_react23.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react23.useState)(
-      null
-    );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react23.useState)(
-      null
-    );
-    const activeModel = GEMINI_RECOMMENDED_MODELS.find(
-      (model) => model.id === activeModelId
-    );
-    const resolveThinkingLevel = (modelId) => thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
-    const handleRowClick = (model) => {
-      onDefaultModelChange(model);
-    };
-    const handleRowKeyDown = (event, model) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onDefaultModelChange(model);
-      }
-    };
-    const handleThinkingButtonClick = (event, modelId) => {
-      event.stopPropagation();
-      setActiveModelId(modelId);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md" }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
-          const isSelected = defaultModel === model.id;
-          const isRowHovered = hoveredRowId === model.id;
-          const thinkingLevel = resolveThinkingLevel(model.id);
-          const isButtonHovered = hoveredButtonId === model.id;
-          const isButtonPressed = pressedButtonId === model.id;
-          let thinkingStateStyles = {};
-          if (isButtonPressed) {
-            thinkingStateStyles = modelControlButtonActiveStyles;
-          } else if (isButtonHovered) {
-            thinkingStateStyles = modelControlButtonHoverStyles;
-          }
-          const rowStyle = {
-            ...rowBaseStyles,
-            ...rowButtonResetStyles,
-            ...isSelected ? rowSelectedStyles : {},
-            ...!isSelected && isRowHovered ? rowHoverStyles : {}
-          };
-          return (
-            // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(
-              "div",
-              {
-                "aria-checked": isSelected,
-                onClick: () => handleRowClick(model.id),
-                onKeyDown: (event) => handleRowKeyDown(event, model.id),
-                onMouseEnter: () => setHoveredRowId(model.id),
-                onMouseLeave: () => setHoveredRowId(null),
-                role: "radio",
-                style: rowStyle,
-                tabIndex: -1,
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(RadioCircle2, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: modelDescriptionStyles, children: model.description })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { style: modelControlRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("span", { style: modelControlLabelStyles, children: "Configure thinking:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
-                        "button",
-                        {
-                          onClick: (e) => handleThinkingButtonClick(e, model.id),
-                          onMouseDown: () => setPressedButtonId(model.id),
-                          onMouseEnter: () => setHoveredButtonId(model.id),
-                          onMouseLeave: () => {
-                            setHoveredButtonId(null);
-                            setPressedButtonId(null);
-                          },
-                          onMouseUp: () => setPressedButtonId(null),
-                          style: {
-                            ...modelControlButtonStyles,
-                            ...thinkingStateStyles
-                          },
-                          type: "button",
-                          children: thinkingLevel
-                        }
-                      )
-                    ] })
-                  ] })
-                ]
-              },
-              model.id
-            )
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
-      ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(
-        gemini_thinking_dialog_default,
-        {
-          initialLevel: resolveThinkingLevel(activeModel.id),
-          model: activeModel,
-          onCancel: () => setActiveModelId(null),
-          onSave: (level) => {
-            onThinkingChange(activeModel.id, level);
-            setActiveModelId(null);
-          }
-        }
-      ) : null
-    ] });
-  };
-  var gemini_default_model_card_default = (0, import_react23.memo)(GeminiDefaultModelCard);
-
-  // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react26 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
-  var import_react25 = __toESM(require_react());
-
   // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
-  var import_react24 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
   var RESPONSE_MODE_OPTIONS = [
@@ -28394,7 +9089,7 @@ ${replacement}
   ];
 
   // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
   var copyStyles = {
     margin: 0,
     fontSize: "13px",
@@ -28468,9 +9163,9 @@ ${replacement}
     onModeChange,
     onStrictInstructionTextChange,
     onStrictSchemaTextChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(settings_card_default, { title: "Response Mode", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { style: copyStyles, children: "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior." }),
-    /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Response Mode", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: copyStyles, children: "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior." }),
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
       "button",
       {
         onClick: () => onModeChange(option.id),
@@ -28480,16 +9175,16 @@ ${replacement}
         },
         type: "button",
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { style: optionTitleStyles2, children: option.label }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { style: optionDescriptionStyles2, children: option.description })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionTitleStyles2, children: option.label }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionDescriptionStyles2, children: option.description })
         ]
       },
       option.id
     )) }),
-    responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: strictBlockStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+    responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: strictBlockStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "textarea",
           {
             onChange: (event) => onStrictSchemaTextChange(event.target.value),
@@ -28498,9 +9193,9 @@ ${replacement}
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
           "textarea",
           {
             onChange: (event) => onStrictInstructionTextChange(event.target.value),
@@ -28511,15 +9206,15 @@ ${replacement}
       ] })
     ] }) : null
   ] });
-  var response_mode_card_default = (0, import_react24.memo)(ResponseModeCard);
+  var response_mode_card_default = (0, import_react6.memo)(ResponseModeCard);
 
   // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime());
-  var GeneralResponseModeFacade = (props) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(response_mode_card_default, { ...props });
-  var general_response_mode_facade_default = (0, import_react25.memo)(GeneralResponseModeFacade);
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var GeneralResponseModeFacade = (props) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(response_mode_card_default, { ...props });
+  var general_response_mode_facade_default = (0, import_react7.memo)(GeneralResponseModeFacade);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     display: "flex",
     flexDirection: "column",
@@ -28531,7 +9226,7 @@ ${replacement}
     lineHeight: 1.4,
     margin: 0
   };
-  var buttonStyles2 = {
+  var buttonStyles = {
     alignSelf: "flex-start",
     border: "1px solid #3a3d41",
     background: "#0e639c",
@@ -28545,8 +9240,8 @@ ${replacement}
     const handleRestartCore = () => {
       postVsCodeMessage({ type: "core:restart-request" });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { style: wrapperStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         general_response_mode_facade_default,
         {
           onModeChange: props.onResponsePolicyModeChange,
@@ -28555,20 +9250,20 @@ ${replacement}
           responsePolicy: props.responsePolicy
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(settings_card_default, { title: "Core Controls", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("button", { onClick: handleRestartCore, style: buttonStyles2, type: "button", children: "Restart Core" })
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(settings_card_default, { title: "Core Controls", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
       ] })
     ] });
   };
-  var general_settings_default = (0, import_react26.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react8.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react28 = __toESM(require_react());
+  var import_react10 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react27 = __toESM(require_react());
-  var import_jsx_runtime33 = __toESM(require_jsx_runtime());
+  var import_react9 = __toESM(require_react());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -28605,7 +9300,7 @@ ${replacement}
     fontSize: "11px",
     border: "1px solid #3c3c3c"
   };
-  var buttonStyles3 = {
+  var buttonStyles2 = {
     minWidth: "160px",
     border: "1px solid #3a3d41",
     background: "#0e639c",
@@ -28616,14 +9311,14 @@ ${replacement}
     fontSize: "12px"
   };
   var buttonDisabledStyles = {
-    ...buttonStyles3,
+    ...buttonStyles2,
     background: "#2d2d30",
     color: "#9f9f9f",
     cursor: "not-allowed",
     borderColor: "#3c3c3c"
   };
   var pendingButtonStyles = {
-    ...buttonStyles3,
+    ...buttonStyles2,
     background: "#c18400",
     borderColor: "#f0c674",
     color: "#1b1b1b"
@@ -28657,20 +9352,20 @@ ${replacement}
     if (pendingConfirmation) {
       resolvedButtonStyle = pendingButtonStyles;
     } else if (hasUpdate && !disabled) {
-      resolvedButtonStyle = buttonStyles3;
+      resolvedButtonStyle = buttonStyles2;
     }
     const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { style: labelStyles2, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { style: versionTextStyles, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: labelStyles2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { style: versionTextStyles, children: [
           "Current: ",
           currentLabel,
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { style: chipStyles, children: latestLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -28679,13 +9374,13 @@ ${replacement}
           type: "button",
           children: buttonLabel
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { style: chipStyles, children: latestLabel })
+      ) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react27.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react9.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime34 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -28777,7 +9472,7 @@ ${replacement}
   };
   var WarningBanner = ({
     provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
   var AutoUpdateToggle = ({
     provider,
     enabled,
@@ -28786,7 +9481,7 @@ ${replacement}
   }) => {
     const providerLabel = resolveProviderLabel(provider);
     const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
       "label",
       {
         style: {
@@ -28795,7 +9490,7 @@ ${replacement}
           cursor: disabled ? "not-allowed" : "pointer"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             "input",
             {
               checked: enabled,
@@ -28805,12 +9500,12 @@ ${replacement}
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { style: toggleTitleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: toggleTitleStyles, children: [
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("p", { style: toggleDescriptionStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { style: toggleDescriptionStyles, children: [
               "Automatically check and update the ",
               packageLabel,
               " on core start. Manual updates remain available below."
@@ -28822,7 +9517,7 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime35 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var rowsContainerStyles = {
     display: "flex",
     flexDirection: "column",
@@ -28849,9 +9544,9 @@ ${replacement}
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react28.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react10.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react28.useMemo)(() => {
+    const rows = (0, import_react10.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -28901,7 +9596,7 @@ ${replacement}
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react28.useMemo)(() => {
+    const hasProviderVersions = (0, import_react10.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -28913,11 +9608,11 @@ ${replacement}
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react28.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react10.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react28.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react10.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -28926,7 +9621,7 @@ ${replacement}
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react28.useEffect)(() => {
+    (0, import_react10.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -28946,17 +9641,17 @@ ${replacement}
     } else if (provider === "codex") {
       title = "Codex Versions";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
       settings_card_default,
       {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("span", { style: metadataTextStyles, children: [
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
           formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             AutoUpdateToggle,
             {
               disabled: versions.loading,
@@ -28965,11 +9660,11 @@ ${replacement}
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: errorStyles, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             VersionRowItem,
             {
               disabled: isBusy,
@@ -28984,11 +9679,11 @@ ${replacement}
       }
     );
   };
-  var provider_versions_default = (0, import_react28.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react10.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/session-continuity-card.tsx
-  var import_react29 = __toESM(require_react());
-  var import_jsx_runtime36 = __toESM(require_jsx_runtime());
+  var import_react11 = __toESM(require_react());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var settingsLabelStyles = {
     display: "flex",
     flexDirection: "column",
@@ -29020,11 +9715,11 @@ ${replacement}
     max,
     onCommit
   }) => {
-    const [draft, setDraft] = import_react29.default.useState(() => String(value));
-    import_react29.default.useEffect(() => {
+    const [draft, setDraft] = import_react11.default.useState(() => String(value));
+    import_react11.default.useEffect(() => {
       setDraft(String(value));
     }, [value]);
-    const commitDraft = import_react29.default.useCallback(() => {
+    const commitDraft = import_react11.default.useCallback(() => {
       const trimmed = draft.trim();
       if (trimmed.length === 0) {
         setDraft(String(value));
@@ -29043,7 +9738,7 @@ ${replacement}
       onCommit(clamped);
       setDraft(String(clamped));
     }, [draft, max, min, onCommit, value]);
-    return /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
       "input",
       {
         autoComplete: "off",
@@ -29075,16 +9770,16 @@ ${replacement}
     onRemainingPercentThresholdChange,
     contextWindowTokenLimit,
     onContextWindowTokenLimitChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(settings_card_default, { title, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
-    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(settings_card_default, { title, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
+    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
       "label",
       {
         htmlFor: `${title}-context-window-token-limit`,
         style: settingsLabelStyles,
         children: [
           "Context window limit (tokens)",
-          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             ManualIntegerInput,
             {
               id: `${title}-context-window-token-limit`,
@@ -29097,14 +9792,14 @@ ${replacement}
         ]
       }
     ) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
       "label",
       {
         htmlFor: `${title}-remaining-percent-threshold`,
         style: settingsLabelStyles,
         children: [
           "Remaining context threshold (%)",
-          /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             ManualIntegerInput,
             {
               id: `${title}-remaining-percent-threshold`,
@@ -29118,11 +9813,11 @@ ${replacement}
       }
     )
   ] });
-  var session_continuity_card_default = import_react29.default.memo(SessionContinuityCard);
+  var session_continuity_card_default = import_react11.default.memo(SessionContinuityCard);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime37 = __toESM(require_jsx_runtime());
-  var containerStyles2 = {
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var containerStyles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -29236,8 +9931,8 @@ ${replacement}
         event.currentTarget.style.background = settingsColorTokens.actionPrimary;
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: containerStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         "button",
         {
           disabled: resetting,
@@ -29258,8 +9953,8 @@ ${replacement}
           children: resetting ? "Resetting..." : "Reset to Defaults"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -29272,7 +9967,7 @@ ${replacement}
             children: "Close"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime37.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -29298,7 +9993,7 @@ ${replacement}
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime38 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var headerStyles3 = {
     display: "flex",
     alignItems: "center",
@@ -29325,9 +10020,9 @@ ${replacement}
     alignItems: "center",
     justifyContent: "center"
   };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { style: headerStyles3, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { style: titleStyles3, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: headerStyles3, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: titleStyles3, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
       "button",
       {
         "aria-label": "Close settings",
@@ -29342,7 +10037,7 @@ ${replacement}
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react30 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -29357,8 +10052,8 @@ ${replacement}
 `;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime39 = __toESM(require_jsx_runtime());
-  var containerStyles3 = {
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var containerStyles2 = {
     marginTop: "20px",
     padding: "12px",
     background: "#1a1a1a",
@@ -29376,14 +10071,14 @@ ${replacement}
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)("div", { style: containerStyles3, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { style: titleStyles4, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: titleStyles4, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime40 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -29410,8 +10105,8 @@ ${replacement}
   var noteStyles2 = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
       "input",
       {
         checked: enabled,
@@ -29420,12 +10115,12 @@ ${replacement}
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("div", { style: titleStyles5, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("div", { style: descriptionStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: titleStyles5, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: descriptionStyles4, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { style: noteStyles2, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -29433,8 +10128,8 @@ ${replacement}
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime41 = __toESM(require_jsx_runtime());
-  var containerStyles4 = {
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var containerStyles3 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
     paddingTop: "15px"
@@ -29449,7 +10144,7 @@ ${replacement}
     alignItems: "center",
     gap: "8px"
   };
-  var buttonStyles4 = {
+  var buttonStyles3 = {
     width: "28px",
     height: "28px",
     background: "#2d2d30",
@@ -29495,20 +10190,20 @@ ${replacement}
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { style: containerStyles4, children: /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("div", { style: titleStyles6, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles6, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
-            style: buttonStyles4,
+            style: buttonStyles3,
             title: "Decrease by 1000",
             type: "button",
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
@@ -29520,22 +10215,22 @@ ${replacement}
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
-            style: buttonStyles4,
+            style: buttonStyles3,
             title: "Increase by 1000",
             type: "button",
             children: "+"
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime41.jsxs)("div", { style: helperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: helperStyles, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime41.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -29543,7 +10238,7 @@ ${replacement}
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime42 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
@@ -29558,19 +10253,19 @@ ${replacement}
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(thinking_pro_tip_default, {})
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react30.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react12.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react31 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
@@ -29757,7 +10452,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord17 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord2 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
   var clampContinuityRemainingPercentThreshold = (value) => Math.min(
     MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -29768,7 +10463,7 @@ ${replacement}
     Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
   );
   var mapGeminiSessionContinuitySettings = (value) => {
-    if (!isRecord17(value)) {
+    if (!isRecord2(value)) {
       return {
         contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
         remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
@@ -29784,7 +10479,7 @@ ${replacement}
     const nextThinkingLevelByModel = {
       ...DEFAULT_GEMINI_THINKING_BY_MODEL
     };
-    if (!isRecord17(value)) {
+    if (!isRecord2(value)) {
       return nextThinkingLevelByModel;
     }
     for (const [modelId, level] of Object.entries(value)) {
@@ -29848,7 +10543,7 @@ ${replacement}
   var RESPONSE_MODE_IDS = new Set(
     RESPONSE_MODE_OPTIONS.map((option) => option.id)
   );
-  var isRecord18 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var normalizeText = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value : fallback;
   var normalizeSchemaText = (value) => {
     const next = normalizeText(
@@ -29857,7 +10552,7 @@ ${replacement}
     );
     try {
       const parsed = JSON.parse(next);
-      if (!isRecord18(parsed)) {
+      if (!isRecord3(parsed)) {
         return DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText;
       }
       return `${JSON.stringify(parsed, null, 2)}
@@ -29895,7 +10590,7 @@ ${replacement}
     accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
     return accumulator;
   }, {});
-  var isRecord19 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -29914,7 +10609,7 @@ ${replacement}
   });
   var mapContinuity = (value) => {
     const numericValue = Number(
-      isRecord19(value) ? value.remainingPercentThreshold : void 0
+      isRecord4(value) ? value.remainingPercentThreshold : void 0
     );
     const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
       MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
@@ -29941,7 +10636,7 @@ ${replacement}
   };
   var mapCodexReasoningByModel = (value) => {
     const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
-    if (!isRecord19(value)) {
+    if (!isRecord4(value)) {
       return nextReasoningByModel;
     }
     for (const [modelId, reasoning] of Object.entries(value)) {
@@ -30000,18 +10695,18 @@ ${replacement}
   // src/client/ui/src/components/settings/use-settings-state.ts
   var RESET_DELAY_MS = 100;
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react31.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react31.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react31.useState)(false);
-    const [saving, setSaving] = (0, import_react31.useState)(false);
-    const [resetting, setResetting] = (0, import_react31.useState)(false);
-    const [versions, setVersions] = (0, import_react31.useState)(() => ({
+    const initialSettingsRef = (0, import_react13.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react13.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react13.useState)(false);
+    const [saving, setSaving] = (0, import_react13.useState)(false);
+    const [resetting, setResetting] = (0, import_react13.useState)(false);
+    const [versions, setVersions] = (0, import_react13.useState)(() => ({
       data: null,
       loading: true,
       error: null,
       updatingTargets: []
     }));
-    (0, import_react31.useEffect)(() => {
+    (0, import_react13.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -30048,23 +10743,23 @@ ${replacement}
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react31.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react13.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react31.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react13.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react31.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react13.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleClaudeContinuityRemainingPercentThresholdChange = (0, import_react31.useCallback)(
+    const handleClaudeContinuityRemainingPercentThresholdChange = (0, import_react13.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -30076,7 +10771,7 @@ ${replacement}
       },
       [settings, updateSettings]
     );
-    const handleCodexContinuityRemainingPercentThresholdChange = (0, import_react31.useCallback)(
+    const handleCodexContinuityRemainingPercentThresholdChange = (0, import_react13.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -30088,7 +10783,7 @@ ${replacement}
       },
       [settings, updateSettings]
     );
-    const handleGeminiContinuityRemainingPercentThresholdChange = (0, import_react31.useCallback)(
+    const handleGeminiContinuityRemainingPercentThresholdChange = (0, import_react13.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -30100,7 +10795,7 @@ ${replacement}
       },
       [settings, updateSettings]
     );
-    const handleGeminiContextWindowTokenLimitChange = (0, import_react31.useCallback)(
+    const handleGeminiContextWindowTokenLimitChange = (0, import_react13.useCallback)(
       (contextWindowTokenLimit) => {
         if (!Number.isFinite(contextWindowTokenLimit)) {
           return;
@@ -30112,62 +10807,62 @@ ${replacement}
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react31.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react13.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react31.useCallback)(
+    const handleCodexReasoningChange = (0, import_react13.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react31.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react13.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleResponsePolicyModeChange = (0, import_react31.useCallback)(
+    const handleResponsePolicyModeChange = (0, import_react13.useCallback)(
       (mode) => {
         updateSettings(updateResponsePolicyMode(settings, mode));
       },
       [settings, updateSettings]
     );
-    const handleStrictSchemaTextChange = (0, import_react31.useCallback)(
+    const handleStrictSchemaTextChange = (0, import_react13.useCallback)(
       (value) => {
         updateSettings(updateStrictSchemaText(settings, value));
       },
       [settings, updateSettings]
     );
-    const handleStrictInstructionTextChange = (0, import_react31.useCallback)(
+    const handleStrictInstructionTextChange = (0, import_react13.useCallback)(
       (value) => {
         updateSettings(updateStrictInstructionText(settings, value));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react31.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react13.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingChange = (0, import_react31.useCallback)(
+    const handleGeminiThinkingChange = (0, import_react13.useCallback)(
       (modelId, level) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react31.useCallback)(() => {
+    const handleSave = (0, import_react13.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react31.useCallback)(() => {
+    const handleReset = (0, import_react13.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -30175,7 +10870,7 @@ ${replacement}
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react31.useCallback)(
+    const handleUpdateProvider = (0, import_react13.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -30217,8 +10912,8 @@ ${replacement}
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime43 = __toESM(require_jsx_runtime());
-  var containerStyles5 = {
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var containerStyles4 = {
     height: "100%",
     display: "flex",
     flexDirection: "column",
@@ -30280,7 +10975,7 @@ ${replacement}
     onClose,
     mode = "full"
   }) => {
-    const [activeTab, setActiveTab] = (0, import_react32.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react14.useState)("claude");
     const {
       settings,
       hasChanges,
@@ -30305,36 +11000,36 @@ ${replacement}
       handleReset,
       handleUpdateProvider
     } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { style: containerStyles5, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(settings_header_default, { onClose }),
-      mode === "settings-only" ? /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { style: modeNoticeStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { style: modeNoticeTitleStyles, children: "Settings only mode" }),
-        /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { children: "Sessions and chats are available in Project Manager." })
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(settings_header_default, { onClose }),
+      mode === "settings-only" ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: modeNoticeStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: modeNoticeTitleStyles, children: "Settings only mode" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { children: "Sessions and chats are available in Project Manager." })
       ] }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab2) => /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
         "button",
         {
-          onClick: () => setActiveTab(tab2.id),
+          onClick: () => setActiveTab(tab.id),
           style: {
             ...tabButtonStyles,
-            ...activeTab === tab2.id ? activeTabStyles : null
+            ...activeTab === tab.id ? activeTabStyles : null
           },
           type: "button",
-          children: tab2.label
+          children: tab.label
         },
-        tab2.id
+        tab.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -30344,7 +11039,7 @@ ${replacement}
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               thinking_settings_default,
               {
                 enabled: settings.providers.claude.thinking.enabled,
@@ -30352,7 +11047,7 @@ ${replacement}
                 onChange: handleThinkingSettingsChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleClaudeContinuityRemainingPercentThresholdChange,
@@ -30363,7 +11058,7 @@ ${replacement}
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime43.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             general_settings_default,
             {
               onResponsePolicyModeChange: handleResponsePolicyModeChange,
@@ -30374,8 +11069,8 @@ ${replacement}
           ) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -30384,7 +11079,7 @@ ${replacement}
                 reasoningByModel: settings.providers.codex.reasoningByModel
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -30394,7 +11089,7 @@ ${replacement}
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleCodexContinuityRemainingPercentThresholdChange,
@@ -30404,8 +11099,8 @@ ${replacement}
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime43.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
@@ -30414,7 +11109,7 @@ ${replacement}
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -30424,7 +11119,7 @@ ${replacement}
               versions
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             session_continuity_card_default,
             {
               contextWindowTokenLimit: settings.providers.gemini.sessionContinuity.contextWindowTokenLimit,
@@ -30436,7 +11131,7 @@ ${replacement}
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime43.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -30449,7 +11144,7 @@ ${replacement}
       )
     ] });
   };
-  var settings_view_default = import_react32.default.memo(SettingsView);
+  var settings_view_default = import_react14.default.memo(SettingsView);
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -30460,13 +11155,13 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react33 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react33.useState)(false);
-    const openSettings = (0, import_react33.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react15.useState)(false);
+    const openSettings = (0, import_react15.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react33.useCallback)(() => {
+    const closeSettings = (0, import_react15.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -30478,7 +11173,7 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react34 = __toESM(require_react());
+  var import_react16 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -30625,76 +11320,76 @@ ${replacement}
     }
     onCoreLoadingStatus(message.payload);
   };
-  var dispatchSessionMessage = (message, handlers2) => {
+  var dispatchSessionMessage = (message, handlers) => {
     switch (message.type) {
       case "session:created":
-        handleSessionCreatedMessage(message, handlers2.onSessionCreated);
+        handleSessionCreatedMessage(message, handlers.onSessionCreated);
         return true;
       case "session:clearAll":
-        handlers2.onSessionClearAll();
+        handlers.onSessionClearAll();
         return true;
       case "session:focusLast":
-        handlers2.onSessionFocusLast();
+        handlers.onSessionFocusLast();
         return true;
       case "session:message":
-        handleSessionMessageEvent(message, handlers2.onSessionMessage);
+        handleSessionMessageEvent(message, handlers.onSessionMessage);
         return true;
       case "session:deleted":
-        handleSessionDeletedMessage(message, handlers2.onSessionDeleted);
+        handleSessionDeletedMessage(message, handlers.onSessionDeleted);
         return true;
       case "session:binding":
-        handleSessionBindingMessage(message, handlers2.onSessionBinding);
+        handleSessionBindingMessage(message, handlers.onSessionBinding);
         return true;
       case "session:history":
-        handleSessionHistoryMessage(message, handlers2.onSessionHistory);
+        handleSessionHistoryMessage(message, handlers.onSessionHistory);
         return true;
       case "session:stream":
-        handleSessionStreamMessage(message, handlers2.onSessionStream);
+        handleSessionStreamMessage(message, handlers.onSessionStream);
         return true;
       default:
         return false;
     }
   };
-  var dispatchWebviewMessage = (rawMessage, handlers2) => {
+  var dispatchWebviewMessage = (rawMessage, handlers) => {
     if (!isIncomingMessage2(rawMessage)) {
       return;
     }
     const message = rawMessage;
     if (dispatchSessionMessage(message, {
-      onSessionCreated: handlers2.onSessionCreated,
-      onSessionClearAll: handlers2.onSessionClearAll,
-      onSessionFocusLast: handlers2.onSessionFocusLast,
-      onSessionMessage: handlers2.onSessionMessage,
-      onSessionDeleted: handlers2.onSessionDeleted,
-      onSessionBinding: handlers2.onSessionBinding,
-      onSessionHistory: handlers2.onSessionHistory,
-      onSessionStream: handlers2.onSessionStream
+      onSessionCreated: handlers.onSessionCreated,
+      onSessionClearAll: handlers.onSessionClearAll,
+      onSessionFocusLast: handlers.onSessionFocusLast,
+      onSessionMessage: handlers.onSessionMessage,
+      onSessionDeleted: handlers.onSessionDeleted,
+      onSessionBinding: handlers.onSessionBinding,
+      onSessionHistory: handlers.onSessionHistory,
+      onSessionStream: handlers.onSessionStream
     })) {
       return;
     }
     switch (message.type) {
       case "core:connection": {
-        if (handlers2.onCoreConnectionStatus && message.payload) {
+        if (handlers.onCoreConnectionStatus && message.payload) {
           const candidate = message.payload;
           const status = candidate.status;
           if (typeof status === "string") {
             const detail = typeof candidate.detail === "string" ? candidate.detail : void 0;
-            handlers2.onCoreConnectionStatus(status, detail);
+            handlers.onCoreConnectionStatus(status, detail);
           }
         }
         return;
       }
       case "providerPicker:open":
-        handleProviderPickerOpenMessage(message, handlers2.onProviderPickerOpen);
+        handleProviderPickerOpenMessage(message, handlers.onProviderPickerOpen);
         return;
       case "ui:showSettings":
-        handlers2.onShowSettings();
+        handlers.onShowSettings();
         return;
       case "core:state":
-        handleCoreStateMessage(message, handlers2.onCoreState);
+        handleCoreStateMessage(message, handlers.onCoreState);
         return;
       case "core:loading-status":
-        handleCoreLoadingStatusMessage(message, handlers2.onCoreLoadingStatus);
+        handleCoreLoadingStatusMessage(message, handlers.onCoreLoadingStatus);
         return;
       default:
         return;
@@ -30717,7 +11412,7 @@ ${replacement}
     onSessionHistory,
     onUseProjectManager
   }) => {
-    (0, import_react34.useEffect)(() => {
+    (0, import_react16.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         if (isUseProjectManagerMessage(event.data)) {
           onUseProjectManager?.();
@@ -30760,7 +11455,7 @@ ${replacement}
   };
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_jsx_runtime44 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var settingsOnlyLayoutStyles = {
     minHeight: "100vh",
     display: "flex",
@@ -30817,11 +11512,11 @@ ${replacement}
   };
   var SettingsOnlyHost = () => {
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleShowSettings = (0, import_react35.useCallback)(() => {
+    const handleShowSettings = (0, import_react17.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    (0, import_react35.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       activateRoot();
     }, []);
     useWebviewMessageHandler({
@@ -30831,12 +11526,12 @@ ${replacement}
       onSessionFocusLast: noopVoidHandler,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime44.jsxs)("section", { style: settingsOnlyCardStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
-        /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
-        /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
-        /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { style: settingsOnlyCardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "button",
           {
             onClick: handleShowSettings,
@@ -30846,782 +11541,17 @@ ${replacement}
           }
         )
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(settings_view_default, { mode: "settings-only", onClose: closeSettings }) }) }) : null
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(settings_view_default, { mode: "settings-only", onClose: closeSettings }) }) }) : null
     ] });
   };
-
-  // src/client/ui/src/app-host/use-idea-collector.ts
-  var import_react36 = __toESM(require_react());
-  var useIdeaCollector = (fallbackSendMessage) => {
-    const serviceRef = (0, import_react36.useRef)(new IdeaCollectorService());
-    const questionnaireServiceRef = (0, import_react36.useRef)(new IdeaQuestionnaireService());
-    const service = serviceRef.current;
-    const questionnaireService = questionnaireServiceRef.current;
-    (0, import_react36.useEffect)(() => {
-      const handleStreamEvent = (candidate) => {
-        if (candidate.type !== "session:stream") {
-          return false;
-        }
-        const sessionId = candidate.payload?.sessionId;
-        if (typeof sessionId !== "string") {
-          return true;
-        }
-        service.handleStreamEvent(sessionId, candidate.payload?.event);
-        return true;
-      };
-      const handleAssistantMessage = (candidate) => {
-        if (candidate.type !== "session:message") {
-          return;
-        }
-        const sessionId = candidate.payload?.sessionId;
-        if (typeof sessionId !== "string") {
-          return;
-        }
-        const message = candidate.payload?.message;
-        if (message?.role !== "assistant") {
-          return;
-        }
-        if (typeof message.content !== "string") {
-          return;
-        }
-        service.recordAssistantMessage(sessionId, message.content);
-      };
-      const handleSessionEvent = (event) => {
-        const candidate = event.data;
-        if (handleStreamEvent(candidate)) {
-          return;
-        }
-        handleAssistantMessage(candidate);
-      };
-      window.addEventListener("message", handleSessionEvent);
-      return () => {
-        window.removeEventListener("message", handleSessionEvent);
-      };
-    }, [service]);
-    const startCollection = (0, import_react36.useCallback)(
-      (sessionId) => {
-        service.startCollection(sessionId);
-      },
-      [service]
-    );
-    const sendMessage = (0, import_react36.useCallback)(
-      (sessionId, content3) => {
-        if (service.isIdeaCollectorSession(sessionId)) {
-          if (!service.isQuestionnairePending(sessionId)) {
-            const outputPaths = service.getOutputPathsForSessionId(sessionId);
-            const question = service.getLastAssistantMessage(sessionId);
-            if (outputPaths && question) {
-              questionnaireService.appendClarificationAnswer(
-                sessionId,
-                outputPaths,
-                question,
-                content3
-              ).catch(() => {
-              });
-            }
-          }
-          service.continueConversation(sessionId, content3);
-          return;
-        }
-        fallbackSendMessage(sessionId, content3);
-      },
-      [fallbackSendMessage, questionnaireService, service]
-    );
-    return { startCollection, sendMessage };
-  };
-
-  // src/client/ui/src/app-host/use-provider-picker-open-handler.ts
-  var import_react37 = __toESM(require_react());
-  var isFlowStageId = (value) => value === "chat" || value === "idea" || value === "spec" || value === "plan" || value === "execute";
-  var useProviderPickerOpenHandler = (openPicker, selectStage, lockStageSelection) => (0, import_react37.useCallback)(
-    (providers, stage) => {
-      activateRoot();
-      if (providers.length === 0) {
-        return;
-      }
-      openPicker(providers);
-      if (stage && isFlowStageId(stage)) {
-        lockStageSelection();
-        selectStage(stage);
-      }
-    },
-    [lockStageSelection, openPicker, selectStage]
-  );
-
-  // src/client/ui/src/components/action-bar/index.tsx
-  var import_react39 = __toESM(require_react());
-
-  // src/client/ui/src/components/action-bar/context-form.tsx
-  var import_jsx_runtime45 = __toESM(require_jsx_runtime());
-  var ActionBarContextForm = ({
-    mode,
-    title,
-    name: name2,
-    description,
-    controlsDisabled,
-    statusMessage,
-    onNameChange,
-    onDescriptionChange,
-    onSubmit,
-    onCancel
-  }) => /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)(import_jsx_runtime45.Fragment, { children: [
-    mode ? /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("form", { className: "action-bar__context-form", onSubmit, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("span", { className: "action-bar__context-form-title", children: title }),
-      /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
-        "input",
-        {
-          "aria-label": "Name",
-          className: "action-bar__context-input",
-          onChange: (event) => onNameChange(event.target.value),
-          placeholder: "Name",
-          type: "text",
-          value: name2
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
-        "input",
-        {
-          "aria-label": "Description",
-          className: "action-bar__context-input",
-          onChange: (event) => onDescriptionChange(event.target.value),
-          placeholder: "Description (optional)",
-          type: "text",
-          value: description
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime45.jsxs)("div", { className: "action-bar__context-form-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
-          "button",
-          {
-            className: "action-bar__context-button",
-            disabled: controlsDisabled,
-            type: "submit",
-            children: "Create"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime45.jsx)(
-          "button",
-          {
-            className: "action-bar__context-button",
-            onClick: onCancel,
-            type: "button",
-            children: "Cancel"
-          }
-        )
-      ] })
-    ] }) : null,
-    statusMessage ? /* @__PURE__ */ (0, import_jsx_runtime45.jsx)("output", { "aria-live": "polite", className: "action-bar__context-status", children: statusMessage }) : null
-  ] });
-
-  // src/client/ui/src/components/action-bar/use-initiative-context.ts
-  var import_react38 = __toESM(require_react());
-
-  // src/client/ui/src/api/orchestrator/initiatives-client.ts
-  var INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
-  var isRecord20 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var isInitiativeSummary = (value) => {
-    if (!isRecord20(value)) {
-      return false;
-    }
-    return typeof value.initiativeSlug === "string" && typeof value.displayName === "string";
-  };
-  var parseInitiatives = (value) => {
-    if (!isRecord20(value)) {
-      return [];
-    }
-    const raw = value.initiatives;
-    if (!Array.isArray(raw)) {
-      return [];
-    }
-    const initiatives = [];
-    for (const entry of raw) {
-      if (!isInitiativeSummary(entry)) {
-        continue;
-      }
-      initiatives.push({
-        initiativeSlug: entry.initiativeSlug,
-        displayName: entry.displayName,
-        description: typeof entry.description === "string" ? entry.description : void 0,
-        currentRunId: typeof entry.currentRunId === "string" ? entry.currentRunId : void 0
-      });
-    }
-    return initiatives;
-  };
-  var parseCreatedInitiative = (value) => {
-    if (!isRecord20(value)) {
-      return null;
-    }
-    const initiative = value.initiative;
-    if (!isInitiativeSummary(initiative)) {
-      return null;
-    }
-    return {
-      initiativeSlug: initiative.initiativeSlug,
-      displayName: initiative.displayName,
-      description: typeof initiative.description === "string" ? initiative.description : void 0,
-      currentRunId: typeof initiative.currentRunId === "string" ? initiative.currentRunId : void 0
-    };
-  };
-  var buildInitiativesUrl = (httpUrl, workspacePath) => {
-    const url = new URL(joinUrl2(httpUrl, INITIATIVES_ENDPOINT));
-    url.searchParams.set("workspacePath", workspacePath);
-    return url.toString();
-  };
-  var listInitiatives = async (httpUrl, workspacePath) => {
-    try {
-      const response = await fetch(buildInitiativesUrl(httpUrl, workspacePath), {
-        method: "GET"
-      });
-      if (!response.ok) {
-        return {
-          ok: false,
-          error: `Failed to load initiatives (HTTP ${response.status}).`
-        };
-      }
-      const payload = await response.json();
-      return { ok: true, data: parseInitiatives(payload) };
-    } catch {
-      return { ok: false, error: "Failed to reach CodeAI Hub core." };
-    }
-  };
-  var createInitiative = async (httpUrl, workspacePath, input) => {
-    try {
-      const response = await fetch(buildInitiativesUrl(httpUrl, workspacePath), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          workspacePath,
-          displayName: input.displayName,
-          description: input.description,
-          createInitialRun: input.createInitialRun
-        })
-      });
-      if (!response.ok) {
-        return {
-          ok: false,
-          error: `Failed to create initiative (HTTP ${response.status}).`
-        };
-      }
-      const payload = await response.json();
-      const initiative = parseCreatedInitiative(payload);
-      if (!initiative) {
-        return { ok: false, error: "Invalid initiative response payload." };
-      }
-      return { ok: true, data: initiative };
-    } catch {
-      return { ok: false, error: "Failed to reach CodeAI Hub core." };
-    }
-  };
-
-  // src/client/ui/src/components/action-bar/use-initiative-context.ts
-  var resolveWorkspacePath = () => {
-    const globalScope3 = window;
-    const workspacePath = globalScope3.__CODEAI_CORE_CONFIG?.workspacePath;
-    if (typeof workspacePath !== "string" || workspacePath.length === 0) {
-      return null;
-    }
-    return workspacePath;
-  };
-  var useInitiativeContext = (disabled) => {
-    const [initiatives, setInitiatives] = (0, import_react38.useState)([]);
-    const [selectedInitiativeSlug, setSelectedInitiativeSlug] = (0, import_react38.useState)(null);
-    const [statusMessage, setStatusMessage] = (0, import_react38.useState)(null);
-    const coreHttpUrl = (0, import_react38.useMemo)(() => resolveCoreHttpUrl2(), []);
-    const workspacePath = (0, import_react38.useMemo)(() => resolveWorkspacePath(), []);
-    const hasWorkspace = Boolean(coreHttpUrl && workspacePath);
-    const clearStatus = (0, import_react38.useCallback)(() => {
-      setStatusMessage(null);
-    }, []);
-    const refreshInitiatives = (0, import_react38.useCallback)(
-      async (preferredSlug) => {
-        if (!(coreHttpUrl && workspacePath)) {
-          return;
-        }
-        const result = await listInitiatives(coreHttpUrl, workspacePath);
-        if (!result.ok) {
-          setInitiatives([]);
-          return;
-        }
-        setInitiatives([...result.data]);
-        const candidate = preferredSlug ?? selectedInitiativeSlug;
-        const fallback = candidate && result.data.some(
-          (initiative) => initiative.initiativeSlug === candidate
-        ) ? candidate : result.data[0]?.initiativeSlug ?? null;
-        setSelectedInitiativeSlug(fallback);
-      },
-      [coreHttpUrl, selectedInitiativeSlug, workspacePath]
-    );
-    (0, import_react38.useEffect)(() => {
-      if (disabled || !hasWorkspace) {
-        return;
-      }
-      refreshInitiatives().catch(() => {
-      });
-    }, [disabled, hasWorkspace, refreshInitiatives]);
-    const selectedInitiative = (0, import_react38.useMemo)(
-      () => initiatives.find(
-        (initiative) => initiative.initiativeSlug === selectedInitiativeSlug
-      ) ?? null,
-      [initiatives, selectedInitiativeSlug]
-    );
-    const initiativeTitle = selectedInitiative ? [selectedInitiative.displayName, selectedInitiative.description].filter(Boolean).join(" \u2014 ") : "Select initiative";
-    const handleInitiativeChange = (0, import_react38.useCallback)(
-      (event) => {
-        const nextSlug = event.target.value;
-        setSelectedInitiativeSlug(nextSlug.length > 0 ? nextSlug : null);
-      },
-      []
-    );
-    const createInitiative2 = (0, import_react38.useCallback)(
-      async (input) => {
-        if (!(coreHttpUrl && workspacePath)) {
-          setStatusMessage("Workspace path is unavailable.");
-          return false;
-        }
-        const displayName = input.displayName.trim();
-        if (!displayName) {
-          setStatusMessage("Provide an initiative name.");
-          return false;
-        }
-        const result = await createInitiative(coreHttpUrl, workspacePath, {
-          displayName,
-          description: input.description?.trim() || void 0
-        });
-        if (!result.ok) {
-          setStatusMessage(result.error);
-          return false;
-        }
-        await refreshInitiatives(result.data.initiativeSlug);
-        setStatusMessage(null);
-        return true;
-      },
-      [coreHttpUrl, refreshInitiatives, workspacePath]
-    );
-    return {
-      initiatives,
-      selectedInitiativeSlug,
-      initiativeTitle,
-      canStartFlow: Boolean(selectedInitiativeSlug),
-      controlsDisabled: disabled || !hasWorkspace,
-      statusMessage,
-      handleInitiativeChange,
-      createInitiative: createInitiative2,
-      clearStatus
-    };
-  };
-
-  // src/client/ui/src/components/action-bar/index.tsx
-  var import_jsx_runtime46 = __toESM(require_jsx_runtime());
-  var BUTTONS = [
-    { id: "startChat", label: ["Simple", "Chat"] },
-    { id: "startIdea", label: ["Idea", ""] },
-    { id: "startSpec", label: ["Spec", ""] },
-    { id: "startPlan", label: ["Plan", ""] },
-    { id: "startExecute", label: ["Execute", ""] }
-  ];
-  var CHAT_BUTTONS = BUTTONS.filter((button) => button.id === "startChat");
-  var FLOW_BUTTONS = BUTTONS.filter((button) => button.id !== "startChat");
-  var ActionBar = ({ disabled = false }) => {
-    const {
-      initiatives,
-      selectedInitiativeSlug,
-      initiativeTitle,
-      canStartFlow,
-      controlsDisabled,
-      statusMessage,
-      handleInitiativeChange,
-      createInitiative: createInitiative2,
-      clearStatus
-    } = useInitiativeContext(disabled);
-    const [createMode, setCreateMode] = (0, import_react39.useState)(null);
-    const [draftName, setDraftName] = (0, import_react39.useState)("");
-    const [draftDescription, setDraftDescription] = (0, import_react39.useState)("");
-    const initiativePlaceholder = initiatives.length === 0 ? "No initiatives yet" : "Select initiative";
-    const formTitle = "New initiative";
-    const handleStartCreateInitiative = (0, import_react39.useCallback)(() => {
-      clearStatus();
-      setCreateMode("initiative");
-      setDraftName("");
-      setDraftDescription("");
-    }, [clearStatus]);
-    const handleCancelCreate = (0, import_react39.useCallback)(() => {
-      setCreateMode(null);
-      setDraftName("");
-      setDraftDescription("");
-    }, []);
-    const handleSubmitCreate = (0, import_react39.useCallback)(
-      async (event) => {
-        event.preventDefault();
-        if (!createMode) {
-          return;
-        }
-        const input = {
-          displayName: draftName,
-          description: draftDescription
-        };
-        const success = createMode === "initiative" ? await createInitiative2(input) : false;
-        if (success) {
-          setCreateMode(null);
-          setDraftName("");
-          setDraftDescription("");
-        }
-      },
-      [createInitiative2, createMode, draftDescription, draftName]
-    );
-    const handleClick = (0, import_react39.useCallback)(
-      (command) => {
-        if (command !== "startChat" && !canStartFlow) {
-          return;
-        }
-        if (disabled) {
-          return;
-        }
-        activateRoot();
-        postVsCodeMessage({ command });
-      },
-      [canStartFlow, disabled]
-    );
-    const flowDisabled = disabled || !canStartFlow;
-    return /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("header", { className: "action-bar", children: /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "action-bar__surface", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
-        "div",
-        {
-          "aria-hidden": "true",
-          className: "action-bar__rail action-bar__rail--top"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
-        "div",
-        {
-          "aria-hidden": "true",
-          className: "action-bar__rail action-bar__rail--bottom"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "action-bar__context", children: /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "action-bar__context-group", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("label", { className: "action-bar__context-label", htmlFor: "initiative", children: "Initiative" }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "action-bar__context-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(
-            "select",
-            {
-              "aria-label": "Initiative",
-              className: "action-bar__context-select",
-              disabled: controlsDisabled,
-              id: "initiative",
-              onChange: handleInitiativeChange,
-              title: initiativeTitle,
-              value: selectedInitiativeSlug ?? "",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("option", { disabled: true, value: "", children: initiativePlaceholder }),
-                initiatives.map((initiative) => /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
-                  "option",
-                  {
-                    value: initiative.initiativeSlug,
-                    children: initiative.displayName
-                  },
-                  initiative.initiativeSlug
-                ))
-              ]
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
-            "button",
-            {
-              className: "action-bar__context-button",
-              disabled: controlsDisabled,
-              onClick: handleStartCreateInitiative,
-              type: "button",
-              children: "New"
-            }
-          )
-        ] })
-      ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsx)(
-        ActionBarContextForm,
-        {
-          controlsDisabled,
-          description: draftDescription,
-          mode: createMode,
-          name: draftName,
-          onCancel: handleCancelCreate,
-          onDescriptionChange: setDraftDescription,
-          onNameChange: setDraftName,
-          onSubmit: handleSubmitCreate,
-          statusMessage,
-          title: formTitle
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)("div", { className: "action-bar__buttons", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--chat", children: CHAT_BUTTONS.map(({ id, label }) => {
-          const ariaLabel = label.filter(Boolean).join(" ");
-          return /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(
-            "button",
-            {
-              "aria-label": ariaLabel,
-              className: "action-bar__button",
-              disabled,
-              onClick: () => handleClick(id),
-              type: "button",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "action-bar__line", children: label[0] }),
-                /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "action-bar__line", children: label[1] })
-              ]
-            },
-            id
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("div", { className: "action-bar__button-zone action-bar__button-zone--flow", children: FLOW_BUTTONS.map(({ id, label }) => {
-          const ariaLabel = label.filter(Boolean).join(" ");
-          return /* @__PURE__ */ (0, import_jsx_runtime46.jsxs)(
-            "button",
-            {
-              "aria-label": ariaLabel,
-              className: "action-bar__button",
-              disabled: flowDisabled,
-              onClick: () => handleClick(id),
-              type: "button",
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "action-bar__line", children: label[0] }),
-                /* @__PURE__ */ (0, import_jsx_runtime46.jsx)("span", { className: "action-bar__line", children: label[1] })
-              ]
-            },
-            id
-          );
-        }) })
-      ] })
-    ] }) });
-  };
-  var action_bar_default = ActionBar;
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime47 = __toESM(require_jsx_runtime());
-  var SETTINGS_ONLY_MODE = true;
-  var FullAppHost = () => {
-    const [coreStatus, setCoreStatus] = (0, import_react40.useState)("connecting");
-    const [coreStatusDetail, setCoreStatusDetail] = (0, import_react40.useState)();
-    const [coreFinalized, setCoreFinalized] = (0, import_react40.useState)(false);
-    const [messages, setMessages] = (0, import_react40.useState)(
-      createDefaultMessages
-    );
-    const [activeMessageIndex, setActiveMessageIndex] = (0, import_react40.useState)(0);
-    const {
-      pickerState,
-      providerLabels,
-      selectedStage,
-      stageSelectionLocked,
-      openPicker,
-      confirmSelection,
-      cancelSelection,
-      resetPicker,
-      selectStage,
-      clearStageSelection,
-      lockStageSelection
-    } = useProviderPickerState();
-    const { settings } = useSettingsState();
-    const {
-      sessions,
-      snapshots,
-      activeSessionId,
-      handleSessionCreated,
-      hydrateFromCoreState,
-      handleSessionMessageEvent: handleSessionMessageEvent2,
-      handleSessionHistoryEvent,
-      handleSessionDeleted,
-      handleSessionBindingUpdate,
-      clearSessions,
-      focusLastSession,
-      selectSession,
-      closeSession,
-      sendMessage
-    } = useSessionStore(providerLabels, settings);
-    const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const shouldKickoffIdeaRef = (0, import_react40.useRef)(false);
-    const {
-      startCollection: startIdeaCollection,
-      sendMessage: sendIdeaCollectorMessage
-    } = useIdeaCollector(sendMessage);
-    const handleProviderPickerOpen = useProviderPickerOpenHandler(
-      openPicker,
-      selectStage,
-      lockStageSelection
-    );
-    const confirmSelectionFromUi = (0, import_react40.useCallback)(
-      (providerIds) => {
-        shouldKickoffIdeaRef.current = selectedStage === "idea" && (providerIds[0] === "codexCli" || providerIds[0] === "claudeCodeCli");
-        confirmSelection(providerIds);
-      },
-      [confirmSelection, selectedStage]
-    );
-    const handleSessionCreatedMessage2 = (0, import_react40.useCallback)(
-      (session) => {
-        activateRoot();
-        resetPicker();
-        handleSessionCreated(session);
-        if (shouldKickoffIdeaRef.current) {
-          shouldKickoffIdeaRef.current = false;
-          if (session.stage === "idea") {
-            startIdeaCollection(session.id);
-          }
-        }
-      },
-      [handleSessionCreated, resetPicker, startIdeaCollection]
-    );
-    const handleShowSettings = (0, import_react40.useCallback)(() => {
-      activateRoot();
-      openSettings();
-    }, [openSettings]);
-    const handleCoreState = (0, import_react40.useCallback)(
-      (payload) => {
-        activateRoot();
-        hydrateFromCoreState(payload);
-      },
-      [hydrateFromCoreState]
-    );
-    const handleSessionMessage = (0, import_react40.useCallback)(
-      (payload) => {
-        activateRoot();
-        handleSessionMessageEvent2(payload);
-      },
-      [handleSessionMessageEvent2]
-    );
-    const handleSessionHistory = (0, import_react40.useCallback)(
-      (payload) => {
-        activateRoot();
-        handleSessionHistoryEvent(payload);
-      },
-      [handleSessionHistoryEvent]
-    );
-    const handleSessionDeletedMessage2 = (0, import_react40.useCallback)(
-      (payload) => {
-        activateRoot();
-        handleSessionDeleted(payload);
-      },
-      [handleSessionDeleted]
-    );
-    const handleSessionBindingMessage2 = (0, import_react40.useCallback)(
-      (payload) => {
-        activateRoot();
-        handleSessionBindingUpdate(payload);
-      },
-      [handleSessionBindingUpdate]
-    );
-    useWebviewMessageHandler({
-      onProviderPickerOpen: handleProviderPickerOpen,
-      onSessionCreated: handleSessionCreatedMessage2,
-      onSessionClearAll: clearSessions,
-      onSessionFocusLast: focusLastSession,
-      onShowSettings: handleShowSettings,
-      onCoreState: handleCoreState,
-      onCoreConnectionStatus: (status, detail) => {
-        if (status === "connecting" || status === "ready" || status === "error") {
-          setCoreStatus(status);
-          setCoreStatusDetail(detail);
-          if (status === "connecting") {
-            setCoreFinalized(false);
-            setMessages(createDefaultMessages());
-            setActiveMessageIndex(0);
-          }
-        }
-      },
-      onCoreLoadingStatus: (status) => {
-        if (status.phase === "finalize") {
-          setCoreFinalized(true);
-          return;
-        }
-        const scopeValue = typeof status.scope === "string" ? status.scope : void 0;
-        const messageId = resolveMessageId(scopeValue, status.phase);
-        if (!messageId) {
-          return;
-        }
-        setMessages((prev) => {
-          const next = { ...prev };
-          const fallback = { ...DEFAULT_MESSAGES[messageId] };
-          const detail = status.detail ?? (status.firstRun ? "This may take a little longer on the first run." : next[messageId]?.detail ?? fallback.detail);
-          next[messageId] = {
-            id: messageId,
-            status: status.label ?? next[messageId]?.status ?? fallback.status,
-            detail
-          };
-          return next;
-        });
-      },
-      onSessionMessage: handleSessionMessage,
-      onSessionDeleted: handleSessionDeletedMessage2,
-      onSessionBinding: handleSessionBindingMessage2,
-      onSessionHistory: handleSessionHistory
-    });
-    const isCoreReady = coreStatus === "ready" && coreFinalized;
-    (0, import_react40.useEffect)(() => {
-      if (isCoreReady) {
-        return;
-      }
-      const timer = window.setInterval(() => {
-        setActiveMessageIndex(
-          (previous3) => (previous3 + 1) % MESSAGE_ORDER.length
-        );
-      }, MESSAGE_ROTATION_INTERVAL_MS);
-      return () => {
-        window.clearInterval(timer);
-      };
-    }, [isCoreReady]);
-    const currentMessage = (0, import_react40.useMemo)(() => {
-      const messageId = MESSAGE_ORDER[activeMessageIndex];
-      return messages[messageId] ?? DEFAULT_MESSAGES[messageId];
-    }, [activeMessageIndex, messages]);
-    const { headlineText, statusLine, detailLine } = (0, import_react40.useMemo)(() => {
-      if (coreStatus === "error") {
-        return {
-          headlineText: "Please hold on - we are getting CodeAI Hub ready.",
-          statusLine: coreStatusDetail ?? "Unable to reach CodeAI Hub core. Retrying...",
-          detailLine: void 0
-        };
-      }
-      return {
-        headlineText: "Please hold on - we are getting CodeAI Hub ready.",
-        statusLine: currentMessage.status,
-        detailLine: coreStatusDetail ?? currentMessage.detail
-      };
-    }, [coreStatus, coreStatusDetail, currentMessage]);
-    return /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(action_bar_default, { disabled: !isCoreReady }),
-      /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
-        SessionRegion,
-        {
-          cancelSelection,
-          clearStageSelection,
-          confirmSelection: confirmSelectionFromUi,
-          pickerState,
-          selectedStage,
-          selectStage,
-          sessionViewProps: {
-            activeSessionId,
-            coreConnectionDetail: coreStatusDetail,
-            coreConnectionStatus: coreStatus,
-            onCloseSession: closeSession,
-            onSelectSession: selectSession,
-            onSendMessage: sendIdeaCollectorMessage,
-            providerLabels,
-            sessions,
-            snapshots
-          },
-          stageSelectionLocked
-        }
-      ),
-      isCoreReady ? null : /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("div", { className: "app-shell__status-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("output", { "aria-live": "polite", className: "app-shell__status-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { "aria-hidden": "true", className: "app-shell__status-indicator" }),
-        /* @__PURE__ */ (0, import_jsx_runtime47.jsxs)("span", { className: "app-shell__status-text", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "app-shell__status-line", children: headlineText }),
-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "app-shell__status-line", children: statusLine }),
-          detailLine ? /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("span", { className: "app-shell__status-line app-shell__status-line--muted", children: detailLine }) : null
-        ] })
-      ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(settings_view_default, { onClose: closeSettings }) }) }) : null
-    ] });
-  };
-  var AppHost = () => SETTINGS_ONLY_MODE ? /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(SettingsOnlyHost, {}) : /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(FullAppHost, {});
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var AppHost = () => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SettingsOnlyHost, {});
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime48 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -31629,9 +11559,9 @@ ${replacement}
       return;
     }
     activateRoot();
-    const root4 = (0, import_client.createRoot)(rootElement);
-    root4.render(
-      /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(import_react41.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime48.jsx)(app_host_default, {}) })
+    const root = (0, import_client.createRoot)(rootElement);
+    root.render(
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(import_react18.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(app_host_default, {}) })
     );
   };
   mount();

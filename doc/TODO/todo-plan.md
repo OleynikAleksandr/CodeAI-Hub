@@ -72,11 +72,13 @@
 1. [DONE] Обновить active SSOT, чтобы `Idea` / `Idea Collector` оставались только историей или compat note, а не текущей семантикой шага `Description` (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(workflow): remove idea legacy semantics from active ssot`).
 2. [DONE] Git Commit: `docs(workflow): remove idea legacy semantics from active ssot` (hash: `2bd86b1c`)
 3. [DONE] Синхронизировать docs index и redirect-notes с новым cleanup boundary: legacy redirect files оставить только как compat links, без product-semantics drift (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`, `doc/SolidWorks-WorkFlow/Plans/IdeaCollector_LegacyCleanup_Architecture.md`; expected commit: `docs(compat): classify idea legacy redirects`).
-4. [TODO] Git Commit: `docs(compat): classify idea legacy redirects` (hash: TBD)
+4. [DONE] Git Commit: `docs(compat): classify idea legacy redirects` (hash: `b5c2ca04`)
 
 ### Stream: Release build after Idea legacy cleanup
-1. [TODO] На чистом дереве прогнать таргетные проверки/сборки для PM/UI/Core/Provider слоёв, затронутых cleanup-ом, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session123.md` и `todo-plan.md`, зафиксировав новый локальный релиз и baseline для post-cleanup regression (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session123.md`; expected commit: `chore(release): prepare idea legacy cleanup release`).
+1. [DONE] На чистом дереве прогнать таргетные проверки/сборки для PM/UI/Core/Provider слоёв, затронутых cleanup-ом, затем выполнить `./scripts/build-all.sh` и подготовить version bump + manifests + release notes под новый локальный релиз (scope: `README.md`, `CHANGELOG.md`, version/manifest files from `build-all.sh`; expected commit: `chore(release): prepare idea legacy cleanup release`).
 2. [TODO] Git Commit: `chore(release): prepare idea legacy cleanup release` (hash: TBD)
+3. [TODO] После чистого дерева выполнить `./scripts/build-release.sh --use-current-version`, затем записать результаты релиза в `doc/Sessions/Session123.md` и `todo-plan.md`, зафиксировав final baseline для post-cleanup regression (scope: `doc/Sessions/Session123.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.762 idea legacy cleanup release`).
+4. [TODO] Git Commit: `docs(session): record 1.1.762 idea legacy cleanup release` (hash: TBD)
 
 ## Notes
 - Archived previous completed rollout plan:

@@ -7,17 +7,17 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.761
-- `Description Help` now follows the same local Project Manager rendering pattern as `Virtual Simulation Help`, `Diagram Modules Help`, and `Diagram Facades Help`: the `Help` button no longer depends on `description-contract`, runtime template-sync, or on-disk template availability.
-- This closes the regression where `Description` could show `template недоступен` even though the problem was architectural: PM help had been wired through a runtime template transport that other step helps do not use.
-- Pre-submit `Description Help` and post-submit `Help` tab still show the same text, because both now render the same built-in PM help component.
-- The `Description` scenario-level DoD from `1.1.759` remains in force: `Final_Description.md` must contain an explicit user-readable scenario block, and scenario count is driven by real product coverage instead of a fixed number.
+## Current Release — v1.1.762
+- `Phase 26` cleanup release: the live first workflow step is now consistently `Description` across PM bootstrap, provider picker, start/fix flows, SSOT docs, and release packaging.
+- Unused PM legacy wrappers and provider accessors for `Idea / Idea Collector` were removed; remaining `idea-*` names are explicitly treated as compat-only internal helpers, provider parser internals, or disabled legacy flow remnants.
+- Release packaging no longer tries to build or stage the deleted `@codeai-hub/idea-collector` package.
+- The `Description` scenario-level DoD from `1.1.759` remains in force, and the local `Description Help` rendering fix from `1.1.761` stays intact.
 
-Previous releases (summary): the `1.1.57x–1.1.755` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, the resume/recovery stabilization release for `Codex gpt-5.4`, the first greenfield polygon grammar rollout, and the first ownership-aware `Product Part` hierarchy release.
+Previous releases (summary): the `1.1.57x–1.1.761` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, the resume/recovery stabilization release for `Codex gpt-5.4`, the first greenfield polygon grammar rollout, the first ownership-aware `Product Part` hierarchy release, and the `Description` prompt/help/runtime stabilization fixes.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
-- **Idea Collector flow**: Codex and Claude sessions can launch a guided idea collection flow that produces structured Idea.md drafts.
+- **Description-first workflow**: the first guided workflow step is `Description`, producing `questionnaire.md` and `Final_Description.md` as the canonical entry into `Virtual Simulation`.
 - **Persistent standalone UI**: the macOS launcher (CEF) stores window position and size in real time, so Project Manager reopens exactly where you left it—even across monitor changes.
 - **Offline-first packaging**: manifests point to the local `~/.codeai-hub/releases/` cache, and build scripts publish fresh tarballs for core, launcher, and provider modules without relying on GitHub downloads.
 - **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, ts-prune export checks, and Biome formatting are orchestrated through Husky pre-commit/pre-push hooks.
