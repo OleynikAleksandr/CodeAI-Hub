@@ -1,8 +1,8 @@
 import {
-  extractIdeaQuestionnaireAnswers,
-  parseIdeaQuestionnaireTemplateFields,
-  renderIdeaQuestionnaire,
-} from "../../ui/src/services/idea-questionnaire-template";
+  extractDescriptionQuestionnaireAnswers,
+  parseDescriptionQuestionnaireTemplateFields,
+  renderDescriptionQuestionnaire,
+} from "../../ui/src/services/description-questionnaire-template";
 import { buildCanonicalQuestionnairePath } from "../../ui/src/services/idea-questionnaire-paths";
 import {
   buildDefaults,
@@ -167,7 +167,7 @@ export class DescriptionQuestionnaireService {
 
     const template = await resolveTemplateMarkdown();
     const { questions, placeholders } =
-      parseIdeaQuestionnaireTemplateFields(template);
+      parseDescriptionQuestionnaireTemplateFields(template);
 
     const questionnairePath = buildCanonicalQuestionnairePath(workspaceSlug);
     const existing = await readWorkspaceFile(sessionId, questionnairePath);
@@ -176,7 +176,10 @@ export class DescriptionQuestionnaireService {
 
     const defaults = buildDefaults(workspaceName, workspace.path);
     const baseContent = existingContent ?? template;
-    const answers = extractIdeaQuestionnaireAnswers(baseContent, placeholders);
+    const answers = extractDescriptionQuestionnaireAnswers(
+      baseContent,
+      placeholders
+    );
 
     const nextAnswers = { ...answers };
     for (const [fieldId, value] of Object.entries(defaults)) {
@@ -185,7 +188,7 @@ export class DescriptionQuestionnaireService {
       }
     }
 
-    const rendered = renderIdeaQuestionnaire(
+    const rendered = renderDescriptionQuestionnaire(
       template,
       placeholders,
       nextAnswers
@@ -215,7 +218,11 @@ export class DescriptionQuestionnaireService {
     placeholders: Record<string, string>,
     answers: Record<string, string>
   ): Promise<void> {
-    const content = renderIdeaQuestionnaire(template, placeholders, answers);
+    const content = renderDescriptionQuestionnaire(
+      template,
+      placeholders,
+      answers
+    );
     await writeWorkspaceFile(sessionId, questionnairePath, content);
   }
 }
