@@ -38,8 +38,8 @@
 
 ### Stream: Remove disabled legacy home-view flow
 1. [DONE] Удалить legacy `Idea/Spec/Plan/Execute` command wiring из home-view transport и оставить Project Manager единственной supported workflow entry surface (scope: `src/extension-module/home-view-message-router/command-handler.ts`, `src/extension-module/home-view-message-router/message-types.ts`, `src/client/ui/src/components/action-bar/index.tsx`; expected commit: `refactor(home-view): drop legacy flow commands`).
-2. [TODO] Git Commit: `refactor(home-view): drop legacy flow commands` (hash: TBD)
-3. [TODO] Снять disabled `FullAppHost` flow-wizard/questionnaire path, который всё ещё тащит `idea` semantics, но не является частью current product surface (scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/app-host/use-provider-picker-open-handler.ts`; expected commit: `refactor(ui): remove disabled full flow host`).
+2. [DONE] Git Commit: `refactor(home-view): drop legacy flow commands` (hash: `080ae09b`)
+3. [DONE] Снять disabled `FullAppHost` flow-wizard/questionnaire path, который всё ещё тащит `idea` semantics, но не является частью current product surface (scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/app-host/use-provider-picker-open-handler.ts`; expected commit: `refactor(ui): remove disabled full flow host`).
 4. [TODO] Git Commit: `refactor(ui): remove disabled full flow host` (hash: TBD)
 
 ### Stream: Provider + package cleanup for legacy Idea Collector layer
