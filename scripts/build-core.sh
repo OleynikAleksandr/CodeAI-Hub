@@ -115,7 +115,6 @@ node "$SCRIPT_DIR/generate-bundled-templates.js"
 
 echo "🔧 Building workspace packages..."
 npm run build --workspace=@codeai-hub/agent-shared >/dev/null
-npm run build --workspace=@codeai-hub/idea-collector >/dev/null
 npm run build --workspace=@codeai-hub/claude-module >/dev/null
 npm run build --workspace=@codeai-hub/codex-module >/dev/null
 npm run build --workspace=@codeai-hub/gemini-module >/dev/null || true
@@ -202,7 +201,6 @@ rm -rf "$APP_STAGE/tarballs"
 # Ensure agent package symlinks are valid inside the extracted runtime.
 # (package-lock from the workspace may create links that otherwise point to nowhere)
 mkdir -p "$APP_STAGE/node_modules/@codeai-hub"
-ln -snf "../../../agents/idea-collector" "$APP_STAGE/node_modules/@codeai-hub/idea-collector"
 ln -snf "../../../agents/shared" "$APP_STAGE/node_modules/@codeai-hub/agent-shared"
 
 NODE_ARCHIVE_PATH="$DOWNLOAD_STAGE/$NODE_ARCHIVE"
