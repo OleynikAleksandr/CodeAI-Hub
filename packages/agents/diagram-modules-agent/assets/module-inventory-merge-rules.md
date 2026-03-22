@@ -1,14 +1,14 @@
 # Module Inventory Merge Rules
 
-When the runtime provides a change summary:
-- Preserve clusters, modules, and relations added by the user unless there is an explicit contradiction in the latest upstream context.
-- Preserve user-modified purpose, responsibility, membership, and ownership fields on existing inventory entities.
-- Preserve user-approved subsystem boundaries from `Final_Description.md` and `virtual-simulation.md` unless the latest upstream context explicitly changes them.
-- Preserve user-approved top-level product contours even when the current DSL cannot express them directly; keep them documented in `Notes`, `Rationale`, or `Assumptions / Open Questions`.
-- Do not silently recreate modules or relations removed by the user.
-- Do not silently convert standalone modules into cluster members or move modules between clusters without a clear upstream reason.
-- Do not silently collapse separately living product parts into one fake cluster just because the current DSL is flatter than the architecture.
-- Do not silently recreate decorative clusters or loose analytical labels removed by the user.
-- If a removed cluster, module, or relation must return, explain the justification in `Notes` or `Rationale`.
-- Prefer extending the existing inventory over rewriting IDs or reshaping user-owned boundaries.
-- When a boundary or ownership contour is still ambiguous, keep the existing user-approved structure and record the ambiguity in `Assumptions / Open Questions` instead of forcing a new grouping.
+Когда runtime передаёт change summary:
+- Сохраняйте clusters, modules и relations, добавленные пользователем, если новый upstream context явно им не противоречит.
+- Сохраняйте user-modified `purpose`, `responsibility`, `membership` и ownership fields на уже существующих entities.
+- Сохраняйте user-approved subsystem boundaries из `Final_Description.md` и `virtual-simulation.md`, если новый upstream context их прямо не меняет.
+- Сохраняйте user-approved top-level product contours даже там, где текущий DSL не умеет выразить их идеально; фиксируйте это через `Notes`, `Rationale` или `Assumptions / Open Questions`.
+- Не восстанавливайте молча modules или relations, которые пользователь удалил.
+- Не переводите молча standalone modules в cluster members и не переносите modules между cluster-ами без ясной upstream причины.
+- Не схлопывайте молча отдельно живущие product parts в один fake cluster только потому, что DSL выглядит более плоским, чем архитектура.
+- Не восстанавливайте молча декоративные cluster-ы или loose analytical labels, которые пользователь уже убрал.
+- Если удалённый cluster, module или relation действительно должен вернуться, явно объясняйте это в `Notes` или `Rationale`.
+- Предпочитайте аккуратно расширять текущий inventory вместо переписывания IDs или reshaping user-owned boundaries.
+- Если boundary или ownership contour всё ещё неоднозначен, сохраняйте текущую user-approved structure и записывайте неоднозначность в `Assumptions / Open Questions`, а не навязывайте новое grouping.

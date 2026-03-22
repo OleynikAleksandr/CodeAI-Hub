@@ -1,71 +1,71 @@
 # Module Inventory Field Reference
 
-Inventory sections:
-- `Module Inventory`: the semantic source of truth for this step. Runtime layout is derived separately and must not replace the inventory.
-- `Product Parts`: top-level ownership layers. Nested `Cluster` blocks and standalone `Module` blocks must live inside their owning product part.
-- `Simple Relations`: sparse direct links the user already expects to see before diagramming. Prefer only the interactions that explain the visible system shape.
-- `Assumptions / Open Questions`: unresolved boundary, naming, or ownership issues.
+Разделы `Module Inventory`:
+- `Module Inventory`: semantic source of truth для этого шага. Runtime layout строится отдельно и не должен подменять inventory.
+- `Product Parts`: верхний ownership layer. Вложенные `Cluster`-блоки и standalone `Module`-блоки должны жить внутри своего `Product Part`.
+- `Simple Relations`: редкие прямые связи, которые уже полезно показать пользователю до следующего шага.
+- `Assumptions / Open Questions`: незакрытые вопросы по boundary, naming или ownership.
 
-Inventory-level guidance:
-- The inventory should reflect the full and non-contradictory system composition at the level of the current model.
-- Product Parts are first-class DSL entities. If a top-level ownership contour is already known, materialize it as a `Product Part` instead of hiding it in `Notes` or a decorative cluster.
-- Each `Product Part` must keep its `Clusters` and `Standalone Modules` fields in exact sync with the nested blocks inside that product part.
-- Do not fall back to flat legacy inventories when the ownership contours are already known.
-- Do not mirror folders, packages, or class names as if they were the architecture.
+Общие правила для inventory:
+- Inventory должен отражать полный и непротиворечивый состав системы на уровне текущей модели.
+- Если верхний ownership contour уже понятен, materialize-ьте его как `Product Part`, а не прячьте в `Notes` или декоративный `Cluster`.
+- Поля `Clusters` и `Standalone Modules` внутри каждого `Product Part` должны точно совпадать с вложенными блоками этой секции.
+- Не откатывайтесь к плоскому legacy inventory, если ownership contours уже видны.
+- Не подменяйте архитектуру списком папок, пакетов или class names.
 
-Product Part fields:
-- `Id`: stable kebab-case identifier that must match the `### Product Part: ...` header.
-- `Title`: human-readable product part name.
-- `Purpose`: one-line user-readable explanation of what this top-level part exists for.
-- `Clusters`: ordered list of cluster IDs nested inside this product part. Must exactly match the nested `### Cluster:` blocks.
-- `Standalone Modules`: ordered list of module IDs that live directly in this product part outside clusters. Must exactly match the nested standalone `### Module:` blocks.
-- `Notes`: optional multiline clarification. Use this to explain ownership rationale, not to hide missing nested blocks.
+Поля `Product Part`:
+- `Id`: стабильный kebab-case identifier. Должен совпадать с заголовком `### Product Part: ...`.
+- `Title`: user-readable имя верхнего блока продукта.
+- `Purpose`: одна короткая строка о том, зачем существует этот верхний блок.
+- `Clusters`: упорядоченный список cluster IDs внутри этого `Product Part`. Должен точно совпадать с вложенными `### Cluster:` блоками.
+- `Standalone Modules`: упорядоченный список module IDs, которые живут прямо в этом `Product Part` вне cluster-ов. Должен точно совпадать с вложенными standalone `### Module:` блоками.
+- `Notes`: необязательное пояснение. Используйте его для ownership rationale, а не для сокрытия отсутствующих nested blocks.
 
-`Product Part` is the top-level part of the product in this DSL. It answers the question: "is this a separate large part of the system?" rather than "what role label should it receive?".
+`Product Part` — это верхний уровень продукта в этом DSL. Он отвечает на вопрос: "это отдельная крупная часть системы?" а не "какой label роли ей дать?".
 
-Cluster fields:
-- `Id`: stable kebab-case identifier.
-- `Title`: human-readable cluster name.
-- `Purpose`: one-line purpose statement in user-readable language.
-- `Product Part`: owning product part ID. Must match the surrounding product part block.
-- `Modules`: ordered list of module IDs in the cluster.
-- `Notes`: optional multiline clarification. Use this to explain the cluster boundary or user-approved rationale, not to dump implementation detail.
+Поля `Cluster`:
+- `Id`: стабильный kebab-case identifier.
+- `Title`: user-readable имя cluster-а.
+- `Purpose`: одна короткая строка о роли этой subsystem.
+- `Product Part`: owning product part ID. Должен совпадать с окружающим `Product Part`.
+- `Modules`: упорядоченный список module IDs внутри cluster-а.
+- `Notes`: необязательное пояснение boundary или user-approved rationale, но не dump implementation details.
 
-Module fields:
-- `Id`: stable kebab-case identifier.
-- `Kind`: required DSL classifier; currently one of `service`, `library`, `adapter`, `gateway`, `store`, `external`. Treat it as a secondary tooling/rendering hint, not as the main architectural meaning.
-- `Title`: human-readable module name by purpose, not by implementation style.
-- `Responsibility`: single-line responsibility summary in user-readable language.
-- `Product Part`: owning product part ID. Required for both cluster members and standalone modules.
-- `Cluster`: optional parent cluster identifier. Omit only for standalone modules that live directly in a product part.
-- `Inputs` / `Outputs`: optional lists of consumed or emitted data.
-- `Spec Target`: optional relative path to a detailed spec.
-- `Contract Targets`: optional list of contract paths.
-- `Code Targets`: optional list of source paths.
-- `Origin`: `agent`, `user`, or `merged`.
-- `Status`: `proposed`, `accepted`, or `deprecated`.
-- `Notes` / `Rationale`: optional multiline text blocks.
+Поля `Module`:
+- `Id`: стабильный kebab-case identifier.
+- `Kind`: обязательный DSL classifier; сейчас один из `service`, `library`, `adapter`, `gateway`, `store`, `external`. Относитесь к нему как ко вторичной tooling/rendering подсказке, а не как к главному архитектурному смыслу.
+- `Title`: user-readable имя module по назначению, а не по стилю реализации.
+- `Responsibility`: одна короткая строка о главной ответственности module.
+- `Product Part`: owning product part ID. Обязателен и для cluster members, и для standalone modules.
+- `Cluster`: необязательный parent cluster identifier. Пропускается только у standalone modules, которые живут прямо внутри `Product Part`.
+- `Inputs` / `Outputs`: необязательные списки входящих или исходящих данных.
+- `Spec Target`: необязательный относительный путь к detail spec.
+- `Contract Targets`: необязательный список contract paths.
+- `Code Targets`: необязательный список source paths.
+- `Origin`: `agent`, `user` или `merged`.
+- `Status`: `proposed`, `accepted` или `deprecated`.
+- `Notes` / `Rationale`: необязательные многострочные пояснения.
 
-Cluster / module guidance:
-- Treat `Cluster` as a formal subsystem container, not as a loose topic label or hidden ownership workaround.
-- Treat `Module` as the smallest standalone functional boundary that still makes sense to the user.
-- A standalone module must remain outside clusters unless there is a real subsystem reason to group it.
-- A standalone module must still be listed in the owning product part `Standalone Modules` field.
-- A cluster member must declare both the correct `Product Part` and the correct `Cluster`.
-- Do not create decorative clusters that only repeat a label without real internal modules.
-- Do not use loose analytical labels such as `core`, `shared`, `utils`, `services`, `stores`, `adapters` unless they are explicitly justified by upstream product context.
-- Prefer one standalone module over a fake cluster when no real subsystem container exists yet.
-- If several peer integrations share a contract but do not yet form a true subsystem boundary, model them as peer modules instead of inventing a cluster.
+Правила интерпретации `Cluster` / `Module`:
+- Относитесь к `Cluster` как к formal subsystem container, а не как к loose topic label или hidden ownership workaround.
+- Относитесь к `Module` как к самой маленькой самостоятельной functional boundary, которая всё ещё имеет смысл для пользователя.
+- Standalone module должен оставаться вне cluster-ов, пока нет реальной subsystem reason его туда группировать.
+- Standalone module всё равно обязан быть перечислен в поле `Standalone Modules` своего `Product Part`.
+- Cluster member обязан явно объявлять и корректный `Product Part`, и корректный `Cluster`.
+- Не создавайте декоративные cluster-ы, которые только повторяют label без реальных модулей внутри.
+- Не используйте loose analytical labels вроде `core`, `shared`, `utils`, `services`, `stores`, `adapters`, если они не оправданы upstream product context.
+- Предпочитайте один standalone module вместо fake cluster-а, если настоящая subsystem boundary ещё не проявилась.
+- Если несколько peer integrations делят общий contract, но ещё не образуют настоящую subsystem boundary, моделируйте их как peer modules, а не как искусственный cluster.
 
-Relation fields:
-- `Id`: deterministic `<from>__<type>__<to>` identifier.
+Поля `Relation`:
+- `Id`: детерминированный identifier вида `<from>__<type>__<to>`.
 - `From` / `To`: module IDs.
-- `Type`: one of `sync-call`, `async-event`, `shared-data`, `config-ref`.
-- `Label`: optional edge label.
-- `Criticality`: optional `high`, `medium`, or `low`.
-- `Origin`, `Status`, `Notes`: same semantics as module fields.
+- `Type`: один из `sync-call`, `async-event`, `shared-data`, `config-ref`.
+- `Label`: необязательный edge label.
+- `Criticality`: необязательный `high`, `medium` или `low`.
+- `Origin`, `Status`, `Notes`: те же значения, что и у module fields.
 
-Relation guidance:
-- Keep relations simple and sparse.
-- If two clusters interact, use the concrete module-to-module relation that best explains why the clusters are connected.
-- Do not turn the inventory into a full dependency graph.
+Правила для `Relation`:
+- Держите relations простыми и sparse.
+- Если взаимодействуют два cluster-а, фиксируйте конкретную module-to-module relation, которая лучше всего объясняет их связь.
+- Не превращайте inventory в полный dependency graph.

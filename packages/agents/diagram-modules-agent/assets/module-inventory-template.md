@@ -11,28 +11,28 @@
 ### Product Part: example-ide-shell
 - Id: example-ide-shell
 - Title: IDE Shell
-- Purpose: Gives the user entry into the product from inside the IDE
+- Purpose: Даёт пользователю вход в продукт из IDE
 - Clusters:
   - example-user-workspace
 - Standalone Modules:
   - activity-timeline
-- Notes: Product Part is the top-level ownership layer for clusters and standalone modules, and its lists must exactly match the nested blocks below
+- Notes: Здесь при необходимости кратко поясняется ownership; списки `Clusters` и `Standalone Modules` должны совпадать с вложенными блоками ниже
 
 ### Cluster: example-user-workspace
 - Id: example-user-workspace
 - Title: User Workspace
-- Purpose: Coordinates how the user enters, opens, and works inside a project workspace
+- Purpose: Координирует вход пользователя в проектный workspace и работу внутри него
 - Product Part: example-ide-shell
 - Modules:
   - workspace-intake
   - workspace-session-state
-- Notes: A cluster is a real subsystem container with modules inside it, not just a visual label or a hidden ownership workaround
+- Notes: Здесь можно кратко пояснить, почему это реальная subsystem boundary, а не декоративная группа
 
 #### Module: workspace-intake
 - Id: workspace-intake
 - Kind: service
 - Title: Workspace Intake
-- Responsibility: Starts and validates workspace entry into the application
+- Responsibility: Запускает и проверяет вход пользователя в workspace
 - Product Part: example-ide-shell
 - Cluster: example-user-workspace
 - Inputs:
@@ -45,13 +45,12 @@
   - packages/example-user-workspace/
 - Origin: agent
 - Status: proposed
-- Notes: This module stays inside the cluster because it is part of the same workspace subsystem boundary
 
 #### Module: workspace-session-state
 - Id: workspace-session-state
 - Kind: store
 - Title: Workspace Session State
-- Responsibility: Keeps the current workspace session readable and consistent for the rest of the product
+- Responsibility: Хранит текущее состояние workspace session в понятном и согласованном виде
 - Product Part: example-ide-shell
 - Cluster: example-user-workspace
 - Inputs:
@@ -69,7 +68,7 @@
 - Id: activity-timeline
 - Kind: adapter
 - Title: Activity Timeline
-- Responsibility: Shows the user a readable timeline of important project activity outside the workspace subsystem
+- Responsibility: Показывает пользователю понятную timeline важных событий вне workspace subsystem
 - Product Part: example-ide-shell
 - Inputs:
   - workspace-session-summary
@@ -81,7 +80,7 @@
   - packages/activity-timeline/
 - Origin: agent
 - Status: proposed
-- Notes: This module remains standalone because the current inventory does not justify grouping it into a larger subsystem
+- Notes: Оставляйте module standalone, пока нет подтверждённой причины группировать его в отдельный cluster
 
 ## Simple Relations
 
@@ -106,8 +105,8 @@
 - Status: proposed
 
 ## Assumptions / Open Questions
-- This inventory is the semantic source of truth for the step; runtime layout is generated separately.
-- If a top-level ownership contour is already known, materialize it as a real `Product Part` instead of hiding it in notes or decorative boundaries.
+- Этот inventory — semantic source of truth шага; runtime layout строится отдельно.
+- Если верхний ownership contour уже понятен, materialize-ьте его как реальный `Product Part`, а не прячьте в notes или декоративные boundaries.
 
 <!--
 Authoring checklist before finalizing:
