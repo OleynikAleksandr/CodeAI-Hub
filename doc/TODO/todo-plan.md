@@ -51,8 +51,10 @@
 4. [DONE] Git Commit: `fix(diagram-ui): align source pending-state copy with workflow` (hash: `f8332a5c`)
 
 ### Stream: Release build after accepted fixes
-1. [BLOCKED] После закрытия принятых фиксов и таргетной верификации выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare next regression feedback release`).
-2. [BLOCKED] Git Commit: `chore(release): prepare next regression feedback release` (hash: TBD)
+1. [IN_PROGRESS] После закрытия принятых фиксов и таргетной верификации синхронизировать versioned manifests и release docs для `1.1.763`, зафиксировать version-bump baseline после `./scripts/build-all.sh`, чтобы рабочее дерево стало чистым перед финальным `build-release` (scope: `package*.json`, `assets/**/manifest.json`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare next regression feedback release`).
+2. [TODO] Git Commit: `chore(release): prepare next regression feedback release` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline `1.1.763`, обновить `todo-plan` и оформить session report по релизу (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session125.md`; expected commit: `docs(session): record 1.1.763 regression feedback release`).
+4. [TODO] Git Commit: `docs(session): record 1.1.763 regression feedback release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plan:
@@ -60,5 +62,5 @@
 - Active planning doc for this scope:
   - `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`
 - Current validated release baseline:
-  - `codeai-hub-1.1.762.vsix`
+  - `codeai-hub-1.1.762.vsix` (pending upgrade to `1.1.763` in the active release stream)
 - The first accepted system-level finding for `Description Help` is closed; further scope expansion now depends only on the next confirmed regression case from live testing.
