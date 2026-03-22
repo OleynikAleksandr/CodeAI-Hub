@@ -32,7 +32,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 ## [1.1.755] - 2026-03-21
 ### Changed
 - `Description`, `Virtual Simulation`, and `Diagram Modules` now share the approved compact runtime surface: user-facing help, runtime prompts, and visible template delivery all use the same glossary, artifact-first baseline, and stop-questioning contract.
-- `Virtual Simulation` now treats the 2-4 runtime scenario limit as a formatting constraint only; the prompt surface explicitly requires enough combined scenario coverage to expose the whole visible system.
+- `Virtual Simulation` now treats the old runtime scenario cap as a formatting concern only; the prompt surface explicitly requires enough combined scenario coverage to expose the whole visible system.
 - `Diagram Modules` now moves from the flat inventory baseline to `Product Part -> Cluster -> Module`, so top-level ownership is part of the semantic model instead of being hidden in notes or flattened into decorative clusters.
 
 ### Added
