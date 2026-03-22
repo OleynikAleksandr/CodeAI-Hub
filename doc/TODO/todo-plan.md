@@ -34,10 +34,10 @@
 3. [DONE] Переписать source templates `diagram_facades` так, чтобы explanatory text был на русском языке, DSL terms остались английскими, а narrative-повторы между template / field reference / merge rules были убраны или сведены к одному authoritative wording (scope: `packages/agents/diagram-facades-agent/assets/facade-map-template.md`, `packages/agents/diagram-facades-agent/assets/facade-map-field-reference.md`, `packages/agents/diagram-facades-agent/assets/facade-map-merge-rules.md`; expected commit: `fix(diagram-templates): localize and dedupe facades templates`).
 4. [DONE] Git Commit: `fix(diagram-templates): localize and dedupe facades templates` (hash: `ffd016f6`)
 5. [DONE] Пересобрать bundled/runtime-synced copies для обоих diagram template packs и подтвердить через `TemplateSyncService`, что итоговые файлы в `/Users/oleksandroliinyk/.codeai-hub/templates/diagram_modules/` и `/Users/oleksandroliinyk/.codeai-hub/templates/diagram_facades/` user-readable, русскоязычные и без лишних narrative-повторов в prompt payload (scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `chore(diagram-templates): rebuild diagram runtime templates`).
-6. [TODO] Git Commit: `chore(diagram-templates): rebuild diagram runtime templates` (hash: TBD)
+6. [DONE] Git Commit: `chore(diagram-templates): rebuild diagram runtime templates` (hash: `550bb63a`)
 
 ### Stream: Autolayout readability follow-up
-1. [TODO] Зафиксировать принятые defects first-open layout для `Diagram Modules` / `Diagram Facades` на live regression `1.1.764` и отделить проблемы runtime layout от проблем semantic artifact (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): capture diagram autolayout defects`).
+1. [DONE] Зафиксировать принятые defects first-open layout для `Diagram Modules` / `Diagram Facades` на live regression `1.1.764` и отделить проблемы runtime layout от проблем semantic artifact (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): capture diagram autolayout defects`).
 2. [TODO] Git Commit: `docs(layout): capture diagram autolayout defects` (hash: TBD)
 3. [TODO] После подтверждения defects определить минимальный кодовый slice для улучшения first-open readability без расширения scope до полного redesign graph runtime (scope: files to be narrowed after evidence capture; expected commit: `fix(diagram-layout): improve first-open readability`).
 4. [TODO] Git Commit: `fix(diagram-layout): improve first-open readability` (hash: TBD)
@@ -53,7 +53,7 @@
 2. [TODO] Git Commit: `docs(layout): record spacing fix regression evidence` (hash: TBD)
 
 ### Stream: Release build after accepted fixes
-1. [BLOCKED] После принятия конкретных prompt / DSL / layout fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый baseline и оформить session report (scope: release/version docs and files to be determined by accepted fixes; expected commit: `chore(release): prepare diagram prompt consistency release`).
+1. [IN_PROGRESS] После принятия конкретных prompt / DSL / layout fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый baseline и оформить session report (scope: release/version docs and files to be determined by accepted fixes; expected commit: `chore(release): prepare diagram prompt consistency release`).
 2. [BLOCKED] Git Commit: `chore(release): prepare diagram prompt consistency release` (hash: TBD)
 
 ## Notes

@@ -64,6 +64,11 @@
 - не трогать канонические английские DSL terms и field names;
 - убрать бессмысленные повторы между template / field reference / merge rules там, где они раздувают общий prompt pack без добавления нового смысла.
 
+Текущее состояние после реализации:
+- source template packs для `diagram_modules` и `diagram_facades` уже локализованы и дедуплицированы;
+- `bundled-templates.ts` пересобран из этих источников;
+- `TemplateSyncService` и его regression test подтверждают, что runtime copies materialize-ятся в `~/.codeai-hub/templates/...` как user-readable русскоязычные templates с сохранёнными английскими DSL terms.
+
 ### 2.4. Always-full prompt pack — осознанное ограничение
 
 Для текущего продукта принимается такой принцип:
@@ -105,6 +110,10 @@
 - вертикальный cluster stacking defect уже принят;
 - horizontal standalone spacing defect уже принят;
 - эти два defect-а должны стать явными implementation targets следующей layout phase.
+
+Текущее состояние после реализации:
+- vertical overlap и excessive standalone horizontal spacing уже исправлены в runtime autolayout для `Diagram Modules`;
+- дальнейшая проверка должна идти уже не на уровне "есть ли defect", а на уровне regression readability после релизной сборки.
 
 ---
 
