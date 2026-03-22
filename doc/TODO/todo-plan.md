@@ -61,8 +61,8 @@
 2. [DONE] Git Commit: `fix(pm): render description help locally` (hash: `6fc1538b`)
 
 ### Stream: Release build after local Description Help rendering fix
-1. [TODO] На чистом дереве прогнать таргетные PM/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md` и `todo-plan.md`, зафиксировав новый локальный релиз с локальным рендером `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md`; expected commit: `chore(release): prepare 1.1.761 assets`).
-2. [TODO] Git Commit: `chore(release): prepare 1.1.761 assets` (hash: TBD)
+1. [DONE] На чистом дереве прогнать таргетные PM/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md` и `todo-plan.md`, зафиксировав новый локальный релиз с локальным рендером `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md`; expected commit: `chore(release): prepare 1.1.761 assets`).
+2. [DONE] Git Commit: `chore(release): prepare 1.1.761 assets` (hash: `f3c9f238`)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase24-2026-03-22.md`
@@ -71,5 +71,6 @@
 - Current regression log:
   - `doc/Sessions/Session118.md`
 - Current validated release baseline before this scope:
-  - `codeai-hub-1.1.760.vsix`
-  - `Description` now requires an explicit scenario block in `Final_Description.md`, and `Description Help` is both single-source and runtime-self-healing for missing synced templates in `1.1.760`
+  - `codeai-hub-1.1.761.vsix`
+  - `Description Help` now follows the same local PM rendering path as `Virtual Simulation`, `Diagram Modules` and `Diagram Facades`, without runtime/template dependency in the user-facing surface
+  - Core self-healing for missing synced `description-template.md` from `1.1.760` remains in place for runtime contract delivery
