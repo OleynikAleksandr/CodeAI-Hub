@@ -48,7 +48,7 @@
 1. [DONE] Классифицировать новый accepted finding для `Diagram Modules` / `Diagram Facades`: когда canonical source artifact ещё не создан, `Source` surface показывает generic artifact-viewer error вместо workflow-aware ожидания upstream artifact; зафиксировать кейс как `runtime/UI drift` и открыть локальный fix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify diagram source pending-state drift`).
 2. [DONE] Git Commit: `docs(plan): classify diagram source pending-state drift` (hash: `78fa5259`)
 3. [DONE] Исправить `Source`-surface для diagram steps так, чтобы до появления canonical `.md` он показывал stage-aware pending message про реальный upstream artifact, а не generic `file not found`, и закрыть таргетным тестом + `typecheck:webview` (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `fix(diagram-ui): align source pending-state copy with workflow`).
-4. [TODO] Git Commit: `fix(diagram-ui): align source pending-state copy with workflow` (hash: TBD)
+4. [DONE] Git Commit: `fix(diagram-ui): align source pending-state copy with workflow` (hash: `f8332a5c`)
 
 ### Stream: Release build after accepted fixes
 1. [BLOCKED] После закрытия принятых фиксов и таргетной верификации выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare next regression feedback release`).
