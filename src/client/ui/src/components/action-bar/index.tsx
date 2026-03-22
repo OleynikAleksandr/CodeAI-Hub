@@ -4,12 +4,7 @@ import { postVsCodeMessage } from "../../vscode";
 import { ActionBarContextForm } from "./context-form";
 import { useInitiativeContext } from "./use-initiative-context";
 
-type ActionBarCommand =
-  | "startChat"
-  | "startIdea"
-  | "startSpec"
-  | "startPlan"
-  | "startExecute";
+type ActionBarCommand = "startChat";
 
 type ButtonDescriptor = {
   readonly id: ActionBarCommand;
@@ -18,14 +13,7 @@ type ButtonDescriptor = {
 
 const BUTTONS: readonly ButtonDescriptor[] = [
   { id: "startChat", label: ["Simple", "Chat"] },
-  { id: "startIdea", label: ["Idea", ""] },
-  { id: "startSpec", label: ["Spec", ""] },
-  { id: "startPlan", label: ["Plan", ""] },
-  { id: "startExecute", label: ["Execute", ""] },
 ];
-
-const CHAT_BUTTONS = BUTTONS.filter((button) => button.id === "startChat");
-const FLOW_BUTTONS = BUTTONS.filter((button) => button.id !== "startChat");
 
 type ActionBarProps = {
   readonly disabled?: boolean;
@@ -36,7 +24,6 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
     initiatives,
     selectedInitiativeSlug,
     initiativeTitle,
-    canStartFlow,
     controlsDisabled,
     statusMessage,
     handleInitiativeChange,
@@ -92,9 +79,6 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
 
   const handleClick = useCallback(
     (command: ActionBarCommand) => {
-      if (command !== "startChat" && !canStartFlow) {
-        return;
-      }
       if (disabled) {
         return;
       }
@@ -103,10 +87,8 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
 
       postVsCodeMessage({ command });
     },
-    [canStartFlow, disabled]
+    [disabled]
   );
-
-  const flowDisabled = disabled || !canStartFlow;
 
   return (
     <header className="action-bar">
@@ -171,31 +153,13 @@ const ActionBar = ({ disabled = false }: ActionBarProps) => {
         />
         <div className="action-bar__buttons">
           <div className="action-bar__button-zone action-bar__button-zone--chat">
-            {CHAT_BUTTONS.map(({ id, label }) => {
+            {BUTTONS.map(({ id, label }) => {
               const ariaLabel = label.filter(Boolean).join(" ");
               return (
                 <button
                   aria-label={ariaLabel}
                   className="action-bar__button"
                   disabled={disabled}
-                  key={id}
-                  onClick={() => handleClick(id)}
-                  type="button"
-                >
-                  <span className="action-bar__line">{label[0]}</span>
-                  <span className="action-bar__line">{label[1]}</span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="action-bar__button-zone action-bar__button-zone--flow">
-            {FLOW_BUTTONS.map(({ id, label }) => {
-              const ariaLabel = label.filter(Boolean).join(" ");
-              return (
-                <button
-                  aria-label={ariaLabel}
-                  className="action-bar__button"
-                  disabled={flowDisabled}
                   key={id}
                   onClick={() => handleClick(id)}
                   type="button"

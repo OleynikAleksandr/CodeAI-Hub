@@ -12,8 +12,6 @@ type CommandContext = {
   readonly coreProcessManager?: CoreProcessManager;
 };
 
-type StartStage = "chat" | "idea" | "spec" | "plan" | "execute";
-
 const PROJECT_MANAGER_HINT =
   "Use Project Manager for sessions and chats during FLOW development.";
 const SESSIONS_DISABLED = true;
@@ -47,10 +45,7 @@ const handleNewSession = (context: CommandContext): void => {
   });
 };
 
-const handleStartWithStage = (
-  context: CommandContext,
-  stage: StartStage
-): void => {
+const handleStartChat = (context: CommandContext): void => {
   if (SESSIONS_DISABLED) {
     notifyProjectManagerHint(context);
     return;
@@ -58,28 +53,18 @@ const handleStartWithStage = (
   const stacks = context.providerRegistry
     .listStacks()
     .filter((stack) => stack.connected);
-
-  const filtered =
-    stage === "chat"
-      ? stacks
-      : stacks.filter(
-          (stack) => stack.id === "codexCli" || stack.id === "claudeCodeCli"
-        );
-
-  if (filtered.length === 0) {
-    const reason =
-      stage === "chat"
-        ? "No connected provider stacks detected. Install a provider CLI to continue."
-        : "Flow steps require Codex or Claude (Structured Output). Connect Codex/Claude to continue.";
-    window.showWarningMessage(reason);
+  if (stacks.length === 0) {
+    window.showWarningMessage(
+      "No connected provider stacks detected. Install a provider CLI to continue."
+    );
     return;
   }
 
   context.notifyWebview({
     type: "providerPicker:open",
     payload: {
-      providers: filtered.map((stack) => serializeStack(stack)),
-      stage,
+      providers: stacks.map((stack) => serializeStack(stack)),
+      stage: "chat",
     },
   });
 };
@@ -109,19 +94,7 @@ export const handleCommand = async (
       handleNewSession(context);
       return;
     case "startChat":
-      handleStartWithStage(context, "chat");
-      return;
-    case "startIdea":
-      handleStartWithStage(context, "idea");
-      return;
-    case "startSpec":
-      handleStartWithStage(context, "spec");
-      return;
-    case "startPlan":
-      handleStartWithStage(context, "plan");
-      return;
-    case "startExecute":
-      handleStartWithStage(context, "execute");
+      handleStartChat(context);
       return;
     case "lastSession":
       notifyProjectManagerHint(context);
