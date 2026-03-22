@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/Sessions/Session123.md`, `doc/Sessions/Session124.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`, `doc/Sessions/Session124.md`, `doc/Sessions/Session125.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -12,55 +12,45 @@
 
 ---
 
-## Phase 27 — Post-Release Regression Feedback Loop (owner: Oleksandr, updated: 2026-03-22)
+## Phase 28 — Workflow Glossary Regression Follow-Up (owner: Oleksandr, updated: 2026-03-22)
 
 ### Stream: Planning baseline
-1. [DONE] Заархивировать завершённый `Phase 26` plan, создать planning-doc под post-release regression feedback loop и открыть новый execution plan, где дальнейшие фиксы будут появляться только из подтверждённых user-observed findings на релизе `1.1.762` (scope: `doc/TODO/Archive/todo-plan-up-to-phase26-2026-03-22.md`, `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start post-release regression feedback scope`).
-2. [DONE] Git Commit: `docs(plan): start post-release regression feedback scope` (hash: `17e23bee`)
+1. [DONE] Заархивировать завершённый `Phase 27` plan и открыть новый testing-driven glossary scope, где accepted findings идут от live regression на `1.1.763`, а первым подтверждённым кейсом становится vocabulary drift между `Description Help`, diagram DSL и пользовательским пониманием верхнего уровня системы (scope: `doc/TODO/Archive/todo-plan-up-to-phase27-2026-03-22.md`, `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start workflow glossary regression scope`).
+2. [TODO] Git Commit: `docs(plan): start workflow glossary regression scope` (hash: TBD)
 
-### Stream: Session handoff baseline
-1. [DONE] Создать session report для нового `Phase 27` scope и синхронизировать active `todo-plan` после planning reset, явно зафиксировав, что code/runtime fixes ещё не начаты, а план находится в intake-mode до первого accepted system-level finding (scope: `doc/Sessions/Session124.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-release regression handoff`).
-2. [DONE] Git Commit: `docs(session): record post-release regression handoff` (hash: `827d9ddf`)
+### Stream: Product Part glossary alignment
+1. [TODO] Классифицировать и закрыть первый accepted glossary finding: заменить в user-facing glossary длинный термин `самостоятельная часть продукта` на канонический `Product Part`, явно объяснив, что `Product Part` — это верхнеуровневая часть системы, а не отдельная роль внутри словаря (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(glossary): align top-level term to product part`).
+2. [TODO] Git Commit: `fix(glossary): align top-level term to product part` (hash: TBD)
 
-### Stream: Regression intake and classification
-1. [DONE] Классифицировать первый принятый regression finding для `Description Help`: текущая фраза про `Submit questionnaire` и продолжение диалога даёт неверную UX-модель, потому что не упоминает provider picker и искажает условие продолжения диалога; зафиксировать кейс как `runtime/UI drift` и переписать plan из intake-mode в конкретный fix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify description help provider-picker drift`).
-2. [DONE] Git Commit: `docs(plan): classify description help provider-picker drift` (hash: `e4357c39`)
+### Stream: Product Part role vocabulary expansion
+1. [TODO] Синхронизировать user-facing role glossary для `Product Part`: добавить `application` и коротко объяснить, что `shell`, `application`, `runtime`, `provider`, `external` — это роли верхнеуровневой части продукта, а не отдельные уровни архитектуры; закрыть drift между кодовым DSL и user-facing field reference (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/description-agent/assets/description-collector-prompt.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(glossary): explain product part roles`).
+2. [TODO] Git Commit: `fix(glossary): explain product part roles` (hash: TBD)
 
-### Stream: Description Help provider-picker copy alignment
-1. [DONE] Исправить source-of-truth copy для `Description Help`, чтобы текст явно отражал фактический UX: после `Submit questionnaire` открывается выбор AI-провайдера, в MVP провайдер выбирается один раз на весь workflow workspace, а диалог продолжается до тех пор, пока пользователь не сочтёт документ достаточно сильной основой для следующего шага (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`; expected commit: `fix(description): align help copy with provider picker flow`).
-2. [DONE] Git Commit: `fix(description): align help copy with provider picker flow` (hash: `a83448bd`)
-3. [DONE] Синхронизировать generated bundled template после обновления source markdown, чтобы `TemplateSyncService` и runtime contract восстанавливали уже новый `Description Help`, а не старую формулировку (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit: `chore(templates): refresh bundled description help copy`).
-4. [DONE] Git Commit: `chore(templates): refresh bundled description help copy` (hash: `d845e59f`)
-5. [DONE] Обновить защитные тесты на локальный PM help и synced template, чтобы новый текст не разъехался между help-component и bundled template и чтобы regression явно ловил возврат старой формулировки (scope: `src/client/project-manager/components/description/description-step-help.test.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `test(description): guard help provider picker wording`).
-6. [DONE] Git Commit: `test(description): guard help provider picker wording` (hash: `c51a7a9d`)
+### Stream: Testing-oriented wording follow-up
+1. [TODO] Переписать active user-facing wording так, чтобы glossary помогал пользователю без знания кода замечать структурные smells на `Virtual Simulation` / `Diagram Modules`, не подсказывая готовую реализацию конкретного проекта (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`, `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`; expected commit: `docs(glossary): refine testing-oriented wording`).
+2. [TODO] Git Commit: `docs(glossary): refine testing-oriented wording` (hash: TBD)
 
-### Stream: Ongoing regression intake
-1. [IN_PROGRESS] Продолжать принимать следующие user-observed findings на релизе `1.1.762`, классифицировать их по модели из planning-doc и открывать новые stage-local fix-stream только после подтверждённого system-level кейса (scope: `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session124.md`; expected commit: `docs(plan): classify next regression finding`).
-2. [TODO] Git Commit: `docs(plan): classify next regression finding` (hash: TBD)
+### Stream: Role field simplification / DSL redesign
+1. [TODO] Классифицировать и спроектировать следующий accepted finding: обязательное поле `Role` в `Product Part` даёт мало user-facing пользы, но создаёт жёсткий vocabulary drift для новых типов продуктов; определить минимальный redesign path (`optional Role` или removal from user-facing inventory) без поломки parser/runtime migration (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`, `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`; expected commit: `docs(dsl): classify product part role simplification`).
+2. [TODO] Git Commit: `docs(dsl): classify product part role simplification` (hash: TBD)
 
-### Stream: Diagram prompt appendix deduplication
-1. [DONE] Классифицировать новый accepted finding для `Diagram Modules` и проверить `Diagram Facades`: runtime prompt дублирует appendix-блоки `Field Reference` и `Merge Rules`, потому что при наличии synced template и fallback asset оба источника одновременно попадают в итоговый prompt; зафиксировать кейс как `runtime/contract drift` и открыть локальный hotfix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify diagram prompt appendix duplication`).
-2. [DONE] Git Commit: `docs(plan): classify diagram prompt appendix duplication` (hash: `f176ee20`)
-3. [DONE] Исправить workflow contract loader так, чтобы для каждого diagram appendix-блока выбирался ровно один источник `synced-or-fallback`, и закрыть regression тестами на отсутствие дублей в `Diagram Modules` и `Diagram Facades` prompt (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `fix(diagram-prompts): dedupe prompt appendix sources`).
-4. [DONE] Git Commit: `fix(diagram-prompts): dedupe prompt appendix sources` (hash: `cf934bdd`)
+### Stream: Explicit Module labeling in diagram UI
+1. [TODO] Классифицировать и закрыть user-facing diagram finding: вернуть `Module` как явную сущность на карточках diagram UI и отделить её от вторичного `Kind`, чтобы пользователь видел `Module`, а `service/store/library` читались только как классификация модуля (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`; expected commit: `fix(diagram-ui): restore explicit module labeling`).
+2. [TODO] Git Commit: `fix(diagram-ui): restore explicit module labeling` (hash: TBD)
 
-### Stream: Diagram source pending-state copy alignment
-1. [DONE] Классифицировать новый accepted finding для `Diagram Modules` / `Diagram Facades`: когда canonical source artifact ещё не создан, `Source` surface показывает generic artifact-viewer error вместо workflow-aware ожидания upstream artifact; зафиксировать кейс как `runtime/UI drift` и открыть локальный fix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify diagram source pending-state drift`).
-2. [DONE] Git Commit: `docs(plan): classify diagram source pending-state drift` (hash: `78fa5259`)
-3. [DONE] Исправить `Source`-surface для diagram steps так, чтобы до появления canonical `.md` он показывал stage-aware pending message про реальный upstream artifact, а не generic `file not found`, и закрыть таргетным тестом + `typecheck:webview` (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `fix(diagram-ui): align source pending-state copy with workflow`).
-4. [DONE] Git Commit: `fix(diagram-ui): align source pending-state copy with workflow` (hash: `f8332a5c`)
-
-### Stream: Release build after accepted fixes
-1. [DONE] После закрытия принятых фиксов и таргетной верификации синхронизировать versioned manifests и release docs для `1.1.763`, зафиксировать version-bump baseline после `./scripts/build-all.sh`, чтобы рабочее дерево стало чистым перед финальным `build-release` (scope: `package*.json`, `assets/**/manifest.json`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare next regression feedback release`).
-2. [DONE] Git Commit: `chore(release): prepare next regression feedback release` (hash: `705808b2`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline `1.1.763`, обновить `todo-plan` и оформить session report по релизу (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session125.md`; expected commit: `docs(session): record 1.1.763 regression feedback release`).
-4. [TODO] Git Commit: `docs(session): record 1.1.763 regression feedback release` (hash: TBD)
+### Stream: Release build after accepted glossary fixes
+1. [BLOCKED] После закрытия принятых glossary fixes, DSL simplification fixes и diagram UI labeling fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare workflow glossary regression release`).
+2. [BLOCKED] Git Commit: `chore(release): prepare workflow glossary regression release` (hash: TBD)
 
 ## Notes
-- Archived completed rollout plan:
+- Archived completed rollout plans:
   - `doc/TODO/Archive/todo-plan-up-to-phase26-2026-03-22.md`
+  - `doc/TODO/Archive/todo-plan-up-to-phase27-2026-03-22.md`
 - Active planning doc for this scope:
-  - `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`
 - Current validated release baseline:
   - `codeai-hub-1.1.763.vsix`
-- The first accepted system-level finding for `Description Help` is closed; further scope expansion now depends only on the next confirmed regression case from live testing.
+- Первые принятые cases этого scope:
+  - user-facing vocabulary не объясняет, что `Product Part` — верхний уровень модели, и не даёт пользователю понятных ролей `shell / application / runtime / provider / external`;
+  - обязательное `Role` выглядит кандидатом на упрощение DSL;
+  - diagram UI потерял явное user-facing имя сущности `Module`.
