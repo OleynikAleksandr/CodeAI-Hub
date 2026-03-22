@@ -788,11 +788,8 @@ const validateVirtualSimulationMarkdown = (
   }
   const scenarioMatches = content.match(VIRTUAL_SIMULATION_SCENARIO_RE);
   const scenarioCount = scenarioMatches?.length ?? 0;
-  if (scenarioCount < 2) {
-    return "virtual-simulation markdown must include at least 2 scenarios (## Сценарий N)";
-  }
-  if (scenarioCount > 4) {
-    return "virtual-simulation markdown must include at most 4 scenarios";
+  if (scenarioCount < 1) {
+    return "virtual-simulation markdown must include at least 1 scenario (## Сценарий N)";
   }
   return null;
 };

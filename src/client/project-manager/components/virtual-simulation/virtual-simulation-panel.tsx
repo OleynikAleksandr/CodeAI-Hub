@@ -19,11 +19,8 @@ const validateVirtualSimulationMarkdown = (content: string): string | null => {
   }
   const scenarioMatches = content.match(VIRTUAL_SIMULATION_SCENARIO_RE);
   const scenarioCount = scenarioMatches?.length ?? 0;
-  if (scenarioCount < 2) {
-    return "Нужно минимум 2 сценария: `## Сценарий N`.";
-  }
-  if (scenarioCount > 4) {
-    return "Нужно максимум 4 сценария: `## Сценарий N`.";
+  if (scenarioCount < 1) {
+    return "Нужен хотя бы один сценарий: `## Сценарий N`.";
   }
   return null;
 };
