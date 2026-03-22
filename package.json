@@ -8,8 +8,7 @@
   "workspaces": [
     "packages/*",
     "packages/agents/shared",
-    "packages/agents/description-agent",
-    "packages/agents/idea-collector"
+    "packages/agents/description-agent"
   ],
   "engines": {
     "vscode": "^1.85.0"

@@ -28,7 +28,6 @@
   "dependencies": {
     "@codeai-hub/claude-module": "file:../Claude_Module",
     "@codeai-hub/codex-module": "file:../Codex_Module",
-    "@codeai-hub/idea-collector": "file:../agents/idea-collector",
     "@codeai-hub/initiatives": "file:../initiatives",
     "@codeai-hub/unified-session": "file:../unified-session",
     "cors": "^2.8.5",

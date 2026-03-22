@@ -137,10 +137,8 @@ if [[ -f "$CORE_PROJECT_DIR/package-lock.json" ]]; then
 fi
 rsync -a "$CORE_PROJECT_DIR/dist" "$APP_STAGE/"
 
-# NOTE: @codeai-hub/core depends on @codeai-hub/idea-collector via a local workspace
-# reference, which npm materializes as a symlink in node_modules. The extracted Core
-# runtime must therefore include the agent packages at a stable relative path so the
-# symlink is valid at runtime (otherwise Core fails to start with MODULE_NOT_FOUND).
+# NOTE: agent packages that are still consumed via local workspace references must be
+# copied into the staged runtime tree so npm's symlinked resolution keeps working.
 AGENTS_STAGE="$STAGING_DIR/agents"
 mkdir -p "$AGENTS_STAGE"
 rsync -a --delete \
@@ -149,12 +147,6 @@ rsync -a --delete \
   --exclude "*.tsbuildinfo" \
   "$REPO_ROOT/packages/agents/shared/" \
   "$AGENTS_STAGE/shared/"
-rsync -a --delete \
-  --exclude "node_modules" \
-  --exclude "src" \
-  --exclude "*.tsbuildinfo" \
-  "$REPO_ROOT/packages/agents/idea-collector/" \
-  "$AGENTS_STAGE/idea-collector/"
 rsync -a --delete \
   --exclude "node_modules" \
   --exclude "src" \

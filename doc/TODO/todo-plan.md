@@ -44,9 +44,11 @@
 
 ### Stream: Provider + package cleanup for legacy Idea Collector layer
 1. [DONE] Переименовать provider-side parser structured output из `Idea Collector` terminology в нейтральную workflow terminology без изменения текущего parse behavior (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit: `refactor(claude): neutralize workflow structured output naming`).
-2. [TODO] Git Commit: `refactor(claude): neutralize workflow structured output naming` (hash: TBD)
-3. [TODO] Удалить orphaned `packages/agents/idea-collector` package и stale Core dependency после того, как активные callers будут переведены на current naming/contracts (scope: `packages/agents/idea-collector`, `packages/core/package.json`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(core): remove legacy idea collector package`).
-4. [TODO] Git Commit: `refactor(core): remove legacy idea collector package` (hash: TBD)
+2. [DONE] Git Commit: `refactor(claude): neutralize workflow structured output naming` (hash: `ee820f6a`)
+3. [DONE] Убрать stale workspace/build references на удаляемый `@codeai-hub/idea-collector`, чтобы root workspace, Core dependency graph и packaging scripts больше не ожидали наличие этого пакета (scope: `package.json`, `packages/core/package.json`, `scripts/build-core.sh`; expected commit: `refactor(build): drop idea collector workspace references`).
+4. [TODO] Git Commit: `refactor(build): drop idea collector workspace references` (hash: TBD)
+5. [TODO] Удалить orphaned `packages/agents/idea-collector` package, обновить lockfile и оставить в Core только runtime legacy alias `idea-contract`, не зависящий от удалённого пакета (scope: `packages/agents/idea-collector`, `package-lock.json`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(core): remove legacy idea collector package`).
+6. [TODO] Git Commit: `refactor(core): remove legacy idea collector package` (hash: TBD)
 
 ### Stream: Docs and SSOT cleanup
 1. [TODO] Обновить active SSOT, чтобы `Idea` / `Idea Collector` оставались только историей или compat note, а не текущей семантикой шага `Description` (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(workflow): remove idea legacy semantics from active ssot`).
