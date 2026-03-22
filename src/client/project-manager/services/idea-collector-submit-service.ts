@@ -3,7 +3,7 @@ import { api } from "../api";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "../../ui/src/services/idea-collector-fallback-schema";
 import { normalizeIdeaCollectorSchema } from "../../ui/src/services/idea-collector-schema-utils";
 import { postSystemNotice } from "../../ui/src/services/idea-collector-support";
-import { notifyMissingIdeaContext } from "../../ui/src/services/idea-questionnaire-messages";
+import { notifyMissingDescriptionContext } from "../../ui/src/services/description-questionnaire-messages";
 import {
   isRecord,
   joinUrl,
@@ -271,7 +271,7 @@ export class IdeaCollectorSubmitService {
     params.onSessionCreated?.(session.id);
     const resolvedInitiativeSlug = session.initiativeSlug ?? initiativeSlug;
     if (!resolvedInitiativeSlug) {
-      notifyMissingIdeaContext(session.id);
+      notifyMissingDescriptionContext(session.id);
       return session.id;
     }
     const bindingPromise = waitForSessionProviderBinding(session.id);
