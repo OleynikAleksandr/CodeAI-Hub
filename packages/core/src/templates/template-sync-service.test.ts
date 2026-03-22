@@ -53,7 +53,8 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     relativePath: ".codeai-hub/templates/description/description-template.md",
     snippets: [
       "ключевые сценарии использования без жёсткого лимита",
-      "После этого продолжайте диалог, пока документ вас устраивает",
+      "После этого откроется выбор AI-провайдера",
+      "провайдер выбирается один раз для всего workflow workspace",
       "отдельный блок ключевых пользовательских сценариев",
     ],
   },

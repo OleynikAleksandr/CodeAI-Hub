@@ -152,8 +152,12 @@ test("description contract restores missing template from bundled assets", async
     await assert.doesNotReject(access(restoredTemplatePath));
     const restoredTemplate = await readFile(restoredTemplatePath, "utf8");
     assert.equal(
+      restoredTemplate.includes("После этого откроется выбор AI-провайдера"),
+      true
+    );
+    assert.equal(
       restoredTemplate.includes(
-        "После этого продолжайте диалог, пока документ вас устраивает"
+        "провайдер выбирается один раз для всего workflow workspace"
       ),
       true
     );

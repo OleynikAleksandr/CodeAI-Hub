@@ -20,14 +20,23 @@ test("description help is a local PM help surface and does not depend on runtime
     true
   );
   assert.equal(
-    source.includes("продолжайте диалог, пока документ вас устраивает"),
+    source.includes("выбор AI-провайдера"),
     true
   );
   assert.equal(
-    source.includes("кластерно-модульной"),
+    source.includes("workflow workspace"),
     true
   );
+  assert.equal(
+    source.includes("достаточно сильной основой для следующего шага"),
+    true
+  );
+  assert.equal(
+    source.includes("продолжайте диалог, пока документ вас устраивает"),
+    false
+  );
+  assert.equal(source.includes("кластерно-модульной"), true);
   assert.equal(source.includes("ключевых пользовательских сценариев"), true);
-  assert.equal(source.includes("Когда анкета готова, нажмите"), false);
+  assert.equal(source.includes("Когда анкета готова, нажмите"), true);
   assert.equal(source.includes("После submit продолжайте диалог"), false);
 });
