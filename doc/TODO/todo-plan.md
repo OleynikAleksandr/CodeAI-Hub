@@ -40,8 +40,8 @@
 
 ### Stream: Diagram prompt appendix deduplication
 1. [DONE] Классифицировать новый accepted finding для `Diagram Modules` и проверить `Diagram Facades`: runtime prompt дублирует appendix-блоки `Field Reference` и `Merge Rules`, потому что при наличии synced template и fallback asset оба источника одновременно попадают в итоговый prompt; зафиксировать кейс как `runtime/contract drift` и открыть локальный hotfix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify diagram prompt appendix duplication`).
-2. [TODO] Git Commit: `docs(plan): classify diagram prompt appendix duplication` (hash: TBD)
-3. [TODO] Исправить workflow contract loader так, чтобы для каждого diagram appendix-блока выбирался ровно один источник `synced-or-fallback`, и закрыть regression тестами на отсутствие дублей в `Diagram Modules` и `Diagram Facades` prompt (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `fix(diagram-prompts): dedupe prompt appendix sources`).
+2. [DONE] Git Commit: `docs(plan): classify diagram prompt appendix duplication` (hash: `f176ee20`)
+3. [DONE] Исправить workflow contract loader так, чтобы для каждого diagram appendix-блока выбирался ровно один источник `synced-or-fallback`, и закрыть regression тестами на отсутствие дублей в `Diagram Modules` и `Diagram Facades` prompt (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `fix(diagram-prompts): dedupe prompt appendix sources`).
 4. [TODO] Git Commit: `fix(diagram-prompts): dedupe prompt appendix sources` (hash: TBD)
 
 ### Stream: Release build after accepted fixes

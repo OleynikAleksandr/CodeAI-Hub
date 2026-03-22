@@ -38,7 +38,7 @@ type WorkflowContractPaths = {
   readonly schema?: WorkflowContractPathSource;
   readonly template?: WorkflowContractPathSource;
   readonly questionnaire?: WorkflowContractPathSource;
-  readonly promptAppendix?: WorkflowContractPathSource;
+  readonly promptAppendix?: readonly WorkflowContractPathSource[];
 };
 
 type ResolvedWorkflowContractPaths = {
@@ -46,7 +46,7 @@ type ResolvedWorkflowContractPaths = {
   readonly schema: readonly string[];
   readonly template: readonly string[];
   readonly questionnaire: readonly string[];
-  readonly promptAppendix: readonly string[];
+  readonly promptAppendix: readonly (readonly string[])[];
 };
 
 const TEMPLATE_ROOT_SEGMENTS = [".codeai-hub", "templates"];
@@ -205,7 +205,9 @@ const resolveWorkflowContractPaths = (
   schema: resolveWorkflowContractPathCandidates(paths.schema),
   template: resolveWorkflowContractPathCandidates(paths.template),
   questionnaire: resolveWorkflowContractPathCandidates(paths.questionnaire),
-  promptAppendix: resolveWorkflowContractPathCandidates(paths.promptAppendix),
+  promptAppendix: (paths.promptAppendix ?? []).map((appendixPaths) =>
+    resolveWorkflowContractPathCandidates(appendixPaths)
+  ),
 });
 
 const readFirstAvailableTextFile = async (
@@ -249,7 +251,7 @@ const readWorkflowContractInputs = async (resolved: {
   readonly schema: readonly string[];
   readonly template: readonly string[];
   readonly questionnaire: readonly string[];
-  readonly promptAppendix: readonly string[];
+  readonly promptAppendix: readonly (readonly string[])[];
 }): Promise<{
   readonly promptPath: string | null;
   readonly prompt: string | null;
@@ -268,7 +270,10 @@ const readWorkflowContractInputs = async (resolved: {
       readFirstAvailableTextFile(resolved.template),
       readFirstAvailableTextFile(resolved.questionnaire),
       Promise.all(
-        resolved.promptAppendix.map((filePath) => readTextFile(filePath))
+        resolved.promptAppendix.map(async (appendixPaths) => {
+          const appendix = await readFirstAvailableTextFile(appendixPaths);
+          return appendix.content;
+        })
       ),
     ]);
   return {

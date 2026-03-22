@@ -9,6 +9,9 @@ import {
   buildDiagramModulesContract,
 } from "./idea-contract-service";
 
+const countOccurrences = (source: string, needle: string): number =>
+  source.split(needle).length - 1;
+
 const writeBundledTemplate = async (
   homePath: string,
   templateId: string
@@ -66,6 +69,20 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
       true
     );
     assert.equal(
+      countOccurrences(
+        contract?.prompt ?? "",
+        "# Module Inventory Field Reference"
+      ),
+      1
+    );
+    assert.equal(
+      countOccurrences(
+        contract?.prompt ?? "",
+        "# Module Inventory Merge Rules"
+      ),
+      1
+    );
+    assert.equal(
       contract?.template.includes("### Cluster: example-user-workspace"),
       true
     );
@@ -104,5 +121,13 @@ test("diagram facades contract embeds field reference and merge rules into promp
       "Keep facade ownership aligned with the current `module-inventory.md`"
     ),
     true
+  );
+  assert.equal(
+    countOccurrences(contract?.prompt ?? "", "# Facade Map Field Reference"),
+    1
+  );
+  assert.equal(
+    countOccurrences(contract?.prompt ?? "", "# Facade Map Merge Rules"),
+    1
   );
 });

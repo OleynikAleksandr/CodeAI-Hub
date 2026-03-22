@@ -17,12 +17,12 @@ export const resolveSyncedDiagramTemplateCandidates = (
 ];
 
 export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
-  ...resolveSyncedDiagramTemplateCandidates(
+  resolveSyncedDiagramTemplateCandidates(
     "diagram_modules/module-inventory-field-reference.md",
     "diagram-modules-agent",
     "module-inventory-field-reference.md"
   ),
-  ...resolveSyncedDiagramTemplateCandidates(
+  resolveSyncedDiagramTemplateCandidates(
     "diagram_modules/module-inventory-merge-rules.md",
     "diagram-modules-agent",
     "module-inventory-merge-rules.md"
@@ -30,12 +30,12 @@ export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
 ] as const;
 
 export const DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS = [
-  ...resolveSyncedDiagramTemplateCandidates(
+  resolveSyncedDiagramTemplateCandidates(
     "diagram_facades/facade-map-field-reference.md",
     "diagram-facades-agent",
     "facade-map-field-reference.md"
   ),
-  ...resolveSyncedDiagramTemplateCandidates(
+  resolveSyncedDiagramTemplateCandidates(
     "diagram_facades/facade-map-merge-rules.md",
     "diagram-facades-agent",
     "facade-map-merge-rules.md"
