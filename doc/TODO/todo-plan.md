@@ -76,9 +76,9 @@
 
 ### Stream: Release build after Idea legacy cleanup
 1. [DONE] На чистом дереве прогнать таргетные проверки/сборки для PM/UI/Core/Provider слоёв, затронутых cleanup-ом, затем выполнить `./scripts/build-all.sh` и подготовить version bump + manifests + release notes под новый локальный релиз (scope: `README.md`, `CHANGELOG.md`, version/manifest files from `build-all.sh`; expected commit: `chore(release): prepare idea legacy cleanup release`).
-2. [TODO] Git Commit: `chore(release): prepare idea legacy cleanup release` (hash: TBD)
-3. [TODO] После чистого дерева выполнить `./scripts/build-release.sh --use-current-version`, затем записать результаты релиза в `doc/Sessions/Session123.md` и `todo-plan.md`, зафиксировав final baseline для post-cleanup regression (scope: `doc/Sessions/Session123.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.762 idea legacy cleanup release`).
-4. [TODO] Git Commit: `docs(session): record 1.1.762 idea legacy cleanup release` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): prepare idea legacy cleanup release` (hash: `01fab424`)
+3. [DONE] После чистого дерева выполнить `./scripts/build-release.sh --use-current-version`, затем записать результаты релиза в `doc/Sessions/Session123.md` и `todo-plan.md`, зафиксировав final baseline для post-cleanup regression (scope: `doc/Sessions/Session123.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.762 idea legacy cleanup release`).
+4. [DONE] Git Commit: `docs(session): record 1.1.762 idea legacy cleanup release` (hash: TBD)
 
 ## Notes
 - Archived previous completed rollout plan:
