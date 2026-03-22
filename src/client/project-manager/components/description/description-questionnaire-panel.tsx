@@ -2,7 +2,7 @@ import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IdeaQuestionnaireView } from "../../../ui/src/components/idea-questionnaire/idea-questionnaire-view";
 import { DescriptionQuestionnaireService } from "../../services/description-questionnaire-service";
-import { IdeaCollectorSubmitService } from "../../services/idea-collector-submit-service";
+import { DescriptionSubmitService } from "../../services/description-submit-service";
 import type { ProviderStackDescriptor, ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
@@ -51,7 +51,7 @@ export const DescriptionQuestionnairePanel: React.FC<
   onIdeaSessionCreatePendingChange,
 }) => {
   const serviceRef = useRef(new DescriptionQuestionnaireService());
-  const ideaCollectorRef = useRef(new IdeaCollectorSubmitService());
+  const descriptionSubmitRef = useRef(new DescriptionSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [providerPickerOpen, setProviderPickerOpen] = useState(false);
@@ -186,7 +186,7 @@ export const DescriptionQuestionnairePanel: React.FC<
         panelState.placeholders,
         answers
       );
-      await ideaCollectorRef.current.submitQuestionnaire({
+      await descriptionSubmitRef.current.submitQuestionnaire({
         workspaceName: resolvedWorkspaceName,
         workspaceSlug: resolvedWorkspaceSlug,
         workspacePath: workspacePath ?? "",
