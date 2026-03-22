@@ -15,8 +15,8 @@ interface DescriptionQuestionnairePanelProps {
   readonly workspacePath?: string;
   readonly workspaceSlug?: string;
   readonly onClose?: () => void;
-  readonly onIdeaSessionCreated?: (sessionId: string) => void;
-  readonly onIdeaSessionCreatePendingChange?: (
+  readonly onDescriptionSessionCreated?: (sessionId: string) => void;
+  readonly onDescriptionSessionCreatePendingChange?: (
     payload: { readonly providerTitle: string } | null
   ) => void;
 }
@@ -47,8 +47,8 @@ export const DescriptionQuestionnairePanel: React.FC<
   workspacePath,
   workspaceSlug,
   onClose,
-  onIdeaSessionCreated,
-  onIdeaSessionCreatePendingChange,
+  onDescriptionSessionCreated,
+  onDescriptionSessionCreatePendingChange,
 }) => {
   const serviceRef = useRef(new DescriptionQuestionnaireService());
   const descriptionSubmitRef = useRef(new DescriptionSubmitService());
@@ -85,7 +85,7 @@ export const DescriptionQuestionnairePanel: React.FC<
 
     setAnswers({});
     setSubmitError(null);
-    onIdeaSessionCreatePendingChange?.(null);
+    onDescriptionSessionCreatePendingChange?.(null);
     setProviderPickerOpen(false);
     submitInFlightRef.current = false;
     setPanelState({ status: "loading" });
@@ -124,7 +124,7 @@ export const DescriptionQuestionnairePanel: React.FC<
     };
   }, [
     canLoad,
-    onIdeaSessionCreatePendingChange,
+    onDescriptionSessionCreatePendingChange,
     resolvedWorkspaceName,
     resolvedWorkspaceSlug,
     workspacePath,
@@ -171,7 +171,7 @@ export const DescriptionQuestionnairePanel: React.FC<
     const providerTitle =
       providerOptions.find((provider) => provider.id === providerId)?.title ??
       null;
-    onIdeaSessionCreatePendingChange?.({
+    onDescriptionSessionCreatePendingChange?.({
       providerTitle: providerTitle ?? providerId,
     });
     if (saveTimerRef.current) {
@@ -193,7 +193,7 @@ export const DescriptionQuestionnairePanel: React.FC<
         questionnairePath: panelState.questionnairePath,
         stage: "description",
         providerId,
-        onSessionCreated: onIdeaSessionCreated,
+        onSessionCreated: onDescriptionSessionCreated,
       });
       if (workspacePath) {
         window.dispatchEvent(
@@ -213,7 +213,7 @@ export const DescriptionQuestionnairePanel: React.FC<
           ? error.message
           : "Не удалось отправить анкету."
       );
-      onIdeaSessionCreatePendingChange?.(null);
+      onDescriptionSessionCreatePendingChange?.(null);
     } finally {
       submitInFlightRef.current = false;
     }

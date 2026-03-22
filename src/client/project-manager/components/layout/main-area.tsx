@@ -144,7 +144,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     [selectedArtifact]
   );
 
-  const handleIdeaSessionCreated = useCallback((sessionId: string) => {
+  const handleDescriptionSessionCreated = useCallback((sessionId: string) => {
     setPreferredSessionId(sessionId);
     setHasDescriptionSession(true);
   }, []);
@@ -260,7 +260,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             descriptionDocumentExists={descriptionDocument !== null}
             headerMode={artifactHeaderMode}
             hasDescriptionSession={hasDescriptionSession}
-            onDescriptionSessionCreated={handleIdeaSessionCreated}
+            onDescriptionSessionCreated={handleDescriptionSessionCreated}
             onPendingSessionCreateChange={setPendingSessionCreate}
             onSelectedArtifactClear={() => setSelectedArtifact(null)}
             onSetActiveToolNull={() => setActiveTool(null)}

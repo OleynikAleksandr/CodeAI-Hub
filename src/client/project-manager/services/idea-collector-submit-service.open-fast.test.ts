@@ -31,5 +31,8 @@ test("questionnaire submit opens session immediately after session:created", asy
   );
 
   const panelSource = await readFile(PANEL_PATH, "utf8");
-  assert.equal(panelSource.includes("onSessionCreated: onIdeaSessionCreated,"), true);
+  assert.equal(
+    panelSource.includes("onSessionCreated: onDescriptionSessionCreated,"),
+    true
+  );
 });

@@ -143,8 +143,8 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     return (
       <DescriptionQuestionnairePanel
         onClose={onSetActiveToolNull}
-        onIdeaSessionCreatePendingChange={onPendingSessionCreateChange}
-        onIdeaSessionCreated={onDescriptionSessionCreated}
+        onDescriptionSessionCreatePendingChange={onPendingSessionCreateChange}
+        onDescriptionSessionCreated={onDescriptionSessionCreated}
         workspaceName={activeWorkspaceName}
         workspacePath={activeWorkspacePath}
         workspaceSlug={activeWorkspaceSlug ?? undefined}
