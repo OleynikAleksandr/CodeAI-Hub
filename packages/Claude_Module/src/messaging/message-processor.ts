@@ -14,12 +14,12 @@ import type {
   ClaudeUsageLimitsStreamPayload,
   ModuleReporter,
 } from "../types";
-import type { IdeaCollectorStructuredOutput } from "./idea-collector-structured-output";
-import {
-  parseIdeaCollectorOutputFromResultMessage,
-  parseIdeaCollectorOutputFromText,
-} from "./idea-collector-structured-output";
 import { extractVariantBArtifacts } from "./structured-output-utils";
+import {
+  parseWorkflowStructuredOutputFromResultMessage,
+  parseWorkflowStructuredOutputFromText,
+  type WorkflowStructuredOutput,
+} from "./workflow-structured-output";
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
 
@@ -788,7 +788,7 @@ export class SDKMessageProcessor {
     if (!assistantText) {
       return;
     }
-    const structured = parseIdeaCollectorOutputFromText(assistantText);
+    const structured = parseWorkflowStructuredOutputFromText(assistantText);
     if (structured) {
       const suggestedResponse = this.emitStructuredOutput(
         session,
@@ -810,7 +810,7 @@ export class SDKMessageProcessor {
   ): void {
     const normalizedMessage = this.normalizeStructuredOutputMessage(message);
     const structured =
-      parseIdeaCollectorOutputFromResultMessage(normalizedMessage);
+      parseWorkflowStructuredOutputFromResultMessage(normalizedMessage);
     if (!structured) {
       return;
     }
@@ -884,7 +884,7 @@ export class SDKMessageProcessor {
   private emitStructuredOutput(
     session: ActiveSession,
     message: ClaudeStreamMessage,
-    output: IdeaCollectorStructuredOutput
+    output: WorkflowStructuredOutput
   ): string | null {
     const variantBArtifacts = extractVariantBArtifacts(message);
     const { artifacts, questions } =

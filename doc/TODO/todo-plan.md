@@ -40,10 +40,10 @@
 1. [DONE] Удалить legacy `Idea/Spec/Plan/Execute` command wiring из home-view transport и оставить Project Manager единственной supported workflow entry surface (scope: `src/extension-module/home-view-message-router/command-handler.ts`, `src/extension-module/home-view-message-router/message-types.ts`, `src/client/ui/src/components/action-bar/index.tsx`; expected commit: `refactor(home-view): drop legacy flow commands`).
 2. [DONE] Git Commit: `refactor(home-view): drop legacy flow commands` (hash: `080ae09b`)
 3. [DONE] Снять disabled `FullAppHost` flow-wizard/questionnaire path, который всё ещё тащит `idea` semantics, но не является частью current product surface (scope: `src/client/ui/src/app-host.tsx`, `src/client/ui/src/app-host/session-region.tsx`, `src/client/ui/src/app-host/use-provider-picker-open-handler.ts`; expected commit: `refactor(ui): remove disabled full flow host`).
-4. [TODO] Git Commit: `refactor(ui): remove disabled full flow host` (hash: TBD)
+4. [DONE] Git Commit: `refactor(ui): remove disabled full flow host` (hash: `ae3c2103`)
 
 ### Stream: Provider + package cleanup for legacy Idea Collector layer
-1. [TODO] Переименовать provider-side parser structured output из `Idea Collector` terminology в нейтральную workflow terminology без изменения текущего parse behavior (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit: `refactor(claude): neutralize workflow structured output naming`).
+1. [DONE] Переименовать provider-side parser structured output из `Idea Collector` terminology в нейтральную workflow terminology без изменения текущего parse behavior (scope: `packages/Claude_Module/src/messaging/idea-collector-structured-output.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`; expected commit: `refactor(claude): neutralize workflow structured output naming`).
 2. [TODO] Git Commit: `refactor(claude): neutralize workflow structured output naming` (hash: TBD)
 3. [TODO] Удалить orphaned `packages/agents/idea-collector` package и stale Core dependency после того, как активные callers будут переведены на current naming/contracts (scope: `packages/agents/idea-collector`, `packages/core/package.json`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`; expected commit: `refactor(core): remove legacy idea collector package`).
 4. [TODO] Git Commit: `refactor(core): remove legacy idea collector package` (hash: TBD)
