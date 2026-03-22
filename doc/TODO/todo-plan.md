@@ -24,13 +24,19 @@
 
 ### Stream: Regression intake and classification
 1. [DONE] Классифицировать первый принятый regression finding для `Description Help`: текущая фраза про `Submit questionnaire` и продолжение диалога даёт неверную UX-модель, потому что не упоминает provider picker и искажает условие продолжения диалога; зафиксировать кейс как `runtime/UI drift` и переписать plan из intake-mode в конкретный fix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify description help provider-picker drift`).
-2. [DONE] Git Commit: `docs(plan): classify description help provider-picker drift` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): classify description help provider-picker drift` (hash: `e4357c39`)
 
 ### Stream: Description Help provider-picker copy alignment
-1. [TODO] Исправить source-of-truth copy для `Description Help`, чтобы текст явно отражал фактический UX: после `Submit questionnaire` открывается выбор AI-провайдера, в MVP провайдер выбирается один раз на весь workflow workspace, а диалог продолжается до тех пор, пока пользователь не сочтёт документ достаточно сильной основой для следующего шага (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`; expected commit: `fix(description): align help copy with provider picker flow`).
-2. [TODO] Git Commit: `fix(description): align help copy with provider picker flow` (hash: TBD)
-3. [TODO] Обновить защитные тесты на локальный PM help и synced template, чтобы новый текст не разъехался между help-component и bundled template и чтобы regression явно ловил возврат старой формулировки (scope: `src/client/project-manager/components/description/description-step-help.test.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `test(description): guard help provider picker wording`).
-4. [TODO] Git Commit: `test(description): guard help provider picker wording` (hash: TBD)
+1. [DONE] Исправить source-of-truth copy для `Description Help`, чтобы текст явно отражал фактический UX: после `Submit questionnaire` открывается выбор AI-провайдера, в MVP провайдер выбирается один раз на весь workflow workspace, а диалог продолжается до тех пор, пока пользователь не сочтёт документ достаточно сильной основой для следующего шага (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`; expected commit: `fix(description): align help copy with provider picker flow`).
+2. [DONE] Git Commit: `fix(description): align help copy with provider picker flow` (hash: `a83448bd`)
+3. [DONE] Синхронизировать generated bundled template после обновления source markdown, чтобы `TemplateSyncService` и runtime contract восстанавливали уже новый `Description Help`, а не старую формулировку (scope: `packages/core/src/templates/bundled-templates.ts`; expected commit: `chore(templates): refresh bundled description help copy`).
+4. [DONE] Git Commit: `chore(templates): refresh bundled description help copy` (hash: `d845e59f`)
+5. [DONE] Обновить защитные тесты на локальный PM help и synced template, чтобы новый текст не разъехался между help-component и bundled template и чтобы regression явно ловил возврат старой формулировки (scope: `src/client/project-manager/components/description/description-step-help.test.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `test(description): guard help provider picker wording`).
+6. [DONE] Git Commit: `test(description): guard help provider picker wording` (hash: `c51a7a9d`)
+
+### Stream: Ongoing regression intake
+1. [IN_PROGRESS] Продолжать принимать следующие user-observed findings на релизе `1.1.762`, классифицировать их по модели из planning-doc и открывать новые stage-local fix-stream только после подтверждённого system-level кейса (scope: `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session124.md`; expected commit: `docs(plan): classify next regression finding`).
+2. [TODO] Git Commit: `docs(plan): classify next regression finding` (hash: TBD)
 
 ### Stream: Release build after accepted fixes
 1. [BLOCKED] После закрытия принятых фиксов и таргетной верификации выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare next regression feedback release`).
@@ -43,4 +49,4 @@
   - `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`
 - Current validated release baseline:
   - `codeai-hub-1.1.762.vsix`
-- Until the first accepted system-level finding arrives, this plan intentionally stays in intake mode rather than inventing speculative fix streams.
+- The first accepted system-level finding for `Description Help` is closed; further scope expansion now depends only on the next confirmed regression case from live testing.
