@@ -5,9 +5,10 @@
  * stored under ~/.codeai-hub/templates/<step>/.
  */
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import { BUNDLED_TEMPLATE_SOURCES } from "../../templates/bundled-templates";
 import {
   appendDiagramPromptAppendix,
   DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS,
@@ -96,6 +97,63 @@ const readTextFile = async (filePath: string): Promise<string | null> => {
   }
 };
 
+const normalizeTemplatePath = (value: string): string =>
+  value.replace(/\\/g, "/");
+
+const decodeBundledTemplate = (base64: string): string | null => {
+  const raw = base64.trim();
+  if (!raw) {
+    return null;
+  }
+  try {
+    return Buffer.from(raw, "base64").toString("utf8");
+  } catch {
+    return null;
+  }
+};
+
+const resolveBundledTemplateSourceForPath = (
+  filePath: string
+): (typeof BUNDLED_TEMPLATE_SOURCES)[number] | null => {
+  const home = homedir();
+  if (!home) {
+    return null;
+  }
+  const normalizedHome = normalizeTemplatePath(home);
+  const normalizedFilePath = normalizeTemplatePath(filePath);
+  const homePrefix = `${normalizedHome}/`;
+  if (!normalizedFilePath.startsWith(homePrefix)) {
+    return null;
+  }
+  const relativePath = normalizedFilePath.slice(homePrefix.length);
+  return (
+    BUNDLED_TEMPLATE_SOURCES.find(
+      (entry) =>
+        normalizeTemplatePath(entry.destinationRelativePath) === relativePath
+    ) ?? null
+  );
+};
+
+const restoreBundledTemplateToDisk = async (
+  filePath: string
+): Promise<string | null> => {
+  const bundledSource = resolveBundledTemplateSourceForPath(filePath);
+  if (!bundledSource) {
+    return null;
+  }
+  const decoded = decodeBundledTemplate(bundledSource.base64);
+  if (!decoded) {
+    return null;
+  }
+  try {
+    await mkdir(path.dirname(filePath), { recursive: true });
+    await writeFile(filePath, `${decoded.trimEnd()}\n`, "utf8");
+    return decoded;
+  } catch {
+    return null;
+  }
+};
+
 const readJsonFile = async (
   filePath: string
 ): Promise<Record<string, unknown> | null> => {
@@ -160,6 +218,12 @@ const readFirstAvailableTextFile = async (
     const content = await readTextFile(filePath);
     if (content) {
       return { path: filePath, content };
+    }
+  }
+  for (const filePath of filePaths) {
+    const restoredContent = await restoreBundledTemplateToDisk(filePath);
+    if (restoredContent) {
+      return { path: filePath, content: restoredContent };
     }
   }
   return { path: null, content: null };

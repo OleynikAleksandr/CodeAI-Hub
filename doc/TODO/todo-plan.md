@@ -48,6 +48,14 @@
 1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md` и `todo-plan.md`, зафиксировав новый локальный релиз с обязательным сценарным блоком `Description` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md`; expected commit: `chore(release): prepare 1.1.759 assets`).
 2. [DONE] Git Commit: `chore(release): prepare 1.1.759 assets` (hash: `c984741e`)
 
+### Stream: Description help template recovery
+1. [DONE] Защитить `Description` contract от missing synced `description-template.md`: runtime должен восстанавливать bundled visible template в `~/.codeai-hub/templates/...` и продолжать отдавать единый `Description Help` / workflow contract без деградации в `template недоступен` (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(workflow): restore missing description help template`).
+2. [TODO] Git Commit: `fix(workflow): restore missing description help template` (hash: TBD)
+
+### Stream: Release build after description help hotfix
+1. [TODO] На чистом дереве прогнать таргетные contract/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md` и `todo-plan.md`, зафиксировав новый локальный релиз с hotfix для `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md`; expected commit: `chore(release): prepare 1.1.760 assets`).
+2. [TODO] Git Commit: `chore(release): prepare 1.1.760 assets` (hash: TBD)
+
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase24-2026-03-22.md`
 - Active planning doc for this scope:

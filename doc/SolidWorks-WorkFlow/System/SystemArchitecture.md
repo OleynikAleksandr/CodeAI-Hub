@@ -89,6 +89,8 @@
 - `description-template.md` — user-facing Help для pre-submit и post-submit (`Artifacts/Help`).
 - `description-collector-prompt.md` — инструкции Description Agent (file-first, краткий контекст workflow, ограничения, DoD).
 
+Инвариант delivery для `Description`: если synced visible template под `~/.codeai-hub/templates/description/description-template.md` отсутствует или был потерян, runtime workflow contract обязан восстановить этот файл из bundled-source и только потом отдавать `Description Help` / `description-contract`. Пользователь не должен видеть `template недоступен`, если каноничный bundled template уже входит в релиз.
+
 Каноничный bundled prompt для `.codeai-hub/templates/virtual_simulation/`:
 - `virtual-simulation-prompt.md` — инструкции Virtual Simulation Agent.
 
