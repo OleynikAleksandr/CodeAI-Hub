@@ -58,7 +58,7 @@
 
 ### Stream: Local PM rendering for Description Help
 1. [DONE] Перевести `Description Help` на тот же локальный PM-pattern, что и у остальных шагов: user-facing help больше не должен зависеть от `description-contract`, template-sync или runtime template availability; pre-submit и `Help` tab должны рендерить один и тот же встроенный help-компонент (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/description/description-step-help.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(pm): render description help locally`).
-2. [TODO] Git Commit: `fix(pm): render description help locally` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): render description help locally` (hash: `6fc1538b`)
 
 ### Stream: Release build after local Description Help rendering fix
 1. [TODO] На чистом дереве прогнать таргетные PM/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md` и `todo-plan.md`, зафиксировав новый локальный релиз с локальным рендером `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md`; expected commit: `chore(release): prepare 1.1.761 assets`).
