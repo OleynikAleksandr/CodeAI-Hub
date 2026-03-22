@@ -122,7 +122,31 @@
 3. [DONE] Синхронизировать release docs с итогом `Phase 22` / `Phase 23`, затем на чистом checkpoint выполнить таргетную verification для diagram/webview surface и `./scripts/build-all.sh`, чтобы получить локальные артефакты `1.1.756` и version/manifest refresh для релиза (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `package.json`, `package-lock.json`, `assets/**/manifest.json`, `packages/*/package.json`; expected commit: `chore(release): build 1.1.756 artifacts`).
 4. [DONE] Git Commit: `chore(release): build 1.1.756 artifacts` (hash: `8ad8e4a7`)
 5. [DONE] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball'ы, затем обновить `doc/Sessions/` и handoff для следующего regression pass на свежем релизе `1.1.756` (scope: `scripts/build-release.sh`, `doc/Sessions/Session116.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.756 release build`).
-6. [TODO] Git Commit: `docs(session): record 1.1.756 release build` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record 1.1.756 release build` (hash: `2ded7cae`)
+
+## Phase 24 — Description Questionnaire Universalization And Downstream Sync (owner: Oleksandr, updated: 2026-03-22)
+
+### Stream: Planning baseline
+1. [IN_PROGRESS] Зафиксировать planning baseline для универсальной `Description` questionnaire: утвердить, что анкета должна описывать любой программный продукт, вопросы идут как лестница от простого к сложному, а кластерно-модульная архитектура объясняется как рекомендуемый подход, а не как product-specific contract; синхронно поправить `todo-plan.md` под этот новый scope (scope: `doc/SolidWorks-WorkFlow/Plans/Description_Questionnaire_Universalization_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): scope universal description questionnaire sync`).
+2. [TODO] Git Commit: `docs(plan): scope universal description questionnaire sync` (hash: TBD)
+
+### Stream: Questionnaire runtime template
+1. [TODO] Перестроить runtime questionnaire template под согласованный универсальный baseline: сохранить универсальность для любого программного продукта, поднять `тип продукта / платформа` в раннюю часть анкеты, убрать product-specific drift, добавить `## 12. Примечания`, затем синхронизировать mirrored legacy questionnaire asset и регенерировать bundled templates (scope: `packages/agents/description-agent/assets/questionnaire-template.md`, `packages/agents/idea-collector/assets/questionnaire-template.md`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(template): universalize description questionnaire`).
+2. [TODO] Git Commit: `docs(template): universalize description questionnaire` (hash: TBD)
+
+### Stream: Description help sync
+1. [TODO] Обновить `Description Help` под тот же baseline: пояснить, что кластерно-модульная архитектура рекомендуется как удобный способ описывать любой продукт для AI, а не как требование знать внутренние термины; синхронно обновить coverage, которая проверяет установленный template/help contract (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/core/src/templates/template-sync-service.test.ts`; expected commit: `docs(help): align description help with universal questionnaire`).
+2. [TODO] Git Commit: `docs(help): align description help with universal questionnaire` (hash: TBD)
+
+### Stream: Downstream prompt consistency audit
+1. [TODO] Перепроверить и при необходимости поправить downstream runtime prompts/help surfaces, чтобы `Virtual Simulation`, `Diagram Modules` и `Diagram Facades` не противоречили новому `Description` baseline: они должны опираться на кластерно-модульную интерпретацию, но не ожидать от анкеты product-specific workflow facts; при необходимости обновить bundled templates (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`; expected commit: `docs(prompt): align downstream stages with universal description baseline`).
+2. [TODO] Git Commit: `docs(prompt): align downstream stages with universal description baseline` (hash: TBD)
+3. [TODO] Досинхронизировать `Diagram Facades` user-facing surface с тем же baseline: prompt/help не должны вводить термины или ожидания, которых не было в `Description`, и должны явно опираться на уже согласованный `module-inventory.md` / facade contract (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): sync diagram facades with universal description baseline`).
+4. [TODO] Git Commit: `docs(prompt): sync diagram facades with universal description baseline` (hash: TBD)
+
+### Stream: Release build after Phase 24
+1. [TODO] На чистом дереве прогнать таргетные template/webview проверки для обновлённого questionnaire/help/prompt surface, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для реального regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `src/client/project-manager/components/description/description-step-help.tsx`, `doc/Sessions/Session117.md`; expected commit: `chore(release): build universal questionnaire package`).
+2. [TODO] Git Commit: `chore(release): build universal questionnaire package` (hash: TBD)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
@@ -132,6 +156,7 @@
   - `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Description_Questionnaire_Universalization_Architecture.md`
 - Session handoff report:
   - `doc/Sessions/Session109.md`
   - `doc/Sessions/Session110.md`
