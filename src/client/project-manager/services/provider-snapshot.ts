@@ -15,7 +15,7 @@ export type ProviderSnapshot = {
   readonly statusMessage?: string | null;
 };
 
-const IDEA_PROVIDER_IDS = new Set<ProviderStackId>([
+const DESCRIPTION_PROVIDER_IDS = new Set<ProviderStackId>([
   "claudeCodeCli",
   "codexCli",
   "geminiCli",
@@ -71,7 +71,7 @@ const toProviderDescriptor = (
   provider: ProviderSnapshot
 ): ProviderStackDescriptor | null => {
   const providerId = provider.id as ProviderStackId;
-  if (!IDEA_PROVIDER_IDS.has(providerId)) {
+  if (!DESCRIPTION_PROVIDER_IDS.has(providerId)) {
     return null;
   }
   return {
@@ -83,7 +83,7 @@ const toProviderDescriptor = (
   };
 };
 
-export const resolveIdeaCollectorProviders = (
+export const resolveDescriptionProviders = (
   snapshot: readonly ProviderSnapshot[]
 ): readonly ProviderStackDescriptor[] => {
   const mapped = snapshot
@@ -93,13 +93,13 @@ export const resolveIdeaCollectorProviders = (
     );
   if (mapped.length > 0) {
     const byId = new Map(mapped.map((provider) => [provider.id, provider]));
-    return Array.from(IDEA_PROVIDER_IDS)
+    return Array.from(DESCRIPTION_PROVIDER_IDS)
       .map((providerId) => byId.get(providerId))
       .filter((provider): provider is ProviderStackDescriptor =>
         Boolean(provider)
       );
   }
-  return Array.from(IDEA_PROVIDER_IDS, (providerId) => ({
+  return Array.from(DESCRIPTION_PROVIDER_IDS, (providerId) => ({
     id: providerId,
     title: getDefaultProviderTitle(providerId),
     description: getDefaultProviderDescription(providerId),
@@ -107,3 +107,5 @@ export const resolveIdeaCollectorProviders = (
     statusMessage: null,
   }));
 };
+
+export const resolveIdeaCollectorProviders = resolveDescriptionProviders;

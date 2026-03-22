@@ -1,6 +1,7 @@
 import type { ProviderStackDescriptor } from "../../types/provider";
 import {
   extractProviders,
+  resolveDescriptionProviders,
   resolveIdeaCollectorProviders,
   type ProviderSnapshot,
 } from "./services/provider-snapshot";
@@ -189,6 +190,10 @@ export class ProjectManagerApi {
     return () => {
       this.coreListeners.delete(listener);
     };
+  }
+
+  getDescriptionProviders(): readonly ProviderStackDescriptor[] {
+    return resolveDescriptionProviders(this.providerSnapshot);
   }
 
   getIdeaCollectorProviders(): readonly ProviderStackDescriptor[] {

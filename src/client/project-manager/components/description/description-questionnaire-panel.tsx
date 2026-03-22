@@ -224,7 +224,7 @@ export const DescriptionQuestionnairePanel: React.FC<
       return;
     }
     setSubmitError(null);
-    setProviderOptions(api.getIdeaCollectorProviders());
+    setProviderOptions(api.getDescriptionProviders());
     setProviderPickerOpen(true);
   };
 
