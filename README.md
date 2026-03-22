@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.764
-- `Product Part` is now the canonical top-level vocabulary term across `Description`, `Virtual Simulation`, and `Diagram Modules`, so the help surfaces no longer teach one term while the diagram DSL uses another.
-- `Diagram Modules` no longer requires a `Role` field on `Product Part` in the user-facing inventory contract; legacy artifacts still parse, but new inventory output is driven by top-level ownership, title, purpose, clusters, and standalone modules.
-- The `Diagram Modules` diagram now labels cards explicitly as `Module` and shows `Kind` only as a secondary classifier, making the hierarchy `Product Part -> Cluster -> Module` readable for non-programmer users.
-- The `Description` flow fix from `1.1.763`, the diagram prompt deduplication, and the workflow-aware pending `Source` surfaces remain in force.
+## Current Release — v1.1.765
+- Runtime-synced `Diagram Modules` and `Diagram Facades` template packs are now user-readable in Russian while preserving English DSL terms, so the same visible files can serve both as help/reference surface and as prompt appendix without language drift.
+- Bundled diagram template delivery is now rebuilt from the localized source assets and verified by `TemplateSyncService`, so fresh installs and repaired home-cache templates materialize the updated packs into `~/.codeai-hub/templates/...`.
+- `Diagram Modules` first-open autolayout now gives more vertical room to stacked modules inside clusters and uses tighter horizontal spacing for standalone modules, reducing visual overlap and wasted empty space.
+- The `1.1.764` hierarchy cleanup remains in force: `Product Part -> Cluster -> Module` stays explicit, `Role` stays out of the user-facing inventory contract, and module cards still show `Kind` only as a secondary classifier.
 
 Previous releases (summary): the `1.1.57x–1.1.762` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, the resume/recovery stabilization release for `Codex gpt-5.4`, the first greenfield polygon grammar rollout, the first ownership-aware `Product Part` hierarchy release, the `Description` prompt/help/runtime stabilization fixes, and the `Description` naming cleanup release.
 
