@@ -145,8 +145,8 @@
 4. [DONE] Git Commit: `docs(prompt): sync diagram facades with universal description baseline` (hash: `c12c2064`)
 
 ### Stream: Release build after Phase 24
-1. [IN_PROGRESS] На чистом дереве прогнать таргетные template/webview проверки для обновлённого questionnaire/help/prompt surface, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для реального regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `src/client/project-manager/components/description/description-step-help.tsx`, `doc/Sessions/Session117.md`; expected commit: `chore(release): build universal questionnaire package`).
-2. [TODO] Git Commit: `chore(release): build universal questionnaire package` (hash: TBD)
+1. [DONE] На чистом дереве прогнать таргетные template/webview проверки для обновлённого questionnaire/help/prompt surface, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для реального regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `src/client/project-manager/components/description/description-step-help.tsx`, `doc/Sessions/Session117.md`; expected commit: `chore(release): build universal questionnaire package`).
+2. [DONE] Git Commit: `chore(release): build 1.1.757 artifacts` (hash: `75111441`)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-phase17-codex-resume-recovery-2026-03-20.md`
@@ -168,10 +168,11 @@
   - prompt/help/template rewrites для `Description`, `Virtual Simulation`, `Diagram Modules` уже закоммичены и вошли в локальный релиз `1.1.755`
   - `Diagram Modules` уже переведён на ownership-aware hierarchy `Product Part -> Cluster -> Module`
   - `module-map.flow.json` подтверждён как non-semantic layout sidecar и для новой nested hierarchy
-  - локальный release package `1.1.756` собран после `Phase 22` / `Phase 23`, включая updated prompt/template guardrails и first-open Product Part auto-layout stabilization
+  - universal `Description` questionnaire/help baseline и downstream stage prompt sync вошли в локальный релиз `1.1.757`, включая новый `Diagram Facades` prompt/help surface
+  - локальный release package `1.1.757` собран после `Phase 24`; артефакты лежат в `doc/tmp/releases/`, VSIX — в корне репозитория
 - Current remaining validation focus:
-  - greenfield regression для `Description` и `Virtual Simulation` на локальном релизе `1.1.755` уже пройден; следующий активный шаг на свежем `1.1.756` — повторный regression pass через `Diagram Modules`
-  - после `Diagram Modules` продолжить regression-цепочку через `Diagram Facades`
+  - на свежем релизе `1.1.757` заново прогнать полный greenfield regression от `Description` до `Diagram Facades`, чтобы проверить universal questionnaire/help baseline уже в реальном workflow
+  - отдельно проверить, не появилось ли новых drift-эффектов между `Description`, `Virtual Simulation`, `Diagram Modules` и `Diagram Facades` после перевода анкеты на универсальный формат
   - при переходе к diagram stages проверить, достаточно ли `Phase 23` улучшила first-open readability без sidecar и какие остаточные layout gaps требуют следующего execution plan
   - после regression-pass решить, архивировать ли текущий completed `todo-plan.md` и с каким новым scope открывать следующий execution plan
 - Current greenfield regression artifact baseline:
