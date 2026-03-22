@@ -23,6 +23,7 @@
   - packages/example-module/src/example-facade.ts
 - Origin: agent
 - Status: proposed
+- Notes: Здесь кратко поясняется внешний смысл facade, а не детали внутренней реализации
 
 ## Facade Relations
 
@@ -34,3 +35,4 @@
 - Label: POST /execute
 - Origin: agent
 - Status: proposed
+- Notes: Показывайте только те facade relations, которые действительно помогают понять boundary map системы

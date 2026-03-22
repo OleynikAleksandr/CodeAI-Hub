@@ -1,21 +1,21 @@
 # Facade Map Field Reference
 
-Facade fields:
-- `Id`: stable kebab-case identifier.
-- `Module`: parent module ID from `module-inventory.md`.
-- `Kind`: currently `class`.
-- `Visibility`: `public` or `internal`.
-- `Methods`: optional list of facade method signatures.
-- `Ports`: optional list in `In/Out: <type> from/to <target>` format.
-- `Contract Targets`: optional contract file paths.
-- `Code Targets`: optional source file paths.
-- `Origin`: `agent`, `user`, or `merged`.
-- `Status`: `proposed`, `accepted`, or `deprecated`.
-- `Notes` / `Rationale`: optional multiline text blocks.
+Поля `Facade`:
+- `Id`: стабильный kebab-case identifier.
+- `Module`: parent module ID из `module-inventory.md`.
+- `Kind`: сейчас `class`.
+- `Visibility`: `public` или `internal`.
+- `Methods`: необязательный список facade method signatures.
+- `Ports`: необязательный список в формате `In/Out: <type> from/to <target>`.
+- `Contract Targets`: необязательные пути к contract files.
+- `Code Targets`: необязательные пути к source files.
+- `Origin`: `agent`, `user` или `merged`.
+- `Status`: `proposed`, `accepted` или `deprecated`.
+- `Notes` / `Rationale`: необязательные многострочные пояснения.
 
-Facade relation fields:
-- `Id`: deterministic `<from>__<type>__<to>` identifier.
+Поля `Facade Relation`:
+- `Id`: детерминированный identifier вида `<from>__<type>__<to>`.
 - `From` / `To`: facade IDs.
-- `Type`: one of `sync-call`, `async-event`, `shared-data`, `config-ref`.
-- `Label`: optional edge label.
-- `Origin`, `Status`, `Notes`: same semantics as facade fields.
+- `Type`: один из `sync-call`, `async-event`, `shared-data`, `config-ref`.
+- `Label`: необязательный edge label.
+- `Origin`, `Status`, `Notes`: те же значения, что и у facade fields.
