@@ -64,7 +64,7 @@
 11. [DONE] Убрать user-facing `Idea Collector` copy из provider picker текущего `Description` шага, а legacy file оставить только как compat wrapper или удалить после переноса текущего render source (scope: `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `src/client/project-manager/components/description/description-provider-picker.tsx`; expected commit: `refactor(pm): remove idea collector copy from provider picker`).
 12. [DONE] Git Commit: `refactor(pm): remove idea collector copy from provider picker` (hash: `480bd5fb`)
 13. [DONE] Удалить unused legacy provider accessor `getIdeaCollectorProviders` и соответствующий snapshot alias, раз у текущего PM flow больше нет callers (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit: `refactor(pm): remove unused idea provider accessor`).
-14. [TODO] Git Commit: `refactor(pm): remove unused idea provider accessor` (hash: TBD)
+14. [DONE] Git Commit: `refactor(pm): remove unused idea provider accessor` (hash: `8514dcb5`)
 15. [DONE] Удалить unused PM wrapper files `idea-collector-submit-service.ts` и `idea-collector-provider-picker.tsx`, раз после migration текущих callers они больше не импортируются (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`; expected commit: `refactor(pm): remove unused idea wrappers`).
 16. [TODO] Git Commit: `refactor(pm): remove unused idea wrappers` (hash: TBD)
 
