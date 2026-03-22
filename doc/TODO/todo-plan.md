@@ -45,8 +45,8 @@
 2. [DONE] Git Commit: `chore(release): build prompt refinement package` (hash: `e620f207`)
 
 ### Stream: Release build after explicit description scenario DoD
-1. [IN_PROGRESS] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md` и `todo-plan.md`, зафиксировав новый локальный релиз с обязательным сценарным блоком `Description` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md`; expected commit: `chore(release): build explicit description scenario package`).
-2. [TODO] Git Commit: `chore(release): build explicit description scenario package` (hash: TBD)
+1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md` и `todo-plan.md`, зафиксировав новый локальный релиз с обязательным сценарным блоком `Description` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md`; expected commit: `chore(release): prepare 1.1.759 assets`).
+2. [DONE] Git Commit: `chore(release): prepare 1.1.759 assets` (hash: `c984741e`)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase24-2026-03-22.md`
@@ -55,5 +55,5 @@
 - Current regression log:
   - `doc/Sessions/Session118.md`
 - Current validated release baseline before this scope:
-  - `codeai-hub-1.1.758.vsix`
-  - hard scenario cap removed from `Description` / `Virtual Simulation` / runtime / SSOT surfaces in `1.1.758`
+  - `codeai-hub-1.1.759.vsix`
+  - `Description` now requires an explicit scenario block in `Final_Description.md`, and `Description Help` is single-source across PM/runtime surfaces in `1.1.759`
