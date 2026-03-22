@@ -66,10 +66,10 @@
 13. [DONE] Удалить unused legacy provider accessor `getIdeaCollectorProviders` и соответствующий snapshot alias, раз у текущего PM flow больше нет callers (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit: `refactor(pm): remove unused idea provider accessor`).
 14. [DONE] Git Commit: `refactor(pm): remove unused idea provider accessor` (hash: `8514dcb5`)
 15. [DONE] Удалить unused PM wrapper files `idea-collector-submit-service.ts` и `idea-collector-provider-picker.tsx`, раз после migration текущих callers они больше не импортируются (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`; expected commit: `refactor(pm): remove unused idea wrappers`).
-16. [TODO] Git Commit: `refactor(pm): remove unused idea wrappers` (hash: TBD)
+16. [DONE] Git Commit: `refactor(pm): remove unused idea wrappers` (hash: `8aa419c1`)
 
 ### Stream: Docs and SSOT cleanup
-1. [TODO] Обновить active SSOT, чтобы `Idea` / `Idea Collector` оставались только историей или compat note, а не текущей семантикой шага `Description` (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(workflow): remove idea legacy semantics from active ssot`).
+1. [DONE] Обновить active SSOT, чтобы `Idea` / `Idea Collector` оставались только историей или compat note, а не текущей семантикой шага `Description` (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(workflow): remove idea legacy semantics from active ssot`).
 2. [TODO] Git Commit: `docs(workflow): remove idea legacy semantics from active ssot` (hash: TBD)
 3. [TODO] Синхронизировать docs index и redirect-notes с новым cleanup boundary: legacy redirect files оставить только как compat links, без product-semantics drift (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`, `doc/SolidWorks-WorkFlow/Plans/IdeaCollector_LegacyCleanup_Architecture.md`; expected commit: `docs(compat): classify idea legacy redirects`).
 4. [TODO] Git Commit: `docs(compat): classify idea legacy redirects` (hash: TBD)

@@ -117,6 +117,7 @@
 - Не упоминать `description.md` как целевой артефакт.
 - Не упоминать auto-reviewer как часть шага `Description`.
 - Не показывать пользователю legacy label `description.md`; даже compat `draftPath` отображается как `Final_Description.md`.
+- Не использовать `Idea` / `Idea Collector` как product-visible label, Help copy, provider-picker copy или имя текущего шага.
 - Не описывать ручной recovery/restart flow как поддерживаемую возможность продукта.
 
 ---
@@ -136,6 +137,7 @@
 - Legacy workspace с `description.md` должны оставаться читаемыми.
 - Runtime/watcher/gating обязаны опираться на `Final_Description.md` как канон; внутренний compat-слой для legacy draft допустим только как non-SSOT fallback.
 - Downstream prompts и path contracts используют только `Final_Description.md`.
+- Остаточные `idea-*` имена допустимы только как internal compat/helper aliases или как disabled legacy remnants вне active PM flow; такие имена не должны считаться source of truth для текущего workflow.
 
 ---
 

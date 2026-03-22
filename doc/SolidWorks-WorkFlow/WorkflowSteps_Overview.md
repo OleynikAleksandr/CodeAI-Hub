@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-03-16
+**Updated:** 2026-03-22
 **Owner:** Oleksandr
 
 ---
@@ -80,6 +80,12 @@ UI после submit:
 Встроенного reviewer-подшага в `Description` нет.
 Standalone reviewer остаётся отдельным deferred-модулем и не входит в базовый chain 1→6.
 Ручной `↻ Restart attempt` в шаге `Description` отсутствует.
+
+### 1.6 Legacy naming boundary
+
+- В живом workflow нет отдельного шага `Idea`.
+- Название шага, Help, provider picker и артефакты первого шага используют только `Description`.
+- Если в коде ещё встречаются `Idea` / `Idea Collector`, это internal compat/deferred legacy слой, а не поддерживаемая product-семантика текущего workflow.
 
 ---
 

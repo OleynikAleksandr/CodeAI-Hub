@@ -80,6 +80,7 @@
   - ограничения/допущения,
   - ключевые сущности/термины.
 - Product-visible contract шага не использует `description.md`, manual restart или встроенный reviewer; internal compat для legacy draft допустим только как non-SSOT fallback.
+- Legacy naming `Idea` / `Idea Collector` больше не участвует в PM bootstrap, user-facing copy, release packaging или stage semantics текущего workflow. Если такие имена ещё встречаются в коде, они допускаются только как internal helper alias, provider parsing internals, archived/deferred flow leftovers или redirect-only compat слой.
 - Standalone Reviewer вынесен в deferred-модуль и не входит в базовый workflow 1→6.
 
 ## 6) Runtime Templates Boundary (Description + Virtual Simulation)
