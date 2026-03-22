@@ -62,7 +62,11 @@
 9. [DONE] Переключить текущие workflow start/fix surfaces на новый provider accessor, чтобы `Idea Collector` naming больше не участвовал в active start/repair flow (scope: `src/client/project-manager/components/layout/use-workflow-tool-select.ts`, `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `refactor(pm): switch workflow provider callers to description accessor`).
 10. [DONE] Git Commit: `refactor(pm): switch workflow provider callers to description accessor` (hash: `0face257`)
 11. [DONE] Убрать user-facing `Idea Collector` copy из provider picker текущего `Description` шага, а legacy file оставить только как compat wrapper или удалить после переноса текущего render source (scope: `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`, `src/client/project-manager/components/description/description-provider-picker.tsx`; expected commit: `refactor(pm): remove idea collector copy from provider picker`).
-12. [TODO] Git Commit: `refactor(pm): remove idea collector copy from provider picker` (hash: TBD)
+12. [DONE] Git Commit: `refactor(pm): remove idea collector copy from provider picker` (hash: `480bd5fb`)
+13. [DONE] Удалить unused legacy provider accessor `getIdeaCollectorProviders` и соответствующий snapshot alias, раз у текущего PM flow больше нет callers (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/provider-snapshot.ts`; expected commit: `refactor(pm): remove unused idea provider accessor`).
+14. [TODO] Git Commit: `refactor(pm): remove unused idea provider accessor` (hash: TBD)
+15. [DONE] Удалить unused PM wrapper files `idea-collector-submit-service.ts` и `idea-collector-provider-picker.tsx`, раз после migration текущих callers они больше не импортируются (scope: `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/components/description/idea-collector-provider-picker.tsx`; expected commit: `refactor(pm): remove unused idea wrappers`).
+16. [TODO] Git Commit: `refactor(pm): remove unused idea wrappers` (hash: TBD)
 
 ### Stream: Docs and SSOT cleanup
 1. [TODO] Обновить active SSOT, чтобы `Idea` / `Idea Collector` оставались только историей или compat note, а не текущей семантикой шага `Description` (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`; expected commit: `docs(workflow): remove idea legacy semantics from active ssot`).

@@ -107,5 +107,3 @@ export const resolveDescriptionProviders = (
     statusMessage: null,
   }));
 };
-
-export const resolveIdeaCollectorProviders = resolveDescriptionProviders;

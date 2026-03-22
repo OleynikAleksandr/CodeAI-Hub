@@ -2,7 +2,6 @@ import type { ProviderStackDescriptor } from "../../types/provider";
 import {
   extractProviders,
   resolveDescriptionProviders,
-  resolveIdeaCollectorProviders,
   type ProviderSnapshot,
 } from "./services/provider-snapshot";
 import { resolveBridgeConfig, type ApiConfig } from "./services/bridge-config";
@@ -194,10 +193,6 @@ export class ProjectManagerApi {
 
   getDescriptionProviders(): readonly ProviderStackDescriptor[] {
     return resolveDescriptionProviders(this.providerSnapshot);
-  }
-
-  getIdeaCollectorProviders(): readonly ProviderStackDescriptor[] {
-    return resolveIdeaCollectorProviders(this.providerSnapshot);
   }
 
   getHttpUrl(): string | null {
