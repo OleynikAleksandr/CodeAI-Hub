@@ -11,7 +11,6 @@ const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
   productParts: [
     {
       id: "local-core-runtime",
-      role: "runtime",
       title: "Local Core Runtime",
       purpose: "Owns provider execution.",
       clusterIds: ["provider-bridge"],
@@ -19,7 +18,6 @@ const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
     },
     {
       id: "standalone-project-manager",
-      role: "shell",
       title: "Standalone Project Manager",
       purpose: "Owns review and navigation.",
       clusterIds: ["review-shell"],

@@ -11,7 +11,6 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
   productParts: [
     {
       id: "local-core-runtime",
-      role: "runtime",
       title: "Local Core Runtime",
       purpose: "Owns stage execution and standalone runtime services.",
       clusterIds: ["project-flow", "artifact-store"],

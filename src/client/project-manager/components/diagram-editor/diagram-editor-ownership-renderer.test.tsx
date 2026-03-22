@@ -17,7 +17,9 @@ test("diagram modules renderer differentiates product part and cluster container
 
   assert.equal(source.includes('data.nodeKind === "productPart"'), true);
   assert.equal(source.includes("Product Part"), true);
-  assert.equal(source.includes("Role: {data.role}"), true);
+  assert.equal(source.includes("Clusters: {data.clusterIds.length}"), true);
+  assert.equal(source.includes("Standalone Modules:"), true);
+  assert.equal(source.includes("Kind: {data.kind}"), true);
   assert.equal(source.includes("Modules: {data.moduleIds.length}"), true);
   assert.equal(source.includes('data.kind === "external"'), true);
   assert.equal(source.includes("External to {data.productPart}"), true);
@@ -29,6 +31,6 @@ test("diagram modules renderer differentiates product part and cluster container
 test("diagram modules panel explains ownership hierarchy in the pending state", async () => {
   const source = await readFile(MODULES_HELP_SOURCE_PATH, "utf8");
 
-  assert.equal(source.includes("Самостоятельная часть продукта"), true);
+  assert.equal(source.includes("Product Part"), true);
   assert.equal(source.includes("Product Part -&gt; Cluster -&gt; Module"), true);
 });

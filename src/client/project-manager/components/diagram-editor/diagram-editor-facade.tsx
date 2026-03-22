@@ -94,8 +94,9 @@ const ContainerNode = ({
         <div style={containerHeaderStyle}>
           <div style={nodeCaptionStyle}>Product Part</div>
           <strong style={{ fontSize: 15 }}>{data.title}</strong>
-          <div style={{ fontSize: 12, color: "var(--pm-accent-strong)" }}>
-            Role: {data.role}
+          <div style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
+            Clusters: {data.clusterIds.length} | Standalone Modules:{" "}
+            {data.standaloneModuleIds.length}
           </div>
         </div>
       </div>
@@ -117,10 +118,13 @@ const ContainerNode = ({
 
 const ModuleNode = ({ data }: { readonly data: ModuleFlowNodeData }) => (
   <div style={nodeCardStyle}>
-    <div style={nodeCaptionStyle}>{data.kind}</div>
+    <div style={nodeCaptionStyle}>Module</div>
     <strong style={{ display: "block", fontSize: 14, marginTop: 4 }}>
       {data.title}
     </strong>
+    <div style={{ marginTop: 4, fontSize: 11, color: "var(--pm-accent-strong)" }}>
+      Kind: {data.kind}
+    </div>
     <div
       style={{
         marginTop: 6,

@@ -11,7 +11,6 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
   productParts: [
     {
       id: "desktop-shell",
-      role: "shell",
       title: "Desktop Shell",
       purpose: "Owns the operator-facing desktop surface.",
       clusterIds: ["workspace", "review", "navigation"],
@@ -19,7 +18,6 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
     },
     {
       id: "local-core-runtime",
-      role: "runtime",
       title: "Local Core Runtime",
       purpose: "Owns stage execution and persistence.",
       clusterIds: ["project-flow"],

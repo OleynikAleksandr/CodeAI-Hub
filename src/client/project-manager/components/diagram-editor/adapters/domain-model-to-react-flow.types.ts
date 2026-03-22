@@ -7,7 +7,6 @@ import type {
   FacadeVisibility,
   ModuleKind,
   ModuleMapModel,
-  ProductPartRole,
   RelationType,
 } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 
@@ -29,7 +28,6 @@ export type ProductPartFlowNodeData = {
   readonly nodeKind: "productPart";
   readonly productPartId: string;
   readonly title: string;
-  readonly role: ProductPartRole;
   readonly clusterIds: readonly string[];
   readonly standaloneModuleIds: readonly string[];
 };

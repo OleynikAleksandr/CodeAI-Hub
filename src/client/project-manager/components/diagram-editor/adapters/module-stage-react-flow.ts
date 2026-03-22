@@ -117,7 +117,6 @@ export const buildModuleStageNodes = (
     ...(model.productParts ?? [
       {
         id: DEFAULT_PRODUCT_PART_ID,
-        role: "application" as const,
         title: humanizeIdentifier(DEFAULT_PRODUCT_PART_ID),
         purpose: "Fallback product part derived in the React Flow adapter",
         clusterIds: [...fallbackClusters.keys()],
@@ -205,7 +204,6 @@ export const buildModuleStageNodes = (
         nodeKind: "productPart",
         productPartId: productPart.id,
         title: productPart.title,
-        role: productPart.role,
         clusterIds,
         standaloneModuleIds,
       },
