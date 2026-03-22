@@ -8,6 +8,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Bug registry: `doc/BugRegistry.md`
 
 ## Current Release — v1.1.763
+- `Description Help` now matches the real submit flow: `Submit questionnaire` opens the provider picker, the provider is chosen once per workflow workspace in the current MVP, and the user keeps iterating until the document is strong enough for the next step.
 - `Diagram Modules` and `Diagram Facades` runtime prompts now deduplicate appended appendix blocks, so `Field Reference` and `Merge Rules` no longer appear twice in live agent instructions.
 - `Diagram Modules` / `Diagram Facades` `Source` surfaces now stay aligned with the real workflow: before the canonical artifact exists they explain which upstream artifact the step is waiting for, instead of showing a generic missing-file error.
 - The `Description` first-step cleanup from `1.1.762`, the explicit scenario-level DoD from `1.1.759`, and the local `Description Help` rendering fix from `1.1.761` remain in force.
