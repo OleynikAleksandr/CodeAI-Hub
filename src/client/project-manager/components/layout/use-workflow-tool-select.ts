@@ -79,7 +79,7 @@ export const useWorkflowToolSelect = (
         if (diagramStartInFlightRef.current) return;
         diagramStartInFlightRef.current = true;
 
-        const providers = api.getIdeaCollectorProviders();
+        const providers = api.getDescriptionProviders();
         const fallbackProvider = providers.at(0) ?? null;
         if (!fallbackProvider) {
           diagramStartInFlightRef.current = false;
@@ -147,7 +147,7 @@ export const useWorkflowToolSelect = (
       if (virtualSimulationStartInFlightRef.current) return;
       virtualSimulationStartInFlightRef.current = true;
 
-      const providers = api.getIdeaCollectorProviders();
+      const providers = api.getDescriptionProviders();
       const fallbackProvider = providers.at(0) ?? null;
       if (!fallbackProvider) {
         virtualSimulationStartInFlightRef.current = false;

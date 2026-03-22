@@ -106,7 +106,7 @@ export const StageArtifactFixButton: React.FC<{
     []
   );
 
-  const providers = api.getIdeaCollectorProviders();
+  const providers = api.getDescriptionProviders();
   const hasProviders = providers.length > 0;
 
   return (
