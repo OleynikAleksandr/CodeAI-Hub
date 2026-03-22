@@ -32,8 +32,8 @@
 
 ### Stream: Remove active compat bridges from current workflow
 1. [DONE] Переключить PM pre-submit bootstrap c `/idea-contract` и `stage: "idea"` на explicit `Description` contract/session semantics и убрать `idea -> description` schema remap в current PM flow (scope: `src/client/project-manager/services/description-questionnaire-service.ts`, `src/client/project-manager/components/sessions/session-schema-stage.ts`, `src/client/project-manager/components/sessions/session-message-sender.ts`; expected commit: `refactor(workflow): switch description bootstrap off idea alias`).
-2. [TODO] Git Commit: `refactor(workflow): switch description bootstrap off idea alias` (hash: TBD)
-3. [TODO] Сузить runtime compat-layer после migration callers: `idea-contract` должен стать либо redirect-only alias, либо быть удалён, если активных callers больше нет (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/ui/src/services/idea-collector-contract.ts`; expected commit: `refactor(core): narrow legacy idea contract bridge`).
+2. [DONE] Git Commit: `refactor(workflow): switch description bootstrap off idea alias` (hash: `21099afb`)
+3. [DONE] Сузить runtime compat-layer после migration callers: `idea-contract` должен стать либо redirect-only alias, либо быть удалён, если активных callers больше нет (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/ui/src/services/idea-collector-contract.ts`; expected commit: `refactor(core): narrow legacy idea contract bridge`).
 4. [TODO] Git Commit: `refactor(core): narrow legacy idea contract bridge` (hash: TBD)
 
 ### Stream: Remove disabled legacy home-view flow

@@ -363,6 +363,5 @@ export const buildDiagramFacadesContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(DIAGRAM_FACADES_TEMPLATE_PATHS);
 
-export const buildIdeaContract =
-  async (): Promise<WorkflowContractPayload | null> =>
-    buildDescriptionContract();
+// Legacy alias for disabled Idea flows. The canonical first workflow step is Description.
+export const buildIdeaContract = buildDescriptionContract;

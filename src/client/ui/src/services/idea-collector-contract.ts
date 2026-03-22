@@ -119,13 +119,17 @@ export const loadVirtualSimulationContract =
     (await fetchWorkflowContract(VIRTUAL_SIMULATION_CONTRACT_ENDPOINT)) ??
     fallbackContract();
 
-export const loadIdeaContract = async (): Promise<IdeaContractSnapshot> => {
-  const descriptionContract = await loadDescriptionContract();
-  return {
-    prompt: descriptionContract.prompt,
-    schema: descriptionContract.schema,
-    outputPaths: FALLBACK_OUTPUT_PATHS,
-    questionnaireTemplateMarkdown:
-      descriptionContract.questionnaireTemplateMarkdown,
+const buildLegacyIdeaAliasContract =
+  async (): Promise<IdeaContractSnapshot> => {
+    const descriptionContract = await loadDescriptionContract();
+    return {
+      prompt: descriptionContract.prompt,
+      schema: descriptionContract.schema,
+      outputPaths: FALLBACK_OUTPUT_PATHS,
+      questionnaireTemplateMarkdown:
+        descriptionContract.questionnaireTemplateMarkdown,
+    };
   };
-};
+
+export const loadIdeaContract = async (): Promise<IdeaContractSnapshot> =>
+  buildLegacyIdeaAliasContract();

@@ -11,7 +11,6 @@ import {
   buildDescriptionContract,
   buildDiagramFacadesContract,
   buildDiagramModulesContract,
-  buildIdeaContract,
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
@@ -298,7 +297,12 @@ export class HttpApiRouter {
   }
 
   private async handleIdeaContract(res: Response): Promise<void> {
-    await this.handleWorkflowContract(res, buildIdeaContract, "Idea");
+    res.setHeader("X-CodeAI-Legacy-Alias", "description-contract");
+    await this.handleWorkflowContract(
+      res,
+      buildDescriptionContract,
+      "Description"
+    );
   }
 
   private async handleWorkflowContract(
