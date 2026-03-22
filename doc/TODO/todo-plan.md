@@ -38,6 +38,12 @@
 1. [IN_PROGRESS] Продолжать принимать следующие user-observed findings на релизе `1.1.762`, классифицировать их по модели из planning-doc и открывать новые stage-local fix-stream только после подтверждённого system-level кейса (scope: `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session124.md`; expected commit: `docs(plan): classify next regression finding`).
 2. [TODO] Git Commit: `docs(plan): classify next regression finding` (hash: TBD)
 
+### Stream: Diagram prompt appendix deduplication
+1. [DONE] Классифицировать новый accepted finding для `Diagram Modules` и проверить `Diagram Facades`: runtime prompt дублирует appendix-блоки `Field Reference` и `Merge Rules`, потому что при наличии synced template и fallback asset оба источника одновременно попадают в итоговый prompt; зафиксировать кейс как `runtime/contract drift` и открыть локальный hotfix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify diagram prompt appendix duplication`).
+2. [TODO] Git Commit: `docs(plan): classify diagram prompt appendix duplication` (hash: TBD)
+3. [TODO] Исправить workflow contract loader так, чтобы для каждого diagram appendix-блока выбирался ровно один источник `synced-or-fallback`, и закрыть regression тестами на отсутствие дублей в `Diagram Modules` и `Diagram Facades` prompt (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`; expected commit: `fix(diagram-prompts): dedupe prompt appendix sources`).
+4. [TODO] Git Commit: `fix(diagram-prompts): dedupe prompt appendix sources` (hash: TBD)
+
 ### Stream: Release build after accepted fixes
 1. [BLOCKED] После закрытия принятых фиксов и таргетной верификации выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare next regression feedback release`).
 2. [BLOCKED] Git Commit: `chore(release): prepare next regression feedback release` (hash: TBD)
