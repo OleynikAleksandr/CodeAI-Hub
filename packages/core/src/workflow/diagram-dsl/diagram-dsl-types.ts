@@ -8,14 +8,6 @@ export const MODULE_KINDS = [
   "store",
   "external",
 ] as const;
-export const PRODUCT_PART_ROLES = [
-  "shell",
-  "application",
-  "runtime",
-  "service",
-  "provider",
-  "external",
-] as const;
 export const RELATION_TYPES = [
   "sync-call",
   "async-event",
@@ -29,7 +21,6 @@ export const FACADE_PORT_DIRECTIONS = ["In", "Out"] as const;
 export type EntityOrigin = (typeof ENTITY_ORIGINS)[number];
 export type EntityStatus = (typeof ENTITY_STATUSES)[number];
 export type ModuleKind = (typeof MODULE_KINDS)[number];
-export type ProductPartRole = (typeof PRODUCT_PART_ROLES)[number];
 export type RelationType = (typeof RELATION_TYPES)[number];
 export type Criticality = (typeof CRITICALITY_LEVELS)[number];
 export type FacadeVisibility = (typeof FACADE_VISIBILITIES)[number];
@@ -37,7 +28,6 @@ export type FacadePortDirection = (typeof FACADE_PORT_DIRECTIONS)[number];
 
 export type ProductPartEntity = {
   readonly id: string;
-  readonly role: ProductPartRole;
   readonly title: string;
   readonly purpose: string;
   readonly clusterIds: readonly string[];

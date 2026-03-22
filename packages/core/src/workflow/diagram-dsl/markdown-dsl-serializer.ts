@@ -121,7 +121,6 @@ const buildProductPartBlock = (
   const lines = [
     `### Product Part: ${productPart.id}`,
     `- Id: ${productPart.id}`,
-    `- Role: ${productPart.role}`,
     `- Title: ${productPart.title}`,
     `- Purpose: ${productPart.purpose}`,
   ];

@@ -10,7 +10,6 @@
 
 ### Product Part: example-ide-shell
 - Id: example-ide-shell
-- Role: shell
 - Title: IDE Shell
 - Purpose: Gives the user entry into the product from inside the IDE
 - Clusters:

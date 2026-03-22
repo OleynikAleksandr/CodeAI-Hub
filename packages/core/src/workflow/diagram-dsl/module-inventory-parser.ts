@@ -12,9 +12,7 @@ import {
   type ModuleKind,
   type ModuleMapModel,
   type ModuleRelation,
-  PRODUCT_PART_ROLES,
   type ProductPartEntity,
-  type ProductPartRole,
   RELATION_TYPES,
   type RelationType,
 } from "./diagram-dsl-types";
@@ -643,14 +641,10 @@ const parseProductPart = (
 ): ParsedProductPart | MarkdownDslParseError => {
   const fields = parseFields(block, warnings);
   const id = required(fields, "Id", block.line);
-  const role = required(fields, "Role", block.line);
   const title = required(fields, "Title", block.line);
   const purpose = required(fields, "Purpose", block.line);
   if (typeof id !== "string") {
     return id;
-  }
-  if (typeof role !== "string") {
-    return role;
   }
   if (typeof title !== "string") {
     return title;
@@ -665,16 +659,8 @@ const parseProductPart = (
       message: "Product Part header Id must match field Id",
     };
   }
-  if (!isOneOf(role, PRODUCT_PART_ROLES)) {
-    return {
-      code: "invalid-metadata",
-      line: block.line,
-      message: `Invalid product part role for ${id}`,
-    };
-  }
   return {
     id,
-    role: role as ProductPartRole,
     title,
     purpose,
     clusterIds: listValue(fields, "Clusters"),
@@ -1038,7 +1024,6 @@ const materializeSyntheticLegacyOwnership = (
   productParts: [
     {
       id: SYNTHETIC_PRODUCT_PART_ID,
-      role: "application",
       title: SYNTHETIC_PRODUCT_PART_TITLE,
       purpose:
         "Synthetic top-level ownership container materialized from a legacy flat inventory",

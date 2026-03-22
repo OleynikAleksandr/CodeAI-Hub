@@ -23,9 +23,7 @@
 
 - в `Description Help` и upstream text используется длинный объяснительный термин `самостоятельная часть продукта`;
 - в `Diagram Modules` user-facing DSL уже существует каноническая сущность `Product Part`;
-- для `Product Part` в коде уже есть роли `shell`, `application`, `runtime`, `service`, `provider`, `external`;
-- user-facing glossary не объясняет, что `Product Part` — это верхний уровень системы, а `shell/application/runtime/provider/...` — это именно роли этого уровня;
-- user-facing field reference для `Diagram Modules` до сих пор перечисляет старый набор ролей без `application`, хотя runtime DSL уже поддерживает её.
+- user-facing glossary не объясняет, что `Product Part` — это верхний уровень системы;
 - обязательное поле `Role` в `Product Part` даёт мало пользовательской пользы, но создаёт жёсткий DSL-контракт, который легко превращается в очередной vocabulary drift для новых типов продуктов.
 - в user-facing диаграмме `Module` как сущность визуально потерян: пользователь видит `service` / `store` / `library`, тогда как `Product Part` и `Cluster` подписаны явно.
 
@@ -45,10 +43,9 @@
 
 1. `Product Part` — это верхнеуровневая часть продукта.
 2. `Cluster` и `Module` живут ниже этого уровня.
-3. `Shell`, `Application`, `Runtime`, `Provider`, `External` — это не отдельные уровни модели, а роли `Product Part`.
-4. Короткий словарь в `Description` должен подготавливать пользователя к `Diagram Modules`, а не вводить параллельный набор терминов.
-5. Если `Role` остаётся в DSL, она не должна быть скрытым источником переусложнения для новых типов продуктов.
-6. На диаграмме пользователь должен явно видеть `Module` как сущность, а `Kind` — только как дополнительную характеристику.
+3. Короткий словарь в `Description` должен подготавливать пользователя к `Diagram Modules`, а не вводить параллельный набор терминов.
+4. `Role` не должна оставаться обязательным user-facing полем в `module-inventory.md`, если она не делает продукт лучше.
+5. На диаграмме пользователь должен явно видеть `Module` как сущность, а `Kind` — только как дополнительную характеристику.
 
 ---
 
@@ -66,27 +63,25 @@
 - prompt/reference в `Diagram Modules`;
 - реальной DSL-сущностью.
 
-### 2. Separate level from role
+### 2. Keep Product Part as the level, not the role
 
 Нужно явно развести:
 - `Product Part` как уровень модели;
-- `Role` как смысловую классификацию этого уровня.
+- любые role-like слова как вторичное объяснение, а не как обязательное поле inventory.
 
 Краткая логика, которую должен увидеть пользователь:
 - `Product Part` отвечает на вопрос: “это отдельная верхнеуровневая часть системы?”
-- `Role` отвечает на вопрос: “какую роль эта часть играет?”
+- `Title` и `Purpose` должны объяснять, что это за верхнеуровневая часть и зачем она нужна.
 
-### 3. Add missing user-facing role explanation
+### 3. Remove formal Role from user-facing inventory DSL
 
-В user-facing словарь и reference нужно добавить минимальные пояснения ролей:
+Формальное поле `Role` больше не должно быть канонической частью `module-inventory.md`.
 
-- `Shell` — оболочка входа, установки, открытия или настройки системы.
-- `Application` — основной пользовательский интерфейс, где человек выполняет основную работу.
-- `Runtime` — отдельная часть, которая координирует выполнение, состояние или жизненный цикл системы.
-- `Provider` — отдельная часть, которая подключает внешний AI/API provider.
-- `External` — внешняя по отношению к продукту часть или boundary.
-
-`Service` в этом scope не является первой проблемой glossary и может остаться как DSL role, но её объяснение тоже должно быть user-readable, если эта роль остаётся доступной в UI/agent-facing reference.
+Решение этого scope:
+- `Product Part` остаётся верхним уровнем inventory;
+- `Title` и `Purpose` несут основной пользовательский смысл;
+- parser должен оставаться tolerant к legacy `Role:` строкам в старых артефактах, но не требовать их;
+- serializer/templates/help/reference больше не должны навязывать `Role` как обязательный DSL field.
 
 ### 4. Testing principle
 
@@ -97,7 +92,7 @@
 - self-check questions, по которым пользователь без знания кода может заметить структурные проблемы;
 - согласованность `Description Help` -> `Virtual Simulation` -> `Diagram Modules`.
 
-### 5. Re-evaluate mandatory Role field
+### 5. Simplify the DSL instead of expanding role enums
 
 Текущее поле `Role` не является главным носителем архитектурного смысла.
 
@@ -109,13 +104,10 @@
 - `Purpose` / `Responsibility`;
 - `Relations`.
 
-Поэтому в этом scope допустимо пересмотреть сам DSL-контракт:
-- либо сделать `Role` optional;
-- либо убрать его из user-facing inventory совсем;
-- либо оставить только если удаётся доказать реальную продуктовую пользу, а не историческое удобство для внутреннего словаря.
-
-Критерий решения здесь прагматичный:
-- если поле не делает продукт лучше, оно не должно оставаться обязательным только “потому что уже есть”.
+Поэтому в этом scope принят прагматичный вывод:
+- `Role` убирается из user-facing inventory DSL;
+- backward compatibility обеспечивается tolerant parser path для legacy artifacts;
+- дальнейшее расширение enum ролей больше не является продуктовой задачей этого workflow.
 
 ### 6. Restore explicit Module identity in the diagram
 
@@ -137,16 +129,17 @@
 - зафиксировать `Product Part` как каноническое user-facing имя верхнеуровневой сущности;
 - убрать старый параллельный термин `самостоятельная часть продукта` из активного glossary, где это влияет на workflow.
 
-### Stream B. Role vocabulary expansion
-- добавить `application` в user-facing field reference и prompt/reference surfaces;
-- объяснить роли `shell / application / runtime / provider / external` как роли `Product Part`.
+### Stream B. Product Part DSL simplification
+- убрать обязательное `Role` из user-facing `module-inventory.md`;
+- синхронизировать parser/serializer/templates/help/reference под новый упрощённый contract;
+- сохранить backward-compatible parse старых inventories с legacy `Role:` строками.
 
 ### Stream C. Regression-oriented help wording
 - скорректировать `Description Help` и связанные user-facing surfaces так, чтобы они подготавливали пользователя к следующему stage vocabulary без избыточной терминологической путаницы.
 
-### Stream D. Role field simplification / DSL redesign
-- проверить, даёт ли обязательный `Role` реальную продуктовую ценность;
-- если не даёт, спроектировать упрощение DSL: optional `Role` или removal из user-facing inventory с безопасной миграцией parser/runtime/templates.
+### Stream D. Follow-up after Role removal
+- проверить, не осталось ли скрытого role drift в UI, prompts, docs или runtime adapters после удаления `Role` из user-facing inventory;
+- при необходимости дочистить только residual compatibility tails, не возвращая поле обратно.
 
 ### Stream E. Explicit Module labeling in diagram UI
 - вернуть `Module` как явную user-facing сущность на diagram surface;
@@ -171,8 +164,7 @@
 Scope считается закрытым, когда одновременно выполнено следующее:
 
 1. `Product Part` закреплён как user-facing верхнеуровневая сущность в активных glossary/reference surfaces.
-2. Роль `application` и другие ключевые роли объяснены пользователю как роли `Product Part`.
-3. Принято решение по судьбе обязательного поля `Role`: сохранить его осознанно, сделать optional или убрать из user-facing DSL.
-4. Diagram UI снова явно показывает `Module` как сущность, а `Kind` остаётся вторичной характеристикой.
-5. `Description Help`, diagram reference assets и SSOT docs больше не расходятся в этой vocabulary model.
-6. Собран новый локальный release и regression продолжается уже на нём.
+2. Обязательное поле `Role` убрано из user-facing `module-inventory.md`, а parser по-прежнему читает legacy artifacts без ручной миграции.
+3. Diagram UI снова явно показывает `Module` как сущность, а `Kind` остаётся вторичной характеристикой.
+4. `Description Help`, diagram reference assets и SSOT docs больше не расходятся в этой vocabulary model.
+5. Собран новый локальный release и regression продолжается уже на нём.

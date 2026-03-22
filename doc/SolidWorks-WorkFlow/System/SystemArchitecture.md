@@ -208,7 +208,7 @@
 - `Diagram Modules` больше не ограничивается semantic baseline вида `cluster + standalone module`.
 - Канонический semantic runtime contract для module stage теперь включает `ProductPartEntity[]`, `ClusterEntity[]`, `ModuleEntity[]` и `ModuleRelation[]`.
 - `Product Part` является верхним ownership layer для user-facing diagram:
-  - имеет `role`, `title`, `purpose`, ordered `clusterIds`, ordered `standaloneModuleIds`;
+  - имеет `title`, `purpose`, ordered `clusterIds`, ordered `standaloneModuleIds`;
   - не может быть пустым;
   - не может использоваться как relation endpoint.
 - `Cluster` обязан принадлежать ровно одному `Product Part`, а `Module` обязан принадлежать ровно одному `Product Part` и максимум одному `Cluster`.

@@ -16,26 +16,14 @@
 
 ### Stream: Planning baseline
 1. [DONE] Заархивировать завершённый `Phase 27` plan и открыть новый testing-driven glossary scope, где accepted findings идут от live regression на `1.1.763`, а первым подтверждённым кейсом становится vocabulary drift между `Description Help`, diagram DSL и пользовательским пониманием верхнего уровня системы (scope: `doc/TODO/Archive/todo-plan-up-to-phase27-2026-03-22.md`, `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start workflow glossary regression scope`).
-2. [TODO] Git Commit: `docs(plan): start workflow glossary regression scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): start workflow glossary regression scope` (hash: `5c94b01c`)
 
-### Stream: Product Part glossary alignment
-1. [TODO] Классифицировать и закрыть первый accepted glossary finding: заменить в user-facing glossary длинный термин `самостоятельная часть продукта` на канонический `Product Part`, явно объяснив, что `Product Part` — это верхнеуровневая часть системы, а не отдельная роль внутри словаря (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(glossary): align top-level term to product part`).
-2. [TODO] Git Commit: `fix(glossary): align top-level term to product part` (hash: TBD)
-
-### Stream: Product Part role vocabulary expansion
-1. [TODO] Синхронизировать user-facing role glossary для `Product Part`: добавить `application` и коротко объяснить, что `shell`, `application`, `runtime`, `provider`, `external` — это роли верхнеуровневой части продукта, а не отдельные уровни архитектуры; закрыть drift между кодовым DSL и user-facing field reference (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/description-agent/assets/description-collector-prompt.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(glossary): explain product part roles`).
-2. [TODO] Git Commit: `fix(glossary): explain product part roles` (hash: TBD)
-
-### Stream: Testing-oriented wording follow-up
-1. [TODO] Переписать active user-facing wording так, чтобы glossary помогал пользователю без знания кода замечать структурные smells на `Virtual Simulation` / `Diagram Modules`, не подсказывая готовую реализацию конкретного проекта (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`, `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`; expected commit: `docs(glossary): refine testing-oriented wording`).
-2. [TODO] Git Commit: `docs(glossary): refine testing-oriented wording` (hash: TBD)
-
-### Stream: Role field simplification / DSL redesign
-1. [TODO] Классифицировать и спроектировать следующий accepted finding: обязательное поле `Role` в `Product Part` даёт мало user-facing пользы, но создаёт жёсткий vocabulary drift для новых типов продуктов; определить минимальный redesign path (`optional Role` или removal from user-facing inventory) без поломки parser/runtime migration (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`, `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`; expected commit: `docs(dsl): classify product part role simplification`).
-2. [TODO] Git Commit: `docs(dsl): classify product part role simplification` (hash: TBD)
+### Stream: Product Part glossary and DSL simplification
+1. [IN_PROGRESS] Закрыть сразу два принятых finding-а одним coherent fix: заменить в active glossary длинный термин `самостоятельная часть продукта` на канонический `Product Part`, а обязательное поле `Role` убрать из user-facing `module-inventory.md`, сохранив backward-compatible parse для legacy `Role:` строк (scope: `packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`, `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix(diagram-modules): simplify product part DSL glossary`).
+2. [TODO] Git Commit: `fix(diagram-modules): simplify product part DSL glossary` (hash: TBD)
 
 ### Stream: Explicit Module labeling in diagram UI
-1. [TODO] Классифицировать и закрыть user-facing diagram finding: вернуть `Module` как явную сущность на карточках diagram UI и отделить её от вторичного `Kind`, чтобы пользователь видел `Module`, а `service/store/library` читались только как классификация модуля (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`; expected commit: `fix(diagram-ui): restore explicit module labeling`).
+1. [IN_PROGRESS] Закрыть user-facing diagram finding: вернуть `Module` как явную сущность на карточках diagram UI, опустить `Kind` до вторичной подписи и убрать display-only `Role` с карточек `Product Part`, чтобы верхний уровень читался через `Product Part`, `Title`, `Purpose`, `Clusters` и `Standalone Modules` (scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.external-boundary.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`; expected commit: `fix(diagram-ui): restore explicit module labeling`).
 2. [TODO] Git Commit: `fix(diagram-ui): restore explicit module labeling` (hash: TBD)
 
 ### Stream: Release build after accepted glossary fixes
@@ -51,6 +39,6 @@
 - Current validated release baseline:
   - `codeai-hub-1.1.763.vsix`
 - Первые принятые cases этого scope:
-  - user-facing vocabulary не объясняет, что `Product Part` — верхний уровень модели, и не даёт пользователю понятных ролей `shell / application / runtime / provider / external`;
-  - обязательное `Role` выглядит кандидатом на упрощение DSL;
+  - user-facing vocabulary не объясняет, что `Product Part` — верхний уровень модели;
+  - обязательное `Role` в user-facing inventory уже принято как кандидат на removal, а не на дальнейшее расширение enum;
   - diagram UI потерял явное user-facing имя сущности `Module`.

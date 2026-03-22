@@ -15,12 +15,13 @@ Inventory-level guidance:
 
 Product Part fields:
 - `Id`: stable kebab-case identifier that must match the `### Product Part: ...` header.
-- `Role`: required ownership role; currently `shell`, `runtime`, `service`, `provider`, or `external`.
 - `Title`: human-readable product part name.
 - `Purpose`: one-line user-readable explanation of what this top-level part exists for.
 - `Clusters`: ordered list of cluster IDs nested inside this product part. Must exactly match the nested `### Cluster:` blocks.
 - `Standalone Modules`: ordered list of module IDs that live directly in this product part outside clusters. Must exactly match the nested standalone `### Module:` blocks.
 - `Notes`: optional multiline clarification. Use this to explain ownership rationale, not to hide missing nested blocks.
+
+`Product Part` is the top-level part of the product in this DSL. It answers the question: "is this a separate large part of the system?" rather than "what role label should it receive?".
 
 Cluster fields:
 - `Id`: stable kebab-case identifier.
