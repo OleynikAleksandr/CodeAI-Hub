@@ -19,11 +19,11 @@
 1. `.codeai-hub/templates/description/questionnaire-template.md`
    - Назначение: анкета pre-submit.
 2. `.codeai-hub/templates/description/description-template.md`
-   - Назначение: user-facing Help (pre-submit и post-submit `Artifacts/Help`).
+   - Назначение: bundled runtime/reference copy of Description Help; этот файл больше не является прямым PM-render source.
 3. `.codeai-hub/templates/description/description-collector-prompt.md`
    - Назначение: системные инструкции Description Agent (file-first).
 
-Ключевая фиксация: `description-template.md` в текущей конфигурации — это Help-шаблон UI, а не каркас `Final_Description.md`.
+Ключевая фиксация: `description-template.md` в текущей конфигурации — это runtime/reference help asset, а не каркас `Final_Description.md`.
 
 ---
 
@@ -110,7 +110,7 @@
 - Левая панель возвращается к Session UI.
 - Правая панель поддерживает переключатель `Artifacts/Help`:
   - `Artifacts` — артефакты стадии,
-  - `Help` — тот же user-facing Help из `description-template.md`.
+  - `Help` — локальный PM help surface с тем же смысловым contract, что и pre-submit Description Help; рендер не зависит от runtime/template-sync.
 
 ### 5.3 UI copy invariants
 

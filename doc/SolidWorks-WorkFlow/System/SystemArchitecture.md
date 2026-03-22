@@ -86,10 +86,10 @@
 
 Каноничные bundled templates в `.codeai-hub/templates/description/`:
 - `questionnaire-template.md` — pre-submit анкета.
-- `description-template.md` — user-facing Help для pre-submit и post-submit (`Artifacts/Help`).
+- `description-template.md` — runtime/reference copy Description Help; PM не должен требовать этот файл для локального рендера Help.
 - `description-collector-prompt.md` — инструкции Description Agent (file-first, краткий контекст workflow, ограничения, DoD).
 
-Инвариант delivery для `Description`: если synced visible template под `~/.codeai-hub/templates/description/description-template.md` отсутствует или был потерян, runtime workflow contract обязан восстановить этот файл из bundled-source и только потом отдавать `Description Help` / `description-contract`. Пользователь не должен видеть `template недоступен`, если каноничный bundled template уже входит в релиз.
+Инвариант delivery для `Description`: user-facing PM Help не должен зависеть от наличия `description-template.md` на диске или от ответа `description-contract`. Runtime может синхронизировать и восстанавливать `description-template.md` как reference asset для workflow contract, но кнопка `Help` в PM обязана рендериться локально по тому же паттерну, что и остальные step helps.
 
 Каноничный bundled prompt для `.codeai-hub/templates/virtual_simulation/`:
 - `virtual-simulation-prompt.md` — инструкции Virtual Simulation Agent.
