@@ -49,6 +49,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/IdeaCollector_LegacyCleanup_Architecture.md` — active cleanup map для остаточного `Idea` / `Idea Collector` legacy слоя; использовать только как migration/compat guide, не как описание текущего product workflow.
 - `Plans/DiagramWorkflow_UserSurface_Architecture.md` — active follow-up план для diagram user surface, inventory-first module flow и visible templates policy.
 - `Plans/StandaloneReviewer_Module.md` — draft deferred-модуля standalone reviewer (manual-only, вне базового chain 1→6).
 - `Plans/Archive/` — завершённые или снятые planning-доки, сохраняемые только как история.

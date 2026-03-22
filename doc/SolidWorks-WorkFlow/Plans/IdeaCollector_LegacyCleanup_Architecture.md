@@ -1,6 +1,6 @@
 # Idea / Idea Collector Legacy Cleanup — Architecture Contract
 
-**Status:** Active planning doc
+**Status:** Active cleanup planning doc
 **Updated:** 2026-03-22
 **Owner:** Oleksandr
 
@@ -149,6 +149,29 @@ Cleanup считается успешным, когда одновременно
 4. `packages/agents/idea-collector` либо удалён, либо явно признан compat-only с доказанным живым caller.
 5. Active SSOT/docs описывают только `Description` как первый current workflow step.
 6. Собран новый локальный релиз и regression baseline обновлён.
+
+---
+
+## Current status snapshot (2026-03-22)
+
+### Уже очищено в active PM/workflow surface
+
+- PM bootstrap и start flow больше не используют `stage: "idea"` или `/idea-contract` как живую семантику первого шага.
+- User-facing `Description` surface больше не показывает `Idea Collector` в provider picker, callback naming или toolbar/start flow.
+- Неиспользуемые PM wrappers `idea-collector-submit-service.ts` и `idea-collector-provider-picker.tsx` удалены.
+- Release packaging больше не пытается собирать или линковать удалённый `@codeai-hub/idea-collector`.
+
+### Что ещё остаётся legacy, но уже не является product semantics
+
+- internal helper aliases в shared UI/services, которые всё ещё носят `idea-*` имена, но обслуживают compat/migration path;
+- provider structured-output parsers, где `Idea Collector` терминология пока ещё живёт внутри internal parse functions;
+- disabled app-host / old flow remnants, сохранённые вне active PM surface;
+- redirect-only runtime endpoint `/idea-contract` и archived/docs references.
+
+### Как трактовать остатки
+
+- Если legacy имя больше не имеет callers в active PM/workflow surface, его нужно удалять, а не сохранять "на будущее".
+- Если legacy имя ещё обслуживает текущий runtime как internal helper, оно не должно просачиваться в user-facing copy, SSOT шагов или release notes.
 
 ---
 

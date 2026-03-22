@@ -6,6 +6,8 @@
 Канонический контракт шага `description` находится в:
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 
+Legacy naming `Idea` / `Idea Collector` не является alias текущего шага в живом PM workflow. Старые ссылки допустимы только как redirect/compat слой для архивных материалов и внутренних migration notes.
+
 **Target flow (SSOT):**
 `questionnaire.md` → Description Agent (resume) → `Final_Description.md`.
 
