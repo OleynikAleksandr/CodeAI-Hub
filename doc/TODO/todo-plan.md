@@ -20,15 +20,17 @@
 
 ### Stream: Session handoff baseline
 1. [DONE] Создать session report для нового `Phase 27` scope и синхронизировать active `todo-plan` после planning reset, явно зафиксировав, что code/runtime fixes ещё не начаты, а план находится в intake-mode до первого accepted system-level finding (scope: `doc/Sessions/Session124.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-release regression handoff`).
-2. [DONE] Git Commit: `docs(session): record post-release regression handoff` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record post-release regression handoff` (hash: `827d9ddf`)
 
 ### Stream: Regression intake and classification
-1. [IN_PROGRESS] Во время live regression на `1.1.762` принимать пользовательский feedback по агентам, артефактам и help/runtime surface, классифицировать каждый кейс как `user-input issue`, `prompt/template/DoD issue`, `runtime/UI drift` или `non-issue`, и только после первого accepted system-level finding переписывать план в конкретные микро-задачи (scope: `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session124.md`; expected commit: `docs(plan): classify first regression findings`).
-2. [TODO] Git Commit: `docs(plan): classify first regression findings` (hash: TBD)
+1. [DONE] Классифицировать первый принятый regression finding для `Description Help`: текущая фраза про `Submit questionnaire` и продолжение диалога даёт неверную UX-модель, потому что не упоминает provider picker и искажает условие продолжения диалога; зафиксировать кейс как `runtime/UI drift` и переписать plan из intake-mode в конкретный fix-stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(plan): classify description help provider-picker drift`).
+2. [DONE] Git Commit: `docs(plan): classify description help provider-picker drift` (hash: TBD)
 
-### Stream: Stage-local fixes from accepted findings
-1. [BLOCKED] После первого принятого system-level finding нарезать только минимальный stage-local fix scope без спекулятивного cross-stage cleanup; каждая микро-задача должна трогать не более `3` файлов и обновлять только реально затронутый surface (`prompt`, `help`, `template`, `validator/runtime contract`, `SSOT`) (scope: TBD after first accepted finding; expected commit: TBD).
-2. [BLOCKED] Git Commit: `TBD` (hash: TBD)
+### Stream: Description Help provider-picker copy alignment
+1. [TODO] Исправить source-of-truth copy для `Description Help`, чтобы текст явно отражал фактический UX: после `Submit questionnaire` открывается выбор AI-провайдера, в MVP провайдер выбирается один раз на весь workflow workspace, а диалог продолжается до тех пор, пока пользователь не сочтёт документ достаточно сильной основой для следующего шага (scope: `src/client/project-manager/components/description/description-step-help.tsx`, `packages/agents/description-agent/assets/description-template.md`; expected commit: `fix(description): align help copy with provider picker flow`).
+2. [TODO] Git Commit: `fix(description): align help copy with provider picker flow` (hash: TBD)
+3. [TODO] Обновить защитные тесты на локальный PM help и synced template, чтобы новый текст не разъехался между help-component и bundled template и чтобы regression явно ловил возврат старой формулировки (scope: `src/client/project-manager/components/description/description-step-help.test.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`; expected commit: `test(description): guard help provider picker wording`).
+4. [TODO] Git Commit: `test(description): guard help provider picker wording` (hash: TBD)
 
 ### Stream: Release build after accepted fixes
 1. [BLOCKED] После закрытия принятых фиксов и таргетной верификации выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare next regression feedback release`).
