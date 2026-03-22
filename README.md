@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.756
-- Greenfield `Virtual Simulation` and `Diagram Modules` prompts now stay inside project-local artifacts and current-stage continuity files instead of drifting into internal CodeAI Hub implementation context.
-- `Diagram Modules` prompt/reference/template delivery now makes `Product Part` ownership rules explicit: product-part lists must match nested clusters/modules exactly, and the authoring checklist is visible to the agent at runtime.
-- Pending `Artifacts` surfaces for `Virtual Simulation`, `Diagram Modules`, and `Diagram Facades` now reuse the same help text as the `Help` tab, so pre-artifact guidance has a single SSOT.
-- First-open `Diagram Modules` layout now stacks top-level product parts into separate rows, keeps internal standalone modules in a dedicated band, and renders the selected external provider outside product-part containers.
+## Current Release — v1.1.757
+- `Description` now starts from a universal runtime questionnaire for any software product: simpler question ladder, earlier product/platform identification, explicit `Примечания`, and no baked-in workflow-specific assumptions.
+- `Description Help` now matches that installed questionnaire and explains cluster-modular architecture as a recommended AI-friendly way to describe a product, not as vocabulary the user must already know.
+- Downstream `Description`, `Virtual Simulation`, and `Diagram Modules` prompts now explicitly infer architecture from plain-language answers and project-local artifacts instead of expecting ready-made module lists or fixed workflow facts in `Description`.
+- `Diagram Facades` now ships the same artifact-first, project-local baseline as the other greenfield stages: runtime prompt and visible help both treat `module-inventory.md` as the semantic source of truth and keep the stage focused on real external facades and relations.
 
 Previous releases (summary): the `1.1.57x–1.1.755` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, the resume/recovery stabilization release for `Codex gpt-5.4`, the first greenfield polygon grammar rollout, and the first ownership-aware `Product Part` hierarchy release.
 
