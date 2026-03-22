@@ -21,8 +21,8 @@
 ### Stream: Description artifact semantics
 1. [TODO] Переформулировать контракт `Description`, чтобы агент обязан был пересобирать артефакт как цельный согласованный документ, но не обязан физически делать полную замену файла, если можно сохранить валидные пользовательские правки patch-based; одновременно добавить явную поддержку composite / multi-surface archetype для гибридных продуктов (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `src/client/project-manager/components/description/description-step-help.tsx`, `packages/core/src/templates/bundled-templates.ts`; expected commit: `docs(prompt): refine description artifact semantics`).
 2. [TODO] Git Commit: `docs(prompt): refine description artifact semantics` (hash: TBD)
-3. [IN_PROGRESS] Усилить DoD `Description`, чтобы `Final_Description.md` явно требовал отдельный блок пользовательски понятных сценариев, но без жёсткого верхнего лимита; формула должна быть "столько сценариев, сколько нужно для покрытия продукта", а не `2–4` (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/template-sync-service.test.ts`, `src/client/project-manager/components/description/description-step-help.test.ts`; expected commit: `docs(prompt): require explicit description scenarios`).
-4. [TODO] Git Commit: `docs(prompt): require explicit description scenarios` (hash: TBD)
+3. [DONE] Усилить DoD `Description`, чтобы `Final_Description.md` явно требовал отдельный блок пользовательски понятных сценариев, но без жёсткого верхнего лимита; формула должна быть "столько сценариев, сколько нужно для покрытия продукта", а не `2–4` (scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/template-sync-service.test.ts`, `src/client/project-manager/components/description/description-step-help.test.ts`; expected commit: `docs(prompt): require explicit description scenarios`).
+4. [DONE] Git Commit: `docs(prompt): require explicit description scenarios` (hash: `214ff36e`)
 
 ### Stream: Stage context scoping
 1. [TODO] Уточнить stage prompts так, чтобы semantic source of truth всегда был ограничен канонической цепочкой артефактов текущего запроса, а continuity/runtime metadata использовались только для сохранения подтверждённого пользователем контекста, но не как источник архитектурной интерпретации (scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`; expected commit: `docs(prompt): tighten stage context scoping`).
@@ -43,6 +43,10 @@
 ### Stream: Release build after scenario-cap checkpoint
 1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для повторного regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `doc/Sessions/Session118.md`, `doc/Sessions/Session119.md`; expected commit: `chore(release): build prompt refinement package`).
 2. [DONE] Git Commit: `chore(release): build prompt refinement package` (hash: `e620f207`)
+
+### Stream: Release build after explicit description scenario DoD
+1. [IN_PROGRESS] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md` и `todo-plan.md`, зафиксировав новый локальный релиз с обязательным сценарным блоком `Description` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md`; expected commit: `chore(release): build explicit description scenario package`).
+2. [TODO] Git Commit: `chore(release): build explicit description scenario package` (hash: TBD)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase24-2026-03-22.md`
