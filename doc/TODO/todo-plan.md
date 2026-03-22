@@ -27,8 +27,8 @@
 2. [DONE] Git Commit: `fix(diagram-ui): restore explicit module labeling` (hash: `01d16679`)
 
 ### Stream: Release build after accepted glossary fixes
-1. [BLOCKED] После закрытия принятых glossary fixes, DSL simplification fixes и diagram UI labeling fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare workflow glossary regression release`).
-2. [BLOCKED] Git Commit: `chore(release): prepare workflow glossary regression release` (hash: TBD)
+1. [DONE] После закрытия принятых glossary fixes, DSL simplification fixes и diagram UI labeling fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline и оформить новый session report (scope: release/version docs and session files to be determined by accepted fixes; expected commit: `chore(release): prepare workflow glossary regression release`).
+2. [DONE] Git Commit: `chore(release): prepare workflow glossary regression release` (hash: `f7a83522`; build finalization commit: `e117207a`)
 
 ## Notes
 - Archived completed rollout plans:
@@ -37,7 +37,7 @@
 - Active planning doc for this scope:
   - `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`
 - Current validated release baseline:
-  - `codeai-hub-1.1.763.vsix`
+  - `codeai-hub-1.1.764.vsix`
 - Первые принятые cases этого scope:
   - user-facing vocabulary не объясняет, что `Product Part` — верхний уровень модели;
   - обязательное `Role` в user-facing inventory уже принято как кандидат на removal, а не на дальнейшее расширение enum;
