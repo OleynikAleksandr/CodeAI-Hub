@@ -81,6 +81,46 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     snippets: [
       "### Cluster: example-user-workspace",
       "#### Module: workspace-intake",
+      "Этот inventory — semantic source of truth шага",
+      "Оставляйте module standalone",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
+    snippets: [
+      "Разделы `Module Inventory`:",
+      "`Product Part` — это верхний уровень продукта в этом DSL",
+      "Правила для `Relation`:",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
+    snippets: [
+      "Когда runtime передаёт change summary:",
+      "Не переводите молча standalone modules в cluster members",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_facades/facade-map-template.md",
+    snippets: [
+      "Здесь кратко поясняется внешний смысл facade",
+      "Показывайте только те facade relations",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_facades/facade-map-field-reference.md",
+    snippets: ["Поля `Facade`:", "Поля `Facade Relation`:"],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_facades/facade-map-merge-rules.md",
+    snippets: [
+      "Когда runtime передаёт change summary:",
+      "Не восстанавливайте молча facades или relations",
     ],
   },
 ] as const;

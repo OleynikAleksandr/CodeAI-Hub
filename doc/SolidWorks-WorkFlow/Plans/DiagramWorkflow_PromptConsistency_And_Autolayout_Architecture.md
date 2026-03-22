@@ -51,14 +51,27 @@
 - уровень авторинга prompt assets;
 - уровень реальной сборки prompt pack, который агент фактически получает.
 
-### 2.3. Always-full prompt pack — осознанное ограничение
+### 2.3. Runtime templates должны быть user-readable и не должны дублировать сами себя
+
+Пользователь прямо указал ещё один важный defect:
+- содержимое runtime-synced template папок `~/.codeai-hub/templates/diagram_modules/` и `~/.codeai-hub/templates/diagram_facades/` пользователь тоже читает как help/reference surface;
+- explanatory text в этих template-файлах должен быть на русском языке;
+- DSL terms при этом должны оставаться английскими;
+- повторение одинаковых narrative-блоков внутри этих template packs недопустимо, потому что значительная часть этого текста потом попадает в общий prompt payload агента.
+
+Следовательно, для diagram templates нужен отдельный follow-up:
+- локализовать explanatory wording для пользователя;
+- не трогать канонические английские DSL terms и field names;
+- убрать бессмысленные повторы между template / field reference / merge rules там, где они раздувают общий prompt pack без добавления нового смысла.
+
+### 2.4. Always-full prompt pack — осознанное ограничение
 
 Для текущего продукта принимается такой принцип:
 - `Diagram Modules` и `Diagram Facades` получают полный prompt pack всегда;
 - не вводится conditional assembly по признаку "артефакт уже существует / ещё не существует";
 - consistency достигается не ветвлением runtime, а строгой дедупликацией смыслов и единым authoritative wording.
 
-### 2.4. User-facing DSL нужно продолжать упрощать по критерию пользы продукту
+### 2.5. User-facing DSL нужно продолжать упрощать по критерию пользы продукту
 
 Пользователь прямо сформулировал принцип:
 - если термин, поле, роль или алгоритм не улучшают продукт, это кандидат на removal, а не на бесконечное расширение словаря.
@@ -68,7 +81,7 @@
 - нельзя оправдывать лишнее поле только тем, что оно "может пригодиться когда-нибудь";
 - follow-up по DSL должен идти после подтверждённых regression finding-ов, а не ради теоретической полноты модели.
 
-### 2.5. Autolayout остаётся отдельным, но связанным направлением
+### 2.6. Autolayout остаётся отдельным, но связанным направлением
 
 Даже при хорошем semantic artifact пользовательский опыт может ломаться, если:
 - first-open layout плохо читается;
@@ -77,6 +90,21 @@
 - diagram не помогает понять систему без ручной правки.
 
 Следовательно, после prompt-consistency audit нужен отдельный follow-up по autolayout и visual readability.
+
+### 2.7. Уже подтверждены два конкретных spacing-defect-а автолайаута
+
+По live regression screenshot-ам `Diagram Modules` на `1.1.764` подтверждены уже не абстрактные, а конкретные visual defects:
+
+1. Внутри cluster lane модули, расположенные вертикально, слегка налезают друг на друга.
+Это означает, что текущий vertical placement budget недооценивает фактическую высоту card или gap между соседними module cards.
+
+2. В `Product Part` без cluster-ов standalone modules раскладываются с чрезмерно большим горизонтальным расстоянием.
+Пользовательский expectation: spacing между standalone modules должен быть визуально сопоставим со spacing между cluster columns, а не существенно больше.
+
+Следовательно, autolayout follow-up больше не начинается "с нуля":
+- вертикальный cluster stacking defect уже принят;
+- horizontal standalone spacing defect уже принят;
+- эти два defect-а должны стать явными implementation targets следующей layout phase.
 
 ---
 
@@ -100,6 +128,12 @@
 - не повторяется ли один и тот же смысл в нескольких местах с разным wording;
 - не остались ли старые legacy hints, которые уже не совпадают с актуальным DSL или workflow.
 
+Отдельная часть этого же audit-а:
+- проверить runtime template packs в `~/.codeai-hub/templates/diagram_modules/` и `~/.codeai-hub/templates/diagram_facades/` как user-facing surface;
+- убедиться, что explanatory text там русскоязычный;
+- убедиться, что английские DSL terms не локализуются;
+- убрать повторяющиеся narrative sections, если они потом дублируются в общем prompt payload.
+
 ### 4.2. DSL follow-up только по подтверждённым finding-ам
 
 Нужно проверять:
@@ -113,6 +147,10 @@
 - какие first-open layout defects реально мешают читать `Diagram Modules` / `Diagram Facades`;
 - какие из них относятся к runtime layout engine, а не к semantic artifact;
 - какой минимальный implementation slice улучшит читаемость без полного redesign graph runtime.
+
+Уже подтверждённые обязательные targets:
+- убрать vertical overlap соседних module cards внутри cluster lane;
+- выровнять horizontal gap между standalone modules внутри `Product Part` с gap между cluster columns, если нет более сильной semantic причины держать другой spacing.
 
 ---
 
@@ -149,12 +187,19 @@
 - Не возвращать removed `Role`.
 - Не терять явную сущность `Module`.
 
-### Stream D — Autolayout readability follow-up
+### Stream D — Runtime template localization and dedupe
+
+- Пересобрать runtime-synced templates для `diagram_modules` так, чтобы explanatory text был на русском, DSL terms остались английскими, а повторяющиеся narrative blocks не раздували prompt payload.
+- Сделать то же самое для `diagram_facades`.
+- Проверить не только repo assets, но и итоговые runtime copies в `~/.codeai-hub/templates/...`.
+
+### Stream E — Autolayout readability follow-up
 
 - Подтвердить конкретные user-facing layout defects через live regression evidence.
 - Определить минимальный кодовый slice для улучшения first-open readability.
+- Отдельно починить vertical cluster stacking и standalone horizontal spacing как уже подтверждённые defects.
 
-### Stream E — Release build
+### Stream F — Release build
 
 - Выполняется только после принятия конкретных prompt / DSL / layout fixes.
 
@@ -164,15 +209,18 @@
 
 Prompt assets:
 - `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`
+- `packages/agents/diagram-modules-agent/assets/module-inventory-template.md`
 - `packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md`
 - `packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md`
 - `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`
+- `packages/agents/diagram-facades-agent/assets/facade-map-template.md`
 - `packages/agents/diagram-facades-agent/assets/facade-map-field-reference.md`
 - `packages/agents/diagram-facades-agent/assets/facade-map-merge-rules.md`
 
 Runtime prompt assembly:
 - `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`
 - `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`
+- `packages/core/src/templates/bundled-templates.ts`
 - `src/client/project-manager/services/prompt-pack-builder.ts`
 
 DSL / renderer:
@@ -190,7 +238,8 @@ Layout follow-up:
 
 Следующий regression pass должен дать:
 - один always-full prompt pack без внутренних противоречий;
+- русскоязычные user-facing diagram templates без потери английских DSL terms;
 - меньше дублированных правил с разным wording;
 - только те DSL surface-поля, которые реально помогают пользователю;
-- более читаемую first-open diagram без подмены semantic artifact layout sidecar-логикой;
+- более читаемую first-open diagram без vertical overlap внутри cluster-ов и без избыточного horizontal spacing у standalone modules;
 - чистый zero-context handoff для следующей волны исправлений.
