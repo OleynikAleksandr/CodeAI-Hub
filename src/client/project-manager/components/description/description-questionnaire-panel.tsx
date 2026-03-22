@@ -1,6 +1,6 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { IdeaQuestionnaireView } from "../../../ui/src/components/idea-questionnaire/idea-questionnaire-view";
+import { DescriptionQuestionnaireView } from "../../../ui/src/components/description-questionnaire/description-questionnaire-view";
 import { DescriptionQuestionnaireService } from "../../services/description-questionnaire-service";
 import { DescriptionSubmitService } from "../../services/description-submit-service";
 import type { ProviderStackDescriptor, ProviderStackId } from "../../../../types/provider";
@@ -257,7 +257,7 @@ export const DescriptionQuestionnairePanel: React.FC<
       {submitError ? (
         <div className="pm-questionnaire-alert">{submitError}</div>
       ) : null}
-      <IdeaQuestionnaireView
+      <DescriptionQuestionnaireView
         answers={answers}
         cancelLabel="Close"
         description="Анкета сохраняется автоматически. Нажмите «Submit questionnaire», выберите провайдера и дождитесь запуска Description. Диалог можно продолжать в той же сессии до финальной версии. Итоговый документ сохраняется в .codeai-hub/<workspace>/description/Final_Description.md."
