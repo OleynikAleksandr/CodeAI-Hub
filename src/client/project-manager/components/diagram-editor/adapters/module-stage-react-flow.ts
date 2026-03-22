@@ -15,9 +15,9 @@ const CLUSTER_PADDING_TOP = 60;
 const CLUSTER_PADDING_BOTTOM = 28;
 const MODULE_X_OFFSET = 24;
 const MODULE_Y_OFFSET = 72;
-const MODULE_Y_STEP = 132;
 const MODULE_CARD_WIDTH = 240;
-const MODULE_CARD_HEIGHT = 120;
+const MODULE_CARD_HEIGHT = 132, MODULE_Y_STEP = MODULE_CARD_HEIGHT + 12;
+const STANDALONE_X_STEP = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2;
 const DEFAULT_PRODUCT_PART_ID = "default-product-part";
 
 const toProductPartNodeId = (productPartId: string): string => `product-part:${productPartId}`;
@@ -33,10 +33,7 @@ const humanizeIdentifier = (value: string): string =>
     .join(" ");
 
 const getClusterHeight = (moduleCount: number): number =>
-  Math.max(
-    CLUSTER_MIN_HEIGHT,
-    CLUSTER_PADDING_TOP + moduleCount * MODULE_Y_STEP + CLUSTER_PADDING_BOTTOM
-  );
+  Math.max(CLUSTER_MIN_HEIGHT, CLUSTER_PADDING_TOP + MODULE_CARD_HEIGHT + Math.max(moduleCount - 1, 0) * MODULE_Y_STEP + CLUSTER_PADDING_BOTTOM);
 
 const buildModuleNode = ({
   module,
@@ -190,8 +187,14 @@ export const buildModuleStageNodes = (
         ? MODULE_CARD_HEIGHT +
           (externalStandaloneModuleIds.length - 1) * MODULE_Y_STEP
         : 0;
-    const productPartColumnCount = Math.max(clusterIds.length, standaloneColumnCount, 1);
-    const productPartWidth = Math.max(720, PRODUCT_PART_PADDING_X * 2 + Math.max(productPartColumnCount * CLUSTER_X_STEP, MODULE_CARD_WIDTH));
+    const productPartWidth = Math.max(
+      720,
+      PRODUCT_PART_PADDING_X * 2 +
+        (clusterIds.length > 0
+          ? Math.max(clusterIds.length * CLUSTER_X_STEP, MODULE_CARD_WIDTH)
+          : MODULE_CARD_WIDTH +
+            Math.max(standaloneColumnCount - 1, 0) * STANDALONE_X_STEP)
+    );
     const productPartHeight = Math.max(260, standaloneY + standaloneSectionHeight + PRODUCT_PART_PADDING_BOTTOM);
     const productPartRowHeight = Math.max(productPartHeight, standaloneY + externalSectionHeight);
     const productPartNode: DiagramFlowNode = {
@@ -261,7 +264,7 @@ export const buildModuleStageNodes = (
               position: {
                 x:
                   PRODUCT_PART_PADDING_X +
-                  (moduleIndex % standaloneColumnCount) * CLUSTER_X_STEP,
+                  (moduleIndex % standaloneColumnCount) * STANDALONE_X_STEP,
                 y:
                   standaloneY +
                   Math.floor(moduleIndex / standaloneColumnCount) * MODULE_Y_STEP,

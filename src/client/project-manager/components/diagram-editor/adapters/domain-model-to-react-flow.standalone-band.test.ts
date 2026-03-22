@@ -159,7 +159,107 @@ test("domainModelToReactFlow wraps standalone modules into a dedicated band with
 
   assert.equal(productPartNode.style?.width, 720);
   assert.deepEqual(descriptionStageNode.position, { x: 24, y: 328 });
-  assert.deepEqual(virtualSimulationStageNode.position, { x: 344, y: 328 });
-  assert.deepEqual(diagramModulesStageNode.position, { x: 24, y: 460 });
-  assert.deepEqual(artifactFreshnessNode.position, { x: 344, y: 460 });
+  assert.deepEqual(virtualSimulationStageNode.position, { x: 296, y: 328 });
+  assert.deepEqual(diagramModulesStageNode.position, { x: 24, y: 472 });
+  assert.deepEqual(artifactFreshnessNode.position, { x: 296, y: 472 });
+});
+
+const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
+  version: 1,
+  stage: "diagram_modules",
+  revision: "stack-feed",
+  updated: "2026-03-22T18:40:00Z",
+  productParts: [
+    {
+      id: "local-core-runtime",
+      title: "Local Core Runtime",
+      purpose: "Owns workflow orchestration.",
+      clusterIds: ["workflow-orchestration"],
+      standaloneModuleIds: [],
+    },
+  ],
+  clusters: [
+    {
+      id: "workflow-orchestration",
+      title: "Workflow Orchestration",
+      purpose: "Runs and coordinates workflow stages.",
+      productPart: "local-core-runtime",
+      moduleIds: ["step-eligibility-guard", "step-execution-coordinator", "dependency-refresh-marker"],
+    },
+  ],
+  modules: [
+    {
+      id: "step-eligibility-guard",
+      kind: "service",
+      title: "Step Eligibility Guard",
+      responsibility: "Decides whether the requested workflow step is allowed to run from the current project state.",
+      productPart: "local-core-runtime",
+      cluster: "workflow-orchestration",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "step-execution-coordinator",
+      kind: "service",
+      title: "Step Execution Coordinator",
+      responsibility: "Runs an approved workflow step against the right inputs and records the resulting artifact chain.",
+      productPart: "local-core-runtime",
+      cluster: "workflow-orchestration",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "dependency-refresh-marker",
+      kind: "service",
+      title: "Dependency Refresh Marker",
+      responsibility: "Marks later workflow results as outdated when an earlier approved artifact changes.",
+      productPart: "local-core-runtime",
+      cluster: "workflow-orchestration",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+  ],
+  relations: [],
+};
+
+test("domainModelToReactFlow gives stacked cluster modules enough vertical space to avoid overlap", () => {
+  const result = domainModelToReactFlow(CLUSTER_STACK_FIXTURE);
+
+  const clusterNode = result.nodes.find(
+    (node) => node.id === "cluster:workflow-orchestration"
+  );
+  const eligibilityNode = result.nodes.find(
+    (node) => node.id === "step-eligibility-guard"
+  );
+  const executionNode = result.nodes.find(
+    (node) => node.id === "step-execution-coordinator"
+  );
+  const refreshNode = result.nodes.find(
+    (node) => node.id === "dependency-refresh-marker"
+  );
+
+  assert.notEqual(clusterNode, undefined);
+  assert.notEqual(eligibilityNode, undefined);
+  assert.notEqual(executionNode, undefined);
+  assert.notEqual(refreshNode, undefined);
+  if (!clusterNode || !eligibilityNode || !executionNode || !refreshNode) {
+    return;
+  }
+
+  assert.deepEqual(eligibilityNode.position, { x: 24, y: 72 });
+  assert.deepEqual(executionNode.position, { x: 24, y: 216 });
+  assert.deepEqual(refreshNode.position, { x: 24, y: 360 });
+  assert.equal(Number(clusterNode.style?.height ?? 0) >= 508, true);
 });
