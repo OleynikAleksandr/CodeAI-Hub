@@ -6,7 +6,7 @@ import { DescriptionSubmitService } from "../../services/description-submit-serv
 import type { ProviderStackDescriptor, ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
-import { IdeaCollectorProviderPicker } from "./idea-collector-provider-picker";
+import { DescriptionProviderPicker } from "./description-provider-picker";
 
 const SAVE_DEBOUNCE_MS = 400;
 
@@ -268,7 +268,7 @@ export const DescriptionQuestionnairePanel: React.FC<
         submitLabel="Submit questionnaire"
         title={title}
       />
-      <IdeaCollectorProviderPicker
+      <DescriptionProviderPicker
         onCancel={handleProviderCancel}
         onConfirm={handleProviderConfirm}
         providers={providerOptions}
