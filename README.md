@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.759
-- `Description` now has a stricter scenario-level DoD: `Final_Description.md` must contain an explicit user-readable scenario block, and scenario count is driven by real product coverage instead of a fixed number.
-- `Description Help` is now single-source: Project Manager renders the same synced markdown template that runtime/contracts ship into `~/.codeai-hub/templates/description/description-template.md`, so the user sees one help text before and after `Submit questionnaire`.
-- The `Description` prompt now refuses to treat narrative-only coverage as sufficient when the questionnaire or dialog already contains concrete user flows; those flows must be normalized into the explicit scenario block.
-- The visible help text now also tells the user what to verify in the final artifact: not just product meaning and boundaries, but the presence of a separate key-scenarios section.
+## Current Release — v1.1.760
+- `Description Help` now has a runtime self-healing delivery path: if `~/.codeai-hub/templates/description/description-template.md` is missing on disk, Core restores it from the bundled release assets before serving `Description Help` or the `description-contract`.
+- This closes the fresh-regression failure where the `Help` button could show `template недоступен` even though the release already contained the canonical bundled `Description` template.
+- The `Description` scenario-level DoD from `1.1.759` remains in force: `Final_Description.md` must contain an explicit user-readable scenario block, and scenario count is driven by real product coverage instead of a fixed number.
+- `Description Help` remains single-source across Project Manager and runtime, so the user-facing help text and the contract template still come from the same canonical markdown source.
 
 Previous releases (summary): the `1.1.57x–1.1.755` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, the resume/recovery stabilization release for `Codex gpt-5.4`, the first greenfield polygon grammar rollout, and the first ownership-aware `Product Part` hierarchy release.
 
