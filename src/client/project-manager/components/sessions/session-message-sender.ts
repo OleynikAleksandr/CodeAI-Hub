@@ -1,7 +1,7 @@
 import { useCallback, type MutableRefObject } from "react";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
-import { loadWorkflowSchemaForProjectManager } from "../../services/idea-collector-submit-service";
+import { loadWorkflowSchemaForProjectManager } from "../../services/description-submit-service";
 import {
   enforceArtifactsRequired,
   isFinalizeTrigger,

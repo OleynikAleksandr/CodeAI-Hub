@@ -1,13 +1,7 @@
-import type { WorkflowStageId } from "../../services/idea-collector-submit-service";
+import type { WorkflowStageId } from "../../services/description-submit-service";
 
 export const resolveSchemaStage = (
   stage: string | null | undefined
 ): WorkflowStageId | null => {
-  if (!stage) {
-    return null;
-  }
-  if (stage === "idea") {
-    return "description";
-  }
-  return null;
+  return stage === "description" ? "description" : null;
 };

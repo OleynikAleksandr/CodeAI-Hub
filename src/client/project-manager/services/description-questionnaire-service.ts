@@ -18,7 +18,7 @@ import {
   type WorkspaceInfo,
 } from "./description-questionnaire-utils";
 
-const IDEA_CONTRACT_ENDPOINT = "/api/v1/orchestrator/idea-contract";
+const DESCRIPTION_CONTRACT_ENDPOINT = "/api/v1/orchestrator/description-contract";
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
   "/api/v1/orchestrator/workspace-file-write";
@@ -26,7 +26,7 @@ const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 
 const DEFAULT_TEMPLATE = "# Description Questionnaire\n\n";
 
-type IdeaContractPayload = {
+type DescriptionContractPayload = {
   readonly questionnaire?: {
     readonly templateMarkdown?: string;
   };
@@ -41,7 +41,9 @@ const resolveTemplateMarkdown = async (): Promise<string> => {
   }
 
   try {
-    const response = await fetch(joinUrl(httpUrl, IDEA_CONTRACT_ENDPOINT));
+    const response = await fetch(
+      joinUrl(httpUrl, DESCRIPTION_CONTRACT_ENDPOINT)
+    );
     if (!response.ok) {
       return DEFAULT_TEMPLATE;
     }
@@ -49,7 +51,7 @@ const resolveTemplateMarkdown = async (): Promise<string> => {
     if (!isRecord(payload)) {
       return DEFAULT_TEMPLATE;
     }
-    const questionnaire = (payload as IdeaContractPayload).questionnaire;
+    const questionnaire = (payload as DescriptionContractPayload).questionnaire;
     const template = questionnaire?.templateMarkdown;
     if (typeof template === "string" && template.trim().length > 0) {
       return template;
@@ -130,7 +132,7 @@ const ensureWorkspaceSession = async (
       body: JSON.stringify({
         workspacePath,
         initiativeSlug,
-        stage: "idea",
+        stage: "description",
       }),
     });
 
