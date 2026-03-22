@@ -1,99 +1,58 @@
 import type React from "react";
+import { useEffect, useState } from "react";
+import MarkdownContent from "../../../ui/src/session/markdown-content";
+import { loadDescriptionContract } from "../../../ui/src/services/idea-collector-contract";
 
-interface DescriptionStepHelpProps {
-  readonly mode: "pre_submit" | "post_submit";
-}
+const HELP_LOAD_ERROR =
+  "Не удалось загрузить Description Help: template недоступен.";
 
-export const DescriptionStepHelp: React.FC<DescriptionStepHelpProps> = ({
-  mode,
-}) => {
-  const isPreSubmit = mode === "pre_submit";
+export const DescriptionStepHelp: React.FC = () => {
+  const [content, setContent] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setContent(null);
+    setError(null);
+
+    loadDescriptionContract()
+      .then((contract) => {
+        if (cancelled) {
+          return;
+        }
+        const template = contract.template?.trim() ?? "";
+        if (template.length === 0) {
+          setError(HELP_LOAD_ERROR);
+          return;
+        }
+        setContent(template);
+      })
+      .catch((loadError: unknown) => {
+        if (cancelled) {
+          return;
+        }
+        setError(
+          loadError instanceof Error ? loadError.message : HELP_LOAD_ERROR
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="pm-details">
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
         <strong>Description Help</strong>
       </div>
-      <div style={{ display: "grid", gap: 10 }}>
-        <div>
-          На шаге Description вы описываете будущий программный продукт
-          простыми словами, а агент переводит это в понятное описание продукта
-          и его начальную архитектурную картину.
-        </div>
-        <div>
-          Что полезнее всего заполнить в анкете:
-          <ul style={{ marginTop: 6 }}>
-            <li>какой это тип продукта или платформы;</li>
-            <li>о чём продукт и какую задачу он решает;</li>
-            <li>кто будет им пользоваться;</li>
-            <li>ключевые сценарии использования без жёсткого лимита;</li>
-            <li>что продукт обязательно должен уметь;</li>
-            <li>какие крупные части и границы уже видны;</li>
-            <li>ограничения, out of scope и примечания.</li>
-          </ul>
-        </div>
-        <div>
-          Мы рекомендуем описывать продукт в логике кластерно-модульной
-          архитектуры.
-        </div>
-        <div>
-          Это не значит, что пользователь обязан знать архитектурные термины
-          заранее. Достаточно описать продукт как набор понятных частей,
-          крупных блоков и границ между ними. Такой способ помогает AI точнее
-          понять систему и аккуратнее вести её к следующим шагам.
-        </div>
-        <div>
-          Почему это полезно:
-          <ul style={{ marginTop: 6 }}>
-            <li>продукт не схлопывается в один большой неясный блок;</li>
-            <li>крупные части системы становятся видны раньше;</li>
-            <li>границы между блоками проще обсуждать и проверять;</li>
-            <li>следующим шагам легче строить сценарии и диаграммы.</li>
-          </ul>
-        </div>
-        <div>
-          Короткий словарь:
-          <ul style={{ marginTop: 6 }}>
-            <li>
-              <code>Shell</code> — то, через что пользователь запускает или
-              открывает продукт.
-            </li>
-            <li>
-              <code>Самостоятельная часть продукта</code> — часть системы,
-              которая живёт отдельно.
-            </li>
-            <li>
-              <code>Cluster</code> — крупный блок из нескольких модулей.
-            </li>
-            <li>
-              <code>Module</code> — отдельный рабочий блок с одной понятной
-              ролью.
-            </li>
-            <li>
-              <code>Boundary</code> — граница между блоками системы.
-            </li>
-          </ul>
-        </div>
-        {isPreSubmit ? (
-          <div>
-            Когда анкета готова, нажмите <code>Submit questionnaire</code>.
-            Агент сразу создаст <code>Final_Description.md</code>, а потом
-            будет задавать только недостающие вопросы.
-          </div>
-        ) : (
-          <div>
-            После submit продолжайте диалог, пока документ вас устраивает.
-            Агент должен остановить вопросы, когда сочтёт документ достаточно
-            сильной основой для следующего шага, но решение о переходе остаётся
-            за вами.
-          </div>
-        )}
-        <div>
-          Итог шага:{" "}
-          <code>.codeai-hub/&lt;workspace&gt;/description/Final_Description.md</code>.
-          Этот документ должен быть одновременно понятен пользователю и служить
-          базой для следующего шага.
-        </div>
-      </div>
+      {error ? <div className="pm-placeholder">{error}</div> : null}
+      {!error && content === null ? (
+        <div className="pm-placeholder">Загружаем Description Help...</div>
+      ) : null}
+      {!error && content !== null ? (
+        <MarkdownContent className="pm-artifact-markdown" content={content} />
+      ) : null}
     </div>
   );
 };

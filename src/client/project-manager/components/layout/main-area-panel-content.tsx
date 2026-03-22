@@ -102,9 +102,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
 
   if (helpMode) {
     if (activeTool === "Description") {
-      return (
-        <DescriptionStepHelp mode={hasDescriptionSession ? "post_submit" : "pre_submit"} />
-      );
+      return <DescriptionStepHelp />;
     }
     if (activeTool === VIRTUAL_SIMULATION_TOOL_LABEL) {
       return <VirtualSimulationHelp />;
@@ -201,7 +199,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   workspacePath,
 }) =>
   showDescriptionHelp ? (
-    <DescriptionStepHelp mode="pre_submit" />
+    <DescriptionStepHelp />
   ) : (
     <ProjectManagerSessionView
       pendingSessionCreate={pendingSessionCreate}
