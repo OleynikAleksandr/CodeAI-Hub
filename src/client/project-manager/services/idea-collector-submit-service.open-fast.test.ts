@@ -5,7 +5,7 @@ import test from "node:test";
 
 const SERVICE_PATH = path.resolve(
   process.cwd(),
-  "src/client/project-manager/services/idea-collector-submit-service.ts"
+  "src/client/project-manager/services/description-submit-service.ts"
 );
 
 const PANEL_PATH = path.resolve(
@@ -33,4 +33,3 @@ test("questionnaire submit opens session immediately after session:created", asy
   const panelSource = await readFile(PANEL_PATH, "utf8");
   assert.equal(panelSource.includes("onSessionCreated: onIdeaSessionCreated,"), true);
 });
-

@@ -1,6 +1,6 @@
 import type { ProviderStackId } from "../../../types/provider";
 import { api } from "../api";
-import { IdeaCollectorSubmitService } from "./idea-collector-submit-service";
+import { DescriptionSubmitService } from "./description-submit-service";
 
 type StartWorkflowStepParams = {
   readonly workspaceName?: string;
@@ -18,7 +18,7 @@ type WorkflowStateGetter = (
 ) => ReturnType<typeof api.getWorkflowState>;
 
 type SubmitQuestionnaireService = Pick<
-  IdeaCollectorSubmitService,
+  DescriptionSubmitService,
   "submitQuestionnaire"
 >;
 
@@ -56,7 +56,7 @@ export class WorkflowStepStartService {
     this.getWorkflowState =
       options?.getWorkflowState ?? api.getWorkflowState.bind(api);
     this.submitService =
-      options?.submitService ?? new IdeaCollectorSubmitService();
+      options?.submitService ?? new DescriptionSubmitService();
   }
 
   async startVirtualSimulation(params: StartWorkflowStepParams): Promise<string> {

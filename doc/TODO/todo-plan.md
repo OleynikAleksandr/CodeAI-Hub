@@ -51,9 +51,9 @@
 6. [DONE] Git Commit: `refactor(core): remove legacy idea collector package` (hash: `e048058f`)
 
 ### Stream: Residual active naming + packaging cleanup
-1. [IN_PROGRESS] Удалить оставшиеся stale build/staging references на удалённый `@codeai-hub/idea-collector`, чтобы релизная сборка больше не пыталась собирать и линковать несуществующий пакет (scope: `scripts/build-core.sh`; expected commit: `fix(build): remove stale idea collector staging refs`).
-2. [TODO] Git Commit: `fix(build): remove stale idea collector staging refs` (hash: TBD)
-3. [TODO] Перенести живой PM submit/start flow на explicit `DescriptionSubmitService`, оставив legacy `idea-collector-submit-service` только как compat alias (scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `refactor(pm): promote description submit service`).
+1. [DONE] Удалить оставшиеся stale build/staging references на удалённый `@codeai-hub/idea-collector`, чтобы релизная сборка больше не пыталась собирать и линковать несуществующий пакет (scope: `scripts/build-core.sh`; expected commit: `fix(build): remove stale idea collector staging refs`).
+2. [DONE] Git Commit: `fix(build): remove stale idea collector staging refs` (hash: `8e51fe53`)
+3. [DONE] Перенести живой PM submit/start flow на explicit `DescriptionSubmitService`, оставив legacy `idea-collector-submit-service` только как compat alias (scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/idea-collector-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `refactor(pm): promote description submit service`).
 4. [TODO] Git Commit: `refactor(pm): promote description submit service` (hash: TBD)
 5. [TODO] Переименовать active callback wiring и pending-session state текущего `Description` шага, чтобы в PM больше не осталось `onIdeaSession*` / `handleIdeaSession*` имен в живом flow (scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit: `refactor(pm): rename description session callbacks`).
 6. [TODO] Git Commit: `refactor(pm): rename description session callbacks` (hash: TBD)
