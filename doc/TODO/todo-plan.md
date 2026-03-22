@@ -38,7 +38,7 @@
 
 ### Stream: Autolayout readability follow-up
 1. [DONE] Зафиксировать принятые defects first-open layout для `Diagram Modules` / `Diagram Facades` на live regression `1.1.764` и отделить проблемы runtime layout от проблем semantic artifact (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): capture diagram autolayout defects`).
-2. [TODO] Git Commit: `docs(layout): capture diagram autolayout defects` (hash: TBD)
+2. [DONE] Git Commit: `docs(layout): capture diagram autolayout defects` (hash: `8792215f`)
 3. [TODO] После подтверждения defects определить минимальный кодовый slice для улучшения first-open readability без расширения scope до полного redesign graph runtime (scope: files to be narrowed after evidence capture; expected commit: `fix(diagram-layout): improve first-open readability`).
 4. [TODO] Git Commit: `fix(diagram-layout): improve first-open readability` (hash: TBD)
 
@@ -53,8 +53,10 @@
 2. [TODO] Git Commit: `docs(layout): record spacing fix regression evidence` (hash: TBD)
 
 ### Stream: Release build after accepted fixes
-1. [IN_PROGRESS] После принятия конкретных prompt / DSL / layout fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый baseline и оформить session report (scope: release/version docs and files to be determined by accepted fixes; expected commit: `chore(release): prepare diagram prompt consistency release`).
-2. [BLOCKED] Git Commit: `chore(release): prepare diagram prompt consistency release` (hash: TBD)
+1. [DONE] После принятия конкретных prompt / DSL / layout fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать новый release-prep baseline `1.1.765` и собрать локальный VSIX / tarball артефакты (scope: `README.md`, `CHANGELOG.md`, release/version manifests and package metadata; expected commit: `chore(release): prepare diagram prompt consistency release`).
+2. [DONE] Git Commit: `chore(release): prepare diagram prompt consistency release` (hash: `f005cc5e`)
+3. [DONE] Оформить финальный session report для релиза `1.1.765`, синхронизировать active plan с фактическими commit-ами этой сессии и подтвердить clean-tree handoff (scope: `doc/TODO/todo-plan.md`, next session report file; expected commit: `docs(session): record 1.1.765 diagram prompt consistency release`).
+4. [TODO] Git Commit: `docs(session): record 1.1.765 diagram prompt consistency release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
@@ -64,7 +66,7 @@
 - Active planning doc for this scope:
   - `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
 - Current validated release baseline:
-  - `codeai-hub-1.1.764.vsix`
+  - `codeai-hub-1.1.765.vsix`
 - User constraints for this scope:
   - always-full prompt pack acceptable;
   - prompt length itself is not a defect;
