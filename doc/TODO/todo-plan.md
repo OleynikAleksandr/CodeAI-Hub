@@ -53,8 +53,8 @@
 2. [DONE] Git Commit: `fix(workflow): restore missing description help template` (hash: `9161dd4a`)
 
 ### Stream: Release build after description help hotfix
-1. [TODO] На чистом дереве прогнать таргетные contract/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md` и `todo-plan.md`, зафиксировав новый локальный релиз с hotfix для `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md`; expected commit: `chore(release): prepare 1.1.760 assets`).
-2. [TODO] Git Commit: `chore(release): prepare 1.1.760 assets` (hash: TBD)
+1. [DONE] На чистом дереве прогнать таргетные contract/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md` и `todo-plan.md`, зафиксировав новый локальный релиз с hotfix для `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md`; expected commit: `chore(release): prepare 1.1.760 assets`).
+2. [DONE] Git Commit: `chore(release): prepare 1.1.760 assets` (hash: `56574596`)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase24-2026-03-22.md`
@@ -63,5 +63,5 @@
 - Current regression log:
   - `doc/Sessions/Session118.md`
 - Current validated release baseline before this scope:
-  - `codeai-hub-1.1.759.vsix`
-  - `Description` now requires an explicit scenario block in `Final_Description.md`, and `Description Help` is single-source across PM/runtime surfaces in `1.1.759`
+  - `codeai-hub-1.1.760.vsix`
+  - `Description` now requires an explicit scenario block in `Final_Description.md`, and `Description Help` is both single-source and runtime-self-healing for missing synced templates in `1.1.760`
