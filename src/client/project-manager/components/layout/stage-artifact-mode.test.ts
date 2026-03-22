@@ -4,6 +4,7 @@ import {
   normalizeArtifactHeaderMode,
   resolveArtifactHeaderModes,
   resolveDiagramSourceArtifact,
+  resolveDiagramSourcePendingMessage,
 } from "./stage-artifact-mode";
 
 test("diagram stages expose source mode in the artifact header", () => {
@@ -48,5 +49,20 @@ test("diagram source artifact resolves to the canonical markdown path", () => {
       workspacePath: "/tmp/workspace",
       workspaceSlug: "workspace-slug",
     }
+  );
+});
+
+test("diagram source pending message follows the real upstream workflow", () => {
+  assert.equal(
+    resolveDiagramSourcePendingMessage("Diagram Modules").includes(
+      "`virtual-simulation.md`"
+    ),
+    true
+  );
+  assert.equal(
+    resolveDiagramSourcePendingMessage("Diagram Facades").includes(
+      "`module-inventory.md`"
+    ),
+    true
   );
 });

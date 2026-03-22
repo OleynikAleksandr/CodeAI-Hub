@@ -8,9 +8,12 @@ import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
+import { useDiagramFacadesArtifactAvailability } from "./use-diagram-facades-artifact-availability";
+import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import {
   isDiagramTool,
   resolveDiagramSourceArtifact,
+  resolveDiagramSourcePendingMessage,
   type ArtifactHeaderMode,
 } from "./stage-artifact-mode";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
@@ -85,6 +88,22 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     workspacePath: activeWorkspacePath,
     workspaceSlug: activeWorkspaceSlug,
   });
+  const diagramModulesSourceAvailable = useDiagramModulesArtifactAvailability({
+    enabled: headerMode === "source" && activeTool === "Diagram Modules",
+    workspacePath: activeWorkspacePath,
+    workspaceSlug: activeWorkspaceSlug,
+  });
+  const diagramFacadesSourceAvailable = useDiagramFacadesArtifactAvailability({
+    enabled: headerMode === "source" && activeTool === "Diagram Facades",
+    workspacePath: activeWorkspacePath,
+    workspaceSlug: activeWorkspaceSlug,
+  });
+  const sourceArtifactAvailable =
+    activeTool === "Diagram Modules"
+      ? diagramModulesSourceAvailable
+      : activeTool === "Diagram Facades"
+        ? diagramFacadesSourceAvailable
+        : false;
   const helpMode = headerMode === "help";
   const showSourceViewer =
     headerMode === "source" && sourceArtifact !== null;
@@ -115,6 +134,13 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     }
   }
   if (showSourceViewer && sourceArtifact) {
+    if (!sourceArtifactAvailable) {
+      return (
+        <div className="pm-placeholder">
+          {resolveDiagramSourcePendingMessage(activeTool)}
+        </div>
+      );
+    }
     return (
       <WorkflowArtifactViewer
         description="Source shows the canonical Markdown artifact used by runtime and agents. Layout sidecars stay hidden from the user-facing surface."

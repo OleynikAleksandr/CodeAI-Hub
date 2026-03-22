@@ -56,3 +56,15 @@ export const resolveDiagramSourceArtifact = (params: {
     workspaceSlug: params.workspaceSlug,
   };
 };
+
+export const resolveDiagramSourcePendingMessage = (
+  tool: string | null
+): string => {
+  if (tool === "Diagram Modules") {
+    return "Source для Diagram Modules станет доступен после создания `module-inventory.md`. До этого шаг опирается на upstream artifact `virtual-simulation.md` из Virtual Simulation.";
+  }
+  if (tool === "Diagram Facades") {
+    return "Source для Diagram Facades станет доступен после создания `facade-map.md`. До этого шаг опирается на upstream artifact `module-inventory.md` из Diagram Modules.";
+  }
+  return "Source станет доступен после появления канонического Markdown-артефакта этого шага.";
+};
