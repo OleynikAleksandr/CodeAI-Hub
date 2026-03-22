@@ -363,5 +363,6 @@ export const buildDiagramFacadesContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(DIAGRAM_FACADES_TEMPLATE_PATHS);
 
-// Legacy alias for disabled Idea flows. The canonical first workflow step is Description.
+// Legacy endpoint alias for disabled Idea flows. The canonical first workflow step
+// is Description, and this alias is no longer backed by a separate idea-collector package.
 export const buildIdeaContract = buildDescriptionContract;
