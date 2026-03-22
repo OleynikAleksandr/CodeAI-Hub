@@ -40,9 +40,9 @@
 9. [DONE] Удалить старый лимит `2–4` из оставшихся активных entry/design surfaces, чтобы description-entry и старые design-доки тоже не подсказывали агенту неверный контракт (scope: `packages/agents/idea-collector/assets/idea-collector-prompt.md`, `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`; expected commit: `docs(prompt): remove hard scenario cap from remaining entry docs`).
 10. [DONE] Git Commit: `docs(prompt): remove hard scenario cap from remaining entry docs` (hash: `d6519aec`)
 
-### Stream: Release build after Phase 25
-1. [TODO] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для повторного regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `doc/Sessions/Session118.md`, `doc/Sessions/Session119.md`; expected commit: `chore(release): build prompt refinement package`).
-2. [TODO] Git Commit: `chore(release): build prompt refinement package` (hash: TBD)
+### Stream: Release build after scenario-cap checkpoint
+1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для повторного regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `doc/Sessions/Session118.md`, `doc/Sessions/Session119.md`; expected commit: `chore(release): build prompt refinement package`).
+2. [DONE] Git Commit: `chore(release): build prompt refinement package` (hash: `e620f207`)
 
 ## Notes
 - Archived previous completed rollout plan: `doc/TODO/Archive/todo-plan-up-to-phase24-2026-03-22.md`
@@ -51,6 +51,5 @@
 - Current regression log:
   - `doc/Sessions/Session118.md`
 - Current validated release baseline before this scope:
-  - `codeai-hub-1.1.757.vsix`
-  - universal `Description` questionnaire/help baseline already shipped in `1.1.757`
-  - downstream `Diagram Facades` prompt/help sync already shipped in `1.1.757`
+  - `codeai-hub-1.1.758.vsix`
+  - hard scenario cap removed from `Description` / `Virtual Simulation` / runtime / SSOT surfaces in `1.1.758`

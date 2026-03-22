@@ -22,11 +22,13 @@
 - Зафиксировано ещё одно решение по анкете: расширенный список сценариев в пункте `6` сохраняется как есть, потому что он лучше помогает агенту увидеть продукт целиком уже на входе.
 - Выявлена одна содержательная правка к анкете перед submit: в пункте `5. Кто будет пользоваться продуктом` не стоит называть AI-агентов и provider runtimes «пользователями» в прямом смысле; этот блок нужно переформулировать как сценарий совместной работы человека и AI.
 - По итогам первых ответов `Description`-агента и оценки нового `Final_Description.md` открыт отдельный planning scope под следующие prompt/help refinement improvements: smarter artifact rewrite semantics, explicit composite archetype support, mandatory explicit scenarios в `Final_Description.md` и более жёсткая политика релевантного context window.
+- На шаге `Virtual Simulation` обнаружен системный regression-contract defect: лимит `2–4` сценария был одновременно зашит в help, prompt, runtime validation, HTTP/router, UI validation copy и SSOT-документацию, из-за чего агент считал число сценариев формальным требованием шага.
+- По этому наблюдению выполнен отдельный corrective rollout и собран новый локальный релиз `1.1.758`, в котором жёсткий upper cap снят со всех рабочих surface-слоёв; для `virtual-simulation.md` сохранено только требование наличия явных сценариев и достаточности покрытия продукта.
 
 ## Current testing state
 - Активный артефакт: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
-- Текущий шаг: ручное завершение `Description` questionnaire перед `Submit questionnaire`.
-- Следующее ожидаемое действие: дочистить пункт `5`, перечитать всю анкету ещё раз и только после этого отправить её агенту шага `Description`.
+- Текущий шаг: regression будет перезапущен на релизе `1.1.758` с той же заполненной анкетой.
+- Следующее ожидаемое действие: установить/запустить `1.1.758`, снова пройти `Description` и проверить, перестал ли `Virtual Simulation` навязывать агенту фиксированное число сценариев.
 
 ## Key architectural answers already prepared for the questionnaire
 - Крупные части продукта:
@@ -47,6 +49,13 @@
 
 ## Git commits
 - `de84b204 docs(plan): start regression prompt refinement scope`
+- `68cfc00f docs(session): checkpoint regression 1.1.757 observations`
+- `713152ff docs(prompt): remove hard scenario cap from description surfaces`
+- `6632ec6b docs(prompt): remove hard scenario cap from virtual simulation surfaces`
+- `8a81a2e5 fix(workflow): remove hard virtual simulation scenario cap`
+- `a88dd6f6 docs(contract): drop hard scenario cap from virtual simulation`
+- `d6519aec docs(prompt): remove hard scenario cap from remaining entry docs`
+- `e620f207 chore(release): build prompt refinement package`
 
 ---
 
@@ -59,11 +68,10 @@
 4. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 
-> Далее: продолжить реальный regression релиза `1.1.757` с того места, где остановились в заполнении `questionnaire.md`, затем перейти к `Submit questionnaire` и оценке нового `Final_Description.md`.
+> Далее: продолжить regression уже на релизе `1.1.758`, начиная заново с той же анкеты, затем перейти к `Submit questionnaire`, `Virtual Simulation` и проверить, что агент больше не зажимается в старый лимит сценариев.
 
 ## Plans for next session
-- Завершить и перечитать `questionnaire.md` для шага `Description`.
-- Прогнать агент `Description` на новой universal анкете и оценить качество первого `Final_Description.md`.
-- По результатам зафиксировать, действительно ли новая анкета сократила corrective dialogue по сравнению с предыдущими regression-сессиями.
-- После `Description` продолжить regression chain: `Virtual Simulation` → `Diagram Modules` → `Diagram Facades`.
-- После подтверждения нового planning-doc решить, когда переходить от regression observation к реализации `Phase 25`.
+- Установить и прогнать локальный релиз `1.1.758` на той же анкете с самого начала.
+- Проверить, что `Description` по-прежнему даёт сильный `Final_Description.md`, а `Virtual Simulation` больше не воспринимает фиксированное число сценариев как формальное требование.
+- После `Virtual Simulation` продолжить regression chain: `Diagram Modules` → `Diagram Facades`.
+- Отдельно наблюдать оставшиеся пункты `Phase 25`, которые ещё не реализованы: smarter artifact rewrite semantics, explicit composite archetype support и tighter stage context scoping.
