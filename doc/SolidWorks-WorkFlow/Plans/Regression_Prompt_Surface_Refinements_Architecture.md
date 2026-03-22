@@ -18,10 +18,12 @@ Draft for approval.
 
 Текущий prompt уже допускает сложную картину, но всё ещё не проговаривает явно, что допустим гибридный archetype без преждевременного выбора одного единственного типа продукта.
 
-### 3. Контракт `Description` недостаточно жёстко требует явные сценарии
-По SSOT `Final_Description.md` должен давать 2–4 ключевых сценария как явную основу для `Virtual Simulation`.
+### 3. Сценарный контракт остаётся слишком жёстко ограниченным
+Сейчас в нескольких поверхностях продукта всё ещё зашит старый лимит `2–4 сценария`: в help, prompt, валидаторе, HTTP-роутере и SSOT-документации.
 
-На практике агент может сделать хороший narrative-документ, но не оформить эти сценарии явно как отдельный сильный блок. Это делает документ полезным для человека, но чуть слабее как вход для следующего шага.
+Этот лимит подталкивает агента не к адекватному покрытию системы, а к искусственному сжатию картины продукта. Для простых продуктов это может быть терпимо, но для более сложных систем приводит к склейке независимых проявлений в один сценарий или к потере важных частей системы.
+
+При этом сам принцип явного сценарного блока остаётся правильным: и `Final_Description.md`, и `virtual-simulation.md` должны содержать пользовательски понятные сценарии как основу для следующих шагов. Ошибка именно в жёстком верхнем лимите, а не в самом требовании сценарности.
 
 ### 4. Нужно жёстче ограничить «релевантный контекст текущего запроса»
 На пустом workspace агент не найдёт много лишнего, но по мере движения по workflow появляется служебный контекст: continuity-файлы, stage metadata, runtime summaries, вспомогательные файлы.
@@ -35,7 +37,7 @@ Prompt surface должна чётче объяснять, что:
 Сделать prompt/help contract следующего поколения более точным:
 - агент обязан мыслить whole-document, но физически может обновлять файл patch-based, сохраняя валидные пользовательские правки;
 - `Description` должен прямо уметь фиксировать composite archetype для гибридных продуктов;
-- `Final_Description.md` должен явно содержать сценарный блок, а не только narrative;
+- `Final_Description.md` должен явно содержать сценарный блок, а не только narrative, но без искусственного верхнего лимита по количеству сценариев;
 - все stage prompts должны ограничивать контекст объёмом, который действительно релевантен текущему запросу и текущему semantic artifact chain.
 
 ## Предлагаемое решение
@@ -53,9 +55,22 @@ Prompt surface должна чётче объяснять, что:
 - наличие нескольких самостоятельных верхнеуровневых частей не является ошибкой и не должно схлопываться в один archetype label.
 
 ### C. Сделать сценарный блок обязательной частью `Final_Description.md`
-Prompt должен жёстко требовать 2–4 явных сценария в пользовательском виде, а не оставлять это как желательный narrative effect.
+Prompt должен жёстко требовать явные пользовательские сценарии как отдельный блок, а не оставлять это как желательный narrative effect. Количество сценариев должно определяться сложностью продукта и полнотой покрытия, а не фиксированным лимитом.
 
-### D. Уточнить политику релевантного контекста
+### D. Снять жёсткий лимит `2–4` со всех сценарных поверхностей
+Нужно синхронно убрать старое ограничение из:
+- user-facing help;
+- stage prompt;
+- валидатора и HTTP-проверок;
+- SSOT-документации;
+- вспомогательных kickoff/template surfaces.
+
+Новая формула должна быть такой:
+- сценариев должно быть столько, сколько нужно для покрытия продукта без белых пятен;
+- связанные проявления можно объединять ради ясности;
+- отсутствие искусственного верхнего лимита не отменяет требования к компактности и качеству покрытия.
+
+### E. Уточнить политику релевантного контекста
 Для каждого stage prompt нужно закрепить правило:
 - сначала canonical stage artifacts;
 - затем текущий user-request context;
@@ -69,21 +84,31 @@ Prompt должен жёстко требовать 2–4 явных сцена�
 - Полный redesign questionnaire — это уже сделано и вошло в `1.1.757`.
 
 ## Предлагаемый минимальный execution scope
-1. `Description` prompt/help: composite archetype + explicit scenario contract + smarter artifact rewrite semantics.
-2. Cross-stage prompt cleanup: релевантный context window и служебные файлы не конкурируют с semantic artifacts.
-3. Release build после этих prompt-level правок и повторный regression pass.
+1. `Description` prompt/help: composite archetype + explicit scenario contract без жёсткого лимита + smarter artifact rewrite semantics.
+2. Cross-stage cleanup: снять hard cap `2–4` с `Description` / `Virtual Simulation` / runtime validation / SSOT surfaces.
+3. Cross-stage prompt cleanup: релевантный context window и служебные файлы не конкурируют с semantic artifacts.
+4. Release build после этих prompt-level правок и повторный regression pass.
 
 ## Файлы, которые с высокой вероятностью войдут в scope
 - `packages/agents/description-agent/assets/description-collector-prompt.md`
+- `packages/agents/description-agent/assets/questionnaire-template.md`
 - `src/client/project-manager/components/description/description-step-help.tsx`
+- `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`
 - `packages/core/src/templates/source/virtual-simulation-prompt.md`
+- `packages/core/src/workflow/validation/virtual-simulation-validator.ts`
+- `packages/core/src/remote-bridge/handlers/http-api-router.ts`
+- `src/client/ui/src/app-host/idea-kickoff-prompt.ts`
 - `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`
 - `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`
 - `packages/core/src/templates/bundled-templates.ts`
+- `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
+- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 
 ## Ожидаемый результат
 Следующий regression pass должен показать:
 - меньше лишних допущений на `Description`;
-- более явные сценарии в `Final_Description.md`;
+- более явные сценарии в `Final_Description.md` без искусственного лимита;
+- отсутствие drift между help/prompt/runtime validation/SSOT по количеству сценариев;
 - меньше drift между stage artifacts и служебным runtime context;
 - более аккуратное отношение агентов к пользовательским правкам на итерациях.
