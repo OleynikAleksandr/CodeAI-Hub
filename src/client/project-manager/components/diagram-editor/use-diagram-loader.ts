@@ -20,6 +20,7 @@ import {
 } from "./flow-sidecar-types";
 
 export type DiagramLoaderStatus = "loading" | "missing" | "ready" | "error";
+export type { DiagramEditorStage } from "./diagram-modules-progressive-model";
 export type DiagramLoaderResult = {
   readonly status: DiagramLoaderStatus;
   readonly content: string | null;

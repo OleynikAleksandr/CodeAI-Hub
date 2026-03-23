@@ -63,10 +63,10 @@
 
 ### Stream: Progressive graph regeneration
 1. [DONE] Перевести flow projection на merge index placeholders с уже готовыми part-артефактами, чтобы React Flow инкрементально дорисовывал graph без очистки уже появившихся `Product Part` и сохранял порядок из staged index artifact вместо пересортировки по `id` (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-layout): progressively materialize product parts`).
-2. [TODO] Git Commit: `feat(diagram-layout): progressively materialize product parts` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-layout): progressively materialize product parts` (hash: `64979af0`)
 
 ### Stream: Progress surface in PM
-1. [TODO] Добавить user-facing progress surface для `Diagram Modules`, чтобы PM показывал planned/generated `Product Part` state и не создавал ощущение, что во время длинной последовательности ничего не происходит (scope: `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): show product part generation progress`).
+1. [DONE] Добавить user-facing progress surface для `Diagram Modules`, чтобы PM показывал planned/generated `Product Part` state и не создавал ощущение, что во время длинной последовательности ничего не происходит; одновременно обновить help-panel под staged `index + product-parts/<part-id>.md + compatibility aggregate` model и сохранить совместимый export `DiagramEditorStage` для общих diagram hooks после loader refactor (scope: `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): show product part generation progress`).
 2. [TODO] Git Commit: `feat(diagram-ui): show product part generation progress` (hash: TBD)
 
 ## Phase 41 — Compatibility Aggregate And Completion Gate (owner: Oleksandr, updated: 2026-03-23)

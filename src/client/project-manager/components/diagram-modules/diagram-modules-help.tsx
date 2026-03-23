@@ -9,14 +9,23 @@ export const DiagramModulesHelp: React.FC = () => (
       <div>
         На шаге Diagram Modules агент превращает{" "}
         <code>Final_Description.md</code> и <code>virtual-simulation.md</code>{" "}
-        в канонический состав системы. Итоговый <code>module-inventory.md</code>{" "}
-        должен быть одновременно понятен пользователю и служить основой для
-        visual diagram и следующего шага.
+        в канонический состав системы. Теперь шаг начинается не с одного giant
+        inventory-файла, а с <code>product-parts.index.md</code> и затем
+        последовательно materialize-ит отдельные{" "}
+        <code>product-parts/&lt;part-id&gt;.md</code>.
       </div>
       <div>
         Главное правило шага: сначала согласуется смысловая карта системы, а
-        уже потом runtime строит из неё диаграмму. Semantic source of truth
-        здесь только один: <code>module-inventory.md</code>.
+        уже потом runtime progressively строит из неё диаграмму. Пользователь
+        должен видеть, как Product Parts появляются по очереди, не дожидаясь
+        полного завершения всего шага.
+      </div>
+      <div>
+        Базовый semantic source of truth теперь двухслойный:{" "}
+        <code>product-parts.index.md</code> задаёт порядок и общий контур, а
+        part-файлы уточняют реальное содержание каждого Product Part.{" "}
+        <code>module-inventory.md</code> остаётся compatibility aggregate для
+        downstream шагов.
       </div>
       <div>
         В visual hierarchy этого шага ownership читается как{" "}
@@ -54,14 +63,15 @@ export const DiagramModulesHelp: React.FC = () => (
       <div>
         Runtime templates этого шага лежат в{" "}
         <code>.codeai-hub/templates/diagram_modules/</code>: основной каркас
-        задаёт <code>module-inventory-template.md</code>, смысл полей уточняет{" "}
-        <code>module-inventory-field-reference.md</code>, а правила merge
-        описаны в <code>module-inventory-merge-rules.md</code>.
+        задаёт staged contract для index и part-файлов, смысл полей уточняет{" "}
+        <code>module-inventory-field-reference.md</code>, а правила merge и
+        compatibility aggregate описаны в{" "}
+        <code>module-inventory-merge-rules.md</code>.
       </div>
       <div>
         <code>module-map.flow.json</code> не описывает архитектуру. Этот файл
-        хранит только layout и обычно появляется после ручного перетаскивания
-        карточек на диаграмме.
+        хранит только layout и может обновляться по мере progressive
+        regeneration графа или после ручного перетаскивания карточек.
       </div>
       <div>
         Агент должен задавать только недостающие вопросы и остановить

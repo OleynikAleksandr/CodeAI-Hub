@@ -1,4 +1,6 @@
 import type React from "react";
+import { useEffect, useState } from "react";
+import { api } from "../../api";
 import { StageArtifactFixButton } from "../shared/stage-artifact-fix-button";
 import { StageArtifactPendingLayout } from "../shared/stage-artifact-stage-panel";
 import type {
@@ -27,6 +29,58 @@ const buildDiagramRepairPrompt = (params: {
     "Устрани parse/validation ошибку и верни корректный canonical artifact для этого stage.",
     `Ошибка: ${params.error}`,
   ].join("\n");
+
+type DiagramModulesProgressBanner = {
+  readonly substep: string;
+  readonly plannedCount: number;
+  readonly generatedCount: number;
+  readonly currentPartId?: string;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readDiagramModulesProgress = (
+  value: unknown
+): DiagramModulesProgressBanner | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const substep =
+    typeof value.substep === "string" && value.substep.trim().length > 0
+      ? value.substep.trim()
+      : null;
+  const plannedCount =
+    typeof value.plannedCount === "number" ? value.plannedCount : null;
+  const generatedCount =
+    typeof value.generatedCount === "number" ? value.generatedCount : null;
+  if (!(substep && plannedCount !== null && generatedCount !== null)) {
+    return null;
+  }
+  const currentPartId =
+    typeof value.currentPartId === "string" && value.currentPartId.trim().length > 0
+      ? value.currentPartId.trim()
+      : undefined;
+  return { substep, plannedCount, generatedCount, currentPartId };
+};
+
+const buildDiagramModulesProgressText = (
+  progress: DiagramModulesProgressBanner
+): string => {
+  if (progress.substep === "index") {
+    return "Runtime формирует index Product Part и готовит последовательность materialization.";
+  }
+  if (progress.substep === "generate_product_part") {
+    return `Собрано ${progress.generatedCount} из ${progress.plannedCount} Product Part. Сейчас materialize-ится ${progress.currentPartId ?? "следующий part"}.`;
+  }
+  if (progress.substep === "compose_aggregate") {
+    return `Все ${progress.plannedCount} Product Part уже готовы. Runtime собирает compatibility aggregate для downstream шага.`;
+  }
+  if (progress.substep === "blocked_ambiguity") {
+    return "Последовательность остановлена на architectural ambiguity и ждёт уточнения пользователя.";
+  }
+  return `Готово ${progress.generatedCount} из ${progress.plannedCount} Product Part. Диаграмма ожидает общего review.`;
+};
 
 type FixStartParams = {
   readonly workspacePath: string;
@@ -75,6 +129,57 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
   workspacePath,
   workspaceSlug,
 }) => {
+  const stageId = resolveDiagramStageId(artifactPath);
+  const [diagramModulesProgress, setDiagramModulesProgress] =
+    useState<DiagramModulesProgressBanner | null>(null);
+
+  useEffect(() => {
+    if (stageId !== "diagram_modules") {
+      setDiagramModulesProgress(null);
+      return;
+    }
+
+    let cancelled = false;
+    const loadProgress = async (): Promise<void> => {
+      const state = await api.getWorkflowState(workspaceSlug, workspacePath);
+      if (cancelled) {
+        return;
+      }
+      setDiagramModulesProgress(
+        readDiagramModulesProgress(state?.diagramModulesProgress)
+      );
+    };
+
+    void loadProgress();
+    const timer = window.setInterval(() => {
+      void loadProgress();
+    }, 3_000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [stageId, workspacePath, workspaceSlug]);
+
+  const progressBanner =
+    stageId === "diagram_modules" && diagramModulesProgress ? (
+      <div
+        style={{
+          display: "grid",
+          gap: 4,
+          padding: "10px 12px",
+          border: "1px solid var(--pm-border)",
+          borderRadius: 10,
+          background: "var(--pm-panel-bg)",
+        }}
+      >
+        <strong style={{ fontSize: 12 }}>Product Part Progress</strong>
+        <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
+          {buildDiagramModulesProgressText(diagramModulesProgress)}
+        </span>
+      </div>
+    ) : null;
+
   if (status === "loading") {
     return <div className="pm-placeholder">Загружаем {title}…</div>;
   }
@@ -126,6 +231,7 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
           <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
             {introText}
           </span>
+          {progressBanner}
         </div>
         <div
           style={{
@@ -163,6 +269,7 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
 
   return (
     <StageArtifactPendingLayout artifactPath={artifactPath} title={title}>
+      {progressBanner}
       {pendingContent}
     </StageArtifactPendingLayout>
   );
