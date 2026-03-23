@@ -134,9 +134,9 @@
 ## Phase 45 — Diagram Workflow Composite Prompt Contract Cleanup (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Planning baseline
-1. [IN_PROGRESS] Зафиксировать findings пользовательского retest `1.1.769`: составной prompt для `Diagram Modules` заставляет агента искать compatibility inventory, staged examples, continuity/runtime templates и legacy stage artifacts, после чего оформить новый planning-doc по composite prompt contract для `Diagram Modules` и `Diagram Facades` вместе с session report по этому retest (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`, `doc/Sessions/Session138.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture composite diagram prompt retest findings`).
-2. [TODO] Git Commit: `docs(plan): capture composite diagram prompt retest findings` (hash: TBD)
-3. [TODO] После planning-baseline commit-а синхронизировать active plan и `Session138` фактическими hash-ами, чтобы следующий cold start видел новый scope и report без `TBD` (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session138.md`; expected commit: `docs(session): sync composite diagram prompt planning handoff`).
+1. [DONE] Зафиксировать findings пользовательского retest `1.1.769`: составной prompt для `Diagram Modules` заставляет агента искать compatibility inventory, staged examples, continuity/runtime templates и legacy stage artifacts, после чего оформить новый planning-doc по composite prompt contract для `Diagram Modules` и `Diagram Facades` вместе с session report по этому retest (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`, `doc/Sessions/Session138.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture composite diagram prompt retest findings`).
+2. [DONE] Git Commit: `docs(plan): capture composite diagram prompt retest findings` (hash: `cc80a289`)
+3. [IN_PROGRESS] После planning-baseline commit-а синхронизировать active plan и `Session138` фактическими hash-ами, чтобы следующий cold start видел новый scope и report без `TBD` (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session138.md`; expected commit: `docs(session): sync composite diagram prompt planning handoff`).
 4. [TODO] Git Commit: `docs(session): sync composite diagram prompt planning handoff` (hash: TBD)
 
 ### Stream: Diagram Modules prompt surface cleanup

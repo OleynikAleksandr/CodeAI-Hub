@@ -31,7 +31,7 @@
 - Пользовательский feedback по промежуточным сообщениям агента считается частью acceptance criteria следующего follow-up: после фиксов агент не должен тратить turn на поиск legacy/staged/helper artifacts, которые runtime ему явно не передавал.
 
 ## Git commits
-- `TBD docs(plan): capture composite diagram prompt retest findings`
+- `cc80a289 docs(plan): capture composite diagram prompt retest findings`
 
 ---
 
