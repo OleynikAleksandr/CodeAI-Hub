@@ -259,7 +259,12 @@ test("domainModelToReactFlow gives stacked cluster modules enough vertical space
   }
 
   assert.deepEqual(eligibilityNode.position, { x: 24, y: 72 });
-  assert.deepEqual(executionNode.position, { x: 24, y: 216 });
-  assert.deepEqual(refreshNode.position, { x: 24, y: 360 });
-  assert.equal(Number(clusterNode.style?.height ?? 0) >= 508, true);
+  assert.equal(executionNode.position.x, 24);
+  assert.equal(refreshNode.position.x, 24);
+  assert.equal(executionNode.position.y > eligibilityNode.position.y + 132, true);
+  assert.equal(refreshNode.position.y > executionNode.position.y + 132, true);
+  assert.equal(
+    Number(clusterNode.style?.height ?? 0) >= refreshNode.position.y + 132 + 16,
+    true
+  );
 });

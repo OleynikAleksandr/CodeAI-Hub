@@ -1,39 +1,31 @@
 import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import type { DiagramFlowNode } from "./domain-model-to-react-flow.types";
 
-const PRODUCT_PART_PADDING_X = 24;
-const PRODUCT_PART_PADDING_TOP = 72;
-const PRODUCT_PART_PADDING_BOTTOM = 28;
-const PRODUCT_PART_SECTION_GAP = 36;
-const PRODUCT_PART_ROW_GAP = 48;
-const PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3;
-const PRODUCT_PART_EXTERNAL_GAP = 72;
-const CLUSTER_X_STEP = 320;
-const CLUSTER_MIN_HEIGHT = 168;
-const CLUSTER_PADDING_X = 24;
-const CLUSTER_PADDING_TOP = 60;
-const CLUSTER_PADDING_BOTTOM = 28;
-const MODULE_X_OFFSET = 24;
-const MODULE_Y_OFFSET = 72;
-const MODULE_CARD_WIDTH = 240;
-const MODULE_CARD_HEIGHT = 132, MODULE_Y_STEP = MODULE_CARD_HEIGHT + 12;
-const STANDALONE_X_STEP = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2;
-const DEFAULT_PRODUCT_PART_ID = "default-product-part";
+type ModuleEntity = ModuleMapModel["modules"][number];
+type ClusterEntity = NonNullable<ModuleMapModel["clusters"]>[number];
+type ProductPartEntity = NonNullable<ModuleMapModel["productParts"]>[number];
+
+const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 28, PRODUCT_PART_HEADER_MIN_HEIGHT = 72;
+const PRODUCT_PART_SECTION_GAP = 36, PRODUCT_PART_ROW_GAP = 48, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
+const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 16;
+const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 132, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 16;
+const STANDALONE_X_STEP = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2, DEFAULT_PRODUCT_PART_ID = "default-product-part";
 
 const toProductPartNodeId = (productPartId: string): string => `product-part:${productPartId}`;
 const toClusterNodeId = (clusterId: string): string => `cluster:${clusterId}`;
-const compareById = <T extends { readonly id: string }>(left: T, right: T): number =>
-  left.id.localeCompare(right.id);
-
+const compareById = <T extends { readonly id: string }>(left: T, right: T): number => left.id.localeCompare(right.id);
 const humanizeIdentifier = (value: string): string =>
-  value
-    .split("-")
-    .filter((part) => part.length > 0)
-    .map((part) => part[0]?.toUpperCase() + part.slice(1))
-    .join(" ");
-
-const getClusterHeight = (moduleCount: number): number =>
-  Math.max(CLUSTER_MIN_HEIGHT, CLUSTER_PADDING_TOP + MODULE_CARD_HEIGHT + Math.max(moduleCount - 1, 0) * MODULE_Y_STEP + CLUSTER_PADDING_BOTTOM);
+  value.split("-").filter(Boolean).map((part) => part[0]?.toUpperCase() + part.slice(1)).join(" ");
+const estimateTextLines = (text: string, charsPerLine: number): number =>
+  text.split(/\r?\n/u).map((line) => Math.max(1, Math.ceil(line.trim().length / charsPerLine))).reduce((sum, count) => sum + count, 0);
+const getExtraLines = (text: string, charsPerLine: number, includedLines = 1): number =>
+  Math.max(0, estimateTextLines(text, charsPerLine) - includedLines);
+const getModuleCardHeight = (module: ModuleEntity): number =>
+  MODULE_CARD_MIN_HEIGHT + getExtraLines(module.title, 24) * TITLE_LINE_HEIGHT + getExtraLines(module.responsibility, 32, 2) * BODY_LINE_HEIGHT;
+const getClusterHeaderHeight = (cluster: Pick<ClusterEntity, "title" | "purpose">): number =>
+  CLUSTER_HEADER_MIN_HEIGHT + getExtraLines(cluster.title, 24) * TITLE_LINE_HEIGHT + getExtraLines(cluster.purpose, 34, 2) * BODY_LINE_HEIGHT;
+const getProductPartHeaderHeight = (productPart: Pick<ProductPartEntity, "title" | "purpose">): number =>
+  PRODUCT_PART_HEADER_MIN_HEIGHT + getExtraLines(productPart.title, 26) * TITLE_LINE_HEIGHT + getExtraLines(productPart.purpose, 30, 2) * BODY_LINE_HEIGHT;
 
 const buildModuleNode = ({
   module,
@@ -41,18 +33,21 @@ const buildModuleNode = ({
   productPart,
   cluster,
   parentId,
+  height,
 }: {
-  readonly module: ModuleMapModel["modules"][number];
+  readonly module: ModuleEntity;
   readonly position: { readonly x: number; readonly y: number };
   readonly productPart: string;
   readonly cluster?: string;
   readonly parentId?: string;
+  readonly height: number;
 }): DiagramFlowNode => ({
   id: module.id,
   type: "module",
   position,
   parentId,
   extent: parentId ? ("parent" as const) : undefined,
+  style: { width: MODULE_CARD_WIDTH, minHeight: height },
   data: {
     stage: "diagram_modules",
     nodeKind: "module",
@@ -71,230 +66,194 @@ const buildModuleNode = ({
 
 const buildFallbackClusters = (
   model: ModuleMapModel
-): ReadonlyMap<
-  string,
-  { readonly moduleIds: readonly string[]; readonly title: string }
-> =>
+): ReadonlyMap<string, { readonly moduleIds: readonly string[]; readonly title: string }> =>
   new Map(
     [...new Set(model.modules.flatMap((module) => (module.cluster ? [module.cluster] : [])))]
       .sort((left, right) => left.localeCompare(right))
-      .map((clusterId) => [
-        clusterId,
-        {
-          moduleIds: model.modules
-            .filter((module) => module.cluster === clusterId)
-            .map((module) => module.id),
-          title: humanizeIdentifier(clusterId),
-        },
-      ])
+      .map((clusterId) => [clusterId, {
+        moduleIds: model.modules.filter((module) => module.cluster === clusterId).map((module) => module.id),
+        title: humanizeIdentifier(clusterId),
+      }])
   );
 
-export const buildModuleStageNodes = (
-  model: ModuleMapModel
-): readonly DiagramFlowNode[] => {
+const getClusterIds = (
+  productPart: ProductPartEntity,
+  model: ModuleMapModel,
+  clustersById: ReadonlyMap<string, ClusterEntity>
+): readonly string[] =>
+  (productPart.clusterIds.length > 0
+    ? productPart.clusterIds
+    : [...new Set(model.modules.flatMap((module) =>
+        module.cluster && (module.productPart ?? DEFAULT_PRODUCT_PART_ID) === productPart.id ? [module.cluster] : []
+      ))]).filter((clusterId) => clustersById.has(clusterId));
+
+const getStandaloneModuleIds = (
+  productPart: ProductPartEntity,
+  model: ModuleMapModel,
+  modulesById: ReadonlyMap<string, ModuleEntity>
+): readonly string[] =>
+  (productPart.standaloneModuleIds.length > 0
+    ? productPart.standaloneModuleIds
+    : model.modules
+        .filter((module) => !module.cluster && (module.productPart ?? DEFAULT_PRODUCT_PART_ID) === productPart.id)
+        .map((module) => module.id)).filter((moduleId) => modulesById.has(moduleId));
+
+export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFlowNode[] => {
   const modulesById = new Map(model.modules.map((module) => [module.id, module]));
   const fallbackClusters = buildFallbackClusters(model);
-  const clustersById = new Map(
-    [...(model.clusters ?? [])]
-      .sort(compareById)
-      .map((cluster) => [cluster.id, cluster] as const)
-  );
+  const clustersById = new Map([...(model.clusters ?? [])].sort(compareById).map((cluster) => [cluster.id, cluster] as const));
   for (const [clusterId, cluster] of fallbackClusters.entries()) {
     if (!clustersById.has(clusterId)) {
-      clustersById.set(clusterId, {
-        id: clusterId,
-        title: cluster.title,
-        purpose: `Fallback cluster for ${clusterId}`,
-        productPart: DEFAULT_PRODUCT_PART_ID,
-        moduleIds: cluster.moduleIds,
-      });
+      clustersById.set(clusterId, { id: clusterId, title: cluster.title, purpose: `Fallback cluster for ${clusterId}`, productPart: DEFAULT_PRODUCT_PART_ID, moduleIds: cluster.moduleIds });
     }
   }
+
   const productParts = [
-    ...(model.productParts ?? [
-      {
-        id: DEFAULT_PRODUCT_PART_ID,
-        title: humanizeIdentifier(DEFAULT_PRODUCT_PART_ID),
-        purpose: "Fallback product part derived in the React Flow adapter",
-        clusterIds: [...fallbackClusters.keys()],
-        standaloneModuleIds: model.modules
-          .filter((module) => !module.cluster)
-          .map((module) => module.id),
-      },
-    ]),
+    ...(model.productParts ?? [{
+      id: DEFAULT_PRODUCT_PART_ID,
+      title: humanizeIdentifier(DEFAULT_PRODUCT_PART_ID),
+      purpose: "Fallback product part derived in the React Flow adapter",
+      clusterIds: [...fallbackClusters.keys()],
+      standaloneModuleIds: model.modules.filter((module) => !module.cluster).map((module) => module.id),
+    }]),
   ].sort(compareById);
 
+  const nodes: DiagramFlowNode[] = [];
   let productPartY = 0;
-
-  return productParts.flatMap((productPart) => {
-    const clusterIds = (
-      productPart.clusterIds.length > 0
-        ? productPart.clusterIds
-        : [
-            ...new Set(
-              model.modules.flatMap((module) =>
-                module.cluster &&
-                (module.productPart ?? DEFAULT_PRODUCT_PART_ID) === productPart.id
-                  ? [module.cluster]
-                  : []
-              )
-            ),
-          ]
-    ).filter((clusterId) => clustersById.has(clusterId));
-    const standaloneModuleIds = (
-      productPart.standaloneModuleIds.length > 0
-        ? productPart.standaloneModuleIds
-        : model.modules
-            .filter(
-              (module) =>
-                !module.cluster &&
-                (module.productPart ?? DEFAULT_PRODUCT_PART_ID) === productPart.id
-            )
-            .map((module) => module.id)
-    ).filter((moduleId) => modulesById.has(moduleId));
-    const externalStandaloneModuleIds = standaloneModuleIds.filter(
-      (moduleId) => modulesById.get(moduleId)?.kind === "external"
-    );
-    const internalStandaloneModuleIds = standaloneModuleIds.filter(
-      (moduleId) => !externalStandaloneModuleIds.includes(moduleId)
-    );
-    const clusterHeights = clusterIds.map((clusterId) =>
-      getClusterHeight(clustersById.get(clusterId)?.moduleIds.length ?? 0)
-    );
-    const clusterSectionHeight = Math.max(0, ...clusterHeights);
-    const standaloneY =
-      PRODUCT_PART_PADDING_TOP +
-      (clusterIds.length > 0 ? clusterSectionHeight + PRODUCT_PART_SECTION_GAP : 0);
+  for (const productPart of productParts) {
+    const clusterIds = getClusterIds(productPart, model, clustersById);
+    const standaloneModuleIds = getStandaloneModuleIds(productPart, model, modulesById);
+    const externalStandaloneModuleIds = standaloneModuleIds.filter((moduleId) => modulesById.get(moduleId)?.kind === "external");
+    const internalStandaloneModuleIds = standaloneModuleIds.filter((moduleId) => !externalStandaloneModuleIds.includes(moduleId));
+    const productPartHeaderHeight = getProductPartHeaderHeight(productPart);
     const standaloneColumnCount = Math.max(
       1,
-      clusterIds.length > 0
-        ? clusterIds.length
-        : Math.min(
-            PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS,
-            Math.max(internalStandaloneModuleIds.length, 1)
-          )
+      clusterIds.length > 0 ? clusterIds.length : Math.min(PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS, Math.max(internalStandaloneModuleIds.length, 1))
     );
-    const standaloneRowCount =
-      internalStandaloneModuleIds.length > 0
-        ? Math.ceil(internalStandaloneModuleIds.length / standaloneColumnCount)
-        : 0;
-    const standaloneSectionHeight =
-      standaloneRowCount > 0
-        ? MODULE_CARD_HEIGHT + (standaloneRowCount - 1) * MODULE_Y_STEP
-        : 0;
-    const externalSectionHeight =
-      externalStandaloneModuleIds.length > 0
-        ? MODULE_CARD_HEIGHT +
-          (externalStandaloneModuleIds.length - 1) * MODULE_Y_STEP
-        : 0;
     const productPartWidth = Math.max(
       720,
       PRODUCT_PART_PADDING_X * 2 +
         (clusterIds.length > 0
           ? Math.max(clusterIds.length * CLUSTER_X_STEP, MODULE_CARD_WIDTH)
-          : MODULE_CARD_WIDTH +
-            Math.max(standaloneColumnCount - 1, 0) * STANDALONE_X_STEP)
+          : MODULE_CARD_WIDTH + Math.max(standaloneColumnCount - 1, 0) * STANDALONE_X_STEP)
     );
-    const productPartHeight = Math.max(260, standaloneY + standaloneSectionHeight + PRODUCT_PART_PADDING_BOTTOM);
-    const productPartRowHeight = Math.max(productPartHeight, standaloneY + externalSectionHeight);
-    const productPartNode: DiagramFlowNode = {
-      id: toProductPartNodeId(productPart.id),
-      type: "cluster",
-      position: { x: 0, y: productPartY },
-      style: { width: productPartWidth, height: productPartHeight },
-      data: {
-        stage: "diagram_modules",
-        nodeKind: "productPart",
-        productPartId: productPart.id,
-        title: productPart.title,
-        purpose: productPart.purpose,
-        clusterIds,
-        standaloneModuleIds,
-      },
-    };
-    const clusterNodes = clusterIds.map((clusterId, clusterIndex) => {
+
+    const clusterNodes: DiagramFlowNode[] = [];
+    const clusteredModuleNodes: DiagramFlowNode[] = [];
+    const clusterHeights: number[] = [];
+    for (const [clusterIndex, clusterId] of clusterIds.entries()) {
       const cluster = clustersById.get(clusterId);
-      return {
+      if (!cluster) {
+        continue;
+      }
+      const headerHeight = getClusterHeaderHeight(cluster);
+      let moduleY = headerHeight;
+      for (const moduleId of cluster.moduleIds) {
+        const module = modulesById.get(moduleId);
+        if (!module) {
+          continue;
+        }
+        const height = getModuleCardHeight(module);
+        clusteredModuleNodes.push(buildModuleNode({
+          module,
+          position: { x: MODULE_X_OFFSET, y: moduleY },
+          parentId: toClusterNodeId(clusterId),
+          productPart: productPart.id,
+          cluster: clusterId,
+          height,
+        }));
+        moduleY += height + MODULE_CARD_GAP;
+      }
+      const clusterHeight = Math.max(CLUSTER_MIN_HEIGHT, moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING);
+      clusterHeights.push(clusterHeight);
+      clusterNodes.push({
         id: toClusterNodeId(clusterId),
         type: "cluster",
-        position: {
-          x: PRODUCT_PART_PADDING_X + clusterIndex * CLUSTER_X_STEP,
-          y: PRODUCT_PART_PADDING_TOP,
-        },
+        position: { x: PRODUCT_PART_PADDING_X + clusterIndex * CLUSTER_X_STEP, y: productPartHeaderHeight },
         parentId: toProductPartNodeId(productPart.id),
-        extent: "parent" as const,
-        style: {
-          width: MODULE_CARD_WIDTH + CLUSTER_PADDING_X * 2,
-          height: getClusterHeight(cluster?.moduleIds.length ?? 0),
-        },
+        extent: "parent",
+        style: { width: MODULE_CARD_WIDTH + CLUSTER_PADDING_X * 2, height: clusterHeight },
         data: {
           stage: "diagram_modules",
           nodeKind: "cluster",
           clusterId,
           productPartId: productPart.id,
-          title: cluster?.title ?? humanizeIdentifier(clusterId),
-          purpose:
-            cluster?.purpose ?? `Fallback cluster for ${humanizeIdentifier(clusterId)}`,
-          moduleIds: cluster?.moduleIds ?? [],
+          title: cluster.title,
+          purpose: cluster.purpose,
+          moduleIds: cluster.moduleIds,
         },
-      } satisfies DiagramFlowNode;
-    });
-    const clusteredModules = clusterIds.flatMap((clusterId) =>
-      (clustersById.get(clusterId)?.moduleIds ?? []).flatMap((moduleId, moduleIndex) => {
+      });
+    }
+
+    const clusterSectionHeight = Math.max(0, ...clusterHeights);
+    const standaloneY = productPartHeaderHeight + (clusterIds.length > 0 ? clusterSectionHeight + PRODUCT_PART_SECTION_GAP : 0);
+    const standaloneNodes: DiagramFlowNode[] = [];
+    let internalSectionHeight = 0;
+    for (let index = 0, rowY = standaloneY; index < internalStandaloneModuleIds.length; ) {
+      const rowIds = internalStandaloneModuleIds.slice(index, index + standaloneColumnCount);
+      const rowHeight = Math.max(...rowIds.map((moduleId) => getModuleCardHeight(modulesById.get(moduleId)!)));
+      rowIds.forEach((moduleId, columnIndex) => {
         const module = modulesById.get(moduleId);
-        return module
-          ? [
-              buildModuleNode({
-                module,
-                position: {
-                  x: MODULE_X_OFFSET,
-                  y: MODULE_Y_OFFSET + moduleIndex * MODULE_Y_STEP,
-                },
-                parentId: toClusterNodeId(clusterId),
-                productPart: productPart.id,
-                cluster: clusterId,
-              }),
-            ]
-          : [];
-      })
+        if (!module) {
+          return;
+        }
+        standaloneNodes.push(buildModuleNode({
+          module,
+          position: { x: PRODUCT_PART_PADDING_X + columnIndex * STANDALONE_X_STEP, y: rowY },
+          parentId: toProductPartNodeId(productPart.id),
+          productPart: productPart.id,
+          height: getModuleCardHeight(module),
+        }));
+      });
+      internalSectionHeight = rowY + rowHeight - standaloneY;
+      rowY += rowHeight + MODULE_CARD_GAP;
+      index += standaloneColumnCount;
+    }
+
+    const externalNodes: DiagramFlowNode[] = [];
+    let externalSectionHeight = 0;
+    for (const [externalIndex, moduleId] of externalStandaloneModuleIds.entries()) {
+      const module = modulesById.get(moduleId);
+      if (!module) {
+        continue;
+      }
+      const height = getModuleCardHeight(module);
+      const offsetY = standaloneY + externalSectionHeight + (externalIndex > 0 ? MODULE_CARD_GAP : 0);
+      externalNodes.push(buildModuleNode({
+        module,
+        position: { x: productPartWidth + PRODUCT_PART_EXTERNAL_GAP, y: productPartY + offsetY },
+        productPart: productPart.id,
+        height,
+      }));
+      externalSectionHeight = offsetY + height - standaloneY;
+    }
+
+    const productPartHeight = Math.max(
+      260,
+      Math.max(productPartHeaderHeight, productPartHeaderHeight + clusterSectionHeight, standaloneY + internalSectionHeight) + PRODUCT_PART_PADDING_BOTTOM
     );
-    const standaloneNodes = internalStandaloneModuleIds.flatMap((moduleId, moduleIndex) => {
-      const module = modulesById.get(moduleId);
-      return module
-        ? [
-            buildModuleNode({
-              module,
-              position: {
-                x:
-                  PRODUCT_PART_PADDING_X +
-                  (moduleIndex % standaloneColumnCount) * STANDALONE_X_STEP,
-                y:
-                  standaloneY +
-                  Math.floor(moduleIndex / standaloneColumnCount) * MODULE_Y_STEP,
-              },
-              parentId: toProductPartNodeId(productPart.id),
-              productPart: productPart.id,
-            }),
-          ]
-        : [];
-    });
-    const externalNodes = externalStandaloneModuleIds.flatMap((moduleId, moduleIndex) => {
-      const module = modulesById.get(moduleId);
-      return module
-        ? [
-            buildModuleNode({
-              module,
-              position: {
-                x: productPartWidth + PRODUCT_PART_EXTERNAL_GAP,
-                y: productPartY + standaloneY + moduleIndex * MODULE_Y_STEP,
-              },
-              productPart: productPart.id,
-            }),
-          ]
-        : [];
-    });
-    const nodes = [productPartNode, ...clusterNodes, ...clusteredModules, ...standaloneNodes, ...externalNodes];
-    productPartY += productPartRowHeight + PRODUCT_PART_ROW_GAP;
-    return nodes;
-  });
+    nodes.push(
+      {
+        id: toProductPartNodeId(productPart.id),
+        type: "cluster",
+        position: { x: 0, y: productPartY },
+        style: { width: productPartWidth, height: productPartHeight },
+        data: {
+          stage: "diagram_modules",
+          nodeKind: "productPart",
+          productPartId: productPart.id,
+          title: productPart.title,
+          purpose: productPart.purpose,
+          clusterIds,
+          standaloneModuleIds,
+        },
+      },
+      ...clusterNodes,
+      ...clusteredModuleNodes,
+      ...standaloneNodes,
+      ...externalNodes
+    );
+    productPartY += Math.max(productPartHeight, standaloneY + externalSectionHeight) + PRODUCT_PART_ROW_GAP;
+  }
+  return nodes;
 };
