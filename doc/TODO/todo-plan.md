@@ -25,11 +25,13 @@
 
 ### Stream: Workflow SSOT for staged decomposition
 1. [DONE] Зафиксировать в workflow/system docs, что `Diagram Modules` больше не опирается на giant single-turn `module-inventory.md`, а начинается с `product-parts.index.md`, затем материализует отдельные part-файлы и откладывает relation lines из базового slice (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(workflow): formalize product part decomposition contract`).
-2. [TODO] Git Commit: `docs(workflow): formalize product part decomposition contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(workflow): formalize product part decomposition contract` (hash: `b10ae202`)
 
 ### Stream: Prompt and path contract for new artifacts
-1. [TODO] Расширить prompt/path contract `diagram_modules`, чтобы runtime и агент знали про `product-parts.index.md`, `product-parts/<part-id>.md` и generated compatibility aggregate `module-inventory.md`, не требуя relation lines в базовом generation path (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): add product part artifact path contract`).
-2. [TODO] Git Commit: `feat(diagram-workflow): add product part artifact path contract` (hash: TBD)
+1. [DONE] Добавить typed path contract `diagram_modules` для `product-parts.index.md` и dynamic `product-parts/<part-id>.md`, чтобы runtime мог безопасно разрешать staged artifact paths внутри workspace без giant single-file assumptions (scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.test.ts`; expected commit: `feat(diagram-workflow): add product part artifact path contract`).
+2. [DONE] Git Commit: `feat(diagram-workflow): add product part artifact path contract` (hash: `941d5f03`)
+3. [DONE] Перенастроить PM prompt pack `diagram_modules` на `product-parts.index.md`, staged `Product Part` generation и runtime-owned compatibility aggregate, чтобы первый user-visible turn больше не вел агента напрямую к giant `module-inventory.md` (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): retarget diagram modules prompt to staged artifacts`).
+4. [TODO] Git Commit: `feat(diagram-workflow): retarget diagram modules prompt to staged artifacts` (hash: TBD)
 
 ### Stream: Artifact upsert and validation baseline
 1. [TODO] Добавить artifact-upsert validation rules для `product-parts.index.md` и `product-parts/<part-id>.md`, оставив aggregate `module-inventory.md` runtime-owned compatibility output, а не прямой agent-written target (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): validate product part artifacts`).

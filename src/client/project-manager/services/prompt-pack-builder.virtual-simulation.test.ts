@@ -32,7 +32,7 @@ test("non-virtual stages keep template hint", () => {
   assert.equal(pack.content.includes("Шаблон (absolute): `/tmp/description-template.md`"), true);
 });
 
-test("diagram modules prompt pack targets inventory and includes phased inputs", () => {
+test("diagram modules prompt pack targets product part index and includes staged hints", () => {
   const pack = buildWorkflowPromptPack({
     stage: "diagram_modules",
     workspacePath: "/tmp/workspace",
@@ -45,13 +45,13 @@ test("diagram modules prompt pack targets inventory and includes phased inputs",
 
   assert.equal(
     pack.content.includes(
-      "Целевой путь (relative): `codeai-hub/demo-workspace/diagram_modules/module-inventory.md`"
+      "Целевой путь (relative): `codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
     ),
     false
   );
   assert.equal(
     pack.content.includes(
-      "Целевой путь (relative): `.codeai-hub/demo-workspace/diagram_modules/module-inventory.md`"
+      "Целевой путь (relative): `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
     ),
     true
   );
@@ -68,14 +68,18 @@ test("diagram modules prompt pack targets inventory and includes phased inputs",
     true
   );
   assert.equal(pack.content.includes("Фазы работы:"), true);
-  assert.equal(pack.content.includes("Phase 2: начни короткий диалог с пользователем"), true);
   assert.equal(
     pack.content.includes(
-      "Phase 3: заверши шаг согласованным `module-inventory.md`"
+      "Phase 2: если runtime запускает continuation subturn"
     ),
     true
   );
-  assert.equal(pack.content.includes("Derived module map"), false);
+  assert.equal(
+    pack.content.includes(
+      "Compatibility aggregate (runtime-owned): `.codeai-hub/demo-workspace/diagram_modules/module-inventory.md`"
+    ),
+    true
+  );
   assert.equal(pack.content.includes("module-map.md"), false);
-  assert.equal(pack.content.includes("Имя выходного файла: `module-inventory.md`"), true);
+  assert.equal(pack.content.includes("Имя выходного файла: `product-parts.index.md`"), true);
 });

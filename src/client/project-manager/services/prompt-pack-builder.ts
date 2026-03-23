@@ -29,7 +29,7 @@ type WorkflowArtifactPaths = {
 const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
-  diagram_modules: "module-inventory.md",
+  diagram_modules: "product-parts.index.md",
   diagram_facades: "facade-map.md",
 };
 
@@ -203,9 +203,10 @@ const buildStagePhaseLines = (
   }
   return [
     "Фазы работы:",
-    "- Phase 1: прочитай `Final_Description.md` и `virtual-simulation.md`, затем восстанови кандидатов в кластеры, standalone modules и простые связи.",
-    `- Phase 2: начни короткий диалог с пользователем и согласуй содержимое \`${targetFileName}\`; не переходи к визуальной карте, пока пользователь не подтвердит inventory или не попросит черновик сразу.`,
-    "- Phase 3: заверши шаг согласованным `module-inventory.md`; visual diagram и `module-map.flow.json` поддерживаются runtime отдельно и не требуют дополнительного Markdown-артефакта от агента.",
+    `- Phase 1: прочитай \`Final_Description.md\` и \`virtual-simulation.md\`, затем создай или обнови \`${targetFileName}\` как canonical index списка \`Product Part\`, их порядка и purpose.`,
+    "- Phase 2: если runtime запускает continuation subturn, работай только с одним целевым `Product Part`, materialize-ь один `product-parts/<part-id>.md` за итерацию и не пытайся молча генерировать весь giant inventory разом.",
+    "- Phase 3: relation lines и cross-part wiring не являются обязательной частью первого полезного результата; сначала стабилизируй ownership structure `Product Part -> Cluster -> Module`.",
+    "- Phase 4: `module-inventory.md` materialize-ится runtime как compatibility aggregate после завершения part-файлов; visual graph и `module-map.flow.json` тоже поддерживаются runtime отдельно.",
   ];
 };
 
@@ -230,7 +231,15 @@ export const buildWorkflowPromptPack = (
     workspaceSlug: params.workspaceSlug,
     runSlug: params.runSlug,
   });
-  const additionalArtifacts: readonly string[] = [];
+  const additionalArtifacts: readonly string[] =
+    params.stage === "diagram_modules"
+      ? [
+          "Дополнительные staged артефакты этого шага:",
+          `- Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
+          `- Compatibility aggregate (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-inventory.md\``,
+          `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,
+        ]
+      : [];
 
   const defaultPrompt =
     params.stage === "virtual_simulation"
