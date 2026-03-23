@@ -283,6 +283,46 @@ test("SessionRequestHandler emits turn_state events for provider lifecycle", asy
   );
 });
 
+test("SessionRequestHandler preserves provider timestamp for assistant messages after turn_completed", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-late-provider-message"
+  );
+  const persistedMessages: Array<{ readonly timestamp: string }> = [];
+  Object.assign((harness.handler as any).sessionStorage, {
+    appendMessage: (
+      _sessionId: string,
+      message: { readonly timestamp: string }
+    ) => {
+      persistedMessages.push(message);
+      return Promise.resolve();
+    },
+  });
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+
+  (harness.handler as any).handleProviderEvent(session.id, {
+    type: "assistant",
+    content: "Late provider commentary",
+    timestamp: "2026-03-23T10:54:30.000Z",
+  });
+  await flushAsyncWork();
+
+  const lastSessionMessage = harness.events
+    .filter((event) => event.type === "session:message")
+    .at(-1);
+  assert.notEqual(lastSessionMessage, undefined);
+  assert.equal(
+    (lastSessionMessage?.payload as { readonly timestamp?: string }).timestamp,
+    "2026-03-23T10:54:30.000Z"
+  );
+  assert.equal(persistedMessages.at(-1)?.timestamp, "2026-03-23T10:54:30.000Z");
+});
+
 test("SessionRequestHandler marks internal messages as running turns", async () => {
   const harness = createHarness();
   const session = harness.sessionManager.createSession(

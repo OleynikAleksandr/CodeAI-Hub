@@ -3402,7 +3402,13 @@ export class SessionRequestHandler {
     if (!content) {
       return;
     }
-    const message = this.sessionManager.appendMessage(sessionId, role, content);
+    const timestamp = this.extractEventTimestamp(event);
+    const message = this.sessionManager.appendMessage(
+      sessionId,
+      role,
+      content,
+      timestamp ?? undefined
+    );
     if (message) {
       this.sessionStorage
         .appendMessage(sessionId, message)
@@ -3492,6 +3498,18 @@ export class SessionRequestHandler {
       return JSON.stringify(typed.data);
     }
     return null;
+  }
+
+  private extractEventTimestamp(event: unknown): string | null {
+    if (!event || typeof event !== "object") {
+      return null;
+    }
+    const typed = event as { readonly timestamp?: unknown };
+    if (typeof typed.timestamp !== "string") {
+      return null;
+    }
+    const normalized = typed.timestamp.trim();
+    return Number.isNaN(Date.parse(normalized)) ? null : normalized;
   }
 
   private extractMessageContentAndTurnOptions(

@@ -83,10 +83,10 @@
 
 ### Stream: False idle-timeout removal
 1. [DONE] Убрать ложное завершение long-silent tool-heavy `Codex` turn-ов по hard `idle_timeout`, чтобы `diagram_modules` не погибал до `structured_output` и сохранения артефакта только из-за длинной паузы между provider events; вместо abort-а процессор должен логировать idle pulses и продолжать ждать реальный следующий event или terminal signal (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): avoid false idle timeout on long diagram turns`).
-2. [TODO] Git Commit: `fix(codex): avoid false idle timeout on long diagram turns` (hash: TBD)
+2. [DONE] Git Commit: `fix(codex): avoid false idle timeout on long diagram turns` (hash: `3ea14565`)
 
 ### Stream: Late provider message preservation
-1. [TODO] Сохранить late provider commentary/final messages в unified session и session UI после длинных `Codex` turn-ов, чтобы raw provider transcript и infinite session history больше не расходились, как в найденном `diagram_modules` failure case (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/unified-session/storage.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(session-history): preserve late codex provider messages`).
+1. [DONE] Сохранить late provider commentary/final messages в unified session и session UI после длинных `Codex` turn-ов, чтобы raw provider transcript и infinite session history больше не расходились, как в найденном `diagram_modules` failure case; provider-side assistant messages должны сохранять исходный timestamp даже если пришли уже после `turn_completed`, а regression test должен явно покрывать этот сценарий (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(session-history): preserve late codex provider messages`).
 2. [TODO] Git Commit: `fix(session-history): preserve late codex provider messages` (hash: TBD)
 
 ## Phase 43 — Release Build After Product Part Decomposition Refactor (owner: Oleksandr, updated: 2026-03-23)
