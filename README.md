@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.765
-- Runtime-synced `Diagram Modules` and `Diagram Facades` template packs are now user-readable in Russian while preserving English DSL terms, so the same visible files can serve both as help/reference surface and as prompt appendix without language drift.
-- Bundled diagram template delivery is now rebuilt from the localized source assets and verified by `TemplateSyncService`, so fresh installs and repaired home-cache templates materialize the updated packs into `~/.codeai-hub/templates/...`.
-- `Diagram Modules` first-open autolayout now gives more vertical room to stacked modules inside clusters and uses tighter horizontal spacing for standalone modules, reducing visual overlap and wasted empty space.
-- The `1.1.764` hierarchy cleanup remains in force: `Product Part -> Cluster -> Module` stays explicit, `Role` stays out of the user-facing inventory contract, and module cards still show `Kind` only as a secondary classifier.
+## Current Release — v1.1.766
+- `Diagram Modules` is now explicitly treated as the main user-review step before `Diagram Facades`: `Product Part` and `Cluster` cards show short purpose text, so the hierarchy explains both structure and intent.
+- First-open `Diagram Modules` layout now measures cluster/module content instead of trusting one fixed vertical step, reserving header space for cluster copy and preventing tall module cards from colliding with headers or each other.
+- Standalone modules inside a `Product Part` now dock under the shorter measured column instead of falling into one large lower band, which reduces empty vertical space in dense product-part scenarios.
+- The localized runtime template packs from `1.1.765` remain in force, so the visible synced `~/.codeai-hub/templates/...` assets still stay Russian for narrative guidance while preserving English DSL terms.
 
 Previous releases (summary): the `1.1.57x–1.1.762` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, the resume/recovery stabilization release for `Codex gpt-5.4`, the first greenfield polygon grammar rollout, the first ownership-aware `Product Part` hierarchy release, the `Description` prompt/help/runtime stabilization fixes, and the `Description` naming cleanup release.
 

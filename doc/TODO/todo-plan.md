@@ -44,9 +44,13 @@
 
 ### Stream: Dense scenario regression evidence
 1. [DONE] После принятия layout fixes зафиксировать regression evidence на самом плотном `Product Part` сценарии и подтвердить, что purpose text, cluster stacking и standalone compaction читаемы без ручной раскладки (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): record dense product part regression evidence`).
-2. [TODO] Git Commit: `docs(layout): record dense product part regression evidence` (hash: TBD)
+2. [DONE] Git Commit: `docs(layout): record dense product part regression evidence` (hash: `4685fc3b`)
 
 ## Phase 34 — Release Build After Diagram Modules Review-Step Fixes (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Release notes sync
+1. [DONE] До запуска release scripts синхронизировать `README.md` и `CHANGELOG.md` с ожидаемым release target `1.1.766`, чтобы build cycle шёл уже от актуального user-facing version narrative (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules layout release notes`).
+2. [TODO] Git Commit: `docs(release): sync diagram modules layout release notes` (hash: TBD)
 
 ### Stream: Release build
 1. [TODO] После принятия fixes по `Diagram Modules` review-surface и autolayout обновить релизные документы, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline (scope: `README.md`, `CHANGELOG.md`, release/version manifests and package metadata; expected commit: `chore(release): prepare diagram modules review layout release`).
