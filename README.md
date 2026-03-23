@@ -7,10 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.776
-- `Diagram Modules` now accepts the live identity-table `product-parts/<part-id>.md` format (`# Product Part: ...`, `## Identity`, `## Owned Clusters`, module rows with `Status`), so the first continuation artifact no longer fails on the old `part_id` bullet requirement.
-- The shared staged parser now tolerates both cluster-section aliases and both module-table shapes, which keeps progressive graph materialization and the final compatibility aggregate on the same live artifact contract.
-- Regression coverage now locks the live identity-table format in both the progressive loader path and the aggregate composer path, reducing the chance that a future retest fixes one parser branch while the other still fails.
+## Current Release — v1.1.777
+- **Critical bugfix**: the agent was falling back to a generic prompt because `normalizeWorkflowContract` rejected diagram-stage contracts. Now the agent receives the full `module-inventory-prompt.md` with all embedded canonical templates.
+- Canonical product-part template rewritten to Outline format (`# Product Part: <Title>`) with Identity table, Purpose prose, Owned Clusters and Standalone Modules — fully aligned with the parser.
+- Continuation prompts now embed the canonical template, eliminating format drift across part turns.
+- Parser compatibility shim for existing drift files (`## Cluster Ownership`, `### Cluster: \`id\``).
+- Semantic validation: aggregate compose now rejects Product Part files with zero Clusters and zero Modules instead of silently producing shallow results.
 - `product-parts.index.md` remains the first staged artifact, hidden continuation still starts from the recovered index parser, and `module-inventory.md` remains runtime-owned compatibility output for downstream stages.
 
 Previous releases (summary): the `1.1.57x–1.1.775` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, the first Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, ownership-aware `Product Part` hierarchy, the two-pass Diagram Modules layout/readability fixes, the new staged product-part decomposition baseline, the staged prompt/continuation repair line, the `1.1.771` / `1.1.772` retest fixes that restored index parsing, `Source`, and hidden continuation, the staged `Product Part` parser recoveries from `1.1.773` and `1.1.774`, and the `1.1.775` fix that restored the live canonical-order index shape.

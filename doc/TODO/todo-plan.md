@@ -53,8 +53,8 @@
 2. [DONE] Git Commit: `test(diagram-workflow): cover canonical product part contract end-to-end` (hash: TBD)
 
 ### Stream: Release notes sync
-1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под новый fixed contract: canonical staged templates, explicit template-path delivery, parser/validation alignment и protected early-flow behavior без регрессии для index skeleton / hidden continuation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync canonical product part template contract notes`).
-2. [TODO] Git Commit: `docs(release): sync canonical product part template contract notes` (hash: TBD)
+1. [DONE] Synced `README.md` (Current Release v1.1.777) and `CHANGELOG.md` (new `[1.1.777]` entry) with canonical template contract stabilization, critical normalizeWorkflowContract bugfix, continuation template injection, parser alignment, and semantic validation hardening (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync canonical product part template contract notes`).
+2. [DONE] Git Commit: `docs(release): sync canonical product part template contract notes` (hash: TBD)
 
 ### Stream: Release build
 1. [TODO] После закрытия contract/template/parser/validation scope выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline, в котором agent получает канонический template path, part-files parse-ятся детерминированно, а runtime не пропускает semantically-empty ownership docs (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare canonical product part template contract release`).

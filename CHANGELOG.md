@@ -2,6 +2,15 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.777] - 2026-03-23
+### Fixed
+- **Critical**: `normalizeWorkflowContract` in `description-submit-service.ts` was rejecting `diagram_modules` and `diagram_facades` contracts because `needsTemplate` was true but these stages deliver templates via `promptAppendix`, not via a `template` path. The agent was falling back to a generic prompt and never received `module-inventory-prompt.md` or canonical templates. Fix: `needsTemplate = stage === "description"`.
+- Canonical product-part template rewritten from legacy inventory-first list DSL (`# Module Inventory`) to Outline format (`# Product Part: <Title>`) with Identity table, Purpose prose, `## Owned Clusters` with module tables, and `## Standalone Modules` — fully aligned with the existing Outline parser path.
+- Continuation prompts for `generate_product_part` substeps now embed the canonical product-part template content, so the agent no longer relies on "memory" from the first turn and format drift is eliminated.
+- Parser compatibility shim added for existing drift files: `## Cluster Ownership` section and `### Cluster: \`id\`` headers now recognized alongside canonical forms.
+- Semantic validation hardening: aggregate compose now explicitly rejects Product Part files that parse OK but contain zero Clusters and zero Modules, instead of silently producing shallow results.
+- Bundled template delivery layer regenerated and synced with canonical source assets.
+
 ## [1.1.776] - 2026-03-23
 ### Fixed
 - `Diagram Modules` now accepts the live identity-table `product-parts/<part-id>.md` continuation format (`# Product Part: ...`, `## Identity`, `## Owned Clusters`, module rows with `Status`), so the first materialized part no longer fails on the legacy `- \`part_id\`: ...` expectation.
