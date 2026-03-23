@@ -51,6 +51,18 @@ const TEMPLATES = [
     dest: ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
   },
   {
+    id: "product-parts-index-template",
+    source:
+      "packages/agents/diagram-modules-agent/assets/product-parts-index-template.md",
+    dest: ".codeai-hub/templates/diagram_modules/product-parts-index-template.md",
+  },
+  {
+    id: "product-part-template",
+    source:
+      "packages/agents/diagram-modules-agent/assets/product-part-template.md",
+    dest: ".codeai-hub/templates/diagram_modules/product-part-template.md",
+  },
+  {
     id: "module-inventory-field-reference",
     source:
       "packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md",

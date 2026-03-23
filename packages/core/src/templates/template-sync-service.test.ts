@@ -23,6 +23,8 @@ const LEGACY_DIAGRAM_TEMPLATE_PATHS = [
 const VISIBLE_DIAGRAM_TEMPLATE_PATHS = [
   ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
   ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
+  ".codeai-hub/templates/diagram_modules/product-parts-index-template.md",
+  ".codeai-hub/templates/diagram_modules/product-part-template.md",
   ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
   ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
   ".codeai-hub/templates/diagram_facades/facade-map-prompt.md",
@@ -83,6 +85,24 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
       "#### Module: workspace-intake",
       "Этот inventory — semantic source of truth шага",
       "Оставляйте module standalone",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_modules/product-parts-index-template.md",
+    snippets: [
+      "# Product Parts Index",
+      "- Status: planned",
+      "generation order",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/diagram_modules/product-part-template.md",
+    snippets: [
+      "# Module Inventory",
+      "This staged file should materialize exactly one Product Part.",
+      "### Module: provider-session-bridge",
     ],
   },
   {
