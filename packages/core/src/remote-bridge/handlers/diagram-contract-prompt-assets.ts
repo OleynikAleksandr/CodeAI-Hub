@@ -18,6 +18,16 @@ export const resolveSyncedDiagramTemplateCandidates = (
 
 export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
   resolveSyncedDiagramTemplateCandidates(
+    "diagram_modules/product-parts-index-template.md",
+    "diagram-modules-agent",
+    "product-parts-index-template.md"
+  ),
+  resolveSyncedDiagramTemplateCandidates(
+    "diagram_modules/product-part-template.md",
+    "diagram-modules-agent",
+    "product-part-template.md"
+  ),
+  resolveSyncedDiagramTemplateCandidates(
     "diagram_modules/module-inventory-field-reference.md",
     "diagram-modules-agent",
     "module-inventory-field-reference.md"
@@ -30,6 +40,11 @@ export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
 ] as const;
 
 export const DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS = [
+  resolveSyncedDiagramTemplateCandidates(
+    "diagram_facades/facade-map-template.md",
+    "diagram-facades-agent",
+    "facade-map-template.md"
+  ),
   resolveSyncedDiagramTemplateCandidates(
     "diagram_facades/facade-map-field-reference.md",
     "diagram-facades-agent",
@@ -49,7 +64,7 @@ export const appendDiagramPromptAppendix = (
   promptAppendix.length > 0
     ? [
         prompt,
-        "The following references are mandatory for valid Markdown-DSL output. Do not invent enum values or field names outside them.",
+        "The following embedded references are part of the current turn. Treat them as already provided prompt content and do not search for alternative template files on disk.",
         ...promptAppendix,
       ].join("\n\n")
     : prompt;

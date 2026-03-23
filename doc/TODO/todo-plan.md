@@ -141,11 +141,11 @@
 
 ### Stream: Diagram Modules prompt surface cleanup
 1. [DONE] Ужесточить user-facing `diagram_modules` prompt asset и PM prompt pack: убрать guidance про поиск compatibility inventory / continuity files / staged examples / legacy `diagram_modules` artifacts, явно описать exact inputs и non-inputs текущего turn-а и перестать показывать generic template hint в compose prompt (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): tighten diagram modules prompt surface`).
-2. [DONE] Git Commit: `fix(diagram-workflow): tighten diagram modules prompt surface` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-workflow): tighten diagram modules prompt surface` (hash: `d2743e55`)
 
 ### Stream: Diagram stage contract assembly cleanup
-1. [TODO] Перестроить runtime workflow contract assembly для diagram stages так, чтобы `diagram_modules` и `diagram_facades` больше не выглядели как generic single-template flow, mandatory DSL appendix продолжал подмешиваться в prompt напрямую, а compose layer не провоцировал template scouting через stage-level template path (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): simplify diagram stage contract assembly`).
-2. [TODO] Git Commit: `fix(diagram-workflow): simplify diagram stage contract assembly` (hash: TBD)
+1. [DONE] Перестроить runtime workflow contract assembly для diagram stages так, чтобы `diagram_modules` и `diagram_facades` больше не выглядели как generic single-template flow, mandatory DSL appendix продолжал подмешиваться в prompt напрямую, а compose layer не провоцировал template scouting через stage-level template path (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): simplify diagram stage contract assembly`).
+2. [DONE] Git Commit: `fix(diagram-workflow): simplify diagram stage contract assembly` (hash: TBD)
 
 ### Stream: Diagram Facades prompt surface cleanup
 1. [TODO] Проверить и ужесточить `diagram_facades` prompt surface по тем же правилам: exact inputs, explicit non-inputs, no continuity/template scouting и без generic template absolute path в user-visible compose prompt (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-facades): tighten facade prompt surface`).

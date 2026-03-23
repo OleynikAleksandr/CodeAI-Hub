@@ -67,11 +67,6 @@ const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
     "diagram-modules-agent",
     "module-inventory-prompt.md"
   ),
-  template: resolveSyncedDiagramTemplateCandidates(
-    "diagram_modules/module-inventory-template.md",
-    "diagram-modules-agent",
-    "module-inventory-template.md"
-  ),
   promptAppendix: DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
 };
 
@@ -80,11 +75,6 @@ const DIAGRAM_FACADES_TEMPLATE_PATHS: WorkflowContractPaths = {
     "diagram_facades/facade-map-prompt.md",
     "diagram-facades-agent",
     "facade-map-prompt.md"
-  ),
-  template: resolveSyncedDiagramTemplateCandidates(
-    "diagram_facades/facade-map-template.md",
-    "diagram-facades-agent",
-    "facade-map-template.md"
   ),
   promptAppendix: DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS,
 };
