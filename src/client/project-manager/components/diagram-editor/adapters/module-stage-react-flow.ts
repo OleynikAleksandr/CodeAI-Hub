@@ -143,7 +143,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
       clusterIds: [...fallbackClusters.keys()],
       standaloneModuleIds: model.modules.filter((module) => !module.cluster).map((module) => module.id),
     }]),
-  ].sort(compareById);
+  ];
 
   const nodes: DiagramFlowNode[] = [];
   let productPartY = 0;

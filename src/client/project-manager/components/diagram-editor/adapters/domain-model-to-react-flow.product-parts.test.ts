@@ -10,18 +10,18 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
   updated: "2026-03-21T14:00:00Z",
   productParts: [
     {
-      id: "desktop-shell",
-      title: "Desktop Shell",
-      purpose: "Owns the operator-facing desktop surface.",
-      clusterIds: ["workspace", "review", "navigation"],
-      standaloneModuleIds: [],
-    },
-    {
       id: "local-core-runtime",
       title: "Local Core Runtime",
       purpose: "Owns stage execution and persistence.",
       clusterIds: ["project-flow"],
       standaloneModuleIds: ["artifact-freshness"],
+    },
+    {
+      id: "desktop-shell",
+      title: "Desktop Shell",
+      purpose: "Owns the operator-facing desktop surface.",
+      clusterIds: ["workspace", "review", "navigation"],
+      standaloneModuleIds: [],
     },
   ],
   clusters: [
@@ -253,12 +253,12 @@ test("domainModelToReactFlow stacks wide product parts into separate rows withou
     return;
   }
 
-  assert.equal(desktopShellNode.position.x, 0);
-  assert.equal(desktopShellNode.position.y, 0);
   assert.equal(localCoreRuntimeNode.position.x, 0);
+  assert.equal(localCoreRuntimeNode.position.y, 0);
+  assert.equal(desktopShellNode.position.x, 0);
   assert.equal(Number(desktopShellNode.style?.width ?? 0) > 980, true);
   assert.equal(
-    localCoreRuntimeNode.position.y >= Number(desktopShellNode.style?.height ?? 0),
+    desktopShellNode.position.y >= Number(localCoreRuntimeNode.style?.height ?? 0),
     true
   );
 });

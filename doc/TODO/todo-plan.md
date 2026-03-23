@@ -59,10 +59,10 @@
 
 ### Stream: Index-first graph skeleton
 1. [DONE] Научить `Diagram Modules` loader читать `product-parts.index.md`, строить skeleton `Product Part` containers и поверх него materialize-ить уже готовые part-файлы, чтобы visual graph начинал жить до появления compatibility aggregate `module-inventory.md` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): load product part skeleton from index artifact`).
-2. [TODO] Git Commit: `feat(diagram-ui): load product part skeleton from index artifact` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-ui): load product part skeleton from index artifact` (hash: `c516da75`)
 
 ### Stream: Progressive graph regeneration
-1. [TODO] Перевести flow projection на merge index placeholders с уже готовыми part-артефактами, чтобы React Flow инкрементально дорисовывал graph без очистки уже появившихся `Product Part` (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-layout): progressively materialize product parts`).
+1. [DONE] Перевести flow projection на merge index placeholders с уже готовыми part-артефактами, чтобы React Flow инкрементально дорисовывал graph без очистки уже появившихся `Product Part` и сохранял порядок из staged index artifact вместо пересортировки по `id` (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-layout): progressively materialize product parts`).
 2. [TODO] Git Commit: `feat(diagram-layout): progressively materialize product parts` (hash: TBD)
 
 ### Stream: Progress surface in PM
