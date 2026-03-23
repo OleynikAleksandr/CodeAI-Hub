@@ -136,3 +136,61 @@ test("diagram modules aggregate composer builds module-inventory from identity-t
     globalThis.fetch = originalFetch;
   }
 });
+
+test("aggregate rejects semantically-empty product part files", async () => {
+  const emptyPartFile = [
+    "# Product Part: Empty Part",
+    "",
+    "## Identity",
+    "",
+    "| Field | Value |",
+    "| ----- | ----- |",
+    "| Part ID | `empty-part` |",
+    "| Product Part | `Empty Part` |",
+    "| Purpose | Has no clusters or modules |",
+    "",
+    "## Purpose",
+    "",
+    "This part has no clusters or modules.",
+  ].join("\n");
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (url: string, init?: RequestInit) => {
+    const method = init?.method ?? "GET";
+    if (method === "GET" && url.includes("path=.codeai-hub")) {
+      if (url.includes("product-parts.index.md")) {
+        return jsonResponse({
+          content: [
+            "# Product Parts Index",
+            "",
+            "### Product Part: empty-part",
+            "- Id: empty-part",
+            "- Title: Empty Part",
+            "- Purpose: Has no clusters or modules",
+            "- Status: planned",
+          ].join("\n"),
+        });
+      }
+      if (url.includes("empty-part.md")) {
+        return jsonResponse({ content: emptyPartFile });
+      }
+    }
+    return new Response(null, { status: 404 });
+  }) as typeof fetch;
+
+  try {
+    const result = await composeDiagramModulesAggregate({
+      httpUrl: "http://localhost:3000",
+      workspacePath: WORKSPACE_PATH,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      assert.equal(result.error.includes("empty-part"), true);
+      assert.equal(result.error.includes("Cluster"), true);
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

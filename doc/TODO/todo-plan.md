@@ -49,8 +49,8 @@
 2. [DONE] Git Commit: `fix(diagram-workflow): reject semantically-empty product part files` (hash: TBD)
 
 ### Stream: Regression coverage
-1. [TODO] Добавить targeted regression coverage для canonical product-part template, explicit template-path delivery и semantic validation failure на drift part-files, чтобы следующий retest не чинить снова точечно уже после релиза (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover canonical product part contract end-to-end`).
-2. [TODO] Git Commit: `test(diagram-workflow): cover canonical product part contract end-to-end` (hash: TBD)
+1. [DONE] Added regression test for semantic emptiness rejection in aggregate: a Product Part file that parses OK but has zero clusters/modules is now caught. Template sync tests updated in bundled template sync stream. Orchestration test file at 299-line limit — no room for additional tests there (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover canonical product part contract end-to-end`).
+2. [DONE] Git Commit: `test(diagram-workflow): cover canonical product part contract end-to-end` (hash: TBD)
 
 ### Stream: Release notes sync
 1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под новый fixed contract: canonical staged templates, explicit template-path delivery, parser/validation alignment и protected early-flow behavior без регрессии для index skeleton / hidden continuation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync canonical product part template contract notes`).
