@@ -280,4 +280,30 @@
 
 ### Stream: Session handoff
 1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.772`, staged part parser recovery, aggregate recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules product part parser recovery release`).
-2. [TODO] Git Commit: `docs(session): record diagram modules product part parser recovery release` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record diagram modules product part parser recovery release` (hash: `5b6ccf2a`)
+
+## Phase 50 — Diagram Modules Product Part Outline Parser Recovery After 1.1.773 (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Planning baseline
+1. [TODO] Зафиксировать новый пользовательский retest `1.1.773`: staged skeleton и hidden continuation по-прежнему работают, но первый continuation file снова ломает `Diagram Modules`, потому что live `product-parts/<part-id>.md` drift-нул уже в другой human-readable outline format (`# Product Part: ...`, `## Purpose`, `## Ownership Boundary`, `## Cluster Inventory`, `## Direct Standalone Modules Under This Part`), а текущий staged parser `1.1.773` всё ещё ожидает предыдущий table-based part format; оформить planning-doc под outline parser recovery и новый release baseline (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_OutlineFormat_Blockers_After_1_1_773_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules product part outline blockers after 1.1.773`).
+2. [TODO] Git Commit: `docs(plan): capture diagram modules product part outline blockers after 1.1.773` (hash: TBD)
+
+### Stream: Outline parser recovery
+1. [TODO] Научить staged `Product Part` parser принимать новый live outline format continuation files и оставить backward compatibility с предыдущим table-based staged format, чтобы progressive loader больше не падал на заголовке `# Product Part: ...` и мог materialize-ить clusters/modules из `Cluster Inventory` таблиц (scope: staged parser module(s) plus targeted progressive regression test; max 3 files; expected commit: `fix(diagram-workflow): parse outline product part files`).
+2. [TODO] Git Commit: `fix(diagram-workflow): parse outline product part files` (hash: TBD)
+
+### Stream: Aggregate regression coverage
+1. [TODO] Добавить regression coverage, что compatibility aggregate тоже переживает новый outline `Product Part` format, а не только progressive UI, чтобы следующий release не ломал финальный `module-inventory.md` на последнем шаге staged sequence (scope: targeted aggregate regression test file; expected commit: `test(diagram-workflow): cover outline product part aggregate`).
+2. [TODO] Git Commit: `test(diagram-workflow): cover outline product part aggregate` (hash: TBD)
+
+### Stream: Release notes sync
+1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.773`: outline `product-parts/<part-id>.md` parser recovery, backward compatibility с table-based staged format и aggregate regression coverage (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.773 retest fixes`).
+2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.773 retest fixes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После outline parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live outline `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules outline parser recovery release`).
+2. [TODO] Git Commit: `chore(release): prepare diagram modules outline parser recovery release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.773`, outline parser recovery, aggregate regression coverage и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules outline parser recovery release`).
+2. [TODO] Git Commit: `docs(session): record diagram modules outline parser recovery release` (hash: TBD)
