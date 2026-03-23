@@ -145,11 +145,11 @@
 
 ### Stream: Diagram stage contract assembly cleanup
 1. [DONE] Перестроить runtime workflow contract assembly для diagram stages так, чтобы `diagram_modules` и `diagram_facades` больше не выглядели как generic single-template flow, mandatory DSL appendix продолжал подмешиваться в prompt напрямую, а compose layer не провоцировал template scouting через stage-level template path (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): simplify diagram stage contract assembly`).
-2. [DONE] Git Commit: `fix(diagram-workflow): simplify diagram stage contract assembly` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-workflow): simplify diagram stage contract assembly` (hash: `c3c6d76c`)
 
 ### Stream: Diagram Facades prompt surface cleanup
-1. [TODO] Проверить и ужесточить `diagram_facades` prompt surface по тем же правилам: exact inputs, explicit non-inputs, no continuity/template scouting и без generic template absolute path в user-visible compose prompt (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-facades): tighten facade prompt surface`).
-2. [TODO] Git Commit: `fix(diagram-facades): tighten facade prompt surface` (hash: TBD)
+1. [DONE] Проверить и ужесточить `diagram_facades` prompt surface по тем же правилам: exact inputs, explicit non-inputs, no continuity/template scouting и без generic template absolute path в user-visible compose prompt (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-facades): tighten facade prompt surface`).
+2. [DONE] Git Commit: `fix(diagram-facades): tighten facade prompt surface` (hash: TBD)
 
 ### Stream: Contract regression coverage
 1. [TODO] Обновить tests prompt/contract composition для `diagram_modules` и `diagram_facades`, чтобы они ловили legacy strings, unwanted template hints и отсутствие strict input restrictions до следующего релиза (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover composite prompt contract cleanup`).

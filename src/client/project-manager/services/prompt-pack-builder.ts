@@ -198,18 +198,26 @@ const buildStagePhaseLines = (
   stage: WorkflowStageId,
   targetFileName: string
 ): readonly string[] => {
-  if (stage !== "diagram_modules") {
-    return [];
+  if (stage === "diagram_modules") {
+    return [
+      "Фазы работы:",
+      `- Phase 1: прочитай \`Final_Description.md\` и \`virtual-simulation.md\`, затем создай или обнови \`${targetFileName}\` как canonical index списка \`Product Part\`, их порядка и purpose.`,
+      "- Phase 2: если runtime запускает continuation subturn (hidden by default), работай только с одним целевым `Product Part`, materialize-ь один `product-parts/<part-id>.md` за итерацию, не жди user-visible `Продолжай` и не пытайся молча генерировать весь giant inventory разом.",
+      "- Phase 3: relation lines и cross-part wiring не являются обязательной частью первого полезного результата; сначала стабилизируй ownership structure `Product Part -> Cluster -> Module`.",
+      "- Phase 4: `module-inventory.md` materialize-ится runtime как compatibility aggregate после завершения part-файлов; visual graph и `module-map.flow.json` тоже поддерживаются runtime отдельно.",
+      "- Phase 5: если какой-либо старый prompt/template текст требует сначала писать прямой `module-inventory.md` или запрещает staged Markdown artifacts, считай это legacy-следом и следуй staged contract выше.",
+      "- Phase 6: не трать текущий turn на поиск compatibility inventory, staged examples, continuity files, helper artifacts или generic template files, если они явно не перечислены выше как входы этого turn-а.",
+    ];
   }
-  return [
-    "Фазы работы:",
-    `- Phase 1: прочитай \`Final_Description.md\` и \`virtual-simulation.md\`, затем создай или обнови \`${targetFileName}\` как canonical index списка \`Product Part\`, их порядка и purpose.`,
-    "- Phase 2: если runtime запускает continuation subturn (hidden by default), работай только с одним целевым `Product Part`, materialize-ь один `product-parts/<part-id>.md` за итерацию, не жди user-visible `Продолжай` и не пытайся молча генерировать весь giant inventory разом.",
-    "- Phase 3: relation lines и cross-part wiring не являются обязательной частью первого полезного результата; сначала стабилизируй ownership structure `Product Part -> Cluster -> Module`.",
-    "- Phase 4: `module-inventory.md` materialize-ится runtime как compatibility aggregate после завершения part-файлов; visual graph и `module-map.flow.json` тоже поддерживаются runtime отдельно.",
-    "- Phase 5: если какой-либо старый prompt/template текст требует сначала писать прямой `module-inventory.md` или запрещает staged Markdown artifacts, считай это legacy-следом и следуй staged contract выше.",
-    "- Phase 6: не трать текущий turn на поиск compatibility inventory, staged examples, continuity files, helper artifacts или generic template files, если они явно не перечислены выше как входы этого turn-а.",
-  ];
+  if (stage === "diagram_facades") {
+    return [
+      "Фазы работы:",
+      `- Phase 1: прочитай \`module-inventory.md\`, затем создай или обнови \`${targetFileName}\` как канонический facade map уже согласованных module boundaries.`,
+      "- Phase 2: не переизобретай module ownership и не ищи дополнительные diagram artifacts вне текущих входов; переводи текущий inventory в user-readable facade map.",
+      "- Phase 3: не трать текущий turn на поиск continuity files, helper artifacts, generic template files или legacy diagram directories, если они явно не перечислены выше как входы этого turn-а.",
+    ];
+  }
+  return [];
 };
 
 const buildChangeSummaryBlock = (stage: WorkflowStageId): string | null => {
@@ -261,6 +269,7 @@ export const buildWorkflowPromptPack = (
     ...primaryInputLines,
     params.stage !== "virtual_simulation" &&
     params.stage !== "diagram_modules" &&
+    params.stage !== "diagram_facades" &&
     params.templatePath
       ? `Шаблон (absolute): \`${params.templatePath}\``
       : null,

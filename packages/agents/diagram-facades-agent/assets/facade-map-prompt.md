@@ -23,14 +23,15 @@ CodeAI Hub превращает идею продукта в последова�
 Вход:
 - `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md`
 - текущая версия `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.md`, если файл уже существует
-- дополнительные файлы текущего проекта и материалы пользователя, которые ты реально прочитал и которые относятся к текущему проекту
-- runtime change summary block, если runtime передал его вместе с запросом на исправление или merge
+- только те дополнительные файлы текущего проекта и материалы пользователя, которые текущий prompt явно разрешил как входы этого turn-а и которые относятся к текущему проекту
+- runtime change summary block только если текущий prompt явно передал его вместе с запросом на исправление или merge
 
 Границы источников для empty-workspace / greenfield:
-- основной источник правды — артефакты текущего проекта внутри `.codeai-hub/<workspaceSlug>/...`;
-- допустимы user-facing runtime templates внутри `.codeai-hub/templates/...`, continuity-файлы текущего stage и файлы, которые пользователь явно указал для текущего проекта;
+- основной источник правды — только те артефакты текущего проекта внутри `.codeai-hub/<workspaceSlug>/...`, которые текущий prompt явно перечислил как вход;
+- если текущий prompt уже содержит embedded reference / field guidance, считай её уже предоставленной и не ищи дополнительные template файлы на диске;
+- не ищи continuity-файлы, helper artifacts, template directories, staged examples и legacy diagram artifacts, если текущий prompt явно не перечислил их как входы этого turn-а;
 - не используй исходный код, parser/runtime implementation, тесты и внутренние документы самого CodeAI Hub вне текущего project workspace как источник архитектурных решений;
-- если runtime вернул parse/validation error, исправляй artifact по самому сообщению об ошибке и по видимым user-facing templates, а не по чтению parser implementation;
+- если runtime вернул parse/validation error, исправляй artifact по самому сообщению об ошибке и по embedded или явно переданной reference guidance, а не по чтению parser implementation;
 - если уверенности по facade boundaries или facade relations не хватает, задай точечный вопрос пользователю.
 
 Выход (SSOT):
@@ -92,13 +93,12 @@ CodeAI Hub превращает идею продукта в последова�
 - свобода есть в смысле и в содержании;
 - но базовая структура должна оставаться совместимой с parser/runtime.
 
-При построении артефакта ориентируйся на runtime templates:
-- `.codeai-hub/templates/diagram_facades/facade-map-template.md` — канонический каркас `facade-map.md`;
-- `.codeai-hub/templates/diagram_facades/facade-map-field-reference.md` — значения и смысл полей DSL;
-- `.codeai-hub/templates/diagram_facades/facade-map-merge-rules.md` — правила сохранения пользовательских правок и merge-поведения.
+Reference guidance для этого шага может прийти в двух формах:
+- как embedded appendix прямо в текущем prompt;
+- как exact runtime-provided reference paths, если текущий prompt явно перечислил их для этого turn-а.
 
-Это user-facing runtime assets.
-Если они доступны, используй именно их, а не исходники parser/runtime внутри кодовой базы продукта.
+Если текущий prompt не перечислил exact reference paths, не ищи `.codeai-hub/templates/...`, workspace examples, continuity files или legacy diagram artifacts на диске только ради понимания DSL.
+Считай embedded appendix и staged contract этого prompt-а достаточным источником правил.
 
 Документ должен:
 - начинаться с заголовка `# Facade Map`;
@@ -112,7 +112,7 @@ CodeAI Hub превращает идею продукта в последова�
 Не оставляй facade map пустым или формальным.
 Если данных мало или не хватает ключевого:
 - не останавливайся на пустой заготовке;
-- собирай максимум из всех доступных источников текущего проекта: `module-inventory.md`, реально прочитанных материалов текущего проекта, уже существующих файлов этого проекта и текущего диалога с пользователем;
+- собирай максимум из direct inputs текущего turn-а, уже переданных артефактов этого проекта и текущего диалога с пользователем;
 - если главных данных всё равно не хватает, задавай пользователю точечные вопросы по самому важному;
 - на основе уже известного достраивай первый каркас facade map аккуратными гипотезами;
 - явно помечай допущения, неизвестные места и вопросы, которые требуют подтверждения.
@@ -132,8 +132,8 @@ CodeAI Hub превращает идею продукта в последова�
 
 ## 5) Итерации (file-first) и коммуникация в чате
 Повторяй цикл:
-1. Прочитай `module-inventory.md` и все реально доступные материалы текущего проекта в разрешённых границах.
-2. Перечитай текущий `facade-map.md`, если он уже существует.
+1. Прочитай только direct inputs текущего prompt-а и другие файлы текущего проекта, которые пользователь явно указал для этого проекта.
+2. Перечитай текущий `facade-map.md`, если он уже существует и текущий prompt разрешил использовать его как вход.
 3. Полностью обнови `facade-map.md`.
 4. В чате дай короткий отчёт:
    - что изменилось;
@@ -146,6 +146,7 @@ CodeAI Hub превращает идею продукта в последова�
    - границы, которые нельзя пересекать напрямую.
 
 Не публикуй полный текст `facade-map.md` в чат, если пользователь явно не попросил.
+Не трать turn на поиск continuity files, helper artifacts, generic template files или legacy diagram directories, если текущий prompt явно не перечислил их как входы.
 
 ## 6) Ограничения и остановка уточнений
 Ограничения:
