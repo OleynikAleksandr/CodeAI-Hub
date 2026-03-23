@@ -2,9 +2,10 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`, `doc/Sessions/Session131.md`, `doc/Sessions/Session132.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/Sessions/Session132.md`, `doc/Sessions/Session133.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
+- Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
 - Husky gates не обходить (`--no-verify` запрещен)
 - Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
 - Перед закрытием stream выполнять таргетные проверки затронутых пакетов/клиентов
@@ -12,101 +13,102 @@
 
 ---
 
-## Phase 31 — Diagram Modules Review-Step Baseline (owner: Oleksandr, updated: 2026-03-23)
+## Phase 37 — Diagram Modules Product Part Decomposition Planning Baseline (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Planning baseline
-1. [DONE] Заархивировать завершённый plan до `Phase 30`, оформить новый planning-doc, в котором `Diagram Modules` зафиксирован как главный user-review step workflow, а также открыть новый `todo-plan.md` с детерминированным `measure -> place` baseline для `Product Part / Cluster / Module` и финальным release stream (scope: `doc/TODO/Archive/todo-plan-up-to-phase30-2026-03-23.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram modules review layout scope`).
-2. [DONE] Git Commit: `docs(plan): start diagram modules review layout scope` (hash: `230a2894`)
+1. [DONE] Заархивировать завершённый план до `Phase 36`, оформить новый planning-doc для decomposition `Diagram Modules` по `Product Part`, progressive React Flow materialization, hidden runtime orchestration turn-ов, deferred relation lines и compatibility aggregate, а также создать новый session report для bug findings и принятого refactor direction (scope: `doc/TODO/Archive/todo-plan-up-to-phase36-2026-03-23.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/Sessions/Session133.md`; expected commit: `docs(plan): start diagram modules product part decomposition scope`).
+2. [TODO] Git Commit: `docs(plan): start diagram modules product part decomposition scope` (hash: TBD)
+3. [TODO] После planning-baseline commit-а синхронизировать новый active plan и `Session133` фактическими hash-ами, чтобы handoff не оставался с `TBD` и следующая сессия могла восстановить контекст без догадок (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session133.md`; expected commit: `docs(session): sync diagram modules decomposition planning handoff`).
+4. [TODO] Git Commit: `docs(session): sync diagram modules decomposition planning handoff` (hash: TBD)
 
-## Phase 32 — Diagram Modules Purpose Surface And Layout Contract (owner: Oleksandr, updated: 2026-03-23)
+## Phase 38 — Diagram Modules Product Part Artifact Contract (owner: Oleksandr, updated: 2026-03-23)
 
-### Stream: Product hierarchy node data
-1. [DONE] Протянуть purpose text `Product Part` и `Cluster` через module-stage React Flow projection, чтобы renderer больше не терял этот слой при построении diagram nodes (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `fix(diagram-layout): surface product hierarchy purpose text`).
-2. [DONE] Git Commit: `fix(diagram-layout): surface product hierarchy purpose text` (hash: `7cb60c2a`)
+### Stream: Workflow SSOT for staged decomposition
+1. [TODO] Зафиксировать в workflow/system docs, что `Diagram Modules` больше не опирается на giant single-turn `module-inventory.md`, а начинается с `product-parts.index.md`, затем материализует отдельные part-файлы и откладывает relation lines из базового slice (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(workflow): formalize product part decomposition contract`).
+2. [TODO] Git Commit: `docs(workflow): formalize product part decomposition contract` (hash: TBD)
 
-### Stream: Product hierarchy card rendering
-1. [DONE] Обновить container cards `Diagram Modules`, чтобы `Product Part` и `Cluster` показывали короткий purpose block как часть header-zone и не теряли текущую читаемость module cards (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): show product hierarchy purpose text`).
-2. [DONE] Git Commit: `fix(diagram-ui): show product hierarchy purpose text` (hash: `3bf565b6`)
+### Stream: Prompt and path contract for new artifacts
+1. [TODO] Расширить prompt/path contract `diagram_modules`, чтобы runtime и агент знали про `product-parts.index.md`, `product-parts/<part-id>.md` и generated compatibility aggregate `module-inventory.md`, не требуя relation lines в базовом generation path (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): add product part artifact path contract`).
+2. [TODO] Git Commit: `feat(diagram-workflow): add product part artifact path contract` (hash: TBD)
 
-### Stream: Layout contract in docs
-1. [DONE] Зафиксировать в workflow/design docs, что `Diagram Modules` является главным user-review step до `Diagram Facades`, и записать accepted autolayout invariants для `measure -> place`, header-zone reservation и shortest-column standalone compaction (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(workflow): formalize diagram modules review contract`).
-2. [DONE] Git Commit: `docs(workflow): formalize diagram modules review contract` (hash: `4996fc25`)
+### Stream: Artifact upsert and validation baseline
+1. [TODO] Добавить artifact-upsert validation rules для `product-parts.index.md` и `product-parts/<part-id>.md`, оставив aggregate `module-inventory.md` runtime-owned compatibility output, а не прямой agent-written target (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): validate product part artifacts`).
+2. [TODO] Git Commit: `feat(diagram-workflow): validate product part artifacts` (hash: TBD)
 
-## Phase 33 — Diagram Modules Deterministic Autolayout (owner: Oleksandr, updated: 2026-03-23)
+## Phase 39 — Hidden Runtime Orchestration And Lock Contract (owner: Oleksandr, updated: 2026-03-23)
 
-### Stream: Cluster measurement and stack safety
-1. [DONE] Перевести высоту `Cluster` с расчёта по числу модулей на measured header/body budget, чтобы cluster header резервировал место под title/meta/purpose, а module cards больше не пересекали header-zone и соседние cards (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; expected commit: `fix(diagram-layout): reserve cluster header and stack modules safely`).
-2. [DONE] Git Commit: `fix(diagram-layout): reserve cluster header and stack modules safely` (hash: `7b133dcc`)
+### Stream: Sequential substep state model
+1. [TODO] Ввести runtime-visible substep contract для `diagram_modules` (`index`, `generate_product_part`, `compose_aggregate`, `awaiting_review`, `blocked_ambiguity`) с current part cursor и progress metadata, чтобы шаг больше не выглядел как один неразличимый giant turn (scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/services/workflow-state-client.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): add product part substep state model`).
+2. [TODO] Git Commit: `feat(diagram-workflow): add product part substep state model` (hash: TBD)
 
-### Stream: Product part compaction
-1. [DONE] Перестроить placement standalone modules внутри `Product Part`, чтобы они пристыковывались под более короткую измеренную колонку, а outer frame product-part замыкался по реально занятому содержимому с симметричными left/right/bottom paddings (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): compact standalone modules inside product part`).
-2. [DONE] Git Commit: `fix(diagram-layout): compact standalone modules inside product part` (hash: `83f50d58`)
+### Stream: Hidden continuation turns
+1. [TODO] Реализовать runtime-controlled hidden continuation turns для последовательной генерации `Product Part`, чтобы следующий subturn запускался без fake user-visible `Продолжай`, а continuation packet содержал cursor, generated parts и stop conditions (scope: `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): orchestrate hidden product part turns`).
+2. [TODO] Git Commit: `feat(diagram-workflow): orchestrate hidden product part turns` (hash: TBD)
 
-### Stream: Dense scenario regression evidence
-1. [DONE] После принятия layout fixes зафиксировать regression evidence на самом плотном `Product Part` сценарии и подтвердить, что purpose text, cluster stacking и standalone compaction читаемы без ручной раскладки (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): record dense product part regression evidence`).
-2. [DONE] Git Commit: `docs(layout): record dense product part regression evidence` (hash: `4685fc3b`)
+### Stream: Input lock until final review
+1. [TODO] Удерживать session input locked между hidden product-part subturn-ами и отпускать его только на blocking ambiguity или на финальном review boundary, чтобы decomposition не повторил premature unlock bug старого giant-turn flow (scope: `src/client/ui/src/app-host/session-stream-snapshot-sync.ts`, `src/client/ui/src/session/input-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(session-ui): keep input locked during product part sequence`).
+2. [TODO] Git Commit: `fix(session-ui): keep input locked during product part sequence` (hash: TBD)
 
-## Phase 34 — Release Build After Diagram Modules Review-Step Fixes (owner: Oleksandr, updated: 2026-03-23)
+## Phase 40 — Progressive React Flow Materialization (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Index-first graph skeleton
+1. [TODO] Научить `Diagram Modules` loader читать `product-parts.index.md`, строить ordered skeleton `Product Part` containers и показывать placeholders для ещё не materialized part-файлов (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): load product part skeleton from index artifact`).
+2. [TODO] Git Commit: `feat(diagram-ui): load product part skeleton from index artifact` (hash: TBD)
+
+### Stream: Progressive graph regeneration
+1. [TODO] Перевести flow projection на merge index placeholders с уже готовыми part-артефактами, чтобы React Flow инкрементально дорисовывал graph без очистки уже появившихся `Product Part` (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-layout): progressively materialize product parts`).
+2. [TODO] Git Commit: `feat(diagram-layout): progressively materialize product parts` (hash: TBD)
+
+### Stream: Progress surface in PM
+1. [TODO] Добавить user-facing progress surface для `Diagram Modules`, чтобы PM показывал planned/generated `Product Part` state и не создавал ощущение, что во время длинной последовательности ничего не происходит (scope: `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): show product part generation progress`).
+2. [TODO] Git Commit: `feat(diagram-ui): show product part generation progress` (hash: TBD)
+
+## Phase 41 — Compatibility Aggregate And Completion Gate (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Runtime aggregate compose
+1. [TODO] Собрать compatibility aggregate `module-inventory.md` из `product-parts.index.md` и part-файлов, чтобы downstream `Diagram Facades` по-прежнему читал единый canonical input, а user-facing generation при этом оставался decomposed и progressive (scope: `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): compose aggregate inventory from product parts`).
+2. [TODO] Git Commit: `feat(diagram-workflow): compose aggregate inventory from product parts` (hash: TBD)
+
+### Stream: Stage completion and gating
+1. [TODO] Перевести `diagram_modules` completion/gating на правило `all planned Product Parts generated + aggregate inventory materialized`, при этом relation lines оставить deferred и не требовать их для базового завершения шага (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): gate completion by product part sequence`).
+2. [TODO] Git Commit: `fix(diagram-workflow): gate completion by product part sequence` (hash: TBD)
+
+## Phase 42 — Codex Long-Turn Stability And Transcript Preservation (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: False idle-timeout removal
+1. [TODO] Убрать ложное завершение long-silent tool-heavy `Codex` turn-ов по hard `idle_timeout`, чтобы `diagram_modules` не погибал до `structured_output` и сохранения артефакта только из-за длинной паузы между provider events (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): avoid false idle timeout on long diagram turns`).
+2. [TODO] Git Commit: `fix(codex): avoid false idle timeout on long diagram turns` (hash: TBD)
+
+### Stream: Late provider message preservation
+1. [TODO] Сохранить late provider commentary/final messages в unified session и session UI после длинных `Codex` turn-ов, чтобы raw provider transcript и infinite session history больше не расходились, как в найденном `diagram_modules` failure case (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/unified-session/storage.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(session-history): preserve late codex provider messages`).
+2. [TODO] Git Commit: `fix(session-history): preserve late codex provider messages` (hash: TBD)
+
+## Phase 43 — Release Build After Product Part Decomposition Refactor (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Release notes sync
-1. [DONE] До запуска release scripts синхронизировать `README.md` и `CHANGELOG.md` с ожидаемым release target `1.1.766`, чтобы build cycle шёл уже от актуального user-facing version narrative (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules layout release notes`).
-2. [DONE] Git Commit: `docs(release): sync diagram modules layout release notes` (hash: `d048904b`)
+1. [TODO] Перед новым release-cycle синхронизировать `README.md`, `CHANGELOG.md` и workflow docs с progressive `Product Part` generation baseline и deferred relation-line policy для следующего patch release после `1.1.767` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync product part decomposition release notes`).
+2. [TODO] Git Commit: `docs(release): sync product part decomposition release notes` (hash: TBD)
 
 ### Stream: Release build
-1. [DONE] После принятия fixes по `Diagram Modules` review-surface и autolayout обновить релизные документы, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline (scope: `README.md`, `CHANGELOG.md`, release/version manifests and package metadata; expected commit: `chore(release): prepare diagram modules review layout release`).
-2. [DONE] Git Commit: `chore(release): prepare diagram modules review layout release` (hash: `037bf15c`)
-
-### Stream: Release gate contract sync
-1. [DONE] Синхронизировать sidecar type-tests с новым `purpose` contract для `Product Part / Cluster`, чтобы финальный `build-release.sh --use-current-version` проходил type-check без post-release drift (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-layout): sync flow sidecar purpose contract`).
-2. [DONE] Git Commit: `test(diagram-layout): sync flow sidecar purpose contract` (hash: `4e71af19`)
+1. [TODO] После принятия decomposition refactor и `Codex` stability fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для следующего пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare product part decomposition release`).
+2. [TODO] Git Commit: `chore(release): prepare product part decomposition release` (hash: TBD)
 
 ### Stream: Session handoff
-1. [DONE] После успешной релизной сборки синхронизировать active plan фактическими hash-ами, оформить новый session report и зафиксировать clean-tree handoff вместе с outcome-ами dense-layout regression (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules review layout release`).
-2. [DONE] Git Commit: `docs(session): record diagram modules review layout release` (hash: `d09fb5b0`)
-
-## Phase 35 — Diagram Modules Header Boundary Second Pass (owner: Oleksandr, updated: 2026-03-23)
-
-### Stream: Planning baseline second pass
-1. [DONE] Зафиксировать post-release findings после пользовательского retest `1.1.766`: остаточные overlaps между purpose/description и body-area, узкий purpose panel у `Product Part`, а также нестабильный start offset для cluster module-stack; на этой базе открыть второй layout pass в planning-doc, todo-plan и новом session report (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session132.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram modules header boundary scope`).
-2. [DONE] Git Commit: `docs(plan): start diagram modules header boundary scope` (hash: `fbce4424`)
-
-### Stream: Product part purpose width and header boundary
-1. [DONE] Расширить purpose panel `Product Part` и пересчитать product-part header/body boundary по реальной нижней границе summary + purpose blocks, чтобы cluster section больше не налезал на description и header использовал доступную ширину эффективнее (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): widen product part purpose panel`).
-2. [DONE] Git Commit: `fix(diagram-ui): widen product part purpose panel` (hash: `852c0a8d`)
-
-### Stream: Product part body start measurement
-1. [DONE] Пересчитать старт cluster section внутри `Product Part` по реальной measured высоте header, чтобы purpose panel и верхние cluster boundaries больше не пересекались даже в плотных сценариях с длинным description (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize product part header boundary`).
-2. [DONE] Git Commit: `fix(diagram-layout): stabilize product part header boundary` (hash: `7f34a840`)
-
-### Stream: Cluster stack start stabilization
-1. [DONE] Пересчитать cluster header/body boundary и старт первой module card от фактической нижней границы description, чтобы cluster description не пересекался с modules, а perceived gap внутри cluster-ов оставался консистентным (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize cluster stack offsets`).
-2. [DONE] Git Commit: `fix(diagram-layout): stabilize cluster stack offsets` (hash: `b311c9ee`)
-
-## Phase 36 — Release Build After Header Boundary Fixes (owner: Oleksandr, updated: 2026-03-23)
-
-### Stream: Release notes sync
-1. [DONE] Перед новой release-сборкой синхронизировать `README.md` и `CHANGELOG.md` под target `1.1.767`, чтобы следующий build cycle отражал second-pass fixes для `Diagram Modules` header/body separation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync header boundary release notes`).
-2. [DONE] Git Commit: `docs(release): sync header boundary release notes` (hash: `4ab8ec0a`)
-
-### Stream: Release build
-1. [DONE] После принятия second-pass fixes по `Diagram Modules` выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules header boundary release`).
-2. [DONE] Git Commit: `chore(release): prepare diagram modules header boundary release` (hash: `77f9d42e`)
-
-### Stream: Session handoff
-1. [DONE] После успешного релиза зафиксировать фактические hash-и second-pass streams, обновить session report результатами тестов и сборки, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, current session report file, related release docs if needed; expected commit: `docs(session): record diagram modules header boundary release`).
-2. [TODO] Git Commit: `docs(session): record diagram modules header boundary release` (hash: TBD)
+1. [TODO] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с итогами product-part refactor, `Codex` timeout fix и release verification, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record product part decomposition release`).
+2. [TODO] Git Commit: `docs(session): record product part decomposition release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
   - `doc/TODO/Archive/todo-plan-up-to-phase28-2026-03-22.md`
   - `doc/TODO/Archive/todo-plan-up-to-phase30-2026-03-23.md`
+  - `doc/TODO/Archive/todo-plan-up-to-phase36-2026-03-23.md`
 - Active planning docs for this scope:
-  - `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 - User constraints for this scope:
-  - `Diagram Modules` рассматривается как главный user-review step;
-  - layout должен быть детерминированным и собираться по схеме `measure -> place`;
-  - `Product Part` и `Cluster` обязаны показывать короткий purpose/description layer;
-  - standalone modules должны компактизироваться под более короткую колонку, а не уходить в пустой нижний band;
-  - relation lines и full `Diagram Facades` redesign не входят в ближайший implementation slice.
+  - `Diagram Modules` остаётся главным graphical review step;
+  - базовый slice не требует relation lines;
+  - пользователь не должен подтверждать каждый отдельный `Product Part` через чат;
+  - runtime должен sequentially materialize `Product Part` автоматически, скрывая orchestration-turns из обычного пользовательского диалога;
+  - React Flow должен progressively regeneraте graph по мере появления новых part-артефактов;
+  - decomposition не отменяет обязательный fix для ложного `Codex` idle-timeout и потери late provider messages.
