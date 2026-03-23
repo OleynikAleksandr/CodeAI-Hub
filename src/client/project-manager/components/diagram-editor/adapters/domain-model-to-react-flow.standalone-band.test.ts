@@ -129,6 +129,8 @@ test("domainModelToReactFlow wraps standalone modules into a dedicated band with
   const productPartNode = result.nodes.find(
     (node) => node.id === "product-part:local-core-runtime"
   );
+  const projectFlowCluster = result.nodes.find((node) => node.id === "cluster:project-flow");
+  const artifactStoreCluster = result.nodes.find((node) => node.id === "cluster:artifact-store");
   const descriptionStageNode = result.nodes.find(
     (node) => node.id === "description-stage"
   );
@@ -143,12 +145,16 @@ test("domainModelToReactFlow wraps standalone modules into a dedicated band with
   );
 
   assert.notEqual(productPartNode, undefined);
+  assert.notEqual(projectFlowCluster, undefined);
+  assert.notEqual(artifactStoreCluster, undefined);
   assert.notEqual(descriptionStageNode, undefined);
   assert.notEqual(virtualSimulationStageNode, undefined);
   assert.notEqual(diagramModulesStageNode, undefined);
   assert.notEqual(artifactFreshnessNode, undefined);
   if (
     !productPartNode ||
+    !projectFlowCluster ||
+    !artifactStoreCluster ||
     !descriptionStageNode ||
     !virtualSimulationStageNode ||
     !diagramModulesStageNode ||
@@ -157,11 +163,20 @@ test("domainModelToReactFlow wraps standalone modules into a dedicated band with
     return;
   }
 
+  const clusterBandBottom = Math.max(
+    projectFlowCluster.position.y + Number(projectFlowCluster.style?.height ?? 0),
+    artifactStoreCluster.position.y + Number(artifactStoreCluster.style?.height ?? 0)
+  );
+
   assert.equal(productPartNode.style?.width, 720);
-  assert.deepEqual(descriptionStageNode.position, { x: 24, y: 328 });
-  assert.deepEqual(virtualSimulationStageNode.position, { x: 296, y: 328 });
-  assert.deepEqual(diagramModulesStageNode.position, { x: 24, y: 472 });
-  assert.deepEqual(artifactFreshnessNode.position, { x: 296, y: 472 });
+  assert.equal(descriptionStageNode.position.x, 24);
+  assert.equal(virtualSimulationStageNode.position.x, 296);
+  assert.equal(descriptionStageNode.position.y, clusterBandBottom + 36);
+  assert.equal(virtualSimulationStageNode.position.y, descriptionStageNode.position.y);
+  assert.equal(diagramModulesStageNode.position.x, 24);
+  assert.equal(artifactFreshnessNode.position.x, 296);
+  assert.equal(diagramModulesStageNode.position.y, artifactFreshnessNode.position.y);
+  assert.equal(diagramModulesStageNode.position.y > descriptionStageNode.position.y + 132, true);
 });
 
 const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
@@ -182,7 +197,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
     {
       id: "workflow-orchestration",
       title: "Workflow Orchestration",
-      purpose: "Runs and coordinates workflow stages.",
+      purpose: "Runs and coordinates workflow stages, execution rules, and downstream refresh decisions for the active project.",
       productPart: "local-core-runtime",
       moduleIds: ["step-eligibility-guard", "step-execution-coordinator", "dependency-refresh-marker"],
     },
@@ -258,7 +273,8 @@ test("domainModelToReactFlow gives stacked cluster modules enough vertical space
     return;
   }
 
-  assert.deepEqual(eligibilityNode.position, { x: 24, y: 72 });
+  assert.equal(eligibilityNode.position.x, 24);
+  assert.equal(eligibilityNode.position.y >= 120, true);
   assert.equal(executionNode.position.x, 24);
   assert.equal(refreshNode.position.x, 24);
   assert.equal(executionNode.position.y > eligibilityNode.position.y + 132, true);

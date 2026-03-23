@@ -72,14 +72,14 @@
 
 ### Stream: Product part purpose width and header boundary
 1. [DONE] Расширить purpose panel `Product Part` и пересчитать product-part header/body boundary по реальной нижней границе summary + purpose blocks, чтобы cluster section больше не налезал на description и header использовал доступную ширину эффективнее (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): widen product part purpose panel`).
-2. [TODO] Git Commit: `fix(diagram-ui): widen product part purpose panel` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-ui): widen product part purpose panel` (hash: `852c0a8d`)
 
 ### Stream: Product part body start measurement
 1. [DONE] Пересчитать старт cluster section внутри `Product Part` по реальной measured высоте header, чтобы purpose panel и верхние cluster boundaries больше не пересекались даже в плотных сценариях с длинным description (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize product part header boundary`).
-2. [TODO] Git Commit: `fix(diagram-layout): stabilize product part header boundary` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-layout): stabilize product part header boundary` (hash: `7f34a840`)
 
 ### Stream: Cluster stack start stabilization
-1. [TODO] Пересчитать cluster header/body boundary и старт первой module card от фактической нижней границы description, чтобы cluster description не пересекался с modules, а perceived gap внутри cluster-ов оставался консистентным (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize cluster stack offsets`).
+1. [DONE] Пересчитать cluster header/body boundary и старт первой module card от фактической нижней границы description, чтобы cluster description не пересекался с modules, а perceived gap внутри cluster-ов оставался консистентным (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize cluster stack offsets`).
 2. [TODO] Git Commit: `fix(diagram-layout): stabilize cluster stack offsets` (hash: TBD)
 
 ## Phase 36 — Release Build After Header Boundary Fixes (owner: Oleksandr, updated: 2026-03-23)
