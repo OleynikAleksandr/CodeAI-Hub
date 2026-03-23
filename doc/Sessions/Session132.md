@@ -1,8 +1,8 @@
-# Session 132 — Diagram Modules Header Boundary Retest Scope
+# Session 132 — Diagram Modules Header Boundary Release 1.1.767
 
-**Date:** 2026-03-23 10:36 CET
+**Date:** 2026-03-23 10:47 CET
 **Branch:** main
-**Version:** 1.1.766
+**Version:** 1.1.767
 
 ---
 
@@ -14,15 +14,37 @@
 - Одновременно пользователь зафиксировал остаточный layout defect в `Local Core Runtime`: purpose text у `Product Part` налезает на контур cluster section, а в cluster с тремя modules первый module card налезает на cluster description.
 - Второй сценарий на `VS Code Extension Shell` показал дополнительное проявление той же проблемы: при одинаковом количестве modules в cluster-ах визуально воспринимается разный vertical gap, потому что первый module stack стартует на разной высоте.
 - На этой основе открыт второй post-release scope: добить `header/body separation`, расширить `Product Part` purpose width allocation и стабилизировать start offset для module-stack внутри cluster-а.
+- В renderer `Diagram Modules` расширен purpose panel у `Product Part`, чтобы верхняя правая колонка использовала больше горизонтального пространства и не дробила description на лишние строки.
+- В adapter `module-stage-react-flow.ts` пересчитан measurement contract для `Product Part`: старт cluster section теперь вычисляется от реальной нижней границы summary/purpose header, а не от укороченного budget.
+- В том же adapter пересчитан measurement contract для `Cluster`: первая module card стартует ниже фактического description header, а standalone-band regression перестал зависеть от хрупких абсолютных `y`-координат.
+- После таргетных regression tests собран новый локальный baseline `1.1.767`: успешно выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, собран [codeai-hub-1.1.767.vsix](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.767.vsix), а tarball-артефакты обновлены в [doc/tmp/releases](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases).
 
-## User test findings to preserve
-- `Product Part` description пересекает верхнюю границу cluster section.
-- `Cluster` description пересекается с первым module card.
-- Purpose panel `Product Part` использует слишком мало горизонтального пространства и искусственно наращивает число строк.
-- В cluster-ах с одинаковым числом module cards perceived gap выглядит разным из-за нестабильной стартовой точки stack-а.
+## Verification
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
+- `ls -lh codeai-hub-1.1.767.vsix`
+- `ls -lh doc/tmp/releases`
+- `git status --short --branch`
+
+## Release artefacts
+- VSIX: [codeai-hub-1.1.767.vsix](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.767.vsix)
+- Local copied release tarballs: [doc/tmp/releases](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases)
+- Runtime release cache: `~/.codeai-hub/releases/`
+
+## Notes
+- Успешный `build-release.sh` снова показал advisory по markdown link audit, теперь на `103` broken links. Это по-прежнему в основном legacy absolute-path ссылки внутри старых session-docs; релиз не заблокирован, но debt продолжает расти и должен быть учтён в следующем cleanup scope.
 
 ## Git commits
-- В начале этой сессии новых коммитов ещё нет: сначала фиксируем scope и planning baseline, потом идём в implementation/release loop.
+- `fbce4424 docs(plan): start diagram modules header boundary scope`
+- `852c0a8d fix(diagram-ui): widen product part purpose panel`
+- `7f34a840 fix(diagram-layout): stabilize product part header boundary`
+- `b311c9ee fix(diagram-layout): stabilize cluster stack offsets`
+- `4ab8ec0a docs(release): sync header boundary release notes`
+- `77f9d42e chore(release): prepare diagram modules header boundary release`
 
 ---
 
@@ -40,7 +62,12 @@
 9. `doc/Sessions/Session131.md`
 10. `doc/Sessions/Session132.md` (THIS REPORT)
 
+## First sanity check
+- Сразу выполнить `git status --short`.
+- Подтвердить, что baseline теперь `1.1.767` и дерево чистое.
+- Если следующий шаг связан с новым пользовательским ретестом, опираться на [codeai-hub-1.1.767.vsix](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.767.vsix) и свежие артефакты в [doc/tmp/releases](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases).
+
 ## Plans for next session
-- Реализовать second-pass fixes для `Product Part` и `Cluster` header measurement.
-- Прогнать таргетные regression tests по dense scenarios.
-- Собрать новый локальный release baseline для retest.
+- Собрать пользовательский feedback по `1.1.767`, в первую очередь на dense `Diagram Modules` scenarios с длинными purpose/description блоками.
+- Решить, закрывает ли second-pass релиз текущий layout scope или нужен ещё один точечный retest/fix cycle.
+- При необходимости открыть отдельный cleanup scope по legacy markdown links в session-docs, если link audit должен стать более строгим release gate.

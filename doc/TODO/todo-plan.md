@@ -89,11 +89,11 @@
 2. [DONE] Git Commit: `docs(release): sync header boundary release notes` (hash: `4ab8ec0a`)
 
 ### Stream: Release build
-1. [IN_PROGRESS] После принятия second-pass fixes по `Diagram Modules` выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules header boundary release`).
-2. [TODO] Git Commit: `chore(release): prepare diagram modules header boundary release` (hash: TBD)
+1. [DONE] После принятия second-pass fixes по `Diagram Modules` выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules header boundary release`).
+2. [DONE] Git Commit: `chore(release): prepare diagram modules header boundary release` (hash: `77f9d42e`)
 
 ### Stream: Session handoff
-1. [TODO] После успешного релиза зафиксировать фактические hash-и second-pass streams, обновить session report результатами тестов и сборки, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, current session report file, related release docs if needed; expected commit: `docs(session): record diagram modules header boundary release`).
+1. [DONE] После успешного релиза зафиксировать фактические hash-и second-pass streams, обновить session report результатами тестов и сборки, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, current session report file, related release docs if needed; expected commit: `docs(session): record diagram modules header boundary release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules header boundary release` (hash: TBD)
 
 ## Notes
