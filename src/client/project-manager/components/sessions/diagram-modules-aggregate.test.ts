@@ -22,42 +22,36 @@ const createCanonicalTableIndex = (): string =>
     "| 1 | `local-core-runtime` | `Local Core Runtime` | Runs the main local orchestration. |",
   ].join("\n");
 
-const createLiveProductPartFile = (): string =>
+const createOutlineProductPartFile = (): string =>
   [
-    "# Module Inventory",
+    "# Product Part: Local Core Runtime",
     "",
-    "Product Part: `Local Core Runtime`",
+    "- `part_id`: `local-core-runtime`",
+    "- `index_order`: `1`",
     "",
-    "## Product Part",
+    "## Purpose",
     "",
-    "| Field | Value |",
-    "| --- | --- |",
-    "| Part ID | `local-core-runtime` |",
-    "| Product Part | `Local Core Runtime` |",
-    "| Canonical order | `1` |",
-    "| Purpose | Runs the main local orchestration. |",
+    "`Local Core Runtime` owns the long-running local orchestration and stateful workflow execution.",
     "",
-    "## Clusters",
+    "## Cluster Inventory",
     "",
-    "### Cluster 1. `runtime-orchestration`",
+    "### 1. `runtime-orchestration`",
     "",
     "**Purpose:** Coordinates workflow execution and staged progress.",
     "",
-    "#### Modules",
+    "| Module ID | Module | Purpose |",
+    "| --- | --- | --- |",
+    "| `workflow-step-runner` | `Workflow Step Runner` | Executes the active workflow step. |",
+    "| `workflow-state-store` | `Workflow State Store` | Persists staged progress. |",
     "",
-    "| Order | Module ID | Module | Purpose |",
-    "| --- | --- | --- | --- |",
-    "| 1 | `workflow-step-runner` | `Workflow Step Runner` | Executes the active workflow step. |",
-    "| 2 | `workflow-state-store` | `Workflow State Store` | Persists staged progress. |",
+    "## Direct Standalone Modules Under This Part",
     "",
-    "## Standalone Modules",
-    "",
-    "| Order | Module ID | Module | Purpose |",
-    "| --- | --- | --- | --- |",
-    "| 1 | `provider-session-bridge` | `Provider Session Bridge` | Connects provider turns with runtime sessions. |",
+    "| Module ID | Module | Purpose |",
+    "| --- | --- | --- |",
+    "| `provider-session-bridge` | `Provider Session Bridge` | Connects provider turns with runtime sessions. |",
   ].join("\n");
 
-test("diagram modules aggregate composer builds module-inventory from live staged product part files", async () => {
+test("diagram modules aggregate composer builds module-inventory from outline staged product part files", async () => {
   const originalFetch = globalThis.fetch;
   let writtenPath: string | null = null;
   let writtenContent: string | null = null;
@@ -76,7 +70,7 @@ test("diagram modules aggregate composer builds module-inventory from live stage
         return jsonResponse({ content: createCanonicalTableIndex() });
       }
       if (artifactPath?.endsWith("product-parts/local-core-runtime.md")) {
-        return jsonResponse({ content: createLiveProductPartFile() });
+        return jsonResponse({ content: createOutlineProductPartFile() });
       }
       return new Response("missing", { status: 404 });
     }
