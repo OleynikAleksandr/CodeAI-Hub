@@ -86,10 +86,10 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед новой release-сборкой синхронизировать `README.md` и `CHANGELOG.md` под target `1.1.767`, чтобы следующий build cycle отражал second-pass fixes для `Diagram Modules` header/body separation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync header boundary release notes`).
-2. [TODO] Git Commit: `docs(release): sync header boundary release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync header boundary release notes` (hash: `4ab8ec0a`)
 
 ### Stream: Release build
-1. [TODO] После принятия second-pass fixes по `Diagram Modules` выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules header boundary release`).
+1. [IN_PROGRESS] После принятия second-pass fixes по `Diagram Modules` выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules header boundary release`).
 2. [TODO] Git Commit: `chore(release): prepare diagram modules header boundary release` (hash: TBD)
 
 ### Stream: Session handoff
