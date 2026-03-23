@@ -208,6 +208,7 @@ const buildStagePhaseLines = (
     "- Phase 3: relation lines и cross-part wiring не являются обязательной частью первого полезного результата; сначала стабилизируй ownership structure `Product Part -> Cluster -> Module`.",
     "- Phase 4: `module-inventory.md` materialize-ится runtime как compatibility aggregate после завершения part-файлов; visual graph и `module-map.flow.json` тоже поддерживаются runtime отдельно.",
     "- Phase 5: если какой-либо старый prompt/template текст требует сначала писать прямой `module-inventory.md` или запрещает staged Markdown artifacts, считай это legacy-следом и следуй staged contract выше.",
+    "- Phase 6: не трать текущий turn на поиск compatibility inventory, staged examples, continuity files, helper artifacts или generic template files, если они явно не перечислены выше как входы этого turn-а.",
   ];
 };
 
@@ -237,7 +238,7 @@ export const buildWorkflowPromptPack = (
       ? [
           "Дополнительные staged артефакты этого шага разрешены и ожидаемы runtime:",
           `- Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
-          `- Compatibility aggregate (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-inventory.md\``,
+          `- Compatibility aggregate (runtime-owned, not a default input): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-inventory.md\``,
           `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,
         ]
       : [];
@@ -258,7 +259,9 @@ export const buildWorkflowPromptPack = (
     `Целевой путь (relative): \`${relativePath}\``,
     `Целевой путь (absolute): \`${absolutePath}\``,
     ...primaryInputLines,
-    params.stage !== "virtual_simulation" && params.templatePath
+    params.stage !== "virtual_simulation" &&
+    params.stage !== "diagram_modules" &&
+    params.templatePath
       ? `Шаблон (absolute): \`${params.templatePath}\``
       : null,
     ...buildStagePhaseLines(params.stage, fileName),

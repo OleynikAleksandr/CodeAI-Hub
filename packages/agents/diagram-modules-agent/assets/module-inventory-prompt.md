@@ -26,14 +26,15 @@ CodeAI Hub превращает идею продукта в последова�
 - `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
 - текущая версия `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md`, если файл уже существует
 - текущая версия целевого `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md`, если runtime continuation уже указал конкретный `Product Part`
-- `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md`, если файл уже существует, но только как compatibility aggregate / reference output
-- дополнительные файлы текущего проекта и материалы пользователя, которые ты реально прочитал и которые относятся к текущему проекту
+- `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md` только если текущий prompt явно указал его как runtime-provided carry-over reference; иначе не ищи и не читай этот файл самостоятельно
+- только те дополнительные файлы текущего проекта и материалы пользователя, которые текущий prompt явно разрешил как входы этого turn-а и которые относятся к текущему проекту
 
 Границы источников для empty-workspace / greenfield:
-- основной источник правды — артефакты текущего проекта внутри `.codeai-hub/<workspaceSlug>/...`;
-- допустимы user-facing runtime templates внутри `.codeai-hub/templates/...`, continuity-файлы текущего stage и файлы, которые пользователь явно указал для текущего проекта;
+- основной источник правды — только те артефакты текущего проекта внутри `.codeai-hub/<workspaceSlug>/...`, которые текущий prompt явно перечислил как вход;
+- если текущий prompt уже содержит embedded reference / field guidance, считай её уже предоставленной и не ищи дополнительные template файлы на диске;
+- не ищи continuity-файлы, staged examples, helper artifacts, legacy `diagram_modules` каталоги и runtime templates, если текущий prompt явно не перечислил их как входы этого turn-а;
 - не используй исходный код, parser/runtime implementation, тесты и внутренние документы самого CodeAI Hub вне текущего project workspace как источник архитектурных решений;
-- если runtime вернул parse/validation error, исправляй artifact по самому сообщению об ошибке и по видимым user-facing templates, а не по чтению parser implementation;
+- если runtime вернул parse/validation error, исправляй artifact по самому сообщению об ошибке и по embedded или явно переданной reference guidance, а не по чтению parser implementation;
 - если уверенности по ownership или составу системы не хватает, задай точечный вопрос пользователю.
 
 Выход (staged SSOT):
@@ -156,19 +157,19 @@ Relations должны оставаться простыми и sparse:
 - `product-parts/<part-id>.md` — один ownership subtree на continuation turn;
 - `module-inventory.md` — runtime-owned compatibility aggregate после завершения staged sequence.
 
-При построении staged артефактов ориентируйся на visible runtime assets:
-- `.codeai-hub/templates/diagram_modules/module-inventory-template.md`
-- `.codeai-hub/templates/diagram_modules/module-inventory-field-reference.md`
-- `.codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md`
+Reference guidance для этого шага может прийти в двух формах:
+- как embedded appendix прямо в текущем prompt;
+- как exact runtime-provided reference paths, если текущий prompt явно перечислил их для этого turn-а.
 
-Пока отдельные staged templates ещё не синхронизированы, используй этот template pack как reference для ownership-aware DSL, значений полей и merge-ограничений.
-Но не трактуй его как указание писать `module-inventory.md` первым direct output.
+Если текущий prompt не перечислил exact reference paths, не ищи `.codeai-hub/templates/...`, staged examples, compatibility artifacts или legacy `diagram_modules` files на диске только ради понимания формата.
+Считай staged contract этого prompt-а и embedded appendix достаточным источником правил.
 
-Если общий текст инструкции, старый template text и runtime continuation расходятся, приоритет у:
+Если общий текст инструкции, legacy artifact text и runtime continuation расходятся, приоритет у:
 1. явного target file текущего turn-а;
-2. staged contract этого prompt-а;
-3. фактических parse/validation ошибок, которые вернул runtime;
-4. visible template pack как reference для полей и ownership DSL.
+2. exact runtime-provided inputs текущего turn-а;
+3. staged contract этого prompt-а;
+4. фактических parse/validation ошибок, которые вернул runtime;
+5. embedded reference appendix или explicit reference paths, если runtime их дал.
 
 `product-parts.index.md` должен:
 - фиксировать ordered список `Product Part`;
@@ -196,7 +197,7 @@ Relation lines и cross-part wiring:
 Не оставляй index или target part пустым или формальным.
 Если данных мало или не хватает ключевого:
 - не останавливайся на пустой заготовке;
-- собирай максимум из всех доступных источников текущего проекта: `Final_Description.md`, `virtual-simulation.md`, реально прочитанных материалов текущего проекта, уже существующих staged artifacts этого проекта и текущего диалога с пользователем;
+- собирай максимум из direct inputs текущего turn-а, уже переданных staged artifacts этого проекта и текущего диалога с пользователем;
 - если главных данных всё равно не хватает, задавай пользователю точечные вопросы по самому важному;
 - на основе уже известного достраивай первый каркас index или целевого `Product Part` аккуратными гипотезами;
 - явно помечай допущения, неизвестные места и вопросы, которые требуют подтверждения.
@@ -217,11 +218,11 @@ Relation lines и cross-part wiring:
 
 ## 5) Итерации (file-first) и коммуникация в чате
 Повторяй цикл:
-1. Прочитай `Final_Description.md`, `virtual-simulation.md` и все реально доступные материалы текущего проекта в разрешённых границах.
+1. Прочитай только direct inputs текущего prompt-а и другие файлы текущего проекта, которые пользователь явно указал для этого проекта.
 2. Определи текущую фазу по target file и runtime continuation context:
    - если это первый visible turn, целевой файл — `product-parts.index.md`;
    - если runtime уже указал конкретный `Product Part`, целевой файл — только соответствующий `product-parts/<part-id>.md`.
-3. Перечитай существующий target artifact, если он уже есть, и staged artifacts, которые реально нужны для текущего turn-а.
+3. Перечитай существующий target artifact, если он уже есть, и только те дополнительные staged artifacts, которые текущий prompt явно указал как входы этого turn-а.
 4. Обнови только текущий target artifact.
 5. В чате дай короткий отчёт:
    - что изменилось;
@@ -235,6 +236,7 @@ Relation lines и cross-part wiring:
    - ownership / boundary ambiguities, которые мешают собрать непротиворечивый index или целевой `Product Part`.
 
 Если runtime автоматически прислал hidden continuation, не жди дополнительного user-visible `Продолжай` и не пытайся вернуть sequence назад в giant single-turn режим.
+Не трать turn на поиск compatibility inventory, staged examples, continuity files, helper artifacts или generic template files, если текущий prompt явно не перечислил их как входы.
 
 Не публикуй полный текст staged artifact в чат, если пользователь явно не попросил.
 
