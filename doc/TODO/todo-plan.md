@@ -312,14 +312,14 @@
 
 ### Stream: Planning baseline
 1. [DONE] Зафиксировать новый пользовательский retest `1.1.774`: `product-parts.index.md` уже создаётся, но `Artifacts` остаётся пустым и hidden continuation не стартует, потому что live index drift-нул в новый `## Canonical Order` heading format (`### 1. \`part-id\``, `Name:`, `Purpose:`), а текущие parser-ы `1.1.774` всё ещё умеют читать только legacy `### Product Part: ...`, ordered list или markdown table; оформить planning-doc под parser recovery и новый release baseline (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_CanonicalOrder_Heading_Blockers_After_1_1_774_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules canonical order blockers after 1.1.774`).
-2. [TODO] Git Commit: `docs(plan): capture diagram modules canonical order blockers after 1.1.774` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): capture diagram modules canonical order blockers after 1.1.774` (hash: `d87aab80`)
 
 ### Stream: Canonical order heading parser recovery
-1. [TODO] Научить progressive skeleton builder и `diagramModulesProgress` читать live `## Canonical Order` heading blocks с `### <n>. \`part-id\`` и полями `Name:` / `Purpose:`, чтобы после index write снова появлялись `Product Part` плашки и hidden continuation получал `currentPartId` вместо зависания на `substep: index` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted regression test file; expected commit: `fix(diagram-workflow): recover canonical order heading index parsing`).
-2. [TODO] Git Commit: `fix(diagram-workflow): recover canonical order heading index parsing` (hash: TBD)
+1. [DONE] Научить progressive skeleton builder и `diagramModulesProgress` читать live `## Canonical Order` heading blocks с `### <n>. \`part-id\`` и полями `Name:` / `Purpose:`, чтобы после index write снова появлялись `Product Part` плашки и hidden continuation получал `currentPartId` вместо зависания на `substep: index` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted regression test file; expected commit: `fix(diagram-workflow): recover canonical order heading index parsing`).
+2. [DONE] Git Commit: `fix(diagram-workflow): recover canonical order heading index parsing` (hash: `0b0fc487`)
 
 ### Stream: Release notes sync
-1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.774`: recovery для live `Canonical Order` heading format в index parser и восстановление hidden continuation через корректный planned part detection (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.774 retest fixes`).
+1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.774`: recovery для live `Canonical Order` heading format в index parser и восстановление hidden continuation через корректный planned part detection (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.774 retest fixes`).
 2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.774 retest fixes` (hash: TBD)
 
 ### Stream: Release build

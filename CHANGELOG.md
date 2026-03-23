@@ -2,6 +2,12 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.775] - 2026-03-23
+### Fixed
+- `Diagram Modules` now accepts the live `product-parts.index.md` canonical-order heading format (`## Canonical Order`, `### <n>. \`part-id\``, `Name:`, `Purpose:`), so the stage no longer produces an empty graph or stalls hidden continuation when the agent writes the newer index shape.
+- The same parser recovery now powers both the client-side staged skeleton and the server-side `diagramModulesProgress` snapshot, restoring `Product Part` cards and automatic continuation together instead of leaving one path behind.
+- Added regression coverage for the live canonical-order heading format while keeping the earlier ordered-list and table-based index variants intact.
+
 ## [1.1.774] - 2026-03-23
 ### Fixed
 - `Diagram Modules` now accepts the live outline `product-parts/<part-id>.md` continuation format (`# Product Part: ...`, `## Purpose`, `## Cluster Inventory`, `## Direct Standalone Modules Under This Part`) in the shared staged parser, so the first materialized part no longer crashes on the legacy `# Module Inventory` title requirement.
