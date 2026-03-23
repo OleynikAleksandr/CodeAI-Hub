@@ -45,6 +45,16 @@ test("diagram modules prompt pack targets product part index and omits generic t
 
   assert.equal(
     pack.content.includes(
+      "Собери staged артефакт на основе `Final_Description.md` и `virtual-simulation.md`."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes("Собери артефакт на основе анкеты и шаблона."),
+    false
+  );
+  assert.equal(
+    pack.content.includes(
       "Целевой путь (relative): `codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
     ),
     false
@@ -101,6 +111,14 @@ test("diagram facades prompt pack omits generic template hint and adds no-search
     templatePath: "/tmp/facade-map-template.md",
   });
 
+  assert.equal(
+    pack.content.includes("Собери артефакт на основе `module-inventory.md`."),
+    true
+  );
+  assert.equal(
+    pack.content.includes("Собери артефакт на основе анкеты и шаблона."),
+    false
+  );
   assert.equal(pack.content.includes("Шаблон (absolute)"), false);
   assert.equal(
     pack.content.includes(

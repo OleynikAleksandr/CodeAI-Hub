@@ -40,6 +40,14 @@ const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   diagram_facades: "Diagram Facades",
 };
 
+const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
+  description: "Собери артефакт на основе анкеты и шаблона.",
+  virtual_simulation: "Собери артефакт на основе `Final_Description.md`.",
+  diagram_modules:
+    "Собери staged артефакт на основе `Final_Description.md` и `virtual-simulation.md`.",
+  diagram_facades: "Собери артефакт на основе `module-inventory.md`.",
+};
+
 const DIAGRAM_STAGE_INPUT_LABELS: Partial<Record<WorkflowStageId, string>> = {
   diagram_modules: "Исходный артефакт",
   diagram_facades: "Артефакт модулей",
@@ -251,10 +259,7 @@ export const buildWorkflowPromptPack = (
         ]
       : [];
 
-  const defaultPrompt =
-    params.stage === "virtual_simulation"
-      ? "Собери артефакт на основе `Final_Description.md`."
-      : "Собери артефакт на основе анкеты и шаблона.";
+  const defaultPrompt = DEFAULT_STAGE_PROMPTS[params.stage];
   const prompt = params.prompt.trim().length ? params.prompt.trim() : defaultPrompt;
   const primaryInputLines = buildStageInputLines({
     stage: params.stage,
