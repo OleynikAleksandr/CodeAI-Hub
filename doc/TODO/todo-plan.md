@@ -16,16 +16,16 @@
 
 ### Stream: Planning baseline
 1. [DONE] Заархивировать завершённый plan до `Phase 30`, оформить новый planning-doc, в котором `Diagram Modules` зафиксирован как главный user-review step workflow, а также открыть новый `todo-plan.md` с детерминированным `measure -> place` baseline для `Product Part / Cluster / Module` и финальным release stream (scope: `doc/TODO/Archive/todo-plan-up-to-phase30-2026-03-23.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram modules review layout scope`).
-2. [TODO] Git Commit: `docs(plan): start diagram modules review layout scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): start diagram modules review layout scope` (hash: `230a2894`)
 
 ## Phase 32 — Diagram Modules Purpose Surface And Layout Contract (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Product hierarchy node data
 1. [DONE] Протянуть purpose text `Product Part` и `Cluster` через module-stage React Flow projection, чтобы renderer больше не терял этот слой при построении diagram nodes (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`; expected commit: `fix(diagram-layout): surface product hierarchy purpose text`).
-2. [TODO] Git Commit: `fix(diagram-layout): surface product hierarchy purpose text` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-layout): surface product hierarchy purpose text` (hash: `7cb60c2a`)
 
 ### Stream: Product hierarchy card rendering
-1. [TODO] Обновить container cards `Diagram Modules`, чтобы `Product Part` и `Cluster` показывали короткий purpose block как часть header-zone и не теряли текущую читаемость module cards (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; expected commit: `fix(diagram-ui): show product hierarchy purpose text`).
+1. [DONE] Обновить container cards `Diagram Modules`, чтобы `Product Part` и `Cluster` показывали короткий purpose block как часть header-zone и не теряли текущую читаемость module cards (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): show product hierarchy purpose text`).
 2. [TODO] Git Commit: `fix(diagram-ui): show product hierarchy purpose text` (hash: TBD)
 
 ### Stream: Layout contract in docs

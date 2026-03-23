@@ -19,6 +19,8 @@ test("diagram modules renderer differentiates product part and cluster container
   assert.equal(source.includes("Product Part"), true);
   assert.equal(source.includes("Clusters: {data.clusterIds.length}"), true);
   assert.equal(source.includes("Standalone Modules:"), true);
+  assert.equal(source.includes("Purpose"), true);
+  assert.equal(source.includes("data.purpose"), true);
   assert.equal(source.includes("Kind: {data.kind}"), true);
   assert.equal(source.includes("Modules: {data.moduleIds.length}"), true);
   assert.equal(source.includes('data.kind === "external"'), true);

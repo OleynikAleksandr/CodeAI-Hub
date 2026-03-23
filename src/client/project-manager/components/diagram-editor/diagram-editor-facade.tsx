@@ -83,6 +83,33 @@ const containerHeaderStyle: React.CSSProperties = {
   alignContent: "start",
 };
 
+const containerSummaryStyle: React.CSSProperties = {
+  display: "grid",
+  gap: 4,
+  minWidth: 0,
+};
+
+const productPartHeaderStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 1fr) minmax(180px, 240px)",
+  gap: 14,
+  alignItems: "start",
+};
+
+const purposePanelStyle: React.CSSProperties = {
+  borderRadius: 14,
+  border: "1px solid rgba(255,255,255,0.06)",
+  background: "rgba(7, 13, 23, 0.32)",
+  padding: "10px 12px",
+};
+
+const purposeTextStyle: React.CSSProperties = {
+  marginTop: 6,
+  fontSize: 11,
+  lineHeight: 1.4,
+  color: "var(--pm-text-muted)",
+};
+
 const ContainerNode = ({
   data,
 }: {
@@ -91,12 +118,18 @@ const ContainerNode = ({
   if (data.nodeKind === "productPart") {
     return (
       <div style={productPartCardStyle}>
-        <div style={containerHeaderStyle}>
-          <div style={nodeCaptionStyle}>Product Part</div>
-          <strong style={{ fontSize: 15 }}>{data.title}</strong>
-          <div style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
-            Clusters: {data.clusterIds.length} | Standalone Modules:{" "}
-            {data.standaloneModuleIds.length}
+        <div style={productPartHeaderStyle}>
+          <div style={containerSummaryStyle}>
+            <div style={nodeCaptionStyle}>Product Part</div>
+            <strong style={{ fontSize: 15 }}>{data.title}</strong>
+            <div style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
+              Clusters: {data.clusterIds.length} | Standalone Modules:{" "}
+              {data.standaloneModuleIds.length}
+            </div>
+          </div>
+          <div style={purposePanelStyle}>
+            <div style={nodeCaptionStyle}>Purpose</div>
+            <div style={purposeTextStyle}>{data.purpose}</div>
           </div>
         </div>
       </div>
@@ -111,6 +144,7 @@ const ContainerNode = ({
         <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
           Modules: {data.moduleIds.length}
         </div>
+        <div style={purposeTextStyle}>{data.purpose}</div>
       </div>
     </div>
   );
