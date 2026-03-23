@@ -204,9 +204,10 @@ const buildStagePhaseLines = (
   return [
     "Фазы работы:",
     `- Phase 1: прочитай \`Final_Description.md\` и \`virtual-simulation.md\`, затем создай или обнови \`${targetFileName}\` как canonical index списка \`Product Part\`, их порядка и purpose.`,
-    "- Phase 2: если runtime запускает continuation subturn, работай только с одним целевым `Product Part`, materialize-ь один `product-parts/<part-id>.md` за итерацию и не пытайся молча генерировать весь giant inventory разом.",
+    "- Phase 2: если runtime запускает continuation subturn (hidden by default), работай только с одним целевым `Product Part`, materialize-ь один `product-parts/<part-id>.md` за итерацию, не жди user-visible `Продолжай` и не пытайся молча генерировать весь giant inventory разом.",
     "- Phase 3: relation lines и cross-part wiring не являются обязательной частью первого полезного результата; сначала стабилизируй ownership structure `Product Part -> Cluster -> Module`.",
     "- Phase 4: `module-inventory.md` materialize-ится runtime как compatibility aggregate после завершения part-файлов; visual graph и `module-map.flow.json` тоже поддерживаются runtime отдельно.",
+    "- Phase 5: если какой-либо старый prompt/template текст требует сначала писать прямой `module-inventory.md` или запрещает staged Markdown artifacts, считай это legacy-следом и следуй staged contract выше.",
   ];
 };
 
@@ -234,7 +235,7 @@ export const buildWorkflowPromptPack = (
   const additionalArtifacts: readonly string[] =
     params.stage === "diagram_modules"
       ? [
-          "Дополнительные staged артефакты этого шага:",
+          "Дополнительные staged артефакты этого шага разрешены и ожидаемы runtime:",
           `- Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
           `- Compatibility aggregate (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-inventory.md\``,
           `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,

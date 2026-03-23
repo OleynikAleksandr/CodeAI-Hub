@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/Sessions/Session132.md`, `doc/Sessions/Session133.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`, `doc/Sessions/Session132.md`, `doc/Sessions/Session133.md`, `doc/Sessions/Session134.md`, `doc/Sessions/Session135.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -101,7 +101,35 @@
 
 ### Stream: Session handoff
 1. [DONE] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с итогами product-part refactor, `Codex` timeout fix и release verification, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record product part decomposition release`).
-2. [DONE] Git Commit: `docs(session): record product part decomposition release` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record product part decomposition release` (hash: `d4f864cb`)
+
+## Phase 44 — Diagram Modules Staged Prompt And Continuation Repair (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Staged prompt contract repair
+1. [DONE] Переписать user-facing `diagram_modules` prompt asset и PM staged header так, чтобы live prompt больше не противоречил decomposition architecture: первый прямой artifact — `product-parts.index.md`, continuation turn materialize-ит один `product-parts/<part-id>.md`, `module-inventory.md` остаётся runtime aggregate, а relation lines не требуются в первом полезном slice (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): align staged diagram modules prompt`).
+2. [DONE] Git Commit: `fix(diagram-workflow): align staged diagram modules prompt` (hash: TBD)
+3. [TODO] Добавить отдельные staged runtime templates для `product-parts.index.md` и одного `Product Part`, чтобы synced/bundled template layer перестал быть монолитным `module-inventory` contract и агент имел честный user-facing DSL для обеих фаз (scope: `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `packages/agents/diagram-modules-agent/assets/product-part-template.md`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): add staged product part templates`).
+4. [TODO] Git Commit: `feat(diagram-workflow): add staged product part templates` (hash: TBD)
+5. [TODO] Синхронизировать bundled/template-sync contract под новый staged набор и покрыть это тестами, чтобы runtime template delivery в релизе больше не тащил старый monolithic prompt/template pair из `module-inventory` baseline (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): sync staged template delivery`).
+6. [TODO] Git Commit: `test(diagram-workflow): sync staged template delivery` (hash: TBD)
+
+### Stream: Continuation trigger repair
+1. [TODO] Перевести `diagram_modules` orchestration с `structured_output`-only trigger на post-turn continuation rule, чтобы direct `file_change` / direct file-write `Codex` path после `product-parts.index.md` тоже запускал hidden следующий turn по `workflowState.diagramModulesProgress` без user-visible `Продолжай` (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): continue after staged file writes`).
+2. [TODO] Git Commit: `fix(diagram-workflow): continue after staged file writes` (hash: TBD)
+3. [TODO] Добавить regression coverage для live failure case `Phase 1 index written -> no structured_output -> hidden continuation still starts`, чтобы повторный retest `Diagram Modules` не зависел от удачи конкретного provider transport path (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover file-change continuation`).
+4. [TODO] Git Commit: `test(diagram-workflow): cover file-change continuation` (hash: TBD)
+
+### Stream: Release notes sync
+1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и workflow docs под findings ретеста `1.1.768`: staged `Diagram Modules` prompt repair, direct file-change continuation support и сохранение skeleton-first `Product Part` rendering как ценного промежуточного результата (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync staged prompt continuation fixes`).
+2. [TODO] Git Commit: `docs(release): sync staged prompt continuation fixes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После prompt/template repair и continuation fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного ретеста `Diagram Modules` без ручного `Продолжай` после `Phase 1` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare staged prompt continuation release`).
+2. [TODO] Git Commit: `chore(release): prepare staged prompt continuation release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по prompt/template repair и continuation retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record staged prompt continuation release`).
+2. [TODO] Git Commit: `docs(session): record staged prompt continuation release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
@@ -111,10 +139,13 @@
 - Active planning docs for this scope:
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
 - User constraints for this scope:
   - `Diagram Modules` остаётся главным graphical review step;
   - базовый slice не требует relation lines;
   - пользователь не должен подтверждать каждый отдельный `Product Part` через чат;
   - runtime должен sequentially materialize `Product Part` автоматически, скрывая orchestration-turns из обычного пользовательского диалога;
   - React Flow должен progressively regeneraте graph по мере появления новых part-артефактов;
-  - decomposition не отменяет обязательный fix для ложного `Codex` idle-timeout и потери late provider messages.
+  - decomposition не отменяет обязательный fix для ложного `Codex` idle-timeout и потери late provider messages;
+  - staged user-facing prompt/template contract не должен противоречить реальному runtime flow;
+  - continuation после `Phase 1` не должен зависеть только от `structured_output`, если provider пишет staged файлы напрямую.
