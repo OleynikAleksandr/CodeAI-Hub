@@ -249,9 +249,9 @@
 2. [DONE] Git Commit: `docs(release): sync diagram modules 1.1.771 retest fixes` (hash: `0d3695e2`)
 
 ### Stream: Release build
-1. [IN_PROGRESS] После availability/parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без pending `Source` и без пустого staged graph после первого index write (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules 1.1.771 retest follow-up release`).
-2. [TODO] Git Commit: `chore(release): prepare diagram modules 1.1.771 retest follow-up release` (hash: TBD)
+1. [DONE] После availability/parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без pending `Source` и без пустого staged graph после первого index write (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules 1.1.771 retest follow-up release`).
+2. [DONE] Git Commit: `chore(release): prepare diagram modules 1.1.771 retest follow-up release` (hash: `3be74f16`)
 
 ### Stream: Session handoff
-1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.771`, availability fix, table parser recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules 1.1.771 retest follow-up release`).
+1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.771`, availability fix, table parser recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules 1.1.771 retest follow-up release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules 1.1.771 retest follow-up release` (hash: TBD)
