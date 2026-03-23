@@ -275,9 +275,9 @@
 2. [DONE] Git Commit: `docs(release): sync diagram modules 1.1.772 retest fixes` (hash: `9540ce0c`)
 
 ### Stream: Release build
-1. [IN_PROGRESS] После staged part parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без progressive/aggregate parse failure на первом `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules product part parser recovery release`).
-2. [TODO] Git Commit: `chore(release): prepare diagram modules product part parser recovery release` (hash: TBD)
+1. [DONE] После staged part parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без progressive/aggregate parse failure на первом `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules product part parser recovery release`).
+2. [DONE] Git Commit: `chore(release): prepare diagram modules product part parser recovery release` (hash: `7f0fdb1a`)
 
 ### Stream: Session handoff
-1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.772`, staged part parser recovery, aggregate recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules product part parser recovery release`).
+1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.772`, staged part parser recovery, aggregate recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules product part parser recovery release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules product part parser recovery release` (hash: TBD)
