@@ -171,7 +171,7 @@
 
 ### Stream: Stage-specific compose opener
 1. [DONE] Убрать legacy opener `Собери артефакт на основе анкеты и шаблона.` из compose prompt для `diagram_modules` и `diagram_facades`, заменить его stage-specific direct-input wording и закрепить это regression tests, чтобы retest `1.1.770` не провоцировал у агента лишние мысли про несуществующий template input (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): remove legacy template header from diagram stages`).
-2. [TODO] Git Commit: `fix(diagram-workflow): remove legacy template header from diagram stages` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-workflow): remove legacy template header from diagram stages` (hash: `3236a549`)
 
 ## Notes
 - Archived completed rollout plans:
