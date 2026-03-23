@@ -57,8 +57,8 @@
 2. [DONE] Git Commit: `docs(release): sync canonical product part template contract notes` (hash: TBD)
 
 ### Stream: Release build
-1. [TODO] После закрытия contract/template/parser/validation scope выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline, в котором agent получает канонический template path, part-files parse-ятся детерминированно, а runtime не пропускает semantically-empty ownership docs (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare canonical product part template contract release`).
-2. [TODO] Git Commit: `chore(release): prepare canonical product part template contract release` (hash: TBD)
+1. [DONE] `./scripts/build-all.sh` bumped version to 1.1.777, built all providers/core/UI/launcher. `./scripts/build-release.sh --use-current-version` produced `codeai-hub-1.1.777.vsix`. All architecture/quality gates passed (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare canonical product part template contract release`).
+2. [DONE] Git Commit: `chore(release): prepare canonical product part template contract release` (hash: TBD)
 
 ### Stream: Session handoff
 1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по canonical template contract stabilization, prompt-delivery fix, parser/validation hardening и результатам нового release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record canonical product part template contract release`).
