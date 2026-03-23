@@ -67,12 +67,12 @@
 
 ### Stream: Progress surface in PM
 1. [DONE] Добавить user-facing progress surface для `Diagram Modules`, чтобы PM показывал planned/generated `Product Part` state и не создавал ощущение, что во время длинной последовательности ничего не происходит; одновременно обновить help-panel под staged `index + product-parts/<part-id>.md + compatibility aggregate` model и сохранить совместимый export `DiagramEditorStage` для общих diagram hooks после loader refactor (scope: `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): show product part generation progress`).
-2. [TODO] Git Commit: `feat(diagram-ui): show product part generation progress` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-ui): show product part generation progress` (hash: `63a8d40d`)
 
 ## Phase 41 — Compatibility Aggregate And Completion Gate (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Runtime aggregate compose
-1. [TODO] Собрать compatibility aggregate `module-inventory.md` из `product-parts.index.md` и part-файлов, чтобы downstream `Diagram Facades` по-прежнему читал единый canonical input, а user-facing generation при этом оставался decomposed и progressive (scope: `packages/core/src/workflow/diagram-dsl/module-inventory-parser.ts`, `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): compose aggregate inventory from product parts`).
+1. [DONE] Собрать compatibility aggregate `module-inventory.md` из `product-parts.index.md` и part-файлов, чтобы downstream `Diagram Facades` по-прежнему читал единый canonical input, а user-facing generation при этом оставался decomposed и progressive; aggregate должен materialize-иться runtime-ом после последнего `Product Part`, а не писаться агентом напрямую (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): compose aggregate inventory from product parts`).
 2. [TODO] Git Commit: `feat(diagram-workflow): compose aggregate inventory from product parts` (hash: TBD)
 
 ### Stream: Stage completion and gating

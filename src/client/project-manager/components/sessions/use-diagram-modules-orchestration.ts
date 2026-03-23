@@ -4,6 +4,7 @@ import { api } from "../../api";
 import { persistIdeaArtifacts } from "../../../ui/src/services/idea-artifact-persistence";
 import { extractIdeaCollectorArtifact } from "../../../ui/src/services/idea-collector-artifact";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import { composeDiagramModulesAggregate } from "./diagram-modules-aggregate";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -25,10 +26,13 @@ const buildContinuationSignature = (params: {
   readonly sessionId: string;
   readonly progress: { readonly substep: string; readonly currentPartId?: string };
 }): string | null => {
-  if (params.progress.substep !== "generate_product_part") {
-    return null;
+  if (params.progress.substep === "compose_aggregate") {
+    return `${params.sessionId}:compose_aggregate`;
   }
-  if (!params.progress.currentPartId) {
+  if (
+    params.progress.substep !== "generate_product_part" ||
+    !params.progress.currentPartId
+  ) {
     return null;
   }
   return `${params.sessionId}:${params.progress.substep}:${params.progress.currentPartId}`;
@@ -164,7 +168,7 @@ export const useDiagramModulesOrchestration = (options: {
             workspaceSlug: intent.workspaceSlug,
             progress,
           });
-          if (!(signature && prompt)) {
+          if (!signature) {
             setSequenceLock(sessionId, false);
             return;
           }
@@ -173,6 +177,25 @@ export const useDiagramModulesOrchestration = (options: {
           }
           dispatchedSignatureRef.current.set(sessionId, signature);
           setSequenceLock(sessionId, true);
+          if (progress.substep === "compose_aggregate") {
+            const aggregateResult = await composeDiagramModulesAggregate({
+              httpUrl,
+              workspacePath: intent.workspacePath,
+              workspaceSlug: intent.workspaceSlug,
+            });
+            if (!aggregateResult.ok) {
+              console.warn(
+                "[DiagramModulesOrchestration] Aggregate compose failed",
+                aggregateResult.error
+              );
+            }
+            setSequenceLock(sessionId, false);
+            return;
+          }
+          if (!prompt) {
+            setSequenceLock(sessionId, false);
+            return;
+          }
           api.sendSessionMessage(sessionId, prompt, {
             workflowControl: { visibility: "hidden" },
           });
