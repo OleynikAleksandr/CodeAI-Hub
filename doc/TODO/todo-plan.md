@@ -195,14 +195,18 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под fixes после retest `1.1.770`: tolerant parsing staged index, recovery hidden continuation path через корректный progress snapshot и cleanup `Diagram Modules` user-facing surface (`Source`, preamble, empty-state) (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules retest blocker fixes`).
-2. [TODO] Git Commit: `docs(release): sync diagram modules retest blocker fixes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync diagram modules retest blocker fixes` (hash: `bcbd06a7`)
+
+### Stream: Release blocker strict typing
+1. [DONE] После первого падения `build-release.sh` исправить strict optional handling в regression test для staged parser recovery, чтобы `typecheck:webview` и release compile gate проходили на `1.1.771` без ручных ослаблений TS checks (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`; expected commit: `test(diagram-workflow): fix staged parser strict test typing`).
+2. [DONE] Git Commit: `test(diagram-workflow): fix staged parser strict test typing` (hash: `54366203`)
 
 ### Stream: Release build
-1. [TODO] После release-notes sync выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline с parser recovery и cleanup `Diagram Modules` surface (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules retest blocker release`).
-2. [TODO] Git Commit: `chore(release): prepare diagram modules retest blocker release` (hash: TBD)
+1. [DONE] После release-notes sync выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline с parser recovery и cleanup `Diagram Modules` surface (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules retest blocker release`).
+2. [DONE] Git Commit: `chore(release): prepare diagram modules retest blocker release` (hash: `08da75ff`)
 
 ### Stream: Session handoff
-1. [TODO] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с пользовательским retest `1.1.770`, root cause analysis и итогами parser/UI cleanup release, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules retest blocker release`).
+1. [DONE] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с пользовательским retest `1.1.770`, root cause analysis и итогами parser/UI cleanup release, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules retest blocker release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules retest blocker release` (hash: TBD)
 
 ## Notes
