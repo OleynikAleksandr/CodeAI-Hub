@@ -5,10 +5,12 @@ type ModuleEntity = ModuleMapModel["modules"][number];
 type ClusterEntity = NonNullable<ModuleMapModel["clusters"]>[number];
 type ProductPartEntity = NonNullable<ModuleMapModel["productParts"]>[number];
 
-const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 28, PRODUCT_PART_HEADER_MIN_HEIGHT = 72;
+const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 28, PRODUCT_PART_HEADER_MIN_HEIGHT = 72, PRODUCT_PART_CARD_PADDING_TOP = 18;
 const PRODUCT_PART_SECTION_GAP = 36, PRODUCT_PART_ROW_GAP = 48, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
-const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 16;
+const PRODUCT_PART_HEADER_BODY_GAP = 16, PRODUCT_PART_PURPOSE_CHARS_PER_LINE = 42, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
+const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 16, CLUSTER_CARD_PADDING_TOP = 14;
 const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 132, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 16;
+const CLUSTER_HEADER_BODY_GAP = 16, CONTAINER_CAPTION_LINE_HEIGHT = 14, CONTAINER_META_LINE_HEIGHT = 16, PURPOSE_TEXT_MARGIN_TOP = 6;
 const STANDALONE_X_STEP = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2, DEFAULT_PRODUCT_PART_ID = "default-product-part";
 
 const toProductPartNodeId = (productPartId: string): string => `product-part:${productPartId}`;
@@ -22,10 +24,34 @@ const getExtraLines = (text: string, charsPerLine: number, includedLines = 1): n
   Math.max(0, estimateTextLines(text, charsPerLine) - includedLines);
 const getModuleCardHeight = (module: ModuleEntity): number =>
   MODULE_CARD_MIN_HEIGHT + getExtraLines(module.title, 24) * TITLE_LINE_HEIGHT + getExtraLines(module.responsibility, 32, 2) * BODY_LINE_HEIGHT;
+const getProductPartSummaryHeight = (title: string): number =>
+  CONTAINER_CAPTION_LINE_HEIGHT + 4 + estimateTextLines(title, PRODUCT_PART_TITLE_CHARS_PER_LINE) * TITLE_LINE_HEIGHT + 4 + CONTAINER_META_LINE_HEIGHT;
+const getPurposePanelHeight = (purpose: string, charsPerLine: number): number =>
+  20 + CONTAINER_CAPTION_LINE_HEIGHT + PURPOSE_TEXT_MARGIN_TOP + estimateTextLines(purpose, charsPerLine) * BODY_LINE_HEIGHT;
 const getClusterHeaderHeight = (cluster: Pick<ClusterEntity, "title" | "purpose">): number =>
-  CLUSTER_HEADER_MIN_HEIGHT + getExtraLines(cluster.title, 24) * TITLE_LINE_HEIGHT + getExtraLines(cluster.purpose, 34, 2) * BODY_LINE_HEIGHT;
+  Math.max(
+    CLUSTER_HEADER_MIN_HEIGHT,
+    CLUSTER_CARD_PADDING_TOP +
+      CONTAINER_CAPTION_LINE_HEIGHT +
+      4 +
+      estimateTextLines(cluster.title, 28) * BODY_LINE_HEIGHT +
+      4 +
+      CONTAINER_META_LINE_HEIGHT +
+      4 +
+      PURPOSE_TEXT_MARGIN_TOP +
+      estimateTextLines(cluster.purpose, 34) * BODY_LINE_HEIGHT +
+      CLUSTER_HEADER_BODY_GAP
+  );
 const getProductPartHeaderHeight = (productPart: Pick<ProductPartEntity, "title" | "purpose">): number =>
-  PRODUCT_PART_HEADER_MIN_HEIGHT + getExtraLines(productPart.title, 26) * TITLE_LINE_HEIGHT + getExtraLines(productPart.purpose, 30, 2) * BODY_LINE_HEIGHT;
+  Math.max(
+    PRODUCT_PART_HEADER_MIN_HEIGHT,
+    PRODUCT_PART_CARD_PADDING_TOP +
+      Math.max(
+        getProductPartSummaryHeight(productPart.title),
+        getPurposePanelHeight(productPart.purpose, PRODUCT_PART_PURPOSE_CHARS_PER_LINE)
+      ) +
+      PRODUCT_PART_HEADER_BODY_GAP
+  );
 
 const buildModuleNode = ({
   module,

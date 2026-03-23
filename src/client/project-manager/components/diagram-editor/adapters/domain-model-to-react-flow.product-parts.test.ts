@@ -137,7 +137,7 @@ const SHORTEST_COLUMN_STANDALONE_FIXTURE: ModuleMapModel = {
     {
       id: "local-core-runtime",
       title: "Local Core Runtime",
-      purpose: "Owns workflow stages and runtime services.",
+      purpose: "Keeps local stage orchestration, downstream rebuild rules, and runtime lifecycle readable for the active project.",
       clusterIds: ["workflow", "continuity"],
       standaloneModuleIds: ["workspace-provider-binding"],
     },
@@ -285,6 +285,8 @@ test("domainModelToReactFlow docks standalone modules under the shorter product 
     continuityCluster.position.y + Number(continuityCluster.style?.height ?? 0);
 
   assert.equal(standaloneNode.parentId, "product-part:local-core-runtime");
+  assert.equal(workflowCluster.position.y >= 120, true);
+  assert.equal(continuityCluster.position.y, workflowCluster.position.y);
   assert.equal(standaloneNode.position.x, workflowCluster.position.x);
   assert.equal(standaloneNode.position.y, workflowBottom + 36);
   assert.equal(standaloneNode.position.y < continuityBottom, true);

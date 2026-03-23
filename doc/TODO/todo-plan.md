@@ -75,7 +75,7 @@
 2. [TODO] Git Commit: `fix(diagram-ui): widen product part purpose panel` (hash: TBD)
 
 ### Stream: Product part body start measurement
-1. [TODO] Пересчитать старт cluster section внутри `Product Part` по реальной measured высоте header, чтобы purpose panel и верхние cluster boundaries больше не пересекались даже в плотных сценариях с длинным description (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize product part header boundary`).
+1. [DONE] Пересчитать старт cluster section внутри `Product Part` по реальной measured высоте header, чтобы purpose panel и верхние cluster boundaries больше не пересекались даже в плотных сценариях с длинным description (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize product part header boundary`).
 2. [TODO] Git Commit: `fix(diagram-layout): stabilize product part header boundary` (hash: TBD)
 
 ### Stream: Cluster stack start stabilization
