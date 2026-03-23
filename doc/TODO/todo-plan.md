@@ -179,15 +179,19 @@
 1. [DONE] Зафиксировать пользовательский retest `1.1.770`: пустой React Flow после `product-parts.index.md`, несработавший hidden continuation и legacy `module-inventory` tails в `Diagram Modules` preamble / Source; оформить planning-doc и новый session report с уже локализованными root cause (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_770_Architecture.md`, `doc/Sessions/Session140.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules retest blockers after 1.1.770`).
 2. [DONE] Git Commit: `docs(plan): capture diagram modules retest blockers after 1.1.770` (hash: `3bce6491`)
 3. [DONE] После planning-baseline commit-а синхронизировать active plan и `Session140` фактическим hash-ом, чтобы следующий cold start не начинался с `TBD` (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session140.md`; expected commit: `docs(session): sync diagram modules retest blocker handoff`).
-4. [TODO] Git Commit: `docs(session): sync diagram modules retest blocker handoff` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): sync diagram modules retest blocker handoff` (hash: `5dd93831`)
 
 ### Stream: Index parser recovery
-1. [TODO] Научить progressive loader и workflow progress snapshot читать реальный numbered `Canonical order` format текущего `product-parts.index.md`, чтобы после первого agent write появлялся staged skeleton и hidden continuation видел `currentPartId` вместо зависания на `substep: index` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted test file; expected commit: `fix(diagram-workflow): recover staged index parsing after retest`).
-2. [TODO] Git Commit: `fix(diagram-workflow): recover staged index parsing after retest` (hash: TBD)
+1. [DONE] Научить progressive loader и workflow progress snapshot читать реальный numbered `Canonical order` format текущего `product-parts.index.md`, чтобы после первого agent write появлялся staged skeleton и hidden continuation видел `currentPartId` вместо зависания на `substep: index` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted test file; expected commit: `fix(diagram-workflow): recover staged index parsing after retest`).
+2. [DONE] Git Commit: `fix(diagram-workflow): recover staged index parsing after retest` (hash: `b1811063`)
 
-### Stream: Diagram Modules surface cleanup
-1. [TODO] Вычистить из `Diagram Modules` visual shell последние tails старой inventory-first архитектуры: legacy intro text, `Source` pending message и misleading empty-canvas copy, чтобы user-facing surface честно описывал staged `product-parts.index.md` baseline и runtime-owned aggregate (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`, targeted test file; expected commit: `fix(diagram-ui): align diagram modules surface with staged flow`).
-2. [TODO] Git Commit: `fix(diagram-ui): align diagram modules surface with staged flow` (hash: TBD)
+### Stream: Diagram Modules source surface cleanup
+1. [TODO] Вычистить из `Diagram Modules` panel и `Source` mode legacy inventory-first copy: intro text, canonical source label/path и pending message должны честно описывать staged `product-parts.index.md` baseline и runtime-owned aggregate, без возврата к `module-inventory.md` как primary artifact stage (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `fix(diagram-ui): align diagram modules source surface with staged flow`).
+2. [TODO] Git Commit: `fix(diagram-ui): align diagram modules source surface with staged flow` (hash: TBD)
+
+### Stream: Diagram Modules empty-state copy cleanup
+1. [TODO] Переписать misleading empty-canvas copy в visual shell так, чтобы index-first staged state больше не выглядел как ошибка пользователя и не советовал “add semantic entities”, закрепив это отдельным targeted test без смешивания со source-surface fix (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, targeted test file; expected commit: `fix(diagram-ui): clarify diagram modules empty staged state`).
+2. [TODO] Git Commit: `fix(diagram-ui): clarify diagram modules empty staged state` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
