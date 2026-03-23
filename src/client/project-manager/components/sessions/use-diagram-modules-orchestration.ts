@@ -1,12 +1,14 @@
-import { useEffect, useRef, type MutableRefObject } from "react";
+import { useEffect, useRef, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { persistIdeaArtifacts } from "../../../ui/src/services/idea-artifact-persistence";
 import { extractIdeaCollectorArtifact } from "../../../ui/src/services/idea-collector-artifact";
+import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+const DIAGRAM_MODULES_SEQUENCE_LOCK_REASON = "diagram_modules_sequence";
 
 const readDiagramModulesProgress = (
   value: unknown
@@ -55,9 +57,64 @@ const buildDiagramModulesContinuationPrompt = (params: {
 export const useDiagramModulesOrchestration = (options: {
   readonly sessionRef: MutableRefObject<SessionRecord | null>;
   readonly pendingIntentRef: MutableRefObject<DialogOpenIntent | null>;
+  readonly setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>;
 }) => {
   const queuedBySessionRef = useRef(new Map<string, Promise<void>>());
   const dispatchedSignatureRef = useRef(new Map<string, string>());
+
+  const setSequenceLock = (sessionId: string, active: boolean) => {
+    options.setSnapshots((previous) => {
+      const current = previous[sessionId];
+      if (!current) {
+        return previous;
+      }
+      const currentReason = current.status.continuityLock?.reason;
+      const isSequenceLock = currentReason === DIAGRAM_MODULES_SEQUENCE_LOCK_REASON;
+      if (active) {
+        const now = Date.now();
+        return {
+          ...previous,
+          [sessionId]: {
+            ...current,
+            status: {
+              ...current.status,
+              connectionState:
+                current.status.connectionState === "running"
+                  ? "running"
+                  : "blocked",
+              continuityLock: {
+                ...(current.status.continuityLock ?? { active: false, updatedAt: now }),
+                active: true,
+                reason: DIAGRAM_MODULES_SEQUENCE_LOCK_REASON,
+                updatedAt: now,
+              },
+              updatedAt: now,
+            },
+          },
+        };
+      }
+      if (!isSequenceLock) {
+        return previous;
+      }
+      const now = Date.now();
+      return {
+        ...previous,
+        [sessionId]: {
+          ...current,
+          status: {
+            ...current.status,
+            connectionState:
+              current.status.connectionState === "blocked" ? "idle" : current.status.connectionState,
+            continuityLock: {
+              active: false,
+              updatedAt: now,
+            },
+            updatedAt: now,
+          },
+        },
+      };
+    });
+  };
 
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message) => {
@@ -108,12 +165,14 @@ export const useDiagramModulesOrchestration = (options: {
             progress,
           });
           if (!(signature && prompt)) {
+            setSequenceLock(sessionId, false);
             return;
           }
           if (dispatchedSignatureRef.current.get(sessionId) === signature) {
             return;
           }
           dispatchedSignatureRef.current.set(sessionId, signature);
+          setSequenceLock(sessionId, true);
           api.sendSessionMessage(sessionId, prompt, {
             workflowControl: { visibility: "hidden" },
           });
