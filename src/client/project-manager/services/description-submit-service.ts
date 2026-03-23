@@ -73,7 +73,7 @@ const normalizeWorkflowContract = (
     pathsRaw && typeof pathsRaw.questionnaire === "string"
       ? pathsRaw.questionnaire
       : undefined;
-  const needsTemplate = stage !== "virtual_simulation";
+  const needsTemplate = stage === "description";
   if (!(prompt && schema && promptPath)) {
     return null;
   }

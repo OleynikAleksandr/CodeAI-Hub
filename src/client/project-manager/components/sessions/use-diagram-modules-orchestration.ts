@@ -41,9 +41,12 @@ const buildContinuationSignature = (params: {
   return `${params.sessionId}:${params.progress.substep}:${params.progress.currentPartId}`;
 };
 
+const PRODUCT_PART_TEMPLATE_TITLE_RE = /^# Product Part:/m;
+
 const buildDiagramModulesContinuationPrompt = (params: {
   readonly workspaceSlug: string;
   readonly progress: { readonly substep: string; readonly currentPartId?: string };
+  readonly partTemplateContent?: string;
 }): string | null => {
   if (
     params.progress.substep !== "generate_product_part" ||
@@ -51,14 +54,23 @@ const buildDiagramModulesContinuationPrompt = (params: {
   ) {
     return null;
   }
-  return [
+  const lines = [
     "Runtime continuation for Diagram Modules.",
     `Next substep: generate_product_part.`,
     `Target Product Part: \`${params.progress.currentPartId}\`.`,
     `Create or update only \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/${params.progress.currentPartId}.md\`.`,
     "Do not rewrite already generated Product Parts.",
     "If you hit blocking ambiguity, stop and ask the user one explicit question.",
-  ].join("\n");
+  ];
+  if (params.partTemplateContent) {
+    lines.push(
+      "",
+      "The following canonical Product Part template is the required format for this file. Treat it as already provided prompt content and do not search for alternative template files on disk.",
+      "",
+      params.partTemplateContent
+    );
+  }
+  return lines.join("\n");
 };
 
 export const useDiagramModulesOrchestration = (options: {
@@ -68,6 +80,7 @@ export const useDiagramModulesOrchestration = (options: {
 }) => {
   const queuedBySessionRef = useRef(new Map<string, Promise<void>>());
   const dispatchedSignatureRef = useRef(new Map<string, string>());
+  const cachedPartTemplateRef = useRef<string | null>(null);
 
   const setSequenceLock = (sessionId: string, active: boolean) => {
     options.setSnapshots((previous) => {
@@ -166,9 +179,32 @@ export const useDiagramModulesOrchestration = (options: {
           sessionId: params.sessionId,
           progress,
         });
+        if (!cachedPartTemplateRef.current) {
+          try {
+            const contractResponse = await fetch(
+              `${httpUrl}/api/v1/orchestrator/diagram-modules-contract`
+            );
+            if (contractResponse.ok) {
+              const contractPayload = (await contractResponse.json()) as Record<string, unknown>;
+              const entries = Array.isArray(contractPayload?.promptAppendixEntries)
+                ? (contractPayload.promptAppendixEntries as unknown[])
+                : [];
+              const partEntry = entries.find(
+                (entry): entry is string =>
+                  typeof entry === "string" && PRODUCT_PART_TEMPLATE_TITLE_RE.test(entry)
+              );
+              if (partEntry) {
+                cachedPartTemplateRef.current = partEntry;
+              }
+            }
+          } catch {
+            // Silent fallback — continuation works without embedded template
+          }
+        }
         const prompt = buildDiagramModulesContinuationPrompt({
           workspaceSlug: params.intent.workspaceSlug,
           progress,
+          partTemplateContent: cachedPartTemplateRef.current ?? undefined,
         });
         if (!signature) {
           setSequenceLock(params.sessionId, false);

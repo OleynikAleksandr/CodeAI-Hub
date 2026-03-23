@@ -29,6 +29,7 @@ type WorkflowContractPayload = {
     readonly templateMarkdown: string;
   };
   readonly version: string;
+  readonly promptAppendixEntries?: readonly string[];
 };
 
 type WorkflowContractPathSource = string | readonly string[];
@@ -339,6 +340,8 @@ const buildWorkflowContract = async (
       ? { templateMarkdown: questionnaireMarkdown }
       : undefined,
     version,
+    promptAppendixEntries:
+      promptAppendix.length > 0 ? promptAppendix : undefined,
   };
 };
 
