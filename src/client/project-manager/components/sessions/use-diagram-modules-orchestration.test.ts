@@ -39,11 +39,13 @@ const createCanonicalOrderIndex = (): string =>
     "",
     "## Canonical order",
     "",
-    "1. `local-core-runtime` — `Local Core Runtime`",
-    "   - Purpose: Runs the main local orchestration.",
+    "### 1. `local-core-runtime`", "",
+    "Name: `Local Core Runtime`", "",
+    "Purpose: Runs the main local orchestration.",
     "",
-    "2. `project-manager-ui` — `Project Manager UI`",
-    "   - Purpose: Shows the staged diagram workflow to the user.",
+    "### 2. `project-manager-ui`", "",
+    "Name: `Project Manager UI`", "",
+    "Purpose: Shows the staged diagram workflow to the user.",
   ].join("\n");
 
 const createCanonicalTableIndex = (): string =>
@@ -135,7 +137,7 @@ test("diagram modules progress snapshot points to next product part after index-
   }
 });
 
-test("diagram modules progressive skeleton parses the numbered canonical order format", () => {
+test("diagram modules progressive skeleton parses the canonical order heading format", () => {
   const model = buildDiagramModulesSkeletonFromIndex(createCanonicalOrderIndex());
   const productParts = model.productParts ?? [];
 
@@ -161,7 +163,7 @@ test("diagram modules progressive skeleton parses the numbered canonical order f
   );
 });
 
-test("diagram modules progress snapshot also reads the numbered canonical order format", async () => {
+test("diagram modules progress snapshot also reads the canonical order heading format", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "diagram-modules-canonical-order-")
   );

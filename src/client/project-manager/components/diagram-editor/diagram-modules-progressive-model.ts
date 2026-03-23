@@ -82,14 +82,15 @@ export const readWorkflowArtifact = async (params: {
 const PRODUCT_PART_HEADER_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
 const PRODUCT_PART_ORDERED_ITEM_RE =
-  /^\d+\.\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s+[—-]\s+`([^`]+)`\s*$/gm;
+  /^(?:\d+\.\s+|###\s+\d+\.\s+)`([a-z0-9]+(?:-[a-z0-9]+)*)`(?:\s+[—-]\s+`([^`]+)`)?\s*$/gm;
 const PRODUCT_PART_TABLE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
 
 const readField = (block: string, label: string): string | null => {
-  const match = block.match(new RegExp(`^\\s*- ${label}:\\s+(.+)$`, "im"));
-  const value = match?.[1]?.trim();
-  return value && value.length > 0 ? value : null;
+  const value = block
+    .match(new RegExp(`^\\s*(?:-\\s*)?${label}:\\s+(.+)$`, "im"))?.[1]
+    ?.trim();
+  return value && value.length > 0 ? value.replace(/^`(.+)`$/u, "$1").trim() : null;
 };
 
 const humanizeIdentifier = (value: string): string =>
@@ -139,6 +140,7 @@ export const buildDiagramModulesSkeletonFromIndex = (
       title:
         match.title ??
         readField(block, "Title") ??
+        readField(block, "Name") ??
         humanizeIdentifier(productPartId),
       purpose:
         match.purpose ??

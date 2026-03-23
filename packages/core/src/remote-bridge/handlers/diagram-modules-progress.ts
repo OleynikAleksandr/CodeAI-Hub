@@ -4,7 +4,7 @@ import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-arti
 const PRODUCT_PART_ID_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
 const PRODUCT_PART_ORDERED_ITEM_RE =
-  /^\d+\.\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s+[—-]\s+`[^`]+`\s*$/gm;
+  /^(?:\d+\.\s+|###\s+\d+\.\s+)`([a-z0-9]+(?:-[a-z0-9]+)*)`(?:\s+[—-]\s+`[^`]+`)?\s*$/gm;
 const PRODUCT_PART_TABLE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`[^`]+`\s*\|\s*.+\|$/gm;
 const BLOCKED_AMBIGUITY_RE = /- Status:\s*blocked_ambiguity\b/i;
