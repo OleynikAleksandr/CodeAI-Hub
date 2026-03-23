@@ -75,6 +75,10 @@ type TurnLifecycleState = {
   ended: boolean;
 };
 type AgentMessageItem = ThreadItem & { readonly type: "agent_message" };
+type IdlePulsePayload = {
+  readonly elapsedMs: number;
+  readonly idleCount: number;
+};
 
 const isAgentMessageItem = (item: ThreadItem): item is AgentMessageItem =>
   item.type === "agent_message";
@@ -165,6 +169,46 @@ const buildRuntimeUsageLimitsPayload = (event: unknown): string | null => {
         : new Date().toISOString(),
     rateLimits,
   });
+};
+
+export const waitForNextResultWithIdlePulses = async <T>(params: {
+  readonly nextPromise: Promise<T>;
+  readonly idleTimeoutMs: number;
+  readonly onIdle: (payload: IdlePulsePayload) => void;
+}): Promise<T> => {
+  const startedAt = Date.now();
+  let idleCount = 0;
+  while (true) {
+    let timer: NodeJS.Timeout | null = null;
+    try {
+      const winner = (await Promise.race([
+        params.nextPromise.then((result) => ({
+          kind: "result" as const,
+          result,
+        })),
+        new Promise<{ readonly kind: "idle" }>((resolve) => {
+          timer = setTimeout(
+            () => resolve({ kind: "idle" }),
+            params.idleTimeoutMs
+          );
+        }),
+      ])) as
+        | { readonly kind: "idle" }
+        | { readonly kind: "result"; readonly result: T };
+      if (winner.kind === "result") {
+        return winner.result;
+      }
+    } finally {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    }
+    idleCount += 1;
+    params.onIdle({
+      elapsedMs: Date.now() - startedAt,
+      idleCount,
+    });
+  }
 };
 
 export class CodexMessageProcessor {
@@ -265,43 +309,27 @@ export class CodexMessageProcessor {
     return eventType === "turn.completed" || eventType === "turn.failed";
   }
 
-  private async waitForNextEventOrTimeout(payload: {
+  private waitForNextEventOrTimeout(payload: {
     readonly session: ActiveSession;
     readonly events: AsyncGenerator<ThreadEvent>;
   }): Promise<IteratorResult<ThreadEvent>> {
     const { session, events } = payload;
     const nextPromise = events.next();
-    let timer: NodeJS.Timeout | null = null;
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      timer = setTimeout(() => {
-        reject(
-          new Error(
-            `Codex turn timeout: no events received within ${TURN_IDLE_TIMEOUT_MS}ms (sessionId=${session.sessionId})`
-          )
-        );
-      }, TURN_IDLE_TIMEOUT_MS);
+    return waitForNextResultWithIdlePulses({
+      nextPromise,
+      idleTimeoutMs: TURN_IDLE_TIMEOUT_MS,
+      onIdle: ({ elapsedMs, idleCount }) => {
+        session.logger?.logSDKEvent("processor.events.idle", {
+          sessionId: session.sessionId,
+          threadId: session.codexThreadId,
+          internal: session.internalTurn ?? false,
+          idleCount,
+          idleMs: elapsedMs,
+          idleTimeoutMs: TURN_IDLE_TIMEOUT_MS,
+          timestampIso: new Date().toISOString(),
+        });
+      },
     });
-
-    try {
-      return (await Promise.race([
-        nextPromise,
-        timeoutPromise,
-      ])) as IteratorResult<ThreadEvent>;
-    } catch (error) {
-      nextPromise.catch(() => {
-        // Ignore late generator failures after timeout.
-      });
-      await this.safeReturnEvents({
-        session,
-        events,
-        reason: "idle_timeout",
-      });
-      throw error;
-    } finally {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    }
   }
 
   constructor(

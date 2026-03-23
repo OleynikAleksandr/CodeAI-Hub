@@ -77,12 +77,12 @@
 
 ### Stream: Stage completion and gating
 1. [DONE] Перевести `diagram_modules` completion/gating на правило `all planned Product Parts generated + aggregate inventory materialized`, при этом relation lines оставить deferred и не требовать их для базового завершения шага; server-side workflow state должен открывать `Diagram Facades` только при `awaiting_review + aggregateReady`, а промежуточные staged part-файлы не должны снимать gate раньше времени (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): gate completion by product part sequence`).
-2. [TODO] Git Commit: `fix(diagram-workflow): gate completion by product part sequence` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-workflow): gate completion by product part sequence` (hash: `ac2f7334`)
 
 ## Phase 42 — Codex Long-Turn Stability And Transcript Preservation (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: False idle-timeout removal
-1. [TODO] Убрать ложное завершение long-silent tool-heavy `Codex` turn-ов по hard `idle_timeout`, чтобы `diagram_modules` не погибал до `structured_output` и сохранения артефакта только из-за длинной паузы между provider events (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): avoid false idle timeout on long diagram turns`).
+1. [DONE] Убрать ложное завершение long-silent tool-heavy `Codex` turn-ов по hard `idle_timeout`, чтобы `diagram_modules` не погибал до `structured_output` и сохранения артефакта только из-за длинной паузы между provider events; вместо abort-а процессор должен логировать idle pulses и продолжать ждать реальный следующий event или terminal signal (scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): avoid false idle timeout on long diagram turns`).
 2. [TODO] Git Commit: `fix(codex): avoid false idle timeout on long diagram turns` (hash: TBD)
 
 ### Stream: Late provider message preservation
