@@ -22,12 +22,12 @@ const TABLE_ROW_RE = /^\|\s*([^|]+?)\s*\|\s*(.+?)\s*\|$/gm;
 const CLUSTER_HEADER_RE =
   /^### Cluster(?: \d+\.)?\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
 const OUTLINE_CLUSTER_HEADER_RE =
-  /^###\s+\d+\.\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
+  /^###(?:\s+\d+\.)?\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
 const PURPOSE_RE = /^\*\*Purpose:\*\*\s+(.+)$/m;
 const MODULE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
 const OUTLINE_MODULE_ROW_RE =
-  /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
+  /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(?:(?:`[^`]+`|[^|]+?)\s*\|\s*)?(.+?)\s*\|$/gm;
 
 const materializeModuleMapFromProductPartOutline = (
   content: string,
@@ -38,14 +38,22 @@ const materializeModuleMapFromProductPartOutline = (
     return buildFailure("invalid-title", 1, "Expected `# Product Part: <title>` title");
   }
 
-  const productPartId = content.match(OUTLINE_PART_ID_RE)?.[1]?.trim();
+  const sections = collectSections(content, SECTION_RE);
+  const identityFields = sections.get("Identity")
+    ? parseFieldTable(sections.get("Identity")!, TABLE_ROW_RE)
+    : new Map<string, string>();
+  const purposeSection = sections.get("Purpose");
+  const purpose =
+    normalizeParagraph(purposeSection?.body ?? "") ||
+    identityFields.get("Purpose")?.trim() ||
+    "";
+  const productPartId =
+    content.match(OUTLINE_PART_ID_RE)?.[1]?.trim() ??
+    identityFields.get("Part ID")?.trim() ??
+    identityFields.get("Id")?.trim();
   if (!productPartId) {
     return buildFailure("missing-required-field", 1, "Missing required field: part_id");
   }
-
-  const sections = collectSections(content, SECTION_RE);
-  const purposeSection = sections.get("Purpose");
-  const purpose = normalizeParagraph(purposeSection?.body ?? "");
   if (!purpose) {
     return buildFailure(
       "missing-required-field",
@@ -57,11 +65,15 @@ const materializeModuleMapFromProductPartOutline = (
   return buildModuleMap({
     content,
     productPartId,
-    productPartTitle: normalizeCell(productPartTitle),
+    productPartTitle:
+      identityFields.get("Product Part")?.trim() ??
+      identityFields.get("Name")?.trim() ??
+      normalizeCell(productPartTitle),
     purpose,
     ...(() => {
       const clusterResult = parseClusters({
-        section: sections.get("Cluster Inventory"),
+        section:
+          sections.get("Owned Clusters") ?? sections.get("Cluster Inventory"),
         productPartId,
         headerPattern: OUTLINE_CLUSTER_HEADER_RE,
         rowPattern: OUTLINE_MODULE_ROW_RE,
@@ -73,7 +85,11 @@ const materializeModuleMapFromProductPartOutline = (
       };
     })(),
     standaloneModules: parseModuleRows(
-      sections.get("Direct Standalone Modules Under This Part")?.body ?? "",
+      (
+        sections.get("Direct Standalone Modules Under This Part") ??
+        sections.get("Standalone Modules") ??
+        sections.get("Owned Standalone Modules")
+      )?.body ?? "",
       productPartId,
       OUTLINE_MODULE_ROW_RE
     ),

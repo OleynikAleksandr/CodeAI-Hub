@@ -60,38 +60,39 @@ const createCanonicalTableIndex = (): string =>
     "| 2 | `project-manager-ui` | `Project Manager UI` | Shows the staged diagram workflow to the user. |",
   ].join("\n");
 
-const createOutlineProductPartFile = (): string =>
+const createIdentityTableProductPartFile = (): string =>
   [
     "# Product Part: VS Code Extension Shell",
     "",
-    "- `part_id`: `vscode-extension-shell`",
-    "- `index_order`: `1`",
+    "## Identity",
+    "",
+    "| Field | Value |",
+    "| --- | --- |",
+    "| Part ID | `vs-code-extension-shell` |",
+    "| Canonical order | `1` |",
+    "| Product Part | `VS Code Extension Shell` |",
     "",
     "## Purpose",
     "",
     "`VS Code Extension Shell` is the distribution-and-settings shell of the product.",
-    "It owns installation, first launch, desktop handoff into `Project Manager`, and global/provider configuration surfaces.",
     "",
-    "## Cluster Inventory",
+    "## Owned Clusters",
     "",
-    "### 1. `shell-bootstrap-and-environment-preparation`",
+    "### `shell-bootstrap-and-environment-preparation`",
+    "",
+    "**Status:** confirmed cluster from `virtual-simulation.md`.",
     "",
     "**Purpose:** turn the extension installation into a runnable local product setup and provide a clear standalone launch path into `Project Manager`.",
     "",
-    "| Module ID | Module | Purpose |",
-    "| --- | --- | --- |",
-    "| `environment-preparation` | `Environment preparation` | Prepare the local environment and required local components during installation and first launch. |",
-    "| `dependency-bootstrap` | `Dependency bootstrap` | Pull the dependencies needed for the rest of the product to run locally. |",
-    "| `desktop-launch-entrypoint` | `Desktop launch entrypoint` | Create and maintain the standalone launch path or desktop shortcut for `Project Manager`. |",
-    "",
-    "## Direct Standalone Modules Under This Part",
-    "",
-    "- None at the current evidence level. The part currently resolves cleanly into the cluster above.",
+    "| Module ID | Module | Status | Purpose |",
+    "| --- | --- | --- | --- |",
+    "| `environment-preparation` | `Environment Preparation` | `inferred seed` | Prepare the local environment and required local components during installation and first launch. |",
+    "| `dependency-bootstrap` | `Dependency Bootstrap` | `inferred seed` | Pull the dependencies needed for the rest of the product to run locally. |",
+    "| `desktop-launch-entrypoint` | `Desktop Launch Entrypoint` | `inferred seed` | Create and maintain the standalone launch path or desktop shortcut for `Project Manager`. |",
   ].join("\n");
 
 test("diagram modules orchestration refreshes workflow state after turn_completed without structured_output", async () => {
   const source = await readFile(ORCHESTRATION_SOURCE_PATH, "utf8");
-
   assert.equal(
     source.includes('artifact !== null || eventType === "turn_completed"'),
     true,
@@ -109,7 +110,6 @@ test("diagram modules progress snapshot points to next product part after index-
     path.join(os.tmpdir(), "diagram-modules-file-change-")
   );
   const workspaceSlug = "demo-workspace";
-
   try {
     const indexPath = path.join(
       workspaceRoot,
@@ -120,12 +120,10 @@ test("diagram modules progress snapshot points to next product part after index-
       encoding: "utf8",
       flag: "w",
     });
-
     const snapshot = await readDiagramModulesProgressSnapshot({
       workspaceRoot,
       workspaceSlug,
     });
-
     assert.notEqual(snapshot, null);
     assert.equal(snapshot?.substep, "generate_product_part");
     assert.equal(snapshot?.plannedCount, 2);
@@ -140,7 +138,6 @@ test("diagram modules progress snapshot points to next product part after index-
 test("diagram modules progressive skeleton parses the canonical order heading format", () => {
   const model = buildDiagramModulesSkeletonFromIndex(createCanonicalOrderIndex());
   const productParts = model.productParts ?? [];
-
   assert.equal(productParts.length, 2);
   assert.deepEqual(
     productParts.map((part) => ({
@@ -253,7 +250,7 @@ test("diagram modules progress snapshot also reads the canonical product parts t
   }
 });
 
-test("diagram modules progressive loader parses the live outline product part format", async () => {
+test("diagram modules progressive loader parses the live identity-table product part format", async () => {
   const workspaceSlug = "demo-workspace";
   const result = await loadDiagramModulesProgressiveResult({
     workspaceSlug,
@@ -264,12 +261,15 @@ test("diagram modules progressive loader parses the live outline product part fo
           status: "ok",
           content: createCanonicalTableIndex().replace(
             "local-core-runtime",
-            "vscode-extension-shell"
+            "vs-code-extension-shell"
           ).replace("Local Core Runtime", "VS Code Extension Shell"),
         } as const;
       }
-      if (artifactPath.endsWith("product-parts/vscode-extension-shell.md")) {
-        return { status: "ok", content: createOutlineProductPartFile() } as const;
+      if (artifactPath.endsWith("product-parts/vs-code-extension-shell.md")) {
+        return {
+          status: "ok",
+          content: createIdentityTableProductPartFile(),
+        } as const;
       }
       return { status: "missing" } as const;
     },
@@ -290,7 +290,9 @@ test("diagram modules progressive loader parses the live outline product part fo
     ]
   );
   assert.equal(
-    result.model.productParts?.find((part) => part.id === "vscode-extension-shell")
+    result.model.productParts?.find(
+      (part) => part.id === "vs-code-extension-shell"
+    )
       ?.clusterIds[0],
     "shell-bootstrap-and-environment-preparation"
   );
