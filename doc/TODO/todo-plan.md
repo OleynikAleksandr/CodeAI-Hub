@@ -186,12 +186,24 @@
 2. [DONE] Git Commit: `fix(diagram-workflow): recover staged index parsing after retest` (hash: `b1811063`)
 
 ### Stream: Diagram Modules source surface cleanup
-1. [TODO] Вычистить из `Diagram Modules` panel и `Source` mode legacy inventory-first copy: intro text, canonical source label/path и pending message должны честно описывать staged `product-parts.index.md` baseline и runtime-owned aggregate, без возврата к `module-inventory.md` как primary artifact stage (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `fix(diagram-ui): align diagram modules source surface with staged flow`).
-2. [TODO] Git Commit: `fix(diagram-ui): align diagram modules source surface with staged flow` (hash: TBD)
+1. [DONE] Вычистить из `Diagram Modules` panel и `Source` mode legacy inventory-first copy: intro text, canonical source label/path и pending message должны честно описывать staged `product-parts.index.md` baseline и runtime-owned aggregate, без возврата к `module-inventory.md` как primary artifact stage (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`; expected commit: `fix(diagram-ui): align diagram modules source surface with staged flow`).
+2. [DONE] Git Commit: `fix(diagram-ui): align diagram modules source surface with staged flow` (hash: `a8e862c2`)
 
 ### Stream: Diagram Modules empty-state copy cleanup
-1. [TODO] Переписать misleading empty-canvas copy в visual shell так, чтобы index-first staged state больше не выглядел как ошибка пользователя и не советовал “add semantic entities”, закрепив это отдельным targeted test без смешивания со source-surface fix (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, targeted test file; expected commit: `fix(diagram-ui): clarify diagram modules empty staged state`).
-2. [TODO] Git Commit: `fix(diagram-ui): clarify diagram modules empty staged state` (hash: TBD)
+1. [DONE] Переписать misleading empty-canvas copy в visual shell так, чтобы index-first staged state больше не выглядел как ошибка пользователя и не советовал “add semantic entities”, закрепив это отдельным targeted test без смешивания со source-surface fix (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, targeted test file; expected commit: `fix(diagram-ui): clarify diagram modules empty staged state`).
+2. [DONE] Git Commit: `fix(diagram-ui): clarify diagram modules empty staged state` (hash: `42e31c24`)
+
+### Stream: Release notes sync
+1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под fixes после retest `1.1.770`: tolerant parsing staged index, recovery hidden continuation path через корректный progress snapshot и cleanup `Diagram Modules` user-facing surface (`Source`, preamble, empty-state) (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules retest blocker fixes`).
+2. [TODO] Git Commit: `docs(release): sync diagram modules retest blocker fixes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После release-notes sync выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline с parser recovery и cleanup `Diagram Modules` surface (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules retest blocker release`).
+2. [TODO] Git Commit: `chore(release): prepare diagram modules retest blocker release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с пользовательским retest `1.1.770`, root cause analysis и итогами parser/UI cleanup release, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules retest blocker release`).
+2. [TODO] Git Commit: `docs(session): record diagram modules retest blocker release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
