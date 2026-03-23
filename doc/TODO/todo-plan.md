@@ -43,7 +43,7 @@
 1. [DONE] Добавить server-side `diagramModulesProgress` snapshot на основе `product-parts.index.md`, part-файлов и aggregate readiness, чтобы runtime мог публиковать `substep/currentPartId/generatedCount` до реального orchestration loop и UI не работал вслепую (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): expose diagram modules progress snapshot`).
 2. [DONE] Git Commit: `feat(diagram-workflow): expose diagram modules progress snapshot` (hash: `8cd6f64b`)
 3. [DONE] Протянуть `diagramModulesProgress` в PM workflow-state client, чтобы hidden orchestration, progress surface и input lock могли опираться на канонический `substep/cursor` вместо эвристик по артефактам; при restart `Diagram Modules` использовать `product-parts.index.md` как continuation source вместо повторного захода от `virtual-simulation.md` (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): consume diagram modules progress snapshot`).
-4. [TODO] Git Commit: `feat(diagram-workflow): consume diagram modules progress snapshot` (hash: TBD)
+4. [DONE] Git Commit: `feat(diagram-workflow): consume diagram modules progress snapshot` (hash: `56d078dd`)
 
 ### Stream: Hidden continuation turns
 1. [DONE] Добавить transport-level hidden workflow turn control, чтобы runtime мог отправлять continuation subturn без записи fake user-message в dialog/unified history и при этом не протекал внутренний `workflowControl` в provider turn options (scope: `packages/core/src/remote-bridge/handlers/workflow-turn-control.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): hide internal workflow control turns`).
@@ -53,12 +53,12 @@
 
 ### Stream: Input lock until final review
 1. [DONE] Добавить PM-side sequence lock между hidden `Product Part` subturn-ами и снимать его только на review boundary без следующего continuation prompt, чтобы decomposition не повторял premature unlock bug старого giant-turn flow даже при коротком idle-window между turn-ами (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(session-ui): keep input locked during product part sequence`).
-2. [TODO] Git Commit: `fix(session-ui): keep input locked during product part sequence` (hash: TBD)
+2. [DONE] Git Commit: `fix(session-ui): keep input locked during product part sequence` (hash: `8a8a1e79`)
 
 ## Phase 40 — Progressive React Flow Materialization (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Index-first graph skeleton
-1. [TODO] Научить `Diagram Modules` loader читать `product-parts.index.md`, строить ordered skeleton `Product Part` containers и показывать placeholders для ещё не materialized part-файлов (scope: `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): load product part skeleton from index artifact`).
+1. [DONE] Научить `Diagram Modules` loader читать `product-parts.index.md`, строить skeleton `Product Part` containers и поверх него materialize-ить уже готовые part-файлы, чтобы visual graph начинал жить до появления compatibility aggregate `module-inventory.md` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-ui): load product part skeleton from index artifact`).
 2. [TODO] Git Commit: `feat(diagram-ui): load product part skeleton from index artifact` (hash: TBD)
 
 ### Stream: Progressive graph regeneration

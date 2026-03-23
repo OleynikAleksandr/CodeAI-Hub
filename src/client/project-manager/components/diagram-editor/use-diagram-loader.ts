@@ -8,65 +8,18 @@ import { api } from "../../api";
 import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
 import {
+  readWorkflowArtifact,
+  resolveDiagramPaths,
+  type DiagramEditorStage,
+  loadDiagramModulesProgressiveResult,
+} from "./diagram-modules-progressive-model";
+import {
   applyFlowSidecarPositions,
   parseFlowSidecar,
   type FlowSidecarDocument,
 } from "./flow-sidecar-types";
 
 export type DiagramLoaderStatus = "loading" | "missing" | "ready" | "error";
-export type DiagramEditorStage = "diagram_modules" | "diagram_facades";
-type DiagramPaths = {
-  readonly artifactPath: string;
-  readonly flowSidecarPath: string;
-  readonly label: string;
-};
-const resolveDiagramPaths = (
-  workspaceSlug: string,
-  stage: DiagramEditorStage
-): DiagramPaths =>
-  stage === "diagram_modules"
-    ? {
-        artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,
-        flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
-        label: "Diagram Modules",
-      }
-    : {
-        artifactPath: `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.md`,
-        flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.flow.json`,
-        label: "Diagram Facades",
-      };
-const readWorkflowArtifact = async (params: {
-  readonly httpUrl: string;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-  readonly path: string;
-}): Promise<
-  | { readonly status: "ok"; readonly content: string }
-  | { readonly status: "missing" }
-  | { readonly status: "error"; readonly error: string }
-> => {
-  const query = new URLSearchParams({
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-    path: params.path,
-    maxBytes: "300000",
-  });
-  try {
-    const response = await fetch(
-      `${params.httpUrl}/api/v1/orchestrator/workflow-artifact?${query.toString()}`,
-      { method: "GET" }
-    );
-    if (response.status === 404) return { status: "missing" };
-    if (!response.ok) return { status: "error", error: "Endpoint недоступен." };
-    const payload = (await response.json()) as Record<string, unknown> | null;
-    const content = typeof payload?.content === "string" ? payload.content : null;
-    return content === null
-      ? { status: "error", error: "Контент отсутствует." }
-      : { status: "ok", content };
-  } catch (error) {
-    return { status: "error", error: error instanceof Error ? error.message : String(error) };
-  }
-};
 export type DiagramLoaderResult = {
   readonly status: DiagramLoaderStatus;
   readonly content: string | null;
@@ -130,6 +83,41 @@ export const useDiagramLoader = (params: {
 
     void (async () => {
       if (params.stage === "diagram_modules") {
+        const progressiveResult = await loadDiagramModulesProgressiveResult({
+          workspaceSlug: params.workspaceSlug,
+          flowSidecarPath: paths.flowSidecarPath,
+          readArtifact: (path) =>
+            readWorkflowArtifact({
+              httpUrl,
+              workspacePath: params.workspacePath,
+              workspaceSlug: params.workspaceSlug,
+              path,
+            }),
+        });
+
+        if (cancelled) {
+          return;
+        }
+
+        if (progressiveResult.status === "ready") {
+          setContent(progressiveResult.content);
+          setModel(progressiveResult.model);
+          setFlowDocument(progressiveResult.flowDocument);
+          setProjection(progressiveResult.projection);
+          setStatus("ready");
+          return;
+        }
+
+        if (progressiveResult.status === "error") {
+          clearDiagram();
+          setStatus("error");
+          setError(
+            `Не удалось загрузить ${paths.label}: ${progressiveResult.error}`
+          );
+          setContent(progressiveResult.content ?? null);
+          return;
+        }
+
         const inventoryResult = await readWorkflowArtifact({
           httpUrl,
           workspacePath: params.workspacePath,
