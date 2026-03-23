@@ -97,11 +97,11 @@
 
 ### Stream: Release build
 1. [DONE] После принятия decomposition refactor и `Codex` stability fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для следующего пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare product part decomposition release`).
-2. [DONE] Git Commit: `chore(release): prepare product part decomposition release` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): prepare product part decomposition release` (hash: `18cd4660`)
 
 ### Stream: Session handoff
-1. [TODO] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с итогами product-part refactor, `Codex` timeout fix и release verification, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record product part decomposition release`).
-2. [TODO] Git Commit: `docs(session): record product part decomposition release` (hash: TBD)
+1. [DONE] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с итогами product-part refactor, `Codex` timeout fix и release verification, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record product part decomposition release`).
+2. [DONE] Git Commit: `docs(session): record product part decomposition release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
