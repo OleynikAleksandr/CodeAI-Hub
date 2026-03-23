@@ -329,3 +329,29 @@
 ### Stream: Session handoff
 1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.774`, canonical-order parser recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules canonical order recovery release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules canonical order recovery release` (hash: TBD)
+
+## Phase 52 — Diagram Modules Identity-Table Product Part Recovery After 1.1.775 (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Planning baseline
+1. [IN_PROGRESS] Зафиксировать новый пользовательский retest `1.1.775`: `product-parts.index.md` уже materialize-ится, `Product Part` плашки появляются и hidden continuation стартует, но первый live `product-parts/<part-id>.md` снова ломает `Diagram Modules`, потому что staged parser всё ещё ждёт старый outline DSL с ``part_id`` bullet и не понимает текущий identity-table format (`## Identity`, `## Owned Clusters`, module rows with `Status`); оформить planning-doc под parser recovery и новый release baseline (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_IdentityTable_Blockers_After_1_1_775_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules identity-table blockers after 1.1.775`).
+2. [TODO] Git Commit: `docs(plan): capture diagram modules identity-table blockers after 1.1.775` (hash: TBD)
+
+### Stream: Identity-table parser recovery
+1. [TODO] Научить staged `Product Part` parser принимать live identity-table format continuation files и сохранить backward compatibility с уже поддержанным bullet-outline format, не трогая восстановленный index parser и hidden continuation path из `1.1.775` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): parse identity-table product part files`).
+2. [TODO] Git Commit: `fix(diagram-workflow): parse identity-table product part files` (hash: TBD)
+
+### Stream: Aggregate regression coverage
+1. [TODO] Добавить отдельный regression test, что compatibility aggregate тоже собирается из live identity-table `Product Part` file, чтобы следующий release не починил только progressive UI и не сломал финальный `module-inventory.md` (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover identity-table product part aggregate`).
+2. [TODO] Git Commit: `test(diagram-workflow): cover identity-table product part aggregate` (hash: TBD)
+
+### Stream: Release notes sync
+1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.775`: recovery для live identity-table `product-parts/<part-id>.md`, alias parsing `Owned Clusters` и tolerance к module rows с `Status` колонкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes`).
+2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После identity-table parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live `Product Part` continuation file при сохранённых index skeleton и hidden continuation (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules identity-table recovery release`).
+2. [TODO] Git Commit: `chore(release): prepare diagram modules identity-table recovery release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.775`, identity-table parser recovery, aggregate regression coverage и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules identity-table recovery release`).
+2. [TODO] Git Commit: `docs(session): record diagram modules identity-table recovery release` (hash: TBD)
