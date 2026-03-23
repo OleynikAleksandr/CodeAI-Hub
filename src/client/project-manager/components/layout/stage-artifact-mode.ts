@@ -6,8 +6,8 @@ const DIAGRAM_TOOL_SOURCE: Readonly<
   Record<DiagramTool, { readonly label: string; readonly path: string }>
 > = {
   "Diagram Modules": {
-    label: "module-inventory.md",
-    path: "diagram_modules/module-inventory.md",
+    label: "product-parts.index.md",
+    path: "diagram_modules/product-parts.index.md",
   },
   "Diagram Facades": {
     label: "facade-map.md",
@@ -61,7 +61,7 @@ export const resolveDiagramSourcePendingMessage = (
   tool: string | null
 ): string => {
   if (tool === "Diagram Modules") {
-    return "Source для Diagram Modules станет доступен после создания `module-inventory.md`. До этого шаг опирается на upstream artifact `virtual-simulation.md` из Virtual Simulation.";
+    return "Source для Diagram Modules станет доступен после создания `product-parts.index.md`. Затем runtime materializes `product-parts/<part-id>.md` и позже собирает `module-inventory.md` как compatibility aggregate.";
   }
   if (tool === "Diagram Facades") {
     return "Source для Diagram Facades станет доступен после создания `facade-map.md`. До этого шаг опирается на upstream artifact `module-inventory.md` из Diagram Modules.";

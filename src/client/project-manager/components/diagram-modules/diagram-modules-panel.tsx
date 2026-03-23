@@ -14,7 +14,7 @@ export const DiagramModulesPanel: React.FC<{
   readonly workspaceSlug: string;
   readonly refreshKey?: number;
 }> = (props) => {
-  const inventoryArtifactPath = `.codeai-hub/${props.workspaceSlug}/diagram_modules/module-inventory.md`;
+  const indexArtifactPath = `.codeai-hub/${props.workspaceSlug}/diagram_modules/product-parts.index.md`;
   const {
     status,
     content,
@@ -60,14 +60,14 @@ export const DiagramModulesPanel: React.FC<{
 
   return (
     <DiagramStagePanelScaffold
-      artifactFileName="module-inventory.md"
-      artifactPath={inventoryArtifactPath}
+      artifactFileName="product-parts.index.md"
+      artifactPath={indexArtifactPath}
       children={null}
       conflicts={[]}
       content={content}
       error={error}
       initialNodes={projection?.nodes}
-      introText="Artifacts shows the derived visual module map. Use Source to review module-inventory.md before the diagram is rendered."
+      introText="Artifacts show the staged Diagram Modules structure starting from `product-parts.index.md`. Use Source to inspect the index while runtime materializes `product-parts/<part-id>.md` and later composes `module-inventory.md`."
       onDismissConflicts={() => {}}
       onNodesChange={async (nodes) => {
         if (!visualProjection) {
