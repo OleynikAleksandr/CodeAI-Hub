@@ -72,10 +72,7 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
   {
     relativePath:
       ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
-    snippets: [
-      "formal subsystem container",
-      ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
-    ],
+    snippets: ["formal subsystem container", "product-parts.index.md"],
   },
   {
     relativePath:
@@ -100,9 +97,9 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     relativePath:
       ".codeai-hub/templates/diagram_modules/product-part-template.md",
     snippets: [
-      "# Module Inventory",
-      "This staged file should materialize exactly one Product Part.",
-      "### Module: provider-session-bridge",
+      "# Product Part:",
+      "File materializes exactly one Product Part",
+      "provider-session-bridge",
     ],
   },
   {
