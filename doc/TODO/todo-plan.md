@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`, `doc/Sessions/Session132.md`, `doc/Sessions/Session133.md`, `doc/Sessions/Session134.md`, `doc/Sessions/Session135.md`, `doc/Sessions/Session137.md`, `doc/Sessions/Session138.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_770_Architecture.md`, `doc/Sessions/Session132.md`, `doc/Sessions/Session133.md`, `doc/Sessions/Session134.md`, `doc/Sessions/Session135.md`, `doc/Sessions/Session137.md`, `doc/Sessions/Session138.md`, `doc/Sessions/Session139.md`, `doc/Sessions/Session140.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -172,6 +172,22 @@
 ### Stream: Stage-specific compose opener
 1. [DONE] Убрать legacy opener `Собери артефакт на основе анкеты и шаблона.` из compose prompt для `diagram_modules` и `diagram_facades`, заменить его stage-specific direct-input wording и закрепить это regression tests, чтобы retest `1.1.770` не провоцировал у агента лишние мысли про несуществующий template input (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): remove legacy template header from diagram stages`).
 2. [DONE] Git Commit: `fix(diagram-workflow): remove legacy template header from diagram stages` (hash: `3236a549`)
+
+## Phase 47 — Diagram Modules Retest Blockers After 1.1.770 (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Planning baseline
+1. [DONE] Зафиксировать пользовательский retest `1.1.770`: пустой React Flow после `product-parts.index.md`, несработавший hidden continuation и legacy `module-inventory` tails в `Diagram Modules` preamble / Source; оформить planning-doc и новый session report с уже локализованными root cause (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_770_Architecture.md`, `doc/Sessions/Session140.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules retest blockers after 1.1.770`).
+2. [TODO] Git Commit: `docs(plan): capture diagram modules retest blockers after 1.1.770` (hash: TBD)
+3. [TODO] После planning-baseline commit-а синхронизировать active plan и `Session140` фактическим hash-ом, чтобы следующий cold start не начинался с `TBD` (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session140.md`; expected commit: `docs(session): sync diagram modules retest blocker handoff`).
+4. [TODO] Git Commit: `docs(session): sync diagram modules retest blocker handoff` (hash: TBD)
+
+### Stream: Index parser recovery
+1. [TODO] Научить progressive loader и workflow progress snapshot читать реальный numbered `Canonical order` format текущего `product-parts.index.md`, чтобы после первого agent write появлялся staged skeleton и hidden continuation видел `currentPartId` вместо зависания на `substep: index` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted test file; expected commit: `fix(diagram-workflow): recover staged index parsing after retest`).
+2. [TODO] Git Commit: `fix(diagram-workflow): recover staged index parsing after retest` (hash: TBD)
+
+### Stream: Diagram Modules surface cleanup
+1. [TODO] Вычистить из `Diagram Modules` visual shell последние tails старой inventory-first архитектуры: legacy intro text, `Source` pending message и misleading empty-canvas copy, чтобы user-facing surface честно описывал staged `product-parts.index.md` baseline и runtime-owned aggregate (scope: `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`, targeted test file; expected commit: `fix(diagram-ui): align diagram modules surface with staged flow`).
+2. [TODO] Git Commit: `fix(diagram-ui): align diagram modules surface with staged flow` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
