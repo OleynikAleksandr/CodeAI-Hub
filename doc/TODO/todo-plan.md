@@ -125,11 +125,11 @@
 
 ### Stream: Release build
 1. [DONE] После prompt/template repair и continuation fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного ретеста `Diagram Modules` без ручного `Продолжай` после `Phase 1` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare staged prompt continuation release`).
-2. [DONE] Git Commit: `chore(release): prepare staged prompt continuation release` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): prepare staged prompt continuation release` (hash: `92f4174a`)
 
 ### Stream: Session handoff
-1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по prompt/template repair и continuation retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record staged prompt continuation release`).
-2. [TODO] Git Commit: `docs(session): record staged prompt continuation release` (hash: TBD)
+1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по prompt/template repair и continuation retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record staged prompt continuation release`).
+2. [DONE] Git Commit: `docs(session): record staged prompt continuation release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
