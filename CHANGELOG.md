@@ -3,6 +3,13 @@
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
 ## [1.1.772] - 2026-03-23
+## [1.1.773] - 2026-03-23
+### Fixed
+- `Diagram Modules` now parses the live human-readable staged `product-parts/<part-id>.md` format in the progressive loader, so the first continuation file expands the graph instead of failing on legacy `Metadata`, `Simple Relations`, or flat inventory section requirements.
+- Compatibility aggregate composition now uses the same staged `Product Part` parser, allowing runtime to build `module-inventory.md` from the real continuation files after the staged sequence completes.
+- Added regression coverage for both paths: the progressive UI must accept the live staged part format, and aggregate composition must emit canonical inventory DSL from those same files.
+
+## [1.1.772] - 2026-03-23
 ### Fixed
 - `Diagram Modules` `Source` now becomes available as soon as `product-parts.index.md` exists; the availability gate no longer waits for `module-inventory.md` before opening the staged canonical artifact.
 - `Diagram Modules` now reads the live Markdown table format under `Canonical Product Parts`, so the first `product-parts.index.md` immediately produces a visible staged skeleton instead of an empty canvas.

@@ -259,19 +259,19 @@
 ## Phase 49 — Diagram Modules Product Part Parser Recovery After 1.1.772 (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Planning baseline
-1. [TODO] Зафиксировать новый пользовательский retest `1.1.772`: index skeleton и hidden continuation уже ожили, но первый materialized `product-parts/<part-id>.md` падает на legacy inventory parser, потому что live staged part file имеет human-readable format (`Product Part` table, `Boundaries`, `Clusters`, `Standalone Modules`, `Non-Ownership`), а не canonical inventory DSL; оформить planning-doc под staged part parser recovery и aggregate handoff (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_LiveFormat_Parser_Blockers_After_1_1_772_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules product part parser blockers after 1.1.772`).
-2. [TODO] Git Commit: `docs(plan): capture diagram modules product part parser blockers after 1.1.772` (hash: TBD)
+1. [DONE] Зафиксировать новый пользовательский retest `1.1.772`: index skeleton и hidden continuation уже ожили, но первый materialized `product-parts/<part-id>.md` падает на legacy inventory parser, потому что live staged part file имеет human-readable format (`Product Part` table, `Boundaries`, `Clusters`, `Standalone Modules`, `Non-Ownership`), а не canonical inventory DSL; оформить planning-doc под staged part parser recovery и aggregate handoff (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_LiveFormat_Parser_Blockers_After_1_1_772_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules product part parser blockers after 1.1.772`).
+2. [DONE] Git Commit: `docs(plan): capture diagram modules product part parser blockers after 1.1.772` (hash: `6d54f545`)
 
 ### Stream: Product Part parser recovery
-1. [TODO] Ввести staged parser для живого human-readable `product-parts/<part-id>.md` format и перевести на него progressive loader, чтобы `Artifacts` не падал на первом materialized part и мог расширять skeleton реальными clusters/modules без требования `Metadata`/`Simple Relations` legacy inventory DSL (scope: staged part parser module, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, targeted parser/progressive regression test file; expected commit: `fix(diagram-workflow): parse staged product part files in progressive loader`).
-2. [TODO] Git Commit: `fix(diagram-workflow): parse staged product part files in progressive loader` (hash: TBD)
+1. [DONE] Ввести staged parser для живого human-readable `product-parts/<part-id>.md` format и перевести на него progressive loader, чтобы `Artifacts` не падал на первом materialized part и мог расширять skeleton реальными clusters/modules без требования `Metadata`/`Simple Relations` legacy inventory DSL (scope: staged part parser module, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, targeted parser/progressive regression test file; expected commit: `fix(diagram-workflow): parse staged product part files in progressive loader`).
+2. [DONE] Git Commit: `fix(diagram-workflow): parse staged product part files in progressive loader` (hash: `37892966`)
 
 ### Stream: Aggregate recovery
-1. [TODO] Перевести compatibility aggregate composer на тот же staged part parser, чтобы runtime не падал на live `product-parts/<part-id>.md` при сборке финального `module-inventory.md` после завершения continuation sequence (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, targeted aggregate regression test file; expected commit: `fix(diagram-workflow): build aggregate from staged product part files`).
-2. [TODO] Git Commit: `fix(diagram-workflow): build aggregate from staged product part files` (hash: TBD)
+1. [DONE] Перевести compatibility aggregate composer на тот же staged part parser, чтобы runtime не падал на live `product-parts/<part-id>.md` при сборке финального `module-inventory.md` после завершения continuation sequence (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, targeted aggregate regression test file; expected commit: `fix(diagram-workflow): build aggregate from staged product part files`).
+2. [DONE] Git Commit: `fix(diagram-workflow): build aggregate from staged product part files` (hash: `6bb36a79`)
 
 ### Stream: Release notes sync
-1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.772`: staged `product-parts/<part-id>.md` parser recovery в progressive loader и compatibility aggregate (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.772 retest fixes`).
+1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.772`: staged `product-parts/<part-id>.md` parser recovery в progressive loader и compatibility aggregate (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.772 retest fixes`).
 2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.772 retest fixes` (hash: TBD)
 
 ### Stream: Release build
