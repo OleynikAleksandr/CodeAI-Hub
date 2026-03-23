@@ -17,6 +17,11 @@ type DiagramEditorShellProps = {
   ) => void | Promise<void>;
 };
 
+const resolveEmptyStateMessage = (title: string): string =>
+  title === "Diagram Modules"
+    ? "Staged shell is ready. After `product-parts.index.md` is parsed, Product Part skeleton nodes appear here and expand as runtime materializes each `product-parts/<part-id>.md`."
+    : "The diagram has no renderable nodes yet. Review the stage artifact or rerun the step if this state persists.";
+
 export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   projection,
   title,
@@ -68,10 +73,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       }}
     >
       {projection.nodes.length === 0 ? (
-        <div className="pm-placeholder">
-          Visual shell is ready, but the diagram is empty. Add semantic entities
-          or rerun the stage to populate the graph.
-        </div>
+        <div className="pm-placeholder">{resolveEmptyStateMessage(title)}</div>
       ) : null}
       <div style={{ display: "flex", flex: "1 1 auto", minHeight: 420 }}>
         <DiagramEditorFacade
