@@ -53,8 +53,12 @@
 2. [DONE] Git Commit: `docs(release): sync diagram modules layout release notes` (hash: `d048904b`)
 
 ### Stream: Release build
-1. [IN_PROGRESS] После принятия fixes по `Diagram Modules` review-surface и autolayout обновить релизные документы, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline (scope: `README.md`, `CHANGELOG.md`, release/version manifests and package metadata; expected commit: `chore(release): prepare diagram modules review layout release`).
-2. [TODO] Git Commit: `chore(release): prepare diagram modules review layout release` (hash: TBD)
+1. [DONE] После принятия fixes по `Diagram Modules` review-surface и autolayout обновить релизные документы, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline (scope: `README.md`, `CHANGELOG.md`, release/version manifests and package metadata; expected commit: `chore(release): prepare diagram modules review layout release`).
+2. [DONE] Git Commit: `chore(release): prepare diagram modules review layout release` (hash: `037bf15c`)
+
+### Stream: Release gate contract sync
+1. [DONE] Синхронизировать sidecar type-tests с новым `purpose` contract для `Product Part / Cluster`, чтобы финальный `build-release.sh --use-current-version` проходил type-check без post-release drift (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-layout): sync flow sidecar purpose contract`).
+2. [TODO] Git Commit: `test(diagram-layout): sync flow sidecar purpose contract` (hash: TBD)
 
 ### Stream: Session handoff
 1. [TODO] После успешной релизной сборки синхронизировать active plan фактическими hash-ами, оформить новый session report и зафиксировать clean-tree handoff вместе с outcome-ами dense-layout regression (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules review layout release`).
