@@ -46,8 +46,10 @@
 4. [TODO] Git Commit: `feat(diagram-workflow): consume diagram modules progress snapshot` (hash: TBD)
 
 ### Stream: Hidden continuation turns
-1. [TODO] Реализовать runtime-controlled hidden continuation turns для последовательной генерации `Product Part`, чтобы следующий subturn запускался без fake user-visible `Продолжай`, а continuation packet содержал cursor, generated parts и stop conditions (scope: `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): orchestrate hidden product part turns`).
-2. [TODO] Git Commit: `feat(diagram-workflow): orchestrate hidden product part turns` (hash: TBD)
+1. [DONE] Добавить transport-level hidden workflow turn control, чтобы runtime мог отправлять continuation subturn без записи fake user-message в dialog/unified history и при этом не протекал внутренний `workflowControl` в provider turn options (scope: `packages/core/src/remote-bridge/handlers/workflow-turn-control.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): hide internal workflow control turns`).
+2. [TODO] Git Commit: `feat(diagram-workflow): hide internal workflow control turns` (hash: TBD)
+3. [TODO] Реализовать PM-side orchestration loop для `diagram_modules`: на `structured_output` сохранять staged artifacts, читать `diagramModulesProgress` и автоматически отправлять hidden continuation packet на следующий `Product Part` или aggregate compose до финального review boundary (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`, new PM orchestration helper, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): orchestrate hidden product part turns`).
+4. [TODO] Git Commit: `feat(diagram-workflow): orchestrate hidden product part turns` (hash: TBD)
 
 ### Stream: Input lock until final review
 1. [TODO] Удерживать session input locked между hidden product-part subturn-ами и отпускать его только на blocking ambiguity или на финальном review boundary, чтобы decomposition не повторил premature unlock bug старого giant-turn flow (scope: `src/client/ui/src/app-host/session-stream-snapshot-sync.ts`, `src/client/ui/src/session/input-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(session-ui): keep input locked during product part sequence`).

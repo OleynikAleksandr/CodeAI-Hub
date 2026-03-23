@@ -43,6 +43,10 @@ import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
+import {
+  shouldHideUserMessage,
+  stripInternalWorkflowTurnOptions,
+} from "./workflow-turn-control";
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
@@ -338,19 +342,6 @@ const extractContinuityThresholdPercentFromSettings = (options: {
   });
 };
 
-const stripOutputSchema = (
-  turnOptions?: Record<string, unknown>
-): Record<string, unknown> | undefined => {
-  if (!turnOptions) {
-    return;
-  }
-  if (!("outputSchema" in turnOptions)) {
-    return turnOptions;
-  }
-  const { outputSchema: _ignored, ...rest } = turnOptions;
-  return Object.keys(rest).length > 0 ? rest : undefined;
-};
-
 const resolveWorkflowStage = (
   stage: string | null | undefined
 ): WorkflowStageId | null =>
@@ -373,7 +364,7 @@ const resolveWorkflowTurnOptions = (params: {
   }
 
   return {
-    turnOptions: stripOutputSchema(params.turnOptions),
+    turnOptions: stripInternalWorkflowTurnOptions(params.turnOptions),
     appliedSchema: false,
     source: "none",
     stageMatched: true,
@@ -2146,6 +2137,7 @@ export class SessionRequestHandler {
     }
 
     const { content, turnOptions } = extracted;
+    const hiddenUserMessage = shouldHideUserMessage(turnOptions);
     this.logSessionMessageExtracted(sessionId, content, turnOptions);
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
@@ -2207,37 +2199,14 @@ export class SessionRequestHandler {
       return;
     }
 
-    const userMessage = this.sessionManager.appendMessage(
-      sessionId,
-      "user",
-      content
-    );
-    if (!userMessage) {
-      this.broadcaster({
-        type: "session:error",
-        payload: { sessionId, message: "Session not found" },
-      });
+    if (
+      !(
+        hiddenUserMessage ||
+        (await this.appendVisibleUserMessage(session, sessionId, content))
+      )
+    ) {
       return;
     }
-
-    try {
-      await this.sessionStorage.appendMessage(sessionId, userMessage);
-    } catch (error: unknown) {
-      this.logger.error(
-        "Failed to append unified session record",
-        error as Error,
-        {
-          sessionId,
-          providerId: session.providerId,
-        }
-      );
-      this.broadcaster({
-        type: "session:error",
-        payload: { sessionId, message: "Failed to persist message to history" },
-      });
-      return;
-    }
-    this.broadcaster({ type: "session:message", payload: userMessage });
 
     const binding = this.providerSessions.get(sessionId);
     const adapter = binding
@@ -2269,7 +2238,7 @@ export class SessionRequestHandler {
       });
       const providerTurnOptions = workflowTurnOptions.stageMatched
         ? workflowTurnOptions.turnOptions
-        : turnOptions;
+        : stripInternalWorkflowTurnOptions(turnOptions);
       if (workflowTurnOptions.appliedSchema) {
         this.logger.info("Applied workflow output schema", {
           sessionId,
@@ -2287,6 +2256,49 @@ export class SessionRequestHandler {
       this.logProviderSendMessageFailed(sessionId, binding, error);
       this.handleProviderFailure(binding.providerId, error, sessionId);
     }
+  }
+
+  private async appendVisibleUserMessage(
+    session: Session,
+    sessionId: string,
+    content: string
+  ): Promise<boolean> {
+    const userMessage = this.sessionManager.appendMessage(
+      sessionId,
+      "user",
+      content
+    );
+    if (!userMessage) {
+      this.broadcaster({
+        type: "session:error",
+        payload: { sessionId, message: "Session not found" },
+      });
+      return false;
+    }
+
+    try {
+      await this.sessionStorage.appendMessage(sessionId, userMessage);
+    } catch (error: unknown) {
+      this.logger.error(
+        "Failed to append unified session record",
+        error as Error,
+        {
+          sessionId,
+          providerId: session.providerId,
+        }
+      );
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId,
+          message: "Failed to persist message to history",
+        },
+      });
+      return false;
+    }
+
+    this.broadcaster({ type: "session:message", payload: userMessage });
+    return true;
   }
 
   async handleDelete(sessionId: string): Promise<void> {
