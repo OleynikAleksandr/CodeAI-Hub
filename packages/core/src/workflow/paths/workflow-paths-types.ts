@@ -4,6 +4,8 @@ export type WorkflowArtifactFileName =
   | "Final_Description.md"
   | "description.md"
   | "virtual-simulation.md"
+  | "product-parts.index.md"
+  | "product-part.md"
   | "module-inventory.md"
   | "module-map.flow.json"
   | "facade-map.md"
@@ -13,6 +15,7 @@ export type WorkflowArtifactFileName =
 export type WorkflowArtifactPath = {
   readonly stage: WorkflowStageId;
   readonly fileName: WorkflowArtifactFileName;
+  readonly partId?: string;
   readonly relativePath: string;
   readonly absolutePath: string;
 };
@@ -22,6 +25,7 @@ export type WorkflowArtifactPathParams = {
   readonly workspaceSlug: string;
   readonly stage: WorkflowStageId;
   readonly fileName: WorkflowArtifactFileName;
+  readonly partId?: string;
 };
 
 export type WorkflowArtifactPathResult =

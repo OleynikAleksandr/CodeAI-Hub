@@ -7,6 +7,7 @@ import type {
 } from "./workflow-paths-types";
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const PART_ID_FILE_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*\.md$/;
 
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
@@ -21,7 +22,15 @@ const WORKFLOW_STAGE_FILES = new Map<
 >([
   ["description", ["Final_Description.md"]],
   ["virtual_simulation", ["virtual-simulation.md"]],
-  ["diagram_modules", ["module-inventory.md", "module-map.flow.json"]],
+  [
+    "diagram_modules",
+    [
+      "product-parts.index.md",
+      "product-part.md",
+      "module-inventory.md",
+      "module-map.flow.json",
+    ],
+  ],
   [
     "diagram_facades",
     ["facade-map.md", "facade-map.flow.json", "facade-map.agent-baseline.md"],
@@ -91,7 +100,13 @@ export const resolveWorkflowArtifactPaths = (
     };
   }
 
-  const relativePath = `.codeai-hub/${params.workspaceSlug}/${params.stage}/${params.fileName}`;
+  const relativePath =
+    params.stage === "diagram_modules" && params.fileName === "product-part.md"
+      ? resolveProductPartRelativePath(params)
+      : `.codeai-hub/${params.workspaceSlug}/${params.stage}/${params.fileName}`;
+  if (!relativePath) {
+    return { ok: false, error: "Invalid product part path parameters" };
+  }
   const absolutePath = resolveSafeArtifactPath(
     params.workspaceRoot,
     relativePath
@@ -105,8 +120,34 @@ export const resolveWorkflowArtifactPaths = (
     value: {
       stage: params.stage,
       fileName: params.fileName,
+      partId:
+        params.stage === "diagram_modules" &&
+        params.fileName === "product-part.md"
+          ? params.partId
+          : undefined,
       relativePath,
       absolutePath,
     },
   };
+};
+
+const resolveProductPartRelativePath = (
+  params: WorkflowArtifactPathParams
+): string | null => {
+  if (
+    !(
+      params.stage === "diagram_modules" &&
+      params.fileName === "product-part.md"
+    )
+  ) {
+    return null;
+  }
+  if (!SLUG_RE.test(params.partId ?? "")) {
+    return null;
+  }
+  const fileName = `${params.partId}.md`;
+  if (!PART_ID_FILE_RE.test(fileName)) {
+    return null;
+  }
+  return `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/${fileName}`;
 };
