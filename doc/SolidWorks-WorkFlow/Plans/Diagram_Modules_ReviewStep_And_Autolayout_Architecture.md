@@ -237,3 +237,60 @@ Reviewer / long-discussion loop здесь признаётся важной б�
 
 Следующий обязательный шаг после этой фиксации evidence:
 - собрать новый локальный release baseline и прогнать release-level verification.
+
+---
+
+## 11. Post-Release Findings After 1.1.766 User Test
+
+Релиз `1.1.766` подтвердил, что направление исправлений выбрано верно:
+- purpose surface у `Product Part` и `Cluster` появился;
+- standalone modules больше не проваливаются в общий пустой нижний band;
+- общий dense `Product Part` стал заметно компактнее и понятнее.
+
+Но пользовательский тест сразу показал второй класс остаточных дефектов.
+
+### 11.1. Product Part header/body separation всё ещё нестабилен
+
+На плотном `Product Part` purpose block визуально доходит до верхней границы cluster-ов.
+Это означает, что body-area для cluster columns начинается не от реальной нижней точки header-content, а от сокращённого budget, который недооценивает высоту description.
+
+Следствие:
+- clusters могут визуально налезать на purpose surface;
+- проблема проявляется не только при длинном title, но и при длинном purpose text;
+- сам факт наличия purpose surface уже недостаточен, если container не умеет зарезервировать под неё весь vertical budget.
+
+### 11.2. Cluster header/body separation тоже остаётся нестабилен
+
+Во втором плотном сценарии первый module card внутри cluster-а всё ещё может подниматься слишком рано и налезать на description cluster-а.
+Это показывает, что старт module-stack считается не от фактического `header bottom`, а от приближённого значения.
+
+Следствие:
+- cluster description визуально конфликтует с первым module card;
+- perceived distance между модулями в разных cluster-ах кажется разной даже при одинаковом числе cards;
+- корень проблемы находится не в module gap как таковом, а в нестабильной стартовой точке первого module.
+
+### 11.3. Product Part purpose width использует горизонтальное место слишком слабо
+
+Верхняя правая зона `Product Part` уже существует, но purpose panel остаётся слишком узкой.
+Из-за этого:
+- текст purpose разбивается на лишние строки;
+- header artificially растёт по высоте;
+- overlap с cluster section проявляется сильнее;
+- рядом с title/meta остаётся неиспользуемое горизонтальное пространство.
+
+### 11.4. Принятые правила для второго pass
+
+1. `Product Part` body должен начинаться от реальной нижней границы всего header-content плюс фиксированный body-start gap.
+2. `Cluster` body должен начинаться от реальной нижней границы cluster header plus одинаковый fixed module-stack start gap.
+3. Product part purpose panel должна занимать большую доступную ширину справа, чтобы purpose text реже дробился на лишние строки.
+4. Первая module card в каждом cluster-е должна стартовать по единому контракту: `header bottom + fixed gap`.
+5. Gap между соседними module cards остаётся константой и не должен казаться разным из-за плавающей верхней точки stack-а.
+
+### 11.5. Execution impact
+
+Следующий implementation slice должен быть не новым redesign, а точечным second-pass fix:
+- пересчитать measurement contract для `Product Part` header;
+- пересчитать measurement contract для `Cluster` header;
+- расширить width allocation для `Product Part` purpose panel;
+- добить regression tests под stable header/body boundary и consistent stack start;
+- после этого собрать ещё один локальный release baseline для пользовательского retest.

@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`, `doc/Sessions/Session131.md`, `doc/Sessions/Session132.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -62,7 +62,39 @@
 
 ### Stream: Session handoff
 1. [DONE] После успешной релизной сборки синхронизировать active plan фактическими hash-ами, оформить новый session report и зафиксировать clean-tree handoff вместе с outcome-ами dense-layout regression (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules review layout release`).
-2. [TODO] Git Commit: `docs(session): record diagram modules review layout release` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record diagram modules review layout release` (hash: `d09fb5b0`)
+
+## Phase 35 — Diagram Modules Header Boundary Second Pass (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Planning baseline second pass
+1. [DONE] Зафиксировать post-release findings после пользовательского retest `1.1.766`: остаточные overlaps между purpose/description и body-area, узкий purpose panel у `Product Part`, а также нестабильный start offset для cluster module-stack; на этой базе открыть второй layout pass в planning-doc, todo-plan и новом session report (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session132.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram modules header boundary scope`).
+2. [TODO] Git Commit: `docs(plan): start diagram modules header boundary scope` (hash: TBD)
+
+### Stream: Product part purpose width and header boundary
+1. [TODO] Расширить purpose panel `Product Part` и пересчитать product-part header/body boundary по реальной нижней границе summary + purpose blocks, чтобы cluster section больше не налезал на description и header использовал доступную ширину эффективнее (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): widen product part purpose panel`).
+2. [TODO] Git Commit: `fix(diagram-ui): widen product part purpose panel` (hash: TBD)
+
+### Stream: Product part body start measurement
+1. [TODO] Пересчитать старт cluster section внутри `Product Part` по реальной measured высоте header, чтобы purpose panel и верхние cluster boundaries больше не пересекались даже в плотных сценариях с длинным description (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize product part header boundary`).
+2. [TODO] Git Commit: `fix(diagram-layout): stabilize product part header boundary` (hash: TBD)
+
+### Stream: Cluster stack start stabilization
+1. [TODO] Пересчитать cluster header/body boundary и старт первой module card от фактической нижней границы description, чтобы cluster description не пересекался с modules, а perceived gap внутри cluster-ов оставался консистентным (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize cluster stack offsets`).
+2. [TODO] Git Commit: `fix(diagram-layout): stabilize cluster stack offsets` (hash: TBD)
+
+## Phase 36 — Release Build After Header Boundary Fixes (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Release notes sync
+1. [TODO] Перед новой release-сборкой синхронизировать `README.md` и `CHANGELOG.md` под target `1.1.767`, чтобы следующий build cycle отражал second-pass fixes для `Diagram Modules` header/body separation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync header boundary release notes`).
+2. [TODO] Git Commit: `docs(release): sync header boundary release notes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После принятия second-pass fixes по `Diagram Modules` выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules header boundary release`).
+2. [TODO] Git Commit: `chore(release): prepare diagram modules header boundary release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После успешного релиза зафиксировать фактические hash-и second-pass streams, обновить session report результатами тестов и сборки, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, current session report file, related release docs if needed; expected commit: `docs(session): record diagram modules header boundary release`).
+2. [TODO] Git Commit: `docs(session): record diagram modules header boundary release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
