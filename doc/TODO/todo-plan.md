@@ -306,4 +306,26 @@
 
 ### Stream: Session handoff
 1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.773`, outline parser recovery, aggregate regression coverage и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules outline parser recovery release`).
-2. [TODO] Git Commit: `docs(session): record diagram modules outline parser recovery release` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record diagram modules outline parser recovery release` (hash: `c9e7964f`)
+
+## Phase 51 — Diagram Modules Canonical Order Heading Recovery After 1.1.774 (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Planning baseline
+1. [DONE] Зафиксировать новый пользовательский retest `1.1.774`: `product-parts.index.md` уже создаётся, но `Artifacts` остаётся пустым и hidden continuation не стартует, потому что live index drift-нул в новый `## Canonical Order` heading format (`### 1. \`part-id\``, `Name:`, `Purpose:`), а текущие parser-ы `1.1.774` всё ещё умеют читать только legacy `### Product Part: ...`, ordered list или markdown table; оформить planning-doc под parser recovery и новый release baseline (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_CanonicalOrder_Heading_Blockers_After_1_1_774_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules canonical order blockers after 1.1.774`).
+2. [TODO] Git Commit: `docs(plan): capture diagram modules canonical order blockers after 1.1.774` (hash: TBD)
+
+### Stream: Canonical order heading parser recovery
+1. [TODO] Научить progressive skeleton builder и `diagramModulesProgress` читать live `## Canonical Order` heading blocks с `### <n>. \`part-id\`` и полями `Name:` / `Purpose:`, чтобы после index write снова появлялись `Product Part` плашки и hidden continuation получал `currentPartId` вместо зависания на `substep: index` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted regression test file; expected commit: `fix(diagram-workflow): recover canonical order heading index parsing`).
+2. [TODO] Git Commit: `fix(diagram-workflow): recover canonical order heading index parsing` (hash: TBD)
+
+### Stream: Release notes sync
+1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.774`: recovery для live `Canonical Order` heading format в index parser и восстановление hidden continuation через корректный planned part detection (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.774 retest fixes`).
+2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.774 retest fixes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После canonical-order parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без пустого skeleton и без остановки continuation после `product-parts.index.md` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules canonical order recovery release`).
+2. [TODO] Git Commit: `chore(release): prepare diagram modules canonical order recovery release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.774`, canonical-order parser recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules canonical order recovery release`).
+2. [TODO] Git Commit: `docs(session): record diagram modules canonical order recovery release` (hash: TBD)
