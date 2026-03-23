@@ -298,10 +298,10 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.773`: outline `product-parts/<part-id>.md` parser recovery, backward compatibility с table-based staged format и aggregate regression coverage (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.773 retest fixes`).
-2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.773 retest fixes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync diagram modules 1.1.773 retest fixes` (hash: `c808962d`)
 
 ### Stream: Release build
-1. [TODO] После outline parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live outline `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules outline parser recovery release`).
+1. [DONE] После outline parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live outline `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules outline parser recovery release`).
 2. [TODO] Git Commit: `chore(release): prepare diagram modules outline parser recovery release` (hash: TBD)
 
 ### Stream: Session handoff
