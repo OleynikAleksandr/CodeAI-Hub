@@ -22,7 +22,7 @@ const TABLE_ROW_RE = /^\|\s*([^|]+?)\s*\|\s*(.+?)\s*\|$/gm;
 const CLUSTER_HEADER_RE =
   /^### Cluster(?: \d+\.)?\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
 const OUTLINE_CLUSTER_HEADER_RE =
-  /^###(?:\s+\d+\.)?\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
+  /^###(?:\s+\d+\.|\s+Cluster:)?\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
 const PURPOSE_RE = /^\*\*Purpose:\*\*\s+(.+)$/m;
 const MODULE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
@@ -73,7 +73,7 @@ const materializeModuleMapFromProductPartOutline = (
     ...(() => {
       const clusterResult = parseClusters({
         section:
-          sections.get("Owned Clusters") ?? sections.get("Cluster Inventory"),
+          sections.get("Owned Clusters") ?? sections.get("Cluster Inventory") ?? sections.get("Cluster Ownership"),
         productPartId,
         headerPattern: OUTLINE_CLUSTER_HEADER_RE,
         rowPattern: OUTLINE_MODULE_ROW_RE,

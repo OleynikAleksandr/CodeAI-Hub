@@ -38,11 +38,11 @@
 
 ### Stream: Bundled template sync
 1. [DONE] Regenerated `bundled-templates.ts` from canonical source assets, updated snippet checks in `template-sync-service.test.ts` to match canonical product-part template shape (`# Product Part:` instead of `# Module Inventory`) and fixed stale prompt snippet reference (scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): sync canonical staged template delivery`).
-2. [DONE] Git Commit: `test(diagram-workflow): sync canonical staged template delivery` (hash: TBD)
+2. [DONE] Git Commit: `test(diagram-workflow): sync canonical staged template delivery` (hash: `ad4b9272`)
 
 ### Stream: Parser alignment
-1. [TODO] Привести staged `Product Part` parser к чтению именно canonical single-part template и оставить только ограниченный additive compatibility shim для уже созданных drift-файлов вроде `Cluster Ownership` / `### Cluster: ...`, не трогая рабочий `product-parts.index.md` parser и hidden continuation path (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): align staged parser with canonical product part template`).
-2. [TODO] Git Commit: `fix(diagram-workflow): align staged parser with canonical product part template` (hash: TBD)
+1. [DONE] Outline parser path already supports canonical template. Added additive compatibility shim: `## Cluster Ownership` section fallback and `### Cluster: \`id\`` header pattern in OUTLINE_CLUSTER_HEADER_RE regex for existing drift files. Index parser untouched (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): align staged parser with canonical product part template`).
+2. [DONE] Git Commit: `fix(diagram-workflow): align staged parser with canonical product part template` (hash: TBD)
 
 ### Stream: Semantic validation hardening
 1. [TODO] Усилить validation/runtime guards так, чтобы `product-parts/<part-id>.md` не считался успешным semantic artifact только по `Part ID` и `Purpose`: если файл заявляет cluster/module ownership, но parser не materialize-ит ни одной вложенной сущности, runtime должен явно сигнализировать ошибку вместо тихого shallow-success (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): reject semantically-empty product part files`).
