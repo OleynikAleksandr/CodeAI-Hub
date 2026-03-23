@@ -272,10 +272,10 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.772`: staged `product-parts/<part-id>.md` parser recovery в progressive loader и compatibility aggregate (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.772 retest fixes`).
-2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.772 retest fixes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync diagram modules 1.1.772 retest fixes` (hash: `9540ce0c`)
 
 ### Stream: Release build
-1. [TODO] После staged part parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без progressive/aggregate parse failure на первом `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules product part parser recovery release`).
+1. [IN_PROGRESS] После staged part parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без progressive/aggregate parse failure на первом `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules product part parser recovery release`).
 2. [TODO] Git Commit: `chore(release): prepare diagram modules product part parser recovery release` (hash: TBD)
 
 ### Stream: Session handoff
