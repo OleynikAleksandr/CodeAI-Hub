@@ -2,6 +2,12 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.776] - 2026-03-23
+### Fixed
+- `Diagram Modules` now accepts the live identity-table `product-parts/<part-id>.md` continuation format (`# Product Part: ...`, `## Identity`, `## Owned Clusters`, module rows with `Status`), so the first materialized part no longer fails on the legacy `- \`part_id\`: ...` expectation.
+- The shared staged parser now tolerates both `Owned Clusters` / `Cluster Inventory` aliases and both three-column and four-column module tables, keeping progressive graph materialization aligned with the actual agent-authored markdown.
+- Added aggregate regression coverage for the same identity-table format, so `module-inventory.md` must still be composed from the live continuation files that power the progressive `Diagram Modules` graph.
+
 ## [1.1.775] - 2026-03-23
 ### Fixed
 - `Diagram Modules` now accepts the live `product-parts.index.md` canonical-order heading format (`## Canonical Order`, `### <n>. \`part-id\``, `Name:`, `Purpose:`), so the stage no longer produces an empty graph or stalls hidden continuation when the agent writes the newer index shape.

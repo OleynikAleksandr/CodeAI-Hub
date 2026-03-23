@@ -342,14 +342,14 @@
 
 ### Stream: Aggregate regression coverage
 1. [DONE] Добавить отдельный regression test, что compatibility aggregate тоже собирается из live identity-table `Product Part` file, чтобы следующий release не починил только progressive UI и не сломал финальный `module-inventory.md` (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover identity-table product part aggregate`).
-2. [TODO] Git Commit: `test(diagram-workflow): cover identity-table product part aggregate` (hash: TBD)
+2. [DONE] Git Commit: `test(diagram-workflow): cover identity-table product part aggregate` (hash: `559fbed1`)
 
 ### Stream: Release notes sync
-1. [IN_PROGRESS] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.775`: recovery для live identity-table `product-parts/<part-id>.md`, alias parsing `Owned Clusters` и tolerance к module rows с `Status` колонкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes`).
+1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.775`: recovery для live identity-table `product-parts/<part-id>.md`, alias parsing `Owned Clusters` и tolerance к module rows с `Status` колонкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes`).
 2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes` (hash: TBD)
 
 ### Stream: Release build
-1. [TODO] После identity-table parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live `Product Part` continuation file при сохранённых index skeleton и hidden continuation (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules identity-table recovery release`).
+1. [IN_PROGRESS] После identity-table parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live `Product Part` continuation file при сохранённых index skeleton и hidden continuation (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules identity-table recovery release`).
 2. [TODO] Git Commit: `chore(release): prepare diagram modules identity-table recovery release` (hash: TBD)
 
 ### Stream: Session handoff
