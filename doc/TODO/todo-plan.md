@@ -254,4 +254,30 @@
 
 ### Stream: Session handoff
 1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.771`, availability fix, table parser recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules 1.1.771 retest follow-up release`).
-2. [TODO] Git Commit: `docs(session): record diagram modules 1.1.771 retest follow-up release` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record diagram modules 1.1.771 retest follow-up release` (hash: `ecb9c87d`)
+
+## Phase 49 — Diagram Modules Product Part Parser Recovery After 1.1.772 (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Planning baseline
+1. [TODO] Зафиксировать новый пользовательский retest `1.1.772`: index skeleton и hidden continuation уже ожили, но первый materialized `product-parts/<part-id>.md` падает на legacy inventory parser, потому что live staged part file имеет human-readable format (`Product Part` table, `Boundaries`, `Clusters`, `Standalone Modules`, `Non-Ownership`), а не canonical inventory DSL; оформить planning-doc под staged part parser recovery и aggregate handoff (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_LiveFormat_Parser_Blockers_After_1_1_772_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules product part parser blockers after 1.1.772`).
+2. [TODO] Git Commit: `docs(plan): capture diagram modules product part parser blockers after 1.1.772` (hash: TBD)
+
+### Stream: Product Part parser recovery
+1. [TODO] Ввести staged parser для живого human-readable `product-parts/<part-id>.md` format и перевести на него progressive loader, чтобы `Artifacts` не падал на первом materialized part и мог расширять skeleton реальными clusters/modules без требования `Metadata`/`Simple Relations` legacy inventory DSL (scope: staged part parser module, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, targeted parser/progressive regression test file; expected commit: `fix(diagram-workflow): parse staged product part files in progressive loader`).
+2. [TODO] Git Commit: `fix(diagram-workflow): parse staged product part files in progressive loader` (hash: TBD)
+
+### Stream: Aggregate recovery
+1. [TODO] Перевести compatibility aggregate composer на тот же staged part parser, чтобы runtime не падал на live `product-parts/<part-id>.md` при сборке финального `module-inventory.md` после завершения continuation sequence (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, targeted aggregate regression test file; expected commit: `fix(diagram-workflow): build aggregate from staged product part files`).
+2. [TODO] Git Commit: `fix(diagram-workflow): build aggregate from staged product part files` (hash: TBD)
+
+### Stream: Release notes sync
+1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.772`: staged `product-parts/<part-id>.md` parser recovery в progressive loader и compatibility aggregate (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.772 retest fixes`).
+2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.772 retest fixes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После staged part parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без progressive/aggregate parse failure на первом `Product Part` continuation file (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules product part parser recovery release`).
+2. [TODO] Git Commit: `chore(release): prepare diagram modules product part parser recovery release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.772`, staged part parser recovery, aggregate recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules product part parser recovery release`).
+2. [TODO] Git Commit: `docs(session): record diagram modules product part parser recovery release` (hash: TBD)
