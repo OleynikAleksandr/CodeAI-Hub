@@ -338,14 +338,14 @@
 
 ### Stream: Identity-table parser recovery
 1. [DONE] Научить staged `Product Part` parser принимать live identity-table format continuation files и сохранить backward compatibility с уже поддержанным bullet-outline format, не трогая восстановленный index parser и hidden continuation path из `1.1.775` (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): parse identity-table product part files`).
-2. [TODO] Git Commit: `fix(diagram-workflow): parse identity-table product part files` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-workflow): parse identity-table product part files` (hash: `6cf9025e`)
 
 ### Stream: Aggregate regression coverage
-1. [IN_PROGRESS] Добавить отдельный regression test, что compatibility aggregate тоже собирается из live identity-table `Product Part` file, чтобы следующий release не починил только progressive UI и не сломал финальный `module-inventory.md` (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover identity-table product part aggregate`).
+1. [DONE] Добавить отдельный regression test, что compatibility aggregate тоже собирается из live identity-table `Product Part` file, чтобы следующий release не починил только progressive UI и не сломал финальный `module-inventory.md` (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover identity-table product part aggregate`).
 2. [TODO] Git Commit: `test(diagram-workflow): cover identity-table product part aggregate` (hash: TBD)
 
 ### Stream: Release notes sync
-1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.775`: recovery для live identity-table `product-parts/<part-id>.md`, alias parsing `Owned Clusters` и tolerance к module rows с `Status` колонкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes`).
+1. [IN_PROGRESS] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.775`: recovery для live identity-table `product-parts/<part-id>.md`, alias parsing `Owned Clusters` и tolerance к module rows с `Status` колонкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes`).
 2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes` (hash: TBD)
 
 ### Stream: Release build

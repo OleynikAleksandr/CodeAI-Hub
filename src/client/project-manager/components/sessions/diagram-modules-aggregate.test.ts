@@ -22,36 +22,43 @@ const createCanonicalTableIndex = (): string =>
     "| 1 | `local-core-runtime` | `Local Core Runtime` | Runs the main local orchestration. |",
   ].join("\n");
 
-const createOutlineProductPartFile = (): string =>
+const createIdentityTableProductPartFile = (): string =>
   [
     "# Product Part: Local Core Runtime",
     "",
-    "- `part_id`: `local-core-runtime`",
-    "- `index_order`: `1`",
+    "## Identity",
+    "",
+    "| Field | Value |",
+    "| --- | --- |",
+    "| Part ID | `local-core-runtime` |",
+    "| Canonical order | `1` |",
+    "| Product Part | `Local Core Runtime` |",
     "",
     "## Purpose",
     "",
     "`Local Core Runtime` owns the long-running local orchestration and stateful workflow execution.",
     "",
-    "## Cluster Inventory",
+    "## Owned Clusters",
     "",
-    "### 1. `runtime-orchestration`",
+    "### `runtime-orchestration`",
+    "",
+    "**Status:** confirmed cluster from `virtual-simulation.md`.",
     "",
     "**Purpose:** Coordinates workflow execution and staged progress.",
     "",
-    "| Module ID | Module | Purpose |",
-    "| --- | --- | --- |",
-    "| `workflow-step-runner` | `Workflow Step Runner` | Executes the active workflow step. |",
-    "| `workflow-state-store` | `Workflow State Store` | Persists staged progress. |",
+    "| Module ID | Module | Status | Purpose |",
+    "| --- | --- | --- | --- |",
+    "| `workflow-step-runner` | `Workflow Step Runner` | `inferred seed` | Executes the active workflow step. |",
+    "| `workflow-state-store` | `Workflow State Store` | `inferred seed` | Persists staged progress. |",
     "",
     "## Direct Standalone Modules Under This Part",
     "",
-    "| Module ID | Module | Purpose |",
-    "| --- | --- | --- |",
-    "| `provider-session-bridge` | `Provider Session Bridge` | Connects provider turns with runtime sessions. |",
+    "| Module ID | Module | Status | Purpose |",
+    "| --- | --- | --- | --- |",
+    "| `provider-session-bridge` | `Provider Session Bridge` | `inferred seed` | Connects provider turns with runtime sessions. |",
   ].join("\n");
 
-test("diagram modules aggregate composer builds module-inventory from outline staged product part files", async () => {
+test("diagram modules aggregate composer builds module-inventory from identity-table staged product part files", async () => {
   const originalFetch = globalThis.fetch;
   let writtenPath: string | null = null;
   let writtenContent: string | null = null;
@@ -70,7 +77,7 @@ test("diagram modules aggregate composer builds module-inventory from outline st
         return jsonResponse({ content: createCanonicalTableIndex() });
       }
       if (artifactPath?.endsWith("product-parts/local-core-runtime.md")) {
-        return jsonResponse({ content: createOutlineProductPartFile() });
+        return jsonResponse({ content: createIdentityTableProductPartFile() });
       }
       return new Response("missing", { status: 404 });
     }
