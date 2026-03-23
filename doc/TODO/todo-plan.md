@@ -324,8 +324,8 @@
 
 ### Stream: Release build
 1. [DONE] После canonical-order parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без пустого skeleton и без остановки continuation после `product-parts.index.md` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules canonical order recovery release`).
-2. [TODO] Git Commit: `chore(release): prepare diagram modules canonical order recovery release` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): prepare diagram modules canonical order recovery release` (hash: `9d812010`)
 
 ### Stream: Session handoff
-1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.774`, canonical-order parser recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules canonical order recovery release`).
+1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.774`, canonical-order parser recovery и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules canonical order recovery release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules canonical order recovery release` (hash: TBD)
