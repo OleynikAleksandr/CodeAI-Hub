@@ -4,7 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { readDiagramModulesProgressSnapshot } from "../../../../../packages/core/src/remote-bridge/handlers/diagram-modules-progress";
-import { buildDiagramModulesSkeletonFromIndex } from "../diagram-editor/diagram-modules-progressive-model";
+import {
+  buildDiagramModulesSkeletonFromIndex,
+  loadDiagramModulesProgressiveResult,
+} from "../diagram-editor/diagram-modules-progressive-model";
 
 const ORCHESTRATION_SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -59,6 +62,30 @@ const createCanonicalTableIndex = (): string =>
     "| --- | --- | --- | --- |",
     "| 1 | `local-core-runtime` | `Local Core Runtime` | Runs the main local orchestration. |",
     "| 2 | `project-manager-ui` | `Project Manager UI` | Shows the staged diagram workflow to the user. |",
+  ].join("\n");
+
+const createLiveProductPartFile = (): string =>
+  [
+    "# Module Inventory",
+    "",
+    "Product Part: `Local Core Runtime`", "", "## Product Part", "",
+    "| Field | Value |", "| --- | --- |",
+    "| Part ID | `local-core-runtime` |", "| Product Part | `Local Core Runtime` |",
+    "| Canonical order | `1` |", "| Purpose | Runs the main local orchestration. |",
+    "",
+    "## Clusters",
+    "",
+    "### Cluster 1. `runtime-orchestration`",
+    "",
+    "**Purpose:** Coordinates workflow execution and staged progress.", "", "#### Modules", "",
+    "| Order | Module ID | Module | Purpose |", "| --- | --- | --- | --- |",
+    "| 1 | `workflow-step-runner` | `Workflow Step Runner` | Executes the active workflow step. |",
+    "| 2 | `workflow-state-store` | `Workflow State Store` | Persists staged progress. |",
+    "",
+    "## Standalone Modules",
+    "",
+    "| Order | Module ID | Module | Purpose |", "| --- | --- | --- | --- |",
+    "| 1 | `provider-session-bridge` | `Provider Session Bridge` | Connects provider turns with runtime sessions. |",
   ].join("\n");
 
 test("diagram modules orchestration refreshes workflow state after turn_completed without structured_output", async () => {
@@ -223,4 +250,41 @@ test("diagram modules progress snapshot also reads the canonical product parts t
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
+});
+
+test("diagram modules progressive loader parses the live staged product part format", async () => {
+  const workspaceSlug = "demo-workspace";
+  const result = await loadDiagramModulesProgressiveResult({
+    workspaceSlug,
+    flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
+    readArtifact: async (artifactPath) => {
+      if (artifactPath.endsWith("product-parts.index.md")) {
+        return { status: "ok", content: createCanonicalTableIndex() } as const;
+      }
+      if (artifactPath.endsWith("product-parts/local-core-runtime.md")) {
+        return { status: "ok", content: createLiveProductPartFile() } as const;
+      }
+      return { status: "missing" } as const;
+    },
+  });
+
+  assert.equal(result.status, "ready");
+  if (result.status !== "ready" || result.model.stage !== "diagram_modules") {
+    assert.fail("expected a ready diagram modules model");
+  }
+
+  assert.deepEqual((result.model.clusters ?? []).map((cluster) => cluster.id), ["runtime-orchestration"]);
+  assert.deepEqual(
+    result.model.modules.map((module) => module.id).sort(),
+    [
+      "provider-session-bridge",
+      "workflow-state-store",
+      "workflow-step-runner",
+    ]
+  );
+  assert.equal(
+    result.model.productParts?.find((part) => part.id === "local-core-runtime")
+      ?.clusterIds[0],
+    "runtime-orchestration"
+  );
 });

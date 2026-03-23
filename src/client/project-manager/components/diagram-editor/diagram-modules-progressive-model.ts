@@ -6,8 +6,8 @@ import type {
   ModuleRelation,
   ProductPartEntity,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
-import { materializeModuleMapFromInventoryDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/module-inventory-parser";
 import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
+import { materializeModuleMapFromStagedProductPart } from "./diagram-modules-staged-part-parser";
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
 import {
   applyFlowSidecarPositions,
@@ -232,7 +232,7 @@ const loadDiagramModulesPartModels = async (params: {
       };
     }
 
-    const materializedPart = materializeModuleMapFromInventoryDsl(
+    const materializedPart = materializeModuleMapFromStagedProductPart(
       partResult.content
     );
     if (!materializedPart.ok) {
