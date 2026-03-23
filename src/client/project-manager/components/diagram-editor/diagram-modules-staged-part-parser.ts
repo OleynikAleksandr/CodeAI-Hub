@@ -1,191 +1,94 @@
 import type {
-  ClusterEntity,
-  MarkdownDslParseError,
-  MarkdownDslParseWarning,
-  ModuleEntity,
-  ModuleMapModel,
-  ProductPartEntity,
-} from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
-import { computeDiagramRevision } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-parser";
+  MaterializedStagedProductPartResult,
+} from "./diagram-modules-staged-part-parser-shared";
+import {
+  buildFailure,
+  buildModuleMap,
+  collectSections,
+  humanizeIdentifier,
+  normalizeCell,
+  normalizeParagraph,
+  parseClusters,
+  parseFieldTable,
+  parseModuleRows,
+} from "./diagram-modules-staged-part-parser-shared";
 
 const INVENTORY_TITLE_RE = /^# Module Inventory$/m;
+const OUTLINE_TITLE_RE = /^# Product Part:\s+(.+)\s*$/m;
+const OUTLINE_PART_ID_RE = /^- `part_id`:\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/m;
 const PRODUCT_PART_TITLE_RE = /^Product Part:\s*`([^`]+)`\s*$/m;
 const SECTION_RE = /^## (.+)$/gm;
 const TABLE_ROW_RE = /^\|\s*([^|]+?)\s*\|\s*(.+?)\s*\|$/gm;
 const CLUSTER_HEADER_RE =
   /^### Cluster(?: \d+\.)?\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
+const OUTLINE_CLUSTER_HEADER_RE =
+  /^###\s+\d+\.\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
 const PURPOSE_RE = /^\*\*Purpose:\*\*\s+(.+)$/m;
 const MODULE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
+const OUTLINE_MODULE_ROW_RE =
+  /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
 
-type MaterializedStagedProductPartResult =
-  | {
-      readonly ok: true;
-      readonly value: ModuleMapModel;
-      readonly content: string;
-      readonly warnings: readonly MarkdownDslParseWarning[];
-    }
-  | {
-      readonly ok: false;
-      readonly error: MarkdownDslParseError;
-      readonly warnings: readonly MarkdownDslParseWarning[];
-    };
-
-type SectionBlock = {
-  readonly body: string;
-  readonly line: number;
-};
-
-const buildFailure = (
-  code: MarkdownDslParseError["code"],
-  line: number,
-  message: string
-): MaterializedStagedProductPartResult => ({
-  ok: false,
-  error: { code, line, message },
-  warnings: [],
-});
-
-const lineOf = (content: string, index: number): number =>
-  content.slice(0, Math.max(0, index)).split(/\r?\n/u).length;
-
-const normalizeCell = (value: string): string => {
-  const trimmed = value.trim();
-  return trimmed.startsWith("`") && trimmed.endsWith("`")
-    ? trimmed.slice(1, -1).trim()
-    : trimmed;
-};
-
-const humanizeIdentifier = (value: string): string =>
-  value
-    .split("-")
-    .filter(Boolean)
-    .map((part) => part[0]?.toUpperCase() + part.slice(1))
-    .join(" ");
-
-const collectSections = (content: string): ReadonlyMap<string, SectionBlock> => {
-  const sections = new Map<string, SectionBlock>();
-  const matches = [...content.matchAll(SECTION_RE)];
-  for (const [index, match] of matches.entries()) {
-    const sectionName = match[1]?.trim();
-    const start = (match.index ?? 0) + match[0].length;
-    const end = matches[index + 1]?.index ?? content.length;
-    if (!sectionName) {
-      continue;
-    }
-    sections.set(sectionName, {
-      body: content.slice(start, end).trim(),
-      line: lineOf(content, match.index ?? 0),
-    });
-  }
-  return sections;
-};
-
-const parseFieldTable = (section: SectionBlock): ReadonlyMap<string, string> => {
-  const fields = new Map<string, string>();
-  for (const match of section.body.matchAll(TABLE_ROW_RE)) {
-    const key = normalizeCell(match[1] ?? "");
-    const value = normalizeCell(match[2] ?? "");
-    if (
-      !key ||
-      key.toLowerCase() === "field" ||
-      key.replace(/-/g, "").trim().length === 0
-    ) {
-      continue;
-    }
-    fields.set(key, value);
-  }
-  return fields;
-};
-
-const toModuleEntity = (params: {
-  readonly id: string;
-  readonly title: string;
-  readonly responsibility: string;
-  readonly productPart: string;
-  readonly cluster?: string;
-}): ModuleEntity => ({
-  id: params.id,
-  kind: "service",
-  title: params.title,
-  responsibility: params.responsibility,
-  productPart: params.productPart,
-  cluster: params.cluster,
-  inputs: [],
-  outputs: [],
-  contractTargets: [],
-  codeTargets: [],
-  origin: "agent",
-  status: "proposed",
-});
-
-const parseModuleRows = (
-  body: string,
-  productPartId: string,
-  clusterId?: string
-): readonly ModuleEntity[] =>
-  [...body.matchAll(MODULE_ROW_RE)].map((match) =>
-    toModuleEntity({
-      id: normalizeCell(match[1] ?? ""),
-      title: normalizeCell(match[2] ?? ""),
-      responsibility: normalizeCell(match[3] ?? ""),
-      productPart: productPartId,
-      cluster: clusterId,
-    })
-  );
-
-const parseClusters = (params: {
-  readonly content: string;
-  readonly section: SectionBlock | undefined;
-  readonly productPartId: string;
-}): {
-  readonly clusters: readonly ClusterEntity[];
-  readonly modules: readonly ModuleEntity[];
-} => {
-  if (!params.section) {
-    return { clusters: [], modules: [] };
-  }
-
-  const clusterMatches = [...params.section.body.matchAll(CLUSTER_HEADER_RE)];
-  const clusters: ClusterEntity[] = [];
-  const modules: ModuleEntity[] = [];
-  for (const [index, match] of clusterMatches.entries()) {
-    const clusterId = normalizeCell(match[1] ?? "");
-    if (!clusterId) {
-      continue;
-    }
-    const start = match.index ?? 0;
-    const end =
-      clusterMatches[index + 1]?.index ?? params.section.body.length;
-    const block = params.section.body.slice(start, end);
-    const clusterModules = parseModuleRows(block, params.productPartId, clusterId);
-    const purpose =
-      block.match(PURPOSE_RE)?.[1]?.trim() ??
-      `Cluster ${humanizeIdentifier(clusterId)} for ${params.productPartId}.`;
-    clusters.push({
-      id: clusterId,
-      title: humanizeIdentifier(clusterId),
-      purpose,
-      productPart: params.productPartId,
-      moduleIds: clusterModules.map((module) => module.id),
-    });
-    modules.push(...clusterModules);
-  }
-  return { clusters, modules };
-};
-
-export const materializeModuleMapFromStagedProductPart = (
-  content: string
+const materializeModuleMapFromProductPartOutline = (
+  content: string,
+  title: string
 ): MaterializedStagedProductPartResult => {
-  const title = content
-    .split(/\r?\n/u)
-    .find((line) => line.trim().length > 0)
-    ?.trim();
-  if (!(title && INVENTORY_TITLE_RE.test(title))) {
+  const productPartTitle = title.match(OUTLINE_TITLE_RE)?.[1]?.trim();
+  if (!productPartTitle) {
+    return buildFailure("invalid-title", 1, "Expected `# Product Part: <title>` title");
+  }
+
+  const productPartId = content.match(OUTLINE_PART_ID_RE)?.[1]?.trim();
+  if (!productPartId) {
+    return buildFailure("missing-required-field", 1, "Missing required field: part_id");
+  }
+
+  const sections = collectSections(content, SECTION_RE);
+  const purposeSection = sections.get("Purpose");
+  const purpose = normalizeParagraph(purposeSection?.body ?? "");
+  if (!purpose) {
+    return buildFailure(
+      "missing-required-field",
+      purposeSection?.line ?? 1,
+      "Missing required section content: Purpose"
+    );
+  }
+
+  return buildModuleMap({
+    content,
+    productPartId,
+    productPartTitle: normalizeCell(productPartTitle),
+    purpose,
+    ...(() => {
+      const clusterResult = parseClusters({
+        section: sections.get("Cluster Inventory"),
+        productPartId,
+        headerPattern: OUTLINE_CLUSTER_HEADER_RE,
+        rowPattern: OUTLINE_MODULE_ROW_RE,
+        purposePattern: PURPOSE_RE,
+      });
+      return {
+        clusters: clusterResult.clusters,
+        clusterModules: clusterResult.modules,
+      };
+    })(),
+    standaloneModules: parseModuleRows(
+      sections.get("Direct Standalone Modules Under This Part")?.body ?? "",
+      productPartId,
+      OUTLINE_MODULE_ROW_RE
+    ),
+  });
+};
+
+const materializeModuleMapFromInventoryProductPart = (
+  content: string,
+  title: string
+): MaterializedStagedProductPartResult => {
+  if (!INVENTORY_TITLE_RE.test(title)) {
     return buildFailure("invalid-title", 1, "Expected `# Module Inventory` title");
   }
 
-  const sections = collectSections(content);
+  const sections = collectSections(content, SECTION_RE);
   const productPartSection = sections.get("Product Part");
   if (!productPartSection) {
     return buildFailure(
@@ -195,7 +98,7 @@ export const materializeModuleMapFromStagedProductPart = (
     );
   }
 
-  const fields = parseFieldTable(productPartSection);
+  const fields = parseFieldTable(productPartSection, TABLE_ROW_RE);
   const productPartId = fields.get("Part ID")?.trim();
   const productPartTitle =
     fields.get("Product Part")?.trim() ??
@@ -217,35 +120,40 @@ export const materializeModuleMapFromStagedProductPart = (
   }
 
   const clusterResult = parseClusters({
-    content,
     section: sections.get("Clusters"),
     productPartId,
+    headerPattern: CLUSTER_HEADER_RE,
+    rowPattern: MODULE_ROW_RE,
+    purposePattern: PURPOSE_RE,
   });
-  const standaloneModules = parseModuleRows(
-    sections.get("Standalone Modules")?.body ?? "",
-    productPartId
-  );
-  const productPart: ProductPartEntity = {
-    id: productPartId,
-    title: productPartTitle ?? humanizeIdentifier(productPartId),
-    purpose,
-    clusterIds: clusterResult.clusters.map((cluster) => cluster.id),
-    standaloneModuleIds: standaloneModules.map((module) => module.id),
-  };
 
-  return {
-    ok: true,
-    value: {
-      version: 1,
-      stage: "diagram_modules",
-      revision: computeDiagramRevision(content),
-      updated: new Date().toISOString(),
-      productParts: [productPart],
-      clusters: clusterResult.clusters,
-      modules: [...clusterResult.modules, ...standaloneModules],
-      relations: [],
-    },
+  return buildModuleMap({
     content,
-    warnings: [],
-  };
+    productPartId,
+    productPartTitle: productPartTitle ?? humanizeIdentifier(productPartId),
+    purpose,
+    clusters: clusterResult.clusters,
+    clusterModules: clusterResult.modules,
+    standaloneModules: parseModuleRows(
+      sections.get("Standalone Modules")?.body ?? "",
+      productPartId,
+      MODULE_ROW_RE
+    ),
+  });
+};
+
+export const materializeModuleMapFromStagedProductPart = (
+  content: string
+): MaterializedStagedProductPartResult => {
+  const title = content
+    .split(/\r?\n/u)
+    .find((line) => line.trim().length > 0)
+    ?.trim();
+  if (!title) {
+    return buildFailure("invalid-title", 1, "Expected staged Product Part title");
+  }
+  if (OUTLINE_TITLE_RE.test(title)) {
+    return materializeModuleMapFromProductPartOutline(content, title);
+  }
+  return materializeModuleMapFromInventoryProductPart(content, title);
 };

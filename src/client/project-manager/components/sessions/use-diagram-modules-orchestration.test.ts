@@ -4,15 +4,9 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { readDiagramModulesProgressSnapshot } from "../../../../../packages/core/src/remote-bridge/handlers/diagram-modules-progress";
-import {
-  buildDiagramModulesSkeletonFromIndex,
-  loadDiagramModulesProgressiveResult,
-} from "../diagram-editor/diagram-modules-progressive-model";
+import { buildDiagramModulesSkeletonFromIndex, loadDiagramModulesProgressiveResult } from "../diagram-editor/diagram-modules-progressive-model";
 
-const ORCHESTRATION_SOURCE_PATH = path.resolve(
-  process.cwd(),
-  "src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts"
-);
+const ORCHESTRATION_SOURCE_PATH = path.resolve(process.cwd(), "src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts");
 
 const createProductPartsIndex = (): string =>
   [
@@ -64,28 +58,33 @@ const createCanonicalTableIndex = (): string =>
     "| 2 | `project-manager-ui` | `Project Manager UI` | Shows the staged diagram workflow to the user. |",
   ].join("\n");
 
-const createLiveProductPartFile = (): string =>
+const createOutlineProductPartFile = (): string =>
   [
-    "# Module Inventory",
+    "# Product Part: VS Code Extension Shell",
     "",
-    "Product Part: `Local Core Runtime`", "", "## Product Part", "",
-    "| Field | Value |", "| --- | --- |",
-    "| Part ID | `local-core-runtime` |", "| Product Part | `Local Core Runtime` |",
-    "| Canonical order | `1` |", "| Purpose | Runs the main local orchestration. |",
+    "- `part_id`: `vscode-extension-shell`",
+    "- `index_order`: `1`",
     "",
-    "## Clusters",
+    "## Purpose",
     "",
-    "### Cluster 1. `runtime-orchestration`",
+    "`VS Code Extension Shell` is the distribution-and-settings shell of the product.",
+    "It owns installation, first launch, desktop handoff into `Project Manager`, and global/provider configuration surfaces.",
     "",
-    "**Purpose:** Coordinates workflow execution and staged progress.", "", "#### Modules", "",
-    "| Order | Module ID | Module | Purpose |", "| --- | --- | --- | --- |",
-    "| 1 | `workflow-step-runner` | `Workflow Step Runner` | Executes the active workflow step. |",
-    "| 2 | `workflow-state-store` | `Workflow State Store` | Persists staged progress. |",
+    "## Cluster Inventory",
     "",
-    "## Standalone Modules",
+    "### 1. `shell-bootstrap-and-environment-preparation`",
     "",
-    "| Order | Module ID | Module | Purpose |", "| --- | --- | --- | --- |",
-    "| 1 | `provider-session-bridge` | `Provider Session Bridge` | Connects provider turns with runtime sessions. |",
+    "**Purpose:** turn the extension installation into a runnable local product setup and provide a clear standalone launch path into `Project Manager`.",
+    "",
+    "| Module ID | Module | Purpose |",
+    "| --- | --- | --- |",
+    "| `environment-preparation` | `Environment preparation` | Prepare the local environment and required local components during installation and first launch. |",
+    "| `dependency-bootstrap` | `Dependency bootstrap` | Pull the dependencies needed for the rest of the product to run locally. |",
+    "| `desktop-launch-entrypoint` | `Desktop launch entrypoint` | Create and maintain the standalone launch path or desktop shortcut for `Project Manager`. |",
+    "",
+    "## Direct Standalone Modules Under This Part",
+    "",
+    "- None at the current evidence level. The part currently resolves cleanly into the cluster above.",
   ].join("\n");
 
 test("diagram modules orchestration refreshes workflow state after turn_completed without structured_output", async () => {
@@ -252,17 +251,23 @@ test("diagram modules progress snapshot also reads the canonical product parts t
   }
 });
 
-test("diagram modules progressive loader parses the live staged product part format", async () => {
+test("diagram modules progressive loader parses the live outline product part format", async () => {
   const workspaceSlug = "demo-workspace";
   const result = await loadDiagramModulesProgressiveResult({
     workspaceSlug,
     flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
     readArtifact: async (artifactPath) => {
       if (artifactPath.endsWith("product-parts.index.md")) {
-        return { status: "ok", content: createCanonicalTableIndex() } as const;
+        return {
+          status: "ok",
+          content: createCanonicalTableIndex().replace(
+            "local-core-runtime",
+            "vscode-extension-shell"
+          ).replace("Local Core Runtime", "VS Code Extension Shell"),
+        } as const;
       }
-      if (artifactPath.endsWith("product-parts/local-core-runtime.md")) {
-        return { status: "ok", content: createLiveProductPartFile() } as const;
+      if (artifactPath.endsWith("product-parts/vscode-extension-shell.md")) {
+        return { status: "ok", content: createOutlineProductPartFile() } as const;
       }
       return { status: "missing" } as const;
     },
@@ -273,18 +278,18 @@ test("diagram modules progressive loader parses the live staged product part for
     assert.fail("expected a ready diagram modules model");
   }
 
-  assert.deepEqual((result.model.clusters ?? []).map((cluster) => cluster.id), ["runtime-orchestration"]);
+  assert.deepEqual((result.model.clusters ?? []).map((cluster) => cluster.id), ["shell-bootstrap-and-environment-preparation"]);
   assert.deepEqual(
     result.model.modules.map((module) => module.id).sort(),
     [
-      "provider-session-bridge",
-      "workflow-state-store",
-      "workflow-step-runner",
+      "dependency-bootstrap",
+      "desktop-launch-entrypoint",
+      "environment-preparation",
     ]
   );
   assert.equal(
-    result.model.productParts?.find((part) => part.id === "local-core-runtime")
+    result.model.productParts?.find((part) => part.id === "vscode-extension-shell")
       ?.clusterIds[0],
-    "runtime-orchestration"
+    "shell-bootstrap-and-environment-preparation"
   );
 });
