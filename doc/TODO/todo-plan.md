@@ -61,8 +61,8 @@
 2. [DONE] Git Commit: `chore(release): prepare canonical product part template contract release` (hash: TBD)
 
 ### Stream: Session handoff
-1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по canonical template contract stabilization, prompt-delivery fix, parser/validation hardening и результатам нового release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record canonical product part template contract release`).
-2. [TODO] Git Commit: `docs(session): record canonical product part template contract release` (hash: TBD)
+1. [DONE] Session report `doc/Sessions/Session148.md` created, all stream hashes recorded in plan (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session148.md`; expected commit: `docs(session): record canonical product part template contract release`).
+2. [DONE] Git Commit: `docs(session): record canonical product part template contract release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
