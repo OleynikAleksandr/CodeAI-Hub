@@ -50,10 +50,10 @@
 
 ### Stream: Release notes sync
 1. [DONE] До запуска release scripts синхронизировать `README.md` и `CHANGELOG.md` с ожидаемым release target `1.1.766`, чтобы build cycle шёл уже от актуального user-facing version narrative (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules layout release notes`).
-2. [TODO] Git Commit: `docs(release): sync diagram modules layout release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync diagram modules layout release notes` (hash: `d048904b`)
 
 ### Stream: Release build
-1. [TODO] После принятия fixes по `Diagram Modules` review-surface и autolayout обновить релизные документы, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline (scope: `README.md`, `CHANGELOG.md`, release/version manifests and package metadata; expected commit: `chore(release): prepare diagram modules review layout release`).
+1. [IN_PROGRESS] После принятия fixes по `Diagram Modules` review-surface и autolayout обновить релизные документы, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline (scope: `README.md`, `CHANGELOG.md`, release/version manifests and package metadata; expected commit: `chore(release): prepare diagram modules review layout release`).
 2. [TODO] Git Commit: `chore(release): prepare diagram modules review layout release` (hash: TBD)
 
 ### Stream: Session handoff
