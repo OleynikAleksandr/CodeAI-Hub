@@ -121,11 +121,11 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и workflow docs под findings ретеста `1.1.768`: staged `Diagram Modules` prompt repair, direct file-change continuation support и сохранение skeleton-first `Product Part` rendering как ценного промежуточного результата (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync staged prompt continuation fixes`).
-2. [DONE] Git Commit: `docs(release): sync staged prompt continuation fixes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync staged prompt continuation fixes` (hash: `d792fcc9`)
 
 ### Stream: Release build
-1. [TODO] После prompt/template repair и continuation fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного ретеста `Diagram Modules` без ручного `Продолжай` после `Phase 1` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare staged prompt continuation release`).
-2. [TODO] Git Commit: `chore(release): prepare staged prompt continuation release` (hash: TBD)
+1. [DONE] После prompt/template repair и continuation fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного ретеста `Diagram Modules` без ручного `Продолжай` после `Phase 1` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare staged prompt continuation release`).
+2. [DONE] Git Commit: `chore(release): prepare staged prompt continuation release` (hash: TBD)
 
 ### Stream: Session handoff
 1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по prompt/template repair и continuation retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record staged prompt continuation release`).
