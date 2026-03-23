@@ -157,10 +157,10 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и workflow docs под findings ретеста `1.1.769`: strict input contract для diagram prompts, removal of legacy template scouting и cleanup composite prompt assembly для `Diagram Modules` / `Diagram Facades` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync composite prompt cleanup notes`).
-2. [TODO] Git Commit: `docs(release): sync composite prompt cleanup notes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync composite prompt cleanup notes` (hash: `e4e51620`)
 
 ### Stream: Release build
-1. [TODO] После cleanup prompt/contract layers выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного retest diagram steps без лишнего discovery chatter (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare composite prompt cleanup release`).
+1. [DONE] После cleanup prompt/contract layers выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного retest diagram steps без лишнего discovery chatter (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare composite prompt cleanup release`).
 2. [TODO] Git Commit: `chore(release): prepare composite prompt cleanup release` (hash: TBD)
 
 ### Stream: Session handoff
