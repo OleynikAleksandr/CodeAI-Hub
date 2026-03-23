@@ -91,16 +91,17 @@ const containerSummaryStyle: React.CSSProperties = {
 
 const productPartHeaderStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(180px, 240px)",
+  gridTemplateColumns: "minmax(0, 1fr) minmax(240px, 320px)",
   gap: 14,
   alignItems: "start",
 };
 
 const purposePanelStyle: React.CSSProperties = {
+  minWidth: 0,
   borderRadius: 14,
   border: "1px solid rgba(255,255,255,0.06)",
   background: "rgba(7, 13, 23, 0.32)",
-  padding: "10px 12px",
+  padding: "10px 14px",
 };
 
 const purposeTextStyle: React.CSSProperties = {

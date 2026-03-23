@@ -68,10 +68,10 @@
 
 ### Stream: Planning baseline second pass
 1. [DONE] Зафиксировать post-release findings после пользовательского retest `1.1.766`: остаточные overlaps между purpose/description и body-area, узкий purpose panel у `Product Part`, а также нестабильный start offset для cluster module-stack; на этой базе открыть второй layout pass в planning-doc, todo-plan и новом session report (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session132.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram modules header boundary scope`).
-2. [TODO] Git Commit: `docs(plan): start diagram modules header boundary scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): start diagram modules header boundary scope` (hash: `fbce4424`)
 
 ### Stream: Product part purpose width and header boundary
-1. [TODO] Расширить purpose panel `Product Part` и пересчитать product-part header/body boundary по реальной нижней границе summary + purpose blocks, чтобы cluster section больше не налезал на description и header использовал доступную ширину эффективнее (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): widen product part purpose panel`).
+1. [DONE] Расширить purpose panel `Product Part` и пересчитать product-part header/body boundary по реальной нижней границе summary + purpose blocks, чтобы cluster section больше не налезал на description и header использовал доступную ширину эффективнее (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): widen product part purpose panel`).
 2. [TODO] Git Commit: `fix(diagram-ui): widen product part purpose panel` (hash: TBD)
 
 ### Stream: Product part body start measurement
