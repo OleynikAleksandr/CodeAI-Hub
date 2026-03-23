@@ -186,28 +186,31 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
     }
 
     const clusterSectionHeight = Math.max(0, ...clusterHeights);
-    const standaloneY = productPartHeaderHeight + (clusterIds.length > 0 ? clusterSectionHeight + PRODUCT_PART_SECTION_GAP : 0);
+    const standaloneBaseY = productPartHeaderHeight + (clusterIds.length > 0 ? clusterSectionHeight + PRODUCT_PART_SECTION_GAP : 0);
     const standaloneNodes: DiagramFlowNode[] = [];
-    let internalSectionHeight = 0;
-    for (let index = 0, rowY = standaloneY; index < internalStandaloneModuleIds.length; ) {
-      const rowIds = internalStandaloneModuleIds.slice(index, index + standaloneColumnCount);
-      const rowHeight = Math.max(...rowIds.map((moduleId) => getModuleCardHeight(modulesById.get(moduleId)!)));
-      rowIds.forEach((moduleId, columnIndex) => {
-        const module = modulesById.get(moduleId);
-        if (!module) {
-          return;
-        }
-        standaloneNodes.push(buildModuleNode({
-          module,
-          position: { x: PRODUCT_PART_PADDING_X + columnIndex * STANDALONE_X_STEP, y: rowY },
-          parentId: toProductPartNodeId(productPart.id),
-          productPart: productPart.id,
-          height: getModuleCardHeight(module),
-        }));
-      });
-      internalSectionHeight = rowY + rowHeight - standaloneY;
-      rowY += rowHeight + MODULE_CARD_GAP;
-      index += standaloneColumnCount;
+    const columnNextY = clusterIds.length > 0
+      ? clusterHeights.map((height) => productPartHeaderHeight + height + PRODUCT_PART_SECTION_GAP)
+      : Array.from({ length: standaloneColumnCount }, () => productPartHeaderHeight);
+    const columnContentBottoms = clusterIds.length > 0
+      ? clusterHeights.map((height) => productPartHeaderHeight + height)
+      : Array.from({ length: standaloneColumnCount }, () => productPartHeaderHeight);
+    for (const moduleId of internalStandaloneModuleIds) {
+      const module = modulesById.get(moduleId);
+      if (!module) {
+        continue;
+      }
+      const columnIndex = columnNextY.indexOf(Math.min(...columnNextY));
+      const height = getModuleCardHeight(module);
+      const y = columnNextY[columnIndex] ?? productPartHeaderHeight;
+      standaloneNodes.push(buildModuleNode({
+        module,
+        position: { x: PRODUCT_PART_PADDING_X + columnIndex * STANDALONE_X_STEP, y },
+        parentId: toProductPartNodeId(productPart.id),
+        productPart: productPart.id,
+        height,
+      }));
+      columnContentBottoms[columnIndex] = y + height;
+      columnNextY[columnIndex] = y + height + MODULE_CARD_GAP;
     }
 
     const externalNodes: DiagramFlowNode[] = [];
@@ -218,19 +221,19 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
         continue;
       }
       const height = getModuleCardHeight(module);
-      const offsetY = standaloneY + externalSectionHeight + (externalIndex > 0 ? MODULE_CARD_GAP : 0);
+      const offsetY = standaloneBaseY + externalSectionHeight + (externalIndex > 0 ? MODULE_CARD_GAP : 0);
       externalNodes.push(buildModuleNode({
         module,
         position: { x: productPartWidth + PRODUCT_PART_EXTERNAL_GAP, y: productPartY + offsetY },
         productPart: productPart.id,
         height,
       }));
-      externalSectionHeight = offsetY + height - standaloneY;
+      externalSectionHeight = offsetY + height - standaloneBaseY;
     }
 
     const productPartHeight = Math.max(
       260,
-      Math.max(productPartHeaderHeight, productPartHeaderHeight + clusterSectionHeight, standaloneY + internalSectionHeight) + PRODUCT_PART_PADDING_BOTTOM
+      Math.max(productPartHeaderHeight, ...columnContentBottoms) + PRODUCT_PART_PADDING_BOTTOM
     );
     nodes.push(
       {
@@ -253,7 +256,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
       ...standaloneNodes,
       ...externalNodes
     );
-    productPartY += Math.max(productPartHeight, standaloneY + externalSectionHeight) + PRODUCT_PART_ROW_GAP;
+    productPartY += Math.max(productPartHeight, standaloneBaseY + externalSectionHeight) + PRODUCT_PART_ROW_GAP;
   }
   return nodes;
 };

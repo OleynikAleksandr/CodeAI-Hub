@@ -128,6 +128,114 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
+const SHORTEST_COLUMN_STANDALONE_FIXTURE: ModuleMapModel = {
+  version: 1,
+  stage: "diagram_modules",
+  revision: "shortest-column",
+  updated: "2026-03-23T10:00:00Z",
+  productParts: [
+    {
+      id: "local-core-runtime",
+      title: "Local Core Runtime",
+      purpose: "Owns workflow stages and runtime services.",
+      clusterIds: ["workflow", "continuity"],
+      standaloneModuleIds: ["workspace-provider-binding"],
+    },
+  ],
+  clusters: [
+    {
+      id: "workflow",
+      title: "Workflow",
+      purpose: "Runs workflow stages.",
+      productPart: "local-core-runtime",
+      moduleIds: ["stage-flow-controller"],
+    },
+    {
+      id: "continuity",
+      title: "Continuity",
+      purpose: "Keeps dialogue and runtime state restorable.",
+      productPart: "local-core-runtime",
+      moduleIds: [
+        "project-state-registry",
+        "session-history-continuity",
+        "runtime-lifetime-manager",
+      ],
+    },
+  ],
+  modules: [
+    {
+      id: "stage-flow-controller",
+      kind: "service",
+      title: "Stage Flow Controller",
+      responsibility: "Controls stage order.",
+      productPart: "local-core-runtime",
+      cluster: "workflow",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "project-state-registry",
+      kind: "store",
+      title: "Project State Registry",
+      responsibility: "Keeps the current workflow state readable for the active workspace.",
+      productPart: "local-core-runtime",
+      cluster: "continuity",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "session-history-continuity",
+      kind: "store",
+      title: "Session History Continuity",
+      responsibility: "Restores the user dialogue and previously accepted artifacts when the project is reopened.",
+      productPart: "local-core-runtime",
+      cluster: "continuity",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "runtime-lifetime-manager",
+      kind: "service",
+      title: "Runtime Lifetime Manager",
+      responsibility: "Keeps the local runtime alive as a separate process after it is started.",
+      productPart: "local-core-runtime",
+      cluster: "continuity",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "workspace-provider-binding",
+      kind: "store",
+      title: "Workspace Provider Binding",
+      responsibility: "Pins one active AI provider for the current workspace.",
+      productPart: "local-core-runtime",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+  ],
+  relations: [],
+};
+
 
 test("domainModelToReactFlow stacks wide product parts into separate rows without overlap", () => {
   const result = domainModelToReactFlow(MULTI_PRODUCT_PART_FIXTURE);
@@ -153,4 +261,31 @@ test("domainModelToReactFlow stacks wide product parts into separate rows withou
     localCoreRuntimeNode.position.y >= Number(desktopShellNode.style?.height ?? 0),
     true
   );
+});
+
+test("domainModelToReactFlow docks standalone modules under the shorter product part column", () => {
+  const result = domainModelToReactFlow(SHORTEST_COLUMN_STANDALONE_FIXTURE);
+
+  const workflowCluster = result.nodes.find((node) => node.id === "cluster:workflow");
+  const continuityCluster = result.nodes.find((node) => node.id === "cluster:continuity");
+  const standaloneNode = result.nodes.find(
+    (node) => node.id === "workspace-provider-binding"
+  );
+
+  assert.notEqual(workflowCluster, undefined);
+  assert.notEqual(continuityCluster, undefined);
+  assert.notEqual(standaloneNode, undefined);
+  if (!workflowCluster || !continuityCluster || !standaloneNode) {
+    return;
+  }
+
+  const workflowBottom =
+    workflowCluster.position.y + Number(workflowCluster.style?.height ?? 0);
+  const continuityBottom =
+    continuityCluster.position.y + Number(continuityCluster.style?.height ?? 0);
+
+  assert.equal(standaloneNode.parentId, "product-part:local-core-runtime");
+  assert.equal(standaloneNode.position.x, workflowCluster.position.x);
+  assert.equal(standaloneNode.position.y, workflowBottom + 36);
+  assert.equal(standaloneNode.position.y < continuityBottom, true);
 });

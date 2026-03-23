@@ -36,10 +36,10 @@
 
 ### Stream: Cluster measurement and stack safety
 1. [DONE] Перевести высоту `Cluster` с расчёта по числу модулей на measured header/body budget, чтобы cluster header резервировал место под title/meta/purpose, а module cards больше не пересекали header-zone и соседние cards (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; expected commit: `fix(diagram-layout): reserve cluster header and stack modules safely`).
-2. [TODO] Git Commit: `fix(diagram-layout): reserve cluster header and stack modules safely` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-layout): reserve cluster header and stack modules safely` (hash: `7b133dcc`)
 
 ### Stream: Product part compaction
-1. [TODO] Перестроить placement standalone modules внутри `Product Part`, чтобы они пристыковывались под более короткую измеренную колонку, а outer frame product-part замыкался по реально занятому содержимому с симметричными left/right/bottom paddings (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; expected commit: `fix(diagram-layout): compact standalone modules inside product part`).
+1. [DONE] Перестроить placement standalone modules внутри `Product Part`, чтобы они пристыковывались под более короткую измеренную колонку, а outer frame product-part замыкался по реально занятому содержимому с симметричными left/right/bottom paddings (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): compact standalone modules inside product part`).
 2. [TODO] Git Commit: `fix(diagram-layout): compact standalone modules inside product part` (hash: TBD)
 
 ### Stream: Dense scenario regression evidence
