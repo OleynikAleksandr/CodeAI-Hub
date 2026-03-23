@@ -346,12 +346,12 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.775`: recovery для live identity-table `product-parts/<part-id>.md`, alias parsing `Owned Clusters` и tolerance к module rows с `Status` колонкой (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes`).
-2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync diagram modules 1.1.775 identity-table fixes` (hash: `a0848c4f`)
 
 ### Stream: Release build
-1. [IN_PROGRESS] После identity-table parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live `Product Part` continuation file при сохранённых index skeleton и hidden continuation (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules identity-table recovery release`).
-2. [TODO] Git Commit: `chore(release): prepare diagram modules identity-table recovery release` (hash: TBD)
+1. [DONE] После identity-table parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без parse failure на первом live `Product Part` continuation file при сохранённых index skeleton и hidden continuation (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules identity-table recovery release`).
+2. [DONE] Git Commit: `chore(release): prepare diagram modules identity-table recovery release` (hash: `758b1e12`)
 
 ### Stream: Session handoff
-1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.775`, identity-table parser recovery, aggregate regression coverage и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules identity-table recovery release`).
+1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами и оформить следующий session report по findings ретеста `1.1.775`, identity-table parser recovery, aggregate regression coverage и результатам следующего release baseline (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules identity-table recovery release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules identity-table recovery release` (hash: TBD)
