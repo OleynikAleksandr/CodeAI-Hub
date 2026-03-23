@@ -35,13 +35,15 @@
 
 ### Stream: Artifact upsert and validation baseline
 1. [DONE] Добавить artifact-upsert validation rules для `product-parts.index.md` и `product-parts/<part-id>.md`, оставив aggregate `module-inventory.md` runtime-owned compatibility output, а не прямой agent-written target (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): validate product part artifacts`).
-2. [TODO] Git Commit: `feat(diagram-workflow): validate product part artifacts` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-workflow): validate product part artifacts` (hash: `624eebda`)
 
 ## Phase 39 — Hidden Runtime Orchestration And Lock Contract (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Sequential substep state model
-1. [TODO] Ввести runtime-visible substep contract для `diagram_modules` (`index`, `generate_product_part`, `compose_aggregate`, `awaiting_review`, `blocked_ambiguity`) с current part cursor и progress metadata, чтобы шаг больше не выглядел как один неразличимый giant turn (scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/services/workflow-state-client.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): add product part substep state model`).
-2. [TODO] Git Commit: `feat(diagram-workflow): add product part substep state model` (hash: TBD)
+1. [DONE] Добавить server-side `diagramModulesProgress` snapshot на основе `product-parts.index.md`, part-файлов и aggregate readiness, чтобы runtime мог публиковать `substep/currentPartId/generatedCount` до реального orchestration loop и UI не работал вслепую (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): expose diagram modules progress snapshot`).
+2. [TODO] Git Commit: `feat(diagram-workflow): expose diagram modules progress snapshot` (hash: TBD)
+3. [TODO] Протянуть `diagramModulesProgress` в PM workflow-state client, чтобы hidden orchestration, progress surface и input lock могли опираться на канонический `substep/cursor` вместо эвристик по артефактам (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): consume diagram modules progress snapshot`).
+4. [TODO] Git Commit: `feat(diagram-workflow): consume diagram modules progress snapshot` (hash: TBD)
 
 ### Stream: Hidden continuation turns
 1. [TODO] Реализовать runtime-controlled hidden continuation turns для последовательной генерации `Product Part`, чтобы следующий subturn запускался без fake user-visible `Продолжай`, а continuation packet содержал cursor, generated parts и stop conditions (scope: `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): orchestrate hidden product part turns`).

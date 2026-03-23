@@ -15,6 +15,7 @@ import type {
   WorkflowStageId,
   WorkflowWatcherEvent,
 } from "../../workflow/watcher/watcher-types";
+import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 
 const HTTP_BAD_REQUEST = 400;
@@ -76,6 +77,7 @@ export class WorkflowStateService {
         continuity: { chains: [] },
         description: null,
         lastActive: null,
+        diagramModulesProgress: null,
       });
       return;
     }
@@ -92,40 +94,52 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlugResult.value
     );
+    const diagramModulesProgressPromise = readDiagramModulesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: workspaceSlugResult.value,
+    });
 
-    Promise.all([continuityPromise, descriptionPromise, lastActivePromise])
-      .then(([chains, descriptionSnapshot, lastActive]) => {
-        const description = descriptionSnapshot
-          ? buildDescriptionBranchSnapshot(descriptionSnapshot)
-          : null;
-        return hydrateWorkflowStateFromFilesystem({
-          state,
-          workspaceRoot,
-          workspaceSlug: workspaceSlugResult.value,
-        })
-          .then((hydratedState) =>
-            applyVirtualSimulationValidation({
-              state: hydratedState,
-              workspaceRoot,
-              workspaceSlug: workspaceSlugResult.value,
-            })
-          )
-          .then((validatedState) => {
-            const gating = {
-              blocked: resolveWorkflowBlockedStages({
+    Promise.all([
+      continuityPromise,
+      descriptionPromise,
+      lastActivePromise,
+      diagramModulesProgressPromise,
+    ])
+      .then(
+        ([chains, descriptionSnapshot, lastActive, diagramModulesProgress]) => {
+          const description = descriptionSnapshot
+            ? buildDescriptionBranchSnapshot(descriptionSnapshot)
+            : null;
+          return hydrateWorkflowStateFromFilesystem({
+            state,
+            workspaceRoot,
+            workspaceSlug: workspaceSlugResult.value,
+          })
+            .then((hydratedState) =>
+              applyVirtualSimulationValidation({
+                state: hydratedState,
+                workspaceRoot,
+                workspaceSlug: workspaceSlugResult.value,
+              })
+            )
+            .then((validatedState) => {
+              const gating = {
+                blocked: resolveWorkflowBlockedStages({
+                  state: validatedState,
+                  description,
+                }),
+              };
+              res.json({
                 state: validatedState,
+                continuity: { chains },
                 description,
-              }),
-            };
-            res.json({
-              state: validatedState,
-              continuity: { chains },
-              description,
-              lastActive,
-              gating,
+                lastActive,
+                gating,
+                diagramModulesProgress,
+              });
             });
-          });
-      })
+        }
+      )
       .catch((error) => {
         this.logger.warn("Failed to read workflow metadata", {
           workspaceSlug: workspaceSlugResult.value,
@@ -136,6 +150,7 @@ export class WorkflowStateService {
           continuity: { chains: [] },
           description: null,
           lastActive: null,
+          diagramModulesProgress: null,
         });
       });
   }
