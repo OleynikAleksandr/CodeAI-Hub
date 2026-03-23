@@ -42,11 +42,11 @@
 
 ### Stream: Parser alignment
 1. [DONE] Outline parser path already supports canonical template. Added additive compatibility shim: `## Cluster Ownership` section fallback and `### Cluster: \`id\`` header pattern in OUTLINE_CLUSTER_HEADER_RE regex for existing drift files. Index parser untouched (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): align staged parser with canonical product part template`).
-2. [DONE] Git Commit: `fix(diagram-workflow): align staged parser with canonical product part template` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-workflow): align staged parser with canonical product part template` (hash: `6752ef1f`)
 
 ### Stream: Semantic validation hardening
-1. [TODO] Усилить validation/runtime guards так, чтобы `product-parts/<part-id>.md` не считался успешным semantic artifact только по `Part ID` и `Purpose`: если файл заявляет cluster/module ownership, но parser не materialize-ит ни одной вложенной сущности, runtime должен явно сигнализировать ошибку вместо тихого shallow-success (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): reject semantically-empty product part files`).
-2. [TODO] Git Commit: `fix(diagram-workflow): reject semantically-empty product part files` (hash: TBD)
+1. [DONE] Updated `MODULE_INVENTORY_TITLE_RE` in `http-api-router.ts` to accept `# Product Part:` header alongside `# Module Inventory`. Added semantic emptiness guard in `diagram-modules-aggregate.ts`: if a parsed Product Part file has zero Clusters and zero Modules, the aggregate compose now fails explicitly instead of silently producing a shallow result (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): reject semantically-empty product part files`).
+2. [DONE] Git Commit: `fix(diagram-workflow): reject semantically-empty product part files` (hash: TBD)
 
 ### Stream: Regression coverage
 1. [TODO] Добавить targeted regression coverage для canonical product-part template, explicit template-path delivery и semantic validation failure на drift part-files, чтобы следующий retest не чинить снова точечно уже после релиза (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover canonical product part contract end-to-end`).

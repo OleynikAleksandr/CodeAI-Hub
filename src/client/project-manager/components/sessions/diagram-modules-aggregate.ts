@@ -117,6 +117,14 @@ export const composeDiagramModulesAggregate = async (params: {
         error: `Не удалось разобрать Product Part ${productPart.id}: строка ${materializedPart.error.line}, ${materializedPart.error.message}`,
       };
     }
+    const partClusters = materializedPart.value.clusters ?? [];
+    const partModulesCount = materializedPart.value.modules.length;
+    if (partClusters.length === 0 && partModulesCount === 0) {
+      return {
+        ok: false,
+        error: `Product Part ${productPart.id} парсится, но не содержит ни одного Cluster или Module. Проверьте, что файл использует canonical template format.`,
+      };
+    }
     partModels.push(materializedPart.value);
   }
 

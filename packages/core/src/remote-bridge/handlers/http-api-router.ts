@@ -763,7 +763,7 @@ type PayloadParseResult<T> =
   | { readonly ok: false; readonly error: string };
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
-const MODULE_INVENTORY_TITLE_RE = /^#\s+Module Inventory/m;
+const MODULE_INVENTORY_TITLE_RE = /^#\s+(?:Module Inventory|Product Part:)/m;
 const PRODUCT_PARTS_INDEX_TITLE_RE = /^#\s+Product Parts Index/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 
@@ -857,7 +857,7 @@ const validateModuleInventoryMarkdown = (
     return "Module inventory markdown is empty";
   }
   if (!MODULE_INVENTORY_TITLE_RE.test(content)) {
-    return "Module inventory markdown is missing '# Module Inventory' header";
+    return "Module inventory markdown is missing '# Module Inventory' or '# Product Part:' header";
   }
   return null;
 };
