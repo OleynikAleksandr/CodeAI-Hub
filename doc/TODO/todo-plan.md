@@ -320,10 +320,10 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.774`: recovery для live `Canonical Order` heading format в index parser и восстановление hidden continuation через корректный planned part detection (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.774 retest fixes`).
-2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.774 retest fixes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync diagram modules 1.1.774 retest fixes` (hash: `832ab5ee`)
 
 ### Stream: Release build
-1. [TODO] После canonical-order parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без пустого skeleton и без остановки continuation после `product-parts.index.md` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules canonical order recovery release`).
+1. [DONE] После canonical-order parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без пустого skeleton и без остановки continuation после `product-parts.index.md` (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules canonical order recovery release`).
 2. [TODO] Git Commit: `chore(release): prepare diagram modules canonical order recovery release` (hash: TBD)
 
 ### Stream: Session handoff
