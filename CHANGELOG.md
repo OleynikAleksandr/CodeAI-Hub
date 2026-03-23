@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.771] - 2026-03-23
+### Fixed
+- `Diagram Modules` now reads both the legacy `### Product Part: ...` index blocks and the live numbered `Canonical order` format written by the staged agent, so the first `product-parts.index.md` immediately produces a visible React Flow skeleton instead of an empty canvas.
+- The same parser recovery restores the hidden continuation path after the index write: `diagramModulesProgress` again resolves the next `currentPartId`, which prevents the stage from stalling on `substep: index` when the live numbered format is used.
+- `Diagram Modules` panel/source surfaces now treat `product-parts.index.md` as the primary stage artifact: intro copy, source label/path, and pending messaging no longer point users back to `module-inventory.md` as if the stage were still inventory-first.
+- Empty-state messaging in the visual shell now explains the staged `index -> product-parts/<part-id>.md -> runtime aggregate` flow, replacing the misleading suggestion to “add semantic entities” or rerun the step while staged materialization is still in progress.
+
 ## [1.1.770] - 2026-03-23
 ### Changed
 - `Diagram Modules` prompt composition now states exact current-turn inputs and explicit non-inputs, so the stage no longer suggests searching compatibility inventory, staged examples, continuity files, legacy helper artifacts, or generic templates unless runtime explicitly passed them.

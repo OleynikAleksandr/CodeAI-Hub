@@ -194,7 +194,7 @@
 2. [DONE] Git Commit: `fix(diagram-ui): clarify diagram modules empty staged state` (hash: `42e31c24`)
 
 ### Stream: Release notes sync
-1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под fixes после retest `1.1.770`: tolerant parsing staged index, recovery hidden continuation path через корректный progress snapshot и cleanup `Diagram Modules` user-facing surface (`Source`, preamble, empty-state) (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules retest blocker fixes`).
+1. [DONE] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под fixes после retest `1.1.770`: tolerant parsing staged index, recovery hidden continuation path через корректный progress snapshot и cleanup `Diagram Modules` user-facing surface (`Source`, preamble, empty-state) (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules retest blocker fixes`).
 2. [TODO] Git Commit: `docs(release): sync diagram modules retest blocker fixes` (hash: TBD)
 
 ### Stream: Release build
