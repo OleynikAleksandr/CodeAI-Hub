@@ -83,6 +83,8 @@ const PRODUCT_PART_HEADER_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
 const PRODUCT_PART_ORDERED_ITEM_RE =
   /^\d+\.\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s+[—-]\s+`([^`]+)`\s*$/gm;
+const PRODUCT_PART_TABLE_ROW_RE =
+  /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
 
 const readField = (block: string, label: string): string | null => {
   const match = block.match(new RegExp(`^\\s*- ${label}:\\s+(.+)$`, "im"));
@@ -106,11 +108,19 @@ export const buildDiagramModulesSkeletonFromIndex = (
       index: match.index ?? 0,
       id: match[1]?.trim() ?? "",
       title: null as string | null,
+      purpose: null as string | null,
     })),
     ...[...markdown.matchAll(PRODUCT_PART_ORDERED_ITEM_RE)].map((match) => ({
       index: match.index ?? 0,
       id: match[1]?.trim() ?? "",
       title: match[2]?.trim() ?? null,
+      purpose: null as string | null,
+    })),
+    ...[...markdown.matchAll(PRODUCT_PART_TABLE_ROW_RE)].map((match) => ({
+      index: match.index ?? 0,
+      id: match[1]?.trim() ?? "",
+      title: match[2]?.trim() ?? null,
+      purpose: match[3]?.trim() ?? null,
     })),
   ].sort((left, right) => left.index - right.index);
   for (const [index, match] of matches.entries()) {
@@ -131,6 +141,7 @@ export const buildDiagramModulesSkeletonFromIndex = (
         readField(block, "Title") ??
         humanizeIdentifier(productPartId),
       purpose:
+        match.purpose ??
         readField(block, "Purpose") ??
         "Planned Product Part awaiting staged materialization.",
       clusterIds: [],

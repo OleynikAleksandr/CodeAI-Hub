@@ -49,6 +49,18 @@ const createCanonicalOrderIndex = (): string =>
     "   - Purpose: Shows the staged diagram workflow to the user.",
   ].join("\n");
 
+const createCanonicalTableIndex = (): string =>
+  [
+    "# Product Parts Index",
+    "",
+    "## Canonical Product Parts",
+    "",
+    "| Order | Part ID | Product Part | Purpose |",
+    "| --- | --- | --- | --- |",
+    "| 1 | `local-core-runtime` | `Local Core Runtime` | Runs the main local orchestration. |",
+    "| 2 | `project-manager-ui` | `Project Manager UI` | Shows the staged diagram workflow to the user. |",
+  ].join("\n");
+
 test("diagram modules orchestration refreshes workflow state after turn_completed without structured_output", async () => {
   const source = await readFile(ORCHESTRATION_SOURCE_PATH, "utf8");
 
@@ -136,6 +148,64 @@ test("diagram modules progress snapshot also reads the numbered canonical order 
     );
     await mkdir(path.dirname(indexPath), { recursive: true });
     await writeFile(indexPath, `${createCanonicalOrderIndex()}\n`, {
+      encoding: "utf8",
+      flag: "w",
+    });
+
+    const snapshot = await readDiagramModulesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.notEqual(snapshot, null);
+    assert.equal(snapshot?.substep, "generate_product_part");
+    assert.equal(snapshot?.plannedCount, 2);
+    assert.equal(snapshot?.generatedCount, 0);
+    assert.equal(snapshot?.currentPartId, "local-core-runtime");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("diagram modules progressive skeleton parses the canonical product parts table format", () => {
+  const model = buildDiagramModulesSkeletonFromIndex(createCanonicalTableIndex());
+  const productParts = model.productParts ?? [];
+
+  assert.equal(productParts.length, 2);
+  assert.deepEqual(
+    productParts.map((part) => ({
+      id: part.id,
+      title: part.title,
+      purpose: part.purpose,
+    })),
+    [
+      {
+        id: "local-core-runtime",
+        title: "Local Core Runtime",
+        purpose: "Runs the main local orchestration.",
+      },
+      {
+        id: "project-manager-ui",
+        title: "Project Manager UI",
+        purpose: "Shows the staged diagram workflow to the user.",
+      },
+    ]
+  );
+});
+
+test("diagram modules progress snapshot also reads the canonical product parts table format", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-canonical-table-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    const indexPath = path.join(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`
+    );
+    await mkdir(path.dirname(indexPath), { recursive: true });
+    await writeFile(indexPath, `${createCanonicalTableIndex()}\n`, {
       encoding: "utf8",
       flag: "w",
     });
