@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.772] - 2026-03-23
+### Fixed
+- `Diagram Modules` `Source` now becomes available as soon as `product-parts.index.md` exists; the availability gate no longer waits for `module-inventory.md` before opening the staged canonical artifact.
+- `Diagram Modules` now reads the live Markdown table format under `Canonical Product Parts`, so the first `product-parts.index.md` immediately produces a visible staged skeleton instead of an empty canvas.
+- The same table-format parser recovery restores hidden continuation after the index write by resolving planned parts and the next `currentPartId` from the real live artifact shape.
+- Added regression coverage for both fixes: `Source` availability must follow `product-parts.index.md`, and staged parser tests now accept the live table-based index alongside the earlier heading/list formats.
+
 ## [1.1.771] - 2026-03-23
 ### Fixed
 - `Diagram Modules` now reads both the legacy `### Product Part: ...` index blocks and the live numbered `Canonical order` format written by the staged agent, so the first `product-parts.index.md` immediately produces a visible React Flow skeleton instead of an empty canvas.

@@ -245,7 +245,7 @@
 2. [TODO] Git Commit: `fix(diagram-workflow): recover table-based staged index parsing` (hash: TBD)
 
 ### Stream: Release notes sync
-1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.771`: `Source` availability на index artifact и parser recovery для live table-format `product-parts.index.md` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.771 retest fixes`).
+1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.771`: `Source` availability на index artifact и parser recovery для live table-format `product-parts.index.md` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.771 retest fixes`).
 2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.771 retest fixes` (hash: TBD)
 
 ### Stream: Release build
