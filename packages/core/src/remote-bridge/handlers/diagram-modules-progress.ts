@@ -3,6 +3,8 @@ import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-arti
 
 const PRODUCT_PART_ID_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
+const PRODUCT_PART_ORDERED_ITEM_RE =
+  /^\d+\.\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s+[—-]\s+`[^`]+`\s*$/gm;
 const BLOCKED_AMBIGUITY_RE = /- Status:\s*blocked_ambiguity\b/i;
 
 export type DiagramModulesSubstep =
@@ -34,12 +36,14 @@ const readExistingFile = async (
 
 const collectPlannedPartIds = (markdown: string): string[] => {
   const plannedPartIds: string[] = [];
-  for (const match of markdown.matchAll(PRODUCT_PART_ID_RE)) {
-    const partId = match[1]?.trim();
-    if (!partId || plannedPartIds.includes(partId)) {
-      continue;
+  for (const pattern of [PRODUCT_PART_ID_RE, PRODUCT_PART_ORDERED_ITEM_RE]) {
+    for (const match of markdown.matchAll(pattern)) {
+      const partId = match[1]?.trim();
+      if (!partId || plannedPartIds.includes(partId)) {
+        continue;
+      }
+      plannedPartIds.push(partId);
     }
-    plannedPartIds.push(partId);
   }
   return plannedPartIds;
 };

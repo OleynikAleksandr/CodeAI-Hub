@@ -81,9 +81,11 @@ export const readWorkflowArtifact = async (params: {
 
 const PRODUCT_PART_HEADER_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
+const PRODUCT_PART_ORDERED_ITEM_RE =
+  /^\d+\.\s+`([a-z0-9]+(?:-[a-z0-9]+)*)`\s+[—-]\s+`([^`]+)`\s*$/gm;
 
 const readField = (block: string, label: string): string | null => {
-  const match = block.match(new RegExp(`^- ${label}:\\s+(.+)$`, "im"));
+  const match = block.match(new RegExp(`^\\s*- ${label}:\\s+(.+)$`, "im"));
   const value = match?.[1]?.trim();
   return value && value.length > 0 ? value : null;
 };
@@ -99,13 +101,24 @@ export const buildDiagramModulesSkeletonFromIndex = (
   markdown: string
 ): ModuleMapModel => {
   const productParts: ProductPartEntity[] = [];
-  const matches = [...markdown.matchAll(PRODUCT_PART_HEADER_RE)];
+  const matches = [
+    ...[...markdown.matchAll(PRODUCT_PART_HEADER_RE)].map((match) => ({
+      index: match.index ?? 0,
+      id: match[1]?.trim() ?? "",
+      title: null as string | null,
+    })),
+    ...[...markdown.matchAll(PRODUCT_PART_ORDERED_ITEM_RE)].map((match) => ({
+      index: match.index ?? 0,
+      id: match[1]?.trim() ?? "",
+      title: match[2]?.trim() ?? null,
+    })),
+  ].sort((left, right) => left.index - right.index);
   for (const [index, match] of matches.entries()) {
-    const productPartId = match[1]?.trim();
+    const productPartId = match.id;
     if (!productPartId) {
       continue;
     }
-    const blockStart = match.index ?? 0;
+    const blockStart = match.index;
     const blockEnd =
       index + 1 < matches.length
         ? (matches[index + 1]?.index ?? markdown.length)
@@ -113,7 +126,10 @@ export const buildDiagramModulesSkeletonFromIndex = (
     const block = markdown.slice(blockStart, blockEnd);
     productParts.push({
       id: productPartId,
-      title: readField(block, "Title") ?? humanizeIdentifier(productPartId),
+      title:
+        match.title ??
+        readField(block, "Title") ??
+        humanizeIdentifier(productPartId),
       purpose:
         readField(block, "Purpose") ??
         "Planned Product Part awaiting staged materialization.",
