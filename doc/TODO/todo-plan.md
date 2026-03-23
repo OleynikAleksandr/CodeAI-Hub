@@ -73,10 +73,10 @@
 
 ### Stream: Runtime aggregate compose
 1. [DONE] Собрать compatibility aggregate `module-inventory.md` из `product-parts.index.md` и part-файлов, чтобы downstream `Diagram Facades` по-прежнему читал единый canonical input, а user-facing generation при этом оставался decomposed и progressive; aggregate должен materialize-иться runtime-ом после последнего `Product Part`, а не писаться агентом напрямую (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): compose aggregate inventory from product parts`).
-2. [TODO] Git Commit: `feat(diagram-workflow): compose aggregate inventory from product parts` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-workflow): compose aggregate inventory from product parts` (hash: `2829ac39`)
 
 ### Stream: Stage completion and gating
-1. [TODO] Перевести `diagram_modules` completion/gating на правило `all planned Product Parts generated + aggregate inventory materialized`, при этом relation lines оставить deferred и не требовать их для базового завершения шага (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): gate completion by product part sequence`).
+1. [DONE] Перевести `diagram_modules` completion/gating на правило `all planned Product Parts generated + aggregate inventory materialized`, при этом relation lines оставить deferred и не требовать их для базового завершения шага; server-side workflow state должен открывать `Diagram Facades` только при `awaiting_review + aggregateReady`, а промежуточные staged part-файлы не должны снимать gate раньше времени (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): gate completion by product part sequence`).
 2. [TODO] Git Commit: `fix(diagram-workflow): gate completion by product part sequence` (hash: TBD)
 
 ## Phase 42 — Codex Long-Turn Stability And Transcript Preservation (owner: Oleksandr, updated: 2026-03-23)

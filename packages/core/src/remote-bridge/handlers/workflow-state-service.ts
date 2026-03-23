@@ -15,7 +15,10 @@ import type {
   WorkflowStageId,
   WorkflowWatcherEvent,
 } from "../../workflow/watcher/watcher-types";
-import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import {
+  type DiagramModulesProgressSnapshot,
+  readDiagramModulesProgressSnapshot,
+} from "./diagram-modules-progress";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 
 const HTTP_BAD_REQUEST = 400;
@@ -127,6 +130,7 @@ export class WorkflowStateService {
                 blocked: resolveWorkflowBlockedStages({
                   state: validatedState,
                   description,
+                  diagramModulesProgress,
                 }),
               };
               res.json({
@@ -252,6 +256,7 @@ const resolveWorkflowBlockedStages = (params: {
     readonly finalPath?: string;
     readonly draftPath?: string;
   } | null;
+  readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
 }): Record<WorkflowStageId, boolean> => {
   const descriptionDone = Boolean(
     params.description?.finalPath ?? params.description?.draftPath
@@ -266,11 +271,20 @@ const resolveWorkflowBlockedStages = (params: {
     stage: "diagram_modules",
     fileName: "module-inventory.md",
   });
+  const diagramModulesReadyFromSequence = Boolean(
+    params.diagramModulesProgress &&
+      params.diagramModulesProgress.substep === "awaiting_review" &&
+      params.diagramModulesProgress.aggregateReady &&
+      params.diagramModulesProgress.generatedCount >=
+        params.diagramModulesProgress.plannedCount
+  );
 
   return {
     description: false,
     virtual_simulation: !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
-    diagram_facades: !diagramModulesArtifactAvailable,
+    diagram_facades: !(
+      diagramModulesReadyFromSequence || diagramModulesArtifactAvailable
+    ),
   };
 };
