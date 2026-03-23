@@ -19,7 +19,7 @@ test("virtual simulation prompt pack omits template hint", () => {
   assert.equal(pack.content.includes("Шаблон (absolute)"), false);
 });
 
-test("non-virtual stages keep template hint", () => {
+test("description prompt pack keeps template hint", () => {
   const pack = buildWorkflowPromptPack({
     stage: "description",
     workspacePath: "/tmp/workspace",
@@ -32,7 +32,7 @@ test("non-virtual stages keep template hint", () => {
   assert.equal(pack.content.includes("Шаблон (absolute): `/tmp/description-template.md`"), true);
 });
 
-test("diagram modules prompt pack targets product part index and includes staged hints", () => {
+test("diagram modules prompt pack targets product part index and omits generic template hint", () => {
   const pack = buildWorkflowPromptPack({
     stage: "diagram_modules",
     workspacePath: "/tmp/workspace",
@@ -76,10 +76,43 @@ test("diagram modules prompt pack targets product part index and includes staged
   );
   assert.equal(
     pack.content.includes(
-      "Compatibility aggregate (runtime-owned): `.codeai-hub/demo-workspace/diagram_modules/module-inventory.md`"
+      "Compatibility aggregate (runtime-owned, not a default input): `.codeai-hub/demo-workspace/diagram_modules/module-inventory.md`"
+    ),
+    true
+  );
+  assert.equal(pack.content.includes("Шаблон (absolute)"), false);
+  assert.equal(
+    pack.content.includes(
+      "не трать текущий turn на поиск compatibility inventory"
     ),
     true
   );
   assert.equal(pack.content.includes("module-map.md"), false);
   assert.equal(pack.content.includes("Имя выходного файла: `product-parts.index.md`"), true);
+});
+
+test("diagram facades prompt pack omits generic template hint and adds no-search rule", () => {
+  const pack = buildWorkflowPromptPack({
+    stage: "diagram_facades",
+    workspacePath: "/tmp/workspace",
+    workspaceSlug: "demo-workspace",
+    prompt: "",
+    questionnairePath: ".codeai-hub/demo-workspace/diagram_modules/module-inventory.md",
+    templatePath: "/tmp/facade-map-template.md",
+  });
+
+  assert.equal(pack.content.includes("Шаблон (absolute)"), false);
+  assert.equal(
+    pack.content.includes(
+      "Phase 1: прочитай `module-inventory.md`, затем создай или обнови `facade-map.md`"
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "не трать текущий turn на поиск continuity files, helper artifacts, generic template files или legacy diagram directories"
+    ),
+    true
+  );
+  assert.equal(pack.content.includes("Имя выходного файла: `facade-map.md`"), true);
 });

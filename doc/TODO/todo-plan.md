@@ -149,10 +149,10 @@
 
 ### Stream: Diagram Facades prompt surface cleanup
 1. [DONE] Проверить и ужесточить `diagram_facades` prompt surface по тем же правилам: exact inputs, explicit non-inputs, no continuity/template scouting и без generic template absolute path в user-visible compose prompt (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-facades): tighten facade prompt surface`).
-2. [DONE] Git Commit: `fix(diagram-facades): tighten facade prompt surface` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-facades): tighten facade prompt surface` (hash: `64840c35`)
 
 ### Stream: Contract regression coverage
-1. [TODO] Обновить tests prompt/contract composition для `diagram_modules` и `diagram_facades`, чтобы они ловили legacy strings, unwanted template hints и отсутствие strict input restrictions до следующего релиза (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover composite prompt contract cleanup`).
+1. [DONE] Обновить tests prompt/contract composition для `diagram_modules` и `diagram_facades`, чтобы они ловили legacy strings, unwanted template hints и отсутствие strict input restrictions до следующего релиза (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover composite prompt contract cleanup`).
 2. [TODO] Git Commit: `test(diagram-workflow): cover composite prompt contract cleanup` (hash: TBD)
 
 ### Stream: Release notes sync
