@@ -1,4 +1,3 @@
-import { materializeModuleMapFromInventoryDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/module-inventory-parser";
 import { serializeModuleMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer";
 import {
   buildDiagramModulesSkeletonFromIndex,
@@ -6,6 +5,7 @@ import {
   readWorkflowArtifact,
   resolveDiagramPaths,
 } from "../diagram-editor/diagram-modules-progressive-model";
+import { materializeModuleMapFromStagedProductPart } from "../diagram-editor/diagram-modules-staged-part-parser";
 
 const WORKSPACE_SESSION_ENDPOINT = "/api/v1/orchestrator/workspace-session";
 const WORKSPACE_FILE_WRITE_ENDPOINT =
@@ -108,7 +108,7 @@ export const composeDiagramModulesAggregate = async (params: {
             : `Не удалось загрузить Product Part ${productPart.id}: ${partResult.error}`,
       };
     }
-    const materializedPart = materializeModuleMapFromInventoryDsl(
+    const materializedPart = materializeModuleMapFromStagedProductPart(
       partResult.content
     );
     if (!materializedPart.ok) {
