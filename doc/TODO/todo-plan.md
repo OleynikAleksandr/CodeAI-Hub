@@ -58,10 +58,10 @@
 
 ### Stream: Release gate contract sync
 1. [DONE] Синхронизировать sidecar type-tests с новым `purpose` contract для `Product Part / Cluster`, чтобы финальный `build-release.sh --use-current-version` проходил type-check без post-release drift (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-layout): sync flow sidecar purpose contract`).
-2. [TODO] Git Commit: `test(diagram-layout): sync flow sidecar purpose contract` (hash: TBD)
+2. [DONE] Git Commit: `test(diagram-layout): sync flow sidecar purpose contract` (hash: `4e71af19`)
 
 ### Stream: Session handoff
-1. [TODO] После успешной релизной сборки синхронизировать active plan фактическими hash-ами, оформить новый session report и зафиксировать clean-tree handoff вместе с outcome-ами dense-layout regression (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules review layout release`).
+1. [DONE] После успешной релизной сборки синхронизировать active plan фактическими hash-ами, оформить новый session report и зафиксировать clean-tree handoff вместе с outcome-ами dense-layout regression (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record diagram modules review layout release`).
 2. [TODO] Git Commit: `docs(session): record diagram modules review layout release` (hash: TBD)
 
 ## Notes
