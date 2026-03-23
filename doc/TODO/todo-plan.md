@@ -234,22 +234,22 @@
 
 ### Stream: Planning baseline
 1. [DONE] Зафиксировать пользовательский retest `1.1.771`: `Source` остаётся в pending после уже созданного `product-parts.index.md`, а React Flow всё ещё пустой, потому что live index format снова разошёлся с parser-ами; оформить новый planning-doc под availability fix и table-format parser recovery (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_771_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules retest blockers after 1.1.771`).
-2. [TODO] Git Commit: `docs(plan): capture diagram modules retest blockers after 1.1.771` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): capture diagram modules retest blockers after 1.1.771` (hash: `bb1d2a88`)
 
 ### Stream: Source availability recovery
-1. [TODO] Перевести availability gate для `Diagram Modules` `Source` с `module-inventory.md` на `product-parts.index.md`, чтобы user-facing source viewer открывался сразу после первого staged artifact write, а не ждал compatibility aggregate (scope: `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.ts`, targeted test file; expected commit: `fix(diagram-ui): unblock diagram modules source on index artifact`).
-2. [TODO] Git Commit: `fix(diagram-ui): unblock diagram modules source on index artifact` (hash: TBD)
+1. [DONE] Перевести availability gate для `Diagram Modules` `Source` с `module-inventory.md` на `product-parts.index.md`, чтобы user-facing source viewer открывался сразу после первого staged artifact write, а не ждал compatibility aggregate (scope: `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.ts`, targeted test file; expected commit: `fix(diagram-ui): unblock diagram modules source on index artifact`).
+2. [DONE] Git Commit: `fix(diagram-ui): unblock diagram modules source on index artifact` (hash: `0ab29a21`)
 
 ### Stream: Table-format parser recovery
-1. [TODO] Научить progressive loader и workflow progress snapshot читать реальный table-based `Canonical Product Parts` format текущего `product-parts.index.md`, чтобы staged skeleton и hidden continuation снова стартовали на live artifact, а не только на legacy headings или numbered list (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted test file; expected commit: `fix(diagram-workflow): recover table-based staged index parsing`).
-2. [TODO] Git Commit: `fix(diagram-workflow): recover table-based staged index parsing` (hash: TBD)
+1. [DONE] Научить progressive loader и workflow progress snapshot читать реальный table-based `Canonical Product Parts` format текущего `product-parts.index.md`, чтобы staged skeleton и hidden continuation снова стартовали на live artifact, а не только на legacy headings или numbered list (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, targeted test file; expected commit: `fix(diagram-workflow): recover table-based staged index parsing`).
+2. [DONE] Git Commit: `fix(diagram-workflow): recover table-based staged index parsing` (hash: `b63968a3`)
 
 ### Stream: Release notes sync
 1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.771`: `Source` availability на index artifact и parser recovery для live table-format `product-parts.index.md` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.771 retest fixes`).
-2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.771 retest fixes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync diagram modules 1.1.771 retest fixes` (hash: `0d3695e2`)
 
 ### Stream: Release build
-1. [TODO] После availability/parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без pending `Source` и без пустого staged graph после первого index write (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules 1.1.771 retest follow-up release`).
+1. [IN_PROGRESS] После availability/parser fixes выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю baseline без pending `Source` и без пустого staged graph после первого index write (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare diagram modules 1.1.771 retest follow-up release`).
 2. [TODO] Git Commit: `chore(release): prepare diagram modules 1.1.771 retest follow-up release` (hash: TBD)
 
 ### Stream: Session handoff
