@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.768
-- `Diagram Modules` now runs as a staged `Product Part` sequence: runtime starts from `product-parts.index.md`, materializes `product-parts/<part-id>.md` incrementally, and lets React Flow surface the system progressively instead of waiting for one giant inventory turn.
-- The PM diagram surface now shows live `Product Part` progress and preserves index order during progressive regeneration, so users can watch the graph grow in the same top-level sequence that the agent discovered.
-- Runtime now composes `module-inventory.md` as a compatibility aggregate after the last `Product Part`, and `Diagram Facades` stays gated until the whole sequence reaches `awaiting_review + aggregateReady`.
-- `Codex` long-running diagram turns no longer die on a hard idle timeout when the provider stays silent for several minutes, and late provider assistant messages now keep their original provider timestamps inside the session transcript.
+## Current Release — v1.1.769
+- `Diagram Modules` now exposes one coherent staged authoring contract end-to-end: the live prompt starts from `product-parts.index.md`, hidden continuation turns materialize one `product-parts/<part-id>.md` at a time, and `module-inventory.md` stays runtime-owned as the downstream compatibility aggregate.
+- The bundled `diagram_modules` template set now ships dedicated staged templates for the index artifact and a single materialized `Product Part`, so synced runtime assets no longer present the old monolithic inventory template as the only user-facing writing surface.
+- PM now rereads `workflowState.diagramModulesProgress` after `turn_completed`, which means direct file-write / file-change Codex turns continue automatically even when the provider does not emit `structured_output`.
+- Regression coverage now pins the direct file-change continuation path, while the existing staged progress UI and skeleton-first React Flow rendering remain the visible review baseline for users.
 
 Previous releases (summary): the `1.1.57x–1.1.767` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, the first Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, ownership-aware `Product Part` hierarchy, the two-pass Diagram Modules layout/readability fixes, and the new staged product-part decomposition baseline.
 

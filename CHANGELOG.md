@@ -2,6 +2,15 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.769] - 2026-03-23
+### Changed
+- `Diagram Modules` live prompt/template surface now follows one explicit staged contract: first `product-parts.index.md`, then one `product-parts/<part-id>.md` per hidden continuation, while `module-inventory.md` remains runtime-owned compatibility output.
+- Bundled template delivery now includes dedicated staged templates for `product-parts.index.md` and a single materialized `Product Part`, so synced `~/.codeai-hub/templates/diagram_modules/...` assets match the repaired PM prompt surface instead of only shipping the old monolithic inventory template.
+
+### Fixed
+- Hidden `Diagram Modules` continuation now rereads `workflowState` after `turn_completed`, so direct file-write / file-change Codex turns continue automatically even when no `structured_output` event is emitted.
+- Added regression coverage for the live failure mode `index written -> no structured_output -> continuation still starts`, reducing the chance that future transport-path changes silently break staged orchestration again.
+
 ## [1.1.768] - 2026-03-23
 ### Changed
 - `Diagram Modules` now starts from `product-parts.index.md` and then materializes one `product-parts/<part-id>.md` at a time, so the stage can progressively reveal the system instead of waiting for one giant inventory turn.
