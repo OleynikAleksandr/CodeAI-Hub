@@ -57,7 +57,7 @@ const DESCRIPTION_PATH_RE =
 const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:module-inventory\.md|module-map\.flow\.json)$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-inventory\.md)|(?:module-map\.flow\.json))$/;
 const DIAGRAM_FACADES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:facade-map\.md|facade-map\.flow\.json|facade-map\.agent-baseline\.md)$/;
 
@@ -470,6 +470,8 @@ type WorkflowStageId =
 type WorkflowArtifactFileName =
   | "Final_Description.md"
   | "virtual-simulation.md"
+  | "product-parts.index.md"
+  | "product-part.md"
   | "module-inventory.md"
   | "module-map.flow.json"
   | "facade-map.md"
@@ -498,6 +500,10 @@ const WORKFLOW_STAGE_SLOTS = new Map<
   [
     "diagram.modules.inventory",
     { stage: "diagram_modules", fileName: "module-inventory.md" },
+  ],
+  [
+    "diagram.modules.index",
+    { stage: "diagram_modules", fileName: "product-parts.index.md" },
   ],
   [
     "diagram.modules.flow",
@@ -532,6 +538,9 @@ type WorkflowStageUpsertTarget = {
   readonly relativePath: string;
   readonly artifactPath: string;
 };
+
+const PRODUCT_PART_SLOT_RE =
+  /^diagram\.modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 
 const resolveWorkflowStageUpsertContext = (params: {
   readonly workspacePath: string;
@@ -568,6 +577,10 @@ const resolveWorkflowStageUpsertTarget = (params: {
   readonly context: WorkflowStageUpsertContext;
   readonly slot: string;
 }): PayloadParseResult<WorkflowStageUpsertTarget> => {
+  const productPartTarget = resolveDiagramModulesProductPartTarget(params);
+  if (productPartTarget) {
+    return productPartTarget;
+  }
   const slotInfo = WORKFLOW_STAGE_SLOTS.get(params.slot);
   if (!slotInfo) {
     return {
@@ -600,6 +613,34 @@ const resolveWorkflowStageUpsertTarget = (params: {
   return {
     ok: true,
     value: { fileName: slotInfo.fileName, relativePath, artifactPath },
+  };
+};
+
+const resolveDiagramModulesProductPartTarget = (params: {
+  readonly context: WorkflowStageUpsertContext;
+  readonly slot: string;
+}): PayloadParseResult<WorkflowStageUpsertTarget> | null => {
+  if (params.context.stage !== "diagram_modules") {
+    return null;
+  }
+  const partId = PRODUCT_PART_SLOT_RE.exec(params.slot)?.[1] ?? null;
+  if (!partId) {
+    return null;
+  }
+  const relativePath = `.codeai-hub/${params.context.initiativeSlug}/diagram_modules/product-parts/${partId}.md`;
+  if (!DIAGRAM_MODULES_PATH_RE.test(relativePath)) {
+    return { ok: false, error: "Invalid diagram modules product part path" };
+  }
+  const artifactPath = resolveArtifactPath(
+    params.context.workspaceRoot,
+    relativePath
+  );
+  if (!artifactPath) {
+    return { ok: false, error: "Unsafe artifact path" };
+  }
+  return {
+    ok: true,
+    value: { fileName: "product-part.md", relativePath, artifactPath },
   };
 };
 
@@ -723,6 +764,7 @@ type PayloadParseResult<T> =
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const MODULE_INVENTORY_TITLE_RE = /^#\s+Module Inventory/m;
+const PRODUCT_PARTS_INDEX_TITLE_RE = /^#\s+Product Parts Index/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 
 const normalizeArtifactContent = (content: string): string =>
@@ -741,6 +783,12 @@ const resolveWorkflowStageValidationError = (params: {
         params.content,
         params.shouldValidate
       );
+    case "product-parts.index.md":
+      return validateProductPartsIndexMarkdown(
+        params.content,
+        params.shouldValidate
+      );
+    case "product-part.md":
     case "module-inventory.md":
       return validateModuleInventoryMarkdown(
         params.content,
@@ -810,6 +858,22 @@ const validateModuleInventoryMarkdown = (
   }
   if (!MODULE_INVENTORY_TITLE_RE.test(content)) {
     return "Module inventory markdown is missing '# Module Inventory' header";
+  }
+  return null;
+};
+
+const validateProductPartsIndexMarkdown = (
+  content: string,
+  shouldValidate: boolean
+): string | null => {
+  if (!shouldValidate) {
+    return null;
+  }
+  if (content.trim().length === 0) {
+    return "Product parts index markdown is empty";
+  }
+  if (!PRODUCT_PARTS_INDEX_TITLE_RE.test(content)) {
+    return "Product parts index markdown is missing '# Product Parts Index' header";
   }
   return null;
 };

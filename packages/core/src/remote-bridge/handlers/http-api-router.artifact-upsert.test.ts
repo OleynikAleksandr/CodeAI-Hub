@@ -150,3 +150,129 @@ test("artifact upsert saves module-inventory.md without derived module-map.md", 
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+const PRODUCT_PARTS_INDEX_MARKDOWN = [
+  "# Product Parts Index",
+  "",
+  "## Metadata",
+  "- Version: 1",
+  "- Stage: diagram_modules",
+  "- Updated: 2026-03-23T12:00:00Z",
+  "",
+  "## Product Parts",
+  "",
+  "### Product Part: local-core-runtime",
+  "- Id: local-core-runtime",
+  "- Title: Local Core Runtime",
+  "- Purpose: Run local orchestration and workflow state.",
+  "- Status: planned",
+  "",
+].join("\n");
+
+test("artifact upsert saves diagram modules staged index and dynamic product part files", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "http-api-router-product-parts-upsert-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    const router = new HttpApiRouter({
+      app: {} as never,
+      fileDropService: {
+        clear() {
+          // Test stub.
+        },
+      } as never,
+      getStatusInfo: () => ({
+        clientCount: 0,
+        sessionData: null,
+        providerData: null,
+      }),
+      logger: new Logger("error"),
+      onWorkspaceSessionCreated: undefined,
+      sessionHandler: {} as never,
+      sessionManager: {
+        getSession(sessionId: string) {
+          if (sessionId !== "session-1") {
+            return null;
+          }
+          return {
+            id: sessionId,
+            initiativeSlug: workspaceSlug,
+            runSlug: null,
+            stage: "diagram_modules",
+            workspacePath: workspaceRoot,
+          };
+        },
+      } as never,
+      sessionStorage: {} as never,
+      systemHandler: {} as never,
+      workflowEventsService: {} as never,
+      workflowStateService: {} as never,
+    });
+
+    const capture = createResponseCapture();
+    await (
+      router as unknown as {
+        handleArtifactUpsertSave(req: Request, res: Response): Promise<void>;
+      }
+    ).handleArtifactUpsertSave(
+      {
+        body: {
+          sessionId: "session-1",
+          artifacts: [
+            {
+              slot: "diagram.modules.index",
+              markdown: PRODUCT_PARTS_INDEX_MARKDOWN,
+            },
+            {
+              slot: "diagram.modules.product-part.local-core-runtime",
+              markdown: MODULE_INVENTORY_MARKDOWN,
+            },
+          ],
+        },
+      } as Request,
+      capture.response
+    );
+
+    const result = capture.read() as {
+      readonly statusCode: number;
+      readonly payload: {
+        readonly saved: readonly {
+          readonly slot: string;
+          readonly path: string;
+          readonly changed: boolean;
+        }[];
+      };
+    };
+
+    assert.equal(result.statusCode, 200);
+    assert.deepEqual(
+      result.payload.saved.map((entry) => entry.slot),
+      [
+        "diagram.modules.index",
+        "diagram.modules.product-part.local-core-runtime",
+      ]
+    );
+
+    const indexPath = path.join(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`
+    );
+    const productPartPath = path.join(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`
+    );
+
+    assert.equal(
+      await readFile(indexPath, "utf8"),
+      PRODUCT_PARTS_INDEX_MARKDOWN
+    );
+    assert.equal(
+      await readFile(productPartPath, "utf8"),
+      MODULE_INVENTORY_MARKDOWN
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
