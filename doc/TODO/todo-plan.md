@@ -115,9 +115,9 @@
 
 ### Stream: Continuation trigger repair
 1. [DONE] Перевести `diagram_modules` orchestration с `structured_output`-only trigger на post-turn continuation rule, чтобы direct `file_change` / direct file-write `Codex` path после `product-parts.index.md` тоже запускал hidden следующий turn по `workflowState.diagramModulesProgress` без user-visible `Продолжай` (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): continue after staged file writes`).
-2. [DONE] Git Commit: `fix(diagram-workflow): continue after staged file writes` (hash: TBD)
-3. [TODO] Добавить regression coverage для live failure case `Phase 1 index written -> no structured_output -> hidden continuation still starts`, чтобы повторный retest `Diagram Modules` не зависел от удачи конкретного provider transport path (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover file-change continuation`).
-4. [TODO] Git Commit: `test(diagram-workflow): cover file-change continuation` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-workflow): continue after staged file writes` (hash: `ad266617`)
+3. [DONE] Добавить regression coverage для live failure case `Phase 1 index written -> no structured_output -> hidden continuation still starts`, чтобы повторный retest `Diagram Modules` не зависел от удачи конкретного provider transport path (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover file-change continuation`).
+4. [DONE] Git Commit: `test(diagram-workflow): cover file-change continuation` (hash: TBD)
 
 ### Stream: Release notes sync
 1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и workflow docs под findings ретеста `1.1.768`: staged `Diagram Modules` prompt repair, direct file-change continuation support и сохранение skeleton-first `Product Part` rendering как ценного промежуточного результата (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync staged prompt continuation fixes`).
