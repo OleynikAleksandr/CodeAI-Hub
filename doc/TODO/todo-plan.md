@@ -18,7 +18,11 @@
 
 ### Stream: Planning baseline
 1. [DONE] Заархивировать завершённый rollout-план до `Phase 52`, оформить новый planning-doc по canonical `product-parts.index.md` / `product-parts/<part-id>.md` template contract и prompt-delivery chain, затем создать новый active `todo-plan.md` только под этот scope с явной защитой уже работающих частей раннего staged flow (scope: `doc/TODO/Archive/todo-plan-up-to-phase52-2026-03-23.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Canonical_ProductPart_Template_And_Prompt_Delivery_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): archive phase52 plan and start canonical product part template scope`).
-2. [TODO] Git Commit: `docs(plan): archive phase52 plan and start canonical product part template scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): archive phase52 plan and start canonical product part template scope` (hash: `bb1578f2`)
+
+### Stream: Planning handoff
+1. [IN_PROGRESS] Оформить session report по итогам этой сессии: пользовательский retest показал, что агент создаёт все `product-parts/<part-id>.md`, но clusters/modules не materialize-ятся в графе; подтвердить root cause по live artifacts и зафиксировать, что следующая сессия начинает именно реализацию `Phase 53`, а не новый exploratory analysis (scope: `doc/Sessions/Session147.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record canonical product part template planning handoff`).
+2. [TODO] Git Commit: `docs(session): record canonical product part template planning handoff` (hash: TBD)
 
 ### Stream: Canonical template SSOT
 1. [TODO] Переписать source assets `product-parts-index-template.md` и `product-part-template.md` в один канонический human-readable, parser-safe staged DSL без legacy inventory-first shape, явно отделив semantic sections от optional narrative appendix, но не меняя уже рабочий index parser path вне нужного template contract (scope: `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `packages/agents/diagram-modules-agent/assets/product-part-template.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): define canonical staged product part templates`).
