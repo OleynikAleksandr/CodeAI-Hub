@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`, `doc/Sessions/Session132.md`, `doc/Sessions/Session133.md`, `doc/Sessions/Session134.md`, `doc/Sessions/Session135.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`, `doc/Sessions/Session132.md`, `doc/Sessions/Session133.md`, `doc/Sessions/Session134.md`, `doc/Sessions/Session135.md`, `doc/Sessions/Session137.md`, `doc/Sessions/Session138.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -129,7 +129,43 @@
 
 ### Stream: Session handoff
 1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по prompt/template repair и continuation retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record staged prompt continuation release`).
-2. [DONE] Git Commit: `docs(session): record staged prompt continuation release` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record staged prompt continuation release` (hash: `e9790b9c`)
+
+## Phase 45 — Diagram Workflow Composite Prompt Contract Cleanup (owner: Oleksandr, updated: 2026-03-23)
+
+### Stream: Planning baseline
+1. [IN_PROGRESS] Зафиксировать findings пользовательского retest `1.1.769`: составной prompt для `Diagram Modules` заставляет агента искать compatibility inventory, staged examples, continuity/runtime templates и legacy stage artifacts, после чего оформить новый planning-doc по composite prompt contract для `Diagram Modules` и `Diagram Facades` вместе с session report по этому retest (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`, `doc/Sessions/Session138.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture composite diagram prompt retest findings`).
+2. [TODO] Git Commit: `docs(plan): capture composite diagram prompt retest findings` (hash: TBD)
+3. [TODO] После planning-baseline commit-а синхронизировать active plan и `Session138` фактическими hash-ами, чтобы следующий cold start видел новый scope и report без `TBD` (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session138.md`; expected commit: `docs(session): sync composite diagram prompt planning handoff`).
+4. [TODO] Git Commit: `docs(session): sync composite diagram prompt planning handoff` (hash: TBD)
+
+### Stream: Diagram Modules prompt surface cleanup
+1. [TODO] Ужесточить user-facing `diagram_modules` prompt asset и PM prompt pack: убрать guidance про поиск compatibility inventory / continuity files / staged examples / legacy `diagram_modules` artifacts, явно описать exact inputs и non-inputs текущего turn-а и перестать показывать generic template hint в compose prompt (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): tighten diagram modules prompt surface`).
+2. [TODO] Git Commit: `fix(diagram-workflow): tighten diagram modules prompt surface` (hash: TBD)
+
+### Stream: Diagram stage contract assembly cleanup
+1. [TODO] Перестроить runtime workflow contract assembly для diagram stages так, чтобы `diagram_modules` и `diagram_facades` больше не выглядели как generic single-template flow, mandatory DSL appendix продолжал подмешиваться в prompt напрямую, а compose layer не провоцировал template scouting через stage-level template path (scope: `packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): simplify diagram stage contract assembly`).
+2. [TODO] Git Commit: `fix(diagram-workflow): simplify diagram stage contract assembly` (hash: TBD)
+
+### Stream: Diagram Facades prompt surface cleanup
+1. [TODO] Проверить и ужесточить `diagram_facades` prompt surface по тем же правилам: exact inputs, explicit non-inputs, no continuity/template scouting и без generic template absolute path в user-visible compose prompt (scope: `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`, `src/client/project-manager/services/prompt-pack-builder.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-facades): tighten facade prompt surface`).
+2. [TODO] Git Commit: `fix(diagram-facades): tighten facade prompt surface` (hash: TBD)
+
+### Stream: Contract regression coverage
+1. [TODO] Обновить tests prompt/contract composition для `diagram_modules` и `diagram_facades`, чтобы они ловили legacy strings, unwanted template hints и отсутствие strict input restrictions до следующего релиза (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover composite prompt contract cleanup`).
+2. [TODO] Git Commit: `test(diagram-workflow): cover composite prompt contract cleanup` (hash: TBD)
+
+### Stream: Release notes sync
+1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и workflow docs под findings ретеста `1.1.769`: strict input contract для diagram prompts, removal of legacy template scouting и cleanup composite prompt assembly для `Diagram Modules` / `Diagram Facades` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync composite prompt cleanup notes`).
+2. [TODO] Git Commit: `docs(release): sync composite prompt cleanup notes` (hash: TBD)
+
+### Stream: Release build
+1. [TODO] После cleanup prompt/contract layers выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного retest diagram steps без лишнего discovery chatter (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare composite prompt cleanup release`).
+2. [TODO] Git Commit: `chore(release): prepare composite prompt cleanup release` (hash: TBD)
+
+### Stream: Session handoff
+1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по composite prompt cleanup и пользовательскому retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record composite prompt cleanup release`).
+2. [TODO] Git Commit: `docs(session): record composite prompt cleanup release` (hash: TBD)
 
 ## Notes
 - Archived completed rollout plans:
@@ -140,6 +176,7 @@
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`
 - User constraints for this scope:
   - `Diagram Modules` остаётся главным graphical review step;
   - базовый slice не требует relation lines;
@@ -149,3 +186,4 @@
   - decomposition не отменяет обязательный fix для ложного `Codex` idle-timeout и потери late provider messages;
   - staged user-facing prompt/template contract не должен противоречить реальному runtime flow;
   - continuation после `Phase 1` не должен зависеть только от `structured_output`, если provider пишет staged файлы напрямую.
+  - agent не должен тратить turn на поиск compatibility inventory, staged examples, continuity files или legacy helper artifacts, если runtime явно не передал их как вход текущего diagram stage.
