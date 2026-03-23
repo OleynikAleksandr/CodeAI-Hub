@@ -2,6 +2,16 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.770] - 2026-03-23
+### Changed
+- `Diagram Modules` prompt composition now states exact current-turn inputs and explicit non-inputs, so the stage no longer suggests searching compatibility inventory, staged examples, continuity files, legacy helper artifacts, or generic templates unless runtime explicitly passed them.
+- `Diagram Facades` now follows the same strict input contract: author from the current `module-inventory.md`, embedded appendix content, and explicitly listed project files instead of spending a turn on continuity/template scouting.
+- Diagram-stage contract assembly now injects staged templates, field references, and merge rules directly into the prompt payload while removing the generic stage-level `templatePath` hint for both `diagram_modules` and `diagram_facades`.
+
+### Fixed
+- Closed the follow-up `1.1.769` composite prompt drift found during live retest, where the agent could still produce discovery chatter such as checking compatibility inventory, staged examples, or a missing formal staged template before writing the real artifact.
+- Added regression coverage for diagram prompt/contract composition, so legacy strings, unwanted template hints, and weakened strict-input restrictions are caught before the next release.
+
 ## [1.1.769] - 2026-03-23
 ### Changed
 - `Diagram Modules` live prompt/template surface now follows one explicit staged contract: first `product-parts.index.md`, then one `product-parts/<part-id>.md` per hidden continuation, while `module-inventory.md` remains runtime-owned compatibility output.

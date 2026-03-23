@@ -153,10 +153,10 @@
 
 ### Stream: Contract regression coverage
 1. [DONE] Обновить tests prompt/contract composition для `diagram_modules` и `diagram_facades`, чтобы они ловили legacy strings, unwanted template hints и отсутствие strict input restrictions до следующего релиза (scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover composite prompt contract cleanup`).
-2. [TODO] Git Commit: `test(diagram-workflow): cover composite prompt contract cleanup` (hash: TBD)
+2. [DONE] Git Commit: `test(diagram-workflow): cover composite prompt contract cleanup` (hash: `7d6120a9`)
 
 ### Stream: Release notes sync
-1. [TODO] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и workflow docs под findings ретеста `1.1.769`: strict input contract для diagram prompts, removal of legacy template scouting и cleanup composite prompt assembly для `Diagram Modules` / `Diagram Facades` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync composite prompt cleanup notes`).
+1. [DONE] Перед новым patch release синхронизировать `README.md`, `CHANGELOG.md` и workflow docs под findings ретеста `1.1.769`: strict input contract для diagram prompts, removal of legacy template scouting и cleanup composite prompt assembly для `Diagram Modules` / `Diagram Facades` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync composite prompt cleanup notes`).
 2. [TODO] Git Commit: `docs(release): sync composite prompt cleanup notes` (hash: TBD)
 
 ### Stream: Release build
