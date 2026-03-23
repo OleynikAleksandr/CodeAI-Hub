@@ -129,6 +129,7 @@ test("domainModelToReactFlow projects module map into product part, cluster, and
     nodeKind: "productPart",
     productPartId: "control-shell",
     title: "Control Shell",
+    purpose: "Owns the operator-facing surface and runtime entrypoint.",
     clusterIds: ["delivery", "security"],
     standaloneModuleIds: ["config-store"],
   });
@@ -143,6 +144,7 @@ test("domainModelToReactFlow projects module map into product part, cluster, and
     clusterId: "delivery",
     productPartId: "control-shell",
     title: "Delivery",
+    purpose: "Owns request delivery into the product.",
     moduleIds: ["api-gateway"],
   });
 

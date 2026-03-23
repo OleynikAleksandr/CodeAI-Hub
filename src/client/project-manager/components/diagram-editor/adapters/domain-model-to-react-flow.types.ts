@@ -28,6 +28,7 @@ export type ProductPartFlowNodeData = {
   readonly nodeKind: "productPart";
   readonly productPartId: string;
   readonly title: string;
+  readonly purpose: string;
   readonly clusterIds: readonly string[];
   readonly standaloneModuleIds: readonly string[];
 };
@@ -38,6 +39,7 @@ export type ClusterFlowNodeData = {
   readonly clusterId: string;
   readonly productPartId: string;
   readonly title: string;
+  readonly purpose: string;
   readonly moduleIds: readonly string[];
 };
 

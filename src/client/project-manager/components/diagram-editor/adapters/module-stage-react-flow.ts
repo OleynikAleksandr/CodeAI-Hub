@@ -207,6 +207,7 @@ export const buildModuleStageNodes = (
         nodeKind: "productPart",
         productPartId: productPart.id,
         title: productPart.title,
+        purpose: productPart.purpose,
         clusterIds,
         standaloneModuleIds,
       },
@@ -232,6 +233,8 @@ export const buildModuleStageNodes = (
           clusterId,
           productPartId: productPart.id,
           title: cluster?.title ?? humanizeIdentifier(clusterId),
+          purpose:
+            cluster?.purpose ?? `Fallback cluster for ${humanizeIdentifier(clusterId)}`,
           moduleIds: cluster?.moduleIds ?? [],
         },
       } satisfies DiagramFlowNode;
