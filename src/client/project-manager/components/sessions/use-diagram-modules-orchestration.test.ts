@@ -99,10 +99,11 @@ test("diagram modules progress snapshot points to next product part after index-
 
 test("diagram modules progressive skeleton parses the numbered canonical order format", () => {
   const model = buildDiagramModulesSkeletonFromIndex(createCanonicalOrderIndex());
+  const productParts = model.productParts ?? [];
 
-  assert.equal(model.productParts.length, 2);
+  assert.equal(productParts.length, 2);
   assert.deepEqual(
-    model.productParts.map((part) => ({
+    productParts.map((part) => ({
       id: part.id,
       title: part.title,
       purpose: part.purpose,
