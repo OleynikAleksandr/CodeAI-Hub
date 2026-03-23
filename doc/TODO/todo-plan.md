@@ -80,12 +80,12 @@
 
 ### Stream: Cluster stack start stabilization
 1. [DONE] Пересчитать cluster header/body boundary и старт первой module card от фактической нижней границы description, чтобы cluster description не пересекался с modules, а perceived gap внутри cluster-ов оставался консистентным (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): stabilize cluster stack offsets`).
-2. [TODO] Git Commit: `fix(diagram-layout): stabilize cluster stack offsets` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-layout): stabilize cluster stack offsets` (hash: `b311c9ee`)
 
 ## Phase 36 — Release Build After Header Boundary Fixes (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Release notes sync
-1. [TODO] Перед новой release-сборкой синхронизировать `README.md` и `CHANGELOG.md` под target `1.1.767`, чтобы следующий build cycle отражал second-pass fixes для `Diagram Modules` header/body separation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync header boundary release notes`).
+1. [DONE] Перед новой release-сборкой синхронизировать `README.md` и `CHANGELOG.md` под target `1.1.767`, чтобы следующий build cycle отражал second-pass fixes для `Diagram Modules` header/body separation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync header boundary release notes`).
 2. [TODO] Git Commit: `docs(release): sync header boundary release notes` (hash: TBD)
 
 ### Stream: Release build

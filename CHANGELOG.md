@@ -2,6 +2,16 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.767] - 2026-03-23
+### Changed
+- `Product Part` purpose panels in `Diagram Modules` now claim a wider right-side column, reducing artificial line wrapping in dense review scenarios.
+- The dense `Diagram Modules` autolayout baseline now treats header/body separation as a two-pass measurement problem for both `Product Part` and `Cluster`, instead of relying on shortened header budgets.
+
+### Fixed
+- `Product Part` cluster sections no longer begin inside the visible purpose area when the top-level description is long; the body start now follows the measured bottom edge of the full header block.
+- Cluster stacks now reserve enough space for long cluster descriptions before placing the first module card, eliminating the remaining overlap reported in the `1.1.766` retest.
+- Standalone-band regression tests now validate layout invariants against measured cluster bottoms instead of brittle absolute coordinates, so second-pass header tuning does not break unrelated release gates.
+
 ## [1.1.766] - 2026-03-23
 ### Changed
 - `Diagram Modules` is now explicitly documented as the primary user-review step before `Diagram Facades`, and `Product Part` / `Cluster` cards show short purpose text directly in the visual hierarchy.

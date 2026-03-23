@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.766
-- `Diagram Modules` is now explicitly treated as the main user-review step before `Diagram Facades`: `Product Part` and `Cluster` cards show short purpose text, so the hierarchy explains both structure and intent.
-- First-open `Diagram Modules` layout now measures cluster/module content instead of trusting one fixed vertical step, reserving header space for cluster copy and preventing tall module cards from colliding with headers or each other.
-- Standalone modules inside a `Product Part` now dock under the shorter measured column instead of falling into one large lower band, which reduces empty vertical space in dense product-part scenarios.
+## Current Release — v1.1.767
+- `Diagram Modules` second-pass layout now measures the full `Product Part` header boundary instead of approximating it, so dense cluster sections no longer start inside the visible purpose area.
+- `Product Part` purpose panels now use a wider right-side column, which reduces unnecessary line wrapping and makes the hierarchy easier to scan before the user edits the diagram.
+- Cluster stacks now start from a stable measured header boundary, so long cluster descriptions no longer collide with the first module card and perceived vertical spacing stays more consistent across dense scenarios.
 - The localized runtime template packs from `1.1.765` remain in force, so the visible synced `~/.codeai-hub/templates/...` assets still stay Russian for narrative guidance while preserving English DSL terms.
 
 Previous releases (summary): the `1.1.57x–1.1.762` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, initial Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, the inventory-only cleanup release, the resume/recovery stabilization release for `Codex gpt-5.4`, the first greenfield polygon grammar rollout, the first ownership-aware `Product Part` hierarchy release, the `Description` prompt/help/runtime stabilization fixes, and the `Description` naming cleanup release.
