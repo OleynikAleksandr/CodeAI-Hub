@@ -17,9 +17,9 @@
 
 ### Stream: Planning baseline
 1. [DONE] Заархивировать завершённый план до `Phase 36`, оформить новый planning-doc для decomposition `Diagram Modules` по `Product Part`, progressive React Flow materialization, hidden runtime orchestration turn-ов, deferred relation lines и compatibility aggregate, а также создать новый session report для bug findings и принятого refactor direction (scope: `doc/TODO/Archive/todo-plan-up-to-phase36-2026-03-23.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/Sessions/Session133.md`; expected commit: `docs(plan): start diagram modules product part decomposition scope`).
-2. [TODO] Git Commit: `docs(plan): start diagram modules product part decomposition scope` (hash: TBD)
-3. [TODO] После planning-baseline commit-а синхронизировать новый active plan и `Session133` фактическими hash-ами, чтобы handoff не оставался с `TBD` и следующая сессия могла восстановить контекст без догадок (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session133.md`; expected commit: `docs(session): sync diagram modules decomposition planning handoff`).
-4. [TODO] Git Commit: `docs(session): sync diagram modules decomposition planning handoff` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): start diagram modules product part decomposition scope` (hash: `6427aa35`)
+3. [DONE] После planning-baseline commit-а синхронизировать новый active plan и `Session133` фактическими hash-ами, чтобы handoff не оставался с `TBD` и следующая сессия могла восстановить контекст без догадок (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session133.md`; expected commit: `docs(session): sync diagram modules decomposition planning handoff`).
+4. [DONE] Git Commit: `docs(session): sync diagram modules decomposition planning handoff` (hash: TBD)
 
 ## Phase 38 — Diagram Modules Product Part Artifact Contract (owner: Oleksandr, updated: 2026-03-23)
 

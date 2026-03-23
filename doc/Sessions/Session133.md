@@ -36,7 +36,7 @@
 - `module-inventory.md` в failure case отсутствовал полностью, поэтому проблема локализована до стадии artifact persistence; `structured_output` для этого turn не был получен.
 
 ## Git commits
-- `TBD docs(plan): start diagram modules product part decomposition scope`
+- `6427aa35 docs(plan): start diagram modules product part decomposition scope`
 
 ---
 
