@@ -177,8 +177,8 @@
 
 ### Stream: Planning baseline
 1. [DONE] Зафиксировать пользовательский retest `1.1.770`: пустой React Flow после `product-parts.index.md`, несработавший hidden continuation и legacy `module-inventory` tails в `Diagram Modules` preamble / Source; оформить planning-doc и новый session report с уже локализованными root cause (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_770_Architecture.md`, `doc/Sessions/Session140.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): capture diagram modules retest blockers after 1.1.770`).
-2. [TODO] Git Commit: `docs(plan): capture diagram modules retest blockers after 1.1.770` (hash: TBD)
-3. [TODO] После planning-baseline commit-а синхронизировать active plan и `Session140` фактическим hash-ом, чтобы следующий cold start не начинался с `TBD` (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session140.md`; expected commit: `docs(session): sync diagram modules retest blocker handoff`).
+2. [DONE] Git Commit: `docs(plan): capture diagram modules retest blockers after 1.1.770` (hash: `3bce6491`)
+3. [DONE] После planning-baseline commit-а синхронизировать active plan и `Session140` фактическим hash-ом, чтобы следующий cold start не начинался с `TBD` (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session140.md`; expected commit: `docs(session): sync diagram modules retest blocker handoff`).
 4. [TODO] Git Commit: `docs(session): sync diagram modules retest blocker handoff` (hash: TBD)
 
 ### Stream: Index parser recovery

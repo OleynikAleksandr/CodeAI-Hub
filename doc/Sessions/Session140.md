@@ -36,6 +36,7 @@
 ## Git commits
 - `3236a549 fix(diagram-workflow): remove legacy template header from diagram stages`
 - `a5c359b9 docs(plan): sync compose header cleanup hash`
+- `3bce6491 docs(plan): capture diagram modules retest blockers after 1.1.770`
 
 ---
 
