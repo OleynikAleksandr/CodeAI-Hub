@@ -2,6 +2,17 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.768] - 2026-03-23
+### Changed
+- `Diagram Modules` now starts from `product-parts.index.md` and then materializes one `product-parts/<part-id>.md` at a time, so the stage can progressively reveal the system instead of waiting for one giant inventory turn.
+- React Flow now follows the staged `Product Part` order from the index artifact, shows visible generation progress in Project Manager, and keeps the graph readable while new parts appear.
+- Runtime now composes `module-inventory.md` as a compatibility aggregate after the last `Product Part`, preserving the downstream single-file contract for `Diagram Facades` without giving that file back to the agent as the primary authoring target.
+
+### Fixed
+- `Diagram Facades` remains blocked until the full `Diagram Modules` product-part sequence reaches `awaiting_review` and the compatibility aggregate exists; intermediate staged part files no longer unlock the next step too early.
+- `Codex` no longer aborts long silent diagram turns on a hard idle timeout while the provider is still working, which removes the failure mode where large `Diagram Modules` sessions died before `structured_output`.
+- Late provider assistant/commentary messages now preserve their original provider timestamps in the session transcript even if they arrive after `turn_completed`, reducing drift between raw provider logs and the infinite session history.
+
 ## [1.1.767] - 2026-03-23
 ### Changed
 - `Product Part` purpose panels in `Diagram Modules` now claim a wider right-side column, reducing artificial line wrapping in dense review scenarios.

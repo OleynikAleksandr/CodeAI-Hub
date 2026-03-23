@@ -19,7 +19,7 @@
 1. [DONE] Заархивировать завершённый план до `Phase 36`, оформить новый planning-doc для decomposition `Diagram Modules` по `Product Part`, progressive React Flow materialization, hidden runtime orchestration turn-ов, deferred relation lines и compatibility aggregate, а также создать новый session report для bug findings и принятого refactor direction (scope: `doc/TODO/Archive/todo-plan-up-to-phase36-2026-03-23.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, `doc/Sessions/Session133.md`; expected commit: `docs(plan): start diagram modules product part decomposition scope`).
 2. [DONE] Git Commit: `docs(plan): start diagram modules product part decomposition scope` (hash: `6427aa35`)
 3. [DONE] После planning-baseline commit-а синхронизировать новый active plan и `Session133` фактическими hash-ами, чтобы handoff не оставался с `TBD` и следующая сессия могла восстановить контекст без догадок (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session133.md`; expected commit: `docs(session): sync diagram modules decomposition planning handoff`).
-4. [DONE] Git Commit: `docs(session): sync diagram modules decomposition planning handoff` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): sync diagram modules decomposition planning handoff` (hash: `a9a16ded`)
 
 ## Phase 38 — Diagram Modules Product Part Artifact Contract (owner: Oleksandr, updated: 2026-03-23)
 
@@ -87,12 +87,12 @@
 
 ### Stream: Late provider message preservation
 1. [DONE] Сохранить late provider commentary/final messages в unified session и session UI после длинных `Codex` turn-ов, чтобы raw provider transcript и infinite session history больше не расходились, как в найденном `diagram_modules` failure case; provider-side assistant messages должны сохранять исходный timestamp даже если пришли уже после `turn_completed`, а regression test должен явно покрывать этот сценарий (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(session-history): preserve late codex provider messages`).
-2. [TODO] Git Commit: `fix(session-history): preserve late codex provider messages` (hash: TBD)
+2. [DONE] Git Commit: `fix(session-history): preserve late codex provider messages` (hash: `4a896807`)
 
 ## Phase 43 — Release Build After Product Part Decomposition Refactor (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Release notes sync
-1. [TODO] Перед новым release-cycle синхронизировать `README.md`, `CHANGELOG.md` и workflow docs с progressive `Product Part` generation baseline и deferred relation-line policy для следующего patch release после `1.1.767` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync product part decomposition release notes`).
+1. [DONE] Перед новым release-cycle синхронизировать `README.md`, `CHANGELOG.md` и workflow docs с progressive `Product Part` generation baseline и deferred relation-line policy для следующего patch release после `1.1.767`, включая `Codex` long-turn stability и transcript preservation fixes в release notes `1.1.768` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync product part decomposition release notes`).
 2. [TODO] Git Commit: `docs(release): sync product part decomposition release notes` (hash: TBD)
 
 ### Stream: Release build
