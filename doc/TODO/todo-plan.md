@@ -161,10 +161,10 @@
 
 ### Stream: Release build
 1. [DONE] После cleanup prompt/contract layers выполнить новый release cycle: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, чтобы отдать пользователю новый baseline для повторного retest diagram steps без лишнего discovery chatter (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare composite prompt cleanup release`).
-2. [TODO] Git Commit: `chore(release): prepare composite prompt cleanup release` (hash: TBD)
+2. [DONE] Git Commit: `chore(release): prepare composite prompt cleanup release` (hash: `ad980668`)
 
 ### Stream: Session handoff
-1. [TODO] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по composite prompt cleanup и пользовательскому retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record composite prompt cleanup release`).
+1. [DONE] После нового релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report по composite prompt cleanup и пользовательскому retest, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record composite prompt cleanup release`).
 2. [TODO] Git Commit: `docs(session): record composite prompt cleanup release` (hash: TBD)
 
 ## Notes
