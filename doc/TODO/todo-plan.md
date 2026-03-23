@@ -40,10 +40,10 @@
 
 ### Stream: Product part compaction
 1. [DONE] Перестроить placement standalone modules внутри `Product Part`, чтобы они пристыковывались под более короткую измеренную колонку, а outer frame product-part замыкался по реально занятому содержимому с симметричными left/right/bottom paddings (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-layout): compact standalone modules inside product part`).
-2. [TODO] Git Commit: `fix(diagram-layout): compact standalone modules inside product part` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-layout): compact standalone modules inside product part` (hash: `83f50d58`)
 
 ### Stream: Dense scenario regression evidence
-1. [TODO] После принятия layout fixes зафиксировать regression evidence на самом плотном `Product Part` сценарии и подтвердить, что purpose text, cluster stacking и standalone compaction читаемы без ручной раскладки (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`, next session report file; expected commit: `docs(layout): record dense product part regression evidence`).
+1. [DONE] После принятия layout fixes зафиксировать regression evidence на самом плотном `Product Part` сценарии и подтвердить, что purpose text, cluster stacking и standalone compaction читаемы без ручной раскладки (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): record dense product part regression evidence`).
 2. [TODO] Git Commit: `docs(layout): record dense product part regression evidence` (hash: TBD)
 
 ## Phase 34 — Release Build After Diagram Modules Review-Step Fixes (owner: Oleksandr, updated: 2026-03-23)

@@ -219,3 +219,21 @@ Reviewer / long-discussion loop здесь признаётся важной б�
 - видимое назначение `Product Part` и `Cluster`, а не только их названия;
 - более надёжную основу для дальнейшего обсуждения структуры продукта;
 - новый локальный релиз, на котором этот review-step можно прогонять дальше.
+
+---
+
+## 10. Regression Evidence After First Implementation Pass
+
+На текущем implementation pass уже подтверждено:
+- `Product Part` и `Cluster` получили purpose surface в React Flow projection и renderer;
+- `Diagram Modules` зафиксирован в workflow/system docs как главный user-review step до `Diagram Facades`;
+- высота `Cluster` больше не считается только по числу модулей: runtime учитывает measured header/content budget и больше не опирается на один грубый `y-step`;
+- stack safety для длинных module cards зафиксирован regression test-ом `domain-model-to-react-flow.standalone-band.test.ts`;
+- standalone modules внутри `Product Part` больше не обязаны падать в общий нижний band: shortest-column docking зафиксирован regression test-ом `domain-model-to-react-flow.product-parts.test.ts`.
+
+Текущий evidence set для dense scenario:
+- `npx tsx --test src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`
+
+Следующий обязательный шаг после этой фиксации evidence:
+- собрать новый локальный release baseline и прогнать release-level verification.
