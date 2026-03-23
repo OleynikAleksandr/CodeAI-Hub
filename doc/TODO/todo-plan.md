@@ -93,11 +93,11 @@
 
 ### Stream: Release notes sync
 1. [DONE] Перед новым release-cycle синхронизировать `README.md`, `CHANGELOG.md` и workflow docs с progressive `Product Part` generation baseline и deferred relation-line policy для следующего patch release после `1.1.767`, включая `Codex` long-turn stability и transcript preservation fixes в release notes `1.1.768` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync product part decomposition release notes`).
-2. [TODO] Git Commit: `docs(release): sync product part decomposition release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): sync product part decomposition release notes` (hash: `fddb26b2`)
 
 ### Stream: Release build
-1. [TODO] После принятия decomposition refactor и `Codex` stability fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для следующего пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare product part decomposition release`).
-2. [TODO] Git Commit: `chore(release): prepare product part decomposition release` (hash: TBD)
+1. [DONE] После принятия decomposition refactor и `Codex` stability fixes выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` и собрать новый локальный baseline для следующего пользовательского retest (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare product part decomposition release`).
+2. [DONE] Git Commit: `chore(release): prepare product part decomposition release` (hash: TBD)
 
 ### Stream: Session handoff
 1. [TODO] После успешного релиза синхронизировать active plan фактическими hash-ами, оформить следующий session report с итогами product-part refactor, `Codex` timeout fix и release verification, затем закрыть цикл clean-tree handoff-коммитом (scope: `doc/TODO/todo-plan.md`, next session report file, related release docs if needed; expected commit: `docs(session): record product part decomposition release`).

@@ -150,8 +150,8 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     assert.equal(result.statusCode, 200);
     const payload = result.payload as WorkflowStatePayload;
 
-    assert.equal(payload.state.stages.virtual_simulation?.status, "completed");
-    assert.equal(payload.state.stages.diagram_modules?.status, "completed");
+    assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
+    assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.diagram_facades, false);
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
@@ -159,14 +159,14 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
     assert.equal(payload.diagramModulesProgress?.aggregateReady, true);
     assert.equal(
-      payload.state.stages.virtual_simulation?.artifacts.some(
+      payload.state?.stages.virtual_simulation?.artifacts?.some(
         (artifact) =>
           artifact.path === "virtual_simulation/virtual-simulation.md"
       ),
       true
     );
     assert.equal(
-      payload.state.stages.diagram_modules?.artifacts.some(
+      payload.state?.stages.diagram_modules?.artifacts?.some(
         (artifact) => artifact.path === "diagram_modules/module-inventory.md"
       ),
       true
@@ -282,11 +282,11 @@ test("workflow-state cold start keeps invalid status but still unlocks diagram m
     assert.equal(result.statusCode, 200);
     const payload = result.payload as WorkflowStatePayload;
 
-    assert.equal(payload.state.stages.virtual_simulation?.status, "invalid");
+    assert.equal(payload.state?.stages.virtual_simulation?.status, "invalid");
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.diagram_facades, true);
     assert.equal(
-      payload.state.stages.virtual_simulation?.gates.some(
+      payload.state?.stages.virtual_simulation?.gates?.some(
         (gate) => gate.gateId === "virtual-simulation.validation"
       ),
       true
