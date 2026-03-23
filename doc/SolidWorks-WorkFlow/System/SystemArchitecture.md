@@ -220,6 +220,17 @@
   - top-level `Product Part` containers раскладываются как независимые row/lane sections и не могут overlap друг с другом;
   - internal standalone modules группируются в отдельную предсказуемую band внутри owning product part и не могут хаотично расширять cluster grid;
   - ownership-free external modules/boundaries (например выбранный AI provider) визуализируются вне product-part container, а не как внутренние элементы его ownership layer.
+- Начиная с review-step baseline (`2026-03-23`), `Diagram Modules` фиксируется как главный user-feedback checkpoint до `Diagram Facades`:
+  - пользователь именно здесь впервые видит архитектуру в наглядной форме и должен иметь возможность активно её корректировать;
+  - `Diagram Facades` остаётся downstream technical step и не заменяет этот review loop.
+- First-open layout contract для `Diagram Modules` должен быть детерминированным и идти по схеме `measure -> place`:
+  - runtime сначала измеряет header/content budget для `Product Part`, `Cluster` и `Module`;
+  - затем размещает child nodes накопительно по реальным высотам, а не только по грубым константам;
+  - child cards не имеют права пересекать header-zone parent container.
+- User-facing hierarchy contract для ownership containers:
+  - `Product Part` и `Cluster` обязаны показывать короткий purpose/description surface, а не только title и counters;
+  - standalone modules должны компактизироваться под более короткую измеренную колонку внутри owning product part;
+  - outer frame `Product Part` должен замыкаться по реально занятому содержимому плюс симметричные paddings, без пустой декоративной вертикали.
 - `module-map.flow.json` остаётся non-semantic layout sidecar даже после введения ownership hierarchy:
   - хранит только geometry/positions;
   - не переносит ownership semantics;

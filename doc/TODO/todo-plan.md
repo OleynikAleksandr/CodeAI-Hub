@@ -26,10 +26,10 @@
 
 ### Stream: Product hierarchy card rendering
 1. [DONE] Обновить container cards `Diagram Modules`, чтобы `Product Part` и `Cluster` показывали короткий purpose block как часть header-zone и не теряли текущую читаемость module cards (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-ui): show product hierarchy purpose text`).
-2. [TODO] Git Commit: `fix(diagram-ui): show product hierarchy purpose text` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-ui): show product hierarchy purpose text` (hash: `3bf565b6`)
 
 ### Stream: Layout contract in docs
-1. [TODO] Зафиксировать в workflow/design docs, что `Diagram Modules` является главным user-review step до `Diagram Facades`, и записать accepted autolayout invariants для `measure -> place`, header-zone reservation и shortest-column standalone compaction (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(workflow): formalize diagram modules review contract`).
+1. [DONE] Зафиксировать в workflow/design docs, что `Diagram Modules` является главным user-review step до `Diagram Facades`, и записать accepted autolayout invariants для `measure -> place`, header-zone reservation и shortest-column standalone compaction (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(workflow): formalize diagram modules review contract`).
 2. [TODO] Git Commit: `docs(workflow): formalize diagram modules review contract` (hash: TBD)
 
 ## Phase 33 — Diagram Modules Deterministic Autolayout (owner: Oleksandr, updated: 2026-03-23)
