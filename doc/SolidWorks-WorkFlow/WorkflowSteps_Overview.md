@@ -131,24 +131,41 @@ Manual start из верхнего toolbar PM:
 - `Final_Description.md`
 - `virtual-simulation.md`
 
-### Артефакт
+### Артефакты
 
+- `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md`
+- `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md`
 - `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md`
 - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json`
 
-`module-inventory.md` является canonical SSOT для semantic content.
+`product-parts.index.md` является первым canonical orchestration artifact этого шага:
+- он фиксирует список `Product Part`, их порядок, purpose и generation status;
+- по нему `React Flow` может показать skeleton общей картины ещё до materialization всех part-файлов.
+
+`product-parts/<part-id>.md` являются canonical semantic artifacts отдельных `Product Part`.
+Каждый такой файл materialize-ит один ownership subtree `Product Part -> Cluster -> Module`.
+
+`module-inventory.md` остаётся downstream compatibility aggregate:
+- он больше не является первым giant single-turn artifact этого шага;
+- runtime собирает его из index + part-файлов после завершения последовательности.
+
 `module-map.flow.json` хранит только layout/view state визуального редактора.
-Visual diagram материализуется runtime напрямую из inventory и не требует отдельного raw map-файла в workspace.
+Visual diagram materialize-ится runtime из index + part artifacts и не требует отдельного raw semantic map-файла в workspace.
 
 ### User-facing baseline
 
 - `Diagram Modules` обязан быть читаемым уже при первом открытии, даже если `module-map.flow.json` ещё не существует.
+- Шаг должен materialize-иться progressive:
+  - сначала появляется skeleton planned `Product Part` из `product-parts.index.md`;
+  - затем `React Flow` последовательно заменяет placeholders реальными ownership trees по мере появления `product-parts/<part-id>.md`;
+  - пользователь не обязан подтверждать каждый `Product Part` через чат между turn-ами.
 - First-open layout для ownership hierarchy должен следовать детерминированному правилу `measure -> place`:
   - сначала измеряются header/content blocks `Product Part`, `Cluster`, `Module`;
   - затем layout раскладывает их сверху вниз по реальным размерам;
   - дочерние cards не имеют права залезать в header-zone родителя;
   - standalone modules должны компактизироваться внутри `Product Part`, а не падать в пустой нижний band.
 - `Product Part` и `Cluster` обязаны показывать короткий purpose/description layer, чтобы пользователь видел не только состав, но и назначение уровня иерархии.
+- Relation lines и cross-part graph wiring не входят в обязательный baseline первого полезного результата `Diagram Modules`; базовый review-step должен сначала стабилизировать структуру `Product Part -> Cluster -> Module`.
 
 ---
 

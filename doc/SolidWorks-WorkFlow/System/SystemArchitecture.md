@@ -146,11 +146,13 @@
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 
-## 6.3) Module Semantic Source Boundary (Phase 3, 2026-03-16)
+## 6.3) Module Semantic Source Boundary (Phase 3, updated 2026-03-23)
 
-- `Diagram Modules` keeps semantic truth in `module-inventory.md`, not in the visible graph canvas.
+- `Diagram Modules` keeps semantic truth in staged Markdown artifacts, not in the visible graph canvas.
 - Видимый UI больше не содержит inline-редакторов для module entities и relations.
-- `module-inventory.md` is the canonical semantic SSOT for `Diagram Modules`; runtime строит visual projection напрямую из inventory и не требует отдельный raw map artifact в workspace.
+- `product-parts.index.md` is the first canonical orchestration artifact for `Diagram Modules`.
+- `product-parts/<part-id>.md` are the primary semantic artifacts of individual `Product Part`.
+- `module-inventory.md` remains the downstream compatibility aggregate for consumers that still expect one canonical module inventory.
 - Начиная с ownership-aware migration (`2026-03-21`), canonical inventory model для `Diagram Modules` включает явный верхний уровень `Product Part -> Cluster -> Module`.
 - Parser/runtime обязаны поддерживать dual-read migration path: новый hierarchical DSL читает explicit `Product Parts`, а legacy flat inventories временно materialize synthetic `default-product-part`, чтобы старые workspace artifacts оставались parseable без ручной миграции.
 - Graph canvas continues to allow manual layout edits, and those changes remain in `module-map.flow.json` only.
@@ -187,7 +189,11 @@
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `module-inventory.md`, `facade-map.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
 - Diagram workflow contract не может ограничиваться только base prompt и template path. Для `diagram_modules` / `diagram_facades` runtime обязан сначала читать strict field-reference и merge-rules из synced visible templates под `~/.codeai-hub/templates/...`, а package assets использовать только как bundled-source fallback, чтобы генерируемый Markdown DSL не изобретал невалидные enum values и оставался parseable для visual shell.
 - Для empty-workspace greenfield сессий agent source boundary обязан оставаться project-local: `Virtual Simulation` и `Diagram Modules` читают только canonical artifacts текущего проекта внутри `.codeai-hub/<workspaceSlug>/...`, continuity files текущего stage и файлы, которые пользователь явно назвал для этого проекта. Исходники CodeAI Hub, parser/runtime implementation и чужие repo-level docs не могут выступать источником архитектурных решений для artifact generation.
-- Для `Diagram Modules` canonical semantic checkpoint теперь `module-inventory.md`; downstream gating и `Diagram Facades` должны читать именно inventory, а visual graph обязан materialize ownership hierarchy `Product Part -> Cluster -> Module` напрямую из него.
+- Для `Diagram Modules` semantic runtime contract теперь staged:
+  - first artifact: `product-parts.index.md`;
+  - primary semantic part artifacts: `product-parts/<part-id>.md`;
+  - downstream compatibility aggregate: `module-inventory.md`.
+- `Diagram Facades` и downstream gating по-прежнему читают `module-inventory.md`, но user-facing generation и progressive review больше не обязаны ждать giant single-turn inventory generation.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume diagram stages Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
 - Пока canonical artifact ещё не создан, `Artifacts` panel для workflow stage обязан показывать тот же help-content, что и вкладка `Help`; отдельный pending-intro prose вне help SSOT не допускается.
 - Ordinary dialog reopen/recovery contract обязан сохранять identity continuity между PM, Core continuity и provider runtime. Если runtime по любой причине создает fresh provider session вместо обычного resume, новый binding должен быть immediately normalized в continuity/index до следующего outbound user turn, а PM не имеет права бесконечно повторять `createSession(old providerSessionId)` для того же continuity entry.
@@ -223,6 +229,11 @@
 - Начиная с review-step baseline (`2026-03-23`), `Diagram Modules` фиксируется как главный user-feedback checkpoint до `Diagram Facades`:
   - пользователь именно здесь впервые видит архитектуру в наглядной форме и должен иметь возможность активно её корректировать;
   - `Diagram Facades` остаётся downstream technical step и не заменяет этот review loop.
+- Начиная с product-part decomposition baseline (`2026-03-23`), `Diagram Modules` больше не должен упираться в giant single-turn `module-inventory.md`:
+  - сначала runtime materialize-ит `product-parts.index.md`;
+  - затем отдельные `Product Part` materialize-ятся по одному;
+  - `React Flow` обязан progressively регенерировать graph по мере появления новых part artifacts;
+  - relation lines и cross-part wiring исключаются из первого обязательного baseline slice.
 - First-open layout contract для `Diagram Modules` должен быть детерминированным и идти по схеме `measure -> place`:
   - runtime сначала измеряет header/content budget для `Product Part`, `Cluster` и `Module`;
   - затем размещает child nodes накопительно по реальным высотам, а не только по грубым константам;
@@ -235,13 +246,18 @@
   - хранит только geometry/positions;
   - не переносит ownership semantics;
   - применяется только если `Revision` sidecar совпадает с текущим semantic artifact.
+- Runtime orchestration contract для `Diagram Modules` должен поддерживать скрытую последовательность subturn-ов:
+  - index discovery turn;
+  - отдельные hidden continuation turns по одному `Product Part`;
+  - runtime-owned compose compatibility aggregate;
+  - unlock user input только на blocking ambiguity или на финальном review boundary.
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 
 Связанный planning-док:
-- `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 
 ## 7) Codex Response Mode Boundary (2026-03-13)
 

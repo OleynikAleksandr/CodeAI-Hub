@@ -24,7 +24,7 @@
 ## Phase 38 — Diagram Modules Product Part Artifact Contract (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Workflow SSOT for staged decomposition
-1. [TODO] Зафиксировать в workflow/system docs, что `Diagram Modules` больше не опирается на giant single-turn `module-inventory.md`, а начинается с `product-parts.index.md`, затем материализует отдельные part-файлы и откладывает relation lines из базового slice (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(workflow): formalize product part decomposition contract`).
+1. [DONE] Зафиксировать в workflow/system docs, что `Diagram Modules` больше не опирается на giant single-turn `module-inventory.md`, а начинается с `product-parts.index.md`, затем материализует отдельные part-файлы и откладывает relation lines из базового slice (scope: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(workflow): formalize product part decomposition contract`).
 2. [TODO] Git Commit: `docs(workflow): formalize product part decomposition contract` (hash: TBD)
 
 ### Stream: Prompt and path contract for new artifacts
