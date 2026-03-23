@@ -47,8 +47,8 @@
 
 ### Stream: Hidden continuation turns
 1. [DONE] Добавить transport-level hidden workflow turn control, чтобы runtime мог отправлять continuation subturn без записи fake user-message в dialog/unified history и при этом не протекал внутренний `workflowControl` в provider turn options (scope: `packages/core/src/remote-bridge/handlers/workflow-turn-control.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): hide internal workflow control turns`).
-2. [TODO] Git Commit: `feat(diagram-workflow): hide internal workflow control turns` (hash: TBD)
-3. [TODO] Реализовать PM-side orchestration loop для `diagram_modules`: на `structured_output` сохранять staged artifacts, читать `diagramModulesProgress` и автоматически отправлять hidden continuation packet на следующий `Product Part` или aggregate compose до финального review boundary (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`, new PM orchestration helper, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): orchestrate hidden product part turns`).
+2. [DONE] Git Commit: `feat(diagram-workflow): hide internal workflow control turns` (hash: `a54cdc64`)
+3. [DONE] Реализовать PM-side orchestration loop для `diagram_modules`: на `structured_output` сохранять staged artifacts, читать `diagramModulesProgress` и автоматически отправлять hidden continuation packet на следующий `Product Part` до финального review boundary без fake user-visible `Продолжай` (scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): orchestrate hidden product part turns`).
 4. [TODO] Git Commit: `feat(diagram-workflow): orchestrate hidden product part turns` (hash: TBD)
 
 ### Stream: Input lock until final review

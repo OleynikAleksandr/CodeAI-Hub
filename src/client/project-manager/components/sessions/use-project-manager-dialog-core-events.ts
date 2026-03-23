@@ -28,6 +28,7 @@ import {
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
 import { resolveRuntimeSessionFromWorkspaceSnapshot } from "./dialog-runtime-session-resolver";
+import { useDiagramModulesOrchestration } from "./use-diagram-modules-orchestration";
 
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
@@ -56,6 +57,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
   readonly setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>;
   readonly setTokenDebugSummaryOverride: Dispatch<SetStateAction<string | undefined>>;
 }) => {
+  useDiagramModulesOrchestration(options);
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message) => {
       if (message.type === "dialog:list:result") {
