@@ -57,6 +57,7 @@ export type WorkflowStateSnapshot = {
   readonly continuity: WorkflowContinuitySnapshot;
   readonly description: DescriptionBranchSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
+  readonly diagramModulesProgress?: Record<string, unknown> | null;
 };
 
 type WorkflowStateResponse = {
@@ -64,6 +65,7 @@ type WorkflowStateResponse = {
   readonly continuity?: unknown;
   readonly description?: unknown;
   readonly gating?: unknown;
+  readonly diagramModulesProgress?: unknown;
 };
 
 const STAGE_ORDER: readonly WorkflowStageId[] = [
@@ -224,6 +226,9 @@ const parseWorkflowState = (
   const continuity = parseContinuitySnapshot(response?.continuity);
   const description = parseDescriptionBranch(response?.description);
   const gating = parseWorkflowGating({ payload: response?.gating, stageOrder: STAGE_ORDER });
+  const diagramModulesProgress = isRecord(response?.diagramModulesProgress)
+    ? response.diagramModulesProgress
+    : null;
   if (isRecord(stagesPayload)) {
     for (const stage of STAGE_ORDER) {
       const stageState = stagesPayload[stage];
@@ -237,7 +242,15 @@ const parseWorkflowState = (
     }
   }
 
-  return { workspaceSlug, updatedAt, stages, continuity, description, gating };
+  return {
+    workspaceSlug,
+    updatedAt,
+    stages,
+    continuity,
+    description,
+    gating,
+    diagramModulesProgress,
+  };
 };
 
 const joinUrl = (baseUrl: string, path: string): string =>

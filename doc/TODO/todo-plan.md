@@ -41,8 +41,8 @@
 
 ### Stream: Sequential substep state model
 1. [DONE] Добавить server-side `diagramModulesProgress` snapshot на основе `product-parts.index.md`, part-файлов и aggregate readiness, чтобы runtime мог публиковать `substep/currentPartId/generatedCount` до реального orchestration loop и UI не работал вслепую (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): expose diagram modules progress snapshot`).
-2. [TODO] Git Commit: `feat(diagram-workflow): expose diagram modules progress snapshot` (hash: TBD)
-3. [TODO] Протянуть `diagramModulesProgress` в PM workflow-state client, чтобы hidden orchestration, progress surface и input lock могли опираться на канонический `substep/cursor` вместо эвристик по артефактам (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): consume diagram modules progress snapshot`).
+2. [DONE] Git Commit: `feat(diagram-workflow): expose diagram modules progress snapshot` (hash: `8cd6f64b`)
+3. [DONE] Протянуть `diagramModulesProgress` в PM workflow-state client, чтобы hidden orchestration, progress surface и input lock могли опираться на канонический `substep/cursor` вместо эвристик по артефактам; при restart `Diagram Modules` использовать `product-parts.index.md` как continuation source вместо повторного захода от `virtual-simulation.md` (scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): consume diagram modules progress snapshot`).
 4. [TODO] Git Commit: `feat(diagram-workflow): consume diagram modules progress snapshot` (hash: TBD)
 
 ### Stream: Hidden continuation turns

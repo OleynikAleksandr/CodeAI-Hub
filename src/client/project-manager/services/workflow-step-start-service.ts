@@ -22,6 +22,17 @@ type SubmitQuestionnaireService = Pick<
   "submitQuestionnaire"
 >;
 
+const readDiagramModulesSubstep = (
+  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null
+): string | null => {
+  const progress = state?.diagramModulesProgress;
+  if (!progress || typeof progress !== "object" || Array.isArray(progress)) {
+    return null;
+  }
+  const substep = progress.substep;
+  return typeof substep === "string" ? substep : null;
+};
+
 const resolveMostRecentContinuitySessionId = (options: {
   readonly state: Awaited<ReturnType<typeof api.getWorkflowState>> | null;
   readonly stage: ContinuityStageId;
@@ -107,11 +118,16 @@ export class WorkflowStepStartService {
     if (modulesBlocked) {
       throw new Error("Missing virtual-simulation.md. Complete Virtual Simulation step first.");
     }
+    const progressSubstep = readDiagramModulesSubstep(state);
+    const questionnairePath =
+      progressSubstep === null
+        ? vsArtifactPath
+        : `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
     return this.submitService.submitQuestionnaire({
       workspaceName: params.workspaceName,
       workspaceSlug: params.workspaceSlug,
       workspacePath: params.workspacePath,
-      questionnairePath: vsArtifactPath,
+      questionnairePath,
       stage: "diagram_modules",
       providerId: params.providerId,
       onSessionCreated: params.onSessionCreated,
