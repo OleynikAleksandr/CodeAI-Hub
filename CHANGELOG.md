@@ -2,7 +2,12 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
-## [1.1.772] - 2026-03-23
+## [1.1.774] - 2026-03-23
+### Fixed
+- `Diagram Modules` now accepts the live outline `product-parts/<part-id>.md` continuation format (`# Product Part: ...`, `## Purpose`, `## Cluster Inventory`, `## Direct Standalone Modules Under This Part`) in the shared staged parser, so the first materialized part no longer crashes on the legacy `# Module Inventory` title requirement.
+- The same shared parser keeps backward compatibility with the earlier table-based staged `Product Part` format from `1.1.773`, so progressive rendering and runtime aggregate composition continue to work across both live continuation shapes.
+- Added explicit aggregate regression coverage for the outline format, so `module-inventory.md` must still be built from the same live continuation files that power the progressive graph.
+
 ## [1.1.773] - 2026-03-23
 ### Fixed
 - `Diagram Modules` now parses the live human-readable staged `product-parts/<part-id>.md` format in the progressive loader, so the first continuation file expands the graph instead of failing on legacy `Metadata`, `Simple Relations`, or flat inventory section requirements.

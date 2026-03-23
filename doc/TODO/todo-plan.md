@@ -294,10 +294,10 @@
 
 ### Stream: Aggregate regression coverage
 1. [DONE] Добавить regression coverage, что compatibility aggregate тоже переживает новый outline `Product Part` format, а не только progressive UI, чтобы следующий release не ломал финальный `module-inventory.md` на последнем шаге staged sequence (scope: targeted aggregate regression test file; expected commit: `test(diagram-workflow): cover outline product part aggregate`).
-2. [TODO] Git Commit: `test(diagram-workflow): cover outline product part aggregate` (hash: TBD)
+2. [DONE] Git Commit: `test(diagram-workflow): cover outline product part aggregate` (hash: `6dadb678`)
 
 ### Stream: Release notes sync
-1. [TODO] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.773`: outline `product-parts/<part-id>.md` parser recovery, backward compatibility с table-based staged format и aggregate regression coverage (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.773 retest fixes`).
+1. [DONE] Перед следующим patch release синхронизировать `README.md`, `CHANGELOG.md` и active plan под findings ретеста `1.1.773`: outline `product-parts/<part-id>.md` parser recovery, backward compatibility с table-based staged format и aggregate regression coverage (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync diagram modules 1.1.773 retest fixes`).
 2. [TODO] Git Commit: `docs(release): sync diagram modules 1.1.773 retest fixes` (hash: TBD)
 
 ### Stream: Release build
