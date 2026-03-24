@@ -721,7 +721,7 @@ type PayloadParseResult<T> =
   | { readonly ok: false; readonly error: string };
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
-const MODULE_INVENTORY_TITLE_RE = /^#\s+(?:Module Inventory|Product Part:)/m;
+const DIAGRAM_MODULES_TITLE_RE = /^#\s+(?:Module Inventory|Product Part:)/m;
 const PRODUCT_PARTS_INDEX_TITLE_RE = /^#\s+Product Parts Index/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 
@@ -747,7 +747,7 @@ const resolveWorkflowStageValidationError = (params: {
         params.shouldValidate
       );
     case "product-part.md":
-      return validateModuleInventoryMarkdown(
+      return validateDiagramModulesMarkdown(
         params.content,
         params.shouldValidate
       );
@@ -795,7 +795,7 @@ const validateVirtualSimulationMarkdown = (
   return null;
 };
 
-const validateModuleInventoryMarkdown = (
+const validateDiagramModulesMarkdown = (
   content: string,
   shouldValidate: boolean
 ): string | null => {
@@ -805,7 +805,7 @@ const validateModuleInventoryMarkdown = (
   if (content.trim().length === 0) {
     return "Module inventory markdown is empty";
   }
-  if (!MODULE_INVENTORY_TITLE_RE.test(content)) {
+  if (!DIAGRAM_MODULES_TITLE_RE.test(content)) {
     return "Module inventory markdown is missing '# Module Inventory' or '# Product Part:' header";
   }
   return null;

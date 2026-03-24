@@ -31,7 +31,7 @@ const createResponseCapture = () => {
   };
 };
 
-const MODULE_INVENTORY_MARKDOWN = [
+const PRODUCT_PART_MARKDOWN = [
   "# Module Inventory",
   "",
   "## Metadata",
@@ -134,7 +134,7 @@ test("artifact upsert saves diagram modules staged index and dynamic product par
             },
             {
               slot: "diagram.modules.product-part.local-core-runtime",
-              markdown: MODULE_INVENTORY_MARKDOWN,
+              markdown: PRODUCT_PART_MARKDOWN,
             },
           ],
         },
@@ -177,7 +177,7 @@ test("artifact upsert saves diagram modules staged index and dynamic product par
     );
     assert.equal(
       await readFile(productPartPath, "utf8"),
-      MODULE_INVENTORY_MARKDOWN
+      PRODUCT_PART_MARKDOWN
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
