@@ -37,15 +37,15 @@
 
 **Цель:** сделать цепочки взаимодействий в системе _наблюдаемыми_ и _проверяемыми_ так, чтобы поиск причины бага не превращался в угадайку и серию «релизов в пустоту».
 
-Эта диаграмма — один из ключевых артефактов этапов `Diagram Facades` и должна работать как «быстрый источник правды» по тому:
+Эта диаграмма — один из ключевых артефактов этапа проектирования и должна работать как «быстрый источник правды» по тому:
 - какие **модули** существуют,
 - где их **границы**,
 - какие **фасады** являются единственными точками входа,
 - какие **взаимодействия** между фасадами допустимы и реально происходят.
 
 Для текущего diagram workflow это означает:
-- semantic SSOT шага `Diagram Facades` хранится в `facade-map.md`;
-- визуальная композиция хранится отдельно в `facade-map.flow.json`;
+- semantic SSOT шага `Diagram Modules` хранится в staged Markdown артефактах (`product-parts.index.md` + `product-parts/<part-id>.md`);
+- визуальная композиция хранится отдельно в `module-map.flow.json`;
 - Project Manager рендерит диаграмму из Markdown DSL через React Flow;
 - visible runtime surface больше не использует Mermaid как source-of-truth, не показывает inline semantic editors и не держит bottom-right minimap.
 
@@ -82,12 +82,12 @@
 - явно аннотировано вручную (и объяснено — зачем оно существует).
 
 ### 2.2 Facade Interaction Map по шагам Workflow (желательно)
-Для каждого шага дерева разработки (например, `Description`, `Virtual Simulation`, далее `Diagram Modules`, `Diagram Facades`) нужен короткий сценарный граф/схема:
+Для каждого шага дерева разработки (например, `Description`, `Virtual Simulation`, `Diagram Modules`) нужен короткий сценарный граф/схема:
 - «кто инициирует действие» → «какой фасад принимает» → «какие фасады/контуры участвуют» → «какой артефакт/событие является сигналом завершения».
 
 Это не заменяет глобальный граф, а прикладывается как «быстрый трейс» для конкретного шага.
 
-Для runtime-шагов `Diagram Modules` / `Diagram Facades` такой trace должен ссылаться на канонические Markdown DSL artifacts (`module-inventory.md`, `facade-map.md`), а не на legacy Mermaid-файлы.
+Для runtime-шага `Diagram Modules` такой trace должен ссылаться на канонические staged Markdown артефакты (`product-parts.index.md`, `product-parts/<part-id>.md`), а не на legacy Mermaid-файлы.
 
 ---
 
@@ -182,9 +182,9 @@ PR считается завершённым только если:
 
 ## 7) Формат диаграмм (актуальная рекомендация)
 
-- Для runtime workflow шагов `Diagram Modules` / `Diagram Facades` канонический формат — Markdown DSL:
-  - `module-inventory.md` / `facade-map.md` как semantic SSOT;
-  - `*.flow.json` как manual-layout/view sidecar;
+- Для runtime workflow шага `Diagram Modules` канонический формат — staged Markdown артефакты:
+  - `product-parts.index.md` + `product-parts/<part-id>.md` как semantic SSOT;
+  - `module-map.flow.json` как manual-layout/view sidecar;
   - React Flow rendering в PM как user-facing surface.
 - `Mermaid` допустим только для explanatory documentation, временных investigation notes или одноразовых design sketches вне runtime workflow.
 - Если в документации используется `Mermaid`, он не должен рассматриваться как source-of-truth для PM rendering, watcher gating или agent merge path.

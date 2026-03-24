@@ -43,7 +43,7 @@
 
 ### 3.1 Resume workflow-сессии (основной режим)
 
-Примеры: `Description`, `Virtual Simulation`, `Diagram Modules`, `Diagram Facades`.
+Примеры: `Description`, `Virtual Simulation`, `Diagram Modules`.
 
 Правило:
 - после завершённого turn, когда агент ждёт пользователя, ввод обязан быть доступен.

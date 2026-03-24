@@ -1,7 +1,7 @@
 # Workflow Steps & Watcher — Contract (SSOT)
 
 **Status:** Active
-**Updated:** 2026-03-19
+**Updated:** 2026-03-24
 **Owner:** Oleksandr + Codex
 
 ---
@@ -22,8 +22,7 @@
 
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
-3. `Diagram Modules` → canonical output: `module-inventory.md` + sidecar `module-map.flow.json`
-4. `Diagram Facades` → canonical output: `facade-map.md` + sidecars `facade-map.flow.json`, `facade-map.agent-baseline.md`
+3. `Diagram Modules` → canonical output: `product-parts.index.md` + `product-parts/<part-id>.md` + sidecar `module-map.flow.json`
 
 ---
 
@@ -37,26 +36,20 @@
 - `Virtual Simulation`:
   - `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
 - `Diagram Modules`:
-  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md` (canonical semantic SSOT)
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md` (canonical orchestration SSOT)
+  - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md` (canonical semantic artifacts per Product Part)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json` (layout/view sidecar)
-- `Diagram Facades`:
-  - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.md` (canonical semantic SSOT)
-  - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.flow.json` (layout/view sidecar)
-  - `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.agent-baseline.md` (agent baseline for diff/merge)
 
 Legacy `description.md` допускается только для compat и не участвует в gating новых workflow.
 
 ### 3.1 Diagram runtime / user-surface contract
 
-- `module-inventory.md` — canonical semantic SSOT для `Diagram Modules`.
-- `facade-map.md` — canonical semantic SSOT для `Diagram Facades`.
-- `*.agent-baseline.md` используется только для agent diff/merge path и не является primary user surface.
+- `product-parts.index.md` + `product-parts/<part-id>.md` — canonical staged semantic SSOT для `Diagram Modules`.
 - `*.flow.json` хранит только layout/view state и не участвует в semantic gating.
-- Project Manager для `Diagram Modules` / `Diagram Facades` использует user surface `Artifacts/Source/Help`:
-  - `Artifacts` по умолчанию открывает visual React Flow projection;
-  - `Source` показывает read-only canonical `.md` (`module-inventory.md` для `Diagram Modules`, `facade-map.md` для `Diagram Facades`);
+- Project Manager для `Diagram Modules` использует user surface `Artifacts/Help` (Source mode был удалён):
+  - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
   - `Help` показывает guidance по шагу.
-- Visible PM surface для diagram steps не должна требовать `Auto-layout`, layout profiles, inline semantic editors или bottom-right minimap.
+- Visible PM surface для diagram step не должна требовать `Auto-layout`, layout profiles, inline semantic editors или bottom-right minimap.
 - Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact.
 
 ---
@@ -76,7 +69,6 @@ Legacy `description.md` допускается только для compat и н�
 - `Description`: шаг может быть `READY` сразу (upstream не требуется).
 - `Virtual Simulation`: требует `Final_Description.md`.
 - `Diagram Modules`: требует доступные canonical artifacts `Final_Description.md` и `virtual-simulation.md`; пользователь вручную запускает шаг, когда считает upstream artifacts достаточными, если gating не блокирует старт.
-- `Diagram Facades`: требует доступный canonical artifact `module-inventory.md`; пользователь вручную запускает шаг, когда считает upstream artifact достаточным, и PM не должен требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
 
 ---
 
@@ -87,9 +79,7 @@ Watcher обязан отслеживать canonical артефакты и пу
 Минимум:
 - `Final_Description.md` created/changed
 - `virtual-simulation.md` created/changed
-- `module-inventory.md` created/changed
-- `facade-map.md` created/changed
-- `facade-map.agent-baseline.md` created/changed
+- `product-parts.index.md` created/changed
 
 Требования:
 - событие содержит `workspaceSlug` + canonical path;
@@ -102,7 +92,6 @@ Watcher обязан отслеживать canonical артефакты и пу
 
 - Изменение `Final_Description.md` после `DONE` шага `Virtual Simulation` → `Virtual Simulation = OUTDATED`.
 - Изменение `Final_Description.md` или `virtual-simulation.md` после `DONE` шага `Diagram Modules` → `Diagram Modules = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
-- Изменение `module-inventory.md` → `Diagram Facades = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
 
 `*.flow.json` не участвуют в semantic gating: это view-only sidecar, их изменение не должно менять `READY/DONE/OUTDATED`.
 
@@ -122,7 +111,7 @@ Manual start не отменяет watcher:
 - отсутствие `templatePath`/artifact template не влияет на запуск шага и пересчёт статусов;
 - источником инструкций для агента является `virtual-simulation-prompt.md`.
 
-Для `Diagram Modules` / `Diagram Facades` default PM route после открытия шага обязан возвращать пользователя в `Artifacts`, а не в raw Markdown source.
+Для `Diagram Modules` default PM route после открытия шага обязан возвращать пользователя в `Artifacts`, а не в raw Markdown source.
 
 ---
 

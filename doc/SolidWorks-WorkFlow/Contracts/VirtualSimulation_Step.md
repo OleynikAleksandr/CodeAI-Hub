@@ -27,8 +27,7 @@ UI описывается *концептуально*: экран/панель 
 
 1) `Description` (финал: `Final_Description.md`)
 2) `Virtual Simulation` (результат: `virtual-simulation.md`)
-3) `Diagram Modules` (результат: `module-inventory.md` + diagram sidecar)
-4) `Diagram Facades` (результат: `facade-map.md` + diagram sidecars)
+3) `Diagram Modules` (результат: `product-parts.index.md` + `product-parts/<part-id>.md` + diagram sidecar)
 
 На момент выполнения Virtual Simulation диаграмм **ещё нет**.
 
@@ -93,7 +92,7 @@ UI описывается *концептуально*: экран/панель 
 Инвариант: артефакты *живые*.
 
 - Изменение `Final_Description.md` **после** того как Virtual Simulation была сделана → Virtual Simulation получает `OUTDATED`.
-- Изменение `virtual-simulation.md` → downstream шаги (Diagram Modules/Facades) получают `OUTDATED` (или остаются `BLOCKED`, если ещё не начинались).
+- Изменение `virtual-simulation.md` → downstream шаг (Diagram Modules) получает `OUTDATED` (или остаётся `BLOCKED`, если ещё не начинался).
 
 Цель: нормализовать цикл «2 шага вперёд, 1 назад».
 
@@ -135,8 +134,7 @@ CodeAI Hub превращает идею в цепочку артефактов,
 Шаг `Virtual Simulation` идёт сразу после `Description` и нужен, чтобы перевести продуктовое описание в рабочие сценарии поведения системы: кто и зачем действует, что делает, что должно произойти, и по каким признакам это считается успешным.
 
 Важно: `virtual-simulation.md` не является «документом ради документа». Он должен, вместе с `Final_Description.md`, дать достаточно точный и непротиворечивый вход для двух следующих шагов:
-- `Diagram Modules` (выделение модулей, зон ответственности, зависимостей);
-- `Diagram Facades` (контракты взаимодействия между модулями через фасады).
+- `Diagram Modules` (выделение модулей, зон ответственности, зависимостей).
 
 ## 2) Среда работы агента, роль и артефакт
 Ты — Virtual Simulation Agent стадии `virtual_simulation`.
@@ -188,7 +186,7 @@ CodeAI Hub превращает идею в цепочку артефактов,
 Шаг считается готовым, когда пользователь явно подтвердил (`ОК` / `утверждаю` / `approve`), а `virtual-simulation.md`:
 - содержит связный сценарный baseline без внутренних противоречий;
 - покрывает продуктовую суть из `Final_Description.md` без потери ключевых ограничений;
-- даёт следующему агенту достаточную основу для построения `module-inventory.md` и `facade-map.md` без переписывания контекста с нуля.
+- даёт следующему агенту достаточную основу для построения staged product-part артефактов без переписывания контекста с нуля.
 ```
 
 ### 8.2 Минимальные инварианты артефакта (без жёсткого template)

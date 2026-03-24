@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-03-23
+**Updated:** 2026-03-24
 **Owner:** Oleksandr
 
 ---
@@ -12,13 +12,12 @@
 
 Пользователь не обязан «продумать всё заранее» на первом шаге. Каждый шаг добавляет только один слой ясности и формирует артефакт, который нужен следующему шагу.
 
-Каноническая цепочка:
+Каноническая цепочка (реализованные шаги):
 - **Шаг 1 (Description):** что за продукт, для кого, и какие базовые сценарии должны работать.
 - **Шаг 2 (Virtual Simulation):** как продукт должен вести себя в сценариях использования.
 - **Шаг 3 (Diagram Modules):** из каких модулей/кластеров состоит система.
-- **Шаг 4 (Diagram Facades):** как модули взаимодействуют через фасады.
-- **Шаг 5 (Module Specifications):** детальные спецификации модулей.
-- **Шаг 6 (TODO Plan + Implementation):** реализация через микро-задачи и коммиты.
+
+> Шаги после Diagram Modules (Module Specifications, TODO Plan + Implementation и др.) спроектированы, но ещё не реализованы в коде.
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
 
@@ -135,7 +134,6 @@ Manual start из верхнего toolbar PM:
 
 - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md`
 - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md`
-- `.codeai-hub/<workspaceSlug>/diagram_modules/module-inventory.md`
 - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json`
 
 `product-parts.index.md` является первым canonical orchestration artifact этого шага:
@@ -144,10 +142,6 @@ Manual start из верхнего toolbar PM:
 
 `product-parts/<part-id>.md` являются canonical semantic artifacts отдельных `Product Part`.
 Каждый такой файл materialize-ит один ownership subtree `Product Part -> Cluster -> Module`.
-
-`module-inventory.md` остаётся downstream compatibility aggregate:
-- он больше не является первым giant single-turn artifact этого шага;
-- runtime собирает его из index + part-файлов после завершения последовательности.
 
 `module-map.flow.json` хранит только layout/view state визуального редактора.
 Visual diagram materialize-ится runtime из index + part artifacts и не требует отдельного raw semantic map-файла в workspace.
@@ -169,78 +163,16 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 ---
 
-## Шаг 4 — Diagram Facades
-
-### Цель
-
-Зафиксировать фасады модулей, типы взаимодействий и зависимости.
-
-Этот шаг остаётся следующим обязательным diagram-step, но является более техническим слоем, чем `Diagram Modules`.
-Для непрофильного пользователя основная структурная коррекция продукта ожидается раньше, на шаге модульной диаграммы.
-
-### Подход
-
-Manual start из верхнего toolbar PM:
-- пользователь сам решает, когда `module-inventory.md` уже достаточно хороший для перехода на следующий шаг;
-- запуск требует доступный canonical upstream artifact `module-inventory.md`;
-- PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
-
-### Входы
-
-- `Final_Description.md`
-- `virtual-simulation.md`
-- `module-inventory.md`
-
-### Артефакты
-
-- `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.md`
-- `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.flow.json`
-- `.codeai-hub/<workspaceSlug>/diagram_facades/facade-map.agent-baseline.md`
-
-`facade-map.md` является canonical SSOT для semantic content.
-`facade-map.flow.json` хранит только layout/view state визуального редактора.
-`facade-map.agent-baseline.md` фиксирует baseline для change summary и безопасного merge после повторных agent runs.
-
----
-
-## Шаг 5 — Module Specifications (будущий)
-
-### Цель
-
-Подготовить детальные спецификации модулей (классы, состояние, ошибки, ограничения).
-
-### Артефакт
-
-- `.codeai-hub/<workspaceSlug>/specifications/<moduleSlug>-spec.md`
-
----
-
-## Шаг 6 — TODO Plan + Implementation (будущий)
-
-### Цель
-
-Превратить спецификации в поэтапный план и реализацию через микро-задачи.
-
-### Артефакты
-
-- `doc/TODO/todo-plan.md`
-- изменения в коде (`packages/`, `src/`)
-- синхронные обновления документации (`doc/`)
-
----
-
 ## Сквозные механизмы
 
 ### OUTDATED propagation
 
 - Изменение `Final_Description.md` → `Virtual Simulation = OUTDATED`.
 - Изменение `virtual-simulation.md` → `Diagram Modules = OUTDATED`.
-- Изменение `module-inventory.md` → `Diagram Facades = OUTDATED`.
-- Изменение `facade-map.md` или `facade-map.agent-baseline.md`/спецификаций → downstream шаги получают `OUTDATED`.
 
 ### Resume-by-default для workflow шагов
 
-Описание шагов 1–4 предполагает «живые» сессии: пользователь может возвращаться и корректировать результат без переинициализации workflow.
+Описание шагов 1–3 предполагает «живые» сессии: пользователь может возвращаться и корректировать результат без переинициализации workflow.
 
 ### Template model (текущее состояние)
 
@@ -254,8 +186,8 @@ Manual start из верхнего toolbar PM:
 - отдельный artifact template не поставляется и не отправляется агенту;
 - структура `virtual-simulation.md` задаётся контрактом шага и минимальными инвариантами валидации.
 
-Шаги `Diagram Modules` и `Diagram Facades` работают через agent asset packs:
-- prompt и template живут в `packages/agents/diagram-modules-agent/assets/` и `packages/agents/diagram-facades-agent/assets/`;
+Шаг `Diagram Modules` работает через agent asset pack:
+- prompt, field reference и merge rules живут в `packages/agents/diagram-modules-agent/assets/` (`diagram-modules-prompt.md`, `diagram-modules-field-reference.md`, `diagram-modules-merge-rules.md`);
 - runtime отправляет агенту canonical `.md` артефакт и generated `Change Summary`;
 - Mermaid `.mmd` больше не является workflow SSOT.
 

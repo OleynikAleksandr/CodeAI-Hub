@@ -1,7 +1,7 @@
 # Project Manager — Workflow Navigation SSOT
 
 **Status:** Active SSOT  
-**Updated:** 2026-03-19  
+**Updated:** 2026-03-24
 **Owner:** Oleksandr + Codex
 
 ---
@@ -23,7 +23,6 @@
 - `description`
 - `virtual_simulation`
 - `diagram_modules`
-- `diagram_facades`
 
 ## 3) Источники активации stage
 
@@ -52,18 +51,11 @@
 |---|---|---|---|---|
 | `description` | `Description` | `Description` | `Artifacts/Help` | `stage=description` |
 | `virtual_simulation` | `VIRTUAL SIMULATION` | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
-| `diagram_modules` | `Diagram Modules` | `Diagram Modules` | `Artifacts/Source/Help` | `stage=diagram_modules` |
-| `diagram_facades` | `Diagram Facades` | `Diagram Facades` | `Artifacts/Source/Help` | `stage=diagram_facades` |
+| `diagram_modules` | `Diagram Modules` | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
 
-Для diagram stages:
-- `Artifacts` — default visual React Flow surface;
-- `Source` — read-only canonical Markdown artifact;
+Для `Diagram Modules` правая панель использует `Artifacts/Help` (Source mode был удалён):
+- `Artifacts` открывает визуальный Module Graph, построенный из staged product-part файлов;
 - `Help` — guidance panel.
-
-For `Diagram Modules` inventory-first flow:
-- `Artifacts` opens the visual projection derived from `module-inventory.md`.
-- `Source` opens `module-inventory.md`.
-- `Diagram Facades` still uses `facade-map.md` as its `Source` surface for now.
 
 ## 5) Инварианты
 
@@ -85,7 +77,7 @@ For `Diagram Modules` inventory-first flow:
 
 1. Любой клик в Toolbar/Tree/auto-select приводит к одному и тому же stage-состоянию UI.
 2. Header правой панели всегда соответствует текущему stage.
-3. Для всех stage доступен `Help`; для diagram stages дополнительно доступен `Source`, а для `Diagram Modules` `Source` должен открывать `module-inventory.md`.
+3. Для всех stage доступен `Help`; для `Diagram Modules` доступен `Artifacts/Help` (Source mode был удалён).
 4. Переходы между stage не оставляют «залипших» артефактов/сессий предыдущего шага.
 
 ## 8) Связанные документы

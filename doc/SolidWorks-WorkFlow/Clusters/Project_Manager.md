@@ -39,9 +39,8 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - левая панель возвращается к Session UI,
   - правая панель имеет переключатель `Artifacts/Help`.
 - В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
-- Для `Diagram Modules` / `Diagram Facades` правая панель использует контракт `Artifacts/Source/Help`:
-  - `Artifacts` по умолчанию открывает визуальную диаграмму;
-  - `Source` показывает read-only canonical `.md` (`module-inventory.md` для `Diagram Modules`, `facade-map.md` для `Diagram Facades`);
+- Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode был удалён):
+  - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
   - `*.flow.json` не показывается пользователю как артефакт.
 - Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors или bottom-right minimap; пользовательский UX для этих шагов = manual drag/persist + left-bottom zoom/fit controls.
 - Semantic changes для diagram steps ожидаются через agent-run или прямое редактирование canonical Markdown, а не через visible inline UI.
