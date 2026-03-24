@@ -34,7 +34,7 @@
 
 ## Git commits
 (ВАЖНО: для следующей сессии восстановить контекст через `git show --stat <hash>` и `git show <hash>`)
-- TBD — planning session, commit after review
+- `89bcf609 docs(plan): archive phase53 and plan step-by-step diagram modules workflow refactor`
 
 ---
 
