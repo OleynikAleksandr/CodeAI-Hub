@@ -50,8 +50,8 @@
 ### Stream 7: Release notes + build
 1. [DONE] Обновить `CHANGELOG.md` с описанием step-by-step workflow, graph refresh, auto-layout fix, Module Graph naming (scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync step-by-step diagram modules workflow notes`)
 2. [DONE] Git Commit: `docs(release): sync step-by-step diagram modules workflow notes` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить VSIX, скопировать tarballs (scope: release manifests, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare step-by-step diagram modules workflow release`)
-4. [TODO] Git Commit: `chore(release): prepare step-by-step diagram modules workflow release` (hash: TBD)
+3. [DONE] build-all.sh → 1.1.778 (hash: 17117fb2). build-release.sh → codeai-hub-1.1.778.vsix. Tarballs → doc/tmp/releases/
+4. [DONE] Git Commit: `chore(release): prepare step-by-step diagram modules workflow release` (hash: TBD)
 
 ### Stream 8: Session handoff
 1. [TODO] Создать session report, записать все hashes (scope: `doc/Sessions/Session150.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record step-by-step diagram modules workflow release`)
