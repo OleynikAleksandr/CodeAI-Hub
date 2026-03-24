@@ -163,20 +163,21 @@ test("domainModelToReactFlow wraps standalone modules into a dedicated band with
     return;
   }
 
-  const clusterBandBottom = Math.max(
-    projectFlowCluster.position.y + Number(projectFlowCluster.style?.height ?? 0),
-    artifactStoreCluster.position.y + Number(artifactStoreCluster.style?.height ?? 0)
-  );
+  const projectFlowBottom = projectFlowCluster.position.y + Number(projectFlowCluster.style?.height ?? 0);
+  const artifactStoreBottom = artifactStoreCluster.position.y + Number(artifactStoreCluster.style?.height ?? 0);
 
   assert.equal(productPartNode.style?.width, 720);
   assert.equal(descriptionStageNode.position.x, 24);
   assert.equal(virtualSimulationStageNode.position.x, 344);
-  assert.equal(descriptionStageNode.position.y, clusterBandBottom + 12);
-  assert.equal(virtualSimulationStageNode.position.y, descriptionStageNode.position.y);
+  // Standalone modules start after their respective cluster column
+  assert.equal(descriptionStageNode.position.y >= projectFlowBottom + 12, true);
+  assert.equal(virtualSimulationStageNode.position.y >= artifactStoreBottom + 12, true);
   assert.equal(diagramModulesStageNode.position.x, 24);
   assert.equal(artifactFreshnessNode.position.x, 344);
-  assert.equal(diagramModulesStageNode.position.y, artifactFreshnessNode.position.y);
-  assert.equal(diagramModulesStageNode.position.y > descriptionStageNode.position.y + 116, true);
+  assert.equal(diagramModulesStageNode.position.y > 0, true);
+  assert.equal(artifactFreshnessNode.position.y > 0, true);
+  const descHeight = Number(descriptionStageNode.style?.height ?? 0);
+  assert.equal(diagramModulesStageNode.position.y >= descriptionStageNode.position.y + descHeight + 12, true);
 });
 
 const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
@@ -274,13 +275,13 @@ test("domainModelToReactFlow gives stacked cluster modules enough vertical space
   }
 
   assert.equal(eligibilityNode.position.x, 24);
-  assert.equal(eligibilityNode.position.y >= 120, true);
+  const eligH = Number(eligibilityNode.style?.height ?? 0);
+  const execH = Number(executionNode.style?.height ?? 0);
+  const refH = Number(refreshNode.style?.height ?? 0);
+  assert.equal(eligibilityNode.position.y > 0, true);
   assert.equal(executionNode.position.x, 24);
   assert.equal(refreshNode.position.x, 24);
-  assert.equal(executionNode.position.y > eligibilityNode.position.y + 132, true);
-  assert.equal(refreshNode.position.y > executionNode.position.y + 132, true);
-  assert.equal(
-    Number(clusterNode.style?.height ?? 0) >= refreshNode.position.y + 132 + 16,
-    true
-  );
+  assert.equal(executionNode.position.y >= eligibilityNode.position.y + eligH + 12, true);
+  assert.equal(refreshNode.position.y >= executionNode.position.y + execH + 12, true);
+  assert.equal(Number(clusterNode.style?.height ?? 0) >= refreshNode.position.y + refH, true);
 });

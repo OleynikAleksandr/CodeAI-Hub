@@ -5,15 +5,24 @@ type ModuleEntity = ModuleMapModel["modules"][number];
 type ClusterEntity = NonNullable<ModuleMapModel["clusters"]>[number];
 type ProductPartEntity = NonNullable<ModuleMapModel["productParts"]>[number];
 
-const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 12, PRODUCT_PART_HEADER_MIN_HEIGHT = 72, PRODUCT_PART_CARD_PADDING_TOP = 10;
+// -- Layout geometry (non-CSS) --
+const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 12, PRODUCT_PART_HEADER_BODY_GAP = 4;
 const PRODUCT_PART_SECTION_GAP = 12, PRODUCT_PART_ROW_GAP = 24, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
-const PRODUCT_PART_HEADER_BODY_GAP = 4, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
-const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 12, CLUSTER_CARD_PADDING_TOP = 8;
-const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 136, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 14;
-const MODULE_RESP_LINE_HEIGHT = 17;
-const CLUSTER_HEADER_BODY_GAP = 4, CLUSTER_PURPOSE_CHARS_PER_LINE = 36, CLUSTER_TITLE_CHARS_PER_LINE = 28;
-const CONTAINER_CAPTION_LINE_HEIGHT = 12, CONTAINER_META_LINE_HEIGHT = 14, PURPOSE_TEXT_MARGIN_TOP = 6;
+const CLUSTER_X_STEP = 320, CLUSTER_PADDING_X = 24, CLUSTER_BOTTOM_PADDING = 12;
+const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_GAP = 12;
 const STANDALONE_X_STEP = CLUSTER_X_STEP, DEFAULT_PRODUCT_PART_ID = "default-product-part";
+// -- CSS-faithful height computation (mirrors diagram-editor-facade.tsx styles) --
+const LH11 = 14, LH12 = 15, LH13 = 16, LH14 = 17, LH15 = 18; // Math.ceil(fontSize * 1.2)
+const LH12_135 = 17; // Math.ceil(12 * 1.35) — module responsibility lineHeight:1.35
+// Module card: nodeCardStyle padding "12px 14px", content width 212px
+const MC_PAD = 12, MC_CONTENT_W = MODULE_CARD_WIDTH - 28;
+const MC_TITLE_CPL = Math.floor(MC_CONTENT_W / 8.5); // bold 14px
+const MC_RESP_CPL = Math.floor(MC_CONTENT_W / 7.2);  // regular 12px
+// Cluster header: containerHeaderStyle gap:4
+const CL_GAP = 4, CL_CONTENT_W = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2 - 28;
+const CL_TITLE_CPL = Math.floor(CL_CONTENT_W / 7.8), CL_PURPOSE_CPL = Math.floor(CL_CONTENT_W / 6.6);
+// Product part
+const PP_TITLE_CPL = 30, PP_PURPOSE_PAD = 10;
 
 const toProductPartNodeId = (productPartId: string): string => `product-part:${productPartId}`;
 const toClusterNodeId = (clusterId: string): string => `cluster:${clusterId}`;
@@ -22,44 +31,28 @@ const humanizeIdentifier = (value: string): string =>
   value.split("-").filter(Boolean).map((part) => part[0]?.toUpperCase() + part.slice(1)).join(" ");
 const estimateTextLines = (text: string, charsPerLine: number): number =>
   text.split(/\r?\n/u).map((line) => Math.max(1, Math.ceil(line.trim().length / charsPerLine))).reduce((sum, count) => sum + count, 0);
-const getExtraLines = (text: string, charsPerLine: number, includedLines = 1): number =>
-  Math.max(0, estimateTextLines(text, charsPerLine) - includedLines);
+// Module card height from CSS: pad + "MODULE" + mt4+title + mt4+kind + mt6+resp + mt8+label + pad
 const getModuleCardHeight = (module: ModuleEntity): number =>
-  MODULE_CARD_MIN_HEIGHT + getExtraLines(module.title, 24) * TITLE_LINE_HEIGHT + getExtraLines(module.responsibility, 32, 2) * MODULE_RESP_LINE_HEIGHT;
-const getProductPartSummaryHeight = (title: string): number =>
-  CONTAINER_CAPTION_LINE_HEIGHT + 4 + estimateTextLines(title, PRODUCT_PART_TITLE_CHARS_PER_LINE) * TITLE_LINE_HEIGHT + 4 + CONTAINER_META_LINE_HEIGHT;
-const getPurposePanelHeight = (purpose: string, charsPerLine: number): number =>
-  20 + CONTAINER_CAPTION_LINE_HEIGHT + PURPOSE_TEXT_MARGIN_TOP + estimateTextLines(purpose, charsPerLine) * BODY_LINE_HEIGHT;
+  Math.ceil(MC_PAD + LH11 + 4 + estimateTextLines(module.title, MC_TITLE_CPL) * LH14 + 4 + LH11 + 6 + estimateTextLines(module.responsibility, MC_RESP_CPL) * LH12_135 + 8 + LH11 + MC_PAD);
+// Cluster header: grid gap:4 — caption, title, meta, (gap+mt6) purpose
 const getClusterHeaderHeight = (cluster: Pick<ClusterEntity, "title" | "purpose">): number =>
-  Math.max(
-    CLUSTER_HEADER_MIN_HEIGHT,
-    CLUSTER_CARD_PADDING_TOP +
-      CONTAINER_CAPTION_LINE_HEIGHT +
-      4 +
-      estimateTextLines(cluster.title, CLUSTER_TITLE_CHARS_PER_LINE) * BODY_LINE_HEIGHT +
-      4 +
-      CONTAINER_META_LINE_HEIGHT +
-      4 +
-      PURPOSE_TEXT_MARGIN_TOP +
-      estimateTextLines(cluster.purpose, CLUSTER_PURPOSE_CHARS_PER_LINE) * BODY_LINE_HEIGHT +
-      CLUSTER_HEADER_BODY_GAP
-  );
+  Math.ceil(LH11 + CL_GAP + estimateTextLines(cluster.title, CL_TITLE_CPL) * LH13 + CL_GAP + LH11 + CL_GAP + 6 + estimateTextLines(cluster.purpose, CL_PURPOSE_CPL) * LH11);
+// Product part summary: caption + gap + title + gap + meta
+const getProductPartSummaryHeight = (title: string): number =>
+  LH11 + 4 + estimateTextLines(title, PP_TITLE_CPL) * LH15 + 4 + LH12;
+// Purpose panel: padding + caption + mt6 + text + padding
+const getPurposePanelHeight = (purpose: string, charsPerLine: number): number =>
+  PP_PURPOSE_PAD + LH11 + 6 + estimateTextLines(purpose, charsPerLine) * LH11 + PP_PURPOSE_PAD;
 const getPurposeCharsPerLine = (productPartWidth: number): number => {
-  // CSS: gridTemplateColumns "auto minmax(240px, 1fr)" — summary shrinks to content, purpose takes rest
   const purposePanelWidth = Math.max(240, productPartWidth - 220);
-  const purposeContentWidth = purposePanelWidth - 28;
-  return Math.max(20, Math.floor(purposeContentWidth / 7));
+  return Math.max(20, Math.floor((purposePanelWidth - 28) / 6.6));
 };
+// Product part header: max(summary, purpose) + transition gap
 const getProductPartHeaderHeight = (productPart: Pick<ProductPartEntity, "title" | "purpose">, productPartWidth: number): number =>
-  Math.max(
-    PRODUCT_PART_HEADER_MIN_HEIGHT,
-    PRODUCT_PART_CARD_PADDING_TOP +
-      Math.max(
-        getProductPartSummaryHeight(productPart.title),
-        getPurposePanelHeight(productPart.purpose, getPurposeCharsPerLine(productPartWidth))
-      ) +
-      PRODUCT_PART_HEADER_BODY_GAP
-  );
+  Math.ceil(Math.max(
+    getProductPartSummaryHeight(productPart.title),
+    getPurposePanelHeight(productPart.purpose, getPurposeCharsPerLine(productPartWidth))
+  ) + PRODUCT_PART_HEADER_BODY_GAP);
 
 const buildModuleNode = ({
   module,
@@ -198,7 +191,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
         }));
         moduleY += height + MODULE_CARD_GAP;
       }
-      const clusterHeight = Math.max(CLUSTER_MIN_HEIGHT, moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING);
+      const clusterHeight = moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING;
       clusterHeights.push(clusterHeight);
       clusterNodes.push({
         id: toClusterNodeId(clusterId),
