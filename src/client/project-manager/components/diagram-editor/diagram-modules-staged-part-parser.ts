@@ -13,7 +13,7 @@ import {
   parseModuleRows,
 } from "./diagram-modules-staged-part-parser-shared";
 
-const INVENTORY_TITLE_RE = /^# Module Inventory$/m;
+const DIAGRAM_MODULES_LEGACY_TITLE_RE = /^# Module Inventory$/m;
 const OUTLINE_TITLE_RE = /^# Product Part:\s+(.+)\s*$/m;
 const OUTLINE_PART_ID_RE = /^- `part_id`:\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/m;
 const PRODUCT_PART_TITLE_RE = /^Product Part:\s*`([^`]+)`\s*$/m;
@@ -100,7 +100,7 @@ const materializeModuleMapFromInventoryProductPart = (
   content: string,
   title: string
 ): MaterializedStagedProductPartResult => {
-  if (!INVENTORY_TITLE_RE.test(title)) {
+  if (!DIAGRAM_MODULES_LEGACY_TITLE_RE.test(title)) {
     return buildFailure("invalid-title", 1, "Expected `# Module Inventory` title");
   }
 

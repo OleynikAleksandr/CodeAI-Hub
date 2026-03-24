@@ -28,7 +28,7 @@ import {
   toLines,
 } from "./markdown-dsl-shared";
 
-const INVENTORY_TITLE_RE = /^# Module Inventory$/;
+const DIAGRAM_MODULES_LEGACY_TITLE_RE = /^# Module Inventory$/;
 const INVENTORY_SECTION_RE = /^## (.+)$/;
 const PRODUCT_PART_HEADER_RE = /^### Product Part: (.+)$/;
 const CLUSTER_HEADER_RE = /^### Cluster: (.+)$/;
@@ -1131,7 +1131,7 @@ const buildModuleMapValue = (
   };
 };
 
-export const parseModuleInventoryDsl = (
+export const parseDiagramModulesDsl = (
   content: string
 ): MarkdownDslParseResult => {
   if (!content.trim()) {
@@ -1140,7 +1140,7 @@ export const parseModuleInventoryDsl = (
 
   const lines = toLines(content);
   const title = lines.find((line) => line.text.trim().length > 0);
-  if (!(title && INVENTORY_TITLE_RE.test(title.text.trim()))) {
+  if (!(title && DIAGRAM_MODULES_LEGACY_TITLE_RE.test(title.text.trim()))) {
     return buildParseFailure(
       "invalid-title",
       title?.number ?? 1,
@@ -1230,7 +1230,7 @@ export type MaterializedModuleMapResult =
 export const materializeModuleMapFromInventoryDsl = (
   content: string
 ): MaterializedModuleMapResult => {
-  const inventoryResult = parseModuleInventoryDsl(content);
+  const inventoryResult = parseDiagramModulesDsl(content);
   if (!inventoryResult.ok) {
     return {
       ok: false,
