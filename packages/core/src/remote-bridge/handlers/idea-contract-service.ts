@@ -63,9 +63,9 @@ const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
 
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: resolveSyncedDiagramTemplateCandidates(
-    "diagram_modules/module-inventory-prompt.md",
+    "diagram_modules/diagram-modules-prompt.md",
     "diagram-modules-agent",
-    "module-inventory-prompt.md"
+    "diagram-modules-prompt.md"
   ),
   promptAppendix: DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
 };

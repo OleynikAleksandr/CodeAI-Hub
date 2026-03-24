@@ -28,14 +28,14 @@ export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
     "product-part-template.md"
   ),
   resolveSyncedDiagramTemplateCandidates(
-    "diagram_modules/module-inventory-field-reference.md",
+    "diagram_modules/diagram-modules-field-reference.md",
     "diagram-modules-agent",
-    "module-inventory-field-reference.md"
+    "diagram-modules-field-reference.md"
   ),
   resolveSyncedDiagramTemplateCandidates(
-    "diagram_modules/module-inventory-merge-rules.md",
+    "diagram_modules/diagram-modules-merge-rules.md",
     "diagram-modules-agent",
-    "module-inventory-merge-rules.md"
+    "diagram-modules-merge-rules.md"
   ),
 ] as const;
 
