@@ -39,16 +39,10 @@ const TEMPLATES = [
     dest: ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
   },
   {
-    id: "module-inventory-prompt",
+    id: "diagram-modules-prompt",
     source:
-      "packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
-  },
-  {
-    id: "module-inventory-template",
-    source:
-      "packages/agents/diagram-modules-agent/assets/module-inventory-template.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
+      "packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md",
+    dest: ".codeai-hub/templates/diagram_modules/diagram-modules-prompt.md",
   },
   {
     id: "product-parts-index-template",
@@ -63,16 +57,16 @@ const TEMPLATES = [
     dest: ".codeai-hub/templates/diagram_modules/product-part-template.md",
   },
   {
-    id: "module-inventory-field-reference",
+    id: "diagram-modules-field-reference",
     source:
-      "packages/agents/diagram-modules-agent/assets/module-inventory-field-reference.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
+      "packages/agents/diagram-modules-agent/assets/diagram-modules-field-reference.md",
+    dest: ".codeai-hub/templates/diagram_modules/diagram-modules-field-reference.md",
   },
   {
-    id: "module-inventory-merge-rules",
+    id: "diagram-modules-merge-rules",
     source:
-      "packages/agents/diagram-modules-agent/assets/module-inventory-merge-rules.md",
-    dest: ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
+      "packages/agents/diagram-modules-agent/assets/diagram-modules-merge-rules.md",
+    dest: ".codeai-hub/templates/diagram_modules/diagram-modules-merge-rules.md",
   },
 ];
 
