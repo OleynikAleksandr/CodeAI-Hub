@@ -46,12 +46,12 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
     process.env.HOME = tempHome;
     const promptPath = await writeBundledTemplate(
       tempHome,
-      "module-inventory-prompt"
+      "diagram-modules-prompt"
     );
     await writeBundledTemplate(tempHome, "product-parts-index-template");
     await writeBundledTemplate(tempHome, "product-part-template");
-    await writeBundledTemplate(tempHome, "module-inventory-field-reference");
-    await writeBundledTemplate(tempHome, "module-inventory-merge-rules");
+    await writeBundledTemplate(tempHome, "diagram-modules-field-reference");
+    await writeBundledTemplate(tempHome, "diagram-modules-merge-rules");
 
     const contract = await buildDiagramModulesContract();
 
