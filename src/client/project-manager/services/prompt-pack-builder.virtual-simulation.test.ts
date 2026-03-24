@@ -84,16 +84,10 @@ test("diagram modules prompt pack targets product part index and omits generic t
     ),
     true
   );
-  assert.equal(
-    pack.content.includes(
-      "Compatibility aggregate (runtime-owned, not a default input): `.codeai-hub/demo-workspace/diagram_modules/module-inventory.md`"
-    ),
-    true
-  );
   assert.equal(pack.content.includes("Шаблон (absolute)"), false);
   assert.equal(
     pack.content.includes(
-      "не трать текущий turn на поиск compatibility inventory"
+      "не трать текущий turn на поиск staged examples"
     ),
     true
   );

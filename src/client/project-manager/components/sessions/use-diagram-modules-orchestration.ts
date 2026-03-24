@@ -4,7 +4,6 @@ import { api } from "../../api";
 import { persistIdeaArtifacts } from "../../../ui/src/services/idea-artifact-persistence";
 import { extractIdeaCollectorArtifact } from "../../../ui/src/services/idea-collector-artifact";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
-import { composeDiagramModulesAggregate } from "./diagram-modules-aggregate";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -123,28 +122,6 @@ export const useDiagramModulesOrchestration = (options: {
           params.intent.workspaceSlug,
           params.intent.workspacePath
         );
-        const progress = readDiagramModulesProgress(state?.diagramModulesProgress);
-        if (!progress || progress.substep !== "compose_aggregate") {
-          return;
-        }
-        const signature = `${params.sessionId}:compose_aggregate`;
-        if (dispatchedSignatureRef.current.get(params.sessionId) === signature) {
-          return;
-        }
-        dispatchedSignatureRef.current.set(params.sessionId, signature);
-        setSequenceLock(params.sessionId, true);
-        const aggregateResult = await composeDiagramModulesAggregate({
-          httpUrl,
-          workspacePath: params.intent.workspacePath,
-          workspaceSlug: params.intent.workspaceSlug,
-        });
-        if (!aggregateResult.ok) {
-          console.warn(
-            "[DiagramModulesOrchestration] Aggregate compose failed",
-            aggregateResult.error
-          );
-        }
-        setSequenceLock(params.sessionId, false);
       })
       .finally(() => {
         if (queuedBySessionRef.current.get(params.sessionId) === nextRun) {

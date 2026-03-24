@@ -24,8 +24,7 @@ export const DiagramModulesHelp: React.FC = () => (
         Базовый semantic source of truth теперь двухслойный:{" "}
         <code>product-parts.index.md</code> задаёт порядок и общий контур, а
         part-файлы уточняют реальное содержание каждого Product Part.{" "}
-        <code>module-inventory.md</code> остаётся compatibility aggregate для
-        downstream шагов.
+        Part-файлы — финальный артефакт этого шага.
       </div>
       <div>
         В visual hierarchy этого шага ownership читается как{" "}

@@ -12,7 +12,6 @@ const BLOCKED_AMBIGUITY_RE = /- Status:\s*blocked_ambiguity\b/i;
 export type DiagramModulesSubstep =
   | "index"
   | "generate_product_part"
-  | "compose_aggregate"
   | "awaiting_review"
   | "blocked_ambiguity";
 
@@ -79,22 +78,6 @@ const resolveGeneratedPartIds = async (params: {
   return generatedPartIds;
 };
 
-const resolveAggregateReady = async (params: {
-  readonly workspaceRoot: string;
-  readonly workspaceSlug: string;
-}): Promise<boolean> => {
-  const artifactPath = resolveWorkflowArtifactPaths({
-    workspaceRoot: params.workspaceRoot,
-    workspaceSlug: params.workspaceSlug,
-    stage: "diagram_modules",
-    fileName: "module-inventory.md",
-  });
-  if (!artifactPath.ok) {
-    return false;
-  }
-  return Boolean(await readExistingFile(artifactPath.value.absolutePath));
-};
-
 export const readDiagramModulesProgressSnapshot = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -120,10 +103,6 @@ export const readDiagramModulesProgressSnapshot = async (params: {
     workspaceSlug: params.workspaceSlug,
     plannedPartIds,
   });
-  const aggregateReady = await resolveAggregateReady({
-    workspaceRoot: params.workspaceRoot,
-    workspaceSlug: params.workspaceSlug,
-  });
   const currentPartId = plannedPartIds.find(
     (partId) => !generatedPartIds.includes(partId)
   );
@@ -135,10 +114,8 @@ export const readDiagramModulesProgressSnapshot = async (params: {
     substep = "index";
   } else if (currentPartId) {
     substep = "generate_product_part";
-  } else if (aggregateReady) {
-    substep = "awaiting_review";
   } else {
-    substep = "compose_aggregate";
+    substep = "awaiting_review";
   }
 
   return {
@@ -148,6 +125,6 @@ export const readDiagramModulesProgressSnapshot = async (params: {
     ...(currentPartId ? { currentPartId } : {}),
     plannedCount: plannedPartIds.length,
     generatedCount: generatedPartIds.length,
-    aggregateReady,
+    aggregateReady: false,
   };
 };

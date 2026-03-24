@@ -6,7 +6,6 @@ export type WorkflowArtifactFileName =
   | "virtual-simulation.md"
   | "product-parts.index.md"
   | "product-part.md"
-  | "module-inventory.md"
   | "module-map.flow.json";
 
 export type WorkflowArtifactPath = {

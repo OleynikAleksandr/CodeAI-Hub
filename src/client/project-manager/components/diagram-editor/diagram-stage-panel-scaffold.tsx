@@ -70,9 +70,6 @@ const buildDiagramModulesProgressText = (
   if (progress.substep === "generate_product_part") {
     return `Собрано ${progress.generatedCount} из ${progress.plannedCount} Product Part. Сейчас materialize-ится ${progress.currentPartId ?? "следующий part"}.`;
   }
-  if (progress.substep === "compose_aggregate") {
-    return `Все ${progress.plannedCount} Product Part уже готовы. Runtime собирает compatibility aggregate для downstream шага.`;
-  }
   if (progress.substep === "blocked_ambiguity") {
     return "Последовательность остановлена на architectural ambiguity и ждёт уточнения пользователя.";
   }

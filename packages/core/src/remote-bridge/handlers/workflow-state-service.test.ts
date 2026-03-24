@@ -124,11 +124,6 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     );
     await writeWorkspaceFile(
       workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,
-      "# Module Inventory\n"
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
       createProductPartsIndex(["local-core-runtime"])
     );
@@ -151,22 +146,16 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     const payload = result.payload as WorkflowStatePayload;
 
     assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
-    assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
+    assert.equal(payload.state?.stages.diagram_modules?.status, "idle");
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
     assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
     assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
-    assert.equal(payload.diagramModulesProgress?.aggregateReady, true);
+    assert.equal(payload.diagramModulesProgress?.aggregateReady, false);
     assert.equal(
       payload.state?.stages.virtual_simulation?.artifacts?.some(
         (artifact) =>
           artifact.path === "virtual_simulation/virtual-simulation.md"
-      ),
-      true
-    );
-    assert.equal(
-      payload.state?.stages.diagram_modules?.artifacts?.some(
-        (artifact) => artifact.path === "diagram_modules/module-inventory.md"
       ),
       true
     );

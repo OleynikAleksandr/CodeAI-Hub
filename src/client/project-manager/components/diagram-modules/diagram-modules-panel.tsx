@@ -75,7 +75,7 @@ export const DiagramModulesPanel: React.FC<{
       content={content}
       error={error}
       initialNodes={projection?.nodes}
-      introText="Artifacts show the staged Diagram Modules structure starting from `product-parts.index.md`. Use Source to inspect the index while runtime materializes `product-parts/<part-id>.md` and later composes `module-inventory.md`."
+      introText="Artifacts show the staged Diagram Modules structure starting from `product-parts.index.md`. Use Source to inspect the index while runtime materializes `product-parts/<part-id>.md`."
       onDismissConflicts={() => {}}
       onNodesChange={async (nodes) => {
         if (!visualProjection) {

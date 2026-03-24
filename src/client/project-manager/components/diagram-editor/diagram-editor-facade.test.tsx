@@ -63,24 +63,10 @@ test("diagram modules panel persists manual node positions without layout profil
   );
   assert.equal(source.includes("Edit modules"), false);
   assert.equal(source.includes("Edit relations"), false);
-  assert.equal(source.includes("module-inventory.md"), true);
   assert.equal(source.includes("derived visual module map"), true);
   assert.equal(source.includes("useDomainPatch"), false);
   assert.equal(source.includes("ModuleEntityEditor"), false);
   assert.equal(source.includes("ModuleRelationEditor"), false);
-});
-
-test("diagram modules loader prefers module inventory before module map", async () => {
-  const source = await readFile(MODULES_LOADER_SOURCE_PATH, "utf8");
-
-  assert.equal(source.includes("materializeModuleMapFromInventoryDsl"), true);
-  assert.equal(
-    source.includes(
-      "artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,"
-    ),
-    true
-  );
-  assert.equal(source.includes("module-inventory.md"), true);
 });
 
 test("module inventory parser converts clusters and standalone modules into a module map model", () => {

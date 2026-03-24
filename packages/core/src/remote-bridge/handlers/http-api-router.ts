@@ -52,7 +52,7 @@ const DESCRIPTION_PATH_RE =
 const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-inventory\.md)|(?:module-map\.flow\.json))$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-map\.flow\.json))$/;
 export type RouterDependencies = {
   readonly app: Express;
   readonly systemHandler: SystemRequestHandler;
@@ -449,7 +449,6 @@ type WorkflowArtifactFileName =
   | "virtual-simulation.md"
   | "product-parts.index.md"
   | "product-part.md"
-  | "module-inventory.md"
   | "module-map.flow.json";
 
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
@@ -469,10 +468,6 @@ const WORKFLOW_STAGE_SLOTS = new Map<
   [
     "workspace.virtual_simulation",
     { stage: "virtual_simulation", fileName: "virtual-simulation.md" },
-  ],
-  [
-    "diagram.modules.inventory",
-    { stage: "diagram_modules", fileName: "module-inventory.md" },
   ],
   [
     "diagram.modules.index",
@@ -752,7 +747,6 @@ const resolveWorkflowStageValidationError = (params: {
         params.shouldValidate
       );
     case "product-part.md":
-    case "module-inventory.md":
       return validateModuleInventoryMarkdown(
         params.content,
         params.shouldValidate
