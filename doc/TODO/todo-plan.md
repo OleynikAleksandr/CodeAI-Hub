@@ -53,6 +53,22 @@
 3. [DONE] build-all.sh → 1.1.778 (hash: 17117fb2). build-release.sh → codeai-hub-1.1.778.vsix. Tarballs → doc/tmp/releases/
 4. [DONE] Git Commit: `chore(release): prepare step-by-step diagram modules workflow release` (hash: TBD)
 
-### Stream 8: Session handoff
-1. [TODO] Создать session report, записать все hashes (scope: `doc/Sessions/Session150.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record step-by-step diagram modules workflow release`)
-2. [TODO] Git Commit: `docs(session): record step-by-step diagram modules workflow release` (hash: TBD)
+### Stream 8: Session handoff (Session 150)
+1. [DONE] Session report `doc/Sessions/Session150.md`
+2. [DONE] Git Commit: `docs(session): record session 150` (hash: TBD)
+
+---
+
+## Phase 55 — Auto-layout calibration & parser fix (owner: Oleksandr, updated: 2026-03-24)
+
+### Stream 1: Fix product part header height (clusters overlap Purpose)
+1. [TODO] `getProductPartHeaderHeight` не учитывает padding `productPartCardStyle`. Кластеры начинаются на `y = headerHeight`, но CSS product part card имеет свой padding-top, который не включён в расчёт. Нужно: (a) проверить `productPartCardStyle` padding в `diagram-editor-facade.tsx`; (b) добавить его в `getProductPartHeaderHeight` в `module-stage-react-flow.ts`; (c) проверить что `productPartHeaderStyle` gap (14px) учтён между summary и purpose grid. Обновить тесты (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): include product part card padding in header height calculation`)
+2. [TODO] Git Commit: `fix(diagram-modules): include product part card padding in header height calculation` (hash: TBD)
+
+### Stream 2: Fix 3-column module table parsing (missing first module per cluster)
+1. [TODO] Агент генерирует 3-колоночную таблицу (`module-id | kind | Responsibility`) вместо 4-колоночной (`Module ID | Module | Status | Purpose`). Результат: (a) title модуля = kind (например "service"), а не humanized module name; (b) 1 модуль в каждом кластере пропадает (N-1 видимых). Root cause: `OUTLINE_MODULE_ROW_RE` в `diagram-modules-staged-part-parser.ts` вероятно матчит header row `| `module-id` | `kind` | Responsibility |` как phantom module, или split по cluster sections теряет первую data row. Нужно: (a) проанализировать точную причину N-1 (debug matchAll результат); (b) fix regex или добавить filter для phantom matches; (c) определить — нужно ли менять parser (поддержка 3-col) или prompt/template (требовать 4-col формат). Обновить тесты (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts`, `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): parse 3-column module tables and show correct module count`)
+2. [TODO] Git Commit: `fix(diagram-modules): parse 3-column module tables and show correct module count` (hash: TBD)
+
+### Stream 3: Release build + session handoff
+1. [TODO] Обновить CHANGELOG.md, build-all.sh, build-release.sh, session report (scope: `CHANGELOG.md`, release manifests, `doc/Sessions/Session151.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): auto-layout calibration and parser fix release`)
+2. [TODO] Git Commit: `chore(release): auto-layout calibration and parser fix release` (hash: TBD)
