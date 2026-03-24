@@ -7,7 +7,7 @@ type ProductPartEntity = NonNullable<ModuleMapModel["productParts"]>[number];
 
 const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 28, PRODUCT_PART_HEADER_MIN_HEIGHT = 72, PRODUCT_PART_CARD_PADDING_TOP = 18;
 const PRODUCT_PART_SECTION_GAP = 36, PRODUCT_PART_ROW_GAP = 48, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
-const PRODUCT_PART_HEADER_BODY_GAP = 16, PRODUCT_PART_PURPOSE_CHARS_PER_LINE = 42, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
+const PRODUCT_PART_HEADER_BODY_GAP = 16, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
 const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 16, CLUSTER_CARD_PADDING_TOP = 14;
 const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 132, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 16;
 const CLUSTER_HEADER_BODY_GAP = 16, CLUSTER_PURPOSE_CHARS_PER_LINE = 36, CLUSTER_TITLE_CHARS_PER_LINE = 28;
@@ -43,13 +43,18 @@ const getClusterHeaderHeight = (cluster: Pick<ClusterEntity, "title" | "purpose"
       estimateTextLines(cluster.purpose, CLUSTER_PURPOSE_CHARS_PER_LINE) * BODY_LINE_HEIGHT +
       CLUSTER_HEADER_BODY_GAP
   );
-const getProductPartHeaderHeight = (productPart: Pick<ProductPartEntity, "title" | "purpose">): number =>
+const getPurposeCharsPerLine = (productPartWidth: number): number => {
+  const purposePanelWidth = Math.max(240, Math.floor(productPartWidth / 2));
+  const purposeContentWidth = purposePanelWidth - 28;
+  return Math.max(20, Math.floor(purposeContentWidth / 7));
+};
+const getProductPartHeaderHeight = (productPart: Pick<ProductPartEntity, "title" | "purpose">, productPartWidth: number): number =>
   Math.max(
     PRODUCT_PART_HEADER_MIN_HEIGHT,
     PRODUCT_PART_CARD_PADDING_TOP +
       Math.max(
         getProductPartSummaryHeight(productPart.title),
-        getPurposePanelHeight(productPart.purpose, PRODUCT_PART_PURPOSE_CHARS_PER_LINE)
+        getPurposePanelHeight(productPart.purpose, getPurposeCharsPerLine(productPartWidth))
       ) +
       PRODUCT_PART_HEADER_BODY_GAP
   );
@@ -152,7 +157,6 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
     const standaloneModuleIds = getStandaloneModuleIds(productPart, model, modulesById);
     const externalStandaloneModuleIds = standaloneModuleIds.filter((moduleId) => modulesById.get(moduleId)?.kind === "external");
     const internalStandaloneModuleIds = standaloneModuleIds.filter((moduleId) => !externalStandaloneModuleIds.includes(moduleId));
-    const productPartHeaderHeight = getProductPartHeaderHeight(productPart);
     const standaloneColumnCount = Math.max(
       1,
       clusterIds.length > 0 ? clusterIds.length : Math.min(PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS, Math.max(internalStandaloneModuleIds.length, 1))
@@ -164,6 +168,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
           ? Math.max(clusterIds.length * CLUSTER_X_STEP, MODULE_CARD_WIDTH)
           : MODULE_CARD_WIDTH + Math.max(standaloneColumnCount - 1, 0) * STANDALONE_X_STEP)
     );
+    const productPartHeaderHeight = getProductPartHeaderHeight(productPart, productPartWidth);
 
     const clusterNodes: DiagramFlowNode[] = [];
     const clusteredModuleNodes: DiagramFlowNode[] = [];
