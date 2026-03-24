@@ -2,6 +2,18 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.778] - 2026-03-24
+### Changed
+- **Diagram Modules step-by-step workflow**: removed hidden auto-continuation. The agent now pauses after creating the product parts index and after each product part, giving the user full control over the conversation flow.
+- **Prompt rewritten**: agent instructions updated from auto-continuation to explicit step-by-step schema with index turn + part turns.
+- **Module Graph sidebar**: artifact renamed from `module-inventory.md` to `Module Graph`; Source mode removed for Diagram Modules (graph is the primary artifact).
+
+### Fixed
+- **Graph refresh**: diagram graph now auto-refreshes when a new product part artifact is persisted (`pm:diagram:refresh` event).
+- **Auto-layout sidecar fallback**: when `flow.json` does not cover all nodes in the current projection, computed layout is used instead of a partially stale sidecar.
+- **Purpose panel width**: CSS changed from `minmax(240px, 320px)` to `minmax(240px, 1fr)` so the Purpose panel stretches to fill available space; layout chars-per-line recalculated dynamically from actual product part width.
+- **Height underestimation**: `MODULE_CARD_MIN_HEIGHT` increased from 132 to 148; 16px safety buffer added to cluster and product part container heights to prevent node overlap.
+
 ## [1.1.777] - 2026-03-23
 ### Fixed
 - **Critical**: `normalizeWorkflowContract` in `description-submit-service.ts` was rejecting `diagram_modules` and `diagram_facades` contracts because `needsTemplate` was true but these stages deliver templates via `promptAppendix`, not via a `template` path. The agent was falling back to a generic prompt and never received `module-inventory-prompt.md` or canonical templates. Fix: `needsTemplate = stage === "description"`.

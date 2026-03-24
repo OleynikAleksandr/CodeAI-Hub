@@ -45,11 +45,11 @@
 
 ### Stream 6: Documentation sync
 1. [DONE] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — отразить step-by-step workflow, убрать упоминания auto-continuation для diagram modules, зафиксировать Module Graph naming (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): reflect step-by-step diagram modules workflow`)
-2. [DONE] Git Commit: `docs(architecture): reflect step-by-step diagram modules workflow` (hash: TBD)
+2. [DONE] Git Commit: `docs(architecture): reflect step-by-step diagram modules workflow` (hash: 02c362c8)
 
 ### Stream 7: Release notes + build
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` с описанием step-by-step workflow, graph refresh, auto-layout fix, Module Graph naming (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync step-by-step diagram modules workflow notes`)
-2. [TODO] Git Commit: `docs(release): sync step-by-step diagram modules workflow notes` (hash: TBD)
+1. [DONE] Обновить `CHANGELOG.md` с описанием step-by-step workflow, graph refresh, auto-layout fix, Module Graph naming (scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync step-by-step diagram modules workflow notes`)
+2. [DONE] Git Commit: `docs(release): sync step-by-step diagram modules workflow notes` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить VSIX, скопировать tarballs (scope: release manifests, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare step-by-step diagram modules workflow release`)
 4. [TODO] Git Commit: `chore(release): prepare step-by-step diagram modules workflow release` (hash: TBD)
 
