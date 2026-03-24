@@ -70,14 +70,15 @@
 
 ### Stream 7: Verification + documentation sync
 
-23. [DONE] **Diagnostic build.** `npm run build --workspace packages/core` и `npm run build:webview` — оба проходят чисто, нет broken references.
+23. [DONE] **Diagnostic build.** `npm run build --workspace packages/core` и `npm run build:webview` — оба проходят чисто.
 24. [SKIP] Нет compilation issues — коммит не нужен.
 
-25. [TODO] **Documentation sync.** Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` если есть упоминания module-inventory file names. Обновить CHANGELOG.md.
-26. [TODO] Git Commit: `docs(architecture): sync diagram-modules template naming in documentation` (hash: TBD)
+25. [DONE] **Documentation sync.** CHANGELOG.md обновлён с Phase 58 changes. Архивирован старый todo-plan.
+26. [DONE] Git Commit: `docs(architecture): sync diagram-modules template naming in changelog and plan` (hash: 1e7cd9a7)
 
 ### Stream 8: Release build
 
-27. [TODO] `./scripts/build-all.sh` → version bump + full build
-28. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX
-29. [TODO] Session report + todo-plan finalization
+27. [DONE] `./scripts/build-all.sh` → 1.1.789. Все providers/core/UI/launcher собраны.
+28. [DONE] Git Commit: `chore(release): bump version to 1.1.789` (hash: 52b1532f)
+29. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.789.vsix`. Tarballs → `doc/tmp/releases/`.
+30. [DONE] Session report + todo-plan finalization.
