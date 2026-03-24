@@ -6,6 +6,7 @@ import type {
   ModuleMapModel,
   ProductPartEntity,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
+import { MODULE_KINDS } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import { computeDiagramRevision } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-parser";
 
 export type MaterializedStagedProductPartResult =
@@ -101,6 +102,9 @@ export const parseFieldTable = (
   return fields;
 };
 
+const isModuleKind = (value: string): value is ModuleEntity["kind"] =>
+  (MODULE_KINDS as readonly string[]).includes(value);
+
 const toModuleEntity = (params: {
   readonly id: string;
   readonly kind?: string;
@@ -110,7 +114,7 @@ const toModuleEntity = (params: {
   readonly cluster?: string;
 }): ModuleEntity => ({
   id: params.id,
-  kind: params.kind ?? "service",
+  kind: params.kind && isModuleKind(params.kind) ? params.kind : "service",
   title: params.title,
   responsibility: params.responsibility,
   productPart: params.productPart,
