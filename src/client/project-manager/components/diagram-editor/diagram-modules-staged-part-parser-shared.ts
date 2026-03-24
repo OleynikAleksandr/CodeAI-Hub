@@ -103,13 +103,14 @@ export const parseFieldTable = (
 
 const toModuleEntity = (params: {
   readonly id: string;
+  readonly kind?: string;
   readonly title: string;
   readonly responsibility: string;
   readonly productPart: string;
   readonly cluster?: string;
 }): ModuleEntity => ({
   id: params.id,
-  kind: "service",
+  kind: params.kind ?? "service",
   title: params.title,
   responsibility: params.responsibility,
   productPart: params.productPart,
@@ -136,6 +137,7 @@ export const parseModuleRows = (
       const isKind = /^[a-z]+$/u.test(col2);
       return toModuleEntity({
         id,
+        kind: isKind ? col2 : undefined,
         title: isKind ? humanizeIdentifier(id) : col2,
         responsibility: normalizeParagraph(match[3] ?? ""),
         productPart: productPartId,
