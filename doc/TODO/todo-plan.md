@@ -86,5 +86,27 @@
 2. [DONE] Git Commit: `fix(diagram-modules): preserve module kind and fix responsibility truncation at pipe chars` (hash: 00d41c73)
 
 ### Stream 3: Release build + session handoff
-1. [IN_PROGRESS] CHANGELOG, session report Session152.md, build-all.sh, build-release.sh
-2. [TODO] Git Commit: `docs(session): record session 152` (hash: TBD)
+1. [DONE] CHANGELOG updated, release 1.1.786 built, Session152.md with architecture decisions.
+2. [DONE] Git Commit: `docs(session): record session 152 with phase 56 completion` (hash: 8dd7085f)
+
+---
+
+## Phase 57 — Cleanup: remove Diagram Facades + module-inventory aggregate (owner: Oleksandr, updated: 2026-03-24)
+
+**Architecture decisions (Session 152):**
+- Diagram Facades removed as trunk workflow step (visual monolith problem)
+- Trunk ends at Diagram Modules; further work branches per Product Part → Cluster → Module
+- `module-inventory.md` aggregate removed — graph built from individual part files
+- Relations parser bug deferred — irrelevant after module-inventory.md removal
+
+### Stream 1: Remove Diagram Facades stage
+1. [TODO] Remove Diagram Facades components, prompts, templates, sidebar entries, tests. Update workflow step definitions. (scope: TBD after exploration)
+2. [TODO] Git Commit: TBD
+
+### Stream 2: Remove module-inventory.md compose pipeline
+1. [TODO] Remove `diagram-modules-aggregate.ts`, compose pipeline, serializer references, sidebar availability checks. Update `prompt-pack-builder.ts`, `workflow-step-start-service.ts`. (scope: TBD after exploration)
+2. [TODO] Git Commit: TBD
+
+### Stream 3: Documentation sync + release
+1. [TODO] Update `SystemArchitecture.md`, workflow docs, CHANGELOG. Build release.
+2. [TODO] Git Commit: TBD
