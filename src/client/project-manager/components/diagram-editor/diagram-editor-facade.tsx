@@ -10,7 +10,6 @@ import type {
   ClusterFlowNodeData,
   DiagramFlowEdge,
   DiagramFlowNode,
-  FacadeFlowNodeData,
   ModuleFlowNodeData,
   ProductPartFlowNodeData,
 } from "./adapters/domain-model-to-react-flow.types";
@@ -204,31 +203,9 @@ const ModuleNode = ({ data }: { readonly data: ModuleFlowNodeData }) => (
   </div>
 );
 
-const FacadeNode = ({ data }: { readonly data: FacadeFlowNodeData }) => (
-  <div style={nodeCardStyle}>
-    <div style={nodeCaptionStyle}>{data.visibility} facade</div>
-    <strong style={{ display: "block", fontSize: 14, marginTop: 4 }}>
-      {data.facadeId}
-    </strong>
-    <div style={{ marginTop: 6, fontSize: 12, color: "var(--pm-text-muted)" }}>
-      Module: {data.moduleId}
-    </div>
-    <div
-      style={{
-        marginTop: 8,
-        fontSize: 11,
-        color: "var(--pm-accent-strong)",
-      }}
-    >
-      Methods: {data.methodCount}
-    </div>
-  </div>
-);
-
 const NODE_TYPES = {
   cluster: ContainerNode as React.ComponentType,
   module: ModuleNode as React.ComponentType,
-  facade: FacadeNode as React.ComponentType,
 } as unknown as NodeTypes;
 
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
