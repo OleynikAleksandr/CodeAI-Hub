@@ -14,10 +14,9 @@ const MODULES_PANEL_SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx"
 );
 
-test("diagram stages expose source mode in the artifact header", () => {
+test("diagram stages expose correct header modes", () => {
   assert.deepEqual(resolveArtifactHeaderModes("Diagram Modules"), [
     "artifacts",
-    "source",
     "help",
   ]);
   assert.deepEqual(resolveArtifactHeaderModes("Diagram Facades"), [

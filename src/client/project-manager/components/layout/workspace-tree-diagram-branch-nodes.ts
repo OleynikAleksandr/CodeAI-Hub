@@ -161,7 +161,7 @@ export const buildDiagramModulesBranchNodes = (options: {
   if (options.diagramModulesArtifactAvailable) {
     nodes.push({
       id: "workflow:diagram_modules:artifact",
-      label: "module-inventory.md",
+      label: "Module Graph",
       title: nodeVisuals.title
         ? `${dmArtifactPath}\n${nodeVisuals.title}`
         : dmArtifactPath,
@@ -169,7 +169,7 @@ export const buildDiagramModulesBranchNodes = (options: {
       visualDepth: 2,
       onSelect: () => {
         dispatchStageActivated("diagram_modules");
-        options.selectArtifact(dmArtifactPath, "module-inventory.md");
+        options.selectArtifact(dmArtifactPath, "Module Graph");
         if (last) {
           options.dispatchDialogOpenIntent(
             buildSessionIntent({
@@ -206,7 +206,7 @@ export const buildDiagramModulesBranchNodes = (options: {
         })
       );
       if (options.diagramModulesArtifactAvailable) {
-        options.selectArtifact(dmArtifactPath, "module-inventory.md");
+        options.selectArtifact(dmArtifactPath, "Module Graph");
       } else {
         options.clearArtifactWithTool("Diagram Modules");
       }

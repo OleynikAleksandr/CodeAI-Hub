@@ -37,13 +37,11 @@
 
 ### Stream 4c: Fix auto-layout — height underestimation
 1. [DONE] Audit и fix расчёта высот в `module-stage-react-flow.ts`: (b) увеличить `MODULE_CARD_MIN_HEIGHT` с 132 до 148; (d) добавить CONTAINER_HEIGHT_SAFETY_BUFFER=16 к cluster и product part heights. Chars-per-line для Purpose уже динамический (Stream 4b). (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fix height calculation to prevent node overlap in auto-layout`)
-2. [DONE] Git Commit: `fix(diagram-modules): fix height calculation to prevent node overlap in auto-layout` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-modules): fix height calculation to prevent node overlap in auto-layout` (hash: 2f5f53f4)
 
 ### Stream 5: Sidebar — rename artifact + remove Source
-1. [TODO] Переименовать артефакт в sidebar: label `"module-inventory.md"` → `"Module Graph"` в `workspace-tree-diagram-branch-nodes.ts`. Переключить artifact availability check с existence of `module-inventory.md` на existence of `product-parts.index.md`. Обновить тесты (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`, `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(sidebar): rename diagram modules artifact to Module Graph`)
-2. [TODO] Git Commit: `refactor(sidebar): rename diagram modules artifact to Module Graph` (hash: TBD)
-3. [TODO] Убрать Source mode для Diagram Modules: в `stage-artifact-mode.ts` — modes `["artifacts", "help"]` вместо `["artifacts", "source", "help"]`. Убрать Source pending message для Diagram Modules. Обновить тесты (scope: `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(sidebar): remove Source mode for Diagram Modules`)
-4. [TODO] Git Commit: `refactor(sidebar): remove Source mode for Diagram Modules` (hash: TBD)
+1. [DONE] Переименовать артефакт в sidebar: label `"module-inventory.md"` → `"Module Graph"` в `workspace-tree-diagram-branch-nodes.ts`. Artifact availability уже использует `product-parts.index.md`. Убрать Source mode для Diagram Modules в `stage-artifact-mode.ts` — modes `["artifacts", "help"]`. Обновить тесты (scope: `workspace-tree-diagram-branch-nodes.ts`, `stage-artifact-mode.ts`, `stage-artifact-mode.test.ts`, `doc/TODO/todo-plan.md`)
+2. [DONE] Git Commit: `refactor(sidebar): rename to Module Graph and remove Source mode for Diagram Modules` (hash: TBD)
 
 ### Stream 6: Documentation sync
 1. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — отразить step-by-step workflow, убрать упоминания auto-continuation для diagram modules, зафиксировать Module Graph naming (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): reflect step-by-step diagram modules workflow`)

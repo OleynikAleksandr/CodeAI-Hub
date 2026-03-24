@@ -23,9 +23,11 @@ export const resolveArtifactHeaderModes = (
 ): readonly ArtifactHeaderMode[] =>
   !tool
     ? ["artifacts"]
-    : isDiagramTool(tool)
+    : tool === "Diagram Facades"
       ? ["artifacts", "source", "help"]
-      : ["artifacts", "help"];
+      : isDiagramTool(tool)
+        ? ["artifacts", "help"]
+        : ["artifacts", "help"];
 
 export const normalizeArtifactHeaderMode = (
   tool: string | null,
