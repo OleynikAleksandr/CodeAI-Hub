@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.786] - 2026-03-24
+### Fixed
+- **First module overlaps cluster purpose**: `getClusterHeaderHeight` now includes `CL_PAD_TOP=14` (clusterCardStyle padding-top) and `MODULE_CARD_GAP` gap after header content. Purpose text uses `CL_PURPOSE_LH=16` (lineHeight:1.4) instead of LH11=14.
+- **Purpose panel flush against clusters**: `PRODUCT_PART_HEADER_BODY_GAP` raised from 4 to 12 — all vertical gaps now uniform at MODULE_CARD_GAP=12.
+- **Responsibility truncated at pipe chars**: `|` inside backtick expressions (e.g. `` `a|b` ``) was treated as column separator by optional group regex. Fix: removed raw-text alternative — only backtick-wrapped values valid as extra columns.
+- **Module kind always "service"**: parser now preserves actual kind from col2 (`gateway`, `adapter`, `store`, etc.) instead of hardcoding `"service"`.
+
 ## [1.1.783] - 2026-03-24
 ### Fixed
 - **Clusters overlap Purpose panel**: `getProductPartHeaderHeight` now includes `productPartCardStyle` padding-top (18px), so clusters start below the card padding instead of overlapping the Purpose panel content.

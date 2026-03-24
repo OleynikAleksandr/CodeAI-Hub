@@ -71,4 +71,20 @@
 
 ### Stream 3: Release build + session handoff
 1. [DONE] CHANGELOG.md updated, build-all.sh → 1.1.783, build-release.sh → codeai-hub-1.1.783.vsix. Tarballs → doc/tmp/releases/. Session report Session151.md.
-2. [DONE] Git Commit: `docs(session): record session 151 with phase 55 completion` (hash: TBD)
+2. [DONE] Git Commit: `docs(session): record session 151 with phase 55 completion` (hash: 29fd4b8d)
+
+---
+
+## Phase 56 — Post-release feedback fixes (owner: Oleksandr, updated: 2026-03-24)
+
+### Stream 1: Uniform spacing (clusters overlap purpose text, PP→cluster gap)
+1. [DONE] Added `CL_PAD_TOP=14` (clusterCardStyle padding-top), `CL_PURPOSE_LH=16` (lineHeight:1.4), `MODULE_CARD_GAP` after header content. Raised `PRODUCT_PART_HEADER_BODY_GAP` from 4 to 12. All vertical gaps now uniform 12px. (scope: `module-stage-react-flow.ts`, `domain-model-to-react-flow.test.ts`)
+2. [DONE] Git Commit: `fix(diagram-modules): uniform spacing with cluster padding and correct purpose line height` (hash: 25005a05)
+
+### Stream 2: Responsibility truncation at pipe + kind always "service"
+1. [DONE] Bug 1: `[^|]+?` in OUTLINE_MODULE_ROW_RE optional group treated `|` inside backtick expressions as column separator, truncating responsibility text. Fix: removed raw-text alternative — only backtick-wrapped values valid as extra column. Bug 2: `toModuleEntity` hardcoded `kind: "service"`. Fix: pass detected kind from col2. Added 2 new test assertions. (scope: `diagram-modules-staged-part-parser.ts`, `diagram-modules-staged-part-parser-shared.ts`, `diagram-modules-staged-part-parser.test.ts`)
+2. [DONE] Git Commit: `fix(diagram-modules): preserve module kind and fix responsibility truncation at pipe chars` (hash: 00d41c73)
+
+### Stream 3: Release build + session handoff
+1. [IN_PROGRESS] CHANGELOG, session report Session152.md, build-all.sh, build-release.sh
+2. [TODO] Git Commit: `docs(session): record session 152` (hash: TBD)
