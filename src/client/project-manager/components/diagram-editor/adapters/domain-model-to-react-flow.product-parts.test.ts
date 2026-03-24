@@ -285,9 +285,9 @@ test("domainModelToReactFlow docks standalone modules under the shorter product 
     continuityCluster.position.y + Number(continuityCluster.style?.height ?? 0);
 
   assert.equal(standaloneNode.parentId, "product-part:local-core-runtime");
-  assert.equal(workflowCluster.position.y >= 120, true);
+  assert.equal(workflowCluster.position.y >= 50, true);
   assert.equal(continuityCluster.position.y, workflowCluster.position.y);
   assert.equal(standaloneNode.position.x, workflowCluster.position.x);
-  assert.equal(standaloneNode.position.y, workflowBottom + 36);
+  assert.equal(standaloneNode.position.y, workflowBottom + 12);
   assert.equal(standaloneNode.position.y < continuityBottom, true);
 });

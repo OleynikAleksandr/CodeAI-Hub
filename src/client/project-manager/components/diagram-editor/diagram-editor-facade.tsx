@@ -91,7 +91,7 @@ const containerSummaryStyle: React.CSSProperties = {
 
 const productPartHeaderStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(0, 1fr) minmax(240px, 1fr)",
+  gridTemplateColumns: "auto minmax(240px, 1fr)",
   gap: 14,
   alignItems: "start",
 };

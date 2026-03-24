@@ -5,13 +5,12 @@ type ModuleEntity = ModuleMapModel["modules"][number];
 type ClusterEntity = NonNullable<ModuleMapModel["clusters"]>[number];
 type ProductPartEntity = NonNullable<ModuleMapModel["productParts"]>[number];
 
-const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 28, PRODUCT_PART_HEADER_MIN_HEIGHT = 72, PRODUCT_PART_CARD_PADDING_TOP = 18;
-const PRODUCT_PART_SECTION_GAP = 36, PRODUCT_PART_ROW_GAP = 48, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
-const PRODUCT_PART_HEADER_BODY_GAP = 16, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
-const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 16, CLUSTER_CARD_PADDING_TOP = 14;
+const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 12, PRODUCT_PART_HEADER_MIN_HEIGHT = 72, PRODUCT_PART_CARD_PADDING_TOP = 10;
+const PRODUCT_PART_SECTION_GAP = 12, PRODUCT_PART_ROW_GAP = 24, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
+const PRODUCT_PART_HEADER_BODY_GAP = 4, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
+const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 12, CLUSTER_CARD_PADDING_TOP = 8;
 const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 148, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 16;
-const CONTAINER_HEIGHT_SAFETY_BUFFER = 16;
-const CLUSTER_HEADER_BODY_GAP = 16, CLUSTER_PURPOSE_CHARS_PER_LINE = 36, CLUSTER_TITLE_CHARS_PER_LINE = 28;
+const CLUSTER_HEADER_BODY_GAP = 4, CLUSTER_PURPOSE_CHARS_PER_LINE = 36, CLUSTER_TITLE_CHARS_PER_LINE = 28;
 const CONTAINER_CAPTION_LINE_HEIGHT = 14, CONTAINER_META_LINE_HEIGHT = 16, PURPOSE_TEXT_MARGIN_TOP = 6;
 const STANDALONE_X_STEP = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2, DEFAULT_PRODUCT_PART_ID = "default-product-part";
 
@@ -45,7 +44,8 @@ const getClusterHeaderHeight = (cluster: Pick<ClusterEntity, "title" | "purpose"
       CLUSTER_HEADER_BODY_GAP
   );
 const getPurposeCharsPerLine = (productPartWidth: number): number => {
-  const purposePanelWidth = Math.max(240, Math.floor(productPartWidth / 2));
+  // CSS: gridTemplateColumns "auto minmax(240px, 1fr)" — summary shrinks to content, purpose takes rest
+  const purposePanelWidth = Math.max(240, productPartWidth - 220);
   const purposeContentWidth = purposePanelWidth - 28;
   return Math.max(20, Math.floor(purposeContentWidth / 7));
 };
@@ -197,7 +197,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
         }));
         moduleY += height + MODULE_CARD_GAP;
       }
-      const clusterHeight = Math.max(CLUSTER_MIN_HEIGHT, (moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING) + CONTAINER_HEIGHT_SAFETY_BUFFER);
+      const clusterHeight = Math.max(CLUSTER_MIN_HEIGHT, moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING);
       clusterHeights.push(clusterHeight);
       clusterNodes.push({
         id: toClusterNodeId(clusterId),
@@ -266,7 +266,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
 
     const productPartHeight = Math.max(
       260,
-      Math.max(productPartHeaderHeight, ...columnContentBottoms) + PRODUCT_PART_PADDING_BOTTOM + CONTAINER_HEIGHT_SAFETY_BUFFER
+      Math.max(productPartHeaderHeight, ...columnContentBottoms) + PRODUCT_PART_PADDING_BOTTOM
     );
     nodes.push(
       {
