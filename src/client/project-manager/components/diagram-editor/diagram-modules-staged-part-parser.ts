@@ -27,7 +27,7 @@ const PURPOSE_RE = /^\*\*Purpose:\*\*\s+(.+)$/m;
 const MODULE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(.+?)\s*\|$/gm;
 const OUTLINE_MODULE_ROW_RE =
-  /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(?:(?:`[^`]+`|[^|]+?)\s*\|\s*)?(.+?)\s*\|$/gm;
+  /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|\s*(?:(?:`[^`]+`|[^|]+?)[ \t]*\|[ \t]*)?(.+?)[ \t]*\|$/gm;
 
 const materializeModuleMapFromProductPartOutline = (
   content: string,
