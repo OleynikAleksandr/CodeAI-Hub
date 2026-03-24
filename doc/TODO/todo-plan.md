@@ -62,13 +62,13 @@
 ## Phase 55 — Auto-layout calibration & parser fix (owner: Oleksandr, updated: 2026-03-24)
 
 ### Stream 1: Fix product part header height (clusters overlap Purpose)
-1. [DONE] Added `PP_CARD_PAD_TOP=18` constant mirroring `productPartCardStyle` padding-top. Updated `getProductPartHeaderHeight` to include card padding before content height. Updated layout tests with correct y-positions. (scope: `module-stage-react-flow.ts`, `domain-model-to-react-flow.test.ts`, `doc/TODO/todo-plan.md`; commit: `fix(diagram-modules): include product part card padding in header height calculation`)
-2. [IN_PROGRESS] Git Commit: `fix(diagram-modules): include product part card padding in header height calculation` (hash: TBD)
+1. [DONE] Added `PP_CARD_PAD_TOP=18` constant mirroring `productPartCardStyle` padding-top. Updated `getProductPartHeaderHeight` to include card padding before content height. Updated layout tests with correct y-positions. (scope: `module-stage-react-flow.ts`, `domain-model-to-react-flow.test.ts`, `doc/TODO/todo-plan.md`)
+2. [DONE] Git Commit: `fix(diagram-modules): include product part card padding in header height calculation` (hash: 36cc3656)
 
 ### Stream 2: Fix 3-column module table parsing (missing first module per cluster)
-1. [DONE] Root cause: `\s*` in `OUTLINE_MODULE_ROW_RE` optional group matched `\n`, causing regex to span across lines — swallowing the next data row into group 3. Fix: replaced `\s*` with `[ \t]*` inside optional group and final anchor. Also: (a) filtered phantom header row match (id="module-id"); (b) when col2 is single lowercase word (kind), use `humanizeIdentifier(id)` as title instead of kind. Added 3 parser tests. (scope: `diagram-modules-staged-part-parser.ts`, `diagram-modules-staged-part-parser-shared.ts`, `diagram-modules-staged-part-parser.test.ts`, `doc/TODO/todo-plan.md`; commit: `fix(diagram-modules): parse 3-column module tables and show correct module count`)
-2. [IN_PROGRESS] Git Commit: `fix(diagram-modules): parse 3-column module tables and show correct module count` (hash: TBD)
+1. [DONE] Root cause: `\s*` in `OUTLINE_MODULE_ROW_RE` optional group matched `\n`, causing regex to span across lines — swallowing the next data row into group 3. Fix: replaced `\s*` with `[ \t]*` inside optional group and final anchor. Also: (a) filtered phantom header row match (id="module-id"); (b) when col2 is single lowercase word (kind), use `humanizeIdentifier(id)` as title instead of kind. Added 3 parser tests. (scope: `diagram-modules-staged-part-parser.ts`, `diagram-modules-staged-part-parser-shared.ts`, `diagram-modules-staged-part-parser.test.ts`, `doc/TODO/todo-plan.md`)
+2. [DONE] Git Commit: `fix(diagram-modules): parse 3-column module tables and show correct module count` (hash: cb4e0aad)
 
 ### Stream 3: Release build + session handoff
-1. [TODO] Обновить CHANGELOG.md, build-all.sh, build-release.sh, session report (scope: `CHANGELOG.md`, release manifests, `doc/Sessions/Session151.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): auto-layout calibration and parser fix release`)
-2. [TODO] Git Commit: `chore(release): auto-layout calibration and parser fix release` (hash: TBD)
+1. [DONE] CHANGELOG.md updated, build-all.sh → 1.1.783, build-release.sh → codeai-hub-1.1.783.vsix. Tarballs → doc/tmp/releases/. Session report Session151.md.
+2. [DONE] Git Commit: `docs(session): record session 151 with phase 55 completion` (hash: TBD)
