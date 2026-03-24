@@ -63,9 +63,9 @@ export const DiagramModulesHelp: React.FC = () => (
         Runtime templates этого шага лежат в{" "}
         <code>.codeai-hub/templates/diagram_modules/</code>: основной каркас
         задаёт staged contract для index и part-файлов, смысл полей уточняет{" "}
-        <code>module-inventory-field-reference.md</code>, а правила merge и
+        <code>diagram-modules-field-reference.md</code>, а правила merge и
         compatibility aggregate описаны в{" "}
-        <code>module-inventory-merge-rules.md</code>.
+        <code>diagram-modules-merge-rules.md</code>.
       </div>
       <div>
         <code>module-map.flow.json</code> не описывает архитектуру. Этот файл

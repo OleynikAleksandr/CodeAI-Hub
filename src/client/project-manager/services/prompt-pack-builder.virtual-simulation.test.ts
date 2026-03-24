@@ -40,7 +40,7 @@ test("diagram modules prompt pack targets product part index and omits generic t
     prompt: "",
     questionnairePath:
       ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md",
-    templatePath: "/tmp/module-inventory-template.md",
+    templatePath: "/tmp/diagram-modules-prompt.md",
   });
 
   assert.equal(
