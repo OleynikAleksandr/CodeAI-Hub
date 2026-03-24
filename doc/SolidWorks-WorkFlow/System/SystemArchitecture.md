@@ -246,11 +246,12 @@
   - хранит только geometry/positions;
   - не переносит ownership semantics;
   - применяется только если `Revision` sidecar совпадает с текущим semantic artifact.
-- Runtime orchestration contract для `Diagram Modules` должен поддерживать скрытую последовательность subturn-ов:
-  - index discovery turn;
-  - отдельные hidden continuation turns по одному `Product Part`;
-  - runtime-owned compose compatibility aggregate;
-  - unlock user input только на blocking ambiguity или на финальном review boundary.
+- Runtime orchestration contract для `Diagram Modules` использует step-by-step workflow (начиная с 1.1.778):
+  - index turn: агент создаёт `product-parts.index.md`, задаёт вопросы по составу, ждёт подтверждения пользователя;
+  - part turns: пользователь подтверждает → агент создаёт один `Product Part`, ждёт подтверждения;
+  - runtime-owned compose compatibility aggregate (`module-inventory.md`);
+  - graph автоматически обновляется при каждом новом artifact (`pm:diagram:refresh` event);
+  - sidebar label: `Module Graph` (Source mode убран — граф является основным артефактом).
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`

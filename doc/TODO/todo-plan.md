@@ -41,11 +41,11 @@
 
 ### Stream 5: Sidebar — rename artifact + remove Source
 1. [DONE] Переименовать артефакт в sidebar: label `"module-inventory.md"` → `"Module Graph"` в `workspace-tree-diagram-branch-nodes.ts`. Artifact availability уже использует `product-parts.index.md`. Убрать Source mode для Diagram Modules в `stage-artifact-mode.ts` — modes `["artifacts", "help"]`. Обновить тесты (scope: `workspace-tree-diagram-branch-nodes.ts`, `stage-artifact-mode.ts`, `stage-artifact-mode.test.ts`, `doc/TODO/todo-plan.md`)
-2. [DONE] Git Commit: `refactor(sidebar): rename to Module Graph and remove Source mode for Diagram Modules` (hash: TBD)
+2. [DONE] Git Commit: `refactor(sidebar): rename to Module Graph and remove Source mode for Diagram Modules` (hash: 84393e2c)
 
 ### Stream 6: Documentation sync
-1. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — отразить step-by-step workflow, убрать упоминания auto-continuation для diagram modules, зафиксировать Module Graph naming (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): reflect step-by-step diagram modules workflow`)
-2. [TODO] Git Commit: `docs(architecture): reflect step-by-step diagram modules workflow` (hash: TBD)
+1. [DONE] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — отразить step-by-step workflow, убрать упоминания auto-continuation для diagram modules, зафиксировать Module Graph naming (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): reflect step-by-step diagram modules workflow`)
+2. [DONE] Git Commit: `docs(architecture): reflect step-by-step diagram modules workflow` (hash: TBD)
 
 ### Stream 7: Release notes + build
 1. [TODO] Обновить `README.md` и `CHANGELOG.md` с описанием step-by-step workflow, graph refresh, auto-layout fix, Module Graph naming (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync step-by-step diagram modules workflow notes`)
