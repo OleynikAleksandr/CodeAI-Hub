@@ -114,6 +114,8 @@ export const useDiagramModulesOrchestration = (options: {
             return;
           }
         }
+        // Signal diagram panel to refresh graph after agent activity
+        window.dispatchEvent(new CustomEvent("pm:diagram:refresh"));
         if (!params.shouldRefreshWorkflowState) {
           return;
         }

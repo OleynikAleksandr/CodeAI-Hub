@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { DiagramStagePanelScaffold } from "../diagram-editor/diagram-stage-panel-scaffold";
@@ -14,6 +14,14 @@ export const DiagramModulesPanel: React.FC<{
   readonly workspaceSlug: string;
   readonly refreshKey?: number;
 }> = (props) => {
+  const [localRefreshKey, setLocalRefreshKey] = useState(0);
+  useEffect(() => {
+    const handler = () => setLocalRefreshKey((k) => k + 1);
+    window.addEventListener("pm:diagram:refresh", handler);
+    return () => window.removeEventListener("pm:diagram:refresh", handler);
+  }, []);
+
+  const combinedRefreshKey = (props.refreshKey ?? 0) + localRefreshKey;
   const indexArtifactPath = `.codeai-hub/${props.workspaceSlug}/diagram_modules/product-parts.index.md`;
   const {
     status,
@@ -24,7 +32,7 @@ export const DiagramModulesPanel: React.FC<{
     flowSidecarPath,
   } =
     useDiagramLoader({
-      refreshKey: props.refreshKey,
+      refreshKey: combinedRefreshKey,
       stage: "diagram_modules",
       workspacePath: props.workspacePath,
       workspaceSlug: props.workspaceSlug,

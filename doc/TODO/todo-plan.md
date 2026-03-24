@@ -21,11 +21,11 @@
 
 ### Stream 2: Rewrite agent prompt for step-by-step workflow
 1. [DONE] Переписать `module-inventory-prompt.md` — новая step-by-step schema: (1) первый turn — только index (список product parts без спецификации), задать вопросы по составу, ждать ответа; (2) каждый следующий turn — по одному product part после подтверждения пользователя; (3) убрать инструкции про hidden continuation. Обновить bundled-templates.ts (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): rewrite prompt for step-by-step user-driven workflow`)
-2. [DONE] Git Commit: `feat(diagram-workflow): rewrite prompt for step-by-step user-driven workflow` (hash: TBD)
+2. [DONE] Git Commit: `feat(diagram-workflow): rewrite prompt for step-by-step user-driven workflow` (hash: 98785429)
 
 ### Stream 3: Graph refresh on new artifact
-1. [TODO] При artifact persist или turn_completed для diagram_modules — диспатчить custom event `pm:diagram:refresh` из orchestration. В `DiagramModulesPanel` слушать этот event и инкрементировать refreshKey (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): refresh graph on new product part artifact`)
-2. [TODO] Git Commit: `fix(diagram-modules): refresh graph on new product part artifact` (hash: TBD)
+1. [DONE] При artifact persist или turn_completed для diagram_modules — диспатчить custom event `pm:diagram:refresh` из orchestration. В `DiagramModulesPanel` слушать этот event и инкрементировать refreshKey (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): refresh graph on new product part artifact`)
+2. [DONE] Git Commit: `fix(diagram-modules): refresh graph on new product part artifact` (hash: TBD)
 
 ### Stream 4: Fix auto-layout — sidecar fallback
 1. [TODO] В `applyFlowSidecarPositions` (`flow-sidecar-types.ts`) — если sidecar не содержит ВСЕХ нодов текущей проекции, не применять его (fallback на computed layout). Обновить тесты (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete`)
