@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md`, `doc/Sessions/Session149.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session153.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -13,108 +13,71 @@
 
 ---
 
-## Phase 54 — Diagram Modules Step-by-Step Workflow & UX Refactor (owner: Oleksandr, updated: 2026-03-24)
+## Phase 58 — Diagram Modules: purge "module-inventory" naming from agent assets, templates and pipeline (owner: Oleksandr, updated: 2026-03-24)
 
-### Stream 1: Remove hidden auto-continuation
-1. [DONE] Убрать hidden auto-continuation из `use-diagram-modules-orchestration.ts`: удалить `buildDiagramModulesContinuationPrompt`, удалить `cachedPartTemplateRef`, убрать вызов `api.sendSessionMessage` с `visibility: "hidden"` для part turns. Оставить aggregate compose logic и sequence lock для финализации. Обновить тесты в `use-diagram-modules-orchestration.test.ts` (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(diagram-workflow): remove hidden auto-continuation for part turns`)
-2. [DONE] Git Commit: `refactor(diagram-workflow): remove hidden auto-continuation for part turns` (hash: 92a429ba)
+**Motivation:** В Phase 57 мы удалили `module-inventory.md` как артефакт и aggregate pipeline, но имена файлов agent assets, bundled templates, runtime paths и prompt контент всё ещё содержат "module-inventory". Это вызывает:
+- stale ссылки в prompt, из-за которых LLM галлюцинирует "следующие шаги" (Diagram Facades) и `module-inventory.md` как живой артефакт;
+- конфликт форматов: `module-inventory-field-reference.md` описывает старый flat формат, а `product-part-template.md` — новый табличный;
+- отсутствие guardrails по гранулярности (Codex: 38 модулей, Claude: 22);
+- шум на диске: 4 файла с prefix "module-inventory" в templates.
 
-### Stream 2: Rewrite agent prompt for step-by-step workflow
-1. [DONE] Переписать `module-inventory-prompt.md` — новая step-by-step schema: (1) первый turn — только index (список product parts без спецификации), задать вопросы по составу, ждать ответа; (2) каждый следующий turn — по одному product part после подтверждения пользователя; (3) убрать инструкции про hidden continuation. Обновить bundled-templates.ts (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): rewrite prompt for step-by-step user-driven workflow`)
-2. [DONE] Git Commit: `feat(diagram-workflow): rewrite prompt for step-by-step user-driven workflow` (hash: 98785429)
+**Scope:** Переименование всех agent assets `module-inventory-*` → `diagram-modules-*`, удаление старого template, rewrite промпта и references, обновление всей pipeline от generate-bundled-templates до UI help text.
 
-### Stream 3: Graph refresh on new artifact
-1. [DONE] При artifact persist или turn_completed для diagram_modules — диспатчить custom event `pm:diagram:refresh` из orchestration. В `DiagramModulesPanel` слушать этот event и инкрементировать refreshKey (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): refresh graph on new product part artifact`)
-2. [DONE] Git Commit: `fix(diagram-modules): refresh graph on new product part artifact` (hash: d5b4c22f)
+### Stream 1: Rewrite content of agent assets (instructions + field reference + merge rules)
 
-### Stream 4: Fix auto-layout — sidecar fallback
-1. [DONE] В `applyFlowSidecarPositions` (`flow-sidecar-types.ts`) — если sidecar не содержит ВСЕХ нодов текущей проекции, не применять его (fallback на computed layout). Обновить тесты (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete`)
-2. [DONE] Git Commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete` (hash: 2729197b)
+1. [DONE] **Rewrite prompt content.** Убраны все 6 упоминаний `module-inventory.md`, убраны "следующий шаг" references, добавлен Granularity Guardrail (3–8 модулей на PP, >10 = пере-декомпозиция, ≤5 = без кластеров), добавлено правило обновления Status → generated.
+2. [DONE] Git Commit: `refactor(diagram-modules): purge module-inventory references and add granularity guardrails to prompt` (hash: 8ca62c77)
 
-### Stream 4b: Fix auto-layout — Purpose panel width
-1. [DONE] В `diagram-editor-facade.tsx` — убрать `minmax(240px, 320px)` для Purpose panel, заменить на `minmax(240px, 1fr)` чтобы Purpose растягивалась по ширине Product Part вместо фиксированных 320px. В `module-stage-react-flow.ts` — пересчитать `PRODUCT_PART_PURPOSE_CHARS_PER_LINE` под реальную ширину Purpose panel (зависит от productPartWidth). Обновить `getProductPartHeaderHeight` для динамического расчёта (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): make Purpose panel width dynamic and align layout calculations`)
-2. [DONE] Git Commit: `fix(diagram-modules): make Purpose panel width dynamic and align layout calculations` (hash: cabb883f)
+3. [DONE] **Rewrite field reference for staged format.** Убран старый flat inventory формат, оставлены семантические правила, примеры в табличном формате. Заголовок → "Diagram Modules Field Reference".
+4. [DONE] Git Commit: `refactor(diagram-modules): rewrite field reference for staged product-part format` (hash: a95769cd)
 
-### Stream 4c: Fix auto-layout — height underestimation
-1. [DONE] Audit и fix расчёта высот в `module-stage-react-flow.ts`: (b) увеличить `MODULE_CARD_MIN_HEIGHT` с 132 до 148; (d) добавить CONTAINER_HEIGHT_SAFETY_BUFFER=16 к cluster и product part heights. Chars-per-line для Purpose уже динамический (Stream 4b). (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fix height calculation to prevent node overlap in auto-layout`)
-2. [DONE] Git Commit: `fix(diagram-modules): fix height calculation to prevent node overlap in auto-layout` (hash: 2f5f53f4)
+5. [DONE] **Rewrite merge rules.** Заменена терминология "inventory" → "staged artifacts" / "product part files". Заголовок → "Diagram Modules Merge Rules".
+6. [DONE] Git Commit: `refactor(diagram-modules): update merge rules terminology from inventory to staged artifacts` (hash: 8fd6ed91)
 
-### Stream 5: Sidebar — rename artifact + remove Source
-1. [DONE] Переименовать артефакт в sidebar: label `"module-inventory.md"` → `"Module Graph"` в `workspace-tree-diagram-branch-nodes.ts`. Artifact availability уже использует `product-parts.index.md`. Убрать Source mode для Diagram Modules в `stage-artifact-mode.ts` — modes `["artifacts", "help"]`. Обновить тесты (scope: `workspace-tree-diagram-branch-nodes.ts`, `stage-artifact-mode.ts`, `stage-artifact-mode.test.ts`, `doc/TODO/todo-plan.md`)
-2. [DONE] Git Commit: `refactor(sidebar): rename to Module Graph and remove Source mode for Diagram Modules` (hash: 84393e2c)
+### Stream 2: Rename agent asset files + delete old template
 
-### Stream 6: Documentation sync
-1. [DONE] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — отразить step-by-step workflow, убрать упоминания auto-continuation для diagram modules, зафиксировать Module Graph naming (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): reflect step-by-step diagram modules workflow`)
-2. [DONE] Git Commit: `docs(architecture): reflect step-by-step diagram modules workflow` (hash: 02c362c8)
+7. [DONE] **Rename agent asset files.** `module-inventory-prompt.md` → `diagram-modules-prompt.md`, `module-inventory-field-reference.md` → `diagram-modules-field-reference.md`, `module-inventory-merge-rules.md` → `diagram-modules-merge-rules.md`. Удалён `module-inventory-template.md`.
+8. [DONE] Git Commit: `refactor(diagram-modules): rename agent assets from module-inventory to diagram-modules` (hash: 919aed66)
 
-### Stream 7: Release notes + build
-1. [DONE] Обновить `CHANGELOG.md` с описанием step-by-step workflow, graph refresh, auto-layout fix, Module Graph naming (scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync step-by-step diagram modules workflow notes`)
-2. [DONE] Git Commit: `docs(release): sync step-by-step diagram modules workflow notes` (hash: TBD)
-3. [DONE] build-all.sh → 1.1.778 (hash: 17117fb2). build-release.sh → codeai-hub-1.1.778.vsix. Tarballs → doc/tmp/releases/
-4. [DONE] Git Commit: `chore(release): prepare step-by-step diagram modules workflow release` (hash: TBD)
+### Stream 3: Update bundled templates + template sync pipeline
 
-### Stream 8: Session handoff (Session 150)
-1. [DONE] Session report `doc/Sessions/Session150.md`
-2. [DONE] Git Commit: `docs(session): record session 150` (hash: TBD)
+9. [DONE] **Update generate-bundled-templates.js.** Source/dest paths обновлены, entry для module-inventory-template удалён. `bundled-templates.ts` перегенерирован (9 templates, было 10).
+10. [DONE] Git Commit: `refactor(build): update bundled template paths from module-inventory to diagram-modules` (hash: 811006c0)
 
----
+11. [DONE] **Update template-sync-service.** 4 старых пути добавлены в `LEGACY_TEMPLATE_RELATIVE_PATHS`. Тесты обновлены.
+12. [DONE] Git Commit: `refactor(templates): add old module-inventory paths to legacy cleanup and update tests` (hash: bde48c52)
 
-## Phase 55 — Auto-layout calibration & parser fix (owner: Oleksandr, updated: 2026-03-24)
+### Stream 4: Update runtime path references
 
-### Stream 1: Fix product part header height (clusters overlap Purpose)
-1. [DONE] Added `PP_CARD_PAD_TOP=18` constant mirroring `productPartCardStyle` padding-top. Updated `getProductPartHeaderHeight` to include card padding before content height. Updated layout tests with correct y-positions. (scope: `module-stage-react-flow.ts`, `domain-model-to-react-flow.test.ts`, `doc/TODO/todo-plan.md`)
-2. [DONE] Git Commit: `fix(diagram-modules): include product part card padding in header height calculation` (hash: 36cc3656)
+13. [DONE] **Update prompt assembly paths.** `diagram-contract-prompt-assets.ts` и `idea-contract-service.ts` обновлены на новые имена.
+14. [DONE] Git Commit: `refactor(core): update diagram prompt assembly paths to diagram-modules naming` (hash: 70b4a4e9)
 
-### Stream 2: Fix 3-column module table parsing (missing first module per cluster)
-1. [DONE] Root cause: `\s*` in `OUTLINE_MODULE_ROW_RE` optional group matched `\n`, causing regex to span across lines — swallowing the next data row into group 3. Fix: replaced `\s*` with `[ \t]*` inside optional group and final anchor. Also: (a) filtered phantom header row match (id="module-id"); (b) when col2 is single lowercase word (kind), use `humanizeIdentifier(id)` as title instead of kind. Added 3 parser tests. (scope: `diagram-modules-staged-part-parser.ts`, `diagram-modules-staged-part-parser-shared.ts`, `diagram-modules-staged-part-parser.test.ts`, `doc/TODO/todo-plan.md`)
-2. [DONE] Git Commit: `fix(diagram-modules): parse 3-column module tables and show correct module count` (hash: cb4e0aad)
+15. [DONE] **Update contract service test.** Template id references обновлены.
+16. [DONE] Git Commit: `test(core): update diagram stage test for renamed templates` (hash: 9d8d7ea2)
 
-### Stream 3: Release build + session handoff
-1. [DONE] CHANGELOG.md updated, build-all.sh → 1.1.783, build-release.sh → codeai-hub-1.1.783.vsix. Tarballs → doc/tmp/releases/. Session report Session151.md.
-2. [DONE] Git Commit: `docs(session): record session 151 with phase 55 completion` (hash: 29fd4b8d)
+### Stream 5: Rename parser + update runtime validation
 
----
+17. [DONE] **Rename parser file.** `module-inventory-parser.ts` → `diagram-modules-parser.ts`. Imports обновлены.
+18. [DONE] Git Commit: `refactor(core): rename module-inventory-parser to diagram-modules-parser` (hash: 8564fcc7)
 
-## Phase 56 — Post-release feedback fixes (owner: Oleksandr, updated: 2026-03-24)
+19. [DONE] **Rename validation symbols.** `MODULE_INVENTORY_TITLE_RE` → `DIAGRAM_MODULES_TITLE_RE`, `validateModuleInventoryMarkdown` → `validateDiagramModulesMarkdown`, `MODULE_INVENTORY_MARKDOWN` → `PRODUCT_PART_MARKDOWN`.
+20. [DONE] Git Commit: `refactor(core): rename module-inventory validation symbols to diagram-modules` (hash: 16242a08)
 
-### Stream 1: Uniform spacing (clusters overlap purpose text, PP→cluster gap)
-1. [DONE] Added `CL_PAD_TOP=14` (clusterCardStyle padding-top), `CL_PURPOSE_LH=16` (lineHeight:1.4), `MODULE_CARD_GAP` after header content. Raised `PRODUCT_PART_HEADER_BODY_GAP` from 4 to 12. All vertical gaps now uniform 12px. (scope: `module-stage-react-flow.ts`, `domain-model-to-react-flow.test.ts`)
-2. [DONE] Git Commit: `fix(diagram-modules): uniform spacing with cluster padding and correct purpose line height` (hash: 25005a05)
+### Stream 6: Update UI + remaining references
 
-### Stream 2: Responsibility truncation at pipe + kind always "service"
-1. [DONE] Bug 1: `[^|]+?` in OUTLINE_MODULE_ROW_RE optional group treated `|` inside backtick expressions as column separator, truncating responsibility text. Fix: removed raw-text alternative — only backtick-wrapped values valid as extra column. Bug 2: `toModuleEntity` hardcoded `kind: "service"`. Fix: pass detected kind from col2. Added 2 new test assertions. (scope: `diagram-modules-staged-part-parser.ts`, `diagram-modules-staged-part-parser-shared.ts`, `diagram-modules-staged-part-parser.test.ts`)
-2. [DONE] Git Commit: `fix(diagram-modules): preserve module kind and fix responsibility truncation at pipe chars` (hash: 00d41c73)
+21. [DONE] **Update help text + remaining test.** `diagram-modules-help.tsx` и `prompt-pack-builder.virtual-simulation.test.ts` обновлены.
+22. [DONE] Git Commit: `refactor(ui): update diagram-modules help text and test paths for renamed templates` (hash: 3c0395c0)
 
-### Stream 3: Release build + session handoff
-1. [DONE] CHANGELOG updated, release 1.1.786 built, Session152.md with architecture decisions.
-2. [DONE] Git Commit: `docs(session): record session 152 with phase 56 completion` (hash: 8dd7085f)
+### Stream 7: Verification + documentation sync
 
----
+23. [DONE] **Diagnostic build.** `npm run build --workspace packages/core` и `npm run build:webview` — оба проходят чисто, нет broken references.
+24. [SKIP] Нет compilation issues — коммит не нужен.
 
-## Phase 57 — Cleanup: remove Diagram Facades + module-inventory aggregate (owner: Oleksandr, updated: 2026-03-24)
+25. [TODO] **Documentation sync.** Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` если есть упоминания module-inventory file names. Обновить CHANGELOG.md.
+26. [TODO] Git Commit: `docs(architecture): sync diagram-modules template naming in documentation` (hash: TBD)
 
-**Architecture decisions (Session 152):**
-- Diagram Facades removed as trunk workflow step (visual monolith problem)
-- Trunk ends at Diagram Modules; further work branches per Product Part → Cluster → Module
-- `module-inventory.md` aggregate removed — graph built from individual part files
-- Relations parser bug deferred — irrelevant after module-inventory.md removal
+### Stream 8: Release build
 
-### Stream 1: Remove Diagram Facades stage
-1. [DONE] Removed Diagram Facades components, prompts, templates, sidebar entries, tests, workflow step definitions. 86 files, -3576 lines. (scope: src/, packages/)
-2. [DONE] Git Commit: `refactor(workflow): remove Diagram Facades stage and all facade references` (hash: 5b12c63d)
-
-### Stream 2: Remove module-inventory.md compose pipeline
-1. [DONE] Removed `diagram-modules-aggregate.ts`, compose pipeline, orchestration substep, prompt/help/panel text, core paths/hydration/progress references. 16 files, -557 lines.
-2. [DONE] Git Commit: `refactor(diagram-modules): remove module-inventory aggregate pipeline` (hash: e8a6c3ab)
-
-### Stream 3: Documentation sync
-1. [DONE] Updated `SystemArchitecture.md` — removed all Diagram Facades and module-inventory references. Updated `CHANGELOG.md` with removal notes.
-2. [DONE] Git Commit: `docs(architecture): remove Diagram Facades and module-inventory from docs`
-
-### Stream 4: Release build
-1. [DONE] build-all.sh → 1.1.788. build-release.sh → codeai-hub-1.1.788.vsix. Tarballs → doc/tmp/releases/. Fixed build-core.sh rsync for deleted facades agent.
-2. [DONE] Git Commits: `chore(release): bump version to 1.1.787` (b493b5cb), `fix(build): remove diagram-facades-agent rsync from build-core.sh` (c5dd8547), `chore(release): bump version to 1.1.788` (d64f90f6), `fix(diagram-editor): remove FacadeNode from editor component` (087f2fac)
-
-### Stream 5: Session handoff
-1. [DONE] Session153.md + todo-plan.md updated.
-2. [DONE] Git Commit: `docs(session): record session 153 with phase 57 completion`
+27. [TODO] `./scripts/build-all.sh` → version bump + full build
+28. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX
+29. [TODO] Session report + todo-plan finalization

@@ -7,6 +7,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 - **Diagram Facades workflow step**: trunk now ends at Diagram Modules. A single flat diagram of all facades was an unreadable visual monolith; facade specs will appear inside per-cluster and per-module branches instead. Deleted: `diagram-facades-agent`, facade panel/help, facade parser, facade editor components, ~3,500 lines of code across 86 files.
 - **module-inventory.md aggregate**: the Module Graph is now built progressively from individual `product-parts/<part-id>.md` files. The compose pipeline, aggregate orchestration substep, and all module-inventory.md references have been removed.
 
+### Changed
+- **Agent assets renamed**: all `module-inventory-*` agent assets renamed to `diagram-modules-*` (`diagram-modules-prompt.md`, `diagram-modules-field-reference.md`, `diagram-modules-merge-rules.md`). Old `module-inventory-template.md` deleted (replaced by `product-part-template.md` + `product-parts-index-template.md`).
+- **Field reference rewritten**: now describes staged tabular product-part format instead of old flat inventory format. Removed Inputs/Outputs/Contract Targets/Code Targets/Origin/Status fields.
+- **Granularity guardrail added to prompt**: typical Product Part should contain 3–8 modules; >10 signals over-decomposition; ≤5 modules usually don't need clusters.
+- **Status update rule**: agent now updates `Status: generated` in `product-parts.index.md` after materializing each part file.
+- **Parser renamed**: `module-inventory-parser.ts` → `diagram-modules-parser.ts`; validation symbols renamed accordingly.
+- **Legacy template cleanup**: 4 old `module-inventory-*` template paths added to `LEGACY_TEMPLATE_RELATIVE_PATHS` for automatic disk cleanup.
+
 ## [1.1.786] - 2026-03-24
 ### Fixed
 - **First module overlaps cluster purpose**: `getClusterHeaderHeight` now includes `CL_PAD_TOP=14` (clusterCardStyle padding-top) and `MODULE_CARD_GAP` gap after header content. Purpose text uses `CL_PURPOSE_LH=16` (lineHeight:1.4) instead of LH11=14.
