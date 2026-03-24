@@ -152,13 +152,6 @@ rsync -a --delete \
   --exclude "*.tsbuildinfo" \
   "$REPO_ROOT/packages/agents/diagram-modules-agent/" \
   "$AGENTS_STAGE/diagram-modules-agent/"
-rsync -a --delete \
-  --exclude "node_modules" \
-  --exclude "src" \
-  --exclude "*.tsbuildinfo" \
-  "$REPO_ROOT/packages/agents/diagram-facades-agent/" \
-  "$AGENTS_STAGE/diagram-facades-agent/"
-
 # Allow agent packages to resolve shared deps when loaded directly from $INSTALL_ROOT/agents/**.
 mkdir -p "$AGENTS_STAGE/node_modules/@codeai-hub"
 ln -snf "../../shared" "$AGENTS_STAGE/node_modules/@codeai-hub/agent-shared"
