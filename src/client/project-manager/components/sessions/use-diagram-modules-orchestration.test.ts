@@ -91,18 +91,13 @@ const createIdentityTableProductPartFile = (): string =>
     "| `desktop-launch-entrypoint` | `Desktop Launch Entrypoint` | `inferred seed` | Create and maintain the standalone launch path or desktop shortcut for `Project Manager`. |",
   ].join("\n");
 
-test("diagram modules orchestration refreshes workflow state after turn_completed without structured_output", async () => {
+test("diagram modules orchestration source code invariants", async () => {
   const source = await readFile(ORCHESTRATION_SOURCE_PATH, "utf8");
-  assert.equal(
-    source.includes('artifact !== null || eventType === "turn_completed"'),
-    true,
-    "turn_completed must trigger a workflow-state refresh even when no structured_output is present"
-  );
-  assert.equal(
-    source.includes('if (eventType === "turn_failed") {'),
-    true,
-    "turn_failed must unlock the sequence instead of leaving the hidden staged flow blocked"
-  );
+  assert.ok(source.includes('artifact !== null || eventType === "turn_completed"'), "turn_completed triggers refresh");
+  assert.ok(source.includes('if (eventType === "turn_failed") {'), "turn_failed unlocks sequence");
+  for (const banned of ['visibility: "hidden"', "buildDiagramModulesContinuationPrompt", "cachedPartTemplateRef"]) {
+    assert.equal(source.includes(banned), false, `must not contain: ${banned}`);
+  }
 });
 
 test("diagram modules progress snapshot points to next product part after index-only direct file write", async () => {
