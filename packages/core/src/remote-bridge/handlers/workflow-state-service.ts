@@ -266,25 +266,9 @@ const resolveWorkflowBlockedStages = (params: {
     stage: "virtual_simulation",
     fileName: "virtual-simulation.md",
   });
-  const diagramModulesArtifactAvailable = stageHasArtifact({
-    state: params.state,
-    stage: "diagram_modules",
-    fileName: "module-inventory.md",
-  });
-  const diagramModulesReadyFromSequence = Boolean(
-    params.diagramModulesProgress &&
-      params.diagramModulesProgress.substep === "awaiting_review" &&
-      params.diagramModulesProgress.aggregateReady &&
-      params.diagramModulesProgress.generatedCount >=
-        params.diagramModulesProgress.plannedCount
-  );
-
   return {
     description: false,
     virtual_simulation: !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
-    diagram_facades: !(
-      diagramModulesReadyFromSequence || diagramModulesArtifactAvailable
-    ),
   };
 };

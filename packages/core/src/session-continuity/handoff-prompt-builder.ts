@@ -4,8 +4,7 @@ const renderStage = (stage: string | null | undefined): ContinuityStageId => {
   if (
     stage === "description" ||
     stage === "virtual_simulation" ||
-    stage === "diagram_modules" ||
-    stage === "diagram_facades"
+    stage === "diagram_modules"
   ) {
     return stage;
   }

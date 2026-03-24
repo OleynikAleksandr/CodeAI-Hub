@@ -14,7 +14,6 @@ export const useStagePanelSync = (params: {
   readonly workspacePath?: string;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable?: boolean;
-  readonly diagramFacadesArtifactAvailable?: boolean;
   readonly selectArtifact: (path: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
@@ -25,7 +24,6 @@ export const useStagePanelSync = (params: {
     workspacePath,
     virtualSimulationArtifactAvailable,
     diagramModulesArtifactAvailable,
-    diagramFacadesArtifactAvailable,
     selectArtifact,
     dispatchDialogOpenIntent,
     clearArtifactWithTool,
@@ -41,13 +39,12 @@ export const useStagePanelSync = (params: {
         workspacePath,
         virtualSimulationArtifactAvailable,
         diagramModulesArtifactAvailable,
-        diagramFacadesArtifactAvailable,
       });
       if (p.artifact) selectArtifact(p.artifact.path, p.artifact.label);
       else if (p.clearTool) clearArtifactWithTool(p.clearTool);
       if (p.session) dispatchDialogOpenIntent(p.session);
     },
-    [clearArtifactWithTool, diagramFacadesArtifactAvailable, diagramModulesArtifactAvailable, dispatchDialogOpenIntent, selectArtifact, virtualSimulationArtifactAvailable, workflowState, workspacePath, workspaceSlug]
+    [clearArtifactWithTool, diagramModulesArtifactAvailable, dispatchDialogOpenIntent, selectArtifact, virtualSimulationArtifactAvailable, workflowState, workspacePath, workspaceSlug]
   );
 
   useEffect(() => {

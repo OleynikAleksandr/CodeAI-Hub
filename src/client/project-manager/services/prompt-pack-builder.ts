@@ -1,8 +1,7 @@
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules"
-  | "diagram_facades";
+  | "diagram_modules";
 
 type WorkflowPromptPackInput = {
   readonly stage: WorkflowStageId;
@@ -30,14 +29,12 @@ const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
   diagram_modules: "product-parts.index.md",
-  diagram_facades: "facade-map.md",
 };
 
 const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
-  diagram_facades: "Diagram Facades",
 };
 
 const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
@@ -45,12 +42,10 @@ const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
   virtual_simulation: "Собери артефакт на основе `Final_Description.md`.",
   diagram_modules:
     "Собери staged артефакт на основе `Final_Description.md` и `virtual-simulation.md`.",
-  diagram_facades: "Собери артефакт на основе `module-inventory.md`.",
 };
 
 const DIAGRAM_STAGE_INPUT_LABELS: Partial<Record<WorkflowStageId, string>> = {
   diagram_modules: "Исходный артефакт",
-  diagram_facades: "Артефакт модулей",
 };
 
 const RUN_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -217,19 +212,11 @@ const buildStagePhaseLines = (
       "- Phase 6: не трать текущий turn на поиск compatibility inventory, staged examples, continuity files, helper artifacts или generic template files, если они явно не перечислены выше как входы этого turn-а.",
     ];
   }
-  if (stage === "diagram_facades") {
-    return [
-      "Фазы работы:",
-      `- Phase 1: прочитай \`module-inventory.md\`, затем создай или обнови \`${targetFileName}\` как канонический facade map уже согласованных module boundaries.`,
-      "- Phase 2: не переизобретай module ownership и не ищи дополнительные diagram artifacts вне текущих входов; переводи текущий inventory в user-readable facade map.",
-      "- Phase 3: не трать текущий turn на поиск continuity files, helper artifacts, generic template files или legacy diagram directories, если они явно не перечислены выше как входы этого turn-а.",
-    ];
-  }
   return [];
 };
 
 const buildChangeSummaryBlock = (stage: WorkflowStageId): string | null => {
-  if (stage !== "diagram_modules" && stage !== "diagram_facades") {
+  if (stage !== "diagram_modules") {
     return null;
   }
   return [
@@ -274,7 +261,6 @@ export const buildWorkflowPromptPack = (
     ...primaryInputLines,
     params.stage !== "virtual_simulation" &&
     params.stage !== "diagram_modules" &&
-    params.stage !== "diagram_facades" &&
     params.templatePath
       ? `Шаблон (absolute): \`${params.templatePath}\``
       : null,

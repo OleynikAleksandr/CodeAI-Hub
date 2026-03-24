@@ -4,7 +4,7 @@ import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { TreeNode } from "./workspace-tree-model";
 import { resolveDiagramStageSyncPayload } from "./workspace-tree-diagram-branch-nodes";
 
-export { buildDiagramModulesBranchNodes, buildDiagramFacadesBranchNodes } from "./workspace-tree-diagram-branch-nodes";
+export { buildDiagramModulesBranchNodes } from "./workspace-tree-diagram-branch-nodes";
 
 const resolveProviderTitle = (providerId: string): string =>
   providerId === "claudeCodeCli" || providerId === "codexCli" || providerId === "geminiCli"
@@ -100,7 +100,7 @@ export const buildDescriptionBranchNodes = (options: {
 
 export const resolveLatestStageChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
-  stage: "virtual_simulation" | "diagram_modules" | "diagram_facades"
+  stage: "virtual_simulation" | "diagram_modules"
 ) => {
   let best: (typeof chains)[number] | null = null;
   for (const chain of chains) {
@@ -130,7 +130,6 @@ export const resolveStageSyncPayload = (options: {
   readonly workspacePath: string;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable?: boolean;
-  readonly diagramFacadesArtifactAvailable?: boolean;
 }): StageSyncPayload => {
   const { stage, workflowState, workspaceSlug, workspacePath } = options;
 
@@ -187,14 +186,13 @@ export const resolveStageSyncPayload = (options: {
     };
   }
 
-  if (stage === "diagram_modules" || stage === "diagram_facades") {
+  if (stage === "diagram_modules") {
     return resolveDiagramStageSyncPayload({
       stage,
       workflowState,
       workspaceSlug,
       workspacePath,
       diagramModulesArtifactAvailable: options.diagramModulesArtifactAvailable,
-      diagramFacadesArtifactAvailable: options.diagramFacadesArtifactAvailable,
     });
   }
 

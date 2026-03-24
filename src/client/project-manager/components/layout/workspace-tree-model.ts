@@ -17,7 +17,6 @@ export const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
-  diagram_facades: "Diagram Facades",
 };
 
 export const WORKFLOW_STAGE_OUTDATED_TITLE =
@@ -27,7 +26,6 @@ export const WORKFLOW_STAGE_BLOCKED_TITLES: Record<WorkflowStageId, string> = {
   description: "READY",
   virtual_simulation: "BLOCKED: requires Final_Description.md",
   diagram_modules: "BLOCKED: requires virtual-simulation.md (DONE)",
-  diagram_facades: "BLOCKED: requires module-inventory.md (DONE)",
 };
 
 export const resolveTreeStatus = (

@@ -5,10 +5,9 @@ import {
   computeDiagramRevision,
   materializeDiagramRevision,
 } from "./diagram-revision";
-import { parseFacadeMapDsl, parseModuleMapDsl } from "./markdown-dsl-parser";
+import { parseModuleMapDsl } from "./markdown-dsl-parser";
 import {
   serializeDiagramMapDsl,
-  serializeFacadeMapDsl,
   serializeModuleMapDsl,
 } from "./markdown-dsl-serializer";
 
@@ -74,50 +73,8 @@ Kept as a dedicated persistence boundary.
 Notes:
 Reads current user profile.`;
 
-const FACADE_MAP_FIXTURE = `# Facade Map
-
-## Metadata
-- Version: 1
-- Stage: diagram_facades
-- Revision: deadbeef
-- Updated: 2026-03-16T15:00:00Z
-
-## Facades
-
-### Facade: auth-facade
-- Id: auth-facade
-- Module: auth-service
-- Kind: class
-- Visibility: public
-- Methods:
-  - login(credentials): AuthToken
-  - logout(sessionId): void
-- Ports:
-  - In: http from api-gateway
-  - Out: event to audit-log
-- Contract Targets:
-  - contracts/auth-facade.md
-- Code Targets:
-  - packages/auth-service/src/auth-facade.ts
-- Origin: agent
-- Status: proposed
-
-## Facade Relations
-
-### Facade Relation: api-gateway__sync-call__auth-facade
-- Id: api-gateway__sync-call__auth-facade
-- From: api-gateway
-- To: auth-facade
-- Type: sync-call
-- Label: POST /login
-- Origin: user
-- Status: accepted`;
-
 const parseDiagram = (content: string): DiagramMapModel => {
-  const parser = content.startsWith("# Module Map")
-    ? parseModuleMapDsl
-    : parseFacadeMapDsl;
-  const result = parser(content);
+  const result = parseModuleMapDsl(content);
   if (!result.ok) {
     throw new Error("Expected fixture to parse");
   }
@@ -142,10 +99,7 @@ const roundTripDiagram = (
     `- Revision: ${revision}`
   );
 
-  const reparsed =
-    model.stage === "diagram_modules"
-      ? parseModuleMapDsl(serialized)
-      : parseFacadeMapDsl(serialized);
+  const reparsed = parseModuleMapDsl(serialized);
   if (!reparsed.ok) {
     throw new Error("Expected serialized output to parse");
   }
@@ -169,28 +123,6 @@ test("serializeModuleMapDsl emits canonical markdown with computed revision", ()
   assert.equal(result.serialized, result.expected);
   assert.equal(
     materializeDiagramRevision(MODULE_MAP_FIXTURE).revision,
-    result.revision
-  );
-  assert.equal(
-    result.reparsed.revision,
-    computeDiagramRevision(result.serialized)
-  );
-  assert.deepEqual(result.reparsed, {
-    ...result.model,
-    revision: result.revision,
-  });
-});
-
-test("serializeFacadeMapDsl emits canonical markdown with computed revision", () => {
-  const result = roundTripDiagram(FACADE_MAP_FIXTURE, (model) =>
-    serializeFacadeMapDsl(
-      model as Extract<DiagramMapModel, { stage: "diagram_facades" }>
-    )
-  );
-
-  assert.equal(result.serialized, result.expected);
-  assert.equal(
-    materializeDiagramRevision(FACADE_MAP_FIXTURE).revision,
     result.revision
   );
   assert.equal(

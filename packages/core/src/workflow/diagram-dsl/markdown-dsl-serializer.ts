@@ -1,9 +1,6 @@
 import type {
   ClusterEntity,
   DiagramMapModel,
-  FacadeEntity,
-  FacadeMapModel,
-  FacadeRelation,
   ModuleEntity,
   ModuleMapModel,
   ModuleRelation,
@@ -167,47 +164,6 @@ const buildModuleRelationBlock = (
   return lines;
 };
 
-const buildFacadeBlock = (entity: FacadeEntity): readonly string[] => {
-  const lines = [
-    `### Facade: ${entity.id}`,
-    `- Id: ${entity.id}`,
-    `- Module: ${entity.module}`,
-    `- Kind: ${entity.kind}`,
-    `- Visibility: ${entity.visibility}`,
-  ];
-  pushList(lines, "Methods", entity.methods);
-  pushList(
-    lines,
-    "Ports",
-    entity.ports.map(
-      (port) =>
-        `${port.direction}: ${port.type} ${port.direction === "In" ? "from" : "to"} ${port.target}`
-    )
-  );
-  pushList(lines, "Contract Targets", entity.contractTargets);
-  pushList(lines, "Code Targets", entity.codeTargets);
-  lines.push(`- Origin: ${entity.origin}`, `- Status: ${entity.status}`);
-  pushTextBlock(lines, "Notes", entity.notes);
-  pushTextBlock(lines, "Rationale", entity.rationale);
-  return lines;
-};
-
-const buildFacadeRelationBlock = (
-  relation: FacadeRelation
-): readonly string[] => {
-  const lines = [
-    `### Facade Relation: ${relation.id}`,
-    `- Id: ${relation.id}`,
-    `- From: ${relation.from}`,
-    `- To: ${relation.to}`,
-    `- Type: ${relation.type}`,
-  ];
-  pushScalar(lines, "Label", relation.label);
-  lines.push(`- Origin: ${relation.origin}`, `- Status: ${relation.status}`);
-  pushTextBlock(lines, "Notes", relation.notes);
-  return lines;
-};
-
 const serializeModuleMapBody = (model: ModuleMapModel): string =>
   (() => {
     const hasOwnershipHierarchy =
@@ -221,9 +177,6 @@ const serializeModuleMapBody = (model: ModuleMapModel): string =>
         "",
         "## Modules",
         "",
-        ...joinBlocks(
-          model.modules.map((module) => buildModuleBlock(module, "###"))
-        ),
         ...joinBlocks(
           model.modules.map((module) => buildModuleBlock(module, "###"))
         ),
@@ -260,28 +213,8 @@ const serializeModuleMapBody = (model: ModuleMapModel): string =>
     ].join("\n");
   })();
 
-const serializeFacadeMapBody = (model: FacadeMapModel): string =>
-  [
-    "# Facade Map",
-    "",
-    ...buildMetadataLines(model.version, model.stage, model.updated),
-    "",
-    "## Facades",
-    "",
-    ...joinBlocks(model.facades.map(buildFacadeBlock)),
-    "",
-    "## Facade Relations",
-    "",
-    ...joinBlocks(model.relations.map(buildFacadeRelationBlock)),
-  ].join("\n");
-
 export const serializeModuleMapDsl = (model: ModuleMapModel): string =>
   materializeDiagramRevision(serializeModuleMapBody(model)).content;
 
-export const serializeFacadeMapDsl = (model: FacadeMapModel): string =>
-  materializeDiagramRevision(serializeFacadeMapBody(model)).content;
-
 export const serializeDiagramMapDsl = (model: DiagramMapModel): string =>
-  model.stage === "diagram_modules"
-    ? serializeModuleMapDsl(model)
-    : serializeFacadeMapDsl(model);
+  serializeModuleMapDsl(model);

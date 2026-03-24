@@ -19,11 +19,6 @@ test("diagram stages expose correct header modes", () => {
     "artifacts",
     "help",
   ]);
-  assert.deepEqual(resolveArtifactHeaderModes("Diagram Facades"), [
-    "artifacts",
-    "source",
-    "help",
-  ]);
 });
 
 test("non-diagram stages keep the legacy artifact/help contract", () => {
@@ -62,12 +57,6 @@ test("diagram source pending message follows the real upstream workflow", () => 
   assert.equal(
     resolveDiagramSourcePendingMessage("Diagram Modules").includes(
       "`product-parts.index.md`"
-    ),
-    true
-  );
-  assert.equal(
-    resolveDiagramSourcePendingMessage("Diagram Facades").includes(
-      "`module-inventory.md`"
     ),
     true
   );

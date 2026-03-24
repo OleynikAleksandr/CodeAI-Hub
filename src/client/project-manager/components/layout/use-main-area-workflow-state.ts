@@ -33,11 +33,9 @@ const TOOL_BY_STAGE: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: VIRTUAL_SIMULATION_TOOL_LABEL,
   diagram_modules: "Diagram Modules",
-  diagram_facades: "Diagram Facades",
 };
 
 const STAGE_PRIORITY: readonly WorkflowStageId[] = [
-  "diagram_facades",
   "diagram_modules",
   "virtual_simulation",
   "description",

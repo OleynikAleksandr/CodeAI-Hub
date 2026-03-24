@@ -253,11 +253,7 @@ type SessionResumeLifecycleStoreHost = {
 
 type PostTurnContextDecision = "no_rollover" | "rollover_required";
 
-type WorkflowStageId =
-  | "description"
-  | "virtual_simulation"
-  | "diagram_modules"
-  | "diagram_facades";
+type WorkflowStageId = "description" | "virtual_simulation" | "diagram_modules";
 
 type WorkflowTurnOptionsResolution = {
   readonly turnOptions?: Record<string, unknown>;
@@ -270,7 +266,6 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "diagram_facades",
 ]);
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
@@ -1515,8 +1510,7 @@ export class SessionRequestHandler {
     if (
       trimmed === "description" ||
       trimmed === "virtual_simulation" ||
-      trimmed === "diagram_modules" ||
-      trimmed === "diagram_facades"
+      trimmed === "diagram_modules"
     ) {
       return trimmed;
     }

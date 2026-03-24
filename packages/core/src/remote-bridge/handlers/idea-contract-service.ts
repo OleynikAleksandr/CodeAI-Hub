@@ -11,7 +11,6 @@ import path from "node:path";
 import { BUNDLED_TEMPLATE_SOURCES } from "../../templates/bundled-templates";
 import {
   appendDiagramPromptAppendix,
-  DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS,
   DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
   resolveSyncedDiagramTemplateCandidates,
 } from "./diagram-contract-prompt-assets";
@@ -69,15 +68,6 @@ const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
     "module-inventory-prompt.md"
   ),
   promptAppendix: DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
-};
-
-const DIAGRAM_FACADES_TEMPLATE_PATHS: WorkflowContractPaths = {
-  prompt: resolveSyncedDiagramTemplateCandidates(
-    "diagram_facades/facade-map-prompt.md",
-    "diagram-facades-agent",
-    "facade-map-prompt.md"
-  ),
-  promptAppendix: DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS,
 };
 
 const readTextFile = async (filePath: string): Promise<string | null> => {
@@ -356,10 +346,6 @@ export const buildVirtualSimulationContract =
 export const buildDiagramModulesContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(DIAGRAM_MODULES_TEMPLATE_PATHS);
-
-export const buildDiagramFacadesContract =
-  async (): Promise<WorkflowContractPayload | null> =>
-    buildWorkflowContract(DIAGRAM_FACADES_TEMPLATE_PATHS);
 
 // Legacy endpoint alias for disabled Idea flows. The canonical first workflow step
 // is Description, and this alias is no longer backed by a separate idea-collector package.

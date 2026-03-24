@@ -1,6 +1,6 @@
 export type ArtifactHeaderMode = "artifacts" | "source" | "help";
 
-type DiagramTool = "Diagram Modules" | "Diagram Facades";
+type DiagramTool = "Diagram Modules";
 
 const DIAGRAM_TOOL_SOURCE: Readonly<
   Record<DiagramTool, { readonly label: string; readonly path: string }>
@@ -9,25 +9,19 @@ const DIAGRAM_TOOL_SOURCE: Readonly<
     label: "product-parts.index.md",
     path: "diagram_modules/product-parts.index.md",
   },
-  "Diagram Facades": {
-    label: "facade-map.md",
-    path: "diagram_facades/facade-map.md",
-  },
 };
 
 export const isDiagramTool = (tool: string | null): tool is DiagramTool =>
-  tool === "Diagram Modules" || tool === "Diagram Facades";
+  tool === "Diagram Modules";
 
 export const resolveArtifactHeaderModes = (
   tool: string | null
 ): readonly ArtifactHeaderMode[] =>
   !tool
     ? ["artifacts"]
-    : tool === "Diagram Facades"
-      ? ["artifacts", "source", "help"]
-      : isDiagramTool(tool)
-        ? ["artifacts", "help"]
-        : ["artifacts", "help"];
+    : isDiagramTool(tool)
+      ? ["artifacts", "help"]
+      : ["artifacts", "help"];
 
 export const normalizeArtifactHeaderMode = (
   tool: string | null,
@@ -63,10 +57,7 @@ export const resolveDiagramSourcePendingMessage = (
   tool: string | null
 ): string => {
   if (tool === "Diagram Modules") {
-    return "Source для Diagram Modules станет доступен после создания `product-parts.index.md`. Затем runtime materializes `product-parts/<part-id>.md` и позже собирает `module-inventory.md` как compatibility aggregate.";
-  }
-  if (tool === "Diagram Facades") {
-    return "Source для Diagram Facades станет доступен после создания `facade-map.md`. До этого шаг опирается на upstream artifact `module-inventory.md` из Diagram Modules.";
+    return "Source для Diagram Modules станет доступен после создания `product-parts.index.md`. Затем runtime materializes `product-parts/<part-id>.md` для каждого product part.";
   }
   return "Source станет доступен после появления канонического Markdown-артефакта этого шага.";
 };

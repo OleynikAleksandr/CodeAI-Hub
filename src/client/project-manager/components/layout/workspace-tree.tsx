@@ -15,7 +15,6 @@ import {
 import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED_TITLE, resolveTreeStatus, type TreeNode } from "./workspace-tree-model";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
-import { useDiagramFacadesArtifactAvailability } from "./use-diagram-facades-artifact-availability";
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -48,13 +47,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
 
   const diagramModulesArtifactAvailable =
     useDiagramModulesArtifactAvailability({
-      enabled: Boolean(selectedWorkspaceId),
-      workspacePath,
-      workspaceSlug,
-    });
-
-  const diagramFacadesArtifactAvailable =
-    useDiagramFacadesArtifactAvailability({
       enabled: Boolean(selectedWorkspaceId),
       workspacePath,
       workspaceSlug,
@@ -110,7 +102,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     workspacePath,
     virtualSimulationArtifactAvailable,
     diagramModulesArtifactAvailable,
-    diagramFacadesArtifactAvailable,
     selectArtifact,
     dispatchDialogOpenIntent,
     clearArtifactWithTool,
@@ -191,7 +182,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       workspacePath,
       virtualSimulationArtifactAvailable,
       diagramModulesArtifactAvailable,
-      diagramFacadesArtifactAvailable,
       selectArtifact,
       dispatchDialogOpenIntent,
       clearArtifactWithTool,

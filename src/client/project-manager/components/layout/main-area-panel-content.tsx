@@ -1,14 +1,11 @@
 import type React from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
-import { DiagramFacadesHelp } from "../diagram-facades/diagram-facades-help";
-import { DiagramFacadesPanel } from "../diagram-facades/diagram-facades-panel";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
 import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
-import { useDiagramFacadesArtifactAvailability } from "./use-diagram-facades-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import {
   isDiagramTool,
@@ -93,17 +90,10 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     workspacePath: activeWorkspacePath,
     workspaceSlug: activeWorkspaceSlug,
   });
-  const diagramFacadesSourceAvailable = useDiagramFacadesArtifactAvailability({
-    enabled: headerMode === "source" && activeTool === "Diagram Facades",
-    workspacePath: activeWorkspacePath,
-    workspaceSlug: activeWorkspaceSlug,
-  });
   const sourceArtifactAvailable =
     activeTool === "Diagram Modules"
       ? diagramModulesSourceAvailable
-      : activeTool === "Diagram Facades"
-        ? diagramFacadesSourceAvailable
-        : false;
+      : false;
   const helpMode = headerMode === "help";
   const showSourceViewer =
     headerMode === "source" && sourceArtifact !== null;
@@ -128,9 +118,6 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     }
     if (activeTool === "Diagram Modules") {
       return <DiagramModulesHelp />;
-    }
-    if (activeTool === "Diagram Facades") {
-      return <DiagramFacadesHelp />;
     }
   }
   if (showSourceViewer && sourceArtifact) {
@@ -187,14 +174,6 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   if (activeTool === "Diagram Modules") {
     return renderStagePanel(
       DiagramModulesPanel,
-      activeWorkspacePath,
-      activeWorkspaceSlug,
-      artifactRefreshKey
-    );
-  }
-  if (activeTool === "Diagram Facades") {
-    return renderStagePanel(
-      DiagramFacadesPanel,
       activeWorkspacePath,
       activeWorkspaceSlug,
       artifactRefreshKey

@@ -15,7 +15,7 @@ import {
   type FlowSidecarDocument,
 } from "./flow-sidecar-types";
 
-export type DiagramEditorStage = "diagram_modules" | "diagram_facades";
+export type DiagramEditorStage = "diagram_modules";
 export type DiagramPaths = {
   readonly artifactPath: string;
   readonly flowSidecarPath: string;
@@ -24,19 +24,12 @@ export type DiagramPaths = {
 
 export const resolveDiagramPaths = (
   workspaceSlug: string,
-  stage: DiagramEditorStage
-): DiagramPaths =>
-  stage === "diagram_modules"
-    ? {
-        artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`,
-        flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
-        label: "Diagram Modules",
-      }
-    : {
-        artifactPath: `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.md`,
-        flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.flow.json`,
-        label: "Diagram Facades",
-      };
+  _stage: DiagramEditorStage
+): DiagramPaths => ({
+  artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+  flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
+  label: "Diagram Modules",
+});
 
 export type ArtifactReadResult =
   | { readonly status: "ok"; readonly content: string }

@@ -14,8 +14,7 @@ const normalizeStageId = (
   if (
     value === "description" ||
     value === "virtual_simulation" ||
-    value === "diagram_modules" ||
-    value === "diagram_facades"
+    value === "diagram_modules"
   ) {
     return value;
   }

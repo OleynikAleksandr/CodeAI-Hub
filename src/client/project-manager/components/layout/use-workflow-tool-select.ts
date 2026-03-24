@@ -7,18 +7,14 @@ import { resolveWorkspaceSlug } from "./main-area-utils";
 
 export const VIRTUAL_SIMULATION_TOOL_LABEL = "VIRTUAL SIMULATION" as const;
 export const DIAGRAM_MODULES_TOOL_LABEL = "Diagram Modules" as const;
-export const DIAGRAM_FACADES_TOOL_LABEL = "Diagram Facades" as const;
 
-type DiagramStageToolLabel =
-  | typeof DIAGRAM_MODULES_TOOL_LABEL
-  | typeof DIAGRAM_FACADES_TOOL_LABEL;
+type DiagramStageToolLabel = typeof DIAGRAM_MODULES_TOOL_LABEL;
 
 const DIAGRAM_STAGE_MAP: Record<
   DiagramStageToolLabel,
-  { readonly stage: "diagram_modules" | "diagram_facades"; readonly startMethod: "startDiagramModules" | "startDiagramFacades" }
+  { readonly stage: "diagram_modules"; readonly startMethod: "startDiagramModules" }
 > = {
   [DIAGRAM_MODULES_TOOL_LABEL]: { stage: "diagram_modules", startMethod: "startDiagramModules" },
-  [DIAGRAM_FACADES_TOOL_LABEL]: { stage: "diagram_facades", startMethod: "startDiagramFacades" },
 };
 
 type PendingSessionCreate = { readonly providerTitle: string } | null;

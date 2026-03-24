@@ -15,8 +15,7 @@ const readNonEmptyString = (value: unknown): string | null =>
 const isWorkflowStageId = (value: unknown): value is WorkflowStageId =>
   value === "description" ||
   value === "virtual_simulation" ||
-  value === "diagram_modules" ||
-  value === "diagram_facades";
+  value === "diagram_modules";
 
 export type WorkflowLastActiveSnapshot = {
   readonly stage: WorkflowStageId;

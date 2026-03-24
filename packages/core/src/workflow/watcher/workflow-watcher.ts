@@ -14,7 +14,6 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "diagram_facades",
 ]);
 
 const supportsRecursiveWatch = (): boolean =>

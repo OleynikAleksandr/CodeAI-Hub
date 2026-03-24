@@ -39,24 +39,6 @@ export const DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS = [
   ),
 ] as const;
 
-export const DIAGRAM_FACADES_PROMPT_APPENDIX_PATHS = [
-  resolveSyncedDiagramTemplateCandidates(
-    "diagram_facades/facade-map-template.md",
-    "diagram-facades-agent",
-    "facade-map-template.md"
-  ),
-  resolveSyncedDiagramTemplateCandidates(
-    "diagram_facades/facade-map-field-reference.md",
-    "diagram-facades-agent",
-    "facade-map-field-reference.md"
-  ),
-  resolveSyncedDiagramTemplateCandidates(
-    "diagram_facades/facade-map-merge-rules.md",
-    "diagram-facades-agent",
-    "facade-map-merge-rules.md"
-  ),
-] as const;
-
 export const appendDiagramPromptAppendix = (
   prompt: string,
   promptAppendix: readonly string[]

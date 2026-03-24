@@ -1,8 +1,5 @@
 import type { ChangeSummary, EntityChange } from "./change-summary-types";
 import type {
-  FacadeEntity,
-  FacadeMapModel,
-  FacadeRelation,
   ModuleEntity,
   ModuleMapModel,
   ModuleRelation,
@@ -37,30 +34,6 @@ const RELATION_FIELD_LABELS = new Map<keyof ModuleRelation, string>([
   ["notes", "Notes"],
 ]);
 
-const FACADE_FIELD_LABELS = new Map<keyof FacadeEntity, string>([
-  ["module", "Module"],
-  ["kind", "Kind"],
-  ["visibility", "Visibility"],
-  ["methods", "Methods"],
-  ["ports", "Ports"],
-  ["contractTargets", "Contract Targets"],
-  ["codeTargets", "Code Targets"],
-  ["origin", "Origin"],
-  ["status", "Status"],
-  ["notes", "Notes"],
-  ["rationale", "Rationale"],
-]);
-
-const FACADE_RELATION_FIELD_LABELS = new Map<keyof FacadeRelation, string>([
-  ["from", "From"],
-  ["to", "To"],
-  ["type", "Type"],
-  ["label", "Label"],
-  ["origin", "Origin"],
-  ["status", "Status"],
-  ["notes", "Notes"],
-]);
-
 const areEqual = (left: unknown, right: unknown): boolean =>
   JSON.stringify(left) === JSON.stringify(right);
 
@@ -87,45 +60,28 @@ const createAddedSummary = (params: {
     : `Relation: ${params.entity.id}`;
 
 const createRemovedSummary = (params: {
-  readonly entityType: "module" | "relation" | "facade" | "facade-relation";
-  readonly entity:
-    | ModuleEntity
-    | ModuleRelation
-    | FacadeEntity
-    | FacadeRelation;
+  readonly entityType: "module" | "relation";
+  readonly entity: ModuleEntity | ModuleRelation;
 }): string => {
   if (params.entityType === "module") {
     return `Module: ${params.entity.id}`;
   }
-  if (params.entityType === "relation") {
-    return `Relation: ${params.entity.id}`;
-  }
-  if (params.entityType === "facade") {
-    return `Facade: ${params.entity.id}`;
-  }
-  return `Facade Relation: ${params.entity.id}`;
+  return `Relation: ${params.entity.id}`;
 };
 
 const createModifiedSummary = (params: {
-  readonly entityType: "module" | "relation" | "facade" | "facade-relation";
+  readonly entityType: "module" | "relation";
   readonly entityId: string;
   readonly modifiedFields: readonly string[];
 }): string => {
-  let entityLabel = "Facade Relation";
-  if (params.entityType === "module") {
-    entityLabel = "Module";
-  } else if (params.entityType === "relation") {
-    entityLabel = "Relation";
-  } else if (params.entityType === "facade") {
-    entityLabel = "Facade";
-  }
+  const entityLabel = params.entityType === "module" ? "Module" : "Relation";
   return `${entityLabel}: ${params.entityId} — fields changed: ${params.modifiedFields.join(", ")}`;
 };
 
 const diffEntitySet = <T extends { readonly id: string }>(params: {
   readonly baseline: readonly T[];
   readonly current: readonly T[];
-  readonly entityType: "module" | "relation" | "facade" | "facade-relation";
+  readonly entityType: "module" | "relation";
   readonly labels: ReadonlyMap<keyof T, string>;
   readonly createAddedSummary: (entity: T) => string;
   readonly createRemovedSummary: (entity: T) => string;
@@ -229,70 +185,6 @@ export const buildModuleMapChangeSummary = (
           createAddedSummary({ entityType: "relation", entity }),
         createRemovedSummary: (entity) =>
           createRemovedSummary({ entityType: "relation", entity }),
-      }),
-    ],
-  };
-};
-
-const createFacadeAddedSummary = (params: {
-  readonly entityType: "facade" | "facade-relation";
-  readonly entity: FacadeEntity | FacadeRelation;
-}): string =>
-  params.entityType === "facade"
-    ? `Facade: ${params.entity.id} (Module: ${(params.entity as FacadeEntity).module}, Visibility: ${(params.entity as FacadeEntity).visibility})`
-    : `Facade Relation: ${params.entity.id}`;
-
-export const buildFacadeMapChangeSummary = (
-  current: FacadeMapModel,
-  baseline: FacadeMapModel | null
-): ChangeSummary => {
-  if (!baseline) {
-    return {
-      baselineRevision: MISSING_BASELINE_REVISION,
-      currentRevision: current.revision,
-      changes: [
-        ...current.facades.map<EntityChange>((entity) => ({
-          entityType: "facade",
-          entityId: entity.id,
-          action: "added",
-          summary: createFacadeAddedSummary({ entityType: "facade", entity }),
-        })),
-        ...current.relations.map<EntityChange>((entity) => ({
-          entityType: "facade-relation",
-          entityId: entity.id,
-          action: "added",
-          summary: createFacadeAddedSummary({
-            entityType: "facade-relation",
-            entity,
-          }),
-        })),
-      ],
-    };
-  }
-
-  return {
-    baselineRevision: baseline.revision,
-    currentRevision: current.revision,
-    changes: [
-      ...diffEntitySet({
-        baseline: baseline.facades,
-        current: current.facades,
-        entityType: "facade",
-        labels: FACADE_FIELD_LABELS,
-        createAddedSummary: (entity) =>
-          createFacadeAddedSummary({ entityType: "facade", entity }),
-        createRemovedSummary: (entity) =>
-          createRemovedSummary({ entityType: "facade", entity }),
-      }),
-      ...diffEntitySet({
-        baseline: baseline.relations,
-        current: current.relations,
-        entityType: "facade-relation",
-        labels: FACADE_RELATION_FIELD_LABELS,
-        createAddedSummary: (entity) =>
-          createFacadeAddedSummary({ entityType: "facade-relation", entity }),
-        createRemovedSummary: (entity) =>
-          createRemovedSummary({ entityType: "facade-relation", entity }),
       }),
     ],
   };

@@ -13,7 +13,6 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "diagram_facades",
 ]);
 
 const WORKFLOW_STAGE_FILES = new Map<
@@ -30,10 +29,6 @@ const WORKFLOW_STAGE_FILES = new Map<
       "module-inventory.md",
       "module-map.flow.json",
     ],
-  ],
-  [
-    "diagram_facades",
-    ["facade-map.md", "facade-map.flow.json", "facade-map.agent-baseline.md"],
   ],
 ]);
 

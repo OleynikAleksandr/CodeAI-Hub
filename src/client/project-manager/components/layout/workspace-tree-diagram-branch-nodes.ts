@@ -24,7 +24,7 @@ const dispatchStageActivated = (stage: string): void => {
 
 const resolveLatestDiagramChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
-  stage: "diagram_modules" | "diagram_facades"
+  stage: "diagram_modules"
 ) => {
   let best: (typeof chains)[number] | null = null;
   for (const chain of chains) {
@@ -43,7 +43,7 @@ const resolveLatestDiagramChain = (
 
 const resolveDiagramNodeVisuals = (
   workflowState: WorkflowStateSnapshot,
-  stage: "diagram_modules" | "diagram_facades"
+  stage: "diagram_modules"
 ): { readonly status: TreeNode["status"]; readonly title?: string } => {
   const status = workflowState.stages[stage] ?? "idle";
   const blocked = workflowState.gating.blocked[stage] ?? false;
@@ -62,7 +62,7 @@ const buildSessionIntent = (params: {
   readonly last: NonNullable<
     ReturnType<typeof resolveLatestDiagramChain>
   >["segments"][number];
-  readonly stage: "diagram_modules" | "diagram_facades";
+  readonly stage: "diagram_modules";
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }): SessionResumeIntent => ({
@@ -77,45 +77,21 @@ const buildSessionIntent = (params: {
 });
 
 export const resolveDiagramStageSyncPayload = (options: {
-  readonly stage: "diagram_modules" | "diagram_facades";
+  readonly stage: "diagram_modules";
   readonly workflowState: WorkflowStateSnapshot;
   readonly workspaceSlug: string;
   readonly workspacePath: string;
   readonly diagramModulesArtifactAvailable?: boolean;
-  readonly diagramFacadesArtifactAvailable?: boolean;
 }): StageSyncPayload => {
-  const { stage, workflowState, workspaceSlug, workspacePath } = options;
+  const { workflowState, workspaceSlug, workspacePath } = options;
 
-  if (stage === "diagram_modules") {
-    const chain = resolveLatestDiagramChain(workflowState.continuity.chains, "diagram_modules");
-    const last = chain?.segments.at(-1) ?? null;
-    const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`;
-    const available = options.diagramModulesArtifactAvailable ?? false;
-    return {
-      artifact: available ? { path: dmArtifactPath, label: "module-inventory.md" } : null,
-      clearTool: available ? null : "Diagram Modules",
-      session: last
-        ? {
-            providerId: last.providerId,
-            providerSessionId: last.providerSessionId,
-            workspacePath,
-            workspaceSlug,
-            initiativeSlug: workspaceSlug,
-            stage: "diagram_modules",
-            sessionKind: "collector",
-            runSlug: null,
-          }
-        : null,
-    };
-  }
-
-  const chain = resolveLatestDiagramChain(workflowState.continuity.chains, "diagram_facades");
+  const chain = resolveLatestDiagramChain(workflowState.continuity.chains, "diagram_modules");
   const last = chain?.segments.at(-1) ?? null;
-  const dfArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.md`;
-  const available = options.diagramFacadesArtifactAvailable ?? false;
+  const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`;
+  const available = options.diagramModulesArtifactAvailable ?? false;
   return {
-    artifact: available ? { path: dfArtifactPath, label: "facade-map.md" } : null,
-    clearTool: available ? null : "Diagram Facades",
+    artifact: available ? { path: dmArtifactPath, label: "Module Graph" } : null,
+    clearTool: available ? null : "Diagram Modules",
     session: last
       ? {
           providerId: last.providerId,
@@ -123,7 +99,7 @@ export const resolveDiagramStageSyncPayload = (options: {
           workspacePath,
           workspaceSlug,
           initiativeSlug: workspaceSlug,
-          stage: "diagram_facades",
+          stage: "diagram_modules",
           sessionKind: "collector",
           runSlug: null,
         }
@@ -149,7 +125,7 @@ export const buildDiagramModulesBranchNodes = (options: {
   }
 
   const nodes: TreeNode[] = [];
-  const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/module-inventory.md`;
+  const dmArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`;
   const nodeVisuals = resolveDiagramNodeVisuals(workflowState, "diagram_modules");
 
   const chain = resolveLatestDiagramChain(
@@ -209,90 +185,6 @@ export const buildDiagramModulesBranchNodes = (options: {
         options.selectArtifact(dmArtifactPath, "Module Graph");
       } else {
         options.clearArtifactWithTool("Diagram Modules");
-      }
-    },
-  });
-  return nodes;
-};
-
-export const buildDiagramFacadesBranchNodes = (options: {
-  readonly workflowState: WorkflowStateSnapshot | null;
-  readonly diagramFacadesArtifactAvailable: boolean;
-  readonly workspaceSlug: string | null;
-  readonly workspacePath?: string;
-  readonly selectArtifact: (artifactPath: string, label: string) => void;
-  readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
-  readonly clearArtifactWithTool: (activeTool: string) => void;
-}): readonly TreeNode[] => {
-  const workflowState = options.workflowState;
-  const workspaceSlug = options.workspaceSlug;
-  const workspacePath = options.workspacePath;
-
-  if (!(workflowState && workspaceSlug && workspacePath)) {
-    return [];
-  }
-
-  const nodes: TreeNode[] = [];
-  const dfArtifactPath = `.codeai-hub/${workspaceSlug}/diagram_facades/facade-map.md`;
-  const nodeVisuals = resolveDiagramNodeVisuals(workflowState, "diagram_facades");
-
-  const chain = resolveLatestDiagramChain(
-    workflowState.continuity.chains,
-    "diagram_facades"
-  );
-  const last = chain?.segments.at(-1) ?? null;
-
-  if (options.diagramFacadesArtifactAvailable) {
-    nodes.push({
-      id: "workflow:diagram_facades:artifact",
-      label: "facade-map.md",
-      title: nodeVisuals.title
-        ? `${dfArtifactPath}\n${nodeVisuals.title}`
-        : dfArtifactPath,
-      status: nodeVisuals.status,
-      visualDepth: 2,
-      onSelect: () => {
-        dispatchStageActivated("diagram_facades");
-        options.selectArtifact(dfArtifactPath, "facade-map.md");
-        if (last) {
-          options.dispatchDialogOpenIntent(
-            buildSessionIntent({
-              last,
-              workspacePath,
-              workspaceSlug,
-              stage: "diagram_facades",
-            })
-          );
-        }
-      },
-    });
-  }
-
-  if (!(chain && last)) {
-    return nodes;
-  }
-
-  const providerTitle = resolveProviderTitle(last.providerId);
-  nodes.push({
-    id: `workflow:diagram_facades:session:${chain.rootSessionId}`,
-    label: `Diagram Facades ${providerTitle}`,
-    status: nodeVisuals.status,
-    title: nodeVisuals.title,
-    visualDepth: 2,
-    onSelect: () => {
-      dispatchStageActivated("diagram_facades");
-      options.dispatchDialogOpenIntent(
-        buildSessionIntent({
-          last,
-          workspacePath,
-          workspaceSlug,
-          stage: "diagram_facades",
-        })
-      );
-      if (options.diagramFacadesArtifactAvailable) {
-        options.selectArtifact(dfArtifactPath, "facade-map.md");
-      } else {
-        options.clearArtifactWithTool("Diagram Facades");
       }
     },
   });

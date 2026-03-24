@@ -29,7 +29,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   activeWorkspace,
 }) => {
   const tools: readonly string[] = activeWorkspace
-    ? ["Description", VIRTUAL_SIMULATION_TOOL_LABEL, "Diagram Modules", "Diagram Facades"]
+    ? ["Description", VIRTUAL_SIMULATION_TOOL_LABEL, "Diagram Modules"]
     : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [preferredSessionId, setPreferredSessionId] = useState<string | null>(null);

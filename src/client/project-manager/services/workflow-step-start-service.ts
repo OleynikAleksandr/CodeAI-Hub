@@ -10,7 +10,7 @@ type StartWorkflowStepParams = {
   readonly onSessionCreated?: (sessionId: string) => void;
 };
 
-type ContinuityStageId = "virtual_simulation" | "diagram_modules" | "diagram_facades";
+type ContinuityStageId = "virtual_simulation" | "diagram_modules";
 
 type WorkflowStateGetter = (
   workspaceSlug: string,
@@ -134,33 +134,4 @@ export class WorkflowStepStartService {
     });
   }
 
-  async startDiagramFacades(params: StartWorkflowStepParams): Promise<string> {
-    const state = await this.getWorkflowState(
-      params.workspaceSlug,
-      params.workspacePath
-    );
-    const existingSessionId = resolveMostRecentContinuitySessionId({
-      state,
-      stage: "diagram_facades",
-    });
-    if (existingSessionId) {
-      params.onSessionCreated?.(existingSessionId);
-      return existingSessionId;
-    }
-
-    const dmArtifactPath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/module-inventory.md`;
-    const facadesBlocked = state?.gating?.blocked?.diagram_facades ?? true;
-    if (facadesBlocked) {
-      throw new Error("Missing module-inventory.md. Complete Diagram Modules step first.");
-    }
-    return this.submitService.submitQuestionnaire({
-      workspaceName: params.workspaceName,
-      workspaceSlug: params.workspaceSlug,
-      workspacePath: params.workspacePath,
-      questionnairePath: dmArtifactPath,
-      stage: "diagram_facades",
-      providerId: params.providerId,
-      onSessionCreated: params.onSessionCreated,
-    });
-  }
 }

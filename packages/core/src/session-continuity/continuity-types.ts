@@ -2,7 +2,6 @@ export type ContinuityStageId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules"
-  | "diagram_facades"
   | "unknown";
 
 export type TokenUsageSnapshot = {

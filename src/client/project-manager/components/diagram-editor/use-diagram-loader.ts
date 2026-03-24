@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import type {
   DiagramMapModel,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
-import { materializeModuleMapFromInventoryDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/module-inventory-parser";
-import { parseFacadeMapDsl, parseModuleMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-parser";
+import { parseModuleMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-parser";
 import { api } from "../../api";
 import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
@@ -119,147 +118,10 @@ export const useDiagramLoader = (params: {
           return;
         }
 
-        const inventoryResult = await readWorkflowArtifact({
-          httpUrl,
-          workspacePath: params.workspacePath,
-          workspaceSlug: params.workspaceSlug,
-          path: paths.artifactPath,
-        });
-
-        if (cancelled) {
-          return;
-        }
-
-        if (inventoryResult.status === "ok") {
-          const inventoryMaterialization = materializeModuleMapFromInventoryDsl(
-            inventoryResult.content
-          );
-          if (!inventoryMaterialization.ok) {
-            clearDiagram();
-            setStatus("error");
-            setError(
-              `Не удалось разобрать ${paths.label}: строка ${inventoryMaterialization.error.line}, ${inventoryMaterialization.error.message}`
-            );
-            setContent(inventoryResult.content);
-            return;
-          }
-
-          const baseProjection = domainModelToReactFlow(
-            inventoryMaterialization.value
-          );
-          const sidecarResult = await readWorkflowArtifact({
-            httpUrl,
-            workspacePath: params.workspacePath,
-            workspaceSlug: params.workspaceSlug,
-            path: paths.flowSidecarPath,
-          });
-
-          if (cancelled) {
-            return;
-          }
-
-          const nextFlowDocument =
-            sidecarResult.status === "ok"
-              ? parseFlowSidecar(sidecarResult.content)
-              : null;
-
-          setContent(inventoryMaterialization.content);
-          setModel(inventoryMaterialization.value);
-          setFlowDocument(nextFlowDocument);
-          setProjection({
-            ...baseProjection,
-            nodes: applyFlowSidecarPositions({
-              nodes: baseProjection.nodes,
-              document: nextFlowDocument,
-              revision: baseProjection.revision,
-            }),
-          });
-          setStatus("ready");
-          return;
-        }
-
-        if (inventoryResult.status === "missing") {
-          setContent(null);
-          clearDiagram();
-          setStatus("missing");
-          return;
-        }
-        if (inventoryResult.status === "error") {
-          clearDiagram();
-          setStatus("error");
-          setError(`Не удалось загрузить ${paths.label}: ${inventoryResult.error}`);
-          return;
-        }
-      }
-
-      const artifactResult = await readWorkflowArtifact({
-        httpUrl,
-        workspacePath: params.workspacePath,
-        workspaceSlug: params.workspaceSlug,
-        path: paths.artifactPath,
-      });
-
-      if (cancelled) {
-        return;
-      }
-
-      if (artifactResult.status === "missing") {
         setContent(null);
         clearDiagram();
         setStatus("missing");
-        return;
       }
-      if (artifactResult.status === "error") {
-        clearDiagram();
-        setStatus("error");
-        setError(`Не удалось загрузить ${paths.label}: ${artifactResult.error}`);
-        return;
-      }
-
-      const parseResult =
-        params.stage === "diagram_modules"
-          ? parseModuleMapDsl(artifactResult.content)
-          : parseFacadeMapDsl(artifactResult.content);
-
-      if (!parseResult.ok) {
-        clearDiagram();
-        setStatus("error");
-        setError(
-          `Не удалось разобрать ${paths.label}: строка ${parseResult.error.line}, ${parseResult.error.message}`
-        );
-        setContent(artifactResult.content);
-        return;
-      }
-
-      const baseProjection = domainModelToReactFlow(parseResult.value);
-      const sidecarResult = await readWorkflowArtifact({
-        httpUrl,
-        workspacePath: params.workspacePath,
-        workspaceSlug: params.workspaceSlug,
-        path: paths.flowSidecarPath,
-      });
-
-      if (cancelled) {
-        return;
-      }
-
-      const nextFlowDocument =
-        sidecarResult.status === "ok"
-          ? parseFlowSidecar(sidecarResult.content)
-          : null;
-
-      setContent(artifactResult.content);
-      setModel(parseResult.value);
-      setFlowDocument(nextFlowDocument);
-      setProjection({
-        ...baseProjection,
-        nodes: applyFlowSidecarPositions({
-          nodes: baseProjection.nodes,
-          document: nextFlowDocument,
-          revision: baseProjection.revision,
-        }),
-      });
-      setStatus("ready");
     })();
 
     return () => {

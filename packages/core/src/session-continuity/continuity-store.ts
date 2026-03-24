@@ -23,8 +23,7 @@ const normalizeStage = (
   if (
     trimmed === "description" ||
     trimmed === "virtual_simulation" ||
-    trimmed === "diagram_modules" ||
-    trimmed === "diagram_facades"
+    trimmed === "diagram_modules"
   ) {
     return trimmed;
   }

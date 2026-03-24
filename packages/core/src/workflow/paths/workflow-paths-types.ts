@@ -7,10 +7,7 @@ export type WorkflowArtifactFileName =
   | "product-parts.index.md"
   | "product-part.md"
   | "module-inventory.md"
-  | "module-map.flow.json"
-  | "facade-map.md"
-  | "facade-map.flow.json"
-  | "facade-map.agent-baseline.md";
+  | "module-map.flow.json";
 
 export type WorkflowArtifactPath = {
   readonly stage: WorkflowStageId;

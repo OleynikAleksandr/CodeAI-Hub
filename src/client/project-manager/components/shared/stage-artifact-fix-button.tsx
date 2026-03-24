@@ -5,8 +5,7 @@ import { resolvePreferredWorkflowProviderId } from "../../services/workflow-prov
 
 type RepairableStageId =
   | "virtual_simulation"
-  | "diagram_modules"
-  | "diagram_facades";
+  | "diagram_modules";
 
 const resolveMostRecentContinuitySessionId = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,

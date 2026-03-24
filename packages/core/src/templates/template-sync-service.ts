@@ -27,6 +27,10 @@ const LEGACY_TEMPLATE_RELATIVE_PATHS = [
   ".codeai-hub/templates/diagram_modules/modules-diagram-template.mmd",
   ".codeai-hub/templates/diagram_facades/facades-graph-prompt.md",
   ".codeai-hub/templates/diagram_facades/facades-graph-template.mmd",
+  ".codeai-hub/templates/diagram_facades/facade-map-prompt.md",
+  ".codeai-hub/templates/diagram_facades/facade-map-template.md",
+  ".codeai-hub/templates/diagram_facades/facade-map-field-reference.md",
+  ".codeai-hub/templates/diagram_facades/facade-map-merge-rules.md",
 ] as const;
 
 export class TemplateSyncService {

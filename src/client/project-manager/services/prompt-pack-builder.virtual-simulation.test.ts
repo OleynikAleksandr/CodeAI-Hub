@@ -101,36 +101,3 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("Имя выходного файла: `product-parts.index.md`"), true);
 });
 
-test("diagram facades prompt pack omits generic template hint and adds no-search rule", () => {
-  const pack = buildWorkflowPromptPack({
-    stage: "diagram_facades",
-    workspacePath: "/tmp/workspace",
-    workspaceSlug: "demo-workspace",
-    prompt: "",
-    questionnairePath: ".codeai-hub/demo-workspace/diagram_modules/module-inventory.md",
-    templatePath: "/tmp/facade-map-template.md",
-  });
-
-  assert.equal(
-    pack.content.includes("Собери артефакт на основе `module-inventory.md`."),
-    true
-  );
-  assert.equal(
-    pack.content.includes("Собери артефакт на основе анкеты и шаблона."),
-    false
-  );
-  assert.equal(pack.content.includes("Шаблон (absolute)"), false);
-  assert.equal(
-    pack.content.includes(
-      "Phase 1: прочитай `module-inventory.md`, затем создай или обнови `facade-map.md`"
-    ),
-    true
-  );
-  assert.equal(
-    pack.content.includes(
-      "не трать текущий turn на поиск continuity files, helper artifacts, generic template files или legacy diagram directories"
-    ),
-    true
-  );
-  assert.equal(pack.content.includes("Имя выходного файла: `facade-map.md`"), true);
-});

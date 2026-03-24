@@ -1519,6 +1519,6 @@ test("SessionRequestHandler source keeps continuity normalization for diagram st
   const source = await readFile(SOURCE_PATH, "utf8");
 
   assert.equal(source.includes('trimmed === "diagram_modules"'), true);
-  assert.equal(source.includes('trimmed === "diagram_facades"'), true);
+  assert.equal(source.includes('trimmed === "diagram_facades"'), false);
   assert.equal(source.includes("private normalizeContinuityStageId"), true);
 });

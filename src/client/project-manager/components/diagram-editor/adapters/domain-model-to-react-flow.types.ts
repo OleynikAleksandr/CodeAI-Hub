@@ -2,11 +2,7 @@ import type {
   Criticality,
   EntityOrigin,
   EntityStatus,
-  FacadeMapModel,
-  FacadePort,
-  FacadeVisibility,
   ModuleKind,
-  ModuleMapModel,
   RelationType,
 } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 
@@ -15,9 +11,9 @@ export type DiagramFlowPosition = {
   readonly y: number;
 };
 
-export type DiagramFlowStage = ModuleMapModel["stage"] | FacadeMapModel["stage"];
+export type DiagramFlowStage = "diagram_modules";
 
-export type DiagramFlowNodeType = "cluster" | "module" | "facade";
+export type DiagramFlowNodeType = "cluster" | "module";
 
 export type DiagramFlowNodeStyle = Readonly<Record<string, number | string>>;
 
@@ -58,24 +54,10 @@ export type ModuleFlowNodeData = {
   readonly outputCount: number;
 };
 
-export type FacadeFlowNodeData = {
-  readonly stage: "diagram_facades";
-  readonly nodeKind: "facade";
-  readonly facadeId: string;
-  readonly moduleId: string;
-  readonly visibility: FacadeVisibility;
-  readonly methodCount: number;
-  readonly methods: readonly string[];
-  readonly ports: readonly FacadePort[];
-  readonly status: EntityStatus;
-  readonly origin: EntityOrigin;
-};
-
 export type DiagramFlowNodeData =
   | ProductPartFlowNodeData
   | ClusterFlowNodeData
-  | ModuleFlowNodeData
-  | FacadeFlowNodeData;
+  | ModuleFlowNodeData;
 
 export type DiagramFlowNode = {
   readonly id: string;

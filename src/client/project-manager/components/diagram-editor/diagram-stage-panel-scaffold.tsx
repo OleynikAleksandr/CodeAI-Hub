@@ -12,11 +12,8 @@ import { DiagramEditorShell } from "./diagram-editor-shell";
 import type { DiagramLoaderStatus } from "./use-diagram-loader";
 
 const resolveDiagramStageId = (
-  artifactPath: string
-): "diagram_modules" | "diagram_facades" =>
-  artifactPath.includes("/diagram_facades/")
-    ? "diagram_facades"
-    : "diagram_modules";
+  _artifactPath: string
+): "diagram_modules" => "diagram_modules";
 
 const buildDiagramRepairPrompt = (params: {
   readonly artifactFileName: string;

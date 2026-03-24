@@ -5,11 +5,8 @@ import type { FileDropService } from "../../file-drop/file-drop-service";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import type { MarkdownDslParseResult } from "../../workflow/diagram-dsl/diagram-dsl-types";
-import { parseFacadeMapDsl } from "../../workflow/diagram-dsl/markdown-dsl-parser";
 import {
   buildDescriptionContract,
-  buildDiagramFacadesContract,
   buildDiagramModulesContract,
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
@@ -40,8 +37,6 @@ const VIRTUAL_SIMULATION_CONTRACT_ENDPOINT =
   "/api/v1/orchestrator/virtual-simulation-contract";
 const DIAGRAM_MODULES_CONTRACT_ENDPOINT =
   "/api/v1/orchestrator/diagram-modules-contract";
-const DIAGRAM_FACADES_CONTRACT_ENDPOINT =
-  "/api/v1/orchestrator/diagram-facades-contract";
 const ARTIFACT_UPSERT_ENDPOINT = "/api/v1/orchestrator/artifact-upsert";
 const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
 const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
@@ -58,9 +53,6 @@ const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-inventory\.md)|(?:module-map\.flow\.json))$/;
-const DIAGRAM_FACADES_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_facades\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:facade-map\.md|facade-map\.flow\.json|facade-map\.agent-baseline\.md)$/;
-
 export type RouterDependencies = {
   readonly app: Express;
   readonly systemHandler: SystemRequestHandler;
@@ -156,17 +148,6 @@ export class HttpApiRouter {
           res,
           buildDiagramModulesContract,
           "Diagram modules"
-        );
-      }
-    );
-
-    app.get(
-      DIAGRAM_FACADES_CONTRACT_ENDPOINT,
-      async (_req: Request, res: Response) => {
-        await this.handleWorkflowContract(
-          res,
-          buildDiagramFacadesContract,
-          "Diagram facades"
         );
       }
     );
@@ -461,11 +442,7 @@ type WorkflowStageArtifactUpsertPlanResult =
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-type WorkflowStageId =
-  | "description"
-  | "virtual_simulation"
-  | "diagram_modules"
-  | "diagram_facades";
+type WorkflowStageId = "description" | "virtual_simulation" | "diagram_modules";
 
 type WorkflowArtifactFileName =
   | "Final_Description.md"
@@ -473,16 +450,12 @@ type WorkflowArtifactFileName =
   | "product-parts.index.md"
   | "product-part.md"
   | "module-inventory.md"
-  | "module-map.flow.json"
-  | "facade-map.md"
-  | "facade-map.flow.json"
-  | "facade-map.agent-baseline.md";
+  | "module-map.flow.json";
 
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "diagram_facades",
 ]);
 
 const WORKFLOW_STAGE_SLOTS = new Map<
@@ -509,22 +482,12 @@ const WORKFLOW_STAGE_SLOTS = new Map<
     "diagram.modules.flow",
     { stage: "diagram_modules", fileName: "module-map.flow.json" },
   ],
-  ["diagram.facades", { stage: "diagram_facades", fileName: "facade-map.md" }],
-  [
-    "diagram.facades.flow",
-    { stage: "diagram_facades", fileName: "facade-map.flow.json" },
-  ],
-  [
-    "diagram.facades.baseline",
-    { stage: "diagram_facades", fileName: "facade-map.agent-baseline.md" },
-  ],
 ]);
 
 const WORKFLOW_STAGE_PATHS = new Map<WorkflowStageId, RegExp>([
   ["description", DESCRIPTION_PATH_RE],
   ["virtual_simulation", VIRTUAL_SIMULATION_PATH_RE],
   ["diagram_modules", DIAGRAM_MODULES_PATH_RE],
-  ["diagram_facades", DIAGRAM_FACADES_PATH_RE],
 ]);
 
 type WorkflowStageUpsertContext = {
@@ -794,15 +757,7 @@ const resolveWorkflowStageValidationError = (params: {
         params.content,
         params.shouldValidate
       );
-    case "facade-map.md":
-    case "facade-map.agent-baseline.md":
-      return validateMarkdownDslDiagram({
-        content: params.content,
-        parser: parseFacadeMapDsl,
-        shouldValidate: params.shouldValidate,
-      });
     case "module-map.flow.json":
-    case "facade-map.flow.json":
       return validateDiagramFlowSidecar(params.content, params.shouldValidate);
     default:
       return "Unsupported artifact file";
@@ -876,21 +831,6 @@ const validateProductPartsIndexMarkdown = (
     return "Product parts index markdown is missing '# Product Parts Index' header";
   }
   return null;
-};
-
-const validateMarkdownDslDiagram = (params: {
-  readonly content: string;
-  readonly parser: (content: string) => MarkdownDslParseResult;
-  readonly shouldValidate: boolean;
-}): string | null => {
-  if (!params.shouldValidate) {
-    return null;
-  }
-  if (params.content.trim().length === 0) {
-    return "Diagram DSL markdown is empty";
-  }
-  const result = params.parser(params.content);
-  return result.ok ? null : result.error.message;
 };
 
 const validateDiagramFlowSidecar = (

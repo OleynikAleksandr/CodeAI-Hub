@@ -4,10 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { BUNDLED_TEMPLATE_SOURCES } from "../../templates/bundled-templates";
-import {
-  buildDiagramFacadesContract,
-  buildDiagramModulesContract,
-} from "./idea-contract-service";
+import { buildDiagramModulesContract } from "./idea-contract-service";
 
 const countOccurrences = (source: string, needle: string): number =>
   source.split(needle).length - 1;
@@ -101,60 +98,6 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
         contract?.prompt ?? "",
         "# Module Inventory Merge Rules"
       ),
-      1
-    );
-    assert.equal(contract?.template, "");
-  } finally {
-    if (previousHome === undefined) {
-      process.env.HOME = undefined;
-    } else {
-      process.env.HOME = previousHome;
-    }
-    await rm(tempHome, { recursive: true, force: true });
-  }
-});
-
-test("diagram facades contract embeds field reference and merge rules into prompt", async () => {
-  const previousHome = process.env.HOME;
-  const tempHome = await mkdtemp(path.join(tmpdir(), "codeai-df-contract-"));
-  try {
-    process.env.HOME = tempHome;
-    const promptPath = await writeBundledTemplate(
-      tempHome,
-      "facade-map-prompt"
-    );
-    await writeBundledTemplate(tempHome, "facade-map-template");
-    await writeBundledTemplate(tempHome, "facade-map-field-reference");
-    await writeBundledTemplate(tempHome, "facade-map-merge-rules");
-
-    const contract = await buildDiagramFacadesContract();
-
-    assert.notEqual(contract, null);
-    assert.equal(contract?.paths.prompt, promptPath);
-    assert.equal(contract?.paths.template, undefined);
-    assert.equal(contract?.prompt.includes("`Kind`: сейчас `class`."), true);
-    assert.equal(
-      contract?.prompt.includes(
-        "Держите facade ownership согласованным с текущим `module-inventory.md`"
-      ),
-      true
-    );
-    assert.equal(
-      contract?.prompt.includes(
-        "do not search for alternative template files on disk"
-      ),
-      true
-    );
-    assert.equal(
-      countExactHeadingOccurrences(contract?.prompt ?? "", "# Facade Map"),
-      1
-    );
-    assert.equal(
-      countOccurrences(contract?.prompt ?? "", "# Facade Map Field Reference"),
-      1
-    );
-    assert.equal(
-      countOccurrences(contract?.prompt ?? "", "# Facade Map Merge Rules"),
       1
     );
     assert.equal(contract?.template, "");

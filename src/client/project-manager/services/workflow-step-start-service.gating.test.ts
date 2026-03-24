@@ -31,7 +31,6 @@ const createWorkflowState = (
     description: "completed",
     virtual_simulation: "in_progress",
     diagram_modules: "idle",
-    diagram_facades: "idle",
   },
   continuity: { chains: [] },
   description: null,
@@ -40,7 +39,6 @@ const createWorkflowState = (
       description: false,
       virtual_simulation: false,
       diagram_modules: false,
-      diagram_facades: false,
     },
   },
   ...overrides,
@@ -64,7 +62,6 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
           description: "completed",
           virtual_simulation: "in_progress",
           diagram_modules: "idle",
-          diagram_facades: "idle",
         },
       }),
     submitService: {
@@ -93,53 +90,6 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
   });
 });
 
-test("startDiagramFacades starts from module-inventory artifact without completed status", async () => {
-  installWindowStub();
-  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
-
-  let captured:
-    | {
-        readonly questionnairePath: string;
-        readonly stage?: string;
-      }
-    | null = null;
-
-  const service = new WorkflowStepStartService({
-    getWorkflowState: async () =>
-      createWorkflowState({
-        stages: {
-          description: "completed",
-          virtual_simulation: "in_progress",
-          diagram_modules: "in_progress",
-          diagram_facades: "idle",
-        },
-      }),
-    submitService: {
-      submitQuestionnaire: async (params) => {
-        captured = {
-          questionnairePath: params.questionnairePath,
-          stage: params.stage,
-        };
-        return "df-session";
-      },
-    },
-  });
-
-  const sessionId = await service.startDiagramFacades({
-    workspaceName: "Demo Workspace",
-    workspacePath: "/tmp/demo",
-    workspaceSlug: "demo-workspace",
-    providerId: "codexCli",
-  });
-
-  assert.equal(sessionId, "df-session");
-  assert.deepEqual(captured, {
-    questionnairePath:
-      ".codeai-hub/demo-workspace/diagram_modules/module-inventory.md",
-    stage: "diagram_facades",
-  });
-});
-
 test("diagram stage start still rejects when gating stays blocked", async () => {
   installWindowStub();
   const { WorkflowStepStartService } = await import("./workflow-step-start-service");
@@ -152,7 +102,6 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
             description: false,
             virtual_simulation: false,
             diagram_modules: true,
-            diagram_facades: false,
           },
         },
       }),

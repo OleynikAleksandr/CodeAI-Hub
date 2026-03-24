@@ -9,14 +9,12 @@ const TOOL_TO_STAGE_MAP: Readonly<Record<string, string>> = {
   Description: "description",
   [VIRTUAL_SIMULATION_TOOL_LABEL]: "virtual_simulation",
   "Diagram Modules": "diagram_modules",
-  "Diagram Facades": "diagram_facades",
 };
 
 const STAGE_TO_TOOL_MAP: Readonly<Record<WorkflowStageId, string>> = {
   description: "Description",
   virtual_simulation: VIRTUAL_SIMULATION_TOOL_LABEL,
   diagram_modules: "Diagram Modules",
-  diagram_facades: "Diagram Facades",
 };
 
 export const resolveStageByTool = (tool: string): string | null =>

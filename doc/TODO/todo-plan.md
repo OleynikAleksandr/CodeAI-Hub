@@ -107,6 +107,18 @@
 1. [TODO] Remove `diagram-modules-aggregate.ts`, compose pipeline, serializer references, sidebar availability checks. Update `prompt-pack-builder.ts`, `workflow-step-start-service.ts`. (scope: TBD after exploration)
 2. [TODO] Git Commit: TBD
 
-### Stream 3: Documentation sync + release
-1. [TODO] Update `SystemArchitecture.md`, workflow docs, CHANGELOG. Build release.
-2. [TODO] Git Commit: TBD
+### Stream 3: Documentation sync
+1. [TODO] Update `SystemArchitecture.md` — remove Diagram Facades references, reflect trunk ending at Diagram Modules. Update workflow docs in `doc/SolidWorks-WorkFlow/`. Update `CHANGELOG.md`. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, workflow docs, `CHANGELOG.md`, `doc/TODO/todo-plan.md`)
+2. [TODO] Git Commit: `docs(architecture): remove Diagram Facades and module-inventory from docs`
+
+### Stream 4: Release build
+1. [TODO] Актуализировать `README.md` и `CHANGELOG.md` под новую версию. (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`)
+2. [TODO] Git Commit: `docs(release): sync cleanup notes for Phase 57 release`
+3. [TODO] Убедиться что `git status` чистый. Запустить `./scripts/build-all.sh` (bump version + full build). (scope: scripts, package.json files)
+4. [TODO] Git Commit: `chore(release): bump version to <new_version>`
+5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`. Проверить вывод: `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`. Скопировать tarballs в `doc/tmp/releases/`. (scope: VSIX, tarballs)
+6. [TODO] Git Commit: TBD (если есть изменения после build-release)
+
+### Stream 5: Session handoff
+1. [TODO] Создать `doc/Sessions/Session153.md` с полным отчётом по Phase 57. (scope: `doc/Sessions/Session153.md`, `doc/TODO/todo-plan.md`)
+2. [TODO] Git Commit: `docs(session): record session 153 with phase 57 completion`

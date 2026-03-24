@@ -11,7 +11,7 @@ export type StageArtifactLoaderResult = {
 
 /**
  * Shared hook that fetches a workflow-stage artifact and polls when missing.
- * Used by Virtual Simulation, Diagram Modules, and Diagram Facades panels.
+ * Used by Virtual Simulation and Diagram Modules panels.
  */
 export const useStageArtifactLoader = (params: {
   readonly workspacePath: string;

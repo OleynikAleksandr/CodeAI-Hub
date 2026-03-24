@@ -20,10 +20,6 @@ const MODULES_LOADER_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/use-diagram-loader.ts"
 );
-const FACADE_PANEL_SOURCE_PATH = path.resolve(
-  process.cwd(),
-  "src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx"
-);
 const SCAFFOLD_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx"
@@ -280,20 +276,3 @@ test("module inventory parser reads product part hierarchy without flattening ow
   assert.equal(result.value.modules[2]?.cluster, undefined);
 });
 
-test("diagram facades panel is visual-only and keeps semantic edits out of the surface", async () => {
-  const source = await readFile(FACADE_PANEL_SOURCE_PATH, "utf8");
-
-  assert.equal(source.includes("onNodesChange={async (nodes) => {"), true);
-  assert.equal(
-    source.includes("await persistNodes({ nodes, revision: visualProjection.revision });"),
-    true
-  );
-  assert.equal(source.includes("Edit facades"), false);
-  assert.equal(source.includes("Edit methods and ports"), false);
-  assert.equal(source.includes("Edit relations"), false);
-  assert.equal(source.includes("useDomainPatch"), false);
-  assert.equal(source.includes("FacadeEntityEditor"), false);
-  assert.equal(source.includes("FacadeMethodsEditor"), false);
-  assert.equal(source.includes("FacadePortsEditor"), false);
-  assert.equal(source.includes("FacadeRelationEditor"), false);
-});

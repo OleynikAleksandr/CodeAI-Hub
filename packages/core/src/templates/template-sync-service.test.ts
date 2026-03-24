@@ -27,10 +27,6 @@ const VISIBLE_DIAGRAM_TEMPLATE_PATHS = [
   ".codeai-hub/templates/diagram_modules/product-part-template.md",
   ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
   ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
-  ".codeai-hub/templates/diagram_facades/facade-map-prompt.md",
-  ".codeai-hub/templates/diagram_facades/facade-map-template.md",
-  ".codeai-hub/templates/diagram_facades/facade-map-field-reference.md",
-  ".codeai-hub/templates/diagram_facades/facade-map-merge-rules.md",
 ] as const;
 
 const POLYGON_TEMPLATE_CONTENT_CHECKS = [
@@ -117,27 +113,6 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     snippets: [
       "Когда runtime передаёт change summary:",
       "Не переводите молча standalone modules в cluster members",
-    ],
-  },
-  {
-    relativePath:
-      ".codeai-hub/templates/diagram_facades/facade-map-template.md",
-    snippets: [
-      "Здесь кратко поясняется внешний смысл facade",
-      "Показывайте только те facade relations",
-    ],
-  },
-  {
-    relativePath:
-      ".codeai-hub/templates/diagram_facades/facade-map-field-reference.md",
-    snippets: ["Поля `Facade`:", "Поля `Facade Relation`:"],
-  },
-  {
-    relativePath:
-      ".codeai-hub/templates/diagram_facades/facade-map-merge-rules.md",
-    snippets: [
-      "Когда runtime передаёт change summary:",
-      "Не восстанавливайте молча facades или relations",
     ],
   },
 ] as const;

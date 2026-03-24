@@ -153,7 +153,6 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
     assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
     assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.gating.blocked.diagram_facades, false);
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
     assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
     assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
@@ -176,7 +175,7 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
   }
 });
 
-test("workflow-state keeps diagram facades blocked until all product parts and aggregate are ready", async () => {
+test("workflow-state tracks diagram modules progress when not all product parts are ready", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-service-product-parts-")
   );
@@ -230,7 +229,6 @@ test("workflow-state keeps diagram facades blocked until all product parts and a
     const payload = result.payload as WorkflowStatePayload;
 
     assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.gating.blocked.diagram_facades, true);
     assert.equal(
       payload.diagramModulesProgress?.substep,
       "generate_product_part"
@@ -284,7 +282,6 @@ test("workflow-state cold start keeps invalid status but still unlocks diagram m
 
     assert.equal(payload.state?.stages.virtual_simulation?.status, "invalid");
     assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.gating.blocked.diagram_facades, true);
     assert.equal(
       payload.state?.stages.virtual_simulation?.gates?.some(
         (gate) => gate.gateId === "virtual-simulation.validation"
