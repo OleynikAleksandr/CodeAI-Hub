@@ -9,7 +9,8 @@ const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 28, PRODUCT_PAR
 const PRODUCT_PART_SECTION_GAP = 36, PRODUCT_PART_ROW_GAP = 48, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
 const PRODUCT_PART_HEADER_BODY_GAP = 16, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
 const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 16, CLUSTER_CARD_PADDING_TOP = 14;
-const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 132, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 16;
+const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 148, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 16;
+const CONTAINER_HEIGHT_SAFETY_BUFFER = 16;
 const CLUSTER_HEADER_BODY_GAP = 16, CLUSTER_PURPOSE_CHARS_PER_LINE = 36, CLUSTER_TITLE_CHARS_PER_LINE = 28;
 const CONTAINER_CAPTION_LINE_HEIGHT = 14, CONTAINER_META_LINE_HEIGHT = 16, PURPOSE_TEXT_MARGIN_TOP = 6;
 const STANDALONE_X_STEP = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2, DEFAULT_PRODUCT_PART_ID = "default-product-part";
@@ -196,7 +197,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
         }));
         moduleY += height + MODULE_CARD_GAP;
       }
-      const clusterHeight = Math.max(CLUSTER_MIN_HEIGHT, moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING);
+      const clusterHeight = Math.max(CLUSTER_MIN_HEIGHT, (moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING) + CONTAINER_HEIGHT_SAFETY_BUFFER);
       clusterHeights.push(clusterHeight);
       clusterNodes.push({
         id: toClusterNodeId(clusterId),
@@ -265,7 +266,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
 
     const productPartHeight = Math.max(
       260,
-      Math.max(productPartHeaderHeight, ...columnContentBottoms) + PRODUCT_PART_PADDING_BOTTOM
+      Math.max(productPartHeaderHeight, ...columnContentBottoms) + PRODUCT_PART_PADDING_BOTTOM + CONTAINER_HEIGHT_SAFETY_BUFFER
     );
     nodes.push(
       {
