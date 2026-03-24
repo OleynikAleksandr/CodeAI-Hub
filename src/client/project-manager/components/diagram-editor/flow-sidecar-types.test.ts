@@ -210,3 +210,54 @@ test("flow sidecar applies saved positions only when the diagram revision matche
   assert.deepEqual(applied[0]?.position, { x: 240, y: 160 });
   assert.deepEqual(skipped[0]?.position, { x: 0, y: 0 });
 });
+
+test("flow sidecar falls back to computed layout when sidecar does not cover all nodes", () => {
+  const nodes = [
+    {
+      id: "product-part:shell",
+      type: "cluster" as const,
+      position: { x: 10, y: 20 },
+      data: {
+        stage: "diagram_modules" as const,
+        nodeKind: "productPart" as const,
+        productPartId: "shell",
+        title: "Shell",
+        purpose: "Entry point.",
+        clusterIds: [],
+        standaloneModuleIds: [],
+      },
+    },
+    {
+      id: "product-part:runtime",
+      type: "cluster" as const,
+      position: { x: 400, y: 20 },
+      data: {
+        stage: "diagram_modules" as const,
+        nodeKind: "productPart" as const,
+        productPartId: "runtime",
+        title: "Runtime",
+        purpose: "Core runtime.",
+        clusterIds: [],
+        standaloneModuleIds: [],
+      },
+    },
+  ];
+
+  const result = applyFlowSidecarPositions({
+    nodes,
+    document: {
+      version: 1,
+      revision: "rev-partial",
+      updated: new Date().toISOString(),
+      nodes: {
+        "product-part:shell": { x: 500, y: 600 },
+        // product-part:runtime is NOT in sidecar
+      },
+    },
+    revision: "rev-partial",
+  });
+
+  // Must keep computed positions — sidecar is incomplete
+  assert.deepEqual(result[0]?.position, { x: 10, y: 20 });
+  assert.deepEqual(result[1]?.position, { x: 400, y: 20 });
+});

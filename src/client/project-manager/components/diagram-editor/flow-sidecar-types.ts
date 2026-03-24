@@ -103,6 +103,12 @@ export const applyFlowSidecarPositions = (params: {
     return params.nodes;
   }
 
+  // Fallback to computed layout if sidecar does not cover all nodes
+  const allCovered = params.nodes.every((node) => node.id in params.document!.nodes);
+  if (!allCovered) {
+    return params.nodes;
+  }
+
   return params.nodes.map((node) => {
     const position = params.document?.nodes[node.id];
     if (!position) {

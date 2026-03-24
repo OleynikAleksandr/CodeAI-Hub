@@ -25,11 +25,11 @@
 
 ### Stream 3: Graph refresh on new artifact
 1. [DONE] При artifact persist или turn_completed для diagram_modules — диспатчить custom event `pm:diagram:refresh` из orchestration. В `DiagramModulesPanel` слушать этот event и инкрементировать refreshKey (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): refresh graph on new product part artifact`)
-2. [DONE] Git Commit: `fix(diagram-modules): refresh graph on new product part artifact` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram-modules): refresh graph on new product part artifact` (hash: d5b4c22f)
 
 ### Stream 4: Fix auto-layout — sidecar fallback
-1. [TODO] В `applyFlowSidecarPositions` (`flow-sidecar-types.ts`) — если sidecar не содержит ВСЕХ нодов текущей проекции, не применять его (fallback на computed layout). Обновить тесты (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete`)
-2. [TODO] Git Commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete` (hash: TBD)
+1. [DONE] В `applyFlowSidecarPositions` (`flow-sidecar-types.ts`) — если sidecar не содержит ВСЕХ нодов текущей проекции, не применять его (fallback на computed layout). Обновить тесты (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete`)
+2. [DONE] Git Commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete` (hash: TBD)
 
 ### Stream 4b: Fix auto-layout — Purpose panel width
 1. [TODO] В `diagram-editor-facade.tsx` — убрать `minmax(240px, 320px)` для Purpose panel, заменить на `minmax(240px, 1fr)` чтобы Purpose растягивалась по ширине Product Part вместо фиксированных 320px. В `module-stage-react-flow.ts` — пересчитать `PRODUCT_PART_PURPOSE_CHARS_PER_LINE` под реальную ширину Purpose panel (зависит от productPartWidth). Обновить `getProductPartHeaderHeight` для динамического расчёта (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): make Purpose panel width dynamic and align layout calculations`)
