@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Canonical_ProductPart_Template_And_Prompt_Delivery_Architecture.md`, `doc/Sessions/Session146.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md`, `doc/Sessions/Session149.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -10,71 +10,51 @@
 - Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
 - Перед закрытием stream выполнять таргетные проверки затронутых пакетов/клиентов
 - После закрытия release stream: выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, записать результаты в `doc/Sessions/`
-- **Protected working parts:** не трогать без прямой необходимости уже работающие `product-parts.index.md` parsing, появление `Product Part` плашек, hidden continuation после index write, `Source` availability на index artifact, sequence lock/gating/review boundary и ранний staged graph skeleton. Если нужен compatibility shim, он должен быть строго additive и локальным.
 
 ---
 
-## Phase 53 — Diagram Modules Canonical ProductPart Template Contract Stabilization (owner: Oleksandr, updated: 2026-03-23)
+## Phase 54 — Diagram Modules Step-by-Step Workflow & UX Refactor (owner: Oleksandr, updated: 2026-03-24)
 
-### Stream: Planning baseline
-1. [DONE] Заархивировать завершённый rollout-план до `Phase 52`, оформить новый planning-doc по canonical `product-parts.index.md` / `product-parts/<part-id>.md` template contract и prompt-delivery chain, затем создать новый active `todo-plan.md` только под этот scope с явной защитой уже работающих частей раннего staged flow (scope: `doc/TODO/Archive/todo-plan-up-to-phase52-2026-03-23.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Canonical_ProductPart_Template_And_Prompt_Delivery_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): archive phase52 plan and start canonical product part template scope`).
-2. [DONE] Git Commit: `docs(plan): archive phase52 plan and start canonical product part template scope` (hash: `bb1578f2`)
+### Stream 1: Remove hidden auto-continuation
+1. [TODO] Убрать hidden auto-continuation из `use-diagram-modules-orchestration.ts`: удалить `buildDiagramModulesContinuationPrompt`, удалить `cachedPartTemplateRef`, убрать вызов `api.sendSessionMessage` с `visibility: "hidden"` для part turns. Оставить aggregate compose logic и sequence lock для финализации. Обновить тесты в `use-diagram-modules-orchestration.test.ts` (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(diagram-workflow): remove hidden auto-continuation for part turns`)
+2. [TODO] Git Commit: `refactor(diagram-workflow): remove hidden auto-continuation for part turns` (hash: TBD)
 
-### Stream: Planning handoff
-1. [IN_PROGRESS] Оформить session report по итогам этой сессии: пользовательский retest показал, что агент создаёт все `product-parts/<part-id>.md`, но clusters/modules не materialize-ятся в графе; подтвердить root cause по live artifacts и зафиксировать, что следующая сессия начинает именно реализацию `Phase 53`, а не новый exploratory analysis (scope: `doc/Sessions/Session147.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record canonical product part template planning handoff`).
-2. [TODO] Git Commit: `docs(session): record canonical product part template planning handoff` (hash: TBD)
+### Stream 2: Rewrite agent prompt for step-by-step workflow
+1. [TODO] Переписать `module-inventory-prompt.md` — новая step-by-step schema: (1) первый turn — только index (список product parts без спецификации), задать вопросы по составу, ждать ответа; (2) каждый следующий turn — по одному product part после подтверждения пользователя; (3) убрать инструкции про hidden continuation. Обновить bundled-templates.ts (scope: `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat(diagram-workflow): rewrite prompt for step-by-step user-driven workflow`)
+2. [TODO] Git Commit: `feat(diagram-workflow): rewrite prompt for step-by-step user-driven workflow` (hash: TBD)
 
-### Stream: Canonical template SSOT
-1. [DONE] Переписать source assets `product-parts-index-template.md` и `product-part-template.md` в один канонический human-readable, parser-safe staged DSL без legacy inventory-first shape, явно отделив semantic sections от optional narrative appendix, но не меняя уже рабочий index parser path вне нужного template contract (scope: `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `packages/agents/diagram-modules-agent/assets/product-part-template.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): define canonical staged product part templates`).
-2. [DONE] Git Commit: `fix(diagram-workflow): define canonical staged product part templates` (hash: `052f7b37`)
+### Stream 3: Graph refresh on new artifact
+1. [TODO] При artifact persist или turn_completed для diagram_modules — диспатчить custom event `pm:diagram:refresh` из orchestration. В `DiagramModulesPanel` слушать этот event и инкрементировать refreshKey (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): refresh graph on new product part artifact`)
+2. [TODO] Git Commit: `fix(diagram-modules): refresh graph on new product part artifact` (hash: TBD)
 
-### Stream: Prompt path delivery
-1. [DONE] Verified: index turn delivery chain already works correctly — canonical templates are embedded via `appendDiagramPromptAppendix` through `DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS`. Part turn delivery is addressed in the dedicated "Part turn template injection" stream below. No code changes needed (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`).
-2. [DONE] No separate commit needed — covered by canonical template SSOT commit `052f7b37` and part turn injection below.
+### Stream 4: Fix auto-layout — sidecar fallback
+1. [TODO] В `applyFlowSidecarPositions` (`flow-sidecar-types.ts`) — если sidecar не содержит ВСЕХ нодов текущей проекции, не применять его (fallback на computed layout). Обновить тесты (scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete`)
+2. [TODO] Git Commit: `fix(diagram-modules): fallback to computed layout when sidecar is incomplete` (hash: TBD)
 
-### Stream: Part turn template injection
-1. [DONE] Critical bugfix: `normalizeWorkflowContract` in `description-submit-service.ts` rejected diagram_modules/diagram_facades contracts because `needsTemplate` was true but these stages have no `template` path (they use `promptAppendix`). Agent was falling back to generic prompt and NEVER received `module-inventory-prompt.md` or canonical templates. Fix: `needsTemplate = stage === "description"`. Also: added `promptAppendixEntries` field to contract payload in `idea-contract-service.ts`, and injected canonical product-part template content into every continuation prompt via `buildDiagramModulesContinuationPrompt` in `use-diagram-modules-orchestration.ts` (scope: `src/client/project-manager/services/description-submit-service.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): inject canonical template into part turn continuation prompt`).
-2. [DONE] Git Commit: `fix(diagram-workflow): inject canonical template into part turn continuation prompt` (hash: `5e3b8441`)
+### Stream 4b: Fix auto-layout — Purpose panel width
+1. [TODO] В `diagram-editor-facade.tsx` — убрать `minmax(240px, 320px)` для Purpose panel, заменить на `minmax(240px, 1fr)` чтобы Purpose растягивалась по ширине Product Part вместо фиксированных 320px. В `module-stage-react-flow.ts` — пересчитать `PRODUCT_PART_PURPOSE_CHARS_PER_LINE` под реальную ширину Purpose panel (зависит от productPartWidth). Обновить `getProductPartHeaderHeight` для динамического расчёта (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): make Purpose panel width dynamic and align layout calculations`)
+2. [TODO] Git Commit: `fix(diagram-modules): make Purpose panel width dynamic and align layout calculations` (hash: TBD)
 
-### Stream: Bundled template sync
-1. [DONE] Regenerated `bundled-templates.ts` from canonical source assets, updated snippet checks in `template-sync-service.test.ts` to match canonical product-part template shape (`# Product Part:` instead of `# Module Inventory`) and fixed stale prompt snippet reference (scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): sync canonical staged template delivery`).
-2. [DONE] Git Commit: `test(diagram-workflow): sync canonical staged template delivery` (hash: `ad4b9272`)
+### Stream 4c: Fix auto-layout — height underestimation
+1. [TODO] Audit и fix расчёта высот в `module-stage-react-flow.ts`: (a) пересчитать `chars-per-line` констант (24/32/42) под реальные CSS widths при font-size 11-14px; (b) увеличить `MODULE_CARD_MIN_HEIGHT` если 132px недостаточно; (c) пересчитать `getClusterHeaderHeight` и `getModuleCardHeight` чтобы совпадали с реальным CSS рендером; (d) добавить safety buffer к container heights чтобы дети не вылезали. Верифицировать на реальных данных (scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-modules): fix height calculation to prevent node overlap in auto-layout`)
+2. [TODO] Git Commit: `fix(diagram-modules): fix height calculation to prevent node overlap in auto-layout` (hash: TBD)
 
-### Stream: Parser alignment
-1. [DONE] Outline parser path already supports canonical template. Added additive compatibility shim: `## Cluster Ownership` section fallback and `### Cluster: \`id\`` header pattern in OUTLINE_CLUSTER_HEADER_RE regex for existing drift files. Index parser untouched (scope: `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): align staged parser with canonical product part template`).
-2. [DONE] Git Commit: `fix(diagram-workflow): align staged parser with canonical product part template` (hash: `6752ef1f`)
+### Stream 5: Sidebar — rename artifact + remove Source
+1. [TODO] Переименовать артефакт в sidebar: label `"module-inventory.md"` → `"Module Graph"` в `workspace-tree-diagram-branch-nodes.ts`. Переключить artifact availability check с existence of `module-inventory.md` на existence of `product-parts.index.md`. Обновить тесты (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`, `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(sidebar): rename diagram modules artifact to Module Graph`)
+2. [TODO] Git Commit: `refactor(sidebar): rename diagram modules artifact to Module Graph` (hash: TBD)
+3. [TODO] Убрать Source mode для Diagram Modules: в `stage-artifact-mode.ts` — modes `["artifacts", "help"]` вместо `["artifacts", "source", "help"]`. Убрать Source pending message для Diagram Modules. Обновить тесты (scope: `src/client/project-manager/components/layout/stage-artifact-mode.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `refactor(sidebar): remove Source mode for Diagram Modules`)
+4. [TODO] Git Commit: `refactor(sidebar): remove Source mode for Diagram Modules` (hash: TBD)
 
-### Stream: Semantic validation hardening
-1. [DONE] Updated `MODULE_INVENTORY_TITLE_RE` in `http-api-router.ts` to accept `# Product Part:` header alongside `# Module Inventory`. Added semantic emptiness guard in `diagram-modules-aggregate.ts`: if a parsed Product Part file has zero Clusters and zero Modules, the aggregate compose now fails explicitly instead of silently producing a shallow result (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `src/client/project-manager/components/sessions/diagram-modules-aggregate.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram-workflow): reject semantically-empty product part files`).
-2. [DONE] Git Commit: `fix(diagram-workflow): reject semantically-empty product part files` (hash: TBD)
+### Stream 6: Documentation sync
+1. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — отразить step-by-step workflow, убрать упоминания auto-continuation для diagram modules, зафиксировать Module Graph naming (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): reflect step-by-step diagram modules workflow`)
+2. [TODO] Git Commit: `docs(architecture): reflect step-by-step diagram modules workflow` (hash: TBD)
 
-### Stream: Regression coverage
-1. [DONE] Added regression test for semantic emptiness rejection in aggregate: a Product Part file that parses OK but has zero clusters/modules is now caught. Template sync tests updated in bundled template sync stream. Orchestration test file at 299-line limit — no room for additional tests there (scope: `src/client/project-manager/components/sessions/diagram-modules-aggregate.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram-workflow): cover canonical product part contract end-to-end`).
-2. [DONE] Git Commit: `test(diagram-workflow): cover canonical product part contract end-to-end` (hash: TBD)
+### Stream 7: Release notes + build
+1. [TODO] Обновить `README.md` и `CHANGELOG.md` с описанием step-by-step workflow, graph refresh, auto-layout fix, Module Graph naming (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync step-by-step diagram modules workflow notes`)
+2. [TODO] Git Commit: `docs(release): sync step-by-step diagram modules workflow notes` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить VSIX, скопировать tarballs (scope: release manifests, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare step-by-step diagram modules workflow release`)
+4. [TODO] Git Commit: `chore(release): prepare step-by-step diagram modules workflow release` (hash: TBD)
 
-### Stream: Release notes sync
-1. [DONE] Synced `README.md` (Current Release v1.1.777) and `CHANGELOG.md` (new `[1.1.777]` entry) with canonical template contract stabilization, critical normalizeWorkflowContract bugfix, continuation template injection, parser alignment, and semantic validation hardening (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): sync canonical product part template contract notes`).
-2. [DONE] Git Commit: `docs(release): sync canonical product part template contract notes` (hash: TBD)
-
-### Stream: Release build
-1. [DONE] `./scripts/build-all.sh` bumped version to 1.1.777, built all providers/core/UI/launcher. `./scripts/build-release.sh --use-current-version` produced `codeai-hub-1.1.777.vsix`. All architecture/quality gates passed (scope: release/version manifests and package metadata, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare canonical product part template contract release`).
-2. [DONE] Git Commit: `chore(release): prepare canonical product part template contract release` (hash: TBD)
-
-### Stream: Session handoff
-1. [DONE] Session report `doc/Sessions/Session148.md` created, all stream hashes recorded in plan (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session148.md`; expected commit: `docs(session): record canonical product part template contract release`).
-2. [DONE] Git Commit: `docs(session): record canonical product part template contract release` (hash: TBD)
-
-## Notes
-- Archived completed rollout plans:
-  - `doc/TODO/Archive/todo-plan-up-to-phase28-2026-03-22.md`
-  - `doc/TODO/Archive/todo-plan-up-to-phase30-2026-03-23.md`
-  - `doc/TODO/Archive/todo-plan-up-to-phase36-2026-03-23.md`
-  - `doc/TODO/Archive/todo-plan-up-to-phase52-2026-03-23.md`
-- Active planning docs for this scope:
-  - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Canonical_ProductPart_Template_And_Prompt_Delivery_Architecture.md`
-- User constraints for this scope:
-  - `Diagram Modules` остаётся главным graphical review step;
-  - шаблон `product-parts/<part-id>.md` обязан быть каноническим и реально передаваться агенту как template текущего turn-а;
-  - исправления должны идти по цепочке `template -> prompt delivery -> parser -> validation -> aggregate`, а не точечными parser hotfix-ами по одному live drift-формату;
-  - уже восстановленные index skeleton / hidden continuation / Source availability / sequence lock нельзя ломать;
-  - не трогать unrelated части кодовой базы, если они не нужны для этого contract scope.
+### Stream 8: Session handoff
+1. [TODO] Создать session report, записать все hashes (scope: `doc/Sessions/Session150.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record step-by-step diagram modules workflow release`)
+2. [TODO] Git Commit: `docs(session): record step-by-step diagram modules workflow release` (hash: TBD)
