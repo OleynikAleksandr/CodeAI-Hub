@@ -100,16 +100,16 @@
 - Relations parser bug deferred — irrelevant after module-inventory.md removal
 
 ### Stream 1: Remove Diagram Facades stage
-1. [TODO] Remove Diagram Facades components, prompts, templates, sidebar entries, tests. Update workflow step definitions. (scope: TBD after exploration)
-2. [TODO] Git Commit: TBD
+1. [DONE] Removed Diagram Facades components, prompts, templates, sidebar entries, tests, workflow step definitions. 86 files, -3576 lines. (scope: src/, packages/)
+2. [DONE] Git Commit: `refactor(workflow): remove Diagram Facades stage and all facade references` (hash: 5b12c63d)
 
 ### Stream 2: Remove module-inventory.md compose pipeline
-1. [TODO] Remove `diagram-modules-aggregate.ts`, compose pipeline, serializer references, sidebar availability checks. Update `prompt-pack-builder.ts`, `workflow-step-start-service.ts`. (scope: TBD after exploration)
-2. [TODO] Git Commit: TBD
+1. [DONE] Removed `diagram-modules-aggregate.ts`, compose pipeline, orchestration substep, prompt/help/panel text, core paths/hydration/progress references. 16 files, -557 lines.
+2. [DONE] Git Commit: `refactor(diagram-modules): remove module-inventory aggregate pipeline` (hash: e8a6c3ab)
 
 ### Stream 3: Documentation sync
-1. [TODO] Update `SystemArchitecture.md` — remove Diagram Facades references, reflect trunk ending at Diagram Modules. Update workflow docs in `doc/SolidWorks-WorkFlow/`. Update `CHANGELOG.md`. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, workflow docs, `CHANGELOG.md`, `doc/TODO/todo-plan.md`)
-2. [TODO] Git Commit: `docs(architecture): remove Diagram Facades and module-inventory from docs`
+1. [DONE] Updated `SystemArchitecture.md` — removed all Diagram Facades and module-inventory references. Updated `CHANGELOG.md` with removal notes.
+2. [DONE] Git Commit: `docs(architecture): remove Diagram Facades and module-inventory from docs`
 
 ### Stream 4: Release build
 1. [TODO] Актуализировать `README.md` и `CHANGELOG.md` под новую версию. (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`)
