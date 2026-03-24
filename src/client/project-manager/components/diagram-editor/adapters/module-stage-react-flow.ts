@@ -21,8 +21,8 @@ const MC_RESP_CPL = Math.floor(MC_CONTENT_W / 7.2);  // regular 12px
 // Cluster header: containerHeaderStyle gap:4
 const CL_GAP = 4, CL_CONTENT_W = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2 - 28;
 const CL_TITLE_CPL = Math.floor(CL_CONTENT_W / 7.8), CL_PURPOSE_CPL = Math.floor(CL_CONTENT_W / 6.6);
-// Product part
-const PP_TITLE_CPL = 30, PP_PURPOSE_PAD = 10;
+// Product part: productPartCardStyle padding "18px 18px 22px"
+const PP_CARD_PAD_TOP = 18, PP_TITLE_CPL = 30, PP_PURPOSE_PAD = 10;
 
 const toProductPartNodeId = (productPartId: string): string => `product-part:${productPartId}`;
 const toClusterNodeId = (clusterId: string): string => `cluster:${clusterId}`;
@@ -47,9 +47,9 @@ const getPurposeCharsPerLine = (productPartWidth: number): number => {
   const purposePanelWidth = Math.max(240, productPartWidth - 220);
   return Math.max(20, Math.floor((purposePanelWidth - 28) / 6.6));
 };
-// Product part header: max(summary, purpose) + transition gap
+// Product part header: card padding-top + max(summary, purpose) + transition gap
 const getProductPartHeaderHeight = (productPart: Pick<ProductPartEntity, "title" | "purpose">, productPartWidth: number): number =>
-  Math.ceil(Math.max(
+  Math.ceil(PP_CARD_PAD_TOP + Math.max(
     getProductPartSummaryHeight(productPart.title),
     getPurposePanelHeight(productPart.purpose, getPurposeCharsPerLine(productPartWidth))
   ) + PRODUCT_PART_HEADER_BODY_GAP);
