@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
-import { parseModuleInventoryDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-modules-parser";
+import { parseDiagramModulesDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-modules-parser";
 
 const FACADE_SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -70,7 +70,7 @@ test("diagram modules panel persists manual node positions without layout profil
 });
 
 test("module inventory parser converts clusters and standalone modules into a module map model", () => {
-  const result = parseModuleInventoryDsl(`\uFEFF# Module Inventory
+  const result = parseDiagramModulesDsl(`\uFEFF# Module Inventory
 
 ## Metadata
 - Version: 1
@@ -166,7 +166,7 @@ test("module inventory parser converts clusters and standalone modules into a mo
 });
 
 test("module inventory parser reads product part hierarchy without flattening ownership", () => {
-  const result = parseModuleInventoryDsl(`# Module Inventory
+  const result = parseDiagramModulesDsl(`# Module Inventory
 
 ## Metadata
 - Version: 2
