@@ -180,7 +180,17 @@
 - Для `Diagram Modules` semantic runtime contract теперь staged:
   - first artifact: `product-parts.index.md`;
   - primary semantic part artifacts: `product-parts/<part-id>.md`.
-- Trunk workflow ends at `Diagram Modules`; facade specs are deferred to per-cluster and per-module branches (future work).
+- Trunk workflow ends at `Diagram Modules`. After Module Graph approval, work continues as a Development Tree `[DESIGNED, NOT IMPLEMENTED]`:
+  - **Product Part branch** (per each part from Module Graph);
+    - **Cluster branch** (per each cluster inside part):
+      - Cluster Specification (functions, constituent modules, cluster-level responsibility);
+      - Cluster Facade Contract (external contract of the cluster);
+      - **Module branch** (per each module inside cluster):
+        - Module Specification (interfaces, methods, dependencies);
+        - Module Facade Contract (public API);
+        - TODO Plan (phases, streams, micro-tasks ≤3 files);
+        - Implementation (code + sync documentation updates).
+  - Facades are NOT a separate trunk step; they appear naturally inside per-cluster and per-module branches.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume `Diagram Modules` Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
 - Пока canonical artifact ещё не создан, `Artifacts` panel для workflow stage обязан показывать тот же help-content, что и вкладка `Help`; отдельный pending-intro prose вне help SSOT не допускается.
 - Ordinary dialog reopen/recovery contract обязан сохранять identity continuity между PM, Core continuity и provider runtime. Если runtime по любой причине создает fresh provider session вместо обычного resume, новый binding должен быть immediately normalized в continuity/index до следующего outbound user turn, а PM не имеет права бесконечно повторять `createSession(old providerSessionId)` для того же continuity entry.
