@@ -97,12 +97,56 @@ Read all artifacts end-to-end for workspace "CodeAI-Hub codex 5.4":
 ## Plans for next session
 
 ### Phase 57 — Cleanup: remove Diagram Facades + module-inventory aggregate
-Scope TBD, but expected areas:
-1. Remove Diagram Facades stage: components, prompts, templates, sidebar entries, tests
-2. Remove `module-inventory.md` compose pipeline: `diagram-modules-aggregate.ts`, serializer references, sidebar availability checks
-3. Update all references: `prompt-pack-builder.ts`, `workflow-step-start-service.ts`, `workspace-tree` entries
-4. Sync documentation: `SystemArchitecture.md`, workflow docs, CHANGELOG
-5. After cleanup: design per-cluster/per-module branching workflow
+
+#### Diagram Facades scope (37 files in src/, 33 in packages/)
+
+**Dedicated facade components (DELETE):**
+- `src/client/project-manager/components/diagram-facades/diagram-facades-panel.tsx`
+- `src/client/project-manager/components/diagram-facades/diagram-facades-help.tsx`
+- `packages/agents/diagram-facades-agent/` (entire agent: `assets/facade-map-prompt.md`, `assets/facade-map-template.md`, `src/facade.ts`)
+
+**Facade-specific editor code (DELETE):**
+- `src/.../diagram-editor/apply-facade-domain-patch.ts` + `.test.ts`
+- `src/.../diagram-editor/apply-facade-relation-patch.ts` + `.test.ts`
+- `src/.../diagram-editor/facade-conflict-merge.test.ts`
+- `src/.../diagram-editor/adapters/domain-model-to-react-flow.facades.test.ts`
+
+**Facade parser in core (DELETE):**
+- `packages/core/src/workflow/diagram-dsl/facade-map-parser.ts` + `.test.ts`
+
+**Files needing facade REFERENCES removed (EDIT, not delete):**
+- `src/.../layout/stage-artifact-mode.ts` + `.test.ts` — remove `diagram_facades` from stage modes
+- `src/.../layout/workspace-tree-diagram-branch-nodes.ts` + `.test.ts` — remove facade branch
+- `src/.../layout/use-diagram-facades-artifact-availability.ts` — DELETE entire file
+- `src/.../layout/main-area.tsx`, `main-area-panel-content.tsx`, `main-area-utils.ts` — remove facade panel routing
+- `src/.../layout/workspace-tree-model.ts`, `workspace-tree-branch-nodes.ts`, `workspace-tree.tsx` — remove facade entries
+- `src/.../layout/use-main-area-workflow-state.ts`, `use-stage-panel-sync.ts`, `use-workflow-tool-select.ts` — remove facade refs
+- `src/.../shared/stage-artifact-fix-button.tsx`, `stage-artifact-content-view.tsx`, `use-stage-artifact-loader.ts` — remove facade cases
+- `src/.../diagram-editor/diagram-stage-panel-scaffold.tsx` — remove facade mode
+- `src/.../diagram-editor/diagram-modules-progressive-model.ts` — remove facade model refs
+- `src/.../diagram-editor/adapters/domain-model-to-react-flow.ts`, `.types.ts` — remove facade adapter path
+- `src/.../diagram-editor/diagram-editor-facade.test.tsx` — remove facade test cases
+- `src/.../services/prompt-pack-builder.ts` — remove facade prompt pack
+- `src/.../services/workflow-step-start-service.ts` + `.gating.test.ts` — remove facade step start
+- `src/.../services/workflow-state-client.ts` — remove facade state
+- `src/.../services/description-submit-service.ts` — remove facade refs
+- `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `workflow-paths-types.ts` — remove facade paths
+- `packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer.test.ts`, `markdown-dsl-parser.ts`, `diagram-dsl-types.ts` — remove facade types/serializer
+- `packages/core/src/workflow/diagram-dsl/baseline-diff-service.test.ts` — remove facade diff tests
+- `packages/core/src/remote-bridge/handlers/` — remove facade contract handlers, session refs, state refs
+- `packages/core/src/workflow/watcher/`, `state/`, `session-continuity/` — remove facade watcher, state, continuity refs
+- `packages/core/src/templates/bundled-templates.ts`, `template-sync-service.ts` + `.test.ts` — remove facade templates
+
+#### module-inventory.md scope (16 files)
+- `src/.../sessions/diagram-modules-aggregate.ts` + `.test.ts` — DELETE compose pipeline
+- `src/.../layout/` — remove availability checks and sidebar refs to module-inventory
+- `src/.../services/prompt-pack-builder.ts` — remove module-inventory as prompt context
+- `src/.../diagram-editor/use-diagram-loader.ts` — verify it loads from part files, not aggregate
+- `src/.../diagram-modules/diagram-modules-panel.tsx` — verify no aggregate dependency
+
+#### Post-cleanup
+- Sync documentation: `SystemArchitecture.md`, workflow docs, CHANGELOG
+- Design per-cluster/per-module branching workflow
 
 ### Known bugs NOT fixed (deferred to cleanup)
 - Relations not parsed from product part files → irrelevant after module-inventory.md removal
