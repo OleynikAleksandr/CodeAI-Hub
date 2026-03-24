@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
-import { parseModuleInventoryDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/module-inventory-parser";
+import { parseModuleInventoryDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-modules-parser";
 
 const FACADE_SOURCE_PATH = path.resolve(
   process.cwd(),
