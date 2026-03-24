@@ -170,13 +170,13 @@ test("domainModelToReactFlow wraps standalone modules into a dedicated band with
 
   assert.equal(productPartNode.style?.width, 720);
   assert.equal(descriptionStageNode.position.x, 24);
-  assert.equal(virtualSimulationStageNode.position.x, 296);
-  assert.equal(descriptionStageNode.position.y, clusterBandBottom + 36);
+  assert.equal(virtualSimulationStageNode.position.x, 344);
+  assert.equal(descriptionStageNode.position.y, clusterBandBottom + 12);
   assert.equal(virtualSimulationStageNode.position.y, descriptionStageNode.position.y);
   assert.equal(diagramModulesStageNode.position.x, 24);
-  assert.equal(artifactFreshnessNode.position.x, 296);
+  assert.equal(artifactFreshnessNode.position.x, 344);
   assert.equal(diagramModulesStageNode.position.y, artifactFreshnessNode.position.y);
-  assert.equal(diagramModulesStageNode.position.y > descriptionStageNode.position.y + 132, true);
+  assert.equal(diagramModulesStageNode.position.y > descriptionStageNode.position.y + 116, true);
 });
 
 const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
