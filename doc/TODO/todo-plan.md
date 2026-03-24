@@ -112,13 +112,9 @@
 2. [DONE] Git Commit: `docs(architecture): remove Diagram Facades and module-inventory from docs`
 
 ### Stream 4: Release build
-1. [TODO] Актуализировать `README.md` и `CHANGELOG.md` под новую версию. (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`)
-2. [TODO] Git Commit: `docs(release): sync cleanup notes for Phase 57 release`
-3. [TODO] Убедиться что `git status` чистый. Запустить `./scripts/build-all.sh` (bump version + full build). (scope: scripts, package.json files)
-4. [TODO] Git Commit: `chore(release): bump version to <new_version>`
-5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`. Проверить вывод: `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`. Скопировать tarballs в `doc/tmp/releases/`. (scope: VSIX, tarballs)
-6. [TODO] Git Commit: TBD (если есть изменения после build-release)
+1. [DONE] build-all.sh → 1.1.788. build-release.sh → codeai-hub-1.1.788.vsix. Tarballs → doc/tmp/releases/. Fixed build-core.sh rsync for deleted facades agent.
+2. [DONE] Git Commits: `chore(release): bump version to 1.1.787` (b493b5cb), `fix(build): remove diagram-facades-agent rsync from build-core.sh` (c5dd8547), `chore(release): bump version to 1.1.788` (d64f90f6), `fix(diagram-editor): remove FacadeNode from editor component` (087f2fac)
 
 ### Stream 5: Session handoff
-1. [TODO] Создать `doc/Sessions/Session153.md` с полным отчётом по Phase 57. (scope: `doc/Sessions/Session153.md`, `doc/TODO/todo-plan.md`)
-2. [TODO] Git Commit: `docs(session): record session 153 with phase 57 completion`
+1. [DONE] Session153.md + todo-plan.md updated.
+2. [DONE] Git Commit: `docs(session): record session 153 with phase 57 completion`
