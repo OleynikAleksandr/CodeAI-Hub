@@ -2,6 +2,13 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.783] - 2026-03-24
+### Fixed
+- **Clusters overlap Purpose panel**: `getProductPartHeaderHeight` now includes `productPartCardStyle` padding-top (18px), so clusters start below the card padding instead of overlapping the Purpose panel content.
+- **3-column module table N-1 bug**: `\s*` in `OUTLINE_MODULE_ROW_RE` optional group matched `\n`, causing the regex to span two lines and swallow the next data row (N-1 visible modules per cluster). Fix: `[ \t]*` prevents newline crossing.
+- **Phantom header row**: table header `| \`module-id\` | \`kind\` | Responsibility |` was matched as a real module. Now filtered by id.
+- **Module title shows kind**: when agent produces 3-column tables (`module-id | kind | Responsibility`), col2 is now detected as kind and module-id is humanized for display title instead of showing "service"/"store"/etc.
+
 ## [1.1.778] - 2026-03-24
 ### Changed
 - **Diagram Modules step-by-step workflow**: removed hidden auto-continuation. The agent now pauses after creating the product parts index and after each product part, giving the user full control over the conversation flow.
