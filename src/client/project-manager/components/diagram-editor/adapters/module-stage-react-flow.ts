@@ -6,7 +6,7 @@ type ClusterEntity = NonNullable<ModuleMapModel["clusters"]>[number];
 type ProductPartEntity = NonNullable<ModuleMapModel["productParts"]>[number];
 
 // -- Layout geometry (non-CSS) --
-const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 12, PRODUCT_PART_HEADER_BODY_GAP = 4;
+const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 12, PRODUCT_PART_HEADER_BODY_GAP = 12;
 const PRODUCT_PART_SECTION_GAP = 12, PRODUCT_PART_ROW_GAP = 24, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
 const CLUSTER_X_STEP = 320, CLUSTER_PADDING_X = 24, CLUSTER_BOTTOM_PADDING = 12;
 const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_GAP = 12;
@@ -18,9 +18,10 @@ const LH12_135 = 17; // Math.ceil(12 * 1.35) — module responsibility lineHeigh
 const MC_PAD = 12, MC_CONTENT_W = MODULE_CARD_WIDTH - 28;
 const MC_TITLE_CPL = Math.floor(MC_CONTENT_W / 8.5); // bold 14px
 const MC_RESP_CPL = Math.floor(MC_CONTENT_W / 7.2);  // regular 12px
-// Cluster header: containerHeaderStyle gap:4
-const CL_GAP = 4, CL_CONTENT_W = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2 - 28;
+// Cluster: clusterCardStyle padding "14px 14px 18px", containerHeaderStyle gap:4
+const CL_PAD_TOP = 14, CL_GAP = 4, CL_CONTENT_W = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2 - 28;
 const CL_TITLE_CPL = Math.floor(CL_CONTENT_W / 7.8), CL_PURPOSE_CPL = Math.floor(CL_CONTENT_W / 6.6);
+const CL_PURPOSE_LH = 16; // Math.ceil(11 * 1.4) — purposeTextStyle lineHeight:1.4
 // Product part: productPartCardStyle padding "18px 18px 22px"
 const PP_CARD_PAD_TOP = 18, PP_TITLE_CPL = 30, PP_PURPOSE_PAD = 10;
 
@@ -34,9 +35,9 @@ const estimateTextLines = (text: string, charsPerLine: number): number =>
 // Module card height from CSS: pad + "MODULE" + mt4+title + mt4+kind + mt6+resp + mt8+label + pad
 const getModuleCardHeight = (module: ModuleEntity): number =>
   Math.ceil(MC_PAD + LH11 + 4 + estimateTextLines(module.title, MC_TITLE_CPL) * LH14 + 4 + LH11 + 6 + estimateTextLines(module.responsibility, MC_RESP_CPL) * LH12_135 + 8 + LH11 + MC_PAD);
-// Cluster header: grid gap:4 — caption, title, meta, (gap+mt6) purpose
+// Cluster header: pad-top + grid(caption, title, meta, purpose) + gap to first module
 const getClusterHeaderHeight = (cluster: Pick<ClusterEntity, "title" | "purpose">): number =>
-  Math.ceil(LH11 + CL_GAP + estimateTextLines(cluster.title, CL_TITLE_CPL) * LH13 + CL_GAP + LH11 + CL_GAP + 6 + estimateTextLines(cluster.purpose, CL_PURPOSE_CPL) * LH11);
+  Math.ceil(CL_PAD_TOP + LH11 + CL_GAP + estimateTextLines(cluster.title, CL_TITLE_CPL) * LH13 + CL_GAP + LH11 + CL_GAP + 6 + estimateTextLines(cluster.purpose, CL_PURPOSE_CPL) * CL_PURPOSE_LH + MODULE_CARD_GAP);
 // Product part summary: caption + gap + title + gap + meta
 const getProductPartSummaryHeight = (title: string): number =>
   LH11 + 4 + estimateTextLines(title, PP_TITLE_CPL) * LH15 + 4 + LH12;

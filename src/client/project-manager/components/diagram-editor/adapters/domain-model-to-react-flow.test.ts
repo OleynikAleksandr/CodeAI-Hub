@@ -152,7 +152,7 @@ test("domainModelToReactFlow projects module map into product part, cluster, and
   assert.equal(gatewayNode.type, "module");
   assert.equal(gatewayNode.parentId, "cluster:delivery");
   assert.equal(gatewayNode.extent, "parent");
-  assert.deepEqual(gatewayNode.position, { x: 24, y: 90 });
+  assert.deepEqual(gatewayNode.position, { x: 24, y: 120 });
   assert.deepEqual(gatewayNode.data, {
     stage: "diagram_modules",
     nodeKind: "module",
@@ -178,7 +178,7 @@ test("domainModelToReactFlow projects module map into product part, cluster, and
   const standaloneNode = result.nodes[5];
   assert.equal(standaloneNode.parentId, "product-part:control-shell");
   assert.equal(standaloneNode.extent, "parent");
-  assert.deepEqual(standaloneNode.position, { x: 24, y: 330 });
+  assert.deepEqual(standaloneNode.position, { x: 24, y: 368 });
 
   assert.deepEqual(result.edges, [
     {
