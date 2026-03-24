@@ -21,12 +21,11 @@ const LEGACY_DIAGRAM_TEMPLATE_PATHS = [
 ] as const;
 
 const VISIBLE_DIAGRAM_TEMPLATE_PATHS = [
-  ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
-  ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
+  ".codeai-hub/templates/diagram_modules/diagram-modules-prompt.md",
   ".codeai-hub/templates/diagram_modules/product-parts-index-template.md",
   ".codeai-hub/templates/diagram_modules/product-part-template.md",
-  ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
-  ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
+  ".codeai-hub/templates/diagram_modules/diagram-modules-field-reference.md",
+  ".codeai-hub/templates/diagram_modules/diagram-modules-merge-rules.md",
 ] as const;
 
 const POLYGON_TEMPLATE_CONTENT_CHECKS = [
@@ -67,18 +66,8 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
   },
   {
     relativePath:
-      ".codeai-hub/templates/diagram_modules/module-inventory-prompt.md",
+      ".codeai-hub/templates/diagram_modules/diagram-modules-prompt.md",
     snippets: ["formal subsystem container", "product-parts.index.md"],
-  },
-  {
-    relativePath:
-      ".codeai-hub/templates/diagram_modules/module-inventory-template.md",
-    snippets: [
-      "### Cluster: example-user-workspace",
-      "#### Module: workspace-intake",
-      "Этот inventory — semantic source of truth шага",
-      "Оставляйте module standalone",
-    ],
   },
   {
     relativePath:
@@ -100,7 +89,7 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
   },
   {
     relativePath:
-      ".codeai-hub/templates/diagram_modules/module-inventory-field-reference.md",
+      ".codeai-hub/templates/diagram_modules/diagram-modules-field-reference.md",
     snippets: [
       "Разделы `Module Inventory`:",
       "`Product Part` — это верхний уровень продукта в этом DSL",
@@ -109,7 +98,7 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
   },
   {
     relativePath:
-      ".codeai-hub/templates/diagram_modules/module-inventory-merge-rules.md",
+      ".codeai-hub/templates/diagram_modules/diagram-modules-merge-rules.md",
     snippets: [
       "Когда runtime передаёт change summary:",
       "Не переводите молча standalone modules в cluster members",
