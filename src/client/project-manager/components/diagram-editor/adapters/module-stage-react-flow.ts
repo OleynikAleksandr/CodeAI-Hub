@@ -9,7 +9,8 @@ const PRODUCT_PART_PADDING_X = 24, PRODUCT_PART_PADDING_BOTTOM = 12, PRODUCT_PAR
 const PRODUCT_PART_SECTION_GAP = 12, PRODUCT_PART_ROW_GAP = 24, PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS = 3, PRODUCT_PART_EXTERNAL_GAP = 72;
 const PRODUCT_PART_HEADER_BODY_GAP = 4, PRODUCT_PART_TITLE_CHARS_PER_LINE = 30;
 const CLUSTER_X_STEP = 320, CLUSTER_MIN_HEIGHT = 168, CLUSTER_PADDING_X = 24, CLUSTER_HEADER_MIN_HEIGHT = 72, CLUSTER_BOTTOM_PADDING = 12, CLUSTER_CARD_PADDING_TOP = 8;
-const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 116, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 14;
+const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_MIN_HEIGHT = 136, MODULE_CARD_GAP = 12, TITLE_LINE_HEIGHT = 18, BODY_LINE_HEIGHT = 14;
+const MODULE_RESP_LINE_HEIGHT = 17;
 const CLUSTER_HEADER_BODY_GAP = 4, CLUSTER_PURPOSE_CHARS_PER_LINE = 36, CLUSTER_TITLE_CHARS_PER_LINE = 28;
 const CONTAINER_CAPTION_LINE_HEIGHT = 12, CONTAINER_META_LINE_HEIGHT = 14, PURPOSE_TEXT_MARGIN_TOP = 6;
 const STANDALONE_X_STEP = CLUSTER_X_STEP, DEFAULT_PRODUCT_PART_ID = "default-product-part";
@@ -24,7 +25,7 @@ const estimateTextLines = (text: string, charsPerLine: number): number =>
 const getExtraLines = (text: string, charsPerLine: number, includedLines = 1): number =>
   Math.max(0, estimateTextLines(text, charsPerLine) - includedLines);
 const getModuleCardHeight = (module: ModuleEntity): number =>
-  MODULE_CARD_MIN_HEIGHT + getExtraLines(module.title, 24) * TITLE_LINE_HEIGHT + getExtraLines(module.responsibility, 32, 2) * BODY_LINE_HEIGHT;
+  MODULE_CARD_MIN_HEIGHT + getExtraLines(module.title, 24) * TITLE_LINE_HEIGHT + getExtraLines(module.responsibility, 32, 2) * MODULE_RESP_LINE_HEIGHT;
 const getProductPartSummaryHeight = (title: string): number =>
   CONTAINER_CAPTION_LINE_HEIGHT + 4 + estimateTextLines(title, PRODUCT_PART_TITLE_CHARS_PER_LINE) * TITLE_LINE_HEIGHT + 4 + CONTAINER_META_LINE_HEIGHT;
 const getPurposePanelHeight = (purpose: string, charsPerLine: number): number =>
