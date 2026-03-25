@@ -1,7 +1,7 @@
 import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Background,
-  Controls,
   ReactFlow,
   type NodeChange,
   type NodeTypes,
@@ -20,15 +20,6 @@ type DiagramEditorFacadeProps = {
   readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
   readonly title: string;
   readonly subtitle?: string;
-};
-
-const toolbarStyle: React.CSSProperties = {
-  display: "grid",
-  gap: 4,
-  padding: "10px 12px",
-  borderBottom: "1px solid var(--pm-border-color)",
-  background:
-    "linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0))",
 };
 
 const canvasStyle: React.CSSProperties = {
@@ -208,52 +199,67 @@ const NODE_TYPES = {
   module: ModuleNode as React.ComponentType,
 } as unknown as NodeTypes;
 
+const PAN_CLASS = "diagram-pan-mode";
+const DRAG_CLASS = "diagram-drag-mode";
+
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
   edges,
   onNodesChange,
   title,
   subtitle,
-}) => (
-  <div
-    style={{
-      display: "grid",
-      gridTemplateRows: "auto 1fr",
-      width: "100%",
-      height: "100%",
-      minHeight: 420,
-      background: "var(--pm-bg-surface)",
-      border: "1px solid var(--pm-border-color)",
-      borderRadius: 16,
-      overflow: "hidden",
-      boxShadow: "var(--pm-shadow-soft)",
-    }}
-  >
-    <div style={toolbarStyle}>
-      <strong style={{ fontSize: 14 }}>{title}</strong>
-      {subtitle ? (
-        <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
-          {subtitle}
-        </span>
-      ) : null}
-    </div>
-    <div style={{ position: "relative", minHeight: 0 }}>
+}) => {
+  const [ctrlHeld, setCtrlHeld] = useState(false);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Control" || event.key === "Meta") setCtrlHeld(true);
+  }, []);
+  const handleKeyUp = useCallback((event: KeyboardEvent) => {
+    if (event.key === "Control" || event.key === "Meta") setCtrlHeld(false);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", () => setCtrlHeld(false));
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [handleKeyDown, handleKeyUp]);
+
+  const draggable = ctrlHeld && Boolean(onNodesChange);
+
+  return (
+    <div
+      className={draggable ? DRAG_CLASS : PAN_CLASS}
+      style={{
+        width: "100%",
+        height: "100%",
+        minHeight: 420,
+        background: "var(--pm-bg-surface)",
+        border: "1px solid var(--pm-border-color)",
+        borderRadius: 16,
+        overflow: "hidden",
+        boxShadow: "var(--pm-shadow-soft)",
+      }}
+    >
+      {!draggable && <style>{`.${PAN_CLASS} .react-flow__node{pointer-events:none}`}</style>}
       <ReactFlow
         fitView
         edges={edges as never}
         nodes={nodes as never}
         nodeTypes={NODE_TYPES}
         onNodesChange={onNodesChange as never}
-        nodesDraggable={Boolean(onNodesChange)}
+        nodesDraggable={draggable}
         nodesConnectable={false}
-        elementsSelectable={Boolean(onNodesChange)}
+        elementsSelectable={draggable}
         panOnDrag
         zoomOnDoubleClick={false}
         style={canvasStyle}
       >
         <Background gap={24} size={1} />
-        <Controls showInteractive={false} />
       </ReactFlow>
     </div>
-  </div>
-);
+  );
+};

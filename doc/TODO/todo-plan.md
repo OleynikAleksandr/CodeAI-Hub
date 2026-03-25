@@ -13,6 +13,31 @@
 
 ---
 
-## Phase 60 — (ожидает задачи от пользователя) (owner: Oleksandr, updated: 2026-03-25)
+## Phase 61 — Diagram Modules UX cleanup (owner: Oleksandr, updated: 2026-03-25)
 
-(Задачи будут добавлены после получения фидбэка по тестированию 1.1.790/1.1.791)
+### Stream 1: Remove description text block above the diagram canvas
+
+Убрать весь текстовый блок между верхним сайдбаром "DIAGRAM MODULES" и canvas диаграммы: заголовок "Diagram Modules", intro text "Artifacts show the staged...", Product Part Progress banner.
+
+1. [TODO] **Remove intro section and progress banner** from `diagram-stage-panel-scaffold.tsx`. Удалить блок `<strong>{title}</strong>`, `<span>{introText}</span>` и `{progressBanner}`. Canvas должен занять всю доступную высоту. (scope: 1 файл)
+2. [TODO] Git Commit: `refactor(pm): remove description text and progress banner from diagram stage panel`
+
+### Stream 2: Remove header bar and controls from ReactFlow canvas
+
+Убрать "Diagram Modules" toolbar внутри ReactFlow контейнера и кнопки +/-/fit в левом нижнем углу.
+
+3. [TODO] **Remove toolbar header and `<Controls />`** from `diagram-editor-facade.tsx`. Удалить `<div style={toolbarStyle}>...</div>` и `<Controls showInteractive={false} />`. Обновить тест в `diagram-editor-facade.test.tsx`. (scope: 2 файла)
+4. [TODO] Git Commit: `refactor(pm): remove toolbar header and zoom controls from diagram canvas`
+
+### Stream 3: Ctrl+drag to move nodes, default drag = pan
+
+По умолчанию левая кнопка мыши перемещает весь граф (pan), даже если схватиться за элемент. Перетаскивание отдельных элементов — только с зажатым Ctrl.
+
+5. [TODO] **Add Ctrl-key state tracking + conditional nodesDraggable** in `diagram-editor-facade.tsx`. Добавить `useState` + `keydown`/`keyup` listeners для Ctrl. Установить `nodesDraggable={ctrlPressed}`. Когда Ctrl не нажат — `pointer-events: none` на `.react-flow__node` через conditional CSS class, чтобы drag на ноде = pan всего canvas. (scope: 1-2 файла)
+6. [TODO] Git Commit: `feat(pm): ctrl+drag to move nodes, default drag pans canvas`
+
+### Stream 4: Release build
+
+7. [TODO] **Таргетные сборки** `npm run build:webview`, `npm run typecheck:webview`, проверка тестов.
+8. [TODO] **Release build**: `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`. Записать результаты в `doc/Sessions/Session155.md`.
+9. [TODO] Git Commit: `chore(release): bump version to <TBD>`

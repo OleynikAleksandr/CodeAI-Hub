@@ -215,18 +215,10 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
         className="pm-details"
         style={{
           display: "grid",
-          gap: 12,
           minHeight: "100%",
-          gridTemplateRows: "auto minmax(0, 1fr)",
+          gridTemplateRows: "minmax(0, 1fr)",
         }}
       >
-        <div style={{ display: "grid", gap: 4 }}>
-          <strong>{title}</strong>
-          <span style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
-            {introText}
-          </span>
-          {progressBanner}
-        </div>
         <div
           style={{
             display: "flex",

@@ -26,9 +26,9 @@ const SCAFFOLD_SOURCE_PATH = path.resolve(
 );
 test("diagram-editor-facade keeps React Flow diagnostics widgets but no auto-layout controls", async () => {
   const source = await readFile(FACADE_SOURCE_PATH, "utf8");
-  assert.equal(source.includes("<Controls showInteractive={false} />"), true);
+  assert.equal(source.includes("<Controls"), false);
   assert.equal(source.includes("<MiniMap"), false);
-  assert.equal(source.includes("nodesDraggable={Boolean(onNodesChange)}"), true);
+  assert.equal(source.includes("nodesDraggable"), true);
   assert.equal(source.includes("ReactFlowProvider"), false);
   assert.equal(source.includes("useReactFlow"), false);
   assert.equal(source.includes("useNodesInitialized"), false);
@@ -49,7 +49,7 @@ test("diagram-editor-shell is now user-owned layout only", async () => {
 test("diagram stage scaffold keeps the visual shell stretched to full panel height", async () => {
   const source = await readFile(SCAFFOLD_SOURCE_PATH, "utf8");
   assert.equal(source.includes("minHeight: \"100%\""), true);
-  assert.equal(source.includes("gridTemplateRows: \"auto minmax(0, 1fr)\""), true);
+  assert.equal(source.includes("gridTemplateRows: \"minmax(0, 1fr)\""), true);
   assert.equal(source.includes("flex: \"1 1 auto\""), true);
 });
 
@@ -63,7 +63,7 @@ test("diagram modules panel persists manual node positions without layout profil
   );
   assert.equal(source.includes("Edit modules"), false);
   assert.equal(source.includes("Edit relations"), false);
-  assert.equal(source.includes("derived visual module map"), true);
+  assert.equal(source.includes("visualProjection"), true);
   assert.equal(source.includes("useDomainPatch"), false);
   assert.equal(source.includes("ModuleEntityEditor"), false);
   assert.equal(source.includes("ModuleRelationEditor"), false);
