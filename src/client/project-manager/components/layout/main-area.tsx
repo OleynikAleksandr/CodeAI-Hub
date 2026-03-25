@@ -238,10 +238,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     !hasDescriptionSession &&
     !hasDescriptionSessionPending;
   const artifactHeaderModes = resolveArtifactHeaderModes(activeTool);
-  const artifactHeaderTitle =
-    activeTool === VIRTUAL_SIMULATION_TOOL_LABEL
-      ? "Virtual Simulation"
-      : activeTool;
+  const artifactHeaderTitle = activeTool === VIRTUAL_SIMULATION_TOOL_LABEL ? "Virtual Simulation" : activeTool;
 
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
 
@@ -277,6 +274,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             <StageArtifactHeaderToggle
               availableModes={artifactHeaderModes}
               extraActions={detachButton}
+              hint={activeTool === "Diagram Modules" ? "Zoom: scroll · Pan: drag · Move node: ⌥(Alt)+drag" : undefined}
               mode={artifactHeaderMode}
               onModeChange={setArtifactHeaderMode}
               title={artifactHeaderTitle}
