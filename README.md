@@ -7,15 +7,18 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.777
-- **Critical bugfix**: the agent was falling back to a generic prompt because `normalizeWorkflowContract` rejected diagram-stage contracts. Now the agent receives the full `module-inventory-prompt.md` with all embedded canonical templates.
-- Canonical product-part template rewritten to Outline format (`# Product Part: <Title>`) with Identity table, Purpose prose, Owned Clusters and Standalone Modules — fully aligned with the parser.
-- Continuation prompts now embed the canonical template, eliminating format drift across part turns.
-- Parser compatibility shim for existing drift files (`## Cluster Ownership`, `### Cluster: \`id\``).
-- Semantic validation: aggregate compose now rejects Product Part files with zero Clusters and zero Modules instead of silently producing shallow results.
-- `product-parts.index.md` remains the first staged artifact, hidden continuation still starts from the recovered index parser, and `module-inventory.md` remains runtime-owned compatibility output for downstream stages.
+## Current Release — v1.1.800
+- **Detachable diagram window**: click `Detach` in the artifact header to open the Module Graph in a separate CEF popup; both windows share one sidecar file and sync positions via BroadcastChannel on drop.
+- **Option(Alt)+drag** for node movement (Ctrl replaced — it triggers context menu on macOS); default drag pans the canvas.
+- **Dynamic container resizing**: Product Part and Cluster containers grow/shrink as child nodes are dragged toward or away from edges (min width PP=720px).
+- **Collision avoidance**: siblings within the same container and Product Parts at the top level enforce a 12px gap — nodes cannot overlap.
+- **Multi-column layout**: clusters with 3+ modules use a 2-column grid.
+- **Controls hint** in artifact header: `Zoom: scroll · Pan: drag · Move node: ⌥(Alt)+drag`.
+- **Auto-select**: opening a workspace now shows Diagram Modules if it has an active session, before Virtual Simulation.
+- **Canvas cleanup**: removed description block, toolbar header, and zoom controls — ReactFlow takes 100% of panel area.
+- **Documentation sync**: Plans/ cleaned up (9 deleted, 9 archived, 8 relocated to System/Contracts); SystemArchitecture.md and Project_Manager.md updated to v1.1.800.
 
-Previous releases (summary): the `1.1.57x–1.1.775` series focused on SSOT routing (dialog vs runtime), snapshot-first lock/usage authority, continuity/resume reliability across providers, Virtual Simulation workflow, the first Diagram Modules / Facades workflow, the diagram DSL runtime foundation, PM/UI contract cleanup, corrective runtime/template delivery, the first visual shell release, semantic editing for both diagram stages, bootstrap/gating + parseability recovery for fresh diagram-stage launch, the diagram user-surface recovery that restored `Artifacts | Source | Help`, repository-wide duplication debt reduction below the enforced release threshold, realtime auto-layout refresh without reopen/remount, inventory-first diagram rollout, ownership-aware `Product Part` hierarchy, the two-pass Diagram Modules layout/readability fixes, the new staged product-part decomposition baseline, the staged prompt/continuation repair line, the `1.1.771` / `1.1.772` retest fixes that restored index parsing, `Source`, and hidden continuation, the staged `Product Part` parser recoveries from `1.1.773` and `1.1.774`, and the `1.1.775` fix that restored the live canonical-order index shape.
+Previous releases (summary): `1.1.57x–1.1.799` — SSOT routing, snapshot-first lock/usage, continuity/resume reliability, Virtual Simulation workflow, Diagram Modules DSL runtime, PM/UI contract cleanup, visual shell, semantic editing, ownership-aware Product Part hierarchy, staged product-part decomposition, step-by-step workflow, parser recoveries, layout/readability fixes, and canonical template alignment.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

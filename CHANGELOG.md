@@ -2,18 +2,25 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
-## [Unreleased]
-### Removed
-- **Diagram Facades workflow step**: trunk now ends at Diagram Modules. A single flat diagram of all facades was an unreadable visual monolith; facade specs will appear inside per-cluster and per-module branches instead. Deleted: `diagram-facades-agent`, facade panel/help, facade parser, facade editor components, ~3,500 lines of code across 86 files.
-- **module-inventory.md aggregate**: the Module Graph is now built progressively from individual `product-parts/<part-id>.md` files. The compose pipeline, aggregate orchestration substep, and all module-inventory.md references have been removed.
+## [1.1.800] - 2026-03-25
+### Added
+- **Detachable diagram window**: `Detach` button in artifact header opens a full-viewport ReactFlow popup via `window.open()`; shared sidecar file with BroadcastChannel sync on drop.
+- **Dynamic container resizing**: Product Part and Cluster containers auto-grow/shrink when child nodes are dragged toward or away from edges; `containerConstraints` stored in flow node data.
+- **Collision avoidance**: AABB minimum-translation-vector with 12px gap between siblings within the same container and between Product Parts at top level.
+- **Multi-column layout**: clusters with 3+ modules use 2-column grid (`CLUSTER_MULTI_COL_THRESHOLD = 2`).
+- **Controls hint**: muted text in artifact header — `Zoom: scroll · Pan: drag · Move node: ⌥(Alt)+drag` — shown only for Diagram Modules.
+- **Auto-select Diagram Modules**: workspace open now checks DM sessions before Virtual Simulation.
 
 ### Changed
-- **Agent assets renamed**: all `module-inventory-*` agent assets renamed to `diagram-modules-*` (`diagram-modules-prompt.md`, `diagram-modules-field-reference.md`, `diagram-modules-merge-rules.md`). Old `module-inventory-template.md` deleted (replaced by `product-part-template.md` + `product-parts-index-template.md`).
-- **Field reference rewritten**: now describes staged tabular product-part format instead of old flat inventory format. Removed Inputs/Outputs/Contract Targets/Code Targets/Origin/Status fields.
-- **Granularity guardrail added to prompt**: typical Product Part should contain 3–8 modules; >10 signals over-decomposition; ≤5 modules usually don't need clusters.
-- **Status update rule**: agent now updates `Status: generated` in `product-parts.index.md` after materializing each part file.
-- **Parser renamed**: `module-inventory-parser.ts` → `diagram-modules-parser.ts`; validation symbols renamed accordingly.
-- **Legacy template cleanup**: 4 old `module-inventory-*` template paths added to `LEGACY_TEMPLATE_RELATIVE_PATHS` for automatic disk cleanup.
+- **Option(Alt)+drag** replaces Ctrl/Meta for node movement — Ctrl+click on macOS triggers context menu.
+- **Canvas cleanup**: removed description block, toolbar header, and zoom controls; ReactFlow fills 100% of panel area.
+- **Detach button relocated** from above the graph to the artifact header (left of Artifacts toggle) via `extraActions` slot.
+- **Documentation reorganization**: Plans/ cleaned (9 deleted, 9 archived, 8 moved to System/Contracts); SystemArchitecture.md and Project_Manager.md updated.
+
+### Removed
+- **Diagram Facades workflow step**: trunk now ends at Diagram Modules. Deleted: `diagram-facades-agent`, facade panel/help, facade parser, facade editor components, ~3,500 lines of code across 86 files.
+- **module-inventory.md aggregate**: Module Graph now built progressively from individual `product-parts/<part-id>.md` files.
+- **Separate detached sidecar**: detached window now shares the same `module-map.flow.json` as the main PM.
 
 ## [1.1.786] - 2026-03-24
 ### Fixed
