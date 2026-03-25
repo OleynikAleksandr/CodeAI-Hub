@@ -11,40 +11,75 @@ import { DiagramEditorFacade } from "./diagram-editor-facade";
 
 const DEFAULT_MODULE_WIDTH = 240;
 const DEFAULT_CHILD_HEIGHT = 100;
+const SIBLING_GAP = 12;
 
 const getConstraints = (data: DiagramFlowNodeData): ContainerConstraints | undefined =>
   (data.nodeKind === "productPart" || data.nodeKind === "cluster") ? data.containerConstraints : undefined;
 
-const childSize = (node: DiagramFlowNode): { w: number; h: number } => ({
-  w: Number(node.style?.width ?? DEFAULT_MODULE_WIDTH),
-  h: Number(node.style?.height ?? node.style?.minHeight ?? DEFAULT_CHILD_HEIGHT),
-});
+const nodeRect = (node: DiagramFlowNode) => {
+  const w = Number(node.style?.width ?? DEFAULT_MODULE_WIDTH);
+  const h = Number(node.style?.height ?? node.style?.minHeight ?? DEFAULT_CHILD_HEIGHT);
+  return { x: node.position.x, y: node.position.y, w, h };
+};
+
+/** Minimum translation to keep SIBLING_GAP between moved and static, or null if no overlap. */
+const collisionPush = (
+  m: { x: number; y: number; w: number; h: number },
+  s: { x: number; y: number; w: number; h: number }
+): { dx: number; dy: number } | null => {
+  if (m.x + m.w + SIBLING_GAP <= s.x || s.x + s.w + SIBLING_GAP <= m.x ||
+      m.y + m.h + SIBLING_GAP <= s.y || s.y + s.h + SIBLING_GAP <= m.y) return null;
+  const pushes = [
+    { dx: s.x - SIBLING_GAP - (m.x + m.w), dy: 0 },
+    { dx: s.x + s.w + SIBLING_GAP - m.x, dy: 0 },
+    { dx: 0, dy: s.y - SIBLING_GAP - (m.y + m.h) },
+    { dx: 0, dy: s.y + s.h + SIBLING_GAP - m.y },
+  ];
+  let best = pushes[0];
+  let bestAbs = Math.abs(best.dx) + Math.abs(best.dy);
+  for (let i = 1; i < pushes.length; i++) {
+    const a = Math.abs(pushes[i].dx) + Math.abs(pushes[i].dy);
+    if (a < bestAbs) { best = pushes[i]; bestAbs = a; }
+  }
+  return best;
+};
+
+/** Resolve sibling overlaps for moved nodes within a group of sibling indices. */
+const separateSiblings = (result: DiagramFlowNode[], siblings: number[], movedIds: ReadonlySet<string>): void => {
+  for (const mi of siblings) {
+    if (!movedIds.has(result[mi].id)) continue;
+    for (const si of siblings) {
+      if (si === mi) continue;
+      const push = collisionPush(nodeRect(result[mi]), nodeRect(result[si]));
+      if (push) {
+        const prev = result[mi];
+        result[mi] = { ...prev, position: { x: prev.position.x + push.dx, y: prev.position.y + push.dy } };
+      }
+    }
+  }
+};
 
 /**
- * Clamp child positions within container header area and resize containers
- * to fit their children. Processes bottom-up: clusters first, then product parts.
+ * Clamp child positions, resolve sibling collisions, and resize containers.
+ * Processes bottom-up: clusters first, then product parts, then top-level PP collisions.
  */
-const resizeContainersToFit = (allNodes: readonly DiagramFlowNode[]): DiagramFlowNode[] => {
+const resizeContainersToFit = (allNodes: readonly DiagramFlowNode[], movedIds: ReadonlySet<string>): DiagramFlowNode[] => {
   const result: DiagramFlowNode[] = allNodes.map((n) => ({ ...n }));
 
   const childIndicesByParent = new Map<string, number[]>();
+  const topLevelIndices: number[] = [];
   for (let i = 0; i < result.length; i++) {
     const pid = result[i].parentId;
     if (pid) {
       const list = childIndicesByParent.get(pid) ?? [];
       list.push(i);
       childIndicesByParent.set(pid, list);
+    } else {
+      topLevelIndices.push(i);
     }
   }
 
-  const processContainer = (idx: number): void => {
-    const container = result[idx];
-    const c = getConstraints(container.data);
-    if (!c) return;
-    const indices = childIndicesByParent.get(container.id);
-    if (!indices || indices.length === 0) return;
-
-    // Clamp child positions (left/top only — right/bottom grow dynamically)
+  const clampChildren = (indices: number[], c: ContainerConstraints): void => {
     for (const ci of indices) {
       const child = result[ci];
       const cx = Math.max(c.childMinX, child.position.x);
@@ -53,34 +88,40 @@ const resizeContainersToFit = (allNodes: readonly DiagramFlowNode[]): DiagramFlo
         result[ci] = { ...child, position: { x: cx, y: cy } };
       }
     }
+  };
 
-    // Bounding box of all children after clamp
-    let maxRight = 0;
-    let maxBottom = 0;
+  const resizeContainer = (idx: number, indices: number[], c: ContainerConstraints): void => {
+    let maxRight = 0, maxBottom = 0;
     for (const ci of indices) {
-      const child = result[ci];
-      const sz = childSize(child);
-      maxRight = Math.max(maxRight, child.position.x + sz.w);
-      maxBottom = Math.max(maxBottom, child.position.y + sz.h);
+      const r = nodeRect(result[ci]);
+      maxRight = Math.max(maxRight, r.x + r.w);
+      maxBottom = Math.max(maxBottom, r.y + r.h);
     }
-
     const newW = Math.max(c.minWidth, maxRight + c.paddingRight);
     const newH = Math.max(c.minHeight, maxBottom + c.paddingBottom);
+    const container = result[idx];
     const curW = Number(container.style?.width ?? c.minWidth);
     const curH = Number(container.style?.height ?? c.minHeight);
-
     if (newW !== curW || newH !== curH) {
       result[idx] = { ...container, style: { ...container.style, width: newW, height: newH } };
     }
   };
 
-  // Bottom-up: clusters first, then product parts
-  for (let i = 0; i < result.length; i++) {
-    if (result[i].data.nodeKind === "cluster") processContainer(i);
-  }
-  for (let i = 0; i < result.length; i++) {
-    if (result[i].data.nodeKind === "productPart") processContainer(i);
-  }
+  const processContainer = (idx: number): void => {
+    const c = getConstraints(result[idx].data);
+    if (!c) return;
+    const indices = childIndicesByParent.get(result[idx].id);
+    if (!indices || indices.length === 0) return;
+    clampChildren(indices, c);
+    separateSiblings(result, indices, movedIds);
+    clampChildren(indices, c);
+    resizeContainer(idx, indices, c);
+  };
+
+  // Bottom-up: clusters → product parts → top-level PP collisions
+  for (let i = 0; i < result.length; i++) { if (result[i].data.nodeKind === "cluster") processContainer(i); }
+  for (let i = 0; i < result.length; i++) { if (result[i].data.nodeKind === "productPart") processContainer(i); }
+  separateSiblings(result, topLevelIndices, movedIds);
 
   return result;
 };
@@ -122,12 +163,13 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       );
       let nextNodesSnapshot: readonly DiagramFlowNode[] | null = null;
 
+      const movedIds = new Set(changes.filter((c) => c.type === "position").map((c) => c.id));
       setNodes((current) => {
         const applied = applyNodeChanges(
           changes as NodeChange[],
           current as never
         ) as DiagramFlowNode[];
-        const nextNodes = resizeContainersToFit(applied);
+        const nextNodes = resizeContainersToFit(applied, movedIds);
         if (shouldPersist) {
           nextNodesSnapshot = nextNodes;
         }
