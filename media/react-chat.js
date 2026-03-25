@@ -8058,50 +8058,26 @@
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
     {
-      id: "gemini-3-pro-preview",
-      displayName: "Gemini 3 Pro Preview",
-      description: "Most advanced reasoning Gemini model for complex problems.",
+      id: "gemini-3.1-pro-preview",
+      displayName: "Gemini 3.1 Pro",
+      description: "Most advanced reasoning Gemini model (1M context).",
       status: "preview",
       family: "gemini-3",
       supportedThinkingLevels: ["low", "high"]
     },
     {
       id: "gemini-3-flash-preview",
-      displayName: "Gemini 3 Flash Preview",
+      displayName: "Gemini 3 Flash",
       description: "Pro-grade reasoning with Flash-level latency and cost.",
       status: "preview",
       family: "gemini-3",
       supportedThinkingLevels: ["minimal", "low", "medium", "high"]
-    },
-    {
-      id: "gemini-2.5-pro",
-      displayName: "Gemini 2.5 Pro",
-      description: "Deep reasoning model with Think mode for complex use cases.",
-      status: "generally_available",
-      family: "gemini-2.5",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-2.5-flash",
-      displayName: "Gemini 2.5 Flash",
-      description: "High-throughput model for enterprise tasks.",
-      status: "generally_available",
-      family: "gemini-2.5",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-2.5-flash-lite",
-      displayName: "Gemini 2.5 Flash Lite",
-      description: "Most cost-efficient and fastest 2.5 model.",
-      status: "generally_available",
-      family: "gemini-2.5",
-      supportedThinkingLevels: ["low", "high"]
     }
   ];
   var GEMINI_MODEL_ID_SET = new Set(
     GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
   );
-  var DEFAULT_GEMINI_MODEL_ID = "gemini-3-pro-preview";
+  var DEFAULT_GEMINI_MODEL_ID = "gemini-3.1-pro-preview";
   var DEFAULT_GEMINI_THINKING_LEVEL = "low";
   var GEMINI_THINKING_LEVELS = [
     {
