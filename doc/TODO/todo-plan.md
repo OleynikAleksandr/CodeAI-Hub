@@ -37,7 +37,7 @@
 
 ---
 
-## Phase 63 — UX: Detach relocation, Option+drag, dynamic container resize (owner: Oleksandr, updated: 2026-03-25)
+## Phase 63 — UX: Detach relocation, Option+drag, dynamic container resize [DONE] (owner: Oleksandr, updated: 2026-03-25)
 
 ### Stream 1: Move Detach button to artifact header
 
@@ -52,3 +52,8 @@
 3. [DONE] **Add container constraints + dynamic resize** — `ContainerConstraints` type in `domain-model-to-react-flow.types.ts`, populated in `module-stage-react-flow.ts`. Removed `extent:"parent"` from child nodes. `resizeContainersToFit` in `diagram-editor-shell.tsx` clamps child positions and resizes containers bottom-up on every drag frame.
 
 4. [DONE] Git Commit: `feat(pm): relocate Detach button, use Option+drag, dynamic container resizing` (hash: 00630a32)
+
+### Stream 4: Release build
+
+5. [DONE] Release build: `./scripts/build-all.sh` → 1.1.796, `./scripts/build-release.sh` → `codeai-hub-1.1.796.vsix`.
+6. [DONE] Git Commit: `chore(release): bump version to 1.1.796` (hash: bc429627)
