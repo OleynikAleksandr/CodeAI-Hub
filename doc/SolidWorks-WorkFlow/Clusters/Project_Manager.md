@@ -39,10 +39,13 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - левая панель возвращается к Session UI,
   - правая панель имеет переключатель `Artifacts/Help`.
 - В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
-- Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode был удалён):
+- Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode убран):
   - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
-  - `*.flow.json` не показывается пользователю как артефакт.
-- Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors или bottom-right minimap; пользовательский UX для этих шагов = manual drag/persist + left-bottom zoom/fit controls.
+  - `*.flow.json` не показывается пользователю как артефакт;
+  - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel` при drop.
+- Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors, zoom/fit controls или bottom-right minimap; пользовательский UX = Option(Alt)+drag для перемещения нод, обычный drag для панорамирования.
+- Контейнеры (Product Part, Cluster) динамически расширяются/сжимаются при перемещении дочерних нод; siblings не могут наложиться друг на друга (12px gap).
+- При открытии workspace PM auto-select показывает Diagram Modules (если есть активная сессия), а не Virtual Simulation.
 - Semantic changes для diagram steps ожидаются через agent-run или прямое редактирование canonical Markdown, а не через visible inline UI.
 
 Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.

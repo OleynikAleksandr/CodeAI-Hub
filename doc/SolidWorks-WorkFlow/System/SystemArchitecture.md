@@ -115,16 +115,15 @@
 - Facade specs are deferred to per-cluster and per-module branches (future work) and are not a trunk workflow step.
 
 Канонические документы:
-- `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 
 ## 6.2) Diagram Visual Shell Boundary (Phase 2, 2026-03-16; updated Phase 57, 2026-03-24)
 
 - Project Manager для `Diagram Modules` рендерит канонические DSL artifacts через diagram-first visual shell на базе React Flow.
-- Правый panel contract для diagram stage = `Artifacts | Source | Help`:
+- Правый panel contract для diagram stage = `Artifacts | Help` (Source mode убран):
   - `Artifacts` показывает саму диаграмму;
-  - `Source` показывает read-only canonical `.md`;
   - `Help` показывает guidance по шагу.
 - Visual shell не владеет semantic state:
   - source of truth остаётся `product-parts.index.md` + `product-parts/<part-id>.md`;
@@ -171,7 +170,7 @@
   - background refresh не должен очищать уже загруженный graph перед следующим успешным parse/load;
   - empty semantic graph обязан показывать explicit placeholder вместо silent blank canvas;
   - manual drag changes обязаны обновлять текущий React Flow canvas в реальном времени и сохраняться в `*.flow.json`;
-  - visual shell не показывает auto-layout chrome или bottom-right minimap; из persistent controls остаются только drag для layout и левый нижний zoom/fit controls.
+  - visual shell не показывает auto-layout chrome, zoom/fit controls или bottom-right minimap; единственный interaction mode = Option(Alt)+drag для node movement, обычный drag панорамирует canvas.
 - Workflow tree child nodes для `Diagram Modules` обязаны наследовать актуальные stage-level `blocked/outdated` сигналы; поддеревья диаграмм не могут маскировать реальный gating state как постоянный `active`.
 - Fresh toolbar bootstrap для шага `Diagram Modules` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `product-parts.index.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
@@ -200,6 +199,17 @@
   - manual drag/editing внутри React Flow;
   - persisted user-owned positions в `module-map.flow.json`;
   - agent-driven semantic updates when new semantic content is needed.
+- Diagram canvas interaction model (начиная с 1.1.796):
+  - **Option(Alt)+drag** перемещает отдельные ноды; обычный drag (без модификатора) панорамирует canvas;
+  - **Dynamic container resizing**: Product Part и Cluster автоматически расширяются/сжимаются при перемещении дочерних нод к границам (минимальная ширина PP = 720px, Cluster = single-column); реализовано через `containerConstraints` в flow node data и bottom-up `resizeContainersToFit` в `DiagramEditorShell`;
+  - **Collision avoidance**: siblings внутри одного контейнера и Product Part-ы между собой не могут наложиться друг на друга (12px SIBLING_GAP, AABB minimum-translation-vector);
+  - **Multi-column layout**: кластеры с 3+ модулями используют 2-column layout (CLUSTER_MULTI_COL_THRESHOLD = 2).
+- Detachable diagram window (начиная с 1.1.795):
+  - кнопка `Detach` в artifact header (слева от `Artifacts` toggle) открывает full-viewport ReactFlow в отдельном CEF popup через `window.open()`;
+  - detached окно использует тот же sidecar файл (`module-map.flow.json`), что и основной PM — позиции нод синхронизированы;
+  - при drop (конце перетаскивания) `BroadcastChannel("pm:diagram:sidecar-sync")` уведомляет другое окно о перезагрузке sidecar;
+  - реализация: `detached-diagram-view.tsx`, `detach-diagram-button.tsx`, `stage-artifact-header-toggle.tsx` (`extraActions` slot).
+- Workspace auto-select (начиная с 1.1.791): при открытии workspace PM проверяет Diagram Modules **перед** Virtual Simulation и показывает последний шаг с активной сессией.
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
@@ -217,8 +227,9 @@
 - `Cluster` обязан принадлежать ровно одному `Product Part`, а `Module` обязан принадлежать ровно одному `Product Part` и максимум одному `Cluster`.
 - React Flow projection для `Diagram Modules` обязан использовать nested container model:
   - product part node = top-level container;
-  - cluster node = child container через `parentId` / `extent: "parent"`;
-  - module node = child node внутри cluster или напрямую внутри product part, если модуль standalone.
+  - cluster node = child container через `parentId` (no `extent: "parent"` — containers resize dynamically);
+  - module node = child node внутри cluster или напрямую внутри product part, если модуль standalone;
+  - container nodes хранят `containerConstraints` (childMinX/Y, minWidth/Height, padding) для dynamic resize и collision avoidance.
 - First-open auto-layout для ownership-aware `Diagram Modules` обязан оставаться readable без user drag:
   - top-level `Product Part` containers раскладываются как независимые row/lane sections и не могут overlap друг с другом;
   - internal standalone modules группируются в отдельную предсказуемую band внутри owning product part и не могут хаотично расширять cluster grid;
@@ -254,7 +265,7 @@
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 
 Связанный planning-док:
-- `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
+- `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
