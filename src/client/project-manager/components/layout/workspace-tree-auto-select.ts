@@ -18,6 +18,7 @@ type WorkspaceTreeAutoSelectParams = {
   readonly workspacePath?: string;
   readonly workspaceSlug?: string | null;
   readonly virtualSimulationArtifactAvailable: boolean;
+  readonly diagramModulesArtifactAvailable: boolean;
   readonly onSelectArtifact: (artifactPath: string, label: string) => void;
   readonly onResumeSession: (payload: SessionResumeIntent) => void;
   readonly onClearArtifactWithTool: (activeTool: string) => void;
@@ -53,7 +54,34 @@ export const useWorkspaceTreeAutoSelect = (
         return;
       }
 
-      // Resolve the latest VS chain (higher-priority step)
+      // Resolve the latest DM chain (highest-priority step)
+      const dmChain = resolveLatestStageChain(state.continuity.chains, "diagram_modules");
+      const dmLast = dmChain?.segments.at(-1) ?? null;
+
+      if (dmLast) {
+        dispatchStageActivated("diagram_modules");
+        const dmArtifactPath =
+          `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
+        if (params.diagramModulesArtifactAvailable) {
+          params.onSelectArtifact(dmArtifactPath, "Module Graph");
+        } else {
+          params.onClearArtifactWithTool("Diagram Modules");
+        }
+        params.onResumeSession({
+          providerId: dmLast.providerId,
+          providerSessionId: dmLast.providerSessionId,
+          workspacePath: params.workspacePath,
+          workspaceSlug: params.workspaceSlug,
+          initiativeSlug: params.workspaceSlug,
+          stage: "diagram_modules",
+          sessionKind: "collector",
+          runSlug: null,
+        });
+        pendingWorkspaceIdRef.current = null;
+        return;
+      }
+
+      // Resolve the latest VS chain (next-priority step)
       const vsChain = resolveLatestStageChain(state.continuity.chains, "virtual_simulation");
       const vsLast = vsChain?.segments.at(-1) ?? null;
 
@@ -118,6 +146,7 @@ export const useWorkspaceTreeAutoSelect = (
       }
     },
     [
+      params.diagramModulesArtifactAvailable,
       params.onClearArtifactWithTool,
       params.onResumeSession,
       params.onSelectArtifact,

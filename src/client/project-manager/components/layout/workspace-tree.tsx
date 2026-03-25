@@ -113,6 +113,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       workspacePath,
       workspaceSlug,
       virtualSimulationArtifactAvailable,
+      diagramModulesArtifactAvailable,
       onSelectArtifact: selectArtifact,
       onResumeSession: dispatchDialogOpenIntent,
       onClearArtifactWithTool: clearArtifactWithTool,
