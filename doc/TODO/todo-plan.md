@@ -84,17 +84,11 @@ Gemini (в отличие от Claude и Codex) не выдаёт промежу
 
 ### Stream 1: Create ThoughtTranslatorService
 
-1. [TODO] **Create `thought-translator-service.ts`** (~80-100 строк):
-   - Конструктор: принимает API ключ (из Gemini провайдера), создаёт `GoogleGenAI` клиент
-   - Метод `translateThought(thought: { subject: string; description: string }): Promise<string | null>`
-   - Модель: `gemini-2.0-flash-lite`
-   - Промпт (настраиваемый): "Ты переводчик AI-агента. Переведи размышление на русский. Убери вводные слова ('I am now', 'I'm focused on'). Сохрани суть. Не добавляй ничего от себя."
-   - Вход: `subject + ": " + description`
-   - Fire-and-forget: не throw-ит, логирует ошибки через reporter, возвращает null при сбое
-   - Timeout: 5 сек (чтобы не копить hanging promises)
-   (scope: `packages/Gemini_Module/src/messaging/thought-translator-service.ts` — 1 новый файл)
+1. [DONE] **Create `thought-translator-service.ts`** (~70 строк):
+   - GoogleGenAI клиент, модель gemini-2.0-flash-lite, промпт на английском
+   - Fire-and-forget: логирует через reporter, null при сбое, 5 сек timeout
 
-2. [TODO] Git Commit: `feat(gemini): add ThoughtTranslatorService for real-time Russian translation via Flash` (hash: TBD)
+2. [DONE] Git Commit: `feat(gemini): add ThoughtTranslatorService for real-time Russian translation via Flash` (hash: TBD)
 
 ### Stream 2: Integrate translator into message-processor
 
