@@ -13,31 +13,24 @@
 
 ---
 
-## Phase 62 — Detachable diagram window (owner: Oleksandr, updated: 2026-03-25)
+## Phase 62 — Detachable diagram window [DONE] (owner: Oleksandr, updated: 2026-03-25)
 
 ### Stream 1: Create DetachedDiagramView component
 
-Минимальный full-screen компонент: загружает артефакт Diagram Modules, рендерит DiagramEditorFacade на 100% viewport. Без sidebar, без session panel.
-
-1. [TODO] **Create `detached-diagram-view.tsx`** in `src/client/project-manager/components/diagram-editor/`. Reuses `useDiagramLoader` + `useDiagramPersistence` with detached sidecar path. Full-viewport ReactFlow. (scope: 1 new file)
-2. [TODO] Git Commit: `feat(pm): add DetachedDiagramView component for popup window`
+1. [DONE] **Create `detached-diagram-view.tsx`** — full-viewport ReactFlow with detached sidecar path. (scope: 1 new file)
 
 ### Stream 2: Route detection in app.tsx
 
-Detect `?mode=detached-diagram` query param. If present, render DetachedDiagramView instead of MainLayout.
-
-3. [TODO] **Update `app.tsx`** to parse URL params and conditionally render DetachedDiagramView. (scope: 1 file)
-4. [TODO] Git Commit: `feat(pm): route detached-diagram mode in app entry point`
+3. [DONE] **Update `app.tsx`** — parse `?mode=detached-diagram` query param, render DetachedDiagramView. (scope: 1 file)
 
 ### Stream 3: Detach button in diagram panel
 
-Add a "Detach" button in the diagram panel that calls `window.open()` with the correct URL and query params.
+5. [DONE] **Add detach button** to `diagram-stage-panel-scaffold.tsx` — opens `window.open()` with query params. (scope: 1 file)
 
-5. [TODO] **Add detach button** to `diagram-stage-panel-scaffold.tsx`. Uses `window.location.href` as base, appends `?mode=detached-diagram&workspaceSlug=X&workspacePath=Y`. (scope: 1 file)
-6. [TODO] Git Commit: `feat(pm): add detach button to open diagram in separate window`
+6. [DONE] Git Commit: `feat(pm): detachable diagram window with independent layout persistence` (hash: fa477a8a)
 
 ### Stream 4: Release build
 
-7. [TODO] Таргетные сборки: `npm run build:webview`, `npm run typecheck:webview`, тесты.
-8. [TODO] Release build: `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`.
-9. [TODO] Git Commit: `chore(release): bump version to <TBD>`
+7. [DONE] Таргетные сборки — зелёные.
+8. [DONE] Release build: `./scripts/build-all.sh` → 1.1.795, `./scripts/build-release.sh` → `codeai-hub-1.1.795.vsix`.
+9. [DONE] Git Commit: `chore(release): bump version to 1.1.795` (hash: 78b27088)
