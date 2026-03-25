@@ -46,17 +46,16 @@
    - `types/index.ts`: удалён `toolExecutionBackend` из `GeminiCliBridgeMetadata`
    - Тесты обновлены: `cli-bridge.test.ts`, `gemini-tool-executor-facade.test.ts`
 
-4. [DONE] Git Commit: `refactor(gemini): remove dead nonInteractiveToolExecutor legacy code` (hash: TBD)
+4. [DONE] Git Commit: `refactor(gemini): remove dead nonInteractiveToolExecutor legacy code` (hash: 21e4eef7)
 
 ### Stream 3: Handle new GeminiEventType values
 
-5. [TODO] **Add handlers for new 0.35.0 events** in `message-processor.ts`:
+5. [DONE] **Add handlers for new 0.35.0 events** in `message-processor.ts`:
    - `ModelInfo` — emit system event с информацией о модели
-   - `AgentExecutionStopped` — emit warning (сейчас молча проглатывается)
-   - `AgentExecutionBlocked` — emit warning
-   (scope: `packages/Gemini_Module/src/messaging/message-processor.ts` — 1 файл)
+   - `AgentExecutionStopped` — emit warning с причиной
+   - `AgentExecutionBlocked` — emit warning с причиной
 
-6. [TODO] Git Commit: `feat(gemini): handle ModelInfo, AgentExecutionStopped, AgentExecutionBlocked events` (hash: TBD)
+6. [DONE] Git Commit: `feat(gemini): handle ModelInfo, AgentExecutionStopped, AgentExecutionBlocked events` (hash: TBD)
 
 ### Stream 4: Targeted build & verification (Phase 64)
 

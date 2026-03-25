@@ -127,6 +127,15 @@ export class GeminiMessageProcessor {
       [TurnEventType.LoopDetected, this.handleLoopDetectedEvent.bind(this)],
       [TurnEventType.InvalidStream, this.handleInvalidStreamEvent.bind(this)],
       [TurnEventType.Finished, this.handleFinishedEvent.bind(this)],
+      [TurnEventType.ModelInfo, this.handleModelInfoEvent.bind(this)],
+      [
+        TurnEventType.AgentExecutionStopped,
+        this.handleAgentExecutionStoppedEvent.bind(this),
+      ],
+      [
+        TurnEventType.AgentExecutionBlocked,
+        this.handleAgentExecutionBlockedEvent.bind(this),
+      ],
     ]);
   }
 
@@ -429,6 +438,66 @@ export class GeminiMessageProcessor {
       accumulator.promptId
     );
     return [];
+  }
+
+  private handleModelInfoEvent(
+    session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event);
+    const modelName = typeof value === "string" ? value : "unknown";
+    session.logger?.logEvent({ type: "model_info", model: modelName });
+    return [
+      {
+        type: "system",
+        provider: "gemini",
+        content: `Gemini model: ${modelName}`,
+        data: { model: modelName },
+      },
+    ];
+  }
+
+  private handleAgentExecutionStoppedEvent(
+    session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event) as {
+      reason?: string;
+      systemMessage?: string;
+    } | null;
+    const reason = value?.reason ?? "unknown";
+    session.logger?.logEvent({ type: "agent_execution_stopped", reason });
+    return [
+      {
+        type: "warning",
+        provider: "gemini",
+        content: `Gemini agent execution stopped: ${reason}`,
+        data: value ?? undefined,
+      },
+    ];
+  }
+
+  private handleAgentExecutionBlockedEvent(
+    session: ActiveSession,
+    event: ServerGeminiStreamEvent,
+    _accumulator: TurnAccumulator
+  ): readonly GeminiSessionEvent[] {
+    const value = this.getEventValue(event) as {
+      reason?: string;
+      systemMessage?: string;
+    } | null;
+    const reason = value?.reason ?? "unknown";
+    session.logger?.logEvent({ type: "agent_execution_blocked", reason });
+    return [
+      {
+        type: "warning",
+        provider: "gemini",
+        content: `Gemini agent execution blocked: ${reason}`,
+        data: value ?? undefined,
+      },
+    ];
   }
 
   private getEventValue(event: ServerGeminiStreamEvent): unknown {
