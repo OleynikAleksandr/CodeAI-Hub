@@ -45,6 +45,7 @@
 | BUG-2026-03-13-01 | FIXED | Codex Runtime | `Debug/Raw`: raw provider log полный, но unified-session/dialog JSONL пуст от агента | 1.1.722 |
 | BUG-2026-03-14-01 | FIXED | Codex Runtime | saved `gpt-5.4` default model пересиливается stale `CODEX_DEFAULT_MODEL=gpt-5.3-codex` | 1.1.726 |
 | BUG-2026-03-20-01 | FIXED | Codex/Core/PM | reopen/recovery цикл держит `diagram_modules` dialog в вечном `Agent is working...` после restart Core / PM | 1.1.753 |
+| BUG-2026-03-25-01 | OPEN | Core/Gemini/PM | Provider error → binding lost → UI deadlock → Core crash → workspace vanishes | — |
 
 ---
 
@@ -1081,3 +1082,88 @@
 **Release:** `1.1.646`
 
 **Verified (manual):** 2026-02-22 — после cold start reviewer‑диалог открывается в `idle/unlocked`; при рестарте Core в середине turn ввод разблокируется автоматически; сообщение “Продолжай” продолжает прерванный turn.
+
+---
+
+## BUG-2026-03-25-01 — Core/Gemini/PM: Provider error cascade → binding lost → UI deadlock → Core crash → workspace vanishes
+
+**Status:** OPEN
+
+**Symptom:**
+Gemini сессия (description step) получает server-side ошибку от Google (`No capacity available for model gemini-3.1-pro-preview`). После этого развивается каскад из 5 проблем, каждая критичнее предыдущей:
+
+1. **Сообщения пользователя молча проглатываются** — UI позволяет ввести и отправить текст, но он не доходит до провайдера.
+2. **UI навечно заблокирован** — после рестарта Core отображается "Agent is working, please wait" без возможности разблокировки.
+3. **Core crash при нажатии Stop** — процесс Core прекращается, launcher фиксирует `core is unreachable`.
+4. **Workspace исчезает из PM** — сессия, анкета, description — всё пропадает из интерфейса.
+5. **Нет self-recovery** — launcher не рестартит Core автоматически, PM не восстанавливает данные.
+
+**Reproduction scenario:**
+1. Открыть Gemini workspace в PM, выбрать `gemini-3.1-pro-preview`
+2. Запустить description session
+3. Дождаться server-side ошибки (capacity/rate-limit) от Google — обычно 3-5 минут
+4. Попробовать отправить сообщение → молча дропается
+5. Рестарт Core через Settings → "Agent is working" навечно
+6. Нажать Stop → Core crash → workspace пропадает
+
+**Root cause analysis (from logs):**
+
+### Фаза 1: Provider runtime failure detected (18:49:14)
+```
+core.log: "Provider runtime failure detected", providerId: "geminiCli"
+core.log: error: "No capacity available for model gemini-3.1-pro-preview on the server"
+```
+Core ловит ошибку из `GeminiSessionManager.sendMessage()` → `throw error` пробрасывается через `GeminiProviderAdapter.sendMessage()` → `SessionRequestHandler.handleMessage()` → Core помечает `providerSessionStatus = "failed"` и **удаляет provider binding**.
+
+### Фаза 2: Сообщение пользователя дропается (18:50:14)
+```
+core.log: "Session message received", sessionId: "3ab639e7...", contentLength: 10
+core.log: "Resolved session for incoming message", providerSessionStatus: "failed"
+core.log: "Provider binding or adapter missing for session", hasBinding: false, hasAdapter: false
+core.log: "Known provider session bindings", knownSessionIds: []
+```
+Core получает user message, видит `providerSessionStatus: "failed"`, binding отсутствует → **сообщение проглочено без обратной связи** (ни error event в UI, ни повторная попытка).
+
+### Фаза 3: Core restart → UI deadlock (18:52)
+Пользователь рестартит Core через Settings.
+```
+gemini-jsonl: session_start (resume), model_info: "gemini-3.1-pro-preview"
+```
+Gemini SDK resume-ит сессию (session_start + model_info), но:
+- `turn_completed` для прерванного turn **никогда не был отправлен** (ошибка произошла mid-turn)
+- UI помнит что turn в прогрессе → "Agent is working, please wait" навечно
+- Поле ввода заблокировано, стоп-кнопка видна
+
+### Фаза 4: Stop → Core crash (19:52)
+Пользователь нажимает Stop.
+```
+launcher.log: "Core monitoring detected core is unreachable on 127.0.0.1:8080"
+```
+Core прекращает работу (crash или unhandled state). Причина не ясна из логов — core.log последняя запись `Core orchestrator stopped` (18:52), после рестарта Core не писал в core.log (вероятно logger не инициализировался).
+
+### Фаза 5: PM потеряла workspace
+PM теряет WebSocket-соединение с Core → workspace/session/questionnaire исчезают из интерфейса. Данные на диске сохранены, но PM не может показать их без Core.
+
+**Affected files (where the issues originate):**
+- `packages/core/` — `SessionRequestHandler`, `provider-registry/` — binding lifecycle, runtime failure handling
+- `packages/core/` — `RemoteBridge` — WebSocket message routing, error propagation to UI
+- `packages/Gemini_Module/src/session/gemini-session-manager.ts` — `sendMessage()` throw path
+- `src/client/project-manager/` — session UI lock/unlock state machine
+
+**Hypothesis for fix (not verified):**
+
+1. **Provider error ≠ Provider death**: Core не должен удалять binding при transient server errors (capacity, rate-limit, timeout). Binding удаление оправдано только при auth failure или module crash. Для transient errors: emit `turn_failed` event → UI разблокируется → пользователь может retry.
+
+2. **Guaranteed `turn_completed`**: если turn начался (`turn_started` отправлен в UI), он **обязан** завершиться — либо `turn_completed`, либо `turn_failed`. Это инвариант, который сейчас нарушается при provider throw + Core restart. Варианты:
+   - `finally` блок в Core `SessionRequestHandler.handleMessage()` который гарантирует `turn_completed/turn_failed`
+   - При Core restart: проверить все sessions с `turn_in_progress` и отправить `turn_failed` + unlock
+
+3. **Graceful error propagation**: когда сообщение пользователя не может быть доставлено (binding missing) — Core **обязан** отправить error event в UI вместо тихого дропа. Пользователь должен видеть: "Сессия потеряна, создайте новую" (или auto-recovery).
+
+4. **Core crash resilience**: Stop-кнопка не должна крашить Core. Вероятно `abort()` на Gemini session вызывает unhandled rejection или state corruption в SDK. Нужен try-catch wrapper вокруг abort path.
+
+5. **Launcher auto-restart**: при crash Core launcher должен рестартить процесс автоматически (сейчас логирует warning но не действует).
+
+**Priority:** CRITICAL — каскад делает Gemini провайдер непригодным для production use при любом server-side error.
+
+**Discovered:** Session 158, 2026-03-25. Triggered by `gemini-cli-core@0.35.0` + `gemini-3.1-pro-preview` capacity limits.
