@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session155.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session156.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -13,47 +13,126 @@
 
 ---
 
-## Phase 62 — Detachable diagram window [DONE] (owner: Oleksandr, updated: 2026-03-25)
+## Phase 64 — Full gemini-cli-core@0.35.0 compatibility (owner: Oleksandr, updated: 2026-03-25)
 
-### Stream 1: Create DetachedDiagramView component
+### Problem statement
+`@google/gemini-cli-core@0.35.0` внёс breaking changes в tool execution API:
+1. `nonInteractiveToolExecutor` полностью удалён — наш legacy путь мёртв
+2. `CoreToolScheduler` конструктор изменился: `config: Config` → `context: AgentLoopContext`
+3. `AgentLoopContext` = `{ config, promptId, toolRegistry, messageBus, geminiClient, sandboxManager }`
+4. Добавлены новые `GeminiEventType`: `ModelInfo`, `AgentExecutionStopped`, `AgentExecutionBlocked`
 
-1. [DONE] **Create `detached-diagram-view.tsx`** — full-viewport ReactFlow with detached sidecar path. (scope: 1 new file)
+Результат: все tool calls Gemini провайдера падают с `TypeError: Cannot read properties of undefined (reading 'messageBus')`, сессия "зависает".
 
-### Stream 2: Route detection in app.tsx
+### Key finding
+`Config` в 0.35.0 содержит deprecated getters для `toolRegistry`, `messageBus`, `geminiClient`, `sandboxManager`, `promptId`. Собираем `AgentLoopContext` из Config и передаём в CoreToolScheduler как `context`.
 
-3. [DONE] **Update `app.tsx`** — parse `?mode=detached-diagram` query param, render DetachedDiagramView. (scope: 1 file)
+### Stream 1: Fix CoreToolScheduler API + remove legacy executor
 
-### Stream 3: Detach button in diagram panel
+1. [TODO] **Rewrite `gemini-tool-executor-facade.ts`** — полная адаптация к CoreToolScheduler@0.35.0:
+   - Удалить `SchedulerConstructor` cast-тип — использовать inline cast к реальной сигнатуре `CoreToolSchedulerOptions`
+   - Удалить legacy branch (`modules.toolExecutor?.executeToolCall`) — в 0.35.0 его нет
+   - В `execute()`: собрать `AgentLoopContext` из `config` (deprecated getters) + `promptId` из `request.prompt_id`
+   - Передать `{ context, getPreferredEditor, onAllToolCallsComplete }` — убрать `onEditorClose` (не существует)
+   (scope: `packages/Gemini_Module/src/session/gemini-tool-executor-facade.ts` — 1 файл)
 
-5. [DONE] **Add detach button** to `diagram-stage-panel-scaffold.tsx` — opens `window.open()` with query params. (scope: 1 file)
+2. [TODO] Git Commit: `fix(gemini): rewrite tool executor for CoreToolScheduler@0.35.0 AgentLoopContext API` (hash: TBD)
 
-6. [DONE] Git Commit: `feat(pm): detachable diagram window with independent layout persistence` (hash: fa477a8a)
+### Stream 2: Clean up dead legacy code in cli-bridge & cli-types
 
-### Stream 4: Release build
+3. [TODO] **Remove `nonInteractiveToolExecutor` from `cli-bridge.ts` and `cli-types.ts`**:
+   - `cli-types.ts`: удалить `toolExecutor` поле из `GeminiCliModules`, удалить `GeminiToolExecutionBackend` тип и `toolExecutionBackend` поле
+   - `cli-bridge.ts`: удалить `findAndLoadOptionalModule` для `nonInteractiveToolExecutor`, удалить `resolveToolExecutionBackend()`, убрать оба поля из return-объекта `loadGeminiModules()`
+   - `gemini-tool-executor-facade.ts`: убрать `modules.toolExecutor` reference (если осталось после Stream 1)
+   (scope: `cli-bridge.ts`, `cli-types.ts`, возможно `gemini-tool-executor-facade.ts` — ≤3 файла)
 
-7. [DONE] Таргетные сборки — зелёные.
-8. [DONE] Release build: `./scripts/build-all.sh` → 1.1.795, `./scripts/build-release.sh` → `codeai-hub-1.1.795.vsix`.
-9. [DONE] Git Commit: `chore(release): bump version to 1.1.795` (hash: 78b27088)
+4. [TODO] Git Commit: `refactor(gemini): remove dead nonInteractiveToolExecutor legacy code` (hash: TBD)
+
+### Stream 3: Handle new GeminiEventType values
+
+5. [TODO] **Add handlers for new 0.35.0 events** in `message-processor.ts`:
+   - `ModelInfo` — emit system event с информацией о модели
+   - `AgentExecutionStopped` — emit warning (сейчас молча проглатывается)
+   - `AgentExecutionBlocked` — emit warning
+   (scope: `packages/Gemini_Module/src/messaging/message-processor.ts` — 1 файл)
+
+6. [TODO] Git Commit: `feat(gemini): handle ModelInfo, AgentExecutionStopped, AgentExecutionBlocked events` (hash: TBD)
+
+### Stream 4: Targeted build & verification (Phase 64)
+
+7. [TODO] **Targeted build** — `npm run build --workspace packages/Gemini_Module`, verify no TS errors.
+8. [TODO] **Functional test** — запустить Gemini сессию в PM, проверить:
+   - tool calls (read_file, run_shell_command) выполняются
+   - thoughts отображаются
+   - content streaming работает
 
 ---
 
-## Phase 63 — UX: Detach relocation, Option+drag, dynamic container resize [DONE] (owner: Oleksandr, updated: 2026-03-25)
+## Phase 65 — Gemini Thought Translator: real-time Russian translation via Flash (owner: Oleksandr, updated: 2026-03-25)
 
-### Stream 1: Move Detach button to artifact header
+### Problem statement
+Gemini (в отличие от Claude и Codex) не выдаёт промежуточные текстовые ответы пользователю. Thoughts приходят на английском, скрыты под плашкой. Пользователь 3-5 минут смотрит пустой экран диалога.
 
-1. [DONE] **Relocate Detach button** — add `extraActions` slot to `StageArtifactHeaderToggle`, pass Detach from `main-area.tsx` (via `useDetachDiagramButton` hook in `detach-diagram-button.tsx`) when `activeTool === "Diagram Modules"`, remove from `diagram-stage-panel-scaffold.tsx`.
+### Solution: Variant B — Gemini Flash translator
+Каждый incoming Thought event параллельно (fire-and-forget) отправляется в `gemini-2.0-flash-lite` для перевода на русский. Результат показывается в диалоге как промежуточный ответ агента. Основной поток не блокируется.
 
-### Stream 2: Replace Ctrl with Option (Alt) for node drag
+Ключевые параметры:
+- Thoughts приходят с интервалами 30-90 сек → latency Flash (1-2 сек) не проблема
+- Промпт: ~30 токенов инструкции + ~100-200 токенов thought → ~250 токенов вход, ~150 выход
+- Стоимость: практически нулевая (Flash-lite бесплатный tier)
+- Graceful degradation: если Flash упал — мысль просто не переводится, основная сессия не страдает
+- SDK `@google/genai` уже в зависимостях, API ключ у пользователя уже есть
 
-2. [DONE] **Change drag modifier key** — replace `Control`/`Meta` with `Alt` in `diagram-editor-facade.tsx`. On macOS Ctrl+click = right-click.
+### Stream 1: Create ThoughtTranslatorService
 
-### Stream 3: Dynamic container resizing on node drag
+1. [TODO] **Create `thought-translator-service.ts`** (~80-100 строк):
+   - Конструктор: принимает API ключ (из Gemini провайдера), создаёт `GoogleGenAI` клиент
+   - Метод `translateThought(thought: { subject: string; description: string }): Promise<string | null>`
+   - Модель: `gemini-2.0-flash-lite`
+   - Промпт (настраиваемый): "Ты переводчик AI-агента. Переведи размышление на русский. Убери вводные слова ('I am now', 'I'm focused on'). Сохрани суть. Не добавляй ничего от себя."
+   - Вход: `subject + ": " + description`
+   - Fire-and-forget: не throw-ит, логирует ошибки через reporter, возвращает null при сбое
+   - Timeout: 5 сек (чтобы не копить hanging promises)
+   (scope: `packages/Gemini_Module/src/messaging/thought-translator-service.ts` — 1 новый файл)
 
-3. [DONE] **Add container constraints + dynamic resize** — `ContainerConstraints` type in `domain-model-to-react-flow.types.ts`, populated in `module-stage-react-flow.ts`. Removed `extent:"parent"` from child nodes. `resizeContainersToFit` in `diagram-editor-shell.tsx` clamps child positions and resizes containers bottom-up on every drag frame.
+2. [TODO] Git Commit: `feat(gemini): add ThoughtTranslatorService for real-time Russian translation via Flash` (hash: TBD)
 
-4. [DONE] Git Commit: `feat(pm): relocate Detach button, use Option+drag, dynamic container resizing` (hash: 00630a32)
+### Stream 2: Integrate translator into message-processor
+
+3. [TODO] **Update `message-processor.ts`** — wire ThoughtTranslatorService:
+   - В конструкторе: принять и сохранить `ThoughtTranslatorService` (optional)
+   - В `handleThoughtEvent()`: после показа thinking-плашки (как сейчас), запустить `translateThought()` через `.then()` (fire-and-forget)
+   - При успешном переводе: `emitDialogMessage(session, "assistant", translatedText, promptId)`
+   - Пользователь видит: thinking-плашка (англ.) + русская реплика в диалоге
+   (scope: `packages/Gemini_Module/src/messaging/message-processor.ts` — 1 файл)
+
+4. [TODO] **Wire service in `gemini-session-manager.ts`** — создать ThoughtTranslatorService при инициализации GeminiMessageProcessor:
+   - Получить API ключ из config
+   - Создать `ThoughtTranslatorService(apiKey, reporter)`
+   - Передать в `GeminiMessageProcessor`
+   (scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts` — 1 файл)
+
+5. [TODO] Git Commit: `feat(gemini): integrate thought translation into message processor pipeline` (hash: TBD)
+
+### Stream 3: Targeted build & verification (Phase 65)
+
+6. [TODO] **Targeted build** — `npm run build --workspace packages/Gemini_Module`, verify no TS errors.
+7. [TODO] **Functional test** — запустить Gemini сессию в PM, проверить:
+   - Thoughts переводятся на русский и появляются в диалоге
+   - Thinking-плашка по-прежнему отображает оригинал
+   - При ошибке Flash (нет сети, невалидный ключ) — основная сессия не ломается
+   - Latency перевода не задерживает основной поток
 
 ### Stream 4: Release build
 
-5. [DONE] Release build: `./scripts/build-all.sh` → 1.1.796, `./scripts/build-release.sh` → `codeai-hub-1.1.796.vsix`.
-6. [DONE] Git Commit: `chore(release): bump version to 1.1.796` (hash: bc429627)
+8. [TODO] Update `README.md`, `CHANGELOG.md` for new version — описать:
+   - Fix: Gemini tool execution compatibility with gemini-cli-core@0.35.0
+   - Feature: Real-time Russian translation of Gemini agent thoughts via Flash
+   - New event handlers: ModelInfo, AgentExecutionStopped, AgentExecutionBlocked
+   - Cleanup: removed legacy nonInteractiveToolExecutor dead code
+9. [TODO] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — добавить секцию ThoughtTranslatorService, обновить Gemini provider architecture.
+10. [TODO] Git Commit: `docs: update README, CHANGELOG, SystemArchitecture for v<new>` (hash: TBD)
+11. [TODO] `./scripts/build-all.sh` → version bump + full build.
+12. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX.
+13. [TODO] Git Commit: `chore(release): bump version to <new_version>` (hash: TBD)
+14. [TODO] Create `doc/Sessions/Session157.md`.
