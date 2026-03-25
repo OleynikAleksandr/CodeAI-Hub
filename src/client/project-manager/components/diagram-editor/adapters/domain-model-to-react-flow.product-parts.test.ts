@@ -263,7 +263,7 @@ test("domainModelToReactFlow stacks wide product parts into separate rows withou
   );
 });
 
-test("domainModelToReactFlow docks standalone modules under the shorter product part column", () => {
+test("domainModelToReactFlow docks standalone modules at uniform baseline below all clusters", () => {
   const result = domainModelToReactFlow(SHORTEST_COLUMN_STANDALONE_FIXTURE);
 
   const workflowCluster = result.nodes.find((node) => node.id === "cluster:workflow");
@@ -283,11 +283,11 @@ test("domainModelToReactFlow docks standalone modules under the shorter product 
     workflowCluster.position.y + Number(workflowCluster.style?.height ?? 0);
   const continuityBottom =
     continuityCluster.position.y + Number(continuityCluster.style?.height ?? 0);
+  const tallestClusterBottom = Math.max(workflowBottom, continuityBottom);
 
   assert.equal(standaloneNode.parentId, "product-part:local-core-runtime");
   assert.equal(workflowCluster.position.y >= 50, true);
   assert.equal(continuityCluster.position.y, workflowCluster.position.y);
   assert.equal(standaloneNode.position.x, workflowCluster.position.x);
-  assert.equal(standaloneNode.position.y, workflowBottom + 12);
-  assert.equal(standaloneNode.position.y < continuityBottom, true);
+  assert.equal(standaloneNode.position.y >= tallestClusterBottom + 12, true);
 });

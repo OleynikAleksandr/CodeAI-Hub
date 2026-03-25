@@ -11,6 +11,9 @@ const PRODUCT_PART_SECTION_GAP = 12, PRODUCT_PART_ROW_GAP = 24, PRODUCT_PART_FAL
 const CLUSTER_X_STEP = 320, CLUSTER_PADDING_X = 24, CLUSTER_BOTTOM_PADDING = 12;
 const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_GAP = 12;
 const STANDALONE_X_STEP = CLUSTER_X_STEP, DEFAULT_PRODUCT_PART_ID = "default-product-part";
+const CLUSTER_MULTI_COL_THRESHOLD = 3;
+const getClusterModuleCols = (n: number): number => n > CLUSTER_MULTI_COL_THRESHOLD ? 2 : 1;
+const getClusterInnerWidth = (cols: number): number => MODULE_X_OFFSET + cols * MODULE_CARD_WIDTH + Math.max(cols - 1, 0) * MODULE_CARD_GAP + CLUSTER_PADDING_X;
 // -- CSS-faithful height computation (mirrors diagram-editor-facade.tsx styles) --
 const LH11 = 14, LH12 = 15, LH13 = 16, LH14 = 17, LH15 = 18; // Math.ceil(fontSize * 1.2)
 const LH12_135 = 17; // Math.ceil(12 * 1.35) — module responsibility lineHeight:1.35
@@ -153,54 +156,52 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
     const standaloneModuleIds = getStandaloneModuleIds(productPart, model, modulesById);
     const externalStandaloneModuleIds = standaloneModuleIds.filter((moduleId) => modulesById.get(moduleId)?.kind === "external");
     const internalStandaloneModuleIds = standaloneModuleIds.filter((moduleId) => !externalStandaloneModuleIds.includes(moduleId));
-    const standaloneColumnCount = Math.max(
-      1,
-      clusterIds.length > 0 ? clusterIds.length : Math.min(PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS, Math.max(internalStandaloneModuleIds.length, 1))
-    );
-    const productPartWidth = Math.max(
-      720,
-      PRODUCT_PART_PADDING_X * 2 +
-        (clusterIds.length > 0
-          ? Math.max(clusterIds.length * CLUSTER_X_STEP, MODULE_CARD_WIDTH)
-          : MODULE_CARD_WIDTH + Math.max(standaloneColumnCount - 1, 0) * STANDALONE_X_STEP)
-    );
+    const clusterModuleCols = clusterIds.map((id) => getClusterModuleCols(clustersById.get(id)?.moduleIds.length ?? 0));
+    const totalClusterSlots = clusterModuleCols.reduce((s, c) => s + c, 0);
+    const standaloneColumnCount = Math.max(1, totalClusterSlots, Math.min(PRODUCT_PART_FALLBACK_STANDALONE_COLUMNS, internalStandaloneModuleIds.length));
+    const productPartWidth = Math.max(720, PRODUCT_PART_PADDING_X * 2 + Math.max(totalClusterSlots, standaloneColumnCount) * CLUSTER_X_STEP);
     const productPartHeaderHeight = getProductPartHeaderHeight(productPart, productPartWidth);
 
     const clusterNodes: DiagramFlowNode[] = [];
     const clusteredModuleNodes: DiagramFlowNode[] = [];
     const clusterHeights: number[] = [];
+    let clusterXSlot = 0;
     for (const [clusterIndex, clusterId] of clusterIds.entries()) {
       const cluster = clustersById.get(clusterId);
       if (!cluster) {
         continue;
       }
+      const cols = clusterModuleCols[clusterIndex] ?? 1;
+      const clusterWidth = getClusterInnerWidth(cols);
       const headerHeight = getClusterHeaderHeight(cluster);
-      let moduleY = headerHeight;
+      const colNextY = Array.from({ length: cols }, () => headerHeight);
       for (const moduleId of cluster.moduleIds) {
         const module = modulesById.get(moduleId);
         if (!module) {
           continue;
         }
         const height = getModuleCardHeight(module);
+        const colIdx = colNextY.indexOf(Math.min(...colNextY));
         clusteredModuleNodes.push(buildModuleNode({
           module,
-          position: { x: MODULE_X_OFFSET, y: moduleY },
+          position: { x: MODULE_X_OFFSET + colIdx * (MODULE_CARD_WIDTH + MODULE_CARD_GAP), y: colNextY[colIdx] },
           parentId: toClusterNodeId(clusterId),
           productPart: productPart.id,
           cluster: clusterId,
           height,
         }));
-        moduleY += height + MODULE_CARD_GAP;
+        colNextY[colIdx] += height + MODULE_CARD_GAP;
       }
-      const clusterHeight = moduleY > headerHeight ? moduleY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING;
+      const maxY = Math.max(headerHeight, ...colNextY);
+      const clusterHeight = maxY > headerHeight ? maxY - MODULE_CARD_GAP + CLUSTER_BOTTOM_PADDING : headerHeight + CLUSTER_BOTTOM_PADDING;
       clusterHeights.push(clusterHeight);
       clusterNodes.push({
         id: toClusterNodeId(clusterId),
         type: "cluster",
-        position: { x: PRODUCT_PART_PADDING_X + clusterIndex * CLUSTER_X_STEP, y: productPartHeaderHeight },
+        position: { x: PRODUCT_PART_PADDING_X + clusterXSlot * CLUSTER_X_STEP, y: productPartHeaderHeight },
         parentId: toProductPartNodeId(productPart.id),
         extent: "parent",
-        style: { width: MODULE_CARD_WIDTH + CLUSTER_PADDING_X * 2, height: clusterHeight },
+        style: { width: clusterWidth, height: clusterHeight },
         data: {
           stage: "diagram_modules",
           nodeKind: "cluster",
@@ -211,17 +212,15 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
           moduleIds: cluster.moduleIds,
         },
       });
+      clusterXSlot += cols;
     }
 
     const clusterSectionHeight = Math.max(0, ...clusterHeights);
     const standaloneBaseY = productPartHeaderHeight + (clusterIds.length > 0 ? clusterSectionHeight + PRODUCT_PART_SECTION_GAP : 0);
     const standaloneNodes: DiagramFlowNode[] = [];
-    const columnNextY = clusterIds.length > 0
-      ? clusterHeights.map((height) => productPartHeaderHeight + height + PRODUCT_PART_SECTION_GAP)
-      : Array.from({ length: standaloneColumnCount }, () => productPartHeaderHeight);
-    const columnContentBottoms = clusterIds.length > 0
-      ? clusterHeights.map((height) => productPartHeaderHeight + height)
-      : Array.from({ length: standaloneColumnCount }, () => productPartHeaderHeight);
+    const columnNextY = Array.from({ length: standaloneColumnCount }, () => standaloneBaseY);
+    const standaloneInitBottom = clusterIds.length > 0 ? productPartHeaderHeight + clusterSectionHeight : productPartHeaderHeight;
+    const columnContentBottoms = Array.from({ length: standaloneColumnCount }, () => standaloneInitBottom);
     for (const moduleId of internalStandaloneModuleIds) {
       const module = modulesById.get(moduleId);
       if (!module) {

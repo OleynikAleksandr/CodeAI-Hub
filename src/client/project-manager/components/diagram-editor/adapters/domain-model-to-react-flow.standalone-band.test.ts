@@ -123,7 +123,7 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow wraps standalone modules into a dedicated band without widening the product part", () => {
+test("domainModelToReactFlow wraps standalone modules across columns based on standalone count", () => {
   const result = domainModelToReactFlow(STANDALONE_WRAP_FIXTURE);
 
   const productPartNode = result.nodes.find(
@@ -166,18 +166,17 @@ test("domainModelToReactFlow wraps standalone modules into a dedicated band with
   const projectFlowBottom = projectFlowCluster.position.y + Number(projectFlowCluster.style?.height ?? 0);
   const artifactStoreBottom = artifactStoreCluster.position.y + Number(artifactStoreCluster.style?.height ?? 0);
 
-  assert.equal(productPartNode.style?.width, 720);
+  // 4 standalone modules → 3 columns, product part widens to accommodate
+  assert.equal(productPartNode.style?.width, 1008);
   assert.equal(descriptionStageNode.position.x, 24);
   assert.equal(virtualSimulationStageNode.position.x, 344);
-  // Standalone modules start after their respective cluster column
+  assert.equal(diagramModulesStageNode.position.x, 664);
+  assert.equal(artifactFreshnessNode.position.x, 664);
+  // All standalone modules start at uniform baseline below all clusters
   assert.equal(descriptionStageNode.position.y >= projectFlowBottom + 12, true);
   assert.equal(virtualSimulationStageNode.position.y >= artifactStoreBottom + 12, true);
-  assert.equal(diagramModulesStageNode.position.x, 24);
-  assert.equal(artifactFreshnessNode.position.x, 344);
-  assert.equal(diagramModulesStageNode.position.y > 0, true);
-  assert.equal(artifactFreshnessNode.position.y > 0, true);
-  const descHeight = Number(descriptionStageNode.style?.height ?? 0);
-  assert.equal(diagramModulesStageNode.position.y >= descriptionStageNode.position.y + descHeight + 12, true);
+  assert.equal(diagramModulesStageNode.position.y, descriptionStageNode.position.y);
+  assert.equal(artifactFreshnessNode.position.y > diagramModulesStageNode.position.y, true);
 });
 
 const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
