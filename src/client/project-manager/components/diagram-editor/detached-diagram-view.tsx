@@ -5,13 +5,6 @@ import { useDiagramPersistence } from "./use-diagram-persistence";
 import { DiagramEditorShell } from "./diagram-editor-shell";
 import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
 
-/**
- * Resolves detached-mode sidecar path by appending `-detached` before extension.
- * Example: `module-map.flow.json` → `module-map.flow-detached.json`
- */
-const toDetachedSidecarPath = (original: string): string =>
-  original.replace(/\.json$/, "-detached.json");
-
 type DetachedDiagramViewProps = {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -41,11 +34,9 @@ export const DetachedDiagramView: React.FC<DetachedDiagramViewProps> = ({
     workspaceSlug,
   });
 
-  const detachedSidecarPath = toDetachedSidecarPath(flowSidecarPath);
-
   const { persistNodes } = useDiagramPersistence({
     artifactPath,
-    flowSidecarPath: detachedSidecarPath,
+    flowSidecarPath,
     stage: "diagram_modules",
     workspacePath,
     workspaceSlug,
