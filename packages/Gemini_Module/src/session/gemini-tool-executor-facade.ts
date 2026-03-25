@@ -4,27 +4,42 @@ import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { ModuleReporter } from "../types";
 
-type SchedulerConstructor = new (options: {
+// AgentLoopContext shape expected by CoreToolScheduler@0.35.0.
+// We assemble it from Config deprecated getters (the only way in bridge mode).
+type AgentLoopContextLike = {
   readonly config: Config;
-  readonly getPreferredEditor: () => void;
-  readonly onEditorClose: () => void;
-  readonly onAllToolCallsComplete: (
+  readonly promptId: string;
+  readonly toolRegistry: unknown;
+  readonly messageBus: unknown;
+  readonly geminiClient: unknown;
+  readonly sandboxManager: unknown;
+};
+
+// CoreToolScheduler constructor options as of @google/gemini-cli-core@0.35.0.
+type SchedulerOptions = {
+  readonly context: AgentLoopContextLike;
+  readonly getPreferredEditor: () => undefined;
+  readonly onAllToolCallsComplete?: (
     completedToolCalls: readonly CompletedToolCall[]
   ) => void | Promise<void>;
-}) => {
+};
+
+type SchedulerInstance = {
   schedule(
     request: ToolCallRequestInfo | readonly ToolCallRequestInfo[],
     signal: AbortSignal
   ): Promise<void>;
 };
 
+type SchedulerConstructor035 = new (
+  options: SchedulerOptions
+) => SchedulerInstance;
+
 export class GeminiToolExecutorFacade {
   private readonly modules: GeminiCliModules;
-  private readonly reporter?: ModuleReporter;
 
-  constructor(modules: GeminiCliModules, reporter?: ModuleReporter) {
+  constructor(modules: GeminiCliModules, _reporter?: ModuleReporter) {
     this.modules = modules;
-    this.reporter = reporter;
   }
 
   async execute(
@@ -32,24 +47,38 @@ export class GeminiToolExecutorFacade {
     request: ToolCallRequestInfo,
     signal: AbortSignal
   ): Promise<CompletedToolCall> {
-    const legacyExecutor = this.modules.toolExecutor;
-    if (legacyExecutor?.executeToolCall) {
-      return await legacyExecutor.executeToolCall(config, request, signal);
-    }
-    this.reporter?.warn?.(
-      "Gemini tool executor switched to scheduler fallback backend",
-      { callId: request.callId, tool: request.name }
-    );
-    return await this.executeWithSchedulerFallback(config, request, signal);
+    return await this.executeWithScheduler(config, request, signal);
   }
 
-  private async executeWithSchedulerFallback(
+  private buildAgentLoopContext(
+    config: Config,
+    request: ToolCallRequestInfo
+  ): AgentLoopContextLike {
+    // Config@0.35.0 exposes deprecated getters for these fields.
+    // In bridge mode this is the only way to assemble AgentLoopContext.
+    const configAny = config as Record<string, unknown>;
+    return {
+      config,
+      promptId:
+        request.prompt_id ??
+        (configAny.promptId as string | undefined) ??
+        "unknown",
+      toolRegistry: configAny.toolRegistry,
+      messageBus: configAny.messageBus,
+      geminiClient: configAny.geminiClient,
+      sandboxManager: configAny.sandboxManager,
+    };
+  }
+
+  private async executeWithScheduler(
     config: Config,
     request: ToolCallRequestInfo,
     signal: AbortSignal
   ): Promise<CompletedToolCall> {
     const Scheduler = this.modules.toolScheduler
-      .CoreToolScheduler as unknown as SchedulerConstructor;
+      .CoreToolScheduler as unknown as SchedulerConstructor035;
+    const context = this.buildAgentLoopContext(config, request);
+
     return await new Promise<CompletedToolCall>((resolve, reject) => {
       let settled = false;
       const settleError = (error: unknown): void => {
@@ -61,12 +90,10 @@ export class GeminiToolExecutorFacade {
       };
 
       const scheduler = new Scheduler({
-        config,
+        context,
         getPreferredEditor: () => {
-          /* Gemini bridge does not provide a preferred editor */
-        },
-        onEditorClose: () => {
-          /* noop */
+          // Bridge does not provide a preferred editor
+          return;
         },
         onAllToolCallsComplete: (
           completedToolCalls: readonly CompletedToolCall[]
@@ -78,7 +105,7 @@ export class GeminiToolExecutorFacade {
           if (!first) {
             settleError(
               new Error(
-                "Gemini scheduler fallback completed without a tool-call result."
+                "Gemini scheduler completed without a tool-call result."
               )
             );
             return;

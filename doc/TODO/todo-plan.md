@@ -29,14 +29,14 @@
 
 ### Stream 1: Fix CoreToolScheduler API + remove legacy executor
 
-1. [TODO] **Rewrite `gemini-tool-executor-facade.ts`** — полная адаптация к CoreToolScheduler@0.35.0:
-   - Удалить `SchedulerConstructor` cast-тип — использовать inline cast к реальной сигнатуре `CoreToolSchedulerOptions`
-   - Удалить legacy branch (`modules.toolExecutor?.executeToolCall`) — в 0.35.0 его нет
-   - В `execute()`: собрать `AgentLoopContext` из `config` (deprecated getters) + `promptId` из `request.prompt_id`
-   - Передать `{ context, getPreferredEditor, onAllToolCallsComplete }` — убрать `onEditorClose` (не существует)
+1. [DONE] **Rewrite `gemini-tool-executor-facade.ts`** — полная адаптация к CoreToolScheduler@0.35.0:
+   - Удалён `SchedulerConstructor` cast-тип — заменён на `SchedulerConstructor035` с `AgentLoopContextLike`
+   - Удалён legacy branch (`modules.toolExecutor?.executeToolCall`) — в 0.35.0 его нет
+   - В `execute()`: собирается `AgentLoopContext` из `config` (deprecated getters) + `promptId` из `request.prompt_id`
+   - Передаётся `{ context, getPreferredEditor, onAllToolCallsComplete }` — убран `onEditorClose`
    (scope: `packages/Gemini_Module/src/session/gemini-tool-executor-facade.ts` — 1 файл)
 
-2. [TODO] Git Commit: `fix(gemini): rewrite tool executor for CoreToolScheduler@0.35.0 AgentLoopContext API` (hash: TBD)
+2. [DONE] Git Commit: `fix(gemini): rewrite tool executor for CoreToolScheduler@0.35.0 AgentLoopContext API` (hash: TBD)
 
 ### Stream 2: Clean up dead legacy code in cli-bridge & cli-types
 
