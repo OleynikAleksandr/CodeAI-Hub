@@ -20,7 +20,7 @@
 - `a31f0668 chore(release): build-all v1.1.695`
 
 ## Release artifacts
-- VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.695.vsix`
+- VSIX: `codeai-hub-1.1.695.vsix`
 - Tarballs: `~/.codeai-hub/releases/*-1.1.695.tar.bz2`
 
 ## Notes

@@ -28,7 +28,7 @@
 - `npm run build:project-manager`
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
-- Release artifact created: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.752.vsix`
+- Release artifact created: `codeai-hub-1.1.752.vsix`
 
 ## Git commits
 - `7089e5b3 docs(session): record v1.1.751 manual validation`
@@ -66,7 +66,7 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session104.md` (THIS REPORT)
 
-> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и решить, архивируется ли закрытый `Phase 16` или на его базе открывается следующий diagram follow-up scope.
+> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и решить, архивируется ли закрытый `Phase 16` или на его базе открывается следующий diagram follow-up scope.
 
 ## Plans for next session
 - Провести ручную проверку `v1.1.752` в живом PM и подтвердить, что inventory-only contract не имеет новых регрессий.

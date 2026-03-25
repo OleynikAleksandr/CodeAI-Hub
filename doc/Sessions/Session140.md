@@ -20,12 +20,12 @@
 
 ## Verification
 - `sed -n '1,220p' '/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules/product-parts.index.md'`
-- `sed -n '1,320p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`
-- `sed -n '1,260p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/layout/stage-artifact-mode.ts`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`
-- `npx tsx --test /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`
+- `sed -n '1,320p' src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`
+- `sed -n '1,260p' packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`
+- `sed -n '1,220p' src/client/project-manager/components/diagram-modules/diagram-modules-panel.tsx`
+- `sed -n '1,220p' src/client/project-manager/components/layout/stage-artifact-mode.ts`
+- `sed -n '1,220p' src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`
+- `npx tsx --test src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`
 - `git status --short --branch`
 
 ## Notes

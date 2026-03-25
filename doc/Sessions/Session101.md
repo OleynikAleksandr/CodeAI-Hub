@@ -42,7 +42,7 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session101.md` (THIS REPORT)
 
-> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и перейти к формированию эталонного `module-map.md` / golden reference для `Diagram Modules`.
+> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и перейти к формированию эталонного `module-map.md` / golden reference для `Diagram Modules`.
 
 ## Plans for next session
 - Проверить `v1.1.748` в реальном Project Manager: toolbar диаграммы должен остаться без `Auto-layout` и профилей, а ручной drag должен сохраняться после reopen/resume.

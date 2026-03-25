@@ -20,7 +20,7 @@
 - `d42f4afb chore(release): build-all v1.1.693`
 
 ## Release artifacts
-- VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.693.vsix`
+- VSIX: `codeai-hub-1.1.693.vsix`
 - Tarballs: `~/.codeai-hub/releases/*-1.1.693.tar.bz2` (скрипт также копирует их в `doc/tmp/releases/`)
 
 ## Notes

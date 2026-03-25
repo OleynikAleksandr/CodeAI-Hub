@@ -17,12 +17,12 @@
 
 ## Verification
 - `view_image '/Users/oleksandroliinyk/Desktop/Screenshot 2026-03-23 at 14.02.33.png'`
-- `sed -n '1,260p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`
-- `sed -n '1,260p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`
-- `sed -n '1,320p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/services/prompt-pack-builder.ts`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/core/src/remote-bridge/handlers/idea-contract-service.ts`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`
+- `sed -n '1,260p' packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`
+- `sed -n '1,260p' packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`
+- `sed -n '1,320p' src/client/project-manager/services/prompt-pack-builder.ts`
+- `sed -n '1,220p' packages/core/src/remote-bridge/handlers/idea-contract-service.ts`
+- `sed -n '1,220p' packages/core/src/remote-bridge/handlers/diagram-contract-prompt-assets.ts`
+- `sed -n '1,220p' packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`
 - `git status --short --branch`
 
 ## Notes
@@ -44,7 +44,7 @@
 4. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-7. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
 9. `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`
 10. `doc/TODO/todo-plan.md`

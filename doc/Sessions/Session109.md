@@ -127,7 +127,7 @@ Updated:
 6. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
-9. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+9. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
 10. `doc/TODO/todo-plan.md`
 
 ## Immediate implementation focus

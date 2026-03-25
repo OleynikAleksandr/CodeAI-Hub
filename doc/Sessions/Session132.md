@@ -17,7 +17,7 @@
 - В renderer `Diagram Modules` расширен purpose panel у `Product Part`, чтобы верхняя правая колонка использовала больше горизонтального пространства и не дробила description на лишние строки.
 - В adapter `module-stage-react-flow.ts` пересчитан measurement contract для `Product Part`: старт cluster section теперь вычисляется от реальной нижней границы summary/purpose header, а не от укороченного budget.
 - В том же adapter пересчитан measurement contract для `Cluster`: первая module card стартует ниже фактического description header, а standalone-band regression перестал зависеть от хрупких абсолютных `y`-координат.
-- После таргетных regression tests собран новый локальный baseline `1.1.767`: успешно выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, собран [codeai-hub-1.1.767.vsix](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.767.vsix), а tarball-артефакты обновлены в [doc/tmp/releases](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases).
+- После таргетных regression tests собран новый локальный baseline `1.1.767`: успешно выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, собран `codeai-hub-1.1.767.vsix`, а tarball-артефакты обновлены в [doc/tmp/releases](../../doc/tmp/releases).
 
 ## Verification
 - `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`
@@ -31,8 +31,8 @@
 - `git status --short --branch`
 
 ## Release artefacts
-- VSIX: [codeai-hub-1.1.767.vsix](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.767.vsix)
-- Local copied release tarballs: [doc/tmp/releases](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases)
+- VSIX: `codeai-hub-1.1.767.vsix`
+- Local copied release tarballs: [doc/tmp/releases](../../doc/tmp/releases)
 - Runtime release cache: `~/.codeai-hub/releases/`
 
 ## Notes
@@ -57,7 +57,7 @@
 4. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-7. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
 8. `doc/TODO/todo-plan.md`
 9. `doc/Sessions/Session131.md`
 10. `doc/Sessions/Session132.md` (THIS REPORT)
@@ -65,7 +65,7 @@
 ## First sanity check
 - Сразу выполнить `git status --short`.
 - Подтвердить, что baseline теперь `1.1.767` и дерево чистое.
-- Если следующий шаг связан с новым пользовательским ретестом, опираться на [codeai-hub-1.1.767.vsix](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.767.vsix) и свежие артефакты в [doc/tmp/releases](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases).
+- Если следующий шаг связан с новым пользовательским ретестом, опираться на `codeai-hub-1.1.767.vsix` и свежие артефакты в [doc/tmp/releases](../../doc/tmp/releases).
 
 ## Plans for next session
 - Собрать пользовательский feedback по `1.1.767`, в первую очередь на dense `Diagram Modules` scenarios с длинными purpose/description блоками.

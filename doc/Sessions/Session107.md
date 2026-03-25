@@ -293,7 +293,7 @@ Release verification state at the end of this session:
 
 - `build-all` completed successfully for `1.1.753`;
 - `build-release --use-current-version` completed successfully;
-- VSIX artifact: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.753.vsix` (`1.4M`);
+- VSIX artifact: `codeai-hub-1.1.753.vsix` (`1.4M`);
 - local release caches updated under `~/.codeai-hub/releases/`.
 
 ---

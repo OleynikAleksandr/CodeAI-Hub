@@ -20,7 +20,7 @@
 - `npm run typecheck:webview` + `npm run build:webview`: ✅ success.
 - `./scripts/build-all.sh`: ✅ success; version bump до `1.1.649`; артефакты в `~/.codeai-hub/releases/` и копия в `doc/tmp/releases/`.
 - `./scripts/build-release.sh --use-current-version`: ✅ success; produced `codeai-hub-1.1.649.vsix`.
-- VSIX path (local): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.649.vsix`
+- VSIX path (local): `codeai-hub-1.1.649.vsix`
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)

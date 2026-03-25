@@ -19,15 +19,15 @@
 ## Verification
 - `sed -n '1,260p' /Users/oleksandroliinyk/.codeai-hub/templates/diagram_modules/module-inventory-prompt.md`
 - `sed -n '1,260p' /Users/oleksandroliinyk/.codeai-hub/templates/diagram_modules/module-inventory-template.md`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/agents/diagram-modules-agent/assets/module-inventory-template.md`
-- `sed -n '1,320p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/services/prompt-pack-builder.ts`
-- `sed -n '1,220p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/core/src/remote-bridge/handlers/idea-contract-service.ts`
+- `sed -n '1,220p' packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md`
+- `sed -n '1,220p' packages/agents/diagram-modules-agent/assets/module-inventory-template.md`
+- `sed -n '1,320p' src/client/project-manager/services/prompt-pack-builder.ts`
+- `sed -n '1,220p' packages/core/src/remote-bridge/handlers/idea-contract-service.ts`
 - `sed -n '1,260p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules/product-parts.index.md`
 - `find '/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules' -maxdepth 2 -type f | sort`
-- `sed -n '1,320p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`
-- `sed -n '1,260p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/ui/src/services/idea-collector-artifact.ts`
-- `sed -n '1,240p' /Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`
+- `sed -n '1,320p' src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`
+- `sed -n '1,260p' src/client/ui/src/services/idea-collector-artifact.ts`
+- `sed -n '1,240p' packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`
 - `tail -n 80 /Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4/codexCli/codex-e2cd0bd6-57f8-4226-aa29-f2f5ae6e8794-diagram-modules.jsonl`
 - `tail -n 120 /Users/oleksandroliinyk/.codeai-hub/providers/codex/home/sessions/2026/03/23/rollout-2026-03-23T13-05-24-019d1a95-e424-71b1-a220-46b64d45c139.jsonl`
 - `tail -n 120 /Users/oleksandroliinyk/.codeai-hub/logs/codex/sdk-codex-019d1a95-e424-71b1-a220-46b64d45c139.jsonl`
@@ -51,7 +51,7 @@
 4. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-7. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
 9. `doc/TODO/todo-plan.md`
 10. `doc/Sessions/Session134.md`

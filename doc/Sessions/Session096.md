@@ -40,7 +40,7 @@
 6. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
 7. `doc/Sessions/Session096.md` (THIS REPORT)
 
-> Далее: в зависимости от следующего diagram scope открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и связанные PM/UI файлы в `src/client/project-manager/components/diagram-editor/`.
+> Далее: в зависимости от следующего diagram scope открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и связанные PM/UI файлы в `src/client/project-manager/components/diagram-editor/`.
 
 ## Plans for next session
 - Ручная проверка `v1.1.743` в реальном PM: `Auto-layout` должен перестраивать текущую диаграмму без перехода на другой stage, как для `Diagram Modules`, так и для `Diagram Facades`.

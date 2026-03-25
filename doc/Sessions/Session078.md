@@ -51,7 +51,7 @@
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
 - В release build подтверждены `Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`.
-- Собран локальный VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.730.vsix`.
+- Собран локальный VSIX: `codeai-hub-1.1.730.vsix`.
 - Advisory duplication check во время `build-release` снова показал `3.12%` при пороге `3%`, но pipeline не прервался и VSIX был собран успешно.
 
 ---

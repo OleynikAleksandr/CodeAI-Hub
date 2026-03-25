@@ -21,13 +21,13 @@
 ## Workspaces and repositories in scope
 
 - Основной репозиторий и главный source of truth для кода и SSOT-доков:
-  [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub)
+  `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub`
 - Зеркальный workspace для запуска продуктовых агентов без `AGENTS.md`:
-  [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4)
+  `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`
 - Корень артефактов в зеркальном workspace:
-  [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub)
+  `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub`
 - Пользователь отдельно напомнил и про глобальный runtime/template root:
-  [`/Users/oleksandroliinyk/.codeai-hub/`](/Users/oleksandroliinyk/.codeai-hub/)
+  `/Users/oleksandroliinyk/.codeai-hub/`
 
 ## Operational agreement fixed in this session
 
@@ -44,10 +44,10 @@
 
 ### Session reports reviewed
 
-- [`doc/Sessions/Session105.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session105.md)
-- [`doc/Sessions/Session104.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session104.md)
-- [`doc/Sessions/Session103.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session103.md)
-- [`doc/Sessions/Session102.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session102.md)
+- [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md)
+- [`doc/Sessions/Session104.md`](../../doc/Sessions/Session104.md)
+- [`doc/Sessions/Session103.md`](../../doc/Sessions/Session103.md)
+- [`doc/Sessions/Session102.md`](../../doc/Sessions/Session102.md)
 
 ### Commits from the last session report reviewed via `git show`
 
@@ -59,26 +59,26 @@
 
 ### SSOT and architecture docs re-opened
 
-- [`AGENTS.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/AGENTS.md)
-- [`doc/SolidWorks-WorkFlow/README.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/README.md)
-- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Docs_Index.md)
-- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
-- [`doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md)
-- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
-- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md)
+- [`AGENTS.md`](../../AGENTS.md)
+- [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
+- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
+- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](../../doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
+- [`doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`](../../doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md)
+- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](../../doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
+- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](../../doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md)
 
 ### Runtime/UI code re-opened to verify actual behavior
 
-- [`src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx)
-- [`src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts)
-- [`src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts)
-- [`packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts)
-- [`src/client/ui/src/app-host/settings-only-host.tsx`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/ui/src/app-host/settings-only-host.tsx)
-- [`src/extension-module/home-view-provider.ts`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/extension-module/home-view-provider.ts)
-- [`src/client/ui/src/core-bridge/supervisor-requests.ts`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/ui/src/core-bridge/supervisor-requests.ts)
-- [`src/client/project-manager/api.ts`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/src/client/project-manager/api.ts)
+- [`src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`](../../src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx)
+- [`src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`](../../src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts)
+- [`src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`](../../src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts)
+- [`packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`](../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts)
+- [`src/client/ui/src/app-host/settings-only-host.tsx`](../../src/client/ui/src/app-host/settings-only-host.tsx)
+- [`src/extension-module/home-view-provider.ts`](../../src/extension-module/home-view-provider.ts)
+- [`src/client/ui/src/core-bridge/supervisor-requests.ts`](../../src/client/ui/src/core-bridge/supervisor-requests.ts)
+- [`src/client/project-manager/api.ts`](../../src/client/project-manager/api.ts)
 
 ## Baseline conclusions restored before artifact work
 
@@ -98,7 +98,7 @@
 
 ### Target file
 
-- [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md)
+- `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
 
 ### What was done
 
@@ -121,7 +121,7 @@
 
 ### Target file
 
-- [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md)
+- `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
 
 ### Review strategy
 
@@ -166,7 +166,7 @@
 
 ### Target file
 
-- [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md)
+- `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`
 
 ### What the first baseline already did well
 
@@ -215,24 +215,24 @@
 
 ### In the main repository
 
-- [`doc/Sessions/Session105.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session105.md)
-- [`doc/SolidWorks-WorkFlow/README.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/README.md)
-- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Docs_Index.md)
-- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
-- [`doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md)
-- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
-- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md)
+- [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md)
+- [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
+- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
+- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](../../doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
+- [`doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`](../../doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md)
+- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](../../doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
+- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](../../doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md)
 
 ### In the mirrored workspace
 
 - Approved questionnaire:
-  [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md)
+  `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
 - Approved description artifact:
-  [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md)
+  `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
 - Approved virtual simulation artifact:
-  [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md)
+  `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`
 
 ## Net result of the session
 
@@ -266,36 +266,36 @@
 
 Если следующая сессия стартует с нулевым контекстом, нужно восстановиться именно в таком порядке:
 
-1. Открыть [`AGENTS.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/AGENTS.md) и напомнить себе, что эта сессия велась в основном как artifact-review, а не как обычная execution-фаза.
-2. Открыть предыдущий релизный отчет [`doc/Sessions/Session105.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session105.md), чтобы вспомнить состояние `main` до этой artifact-сессии.
-3. Открыть этот отчет [`doc/Sessions/Session106.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session106.md) и прочитать его целиком, а не только конец.
+1. Открыть [`AGENTS.md`](../../AGENTS.md) и напомнить себе, что эта сессия велась в основном как artifact-review, а не как обычная execution-фаза.
+2. Открыть предыдущий релизный отчет [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md), чтобы вспомнить состояние `main` до этой artifact-сессии.
+3. Открыть этот отчет [`doc/Sessions/Session106.md`](../../doc/Sessions/Session106.md) и прочитать его целиком, а не только конец.
 4. Проверить `git status` и убедиться, что основной репозиторий по-прежнему чист и что работа идет от `main`.
 5. Переоткрыть базовые SSOT-доки:
-   - [`doc/SolidWorks-WorkFlow/README.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/README.md)
-   - [`doc/SolidWorks-WorkFlow/Docs_Index.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Docs_Index.md)
-   - [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-   - [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+   - [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
+   - [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
+   - [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
+   - [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
 6. После этого открыть утвержденные артефакты уже в mirrored workspace:
-   - [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md)
-   - [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md)
-   - [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md)
+   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
+   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
+   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`
 7. Только потом переходить к следующему generated artifact, чтобы не потерять уже утвержденные semantic boundaries.
 
 ## Required documents to review before work
 
-1. [`AGENTS.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/AGENTS.md)
-2. [`doc/Sessions/Session105.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session105.md)
-3. [`doc/Sessions/Session106.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session106.md) (THIS REPORT)
-4. [`doc/SolidWorks-WorkFlow/README.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/README.md)
-5. [`doc/SolidWorks-WorkFlow/Docs_Index.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Docs_Index.md)
-6. [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-7. [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
-8. [`doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md)
-9. [`doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md)
+1. [`AGENTS.md`](../../AGENTS.md)
+2. [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md)
+3. [`doc/Sessions/Session106.md`](../../doc/Sessions/Session106.md) (THIS REPORT)
+4. [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
+5. [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
+6. [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
+7. [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+8. [`doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`](../../doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md)
+9. [`doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`](../../doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md)
 10. Approved mirrored-workspace artifacts:
-    - [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md)
-    - [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md)
-    - [`/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md)
+    - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
+    - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
+    - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/virtual_simulation/virtual-simulation.md`
 
 ## Non-negotiable invariants for next session
 

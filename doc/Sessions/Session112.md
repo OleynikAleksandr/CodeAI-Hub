@@ -39,7 +39,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
+5. `doc/SolidWorks-WorkFlow/Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
 6. `doc/Sessions/Session112.md` (THIS REPORT)
 
 > Then open the specific planning or SSOT documents required by the next task from `doc/SolidWorks-WorkFlow/Plans/`, `System/`, `Clusters/`, `Modules/`, and `Contracts/`.

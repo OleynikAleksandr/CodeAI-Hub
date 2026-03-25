@@ -48,7 +48,7 @@
 6. `doc/TODO/todo-plan.md`
 7. `doc/Sessions/Session095.md` (THIS REPORT)
 
-> Далее: если продолжаем diagram UX/readability scope, открыть также `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`.
+> Далее: если продолжаем diagram UX/readability scope, открыть также `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`.
 
 ## Plans for next session
 - Manually verify `v1.1.742` in the running UI:

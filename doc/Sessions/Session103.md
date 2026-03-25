@@ -48,7 +48,7 @@
 - `npm run build:webview` прошёл успешно перед релизом.
 - `npm run build:project-manager` прошёл успешно перед релизом.
 - `./scripts/build-all.sh` успешно собрал unified artifacts и поднял версию до `1.1.751`.
-- `./scripts/build-release.sh --use-current-version` успешно создал `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.751.vsix`.
+- `./scripts/build-release.sh --use-current-version` успешно создал `codeai-hub-1.1.751.vsix`.
 - `node --test --import tsx src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts` прошёл успешно после PM prompt-pack repair.
 - `npm run typecheck:webview` прошёл успешно после repair-flow изменений в PM shared components.
 - `node --test --import tsx packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts` прошёл успешно и подтвердил, что `artifact-upsert` пишет `module-inventory.md` и derived `module-map.md`.
@@ -108,8 +108,8 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session103.md` (THIS REPORT)
 
-> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
-> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md` и этот отчёт, затем решить, архивируем ли закрытый `Phase 15` и открываем ли новый planning doc под следующий diagram follow-up.
+> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
+> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md` и этот отчёт, затем решить, архивируем ли закрытый `Phase 15` и открываем ли новый planning doc под следующий diagram follow-up.
 
 ## Plans for next session
 - Разобрать quality gaps первого inventory-derived diagram draft: рендер простых связей, перегруженность storage/runtime-модулей и визуальное/семантическое положение `selected-ai-provider`.

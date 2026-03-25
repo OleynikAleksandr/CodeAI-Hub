@@ -15,7 +15,7 @@
 
 ## Build / verification
 - `./scripts/build-release.sh --use-current-version` (v1.1.647): ✅ success; produced `codeai-hub-1.1.647.vsix`.
-- Local artifact: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.647.vsix` (rebuilt after changelog update).
+- Local artifact: `codeai-hub-1.1.647.vsix` (rebuilt after changelog update).
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)

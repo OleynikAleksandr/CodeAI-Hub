@@ -39,7 +39,7 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
-7. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
 8. `doc/Sessions/Session097.md` (THIS REPORT)
 
 > Далее: если manual verification подтвердит успешный modules-first corrective stream, следующий шаг переносит layout/profile lessons learned на `Diagram Facades` и отдельно дорабатывает читаемость dense facade graphs.

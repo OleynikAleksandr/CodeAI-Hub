@@ -128,7 +128,7 @@ Updated:
 6. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 7. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 8. `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-9. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
+9. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
 10. `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
 11. `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`
 12. `doc/TODO/todo-plan.md`

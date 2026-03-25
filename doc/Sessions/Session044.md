@@ -18,7 +18,7 @@
 - `dc4681e4 chore(release): build-all v1.1.692`
 
 ## Release artifacts
-- VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.692.vsix`
+- VSIX: `codeai-hub-1.1.692.vsix`
 - Tarballs: `~/.codeai-hub/releases/*-1.1.692.tar.bz2` (скрипт также копирует их в `doc/tmp/releases/`)
 
 ## Notes

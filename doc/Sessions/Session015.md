@@ -17,7 +17,7 @@
 - `./scripts/build-all.sh`: ✅ success; артефакты в `~/.codeai-hub/releases/` и копия в `doc/tmp/releases/`.
 - `./scripts/build-release.sh --use-current-version`: ✅ success.
 
-VSIX path (local): `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.662.vsix`
+VSIX path (local): `codeai-hub-1.1.662.vsix`
 VSIX sha256: `071d225f09480e0739432657fea542b9c504edbc82ef742a10a9062a2ffb2ba9`
 
 ## Git commits

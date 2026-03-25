@@ -14,7 +14,7 @@
 - Докоммичены пропущенные handoff-документы:
   - `doc/Sessions/Session110.md`
   - `doc/Sessions/Session111.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
 - Удалены больше не нужные prompt/help draft-файлы из `doc/`, потому что их содержимое уже перенесено в runtime assets и user-facing help surface.
 - Синхронно обновлены release-facing и SSOT документы:
   - `README.md`

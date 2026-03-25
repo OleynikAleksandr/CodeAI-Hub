@@ -20,7 +20,7 @@
 - Ручная проверка:
   - `doc/TODO/todo-plan.md`
   - `doc/TODO/Archive/todo-plan-up-to-phase28-2026-03-22.md`
-  - `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
   - `doc/Sessions/Session127.md`
 
 ## Git commits
@@ -40,7 +40,7 @@
 4. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-7. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
 9. `doc/TODO/todo-plan.md`
 10. `doc/Sessions/Session127.md`

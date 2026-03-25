@@ -25,8 +25,8 @@
   - `✅ Package created`
 
 ## Release artefacts
-- VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.723.vsix`
-- Tarballs: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/releases/`
+- VSIX: `codeai-hub-1.1.723.vsix`
+- Tarballs: `doc/tmp/releases/`
   - `CodeAIHubLauncher-macos-arm64-1.1.723.tar.bz2`
   - `claude-module-1.1.723.tar.bz2`
   - `codeai-hub-core-darwin-arm64-1.1.723.tar.bz2`

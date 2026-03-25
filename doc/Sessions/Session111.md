@@ -31,7 +31,7 @@
   - `module-map.flow.json` — только layout sidecar и обычно появляется после ручного drag node на canvas;
   - runtime templates из `.codeai-hub/templates/diagram_modules/` должны быть явной частью contract surface.
 - Создан новый planning-doc:
-  - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
   - документ фиксирует новый DSL baseline `Product Part -> Cluster -> Module`, migration strategy `dual-read, single-write` и impact на parser / serializer / React Flow projection.
 - Обновлён `doc/TODO/todo-plan.md`:
   - `Phase 20` расширена до исполнимых streams по имплементации новых prompt/help/template surfaces;
@@ -53,7 +53,7 @@
 3. `doc/Sessions/Session111.md` (THIS REPORT)
 4. `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
 5. `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
-6. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
+6. `doc/SolidWorks-WorkFlow/Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
 7. `doc/TODO/todo-plan.md`
 8. Drafts in `doc/`:
    - `doc/description-agent-prompt-draft-v4.md`

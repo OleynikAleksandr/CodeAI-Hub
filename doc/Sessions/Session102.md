@@ -40,7 +40,7 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session102.md` (THIS REPORT)
 
-> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md` и продолжить проектирование manual alignment tools для `module-map.md` / `facade-map.md`.
+> Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и продолжить проектирование manual alignment tools для `module-map.md` / `facade-map.md`.
 
 ## Plans for next session
 - Зафиксировать golden reference для `module-map.md` и, если нужно, отдельно для `facade-map.md`.
