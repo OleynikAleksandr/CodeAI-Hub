@@ -922,29 +922,8 @@ export class GeminiSessionManager {
         thinkingLevel?: string;
       }
     | undefined {
-    if (modelId.startsWith("gemini-2.5-")) {
-      // Gemini 2.5 family uses thinkingBudget
-      let budget = 0;
-      switch (level) {
-        case "low":
-          budget = 4000;
-          break;
-        case "high":
-          budget = 16_000;
-          break;
-        default:
-          budget = 4000; // Default to specific budget if unknown, to be safe
-          break;
-      }
-
-      return {
-        includeThoughts: budget > 0,
-        thinkingBudget: budget,
-      };
-    }
-
-    if (modelId.startsWith("gemini-3-") && level && level !== "off") {
-      // Gemini 3 family uses thinkingLevel
+    // Gemini 3.x family (3-flash, 3.1-pro, etc.) uses thinkingLevel
+    if (modelId.startsWith("gemini-3") && level && level !== "off") {
       return {
         includeThoughts: true,
         thinkingLevel: level,

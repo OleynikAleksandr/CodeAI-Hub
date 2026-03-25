@@ -138,11 +138,8 @@ Default: `gemini-3.1-pro-preview`
 
 ### Stream 2: Update Gemini_Module thinking config
 
-3. [TODO] **Update `packages/Gemini_Module/src/session/gemini-session-manager.ts`**:
-   - `resolveThinkingConfig()`: удалить ветку `gemini-2.5-`, обновить `gemini-3-` на `gemini-3` (покрывает и 3.1 Pro и 3 Flash)
-   (scope: `gemini-session-manager.ts` — 1 файл)
-
-4. [TODO] Git Commit: `refactor(gemini): remove 2.5 thinking config branch` (hash: TBD)
+3. [DONE] Removed gemini-2.5 branch, widened prefix to `"gemini-3"` (covers 3-flash + 3.1-pro)
+4. [DONE] Git Commit: `refactor(gemini): remove 2.5 thinking config branch` (hash: TBD)
 
 ### Stream 3: Targeted build + verification
 
