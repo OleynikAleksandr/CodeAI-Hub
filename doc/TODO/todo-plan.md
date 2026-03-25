@@ -109,8 +109,8 @@ Gemini (в отличие от Claude и Codex) не выдаёт промежу
 
 8. [DONE] Update `README.md`, `CHANGELOG.md` for new version.
 9. [DONE] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — ThoughtTranslatorService section added.
-10. [IN_PROGRESS] Git Commit: `docs: update README, CHANGELOG, SystemArchitecture` (hash: TBD)
-11. [TODO] `./scripts/build-all.sh` → version bump + full build.
-12. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX.
-13. [TODO] Git Commit: `chore(release): bump version to <new_version>` (hash: TBD)
-14. [TODO] Create `doc/Sessions/Session158.md`.
+10. [DONE] Git Commit: `docs: update README, CHANGELOG, SystemArchitecture` (hash: 67c519f7)
+11. [DONE] `./scripts/build-all.sh` → version 1.1.801, all providers/core/UI/launcher built.
+12. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.801.vsix` (1.5M).
+13. [DONE] Git Commit: `chore(release): bump version to 1.1.801` (hash: 1a5d827b)
+14. [DONE] Create `doc/Sessions/Session158.md`.
