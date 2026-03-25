@@ -12,7 +12,6 @@ import type {
 } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { Part, UsageMetadata } from "@google/genai";
 import { GeminiMessageProcessor } from "../messaging/message-processor";
-// biome-ignore lint/correctness/noUnusedImports: used in constructor for instantiation
 import { ThoughtTranslatorService } from "../messaging/thought-translator-service";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
@@ -101,7 +100,6 @@ export class GeminiSessionManager {
     // Capture API key BEFORE sanitizeEnvironment clears GOOGLE_API_KEY
     const apiKey = process.env.GOOGLE_API_KEY?.trim();
     if (apiKey && apiKey.length > 0) {
-      // biome-ignore lint/correctness/noUndeclaredVariables: imported from sibling package
       this.thoughtTranslator = new ThoughtTranslatorService(apiKey, reporter);
     }
     this.sanitizeEnvironment();

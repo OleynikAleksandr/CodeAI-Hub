@@ -9,7 +9,6 @@ import type { UsageMetadata } from "@google/genai";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { ActiveSession } from "../session/types";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
-// biome-ignore lint/correctness/noUnusedImports: used as type in options and class field
 import type { ThoughtTranslatorService } from "./thought-translator-service";
 
 type TurnAccumulator = {

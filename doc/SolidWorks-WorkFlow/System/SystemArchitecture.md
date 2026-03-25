@@ -67,6 +67,11 @@
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
+- Gemini Thought Translator: `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
+  - Fire-and-forget translation of Gemini agent thoughts via `gemini-2.0-flash-lite`
+  - Wired into `GeminiMessageProcessor.handleThoughtEvent()` as optional dependency
+  - API key captured from `GOOGLE_API_KEY` env before `sanitizeEnvironment()` in `GeminiSessionManager`
+  - Graceful degradation: translation failure does not affect main agent session
 
 ## 5) Workflow Boundary (Description, 2026-03-01)
 

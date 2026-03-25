@@ -107,14 +107,10 @@ Gemini (в отличие от Claude и Codex) не выдаёт промежу
 
 ### Stream 4: Release build
 
-8. [TODO] Update `README.md`, `CHANGELOG.md` for new version — описать:
-   - Fix: Gemini tool execution compatibility with gemini-cli-core@0.35.0
-   - Feature: Real-time Russian translation of Gemini agent thoughts via Flash
-   - New event handlers: ModelInfo, AgentExecutionStopped, AgentExecutionBlocked
-   - Cleanup: removed legacy nonInteractiveToolExecutor dead code
-9. [TODO] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — добавить секцию ThoughtTranslatorService, обновить Gemini provider architecture.
-10. [TODO] Git Commit: `docs: update README, CHANGELOG, SystemArchitecture for v<new>` (hash: TBD)
+8. [DONE] Update `README.md`, `CHANGELOG.md` for new version.
+9. [DONE] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — ThoughtTranslatorService section added.
+10. [IN_PROGRESS] Git Commit: `docs: update README, CHANGELOG, SystemArchitecture` (hash: TBD)
 11. [TODO] `./scripts/build-all.sh` → version bump + full build.
 12. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX.
 13. [TODO] Git Commit: `chore(release): bump version to <new_version>` (hash: TBD)
-14. [TODO] Create `doc/Sessions/Session157.md`.
+14. [TODO] Create `doc/Sessions/Session158.md`.

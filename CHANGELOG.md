@@ -2,6 +2,17 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [Unreleased] - 2026-03-25
+### Fixed
+- **Gemini tool execution**: full compatibility with `gemini-cli-core@0.35.0` — build `AgentLoopContext` from Config deprecated getters, pass to `CoreToolScheduler` (fixes `TypeError: Cannot read properties of undefined (reading 'messageBus')`).
+
+### Added
+- **Gemini Thought Translator**: real-time Russian translation of Gemini agent thoughts via `gemini-2.0-flash-lite` (fire-and-forget, zero-cost, graceful degradation).
+- **New event handlers**: `ModelInfo`, `AgentExecutionStopped`, `AgentExecutionBlocked` events from `gemini-cli-core@0.35.0`.
+
+### Removed
+- **Legacy nonInteractiveToolExecutor**: dead code path removed from `cli-bridge`, `cli-types`, and tool executor facade.
+
 ## [1.1.800] - 2026-03-25
 ### Added
 - **Detachable diagram window**: `Detach` button in artifact header opens a full-viewport ReactFlow popup via `window.open()`; shared sidecar file with BroadcastChannel sync on drop.
