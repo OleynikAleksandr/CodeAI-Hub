@@ -41,17 +41,14 @@
 
 ### Stream 1: Move Detach button to artifact header
 
-1. [TODO] **Relocate Detach button** — add `extraActions` slot to `StageArtifactHeaderToggle`, pass Detach from `main-area.tsx` when `activeTool === "Diagram Modules"`, remove from `diagram-stage-panel-scaffold.tsx`. (scope: `stage-artifact-header-toggle.tsx`, `main-area.tsx`, `diagram-stage-panel-scaffold.tsx`)
-2. [TODO] Git Commit: `fix(pm): move Detach button to artifact header next to Artifacts toggle`
+1. [DONE] **Relocate Detach button** — add `extraActions` slot to `StageArtifactHeaderToggle`, pass Detach from `main-area.tsx` (via `useDetachDiagramButton` hook in `detach-diagram-button.tsx`) when `activeTool === "Diagram Modules"`, remove from `diagram-stage-panel-scaffold.tsx`.
 
 ### Stream 2: Replace Ctrl with Option (Alt) for node drag
 
-3. [TODO] **Change drag modifier key** — replace `Control`/`Meta` with `Alt` in `diagram-editor-facade.tsx`. On macOS Ctrl+click = right-click, Option is the correct modifier. (scope: `diagram-editor-facade.tsx`)
-4. [TODO] Git Commit: `fix(pm): use Option/Alt instead of Ctrl for diagram node drag`
+2. [DONE] **Change drag modifier key** — replace `Control`/`Meta` with `Alt` in `diagram-editor-facade.tsx`. On macOS Ctrl+click = right-click.
 
 ### Stream 3: Dynamic container resizing on node drag
 
-5. [TODO] **Add container constraints to types** — extend `ProductPartFlowNodeData` and `ClusterFlowNodeData` with `containerConstraints` (childMinX, childMinY, minWidth, minHeight, paddingRight, paddingBottom). Remove `extent: "parent"` from child nodes. Populate constraints in `module-stage-react-flow.ts`. (scope: `domain-model-to-react-flow.types.ts`, `module-stage-react-flow.ts`)
-6. [TODO] Git Commit: `feat(pm): add container constraints to flow node data for dynamic resizing`
-7. [TODO] **Implement dynamic resize logic** — in `diagram-editor-shell.tsx`, after `applyNodeChanges` clamp child positions and recalculate container width/height from children bounding box. Cascade: cluster resize → product part resize. Min width PP=720, Cluster=single-column. (scope: `diagram-editor-shell.tsx`)
-8. [TODO] Git Commit: `feat(pm): dynamic container resizing when dragging nodes`
+3. [DONE] **Add container constraints + dynamic resize** — `ContainerConstraints` type in `domain-model-to-react-flow.types.ts`, populated in `module-stage-react-flow.ts`. Removed `extent:"parent"` from child nodes. `resizeContainersToFit` in `diagram-editor-shell.tsx` clamps child positions and resizes containers bottom-up on every drag frame.
+
+4. [DONE] Git Commit: `feat(pm): relocate Detach button, use Option+drag, dynamic container resizing` (hash: 00630a32)
