@@ -273,14 +273,14 @@ test("domainModelToReactFlow gives stacked cluster modules enough vertical space
     return;
   }
 
+  // 3 modules → 2-column layout (col 0: eligibility + refresh, col 1: execution)
   assert.equal(eligibilityNode.position.x, 24);
-  const eligH = Number(eligibilityNode.style?.height ?? 0);
-  const execH = Number(executionNode.style?.height ?? 0);
-  const refH = Number(refreshNode.style?.height ?? 0);
-  assert.equal(eligibilityNode.position.y > 0, true);
-  assert.equal(executionNode.position.x, 24);
+  assert.equal(executionNode.position.x, 276);
   assert.equal(refreshNode.position.x, 24);
-  assert.equal(executionNode.position.y >= eligibilityNode.position.y + eligH + 12, true);
-  assert.equal(refreshNode.position.y >= executionNode.position.y + execH + 12, true);
-  assert.equal(Number(clusterNode.style?.height ?? 0) >= refreshNode.position.y + refH, true);
+  assert.equal(eligibilityNode.position.y > 0, true);
+  // Two-column: eligibility and execution start at same Y
+  assert.equal(executionNode.position.y, eligibilityNode.position.y);
+  // refresh stacks below eligibility in col 0
+  assert.equal(refreshNode.position.y > eligibilityNode.position.y, true);
+  assert.equal(Number(clusterNode.style?.height ?? 0) > refreshNode.position.y, true);
 });

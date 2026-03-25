@@ -11,7 +11,7 @@ const PRODUCT_PART_SECTION_GAP = 12, PRODUCT_PART_ROW_GAP = 24, PRODUCT_PART_FAL
 const CLUSTER_X_STEP = 320, CLUSTER_PADDING_X = 24, CLUSTER_BOTTOM_PADDING = 12;
 const MODULE_X_OFFSET = 24, MODULE_CARD_WIDTH = 240, MODULE_CARD_GAP = 12;
 const STANDALONE_X_STEP = CLUSTER_X_STEP, DEFAULT_PRODUCT_PART_ID = "default-product-part";
-const CLUSTER_MULTI_COL_THRESHOLD = 3;
+const CLUSTER_MULTI_COL_THRESHOLD = 2;
 const getClusterModuleCols = (n: number): number => n > CLUSTER_MULTI_COL_THRESHOLD ? 2 : 1;
 const getClusterInnerWidth = (cols: number): number => MODULE_X_OFFSET + cols * MODULE_CARD_WIDTH + Math.max(cols - 1, 0) * MODULE_CARD_GAP + CLUSTER_PADDING_X;
 // -- CSS-faithful height computation (mirrors diagram-editor-facade.tsx styles) --
