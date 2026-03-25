@@ -56,7 +56,7 @@ export class GeminiToolExecutorFacade {
   ): AgentLoopContextLike {
     // Config@0.35.0 exposes deprecated getters for these fields.
     // In bridge mode this is the only way to assemble AgentLoopContext.
-    const configAny = config as Record<string, unknown>;
+    const configAny = config as unknown as Record<string, unknown>;
     return {
       config,
       promptId:

@@ -73,5 +73,8 @@ test("GeminiToolExecutorFacade executes through CoreToolScheduler with AgentLoop
   assert.equal(result, expected);
   assert.deepEqual(scheduledRequest, request);
   assert.ok(receivedContext, "Scheduler should receive AgentLoopContext");
-  assert.equal(receivedContext.promptId, "prompt-1");
+  assert.equal(
+    (receivedContext as Record<string, unknown>).promptId,
+    "prompt-1"
+  );
 });

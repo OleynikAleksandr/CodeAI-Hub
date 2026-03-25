@@ -127,16 +127,24 @@ export class GeminiMessageProcessor {
       [TurnEventType.LoopDetected, this.handleLoopDetectedEvent.bind(this)],
       [TurnEventType.InvalidStream, this.handleInvalidStreamEvent.bind(this)],
       [TurnEventType.Finished, this.handleFinishedEvent.bind(this)],
-      [TurnEventType.ModelInfo, this.handleModelInfoEvent.bind(this)],
-      [
-        TurnEventType.AgentExecutionStopped,
-        this.handleAgentExecutionStoppedEvent.bind(this),
-      ],
-      [
-        TurnEventType.AgentExecutionBlocked,
-        this.handleAgentExecutionBlockedEvent.bind(this),
-      ],
     ]);
+    // Events added in gemini-cli-core@0.35.0 — may not exist in older type defs,
+    // so we register via runtime enum lookup with string fallback.
+    const enumRecord = TurnEventType as unknown as Record<string, string>;
+    this.eventHandlers.set(
+      (enumRecord.ModelInfo ?? "model_info") as GeminiEventType,
+      this.handleModelInfoEvent.bind(this)
+    );
+    this.eventHandlers.set(
+      (enumRecord.AgentExecutionStopped ??
+        "agent_execution_stopped") as GeminiEventType,
+      this.handleAgentExecutionStoppedEvent.bind(this)
+    );
+    this.eventHandlers.set(
+      (enumRecord.AgentExecutionBlocked ??
+        "agent_execution_blocked") as GeminiEventType,
+      this.handleAgentExecutionBlockedEvent.bind(this)
+    );
   }
 
   createAccumulator(promptId: string): TurnAccumulator {

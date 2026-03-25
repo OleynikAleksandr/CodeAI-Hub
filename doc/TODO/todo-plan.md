@@ -55,11 +55,11 @@
    - `AgentExecutionStopped` — emit warning с причиной
    - `AgentExecutionBlocked` — emit warning с причиной
 
-6. [DONE] Git Commit: `feat(gemini): handle ModelInfo, AgentExecutionStopped, AgentExecutionBlocked events` (hash: TBD)
+6. [DONE] Git Commit: `feat(gemini): handle ModelInfo, AgentExecutionStopped, AgentExecutionBlocked events` (hash: c025e817)
 
 ### Stream 4: Targeted build & verification (Phase 64)
 
-7. [TODO] **Targeted build** — `npm run build --workspace packages/Gemini_Module`, verify no TS errors.
+7. [DONE] **Targeted build** — `npm run build --workspace packages/Gemini_Module` — TS fix applied and build clean.
 8. [TODO] **Functional test** — запустить Gemini сессию в PM, проверить:
    - tool calls (read_file, run_shell_command) выполняются
    - thoughts отображаются
