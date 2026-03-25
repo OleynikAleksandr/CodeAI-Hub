@@ -212,10 +212,10 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   const [ctrlHeld, setCtrlHeld] = useState(false);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Control" || event.key === "Meta") setCtrlHeld(true);
+    if (event.key === "Alt") setCtrlHeld(true);
   }, []);
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Control" || event.key === "Meta") setCtrlHeld(false);
+    if (event.key === "Alt") setCtrlHeld(false);
   }, []);
 
   useEffect(() => {

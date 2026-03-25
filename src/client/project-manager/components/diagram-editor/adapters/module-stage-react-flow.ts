@@ -77,7 +77,6 @@ const buildModuleNode = ({
   type: "module",
   position,
   parentId,
-  extent: parentId ? ("parent" as const) : undefined,
   style: { width: MODULE_CARD_WIDTH, minHeight: height },
   data: {
     stage: "diagram_modules",
@@ -200,7 +199,6 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
         type: "cluster",
         position: { x: PRODUCT_PART_PADDING_X + clusterXSlot * CLUSTER_X_STEP, y: productPartHeaderHeight },
         parentId: toProductPartNodeId(productPart.id),
-        extent: "parent",
         style: { width: clusterWidth, height: clusterHeight },
         data: {
           stage: "diagram_modules",
@@ -210,6 +208,14 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
           title: cluster.title,
           purpose: cluster.purpose,
           moduleIds: cluster.moduleIds,
+          containerConstraints: {
+            childMinX: MODULE_X_OFFSET,
+            childMinY: headerHeight,
+            minWidth: getClusterInnerWidth(1),
+            minHeight: headerHeight + CLUSTER_BOTTOM_PADDING,
+            paddingRight: CLUSTER_PADDING_X,
+            paddingBottom: CLUSTER_BOTTOM_PADDING,
+          },
         },
       });
       clusterXSlot += cols;
@@ -276,6 +282,7 @@ export const buildModuleStageNodes = (model: ModuleMapModel): readonly DiagramFl
           purpose: productPart.purpose,
           clusterIds,
           standaloneModuleIds,
+          containerConstraints: { childMinX: PRODUCT_PART_PADDING_X, childMinY: productPartHeaderHeight, minWidth: 720, minHeight: 260, paddingRight: PRODUCT_PART_PADDING_X, paddingBottom: PRODUCT_PART_PADDING_BOTTOM },
         },
       },
       ...clusterNodes,

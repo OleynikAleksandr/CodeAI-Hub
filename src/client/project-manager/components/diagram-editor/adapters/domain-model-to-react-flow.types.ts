@@ -19,6 +19,15 @@ export type DiagramFlowNodeStyle = Readonly<Record<string, number | string>>;
 
 export type DiagramFlowEdgeType = "relation";
 
+export type ContainerConstraints = {
+  readonly childMinX: number;
+  readonly childMinY: number;
+  readonly minWidth: number;
+  readonly minHeight: number;
+  readonly paddingRight: number;
+  readonly paddingBottom: number;
+};
+
 export type ProductPartFlowNodeData = {
   readonly stage: "diagram_modules";
   readonly nodeKind: "productPart";
@@ -27,6 +36,7 @@ export type ProductPartFlowNodeData = {
   readonly purpose: string;
   readonly clusterIds: readonly string[];
   readonly standaloneModuleIds: readonly string[];
+  readonly containerConstraints?: ContainerConstraints;
 };
 
 export type ClusterFlowNodeData = {
@@ -37,6 +47,7 @@ export type ClusterFlowNodeData = {
   readonly title: string;
   readonly purpose: string;
   readonly moduleIds: readonly string[];
+  readonly containerConstraints?: ContainerConstraints;
 };
 
 export type ModuleFlowNodeData = {

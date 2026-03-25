@@ -11,6 +11,7 @@ import {
   type ArtifactHeaderMode,
 } from "./stage-artifact-mode";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
+import { useDetachDiagramButton } from "./detach-diagram-button";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
 import { StatusBar } from "./status-bar";
@@ -242,6 +243,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
       ? "Virtual Simulation"
       : activeTool;
 
+  const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
+
   return (
     <main className="pm-main-area">
       <Toolbar
@@ -273,6 +276,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
           artifactHeaderTitle ? (
             <StageArtifactHeaderToggle
               availableModes={artifactHeaderModes}
+              extraActions={detachButton}
               mode={artifactHeaderMode}
               onModeChange={setArtifactHeaderMode}
               title={artifactHeaderTitle}

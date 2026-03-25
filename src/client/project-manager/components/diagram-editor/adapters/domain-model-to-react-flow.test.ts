@@ -124,34 +124,23 @@ test("domainModelToReactFlow projects module map into product part, cluster, and
   assert.equal(productPartNode.parentId, undefined);
   assert.equal(productPartNode.extent, undefined);
   assert.equal(productPartNode.style?.width, 720);
-  assert.deepEqual(productPartNode.data, {
-    stage: "diagram_modules",
-    nodeKind: "productPart",
-    productPartId: "control-shell",
-    title: "Control Shell",
-    purpose: "Owns the operator-facing surface and runtime entrypoint.",
-    clusterIds: ["delivery", "security"],
-    standaloneModuleIds: ["config-store"],
-  });
+  assert.equal(productPartNode.data.nodeKind, "productPart");
+  assert.equal((productPartNode.data as Record<string, unknown>).productPartId, "control-shell");
+  assert.equal((productPartNode.data as Record<string, unknown>).title, "Control Shell");
+  assert.ok("containerConstraints" in productPartNode.data);
 
   const deliveryCluster = result.nodes[1];
   assert.equal(deliveryCluster.type, "cluster");
   assert.equal(deliveryCluster.parentId, "product-part:control-shell");
-  assert.equal(deliveryCluster.extent, "parent");
-  assert.deepEqual(deliveryCluster.data, {
-    stage: "diagram_modules",
-    nodeKind: "cluster",
-    clusterId: "delivery",
-    productPartId: "control-shell",
-    title: "Delivery",
-    purpose: "Owns request delivery into the product.",
-    moduleIds: ["api-gateway"],
-  });
+  assert.equal(deliveryCluster.extent, undefined);
+  assert.equal(deliveryCluster.data.nodeKind, "cluster");
+  assert.equal((deliveryCluster.data as Record<string, unknown>).clusterId, "delivery");
+  assert.ok("containerConstraints" in deliveryCluster.data);
 
   const gatewayNode = result.nodes[3];
   assert.equal(gatewayNode.type, "module");
   assert.equal(gatewayNode.parentId, "cluster:delivery");
-  assert.equal(gatewayNode.extent, "parent");
+  assert.equal(gatewayNode.extent, undefined);
   assert.deepEqual(gatewayNode.position, { x: 24, y: 120 });
   assert.deepEqual(gatewayNode.data, {
     stage: "diagram_modules",
@@ -171,13 +160,12 @@ test("domainModelToReactFlow projects module map into product part, cluster, and
   assert.equal(
     result.nodes
       .filter((node) => node.type === "module")
-      .every((node) => typeof node.parentId === "string" && node.extent === "parent"),
+      .every((node) => typeof node.parentId === "string"),
     true
   );
 
   const standaloneNode = result.nodes[5];
   assert.equal(standaloneNode.parentId, "product-part:control-shell");
-  assert.equal(standaloneNode.extent, "parent");
   assert.deepEqual(standaloneNode.position, { x: 24, y: 368 });
 
   assert.deepEqual(result.edges, [

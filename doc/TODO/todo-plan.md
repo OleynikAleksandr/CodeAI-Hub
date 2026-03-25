@@ -34,3 +34,24 @@
 7. [DONE] Таргетные сборки — зелёные.
 8. [DONE] Release build: `./scripts/build-all.sh` → 1.1.795, `./scripts/build-release.sh` → `codeai-hub-1.1.795.vsix`.
 9. [DONE] Git Commit: `chore(release): bump version to 1.1.795` (hash: 78b27088)
+
+---
+
+## Phase 63 — UX: Detach relocation, Option+drag, dynamic container resize (owner: Oleksandr, updated: 2026-03-25)
+
+### Stream 1: Move Detach button to artifact header
+
+1. [TODO] **Relocate Detach button** — add `extraActions` slot to `StageArtifactHeaderToggle`, pass Detach from `main-area.tsx` when `activeTool === "Diagram Modules"`, remove from `diagram-stage-panel-scaffold.tsx`. (scope: `stage-artifact-header-toggle.tsx`, `main-area.tsx`, `diagram-stage-panel-scaffold.tsx`)
+2. [TODO] Git Commit: `fix(pm): move Detach button to artifact header next to Artifacts toggle`
+
+### Stream 2: Replace Ctrl with Option (Alt) for node drag
+
+3. [TODO] **Change drag modifier key** — replace `Control`/`Meta` with `Alt` in `diagram-editor-facade.tsx`. On macOS Ctrl+click = right-click, Option is the correct modifier. (scope: `diagram-editor-facade.tsx`)
+4. [TODO] Git Commit: `fix(pm): use Option/Alt instead of Ctrl for diagram node drag`
+
+### Stream 3: Dynamic container resizing on node drag
+
+5. [TODO] **Add container constraints to types** — extend `ProductPartFlowNodeData` and `ClusterFlowNodeData` with `containerConstraints` (childMinX, childMinY, minWidth, minHeight, paddingRight, paddingBottom). Remove `extent: "parent"` from child nodes. Populate constraints in `module-stage-react-flow.ts`. (scope: `domain-model-to-react-flow.types.ts`, `module-stage-react-flow.ts`)
+6. [TODO] Git Commit: `feat(pm): add container constraints to flow node data for dynamic resizing`
+7. [TODO] **Implement dynamic resize logic** — in `diagram-editor-shell.tsx`, after `applyNodeChanges` clamp child positions and recalculate container width/height from children bounding box. Cascade: cluster resize → product part resize. Min width PP=720, Cluster=single-column. (scope: `diagram-editor-shell.tsx`)
+8. [TODO] Git Commit: `feat(pm): dynamic container resizing when dragging nodes`

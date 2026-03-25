@@ -3,6 +3,7 @@ import type { ArtifactHeaderMode } from "./stage-artifact-mode";
 
 interface StageArtifactHeaderToggleProps {
   readonly availableModes: readonly ArtifactHeaderMode[];
+  readonly extraActions?: React.ReactNode;
   readonly mode: ArtifactHeaderMode;
   readonly onModeChange: (mode: ArtifactHeaderMode) => void;
   readonly title: string;
@@ -28,7 +29,7 @@ const resolveToggleButtonStyle = (
 
 export const StageArtifactHeaderToggle: React.FC<
   StageArtifactHeaderToggleProps
-> = ({ availableModes, mode, onModeChange, title }) => (
+> = ({ availableModes, extraActions, mode, onModeChange, title }) => (
   <div
     style={{
       alignItems: "center",
@@ -39,6 +40,7 @@ export const StageArtifactHeaderToggle: React.FC<
   >
     <span>{title}</span>
     <div style={{ display: "inline-flex", gap: 6 }}>
+      {extraActions}
       {availableModes.map((nextMode) => (
         <button
           key={nextMode}
