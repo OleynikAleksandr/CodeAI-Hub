@@ -98,7 +98,7 @@ Gemini (в отличие от Claude и Codex) не выдаёт промежу
 
 ### Stream 3: Targeted build & verification (Phase 65)
 
-6. [TODO] **Targeted build** — `npm run build --workspace packages/Gemini_Module`, verify no TS errors.
+6. [DONE] **Targeted build** — `npm run build --workspace packages/Gemini_Module` — clean after fixing biome import issues.
 7. [TODO] **Functional test** — запустить Gemini сессию в PM, проверить:
    - Thoughts переводятся на русский и появляются в диалоге
    - Thinking-плашка по-прежнему отображает оригинал

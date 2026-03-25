@@ -12,6 +12,8 @@ import type {
 } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { Part, UsageMetadata } from "@google/genai";
 import { GeminiMessageProcessor } from "../messaging/message-processor";
+// biome-ignore lint/correctness/noUnusedImports: used in constructor for instantiation
+import { ThoughtTranslatorService } from "../messaging/thought-translator-service";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
 import { GeminiToolExecutorFacade } from "./gemini-tool-executor-facade";
