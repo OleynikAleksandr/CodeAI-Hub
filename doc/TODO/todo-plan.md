@@ -114,3 +114,37 @@ Gemini (в отличие от Claude и Codex) не выдаёт промежу
 12. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.801.vsix` (1.5M).
 13. [DONE] Git Commit: `chore(release): bump version to 1.1.801` (hash: 1a5d827b)
 14. [DONE] Create `doc/Sessions/Session158.md`.
+
+---
+
+## Phase 66 — Gemini model registry update: remove 2.5, fix 3.1 Pro ID (owner: Oleksandr, updated: 2026-03-25)
+
+### Problem statement
+1. `gemini-3-pro-preview` deprecated 9 марта 2026, перенаправляется на `gemini-3.1-pro-preview`
+2. Модели `gemini-2.5-*` устарели — убираем из UI и registry
+3. `resolveThinkingConfig()` содержит ветку для `gemini-2.5-` которая больше не нужна
+
+### Target state
+Только 2 модели:
+- `gemini-3.1-pro-preview` — Gemini 3.1 Pro (flagship reasoning, 1M context)
+- `gemini-3-flash-preview` — Gemini 3 Flash (Pro-level at Flash speed/cost)
+
+Default: `gemini-3.1-pro-preview`
+
+### Stream 1: Update model registry + Settings UI types
+
+1. [DONE] **Update `src/types/gemini-model-registry.ts`**: 2 models, default 3.1 Pro, family "gemini-3"
+2. [DONE] Git Commit: `feat(gemini): update model registry — remove 2.5, add gemini-3.1-pro-preview` (hash: TBD)
+
+### Stream 2: Update Gemini_Module thinking config
+
+3. [TODO] **Update `packages/Gemini_Module/src/session/gemini-session-manager.ts`**:
+   - `resolveThinkingConfig()`: удалить ветку `gemini-2.5-`, обновить `gemini-3-` на `gemini-3` (покрывает и 3.1 Pro и 3 Flash)
+   (scope: `gemini-session-manager.ts` — 1 файл)
+
+4. [TODO] Git Commit: `refactor(gemini): remove 2.5 thinking config branch` (hash: TBD)
+
+### Stream 3: Targeted build + verification
+
+5. [TODO] `npm run build --workspace packages/Gemini_Module` + `npm run build:webview` + `npm run typecheck:webview`
+6. [TODO] Git Commit + build-all → build-release → VSIX
