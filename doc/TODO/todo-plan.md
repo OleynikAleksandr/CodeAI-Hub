@@ -13,31 +13,31 @@
 
 ---
 
-## Phase 61 — Diagram Modules UX cleanup (owner: Oleksandr, updated: 2026-03-25)
+## Phase 62 — Detachable diagram window (owner: Oleksandr, updated: 2026-03-25)
 
-### Stream 1: Remove description text block above the diagram canvas
+### Stream 1: Create DetachedDiagramView component
 
-Убрать весь текстовый блок между верхним сайдбаром "DIAGRAM MODULES" и canvas диаграммы: заголовок "Diagram Modules", intro text "Artifacts show the staged...", Product Part Progress banner.
+Минимальный full-screen компонент: загружает артефакт Diagram Modules, рендерит DiagramEditorFacade на 100% viewport. Без sidebar, без session panel.
 
-1. [TODO] **Remove intro section and progress banner** from `diagram-stage-panel-scaffold.tsx`. Удалить блок `<strong>{title}</strong>`, `<span>{introText}</span>` и `{progressBanner}`. Canvas должен занять всю доступную высоту. (scope: 1 файл)
-2. [TODO] Git Commit: `refactor(pm): remove description text and progress banner from diagram stage panel`
+1. [TODO] **Create `detached-diagram-view.tsx`** in `src/client/project-manager/components/diagram-editor/`. Reuses `useDiagramLoader` + `useDiagramPersistence` with detached sidecar path. Full-viewport ReactFlow. (scope: 1 new file)
+2. [TODO] Git Commit: `feat(pm): add DetachedDiagramView component for popup window`
 
-### Stream 2: Remove header bar and controls from ReactFlow canvas
+### Stream 2: Route detection in app.tsx
 
-Убрать "Diagram Modules" toolbar внутри ReactFlow контейнера и кнопки +/-/fit в левом нижнем углу.
+Detect `?mode=detached-diagram` query param. If present, render DetachedDiagramView instead of MainLayout.
 
-3. [TODO] **Remove toolbar header and `<Controls />`** from `diagram-editor-facade.tsx`. Удалить `<div style={toolbarStyle}>...</div>` и `<Controls showInteractive={false} />`. Обновить тест в `diagram-editor-facade.test.tsx`. (scope: 2 файла)
-4. [TODO] Git Commit: `refactor(pm): remove toolbar header and zoom controls from diagram canvas`
+3. [TODO] **Update `app.tsx`** to parse URL params and conditionally render DetachedDiagramView. (scope: 1 file)
+4. [TODO] Git Commit: `feat(pm): route detached-diagram mode in app entry point`
 
-### Stream 3: Ctrl+drag to move nodes, default drag = pan
+### Stream 3: Detach button in diagram panel
 
-По умолчанию левая кнопка мыши перемещает весь граф (pan), даже если схватиться за элемент. Перетаскивание отдельных элементов — только с зажатым Ctrl.
+Add a "Detach" button in the diagram panel that calls `window.open()` with the correct URL and query params.
 
-5. [TODO] **Add Ctrl-key state tracking + conditional nodesDraggable** in `diagram-editor-facade.tsx`. Добавить `useState` + `keydown`/`keyup` listeners для Ctrl. Установить `nodesDraggable={ctrlPressed}`. Когда Ctrl не нажат — `pointer-events: none` на `.react-flow__node` через conditional CSS class, чтобы drag на ноде = pan всего canvas. (scope: 1-2 файла)
-6. [TODO] Git Commit: `feat(pm): ctrl+drag to move nodes, default drag pans canvas`
+5. [TODO] **Add detach button** to `diagram-stage-panel-scaffold.tsx`. Uses `window.location.href` as base, appends `?mode=detached-diagram&workspaceSlug=X&workspacePath=Y`. (scope: 1 file)
+6. [TODO] Git Commit: `feat(pm): add detach button to open diagram in separate window`
 
 ### Stream 4: Release build
 
-7. [TODO] **Таргетные сборки** `npm run build:webview`, `npm run typecheck:webview`, проверка тестов.
-8. [TODO] **Release build**: `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`. Записать результаты в `doc/Sessions/Session155.md`.
+7. [TODO] Таргетные сборки: `npm run build:webview`, `npm run typecheck:webview`, тесты.
+8. [TODO] Release build: `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`.
 9. [TODO] Git Commit: `chore(release): bump version to <TBD>`

@@ -209,6 +209,16 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
     );
   }
 
+  const handleDetach = () => {
+    const base = window.location.href.split("?")[0];
+    const params = new URLSearchParams({
+      mode: "detached-diagram",
+      workspaceSlug,
+      workspacePath,
+    });
+    window.open(`${base}?${params.toString()}`, "_blank", "popup");
+  };
+
   if (status === "ready" && projection) {
     return (
       <div
@@ -216,9 +226,26 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
         style={{
           display: "grid",
           minHeight: "100%",
-          gridTemplateRows: "minmax(0, 1fr)",
+          gridTemplateRows: "auto minmax(0, 1fr)",
         }}
       >
+        <div style={{ display: "flex", justifyContent: "flex-end", padding: "4px 4px 0" }}>
+          <button
+            type="button"
+            onClick={handleDetach}
+            style={{
+              fontSize: 11,
+              padding: "3px 10px",
+              borderRadius: 6,
+              border: "1px solid var(--pm-border)",
+              background: "transparent",
+              color: "var(--pm-text-muted)",
+              cursor: "pointer",
+            }}
+          >
+            Detach
+          </button>
+        </div>
         <div
           style={{
             display: "flex",

@@ -49,7 +49,7 @@ test("diagram-editor-shell is now user-owned layout only", async () => {
 test("diagram stage scaffold keeps the visual shell stretched to full panel height", async () => {
   const source = await readFile(SCAFFOLD_SOURCE_PATH, "utf8");
   assert.equal(source.includes("minHeight: \"100%\""), true);
-  assert.equal(source.includes("gridTemplateRows: \"minmax(0, 1fr)\""), true);
+  assert.equal(source.includes("gridTemplateRows: \"auto minmax(0, 1fr)\""), true);
   assert.equal(source.includes("flex: \"1 1 auto\""), true);
 });
 
