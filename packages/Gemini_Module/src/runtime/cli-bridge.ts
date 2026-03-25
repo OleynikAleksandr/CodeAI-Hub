@@ -4,11 +4,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { GeminiCliBridgeMetadata, ModuleReporter } from "../types";
-import type {
-  GeminiCliBridge,
-  GeminiCliModules,
-  GeminiToolExecutionBackend,
-} from "./cli-types";
+import type { GeminiCliBridge, GeminiCliModules } from "./cli-types";
 
 const { createRequire } = nodeModule;
 const moduleGlobalPaths =
@@ -59,44 +55,6 @@ const findAndLoadModule = async <T>(
       .map((e) => String(e))
       .join("\n")}`
   );
-};
-
-const isModuleNotFoundError = (error: unknown): boolean => {
-  if (!(error instanceof Error)) {
-    return false;
-  }
-  const withCode = error as { code?: string };
-  if (withCode.code === "ERR_MODULE_NOT_FOUND") {
-    return true;
-  }
-  return error.message.includes("ERR_MODULE_NOT_FOUND");
-};
-
-const findAndLoadOptionalModule = async <T>(
-  root: string,
-  candidates: readonly (readonly string[])[]
-): Promise<T | null> => {
-  for (const segments of candidates) {
-    try {
-      return await loadEsmModule<T>(root, ...segments);
-    } catch (error) {
-      if (isModuleNotFoundError(error)) {
-        continue;
-      }
-      throw error;
-    }
-  }
-  return null;
-};
-
-export const resolveToolExecutionBackend = (
-  toolExecutor: GeminiCliModules["toolExecutor"]
-): GeminiToolExecutionBackend => {
-  const executeToolCall = (toolExecutor as { executeToolCall?: unknown } | null)
-    ?.executeToolCall;
-  return typeof executeToolCall === "function"
-    ? "legacy_non_interactive"
-    : "scheduler_fallback";
 };
 
 const createGeminiCliCompatibilityError = (
@@ -402,14 +360,6 @@ const loadGeminiModules = async (
     ]),
   ]);
 
-  const toolExecutor = await findAndLoadOptionalModule<
-    typeof import("@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor")
-  >(cliCoreRoot, [
-    ["dist", "src", "core", "nonInteractiveToolExecutor.js"],
-    ["dist", "core", "nonInteractiveToolExecutor.js"],
-  ]);
-  const toolExecutionBackend = resolveToolExecutionBackend(toolExecutor);
-
   return {
     config,
     settings,
@@ -417,8 +367,6 @@ const loadGeminiModules = async (
     extensionEnablement,
     contentGenerator,
     toolScheduler,
-    toolExecutor,
-    toolExecutionBackend,
     turn,
     thoughtUtils,
   };
@@ -500,19 +448,8 @@ export const loadCliBridgeFromGlobal = async (
     cliCore: {
       package: GEMINI_CLI_CORE_PACKAGE,
       version: resolvedCoreVersion,
-      toolExecutionBackend: modules.toolExecutionBackend,
     },
   };
-  if (modules.toolExecutionBackend === "scheduler_fallback") {
-    options.reporter?.warn?.(
-      "Gemini CLI Core legacy nonInteractiveToolExecutor is unavailable; using scheduler fallback backend",
-      {
-        cliRoot,
-        cliCoreRoot,
-        coreVersion: resolvedCoreVersion,
-      }
-    );
-  }
 
   return {
     modules,

@@ -29,39 +29,12 @@ const createCompletedCall = (request: ToolCallRequestInfo): CompletedToolCall =>
     invocation: {},
   }) as unknown as CompletedToolCall;
 
-test("GeminiToolExecutorFacade uses legacy nonInteractive executor when available", async () => {
-  const request = createToolRequest();
-  const expected = createCompletedCall(request);
-  let schedulerConstructed = false;
-  const modules = {
-    toolExecutor: {
-      executeToolCall: async () => expected,
-    },
-    toolScheduler: {
-      CoreToolScheduler: class {
-        constructor() {
-          schedulerConstructed = true;
-        }
-      },
-    },
-  } as unknown as GeminiCliModules;
-
-  const facade = new GeminiToolExecutorFacade(modules);
-  const result = await facade.execute(
-    {} as never,
-    request,
-    new AbortController().signal
-  );
-  assert.equal(result, expected);
-  assert.equal(schedulerConstructed, false);
-});
-
-test("GeminiToolExecutorFacade executes through scheduler fallback when legacy executor is missing", async () => {
+test("GeminiToolExecutorFacade executes through CoreToolScheduler with AgentLoopContext", async () => {
   const request = createToolRequest();
   const expected = createCompletedCall(request);
   let scheduledRequest: ToolCallRequestInfo | null = null;
+  let receivedContext: Record<string, unknown> | null = null;
   const modules = {
-    toolExecutor: null,
     toolScheduler: {
       CoreToolScheduler: class {
         private readonly options: {
@@ -71,11 +44,13 @@ test("GeminiToolExecutorFacade executes through scheduler fallback when legacy e
         };
 
         constructor(options: {
+          readonly context: Record<string, unknown>;
           readonly onAllToolCallsComplete: (
             completedToolCalls: readonly CompletedToolCall[]
           ) => Promise<void>;
         }) {
           this.options = options;
+          receivedContext = options.context;
         }
 
         async schedule(
@@ -97,4 +72,6 @@ test("GeminiToolExecutorFacade executes through scheduler fallback when legacy e
   );
   assert.equal(result, expected);
   assert.deepEqual(scheduledRequest, request);
+  assert.ok(receivedContext, "Scheduler should receive AgentLoopContext");
+  assert.equal(receivedContext.promptId, "prompt-1");
 });

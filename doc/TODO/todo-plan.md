@@ -36,17 +36,17 @@
    - Передаётся `{ context, getPreferredEditor, onAllToolCallsComplete }` — убран `onEditorClose`
    (scope: `packages/Gemini_Module/src/session/gemini-tool-executor-facade.ts` — 1 файл)
 
-2. [DONE] Git Commit: `fix(gemini): rewrite tool executor for CoreToolScheduler@0.35.0 AgentLoopContext API` (hash: TBD)
+2. [DONE] Git Commit: `fix(gemini): rewrite tool executor for CoreToolScheduler@0.35.0 AgentLoopContext API` (hash: 5734f1fe)
 
 ### Stream 2: Clean up dead legacy code in cli-bridge & cli-types
 
-3. [TODO] **Remove `nonInteractiveToolExecutor` from `cli-bridge.ts` and `cli-types.ts`**:
-   - `cli-types.ts`: удалить `toolExecutor` поле из `GeminiCliModules`, удалить `GeminiToolExecutionBackend` тип и `toolExecutionBackend` поле
-   - `cli-bridge.ts`: удалить `findAndLoadOptionalModule` для `nonInteractiveToolExecutor`, удалить `resolveToolExecutionBackend()`, убрать оба поля из return-объекта `loadGeminiModules()`
-   - `gemini-tool-executor-facade.ts`: убрать `modules.toolExecutor` reference (если осталось после Stream 1)
-   (scope: `cli-bridge.ts`, `cli-types.ts`, возможно `gemini-tool-executor-facade.ts` — ≤3 файла)
+3. [DONE] **Remove `nonInteractiveToolExecutor` from `cli-bridge.ts` and `cli-types.ts`**:
+   - `cli-types.ts`: удалён `toolExecutor`, `GeminiToolExecutionBackend`, `toolExecutionBackend`
+   - `cli-bridge.ts`: удалён `findAndLoadOptionalModule`, `isModuleNotFoundError`, `resolveToolExecutionBackend()`, убраны поля из `loadGeminiModules()`
+   - `types/index.ts`: удалён `toolExecutionBackend` из `GeminiCliBridgeMetadata`
+   - Тесты обновлены: `cli-bridge.test.ts`, `gemini-tool-executor-facade.test.ts`
 
-4. [TODO] Git Commit: `refactor(gemini): remove dead nonInteractiveToolExecutor legacy code` (hash: TBD)
+4. [DONE] Git Commit: `refactor(gemini): remove dead nonInteractiveToolExecutor legacy code` (hash: TBD)
 
 ### Stream 3: Handle new GeminiEventType values
 

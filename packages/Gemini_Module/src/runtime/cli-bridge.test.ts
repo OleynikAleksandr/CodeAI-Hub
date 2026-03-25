@@ -6,7 +6,6 @@ import test from "node:test";
 import {
   isGeminiCliCompatibilityError,
   loadCliBridgeFromGlobal,
-  resolveToolExecutionBackend,
 } from "./cli-bridge";
 
 const writeTextFile = async (
@@ -115,12 +114,7 @@ const createGeminiFixture = async (options: {
   };
 };
 
-test("resolveToolExecutionBackend returns scheduler fallback when tool executor is missing", () => {
-  const backend = resolveToolExecutionBackend(null);
-  assert.equal(backend, "scheduler_fallback");
-});
-
-test("loadCliBridgeFromGlobal falls back to scheduler backend when legacy executor is missing", async () => {
+test("loadCliBridgeFromGlobal loads modules without legacy executor", async () => {
   const fixture = await createGeminiFixture({
     includeLegacyExecutor: false,
     includeThoughtUtils: true,
@@ -129,12 +123,8 @@ test("loadCliBridgeFromGlobal falls back to scheduler backend when legacy execut
   process.env.CODEAI_HUB_GEMINI_CLI_ROOT = fixture.cliRoot;
   try {
     const bridge = await loadCliBridgeFromGlobal();
-    assert.equal(bridge.modules.toolExecutionBackend, "scheduler_fallback");
-    assert.equal(bridge.modules.toolExecutor, null);
-    assert.equal(
-      bridge.metadata.cliCore?.toolExecutionBackend,
-      "scheduler_fallback"
-    );
+    assert.ok(bridge.modules.toolScheduler);
+    assert.ok(bridge.metadata.cliCore);
   } finally {
     if (previousRoot === undefined) {
       process.env.CODEAI_HUB_GEMINI_CLI_ROOT = undefined;

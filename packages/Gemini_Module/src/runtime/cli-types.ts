@@ -4,14 +4,9 @@ import type * as CliExtensionEnablementModule from "@google/gemini-cli/dist/src/
 import type * as CliSettingsModule from "@google/gemini-cli/dist/src/config/settings";
 import type * as CoreContentModule from "@google/gemini-cli-core/dist/src/core/contentGenerator";
 import type * as ToolSchedulerModule from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type * as ToolExecutorModule from "@google/gemini-cli-core/dist/src/core/nonInteractiveToolExecutor";
 import type * as TurnModule from "@google/gemini-cli-core/dist/src/core/turn";
 import type * as ThoughtUtilsModule from "@google/gemini-cli-core/dist/src/utils/thoughtUtils";
 import type { GeminiCliBridgeMetadata } from "../types";
-
-export type GeminiToolExecutionBackend =
-  | "legacy_non_interactive"
-  | "scheduler_fallback";
 
 export type GeminiCliModules = {
   readonly config: typeof CliConfigModule;
@@ -20,8 +15,6 @@ export type GeminiCliModules = {
   readonly extensionEnablement: typeof CliExtensionEnablementModule;
   readonly contentGenerator: typeof CoreContentModule;
   readonly toolScheduler: typeof ToolSchedulerModule;
-  readonly toolExecutor: typeof ToolExecutorModule | null;
-  readonly toolExecutionBackend: GeminiToolExecutionBackend;
   readonly turn: typeof TurnModule;
   readonly thoughtUtils: typeof ThoughtUtilsModule;
 };

@@ -138,9 +138,6 @@ export type GeminiCliBridgeMetadata = {
   readonly cliCore?: {
     readonly package: string;
     readonly version: string;
-    readonly toolExecutionBackend?:
-      | "legacy_non_interactive"
-      | "scheduler_fallback";
   };
 };
 
