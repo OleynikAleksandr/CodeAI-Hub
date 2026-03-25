@@ -18,7 +18,9 @@ export const DiagramModulesPanel: React.FC<{
   useEffect(() => {
     const handler = () => setLocalRefreshKey((k) => k + 1);
     window.addEventListener("pm:diagram:refresh", handler);
-    return () => window.removeEventListener("pm:diagram:refresh", handler);
+    let bc: BroadcastChannel | null = null;
+    try { bc = new BroadcastChannel("pm:diagram:sidecar-sync"); bc.onmessage = handler; } catch { /* unsupported */ }
+    return () => { window.removeEventListener("pm:diagram:refresh", handler); bc?.close(); };
   }, []);
 
   const combinedRefreshKey = (props.refreshKey ?? 0) + localRefreshKey;

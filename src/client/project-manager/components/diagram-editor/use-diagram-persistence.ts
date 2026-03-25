@@ -139,6 +139,9 @@ export const useDiagramPersistence = (params: {
         serializeFlowSidecar(document)
       );
       setSaveState(ok ? "saved" : "error");
+      if (ok) {
+        try { new BroadcastChannel("pm:diagram:sidecar-sync").postMessage("updated"); } catch { /* unsupported */ }
+      }
     } catch {
       setSaveState("error");
     }

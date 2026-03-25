@@ -19,7 +19,9 @@ export const DetachedDiagramView: React.FC<DetachedDiagramViewProps> = ({
   useEffect(() => {
     const handler = () => setRefreshKey((k) => k + 1);
     window.addEventListener("pm:diagram:refresh", handler);
-    return () => window.removeEventListener("pm:diagram:refresh", handler);
+    let bc: BroadcastChannel | null = null;
+    try { bc = new BroadcastChannel("pm:diagram:sidecar-sync"); bc.onmessage = handler; } catch { /* unsupported */ }
+    return () => { window.removeEventListener("pm:diagram:refresh", handler); bc?.close(); };
   }, []);
 
   const {
