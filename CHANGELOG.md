@@ -2,7 +2,7 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
-## [Unreleased] - 2026-03-25
+## [1.1.801] - 2026-03-25
 ### Fixed
 - **Gemini tool execution**: full compatibility with `gemini-cli-core@0.35.0` — build `AgentLoopContext` from Config deprecated getters, pass to `CoreToolScheduler` (fixes `TypeError: Cannot read properties of undefined (reading 'messageBus')`).
 
