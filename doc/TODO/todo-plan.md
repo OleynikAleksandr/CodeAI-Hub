@@ -92,20 +92,9 @@ Gemini (в отличие от Claude и Codex) не выдаёт промежу
 
 ### Stream 2: Integrate translator into message-processor
 
-3. [TODO] **Update `message-processor.ts`** — wire ThoughtTranslatorService:
-   - В конструкторе: принять и сохранить `ThoughtTranslatorService` (optional)
-   - В `handleThoughtEvent()`: после показа thinking-плашки (как сейчас), запустить `translateThought()` через `.then()` (fire-and-forget)
-   - При успешном переводе: `emitDialogMessage(session, "assistant", translatedText, promptId)`
-   - Пользователь видит: thinking-плашка (англ.) + русская реплика в диалоге
-   (scope: `packages/Gemini_Module/src/messaging/message-processor.ts` — 1 файл)
-
-4. [TODO] **Wire service in `gemini-session-manager.ts`** — создать ThoughtTranslatorService при инициализации GeminiMessageProcessor:
-   - Получить API ключ из config
-   - Создать `ThoughtTranslatorService(apiKey, reporter)`
-   - Передать в `GeminiMessageProcessor`
-   (scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts` — 1 файл)
-
-5. [TODO] Git Commit: `feat(gemini): integrate thought translation into message processor pipeline` (hash: TBD)
+3. [DONE] **Update `message-processor.ts`** — fire-and-forget `.then()` in handleThoughtEvent
+4. [DONE] **Wire service in `gemini-session-manager.ts`** — capture GOOGLE_API_KEY before sanitize, pass to MessageProcessor
+5. [DONE] Git Commit: `feat(gemini): integrate thought translation into message processor pipeline` (hash: TBD)
 
 ### Stream 3: Targeted build & verification (Phase 65)
 

@@ -86,13 +86,22 @@ export class GeminiSessionManager {
 
   private readonly modules: GeminiCliModules;
   private readonly toolExecutorFacade: GeminiToolExecutorFacade;
+  private readonly thoughtTranslator?: ThoughtTranslatorService;
+  private readonly reporter?: ModuleReporter;
 
   constructor(modules: GeminiCliModules, reporter?: ModuleReporter) {
     this.modules = modules;
+    this.reporter = reporter;
     this.toolExecutorFacade = new GeminiToolExecutorFacade(
       this.modules,
       reporter
     );
+    // Capture API key BEFORE sanitizeEnvironment clears GOOGLE_API_KEY
+    const apiKey = process.env.GOOGLE_API_KEY?.trim();
+    if (apiKey && apiKey.length > 0) {
+      // biome-ignore lint/correctness/noUndeclaredVariables: imported from sibling package
+      this.thoughtTranslator = new ThoughtTranslatorService(apiKey, reporter);
+    }
     this.sanitizeEnvironment();
   }
 
@@ -584,6 +593,7 @@ export class GeminiSessionManager {
     const messageProcessor = new GeminiMessageProcessor({
       reporter: session.reporter,
       modules: this.modules,
+      thoughtTranslator: this.thoughtTranslator,
     });
     const accumulator = messageProcessor.createAccumulator(promptId);
     let assistantSegmentsEmitted = 0;

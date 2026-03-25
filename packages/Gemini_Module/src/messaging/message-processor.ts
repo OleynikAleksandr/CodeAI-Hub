@@ -26,6 +26,7 @@ type HandleEventOutcome = {
 type GeminiMessageProcessorOptions = {
   readonly reporter?: ModuleReporter;
   readonly modules: GeminiCliModules;
+  readonly thoughtTranslator?: ThoughtTranslatorService;
 };
 
 type EventHandler = (
@@ -92,11 +93,14 @@ export class GeminiMessageProcessor {
 
   private readonly modules: GeminiCliModules;
 
+  private readonly thoughtTranslator?: ThoughtTranslatorService;
+
   private readonly eventHandlers: Map<GeminiEventType, EventHandler>;
 
   constructor(options: GeminiMessageProcessorOptions) {
     this.reporter = options.reporter;
     this.modules = options.modules;
+    this.thoughtTranslator = options.thoughtTranslator;
     const { GeminiEventType: TurnEventType } = this.modules.turn;
     this.eventHandlers = new Map<GeminiEventType, EventHandler>([
       [TurnEventType.Content, this.handleContentEvent.bind(this)],
@@ -361,6 +365,20 @@ export class GeminiMessageProcessor {
       formatted,
       accumulator.promptId
     );
+    // Fire-and-forget translation via Flash — does not block main stream
+    if (this.thoughtTranslator) {
+      const promptId = accumulator.promptId;
+      this.thoughtTranslator
+        .translateThought(value)
+        .then((translated) => {
+          if (translated) {
+            this.emitDialogMessage(session, "assistant", translated, promptId);
+          }
+        })
+        .catch(() => {
+          // Graceful degradation: translation failure is non-blocking
+        });
+    }
     return [
       {
         type: "system",
