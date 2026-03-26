@@ -8,7 +8,7 @@ import { VirtualSimulationHelp } from "./virtual-simulation-help";
 
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE =
-  /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
+  /^(?:#{1,6}\s+)?(?:Сценарий|Scenario)\s+\d+\b/gm;
 
 const validateVirtualSimulationMarkdown = (content: string): string | null => {
   if (content.trim().length === 0) {
@@ -20,7 +20,7 @@ const validateVirtualSimulationMarkdown = (content: string): string | null => {
   const scenarioMatches = content.match(VIRTUAL_SIMULATION_SCENARIO_RE);
   const scenarioCount = scenarioMatches?.length ?? 0;
   if (scenarioCount < 1) {
-    return "Нужен хотя бы один сценарий: `## Сценарий N`.";
+    return "Нужен хотя бы один сценарий (Сценарий N).";
   }
   return null;
 };
