@@ -37,11 +37,24 @@ export const useRuntimeModelSync = (
       }
       const { sessionId, modelId } = payload;
       setSnapshots((previous) => {
-        const snapshot = previous[sessionId];
-        if (!snapshot?.status.models?.length) {
+        // Core broadcasts with its runtime sessionId, but PM dialog sessions
+        // may store the snapshot under the dialogId. Fall back to activeSessionId
+        // when the broadcast sessionId has no matching snapshot.
+        const resolvedId =
+          previous[sessionId]?.status.models?.length
+            ? sessionId
+            : activeSessionId && previous[activeSessionId]?.status.models?.length
+              ? activeSessionId
+              : null;
+        if (!resolvedId) {
           return previous;
         }
-        const currentModel = snapshot.status.models[0];
+        const snapshot = previous[resolvedId];
+        const models = snapshot.status.models;
+        if (!models?.length) {
+          return previous;
+        }
+        const currentModel = models[0];
         if (currentModel.modelId === modelId) {
           return previous;
         }
@@ -51,11 +64,11 @@ export const useRuntimeModelSync = (
             modelId,
             modelDisplayName: formatModelDisplayName(modelId),
           },
-          ...snapshot.status.models.slice(1),
+          ...models.slice(1),
         ];
         return {
           ...previous,
-          [sessionId]: {
+          [resolvedId]: {
             ...snapshot,
             status: { ...snapshot.status, models: updatedModels },
           },
