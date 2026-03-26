@@ -2134,6 +2134,15 @@ export class SessionRequestHandler {
           sessionId: options.sessionId,
           targetModelId: options.targetModelId,
         });
+        // Immediately broadcast so StatusPanel updates without waiting for ModelInfo event
+        this.broadcaster({
+          type: "session:model:update",
+          payload: {
+            sessionId: options.sessionId,
+            providerId: session.providerId,
+            modelId: options.targetModelId,
+          },
+        });
       }
     }
 
