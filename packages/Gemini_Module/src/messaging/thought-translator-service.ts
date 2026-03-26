@@ -1,79 +1,43 @@
 /**
  * Thought Translator Service — translates Gemini agent thoughts into Russian
- * using a lightweight Gemini model (Flash Lite) through the same authenticated
- * Gemini CLI Core client that powers the main session. No separate API key needed.
+ * using the free Google Translate API endpoint. No API key or auth needed.
  */
 
 import type { ModuleReporter } from "../types";
 
-const TRANSLATION_MODEL = "gemini-2.5-flash-lite";
-const TRANSLATION_TIMEOUT_MS = 15_000;
+const TRANSLATE_URL =
+  "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t";
 
-const SYSTEM_INSTRUCTION =
-  "You are a one-shot translator. Output ONLY the Russian translation. " +
-  "No commentary, no analysis, no intermediate steps, no markdown.";
-
-const PARAGRAPH_SPLIT_REGEX = /\n\s*\n/;
-
-const USER_PROMPT_PREFIX =
-  "Translate this AI agent thought to Russian. " +
-  "Remove filler ('I am now', 'I need to', 'Let me'). " +
-  "One concise sentence. ONLY the translation:\n\n";
-
-// GeminiClient.generateContent signature from @google/gemini-cli-core
-type GeminiClientBridge = {
-  generateContent(
-    modelConfigKey: { model: string },
-    contents: readonly { role: string; parts: readonly { text: string }[] }[],
-    abortSignal: AbortSignal
-  ): Promise<{
-    candidates?: readonly {
-      content?: { parts?: readonly { text?: string }[] };
-    }[];
-  }>;
-};
+const TRANSLATION_TIMEOUT_MS = 3000;
 
 /**
- * Extract only the final translation from potentially verbose output.
- * If the model includes chain-of-thought, take the last non-empty paragraph.
+ * Parse the Google Translate JSON response array.
+ * Response shape: [[["translated","original",null,null,N],...],null,"en",...]
+ * Each element in response[0] is a sentence pair — join all [0] elements.
  */
-const extractFinalTranslation = (raw: string): string => {
-  const trimmed = raw.trim();
-  if (trimmed.length === 0) {
+const parseTranslateResponse = (
+  data: readonly (readonly (readonly string[])[] | null)[]
+): string => {
+  const segments = data[0];
+  if (!Array.isArray(segments)) {
     return "";
   }
-  // Split by double newline (paragraph breaks)
-  const paragraphs = trimmed
-    .split(PARAGRAPH_SPLIT_REGEX)
-    .map((p) => p.trim())
-    .filter((p) => p.length > 0);
-  // Last paragraph is most likely the actual translation
-  return paragraphs.at(-1) ?? trimmed;
+  return segments
+    .map((segment) => (Array.isArray(segment) ? (segment[0] ?? "") : ""))
+    .join("");
 };
 
 export class ThoughtTranslatorService {
-  private clientRef: GeminiClientBridge | null = null;
   private readonly reporter?: ModuleReporter;
 
   constructor(reporter?: ModuleReporter) {
     this.reporter = reporter;
   }
 
-  bindClient(client: GeminiClientBridge): void {
-    this.clientRef = client;
-    this.reporter?.info?.(
-      "ThoughtTranslator: bound to authenticated GeminiClient"
-    );
-  }
-
   async translateThought(thought: {
     readonly subject: string;
     readonly description: string;
   }): Promise<string | null> {
-    if (!this.clientRef) {
-      return null;
-    }
-
     const input = thought.subject?.trim()
       ? `${thought.subject.trim()}: ${thought.description}`
       : thought.description;
@@ -83,22 +47,18 @@ export class ThoughtTranslatorService {
     }
 
     try {
-      const result = await this.callWithTimeout(input);
+      const result = await this.callGoogleTranslate(input);
       const text = result?.trim();
-      return text && text.length > 0 ? extractFinalTranslation(text) : null;
+      return text && text.length > 0 ? text : null;
     } catch (error) {
       this.reporter?.warn?.("Thought translation failed (non-blocking)", {
-        model: TRANSLATION_MODEL,
         error: error instanceof Error ? error.message : String(error),
       });
       return null;
     }
   }
 
-  private async callWithTimeout(input: string): Promise<string | null> {
-    if (!this.clientRef) {
-      return null;
-    }
+  private async callGoogleTranslate(input: string): Promise<string | null> {
     const controller = new AbortController();
     const timeout = setTimeout(
       () => controller.abort(),
@@ -106,24 +66,13 @@ export class ThoughtTranslatorService {
     );
 
     try {
-      const response = await this.clientRef.generateContent(
-        { model: TRANSLATION_MODEL },
-        [
-          { role: "user", parts: [{ text: SYSTEM_INSTRUCTION }] },
-          {
-            role: "model",
-            parts: [
-              {
-                text: "Understood. I will output only the Russian translation.",
-              },
-            ],
-          },
-          { role: "user", parts: [{ text: `${USER_PROMPT_PREFIX}${input}` }] },
-        ],
-        controller.signal
-      );
-      const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
-      return text ?? null;
+      const url = `${TRANSLATE_URL}&q=${encodeURIComponent(input)}`;
+      const response = await fetch(url, { signal: controller.signal });
+      if (!response.ok) {
+        return null;
+      }
+      const data = await response.json();
+      return parseTranslateResponse(data);
     } finally {
       clearTimeout(timeout);
     }
