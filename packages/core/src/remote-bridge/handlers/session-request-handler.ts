@@ -417,6 +417,22 @@ export class SessionRequestHandler {
     string,
     PostTurnContextDecision
   >();
+  private readonly retryBudgetBySessionId = new Map<
+    string,
+    { transientRetries: number; autoResumeAttempts: number }
+  >();
+  private readonly pendingUserIntentBySessionId = new Map<
+    string,
+    {
+      content: string;
+      timestamp: number;
+      timerId: ReturnType<typeof setTimeout>;
+    }
+  >();
+
+  private static readonly MAX_TRANSIENT_RETRIES = 1;
+  private static readonly MAX_AUTO_RESUME_ATTEMPTS = 1;
+  private static readonly PENDING_INTENT_TTL_MS = 60_000;
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
@@ -3350,6 +3366,32 @@ export class SessionRequestHandler {
     return "Provider error.";
   }
 
+  private applyClassifiedSessionCleanup(
+    sessionId: string,
+    binding: ProviderSessionBinding | undefined,
+    classification: {
+      shouldRemoveBinding: boolean;
+      retryable: boolean;
+      failureClass: string;
+    }
+  ): void {
+    if (classification.shouldRemoveBinding && binding) {
+      binding.unsubscribe();
+      this.providerSessions.delete(sessionId);
+      this.sessionManager.markProviderSessionFailed(sessionId);
+      this.sessionStorage.close(sessionId, "provider-failure");
+      this.broadcastSessionBinding(sessionId);
+    } else {
+      this.emitTurnStateEvent({ sessionId, state: "idle" });
+    }
+
+    if (classification.retryable) {
+      this.consumeRetryBudget(sessionId, classification.failureClass);
+    } else {
+      this.expirePendingUserIntent(sessionId);
+    }
+  }
+
   private handleProviderFailure(
     providerId: string,
     error: unknown,
@@ -3374,29 +3416,15 @@ export class SessionRequestHandler {
         sessionId: sessionId ?? undefined,
         failureClass: classification.failureClass,
         retryable: classification.retryable,
-        shouldRemoveBinding: classification.shouldRemoveBinding,
-        shouldDegradeProvider: classification.shouldDegradeProvider,
       }
     );
 
-    // Only degrade the whole provider for runtime failures, not transient turn errors
     if (classification.shouldDegradeProvider) {
       this.providerRegistry.handleRuntimeFailure(providerId, error);
     }
 
     if (sessionId) {
-      if (classification.shouldRemoveBinding && binding) {
-        binding.unsubscribe();
-        this.providerSessions.delete(sessionId);
-        this.sessionManager.markProviderSessionFailed(sessionId);
-        this.sessionStorage.close(sessionId, "provider-failure");
-        this.broadcastSessionBinding(sessionId);
-      }
-
-      // Emit turn_failed for transient/recoverable so UI unlocks
-      if (!classification.shouldRemoveBinding) {
-        this.emitTurnStateEvent({ sessionId, state: "idle" });
-      }
+      this.applyClassifiedSessionCleanup(sessionId, binding, classification);
     }
 
     this.broadcaster({
@@ -3413,6 +3441,114 @@ export class SessionRequestHandler {
 
     if (!sessionId) {
       this.stateBroadcaster();
+    }
+  }
+
+  private getRetryBudget(sessionId: string): {
+    transientRetries: number;
+    autoResumeAttempts: number;
+  } {
+    const existing = this.retryBudgetBySessionId.get(sessionId);
+    if (existing) {
+      return existing;
+    }
+    const budget = { transientRetries: 0, autoResumeAttempts: 0 };
+    this.retryBudgetBySessionId.set(sessionId, budget);
+    return budget;
+  }
+
+  private consumeRetryBudget(sessionId: string, failureClass: string): void {
+    const budget = this.getRetryBudget(sessionId);
+    if (failureClass === "transient_turn_failure") {
+      budget.transientRetries += 1;
+      if (
+        budget.transientRetries > SessionRequestHandler.MAX_TRANSIENT_RETRIES
+      ) {
+        this.logger.warn("Transient retry budget exhausted", {
+          sessionId,
+          retries: budget.transientRetries,
+        });
+      }
+    } else if (failureClass === "session_binding_recoverable") {
+      budget.autoResumeAttempts += 1;
+      if (
+        budget.autoResumeAttempts >
+        SessionRequestHandler.MAX_AUTO_RESUME_ATTEMPTS
+      ) {
+        this.logger.warn("Auto-resume budget exhausted", {
+          sessionId,
+          attempts: budget.autoResumeAttempts,
+        });
+      }
+    }
+  }
+
+  hasRetryBudget(sessionId: string): boolean {
+    const budget = this.getRetryBudget(sessionId);
+    return (
+      budget.transientRetries <= SessionRequestHandler.MAX_TRANSIENT_RETRIES &&
+      budget.autoResumeAttempts <=
+        SessionRequestHandler.MAX_AUTO_RESUME_ATTEMPTS
+    );
+  }
+
+  resetRetryBudget(sessionId: string): void {
+    this.retryBudgetBySessionId.delete(sessionId);
+  }
+
+  trackPendingUserIntent(sessionId: string, content: string): void {
+    this.clearPendingUserIntent(sessionId);
+    const timerId = setTimeout(() => {
+      this.expirePendingUserIntent(sessionId);
+    }, SessionRequestHandler.PENDING_INTENT_TTL_MS);
+    this.pendingUserIntentBySessionId.set(sessionId, {
+      content,
+      timestamp: Date.now(),
+      timerId,
+    });
+  }
+
+  getPendingUserIntent(sessionId: string): string | null {
+    const intent = this.pendingUserIntentBySessionId.get(sessionId);
+    if (!intent) {
+      return null;
+    }
+    const elapsed = Date.now() - intent.timestamp;
+    if (elapsed > SessionRequestHandler.PENDING_INTENT_TTL_MS) {
+      this.expirePendingUserIntent(sessionId);
+      return null;
+    }
+    return intent.content;
+  }
+
+  private clearPendingUserIntent(sessionId: string): void {
+    const existing = this.pendingUserIntentBySessionId.get(sessionId);
+    if (existing) {
+      clearTimeout(existing.timerId);
+      this.pendingUserIntentBySessionId.delete(sessionId);
+    }
+  }
+
+  private expirePendingUserIntent(sessionId: string): void {
+    const existing = this.pendingUserIntentBySessionId.get(sessionId);
+    if (existing) {
+      clearTimeout(existing.timerId);
+      this.pendingUserIntentBySessionId.delete(sessionId);
+      this.logger.warn("Pending user intent TTL expired", {
+        sessionId,
+        contentLength: existing.content.length,
+        elapsedMs: Date.now() - existing.timestamp,
+      });
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId,
+          message:
+            "Your previous message was not delivered. Please send it again.",
+          code: "pending_intent_expired",
+          pendingIntentExpired: true,
+        },
+      });
     }
   }
 

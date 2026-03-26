@@ -274,3 +274,15 @@ export type CoreStatePayload = {
 export type ProjectUpdatePayload = {
   readonly projects: readonly WorkspaceProject[];
 };
+
+export type {
+  ProviderFailureClass,
+  DialogSwitchMode,
+  DialogSwitchInitiator,
+  DialogSwitchTarget,
+  DialogSwitchOfferPayload,
+  DialogSwitchProgressPhase,
+  DialogSwitchProgressPayload,
+  DialogSwitchResultPayload,
+  TurnFailedPayload,
+} from "./dialog-switch-types";
