@@ -1,5 +1,6 @@
 import SessionView from "../../../ui/src/session/session-view";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
+import { useDialogSwitchOffer } from "./use-dialog-switch-offer";
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
 export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
@@ -10,6 +11,7 @@ export const ProjectManagerDialogSessionView = (props: {
 }) => {
   const { connection, providerLabels, session, snapshots, tokenDebugSummaryOverride, sendMessage } =
     useProjectManagerDialogSessionController(props.intent);
+  const { switchOffer, dismissSwitchOffer } = useDialogSwitchOffer(session?.id ?? null);
 
   if (!session) {
     const shouldShowPending = props.emptyStatePending === true;
@@ -44,6 +46,8 @@ export const ProjectManagerDialogSessionView = (props: {
       sessions={[session]}
       showEmptyState={true}
       snapshots={snapshots}
+      switchOffer={switchOffer}
+      onDismissSwitchOffer={dismissSwitchOffer}
       tokenDebugSummaryOverride={tokenDebugSummaryOverride}
     />
   );
