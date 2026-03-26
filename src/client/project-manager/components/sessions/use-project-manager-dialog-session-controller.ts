@@ -20,6 +20,7 @@ import {
 } from "./session-stream";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
+import { appendOptimisticUserMessage } from "./session-message-dedupe";
 import { useProjectManagerDialogCoreEvents } from "./use-project-manager-dialog-core-events";
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
@@ -287,7 +288,10 @@ export const useProjectManagerDialogSessionController = (
       return;
     }
     api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content);
-  }, []);
+    // Optimistic: render user message immediately instead of waiting for dialog:history:result
+    const currentSessionId = sessionRef.current?.id ?? currentDialogId;
+    setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
+  }, [setSnapshots]);
 
   return { connection, providerLabels, session, snapshots, setSnapshots, tokenDebugSummaryOverride, sendMessage };
 };

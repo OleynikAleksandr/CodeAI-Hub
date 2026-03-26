@@ -11,6 +11,21 @@ const isReplayDuplicate = (options: {
   options.existing.createdAt === options.incoming.createdAt &&
   options.existing.content === options.incoming.content;
 
+export const appendOptimisticUserMessage = (
+  snapshots: SessionSnapshots,
+  sessionId: string,
+  content: string
+): SessionSnapshots =>
+  appendDedupedSessionMessageToSnapshots(snapshots, {
+    sessionId,
+    message: {
+      id: `optimistic-${Date.now()}`,
+      role: "user",
+      content,
+      createdAt: Date.now(),
+    },
+  });
+
 export const appendDedupedSessionMessageToSnapshots = (
   snapshots: SessionSnapshots,
   payload: { readonly sessionId: string; readonly message: SessionMessage }
