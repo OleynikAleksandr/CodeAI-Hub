@@ -16,6 +16,7 @@ export type DialogHistoryMessage = {
   readonly role: "system" | "user" | "assistant" | "thinking";
   readonly content: string;
   readonly timestamp: string;
+  readonly tag?: string;
 };
 
 export type DialogHistoryResult = {
@@ -54,6 +55,7 @@ export class DialogHistoryService {
       role: messageRecord.role,
       content: messageRecord.content,
       timestamp: messageRecord.timestamp,
+      ...(messageRecord.tag ? { tag: messageRecord.tag } : {}),
     });
   }
 
