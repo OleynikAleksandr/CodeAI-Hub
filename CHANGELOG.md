@@ -2,6 +2,16 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.810] - 2026-03-26
+### Changed
+- **Gemini ThoughtTranslator**: replaced Flash-Lite LLM translation with free Google Translate API — latency drops from 1-71s to ~100ms, no chain-of-thought leakage.
+- **Thought rendering**: translated thoughts now display as visible "Gemini · Thinking" messages instead of collapsed English-only blocks.
+- **JSONL format**: one record per thought (`role: "assistant"`, `tag: "thinking"`) instead of two (thinking + assistant). English originals no longer written to JSONL.
+
+### Added
+- **SessionMessage `tag` field**: optional string tag propagated through Core storage, JSONL, and UI for semantic message classification.
+- **Buffered thought ordering**: translations are awaited before real response emit, guaranteeing correct JSONL ordering.
+
 ## [1.1.806] - 2026-03-26
 ### Fixed
 - **Recovery offer pipeline (BUG-2026-03-26-01)**: provider timeout/failure now emits `dialog:switch:offer` event so PM can show recovery banner with retry/switch options — previously only silent input unlock occurred.

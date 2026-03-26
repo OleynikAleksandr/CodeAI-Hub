@@ -72,10 +72,11 @@
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 - Gemini Thought Translator: `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
-  - Fire-and-forget translation of Gemini agent thoughts via `gemini-2.0-flash-lite`
-  - Wired into `GeminiMessageProcessor.handleThoughtEvent()` as optional dependency
-  - API key captured from `GOOGLE_API_KEY` env before `sanitizeEnvironment()` in `GeminiSessionManager`
-  - Graceful degradation: translation failure does not affect main agent session
+  - Translates Gemini agent thoughts EN→RU via free Google Translate API (~100ms)
+  - Buffered in `GeminiMessageProcessor.handleThoughtEvent()`: pending translations are awaited before real response emit
+  - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" (visible, not collapsed)
+  - No API key or auth required (uses `translate.googleapis.com` free endpoint)
+  - Graceful degradation: on failure, English original is emitted as fallback
 
 ## 5) Workflow Boundary (Description, 2026-03-01)
 
