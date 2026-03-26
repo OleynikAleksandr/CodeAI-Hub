@@ -58,12 +58,12 @@
 
 ### Stream: Same-provider retry orchestration
 1. [DONE] Реализовать same-provider auto-resume через сохранённый `providerSessionId` и явный `retry_in_place` path в recovery orchestration (scope: `packages/core/src/recovery/dialog-switch-orchestrator.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-manager/index.ts`; expected commit: `feat(core): add same-provider recovery orchestration`)
-2. [IN_PROGRESS] Git Commit: `feat(core): add same-provider recovery orchestration` (hash: TBD)
+2. [DONE] Git Commit: `feat(core): add same-provider recovery orchestration` (hash: 394396ed)
 3. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: same-provider retry и auto-resume проходят без ручного recreate session (scope: `@codeai-hub/core`)
 
 ### Stream: Model switch for current provider
 4. [DONE] Добавить `switch_model` в target resolver и generic switch contracts, используя текущие provider defaults как базовый MVP behavior (scope: `packages/core/src/recovery/recovery-target-resolver.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat(core): add switch-model recovery mode`)
-5. [IN_PROGRESS] Git Commit: `feat(core): add switch-model recovery mode` (hash: TBD)
+5. [DONE] Git Commit: `feat(core): add switch-model recovery mode` (hash: 394396ed)
 6. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: user-initiated switch_model продолжает тот же logical dialog (scope: `@codeai-hub/core`)
 7. [TODO] Закрыть тестами happy path для same-provider retry и user-initiated model switch при живом Core (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(core): cover same-provider retry and switch-model flows`)
 8. [TODO] Git Commit: `test(core): cover same-provider retry and switch-model flows` (hash: TBD)
@@ -74,9 +74,9 @@
 ## Phase 69 — Cross-provider switch and provider-neutral transfer package (owner: Oleksandr, updated: 2026-03-26)
 
 ### Stream: Provider-neutral takeover package
-1. [TODO] Создать builders для `CanonicalSessionPreamble`, `unified-dialog.prompt.md` и `provider-switch-handoff.md` как provider-neutral takeover package (scope: `packages/core/src/recovery/canonical-session-preamble-resolver.ts`, `packages/core/src/recovery/provider-facing-dialog-builder.ts`, `packages/core/src/recovery/unified-dialog-transfer-builder.ts`; expected commit: `feat(core): add provider-neutral switch transfer builders`)
-2. [TODO] Git Commit: `feat(core): add provider-neutral switch transfer builders` (hash: TBD)
-3. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: builders генерируют plain-dialog payload без provider-native envelopes (scope: `@codeai-hub/core`)
+1. [DONE] Создать builders для `CanonicalSessionPreamble`, `unified-dialog.prompt.md` и `provider-switch-handoff.md` как provider-neutral takeover package (scope: `packages/core/src/recovery/canonical-session-preamble-resolver.ts`, `packages/core/src/recovery/provider-facing-dialog-builder.ts`, `packages/core/src/recovery/unified-dialog-transfer-builder.ts`; expected commit: `feat(core): add provider-neutral switch transfer builders`)
+2. [IN_PROGRESS] Git Commit: `feat(core): add provider-neutral switch transfer builders` (hash: TBD)
+3. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: builders генерируют plain-dialog payload без provider-native envelopes (scope: `@codeai-hub/core`)
 4. [TODO] Подключить materialization transfer package к unified dialog source и recovery orchestration без зависимости от provider-native JSONL (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/unified-session/storage.ts`, `packages/core/src/recovery/dialog-switch-orchestrator.ts`; expected commit: `feat(core): build switch transfer package from unified dialog history`)
 5. [TODO] Git Commit: `feat(core): build switch transfer package from unified dialog history` (hash: TBD)
 6. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: transfer package materializes from unified dialog history, а не из rollout JSONL (scope: `@codeai-hub/core`)
