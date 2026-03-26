@@ -1,8 +1,8 @@
-# Session 162 — ThoughtTranslator Analysis + Google Translate Migration Planning
+# Session 162 — ThoughtTranslator: Google Translate Migration + Tag Field
 
-**Date:** 2026-03-26 12:30–13:30 (CET)
+**Date:** 2026-03-26 12:30–13:10 (CET)
 **Branch:** main
-**Version:** 1.1.809 (no version change)
+**Version:** 1.1.810 (started at 1.1.809)
 
 ---
 
@@ -10,54 +10,61 @@
 
 ## Work summary
 
-### VSIX 1.1.809 live testing (by user)
-- Confirmed: ThoughtTranslator produces Russian translations of Gemini thinking events
-- Confirmed: translations are visible in UI under "Thinking" collapsible blocks
+### Analysis phase
+- Deep analysis of ThoughtTranslator pipeline (SDK → MessageProcessor → Flash-Lite → Core → JSONL → UI)
+- Discovered 3 defects: wrong JSONL roles, Flash-Lite chain-of-thought leakage, race condition ordering
+- JSONL evidence analysis with exact timestamps and message IDs
+- Tested free Google Translate API endpoint — 100ms latency, clean output, no auth
 
-### Deep analysis of ThoughtTranslator pipeline
-- Traced complete event flow: Gemini SDK → MessageProcessor → ThoughtTranslatorService (Flash-Lite) → Core → JSONL → UI
-- Discovered three confirmed defects:
+### Phase 74 — ThoughtTranslator: Google Translate migration + tag field
 
-**Defect A — Wrong roles in JSONL:**
-Each thought produces TWO records: original English (`role: "thinking"`) + translation (`role: "assistant"`). Translation is indistinguishable from real agent response in JSONL.
+**Stream 1: Replace Flash-Lite with Google Translate API**
+- Rewrote `ThoughtTranslatorService`: removed `generateContent`, multi-turn prompt, `extractFinalTranslation`
+- New: single `fetch()` to `translate.googleapis.com/translate_a/single?client=gtx`, 3s timeout
+- Removed `bindClient()` / `GeminiClientBridge` dependency and binding in `GeminiSessionManager`
 
-**Defect B — Flash-Lite chain-of-thought leakage:**
-Flash-Lite (gemini-2.5-flash-lite) sometimes outputs reasoning instead of clean translation. `extractFinalTranslation()` fails on single-paragraph reasoning. Example from JSONL line 26:
-```
-"My refined draft became: \"Читаю файл для проверки...\". I felt this version successfully encapsulated..."
-```
+**Stream 2: Core types — add `tag` field**
+- Added `tag?: string` to `SessionMessage` type and `DialogMessagePayload`
+- Refactored `appendMessage()` to options object (lint: max 4 params)
+- Tag propagates through Core storage → JSONL → UI broadcast
 
-**Defect C — Race condition / message ordering:**
-Translation is fire-and-forget async (measured: 6ms to 71s latency). Real responses can arrive before translations, causing out-of-order JSONL records.
+**Stream 3: MessageProcessor — buffered emit with tag**
+- Rewrote `handleThoughtEvent()`: no more sync thinking emit + fire-and-forget translation
+- New: translation promise buffered in `pendingTranslations[]`, emitted as `role: "assistant"` with `tag: "thinking"`
+- `handleFinishedEvent()`: `await Promise.allSettled(pendingTranslations)` before real response
 
-### JSONL evidence analysis
-- Read session JSONL: `~/.codeai-hub/sessions/.../gemini-c740333d-...-virtual-simulation.jsonl`
-- Confirmed all three defects with exact timestamps and message IDs
-- Measured Flash-Lite latencies: 6ms, 7s, 7s, 71s (highly unpredictable)
+**Stream 4: UI — render tagged thinking**
+- Added `tag?: string` to UI `SessionMessage`, `ServerSessionMessage`
+- Updated normalizer to propagate tag from server
+- `resolveRoleLabel()`: `tag === "thinking"` → "Gemini · Thinking"
+- Tagged messages render as `StandardMessage` (visible, with timestamp)
 
-### Google Translate API testing
-- Tested free endpoint: `translate.googleapis.com/translate_a/single?client=gtx`
-- No API key needed, no auth needed
-- Latency: ~100ms for same text that took Flash-Lite 7-71 seconds
-- Quality: clean Russian translation, no chain-of-thought leakage
-- Successfully translated the exact thought text that Flash-Lite mangled
+**Stream 5: Codebase cleanup**
+- Grep audit: zero results for Flash-Lite remnants (`TRANSLATION_MODEL`, `extractFinalTranslation`, `GeminiClientBridge`, `gemini-2.5-flash-lite`)
+- Full Gemini module build green
 
-### Planning documents created
-- Created planning doc: `doc/SolidWorks-WorkFlow/Plans/ThoughtTranslation_GoogleTranslate_Migration.md`
-- Archived old todo-plan: `doc/TODO/Archive/todo-plan-up-to-phase73-2026-03-26.md`
-- Created new `doc/TODO/todo-plan.md` with Phase 74 (6 streams, 19 tasks)
-- Created this session report
+**Stream 6: Docs sync + Release**
+- Updated CHANGELOG.md, SystemArchitecture.md
+- Release 1.1.810: build-all.sh + build-release.sh, VSIX 1.5MB
 
 ## Git commits
-(No code commits in this session — analysis and planning only)
+- `0302672c feat(gemini): replace Flash-Lite ThoughtTranslator with Google Translate API`
+- `9b709a93 feat(core): add optional tag field to SessionMessage and dialog pipeline`
+- `5644a327 feat(gemini): buffer thought translations and emit with tag before real response`
+- `a8f17d62 feat(ui): render tagged thinking as visible Gemini · Thinking messages`
+- `110f7d89 docs: sync ThoughtTranslator Google Translate migration and tag field`
+- `1aea812c chore(ui): rebuild webview bundle`
+- `dc2a4411 chore(release): bump version to 1.1.810`
 
 ## New files created
 - `doc/SolidWorks-WorkFlow/Plans/ThoughtTranslation_GoogleTranslate_Migration.md`
 - `doc/TODO/Archive/todo-plan-up-to-phase73-2026-03-26.md`
-- `doc/Sessions/Session162.md`
 
-## New files modified
-- `doc/TODO/todo-plan.md` (replaced with Phase 74 plan)
+## Verification status
+- All quality gates green (architecture 0 violations, duplication 2.23%)
+- Core, Gemini module, webview, typecheck — all pass
+- VSIX 1.1.810 (1.5MB) successfully packaged
+- Flash-Lite grep audit: zero remnants in codebase
 
 ---
 
@@ -66,47 +73,29 @@ Translation is fire-and-forget async (measured: 6ms to 71s latency). Real respon
 ## Required documents to review before work
 1. `AGENTS.md`
 2. `doc/Sessions/Session162.md` (THIS REPORT)
-3. `doc/TODO/todo-plan.md` — Phase 74, start from Stream 1
+3. `doc/TODO/todo-plan.md`
 4. `doc/SolidWorks-WorkFlow/Plans/ThoughtTranslation_GoogleTranslate_Migration.md`
-5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-
-## Key files to understand before coding (read via git show or direct read)
-- `packages/Gemini_Module/src/messaging/thought-translator-service.ts` — current Flash-Lite implementation (will be rewritten)
-- `packages/Gemini_Module/src/messaging/message-processor.ts` — handleThoughtEvent (lines 344-391), emitDialogMessage (lines 544-564)
-- `packages/Gemini_Module/src/session/gemini-session-manager.ts` — ensureThoughtTranslatorBound, bindClient
-- `packages/core/src/session-manager/index.ts` — SessionMessage type
-- `packages/core/src/remote-bridge/handlers/session-request-handler.ts` — DialogMessagePayload (line ~147), appendDialogMessage (line 3717)
-- `src/types/session.ts` — UI SessionMessage type
-- `src/client/ui/src/session/dialog-panel-message-utils.ts` — resolveRoleLabel (line ~36), buildMessageClassNames
-- `src/client/ui/src/session/dialog-panel.tsx` — ThinkingMessage vs StandardMessage routing (lines 133-156)
 
 ## Plans for next session
 
-### Execute Phase 74 streams in order:
-1. **Stream 1**: Rewrite ThoughtTranslatorService → Google Translate API (1 file)
-2. **Stream 2**: Add `tag` field to Core SessionMessage + DialogMessagePayload (2 files, hotspot)
-3. **Stream 3**: Rewrite MessageProcessor.handleThoughtEvent — buffered emit with tag (1 file)
-4. **Stream 4**: UI rendering — resolveRoleLabel + dialog-panel routing (3 files)
-5. **Stream 5**: Cleanup — remove all Flash-Lite remnants, grep audit (2 files)
-6. **Stream 6**: Docs sync + release build
+### Priority 1: Test release 1.1.810
+Install VSIX and verify:
+1. **Thinking translations** — should show as visible "Gemini · Thinking" messages (not collapsed)
+2. **Translation quality** — clean Russian text, no English chain-of-thought leakage
+3. **Translation speed** — ~100ms (vs 1-71s before), no noticeable delay
+4. **JSONL ordering** — translations appear BEFORE real agent response
+5. **Real responses** — still show as "Gemini" (no tag)
+6. **Backward compatibility** — old sessions with `role: "thinking"` still render as collapsed blocks
 
-### Google Translate API details (for Stream 1)
-- Endpoint: `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t`
-- Method: GET with query param `q=<url_encoded_text>`
-- Response: JSON array, translation at `response[0].map(p => p[0]).join("")`
-- Timeout: 3 seconds (vs 15s for Flash-Lite)
-- No auth, no API key, no npm dependencies
-
-### Architecture decision: `tag` field
-- `tag?: string` added to SessionMessage (both Core and UI)
-- Translated thoughts: `{ role: "assistant", tag: "thinking", content: "русский перевод" }`
-- UI routing: `tag === "thinking"` → StandardMessage with label "Gemini · Thinking"
-- Backward compatible: old records without tag work unchanged
+### Priority 2: Known issues from Session 161
+- Cross-provider switch (`switch_provider`) — buttons not wired to actual provider switch
+- Recovery banner testing continuation
+- Virtual Simulation workflow testing
 
 ### Known state at end of session
 - Branch: `main`
-- Version: `1.1.809` (no version change this session)
-- VSIX 1.1.809 installed and under testing by user
-- No code changes — pure analysis and planning session
-- All three ThoughtTranslator defects documented with JSONL evidence
-- Google Translate API verified working via curl test
+- Version: `1.1.810`
+- VSIX ready at project root
+- Phase 74 fully completed (all 6 streams DONE)
+- Flash-Lite completely removed from codebase
+- Google Translate API integrated (free endpoint, no auth)
