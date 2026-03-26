@@ -17,6 +17,7 @@ type TurnAccumulator = {
   responseChunks: string[];
   citations: string[];
   toolRequests: ToolCallRequestInfo[];
+  pendingTranslations: Promise<void>[];
   usage?: UsageMetadata;
 };
 
@@ -159,6 +160,7 @@ export class GeminiMessageProcessor {
       responseChunks: [],
       citations: [],
       toolRequests: [],
+      pendingTranslations: [],
     };
   }
 
@@ -360,25 +362,30 @@ export class GeminiMessageProcessor {
       value.subject && value.subject.trim().length > 0
         ? `${value.subject.trim()}: ${value.description}`
         : value.description;
-    this.emitDialogMessage(
-      session,
-      "thinking",
-      formatted,
-      accumulator.promptId
-    );
-    // Fire-and-forget translation via Flash — does not block main stream
+    // Buffer translation — emit only translated text (or English fallback)
     if (this.thoughtTranslator) {
       const promptId = accumulator.promptId;
-      this.thoughtTranslator
+      const pending = this.thoughtTranslator
         .translateThought(value)
         .then((translated: string | null) => {
-          if (translated) {
-            this.emitDialogMessage(session, "assistant", translated, promptId);
-          }
+          const content = translated ?? formatted;
+          this.emitDialogMessage(session, "assistant", content, {
+            seed: promptId,
+            tag: "thinking",
+          });
         })
         .catch(() => {
-          // Graceful degradation: translation failure is non-blocking
+          this.emitDialogMessage(session, "assistant", formatted, {
+            seed: accumulator.promptId,
+            tag: "thinking",
+          });
         });
+      accumulator.pendingTranslations.push(pending);
+    } else {
+      this.emitDialogMessage(session, "assistant", formatted, {
+        seed: accumulator.promptId,
+        tag: "thinking",
+      });
     }
     return [
       {
@@ -458,12 +465,20 @@ export class GeminiMessageProcessor {
         : undefined;
     const assistantSegment = accumulator.currentAssistantChunks.join("");
     accumulator.currentAssistantChunks.length = 0;
-    this.emitDialogMessage(
-      session,
-      "assistant",
-      assistantSegment,
-      accumulator.promptId
-    );
+    // Drain pending thought translations before emitting the real response
+    if (accumulator.pendingTranslations.length > 0) {
+      const pending = [...accumulator.pendingTranslations];
+      accumulator.pendingTranslations.length = 0;
+      Promise.allSettled(pending).then(() => {
+        this.emitDialogMessage(session, "assistant", assistantSegment, {
+          seed: accumulator.promptId,
+        });
+      });
+    } else {
+      this.emitDialogMessage(session, "assistant", assistantSegment, {
+        seed: accumulator.promptId,
+      });
+    }
     return [];
   }
 
@@ -545,11 +560,12 @@ export class GeminiMessageProcessor {
     session: ActiveSession,
     role: "assistant" | "thinking" | "user",
     content: string,
-    seed?: string
+    options?: { readonly seed?: string; readonly tag?: string }
   ): void {
     if (!content || content.trim().length === 0) {
       return;
     }
+    const seed = options?.seed;
     const uuid =
       seed && seed.length > 0
         ? `${seed}-${role}-${crypto.randomUUID()}`
@@ -560,6 +576,7 @@ export class GeminiMessageProcessor {
       content,
       uuid,
       timestamp: new Date().toISOString(),
+      ...(options?.tag ? { tag: options.tag } : {}),
     });
   }
 
