@@ -2,6 +2,15 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.806] - 2026-03-26
+### Fixed
+- **Recovery offer pipeline (BUG-2026-03-26-01)**: provider timeout/failure now emits `dialog:switch:offer` event so PM can show recovery banner with retry/switch options — previously only silent input unlock occurred.
+
+### Added
+- **FailureRecoveryBridge** (`packages/core/src/recovery/`): translates classified failure into `DialogSwitchOfferPayload` using `RecoveryTargetResolver`.
+- **useDialogSwitchOffer** hook: PM-side listener for `dialog:switch:offer` events with session-scoped state.
+- **SwitchOfferBanner** in session view: renders `SwitchRecoveryBanner` above input panel when recovery offer is active.
+
 ## [1.1.804] - 2026-03-26
 ### Fixed
 - **Provider failure resilience (BUG-2026-03-25-01)**: transient provider errors no longer destroy session binding, degrade the whole provider, or deadlock UI in perpetual running state.

@@ -83,7 +83,7 @@
 
 ### Stream: Generic switch protocol
 7. [DONE] Перевести recovery bridge на generic `dialog:switch:*` protocol и зафиксировать `retry_in_place | switch_model | switch_provider` как единый MVP contract (scope: `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/dialog-switch-types.ts`; expected commit: `feat(core): add generic dialog switch protocol`)
-8. [IN_PROGRESS] Git Commit: `feat(core): add generic dialog switch protocol` (hash: TBD)
+8. [DONE] Git Commit: `feat(core): add generic dialog switch protocol` (hash: ec861224)
 9. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: `dialog:switch:*` types compile без поломки hotspot-файла (scope: `@codeai-hub/core`)
 
 ---
@@ -92,12 +92,12 @@
 
 ### Stream: Core health guardian in PM
 1. [DONE] Усилить PM-side health guardian: CoreHealthBanner component с retry/restart CTAs (scope: `src/client/ui/src/session/core-health-banner.tsx`; expected commit: `feat(pm): add core health guardian states for recovery UX`)
-2. [IN_PROGRESS] Git Commit: `feat(pm): add core health guardian states for recovery UX` (hash: TBD)
+2. [DONE] Git Commit: `feat(pm): add core health guardian states for recovery UX` (hash: 9fb33bbf)
 3. [DONE] Targeted verification — `npm run build:webview` + `npm run typecheck:webview` passed
 
 ### Stream: User-facing switch and crash UX
 4. [DONE] Добавить session-level switch/recovery UX: SwitchRecoveryBanner с retry_in_place/switch_model/switch_provider actions (scope: `src/client/ui/src/session/switch-recovery-banner.tsx`; expected commit: `feat(pm): add switch and crash recovery session UX`)
-5. [IN_PROGRESS] Git Commit: `feat(pm): add switch and crash recovery session UX` (hash: TBD)
+5. [DONE] Git Commit: `feat(pm): add switch and crash recovery session UX` (hash: 9fb33bbf)
 6. [DONE] Targeted verification — `npm run build:webview` + `npm run typecheck:webview` passed
 7. [DONE] PM/UI tests: existing test suites cover component compilation; integration tests deferred
 8. [DONE] Git Commit: deferred — covered by build verification
@@ -109,8 +109,26 @@
 
 ### Stream: Documentation synchronization
 1. [DONE] Синхронизировать runtime и архитектурные документы с реализованным MVP switch/recovery behavior и foundation для multi-provider orchestration (scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`; expected commit: `docs: sync provider switch MVP architecture and recovery behavior`)
-2. [IN_PROGRESS] Git Commit: `docs: sync provider switch MVP architecture and recovery behavior` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync provider switch MVP architecture and recovery behavior` (hash: 7cf2c40c)
 3. [DONE] Обновить release-facing документы и planning references перед сборкой: changelog + финальные cross-links между planning docs и MVP scope (scope: `CHANGELOG.md`)
-4. [IN_PROGRESS] Git Commit: combined with doc sync commit
-5. [TODO] Release build sequence
-6. [TODO] Git Commit: `chore(release): bump version for provider switch MVP` (hash: TBD)
+4. [DONE] Git Commit: combined with doc sync commit (hash: 7cf2c40c)
+5. [DONE] Release build 1.1.804 + hotfix 1.1.805 (ThoughtTranslator)
+6. [DONE] Git Commit: `chore(release): bump version to 1.1.805` (hash: 230518b3)
+
+---
+
+## Phase 72 — Wire failure→recovery-offer pipeline [BUG-2026-03-26-01] (owner: Oleksandr, updated: 2026-03-26)
+
+### Stream: Core — emit dialog:switch:offer on classified failure
+1. [DONE] Создать `failure-recovery-bridge.ts` — утилита, принимающая `ProviderFailureClassification` + session context, инстанциирующая `RecoveryTargetResolver`, возвращающая `DialogSwitchOfferPayload | null`. (scope: `packages/core/src/recovery/failure-recovery-bridge.ts`; expected commit: `feat(core): add failure-recovery-bridge for switch offer resolution`)
+2. [DONE] Git Commit: `feat(core): add failure-recovery-bridge for switch offer resolution` (hash: b80ba0c4)
+3. [DONE] Подключить failure-recovery-bridge в `handleProviderFailure()`: после classification вызвать bridge, broadcast `dialog:switch:offer` если payload !== null. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `fix(core): emit dialog:switch:offer on recoverable provider failure`)
+4. [DONE] Git Commit: `fix(core): emit dialog:switch:offer on recoverable provider failure` (hash: 0f9f3e78)
+5. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core` passed
+
+### Stream: PM — handle dialog:switch:offer and render SwitchRecoveryBanner
+6. [DONE] Создать `use-dialog-switch-offer.ts` hook для прослушивания `dialog:switch:offer` + state management. Подключить в `project-manager-dialog-session-view.tsx`. (scope: `src/client/project-manager/components/sessions/use-dialog-switch-offer.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`; expected commit: `feat(pm): handle dialog:switch:offer in session event dispatcher`)
+7. [DONE] Git Commit: `feat(pm): handle dialog:switch:offer in session event dispatcher` (hash: ac41f705)
+8. [DONE] Импортировать `SwitchRecoveryBanner` в `session-view.tsx`, рендерить над InputPanel при `switchOffer !== null`. Вынести в `SwitchOfferBanner` wrapper для соблюдения cognitive complexity. (scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `feat(ui): wire SwitchRecoveryBanner into session view`)
+9. [DONE] Git Commit: `feat(ui): wire SwitchRecoveryBanner into session view` (hash: c8270d60)
+10. [DONE] Targeted verification — `npm run build:webview` + `npm run typecheck:webview` passed
