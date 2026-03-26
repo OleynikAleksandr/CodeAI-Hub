@@ -7,7 +7,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release
+## Current Release — v1.1.818
 - **Rate limit display**: only known Gemini models shown with human-readable names ("Gemini 3.1 Pro", "Gemini 3 Flash"); stale API buckets filtered out.
 - **Model switch label**: StatusPanel updates immediately after model switch via recovery banner (broadcast + ID fallback + settings sync guard).
 - **Optimistic user message**: PM dialog messages appear instantly on send, no round-trip delay.
