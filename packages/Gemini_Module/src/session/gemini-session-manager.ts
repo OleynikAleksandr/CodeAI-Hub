@@ -305,6 +305,18 @@ export class GeminiSessionManager {
     session.abortController = abortController;
     session.status = "streaming";
 
+    // Watchdog: abort if provider does not respond within 180 seconds
+    const WATCHDOG_TIMEOUT_MS = 180_000;
+    const watchdog = setTimeout(() => {
+      if (!abortController.signal.aborted) {
+        abortController.abort();
+        session.reporter?.warn?.("sendMessage watchdog timeout exceeded", {
+          sessionId,
+          timeoutMs: WATCHDOG_TIMEOUT_MS,
+        });
+      }
+    }, WATCHDOG_TIMEOUT_MS);
+
     const timestamp = new Date().toISOString();
     session.eventEmitter.emit("message", {
       type: "turn_started",
@@ -397,6 +409,7 @@ export class GeminiSessionManager {
       ]);
       throw error;
     } finally {
+      clearTimeout(watchdog);
       if (session.abortController && !session.abortController.signal.aborted) {
         session.abortController.abort();
       }
