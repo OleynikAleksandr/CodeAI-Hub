@@ -44,13 +44,13 @@
 2. [DONE] Git Commit: `feat(core): classify provider failures before teardown` (hash: a205f3c6)
 3. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: classifier path не ломает старт/сборку Core после правки hotspot-файла (scope: `@codeai-hub/core`)
 4. [DONE] Встроить retry budget и `pending user intent TTL=60s`, чтобы recovery был конечным и не создавал бесконечных retry loops (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit: `fix(core): bound retries and surface undelivered turn state`)
-5. [IN_PROGRESS] Git Commit: `fix(core): bound retries and surface undelivered turn state` (hash: TBD)
+5. [DONE] Git Commit: `fix(core): bound retries and surface undelivered turn state` (hash: 92d0f57a)
 6. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: недоставленное сообщение получает конечный outcome, без бесконечного retry loop (scope: `@codeai-hub/core`)
 
 ### Stream: Turn lifecycle and no-silent-drop
-7. [TODO] Гарантировать `turn_failed`/UI unlock для failed turns и убрать silent drop при missing binding, сохранив continuity dialog (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): finalize failed turns without dropping continuity`)
-8. [TODO] Git Commit: `fix(core): finalize failed turns without dropping continuity` (hash: TBD)
-9. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: transient failure разблокирует UI, follow-up message не теряется (scope: `@codeai-hub/core`)
+7. [DONE] Гарантировать `turn_failed`/UI unlock для failed turns и убрать silent drop при missing binding, сохранив continuity dialog (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): finalize failed turns without dropping continuity`)
+8. [IN_PROGRESS] Git Commit: `fix(core): finalize failed turns without dropping continuity` (hash: TBD)
+9. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: transient failure разблокирует UI, follow-up message не теряется (scope: `@codeai-hub/core`)
 
 ---
 

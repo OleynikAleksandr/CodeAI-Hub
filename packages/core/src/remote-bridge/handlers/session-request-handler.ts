@@ -1796,6 +1796,15 @@ export class SessionRequestHandler {
         Boolean(binding),
         Boolean(adapter)
       );
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId,
+          message: "Provider binding is unavailable for internal message.",
+          code: "missing_provider_binding",
+          retryable: false,
+        },
+      });
       return;
     }
 
@@ -2231,6 +2240,17 @@ export class SessionRequestHandler {
         Boolean(binding),
         Boolean(adapter)
       );
+      this.trackPendingUserIntent(sessionId, content);
+      this.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId,
+          message:
+            "Provider binding is unavailable. Your message has been saved and will be retried when the provider recovers.",
+          code: "missing_provider_binding",
+          retryable: true,
+        },
+      });
       return;
     }
 
