@@ -49,7 +49,7 @@
 
 ### Stream: Turn lifecycle and no-silent-drop
 7. [DONE] Гарантировать `turn_failed`/UI unlock для failed turns и убрать silent drop при missing binding, сохранив continuity dialog (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): finalize failed turns without dropping continuity`)
-8. [IN_PROGRESS] Git Commit: `fix(core): finalize failed turns without dropping continuity` (hash: TBD)
+8. [DONE] Git Commit: `fix(core): finalize failed turns without dropping continuity` (hash: 44948bf1)
 9. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: transient failure разблокирует UI, follow-up message не теряется (scope: `@codeai-hub/core`)
 
 ---
@@ -57,14 +57,14 @@
 ## Phase 68 — Same-provider recovery and switch_model path (owner: Oleksandr, updated: 2026-03-26)
 
 ### Stream: Same-provider retry orchestration
-1. [TODO] Реализовать same-provider auto-resume через сохранённый `providerSessionId` и явный `retry_in_place` path в recovery orchestration (scope: `packages/core/src/recovery/dialog-switch-orchestrator.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-manager/index.ts`; expected commit: `feat(core): add same-provider recovery orchestration`)
-2. [TODO] Git Commit: `feat(core): add same-provider recovery orchestration` (hash: TBD)
-3. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: same-provider retry и auto-resume проходят без ручного recreate session (scope: `@codeai-hub/core`)
+1. [DONE] Реализовать same-provider auto-resume через сохранённый `providerSessionId` и явный `retry_in_place` path в recovery orchestration (scope: `packages/core/src/recovery/dialog-switch-orchestrator.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-manager/index.ts`; expected commit: `feat(core): add same-provider recovery orchestration`)
+2. [IN_PROGRESS] Git Commit: `feat(core): add same-provider recovery orchestration` (hash: TBD)
+3. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: same-provider retry и auto-resume проходят без ручного recreate session (scope: `@codeai-hub/core`)
 
 ### Stream: Model switch for current provider
-4. [TODO] Добавить `switch_model` в target resolver и generic switch contracts, используя текущие provider defaults как базовый MVP behavior (scope: `packages/core/src/recovery/recovery-target-resolver.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat(core): add switch-model recovery mode`)
-5. [TODO] Git Commit: `feat(core): add switch-model recovery mode` (hash: TBD)
-6. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: user-initiated switch_model продолжает тот же logical dialog (scope: `@codeai-hub/core`)
+4. [DONE] Добавить `switch_model` в target resolver и generic switch contracts, используя текущие provider defaults как базовый MVP behavior (scope: `packages/core/src/recovery/recovery-target-resolver.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat(core): add switch-model recovery mode`)
+5. [IN_PROGRESS] Git Commit: `feat(core): add switch-model recovery mode` (hash: TBD)
+6. [DONE] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: user-initiated switch_model продолжает тот же logical dialog (scope: `@codeai-hub/core`)
 7. [TODO] Закрыть тестами happy path для same-provider retry и user-initiated model switch при живом Core (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(core): cover same-provider retry and switch-model flows`)
 8. [TODO] Git Commit: `test(core): cover same-provider retry and switch-model flows` (hash: TBD)
 9. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: automated tests не оставили broken Core build (scope: `@codeai-hub/core`)
