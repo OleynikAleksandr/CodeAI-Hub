@@ -6,7 +6,7 @@
 
 import type { ModuleReporter } from "../types";
 
-const TRANSLATION_MODEL = "gemini-2.0-flash-lite";
+const TRANSLATION_MODEL = "gemini-2.5-flash-lite";
 const TRANSLATION_TIMEOUT_MS = 8000;
 
 const TRANSLATION_PROMPT = [
