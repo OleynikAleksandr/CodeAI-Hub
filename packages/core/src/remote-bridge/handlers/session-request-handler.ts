@@ -10,6 +10,7 @@ import {
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
+import { buildSwitchOfferPayload } from "../../recovery/failure-recovery-bridge";
 import { classifyProviderFailure } from "../../recovery/provider-failure-classifier";
 import {
   ContinuityChainStore,
@@ -3458,6 +3459,30 @@ export class SessionRequestHandler {
         retryable: classification.retryable,
       },
     });
+
+    // Emit recovery offer when session context is available
+    if (sessionId) {
+      const session = this.sessionManager.getSession(sessionId);
+      const offerPayload = buildSwitchOfferPayload(
+        classification,
+        {
+          sessionId,
+          dialogId: sessionId,
+          providerId,
+          providerSessionId: binding?.providerSessionId ?? null,
+          stage: session?.stage ?? null,
+          adapterAvailable: Boolean(adapter),
+        },
+        (pid: string) => Boolean(this.providerRegistry.getAdapter(pid))
+      );
+
+      if (offerPayload) {
+        this.broadcaster({
+          type: "dialog:switch:offer",
+          payload: offerPayload,
+        });
+      }
+    }
 
     if (!sessionId) {
       this.stateBroadcaster();
