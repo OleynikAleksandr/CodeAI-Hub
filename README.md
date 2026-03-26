@@ -8,11 +8,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Bug registry: `doc/BugRegistry.md`
 
 ## Current Release
-- **Provider failure resilience (BUG-2026-03-25-01)**: transient provider errors no longer destroy session binding or deadlock UI. `ProviderFailureClassifier` distinguishes transient turn failures from terminal session failures.
-- **Bounded retry budget**: 1 silent retry for transient errors, 1 auto-resume for recoverable bindings, with 60s TTL for pending user intent — no infinite retry loops.
-- **Provider/model switch protocol**: generic `dialog:switch:*` protocol supports `retry_in_place`, `switch_model`, and `switch_provider` modes. Cross-provider takeover uses plain `User:/Assistant:` dialog transcript, not provider-native JSONL.
-- **Recovery orchestration**: `DialogSwitchOrchestrator` handles same-provider retry and model switch. `RecoveryTargetResolver` provides hardcoded MVP fallback matrix across Gemini/Claude/Codex.
-- **PM crash/recovery UX**: `CoreHealthBanner` shows retry/restart CTAs when Core is unavailable. `SwitchRecoveryBanner` presents switch options after provider failure.
+- **Rate limit display**: only known Gemini models shown with human-readable names ("Gemini 3.1 Pro", "Gemini 3 Flash"); stale API buckets filtered out.
+- **Model switch label**: StatusPanel updates immediately after model switch via recovery banner.
+- **Optimistic user message**: PM dialog messages appear instantly on send, no round-trip delay.
+- **Google Translate thoughts**: Gemini thinking events translated via Google Translate API (~100ms) with "Gemini · Thinking" label and `tag: "thinking"` in JSONL.
+- **Recovery UX**: `CoreHealthBanner`, `SwitchRecoveryBanner`, `dialog:switch:*` protocol for retry/switch across Gemini/Claude/Codex.
 
 Previous releases (summary): `1.1.57x–1.1.799` — SSOT routing, snapshot-first lock/usage, continuity/resume reliability, Virtual Simulation workflow, Diagram Modules DSL runtime, PM/UI contract cleanup, visual shell, semantic editing, ownership-aware Product Part hierarchy, staged product-part decomposition, step-by-step workflow, parser recoveries, layout/readability fixes, and canonical template alignment.
 
