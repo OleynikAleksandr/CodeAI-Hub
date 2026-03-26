@@ -500,6 +500,7 @@ export class UnifiedSessionStorage {
       role: message.role,
       content: message.content,
       timestamp: message.timestamp,
+      ...(message.tag ? { tag: message.tag } : {}),
     });
   }
 }

@@ -36,6 +36,7 @@ export type SessionMessageRecord = {
   readonly messageId: string;
   readonly role: MessageRole;
   readonly content: string;
+  readonly tag?: string;
 };
 
 export type SessionWriterOptions = {
@@ -50,6 +51,7 @@ export type AppendMessageOptions = {
   readonly role: MessageRole;
   readonly content: string;
   readonly timestamp?: string;
+  readonly tag?: string;
 };
 
 export type CloseSessionOptions = {
@@ -115,6 +117,7 @@ const createMessageRecord = (
   messageId: message.messageId,
   role: message.role,
   content: message.content,
+  ...(message.tag ? { tag: message.tag } : {}),
 });
 
 export class UnifiedSessionWriter {
