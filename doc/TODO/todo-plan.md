@@ -2,146 +2,117 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session156.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session158.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`
+- Этот `TODO Plan` реализует **один MVP scope**: resilience bugfix + provider/model switch + PM health guardian как база для будущего multi-provider orchestration
+- Отдельного сокращённого варианта внутри этого плана нет: **все Phase 67-71 вместе и есть MVP**
+- Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
-- Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
-- Husky gates не обходить (`--no-verify` запрещен)
+- Husky gates не обходить (`--no-verify` запрещён)
 - Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
-- Перед закрытием stream выполнять таргетные проверки затронутых пакетов/клиентов
-- После закрытия release stream: выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, записать результаты в `doc/Sessions/`
+- Перед закрытием каждого stream выполнять таргетные проверки затронутых пакетов/клиентов
+- Для Core stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/core`
+- Для PM/UI stream-ов таргетная проверка по умолчанию: `npm run build:webview` + `npm run typecheck:webview`
+- `packages/core/src/remote-bridge/handlers/session-request-handler.ts` считается hotspot-файлом; после каждой микро-задачи, которая его меняет, обязателен немедленный `npm run build --workspace=@codeai-hub/core`
+- Даже если автоматические тесты вынесены в отдельный stream, после каждой реализации обязателен targeted build и короткий smoke-check затронутого user flow
+- Финальный release stream выполняется только после синхронизации документации и чистого дерева
 
 ---
 
-## Phase 64 — Full gemini-cli-core@0.35.0 compatibility (owner: Oleksandr, updated: 2026-03-25)
+## MVP Outcome
 
-### Problem statement
-`@google/gemini-cli-core@0.35.0` внёс breaking changes в tool execution API:
-1. `nonInteractiveToolExecutor` полностью удалён — наш legacy путь мёртв
-2. `CoreToolScheduler` конструктор изменился: `config: Config` → `context: AgentLoopContext`
-3. `AgentLoopContext` = `{ config, promptId, toolRegistry, messageBus, geminiClient, sandboxManager }`
-4. Добавлены новые `GeminiEventType`: `ModelInfo`, `AgentExecutionStopped`, `AgentExecutionBlocked`
+Критерии завершения этого плана:
+- transient provider errors больше не рвут binding и не оставляют UI в вечном running state
+- поддержан bounded retry budget: 1 safe silent retry для transient errors, 1 auto-resume для `session_binding_recoverable`
+- поддержаны `retry_in_place`, `switch_model`, `switch_provider`
+- cross-provider takeover использует `unified-dialog.prompt.md` + `provider-switch-handoff.md`, а не provider-native JSONL
+- PM показывает явный crash/unavailable UX, если Core недоступен
+- все контракты остаются provider-neutral и совместимыми с будущим `multi-provider-orchestrator`
 
-Результат: все tool calls Gemini провайдера падают с `TypeError: Cannot read properties of undefined (reading 'messageBus')`, сессия "зависает".
+## MVP Assumptions
 
-### Key finding
-`Config` в 0.35.0 содержит deprecated getters для `toolRegistry`, `messageBus`, `geminiClient`, `sandboxManager`, `promptId`. Собираем `AgentLoopContext` из Config и передаём в CoreToolScheduler как `context`.
-
-### Stream 1: Fix CoreToolScheduler API + remove legacy executor
-
-1. [DONE] **Rewrite `gemini-tool-executor-facade.ts`** — полная адаптация к CoreToolScheduler@0.35.0:
-   - Удалён `SchedulerConstructor` cast-тип — заменён на `SchedulerConstructor035` с `AgentLoopContextLike`
-   - Удалён legacy branch (`modules.toolExecutor?.executeToolCall`) — в 0.35.0 его нет
-   - В `execute()`: собирается `AgentLoopContext` из `config` (deprecated getters) + `promptId` из `request.prompt_id`
-   - Передаётся `{ context, getPreferredEditor, onAllToolCallsComplete }` — убран `onEditorClose`
-   (scope: `packages/Gemini_Module/src/session/gemini-tool-executor-facade.ts` — 1 файл)
-
-2. [DONE] Git Commit: `fix(gemini): rewrite tool executor for CoreToolScheduler@0.35.0 AgentLoopContext API` (hash: 5734f1fe)
-
-### Stream 2: Clean up dead legacy code in cli-bridge & cli-types
-
-3. [DONE] **Remove `nonInteractiveToolExecutor` from `cli-bridge.ts` and `cli-types.ts`**:
-   - `cli-types.ts`: удалён `toolExecutor`, `GeminiToolExecutionBackend`, `toolExecutionBackend`
-   - `cli-bridge.ts`: удалён `findAndLoadOptionalModule`, `isModuleNotFoundError`, `resolveToolExecutionBackend()`, убраны поля из `loadGeminiModules()`
-   - `types/index.ts`: удалён `toolExecutionBackend` из `GeminiCliBridgeMetadata`
-   - Тесты обновлены: `cli-bridge.test.ts`, `gemini-tool-executor-facade.test.ts`
-
-4. [DONE] Git Commit: `refactor(gemini): remove dead nonInteractiveToolExecutor legacy code` (hash: 21e4eef7)
-
-### Stream 3: Handle new GeminiEventType values
-
-5. [DONE] **Add handlers for new 0.35.0 events** in `message-processor.ts`:
-   - `ModelInfo` — emit system event с информацией о модели
-   - `AgentExecutionStopped` — emit warning с причиной
-   - `AgentExecutionBlocked` — emit warning с причиной
-
-6. [DONE] Git Commit: `feat(gemini): handle ModelInfo, AgentExecutionStopped, AgentExecutionBlocked events` (hash: c025e817)
-
-### Stream 4: Targeted build & verification (Phase 64)
-
-7. [DONE] **Targeted build** — `npm run build --workspace packages/Gemini_Module` — TS fix applied and build clean.
-8. [TODO] **Functional test** — запустить Gemini сессию в PM, проверить:
-   - tool calls (read_file, run_shell_command) выполняются
-   - thoughts отображаются
-   - content streaming работает
+- отдельный stage-specific artifact resolver в рамках этого MVP не вводится; используем canonical artifacts текущего stage из существующего runtime/workflow context
+- persistent session-scoped model override в MVP не вводится; если explicit `targetModelId` не передан, используется текущий settings default
+- `pendingSwitchIntent` в MVP хранится только in-memory на стороне PM; disk-persistence переносится за пределы этого плана
 
 ---
 
-## Phase 65 — Gemini Thought Translator: real-time Russian translation via Flash (owner: Oleksandr, updated: 2026-03-25)
+## Phase 67 — Core resilience invariants for provider failure (owner: Oleksandr, updated: 2026-03-26)
 
-### Problem statement
-Gemini (в отличие от Claude и Codex) не выдаёт промежуточные текстовые ответы пользователю. Thoughts приходят на английском, скрыты под плашкой. Пользователь 3-5 минут смотрит пустой экран диалога.
+### Stream: Failure classification and bounded retry
+1. [TODO] Ввести `ProviderFailureClassifier` и первичную классификацию `transient_turn_failure | session_binding_recoverable | provider_runtime_failure | terminal_session_failure`; подключить её до runtime teardown в Core (scope: `packages/core/src/recovery/provider-failure-classifier.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/provider-registry/index.ts`; expected commit: `feat(core): classify provider failures before teardown`)
+2. [TODO] Git Commit: `feat(core): classify provider failures before teardown` (hash: TBD)
+3. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: classifier path не ломает старт/сборку Core после правки hotspot-файла (scope: `@codeai-hub/core`)
+4. [TODO] Встроить retry budget и `pending user intent TTL=60s`, чтобы recovery был конечным и не создавал бесконечных retry loops (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit: `fix(core): bound retries and surface undelivered turn state`)
+5. [TODO] Git Commit: `fix(core): bound retries and surface undelivered turn state` (hash: TBD)
+6. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: недоставленное сообщение получает конечный outcome, без бесконечного retry loop (scope: `@codeai-hub/core`)
 
-### Solution: Variant B — Gemini Flash translator
-Каждый incoming Thought event параллельно (fire-and-forget) отправляется в `gemini-2.0-flash-lite` для перевода на русский. Результат показывается в диалоге как промежуточный ответ агента. Основной поток не блокируется.
-
-Ключевые параметры:
-- Thoughts приходят с интервалами 30-90 сек → latency Flash (1-2 сек) не проблема
-- Промпт: ~30 токенов инструкции + ~100-200 токенов thought → ~250 токенов вход, ~150 выход
-- Стоимость: практически нулевая (Flash-lite бесплатный tier)
-- Graceful degradation: если Flash упал — мысль просто не переводится, основная сессия не страдает
-- SDK `@google/genai` уже в зависимостях, API ключ у пользователя уже есть
-
-### Stream 1: Create ThoughtTranslatorService
-
-1. [DONE] **Create `thought-translator-service.ts`** (~70 строк):
-   - GoogleGenAI клиент, модель gemini-2.0-flash-lite, промпт на английском
-   - Fire-and-forget: логирует через reporter, null при сбое, 5 сек timeout
-
-2. [DONE] Git Commit: `feat(gemini): add ThoughtTranslatorService for real-time Russian translation via Flash` (hash: TBD)
-
-### Stream 2: Integrate translator into message-processor
-
-3. [DONE] **Update `message-processor.ts`** — fire-and-forget `.then()` in handleThoughtEvent
-4. [DONE] **Wire service in `gemini-session-manager.ts`** — capture GOOGLE_API_KEY before sanitize, pass to MessageProcessor
-5. [DONE] Git Commit: `feat(gemini): integrate thought translation into message processor pipeline` (hash: TBD)
-
-### Stream 3: Targeted build & verification (Phase 65)
-
-6. [DONE] **Targeted build** — `npm run build --workspace packages/Gemini_Module` — clean after fixing biome import issues.
-7. [TODO] **Functional test** — запустить Gemini сессию в PM, проверить:
-   - Thoughts переводятся на русский и появляются в диалоге
-   - Thinking-плашка по-прежнему отображает оригинал
-   - При ошибке Flash (нет сети, невалидный ключ) — основная сессия не ломается
-   - Latency перевода не задерживает основной поток
-
-### Stream 4: Release build
-
-8. [DONE] Update `README.md`, `CHANGELOG.md` for new version.
-9. [DONE] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — ThoughtTranslatorService section added.
-10. [DONE] Git Commit: `docs: update README, CHANGELOG, SystemArchitecture` (hash: 67c519f7)
-11. [DONE] `./scripts/build-all.sh` → version 1.1.801, all providers/core/UI/launcher built.
-12. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.801.vsix` (1.5M).
-13. [DONE] Git Commit: `chore(release): bump version to 1.1.801` (hash: 1a5d827b)
-14. [DONE] Create `doc/Sessions/Session158.md`.
+### Stream: Turn lifecycle and no-silent-drop
+7. [TODO] Гарантировать `turn_failed`/UI unlock для failed turns и убрать silent drop при missing binding, сохранив continuity dialog (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`; expected commit: `fix(core): finalize failed turns without dropping continuity`)
+8. [TODO] Git Commit: `fix(core): finalize failed turns without dropping continuity` (hash: TBD)
+9. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: transient failure разблокирует UI, follow-up message не теряется (scope: `@codeai-hub/core`)
 
 ---
 
-## Phase 66 — Gemini model registry update: remove 2.5, fix 3.1 Pro ID (owner: Oleksandr, updated: 2026-03-25)
+## Phase 68 — Same-provider recovery and switch_model path (owner: Oleksandr, updated: 2026-03-26)
 
-### Problem statement
-1. `gemini-3-pro-preview` deprecated 9 марта 2026, перенаправляется на `gemini-3.1-pro-preview`
-2. Модели `gemini-2.5-*` устарели — убираем из UI и registry
-3. `resolveThinkingConfig()` содержит ветку для `gemini-2.5-` которая больше не нужна
+### Stream: Same-provider retry orchestration
+1. [TODO] Реализовать same-provider auto-resume через сохранённый `providerSessionId` и явный `retry_in_place` path в recovery orchestration (scope: `packages/core/src/recovery/dialog-switch-orchestrator.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/session-manager/index.ts`; expected commit: `feat(core): add same-provider recovery orchestration`)
+2. [TODO] Git Commit: `feat(core): add same-provider recovery orchestration` (hash: TBD)
+3. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: same-provider retry и auto-resume проходят без ручного recreate session (scope: `@codeai-hub/core`)
 
-### Target state
-Только 2 модели:
-- `gemini-3.1-pro-preview` — Gemini 3.1 Pro (flagship reasoning, 1M context)
-- `gemini-3-flash-preview` — Gemini 3 Flash (Pro-level at Flash speed/cost)
+### Stream: Model switch for current provider
+4. [TODO] Добавить `switch_model` в target resolver и generic switch contracts, используя текущие provider defaults как базовый MVP behavior (scope: `packages/core/src/recovery/recovery-target-resolver.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat(core): add switch-model recovery mode`)
+5. [TODO] Git Commit: `feat(core): add switch-model recovery mode` (hash: TBD)
+6. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: user-initiated switch_model продолжает тот же logical dialog (scope: `@codeai-hub/core`)
+7. [TODO] Закрыть тестами happy path для same-provider retry и user-initiated model switch при живом Core (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(core): cover same-provider retry and switch-model flows`)
+8. [TODO] Git Commit: `test(core): cover same-provider retry and switch-model flows` (hash: TBD)
+9. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: automated tests не оставили broken Core build (scope: `@codeai-hub/core`)
 
-Default: `gemini-3.1-pro-preview`
+---
 
-### Stream 1: Update model registry + Settings UI types
+## Phase 69 — Cross-provider switch and provider-neutral transfer package (owner: Oleksandr, updated: 2026-03-26)
 
-1. [DONE] **Update `src/types/gemini-model-registry.ts`**: 2 models, default 3.1 Pro, family "gemini-3"
-2. [DONE] Git Commit: `feat(gemini): update model registry — remove 2.5, add gemini-3.1-pro-preview` (hash: TBD)
+### Stream: Provider-neutral takeover package
+1. [TODO] Создать builders для `CanonicalSessionPreamble`, `unified-dialog.prompt.md` и `provider-switch-handoff.md` как provider-neutral takeover package (scope: `packages/core/src/recovery/canonical-session-preamble-resolver.ts`, `packages/core/src/recovery/provider-facing-dialog-builder.ts`, `packages/core/src/recovery/unified-dialog-transfer-builder.ts`; expected commit: `feat(core): add provider-neutral switch transfer builders`)
+2. [TODO] Git Commit: `feat(core): add provider-neutral switch transfer builders` (hash: TBD)
+3. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: builders генерируют plain-dialog payload без provider-native envelopes (scope: `@codeai-hub/core`)
+4. [TODO] Подключить materialization transfer package к unified dialog source и recovery orchestration без зависимости от provider-native JSONL (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`, `packages/core/src/unified-session/storage.ts`, `packages/core/src/recovery/dialog-switch-orchestrator.ts`; expected commit: `feat(core): build switch transfer package from unified dialog history`)
+5. [TODO] Git Commit: `feat(core): build switch transfer package from unified dialog history` (hash: TBD)
+6. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: transfer package materializes from unified dialog history, а не из rollout JSONL (scope: `@codeai-hub/core`)
 
-### Stream 2: Update Gemini_Module thinking config
+### Stream: Generic switch protocol
+7. [TODO] Перевести recovery bridge на generic `dialog:switch:*` protocol и зафиксировать `retry_in_place | switch_model | switch_provider` как единый MVP contract (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat(core): add generic dialog switch protocol`)
+8. [TODO] Git Commit: `feat(core): add generic dialog switch protocol` (hash: TBD)
+9. [TODO] Targeted verification — `npm run build --workspace=@codeai-hub/core`; smoke-check: `dialog:switch:*` flow проходит от offer до confirm без поломки hotspot-файла (scope: `@codeai-hub/core`)
 
-3. [DONE] Removed gemini-2.5 branch, widened prefix to `"gemini-3"` (covers 3-flash + 3.1-pro)
-4. [DONE] Git Commit: `refactor(gemini): remove 2.5 thinking config branch` (hash: TBD)
+---
 
-### Stream 3: Targeted build + verification
+## Phase 70 — PM health guardian and switch UX (owner: Oleksandr, updated: 2026-03-26)
 
-5. [TODO] `npm run build --workspace packages/Gemini_Module` + `npm run build:webview` + `npm run typecheck:webview`
-6. [TODO] Git Commit + build-all → build-release → VSIX
+### Stream: Core health guardian in PM
+1. [TODO] Усилить PM-side health guardian: connection loss, status polling, restart state propagation и связь с supervisor UX (scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/core-bridge/core-bridge-reconnect.ts`, `src/client/project-manager/components/sessions/status-hydrator.ts`; expected commit: `feat(pm): add core health guardian states for recovery UX`)
+2. [TODO] Git Commit: `feat(pm): add core health guardian states for recovery UX` (hash: TBD)
+3. [TODO] Targeted verification — `npm run build:webview` + `npm run typecheck:webview`; smoke-check: PM корректно показывает reconnect/crash state при недоступном Core (scope: `webview + PM UI`)
+
+### Stream: User-facing switch and crash UX
+4. [TODO] Добавить session-level switch/recovery UX: crash banner, manual `switch model / switch provider`, approve/reject actions (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/input-panel.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`; expected commit: `feat(pm): add switch and crash recovery session UX`)
+5. [TODO] Git Commit: `feat(pm): add switch and crash recovery session UX` (hash: TBD)
+6. [TODO] Targeted verification — `npm run build:webview` + `npm run typecheck:webview`; smoke-check: manual switch actions и crash banner доступны в session UX (scope: `webview + PM UI`)
+7. [TODO] Добавить PM/UI tests для crash banner, user-initiated switch request и post-reconnect recovery path (scope: `src/client/ui/src/session/input-panel.test.tsx`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/components/sessions/session-stream-provider-fallback.test.ts`; expected commit: `test(pm): cover crash banner and manual switch flows`)
+8. [TODO] Git Commit: `test(pm): cover crash banner and manual switch flows` (hash: TBD)
+9. [TODO] Targeted verification — `npm run build:webview` + `npm run typecheck:webview`; smoke-check: test additions не сломали PM/UI сборку (scope: `webview + PM UI`)
+
+---
+
+## Phase 71 — Documentation sync, verification, and release build (owner: Oleksandr, updated: 2026-03-26)
+
+### Stream: Documentation synchronization
+1. [TODO] Синхронизировать runtime и архитектурные документы с реализованным MVP switch/recovery behavior и foundation для multi-provider orchestration (scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`; expected commit: `docs: sync provider switch MVP architecture and recovery behavior`)
+2. [TODO] Git Commit: `docs: sync provider switch MVP architecture and recovery behavior` (hash: TBD)
+3. [TODO] Обновить release-facing документы и planning references перед сборкой: changelog + финальные cross-links между planning docs и MVP scope (scope: `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`; expected commit: `docs: finalize release notes and planning cross-links for switch MVP`)
+4. [TODO] Git Commit: `docs: finalize release notes and planning cross-links for switch MVP` (hash: TBD)
+
+### Stream: Release build and session wrap-up
+5. [TODO] После зелёных таргетных проверок выполнить release sequence по инструкции: `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты, обновить `doc/Sessions/Session159.md` и финальные статусы в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session159.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): bump version for provider switch MVP`)
+6. [TODO] Git Commit: `chore(release): bump version for provider switch MVP` (hash: TBD)
