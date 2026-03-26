@@ -37,6 +37,23 @@ type GeminiWindowCandidate = {
 const MAX_COMPAT_WINDOWS = 3;
 const DAILY_WINDOW_THRESHOLD_MS = 36 * 60 * 60 * 1000;
 
+/**
+ * Known Gemini models — only these appear in rate-limit labels.
+ * Key: raw model ID returned by Google Quota API (lowercase).
+ * Value: human-readable display name shown in UI.
+ */
+const GEMINI_MODEL_DISPLAY_NAMES: Readonly<Record<string, string>> = {
+  "gemini-3.1-pro-preview": "Gemini 3.1 Pro",
+  "gemini-3-flash-preview": "Gemini 3 Flash",
+};
+
+const resolveModelDisplayName = (modelId: string | null): string | null => {
+  if (!modelId) {
+    return null;
+  }
+  return GEMINI_MODEL_DISPLAY_NAMES[modelId.toLowerCase()] ?? null;
+};
+
 const clampPercent = (value: number): number => {
   if (!Number.isFinite(value) || value < 0) {
     return 0;
@@ -186,8 +203,13 @@ const buildWindowCandidate = (
     typeof bucket.modelId === "string" && bucket.modelId.trim().length > 0
       ? bucket.modelId.trim()
       : null;
+  // Skip buckets for models not in our known registry
+  const displayName = resolveModelDisplayName(modelId);
+  if (modelId && !displayName) {
+    return null;
+  }
   const tokenType = formatTokenType(bucket.tokenType);
-  const label = [modelId ?? "Gemini Quota", tokenType]
+  const label = [displayName ?? "Gemini Quota", tokenType]
     .filter((value): value is string => Boolean(value))
     .join(" ");
   const percentUsed = clampPercent((1 - remainingFraction) * 100);
