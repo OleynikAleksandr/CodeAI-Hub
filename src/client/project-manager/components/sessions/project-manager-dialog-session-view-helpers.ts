@@ -29,6 +29,7 @@ type DialogHistoryRecord = {
   readonly role: "system" | "user" | "assistant" | "thinking";
   readonly content: string;
   readonly timestamp: string;
+  readonly tag?: string;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -89,11 +90,13 @@ const sanitizeDialogHistoryRecord = (value: unknown): DialogHistoryRecord | null
   ) {
     return null;
   }
+  const tag = typeof value.tag === "string" ? value.tag : undefined;
   return {
     messageId: value.messageId,
     role,
     content: value.content,
     timestamp: value.timestamp,
+    ...(tag ? { tag } : {}),
   };
 };
 
@@ -179,6 +182,7 @@ export const convertHistoryToMessages = (records: readonly unknown[]): SessionMe
       role: sanitized.role,
       content: sanitized.content,
       createdAt,
+      ...(sanitized.tag ? { tag: sanitized.tag } : {}),
     });
   }
   result.sort((a, b) => a.createdAt - b.createdAt);
