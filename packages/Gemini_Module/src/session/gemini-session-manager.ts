@@ -307,17 +307,11 @@ export class GeminiSessionManager {
     session.abortController = abortController;
     session.status = "streaming";
 
-    // Watchdog: abort if provider does not respond within 180 seconds
-    const WATCHDOG_TIMEOUT_MS = 180_000;
-    const watchdog = setTimeout(() => {
-      if (!abortController.signal.aborted) {
-        abortController.abort();
-        session.reporter?.warn?.("sendMessage watchdog timeout exceeded", {
-          sessionId,
-          timeoutMs: WATCHDOG_TIMEOUT_MS,
-        });
-      }
-    }, WATCHDOG_TIMEOUT_MS);
+    const { reset: resetWatchdog, clear: clearWatchdog } =
+      this.createIdleWatchdog(abortController);
+    resetWatchdog();
+    (session as unknown as Record<string, unknown>).resetWatchdog =
+      resetWatchdog;
 
     const timestamp = new Date().toISOString();
     session.eventEmitter.emit("message", {
@@ -411,7 +405,8 @@ export class GeminiSessionManager {
       ]);
       throw error;
     } finally {
-      clearTimeout(watchdog);
+      clearWatchdog();
+      (session as unknown as Record<string, unknown>).resetWatchdog = undefined;
       if (session.abortController && !session.abortController.signal.aborted) {
         session.abortController.abort();
       }
@@ -450,6 +445,31 @@ export class GeminiSessionManager {
         });
       }
     }
+  }
+
+  private createIdleWatchdog(abortController: AbortController): {
+    reset: () => void;
+    clear: () => void;
+  } {
+    const IDLE_MS = 180_000;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const reset = (): void => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        if (!abortController.signal.aborted) {
+          abortController.abort();
+        }
+      }, IDLE_MS);
+    };
+    const clear = (): void => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+    return { reset, clear };
   }
 
   private applyPendingModelOverride(
@@ -660,6 +680,10 @@ export class GeminiSessionManager {
 
     try {
       for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
+        // Reset idle watchdog on every SDK event (tool calls keep it alive)
+        const resetFn = (session as unknown as Record<string, unknown>)
+          .resetWatchdog as (() => void) | undefined;
+        resetFn?.();
         const outcome = messageProcessor.handleEvent(
           session,
           event,
