@@ -28,7 +28,8 @@ const resolveLatestArtifactPath = (params: {
 };
 
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
-const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
+const VIRTUAL_SIMULATION_SCENARIO_RE =
+  /^(?:#{1,6}\s+)?(?:Сценарий|Scenario)\s+\d+\b/gm;
 
 export const validateVirtualSimulationMarkdown = (
   content: string
@@ -42,7 +43,7 @@ export const validateVirtualSimulationMarkdown = (
   const scenarioMatches = content.match(VIRTUAL_SIMULATION_SCENARIO_RE);
   const scenarioCount = scenarioMatches?.length ?? 0;
   if (scenarioCount < 1) {
-    return "virtual-simulation markdown must include at least 1 scenario (## Сценарий N)";
+    return "virtual-simulation markdown must include at least 1 scenario heading (Сценарий N)";
   }
   return null;
 };
