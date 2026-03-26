@@ -12,6 +12,7 @@ import {
   useQueuedSend,
 } from "./session-view-helpers";
 import StatusPanel from "./status-panel";
+import { SwitchRecoveryBanner } from "./switch-recovery-banner";
 import {
   buildTokenDebugSummary,
   resolveActiveSessionSnapshot,
@@ -64,7 +65,50 @@ type SessionViewProps = {
   readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
+  readonly switchOffer?: SwitchOfferProp | null;
+  readonly onDismissSwitchOffer?: () => void;
 };
+
+type SwitchOfferProp = {
+  readonly reason: string;
+  readonly canRetryInPlace: boolean;
+  readonly recommendedTarget: SwitchTargetProp | null;
+  readonly alternativeTargets: readonly SwitchTargetProp[];
+};
+
+type SwitchTargetProp = {
+  readonly providerId: string;
+  readonly modelId: string | null;
+  readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
+};
+
+const SwitchOfferBanner = ({
+  offer,
+  onDismiss,
+}: {
+  readonly offer: SwitchOfferProp;
+  readonly onDismiss?: () => void;
+}) => (
+  <SwitchRecoveryBanner
+    alternativeTargets={offer.alternativeTargets.map((t) => ({
+      ...t,
+      label: t.providerId,
+    }))}
+    canRetryInPlace={offer.canRetryInPlace}
+    onDismiss={onDismiss}
+    onRetryInPlace={offer.canRetryInPlace ? onDismiss : undefined}
+    onSelectTarget={() => onDismiss?.()}
+    reason={offer.reason}
+    recommendedTarget={
+      offer.recommendedTarget
+        ? {
+            ...offer.recommendedTarget,
+            label: offer.recommendedTarget.providerId,
+          }
+        : null
+    }
+  />
+);
 
 const resolveContinuityErrorCopy = (
   activeSession: SessionSnapshot | null
@@ -87,6 +131,8 @@ const SessionViewBody = ({
   onSelectSession,
   onCloseSession,
   onSendMessage,
+  switchOffer,
+  onDismissSwitchOffer,
 }: SessionViewProps) => {
   const allSessions = allSessionsProp ?? sessions;
   const activeSession = resolveActiveSessionSnapshot({
@@ -186,6 +232,12 @@ const SessionViewBody = ({
           />
         </div>
         <div className="session-app__rails">
+          {switchOffer ? (
+            <SwitchOfferBanner
+              offer={switchOffer}
+              onDismiss={onDismissSwitchOffer}
+            />
+          ) : null}
           {terminalNoResume ? (
             <div className="session-input__hint">
               This session is complete and read-only.
