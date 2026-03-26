@@ -108,11 +108,9 @@
 ## Phase 71 — Documentation sync, verification, and release build (owner: Oleksandr, updated: 2026-03-26)
 
 ### Stream: Documentation synchronization
-1. [TODO] Синхронизировать runtime и архитектурные документы с реализованным MVP switch/recovery behavior и foundation для multi-provider orchestration (scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`; expected commit: `docs: sync provider switch MVP architecture and recovery behavior`)
-2. [TODO] Git Commit: `docs: sync provider switch MVP architecture and recovery behavior` (hash: TBD)
-3. [TODO] Обновить release-facing документы и planning references перед сборкой: changelog + финальные cross-links между planning docs и MVP scope (scope: `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`; expected commit: `docs: finalize release notes and planning cross-links for switch MVP`)
-4. [TODO] Git Commit: `docs: finalize release notes and planning cross-links for switch MVP` (hash: TBD)
-
-### Stream: Release build and session wrap-up
-5. [TODO] После зелёных таргетных проверок выполнить release sequence по инструкции: `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты, обновить `doc/Sessions/Session159.md` и финальные статусы в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session159.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): bump version for provider switch MVP`)
+1. [DONE] Синхронизировать runtime и архитектурные документы с реализованным MVP switch/recovery behavior и foundation для multi-provider orchestration (scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`; expected commit: `docs: sync provider switch MVP architecture and recovery behavior`)
+2. [IN_PROGRESS] Git Commit: `docs: sync provider switch MVP architecture and recovery behavior` (hash: TBD)
+3. [DONE] Обновить release-facing документы и planning references перед сборкой: changelog + финальные cross-links между planning docs и MVP scope (scope: `CHANGELOG.md`)
+4. [IN_PROGRESS] Git Commit: combined with doc sync commit
+5. [TODO] Release build sequence
 6. [TODO] Git Commit: `chore(release): bump version for provider switch MVP` (hash: TBD)

@@ -2,6 +2,22 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.804] - 2026-03-26
+### Fixed
+- **Provider failure resilience (BUG-2026-03-25-01)**: transient provider errors no longer destroy session binding, degrade the whole provider, or deadlock UI in perpetual running state.
+- **No-silent-drop**: user messages at missing binding now get explicit error + pending intent tracking instead of being silently dropped.
+
+### Added
+- **ProviderFailureClassifier** (`packages/core/src/recovery/`): classifies errors into `transient_turn_failure`, `session_binding_recoverable`, `provider_runtime_failure`, `terminal_session_failure`.
+- **Bounded retry budget**: 1 silent retry for transient errors, 1 auto-resume for recoverable bindings, 60s TTL for pending user intent.
+- **DialogSwitchOrchestrator**: same-provider retry and model switch via `retry_in_place`/`switch_model` modes.
+- **RecoveryTargetResolver**: MVP hardcoded fallback matrix for cross-provider recovery (Gemini/Claude/Codex).
+- **Provider-neutral transfer builders**: `CanonicalSessionPreambleResolver`, `ProviderFacingDialogBuilder` (plain `User:/Assistant:` transcript), `UnifiedDialogTransferBuilder` (handoff + bootstrap prompt).
+- **Generic `dialog:switch:*` protocol**: `dialog:switch:offer/progress/result` outgoing events, `dialog:switch:request/confirm/cancel` incoming commands.
+- **CoreHealthBanner**: PM-side crash/unavailable UX with retry/restart CTAs.
+- **SwitchRecoveryBanner**: session-level switch options (retry in place, switch model, switch provider, dismiss).
+- **PM dialog-switch-types.ts**: extracted switch types to stay within 300-line architectural limit.
+
 ## [1.1.801] - 2026-03-25
 ### Fixed
 - **Gemini tool execution**: full compatibility with `gemini-cli-core@0.35.0` — build `AgentLoopContext` from Config deprecated getters, pass to `CoreToolScheduler` (fixes `TypeError: Cannot read properties of undefined (reading 'messageBus')`).

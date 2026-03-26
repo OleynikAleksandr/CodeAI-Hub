@@ -8,15 +8,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Bug registry: `doc/BugRegistry.md`
 
 ## Current Release
-- **Gemini SDK 0.35.0 compatibility**: tool execution fixed — AgentLoopContext assembled from Config deprecated getters; `CoreToolScheduler` API fully aligned.
-- **Gemini Thought Translator**: real-time Russian translation of agent thoughts via `gemini-2.0-flash-lite` (fire-and-forget, zero cost, graceful degradation).
-- **New Gemini events**: `ModelInfo`, `AgentExecutionStopped`, `AgentExecutionBlocked` handlers.
-- **Legacy cleanup**: removed dead `nonInteractiveToolExecutor` code path.
-- **Detachable diagram window**: click `Detach` in the artifact header to open the Module Graph in a separate CEF popup; both windows share one sidecar file and sync positions via BroadcastChannel on drop.
-- **Option(Alt)+drag** for node movement (Ctrl replaced — it triggers context menu on macOS); default drag pans the canvas.
-- **Dynamic container resizing**: Product Part and Cluster containers grow/shrink as child nodes are dragged toward or away from edges (min width PP=720px).
-- **Collision avoidance**: siblings within the same container and Product Parts at the top level enforce a 12px gap — nodes cannot overlap.
-- **Multi-column layout**: clusters with 3+ modules use a 2-column grid.
+- **Provider failure resilience (BUG-2026-03-25-01)**: transient provider errors no longer destroy session binding or deadlock UI. `ProviderFailureClassifier` distinguishes transient turn failures from terminal session failures.
+- **Bounded retry budget**: 1 silent retry for transient errors, 1 auto-resume for recoverable bindings, with 60s TTL for pending user intent — no infinite retry loops.
+- **Provider/model switch protocol**: generic `dialog:switch:*` protocol supports `retry_in_place`, `switch_model`, and `switch_provider` modes. Cross-provider takeover uses plain `User:/Assistant:` dialog transcript, not provider-native JSONL.
+- **Recovery orchestration**: `DialogSwitchOrchestrator` handles same-provider retry and model switch. `RecoveryTargetResolver` provides hardcoded MVP fallback matrix across Gemini/Claude/Codex.
+- **PM crash/recovery UX**: `CoreHealthBanner` shows retry/restart CTAs when Core is unavailable. `SwitchRecoveryBanner` presents switch options after provider failure.
 
 Previous releases (summary): `1.1.57x–1.1.799` — SSOT routing, snapshot-first lock/usage, continuity/resume reliability, Virtual Simulation workflow, Diagram Modules DSL runtime, PM/UI contract cleanup, visual shell, semantic editing, ownership-aware Product Part hierarchy, staged product-part decomposition, step-by-step workflow, parser recoveries, layout/readability fixes, and canonical template alignment.
 

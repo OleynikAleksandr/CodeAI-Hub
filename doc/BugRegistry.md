@@ -45,7 +45,7 @@
 | BUG-2026-03-13-01 | FIXED | Codex Runtime | `Debug/Raw`: raw provider log полный, но unified-session/dialog JSONL пуст от агента | 1.1.722 |
 | BUG-2026-03-14-01 | FIXED | Codex Runtime | saved `gpt-5.4` default model пересиливается stale `CODEX_DEFAULT_MODEL=gpt-5.3-codex` | 1.1.726 |
 | BUG-2026-03-20-01 | FIXED | Codex/Core/PM | reopen/recovery цикл держит `diagram_modules` dialog в вечном `Agent is working...` после restart Core / PM | 1.1.753 |
-| BUG-2026-03-25-01 | OPEN | Core/Gemini/PM | Provider error → binding lost → UI deadlock → Core crash → workspace vanishes | — |
+| BUG-2026-03-25-01 | FIXED | Core/Gemini/PM | Provider error → binding lost → UI deadlock → Core crash → workspace vanishes | 1.1.804 |
 
 ---
 
