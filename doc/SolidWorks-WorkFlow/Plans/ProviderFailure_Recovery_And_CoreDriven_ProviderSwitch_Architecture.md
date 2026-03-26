@@ -593,17 +593,17 @@ Manual switch должен быть доступен даже без error path.
 
 Этот документ не реализует multi-provider orchestration целиком, но обязан заложить для него совместимую базу.
 
-Связь с [MultiProvider_Orchestration_Scenarios.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md#L1):
+Связь с [MultiProvider_Orchestration_Scenarios.md](MultiProvider_Orchestration_Scenarios.md#L1):
 
 - `dialog:switch:*` и `dialog-switch-orchestrator`
   - это low-level primitive для будущего `multi-provider-orchestrator`
-  - соответствует идее общего coordination layer из [раздела 2](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md#L34)
+  - соответствует идее общего coordination layer из [раздела 2](MultiProvider_Orchestration_Scenarios.md#L34)
 
 - current `switch_provider` / `switch_model`
-  - это база для `Adaptive Specialist Routing` из [Scenario D](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md#L182)
+  - это база для `Adaptive Specialist Routing` из [Scenario D](MultiProvider_Orchestration_Scenarios.md#L182)
 
 - provider failure fallback внутри continuity
-  - это прямой ответ на open question про graceful fallback, если один provider "умер" в multi-provider flow [раздел 6, пункт 5](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md#L354)
+  - это прямой ответ на open question про graceful fallback, если один provider "умер" в multi-provider flow [раздел 6, пункт 5](MultiProvider_Orchestration_Scenarios.md#L354)
 
 - unified dialog + provider-neutral transfer package
   - это база для того, чтобы в сценариях A-F можно было безопасно передавать контекст между провайдерами без опоры на provider-native JSONL
