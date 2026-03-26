@@ -8,6 +8,7 @@ export type SessionMessage = {
   readonly role: SessionRole;
   readonly content: string;
   readonly timestamp: string;
+  readonly tag?: string;
 };
 
 export type Session = {
@@ -115,7 +116,7 @@ export class SessionManager {
     sessionId: string,
     role: SessionRole,
     content: string,
-    timestamp?: string
+    options?: { readonly timestamp?: string; readonly tag?: string }
   ): SessionMessage | null {
     const session = this.sessions.get(sessionId);
     if (!session) {
@@ -127,7 +128,8 @@ export class SessionManager {
       role,
       content,
       sessionId,
-      timestamp: timestamp ?? new Date().toISOString(),
+      timestamp: options?.timestamp ?? new Date().toISOString(),
+      ...(options?.tag ? { tag: options.tag } : {}),
     };
 
     session.messages.push(message);

@@ -148,6 +148,7 @@ export type DialogMessagePayload = {
   readonly role?: string;
   readonly content?: unknown;
   readonly timestamp?: string;
+  readonly tag?: string;
 };
 
 type MessageContentPayload =
@@ -3695,7 +3696,7 @@ export class SessionRequestHandler {
       sessionId,
       role,
       content,
-      timestamp ?? undefined
+      { timestamp: timestamp ?? undefined }
     );
     if (message) {
       this.sessionStorage
@@ -3727,11 +3728,13 @@ export class SessionRequestHandler {
       payload.role === "thinking"
         ? payload.role
         : "assistant";
+    const tag =
+      payload.tag && typeof payload.tag === "string" ? payload.tag : undefined;
     const message = this.sessionManager.appendMessage(
       sessionId,
       role,
       payload.content,
-      payload.timestamp
+      { timestamp: payload.timestamp, tag }
     );
     if (message) {
       this.sessionStorage
