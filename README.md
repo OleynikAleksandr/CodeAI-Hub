@@ -9,7 +9,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 
 ## Current Release
 - **Rate limit display**: only known Gemini models shown with human-readable names ("Gemini 3.1 Pro", "Gemini 3 Flash"); stale API buckets filtered out.
-- **Model switch label**: StatusPanel updates immediately after model switch via recovery banner.
+- **Model switch label**: StatusPanel updates immediately after model switch via recovery banner (broadcast + ID fallback + settings sync guard).
 - **Optimistic user message**: PM dialog messages appear instantly on send, no round-trip delay.
 - **Google Translate thoughts**: Gemini thinking events translated via Google Translate API (~100ms) with "Gemini · Thinking" label and `tag: "thinking"` in JSONL.
 - **Recovery UX**: `CoreHealthBanner`, `SwitchRecoveryBanner`, `dialog:switch:*` protocol for retry/switch across Gemini/Claude/Codex.

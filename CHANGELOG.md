@@ -2,10 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
-## [1.1.816] - 2026-03-26
+## [1.1.818] - 2026-03-26
 ### Fixed
 - **Rate limit display**: filter stale model buckets (e.g. `gemini-3-pro-preview`) from Google Quota API and show human-readable display names ("Gemini 3.1 Pro", "Gemini 3 Flash") instead of raw model IDs.
-- **Model label after switch**: `StatusPanel` now updates immediately when switching models via recovery banner — explicit `session:model:update` broadcast on `switch_model` instead of waiting for ModelInfo event.
+- **Model label after switch**: `StatusPanel` now updates immediately when switching models via recovery banner. Three-layer fix: explicit `session:model:update` broadcast on `switch_model`, snapshot ID fallback for dialog sessions, and `useSettingsModelsSync` skip when runtime override is active.
 - **Optimistic user message**: user messages in PM dialog sessions appear instantly on send instead of waiting for `dialog:history:result` round-trip.
 
 ## [1.1.810] - 2026-03-26
