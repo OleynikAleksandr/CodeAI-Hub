@@ -21,7 +21,6 @@ import {
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { useProjectManagerDialogCoreEvents } from "./use-project-manager-dialog-core-events";
-
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
 export type ProjectManagerDialogSessionController = {
@@ -29,6 +28,7 @@ export type ProjectManagerDialogSessionController = {
   readonly providerLabels: ReturnType<typeof buildProviderLabels>;
   readonly session: SessionRecord | null;
   readonly snapshots: SessionSnapshots;
+  readonly setSnapshots: React.Dispatch<React.SetStateAction<SessionSnapshots>>;
   readonly tokenDebugSummaryOverride: string | undefined;
   readonly sendMessage: (content: string) => void;
 };
@@ -289,12 +289,5 @@ export const useProjectManagerDialogSessionController = (
     api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content);
   }, []);
 
-  return {
-    connection,
-    providerLabels,
-    session,
-    snapshots,
-    tokenDebugSummaryOverride,
-    sendMessage,
-  };
+  return { connection, providerLabels, session, snapshots, setSnapshots, tokenDebugSummaryOverride, sendMessage };
 };

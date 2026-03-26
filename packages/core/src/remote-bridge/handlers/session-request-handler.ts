@@ -3385,9 +3385,39 @@ export class SessionRequestHandler {
       case "dialog_message":
         this.appendDialogMessage(sessionId, event as DialogMessagePayload);
         break;
+      case "system":
+        this.appendProviderMessage(sessionId, "system", event);
+        this.broadcastRuntimeModelUpdate(sessionId, event);
+        break;
       default:
         break;
     }
+  }
+
+  private broadcastRuntimeModelUpdate(
+    sessionId: string,
+    event: ProviderEventEnvelope
+  ): void {
+    const data = (event as { data?: unknown }).data;
+    if (!data || typeof data !== "object") {
+      return;
+    }
+    const modelId = (data as { model?: unknown }).model;
+    if (typeof modelId !== "string" || modelId.trim().length === 0) {
+      return;
+    }
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+    this.broadcaster({
+      type: "session:model:update",
+      payload: {
+        sessionId,
+        providerId: session.providerId,
+        modelId: modelId.trim(),
+      },
+    });
   }
 
   private broadcastProviderError(

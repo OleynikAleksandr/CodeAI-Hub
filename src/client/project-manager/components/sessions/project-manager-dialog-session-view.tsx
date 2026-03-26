@@ -2,6 +2,7 @@ import SessionView from "../../../ui/src/session/session-view";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 import { useDialogSwitchOffer } from "./use-dialog-switch-offer";
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
+import { useRuntimeModelSync } from "./use-runtime-model-sync";
 export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 export const ProjectManagerDialogSessionView = (props: {
@@ -9,10 +10,11 @@ export const ProjectManagerDialogSessionView = (props: {
   readonly onExit: () => void;
   readonly emptyStatePending?: boolean;
 }) => {
-  const { connection, providerLabels, session, snapshots, tokenDebugSummaryOverride, sendMessage } =
+  const { connection, providerLabels, session, snapshots, setSnapshots, tokenDebugSummaryOverride, sendMessage } =
     useProjectManagerDialogSessionController(props.intent);
   const { switchOffer, dismissSwitchOffer, acceptRetryInPlace, acceptSwitchTarget } =
     useDialogSwitchOffer(session?.id ?? null);
+  useRuntimeModelSync(session?.id ?? null, setSnapshots);
 
   if (!session) {
     const shouldShowPending = props.emptyStatePending === true;

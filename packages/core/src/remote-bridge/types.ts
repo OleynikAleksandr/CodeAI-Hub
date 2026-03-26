@@ -151,6 +151,14 @@ export type BridgeEvent =
       readonly payload: CommandErrorPayload;
     }
   | {
+      readonly type: "session:model:update";
+      readonly payload: {
+        readonly sessionId: string;
+        readonly providerId: string;
+        readonly modelId: string;
+      };
+    }
+  | {
       readonly type: "dialog:switch:offer";
       readonly payload: DialogSwitchOfferPayload;
     }
