@@ -7,15 +7,18 @@
 import type { ModuleReporter } from "../types";
 
 const TRANSLATION_MODEL = "gemini-2.5-flash-lite";
-const TRANSLATION_TIMEOUT_MS = 8000;
+const TRANSLATION_TIMEOUT_MS = 15_000;
 
-const TRANSLATION_PROMPT = [
-  "You are a translator for an AI coding agent.",
-  "Translate the following agent thought into Russian.",
-  "Remove filler phrases like 'I am now', 'I need to', 'Let me'.",
-  "Keep the essence. Do not add anything of your own.",
-  "Return ONLY the translated text, no explanations.",
-].join(" ");
+const SYSTEM_INSTRUCTION =
+  "You are a one-shot translator. Output ONLY the Russian translation. " +
+  "No commentary, no analysis, no intermediate steps, no markdown.";
+
+const PARAGRAPH_SPLIT_REGEX = /\n\s*\n/;
+
+const USER_PROMPT_PREFIX =
+  "Translate this AI agent thought to Russian. " +
+  "Remove filler ('I am now', 'I need to', 'Let me'). " +
+  "One concise sentence. ONLY the translation:\n\n";
 
 // GeminiClient.generateContent signature from @google/gemini-cli-core
 type GeminiClientBridge = {
@@ -30,6 +33,24 @@ type GeminiClientBridge = {
   }>;
 };
 
+/**
+ * Extract only the final translation from potentially verbose output.
+ * If the model includes chain-of-thought, take the last non-empty paragraph.
+ */
+const extractFinalTranslation = (raw: string): string => {
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) {
+    return "";
+  }
+  // Split by double newline (paragraph breaks)
+  const paragraphs = trimmed
+    .split(PARAGRAPH_SPLIT_REGEX)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0);
+  // Last paragraph is most likely the actual translation
+  return paragraphs.at(-1) ?? trimmed;
+};
+
 export class ThoughtTranslatorService {
   private clientRef: GeminiClientBridge | null = null;
   private readonly reporter?: ModuleReporter;
@@ -38,10 +59,6 @@ export class ThoughtTranslatorService {
     this.reporter = reporter;
   }
 
-  /**
-   * Bind the translator to an authenticated GeminiClient from an active session.
-   * Called once the first session is fully initialized.
-   */
   bindClient(client: GeminiClientBridge): void {
     this.clientRef = client;
     this.reporter?.info?.(
@@ -68,7 +85,7 @@ export class ThoughtTranslatorService {
     try {
       const result = await this.callWithTimeout(input);
       const text = result?.trim();
-      return text && text.length > 0 ? text : null;
+      return text && text.length > 0 ? extractFinalTranslation(text) : null;
     } catch (error) {
       this.reporter?.warn?.("Thought translation failed (non-blocking)", {
         model: TRANSLATION_MODEL,
@@ -92,10 +109,16 @@ export class ThoughtTranslatorService {
       const response = await this.clientRef.generateContent(
         { model: TRANSLATION_MODEL },
         [
+          { role: "user", parts: [{ text: SYSTEM_INSTRUCTION }] },
           {
-            role: "user",
-            parts: [{ text: `${TRANSLATION_PROMPT}\n\n${input}` }],
+            role: "model",
+            parts: [
+              {
+                text: "Understood. I will output only the Russian translation.",
+              },
+            ],
           },
+          { role: "user", parts: [{ text: `${USER_PROMPT_PREFIX}${input}` }] },
         ],
         controller.signal
       );
