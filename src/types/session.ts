@@ -7,6 +7,7 @@ export type SessionMessage = {
   readonly role: SessionMessageRole;
   readonly content: string;
   readonly createdAt: number;
+  readonly tag?: string;
 };
 
 export type SessionBindingInfo = {

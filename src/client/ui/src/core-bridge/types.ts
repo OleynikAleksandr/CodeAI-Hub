@@ -27,6 +27,7 @@ export type ServerSessionMessage = {
   readonly content?: string;
   readonly sessionId?: string;
   readonly timestamp?: string;
+  readonly tag?: string;
 };
 
 export type ServerSession = {

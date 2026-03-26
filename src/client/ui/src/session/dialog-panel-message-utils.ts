@@ -38,6 +38,9 @@ export const resolveRoleLabel = (
   providerLabel: string | null
 ): string => {
   if (message.role === "assistant") {
+    if (message.tag === "thinking") {
+      return providerLabel ? `${providerLabel} · Thinking` : "Thinking";
+    }
     return providerLabel ?? "Assistant";
   }
   if (message.role === "user") {
