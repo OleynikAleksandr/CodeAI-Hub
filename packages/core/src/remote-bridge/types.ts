@@ -149,6 +149,18 @@ export type BridgeEvent =
   | {
       readonly type: "command:error";
       readonly payload: CommandErrorPayload;
+    }
+  | {
+      readonly type: "dialog:switch:offer";
+      readonly payload: DialogSwitchOfferPayload;
+    }
+  | {
+      readonly type: "dialog:switch:progress";
+      readonly payload: DialogSwitchProgressPayload;
+    }
+  | {
+      readonly type: "dialog:switch:result";
+      readonly payload: DialogSwitchResultPayload;
     };
 
 export type IncomingMessage =
@@ -234,6 +246,30 @@ export type IncomingMessage =
   | {
       readonly type: "workspace:snapshot:request";
       readonly payload: WorkspaceSnapshotRequestPayload;
+    }
+  | {
+      readonly type: "dialog:switch:request";
+      readonly payload: {
+        readonly dialogId: string;
+        readonly targetProviderId?: string;
+        readonly targetModelId?: string;
+        readonly mode: DialogSwitchMode;
+      };
+    }
+  | {
+      readonly type: "dialog:switch:confirm";
+      readonly payload: {
+        readonly dialogId: string;
+        readonly targetProviderId: string;
+        readonly targetModelId?: string;
+        readonly mode: DialogSwitchMode;
+      };
+    }
+  | {
+      readonly type: "dialog:switch:cancel";
+      readonly payload: {
+        readonly dialogId: string;
+      };
     };
 
 export const serializeSession = (session: Session): SerializedSession => ({
