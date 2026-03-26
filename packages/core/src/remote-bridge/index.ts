@@ -329,6 +329,9 @@ export class RemoteBridge {
       case "dialog:send":
         await this.handleDialogSend(clientId, incoming.payload);
         break;
+      case "dialog:switch:request":
+        await this.handleDialogSwitchRequest(incoming.payload);
+        break;
       case "projects:add":
         this.projectHandler.handleAdd(
           incoming.payload.path,
@@ -647,6 +650,32 @@ export class RemoteBridge {
         status: result.ok ? "sent" : "rejected",
         error: result.ok ? null : result.error,
       },
+    });
+  }
+
+  private async handleDialogSwitchRequest(payload: {
+    readonly sessionId?: unknown;
+    readonly mode?: unknown;
+    readonly targetProviderId?: unknown;
+    readonly targetModelId?: unknown;
+  }): Promise<void> {
+    const sessionId =
+      typeof payload.sessionId === "string" ? payload.sessionId : null;
+    const mode = typeof payload.mode === "string" ? payload.mode : null;
+    if (!(sessionId && mode)) {
+      return;
+    }
+    await this.sessionHandler.handleSwitchRequest({
+      sessionId,
+      mode: mode as "retry_in_place" | "switch_model" | "switch_provider",
+      targetProviderId:
+        typeof payload.targetProviderId === "string"
+          ? payload.targetProviderId
+          : undefined,
+      targetModelId:
+        typeof payload.targetModelId === "string"
+          ? payload.targetModelId
+          : undefined,
     });
   }
 

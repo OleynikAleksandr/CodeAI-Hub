@@ -18,6 +18,12 @@ export type DialogApi = {
     content: string,
     requestId?: string
   ) => string | null;
+  readonly sendSwitchRequest: (
+    sessionId: string,
+    mode: "retry_in_place" | "switch_model" | "switch_provider",
+    targetProviderId?: string,
+    targetModelId?: string
+  ) => void;
 };
 
 const createRequestId = (prefix: string): string => {
@@ -81,5 +87,16 @@ export const createDialogApi = (
       payload: { requestId: resolvedRequestId, workspaceSlug, dialogId, content },
     });
     return resolvedRequestId;
+  },
+  sendSwitchRequest: (sessionId, mode, targetProviderId, targetModelId) => {
+    send({
+      type: "dialog:switch:request",
+      payload: {
+        sessionId,
+        mode,
+        ...(targetProviderId ? { targetProviderId } : {}),
+        ...(targetModelId ? { targetModelId } : {}),
+      },
+    });
   },
 });

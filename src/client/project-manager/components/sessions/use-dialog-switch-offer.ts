@@ -1,6 +1,6 @@
 /**
  * Hook that listens for dialog:switch:offer events from Core
- * and provides state + dismiss action for the SwitchRecoveryBanner.
+ * and provides state + actions for the SwitchRecoveryBanner.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -21,7 +21,6 @@ export const useDialogSwitchOffer = (activeSessionId: string | null) => {
       if (!payload || !activeSessionId) {
         return;
       }
-      // Only show offers for the currently visible session
       if (payload.sessionId === activeSessionId) {
         setSwitchOffer(payload);
       }
@@ -31,7 +30,6 @@ export const useDialogSwitchOffer = (activeSessionId: string | null) => {
     };
   }, [activeSessionId]);
 
-  // Clear offer when session changes
   useEffect(() => {
     setSwitchOffer(null);
   }, [activeSessionId]);
@@ -40,5 +38,38 @@ export const useDialogSwitchOffer = (activeSessionId: string | null) => {
     setSwitchOffer(null);
   }, []);
 
-  return { switchOffer, dismissSwitchOffer };
+  const acceptRetryInPlace = useCallback(() => {
+    if (!activeSessionId) {
+      return;
+    }
+    api.dialogs.sendSwitchRequest(activeSessionId, "retry_in_place");
+    setSwitchOffer(null);
+  }, [activeSessionId]);
+
+  const acceptSwitchTarget = useCallback(
+    (target: { providerId: string; modelId: string | null; mode: string }) => {
+      if (!activeSessionId) {
+        return;
+      }
+      const mode =
+        target.mode === "switch_model" || target.mode === "switch_provider"
+          ? target.mode
+          : "switch_model";
+      api.dialogs.sendSwitchRequest(
+        activeSessionId,
+        mode,
+        target.providerId,
+        target.modelId ?? undefined
+      );
+      setSwitchOffer(null);
+    },
+    [activeSessionId]
+  );
+
+  return {
+    switchOffer,
+    dismissSwitchOffer,
+    acceptRetryInPlace,
+    acceptSwitchTarget,
+  };
 };

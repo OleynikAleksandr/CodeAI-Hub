@@ -300,6 +300,8 @@ export class GeminiSessionManager {
       throw new Error("Cannot send empty Gemini prompt.");
     }
 
+    this.applyPendingModelOverride(session, sessionId);
+
     const promptId = randomUUID();
     const abortController = new AbortController();
     session.abortController = abortController;
@@ -448,6 +450,23 @@ export class GeminiSessionManager {
         });
       }
     }
+  }
+
+  private applyPendingModelOverride(
+    session: { config: { setModel: (m: string) => void } },
+    _sessionId: string
+  ): void {
+    const self = this as unknown as Record<string, unknown>;
+    const pendingModel = self.pendingModelOverride as string | undefined;
+    if (!pendingModel) {
+      return;
+    }
+    try {
+      session.config.setModel(pendingModel);
+    } catch {
+      // Model override failed — continue with current model
+    }
+    self.pendingModelOverride = undefined;
   }
 
   async closeSession(sessionId: string): Promise<void> {

@@ -67,6 +67,8 @@ type SessionViewProps = {
   readonly onSendMessage: (sessionId: string, content: string) => void;
   readonly switchOffer?: SwitchOfferProp | null;
   readonly onDismissSwitchOffer?: () => void;
+  readonly onRetryInPlace?: () => void;
+  readonly onSelectSwitchTarget?: (target: SwitchTargetProp) => void;
 };
 
 type SwitchOfferProp = {
@@ -85,9 +87,13 @@ type SwitchTargetProp = {
 const SwitchOfferBanner = ({
   offer,
   onDismiss,
+  onRetry,
+  onSelect,
 }: {
   readonly offer: SwitchOfferProp;
   readonly onDismiss?: () => void;
+  readonly onRetry?: () => void;
+  readonly onSelect?: (target: SwitchTargetProp) => void;
 }) => (
   <SwitchRecoveryBanner
     alternativeTargets={offer.alternativeTargets.map((t) => ({
@@ -96,8 +102,10 @@ const SwitchOfferBanner = ({
     }))}
     canRetryInPlace={offer.canRetryInPlace}
     onDismiss={onDismiss}
-    onRetryInPlace={offer.canRetryInPlace ? onDismiss : undefined}
-    onSelectTarget={() => onDismiss?.()}
+    onRetryInPlace={offer.canRetryInPlace ? onRetry : undefined}
+    onSelectTarget={(t) =>
+      onSelect?.({ providerId: t.providerId, modelId: t.modelId, mode: t.mode })
+    }
     reason={offer.reason}
     recommendedTarget={
       offer.recommendedTarget
@@ -133,6 +141,8 @@ const SessionViewBody = ({
   onSendMessage,
   switchOffer,
   onDismissSwitchOffer,
+  onRetryInPlace,
+  onSelectSwitchTarget,
 }: SessionViewProps) => {
   const allSessions = allSessionsProp ?? sessions;
   const activeSession = resolveActiveSessionSnapshot({
@@ -236,6 +246,8 @@ const SessionViewBody = ({
             <SwitchOfferBanner
               offer={switchOffer}
               onDismiss={onDismissSwitchOffer}
+              onRetry={onRetryInPlace}
+              onSelect={onSelectSwitchTarget}
             />
           ) : null}
           {terminalNoResume ? (

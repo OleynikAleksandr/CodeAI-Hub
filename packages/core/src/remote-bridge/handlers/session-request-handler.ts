@@ -2101,6 +2101,60 @@ export class SessionRequestHandler {
     return { ok: true };
   }
 
+  async handleSwitchRequest(options: {
+    readonly sessionId: string;
+    readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
+    readonly targetProviderId?: string;
+    readonly targetModelId?: string;
+  }): Promise<void> {
+    const session = this.sessionManager.getSession(options.sessionId);
+    if (!session) {
+      this.logger.warn("Switch request: session not found", {
+        sessionId: options.sessionId,
+      });
+      return;
+    }
+
+    const adapter = this.providerRegistry.getAdapter(session.providerId);
+    if (!adapter) {
+      this.logger.warn("Switch request: provider adapter unavailable", {
+        sessionId: options.sessionId,
+        providerId: session.providerId,
+      });
+      return;
+    }
+
+    // For switch_model: override model on adapter before resend
+    if (options.mode === "switch_model" && options.targetModelId) {
+      const adapterAny = adapter as { setModelOverride?: (m: string) => void };
+      if (typeof adapterAny.setModelOverride === "function") {
+        adapterAny.setModelOverride(options.targetModelId);
+        this.logger.info("Switch request: model override applied", {
+          sessionId: options.sessionId,
+          targetModelId: options.targetModelId,
+        });
+      }
+    }
+
+    // Resend the last user message from session history
+    const lastUserMessage = [...session.messages]
+      .reverse()
+      .find((m) => m.role === "user");
+
+    if (lastUserMessage) {
+      this.logger.info("Switch request: resending last user message", {
+        sessionId: options.sessionId,
+        mode: options.mode,
+        contentLength: lastUserMessage.content.length,
+      });
+      await this.handleMessage(options.sessionId, lastUserMessage.content);
+    } else {
+      this.logger.warn("Switch request: no user message to resend", {
+        sessionId: options.sessionId,
+      });
+    }
+  }
+
   private inferRunSlugFromDialogId(dialogId: string): string | null {
     const trimmed = dialogId.trim().toLowerCase();
     if (trimmed.endsWith("__collector") || trimmed.endsWith("-collector")) {

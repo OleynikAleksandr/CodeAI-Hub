@@ -193,6 +193,15 @@ export class GeminiProviderAdapter {
     this.listeners.delete(sessionId);
   }
 
+  setModelOverride(modelId: string): void {
+    const manager = this.sessionManager;
+    if (manager) {
+      (manager as unknown as Record<string, unknown>).pendingModelOverride =
+        modelId;
+    }
+    this.options.reporter?.info?.("Gemini model override set", { modelId });
+  }
+
   async sendMessage(sessionId: string, content: string): Promise<void> {
     const manager = this.requireSessionManager();
     try {

@@ -202,7 +202,18 @@ export type OutgoingMessage =
       readonly payload: DialogHistoryRequestPayload;
     }
   | { readonly type: "dialog:send"; readonly payload: DialogSendRequestPayload }
+  | {
+      readonly type: "dialog:switch:request";
+      readonly payload: DialogSwitchRequestPayload;
+    }
   | { readonly type: "settings:load" };
+
+export type DialogSwitchRequestPayload = {
+  readonly sessionId: string;
+  readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
+  readonly targetProviderId?: string;
+  readonly targetModelId?: string;
+};
 
 export type IncomingMessage =
   | { readonly type: "workspace:scope:ack"; readonly payload: WorkspaceScopeAckPayload }

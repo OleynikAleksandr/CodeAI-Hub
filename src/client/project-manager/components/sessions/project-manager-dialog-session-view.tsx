@@ -11,7 +11,8 @@ export const ProjectManagerDialogSessionView = (props: {
 }) => {
   const { connection, providerLabels, session, snapshots, tokenDebugSummaryOverride, sendMessage } =
     useProjectManagerDialogSessionController(props.intent);
-  const { switchOffer, dismissSwitchOffer } = useDialogSwitchOffer(session?.id ?? null);
+  const { switchOffer, dismissSwitchOffer, acceptRetryInPlace, acceptSwitchTarget } =
+    useDialogSwitchOffer(session?.id ?? null);
 
   if (!session) {
     const shouldShowPending = props.emptyStatePending === true;
@@ -48,6 +49,8 @@ export const ProjectManagerDialogSessionView = (props: {
       snapshots={snapshots}
       switchOffer={switchOffer}
       onDismissSwitchOffer={dismissSwitchOffer}
+      onRetryInPlace={acceptRetryInPlace}
+      onSelectSwitchTarget={acceptSwitchTarget}
       tokenDebugSummaryOverride={tokenDebugSummaryOverride}
     />
   );
