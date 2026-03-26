@@ -8500,7 +8500,8 @@
       id: message.id,
       role,
       content: normalizedContent,
-      createdAt: toNumberTimestamp(message.timestamp)
+      createdAt: toNumberTimestamp(message.timestamp),
+      ...typeof message.tag === "string" ? { tag: message.tag } : {}
     };
   };
   var generateLocalMessageId = () => {
