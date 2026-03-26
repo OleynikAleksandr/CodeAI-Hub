@@ -10,6 +10,7 @@ import {
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
+import { classifyProviderFailure } from "../../recovery/provider-failure-classifier";
 import {
   ContinuityChainStore,
   promoteContinuityChainRootIfPresent,
@@ -3354,22 +3355,48 @@ export class SessionRequestHandler {
     error: unknown,
     sessionId?: string
   ): void {
+    const binding = sessionId
+      ? this.providerSessions.get(sessionId)
+      : undefined;
+    const adapter = this.providerRegistry.getAdapter(providerId);
+
+    const classification = classifyProviderFailure(error, {
+      hasBinding: Boolean(binding),
+      hasProviderSessionId: Boolean(binding?.providerSessionId),
+      adapterAvailable: Boolean(adapter),
+    });
+
     this.logger.error(
-      "Provider operation failed",
+      `Provider operation failed [${classification.failureClass}]`,
       error instanceof Error ? error : new Error(String(error)),
-      { providerId }
+      {
+        providerId,
+        sessionId: sessionId ?? undefined,
+        failureClass: classification.failureClass,
+        retryable: classification.retryable,
+        shouldRemoveBinding: classification.shouldRemoveBinding,
+        shouldDegradeProvider: classification.shouldDegradeProvider,
+      }
     );
-    this.providerRegistry.handleRuntimeFailure(providerId, error);
+
+    // Only degrade the whole provider for runtime failures, not transient turn errors
+    if (classification.shouldDegradeProvider) {
+      this.providerRegistry.handleRuntimeFailure(providerId, error);
+    }
 
     if (sessionId) {
-      const binding = this.providerSessions.get(sessionId);
-      if (binding) {
+      if (classification.shouldRemoveBinding && binding) {
         binding.unsubscribe();
         this.providerSessions.delete(sessionId);
+        this.sessionManager.markProviderSessionFailed(sessionId);
+        this.sessionStorage.close(sessionId, "provider-failure");
+        this.broadcastSessionBinding(sessionId);
       }
-      this.sessionManager.markProviderSessionFailed(sessionId);
-      this.sessionStorage.close(sessionId, "provider-failure");
-      this.broadcastSessionBinding(sessionId);
+
+      // Emit turn_failed for transient/recoverable so UI unlocks
+      if (!classification.shouldRemoveBinding) {
+        this.emitTurnStateEvent({ sessionId, state: "idle" });
+      }
     }
 
     this.broadcaster({
@@ -3379,6 +3406,8 @@ export class SessionRequestHandler {
         providerId,
         message:
           error instanceof Error ? error.message : "Provider unavailable",
+        failureClass: classification.failureClass,
+        retryable: classification.retryable,
       },
     });
 
