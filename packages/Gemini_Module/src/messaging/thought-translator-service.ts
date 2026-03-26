@@ -1,7 +1,13 @@
+/**
+ * Thought Translator Service — translates Gemini agent thoughts into Russian
+ * using a lightweight Gemini model (Flash Lite) through the same authenticated
+ * Gemini CLI Core client that powers the main session. No separate API key needed.
+ */
+
 import type { ModuleReporter } from "../types";
 
 const TRANSLATION_MODEL = "gemini-2.0-flash-lite";
-const TRANSLATION_TIMEOUT_MS = 5000;
+const TRANSLATION_TIMEOUT_MS = 8000;
 
 const TRANSLATION_PROMPT = [
   "You are a translator for an AI coding agent.",
@@ -11,50 +17,43 @@ const TRANSLATION_PROMPT = [
   "Return ONLY the translated text, no explanations.",
 ].join(" ");
 
-// Lazy-loaded GoogleGenAI client type (resolved at runtime via require)
-type GenAIClient = {
-  models: {
-    generateContent(options: {
-      model: string;
-      contents: string;
-      config?: { abortSignal?: AbortSignal };
-    }): Promise<{ text?: string }>;
-  };
-};
-
-// Lazy require to avoid crashing the entire module when @google/genai
-// is not installed in the provider runtime directory.
-const createGenAIClient = (apiKey: string): GenAIClient | null => {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { GoogleGenAI } = require("@google/genai") as {
-      GoogleGenAI: new (options: { apiKey: string }) => GenAIClient;
-    };
-    return new GoogleGenAI({ apiKey });
-  } catch {
-    return null;
-  }
+// GeminiClient.generateContent signature from @google/gemini-cli-core
+type GeminiClientBridge = {
+  generateContent(
+    modelConfigKey: { model: string },
+    contents: readonly { role: string; parts: readonly { text: string }[] }[],
+    abortSignal: AbortSignal
+  ): Promise<{
+    candidates?: readonly {
+      content?: { parts?: readonly { text?: string }[] };
+    }[];
+  }>;
 };
 
 export class ThoughtTranslatorService {
-  private readonly client: GenAIClient | null;
+  private clientRef: GeminiClientBridge | null = null;
   private readonly reporter?: ModuleReporter;
 
-  constructor(apiKey: string, reporter?: ModuleReporter) {
-    this.client = createGenAIClient(apiKey);
+  constructor(reporter?: ModuleReporter) {
     this.reporter = reporter;
-    if (!this.client) {
-      this.reporter?.warn?.(
-        "ThoughtTranslatorService: @google/genai not available, translations disabled"
-      );
-    }
+  }
+
+  /**
+   * Bind the translator to an authenticated GeminiClient from an active session.
+   * Called once the first session is fully initialized.
+   */
+  bindClient(client: GeminiClientBridge): void {
+    this.clientRef = client;
+    this.reporter?.info?.(
+      "ThoughtTranslator: bound to authenticated GeminiClient"
+    );
   }
 
   async translateThought(thought: {
     readonly subject: string;
     readonly description: string;
   }): Promise<string | null> {
-    if (!this.client) {
+    if (!this.clientRef) {
       return null;
     }
 
@@ -80,7 +79,7 @@ export class ThoughtTranslatorService {
   }
 
   private async callWithTimeout(input: string): Promise<string | null> {
-    if (!this.client) {
+    if (!this.clientRef) {
       return null;
     }
     const controller = new AbortController();
@@ -90,14 +89,18 @@ export class ThoughtTranslatorService {
     );
 
     try {
-      const response = await this.client.models.generateContent({
-        model: TRANSLATION_MODEL,
-        contents: `${TRANSLATION_PROMPT}\n\n${input}`,
-        config: {
-          abortSignal: controller.signal,
-        },
-      });
-      return response.text ?? null;
+      const response = await this.clientRef.generateContent(
+        { model: TRANSLATION_MODEL },
+        [
+          {
+            role: "user",
+            parts: [{ text: `${TRANSLATION_PROMPT}\n\n${input}` }],
+          },
+        ],
+        controller.signal
+      );
+      const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      return text ?? null;
     } finally {
       clearTimeout(timeout);
     }

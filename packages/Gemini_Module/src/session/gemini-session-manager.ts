@@ -87,7 +87,8 @@ export class GeminiSessionManager {
 
   private readonly modules: GeminiCliModules;
   private readonly toolExecutorFacade: GeminiToolExecutorFacade;
-  private readonly thoughtTranslator?: ThoughtTranslatorService;
+  private readonly thoughtTranslator: ThoughtTranslatorService;
+  private thoughtTranslatorBound = false;
   private readonly reporter?: ModuleReporter;
 
   constructor(modules: GeminiCliModules, reporter?: ModuleReporter) {
@@ -97,12 +98,20 @@ export class GeminiSessionManager {
       this.modules,
       reporter
     );
-    // Capture API key BEFORE sanitizeEnvironment clears GOOGLE_API_KEY
-    const apiKey = process.env.GOOGLE_API_KEY?.trim();
-    if (apiKey && apiKey.length > 0) {
-      this.thoughtTranslator = new ThoughtTranslatorService(apiKey, reporter);
-    }
+    // ThoughtTranslator is created eagerly but bound to a GeminiClient
+    // only after the first session is initialized (no API key needed).
+    this.thoughtTranslator = new ThoughtTranslatorService(reporter);
     this.sanitizeEnvironment();
+  }
+
+  private ensureThoughtTranslatorBound(client: unknown): void {
+    if (this.thoughtTranslatorBound) {
+      return;
+    }
+    this.thoughtTranslator.bindClient(
+      client as Parameters<ThoughtTranslatorService["bindClient"]>[0]
+    );
+    this.thoughtTranslatorBound = true;
   }
 
   listSessions(): readonly ActiveSession[] {
@@ -207,6 +216,8 @@ export class GeminiSessionManager {
 
     await config.initialize();
     const client = config.getGeminiClient();
+
+    this.ensureThoughtTranslatorBound(client);
 
     if (resolvedThinkingLevel) {
       this.monkeyPatchGeminiClient(
