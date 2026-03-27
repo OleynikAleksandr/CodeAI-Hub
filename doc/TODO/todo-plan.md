@@ -18,7 +18,7 @@
 - Новый oversized handwritten source file вне explicit debt allowlist запрещён
 - Generated/build directories (`dist/`, `build/`, `node_modules/`) исключаются из line-limit gate только по директориям, а не через выпадение целых source-root’ов
 - Oversized allowlist должен только уменьшаться; если файл реально опустился до `300` строк или ниже, он должен покинуть allowlist без откладывания «на потом»
-- После того как audit-файл будет добавлен в репозиторий, он должен быть немедленно синхронизирован с planning-doc и этим `todo-plan.md`, но без расширения scope за пределы двух фаз ниже
+- Audit `CODEAI_HUB_HONEST_AUDIT_20260327.md` уже принят как baseline: его findings про source-surface blind spot, false-green gate surface, god-module concentration и release/package truthfulness должны учитываться в порядке задач ниже, но без расширения scope за пределы двух фаз этого плана
 
 ---
 
@@ -36,7 +36,7 @@
 ## Phase 77 — Post-Audit Packaging Tail Cleanup (owner: Oleksandr, updated: 2026-03-27)
 
 ### Stream: Audit intake and packaging surface
-1. [TODO] После добавления audit-файла синхронизировать post-audit findings с canonical planning doc и подтвердить, что текущий scope ограничен cleanup-хвостами после успешного релиза `1.1.819`, без feature-expansion. Scope: `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): sync post-audit cleanup scope`
+1. [DONE] Синхронизировать findings audit-а `CODEAI_HUB_HONEST_AUDIT_20260327.md` с canonical planning doc и подтвердить, что текущий scope ограничен cleanup-хвостами после успешного релиза `1.1.819`, без feature-expansion. Scope: `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): sync post-audit cleanup scope`
 2. [TODO] Git Commit: `docs(architecture): sync post-audit cleanup scope` (hash: TBD)
 3. [TODO] Исключить `.husky/_` helper files из VSIX/package surface и зафиксировать release-facing packaging contract, не меняя runtime behavior. Scope: `.vscodeignore`, `README.md`, `CHANGELOG.md`. Expected commit: `chore(packaging): exclude husky helper files from VSIX`
 4. [TODO] Git Commit: `chore(packaging): exclude husky helper files from VSIX` (hash: TBD)

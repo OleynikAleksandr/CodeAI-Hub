@@ -10,6 +10,8 @@
 
 `Release 1.1.819` уже собран и вручную проверен пользователем: текущий baseline считается рабочим.
 
+Аудит `CodeAI Hub Honest Audit` от `2026-03-27` (`CODEAI_HUB_HONEST_AUDIT_20260327.md`) прочитан и принят как входной документ для этой фазы.
+
 Следующий scope не про новые product-возможности. Это post-audit cleanup:
 
 - подчищаем хвосты после уже проведённого аудита;
@@ -17,7 +19,7 @@
 - продолжаем `Wave 2` декомпозицию oversized runtime files;
 - удерживаем behavior-preserving refactor как единственный допустимый режим изменений.
 
-Аудит-файл будет добавлен отдельно в рамках текущей сессии. Этот planning-док фиксирует каркас работ заранее, чтобы audit findings только уточняли приоритеты внутри уже согласованного scope, а не меняли саму цель.
+Этот planning-док фиксирует каркас работ так, чтобы audit findings уточняли приоритеты внутри уже согласованного scope, а не меняли саму цель.
 
 ---
 
@@ -60,10 +62,21 @@
 
 ### 3.3. Audit handling
 
-- После добавления audit-файла его findings должны быть синхронно отражены в этом planning-доке и в `doc/TODO/todo-plan.md`.
+- Findings audit-а от `2026-03-27` принимаются как post-release baseline для этой фазы.
+- Из audit-а в текущий scope прямо входят четыре сигнала:
+  - blind spot старого `check-architecture.sh`, который раньше не видел `packages/**/src`;
+  - false-green risk между заявленным quality workflow и фактическими root gates;
+  - god-module concentration в Core/provider runtime;
+  - release/package noise, который ослабляет правдивость release surface.
+- Из audit-а не переносим в этот план отдельный новый scope по CI/metadata cleanup или новый feature-work.
 - Audit может менять порядок задач внутри фаз, но не должен расширять scope за пределы:
   - packaging tail cleanup;
   - oversized/runtime debt cleanup.
+- Практическая интерпретация findings:
+  - blind spot по source surface уже закрыт расширением architecture gate и переводом старого долга в explicit allowlist;
+  - false-green/root workflow findings в этой фазе трогаем только там, где они пересекаются с release/package truthfulness;
+  - god-module findings напрямую определяют порядок `Wave 2`;
+  - environment-specific runtime assumptions считаются отдельным follow-up только если снова всплывут в текущих hotspot-ах.
 
 ### 3.4. Architecture contract
 
