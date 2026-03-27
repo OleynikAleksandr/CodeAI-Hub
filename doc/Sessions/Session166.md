@@ -81,5 +81,6 @@
 
 ## Plans for next session
 
-- Начать новый `todo-plan.md` или следующую фазу Wave 2 backlog, начиная с `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/config/index.ts`, `packages/core/src/remote-bridge/types.ts`.
+- Начать следующую фазу Wave 2 backlog, начиная с `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/config/index.ts`, `packages/core/src/remote-bridge/types.ts`.
 - Отдельно оценить, нужен ли следующий release-facing sweep по `.vscodeignore` и packaging surface: VSIX собран чисто, но package по-прежнему включает служебные `.husky/_` helper files.
+- Текущее состояние ветки: main ahead of origin/main на 26 commits. Неблокирующий follow-up: VSIX собирается чисто, но packaging surface всё ещё включает .husky/_ helper files; это стоит вынести в следующий cleanup.
