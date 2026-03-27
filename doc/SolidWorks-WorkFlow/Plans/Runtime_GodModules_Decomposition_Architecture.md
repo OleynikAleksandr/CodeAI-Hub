@@ -10,17 +10,18 @@
 
 В репозитории накопился не один случайный oversized file, а целый слой operational god-modules.
 
-Текущее состояние handwritten source surface после исправления architecture gate:
+Текущее состояние handwritten source surface после первых façade cuts:
 
-- `32` source-файла уже превышают лимит `300` строк и вынесены во временный debt allowlist
-- `55` source-файлов находятся в warning zone `250-300`
-- самая опасная зона — Core runtime orchestration и provider runtime
+- `30` source-файлов ещё превышают лимит `300` строк и остаются во временном debt allowlist
+- `64` source-файла находятся в warning zone `250-300`
+- blind spot в architecture gate закрыт, а первые façade cuts уже сняли oversized debt с `provider-registry/index.ts` и `gemini-session-manager.ts`
+- самая опасная зона теперь сместилась в Core remote bridge, diagram DSL и provider message processors
 
 Ключевые файлы первой волны:
 
-- `packages/core/src/remote-bridge/handlers/session-request-handler.ts` — `4291` lines
-- `packages/core/src/provider-registry/index.ts` — `1225` lines
-- `packages/Gemini_Module/src/session/gemini-session-manager.ts` — `987` lines
+- `packages/core/src/remote-bridge/handlers/session-request-handler.ts` — `3174` lines
+- `packages/core/src/provider-registry/index.ts` — `272` lines after façade extraction
+- `packages/Gemini_Module/src/session/gemini-session-manager.ts` — `295` lines after façade extraction
 
 Это уже не вопрос стиля. Это вопрос архитектурной управляемости:
 
@@ -131,8 +132,11 @@
   - adapter attachment on bootstrap
 - `provider-recovery-scheduler.ts`
   - retry timers
-  - pending retry set
+  - retry callback wiring
+- `provider-recovery-coordinator.ts`
+  - pending retry bookkeeping
   - recovery attempts
+  - inactive/degraded status transitions
 
 Правило:
 
@@ -155,10 +159,15 @@
 Целевые submodules:
 
 - `gemini-session-bootstrapper.ts`
-  - settings load
+  - requested session id bootstrap
   - auth refresh
-  - argv/config/client bootstrap
+  - config/client bootstrap
   - session creation result
+- `gemini-session-settings-resolver.ts`
+  - settings load
+  - settings snapshot resolution
+  - model/thinking/context defaults
+  - argv/auth resolution
 - `gemini-session-store.ts`
   - sessions map
   - alias map
@@ -171,11 +180,11 @@
   - tool execution chain
   - response parts aggregation
   - tool execution events
-- `gemini-idle-watchdog.ts`
-  - watchdog lifecycle
-- `gemini-session-closer.ts`
+- `gemini-session-lifecycle.ts`
+  - idle watchdog lifecycle
+  - pending model override application
   - close/reset chat
-  - final state cleanup
+  - token usage extraction
 
 Правило:
 
@@ -185,16 +194,29 @@
 
 ## 4. Second Wave After Key Files
 
-После первой волны в следующий backlog переходят:
+После первых façade cuts следующая волна oversized debt приоритизируется так:
 
 - `packages/core/src/remote-bridge/handlers/http-api-router.ts`
 - `packages/core/src/remote-bridge/index.ts`
 - `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`
 - `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`
-- provider message processors:
+- `packages/core/src/config/index.ts`
+- `packages/core/src/remote-bridge/types.ts`
+- provider message processors and adjacent runtime clusters:
   - `packages/Claude_Module/src/messaging/message-processor.ts`
   - `packages/Codex_Module/src/messaging/message-processor.ts`
+  - `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`
   - `packages/Gemini_Module/src/messaging/message-processor.ts`
+
+Из allowlist должны исчезать сразу после успешного façade cut:
+
+- `packages/core/src/provider-registry/index.ts`
+- `packages/Gemini_Module/src/session/gemini-session-manager.ts`
+
+Старый first-wave backlog, который уже закрыт как oversized debt, больше не считается кандидатом wave 2:
+
+- `packages/core/src/provider-registry/index.ts`
+- `packages/Gemini_Module/src/session/gemini-session-manager.ts`
 
 Для них применяем тот же принцип:
 

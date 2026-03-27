@@ -24,14 +24,12 @@ packages/Codex_Module/src/sdk/codex-sdk-patches.ts
 packages/Gemini_Module/src/installer/gemini-installer.ts
 packages/Gemini_Module/src/messaging/message-processor.ts
 packages/Gemini_Module/src/runtime/cli-bridge.ts
-packages/Gemini_Module/src/session/gemini-session-manager.ts
 
 # Core supervisor
 packages/core-supervisor/src/index.ts
 
 # Core runtime
 packages/core/src/config/index.ts
-packages/core/src/provider-registry/index.ts
 packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts
 packages/core/src/provider-usage-limits/providers/gemini/gemini-quota-api-reader.ts
 packages/core/src/remote-bridge/handlers/http-api-router.ts
