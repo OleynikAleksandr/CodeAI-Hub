@@ -4,31 +4,31 @@ import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client"
 import type { GeminiSessionLogger } from "../logging/session-logger";
 import type { ModuleReporter } from "../types";
 
-export type ActiveSession = {
-  sessionId: string;
+export interface ActiveSession {
+  abortController: AbortController | null;
+  readonly client: GeminiClient;
+  readonly config: Config;
+  readonly contextWindowTokenLimit: number;
   readonly createdAt: number;
   readonly eventEmitter: EventEmitter;
-  readonly config: Config;
-  readonly client: GeminiClient;
-  readonly workspacePath: string;
-  readonly contextWindowTokenLimit: number;
-  status: "idle" | "streaming" | "closing" | "closed";
-  abortController: AbortController | null;
   logger?: GeminiSessionLogger;
   reporter?: ModuleReporter;
-};
-
-export type SessionCreationOptions = {
+  sessionId: string;
+  status: "idle" | "streaming" | "closing" | "closed";
   readonly workspacePath: string;
-  readonly resumeSessionId?: string;
-  readonly defaultModel?: string;
-  readonly thinkingLevel?: string;
-  readonly settingsPath?: string;
-  readonly reporter?: ModuleReporter;
-  readonly logger?: GeminiSessionLogger | null;
-};
+}
 
-export type SessionCreationResult = {
-  readonly sessionId: string;
+export interface SessionCreationOptions {
+  readonly defaultModel?: string;
+  readonly logger?: GeminiSessionLogger | null;
+  readonly reporter?: ModuleReporter;
+  readonly resumeSessionId?: string;
+  readonly settingsPath?: string;
+  readonly thinkingLevel?: string;
+  readonly workspacePath: string;
+}
+
+export interface SessionCreationResult {
   readonly session: ActiveSession;
-};
+  readonly sessionId: string;
+}

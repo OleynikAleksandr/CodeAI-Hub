@@ -1,90 +1,25 @@
 import { randomUUID } from "node:crypto";
-import { EventEmitter } from "node:events";
-import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import path from "node:path";
-import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
-import type { AuthType as AuthTypeEnum } from "@google/gemini-cli-core/dist/src/core/contentGenerator";
-import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
-import type {
-  ServerGeminiStreamEvent,
-  ToolCallRequestInfo,
-} from "@google/gemini-cli-core/dist/src/core/turn";
-import type { Part, UsageMetadata } from "@google/genai";
-import { GeminiMessageProcessor } from "../messaging/message-processor";
+import type { UsageMetadata } from "@google/genai";
 import { ThoughtTranslatorService } from "../messaging/thought-translator-service";
 import type { GeminiCliModules } from "../runtime/cli-types";
-import type { GeminiSessionEvent, ModuleReporter } from "../types";
+import type { ModuleReporter } from "../types";
+import { GeminiSessionBootstrapper } from "./gemini-session-bootstrapper";
+import { GeminiSessionLifecycle } from "./gemini-session-lifecycle";
+import { GeminiSessionStore } from "./gemini-session-store";
+import { GeminiToolCallOrchestrator } from "./gemini-tool-call-orchestrator";
 import { GeminiToolExecutorFacade } from "./gemini-tool-executor-facade";
+import { GeminiTurnRunner } from "./gemini-turn-runner";
 import type {
   ActiveSession,
   SessionCreationOptions,
   SessionCreationResult,
 } from "./types";
 
-const GEMINI_ENV_KEYS_TO_CLEAR = [
-  "GOOGLE_CLOUD_PROJECT",
-  "GOOGLE_CLOUD_PROJECT_ID",
-  "GOOGLE_CLOUD_LOCATION",
-  "GOOGLE_API_KEY",
-] as const;
-
-const TOOL_RESPONSE_FALLBACK =
-  "Gemini tool execution completed without response parts.";
-
-const MAX_TOOL_CALL_CHAIN_DEPTH = 8;
-
-type GeminiTurnResult = {
-  readonly responseText: string;
-  readonly usage?: UsageMetadata;
-  readonly citations: readonly string[];
-  readonly toolRequests: readonly ToolCallRequestInfo[];
-  readonly assistantSegmentsEmitted: number;
-};
-
-type ToolExecutionOutcome = {
-  readonly parts: Part[];
-  readonly events: GeminiSessionEvent[];
-  readonly completedCalls: CompletedToolCall[];
-};
-
-type ConversationResult = {
-  readonly text: string;
-  readonly citations: readonly string[];
-  readonly usage?: UsageMetadata;
-  readonly depthExceeded: boolean;
-  readonly assistantSegmentsEmitted: number;
-};
-
-type ProcessTurnContext = {
-  readonly session: ActiveSession;
-  readonly parts: Part[];
-  readonly promptId: string;
-  readonly signal: AbortSignal;
-  readonly depth: number;
-};
-
-type GeminiSettingsSnapshot = {
-  readonly providers?: {
-    readonly gemini?: {
-      readonly defaultModel?: unknown;
-      readonly thinkingLevelByModel?: Record<string, unknown>;
-      readonly sessionContinuity?: {
-        readonly contextWindowTokenLimit?: unknown;
-        readonly remainingPercentThreshold?: unknown;
-      };
-    };
-  };
-};
-
-const DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 300_000;
-const MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 10_000;
-const MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1_000_000;
-
 export class GeminiSessionManager {
-  private readonly sessions = new Map<string, ActiveSession>();
-  private readonly sessionAliases = new Map<string, string>();
-
+  private readonly sessionLifecycle: GeminiSessionLifecycle;
+  private readonly sessionBootstrapper: GeminiSessionBootstrapper;
+  private readonly sessionStore = new GeminiSessionStore();
+  private readonly turnRunner: GeminiTurnRunner;
   private readonly modules: GeminiCliModules;
   private readonly toolExecutorFacade: GeminiToolExecutorFacade;
   private readonly thoughtTranslator: ThoughtTranslatorService;
@@ -93,20 +28,31 @@ export class GeminiSessionManager {
   constructor(modules: GeminiCliModules, reporter?: ModuleReporter) {
     this.modules = modules;
     this.reporter = reporter;
+    this.sessionBootstrapper = new GeminiSessionBootstrapper(modules);
+    this.sessionLifecycle = new GeminiSessionLifecycle();
     this.toolExecutorFacade = new GeminiToolExecutorFacade(
       this.modules,
       reporter
     );
     this.thoughtTranslator = new ThoughtTranslatorService(reporter);
-    this.sanitizeEnvironment();
+    this.turnRunner = new GeminiTurnRunner({
+      emitEvents: (session, events) =>
+        this.sessionLifecycle.emitEvents(session, events),
+      modules: this.modules,
+      reporter,
+      thoughtTranslator: this.thoughtTranslator,
+      toolCallOrchestrator: new GeminiToolCallOrchestrator(
+        this.toolExecutorFacade
+      ),
+    });
   }
 
   listSessions(): readonly ActiveSession[] {
-    return Array.from(this.sessions.values());
+    return this.sessionStore.listSessions();
   }
 
   getSession(sessionId: string): ActiveSession | undefined {
-    return this.sessions.get(sessionId);
+    return this.sessionStore.getSession(sessionId);
   }
 
   createSession(
@@ -132,130 +78,38 @@ export class GeminiSessionManager {
   private async startSession(
     options: SessionCreationOptions
   ): Promise<SessionCreationResult> {
-    const workspacePath = options.workspacePath;
-    const requestedResumeSessionId =
-      typeof options.resumeSessionId === "string" &&
-      options.resumeSessionId.trim().length > 0
-        ? options.resumeSessionId.trim()
-        : undefined;
-    const sessionId = requestedResumeSessionId ?? randomUUID();
-    const eventEmitter = new EventEmitter();
+    const { providerSessionId, requestedSessionId, session } =
+      await this.sessionBootstrapper.bootstrap(options);
 
-    const settings = this.modules.settings.loadSettings(workspacePath);
-    const migrateDeprecatedSettings = this.modules.settings
-      .migrateDeprecatedSettings as unknown;
-    if (typeof migrateDeprecatedSettings === "function") {
-      (
-        migrateDeprecatedSettings as (
-          loadedSettings: unknown,
-          extensionManager?: unknown
-        ) => void
-      )(settings, {
-        // Extensions are not supported inside the CodeAI Hub bridge yet.
-        disableExtension: async () => {
-          /* noop */
-        },
-      });
-    }
+    session.logger?.start(requestedSessionId);
+    this.sessionStore.registerSession(requestedSessionId, session);
 
-    const settingsSnapshot = this.loadSettingsSnapshot(options.settingsPath);
-    const defaultModelOverride =
-      this.resolveDefaultModelFromSnapshot(settingsSnapshot);
-    const resolvedModel = defaultModelOverride ?? options.defaultModel;
-
-    const thinkingLevelOverride = resolvedModel
-      ? this.resolveThinkingLevelFromSnapshot(settingsSnapshot, resolvedModel)
-      : undefined;
-    const resolvedThinkingLevel =
-      thinkingLevelOverride ?? options.thinkingLevel;
-
-    const argv = this.createArgv({
-      ...options,
-      resumeSessionId: requestedResumeSessionId,
-      defaultModel: resolvedModel,
-      thinkingLevel: resolvedThinkingLevel,
-    });
-
-    const loadCliConfig = this.modules.config
-      .loadCliConfig as typeof this.modules.config.loadCliConfig;
-
-    const config = await loadCliConfig(
-      settings.merged,
-      sessionId,
-      argv,
-      workspacePath
-    );
-
-    const authType = this.resolveAuthType(
-      settings.merged.security?.auth?.selectedType
-    );
-
-    try {
-      await config.refreshAuth(authType);
-    } catch (error) {
-      options.reporter?.error?.("Gemini authentication failed", error);
-      throw error;
-    }
-
-    if (resolvedModel) {
-      config.setModel(resolvedModel);
-    }
-
-    await config.initialize();
-    const client = config.getGeminiClient();
-
-    if (resolvedThinkingLevel) {
-      this.monkeyPatchGeminiClient(
-        client,
-        resolvedModel ?? "",
-        resolvedThinkingLevel
-      );
-    }
-    const session: ActiveSession = {
-      sessionId,
-      createdAt: Date.now(),
-      eventEmitter,
-      config,
-      client,
-      workspacePath,
-      contextWindowTokenLimit:
-        this.resolveContextWindowTokenLimitFromSnapshot(settingsSnapshot),
-      status: "idle",
-      abortController: null,
-      reporter: options.reporter,
-      logger: options.logger ?? undefined,
-    };
-
-    session.logger?.start(sessionId);
-    this.sessions.set(sessionId, session);
-
-    this.emitEvents(session, [
+    this.sessionLifecycle.emitEvents(session, [
       {
         type: "system",
         provider: "gemini",
-        content: `Gemini session initialized (model: ${config.getModel()}).`,
+        content: `Gemini session initialized (model: ${session.config.getModel()}).`,
       },
     ]);
-    let resolvedSessionId: string = sessionId;
-    const providerSessionId = config.getSessionId();
+    let resolvedSessionId: string = requestedSessionId;
     if (providerSessionId && providerSessionId.length > 0) {
-      resolvedSessionId = this.promoteSessionId(
-        sessionId,
+      resolvedSessionId = this.sessionStore.promoteSessionId(
+        requestedSessionId,
         providerSessionId,
         session
       );
     } else {
-      session.logger?.renameSession?.(sessionId, sessionId);
+      session.logger?.renameSession?.(requestedSessionId, requestedSessionId);
     }
     queueMicrotask(() => {
-      eventEmitter.emit("realSessionId", resolvedSessionId);
+      session.eventEmitter.emit("realSessionId", resolvedSessionId);
       if (
         providerSessionId &&
         providerSessionId.length > 0 &&
-        providerSessionId !== sessionId
+        providerSessionId !== requestedSessionId
       ) {
-        eventEmitter.emit("sessionIdChanged", {
-          oldId: sessionId,
+        session.eventEmitter.emit("sessionIdChanged", {
+          oldId: requestedSessionId,
           newId: resolvedSessionId,
           provider: "gemini",
         });
@@ -266,7 +120,7 @@ export class GeminiSessionManager {
   }
 
   async sendMessage(sessionId: string, content: string): Promise<void> {
-    const session = this.requireSession(sessionId);
+    const session = this.sessionStore.requireSession(sessionId);
     session.reporter?.info?.("Gemini sendMessage called", {
       sessionId,
       actualSessionId: session.sessionId,
@@ -285,7 +139,10 @@ export class GeminiSessionManager {
       throw new Error("Cannot send empty Gemini prompt.");
     }
 
-    this.applyPendingModelOverride(session, sessionId);
+    this.sessionLifecycle.applyPendingModelOverride(
+      this as unknown as Record<string, unknown>,
+      session
+    );
 
     const promptId = randomUUID();
     const abortController = new AbortController();
@@ -293,7 +150,7 @@ export class GeminiSessionManager {
     session.status = "streaming";
 
     const { reset: resetWatchdog, clear: clearWatchdog } =
-      this.createIdleWatchdog(abortController);
+      this.sessionLifecycle.createIdleWatchdog(abortController);
     resetWatchdog();
     (session as unknown as Record<string, unknown>).resetWatchdog =
       resetWatchdog;
@@ -315,7 +172,7 @@ export class GeminiSessionManager {
       timestamp,
     });
 
-    this.emitEvents(session, [
+    this.sessionLifecycle.emitEvents(session, [
       {
         type: "user_input",
         provider: "gemini",
@@ -330,7 +187,7 @@ export class GeminiSessionManager {
     let didComplete = false;
     let lastUsage: UsageMetadata | undefined;
     try {
-      const result = await this.processTurns({
+      const result = await this.turnRunner.processTurns({
         session,
         parts: [{ text: trimmed }],
         promptId,
@@ -340,7 +197,7 @@ export class GeminiSessionManager {
       lastUsage = result.usage;
 
       if (result.depthExceeded) {
-        this.emitEvents(session, [
+        this.sessionLifecycle.emitEvents(session, [
           {
             type: "system",
             provider: "gemini",
@@ -361,7 +218,7 @@ export class GeminiSessionManager {
           citations: finalCitations,
         });
 
-        this.emitEvents(session, [
+        this.sessionLifecycle.emitEvents(session, [
           {
             type: "assistant",
             provider: "gemini",
@@ -381,7 +238,7 @@ export class GeminiSessionManager {
         promptId,
         stage: "send",
       });
-      this.emitEvents(session, [
+      this.sessionLifecycle.emitEvents(session, [
         {
           type: "error",
           provider: "gemini",
@@ -399,7 +256,7 @@ export class GeminiSessionManager {
       session.status = "idle";
       if (didComplete) {
         const completedTimestamp = new Date().toISOString();
-        const used = this.extractTokenUsageUsed(lastUsage);
+        const used = this.sessionLifecycle.extractTokenUsageUsed(lastUsage);
         if (used !== null) {
           session.eventEmitter.emit("message", {
             type: "stream_event",
@@ -432,556 +289,7 @@ export class GeminiSessionManager {
     }
   }
 
-  private createIdleWatchdog(abortController: AbortController): {
-    reset: () => void;
-    clear: () => void;
-  } {
-    const IDLE_MS = 180_000;
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const reset = (): void => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-      timer = setTimeout(() => {
-        if (!abortController.signal.aborted) {
-          abortController.abort();
-        }
-      }, IDLE_MS);
-    };
-    const clear = (): void => {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-    };
-    return { reset, clear };
-  }
-
-  private applyPendingModelOverride(
-    session: { config: { setModel: (m: string) => void } },
-    _sessionId: string
-  ): void {
-    const self = this as unknown as Record<string, unknown>;
-    const pendingModel = self.pendingModelOverride as string | undefined;
-    if (!pendingModel) {
-      return;
-    }
-    try {
-      session.config.setModel(pendingModel);
-    } catch {
-      // Model override failed — continue with current model
-    }
-    self.pendingModelOverride = undefined;
-  }
-
   async closeSession(sessionId: string): Promise<void> {
-    const resolvedSessionId = this.sessionAliases.get(sessionId) ?? sessionId;
-    const session = this.sessions.get(resolvedSessionId);
-    if (!session) {
-      return;
-    }
-
-    session.status = "closing";
-    session.abortController?.abort();
-
-    try {
-      await session.client.resetChat();
-    } catch (error) {
-      session.reporter?.warn?.("Failed to reset Gemini chat", {
-        message: error instanceof Error ? error.message : String(error),
-      });
-    }
-
-    session.logger?.end();
-    session.status = "closed";
-    this.sessions.delete(resolvedSessionId);
-    this.pruneAliasesForSession(resolvedSessionId);
-    this.emitEvents(session, [
-      {
-        type: "system",
-        provider: "gemini",
-        content: "Gemini session closed.",
-      },
-    ]);
-  }
-
-  private promoteSessionId(
-    previousId: string,
-    nextId: string,
-    session: ActiveSession
-  ): string {
-    if (nextId === previousId) {
-      session.sessionId = nextId;
-      session.logger?.renameSession?.(previousId, nextId);
-      return nextId;
-    }
-    this.sessionAliases.set(previousId, nextId);
-    this.sessions.delete(previousId);
-    session.sessionId = nextId;
-    this.sessions.set(nextId, session);
-    session.logger?.renameSession?.(previousId, nextId);
-    return nextId;
-  }
-
-  private extractTokenUsageUsed(usage?: UsageMetadata): number | null {
-    const numeric = Number(usage?.totalTokenCount);
-    if (!Number.isFinite(numeric) || numeric < 0) {
-      return null;
-    }
-    return Math.floor(numeric);
-  }
-
-  private clampContextWindowTokenLimit(value: number): number {
-    return Math.min(
-      MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
-      Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
-    );
-  }
-
-  private resolveContextWindowTokenLimitFromSnapshot(
-    snapshot: GeminiSettingsSnapshot | null
-  ): number {
-    const raw =
-      snapshot?.providers?.gemini?.sessionContinuity?.contextWindowTokenLimit;
-    const numeric = typeof raw === "number" ? raw : Number(raw);
-    if (!Number.isFinite(numeric)) {
-      return DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT;
-    }
-    return this.clampContextWindowTokenLimit(numeric);
-  }
-
-  private async processTurns(
-    context: ProcessTurnContext
-  ): Promise<ConversationResult> {
-    const { session, parts, promptId, signal, depth } = context;
-    if (depth >= MAX_TOOL_CALL_CHAIN_DEPTH) {
-      return {
-        text: "",
-        citations: [],
-        usage: undefined,
-        depthExceeded: true,
-        assistantSegmentsEmitted: 0,
-      };
-    }
-
-    const turnResult = await this.runTurn(session, parts, promptId, signal);
-    let responseText = turnResult.responseText;
-    let citations = [...turnResult.citations];
-    let usage = turnResult.usage;
-    let depthExceeded = false;
-    let assistantSegmentsEmitted = turnResult.assistantSegmentsEmitted;
-
-    if (turnResult.toolRequests.length === 0) {
-      return {
-        text: responseText,
-        citations,
-        usage,
-        depthExceeded,
-        assistantSegmentsEmitted,
-      };
-    }
-
-    const outcome = await this.executeToolCalls(
-      session,
-      turnResult.toolRequests,
-      signal
-    );
-    this.emitEvents(session, outcome.events);
-
-    try {
-      const model =
-        session.client.getCurrentSequenceModel() ?? session.config.getModel();
-      session.client
-        .getChat()
-        .recordCompletedToolCalls(model, outcome.completedCalls);
-    } catch (error) {
-      session.reporter?.warn?.("Failed to record Gemini tool calls", {
-        message: error instanceof Error ? error.message : String(error),
-      });
-    }
-
-    const nextParts =
-      outcome.parts.length > 0
-        ? outcome.parts
-        : [
-            {
-              text: TOOL_RESPONSE_FALLBACK,
-            },
-          ];
-
-    const nested = await this.processTurns({
-      session,
-      parts: nextParts,
-      promptId,
-      signal,
-      depth: depth + 1,
-    });
-
-    responseText += nested.text;
-    citations = citations.concat(nested.citations);
-    usage = nested.usage ?? usage;
-    depthExceeded = nested.depthExceeded;
-    assistantSegmentsEmitted += nested.assistantSegmentsEmitted;
-
-    return {
-      text: responseText,
-      citations,
-      usage,
-      depthExceeded,
-      assistantSegmentsEmitted,
-    };
-  }
-
-  private async runTurn(
-    session: ActiveSession,
-    parts: readonly Part[],
-    promptId: string,
-    signal: AbortSignal
-  ): Promise<GeminiTurnResult> {
-    const messageProcessor = new GeminiMessageProcessor({
-      reporter: session.reporter,
-      modules: this.modules,
-      thoughtTranslator: this.thoughtTranslator,
-    });
-    const accumulator = messageProcessor.createAccumulator(promptId);
-    let assistantSegmentsEmitted = 0;
-    const countAssistantSegment = (payload: unknown): void => {
-      if (
-        payload &&
-        typeof payload === "object" &&
-        (payload as { type?: string }).type === "dialog_message" &&
-        (payload as { role?: string }).role === "assistant"
-      ) {
-        assistantSegmentsEmitted += 1;
-      }
-    };
-    session.eventEmitter.on("message", countAssistantSegment);
-
-    const stream = session.client.sendMessageStream(
-      Array.from(parts) as Part[],
-      signal,
-      promptId
-    );
-
-    try {
-      for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
-        // Reset idle watchdog on every SDK event (tool calls keep it alive)
-        const resetFn = (session as unknown as Record<string, unknown>)
-          .resetWatchdog as (() => void) | undefined;
-        resetFn?.();
-        const outcome = messageProcessor.handleEvent(
-          session,
-          event,
-          accumulator
-        );
-        this.emitEvents(session, outcome.events);
-      }
-    } finally {
-      session.eventEmitter.off("message", countAssistantSegment);
-    }
-
-    return {
-      ...messageProcessor.finalize(accumulator),
-      assistantSegmentsEmitted,
-    };
-  }
-
-  private async executeToolCalls(
-    session: ActiveSession,
-    requests: readonly ToolCallRequestInfo[],
-    signal: AbortSignal
-  ): Promise<ToolExecutionOutcome> {
-    const events: GeminiSessionEvent[] = [];
-    const responseParts: Part[] = [];
-    const completedCalls: CompletedToolCall[] = [];
-
-    for (const request of requests) {
-      session.logger?.logEvent({
-        type: "tool_execution_start",
-        tool: request.name,
-        callId: request.callId,
-      });
-
-      events.push({
-        type: "system",
-        provider: "gemini",
-        content: `Executing tool "${request.name}" (call ${request.callId}).`,
-        data: {
-          callId: request.callId,
-          tool: request.name,
-          args: request.args,
-        },
-      });
-
-      try {
-        const completedCall = await this.toolExecutorFacade.execute(
-          session.config,
-          request,
-          signal
-        );
-        completedCalls.push(completedCall);
-
-        const toolResponse = completedCall.response;
-        if (Array.isArray(toolResponse?.responseParts)) {
-          responseParts.push(...toolResponse.responseParts);
-        } else if (typeof toolResponse?.resultDisplay === "string") {
-          responseParts.push({ text: toolResponse.resultDisplay });
-        }
-
-        events.push({
-          type: "system",
-          provider: "gemini",
-          content: toolResponse?.error
-            ? `Tool "${request.name}" returned an error.`
-            : `Tool "${request.name}" completed successfully.`,
-          data: {
-            callId: request.callId,
-            status: completedCall.status,
-            error: toolResponse?.error,
-          },
-        });
-
-        if (toolResponse?.error) {
-          session.logger?.logError({
-            error: toolResponse.error,
-            callId: request.callId,
-            tool: request.name,
-          });
-        } else {
-          session.logger?.logEvent({
-            type: "tool_execution_complete",
-            tool: request.name,
-            callId: request.callId,
-          });
-        }
-      } catch (error) {
-        session.logger?.logError({
-          error,
-          promptId: request.callId,
-          stage: "tool",
-        });
-        events.push({
-          type: "error",
-          provider: "gemini",
-          content: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
-
-    return {
-      parts: responseParts,
-      events,
-      completedCalls,
-    };
-  }
-
-  private emitEvents(
-    session: ActiveSession,
-    events: readonly GeminiSessionEvent[]
-  ): void {
-    if (events.length === 0) {
-      return;
-    }
-    for (const event of events) {
-      if (GeminiSessionManager.ALLOWED_EVENT_TYPES.has(event.type)) {
-        session.eventEmitter.emit("message", event);
-      }
-    }
-  }
-
-  private static readonly ALLOWED_EVENT_TYPES = new Set<
-    GeminiSessionEvent["type"]
-  >(["assistant"]);
-
-  private sanitizeEnvironment(): void {
-    for (const key of GEMINI_ENV_KEYS_TO_CLEAR) {
-      if (key in process.env) {
-        delete process.env[key];
-      }
-    }
-  }
-
-  private resolveAuthType(selected?: string): AuthTypeEnum {
-    const { AuthType } = this.modules.contentGenerator;
-    switch (selected) {
-      case AuthType.LOGIN_WITH_GOOGLE:
-      case "oauth-personal":
-      case "login_with_google":
-        return AuthType.LOGIN_WITH_GOOGLE;
-      case AuthType.USE_GEMINI:
-      case "gemini-api-key":
-        return AuthType.USE_GEMINI;
-      case AuthType.USE_VERTEX_AI:
-      case "vertex-ai":
-        return AuthType.USE_VERTEX_AI;
-      case AuthType.LEGACY_CLOUD_SHELL:
-      case "cloud-shell":
-        return AuthType.LEGACY_CLOUD_SHELL;
-      default:
-        return AuthType.LOGIN_WITH_GOOGLE;
-    }
-  }
-
-  private createArgv(options: SessionCreationOptions): CliArgs {
-    const includeDirectories = Array.from(
-      new Set(
-        [
-          path.join(homedir(), ".codeai-hub", "templates"),
-          options.workspacePath,
-        ].map((directory) => path.resolve(directory))
-      )
-    );
-    return {
-      query: undefined,
-      model: options.defaultModel,
-      sandbox: undefined,
-      debug: options.logger !== undefined,
-      prompt: undefined,
-      promptInteractive: undefined,
-      yolo: true,
-      approvalMode: "yolo",
-      allowedMcpServerNames: undefined,
-      allowedTools: undefined,
-      experimentalAcp: false,
-      extensions: undefined,
-      listExtensions: false,
-      resume: options.resumeSessionId,
-      listSessions: false,
-      deleteSession: undefined,
-      includeDirectories,
-      screenReader: undefined,
-      useSmartEdit: undefined,
-      useWriteTodos: undefined,
-      outputFormat: "json",
-      fakeResponses: undefined,
-      recordResponses: undefined,
-      thinkingLevel: options.thinkingLevel,
-      // biome-ignore lint/suspicious/noExplicitAny: custom property thinkingLevel
-    } as any as CliArgs;
-  }
-
-  private requireSession(sessionId: string): ActiveSession {
-    const session = this.sessions.get(sessionId);
-    if (session) {
-      return session;
-    }
-
-    const canonicalId = this.sessionAliases.get(sessionId);
-    if (canonicalId) {
-      const resolved = this.sessions.get(canonicalId);
-      if (resolved) {
-        return resolved;
-      }
-      this.sessionAliases.delete(sessionId);
-    }
-
-    // Fallback: search by internal sessionId property
-    for (const candidate of this.sessions.values()) {
-      if (candidate.sessionId === sessionId) {
-        return candidate;
-      }
-    }
-
-    const availableIds = Array.from(this.sessions.keys()).join(", ");
-    const aliasIds = Array.from(this.sessionAliases.keys()).join(", ");
-    throw new Error(
-      `Gemini session ${sessionId} not found. Available: [${availableIds}] Aliases: [${aliasIds}]`
-    );
-  }
-
-  private pruneAliasesForSession(sessionId: string): void {
-    for (const [alias, canonical] of this.sessionAliases.entries()) {
-      if (alias === sessionId || canonical === sessionId) {
-        this.sessionAliases.delete(alias);
-      }
-    }
-  }
-
-  private loadSettingsSnapshot(
-    settingsPath?: string
-  ): GeminiSettingsSnapshot | null {
-    if (!settingsPath) {
-      return null;
-    }
-    try {
-      const raw = readFileSync(settingsPath, "utf8");
-      return JSON.parse(raw) as GeminiSettingsSnapshot;
-    } catch {
-      return null;
-    }
-  }
-
-  private resolveDefaultModelFromSnapshot(
-    snapshot: GeminiSettingsSnapshot | null
-  ): string | undefined {
-    const candidate = snapshot?.providers?.gemini?.defaultModel;
-
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate.trim();
-    }
-
-    return;
-  }
-
-  private resolveThinkingLevelFromSnapshot(
-    snapshot: GeminiSettingsSnapshot | null,
-
-    modelId: string
-  ): string | undefined {
-    const candidate =
-      snapshot?.providers?.gemini?.thinkingLevelByModel?.[modelId];
-
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate.trim();
-    }
-
-    return;
-  }
-
-  private monkeyPatchGeminiClient(
-    // biome-ignore lint/suspicious/noExplicitAny: library client typing is not exposed here
-    client: any,
-    modelId: string,
-    level: string
-  ): void {
-    if (!client || typeof client.startChat !== "function") {
-      return;
-    }
-
-    const originalStartChat = client.startChat.bind(client);
-
-    // biome-ignore lint/suspicious/noExplicitAny: overriding library method
-    client.startChat = async (...args: any[]) => {
-      const chat = await originalStartChat(...args);
-
-      if (chat?.generationConfig) {
-        const thinkingConfig = this.resolveThinkingConfig(modelId, level);
-        if (thinkingConfig) {
-          chat.generationConfig.thinkingConfig = thinkingConfig;
-        }
-      }
-      return chat;
-    };
-  }
-
-  private resolveThinkingConfig(
-    modelId: string,
-    level: string
-  ):
-    | {
-        includeThoughts: boolean;
-        thinkingBudget?: number;
-        thinkingLevel?: string;
-      }
-    | undefined {
-    // Gemini 3.x family (3-flash, 3.1-pro, etc.) uses thinkingLevel
-    if (modelId.startsWith("gemini-3") && level && level !== "off") {
-      return {
-        includeThoughts: true,
-        thinkingLevel: level,
-      };
-    }
-
-    return;
+    await this.sessionLifecycle.closeSession(this.sessionStore, sessionId);
   }
 }

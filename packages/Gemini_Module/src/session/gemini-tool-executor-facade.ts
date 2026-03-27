@@ -6,30 +6,30 @@ import type { ModuleReporter } from "../types";
 
 // AgentLoopContext shape expected by CoreToolScheduler@0.35.0.
 // We assemble it from Config deprecated getters (the only way in bridge mode).
-type AgentLoopContextLike = {
+interface AgentLoopContextLike {
   readonly config: Config;
-  readonly promptId: string;
-  readonly toolRegistry: unknown;
-  readonly messageBus: unknown;
   readonly geminiClient: unknown;
+  readonly messageBus: unknown;
+  readonly promptId: string;
   readonly sandboxManager: unknown;
-};
+  readonly toolRegistry: unknown;
+}
 
 // CoreToolScheduler constructor options as of @google/gemini-cli-core@0.35.0.
-type SchedulerOptions = {
+interface SchedulerOptions {
   readonly context: AgentLoopContextLike;
   readonly getPreferredEditor: () => undefined;
   readonly onAllToolCallsComplete?: (
     completedToolCalls: readonly CompletedToolCall[]
   ) => void | Promise<void>;
-};
+}
 
-type SchedulerInstance = {
+interface SchedulerInstance {
   schedule(
     request: ToolCallRequestInfo | readonly ToolCallRequestInfo[],
     signal: AbortSignal
   ): Promise<void>;
-};
+}
 
 type SchedulerConstructor035 = new (
   options: SchedulerOptions
