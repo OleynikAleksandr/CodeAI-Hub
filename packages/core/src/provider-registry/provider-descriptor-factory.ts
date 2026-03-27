@@ -1,0 +1,181 @@
+import type { ModuleReporter } from "@codeai-hub/claude-module";
+import type { CoreConfig } from "../config";
+import {
+  CLAUDE_INSTALLER_PATHS,
+  CODEX_INSTALLER_PATHS,
+  GEMINI_INSTALLER_PATHS,
+} from "./provider-installer-paths";
+import type {
+  ClaudeAdapterCtor,
+  CodexAdapterCtor,
+  GeminiAdapterCtor,
+  MutableProviderDescriptor,
+  ProviderAdapter,
+  ProviderDescriptor,
+} from "./provider-module-loader.types";
+import {
+  createClaudeUsageLimitsFacadeBridge,
+  createCodexUsageLimitsFacadeBridge,
+  createGeminiUsageLimitsFacadeBridge,
+} from "./provider-usage-limits-bridge-factory";
+
+interface ProviderDescriptorFactoryOptions {
+  readonly claudeAdapterCtor: ClaudeAdapterCtor;
+  readonly codexAdapterCtor: CodexAdapterCtor;
+  readonly config: CoreConfig;
+  readonly createReporter: (scope: string) => ModuleReporter;
+  readonly handleAdapterConstructionFailure: (
+    descriptor: MutableProviderDescriptor,
+    error: unknown,
+    failureLabel: string
+  ) => void;
+}
+
+interface GeminiAdapterFactoryOptions {
+  readonly adapterCtor: GeminiAdapterCtor;
+  readonly config: CoreConfig;
+  readonly createReporter: (scope: string) => ModuleReporter;
+  readonly credentialsDirectory?: string;
+  readonly defaultModel?: string;
+  readonly settingsPath: string;
+  readonly thinkingLevelByModel: Record<string, string>;
+  readonly workspacePath: string;
+}
+
+const tryAttachAdapter = (
+  factory: () => ProviderAdapter,
+  descriptor: MutableProviderDescriptor,
+  failureLabel: string,
+  onFailure: ProviderDescriptorFactoryOptions["handleAdapterConstructionFailure"]
+): void => {
+  try {
+    descriptor.adapter = factory();
+  } catch (error) {
+    onFailure(descriptor, error, failureLabel);
+  }
+};
+
+export const createClaudeAdapterInstance = (
+  options: Pick<
+    ProviderDescriptorFactoryOptions,
+    "claudeAdapterCtor" | "config" | "createReporter"
+  >
+): ProviderAdapter =>
+  new options.claudeAdapterCtor({
+    installerPaths: CLAUDE_INSTALLER_PATHS,
+    usageLimitsFacade: createClaudeUsageLimitsFacadeBridge(),
+    workspace: {
+      workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
+      claudeProjectSlug: options.config.claudeProjectSlug,
+      settingsPath: options.config.claudeSettingsPath,
+      defaultModel: options.config.claudeDefaultModel,
+    },
+    reporter: options.createReporter("claude"),
+  });
+
+export const createCodexAdapterInstance = (
+  options: Pick<
+    ProviderDescriptorFactoryOptions,
+    "codexAdapterCtor" | "config" | "createReporter"
+  >
+): ProviderAdapter => {
+  const {
+    codexWorkspacePath,
+    codexSandboxMode,
+    codexApprovalMode,
+    codexDefaultModel,
+    codexDefaultReasoningEffort,
+    codexSkipGitRepoCheck,
+  } = options.config;
+
+  return new options.codexAdapterCtor({
+    installerPaths: CODEX_INSTALLER_PATHS,
+    usageLimitsFacade: createCodexUsageLimitsFacadeBridge(),
+    workspace: {
+      workspacePath: codexWorkspacePath ?? process.cwd(),
+      defaultSandboxMode: codexSandboxMode,
+      defaultApprovalMode: codexApprovalMode,
+      defaultModel: codexDefaultModel,
+      defaultReasoningEffort: codexDefaultReasoningEffort,
+      skipGitRepoCheck: codexSkipGitRepoCheck,
+    },
+    reporter: options.createReporter("codex"),
+  });
+};
+
+const buildClaudeDescriptor = (
+  options: ProviderDescriptorFactoryOptions
+): ProviderDescriptor => {
+  const descriptor: MutableProviderDescriptor = {
+    id: "claudeCodeCli",
+    name: "Claude",
+    description: "Using your authentication Claude Code CLI",
+    status: "active",
+  };
+  tryAttachAdapter(
+    () => createClaudeAdapterInstance(options),
+    descriptor,
+    "Claude CLI components are unavailable.",
+    options.handleAdapterConstructionFailure
+  );
+  return descriptor;
+};
+
+const buildCodexDescriptor = (
+  options: ProviderDescriptorFactoryOptions
+): ProviderDescriptor => {
+  const descriptor: MutableProviderDescriptor = {
+    id: "codexCli",
+    name: "Codex",
+    description: "Using your authentication Codex CLI",
+    status: "active",
+  };
+  tryAttachAdapter(
+    () => createCodexAdapterInstance(options),
+    descriptor,
+    "Codex CLI components are unavailable.",
+    options.handleAdapterConstructionFailure
+  );
+  return descriptor;
+};
+
+const buildGeminiDescriptor = (): ProviderDescriptor => ({
+  id: "geminiCli",
+  name: "Gemini",
+  description: "Using your authentication Gemini CLI",
+  status: "active",
+});
+
+export const createProviderDescriptors = (
+  options: ProviderDescriptorFactoryOptions
+): ProviderDescriptor[] => [
+  buildClaudeDescriptor(options),
+  buildCodexDescriptor(options),
+  buildGeminiDescriptor(),
+];
+
+export const createGeminiAdapterInstance = (
+  options: GeminiAdapterFactoryOptions
+): ProviderAdapter => {
+  const credentials = options.credentialsDirectory
+    ? {
+        directory: options.credentialsDirectory,
+        requiredFiles: ["oauth_creds.json", "credentials.json"],
+      }
+    : {
+        requiredFiles: ["oauth_creds.json", "credentials.json"],
+      };
+
+  return new options.adapterCtor({
+    installerPaths: GEMINI_INSTALLER_PATHS,
+    workspace: {
+      workspacePath: options.workspacePath,
+      defaultModel: options.defaultModel,
+      thinkingLevelByModel: options.thinkingLevelByModel,
+      settingsPath: options.settingsPath,
+    },
+    reporter: options.createReporter("gemini"),
+    credentials,
+    usageLimitsFacade: createGeminiUsageLimitsFacadeBridge(),
+  });
+};
