@@ -2,6 +2,10 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [Unreleased]
+### Fixed
+- **VSIX packaging surface**: `.husky/_` helper files and repository hook scripts are no longer shipped inside the extension package.
+
 ## [1.1.819] - 2026-03-27
 ### Changed
 - **Repository quality gates**: repo-wide `npm run lint` is green again; `.husky/pre-commit` now runs architecture + lint + ts-prune and formats only staged files via stash-safe restore.
