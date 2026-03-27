@@ -3,10 +3,10 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
-export type NpmCommandResult = {
-  readonly stdout: string;
+export interface NpmCommandResult {
   readonly stderr: string;
-};
+  readonly stdout: string;
+}
 
 export async function runNpmCommand(
   args: readonly string[],

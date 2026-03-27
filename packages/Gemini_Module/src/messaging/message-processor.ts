@@ -11,25 +11,25 @@ import type { ActiveSession } from "../session/types";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
 import type { ThoughtTranslatorService } from "./thought-translator-service";
 
-type TurnAccumulator = {
-  readonly promptId: string;
-  currentAssistantChunks: string[];
-  responseChunks: string[];
+interface TurnAccumulator {
   citations: string[];
-  toolRequests: ToolCallRequestInfo[];
+  currentAssistantChunks: string[];
   pendingTranslations: Promise<void>[];
+  readonly promptId: string;
+  responseChunks: string[];
+  toolRequests: ToolCallRequestInfo[];
   usage?: UsageMetadata;
-};
+}
 
-type HandleEventOutcome = {
+interface HandleEventOutcome {
   readonly events: readonly GeminiSessionEvent[];
-};
+}
 
-type GeminiMessageProcessorOptions = {
-  readonly reporter?: ModuleReporter;
+interface GeminiMessageProcessorOptions {
   readonly modules: GeminiCliModules;
+  readonly reporter?: ModuleReporter;
   readonly thoughtTranslator?: ThoughtTranslatorService;
-};
+}
 
 type EventHandler = (
   session: ActiveSession,

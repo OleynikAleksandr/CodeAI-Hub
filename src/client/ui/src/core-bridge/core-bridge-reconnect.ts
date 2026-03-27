@@ -3,20 +3,20 @@ import type { CoreBridgeConfig } from "./types";
 
 type CoreConnectionStatus = "connecting" | "ready" | "error";
 
-type ScheduleCoreBridgeReconnectOptions = {
+interface ScheduleCoreBridgeReconnectOptions {
   readonly config: CoreBridgeConfig;
-  readonly reconnectDelayMs: number;
-  readonly reconnectTimerRef: { current: number | undefined };
+  readonly connectWebSocket: (config: CoreBridgeConfig) => void;
   readonly hasSuccessfulConnection: boolean;
   readonly notifyConnectionStatus: (
     status: CoreConnectionStatus,
     detail?: string
   ) => void;
+  readonly reconnectDelayMs: number;
+  readonly reconnectTimerRef: { current: number | undefined };
   readonly requestCoreFromSupervisor: (
     mode: "ensure-started" | "restart" | "stop"
   ) => void;
-  readonly connectWebSocket: (config: CoreBridgeConfig) => void;
-};
+}
 
 export const scheduleCoreBridgeReconnect = (
   options: ScheduleCoreBridgeReconnectOptions

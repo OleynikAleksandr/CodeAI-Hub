@@ -21,18 +21,18 @@ import {
 
 type Notifier = (message: Record<string, unknown>) => void;
 
-type CommandContext = {
-  readonly providerRegistry: ProviderRegistry;
-  readonly notifyWebview: Notifier;
-  readonly fileOperations: FileOperationsFacade;
+interface CommandContext {
   readonly coreProcessManager?: CoreProcessManager;
-};
+  readonly fileOperations: FileOperationsFacade;
+  readonly notifyWebview: Notifier;
+  readonly providerRegistry: ProviderRegistry;
+}
 
-type ProviderPickerContext = {
+interface ProviderPickerContext {
+  readonly notifyWebview: Notifier;
   readonly providerRegistry: ProviderRegistry;
   readonly sessionLauncher: SessionLauncher;
-  readonly notifyWebview: Notifier;
-};
+}
 
 export class HomeViewMessageRouter {
   private readonly providerRegistry: ProviderRegistry;

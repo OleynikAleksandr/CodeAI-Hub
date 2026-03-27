@@ -3,22 +3,22 @@
  * and recovery/switch options are available.
  */
 
-type SwitchTarget = {
-  readonly providerId: string;
-  readonly modelId: string | null;
-  readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
+interface SwitchTarget {
   readonly label: string;
-};
+  readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
+  readonly modelId: string | null;
+  readonly providerId: string;
+}
 
-type SwitchRecoveryBannerProps = {
-  readonly reason: string;
-  readonly canRetryInPlace: boolean;
-  readonly recommendedTarget: SwitchTarget | null;
+interface SwitchRecoveryBannerProps {
   readonly alternativeTargets: readonly SwitchTarget[];
+  readonly canRetryInPlace: boolean;
+  readonly onDismiss?: () => void;
   readonly onRetryInPlace?: () => void;
   readonly onSelectTarget?: (target: SwitchTarget) => void;
-  readonly onDismiss?: () => void;
-};
+  readonly reason: string;
+  readonly recommendedTarget: SwitchTarget | null;
+}
 
 const formatTargetLabel = (target: SwitchTarget): string => {
   if (target.mode === "retry_in_place") {

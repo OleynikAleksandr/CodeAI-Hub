@@ -1,7 +1,7 @@
-type IdeaCollectorArtifact = {
-  readonly suggestedResponse: string | null;
+interface IdeaCollectorArtifact {
   readonly artifacts: readonly { slot: string; markdown: string }[];
-};
+  readonly suggestedResponse: string | null;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);

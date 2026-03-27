@@ -17,9 +17,9 @@ const SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
 const SETTINGS_FILE = path.join(SETTINGS_DIR, "settings.json");
 const LEGACY_CLAUDE_SETTINGS_FILE = path.join(SETTINGS_DIR, "claude.json");
 
-type LegacyClaudeSettingsFile = {
+interface LegacyClaudeSettingsFile {
   readonly thinking?: unknown;
-};
+}
 
 const normalizeSnapshotForStorage = (
   value: unknown

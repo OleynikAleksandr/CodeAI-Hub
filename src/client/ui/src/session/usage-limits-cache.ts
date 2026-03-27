@@ -3,11 +3,11 @@ import type { SessionStatusInfo } from "../../../../types/session";
 type UsageLimits = NonNullable<SessionStatusInfo["usageLimits"]>;
 type UsageLimitLabels = SessionStatusInfo["usageLimitLabels"];
 
-type StoredUsageLimits = {
-  readonly usageLimits: UsageLimits;
-  readonly usageLimitLabels?: UsageLimitLabels;
+interface StoredUsageLimits {
   readonly updatedAt: number;
-};
+  readonly usageLimitLabels?: UsageLimitLabels;
+  readonly usageLimits: UsageLimits;
+}
 
 const USAGE_LIMITS_STORAGE_PREFIX = "codeaihub:lastUsageLimitsByProvider:";
 

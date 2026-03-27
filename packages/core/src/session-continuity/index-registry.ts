@@ -6,11 +6,8 @@ const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
 const INDEX_FILE_NAME = "index.json";
 
-export type ContinuityIndexEntry = {
-  readonly stage: ContinuityStageId;
-  readonly rootSessionId: string;
+export interface ContinuityIndexEntry {
   readonly dialogId: string;
-  readonly updatedAt: string;
   /**
    * Core session id of the latest continuity segment (best-effort).
    * Used by clients to bind runtime status/lock/usage to the correct session id,
@@ -19,14 +16,17 @@ export type ContinuityIndexEntry = {
   readonly latestSessionId?: string | null;
   readonly providerId: string | null;
   readonly providerSessionId: string | null;
-};
+  readonly rootSessionId: string;
+  readonly stage: ContinuityStageId;
+  readonly updatedAt: string;
+}
 
-export type ContinuityIndex = {
+export interface ContinuityIndex {
+  readonly entries: readonly ContinuityIndexEntry[];
+  readonly updatedAt: string;
   readonly version: 1;
   readonly workspaceSlug: string;
-  readonly updatedAt: string;
-  readonly entries: readonly ContinuityIndexEntry[];
-};
+}
 
 const readJson = async <T>(filePath: string): Promise<T | null> => {
   try {

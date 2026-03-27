@@ -1,59 +1,59 @@
 import type { EventEmitter } from "node:events";
 import type { ClaudeStreamMessage } from "../types";
 
-export type MessageController = {
+export interface MessageController {
   pendingMessages: unknown[];
   resolveNext: ((value: unknown) => void) | null;
-};
+}
 
-export type SessionLogger = {
-  readonly start: (sessionId: string) => void;
+export interface SessionLogger {
   readonly end: () => void;
-  readonly logUserInput: (content: string) => void;
   readonly logSDKMessage: (type: string, payload: unknown) => void;
+  readonly logUserInput: (content: string) => void;
   readonly renameSession?: (oldId: string, newId: string) => void;
-};
+  readonly start: (sessionId: string) => void;
+}
 
-export type ClaudeTurnLifecycleState = {
-  started: boolean;
+export interface ClaudeTurnLifecycleState {
   ended: boolean;
-};
+  started: boolean;
+}
 
-export type ClaudeQueuedTurn = {
+export interface ClaudeQueuedTurn {
   readonly content: string;
-  readonly turnOptions?: Record<string, unknown>;
-  readonly internal: boolean;
   readonly enqueuedAt: number;
-};
+  readonly internal: boolean;
+  readonly turnOptions?: Record<string, unknown>;
+}
 
-export type ClaudeTurnQueueState = {
-  readonly pending: ClaudeQueuedTurn[];
+export interface ClaudeTurnQueueState {
   inFlight: ClaudeQueuedTurn | null;
   internalTurn: boolean;
   lifecycle: ClaudeTurnLifecycleState;
+  readonly pending: ClaudeQueuedTurn[];
   processing: boolean;
   shutdownRequested: boolean;
-};
+}
 
-export type ActiveSession = {
-  sessionId: string;
-  readonly workspacePath: string;
+export interface ActiveSession {
   readonly createdAt: number;
   readonly eventEmitter: EventEmitter;
-  readonly messageController: MessageController;
   readonly logger: SessionLogger | null;
-  readonly resumeSessionId?: string;
-  structuredOutputSchema?: Record<string, unknown> | null;
-  structuredOutputUuids?: Set<string>;
-  turnQueue?: ClaudeTurnQueueState;
-  processingLoop?: Promise<void>;
+  readonly messageController: MessageController;
   messageGenerator?: AsyncGenerator<unknown>;
+  processingLoop?: Promise<void>;
   queryInstance?: AsyncIterableIterator<unknown> & {
     interrupt?: () => Promise<void>;
   };
-};
+  readonly resumeSessionId?: string;
+  sessionId: string;
+  structuredOutputSchema?: Record<string, unknown> | null;
+  structuredOutputUuids?: Set<string>;
+  turnQueue?: ClaudeTurnQueueState;
+  readonly workspacePath: string;
+}
 
-export type ClaudeTurnProcessorHooks = {
+export interface ClaudeTurnProcessorHooks {
   readonly createIterator: (payload: {
     readonly session: ActiveSession;
     readonly turn: ClaudeQueuedTurn;
@@ -65,9 +65,9 @@ export type ClaudeTurnProcessorHooks = {
     readonly previousSessionId: string;
     readonly realSessionId: string;
   }) => void;
-};
+}
 
-export type SessionCreationResult = {
-  readonly tempId: string;
+export interface SessionCreationResult {
   readonly session: ActiveSession;
-};
+  readonly tempId: string;
+}

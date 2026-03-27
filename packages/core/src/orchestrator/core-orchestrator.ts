@@ -228,7 +228,7 @@ export class CoreOrchestrator {
 
   private buildTtlState(): CoreTtlState {
     const lastActivityAt =
-      this.lastActivityAt != null ? this.lastActivityAt.toISOString() : null;
+      this.lastActivityAt == null ? null : this.lastActivityAt.toISOString();
     const idleSince = this.idleSince ? this.idleSince.toISOString() : null;
 
     if (this.idleTtlMs === null) {

@@ -22,10 +22,10 @@ export type PortDecision =
   | { readonly kind: "running"; readonly port: number }
   | { readonly kind: "launch"; readonly port: number };
 
-type CorePortManagerOptions = {
-  readonly host: string;
+interface CorePortManagerOptions {
   readonly envPort: number;
-};
+  readonly host: string;
+}
 
 export class CorePortManager {
   private readonly host: string;

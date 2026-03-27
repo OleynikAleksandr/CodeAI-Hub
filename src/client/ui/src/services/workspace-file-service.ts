@@ -1,11 +1,11 @@
 import { joinUrl, resolveCoreHttpUrl } from "./idea-collector-support";
 
-export type WorkspaceFileResponse = {
+export interface WorkspaceFileResponse {
+  readonly content: string;
+  readonly maxBytes: number;
   readonly path: string;
   readonly truncated: boolean;
-  readonly maxBytes: number;
-  readonly content: string;
-};
+}
 
 export type WorkspaceFileFetchResult =
   | { readonly status: "ok"; readonly file: WorkspaceFileResponse }

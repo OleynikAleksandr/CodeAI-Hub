@@ -6,11 +6,11 @@ import ThinkingProTip from "./thinking/thinking-pro-tip";
 import ThinkingToggle from "./thinking/thinking-toggle";
 import ThinkingTokenInput from "./thinking/thinking-token-input";
 
-type ThinkingSettingsProps = {
+interface ThinkingSettingsProps {
   readonly enabled: boolean;
   readonly maxTokens: number;
   readonly onChange: (enabled: boolean, maxTokens: number) => void;
-};
+}
 
 const wrapperStyles: CSSProperties = {
   marginBottom: "30px",

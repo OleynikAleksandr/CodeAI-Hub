@@ -3,19 +3,19 @@ import path from "node:path";
 import type { ExtensionContext } from "vscode";
 import type { PlatformKey } from "./platform";
 
-export type ManifestEntry = {
+export interface ManifestEntry {
   readonly cefVersion: string;
   readonly channel: string;
   readonly package: string;
   readonly sha1: string;
   readonly size: number;
-};
+}
 
-export type Manifest = {
-  readonly schema: number;
+export interface Manifest {
   readonly baseUrl: string;
   readonly platforms: Record<PlatformKey, ManifestEntry | undefined>;
-};
+  readonly schema: number;
+}
 
 export const readManifest = async (
   context: ExtensionContext

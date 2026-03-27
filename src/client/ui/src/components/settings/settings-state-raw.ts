@@ -1,58 +1,58 @@
-export type RawThinkingSettings = {
+export interface RawThinkingSettings {
   readonly enabled?: unknown;
   readonly maxTokens?: unknown;
-};
-export type RawAutoUpdateSettings = {
+}
+export interface RawAutoUpdateSettings {
   readonly enabled?: unknown;
-};
-export type RawClaudeSessionContinuitySettings = {
+}
+export interface RawClaudeSessionContinuitySettings {
   readonly remainingPercentThreshold?: unknown;
-};
-export type RawCodexSessionContinuitySettings = {
+}
+export interface RawCodexSessionContinuitySettings {
   readonly remainingPercentThreshold?: unknown;
-};
-export type RawGeminiSessionContinuitySettings = {
+}
+export interface RawGeminiSessionContinuitySettings {
   readonly contextWindowTokenLimit?: unknown;
   readonly remainingPercentThreshold?: unknown;
-};
-export type RawClaudeSettings = {
-  readonly thinking?: RawThinkingSettings;
+}
+export interface RawClaudeSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly sessionContinuity?: RawClaudeSessionContinuitySettings;
-};
-export type RawCodexSettings = {
+  readonly thinking?: RawThinkingSettings;
+}
+export interface RawCodexSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: Record<string, unknown>;
   readonly sessionContinuity?: RawCodexSessionContinuitySettings;
-};
-export type RawGeminiSettings = {
+}
+export interface RawGeminiSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
-  readonly thinkingLevelByModel?: Record<string, unknown>;
   readonly sessionContinuity?: RawGeminiSessionContinuitySettings;
-};
-export type RawCoreControlsSettings = {
+  readonly thinkingLevelByModel?: Record<string, unknown>;
+}
+export interface RawCoreControlsSettings {
   readonly allowRestart?: unknown;
-};
-export type RawGeneralStrictOutputSettings = {
-  readonly schemaText?: unknown;
+}
+export interface RawGeneralStrictOutputSettings {
   readonly instructionText?: unknown;
-};
-export type RawGeneralResponsePolicySettings = {
+  readonly schemaText?: unknown;
+}
+export interface RawGeneralResponsePolicySettings {
   readonly mode?: unknown;
   readonly strictOutput?: RawGeneralStrictOutputSettings;
-};
-export type RawGeneralSettings = {
+}
+export interface RawGeneralSettings {
   readonly coreControls?: RawCoreControlsSettings;
   readonly responsePolicy?: RawGeneralResponsePolicySettings;
-};
-export type RawSettingsSnapshot = {
+}
+export interface RawSettingsSnapshot {
   readonly general?: RawGeneralSettings;
   readonly providers?: {
     readonly claude?: RawClaudeSettings;
     readonly codex?: RawCodexSettings;
     readonly gemini?: RawGeminiSettings;
   };
-};
+}

@@ -8,21 +8,21 @@ export type WorkflowArtifactFileName =
   | "product-part.md"
   | "module-map.flow.json";
 
-export type WorkflowArtifactPath = {
-  readonly stage: WorkflowStageId;
+export interface WorkflowArtifactPath {
+  readonly absolutePath: string;
   readonly fileName: WorkflowArtifactFileName;
   readonly partId?: string;
   readonly relativePath: string;
-  readonly absolutePath: string;
-};
-
-export type WorkflowArtifactPathParams = {
-  readonly workspaceRoot: string;
-  readonly workspaceSlug: string;
   readonly stage: WorkflowStageId;
+}
+
+export interface WorkflowArtifactPathParams {
   readonly fileName: WorkflowArtifactFileName;
   readonly partId?: string;
-};
+  readonly stage: WorkflowStageId;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}
 
 export type WorkflowArtifactPathResult =
   | { readonly ok: true; readonly value: WorkflowArtifactPath }

@@ -1,8 +1,8 @@
-export type BundledTemplateSource = {
-  readonly id: string;
-  readonly destinationRelativePath: string;
+export interface BundledTemplateSource {
   readonly base64: string;
-};
+  readonly destinationRelativePath: string;
+  readonly id: string;
+}
 
 export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   {

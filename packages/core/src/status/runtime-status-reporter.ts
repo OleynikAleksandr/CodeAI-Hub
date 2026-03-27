@@ -5,14 +5,14 @@ export type RuntimeStatusPhase =
   | "finalize"
   | "shutdown";
 
-export type RuntimeStatusEvent = {
-  readonly phase: RuntimeStatusPhase;
-  readonly label: string;
+export interface RuntimeStatusEvent {
   readonly detail?: string;
-  readonly scope?: string;
   readonly firstRun?: boolean;
+  readonly label: string;
+  readonly phase: RuntimeStatusPhase;
+  readonly scope?: string;
   readonly timestamp: string;
-};
+}
 
 type Listener = (event: RuntimeStatusEvent) => void;
 

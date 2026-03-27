@@ -1,25 +1,25 @@
-export type GeminiInstallerPaths = {
-  readonly macOS: string;
+export interface GeminiInstallerPaths {
   readonly linux: string;
+  readonly macOS: string;
   readonly windows: string;
-};
+}
 
-export type GeminiWorkspaceOptions = {
-  readonly workspacePath: string;
+export interface GeminiWorkspaceOptions {
   readonly defaultModel?: string;
-  readonly thinkingLevelByModel?: Record<string, string>;
   readonly settingsPath?: string;
-};
+  readonly thinkingLevelByModel?: Record<string, string>;
+  readonly workspacePath: string;
+}
 
-export type GeminiCredentialsOptions = {
+export interface GeminiCredentialsOptions {
   readonly directory?: string;
   readonly requiredFiles?: readonly string[];
-};
+}
 
-export type GeminiUsageLimitBucket = {
+export interface GeminiUsageLimitBucket {
   readonly percentUsed: number;
   readonly resetsAt: string | null;
-};
+}
 
 export type GeminiUsageLimits = {
   readonly currentSession?: GeminiUsageLimitBucket | null;
@@ -27,17 +27,15 @@ export type GeminiUsageLimits = {
   readonly currentWeekSonnetOnly?: GeminiUsageLimitBucket | null;
 } | null;
 
-export type GeminiUsageLimitsReadParams = {
-  readonly workspacePath: string;
-  readonly runtimeSessionId: string;
-  readonly providerSessionId: string | null;
+export interface GeminiUsageLimitsReadParams {
   readonly environment?: NodeJS.ProcessEnv;
   readonly force?: boolean;
-};
+  readonly providerSessionId: string | null;
+  readonly runtimeSessionId: string;
+  readonly workspacePath: string;
+}
 
-export type GeminiUsageLimitsStreamPayload = {
-  readonly providerScopeKey: string;
-  readonly usageLimits: GeminiUsageLimits;
+export interface GeminiUsageLimitsStreamPayload {
   readonly data: {
     readonly kind: "usage_limits";
     readonly usageLimits: GeminiUsageLimits;
@@ -45,16 +43,18 @@ export type GeminiUsageLimitsStreamPayload = {
     readonly source: string;
     readonly collectedAt: string;
   };
-};
+  readonly providerScopeKey: string;
+  readonly usageLimits: GeminiUsageLimits;
+}
 
-export type GeminiUsageLimitsFacadeBridge = {
-  readStreamPayload(
-    params: GeminiUsageLimitsReadParams
-  ): Promise<GeminiUsageLimitsStreamPayload | null>;
+export interface GeminiUsageLimitsFacadeBridge {
   getCachedStreamPayload(params: {
     readonly providerSessionId: string | null;
   }): GeminiUsageLimitsStreamPayload | null;
-};
+  readStreamPayload(
+    params: GeminiUsageLimitsReadParams
+  ): Promise<GeminiUsageLimitsStreamPayload | null>;
+}
 
 const areGeminiUsageLimitBucketsEqual = (
   left: GeminiUsageLimitBucket | null | undefined,
@@ -97,38 +97,35 @@ export const areGeminiUsageLimitsPayloadEqual = (
     right?.usageLimits ?? null
   );
 
-export type ModuleReporter = {
-  readonly info?: (message: string, metadata?: Record<string, unknown>) => void;
-  readonly warn?: (message: string, metadata?: Record<string, unknown>) => void;
+export interface ModuleReporter {
   readonly error?: (
     message: string,
     error?: unknown,
     metadata?: Record<string, unknown>
   ) => void;
+  readonly info?: (message: string, metadata?: Record<string, unknown>) => void;
   readonly progress?: (event: ModuleProgressEvent) => void;
-};
+  readonly warn?: (message: string, metadata?: Record<string, unknown>) => void;
+}
 
-export type GeminiModuleOptions = {
-  readonly installerPaths: GeminiInstallerPaths;
-  readonly workspace: GeminiWorkspaceOptions;
-  readonly reporter?: ModuleReporter;
-  readonly enableDebugLogging?: boolean;
+export interface GeminiModuleOptions {
   readonly credentials?: GeminiCredentialsOptions;
+  readonly enableDebugLogging?: boolean;
+  readonly installerPaths: GeminiInstallerPaths;
+  readonly reporter?: ModuleReporter;
   readonly usageLimitsFacade?: GeminiUsageLimitsFacadeBridge;
-};
+  readonly workspace: GeminiWorkspaceOptions;
+}
 
-export type GeminiSessionEvent = {
-  readonly type: string;
-  readonly provider?: string;
+export interface GeminiSessionEvent {
   readonly content?: string;
   readonly data?: unknown;
   readonly payload?: unknown;
-};
+  readonly provider?: string;
+  readonly type: string;
+}
 
-export type GeminiCliBridgeMetadata = {
-  readonly version: string;
-  readonly preparedAt: string;
-  readonly source: string;
+export interface GeminiCliBridgeMetadata {
   readonly cli?: {
     readonly package: string;
     readonly requiredVersion?: string;
@@ -139,17 +136,20 @@ export type GeminiCliBridgeMetadata = {
     readonly package: string;
     readonly version: string;
   };
-};
+  readonly preparedAt: string;
+  readonly source: string;
+  readonly version: string;
+}
 
-export type ModuleProgressEvent = {
-  readonly label: string;
+export interface ModuleProgressEvent {
   readonly detail?: string;
-  readonly scope?: string;
-  readonly phase?: "install" | "provider" | "finalize";
   readonly firstRun?: boolean;
-};
+  readonly label: string;
+  readonly phase?: "install" | "provider" | "finalize";
+  readonly scope?: string;
+}
 
-export type GeminiUpdateResult = {
+export interface GeminiUpdateResult {
   readonly cliVersion: string;
   readonly coreVersion: string;
-};
+}

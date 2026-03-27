@@ -14,18 +14,18 @@ type UsageLimitsProbeResult =
   | "parsed_empty"
   | "parsed_ok";
 
-type UsageLimitsProbeLogEntry = {
-  readonly type: "usage_limits_probe";
-  readonly timestamp: string;
-  readonly sessionId: string;
+interface UsageLimitsProbeLogEntry {
   readonly cwd: string;
-  readonly result: UsageLimitsProbeResult;
   readonly durationMs: number;
-  readonly httpStatus?: number;
-  readonly headers?: Readonly<Record<string, string>>;
-  readonly snapshot?: UsageLimitsSnapshot | null;
   readonly error?: string;
-};
+  readonly headers?: Readonly<Record<string, string>>;
+  readonly httpStatus?: number;
+  readonly result: UsageLimitsProbeResult;
+  readonly sessionId: string;
+  readonly snapshot?: UsageLimitsSnapshot | null;
+  readonly timestamp: string;
+  readonly type: "usage_limits_probe";
+}
 
 export class ClaudeUsageLimitsProbeLog {
   private readonly filePath: string;

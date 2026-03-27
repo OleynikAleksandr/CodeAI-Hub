@@ -17,16 +17,16 @@ const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const sanitizeSessionId = (value: string): string =>
   sanitizeWorkspaceSlug(value);
 
-type PendingSession = {
-  readonly providerId: string;
-  readonly workspaceSlug: string;
-  providerSessionId?: string;
+interface PendingSession {
   historySessionId: string;
   readonly historySessionIdLocked: boolean;
+  readonly providerId: string;
+  providerSessionId?: string;
+  readonly queue: SessionMessage[];
+  readonly workspaceSlug: string;
   writer?: UnifiedSessionWriter;
   writerSessionId?: string;
-  readonly queue: SessionMessage[];
-};
+}
 
 export class UnifiedSessionStorage {
   private readonly logger: Logger;

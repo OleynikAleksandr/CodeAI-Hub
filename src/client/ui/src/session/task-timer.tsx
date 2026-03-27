@@ -4,25 +4,25 @@ import type { ProviderTheme } from "./helpers";
 type TaskTimerPlacement = "overlay" | "footer";
 type TaskTimerMode = "total" | "turn";
 
-export type TaskTimerSnapshot = {
+export interface TaskTimerSnapshot {
+  /**
+   * Epoch time in ms when the current busy segment started, or null if idle.
+   */
+  readonly runningSinceMs: number | null;
   /**
    * Accumulated busy/wait time in whole seconds.
    * Does not include the currently-running busy segment (if any).
    */
   readonly totalSeconds: number;
-  /**
-   * Epoch time in ms when the current busy segment started, or null if idle.
-   */
-  readonly runningSinceMs: number | null;
-};
+}
 
-type TaskTimerProps = {
-  readonly timer: TaskTimerSnapshot | null;
+interface TaskTimerProps {
   readonly active: boolean;
-  readonly placement: TaskTimerPlacement;
   readonly mode?: TaskTimerMode;
+  readonly placement: TaskTimerPlacement;
   readonly theme?: ProviderTheme | null;
-};
+  readonly timer: TaskTimerSnapshot | null;
+}
 
 const TICK_MS = 1000;
 

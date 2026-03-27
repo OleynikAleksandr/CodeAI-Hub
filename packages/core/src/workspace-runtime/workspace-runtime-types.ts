@@ -1,13 +1,13 @@
-export type NodeKey = {
-  readonly workspaceRoot: string;
+export interface NodeKey {
   readonly nodeId: string;
-};
-
-export type SessionKey = {
   readonly workspaceRoot: string;
+}
+
+export interface SessionKey {
   readonly nodeId: string;
   readonly sessionId: string;
-};
+  readonly workspaceRoot: string;
+}
 
 export type WorkspaceLoadState = "loading" | "ready" | "error";
 
@@ -19,13 +19,13 @@ export type NodeStatus =
   | "OUTDATED"
   | "ERROR";
 
-export type NodeSnapshot = {
-  readonly status: NodeStatus;
+export interface NodeSnapshot extends Record<string, unknown> {
   readonly deps?: readonly string[];
   readonly label?: string;
   readonly reason?: string | null;
+  readonly status: NodeStatus;
   readonly updatedAt?: string;
-};
+}
 
 export type SessionTurnState = "idle" | "running";
 
@@ -38,17 +38,17 @@ export type SessionResumeMode =
 
 export type SessionTerminalLockReason = "terminal_no_resume";
 
-export type SessionTaskTimerSnapshot = {
+export interface SessionTaskTimerSnapshot {
+  /**
+   * Epoch time in ms when the current busy segment started, or null if idle.
+   */
+  readonly runningSinceMs: number | null;
   /**
    * Accumulated busy/wait time in whole seconds for the workflow node.
    * Does not include the currently-running busy segment (if any).
    */
   readonly totalSeconds: number;
-  /**
-   * Epoch time in ms when the current busy segment started, or null if idle.
-   */
-  readonly runningSinceMs: number | null;
-};
+}
 
 export type SessionContinuityLockReason =
   | "context_check_pending"
@@ -61,55 +61,55 @@ export type SessionContinuityLockReason =
   | "resume_timeout"
   | SessionTerminalLockReason;
 
-export type SessionContinuityLockTransition = {
-  readonly rolloverId: string;
-  readonly sourceSessionId: string;
-  readonly targetSessionId?: string;
-  readonly stageId?: string;
-  readonly runSlug?: string | null;
-  readonly reason: SessionContinuityLockReason;
-  readonly rolloverPending?: boolean;
+export interface SessionContinuityLockTransition {
   readonly awaitingBootstrapTurn: boolean;
-  readonly resumeMode?: SessionResumeMode;
   readonly finalTurnCompleted?: boolean;
+  readonly reason: SessionContinuityLockReason;
+  readonly resumeMode?: SessionResumeMode;
+  readonly rolloverId: string;
+  readonly rolloverPending?: boolean;
+  readonly runSlug?: string | null;
+  readonly sourceSessionId: string;
+  readonly stageId?: string;
+  readonly targetSessionId?: string;
   readonly terminalLockReason?: SessionTerminalLockReason;
   readonly updatedAt: string;
-};
+}
 
-export type SessionSnapshot = {
-  readonly nodeId: string;
-  readonly turnState: SessionTurnState;
+export interface SessionSnapshot extends Record<string, unknown> {
+  readonly bindingStatus?: SessionBindingStatus;
   readonly continuityLockActive: boolean;
   readonly continuityLockReason?: SessionContinuityLockReason;
   readonly continuityLockTransition?: SessionContinuityLockTransition;
-  readonly resumeMode?: SessionResumeMode;
   readonly finalTurnCompleted?: boolean;
-  readonly terminalLockReason?: SessionTerminalLockReason;
   readonly lastHeartbeatAt?: string;
+  readonly nodeId: string;
   readonly providerId?: string;
   readonly providerSessionId?: string;
-  readonly bindingStatus?: SessionBindingStatus;
+  readonly resumeMode?: SessionResumeMode;
   readonly taskTimer?: SessionTaskTimerSnapshot;
-};
+  readonly terminalLockReason?: SessionTerminalLockReason;
+  readonly turnState: SessionTurnState;
+}
 
-export type ArtifactPointer = {
+export interface ArtifactPointer extends Record<string, unknown> {
   readonly artifactId: string;
-  readonly version: string;
   readonly path: string;
   readonly updatedAt?: string;
-};
+  readonly version: string;
+}
 
-export type WorkspaceSnapshot = {
-  readonly workspaceRoot: string;
-  readonly loadState: WorkspaceLoadState;
-  readonly error?: string | null;
-  readonly workflow: {
-    readonly nodes: Readonly<Record<string, NodeSnapshot>>;
-  };
-  readonly sessions: Readonly<Record<string, SessionSnapshot>>;
+export interface WorkspaceSnapshot {
   readonly artifacts: {
     readonly currentByNodeId: Readonly<
       Record<string, Readonly<Record<string, ArtifactPointer>>>
     >;
   };
-};
+  readonly error?: string | null;
+  readonly loadState: WorkspaceLoadState;
+  readonly sessions: Readonly<Record<string, SessionSnapshot>>;
+  readonly workflow: {
+    readonly nodes: Readonly<Record<string, NodeSnapshot>>;
+  };
+  readonly workspaceRoot: string;
+}

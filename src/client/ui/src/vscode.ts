@@ -1,6 +1,6 @@
-export type VsCodeApi = {
+export interface VsCodeApi {
   postMessage: (message: unknown) => void;
-};
+}
 
 let cachedApi: VsCodeApi | undefined;
 

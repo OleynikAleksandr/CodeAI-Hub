@@ -17,14 +17,14 @@ import {
   resolveRecoveryTargets,
 } from "./recovery-target-resolver";
 
-export type FailureRecoveryContext = {
-  readonly sessionId: string;
+export interface FailureRecoveryContext {
+  readonly adapterAvailable: boolean;
   readonly dialogId: string | null;
   readonly providerId: string;
   readonly providerSessionId: string | null;
+  readonly sessionId: string;
   readonly stage: string | null;
-  readonly adapterAvailable: boolean;
-};
+}
 
 type ProviderHealthCheck = (providerId: string) => boolean;
 

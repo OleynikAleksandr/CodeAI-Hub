@@ -1,7 +1,7 @@
-export type ContextUsageSnapshot = {
-  readonly used: number;
+export interface ContextUsageSnapshot {
   readonly limit: number;
-};
+  readonly used: number;
+}
 
 const COMPACT_NUMBER_PATTERN = /^([\d.,]+)\s*([kKmM])?$/;
 const TOKENS_SNAPSHOT_PATTERNS: readonly RegExp[] = [

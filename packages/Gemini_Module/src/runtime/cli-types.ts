@@ -8,18 +8,18 @@ import type * as TurnModule from "@google/gemini-cli-core/dist/src/core/turn";
 import type * as ThoughtUtilsModule from "@google/gemini-cli-core/dist/src/utils/thoughtUtils";
 import type { GeminiCliBridgeMetadata } from "../types";
 
-export type GeminiCliModules = {
+export interface GeminiCliModules {
   readonly config: typeof CliConfigModule;
-  readonly settings: typeof CliSettingsModule;
+  readonly contentGenerator: typeof CoreContentModule;
   readonly extension: typeof CliExtensionModule;
   readonly extensionEnablement: typeof CliExtensionEnablementModule;
-  readonly contentGenerator: typeof CoreContentModule;
+  readonly settings: typeof CliSettingsModule;
+  readonly thoughtUtils: typeof ThoughtUtilsModule;
   readonly toolScheduler: typeof ToolSchedulerModule;
   readonly turn: typeof TurnModule;
-  readonly thoughtUtils: typeof ThoughtUtilsModule;
-};
+}
 
-export type GeminiCliBridge = {
-  readonly modules: GeminiCliModules;
+export interface GeminiCliBridge {
   readonly metadata: GeminiCliBridgeMetadata;
-};
+  readonly modules: GeminiCliModules;
+}

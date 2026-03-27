@@ -1,7 +1,7 @@
-type DecodedFragment = {
-  readonly decoded: string;
+interface DecodedFragment {
   readonly complete: boolean;
-};
+  readonly decoded: string;
+}
 
 const UNICODE_ESCAPE_REGEX = /^[0-9a-fA-F]{4}$/;
 

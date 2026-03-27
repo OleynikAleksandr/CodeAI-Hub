@@ -9,30 +9,30 @@ type GeminiUsageLimitSource = Extract<
   "gemini_quota_api"
 >;
 
-export type GeminiQuotaApiBucket = {
+export interface GeminiQuotaApiBucket {
   readonly modelId?: string | null;
-  readonly tokenType?: string | null;
   readonly remainingAmount?: string | null;
   readonly remainingFraction?: number | null;
   readonly resetTime?: string | null;
-};
+  readonly tokenType?: string | null;
+}
 
-export type GeminiQuotaApiSnapshot = {
+export interface GeminiQuotaApiSnapshot {
   readonly activeModel?: string | null;
   readonly buckets: readonly GeminiQuotaApiBucket[];
   readonly collectedAt: string;
-};
+}
 
-export type GeminiUsageLimitsNormalizeInput = {
+export interface GeminiUsageLimitsNormalizeInput {
   readonly providerScopeKey: string;
   readonly snapshot: GeminiQuotaApiSnapshot;
   readonly source?: GeminiUsageLimitSource;
-};
+}
 
-type GeminiWindowCandidate = {
+interface GeminiWindowCandidate {
   readonly priority: number;
   readonly window: Omit<ProviderUsageLimitWindow, "id">;
-};
+}
 
 const MAX_COMPAT_WINDOWS = 3;
 const DAILY_WINDOW_THRESHOLD_MS = 36 * 60 * 60 * 1000;

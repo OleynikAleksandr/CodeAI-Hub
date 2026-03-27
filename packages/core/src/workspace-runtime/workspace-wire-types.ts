@@ -8,66 +8,66 @@ export type WorkspaceSelectReason =
   | "reconnect"
   | "workspace_cleared";
 
-export type WorkspaceSelectPayload = {
+export interface WorkspaceSelectPayload {
+  readonly reason: WorkspaceSelectReason;
   readonly requestId: string;
   readonly workspaceRoot: string | null;
-  readonly reason: WorkspaceSelectReason;
-};
+}
 
-export type WorkspaceSelect = {
-  readonly type: "workspace:select";
+export interface WorkspaceSelect {
   readonly payload: WorkspaceSelectPayload;
-};
+  readonly type: "workspace:select";
+}
 
-export type WorkspaceSelectAckPayload = {
+export interface WorkspaceSelectAckPayload {
+  readonly error?: string | null;
   readonly requestId: string;
+  readonly selectionId: string | null;
   readonly status: "applied" | "rejected";
   readonly workspaceRoot: string | null;
-  readonly selectionId: string | null;
-  readonly error?: string | null;
-};
+}
 
-export type WorkspaceSelectAck = {
-  readonly type: "workspace:select:ack";
+export interface WorkspaceSelectAck {
   readonly payload: WorkspaceSelectAckPayload;
-};
+  readonly type: "workspace:select:ack";
+}
 
-export type WorkspaceSnapshotRequestPayload = {
+export interface WorkspaceSnapshotRequestPayload {
+  readonly reason: "resync" | "debug";
   readonly requestId: string;
   readonly workspaceRoot: string;
-  readonly reason: "resync" | "debug";
-};
+}
 
-export type WorkspaceSnapshotRequest = {
-  readonly type: "workspace:snapshot:request";
+export interface WorkspaceSnapshotRequest {
   readonly payload: WorkspaceSnapshotRequestPayload;
-};
+  readonly type: "workspace:snapshot:request";
+}
 
-export type WorkspaceSnapshotPushPayload = {
-  readonly workspaceRoot: string;
+export interface WorkspaceSnapshotPushPayload {
+  readonly generatedAt: string;
   readonly selectionId: string;
   readonly sequence: number;
-  readonly generatedAt: string;
   readonly snapshot: WorkspaceSnapshot;
-};
+  readonly workspaceRoot: string;
+}
 
-export type WorkspaceSnapshotPush = {
-  readonly type: "workspace:snapshot";
+export interface WorkspaceSnapshotPush {
   readonly payload: WorkspaceSnapshotPushPayload;
-};
+  readonly type: "workspace:snapshot";
+}
 
 export type WorkspaceSnapshotSessionTransition =
   SessionContinuityLockTransition;
 
-export type CommandErrorPayload = {
-  readonly requestId: string;
-  readonly command: string;
-  readonly message: string;
+export interface CommandErrorPayload {
   readonly code?: string;
+  readonly command: string;
   readonly details?: unknown;
-};
+  readonly message: string;
+  readonly requestId: string;
+}
 
-export type CommandError = {
-  readonly type: "command:error";
+export interface CommandError {
   readonly payload: CommandErrorPayload;
-};
+  readonly type: "command:error";
+}

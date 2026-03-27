@@ -1,14 +1,14 @@
 import type { CSSProperties, ReactNode } from "react";
 
-export type ProviderOptionDialogOption<Value extends string> = {
-  readonly value: Value;
-  readonly label: string;
+export interface ProviderOptionDialogOption<Value extends string> {
   readonly description: string;
-  readonly useCase: string;
   readonly isDefault?: boolean;
-};
+  readonly label: string;
+  readonly useCase: string;
+  readonly value: Value;
+}
 
-type ProviderOptionDialogProps<Value extends string> = {
+interface ProviderOptionDialogProps<Value extends string> {
   readonly ariaLabel: string;
   readonly closeLabel?: string;
   readonly footer?: ReactNode;
@@ -19,7 +19,7 @@ type ProviderOptionDialogProps<Value extends string> = {
   readonly selectedValue: Value;
   readonly subtitle: string;
   readonly title: string;
-};
+}
 
 const overlayStyles: CSSProperties = {
   position: "fixed",

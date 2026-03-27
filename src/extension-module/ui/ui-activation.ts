@@ -6,16 +6,16 @@ import { readUIManifest } from "./ui-manifest-reader";
 import { resolveUIBundlePath } from "./ui-path-resolver";
 import { UIRegistry } from "./ui-registry";
 
-export type UIActivationResult = {
-  webview: {
-    path: string;
-    source: "installed" | "embedded";
-  };
+export interface UIActivationResult {
   projectManager: {
     path: string;
     source: "installed" | "embedded";
   };
-};
+  webview: {
+    path: string;
+    source: "installed" | "embedded";
+  };
+}
 
 async function tryResolveBundle(
   bundleId: "vscode-webview" | "project-manager",

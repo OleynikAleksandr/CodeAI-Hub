@@ -1,8 +1,8 @@
 import type { DragDropLogger } from "./data-transfer-file-extractor";
 
-type LauncherBridge = {
+interface LauncherBridge {
   readonly requestFileDrop?: () => unknown;
-};
+}
 
 const resolveLauncherBridge = (): LauncherBridge | null => {
   const globalScope = window as typeof window & {

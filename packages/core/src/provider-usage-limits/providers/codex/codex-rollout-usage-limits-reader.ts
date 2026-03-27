@@ -14,10 +14,10 @@ const DEFAULT_CODEAI_CODEX_HOME = path.join(
   "home"
 );
 
-type DirectoryEntry = {
+interface DirectoryEntry {
   readonly name: string;
   readonly path: string;
-};
+}
 
 const fileExists = async (filePath: string): Promise<boolean> => {
   try {
@@ -174,9 +174,9 @@ const scanYearDirectory = async (
   return null;
 };
 
-export type CodexRolloutUsageLimitsReaderOptions = {
+export interface CodexRolloutUsageLimitsReaderOptions {
   readonly codexHome?: string;
-};
+}
 
 export const resolveCodexRolloutFilePath = async (
   providerSessionId: string,

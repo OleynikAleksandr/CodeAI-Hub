@@ -16,15 +16,16 @@ export const PACKAGE_MAP = {
 export type ProviderId = keyof typeof PACKAGE_MAP;
 export type VersionTarget = "cli" | "sdk" | "core";
 
-export type VersionEntry = {
-  readonly packageName: string;
+export interface VersionEntry {
   readonly currentVersion: string | null;
-  readonly latestVersion: string | null;
-  readonly source: "global";
   readonly error?: string | null;
-};
+  readonly latestVersion: string | null;
+  readonly packageName: string;
+  readonly source: "global";
+}
 
-export type ProviderVersionsSnapshot = {
+export interface ProviderVersionsSnapshot {
+  readonly checkedAt: string;
   readonly claude: {
     readonly cli: VersionEntry;
     readonly sdk: VersionEntry;
@@ -37,21 +38,20 @@ export type ProviderVersionsSnapshot = {
     readonly cli: VersionEntry;
     readonly core: VersionEntry;
   };
-  readonly checkedAt: string;
-};
+}
 
-export type PackageVersionResult = {
-  readonly packageName: string;
+export interface PackageVersionResult {
   readonly currentVersion: string | null;
-  readonly latestVersion: string | null;
   readonly error?: string;
-};
+  readonly latestVersion: string | null;
+  readonly packageName: string;
+}
 
-export type PackageDescriptor = {
+export interface PackageDescriptor {
+  readonly packageName: string;
   readonly provider: ProviderId;
   readonly target: VersionTarget;
-  readonly packageName: string;
-};
+}
 
 const nowIso = (): string => new Date().toISOString();
 

@@ -13,8 +13,11 @@
     "node": ">=20.0.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.7",
     "@types/node": "^20.11.0",
-    "typescript": "^5.3.3"
+    "husky": "^9.1.7",
+    "typescript": "^5.3.3",
+    "ultracite": "^7.3.2"
   },
   "keywords": [
     "codeai-hub",

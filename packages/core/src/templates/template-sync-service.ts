@@ -9,12 +9,12 @@ import {
 
 type TemplateSyncOutcome = "installed" | "updated" | "up-to-date" | "error";
 
-type TemplateSyncResult = {
-  readonly id: string;
-  readonly path: string;
-  readonly outcome: TemplateSyncOutcome;
+interface TemplateSyncResult {
   readonly error?: string;
-};
+  readonly id: string;
+  readonly outcome: TemplateSyncOutcome;
+  readonly path: string;
+}
 
 const normalizeContent = (value: string): string =>
   value.replace(/\r\n/g, "\n").trimEnd();
@@ -132,7 +132,7 @@ export class TemplateSyncService {
     }
 
     const normalizedExisting =
-      existing !== null ? normalizeContent(existing) : null;
+      existing === null ? null : normalizeContent(existing);
     if (normalizedExisting === normalizedBundled) {
       return { id: source.id, path: destinationPath, outcome: "up-to-date" };
     }

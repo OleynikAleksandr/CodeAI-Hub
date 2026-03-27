@@ -8,11 +8,11 @@ import {
 } from "node:fs";
 import { CORE_LOCK_FILE, STATE_DIR } from "./paths";
 
-type ManagerClaim = {
+interface ManagerClaim {
   readonly manager: string;
   readonly pid: number;
   readonly timestamp: number;
-};
+}
 
 const encodeClaim = (claim: ManagerClaim): string =>
   `manager=${claim.manager}\npid=${claim.pid}\ntimestamp=${claim.timestamp}\n`;

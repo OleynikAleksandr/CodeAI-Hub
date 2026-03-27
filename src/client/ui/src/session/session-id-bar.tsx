@@ -9,10 +9,10 @@ import { readLastKnownUsageLimitsState } from "./usage-limits-cache";
 
 const SESSION_ID_PREFIX_LENGTH = 8;
 
-type SessionIdBarProps = {
+interface SessionIdBarProps {
   readonly binding: SessionBindingInfo;
   readonly status: SessionStatusInfo;
-};
+}
 
 const resolveIdLabel = (binding: SessionBindingInfo): string => {
   if (binding.providerSessionId) {

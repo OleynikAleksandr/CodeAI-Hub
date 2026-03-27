@@ -43,46 +43,46 @@ export type ProviderId = "claude" | "codex" | "gemini";
 export type { ProviderVersions, VersionEntry } from "./provider-versions-model";
 export type { RawSettingsSnapshot } from "./settings-state-raw";
 
-type ThinkingSettings = {
+interface ThinkingSettings {
   readonly enabled: boolean;
   readonly maxTokens: number;
-};
-type AutoUpdateSettings = {
+}
+interface AutoUpdateSettings {
   readonly enabled: boolean;
-};
-type CoreControlsSettings = {
+}
+interface CoreControlsSettings {
   readonly allowRestart: boolean;
-};
-type GeneralSettings = {
+}
+interface GeneralSettings {
   readonly coreControls: CoreControlsSettings;
   readonly responsePolicy: import("./general-response-mode/response-mode-state").GeneralResponsePolicySettings;
-};
-type ContinuitySettings = {
+}
+interface ContinuitySettings {
   readonly remainingPercentThreshold: number;
-};
-type ClaudeSettings = {
-  readonly thinking: ThinkingSettings;
+}
+interface ClaudeSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: ClaudeModelAliasId;
   readonly sessionContinuity: ContinuitySettings;
-};
+  readonly thinking: ThinkingSettings;
+}
 export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
 >;
-type CodexSettings = {
+interface CodexSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
   readonly sessionContinuity: ContinuitySettings;
-};
-export type Settings = {
+}
+export interface Settings {
   readonly general: GeneralSettings;
   readonly providers: {
     readonly claude: ClaudeSettings;
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettings;
   };
-};
+}
 
 const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;

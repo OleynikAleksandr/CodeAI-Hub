@@ -16,10 +16,10 @@ import ThinkingSettings from "./settings/thinking-settings";
 import { useSettingsState } from "./settings/use-settings-state";
 
 type SettingsMode = "settings-only" | "full";
-type SettingsViewProps = {
-  readonly onClose: () => void;
+interface SettingsViewProps {
   readonly mode?: SettingsMode;
-};
+  readonly onClose: () => void;
+}
 
 type SettingsTab = "claude" | "codex" | "gemini" | "general";
 

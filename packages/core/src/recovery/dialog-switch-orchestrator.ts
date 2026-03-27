@@ -12,24 +12,24 @@ export type SwitchMode = "retry_in_place" | "switch_model" | "switch_provider";
 
 export type SwitchInitiator = "core_recovery" | "user_request";
 
-export type SwitchRequest = {
-  readonly sessionId: string;
-  readonly dialogId: string;
-  readonly mode: SwitchMode;
-  readonly initiator: SwitchInitiator;
+export interface SwitchRequest {
   readonly currentProviderId: string;
   readonly currentProviderSessionId: string | null;
-  readonly targetProviderId: string;
-  readonly targetModelId: string | null;
+  readonly dialogId: string;
+  readonly initiator: SwitchInitiator;
+  readonly mode: SwitchMode;
   readonly pendingUserIntent: string | null;
-};
+  readonly sessionId: string;
+  readonly targetModelId: string | null;
+  readonly targetProviderId: string;
+}
 
-export type SwitchResult = {
-  readonly success: boolean;
+export interface SwitchResult {
+  readonly error: string | null;
   readonly newProviderSessionId: string | null;
   readonly newSessionId: string | null;
-  readonly error: string | null;
-};
+  readonly success: boolean;
+}
 
 type AdapterResumeFunction = (
   providerSessionId: string,
@@ -42,9 +42,9 @@ type AdapterLookup = (providerId: string) =>
     }
   | undefined;
 
-export type OrchestratorDeps = {
-  readonly logger: Logger;
+export interface OrchestratorDeps {
   readonly getAdapter: AdapterLookup;
+  readonly logger: Logger;
   readonly rebindSession: (
     sessionId: string,
     providerSessionId: string,
@@ -54,7 +54,7 @@ export type OrchestratorDeps = {
     sessionId: string,
     content: string
   ) => Promise<void>;
-};
+}
 
 export class DialogSwitchOrchestrator {
   private readonly deps: OrchestratorDeps;

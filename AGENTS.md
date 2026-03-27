@@ -157,15 +157,15 @@ doc/TODO/Archive/
 
 # Ultracite Code Standards
 
-This project uses **Ultracite**, a zero-config Biome preset that enforces strict code quality standards through automated formatting and linting.
+This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.
 
 ## Quick Reference
 
-- **Format code**: `npx ultracite fix`
-- **Check for issues**: `npx ultracite check`
-- **Diagnose setup**: `npx ultracite doctor`
+- **Format code**: `npm exec -- ultracite fix`
+- **Check for issues**: `npm exec -- ultracite check`
+- **Diagnose setup**: `npm exec -- ultracite doctor`
 
-Biome (the underlying engine) provides extremely fast Rust-based linting and formatting. Most issues are automatically fixable.
+Biome (the underlying engine) provides robust linting and formatting. Most issues are automatically fixable.
 
 ---
 
@@ -277,11 +277,4 @@ Biome's linter will catch most issues automatically. Focus your attention on:
 
 ---
 
-Most formatting and common issues are automatically fixed by Biome. Run `npx ultracite fix` before committing to ensure compliance.
-
----
-
-## Политика релизов (GitHub)
-- Во время активной разработки **не публикуем релизы на GitHub** (слишком много бинарных артефактов/модулей).
-- Все релизы оформляются и проверяются **локально** (артефакты в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, VSIX в корне репозитория).
-- Любые действия вида `gh auth login`, `gh release create/upload`, публикация assets/notes выполняются **только по явному запросу пользователя**.
+Most formatting and common issues are automatically fixed by Biome. Run `npm exec -- ultracite fix` before committing to ensure compliance.

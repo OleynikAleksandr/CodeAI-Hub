@@ -30,12 +30,12 @@ const buttonStyles: CSSProperties = {
   fontSize: "12px",
 };
 
-type GeneralSettingsProps = {
-  readonly responsePolicy: GeneralResponsePolicySettings;
+interface GeneralSettingsProps {
   readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
-  readonly onStrictSchemaTextChange: (value: string) => void;
   readonly onStrictInstructionTextChange: (value: string) => void;
-};
+  readonly onStrictSchemaTextChange: (value: string) => void;
+  readonly responsePolicy: GeneralResponsePolicySettings;
+}
 
 const GeneralSettings = (props: GeneralSettingsProps) => {
   const handleRestartCore = () => {

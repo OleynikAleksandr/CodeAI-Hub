@@ -24,9 +24,9 @@ const CLI_EXECUTABLE_WINDOWS = "gemini.cmd";
 const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
 const USERPROFILE_PATTERN = /%USERPROFILE%/giu;
 
-export type GeminiInstallerOptions = {
+export interface GeminiInstallerOptions {
   readonly reporter?: ModuleReporter;
-};
+}
 
 export class GeminiInstaller {
   private readonly reporter?: ModuleReporter;

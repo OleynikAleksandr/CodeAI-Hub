@@ -24,14 +24,14 @@ html {
 }
 
 body {
-  margin: 0;
+  height: 100vh;
   padding: 0;
+  margin: 0;
+  overflow: hidden;
   font-family: var(--vscode-font-family);
   font-size: var(--vscode-font-size);
   color: var(--vscode-foreground);
   background-color: var(--app-background);
-  height: 100vh;
-  overflow: hidden;
 }
 
 #app {
@@ -43,8 +43,8 @@ body {
   flex-direction: column;
   height: 100vh;
   min-height: 0;
-  background-color: transparent;
   overflow: hidden;
+  background-color: transparent;
 }
 
 #root.active {
@@ -53,49 +53,49 @@ body {
 
 /* App shell */
 .app-shell {
-  flex: 1;
+  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
+  gap: 0;
   min-height: 0;
   background-color: var(--app-background);
-  gap: 0;
-  position: relative;
 }
 
 .app-shell__session-region {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0;
-  padding: 8px 8px 0;
-  background-color: rgba(31, 31, 31, 1);
   min-height: 0;
+  padding: 8px 8px 0;
   overflow: hidden;
+  background-color: rgba(31, 31, 31, 1);
 }
 
 /* Action bar */
 .action-bar {
-  padding: 0;
   display: flex;
   justify-content: center;
+  padding: 0;
   background-color: var(--app-background);
 }
 
 .action-bar__surface {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   padding: 16px 8px;
   background-color: var(--surface-background);
   box-shadow: 0 1px rgba(255, 255, 255, 0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 .action-bar__rail {
   position: absolute;
-  left: 0;
   right: 0;
+  left: 0;
   height: 8px;
   pointer-events: none;
 }
@@ -135,21 +135,21 @@ body {
 
 .action-bar__context-label {
   font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--action-button-text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .action-bar__context-select,
 .action-bar__context-input {
   height: 32px;
-  border-radius: 4px;
-  border: 1px solid rgba(120, 140, 160, 0.6);
-  background-color: rgba(26, 30, 34, 0.9);
-  color: var(--action-button-text-strong);
   padding: 0 10px;
   font-size: 12px;
+  color: var(--action-button-text-strong);
   outline: none;
+  background-color: rgba(26, 30, 34, 0.9);
+  border: 1px solid rgba(120, 140, 160, 0.6);
+  border-radius: 4px;
 }
 
 .action-bar__context-row .action-bar__context-select {
@@ -159,8 +159,8 @@ body {
 
 .action-bar__context-select:disabled,
 .action-bar__context-input:disabled {
-  opacity: 0.55;
   cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .action-bar__context-actions {
@@ -171,13 +171,13 @@ body {
 
 .action-bar__context-button {
   height: 32px;
-  border-radius: 4px;
-  border: 1px solid var(--action-button-border);
-  background-color: rgba(35, 40, 45, 0.9);
-  color: var(--action-button-text-strong);
   padding: 0 10px;
   font-size: 12px;
+  color: var(--action-button-text-strong);
   cursor: pointer;
+  background-color: rgba(35, 40, 45, 0.9);
+  border: 1px solid var(--action-button-border);
+  border-radius: 4px;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -185,14 +185,14 @@ body {
 }
 
 .action-bar__context-button:hover {
+  color: #ffffff;
   background-color: rgba(45, 55, 65, 0.9);
   border-color: var(--action-button-hover-border);
-  color: #ffffff;
 }
 
 .action-bar__context-button:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .action-bar__context-form {
@@ -203,15 +203,15 @@ body {
   gap: 8px;
   align-items: center;
   padding: 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(120, 140, 160, 0.3);
   background-color: rgba(22, 26, 30, 0.9);
+  border: 1px solid rgba(120, 140, 160, 0.3);
+  border-radius: 6px;
 }
 
 .action-bar__context-form-title {
   font-size: 12px;
-  color: var(--action-button-text-strong);
   font-weight: 600;
+  color: var(--action-button-text-strong);
 }
 
 .action-bar__context-form-actions {
@@ -248,17 +248,17 @@ body {
 }
 
 .action-bar__button {
-  height: 32px;
-  border-radius: 4px;
-  border: 1px solid var(--action-button-border);
-  background-color: var(--action-button-bg);
-  color: var(--action-button-text);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 32px;
   line-height: 1.05;
+  color: var(--action-button-text);
   cursor: pointer;
+  background-color: var(--action-button-bg);
+  border: 1px solid var(--action-button-border);
+  border-radius: 4px;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -266,15 +266,15 @@ body {
 }
 
 .action-bar__button:hover {
+  color: var(--action-button-text-strong);
   background-color: var(--action-button-hover-bg);
   border-color: var(--action-button-hover-border);
-  color: var(--action-button-text-strong);
 }
 
 .action-bar__button:active {
+  color: #ffffff;
   background-color: var(--action-button-active-bg);
   border-color: var(--action-button-active-border);
-  color: #ffffff;
 }
 
 .action-bar__button:focus-visible {
@@ -283,24 +283,24 @@ body {
 }
 
 .action-bar__button:disabled {
-  opacity: 0.45;
+  color: var(--action-button-text);
   cursor: not-allowed;
   background-color: var(--action-button-bg);
   border-color: var(--action-button-border);
-  color: var(--action-button-text);
+  opacity: 0.45;
 }
 
 .action-bar__button:disabled:hover,
 .action-bar__button:disabled:active {
+  color: var(--action-button-text);
   background-color: var(--action-button-bg);
   border-color: var(--action-button-border);
-  color: var(--action-button-text);
 }
 
 .action-bar__button--highlight {
+  color: var(--action-button-text);
   background-color: var(--action-button-bg);
   border-color: var(--action-button-border);
-  color: var(--action-button-text);
 }
 
 .action-bar__line {
@@ -344,24 +344,24 @@ body {
 
 .app-shell__status-card {
   display: inline-flex;
-  align-items: center;
   gap: 12px;
+  align-items: center;
   padding: 14px 18px;
-  border-radius: 6px;
+  font-size: 13px;
+  color: var(--vscode-foreground, #e6e6e6);
   background-color: rgba(20, 20, 20, 0.9);
   border: 1px solid rgba(96, 96, 96, 0.6);
-  color: var(--vscode-foreground, #e6e6e6);
-  font-size: 13px;
+  border-radius: 6px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 .app-shell__status-indicator {
   width: 14px;
   height: 14px;
-  border-radius: 50%;
   border: 2px solid transparent;
   border-top-color: #f5f5f5;
   border-right-color: #f5f5f5;
+  border-radius: 50%;
   animation: app-shell-spin 0.9s linear infinite;
 }
 
@@ -369,8 +369,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  white-space: normal;
   max-width: min(340px, 60vw);
+  white-space: normal;
 }
 
 .app-shell__status-line {
@@ -397,23 +397,23 @@ body {
 
 /* Provider picker */
 .provider-picker {
+  padding: 16px;
+  color: var(--vscode-foreground, #cccccc);
   background-color: #242a2f;
   border: 1px solid #333333;
   border-radius: 6px;
-  padding: 16px;
-  color: var(--vscode-foreground, #cccccc);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .provider-picker__title {
-  font-size: 14px;
   margin: 0 0 4px;
+  font-size: 14px;
   color: var(--vscode-foreground, #e6e6e6);
 }
 
 .provider-picker__description {
-  font-size: 12px;
   margin: 0 0 12px;
+  font-size: 12px;
   color: #a6a6a6;
 }
 
@@ -424,12 +424,12 @@ body {
 }
 
 .provider-picker__fieldset {
-  margin: 0;
-  padding: 0;
-  border: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 0;
+  margin: 0;
+  border: none;
 }
 
 .provider-picker__spacer {
@@ -447,10 +447,10 @@ body {
   display: flex;
   gap: 8px;
   align-items: flex-start;
+  padding: 8px;
   background-color: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 4px;
-  padding: 8px;
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease;
@@ -498,13 +498,13 @@ body {
 }
 
 .provider-picker__label-status {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.06em;
   text-transform: uppercase;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  letter-spacing: 0.06em;
 }
 
 .provider-picker__label-status--connected {
@@ -517,57 +517,57 @@ body {
 
 .provider-picker__warning {
   display: block;
-  font-size: 11px;
-  color: #f5c06f;
   margin-top: 4px;
+  font-size: 11px;
   line-height: 1.4;
+  color: #f5c06f;
 }
 
 .provider-picker__actions {
   display: flex;
   flex-direction: row;
+  gap: 16px;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
   margin-top: 16px;
 }
 
 .provider-picker__action-buttons {
   display: flex;
-  align-items: center;
   gap: 8px;
+  align-items: center;
 }
 
 .provider-picker__primary,
 .provider-picker__secondary {
   height: 32px;
   padding: 0 16px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  cursor: pointer;
   font-size: 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
   transition: all 0.2s ease;
 }
 
 .provider-picker__primary {
-  background-color: var(--action-button-bg);
-  color: var(--action-button-text);
-  border-color: var(--action-button-border);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  color: var(--action-button-text);
+  background-color: var(--action-button-bg);
+  border-color: var(--action-button-border);
 }
 
 .provider-picker__primary:hover:enabled {
-  background-color: var(--action-button-hover-bg);
   color: var(--action-button-text-strong);
+  background-color: var(--action-button-hover-bg);
   border-color: var(--action-button-hover-border);
 }
 
 .provider-picker__primary:active:enabled {
-  background-color: var(--action-button-active-bg);
   color: #ffffff;
+  background-color: var(--action-button-active-bg);
   border-color: var(--action-button-active-border);
 }
 
@@ -577,13 +577,13 @@ body {
 }
 
 .provider-picker__primary:disabled {
-  opacity: 0.4;
   cursor: not-allowed;
+  opacity: 0.4;
 }
 
 .provider-picker__secondary {
-  background-color: transparent;
   color: #d0d0d0;
+  background-color: transparent;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -592,9 +592,9 @@ body {
 }
 
 .provider-picker__status {
+  flex: 1 1 auto;
   font-size: 11px;
   color: #989898;
-  flex: 1 1 auto;
   text-align: left;
 }
 
@@ -602,19 +602,19 @@ body {
 .settings-overlay {
   position: fixed;
   inset: 0;
+  z-index: 20;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
   background-color: #1e1e1e;
-  z-index: 20;
 }
 
 .settings-overlay__panel {
   width: 100%;
   height: 100%;
+  overflow: hidden;
   background-color: #1e1e1e;
   border: none;
   border-radius: 0;
   box-shadow: none;
-  overflow: hidden;
 }

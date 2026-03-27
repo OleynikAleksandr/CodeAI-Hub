@@ -5,11 +5,11 @@ type OpenSettingsHandler = () => void;
 
 type CloseSettingsHandler = () => void;
 
-export type UseSettingsVisibilityResult = {
-  readonly settingsVisible: boolean;
-  readonly openSettings: OpenSettingsHandler;
+export interface UseSettingsVisibilityResult {
   readonly closeSettings: CloseSettingsHandler;
-};
+  readonly openSettings: OpenSettingsHandler;
+  readonly settingsVisible: boolean;
+}
 
 export const useSettingsVisibility = (): UseSettingsVisibilityResult => {
   const [settingsVisible, setSettingsVisible] = useState(false);

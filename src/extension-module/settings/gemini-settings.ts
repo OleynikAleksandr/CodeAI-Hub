@@ -11,17 +11,17 @@ import {
 } from "./auto-update-settings";
 import { isRecord } from "./settings-utils";
 
-export type GeminiSessionContinuitySettings = {
+export interface GeminiSessionContinuitySettings {
   readonly contextWindowTokenLimit: number;
   readonly remainingPercentThreshold: number;
-};
+}
 
-export type GeminiSettings = {
+export interface GeminiSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: GeminiModelId;
-  readonly thinkingLevelByModel: Record<string, GeminiThinkingLevel>;
   readonly sessionContinuity: GeminiSessionContinuitySettings;
-};
+  readonly thinkingLevelByModel: Record<string, GeminiThinkingLevel>;
+}
 
 export const MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 export const MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;

@@ -3,49 +3,40 @@ import type { Logger } from "../../telemetry/logger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { BridgeEvent } from "../types";
 
-type ProviderEventEnvelope = {
+interface ProviderEventEnvelope {
+  readonly payload?: unknown;
   readonly type?: string;
-  readonly payload?: unknown;
-};
+}
 
-type DialogMessagePayload = {
-  readonly role?: string;
+interface DialogMessagePayload {
   readonly content?: unknown;
-  readonly timestamp?: string;
+  readonly role?: string;
   readonly tag?: string;
-};
+  readonly timestamp?: string;
+}
 
-type SessionIdChangedPayload = { readonly newId?: string };
+interface SessionIdChangedPayload {
+  readonly newId?: string;
+}
 
-type ProviderErrorEnvelope = {
-  readonly provider?: unknown;
-  readonly message?: unknown;
+interface ProviderErrorEnvelope {
   readonly error?: unknown;
+  readonly message?: unknown;
   readonly payload?: unknown;
-};
+  readonly provider?: unknown;
+}
 
-type SessionProviderEventRouterDependencies = {
-  readonly sessionManager: SessionManager;
+interface SessionProviderEventRouterDependencies {
+  readonly appendDialogMessage: (
+    sessionId: string,
+    payload: DialogMessagePayload
+  ) => void;
+  readonly appendProviderMessage: (
+    sessionId: string,
+    role: "assistant" | "system" | "thinking",
+    event: unknown
+  ) => void;
   readonly broadcaster: (event: BridgeEvent) => void;
-  readonly logger: Logger;
-  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
-  readonly handleSessionContinuityProviderEvent: (
-    sessionId: string,
-    event: unknown
-  ) => Promise<void>;
-  readonly handleFlowNodeContinuityProviderEvent: (
-    sessionId: string,
-    event: unknown
-  ) => Promise<void>;
-  readonly updateBindingWithResolvedId: (
-    sessionId: string,
-    providerSessionId: string
-  ) => void;
-  readonly markPostTurnContextDecisionPending: (sessionId: string) => void;
-  readonly handleTurnCompletedWithFlowNodeArbitration: (
-    sessionId: string,
-    flowNodeContinuityTask: Promise<void>
-  ) => void;
   readonly clearPostTurnContextDecision: (sessionId: string) => void;
   readonly emitTurnStateEvent: (options: {
     readonly sessionId: string;
@@ -55,16 +46,27 @@ type SessionProviderEventRouterDependencies = {
     readonly sessionId: string;
     readonly reason: "resume_ready" | "resume_failed" | "resume_timeout";
   }) => void;
-  readonly appendProviderMessage: (
+  readonly handleFlowNodeContinuityProviderEvent: (
     sessionId: string,
-    role: "assistant" | "system" | "thinking",
     event: unknown
-  ) => void;
-  readonly appendDialogMessage: (
+  ) => Promise<void>;
+  readonly handleSessionContinuityProviderEvent: (
     sessionId: string,
-    payload: DialogMessagePayload
+    event: unknown
+  ) => Promise<void>;
+  readonly handleTurnCompletedWithFlowNodeArbitration: (
+    sessionId: string,
+    flowNodeContinuityTask: Promise<void>
   ) => void;
-};
+  readonly logger: Logger;
+  readonly markPostTurnContextDecisionPending: (sessionId: string) => void;
+  readonly sessionManager: SessionManager;
+  readonly updateBindingWithResolvedId: (
+    sessionId: string,
+    providerSessionId: string
+  ) => void;
+  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
+}
 
 export class SessionProviderEventRouter {
   private readonly deps: SessionProviderEventRouterDependencies;
@@ -239,7 +241,6 @@ export class SessionProviderEventRouter {
       typeof typed.provider === "string" && typed.provider.trim().length > 0
         ? typed.provider.trim()
         : null;
-
     this.deps.broadcaster({
       type: "session:error",
       payload: {

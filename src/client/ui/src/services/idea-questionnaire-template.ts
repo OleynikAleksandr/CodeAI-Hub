@@ -1,16 +1,16 @@
-type QuestionnaireField = {
+interface QuestionnaireField {
+  readonly description?: string;
+  readonly hint?: string;
   readonly id: string;
   readonly title: string;
   readonly titleHint?: string;
-  readonly description?: string;
-  readonly hint?: string;
-};
+}
 
-type FieldMeta = {
+interface FieldMeta {
+  readonly description?: string;
   readonly title: string;
   readonly titleHint?: string;
-  readonly description?: string;
-};
+}
 
 export const FIELD_REGEX =
   /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;

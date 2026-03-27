@@ -15,15 +15,15 @@ export type DiagramModulesSubstep =
   | "awaiting_review"
   | "blocked_ambiguity";
 
-export type DiagramModulesProgressSnapshot = {
-  readonly substep: DiagramModulesSubstep;
-  readonly plannedPartIds: readonly string[];
-  readonly generatedPartIds: readonly string[];
-  readonly currentPartId?: string;
-  readonly plannedCount: number;
-  readonly generatedCount: number;
+export interface DiagramModulesProgressSnapshot {
   readonly aggregateReady: boolean;
-};
+  readonly currentPartId?: string;
+  readonly generatedCount: number;
+  readonly generatedPartIds: readonly string[];
+  readonly plannedCount: number;
+  readonly plannedPartIds: readonly string[];
+  readonly substep: DiagramModulesSubstep;
+}
 
 const readExistingFile = async (
   absolutePath: string

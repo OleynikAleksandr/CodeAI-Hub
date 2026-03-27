@@ -1,13 +1,13 @@
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import { type FlowStageId, FlowWizard } from "../components/flow-wizard";
 
-type FlowWizardPickerProps = {
-  readonly providers: readonly ProviderStackDescriptor[];
-  readonly selectedStage: FlowStageId | null;
+interface FlowWizardPickerProps {
   readonly onCancel: () => void;
   readonly onStageClick: (stage: FlowStageId) => void;
+  readonly providers: readonly ProviderStackDescriptor[];
+  readonly selectedStage: FlowStageId | null;
   readonly visible: boolean;
-};
+}
 
 export const FlowWizardPicker = ({
   providers,

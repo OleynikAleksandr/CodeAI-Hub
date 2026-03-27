@@ -12,58 +12,58 @@ import type { BridgeEvent } from "../types";
 export type ContinuityLockState = "locked" | "unlocked";
 export type ContinuityLockReason = SessionContinuityLockReason;
 
-type ContinuityLockPayload = {
+interface ContinuityLockPayload {
   readonly kind: "continuity_lock";
-  readonly state: ContinuityLockState;
-  readonly rolloverId: string;
-  readonly sourceSessionId: string;
-  readonly targetSessionId?: string;
-  readonly stageId: string;
-  readonly runSlug: string | null;
   readonly reason: ContinuityLockReason;
+  readonly rolloverId: string;
+  readonly runSlug: string | null;
+  readonly sourceSessionId: string;
+  readonly stageId: string;
+  readonly state: ContinuityLockState;
+  readonly targetSessionId?: string;
   readonly timestamp: string;
-};
+}
 
-export type FlowNodeContinuityLockContext = {
-  readonly rolloverId: string;
-  readonly sourceSessionId: string;
-  readonly targetSessionId?: string;
-  readonly stageId: string;
-  readonly runSlug: string | null;
+export interface FlowNodeContinuityLockContext {
   readonly awaitingBootstrapTurn: boolean;
-};
-
-export type EmitContinuityLockEventOptions = {
-  readonly sessionId: string;
   readonly rolloverId: string;
-  readonly sourceSessionId: string;
-  readonly targetSessionId?: string;
-  readonly stageId: string;
   readonly runSlug: string | null;
-  readonly state: ContinuityLockState;
+  readonly sourceSessionId: string;
+  readonly stageId: string;
+  readonly targetSessionId?: string;
+}
+
+export interface EmitContinuityLockEventOptions {
   readonly reason: ContinuityLockReason;
-};
+  readonly rolloverId: string;
+  readonly runSlug: string | null;
+  readonly sessionId: string;
+  readonly sourceSessionId: string;
+  readonly stageId: string;
+  readonly state: ContinuityLockState;
+  readonly targetSessionId?: string;
+}
 
-type SessionResumeLifecycleSnapshot = {
-  readonly mode: SessionResumeMode;
+interface SessionResumeLifecycleSnapshot {
   readonly finalTurnCompleted: boolean;
+  readonly mode: SessionResumeMode;
   readonly terminalLockReason: SessionTerminalLockReason | null;
-};
+}
 
-type SessionContinuityLockServiceDependencies = {
-  readonly sessionManager: SessionManager;
+interface SessionContinuityLockServiceDependencies {
   readonly broadcaster: (event: BridgeEvent) => void;
-  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   readonly clearPostTurnContextDecision: (sessionId: string) => void;
   readonly clearRolloverSessionState: (sessionId: string) => void;
   readonly getSessionResumeLifecycleState: (
     session: Session
   ) => SessionResumeLifecycleSnapshot;
+  readonly sessionManager: SessionManager;
   readonly updateSessionResumeLifecycleState: (
     session: Session,
     patch: Partial<SessionResumeLifecycleSnapshot>
   ) => SessionResumeLifecycleSnapshot;
-};
+  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
+}
 
 export class SessionContinuityLockService {
   private readonly deps: SessionContinuityLockServiceDependencies;

@@ -41,44 +41,44 @@ const EVENTS_RETURN_TIMEOUT_MS = 1500;
 const CODEAI_CODEX_RATE_LIMITS_PAYLOAD_ENV_KEY =
   "CODEAI_CODEX_RATE_LIMITS_PAYLOAD";
 
-type EnqueuedMessage = {
-  readonly type: "user_input";
+interface EnqueuedMessage {
   readonly content: string;
-  readonly turnOptions?: CodexTurnOptions;
   readonly internal?: boolean;
-};
+  readonly turnOptions?: CodexTurnOptions;
+  readonly type: "user_input";
+}
 
-type ProcessTurnContext = {
+interface ProcessTurnContext {
+  readonly message: EnqueuedMessage;
   readonly session: ActiveSession;
   readonly thread: Thread;
-  readonly message: EnqueuedMessage;
-};
+}
 
-type MessageProcessorOptions = {
+interface MessageProcessorOptions {
   readonly reporter?: ModuleReporter;
   readonly usageLimitsFacade?: CodexUsageLimitsFacadeBridge;
-};
+}
 
-type ReasoningDelta = {
+interface ReasoningDelta {
   readonly delta: string;
   readonly merged: string;
-};
+}
 
-type StartupLockContext = {
+interface StartupLockContext {
+  readonly ownerSessionId: string;
   readonly release: CodexStartupLockRelease;
   readonly threadStartedTimeoutMs: number;
-  readonly ownerSessionId: string;
-};
+}
 
-type TurnLifecycleState = {
-  started: boolean;
+interface TurnLifecycleState {
   ended: boolean;
-};
+  started: boolean;
+}
 type AgentMessageItem = ThreadItem & { readonly type: "agent_message" };
-type IdlePulsePayload = {
+interface IdlePulsePayload {
   readonly elapsedMs: number;
   readonly idleCount: number;
-};
+}
 
 const isAgentMessageItem = (item: ThreadItem): item is AgentMessageItem =>
   item.type === "agent_message";

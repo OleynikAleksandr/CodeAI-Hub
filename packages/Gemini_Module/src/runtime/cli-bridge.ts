@@ -10,6 +10,9 @@ const { createRequire } = nodeModule;
 const moduleGlobalPaths =
   (nodeModule as unknown as { globalPaths?: readonly string[] }).globalPaths ??
   [];
+const requireFromWorkspaceRoot = createRequire(
+  path.join(process.cwd(), "package.json")
+);
 
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
@@ -160,8 +163,7 @@ const resolveGeminiCliRoot = async (): Promise<{
   }
 
   try {
-    const requireFromHere = createRequire(__filename);
-    const resolved = requireFromHere.resolve(
+    const resolved = requireFromWorkspaceRoot.resolve(
       `${GEMINI_CLI_PACKAGE}/package.json`
     );
     candidates.push(resolved);
@@ -241,8 +243,7 @@ const resolveGeminiCliCoreRoot = async (
   }
 
   try {
-    const requireFromHere = createRequire(__filename);
-    const resolved = requireFromHere.resolve(
+    const resolved = requireFromWorkspaceRoot.resolve(
       `${GEMINI_CLI_CORE_PACKAGE}/package.json`
     );
     candidates.push(resolved);
@@ -372,11 +373,11 @@ const loadGeminiModules = async (
   };
 };
 
-export type LoadCliBridgeOptions = {
+export interface LoadCliBridgeOptions {
   readonly expectedCliVersion?: string;
   readonly expectedCoreVersion?: string;
   readonly reporter?: ModuleReporter;
-};
+}
 
 export const loadCliBridgeFromGlobal = async (
   options: LoadCliBridgeOptions = {}

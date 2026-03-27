@@ -1,15 +1,15 @@
-type ActionBarContextFormProps = {
-  readonly mode: "initiative" | null;
-  readonly title: string;
-  readonly name: string;
-  readonly description: string;
+interface ActionBarContextFormProps {
   readonly controlsDisabled: boolean;
-  readonly statusMessage: string | null;
-  readonly onNameChange: (value: string) => void;
-  readonly onDescriptionChange: (value: string) => void;
-  readonly onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  readonly description: string;
+  readonly mode: "initiative" | null;
+  readonly name: string;
   readonly onCancel: () => void;
-};
+  readonly onDescriptionChange: (value: string) => void;
+  readonly onNameChange: (value: string) => void;
+  readonly onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  readonly statusMessage: string | null;
+  readonly title: string;
+}
 
 export const ActionBarContextForm = ({
   mode,

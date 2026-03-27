@@ -19,10 +19,10 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
 const supportsRecursiveWatch = (): boolean =>
   process.platform === "darwin" || process.platform === "win32";
 
-type WorkflowPathMatch = {
-  readonly stage: WorkflowStageId;
+interface WorkflowPathMatch {
   readonly filePath?: string;
-};
+  readonly stage: WorkflowStageId;
+}
 
 const isWorkflowStage = (value: string): value is WorkflowStageId =>
   WORKFLOW_STAGE_SET.has(value as WorkflowStageId);

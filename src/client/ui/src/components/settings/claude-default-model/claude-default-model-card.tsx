@@ -22,10 +22,10 @@ import {
   rowSelectedStyles,
 } from "../shared-model-card-styles";
 
-type ClaudeDefaultModelCardProps = {
+interface ClaudeDefaultModelCardProps {
   readonly defaultModel: ClaudeModelAliasId;
   readonly onDefaultModelChange: (model: ClaudeModelAliasId) => void;
-};
+}
 
 const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
   defaultModel,

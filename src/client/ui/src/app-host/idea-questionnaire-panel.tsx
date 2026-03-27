@@ -18,13 +18,13 @@ import {
 } from "./session-region-idea-paths";
 import { IDEA_QUESTIONNAIRE_COPY } from "./session-region-questionnaire-copy";
 
-type IdeaQuestionnairePanelProps = {
+interface IdeaQuestionnairePanelProps {
   readonly activeSessionId: string | null;
-  readonly sessions: readonly SessionRecord[];
+  readonly onQuestionnaireVisibleChange: (visible: boolean) => void;
   readonly pendingQuestionnaireRef: MutableRefObject<boolean>;
   readonly pickerVisible: boolean;
-  readonly onQuestionnaireVisibleChange: (visible: boolean) => void;
-};
+  readonly sessions: readonly SessionRecord[];
+}
 
 export const IdeaQuestionnairePanel = ({
   activeSessionId,

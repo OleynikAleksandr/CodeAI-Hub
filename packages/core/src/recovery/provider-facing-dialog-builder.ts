@@ -4,10 +4,10 @@
  * without metadata, timestamps, or provider-specific envelopes.
  */
 
-export type DialogMessage = {
-  readonly role: "system" | "user" | "assistant" | "thinking";
+export interface DialogMessage {
   readonly content: string;
-};
+  readonly role: "system" | "user" | "assistant" | "thinking";
+}
 
 /**
  * Build a plain-text dialog transcript for the new provider.

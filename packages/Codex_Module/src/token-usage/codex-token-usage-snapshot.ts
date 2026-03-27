@@ -1,7 +1,7 @@
-export type TokenUsageSnapshot = {
-  readonly used: number;
+export interface TokenUsageSnapshot {
   readonly limit: number;
-};
+  readonly used: number;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);

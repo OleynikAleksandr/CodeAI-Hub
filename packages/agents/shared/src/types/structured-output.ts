@@ -4,14 +4,14 @@ import type { JsonRecord } from "./agent-contract";
  * Base interface for agent structured output.
  * All agent-specific outputs extend this interface.
  */
-export type BaseStructuredOutput = {
-  /** Suggested response text to show the user */
-  readonly suggestedResponse: string | null;
-  /** Next action indicator (e.g., 'continue', 'finalize', 'clarify') */
-  readonly nextAction: string | null;
+export interface BaseStructuredOutput {
   /** Generated artifact data (agent-specific structure) */
   readonly artifact: JsonRecord | null;
-};
+  /** Next action indicator (e.g., 'continue', 'finalize', 'clarify') */
+  readonly nextAction: string | null;
+  /** Suggested response text to show the user */
+  readonly suggestedResponse: string | null;
+}
 
 /**
  * Result of parsing structured output from LLM response.

@@ -5,18 +5,18 @@
 
 import type { CanonicalSessionPreamble } from "./canonical-session-preamble-resolver";
 
-export type SwitchHandoffContext = {
-  readonly initiator: "core_recovery" | "user_request";
-  readonly previousProviderId: string;
-  readonly previousModelId: string | null;
-  readonly targetProviderId: string;
-  readonly targetModelId: string | null;
-  readonly switchMode: "retry_in_place" | "switch_model" | "switch_provider";
-  readonly reason: string;
-  readonly preamble: CanonicalSessionPreamble;
-  readonly latestUserIntent: string | null;
+export interface SwitchHandoffContext {
   readonly dialogPromptPath: string;
-};
+  readonly initiator: "core_recovery" | "user_request";
+  readonly latestUserIntent: string | null;
+  readonly preamble: CanonicalSessionPreamble;
+  readonly previousModelId: string | null;
+  readonly previousProviderId: string;
+  readonly reason: string;
+  readonly switchMode: "retry_in_place" | "switch_model" | "switch_provider";
+  readonly targetModelId: string | null;
+  readonly targetProviderId: string;
+}
 
 export function buildProviderSwitchHandoff(
   context: SwitchHandoffContext

@@ -14,32 +14,32 @@ const EXEC_PATCHED = Symbol("codex-reasoning-exec-run");
 const INTERNAL_ORIGINATOR_ENV = "CODEX_INTERNAL_ORIGINATOR_OVERRIDE";
 const TYPESCRIPT_SDK_ORIGINATOR = "codex_sdk_ts";
 
-type ConfigOverride = {
+interface ConfigOverride {
   readonly key: string;
   readonly value: string;
-};
+}
 
 type PatchedThreadOptions = ThreadOptions & {
   readonly modelReasoningEffort?: string;
 };
 
-type ThreadTurnOptions = {
+interface ThreadTurnOptions {
   readonly outputSchema?: unknown;
-};
+}
 
-type PatchedExecArgs = {
-  readonly input: string;
-  readonly baseUrl?: string;
+interface PatchedExecArgs {
   readonly apiKey?: string;
-  readonly threadId?: string | null;
-  readonly images?: readonly string[];
-  readonly model?: string;
-  readonly sandboxMode?: string;
-  readonly workingDirectory?: string;
-  readonly skipGitRepoCheck?: boolean;
-  readonly outputSchemaFile?: string;
+  readonly baseUrl?: string;
   configOverrides?: readonly ConfigOverride[];
-};
+  readonly images?: readonly string[];
+  readonly input: string;
+  readonly model?: string;
+  readonly outputSchemaFile?: string;
+  readonly sandboxMode?: string;
+  readonly skipGitRepoCheck?: boolean;
+  readonly threadId?: string | null;
+  readonly workingDirectory?: string;
+}
 
 type ThreadRunStreamedInternal = (
   this: {
@@ -62,7 +62,9 @@ type ThreadRunStreamedInternal = (
 const isJsonObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-type ThreadConstructor = { prototype: unknown };
+interface ThreadConstructor {
+  prototype: unknown;
+}
 
 const isThreadStartedEvent = (
   value: unknown

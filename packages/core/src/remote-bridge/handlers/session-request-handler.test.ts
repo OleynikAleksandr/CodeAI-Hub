@@ -12,43 +12,43 @@ export const SOURCE_PATH = path.resolve(
   "packages/core/src/remote-bridge/handlers/session-request-handler.ts"
 );
 
-export type BindingUpdate = {
-  readonly sessionId: string;
+export interface BindingUpdate {
   readonly providerSessionId: string;
-};
-export type RuntimeLockUpdate = {
   readonly sessionId: string;
+}
+export interface RuntimeLockUpdate {
   readonly active: boolean;
-  readonly reason: string | null;
-  readonly transitionRolloverId: string | null;
   readonly awaitingBootstrapTurn: boolean;
-};
-type MutableSessionStorage = {
+  readonly reason: string | null;
+  readonly sessionId: string;
+  readonly transitionRolloverId: string | null;
+}
+interface MutableSessionStorage {
   appendMessage: (...args: unknown[]) => Promise<void>;
+  backfillHistory: (...args: unknown[]) => Promise<void>;
   close: (...args: unknown[]) => void;
   promote: (sessionId: string, providerSessionId: string) => void;
-  register: (...args: unknown[]) => void;
-  backfillHistory: (...args: unknown[]) => Promise<void>;
   promoteHistoryFile: (...args: unknown[]) => void;
-};
-type MutableProviderRegistry = {
+  register: (...args: unknown[]) => void;
+}
+interface MutableProviderRegistry {
   getAdapter: (...args: unknown[]) => unknown;
   handleRuntimeFailure: (...args: unknown[]) => void;
-};
+}
 
-export type HandlerHarness = {
-  readonly handler: SessionRequestHandler;
+export interface HandlerHarness {
   readonly api: SessionRequestHandler & Record<string, unknown>;
-  readonly sessionManager: SessionManager;
-  readonly providerSessions: Map<string, ProviderSessionBinding>;
-  readonly providerRegistry: MutableProviderRegistry;
-  readonly sessionStorage: MutableSessionStorage;
-  readonly events: BridgeEvent[];
-  readonly promoted: BindingUpdate[];
-  readonly continuityUpdates: BindingUpdate[];
   readonly continuityTracked: BindingUpdate[];
+  readonly continuityUpdates: BindingUpdate[];
+  readonly events: BridgeEvent[];
+  readonly handler: SessionRequestHandler;
+  readonly promoted: BindingUpdate[];
+  readonly providerRegistry: MutableProviderRegistry;
+  readonly providerSessions: Map<string, ProviderSessionBinding>;
   readonly runtimeLockUpdates: RuntimeLockUpdate[];
-};
+  readonly sessionManager: SessionManager;
+  readonly sessionStorage: MutableSessionStorage;
+}
 
 const TEST_CORE_CONFIG: CoreConfig = {
   host: "127.0.0.1",

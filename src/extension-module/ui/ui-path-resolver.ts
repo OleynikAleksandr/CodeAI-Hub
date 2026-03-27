@@ -3,10 +3,10 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import type { UIBundleId } from "./ui-types";
 
-export type UIPathResolveResult = {
+export interface UIPathResolveResult {
   readonly path: string;
   readonly source: "installed" | "embedded";
-};
+}
 
 /**
  * Resolves the path to a UI bundle.

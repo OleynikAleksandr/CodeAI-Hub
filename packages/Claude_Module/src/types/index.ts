@@ -1,27 +1,27 @@
-export type ClaudeInstallerPaths = {
-  readonly macOS: string;
+export interface ClaudeInstallerPaths {
   readonly linux: string;
+  readonly macOS: string;
   readonly windows: string;
-};
+}
 
-export type ClaudeWorkspaceOptions = {
-  readonly workspacePath: string;
+export interface ClaudeWorkspaceOptions {
   readonly claudeProjectSlug: string;
-  readonly settingsPath?: string;
   readonly defaultModel?: string;
-};
+  readonly settingsPath?: string;
+  readonly workspacePath: string;
+}
 
-export type ModuleReporter = {
-  readonly info?: (message: string) => void;
-  readonly warn?: (message: string) => void;
+export interface ModuleReporter {
   readonly error?: (message: string, error?: unknown) => void;
+  readonly info?: (message: string) => void;
   readonly progress?: (event: ModuleProgressEvent) => void;
-};
+  readonly warn?: (message: string) => void;
+}
 
-export type ClaudeUsageLimitBucket = {
+export interface ClaudeUsageLimitBucket {
   readonly percentUsed: number;
   readonly resetsAt: string | null;
-};
+}
 
 export type ClaudeUsageLimits = {
   readonly currentSession?: ClaudeUsageLimitBucket | null;
@@ -29,17 +29,15 @@ export type ClaudeUsageLimits = {
   readonly currentWeekSonnetOnly?: ClaudeUsageLimitBucket | null;
 } | null;
 
-export type ClaudeUsageLimitsReadParams = {
-  readonly workspacePath: string;
-  readonly runtimeSessionId: string;
-  readonly providerSessionId: string | null;
+export interface ClaudeUsageLimitsReadParams {
   readonly environment?: NodeJS.ProcessEnv;
   readonly force?: boolean;
-};
+  readonly providerSessionId: string | null;
+  readonly runtimeSessionId: string;
+  readonly workspacePath: string;
+}
 
-export type ClaudeUsageLimitsStreamPayload = {
-  readonly providerScopeKey: string;
-  readonly usageLimits: ClaudeUsageLimits;
+export interface ClaudeUsageLimitsStreamPayload {
   readonly data: {
     readonly kind: "usage_limits";
     readonly usageLimits: ClaudeUsageLimits;
@@ -47,24 +45,26 @@ export type ClaudeUsageLimitsStreamPayload = {
     readonly source: string;
     readonly collectedAt: string;
   };
-};
+  readonly providerScopeKey: string;
+  readonly usageLimits: ClaudeUsageLimits;
+}
 
-export type ClaudeUsageLimitsFacadeBridge = {
-  readStreamPayload(
-    params: ClaudeUsageLimitsReadParams
-  ): Promise<ClaudeUsageLimitsStreamPayload | null>;
+export interface ClaudeUsageLimitsFacadeBridge {
   getCachedStreamPayload(params: {
     readonly providerSessionId: string | null;
   }): ClaudeUsageLimitsStreamPayload | null;
-};
+  readStreamPayload(
+    params: ClaudeUsageLimitsReadParams
+  ): Promise<ClaudeUsageLimitsStreamPayload | null>;
+}
 
-export type ClaudeModuleOptions = {
-  readonly installerPaths: ClaudeInstallerPaths;
-  readonly workspace: ClaudeWorkspaceOptions;
+export interface ClaudeModuleOptions {
   readonly enableDebugStreams?: boolean;
+  readonly installerPaths: ClaudeInstallerPaths;
   readonly reporter?: ModuleReporter;
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
-};
+  readonly workspace: ClaudeWorkspaceOptions;
+}
 
 export type ClaudeStreamMessage = {
   readonly type: string;
@@ -87,10 +87,10 @@ export type ClaudeStreamMessage = {
   readonly timestamp?: string;
 } & Record<string, unknown>;
 
-export type ModuleProgressEvent = {
-  readonly label: string;
+export interface ModuleProgressEvent {
   readonly detail?: string;
-  readonly scope?: string;
-  readonly phase?: "install" | "provider" | "finalize";
   readonly firstRun?: boolean;
-};
+  readonly label: string;
+  readonly phase?: "install" | "provider" | "finalize";
+  readonly scope?: string;
+}

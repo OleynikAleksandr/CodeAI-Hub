@@ -1,11 +1,11 @@
-export type IFilePathFacade = {
-  startMonitoring(): Promise<void>;
-  stopMonitoring(): void;
-  getDraggedFilePaths(): Promise<string[] | null>;
-  getDraggedFilePath(): Promise<string | null>;
-  copyPathToClipboard(filePath: string): Promise<void>;
-  getClipboardPath(): Promise<string | null>;
+export interface IFilePathFacade {
   cachePaths(paths: readonly string[]): void;
   clearCache(): void;
+  copyPathToClipboard(filePath: string): Promise<void>;
   dispose(): void;
-};
+  getClipboardPath(): Promise<string | null>;
+  getDraggedFilePath(): Promise<string | null>;
+  getDraggedFilePaths(): Promise<string[] | null>;
+  startMonitoring(): Promise<void>;
+  stopMonitoring(): void;
+}

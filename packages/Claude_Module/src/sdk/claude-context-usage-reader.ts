@@ -8,10 +8,10 @@ import {
 import type { ContextUsageSnapshot } from "./claude-context-usage-snapshot";
 import { extractSnapshotFromStreamJsonLine } from "./claude-context-usage-snapshot";
 
-type ContextUsageReaderOptions = {
-  readonly executablePath: string;
+interface ContextUsageReaderOptions {
   readonly env: NodeJS.ProcessEnv;
-};
+  readonly executablePath: string;
+}
 
 const TEMP_SESSION_PREFIX = "temp_";
 

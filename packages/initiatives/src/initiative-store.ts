@@ -11,13 +11,13 @@ import {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
-export type InitiativeManifest = {
-  readonly initiativeSlug: string;
-  readonly displayName: string;
-  readonly description?: string;
+export interface InitiativeManifest {
   readonly createdAt: string;
+  readonly description?: string;
+  readonly displayName: string;
+  readonly initiativeSlug: string;
   readonly updatedAt: string;
-};
+}
 
 const parseInitiativeManifest = (value: unknown): InitiativeManifest | null => {
   if (!isRecord(value)) {

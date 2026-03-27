@@ -11,22 +11,22 @@ type ProgressReporter = Progress<{
   increment?: number;
 }>;
 
-type DownloadRequest = {
-  readonly url: string;
+interface DownloadRequest {
   readonly destination: string;
-  readonly size: number;
-  readonly progress?: ProgressReporter;
   readonly label?: string;
   readonly localFallbacks?: readonly string[];
-};
-
-type StreamOptions = {
-  readonly response: IncomingMessage;
-  readonly destination: string;
-  readonly totalBytes: number;
   readonly progress?: ProgressReporter;
+  readonly size: number;
+  readonly url: string;
+}
+
+interface StreamOptions {
+  readonly destination: string;
   readonly label: string;
-};
+  readonly progress?: ProgressReporter;
+  readonly response: IncomingMessage;
+  readonly totalBytes: number;
+}
 
 const HTTP_STATUS_OK = 200;
 const HTTP_STATUS_MOVED_PERMANENTLY = 301;

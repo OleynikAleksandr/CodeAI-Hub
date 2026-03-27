@@ -6,14 +6,14 @@ import type {
 } from "react";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
 
-type SettingsFooterProps = {
+interface SettingsFooterProps {
   readonly hasChanges: boolean;
-  readonly saving: boolean;
-  readonly resetting: boolean;
   readonly onClose: () => void;
-  readonly onSave: () => void;
   readonly onReset: () => void;
-};
+  readonly onSave: () => void;
+  readonly resetting: boolean;
+  readonly saving: boolean;
+}
 
 const containerStyles: CSSProperties = {
   display: "flex",

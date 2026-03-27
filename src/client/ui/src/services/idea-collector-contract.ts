@@ -4,36 +4,36 @@ import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "./idea-collector-fallback-schema
 import { normalizeIdeaCollectorSchema } from "./idea-collector-schema-utils";
 import { joinUrl, resolveCoreHttpUrl } from "./idea-collector-support";
 
-type WorkflowContractPayload = {
+interface WorkflowContractPayload extends Record<string, unknown> {
   readonly prompt: string;
-  readonly schema: Record<string, unknown>;
-  readonly template?: string;
   readonly questionnaire?: {
     readonly templateMarkdown?: string;
   };
+  readonly schema: Record<string, unknown>;
+  readonly template?: string;
   readonly version?: string;
-};
+}
 
-type WorkflowContractSnapshot = {
+interface WorkflowContractSnapshot {
   readonly prompt: string;
+  readonly questionnaireTemplateMarkdown: string | null;
   readonly schema: Record<string, unknown>;
   readonly template: string | null;
-  readonly questionnaireTemplateMarkdown: string | null;
   readonly version: string | null;
-};
+}
 
 export type DescriptionContractSnapshot = WorkflowContractSnapshot;
 export type VirtualSimulationContractSnapshot = WorkflowContractSnapshot;
 
-export type IdeaContractSnapshot = {
-  readonly prompt: string;
-  readonly schema: Record<string, unknown>;
+export interface IdeaContractSnapshot {
   readonly outputPaths: {
     readonly idea: string;
     readonly virtualSimulation: string;
   };
+  readonly prompt: string;
   readonly questionnaireTemplateMarkdown: string | null;
-};
+  readonly schema: Record<string, unknown>;
+}
 
 const DESCRIPTION_CONTRACT_ENDPOINT =
   "/api/v1/orchestrator/description-contract";

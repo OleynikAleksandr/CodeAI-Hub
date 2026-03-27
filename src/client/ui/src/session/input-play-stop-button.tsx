@@ -1,9 +1,9 @@
 import { memo } from "react";
 
-type InputPlayStopButtonProps = {
-  readonly stopActive: boolean;
+interface InputPlayStopButtonProps {
   readonly onClick: () => void;
-};
+  readonly stopActive: boolean;
+}
 
 const InputPlayStopButton = ({
   stopActive,

@@ -9,11 +9,11 @@ import {
 
 export type FlowStageId = "chat" | "idea" | "spec" | "plan" | "execute";
 
-export type FlowWizardProps = {
+export interface FlowWizardProps {
   readonly activeStage: FlowStageId | null;
-  readonly onStageClick: (stage: FlowStageId) => void;
   readonly disabledStages?: ReadonlySet<FlowStageId>;
-};
+  readonly onStageClick: (stage: FlowStageId) => void;
+}
 
 const STAGES: ReadonlyArray<{
   readonly id: FlowStageId;

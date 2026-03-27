@@ -36,15 +36,15 @@ import {
 } from "./codex-model-card-styles";
 import CodexReasoningDialog from "./codex-reasoning-dialog";
 
-type CodexDefaultModelCardProps = {
+interface CodexDefaultModelCardProps {
   readonly defaultModel: CodexModelId;
-  readonly reasoningByModel: CodexReasoningByModel;
   readonly onDefaultModelChange: (modelId: CodexModelId) => void;
   readonly onReasoningChange: (
     modelId: CodexModelId,
     reasoning: CodexReasoningLevel
   ) => void;
-};
+  readonly reasoningByModel: CodexReasoningByModel;
+}
 
 const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
   <div

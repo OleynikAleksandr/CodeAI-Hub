@@ -46,11 +46,11 @@ export const resolveUniqueSlug = (
   throw new Error(`Unable to allocate unique slug for ${baseSlug}`);
 };
 
-export type InitiativePaths = {
-  readonly initiativesRoot: string;
+export interface InitiativePaths {
   readonly initiativeDir: string;
   readonly initiativeManifestPath: string;
-};
+  readonly initiativesRoot: string;
+}
 
 export const resolveInitiativesRoot = (workspaceRoot: string): string =>
   path.join(workspaceRoot, ".codeai-hub");

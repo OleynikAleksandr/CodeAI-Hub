@@ -39,14 +39,14 @@ const AUTH_PROBE_TIMEOUT_MS = 20_000;
 const AUTH_PROBE_KILL_GRACE_MS = 2000;
 const MAX_PROBE_OUTPUT_CHARS = 4000;
 
-type ExecFailure = {
-  readonly message?: unknown;
-  readonly stdout?: unknown;
-  readonly stderr?: unknown;
+interface ExecFailure {
   readonly code?: unknown;
-  readonly signal?: unknown;
   readonly killed?: unknown;
-};
+  readonly message?: unknown;
+  readonly signal?: unknown;
+  readonly stderr?: unknown;
+  readonly stdout?: unknown;
+}
 
 const toOptionalString = (value: unknown): string => {
   if (typeof value === "string") {
@@ -462,7 +462,7 @@ export class SDKAuthManager {
           return;
         }
 
-        const codePart = code !== null ? `code=${code}` : "";
+        const codePart = code === null ? "" : `code=${code}`;
         const signalPart = signal ? `signal=${signal}` : "";
         const details = [failureMessage, codePart, signalPart]
           .filter(Boolean)

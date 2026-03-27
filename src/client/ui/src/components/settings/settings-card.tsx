@@ -25,10 +25,10 @@ const titleStyles: CSSProperties = {
   color: settingsColorTokens.textPrimary,
 };
 
-type SettingsCardProps = {
-  readonly title?: string;
+interface SettingsCardProps {
   readonly action?: ReactNode;
-};
+  readonly title?: string;
+}
 
 const SettingsCard = ({
   title,

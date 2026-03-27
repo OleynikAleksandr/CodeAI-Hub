@@ -4,54 +4,54 @@ export type ContinuityStageId =
   | "diagram_modules"
   | "unknown";
 
-export type TokenUsageSnapshot = {
-  readonly used: number;
+export interface TokenUsageSnapshot {
   readonly limit: number;
   readonly updatedAt: string;
-};
+  readonly used: number;
+}
 
-export type TokenUsageDecision = {
-  readonly usedRatio: number;
+export interface TokenUsageDecision {
   readonly remainingRatio: number;
   readonly shouldHandoff: boolean;
-};
+  readonly usedRatio: number;
+}
 
-export type ContinuitySegment = {
-  readonly sessionId: string;
-  readonly providerId: string;
-  readonly providerSessionId: string;
+export interface ContinuitySegment {
   readonly createdAt: string;
   readonly handoffReportPath?: string;
+  readonly providerId: string;
+  readonly providerSessionId: string;
+  readonly sessionId: string;
   readonly tokenUsage?: TokenUsageSnapshot;
-};
+}
 
-export type ContinuityChain = {
-  readonly rootSessionId: string;
+export interface ContinuityChain {
   /**
    * Stable UI dialog key. Legacy chains may omit this field; treat as
    * `rootSessionId` when missing.
    */
   readonly dialogId?: string;
-  readonly workspaceSlug: string;
-  readonly stage: ContinuityStageId;
-  readonly segments: readonly ContinuitySegment[];
-  readonly updatedAt: string;
-};
-
-export type ContinuityChainSummary = {
   readonly rootSessionId: string;
+  readonly segments: readonly ContinuitySegment[];
+  readonly stage: ContinuityStageId;
+  readonly updatedAt: string;
+  readonly workspaceSlug: string;
+}
+
+export interface ContinuityChainSummary {
   /**
    * Stable UI dialog key. Legacy chains may omit this field; treat as
    * `rootSessionId` when missing.
    */
   readonly dialogId?: string;
-  readonly workspaceSlug: string;
-  readonly stage: ContinuityStageId;
+  readonly rootSessionId: string;
   readonly segments: readonly ContinuitySegment[];
+  readonly stage: ContinuityStageId;
   readonly updatedAt: string;
-};
+  readonly workspaceSlug: string;
+}
 
-export type HandoffReportSnapshot = {
-  readonly path: string;
+export interface HandoffReportSnapshot {
   readonly createdAt: string;
-};
+  readonly path: string;
+}

@@ -16,28 +16,28 @@ export type ProgressReporter = Progress<{
   increment?: number;
 }>;
 
-export type ManifestEntry = {
+export interface ManifestEntry {
   readonly coreVersion: string;
   readonly package: string;
-  readonly size: number;
   readonly sha1: string;
-};
+  readonly size: number;
+}
 
-export type CoreManifest = {
-  readonly schema: number;
+export interface CoreManifest {
   readonly baseUrl: string;
   readonly platforms: Record<string, ManifestEntry>;
-};
+  readonly schema: number;
+}
 
 const INSTALL_MARKER_FILE = "install.json";
 const DOWNLOADS_DIR_NAME = "downloads";
 
-type InstallMarker = {
-  readonly platform: string;
+interface InstallMarker {
   readonly coreVersion: string;
   readonly installedAt: string;
   readonly package: string;
-};
+  readonly platform: string;
+}
 
 export const readCoreManifest = async (
   context: ExtensionContext

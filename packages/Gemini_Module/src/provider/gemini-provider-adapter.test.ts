@@ -7,10 +7,10 @@ import { GeminiProviderAdapter } from "./gemini-provider-adapter";
 const EMPTY_RESUME_SESSION_ID_ERROR_RE =
   /Cannot resume Gemini session with an empty session id/;
 
-type ResumeCall = {
-  readonly sessionId: string;
+interface ResumeCall {
   readonly options: Omit<SessionCreationOptions, "resumeSessionId">;
-};
+  readonly sessionId: string;
+}
 
 const createAdapterHarness = () => {
   const resumeCalls: ResumeCall[] = [];

@@ -6,19 +6,19 @@
  * a configurable routing engine from MultiProvider Orchestration.
  */
 
-export type RecoveryTarget = {
-  readonly providerId: string;
-  readonly modelId: string | null;
+export interface RecoveryTarget {
   readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
-};
+  readonly modelId: string | null;
+  readonly providerId: string;
+}
 
-export type RecoveryContext = {
-  readonly currentProviderId: string;
-  readonly stage: string | null;
+export interface RecoveryContext {
   readonly adapterAvailable: boolean;
-  readonly providerSessionIdKnown: boolean;
   readonly canRetryInPlace: boolean;
-};
+  readonly currentProviderId: string;
+  readonly providerSessionIdKnown: boolean;
+  readonly stage: string | null;
+}
 
 type ProviderHealthCheck = (providerId: string) => boolean;
 

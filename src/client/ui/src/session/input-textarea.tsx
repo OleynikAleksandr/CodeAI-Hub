@@ -9,25 +9,25 @@ import {
 import { DEFAULT_DRAG_OVERLAY_LABEL, useInputDragDrop } from "./input-dnd";
 import { createClipboardHandlers } from "./input-panel-clipboard";
 
-type InputTextareaClasses = {
+interface InputTextareaClasses {
   readonly container: string;
   readonly containerDragging: string;
+  readonly overlay: string;
   readonly textarea: string;
   readonly textareaFocused: string;
-  readonly overlay: string;
-};
+}
 
-type InputTextareaProps = {
-  readonly value: string;
-  readonly onValueChange: (nextValue: string) => void;
-  readonly onSubmit?: () => void;
-  readonly placeholder?: string;
-  readonly rows?: number;
+interface InputTextareaProps {
+  readonly classes?: Partial<InputTextareaClasses>;
   readonly maxHeight?: number;
+  readonly onSubmit?: () => void;
+  readonly onValueChange: (nextValue: string) => void;
   readonly overlayLabel?: string;
   readonly overlaySlot?: ReactNode;
-  readonly classes?: Partial<InputTextareaClasses>;
-};
+  readonly placeholder?: string;
+  readonly rows?: number;
+  readonly value: string;
+}
 
 const DEFAULT_CLASSES: InputTextareaClasses = {
   container: "",

@@ -33,11 +33,11 @@ const MODULE_TITLE_RE = /^# Module Map$/;
 const MODULE_HEADER_RE = /^### Module: (.+)$/;
 const RELATION_HEADER_RE = /^### Relation: (.+)$/;
 
-type BaseEntity = {
+interface BaseEntity {
   readonly id: string;
   readonly origin: EntityOrigin;
   readonly status: EntityStatus;
-};
+}
 
 const required = (
   fields: Fields,

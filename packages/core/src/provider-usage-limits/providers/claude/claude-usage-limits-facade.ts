@@ -62,23 +62,23 @@ type ClaudeRuntimeRateLimitType =
   | "seven_day"
   | "seven_day_sonnet";
 
-export type ClaudeUsageLimitsFacadeOptions = {
+export interface ClaudeUsageLimitsFacadeOptions {
   readonly headersReader?: ClaudeLiveHeadersReader;
   readonly normalizer?: ClaudeUsageLimitsNormalizer;
   readonly oauthTokenResolver?: ClaudeOAuthTokenResolver;
-};
+}
 
-export type ClaudeUsageHeadersInput = {
+export interface ClaudeUsageHeadersInput {
   readonly collectedAt?: string;
   readonly headers: ReadonlyMap<string, string>;
   readonly providerSessionId: string | null;
   readonly source?: ClaudeUsageLimitSource;
-};
-export type ClaudeRuntimeRateLimitPayload = {
+}
+export interface ClaudeRuntimeRateLimitPayload {
   readonly collectedAt?: string;
-  readonly rateLimitInfo?: unknown;
   readonly rate_limit_info?: unknown;
-};
+  readonly rateLimitInfo?: unknown;
+}
 
 const isLikelyRawToken = (value: string): boolean => {
   const trimmed = value.trim();

@@ -1,10 +1,10 @@
 import type { CSSProperties } from "react";
 
-type QuestionnaireResumeBannerProps = {
+interface QuestionnaireResumeBannerProps {
   readonly note: string;
-  readonly resumeLabel: string;
   readonly onResume: () => void;
-};
+  readonly resumeLabel: string;
+}
 
 const containerStyles: CSSProperties = {
   display: "flex",

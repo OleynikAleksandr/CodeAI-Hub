@@ -1,22 +1,22 @@
 import type { CSSProperties } from "react";
 import { memo } from "react";
 
-export type VersionRow = {
-  readonly label: string;
-  readonly packageName: string;
+export interface VersionRow {
   readonly currentVersion?: string | null;
+  readonly label: string;
   readonly latestVersion?: string | null;
-  readonly target?: "cli" | "sdk" | "core";
+  readonly packageName: string;
   readonly showUpdateButton?: boolean;
-};
+  readonly target?: "cli" | "sdk" | "core";
+}
 
-type VersionRowItemProps = {
-  readonly row: VersionRow;
+interface VersionRowItemProps {
   readonly disabled: boolean;
   readonly isUpdating: boolean;
-  readonly pendingConfirmation: boolean;
   readonly onClick?: () => void;
-};
+  readonly pendingConfirmation: boolean;
+  readonly row: VersionRow;
+}
 
 const rowStyles: CSSProperties = {
   display: "flex",

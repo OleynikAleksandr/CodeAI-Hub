@@ -16,20 +16,20 @@ import {
   shouldDeliverTokenUsageForScope,
 } from "./websocket-session-scope";
 
-type ClientSocket = {
+interface ClientSocket {
   readonly id: string;
-  readonly socket: WebSocket;
   scope: {
     enabled: boolean;
     workspacePath: string | null;
   };
-};
+  readonly socket: WebSocket;
+}
 
-type TokenUsageSnapshot = {
-  readonly used: number;
+interface TokenUsageSnapshot {
   readonly limit: number;
   readonly updatedAt: string;
-};
+  readonly used: number;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -51,19 +51,19 @@ const extractUsageLimitsReplayEvent = (event: unknown): unknown | null => {
   return event;
 };
 
-export type WebSocketManagerDependencies = {
+export interface WebSocketManagerDependencies {
+  readonly getInitialState: () => unknown;
+  readonly getLatestStatus: () => unknown;
   readonly httpServer: Server;
   readonly logger: Logger;
+  readonly onClientConnected: (clientId: string, total: number) => void;
+  readonly onClientDisconnected: (clientId: string, total: number) => void;
   readonly onIncomingMessage: (
     clientId: string,
     socket: WebSocket,
     message: IncomingMessage
   ) => Promise<void>;
-  readonly onClientConnected: (clientId: string, total: number) => void;
-  readonly onClientDisconnected: (clientId: string, total: number) => void;
-  readonly getInitialState: () => unknown;
-  readonly getLatestStatus: () => unknown;
-};
+}
 
 export class WebSocketManager {
   private wsServer?: WebSocketServer;

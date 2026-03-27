@@ -11347,11 +11347,12 @@
     switch (message.type) {
       case "core:connection": {
         if (handlers.onCoreConnectionStatus && message.payload) {
-          const candidate = message.payload;
-          const status = candidate.status;
+          const { detail, status } = message.payload;
           if (typeof status === "string") {
-            const detail = typeof candidate.detail === "string" ? candidate.detail : void 0;
-            handlers.onCoreConnectionStatus(status, detail);
+            handlers.onCoreConnectionStatus(
+              status,
+              typeof detail === "string" ? detail : void 0
+            );
           }
         }
         return;

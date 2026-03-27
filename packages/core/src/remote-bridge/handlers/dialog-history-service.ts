@@ -11,18 +11,18 @@ import { DialogOpenService } from "./dialog-open-service";
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 
-export type DialogHistoryMessage = {
+export interface DialogHistoryMessage {
+  readonly content: string;
   readonly messageId: string;
   readonly role: "system" | "user" | "assistant" | "thinking";
-  readonly content: string;
-  readonly timestamp: string;
   readonly tag?: string;
-};
+  readonly timestamp: string;
+}
 
-export type DialogHistoryResult = {
-  readonly messages: readonly DialogHistoryMessage[];
+export interface DialogHistoryResult {
   readonly lastCursor: number;
-};
+  readonly messages: readonly DialogHistoryMessage[];
+}
 
 type SessionRecord = Awaited<ReturnType<typeof readSessionEvents>>[number];
 type SessionMessageRecord = Extract<

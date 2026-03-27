@@ -8,71 +8,71 @@ import type {
   SessionRecord,
 } from "../../../../types/session";
 
-export type CoreBridgeConfig = {
+export interface CoreBridgeConfig {
   readonly httpUrl: string;
   readonly wsUrl: string;
-};
+}
 
-export type ServerProvider = {
+export interface ServerProvider {
+  readonly description?: string;
   readonly id?: string;
   readonly name?: string;
-  readonly description?: string;
   readonly status?: string;
   readonly statusMessage?: string | null;
-};
+}
 
-export type ServerSessionMessage = {
+export interface ServerSessionMessage {
+  readonly content?: string;
   readonly id?: string;
   readonly role?: SessionMessageRole;
-  readonly content?: string;
   readonly sessionId?: string;
-  readonly timestamp?: string;
   readonly tag?: string;
-};
+  readonly timestamp?: string;
+}
 
-export type ServerSession = {
-  readonly id?: string;
-  readonly providerId?: ProviderStackId | string;
-  readonly workspacePath?: string;
-  readonly initiativeSlug?: string | null;
-  readonly stage?: string | null;
-  readonly runSlug?: string | null;
-  readonly sessionKind?: "collector" | null;
-  readonly continuationParentId?: string | null;
+export interface ServerSession {
   readonly continuationIndex?: number | null;
-  readonly title?: string;
+  readonly continuationParentId?: string | null;
   readonly createdAt?: string;
-  readonly updatedAt?: string;
+  readonly id?: string;
+  readonly initiativeSlug?: string | null;
+  readonly providerId?: ProviderStackId | string;
   readonly providerSessionId?: string | null;
   readonly providerSessionStatus?: "pending" | "ready" | "failed";
-};
+  readonly runSlug?: string | null;
+  readonly sessionKind?: "collector" | null;
+  readonly stage?: string | null;
+  readonly title?: string;
+  readonly updatedAt?: string;
+  readonly workspacePath?: string;
+}
 
-export type ServerStatusResponse = {
-  readonly sessions?: readonly ServerSession[];
+export interface ServerStatusResponse {
   readonly providers?: readonly ServerProvider[];
-};
+  readonly sessions?: readonly ServerSession[];
+}
 
-export type CoreBridgeStatePayload = {
-  readonly sessions: readonly SessionRecord[];
+export interface CoreBridgeStatePayload {
   readonly providers: readonly ProviderStackDescriptor[];
-};
+  readonly sessions: readonly SessionRecord[];
+}
 
-export type CoreBridgeSessionMessagePayload = {
-  readonly sessionId: string;
+export interface CoreBridgeSessionMessagePayload {
   readonly message: SessionMessage;
-};
-
-export type CoreBridgeSessionBindingPayload = {
   readonly sessionId: string;
-  readonly providerSessionId: string | null;
-  readonly status: "pending" | "ready" | "failed";
-};
+}
 
-export type CoreRuntimeStatusPayload = {
-  readonly phase?: string;
-  readonly label?: string;
+export interface CoreBridgeSessionBindingPayload {
+  readonly providerSessionId: string | null;
+  readonly sessionId: string;
+  readonly status: "pending" | "ready" | "failed";
+}
+
+export interface CoreRuntimeStatusPayload {
   readonly detail?: string;
-  readonly scope?: string;
   readonly firstRun?: boolean;
+  readonly label?: string;
+  readonly phase?: string;
+  readonly scope?: string;
   readonly timestamp?: string;
-};
+}

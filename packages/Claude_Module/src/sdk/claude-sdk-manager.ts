@@ -23,26 +23,23 @@ export type QueryFunction = (payload: {
 const SHORT_ID_LENGTH = 8;
 const TEMP_SESSION_PREFIX = "temp_";
 
-type ClaudeManagerDependencies = {
-  readonly installer: SDKInstaller;
+interface ClaudeManagerDependencies {
   readonly authManager: SDKAuthManager;
-  readonly sessions: SDKSessionManager;
-  readonly processor: SDKMessageProcessor;
-  readonly workspace: ClaudeWorkspaceOptions;
-  readonly reporter?: ModuleReporter;
   readonly enableDebugStreams?: boolean;
-};
+  readonly installer: SDKInstaller;
+  readonly processor: SDKMessageProcessor;
+  readonly reporter?: ModuleReporter;
+  readonly sessions: SDKSessionManager;
+  readonly workspace: ClaudeWorkspaceOptions;
+}
 
-type ThinkingSettings = {
+interface ThinkingSettings {
   readonly enabled: boolean;
   readonly maxTokens: number;
-};
+}
 
-type ClaudeSettingsSnapshot = {
-  readonly thinking?: {
-    readonly enabled?: unknown;
-    readonly maxTokens?: unknown;
-  };
+interface ClaudeSettingsSnapshot {
+  readonly defaultModel?: unknown;
   readonly providers?: {
     readonly claude?: {
       readonly thinking?: {
@@ -52,27 +49,30 @@ type ClaudeSettingsSnapshot = {
       readonly defaultModel?: unknown;
     };
   };
-  readonly defaultModel?: unknown;
-};
+  readonly thinking?: {
+    readonly enabled?: unknown;
+    readonly maxTokens?: unknown;
+  };
+}
 
-type ClaudeQueryOptions = {
-  cwd: string;
-  permissionMode: "bypassPermissions";
-  allowDangerouslySkipPermissions: boolean;
+interface ClaudeQueryOptions extends Record<string, unknown> {
   additionalDirectories: string[];
-  includePartialMessages: boolean;
-  projectPath: string;
-  settingSources: string[];
+  allowDangerouslySkipPermissions: boolean;
+  cwd: string;
   env: NodeJS.ProcessEnv;
-  pathToClaudeCodeExecutable: string;
-  model?: string;
+  includePartialMessages: boolean;
   maxThinkingTokens?: number;
-  resume?: string;
+  model?: string;
   outputFormat?: {
     type: "json_schema";
     schema: Record<string, unknown>;
   };
-};
+  pathToClaudeCodeExecutable: string;
+  permissionMode: "bypassPermissions";
+  projectPath: string;
+  resume?: string;
+  settingSources: string[];
+}
 
 export class ClaudeSDKManager {
   private sdkModule: { readonly query: QueryFunction } | null = null;

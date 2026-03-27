@@ -13,30 +13,30 @@ import {
 
 type Command = "start" | "stop" | "status" | "help";
 
-type CliOptions = {
+interface CliOptions {
   host: string;
   port: number;
-};
+}
 
-type HealthResponse = {
+interface HealthResponse {
+  readonly pid?: number;
   readonly status: string;
   readonly version?: string;
-  readonly pid?: number;
-};
+}
 
 export type SupervisorClientOptions = CliOptions;
 export type SupervisorHealth = HealthResponse;
 
-export type SupervisorLogger = {
-  readonly info?: (message: string) => void;
+export interface SupervisorLogger {
   readonly error?: (message: string) => void;
-};
+  readonly info?: (message: string) => void;
+}
 
 type OptionName = "host" | "port";
-type OptionMatch = {
+interface OptionMatch {
   readonly name: OptionName;
   readonly value: string;
-};
+}
 
 const SEMVER_DIRECTORY_PATTERN = /^\d+\.\d+\.\d+$/u;
 const SEMVER_PART_COUNT = 3;
@@ -50,7 +50,9 @@ const HEALTH_PATH = "/api/v1/health";
 const CORE_RUNTIME_ROOT = path.join(os.homedir(), ".codeai-hub", "core");
 const SHUTDOWN_PATH = "/api/v1/shutdown";
 const HTTP_TIMEOUT_MS = 2000;
-const supervisorRequire = createRequire(__filename);
+const supervisorRequire = createRequire(
+  process.argv[1] ?? path.join(process.cwd(), "package.json")
+);
 const INLINE_OPTION_REGEX = /^--(?<name>host|port)=(?<value>.+)$/u;
 const FLAG_NAME_MAP: Record<string, OptionName> = {
   "--host": "host",
@@ -242,14 +244,14 @@ const buildCoreProcessEnv = (
   return env;
 };
 
-type CoreRuntimeInfo = {
-  readonly platformKey: string;
-  readonly version: string;
-  readonly runtimeDir: string;
-  readonly nodePath: string;
+interface CoreRuntimeInfo {
   readonly appDir: string;
   readonly entryPoint: string;
-};
+  readonly nodePath: string;
+  readonly platformKey: string;
+  readonly runtimeDir: string;
+  readonly version: string;
+}
 
 const detectPlatformKey = (): string | null => {
   const platform = process.platform;

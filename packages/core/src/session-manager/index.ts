@@ -2,38 +2,38 @@ import { randomUUID } from "node:crypto";
 
 export type SessionRole = "user" | "assistant" | "system" | "thinking";
 
-export type SessionMessage = {
-  readonly id: string;
-  readonly sessionId: string;
-  readonly role: SessionRole;
+export interface SessionMessage {
   readonly content: string;
-  readonly timestamp: string;
-  readonly tag?: string;
-};
-
-export type Session = {
   readonly id: string;
-  readonly providerId: string;
-  readonly workspacePath: string;
-  readonly initiativeSlug: string | null;
-  readonly stage: string | null;
-  readonly runSlug: string | null;
-  readonly continuationParentId: string | null;
+  readonly role: SessionRole;
+  readonly sessionId: string;
+  readonly tag?: string;
+  readonly timestamp: string;
+}
+
+export interface Session {
   readonly continuationIndex: number;
-  readonly title: string;
+  readonly continuationParentId: string | null;
   readonly createdAt: string;
-  updatedAt: string;
+  readonly id: string;
+  readonly initiativeSlug: string | null;
   messages: SessionMessage[];
+  readonly providerId: string;
   providerSessionId?: string;
   providerSessionStatus: "pending" | "ready" | "failed";
-};
+  readonly runSlug: string | null;
+  readonly stage: string | null;
+  readonly title: string;
+  updatedAt: string;
+  readonly workspacePath: string;
+}
 
-export type SessionInitiativeContext = {
-  readonly initiativeSlug?: string | null;
-  readonly stage?: string | null;
-  readonly runSlug?: string | null;
+export interface SessionInitiativeContext {
   readonly continuationParentId?: string | null;
-};
+  readonly initiativeSlug?: string | null;
+  readonly runSlug?: string | null;
+  readonly stage?: string | null;
+}
 
 const SESSION_TITLE_PREFIX_LENGTH = 4;
 

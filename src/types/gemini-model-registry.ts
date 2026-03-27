@@ -2,14 +2,14 @@ export type GeminiThinkingLevel = "minimal" | "low" | "medium" | "high" | "off";
 
 export type GeminiModelId = "gemini-3.1-pro-preview" | "gemini-3-flash-preview";
 
-export type GeminiModelDescriptor = {
-  readonly id: GeminiModelId;
-  readonly displayName: string;
+export interface GeminiModelDescriptor {
   readonly description: string;
-  readonly status: "preview" | "generally_available";
+  readonly displayName: string;
   readonly family: "gemini-3";
+  readonly id: GeminiModelId;
+  readonly status: "preview" | "generally_available";
   readonly supportedThinkingLevels: readonly GeminiThinkingLevel[];
-};
+}
 
 export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
   {
@@ -38,11 +38,11 @@ export const DEFAULT_GEMINI_MODEL_ID: GeminiModelId = "gemini-3.1-pro-preview";
 
 export const DEFAULT_GEMINI_THINKING_LEVEL: GeminiThinkingLevel = "low";
 
-export type GeminiThinkingLevelDescriptor = {
-  readonly name: GeminiThinkingLevel;
+export interface GeminiThinkingLevelDescriptor {
   readonly description: string;
+  readonly name: GeminiThinkingLevel;
   readonly useCase: string;
-};
+}
 
 export const GEMINI_THINKING_LEVELS: readonly GeminiThinkingLevelDescriptor[] =
   [

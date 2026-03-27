@@ -26,9 +26,9 @@ const readJsonlFile = async (filePath: string): Promise<unknown[]> => {
   }
 };
 
-export type TokenUsageReaderOptions = {
+export interface TokenUsageReaderOptions {
   readonly codexHome?: string;
-};
+}
 
 export class CodexTokenUsageReader {
   private readonly options: TokenUsageReaderOptions;

@@ -9,11 +9,11 @@ import type { ProviderStackId } from "../../types/provider";
 import type { ProviderPickerMessage } from "./message-types";
 import { isSuccessfulLaunch, serializeSession } from "./serialization";
 
-type ProviderPickerContext = {
+interface ProviderPickerContext {
+  readonly notifyWebview: (message: Record<string, unknown>) => void;
   readonly providerRegistry: ProviderRegistry;
   readonly sessionLauncher: SessionLauncher;
-  readonly notifyWebview: (message: Record<string, unknown>) => void;
-};
+}
 
 const sanitizeProviderIds = (
   providerRegistry: ProviderRegistry,

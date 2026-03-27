@@ -42,22 +42,22 @@ type SessionHistoryHandler = (payload: {
   readonly messages: readonly SessionMessage[];
 }) => void;
 
-export type UseSessionStoreResult = {
+export interface UseSessionStoreResult {
+  readonly activeSessionId: string | null;
+  readonly clearSessions: ClearSessionsHandler;
+  readonly closeSession: CloseSessionHandler;
+  readonly focusLastSession: FocusLastSessionHandler;
+  readonly handleSessionBindingUpdate: SessionBindingHandler;
+  readonly handleSessionCreated: SessionCreatedHandler;
+  readonly handleSessionDeleted: SessionDeletedHandler;
+  readonly handleSessionHistoryEvent: SessionHistoryHandler;
+  readonly handleSessionMessageEvent: SessionMessageHandler;
+  readonly hydrateFromCoreState: CoreStateHandler;
+  readonly selectSession: SelectSessionHandler;
+  readonly sendMessage: SendMessageHandler;
   readonly sessions: readonly SessionRecord[];
   readonly snapshots: SessionSnapshots;
-  readonly activeSessionId: string | null;
-  readonly handleSessionCreated: SessionCreatedHandler;
-  readonly hydrateFromCoreState: CoreStateHandler;
-  readonly handleSessionMessageEvent: SessionMessageHandler;
-  readonly handleSessionHistoryEvent: SessionHistoryHandler;
-  readonly handleSessionDeleted: SessionDeletedHandler;
-  readonly handleSessionBindingUpdate: SessionBindingHandler;
-  readonly clearSessions: ClearSessionsHandler;
-  readonly focusLastSession: FocusLastSessionHandler;
-  readonly selectSession: SelectSessionHandler;
-  readonly closeSession: CloseSessionHandler;
-  readonly sendMessage: SendMessageHandler;
-};
+}
 export const useSessionStore = (
   providerLabels: ProviderLabels,
   settings: Settings | null

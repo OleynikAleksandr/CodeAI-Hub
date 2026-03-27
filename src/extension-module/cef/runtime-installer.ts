@@ -22,22 +22,22 @@ type ProgressReporter = Progress<{
   increment?: number;
 }>;
 
-export type CefRuntimeInfo = {
-  readonly version: string;
+export interface CefRuntimeInfo {
   readonly platform: PlatformKey;
   readonly runtimeDir: string;
-};
+  readonly version: string;
+}
 
 const INSTALL_MARKER_FILE = "install.json";
 const DOWNLOADS_DIR_NAME = "downloads";
 
-type InstallMarker = {
-  readonly platform: PlatformKey;
+interface InstallMarker {
   readonly cefVersion: string;
+  readonly channel: string;
   readonly installedAt: string;
   readonly package: string;
-  readonly channel: string;
-};
+  readonly platform: PlatformKey;
+}
 
 const getBaseInstallDir = async (): Promise<string> => {
   const homeDir = process.env.HOME ?? tmpdir();

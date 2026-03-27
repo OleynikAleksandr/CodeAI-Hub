@@ -1,11 +1,11 @@
 export type ClaudeModelAliasId = "sonnet" | "opus" | "haiku";
 
-export type ClaudeModelAliasDescriptor = {
+export interface ClaudeModelAliasDescriptor {
   readonly alias: ClaudeModelAliasId;
-  readonly displayName: string;
   readonly description: string;
+  readonly displayName: string;
   readonly status: "active";
-};
+}
 
 export const CLAUDE_MODEL_ALIASES: readonly ClaudeModelAliasDescriptor[] = [
   {

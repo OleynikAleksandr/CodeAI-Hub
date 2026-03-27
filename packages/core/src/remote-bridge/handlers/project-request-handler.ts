@@ -1,10 +1,10 @@
 import type { ProjectRegistry } from "../../services/project-registry/project-registry";
 import type { WorkspaceProject } from "../../services/project-registry/types";
 
-export type ProjectUpdateEvent = {
-  readonly type: "projects:update";
+export interface ProjectUpdateEvent {
   readonly payload: { readonly projects: readonly WorkspaceProject[] };
-};
+  readonly type: "projects:update";
+}
 
 export class ProjectRequestHandler {
   private readonly registry: ProjectRegistry;

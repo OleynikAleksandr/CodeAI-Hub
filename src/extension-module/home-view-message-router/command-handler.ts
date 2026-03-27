@@ -5,12 +5,12 @@ import type { FileOperationsFacade } from "../file-operations/file-operations-fa
 import type { WebviewCommand } from "./message-types";
 import { serializeStack } from "./serialization";
 
-type CommandContext = {
-  readonly providerRegistry: ProviderRegistry;
-  readonly notifyWebview: (message: Record<string, unknown>) => void;
-  readonly fileOperations: FileOperationsFacade;
+interface CommandContext {
   readonly coreProcessManager?: CoreProcessManager;
-};
+  readonly fileOperations: FileOperationsFacade;
+  readonly notifyWebview: (message: Record<string, unknown>) => void;
+  readonly providerRegistry: ProviderRegistry;
+}
 
 const PROJECT_MANAGER_HINT =
   "Use Project Manager for sessions and chats during FLOW development.";

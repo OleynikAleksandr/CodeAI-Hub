@@ -20,18 +20,18 @@ import type {
 
 const DEFAULT_MIN_REFRESH_INTERVAL_MS = 1500;
 
-type ProviderUsageLimitsReader = {
+interface ProviderUsageLimitsReader {
   read(
     params: ReadProviderUsageLimitsParams
   ): Promise<ProviderUsageLimitsSnapshot | null>;
-};
+}
 
-type ProviderUsageLimitsReporter = {
+interface ProviderUsageLimitsReporter {
   readonly info?: (message: string) => void;
   readonly warn?: (message: string) => void;
-};
+}
 
-export type ProviderUsageLimitsFacadeOptions = {
+export interface ProviderUsageLimitsFacadeOptions {
   readonly adapter?: ProviderUsageLimitsAdapter;
   readonly cache?: ProviderUsageLimitsCache;
   readonly changeDetector?: ProviderUsageLimitsChangeDetector;
@@ -41,7 +41,7 @@ export type ProviderUsageLimitsFacadeOptions = {
     Record<ProviderUsageLimitProviderId, ProviderUsageLimitsReader>
   >;
   readonly reporter?: ProviderUsageLimitsReporter;
-};
+}
 
 export class ProviderUsageLimitsFacade {
   readonly #adapter: ProviderUsageLimitsAdapter;

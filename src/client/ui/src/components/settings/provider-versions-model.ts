@@ -1,12 +1,13 @@
-export type VersionEntry = {
-  readonly packageName: string;
+export interface VersionEntry {
   readonly currentVersion: string | null;
-  readonly latestVersion: string | null;
-  readonly source: "global";
   readonly error?: string | null;
-};
+  readonly latestVersion: string | null;
+  readonly packageName: string;
+  readonly source: "global";
+}
 
-export type ProviderVersions = {
+export interface ProviderVersions {
+  readonly checkedAt?: string;
   readonly claude: {
     readonly cli: VersionEntry;
     readonly sdk: VersionEntry;
@@ -19,5 +20,4 @@ export type ProviderVersions = {
     readonly cli: VersionEntry;
     readonly core: VersionEntry;
   };
-  readonly checkedAt?: string;
-};
+}

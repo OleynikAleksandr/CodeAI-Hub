@@ -10,10 +10,10 @@ import { join } from "node:path";
 
 type TaskTimerTotals = Readonly<Record<string, number>>;
 
-export type PersistedTaskTimerState = {
+export interface PersistedTaskTimerState {
   readonly schemaVersion: 2;
   readonly totals: TaskTimerTotals;
-};
+}
 
 const STATE_SUBDIR = ".codeai-hub/state";
 const STORAGE_FILE = "task-timers.json";

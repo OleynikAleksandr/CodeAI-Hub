@@ -5,10 +5,10 @@ import {
   THINKING_TOKEN_STEP,
 } from "./constants";
 
-type ThinkingTokenInputProps = {
-  readonly value: number;
+interface ThinkingTokenInputProps {
   readonly onChange: (nextValue: number) => void;
-};
+  readonly value: number;
+}
 
 const containerStyles: CSSProperties = {
   paddingLeft: "28px",

@@ -1,10 +1,10 @@
 import type { ClipboardEvent, RefObject } from "react";
 
-type ClipboardHandlersConfig = {
-  readonly textareaRef: RefObject<HTMLTextAreaElement>;
+interface ClipboardHandlersConfig {
   readonly insertTextAtSelection: (text: string) => void;
   readonly syncTextareaValue: () => void;
-};
+  readonly textareaRef: RefObject<HTMLTextAreaElement>;
+}
 
 const WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
 

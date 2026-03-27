@@ -10,10 +10,10 @@ export const useSessionStreamStatusSync = (
   setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>
 ): void => {
   useEffect(() => {
-    type SessionStreamCandidate = {
-      readonly type?: unknown;
+    interface SessionStreamCandidate {
       readonly payload?: unknown;
-    };
+      readonly type?: unknown;
+    }
 
     const handleIncoming = (event: MessageEvent<unknown>) => {
       const candidate = event.data as SessionStreamCandidate;

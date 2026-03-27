@@ -17,16 +17,16 @@ export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
 >;
 
-export type CodexSessionContinuitySettings = {
+export interface CodexSessionContinuitySettings {
   readonly remainingPercentThreshold: number;
-};
+}
 
-export type CodexSettings = {
+export interface CodexSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
   readonly sessionContinuity: CodexSessionContinuitySettings;
-};
+}
 
 export const MIN_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 export const MAX_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;

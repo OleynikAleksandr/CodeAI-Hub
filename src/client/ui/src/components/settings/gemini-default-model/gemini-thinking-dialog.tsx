@@ -11,12 +11,12 @@ import {
   providerOptionDialogButtonStyles,
 } from "../shared/provider-option-dialog";
 
-type GeminiThinkingDialogProps = {
-  readonly model: GeminiModelDescriptor;
+interface GeminiThinkingDialogProps {
   readonly initialLevel: GeminiThinkingLevel;
-  readonly onSave: (level: GeminiThinkingLevel) => void;
+  readonly model: GeminiModelDescriptor;
   readonly onCancel: () => void;
-};
+  readonly onSave: (level: GeminiThinkingLevel) => void;
+}
 
 const GeminiThinkingDialog: FC<GeminiThinkingDialogProps> = ({
   model,

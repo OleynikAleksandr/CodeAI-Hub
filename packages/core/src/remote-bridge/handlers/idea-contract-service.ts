@@ -15,39 +15,39 @@ import {
   resolveSyncedDiagramTemplateCandidates,
 } from "./diagram-contract-prompt-assets";
 
-type WorkflowContractPayload = {
-  readonly prompt: string;
-  readonly schema: Record<string, unknown>;
-  readonly template: string;
+interface WorkflowContractPayload {
   readonly paths: {
     readonly prompt: string;
     readonly template?: string;
     readonly questionnaire?: string;
   };
+  readonly prompt: string;
+  readonly promptAppendixEntries?: readonly string[];
   readonly questionnaire?: {
     readonly templateMarkdown: string;
   };
+  readonly schema: Record<string, unknown>;
+  readonly template: string;
   readonly version: string;
-  readonly promptAppendixEntries?: readonly string[];
-};
+}
 
 type WorkflowContractPathSource = string | readonly string[];
 
-type WorkflowContractPaths = {
+interface WorkflowContractPaths {
   readonly prompt: WorkflowContractPathSource;
+  readonly promptAppendix?: readonly WorkflowContractPathSource[];
+  readonly questionnaire?: WorkflowContractPathSource;
   readonly schema?: WorkflowContractPathSource;
   readonly template?: WorkflowContractPathSource;
-  readonly questionnaire?: WorkflowContractPathSource;
-  readonly promptAppendix?: readonly WorkflowContractPathSource[];
-};
+}
 
-type ResolvedWorkflowContractPaths = {
+interface ResolvedWorkflowContractPaths {
   readonly prompt: readonly string[];
+  readonly promptAppendix: readonly (readonly string[])[];
+  readonly questionnaire: readonly string[];
   readonly schema: readonly string[];
   readonly template: readonly string[];
-  readonly questionnaire: readonly string[];
-  readonly promptAppendix: readonly (readonly string[])[];
-};
+}
 
 const TEMPLATE_ROOT_SEGMENTS = [".codeai-hub", "templates"];
 

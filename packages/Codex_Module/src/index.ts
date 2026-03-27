@@ -26,7 +26,6 @@ type CodexTurnOptions = CodexTurnOptionsType;
 type CodexWorkspaceOptions = CodexWorkspaceOptionsType;
 type ModuleReporter = ModuleReporterType;
 
-export { CodexProviderAdapter };
 export type {
   CodexApprovalMode,
   CodexInstallerPaths,
@@ -40,3 +39,4 @@ export type {
   CodexWorkspaceOptions,
   ModuleReporter,
 };
+export { CodexProviderAdapter };

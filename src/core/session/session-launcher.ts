@@ -2,9 +2,9 @@ import type { ProviderStackId } from "../../types/provider";
 import { getDefaultProviderTitle } from "../../types/provider";
 import type { SessionRecord } from "../../types/session";
 
-export type SessionLaunchRequest = {
+export interface SessionLaunchRequest {
   readonly providerIds: readonly ProviderStackId[];
-};
+}
 
 export type SessionLaunchResult =
   | {

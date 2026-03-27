@@ -6,18 +6,18 @@ import { useInitiativeContext } from "./use-initiative-context";
 
 type ActionBarCommand = "startChat";
 
-type ButtonDescriptor = {
+interface ButtonDescriptor {
   readonly id: ActionBarCommand;
   readonly label: readonly [string, string];
-};
+}
 
 const BUTTONS: readonly ButtonDescriptor[] = [
   { id: "startChat", label: ["Simple", "Chat"] },
 ];
 
-type ActionBarProps = {
+interface ActionBarProps {
   readonly disabled?: boolean;
-};
+}
 
 const ActionBar = ({ disabled = false }: ActionBarProps) => {
   const {

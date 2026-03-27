@@ -4,21 +4,21 @@ type ApiResult<T> =
   | { readonly ok: true; readonly data: T }
   | { readonly ok: false; readonly error: string };
 
-export type InitiativeSummary = {
-  readonly initiativeSlug: string;
-  readonly displayName: string;
-  readonly description?: string;
+export interface InitiativeSummary {
   readonly currentRunId?: string;
-};
-
-type CreateInitiativeInput = {
-  readonly displayName: string;
   readonly description?: string;
+  readonly displayName: string;
+  readonly initiativeSlug: string;
+}
+
+interface CreateInitiativeInput {
   readonly createInitialRun?: {
     readonly displayName: string;
     readonly description?: string;
   };
-};
+  readonly description?: string;
+  readonly displayName: string;
+}
 
 const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
 

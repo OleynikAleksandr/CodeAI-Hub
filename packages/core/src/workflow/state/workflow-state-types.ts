@@ -7,34 +7,34 @@ export type WorkflowStageStatus =
   | "invalid"
   | "outdated";
 
-export type WorkflowArtifactState = {
+export interface WorkflowArtifactState {
   readonly path: string;
   readonly updatedAt: string;
-};
+}
 
 export type WorkflowGateStatus = "started" | "passed" | "failed";
 
-export type WorkflowGateState = {
+export interface WorkflowGateState {
+  readonly detail?: string;
   readonly gateId: string;
+  readonly stage?: WorkflowStageId;
   readonly status: WorkflowGateStatus;
   readonly updatedAt: string;
-  readonly stage?: WorkflowStageId;
-  readonly detail?: string;
-};
+}
 
-export type WorkflowStageState = {
-  readonly stage: WorkflowStageId;
-  readonly status: WorkflowStageStatus;
+export interface WorkflowStageState {
   readonly artifacts: readonly WorkflowArtifactState[];
   readonly gates: readonly WorkflowGateState[];
+  readonly stage: WorkflowStageId;
+  readonly status: WorkflowStageStatus;
   readonly updatedAt: string;
-};
+}
 
-export type WorkflowState = {
-  readonly workspaceSlug: string;
-  readonly stages: Record<WorkflowStageId, WorkflowStageState>;
+export interface WorkflowState {
   readonly gates: readonly WorkflowGateState[];
+  readonly stages: Record<WorkflowStageId, WorkflowStageState>;
   readonly updatedAt: string;
-};
+  readonly workspaceSlug: string;
+}
 
 export type WorkflowStateListener = (state: WorkflowState) => void;

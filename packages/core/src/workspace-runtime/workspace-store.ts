@@ -22,15 +22,15 @@ const createDefaultSession = (key: SessionKey): SessionSnapshot => ({
 
 type MutableArtifactsByNode = Map<string, Map<string, ArtifactPointer>>;
 
-export type WorkspaceState = {
-  readonly workspaceRoot: string;
-  loadState: WorkspaceLoadState;
-  error: string | null;
-  readonly nodes: Map<string, NodeSnapshot>;
-  readonly sessions: Map<string, SessionSnapshot>;
+export interface WorkspaceState {
   readonly artifactsByNode: MutableArtifactsByNode;
   dirty: boolean;
-};
+  error: string | null;
+  loadState: WorkspaceLoadState;
+  readonly nodes: Map<string, NodeSnapshot>;
+  readonly sessions: Map<string, SessionSnapshot>;
+  readonly workspaceRoot: string;
+}
 
 const createWorkspaceState = (workspaceRoot: string): WorkspaceState => ({
   workspaceRoot,

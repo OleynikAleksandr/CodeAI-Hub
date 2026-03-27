@@ -12,25 +12,25 @@ import MarkdownContent from "./markdown-content";
 
 const AUTO_SCROLL_EPSILON = 32;
 
-type DialogPanelProps = {
+interface DialogPanelProps {
   readonly messages: readonly SessionMessage[];
-  readonly providerTheme?: ProviderTheme | null;
   readonly providerLabel?: string | null;
-};
+  readonly providerTheme?: ProviderTheme | null;
+}
 
-type ThinkingMessageProps = {
-  readonly message: SessionMessage;
+interface ThinkingMessageProps {
+  readonly className: string;
   readonly expanded: boolean;
-  readonly onToggle: (messageId: string) => void;
   readonly label: string;
-  readonly className: string;
-};
-
-type StandardMessageProps = {
   readonly message: SessionMessage;
-  readonly label: string;
+  readonly onToggle: (messageId: string) => void;
+}
+
+interface StandardMessageProps {
   readonly className: string;
-};
+  readonly label: string;
+  readonly message: SessionMessage;
+}
 
 const DialogPanel = ({
   messages,

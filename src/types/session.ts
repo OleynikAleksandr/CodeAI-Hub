@@ -2,36 +2,36 @@ import type { ProviderStackId } from "./provider";
 
 export type SessionMessageRole = "system" | "assistant" | "user" | "thinking";
 
-export type SessionMessage = {
-  readonly id: string;
-  readonly role: SessionMessageRole;
+export interface SessionMessage {
   readonly content: string;
   readonly createdAt: number;
+  readonly id: string;
+  readonly role: SessionMessageRole;
   readonly tag?: string;
-};
+}
 
-export type SessionBindingInfo = {
+export interface SessionBindingInfo {
   readonly providerSessionId: string | null;
   readonly status: "pending" | "ready" | "failed";
-};
+}
 
-export type SessionTodoItem = {
+export interface SessionTodoItem {
+  readonly completed: boolean;
   readonly id: string;
   readonly title: string;
-  readonly completed: boolean;
-};
+}
 
 /**
  * Information about a model used in a session.
  * Includes provider context, model identifier, and reasoning level if applicable.
  */
-export type ModelInfo = {
+export interface ModelInfo {
+  readonly modelDisplayName: string;
+  readonly modelId: string;
   readonly providerId: ProviderStackId;
   readonly providerName: string;
-  readonly modelId: string;
-  readonly modelDisplayName: string;
   readonly reasoning?: string;
-};
+}
 
 export type SessionUsageLimitLabels = {
   readonly currentSession?: string | null;
@@ -39,12 +39,30 @@ export type SessionUsageLimitLabels = {
   readonly currentWeekSonnetOnly?: string | null;
 } | null;
 
-export type SessionStatusInfo = {
-  readonly providerSummary: string;
-  readonly providerScopeKey?: string | null;
-  readonly models?: readonly ModelInfo[];
-  readonly rollover?: FlowNodeRolloverInfo | null;
+export interface SessionStatusInfo {
+  readonly connectionState: "idle" | "running" | "blocked";
   readonly continuityLock?: SessionContinuityLockInfo;
+  readonly models?: readonly ModelInfo[];
+  readonly providerScopeKey?: string | null;
+  readonly providerSummary: string;
+  readonly rollover?: FlowNodeRolloverInfo | null;
+  readonly taskTimer?: {
+    /**
+     * Accumulated busy/wait time in whole seconds for the workflow agent.
+     * Does not include the currently-running busy segment (if any).
+     */
+    readonly totalSeconds: number;
+    /**
+     * Epoch time in ms when the current busy segment started, or null if idle.
+     */
+    readonly runningSinceMs: number | null;
+  };
+  readonly tokenUsage: {
+    readonly used: number;
+    readonly limit: number;
+  };
+  readonly updatedAt: number;
+  readonly usageLimitLabels?: SessionUsageLimitLabels;
   readonly usageLimits?: {
     readonly currentSession?: {
       readonly percentUsed: number;
@@ -59,43 +77,25 @@ export type SessionStatusInfo = {
       readonly resetsAt?: string | null;
     } | null;
   } | null;
-  readonly usageLimitLabels?: SessionUsageLimitLabels;
-  readonly tokenUsage: {
-    readonly used: number;
-    readonly limit: number;
-  };
-  readonly taskTimer?: {
-    /**
-     * Accumulated busy/wait time in whole seconds for the workflow agent.
-     * Does not include the currently-running busy segment (if any).
-     */
-    readonly totalSeconds: number;
-    /**
-     * Epoch time in ms when the current busy segment started, or null if idle.
-     */
-    readonly runningSinceMs: number | null;
-  };
-  readonly connectionState: "idle" | "running" | "blocked";
-  readonly updatedAt: number;
-};
+}
 
-export type SessionContinuityLockInfo = {
+export interface SessionContinuityLockInfo {
   readonly active: boolean;
+  readonly reason?: string;
   readonly rolloverId?: string;
   readonly sourceSessionId?: string;
   readonly targetSessionId?: string;
-  readonly reason?: string;
   readonly updatedAt: number;
-};
+}
 
-export type FlowNodeRolloverInfo = {
+export interface FlowNodeRolloverInfo {
+  readonly error?: string;
   readonly phase: string;
   readonly remainingPercent?: number;
-  readonly thresholdPercent?: number;
   readonly reportPath?: string;
-  readonly error?: string;
+  readonly thresholdPercent?: number;
   readonly updatedAt: number;
-};
+}
 
 /**
  * Kind of session agent within a workflow stage.
@@ -103,25 +103,25 @@ export type FlowNodeRolloverInfo = {
  */
 export type SessionKind = "collector";
 
-export type SessionRecord = {
+export interface SessionRecord {
+  readonly binding: SessionBindingInfo;
+  readonly continuationIndex?: number | null;
+  readonly continuationParentId?: string | null;
+  readonly createdAt: number;
   readonly id: string;
-  readonly title: string;
-  readonly providerIds: readonly ProviderStackId[];
-  readonly workspacePath: string;
   readonly initiativeSlug?: string | null;
-  readonly stage?: string | null;
+  readonly providerIds: readonly ProviderStackId[];
   readonly runSlug?: string | null;
   readonly sessionKind?: SessionKind | null;
-  readonly continuationParentId?: string | null;
-  readonly continuationIndex?: number | null;
-  readonly createdAt: number;
-  readonly binding: SessionBindingInfo;
-};
+  readonly stage?: string | null;
+  readonly title: string;
+  readonly workspacePath: string;
+}
 
-export type SessionSnapshot = {
-  readonly messages: readonly SessionMessage[];
-  readonly todos: readonly SessionTodoItem[];
-  readonly status: SessionStatusInfo;
-  readonly draft: string;
+export interface SessionSnapshot {
   readonly binding: SessionBindingInfo;
-};
+  readonly draft: string;
+  readonly messages: readonly SessionMessage[];
+  readonly status: SessionStatusInfo;
+  readonly todos: readonly SessionTodoItem[];
+}

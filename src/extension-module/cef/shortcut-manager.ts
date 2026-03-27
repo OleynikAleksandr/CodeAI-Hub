@@ -2,10 +2,10 @@ import { promises as fs } from "node:fs";
 import { platform } from "node:os";
 import { ensureMacShortcut as ensureMacShortcutService } from "./mac-shortcut-service";
 
-type ShortcutTarget = {
-  readonly path: string;
+interface ShortcutTarget {
   readonly args: readonly string[];
-};
+  readonly path: string;
+}
 
 const pathExists = async (targetPath: string): Promise<boolean> => {
   try {

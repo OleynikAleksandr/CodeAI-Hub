@@ -5,12 +5,12 @@ import {
 import type { GeneralResponsePolicySettings } from "./general-response-mode/response-mode-settings";
 import { isRecord, resolveBoolean } from "./settings-utils";
 
-export type GeneralSettings = {
+export interface GeneralSettings {
   readonly coreControls: {
     readonly allowRestart: boolean;
   };
   readonly responsePolicy: GeneralResponsePolicySettings;
-};
+}
 
 export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   coreControls: {

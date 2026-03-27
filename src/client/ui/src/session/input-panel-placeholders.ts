@@ -1,10 +1,10 @@
-type ResolveInputPlaceholderOptions = {
+interface ResolveInputPlaceholderOptions {
+  readonly connectionState: string;
+  readonly continuityErrorCopy: string | null;
+  readonly continuityLockActive: boolean;
   readonly isQueued: boolean;
   readonly terminalNoResume: boolean;
-  readonly connectionState: string;
-  readonly continuityLockActive: boolean;
-  readonly continuityErrorCopy: string | null;
-};
+}
 
 export const resolveInputPlaceholder = (
   options: ResolveInputPlaceholderOptions

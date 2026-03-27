@@ -7,12 +7,12 @@ import {
 } from "./response-mode-copy";
 import type { GeneralResponsePolicySettings } from "./response-mode-state";
 
-type ResponseModeCardProps = {
-  readonly responsePolicy: GeneralResponsePolicySettings;
+interface ResponseModeCardProps {
   readonly onModeChange: (mode: GeneralResponseMode) => void;
-  readonly onStrictSchemaTextChange: (value: string) => void;
   readonly onStrictInstructionTextChange: (value: string) => void;
-};
+  readonly onStrictSchemaTextChange: (value: string) => void;
+  readonly responsePolicy: GeneralResponsePolicySettings;
+}
 
 const copyStyles: CSSProperties = {
   margin: 0,

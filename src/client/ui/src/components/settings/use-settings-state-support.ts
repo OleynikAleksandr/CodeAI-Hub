@@ -13,12 +13,12 @@ import type {
   Settings,
 } from "./settings-state-model";
 
-export type VersionsState = {
+export interface VersionsState {
   readonly data: ProviderVersions | null;
-  readonly loading: boolean;
   readonly error?: string | null;
+  readonly loading: boolean;
   readonly updatingTargets: readonly string[];
-};
+}
 
 type IncomingMessage =
   | {
@@ -56,52 +56,52 @@ export const clampRemainingPercentThreshold = (value: number): number =>
 export const clampGeminiContextWindowTokenLimit = (value: number): number =>
   Math.min(1_000_000, Math.max(10_000, Math.round(value)));
 
-export type UseSettingsStateResult = {
-  readonly settings: Settings;
-  readonly hasChanges: boolean;
-  readonly saving: boolean;
-  readonly resetting: boolean;
-  readonly versions: VersionsState;
-  readonly handleThinkingSettingsChange: (
-    enabled: boolean,
-    maxTokens: number
-  ) => void;
+export interface UseSettingsStateResult {
   readonly handleClaudeContinuityRemainingPercentThresholdChange: (
     remainingPercentThreshold: number
-  ) => void;
-  readonly handleCodexContinuityRemainingPercentThresholdChange: (
-    remainingPercentThreshold: number
-  ) => void;
-  readonly handleGeminiContinuityRemainingPercentThresholdChange: (
-    remainingPercentThreshold: number
-  ) => void;
-  readonly handleGeminiContextWindowTokenLimitChange: (
-    contextWindowTokenLimit: number
   ) => void;
   readonly handleClaudeDefaultModelChange: (
     modelId: ClaudeModelAliasId
   ) => void;
+  readonly handleCodexContinuityRemainingPercentThresholdChange: (
+    remainingPercentThreshold: number
+  ) => void;
   readonly handleCodexDefaultModelChange: (modelId: CodexModelId) => void;
+  readonly handleCodexReasoningChange: (
+    modelId: CodexModelId,
+    reasoning: CodexReasoningLevel
+  ) => void;
+  readonly handleGeminiContextWindowTokenLimitChange: (
+    contextWindowTokenLimit: number
+  ) => void;
+  readonly handleGeminiContinuityRemainingPercentThresholdChange: (
+    remainingPercentThreshold: number
+  ) => void;
   readonly handleGeminiDefaultModelChange: (modelId: GeminiModelId) => void;
   readonly handleGeminiThinkingChange: (
     modelId: GeminiModelId,
     level: GeminiThinkingLevel
   ) => void;
-  readonly handleCodexReasoningChange: (
-    modelId: CodexModelId,
-    reasoning: CodexReasoningLevel
-  ) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,
     enabled: boolean
   ) => void;
-  readonly handleResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
-  readonly handleStrictSchemaTextChange: (value: string) => void;
-  readonly handleStrictInstructionTextChange: (value: string) => void;
-  readonly handleSave: () => void;
   readonly handleReset: () => void;
+  readonly handleResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
+  readonly handleSave: () => void;
+  readonly handleStrictInstructionTextChange: (value: string) => void;
+  readonly handleStrictSchemaTextChange: (value: string) => void;
+  readonly handleThinkingSettingsChange: (
+    enabled: boolean,
+    maxTokens: number
+  ) => void;
   readonly handleUpdateProvider: (
     provider: ProviderId,
     target: "cli" | "sdk" | "core"
   ) => void;
-};
+  readonly hasChanges: boolean;
+  readonly resetting: boolean;
+  readonly saving: boolean;
+  readonly settings: Settings;
+  readonly versions: VersionsState;
+}

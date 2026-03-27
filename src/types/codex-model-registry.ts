@@ -8,14 +8,14 @@ export type CodexModelPlatform =
 export type CodexModelStatus = "active" | "succeeded_by";
 export type CodexModelTier = "flagship" | "max" | "mini" | "general";
 
-export type CodexRecommendedModelDescriptor = {
-  readonly id: string;
-  readonly displayName: string;
+export interface CodexRecommendedModelDescriptor {
   readonly description: string;
+  readonly displayName: string;
+  readonly id: string;
   readonly platforms: readonly CodexModelPlatform[];
   readonly status: CodexModelStatus;
   readonly tier: CodexModelTier;
-};
+}
 
 export const CODEX_RECOMMENDED_MODELS = [
   {
@@ -60,13 +60,13 @@ export const CODEX_SETTINGS_MODELS = [
   },
 ] as const satisfies readonly CodexRecommendedModelDescriptor[];
 
-export type CodexLegacyModelDescriptor = {
-  readonly id: string;
-  readonly displayName: string;
+export interface CodexLegacyModelDescriptor {
   readonly description: string;
+  readonly displayName: string;
+  readonly id: string;
   readonly status: "succeeded_by";
   readonly successor: string;
-};
+}
 
 export const CODEX_LEGACY_MODELS =
   [] as const satisfies readonly CodexLegacyModelDescriptor[];
@@ -88,12 +88,12 @@ export const DEFAULT_CODEX_MODEL_ID: CodexRecommendedModelId = "gpt-5.3-codex";
 
 export type CodexReasoningLevel = "low" | "medium" | "high" | "xhigh";
 
-export type CodexReasoningLevelDescriptor = {
-  readonly name: CodexReasoningLevel;
-  readonly description: string;
-  readonly useCase: string;
+export interface CodexReasoningLevelDescriptor {
   readonly default: boolean;
-};
+  readonly description: string;
+  readonly name: CodexReasoningLevel;
+  readonly useCase: string;
+}
 
 export const CODEX_REASONING_LEVELS = [
   {

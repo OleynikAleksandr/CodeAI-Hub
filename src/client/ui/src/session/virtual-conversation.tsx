@@ -127,13 +127,13 @@ export const useAgentWorkingIndicator = (options: {
   return visible;
 };
 
-type SessionHeaderProps = {
-  readonly sessions: readonly SessionRecord[];
-  readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
+interface SessionHeaderProps {
   readonly activeSessionId: string | null;
-  readonly onSelectSession: (sessionId: string) => void;
   readonly onCloseSession: (sessionId: string) => void;
-};
+  readonly onSelectSession: (sessionId: string) => void;
+  readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
+  readonly sessions: readonly SessionRecord[];
+}
 
 export const SessionHeader = ({
   sessions,
@@ -200,10 +200,10 @@ export const computeFallbackContinuationIndex = (options: {
   return Math.max(index, 2);
 };
 
-type MessageWithSegmentIndex = {
+interface MessageWithSegmentIndex {
   readonly message: SessionMessage;
   readonly segmentIndex: number;
-};
+}
 
 const compareMessageIds = (left: string, right: string): number => {
   if (left < right) {

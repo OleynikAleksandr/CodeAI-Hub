@@ -6,15 +6,15 @@ import {
 
 export type { GeneralResponseMode } from "./response-mode-copy";
 
-export type GeneralStrictOutputSettings = {
-  readonly schemaText: string;
+export interface GeneralStrictOutputSettings {
   readonly instructionText: string;
-};
+  readonly schemaText: string;
+}
 
-export type GeneralResponsePolicySettings = {
+export interface GeneralResponsePolicySettings {
   readonly mode: GeneralResponseMode;
   readonly strictOutput: GeneralStrictOutputSettings;
-};
+}
 
 const DEFAULT_STRICT_OUTPUT_SCHEMA = {
   type: "object",

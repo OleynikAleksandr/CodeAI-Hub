@@ -21,12 +21,12 @@ export type ProgressReporter = Progress<{
   increment?: number;
 }>;
 
-export type InstallMarker = {
-  readonly platform: PlatformKey;
-  readonly launcherVersion: string;
+export interface InstallMarker {
   readonly installedAt: string;
+  readonly launcherVersion: string;
   readonly package: string;
-};
+  readonly platform: PlatformKey;
+}
 
 export const INSTALL_MARKER_FILE = "install.json";
 export const DOWNLOADS_DIR_NAME = "downloads";

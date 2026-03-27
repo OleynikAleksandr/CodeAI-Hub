@@ -46,11 +46,11 @@ const INVENTORY_SECTION_NAMES = new Set([
 const SYNTHETIC_PRODUCT_PART_ID = "default-product-part";
 const SYNTHETIC_PRODUCT_PART_TITLE = "Default Product Part";
 
-type BaseEntity = {
+interface BaseEntity {
   readonly id: string;
   readonly origin: EntityOrigin;
   readonly status: EntityStatus;
-};
+}
 
 type ParsedProductPart = ProductPartEntity & {
   readonly sourceLine: number;
@@ -69,38 +69,38 @@ type ParsedCluster = ClusterEntity & {
   readonly modules: readonly ParsedModule[];
 };
 
-type InventoryLine = {
+interface InventoryLine {
   readonly number: number;
   readonly text: string;
-};
+}
 
-type ModuleParseOptions = {
+interface ModuleParseOptions {
   readonly expectedCluster?: string | null;
   readonly expectedProductPart?: string;
-};
+}
 
-type ParsedOwnershipStructure = {
+interface ParsedOwnershipStructure {
   readonly clusters: readonly ParsedCluster[];
   readonly productParts: readonly ParsedProductPart[];
   readonly standaloneModules: readonly ParsedModule[];
-};
+}
 
-type ProductPartSectionParseState = {
+interface ProductPartSectionParseState {
   currentPartClusters: ParsedCluster[];
   currentPartStandalone: ParsedModule[];
   currentProductPart: ParsedProductPart | null;
   parsedClusters: ParsedCluster[];
   parsedProductParts: ParsedProductPart[];
   parsedStandaloneModules: ParsedModule[];
-};
+}
 
-type ProductPartCursorContext = {
+interface ProductPartCursorContext {
   readonly cursor: number;
   readonly lines: readonly InventoryLine[];
   readonly productPartId: string;
   readonly state: ProductPartSectionParseState;
   readonly warnings: readonly MarkdownDslParseWarning[];
-};
+}
 
 const required = (
   fields: Fields,

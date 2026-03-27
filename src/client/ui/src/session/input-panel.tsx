@@ -12,17 +12,17 @@ import { InputTextarea } from "./input-textarea";
 import type { TaskTimerSnapshot } from "./task-timer";
 import { TaskTimer } from "./task-timer";
 
-type InputPanelProps = {
-  readonly draft: string;
+interface InputPanelProps {
   readonly connectionState?: "idle" | "running" | "blocked";
-  readonly continuityLockActive?: boolean;
   readonly continuityErrorCopy?: string | null;
+  readonly continuityLockActive?: boolean;
+  readonly draft: string;
   readonly isQueued?: boolean;
-  readonly providerTheme?: ProviderTheme | null;
-  readonly terminalNoResume?: boolean;
-  readonly taskTimer?: TaskTimerSnapshot | null;
   readonly onSubmit: (text: string) => void;
-};
+  readonly providerTheme?: ProviderTheme | null;
+  readonly taskTimer?: TaskTimerSnapshot | null;
+  readonly terminalNoResume?: boolean;
+}
 
 const MAX_TEXTAREA_HEIGHT = 200;
 const CORE_START_DELAY_MS = 2000;

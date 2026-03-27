@@ -8,11 +8,11 @@ const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
 const WORKSPACE_ROOT_DIR = ".codeai-hub";
 
-type WorkspaceSessionPayload = {
-  readonly workspacePath: string;
+interface WorkspaceSessionPayload {
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
-};
+  readonly workspacePath: string;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);

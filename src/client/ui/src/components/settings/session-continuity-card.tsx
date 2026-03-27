@@ -1,13 +1,13 @@
 import React from "react";
 import SettingsCard from "./settings-card";
 
-type SessionContinuityCardProps = {
-  readonly title: string;
-  readonly remainingPercentThreshold: number;
-  readonly onRemainingPercentThresholdChange: (value: number) => void;
+interface SessionContinuityCardProps {
   readonly contextWindowTokenLimit?: number;
   readonly onContextWindowTokenLimitChange?: (value: number) => void;
-};
+  readonly onRemainingPercentThresholdChange: (value: number) => void;
+  readonly remainingPercentThreshold: number;
+  readonly title: string;
+}
 
 const settingsLabelStyles: React.CSSProperties = {
   display: "flex",
@@ -33,13 +33,13 @@ const settingsInputStyles: React.CSSProperties = {
   color: "#cccccc",
 };
 
-type ManualIntegerInputProps = {
+interface ManualIntegerInputProps {
   readonly id: string;
-  readonly value: number;
-  readonly min: number;
   readonly max: number;
+  readonly min: number;
   readonly onCommit: (value: number) => void;
-};
+  readonly value: number;
+}
 
 const UNSIGNED_INTEGER_RE = /^\d+$/;
 

@@ -4,10 +4,10 @@ import { IdeaQuestionnaireService } from "../services/idea-questionnaire-service
 
 type SendMessageHandler = (sessionId: string, content: string) => void;
 
-export type UseIdeaCollectorResult = {
-  readonly startCollection: (sessionId: string) => void;
+export interface UseIdeaCollectorResult {
   readonly sendMessage: SendMessageHandler;
-};
+  readonly startCollection: (sessionId: string) => void;
+}
 
 export const useIdeaCollector = (
   fallbackSendMessage: SendMessageHandler
@@ -18,8 +18,7 @@ export const useIdeaCollector = (
   const questionnaireService = questionnaireServiceRef.current;
 
   useEffect(() => {
-    type SessionEventCandidate = {
-      readonly type?: string;
+    interface SessionEventCandidate {
       readonly payload?: {
         readonly sessionId?: string;
         readonly event?: unknown;
@@ -28,7 +27,8 @@ export const useIdeaCollector = (
           readonly content?: unknown;
         };
       };
-    };
+      readonly type?: string;
+    }
 
     const handleStreamEvent = (candidate: SessionEventCandidate): boolean => {
       if (candidate.type !== "session:stream") {

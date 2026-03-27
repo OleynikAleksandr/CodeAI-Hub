@@ -2,38 +2,38 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 
-export type CoreConfig = {
-  readonly host: string;
-  readonly port: number;
-  readonly shutdownGracePeriodMs: number;
-  readonly idleTtlMinutes: number | null;
-  readonly managedMode: string | null;
-  readonly templatesDir: string;
-  readonly claudeWorkspacePath?: string;
+export interface CoreConfig {
+  readonly claudeContinuityRemainingPercentThreshold: number;
+  readonly claudeDefaultModel: string;
   readonly claudeProjectSlug: string;
   readonly claudeSettingsPath: string;
-  readonly codexWorkspacePath?: string;
-  readonly codexSandboxMode?:
-    | "read-only"
-    | "workspace-write"
-    | "danger-full-access";
+  readonly claudeWorkspacePath?: string;
   readonly codexApprovalMode?:
     | "never"
     | "on-request"
     | "on-failure"
     | "untrusted";
-  readonly codexSkipGitRepoCheck: boolean;
   readonly codexDefaultModel?: string;
   readonly codexDefaultReasoningEffort?: CodexReasoningEffort;
-  readonly geminiWorkspacePath?: string;
-  readonly geminiDefaultModel?: string;
-  readonly geminiThinkingLevelByModel: Record<string, string>;
-  readonly geminiSettingsPath: string;
-  readonly geminiCredentialsDirectory?: string;
-  readonly claudeDefaultModel: string;
-  readonly claudeContinuityRemainingPercentThreshold: number;
+  readonly codexSandboxMode?:
+    | "read-only"
+    | "workspace-write"
+    | "danger-full-access";
+  readonly codexSkipGitRepoCheck: boolean;
+  readonly codexWorkspacePath?: string;
   readonly continuityPreemptRemainingPercentThreshold: number;
-};
+  readonly geminiCredentialsDirectory?: string;
+  readonly geminiDefaultModel?: string;
+  readonly geminiSettingsPath: string;
+  readonly geminiThinkingLevelByModel: Record<string, string>;
+  readonly geminiWorkspacePath?: string;
+  readonly host: string;
+  readonly idleTtlMinutes: number | null;
+  readonly managedMode: string | null;
+  readonly port: number;
+  readonly shutdownGracePeriodMs: number;
+  readonly templatesDir: string;
+}
 
 type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
 
@@ -85,12 +85,12 @@ const MULTIPLE_DASHES_REGEX = /-+/g;
 const TRAILING_DASH_REGEX = /-$/;
 const BOOLEAN_TRUTHY = new Set(["1", "true", "yes", "on"]);
 
-type CodexSettingsSnapshot = {
+interface CodexSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: unknown;
-};
+}
 
-type ClaudeSettingsSnapshot = {
+interface ClaudeSettingsSnapshot {
   readonly providers?: {
     readonly claude?: {
       readonly sessionContinuity?: {
@@ -98,7 +98,7 @@ type ClaudeSettingsSnapshot = {
       };
     };
   };
-};
+}
 
 const toNumber = (value: string | undefined, fallback: number): number => {
   if (!value) {
@@ -197,10 +197,10 @@ const resolveCodexReasoningFromSettings = (
   return normalized;
 };
 
-type GeminiSettingsSnapshot = {
+interface GeminiSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly thinkingLevelByModel?: unknown;
-};
+}
 
 const loadGeminiSettingsSnapshot = (): GeminiSettingsSnapshot | null => {
   try {

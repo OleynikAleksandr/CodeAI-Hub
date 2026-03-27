@@ -11,14 +11,14 @@ import {
   flowStageTitleStyles,
 } from "./styles";
 
-export type FlowStageProps = {
-  readonly id: FlowStageId;
-  readonly title: string;
-  readonly subtitle: string;
+export interface FlowStageProps {
   readonly active: boolean;
   readonly disabled: boolean;
+  readonly id: FlowStageId;
   readonly onStageClick: (stage: FlowStageId) => void;
-};
+  readonly subtitle: string;
+  readonly title: string;
+}
 
 export const FlowStage = ({
   id,

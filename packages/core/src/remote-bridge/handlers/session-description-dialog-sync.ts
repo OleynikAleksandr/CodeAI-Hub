@@ -18,11 +18,11 @@ export type DescriptionDialogResolution = {
   readonly shouldBackfill: boolean;
 } | null;
 
-type SessionDescriptionDialogSyncDependencies = {
-  readonly sessionStorage: UnifiedSessionStorage;
+interface SessionDescriptionDialogSyncDependencies {
   readonly continuityRootBySessionId: Map<string, string>;
   readonly logger: Logger;
-};
+  readonly sessionStorage: UnifiedSessionStorage;
+}
 
 export class SessionDescriptionDialogSync {
   private readonly deps: SessionDescriptionDialogSyncDependencies;

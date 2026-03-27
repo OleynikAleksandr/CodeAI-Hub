@@ -1,8 +1,8 @@
 import type { CSSProperties, FC } from "react";
 
-type SettingsHeaderProps = {
+interface SettingsHeaderProps {
   readonly onClose: () => void;
-};
+}
 
 const headerStyles: CSSProperties = {
   display: "flex",

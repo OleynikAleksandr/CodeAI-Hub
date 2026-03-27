@@ -3,12 +3,12 @@
  * Provides explicit crash/unavailable UX with retry/restart CTAs.
  */
 
-type CoreHealthBannerProps = {
-  readonly connectionStatus: "connecting" | "ready" | "error";
+interface CoreHealthBannerProps {
   readonly connectionDetail?: string;
-  readonly onRetryConnection?: () => void;
+  readonly connectionStatus: "connecting" | "ready" | "error";
   readonly onRestartCore?: () => void;
-};
+  readonly onRetryConnection?: () => void;
+}
 
 export const CoreHealthBanner = ({
   connectionStatus,

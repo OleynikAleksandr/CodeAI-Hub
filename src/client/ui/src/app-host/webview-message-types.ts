@@ -5,73 +5,79 @@ import type {
   CoreRuntimeStatusPayload,
 } from "../core-bridge/types";
 
-export type ProviderPickerOpenMessage = {
-  readonly type: "providerPicker:open";
+export interface ProviderPickerOpenMessage {
   readonly payload?: {
     readonly providers?: unknown;
     readonly stage?: unknown;
   };
-};
+  readonly type: "providerPicker:open";
+}
 
-export type SessionCreatedMessage = {
+export interface SessionCreatedMessage {
+  readonly payload?: unknown;
   readonly type: "session:created";
-  readonly payload?: unknown;
-};
+}
 
-export type SessionClearAllMessage = { readonly type: "session:clearAll" };
+export interface SessionClearAllMessage {
+  readonly type: "session:clearAll";
+}
 
-export type SessionFocusLastMessage = { readonly type: "session:focusLast" };
+export interface SessionFocusLastMessage {
+  readonly type: "session:focusLast";
+}
 
-export type ShowSettingsMessage = { readonly type: "ui:showSettings" };
+export interface ShowSettingsMessage {
+  readonly type: "ui:showSettings";
+}
 
-export type UseProjectManagerMessage = {
+export interface UseProjectManagerMessage {
   readonly type: "ui:useProjectManager";
-};
+}
 
-export type CoreStateMessage = {
+export interface CoreStateMessage {
+  readonly payload?: unknown;
   readonly type: "core:state";
-  readonly payload?: unknown;
-};
+}
 
-export type CoreConnectionPayload = {
-  readonly status: string;
+export interface CoreConnectionPayload {
   readonly detail?: string;
-};
+  readonly status: string;
+}
 
-export type CoreConnectionMessage = {
-  readonly type: "core:connection";
+export interface CoreConnectionMessage {
   readonly payload?: CoreConnectionPayload;
-};
+  readonly type: "core:connection";
+}
 
-export type CoreLoadingStatusMessage = {
+export interface CoreLoadingStatusMessage {
+  readonly payload?: unknown;
   readonly type: "core:loading-status";
-  readonly payload?: unknown;
-};
+}
 
-export type SessionMessageEvent = {
+export interface SessionMessageEvent {
+  readonly payload?: unknown;
   readonly type: "session:message";
-  readonly payload?: unknown;
-};
+}
 
-export type SessionDeletedMessage = {
+export interface SessionDeletedMessage {
+  readonly payload?: unknown;
   readonly type: "session:deleted";
-  readonly payload?: unknown;
-};
+}
 
-export type SessionBindingMessage = {
+export interface SessionBindingMessage {
+  readonly payload?: unknown;
   readonly type: "session:binding";
-  readonly payload?: unknown;
-};
+}
 
-export type SessionHistoryMessage = {
+export interface SessionHistoryMessage {
+  readonly payload?: unknown;
   readonly type: "session:history";
-  readonly payload?: unknown;
-};
+}
 
-export type SessionStreamMessage = {
-  readonly type: "session:stream";
+export interface SessionStreamMessage {
   readonly payload?: unknown;
-};
+  readonly type: "session:stream";
+}
 
 export type IncomingMessage =
   | ProviderPickerOpenMessage

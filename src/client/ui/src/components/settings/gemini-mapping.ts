@@ -16,17 +16,17 @@ export type GeminiThinkingByModel = Readonly<
   Record<string, GeminiThinkingLevel>
 >;
 
-export type GeminiSessionContinuitySettings = {
+export interface GeminiSessionContinuitySettings {
   readonly contextWindowTokenLimit: number;
   readonly remainingPercentThreshold: number;
-};
+}
 
-export type GeminiSettings = {
+export interface GeminiSettings {
   readonly autoUpdate: { readonly enabled: boolean };
   readonly defaultModel: GeminiModelId;
-  readonly thinkingLevelByModel: GeminiThinkingByModel;
   readonly sessionContinuity: GeminiSessionContinuitySettings;
-};
+  readonly thinkingLevelByModel: GeminiThinkingByModel;
+}
 
 const GEMINI_THINKING_LEVEL_SET = new Set<string>(
   GEMINI_THINKING_LEVELS.map((level) => level.name)

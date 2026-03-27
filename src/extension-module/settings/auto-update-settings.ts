@@ -1,8 +1,8 @@
 import { isRecord, resolveBoolean } from "./settings-utils";
 
-export type AutoUpdateSettings = {
+export interface AutoUpdateSettings {
   readonly enabled: boolean;
-};
+}
 
 export const DEFAULT_AUTO_UPDATE_SETTINGS: AutoUpdateSettings = {
   enabled: true,

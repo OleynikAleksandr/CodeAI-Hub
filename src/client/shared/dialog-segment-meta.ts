@@ -3,13 +3,13 @@ import type { SessionMessage } from "../../types/session";
 const SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
 
-type SegmentSummaryPayload = {
+interface SegmentSummaryPayload {
   readonly kind: "segment_summary";
   readonly segments: readonly {
     readonly index: number;
     readonly remainingPercent?: number;
   }[];
-};
+}
 
 const clampPercent = (value: number): number =>
   Math.max(0, Math.min(100, Math.round(value)));

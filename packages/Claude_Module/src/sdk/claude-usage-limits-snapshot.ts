@@ -1,22 +1,22 @@
-export type UsageLimitBucket = {
+export interface UsageLimitBucket {
   readonly percentUsed: number;
   readonly resetsAt: string | null;
-};
+}
 
-export type UsageLimitsSnapshot = {
+export interface UsageLimitsSnapshot {
   readonly currentSession: UsageLimitBucket | null;
   readonly currentWeekAllModels: UsageLimitBucket | null;
   readonly currentWeekSonnetOnly: UsageLimitBucket | null;
-};
+}
 
 type RateLimitWindow = "5h" | "7d";
 
-type ParsedWindowHeaders = {
+interface ParsedWindowHeaders {
   readonly limit: number | null;
   readonly remaining: number | null;
-  readonly utilizationPercent: number | null;
   readonly reset: string | null;
-};
+  readonly utilizationPercent: number | null;
+}
 const DIGITS_ONLY_PATTERN = /^\d+$/;
 
 const clampPercent = (value: number): number => {

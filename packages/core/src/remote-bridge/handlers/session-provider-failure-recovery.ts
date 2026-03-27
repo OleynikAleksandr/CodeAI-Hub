@@ -6,33 +6,33 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { BridgeEvent } from "../types";
 
-type ProviderSessionBindingLike = {
+interface ProviderSessionBindingLike {
   readonly providerId: string;
   providerSessionId: string;
   readonly unsubscribe: () => void;
-};
+}
 
 type ProviderFailureClassification = ReturnType<typeof classifyProviderFailure>;
 
-type SessionProviderFailureRecoveryDependencies = {
-  readonly providerRegistry: ProviderRegistry;
-  readonly sessionManager: SessionManager;
-  readonly sessionStorage: UnifiedSessionStorage;
-  readonly providerSessions: Map<string, ProviderSessionBindingLike>;
+interface SessionProviderFailureRecoveryDependencies {
   readonly broadcaster: (event: BridgeEvent) => void;
-  readonly stateBroadcaster: () => void;
-  readonly logger: Logger;
   readonly broadcastSessionBinding: (sessionId: string) => void;
-  readonly emitTurnStateEvent: (options: {
-    readonly sessionId: string;
-    readonly state: "idle" | "running";
-  }) => void;
   readonly consumeRetryBudget: (
     sessionId: string,
     failureClass: string
   ) => void;
+  readonly emitTurnStateEvent: (options: {
+    readonly sessionId: string;
+    readonly state: "idle" | "running";
+  }) => void;
   readonly expirePendingUserIntent: (sessionId: string) => void;
-};
+  readonly logger: Logger;
+  readonly providerRegistry: ProviderRegistry;
+  readonly providerSessions: Map<string, ProviderSessionBindingLike>;
+  readonly sessionManager: SessionManager;
+  readonly sessionStorage: UnifiedSessionStorage;
+  readonly stateBroadcaster: () => void;
+}
 
 export class SessionProviderFailureRecovery {
   private readonly deps: SessionProviderFailureRecoveryDependencies;

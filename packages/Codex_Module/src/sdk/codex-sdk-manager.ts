@@ -42,20 +42,20 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "xhigh",
 ]);
 
-type CodexSettingsSnapshot = {
+interface CodexSettingsSnapshot {
   readonly defaultModel?: string;
   readonly reasoningByModel: Record<string, CodexReasoningEffort>;
   readonly responsePolicy?: CodexResponsePolicy;
-};
+}
 
-type CodexManagerDependencies = {
-  readonly installer: CodexInstaller;
+interface CodexManagerDependencies {
   readonly authManager: CodexAuthManager;
-  readonly sessions: CodexSessionManager;
+  readonly installer: CodexInstaller;
   readonly processor: CodexMessageProcessor;
-  readonly workspace: CodexWorkspaceOptions;
   readonly reporter?: ModuleReporter;
-};
+  readonly sessions: CodexSessionManager;
+  readonly workspace: CodexWorkspaceOptions;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;

@@ -4,7 +4,10 @@ const { build } = require("esbuild");
 const fs = require("node:fs/promises");
 const path = require("node:path");
 
-const projectRoot = path.resolve(__dirname, "..");
+const projectRoot = path.resolve(
+  path.dirname(require.resolve("./build-project-manager.js")),
+  ".."
+);
 const entryFile = path.join(
   projectRoot,
   "src",

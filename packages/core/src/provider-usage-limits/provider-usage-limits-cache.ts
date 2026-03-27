@@ -3,11 +3,11 @@ import type {
   ProviderUsageLimitsSnapshot,
 } from "./provider-usage-limits-types";
 
-export type ProviderUsageLimitsCacheEntry = {
-  readonly snapshot: ProviderUsageLimitsSnapshot;
-  readonly compat: CompatibleSessionUsageLimits;
+export interface ProviderUsageLimitsCacheEntry {
   readonly cachedAt: number;
-};
+  readonly compat: CompatibleSessionUsageLimits;
+  readonly snapshot: ProviderUsageLimitsSnapshot;
+}
 
 export class ProviderUsageLimitsCache {
   readonly #entries = new Map<string, ProviderUsageLimitsCacheEntry>();

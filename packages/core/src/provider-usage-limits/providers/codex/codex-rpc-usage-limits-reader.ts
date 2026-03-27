@@ -27,20 +27,20 @@ const FALLBACK_CODEX_CLI_CANDIDATE = path.join(
 );
 const STDIO_LINE_SPLIT_PATTERN = /\r?\n/u;
 
-type CodexRuntimePayload = {
+interface CodexRuntimePayload {
   readonly collectedAt?: string;
-  readonly rateLimits?: unknown;
   readonly rate_limits?: unknown;
-};
+  readonly rateLimits?: unknown;
+}
 
-type JsonRpcEnvelope = {
+interface JsonRpcEnvelope {
   readonly error?: {
     readonly message?: string;
   } | null;
   readonly id?: number | string;
   readonly method?: string;
   readonly result?: unknown;
-};
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -124,11 +124,11 @@ const extractAppServerRateLimitsResult = (
   };
 };
 
-export type CodexRpcUsageLimitsReaderOptions = {
+export interface CodexRpcUsageLimitsReaderOptions {
   readonly envKey?: string;
   readonly normalizer?: CodexUsageLimitsNormalizer;
   readonly timeoutMs?: number;
-};
+}
 
 export class CodexRpcUsageLimitsReader {
   readonly #envKey: string;

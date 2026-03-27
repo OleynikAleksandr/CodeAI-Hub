@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { DragDropFacade } from "../modules/drag-drop-module/drag-drop-facade";
 
-type InputDragDropOptions = {
+interface InputDragDropOptions {
   readonly containerRef: React.RefObject<HTMLDivElement>;
-  readonly textareaRef: React.RefObject<HTMLTextAreaElement>;
   readonly onValueChange: (newValue: string) => void;
-};
+  readonly textareaRef: React.RefObject<HTMLTextAreaElement>;
+}
 
 export const DEFAULT_DRAG_OVERLAY_LABEL = "Drop files here while holding Shift";
 

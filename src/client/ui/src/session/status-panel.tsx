@@ -16,12 +16,12 @@ const formatModelSummary = (models: readonly ModelInfo[]): string =>
 
 type CoreConnectionStatus = "connecting" | "ready" | "error";
 
-type StatusPanelProps = {
-  readonly status: SessionStatusInfo | null;
-  readonly connectionStatus: CoreConnectionStatus;
+interface StatusPanelProps {
   readonly connectionDetail?: string;
+  readonly connectionStatus: CoreConnectionStatus;
+  readonly status: SessionStatusInfo | null;
   readonly tokenDebugSummary?: string;
-};
+}
 
 const StatusPanel = ({
   status,

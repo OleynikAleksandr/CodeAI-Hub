@@ -3,7 +3,10 @@
 const { build } = require("esbuild");
 const path = require("node:path");
 
-const projectRoot = path.resolve(__dirname, "..");
+const projectRoot = path.resolve(
+  path.dirname(require.resolve("./build-webview.js")),
+  ".."
+);
 const entryFile = path.resolve(
   projectRoot,
   "src",

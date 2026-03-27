@@ -9,17 +9,17 @@ const WORKSPACE_FILE_ENDPOINT = "/api/v1/orchestrator/workspace-file";
 const DEFAULT_MAX_BYTES = 300_000;
 const MAX_FILES = 3;
 
-type WorkspaceReadCommand = {
+interface WorkspaceReadCommand {
   readonly paths: readonly string[];
   readonly remainingMessage: string;
-};
+}
 
-type WorkspaceFileResponse = {
+interface WorkspaceFileResponse {
+  readonly content: string;
+  readonly maxBytes: number;
   readonly path: string;
   readonly truncated: boolean;
-  readonly maxBytes: number;
-  readonly content: string;
-};
+}
 
 const normalizePathToken = (token: string): string | null => {
   const trimmed = token.trim();

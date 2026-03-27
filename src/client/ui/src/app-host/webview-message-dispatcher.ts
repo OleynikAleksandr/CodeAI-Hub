@@ -42,34 +42,34 @@ type SessionCreatedHandler = (session: SessionRecord) => void;
 
 type VoidHandler = () => void;
 
-type SessionDispatchHandlers = {
-  readonly onSessionCreated: SessionCreatedHandler;
-  readonly onSessionClearAll: VoidHandler;
-  readonly onSessionFocusLast: VoidHandler;
-  readonly onSessionMessage?: (
-    payload: CoreBridgeSessionMessagePayload
-  ) => void;
-  readonly onSessionDeleted?: (payload: { readonly sessionId: string }) => void;
+interface SessionDispatchHandlers {
   readonly onSessionBinding?: (
     payload: CoreBridgeSessionBindingPayload
   ) => void;
+  readonly onSessionClearAll: VoidHandler;
+  readonly onSessionCreated: SessionCreatedHandler;
+  readonly onSessionDeleted?: (payload: { readonly sessionId: string }) => void;
+  readonly onSessionFocusLast: VoidHandler;
   readonly onSessionHistory?: (payload: {
     readonly sessionId: string;
     readonly messages: readonly SessionMessage[];
   }) => void;
+  readonly onSessionMessage?: (
+    payload: CoreBridgeSessionMessagePayload
+  ) => void;
   readonly onSessionStream?: (payload: {
     readonly sessionId: string;
     readonly event?: unknown;
   }) => void;
-};
+}
 
-type WebviewDispatchHandlers = SessionDispatchHandlers & {
-  readonly onProviderPickerOpen: ProviderPickerOpenHandler;
-  readonly onShowSettings: VoidHandler;
-  readonly onCoreState?: (payload: CoreBridgeStatePayload) => void;
+interface WebviewDispatchHandlers extends SessionDispatchHandlers {
   readonly onCoreConnectionStatus?: (status: string, detail?: string) => void;
   readonly onCoreLoadingStatus?: (payload: CoreRuntimeStatusPayload) => void;
-};
+  readonly onCoreState?: (payload: CoreBridgeStatePayload) => void;
+  readonly onProviderPickerOpen: ProviderPickerOpenHandler;
+  readonly onShowSettings: VoidHandler;
+}
 
 const handleProviderPickerOpenMessage = (
   message: ProviderPickerOpenMessage,
@@ -225,8 +225,12 @@ const dispatchSessionMessage = (
   }
 };
 
-export type { ProviderPickerOpenHandler, SessionCreatedHandler, VoidHandler };
-export type { WebviewDispatchHandlers };
+export type {
+  ProviderPickerOpenHandler,
+  SessionCreatedHandler,
+  VoidHandler,
+  WebviewDispatchHandlers,
+};
 
 export const dispatchWebviewMessage = (
   rawMessage: unknown,
@@ -256,12 +260,12 @@ export const dispatchWebviewMessage = (
   switch (message.type) {
     case "core:connection": {
       if (handlers.onCoreConnectionStatus && message.payload) {
-        const candidate = message.payload as Record<string, unknown>;
-        const status = candidate.status;
+        const { detail, status } = message.payload;
         if (typeof status === "string") {
-          const detail =
-            typeof candidate.detail === "string" ? candidate.detail : undefined;
-          handlers.onCoreConnectionStatus(status, detail);
+          handlers.onCoreConnectionStatus(
+            status,
+            typeof detail === "string" ? detail : undefined
+          );
         }
       }
       return;

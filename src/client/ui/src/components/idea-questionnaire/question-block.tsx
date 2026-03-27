@@ -19,19 +19,19 @@ import {
   questionTitleStyles,
 } from "./styles";
 
-export type QuestionnaireQuestion = {
+export interface QuestionnaireQuestion {
+  readonly description?: string;
+  readonly hint?: string;
   readonly id: string;
   readonly title: string;
   readonly titleHint?: string;
-  readonly description?: string;
-  readonly hint?: string;
-};
+}
 
-type QuestionBlockProps = {
+interface QuestionBlockProps {
+  readonly onChange: (questionId: string, value: string) => void;
   readonly question: QuestionnaireQuestion;
   readonly value: string;
-  readonly onChange: (questionId: string, value: string) => void;
-};
+}
 
 const BASE_MIN_HEIGHT = 96;
 

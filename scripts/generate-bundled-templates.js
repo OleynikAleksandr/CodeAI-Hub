@@ -7,7 +7,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const ROOT = path.resolve(__dirname, "..");
+const ROOT = path.resolve(
+  path.dirname(require.resolve("./generate-bundled-templates.js")),
+  ".."
+);
 const OUTPUT = path.join(
   ROOT,
   "packages/core/src/templates/bundled-templates.ts"

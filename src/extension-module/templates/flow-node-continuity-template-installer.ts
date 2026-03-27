@@ -13,10 +13,10 @@ const DESTINATION_BASE_RELATIVE_PATH = path.join(
 
 const BUNDLED_BASE_RELATIVE_PATH = path.join("assets", "flow", "continuity");
 
-type TemplateDescriptor = {
-  readonly templateFileName: string;
+interface TemplateDescriptor {
   readonly logPrefix: string;
-};
+  readonly templateFileName: string;
+}
 
 const FLOW_NODE_CONTINUITY_TEMPLATES: readonly TemplateDescriptor[] = [
   {

@@ -6,24 +6,24 @@ import type {
 
 type RateLimitWindow = "5h" | "7d";
 
-type ParsedWindowHeaders = {
+interface ParsedWindowHeaders {
   readonly limit: number | null;
   readonly remaining: number | null;
-  readonly utilizationPercent: number | null;
   readonly reset: string | null;
-};
+  readonly utilizationPercent: number | null;
+}
 
 type ClaudeUsageLimitSource = Extract<
   ProviderUsageLimitSource,
   "claude_headers" | "claude_probe"
 >;
 
-export type ClaudeUsageLimitsNormalizeInput = {
+export interface ClaudeUsageLimitsNormalizeInput {
   readonly collectedAt?: string;
   readonly headers: ReadonlyMap<string, string>;
   readonly providerScopeKey: string;
   readonly source?: ClaudeUsageLimitSource;
-};
+}
 
 const DIGITS_ONLY_PATTERN = /^\d+$/;
 

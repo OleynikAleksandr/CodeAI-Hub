@@ -48,10 +48,10 @@ export class ProjectRegistry {
       readonly slug?: unknown;
     };
 
-    type ProjectRegistrySchemaWithOptionalSlug = {
-      workspaces: WorkspaceProjectWithOptionalSlug[];
+    interface ProjectRegistrySchemaWithOptionalSlug {
       lastActiveWorkspaceId?: string;
-    };
+      workspaces: WorkspaceProjectWithOptionalSlug[];
+    }
 
     const data =
       this.storage.load() as unknown as ProjectRegistrySchemaWithOptionalSlug;

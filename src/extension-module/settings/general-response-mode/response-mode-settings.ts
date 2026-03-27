@@ -1,14 +1,14 @@
 export type GeneralResponseMode = "strict" | "hybrid" | "debug_raw";
 
-export type GeneralStrictOutputSettings = {
-  readonly schemaText: string;
+export interface GeneralStrictOutputSettings {
   readonly instructionText: string;
-};
+  readonly schemaText: string;
+}
 
-export type GeneralResponsePolicySettings = {
+export interface GeneralResponsePolicySettings {
   readonly mode: GeneralResponseMode;
   readonly strictOutput: GeneralStrictOutputSettings;
-};
+}
 
 export const DEFAULT_STRICT_OUTPUT_SCHEMA = {
   type: "object",

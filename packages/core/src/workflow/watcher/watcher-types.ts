@@ -5,10 +5,10 @@ export type WorkflowStageId =
   | "virtual_simulation"
   | "diagram_modules";
 
-export type WorkflowWatcherEventBase = {
+export interface WorkflowWatcherEventBase {
   readonly timestamp: string;
   readonly workspaceSlug: string;
-};
+}
 
 export type WorkflowRunCreatedEvent = WorkflowWatcherEventBase & {
   readonly type: "workflow.run.created";
@@ -51,10 +51,10 @@ export type WorkflowWatcherEvent =
 
 export type WorkflowWatcherListener = (event: WorkflowWatcherEvent) => void;
 
-export type WorkflowWatcherOptions = {
-  readonly workspaceSlug: string;
-  readonly watchRoot: string;
-  readonly logger: Logger;
+export interface WorkflowWatcherOptions {
   readonly clock?: () => string;
   readonly enableFsWatch?: boolean;
-};
+  readonly logger: Logger;
+  readonly watchRoot: string;
+  readonly workspaceSlug: string;
+}

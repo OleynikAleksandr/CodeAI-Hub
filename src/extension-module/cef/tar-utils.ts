@@ -1,12 +1,12 @@
 import { execFile } from "node:child_process";
 
-export type TarExtractOptions = {
+export interface TarExtractOptions {
   readonly archivePath: string;
   readonly destination: string;
   readonly label: string;
-  readonly stripComponents?: number;
   readonly onProgress?: (message: string) => void;
-};
+  readonly stripComponents?: number;
+}
 
 const resolveTarArgs = (archivePath: string): string[] => {
   if (archivePath.endsWith(".tar.gz") || archivePath.endsWith(".tgz")) {

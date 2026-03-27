@@ -53,22 +53,22 @@ const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-map\.flow\.json))$/;
-export type RouterDependencies = {
+export interface RouterDependencies {
   readonly app: Express;
-  readonly systemHandler: SystemRequestHandler;
   readonly fileDropService: FileDropService;
-  readonly sessionHandler: SessionRequestHandler;
-  readonly sessionManager: SessionManager;
-  readonly sessionStorage: UnifiedSessionStorage;
+  readonly getStatusInfo: () => StatusInfo;
   readonly logger: Logger;
-  readonly workflowEventsService: WorkflowEventsService;
-  readonly workflowStateService: WorkflowStateService;
   readonly onWorkspaceSessionCreated?: (
     workspacePath: string,
     workspaceSlug: string
   ) => Promise<void> | void;
-  readonly getStatusInfo: () => StatusInfo;
-};
+  readonly sessionHandler: SessionRequestHandler;
+  readonly sessionManager: SessionManager;
+  readonly sessionStorage: UnifiedSessionStorage;
+  readonly systemHandler: SystemRequestHandler;
+  readonly workflowEventsService: WorkflowEventsService;
+  readonly workflowStateService: WorkflowStateService;
+}
 
 export class HttpApiRouter {
   private readonly deps: RouterDependencies;
@@ -372,15 +372,15 @@ export class HttpApiRouter {
   }
 }
 
-type ArtifactUpsertItem = {
-  readonly slot: string;
+interface ArtifactUpsertItem {
   readonly markdown: string;
-};
+  readonly slot: string;
+}
 
-type ArtifactUpsertPayload = {
-  readonly sessionId: string;
+interface ArtifactUpsertPayload {
   readonly artifacts: ArtifactUpsertItem[];
-};
+  readonly sessionId: string;
+}
 
 type ArtifactUpsertPayloadResult =
   | { readonly ok: true; readonly value: ArtifactUpsertPayload }
@@ -425,7 +425,7 @@ type ArtifactWriteResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly error: Error };
 
-type WorkflowStageArtifactUpsertPlan = {
+interface WorkflowStageArtifactUpsertPlan {
   readonly upserts: readonly {
     readonly slot: string;
     readonly relativePath: string;
@@ -434,7 +434,7 @@ type WorkflowStageArtifactUpsertPlan = {
     readonly existingContent: string | null;
     readonly changed: boolean;
   }[];
-};
+}
 
 type WorkflowStageArtifactUpsertPlanResult =
   | { readonly ok: true; readonly value: WorkflowStageArtifactUpsertPlan }
@@ -485,17 +485,17 @@ const WORKFLOW_STAGE_PATHS = new Map<WorkflowStageId, RegExp>([
   ["diagram_modules", DIAGRAM_MODULES_PATH_RE],
 ]);
 
-type WorkflowStageUpsertContext = {
+interface WorkflowStageUpsertContext {
   readonly initiativeSlug: string;
-  readonly workspaceRoot: string;
   readonly stage: WorkflowStageId;
-};
+  readonly workspaceRoot: string;
+}
 
-type WorkflowStageUpsertTarget = {
+interface WorkflowStageUpsertTarget {
+  readonly artifactPath: string;
   readonly fileName: WorkflowArtifactFileName;
   readonly relativePath: string;
-  readonly artifactPath: string;
-};
+}
 
 const PRODUCT_PART_SLOT_RE =
   /^diagram\.modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/;
@@ -849,11 +849,11 @@ const validateDiagramFlowSidecar = (
   }
 };
 
-type ArtifactBackup = {
+interface ArtifactBackup {
+  readonly backupPath: string | null;
   readonly path: string;
   readonly previousContent: string | null;
-  readonly backupPath: string | null;
-};
+}
 
 const backupAndWriteArtifact = async (
   artifactPath: string,

@@ -1,16 +1,16 @@
 import type { DragDropLogger } from "./data-transfer-file-extractor";
 import { extractFilePathsFromDataTransfer } from "./data-transfer-file-extractor";
 
-export type DragDropCallbacks = {
+export interface DragDropCallbacks {
   readonly onDragEnter?: (isShiftPressed: boolean) => void;
   readonly onDragLeave?: () => void;
-  readonly onFileDrop?: (filePaths: readonly string[]) => void;
   readonly onFallbackRequest?: () => void;
-};
+  readonly onFileDrop?: (filePaths: readonly string[]) => void;
+}
 
-export type DragDropHandlerOptions = {
+export interface DragDropHandlerOptions {
   readonly logger?: DragDropLogger;
-};
+}
 
 export class DragDropHandler {
   private container: HTMLElement | null = null;

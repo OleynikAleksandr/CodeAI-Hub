@@ -3,13 +3,13 @@
  * preamble for switch/takeover that contains only portable context.
  */
 
-export type CanonicalSessionPreamble = {
-  readonly stage: string | null;
-  readonly language: string;
-  readonly currentObjective: string;
+export interface CanonicalSessionPreamble {
   readonly canonicalArtifacts: readonly { path: string; reason: string }[];
   readonly continuationInstructions: string;
-};
+  readonly currentObjective: string;
+  readonly language: string;
+  readonly stage: string | null;
+}
 
 const STAGE_OBJECTIVES: Record<string, string> = {
   description:

@@ -51,38 +51,38 @@ const resolveInputConnectionState = (options: {
   return options.connectionState;
 };
 
-type SessionViewProps = {
-  readonly allSessions?: readonly SessionRecord[];
-  readonly sessions: readonly SessionRecord[];
-  readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
+interface SessionViewProps {
   readonly activeSessionId: string | null;
-  readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
-  readonly showEmptyState: boolean;
-  readonly emptyStatePending?: boolean;
-  readonly coreConnectionStatus: "connecting" | "ready" | "error";
+  readonly allSessions?: readonly SessionRecord[];
   readonly coreConnectionDetail?: string;
-  readonly tokenDebugSummaryOverride?: string;
-  readonly onSelectSession: (sessionId: string) => void;
+  readonly coreConnectionStatus: "connecting" | "ready" | "error";
+  readonly emptyStatePending?: boolean;
   readonly onCloseSession: (sessionId: string) => void;
-  readonly onSendMessage: (sessionId: string, content: string) => void;
-  readonly switchOffer?: SwitchOfferProp | null;
   readonly onDismissSwitchOffer?: () => void;
   readonly onRetryInPlace?: () => void;
+  readonly onSelectSession: (sessionId: string) => void;
   readonly onSelectSwitchTarget?: (target: SwitchTargetProp) => void;
-};
+  readonly onSendMessage: (sessionId: string, content: string) => void;
+  readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
+  readonly sessions: readonly SessionRecord[];
+  readonly showEmptyState: boolean;
+  readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
+  readonly switchOffer?: SwitchOfferProp | null;
+  readonly tokenDebugSummaryOverride?: string;
+}
 
-type SwitchOfferProp = {
-  readonly reason: string;
-  readonly canRetryInPlace: boolean;
-  readonly recommendedTarget: SwitchTargetProp | null;
+interface SwitchOfferProp {
   readonly alternativeTargets: readonly SwitchTargetProp[];
-};
+  readonly canRetryInPlace: boolean;
+  readonly reason: string;
+  readonly recommendedTarget: SwitchTargetProp | null;
+}
 
-type SwitchTargetProp = {
-  readonly providerId: string;
-  readonly modelId: string | null;
+interface SwitchTargetProp {
   readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
-};
+  readonly modelId: string | null;
+  readonly providerId: string;
+}
 
 const SwitchOfferBanner = ({
   offer,

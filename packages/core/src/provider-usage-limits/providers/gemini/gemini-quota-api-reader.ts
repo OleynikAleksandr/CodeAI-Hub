@@ -13,7 +13,9 @@ import {
   GeminiUsageLimitsNormalizer,
 } from "./gemini-usage-limits-normalizer";
 
-const requireModule = createRequire(__filename);
+const requireModule = createRequire(
+  process.argv[1] ?? path.join(process.cwd(), "package.json")
+);
 
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
@@ -42,28 +44,31 @@ const DEFAULT_GEMINI_CLI_CORE_ROOT = path.join(
   "gemini-cli-core"
 );
 
-type GeminiMergedSettings = {
+interface GeminiMergedSettings {
   readonly security?: {
     readonly auth?: {
       readonly selectedType?: string;
     };
   };
-};
+}
 
-type GeminiLoadedSettings = { readonly merged: GeminiMergedSettings };
-type GeminiSettingsModule = {
+interface GeminiLoadedSettings {
+  readonly merged: GeminiMergedSettings;
+}
+
+interface GeminiSettingsModule {
   loadSettings(workspacePath: string): GeminiLoadedSettings;
-};
+}
 
-type GeminiQuotaConfig = {
-  refreshAuth(authType: string): Promise<void>;
-  initialize(): Promise<void>;
-  refreshUserQuota?(): Promise<unknown>;
-  getLastRetrievedQuota?(): unknown;
+interface GeminiQuotaConfig {
   getActiveModel?(): string;
-};
+  getLastRetrievedQuota?(): unknown;
+  initialize(): Promise<void>;
+  refreshAuth(authType: string): Promise<void>;
+  refreshUserQuota?(): Promise<unknown>;
+}
 
-type GeminiConfigModule = {
+interface GeminiConfigModule {
   loadCliConfig(
     settings: GeminiMergedSettings,
     sessionId: string,
@@ -72,20 +77,20 @@ type GeminiConfigModule = {
       readonly cwd?: string;
     }
   ): Promise<GeminiQuotaConfig>;
-};
+}
 
-type GeminiContentModule = {
+interface GeminiContentModule {
   readonly AuthType: {
     readonly LOGIN_WITH_GOOGLE: string;
     readonly COMPUTE_ADC: string;
   };
-};
+}
 
-type GeminiQuotaModules = {
+interface GeminiQuotaModules {
   readonly config: GeminiConfigModule;
-  readonly settings: GeminiSettingsModule;
   readonly content: GeminiContentModule;
-};
+  readonly settings: GeminiSettingsModule;
+}
 
 const dynamicImportModule = <T>(specifier: string): Promise<T> =>
   Function("specifier", "return import(specifier);")(specifier) as Promise<T>;
@@ -237,9 +242,9 @@ const loadGeminiQuotaModules = (): Promise<GeminiQuotaModules> => {
   return modulesPromise;
 };
 
-export type GeminiQuotaApiUsageLimitsReaderOptions = {
+export interface GeminiQuotaApiUsageLimitsReaderOptions {
   readonly normalizer?: GeminiUsageLimitsNormalizer;
-};
+}
 
 export class GeminiQuotaApiUsageLimitsReader {
   readonly #normalizer: GeminiUsageLimitsNormalizer;

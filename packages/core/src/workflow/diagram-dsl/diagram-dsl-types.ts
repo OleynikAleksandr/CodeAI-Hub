@@ -21,64 +21,64 @@ export type ModuleKind = (typeof MODULE_KINDS)[number];
 export type RelationType = (typeof RELATION_TYPES)[number];
 export type Criticality = (typeof CRITICALITY_LEVELS)[number];
 
-export type ProductPartEntity = {
-  readonly id: string;
-  readonly title: string;
-  readonly purpose: string;
+export interface ProductPartEntity {
   readonly clusterIds: readonly string[];
-  readonly standaloneModuleIds: readonly string[];
-  readonly notes?: string;
-};
-
-export type ClusterEntity = {
   readonly id: string;
-  readonly title: string;
+  readonly notes?: string;
   readonly purpose: string;
-  readonly productPart: string;
+  readonly standaloneModuleIds: readonly string[];
+  readonly title: string;
+}
+
+export interface ClusterEntity {
+  readonly id: string;
   readonly moduleIds: readonly string[];
   readonly notes?: string;
-};
-
-export type ModuleEntity = {
-  readonly id: string;
-  readonly kind: ModuleKind;
+  readonly productPart: string;
+  readonly purpose: string;
   readonly title: string;
-  readonly responsibility: string;
-  readonly productPart?: string;
+}
+
+export interface ModuleEntity {
   readonly cluster?: string;
-  readonly inputs: readonly string[];
-  readonly outputs: readonly string[];
-  readonly specTarget?: string;
-  readonly contractTargets: readonly string[];
   readonly codeTargets: readonly string[];
+  readonly contractTargets: readonly string[];
+  readonly id: string;
+  readonly inputs: readonly string[];
+  readonly kind: ModuleKind;
+  readonly notes?: string;
+  readonly origin: EntityOrigin;
+  readonly outputs: readonly string[];
+  readonly productPart?: string;
+  readonly rationale?: string;
+  readonly responsibility: string;
+  readonly specTarget?: string;
+  readonly status: EntityStatus;
+  readonly title: string;
+}
+
+export interface ModuleRelation {
+  readonly criticality?: Criticality;
+  readonly from: string;
+  readonly id: string;
+  readonly label?: string;
+  readonly notes?: string;
   readonly origin: EntityOrigin;
   readonly status: EntityStatus;
-  readonly notes?: string;
-  readonly rationale?: string;
-};
-
-export type ModuleRelation = {
-  readonly id: string;
-  readonly from: string;
   readonly to: string;
   readonly type: RelationType;
-  readonly label?: string;
-  readonly criticality?: Criticality;
-  readonly origin: EntityOrigin;
-  readonly status: EntityStatus;
-  readonly notes?: string;
-};
+}
 
-export type ModuleMapModel = {
-  readonly version: number;
-  readonly stage: "diagram_modules";
-  readonly revision: string;
-  readonly updated: string;
-  readonly productParts?: readonly ProductPartEntity[];
+export interface ModuleMapModel {
   readonly clusters?: readonly ClusterEntity[];
   readonly modules: readonly ModuleEntity[];
+  readonly productParts?: readonly ProductPartEntity[];
   readonly relations: readonly ModuleRelation[];
-};
+  readonly revision: string;
+  readonly stage: "diagram_modules";
+  readonly updated: string;
+  readonly version: number;
+}
 
 export type DiagramMapModel = ModuleMapModel;
 
@@ -87,11 +87,11 @@ export type MarkdownDslParseWarningCode =
   | "unknown-entity-header"
   | "unknown-section";
 
-export type MarkdownDslParseWarning = {
+export interface MarkdownDslParseWarning {
   readonly code: MarkdownDslParseWarningCode;
   readonly line: number;
   readonly message: string;
-};
+}
 
 export type MarkdownDslParseErrorCode =
   | "duplicate-entity-id"
@@ -102,23 +102,23 @@ export type MarkdownDslParseErrorCode =
   | "missing-required-field"
   | "missing-section";
 
-export type MarkdownDslParseError = {
+export interface MarkdownDslParseError {
   readonly code: MarkdownDslParseErrorCode;
   readonly line: number;
   readonly message: string;
-};
+}
 
-export type MarkdownDslParseSuccess = {
+export interface MarkdownDslParseSuccess {
   readonly ok: true;
   readonly value: DiagramMapModel;
   readonly warnings: readonly MarkdownDslParseWarning[];
-};
+}
 
-export type MarkdownDslParseFailure = {
-  readonly ok: false;
+export interface MarkdownDslParseFailure {
   readonly error: MarkdownDslParseError;
+  readonly ok: false;
   readonly warnings: readonly MarkdownDslParseWarning[];
-};
+}
 
 export type MarkdownDslParseResult =
   | MarkdownDslParseSuccess

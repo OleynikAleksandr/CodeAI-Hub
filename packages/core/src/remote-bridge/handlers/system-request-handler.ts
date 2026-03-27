@@ -2,19 +2,19 @@ import type { Request, Response } from "express";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 
-export type TtlState = {
+export interface TtlState {
+  readonly idleSince: string | null;
   readonly idleTtlMs: number | null;
   readonly lastActivityAt: string | null;
-  readonly idleSince: string | null;
   readonly secondsUntilShutdown: number | null;
-};
+}
 
-export type StatusInfo = {
+export interface StatusInfo {
   readonly clientCount: number;
-  readonly ttlState?: TtlState;
-  readonly sessionData: unknown;
   readonly providerData: unknown;
-};
+  readonly sessionData: unknown;
+  readonly ttlState?: TtlState;
+}
 
 const MILLISECONDS_IN_SECOND = 1000;
 

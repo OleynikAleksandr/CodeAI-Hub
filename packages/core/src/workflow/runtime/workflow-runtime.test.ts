@@ -9,19 +9,19 @@ const SOURCE_PATH = path.resolve(
   "packages/core/src/workflow/runtime/workflow-runtime.ts"
 );
 
-type DescriptionSnapshot = {
-  readonly workspaceSlug: string;
-  readonly workspacePath: string;
+interface DescriptionSnapshot {
   readonly createdAt: string;
-  readonly updatedAt: string;
   readonly finalPath?: string;
-};
+  readonly updatedAt: string;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}
 
-type RuntimeHarness = {
-  readonly runtime: WorkflowRuntime;
+interface RuntimeHarness {
   readonly descriptionUpserts: Record<string, unknown>[];
   readonly lastActiveUpserts: Record<string, unknown>[];
-};
+  readonly runtime: WorkflowRuntime;
+}
 
 const createHarness = (
   snapshot: DescriptionSnapshot | null = null

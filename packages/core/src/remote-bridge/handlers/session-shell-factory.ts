@@ -11,15 +11,29 @@ import type {
   ShellSessionCreationResult,
 } from "./session-request-handler";
 
-type SessionShellFactoryDependencies = {
-  readonly sessionManager: SessionManager;
-  readonly sessionStorage: UnifiedSessionStorage;
-  readonly continuity: SessionContinuityFacade;
-  readonly continuityRootBySessionId: Map<string, string>;
-  readonly providerSessions: Map<string, ProviderSessionBinding>;
+interface SessionShellFactoryDependencies {
+  readonly appendDialogSegmentBoundaryMeta: (options: {
+    readonly session: Session;
+    readonly workspaceSlug: string;
+    readonly stageId: string;
+    readonly silent: boolean;
+  }) => Promise<void>;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly broadcastSessionBinding: (sessionId: string) => void;
+  readonly continuity: SessionContinuityFacade;
+  readonly continuityRootBySessionId: Map<string, string>;
+  readonly handleProviderEvent: (sessionId: string, event: unknown) => void;
+  readonly maybeBackfillDescriptionDialogHistory: (options: {
+    readonly session: Session;
+    readonly providerSessionId: string;
+    readonly dialog: DescriptionDialogResolution;
+  }) => Promise<void>;
+  readonly maybePromoteLegacyDescriptionDialogHistory: (options: {
+    readonly session: Session;
+    readonly dialogSessionId?: string | null;
+  }) => void;
   readonly notifyRuntimeSessionCreated: (session: Session) => void;
+  readonly providerSessions: Map<string, ProviderSessionBinding>;
   readonly registerInitialSessionLifecycle: (
     session: Session,
     explicitMode?: SessionResumeMode
@@ -31,31 +45,17 @@ type SessionShellFactoryDependencies = {
     readonly session: Session;
     readonly providerSessionId: string;
   }) => Promise<DescriptionDialogResolution>;
-  readonly maybePromoteLegacyDescriptionDialogHistory: (options: {
-    readonly session: Session;
-    readonly dialogSessionId?: string | null;
-  }) => void;
-  readonly maybeBackfillDescriptionDialogHistory: (options: {
-    readonly session: Session;
-    readonly providerSessionId: string;
-    readonly dialog: DescriptionDialogResolution;
-  }) => Promise<void>;
+  readonly sessionManager: SessionManager;
+  readonly sessionStorage: UnifiedSessionStorage;
   readonly updateDescriptionSessionRef: (
     session: Session,
     providerSessionId: string
   ) => Promise<void>;
-  readonly handleProviderEvent: (sessionId: string, event: unknown) => void;
   readonly updateProviderBinding: (
     sessionId: string,
     providerSessionId: string
   ) => void;
-  readonly appendDialogSegmentBoundaryMeta: (options: {
-    readonly session: Session;
-    readonly workspaceSlug: string;
-    readonly stageId: string;
-    readonly silent: boolean;
-  }) => Promise<void>;
-};
+}
 
 export class SessionShellFactory {
   private readonly deps: SessionShellFactoryDependencies;

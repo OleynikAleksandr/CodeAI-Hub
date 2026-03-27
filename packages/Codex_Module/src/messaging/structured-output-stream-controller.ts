@@ -13,46 +13,46 @@ const STRUCTURED_OUTPUT_PROMPT = [
 ].join("\n");
 
 type StructuredOutputMode = "default" | "idea_collector" | "passthrough";
-type StructuredOutputTurnConfig = {
-  readonly mode: StructuredOutputMode;
-  readonly fieldKey: "answer" | "suggested_response";
-  readonly applyPrompt: boolean;
-  readonly promptTemplate?: string;
-  readonly defaultOutputSchema?: unknown;
-  readonly suppressCommentary: boolean;
+interface StructuredOutputTurnConfig {
   readonly allowedArtifactSlots?: ReadonlySet<string>;
-};
+  readonly applyPrompt: boolean;
+  readonly defaultOutputSchema?: unknown;
+  readonly fieldKey: "answer" | "suggested_response";
+  readonly mode: StructuredOutputMode;
+  readonly promptTemplate?: string;
+  readonly suppressCommentary: boolean;
+}
 type StructuredOutputArtifact = Record<string, unknown>;
-type StructuredOutputArtifactUpsert = {
-  readonly slot: string;
+interface StructuredOutputArtifactUpsert {
   readonly markdown: string;
-};
-type ParsedOutput = {
-  readonly assistantText?: string;
-  readonly nextAction?: string;
+  readonly slot: string;
+}
+interface ParsedOutput {
   readonly artifact?: StructuredOutputArtifact;
   readonly artifacts?: readonly StructuredOutputArtifactUpsert[];
-};
-type StructuredOutputParseOptions = {
+  readonly assistantText?: string;
+  readonly nextAction?: string;
+}
+interface StructuredOutputParseOptions {
   readonly allowedArtifactSlots?: ReadonlySet<string>;
-};
+}
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
-type AnswerStreamState = {
+interface AnswerStreamState {
+  assistantText: string;
   extractor?: AnswerJsonStreamExtractor;
   itemId: string | null;
-  assistantText: string;
-  sourceText: string;
   mode: StructuredOutputMode;
-};
-export type StructuredOutputResult = {
-  readonly streamDelta?: string;
-  readonly assistantText?: string;
-  readonly nextAction?: string;
+  sourceText: string;
+}
+export interface StructuredOutputResult {
   readonly artifact?: StructuredOutputArtifact;
   readonly artifacts?: readonly StructuredOutputArtifactUpsert[];
+  readonly assistantText?: string;
+  readonly nextAction?: string;
   readonly outputHash?: string;
-};
+  readonly streamDelta?: string;
+}
 const DEFAULT_TURN_CONFIG: StructuredOutputTurnConfig = {
   mode: "default",
   fieldKey: "answer",

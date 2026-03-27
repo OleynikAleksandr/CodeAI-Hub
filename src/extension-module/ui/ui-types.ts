@@ -1,13 +1,13 @@
 /**
  * Represents the schema of assets/ui/manifest.json
  */
-export type UIManifest = {
-  schema: number;
+export interface UIManifest {
   baseUrl: string;
   bundles: {
     [key in UIBundleId]?: UIBundle;
   };
-};
+  schema: number;
+}
 
 /**
  * Unique identifiers for supported UI bundles.
@@ -17,29 +17,29 @@ export type UIBundleId = "vscode-webview" | "project-manager";
 /**
  * Describes a single UI bundle artifact.
  */
-export type UIBundle = {
-  version: string;
+export interface UIBundle {
   package: string;
-  size: number;
   sha1: string;
-};
+  size: number;
+  version: string;
+}
 
 /**
  * Represents an installed UI bundle in the local registry.
  */
-export type UIRegistryEntry = {
+export interface UIRegistryEntry {
   bundleId: UIBundleId;
-  version: string;
   installedAt: number; // Timestamp
   path: string; // Absolute path to the unpacked bundle
-};
+  version: string;
+}
 
 /**
  * Represents the structure of ~/.codeai-hub/ui/registry.json
  */
-export type UIRegistryFile = {
-  schema: number;
+export interface UIRegistryFile {
   installed: {
     [key in UIBundleId]?: UIRegistryEntry;
   };
-};
+  schema: number;
+}

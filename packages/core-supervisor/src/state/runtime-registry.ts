@@ -3,17 +3,17 @@ import { RUNTIME_REGISTRY_FILE, STATE_DIR } from "./paths";
 
 type RegistryComponent = "core" | "launcher" | "cef" | "vsix";
 
-type RuntimeComponentEntry = {
-  readonly version: string;
-  readonly platform?: string;
+interface RuntimeComponentEntry {
   readonly path?: string;
+  readonly platform?: string;
   readonly updatedAt: string;
-};
+  readonly version: string;
+}
 
-type NetworkState = {
+interface NetworkState {
   readonly corePort?: number;
   readonly updatedAt: string;
-};
+}
 
 export type RuntimeRegistry = Partial<
   Record<RegistryComponent, RuntimeComponentEntry>

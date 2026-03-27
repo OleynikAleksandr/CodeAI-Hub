@@ -10,17 +10,17 @@ import {
   questionnaireTitleStyles,
 } from "./styles";
 
-type IdeaQuestionnaireViewProps = {
-  readonly title: string;
-  readonly description?: string;
-  readonly questions: readonly QuestionnaireQuestion[];
+interface IdeaQuestionnaireViewProps {
   readonly answers: Record<string, string>;
-  readonly submitLabel: string;
   readonly cancelLabel: string;
+  readonly description?: string;
   readonly onAnswerChange: (questionId: string, value: string) => void;
-  readonly onSubmit: () => void;
   readonly onCancel: () => void;
-};
+  readonly onSubmit: () => void;
+  readonly questions: readonly QuestionnaireQuestion[];
+  readonly submitLabel: string;
+  readonly title: string;
+}
 
 export const IdeaQuestionnaireView = ({
   title,

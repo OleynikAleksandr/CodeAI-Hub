@@ -19,12 +19,12 @@
   "author": "CodeAI Hub",
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "^2.3.7",
+    "@biomejs/biome": "^2.4.7",
     "@openai/codex-sdk": "0.53.0",
     "@types/node": "^20.11.0",
     "husky": "^9.1.7",
     "lefthook": "^2.0.4",
     "lint-staged": "^16.2.7",
-    "ultracite": "^6.3.7"
+    "ultracite": "^7.3.2"
   }
 }

@@ -23,16 +23,15 @@ import {
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
 
-type VariantBArtifact = ReturnType<typeof extractVariantBArtifacts> extends
-  | (infer Item)[]
-  | null
-  ? Item
-  : never;
+type VariantBArtifact =
+  ReturnType<typeof extractVariantBArtifacts> extends (infer Item)[] | null
+    ? Item
+    : never;
 
-type VariantBPartition = {
+interface VariantBPartition {
   readonly artifacts?: VariantBArtifact[];
   readonly questions: string[];
-};
+}
 
 const partitionVariantBArtifacts = (
   artifacts: VariantBArtifact[] | null
@@ -81,15 +80,15 @@ const appendQuestionsToSuggestedResponse = (
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-type ContextUsageReaderConfig = {
-  readonly executablePath: string;
+interface ContextUsageReaderConfig {
   readonly env: NodeJS.ProcessEnv;
-};
+  readonly executablePath: string;
+}
 
-type TokenUsageSnapshot = {
-  readonly used: number;
+interface TokenUsageSnapshot {
   readonly limit: number;
-};
+  readonly used: number;
+}
 
 const areUsageLimitBucketsEqual = (
   left: ClaudeUsageLimitBucket | null | undefined,
@@ -188,17 +187,17 @@ const buildRuntimeUsageLimitsPayload = (
   });
 };
 
-type ProcessResponseOptions = {
-  readonly sessionId: string;
+interface ProcessResponseOptions {
   readonly iterator: AsyncIterable<ClaudeStreamMessage>;
   readonly onRealSessionId: (sessionId: string) => void;
-};
+  readonly sessionId: string;
+}
 
-type MessageProcessorOptions = {
+interface MessageProcessorOptions {
   readonly projectPath: string;
   readonly reporter?: ModuleReporter;
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
-};
+}
 
 export class SDKMessageProcessor {
   private readonly sessionManager: SDKSessionManager;

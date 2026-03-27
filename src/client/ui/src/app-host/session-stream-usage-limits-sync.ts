@@ -29,15 +29,15 @@ const readString = (value: unknown): string | null =>
 const clampPercent = (value: number): number =>
   Math.max(0, Math.min(100, value));
 
-type UsageLimitsSyncResult = {
-  readonly snapshots: SessionSnapshots;
+interface UsageLimitsSyncResult {
   readonly snapshot: SessionSnapshot;
-};
+  readonly snapshots: SessionSnapshots;
+}
 
-type UsageLimitBucket = {
+interface UsageLimitBucket {
   readonly percentUsed: number;
   readonly resetsAt?: string | null;
-};
+}
 
 type UsageLimitState<T> = Partial<
   Record<

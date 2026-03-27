@@ -22,13 +22,18 @@ type ServerEventType =
   | "core:loading-status"
   | "session:binding";
 
-type ServerEnvelope = {
-  readonly type: ServerEventType;
+interface ServerEnvelope {
   readonly payload: unknown;
-};
+  readonly type: ServerEventType;
+}
 
-type DeletedPayload = { readonly sessionId: string };
-type StreamPayload = { readonly sessionId: string; readonly event?: unknown };
+interface DeletedPayload {
+  readonly sessionId: string;
+}
+interface StreamPayload {
+  readonly event?: unknown;
+  readonly sessionId: string;
+}
 
 const parseEnvelope = (raw: string): ServerEnvelope | null => {
   try {

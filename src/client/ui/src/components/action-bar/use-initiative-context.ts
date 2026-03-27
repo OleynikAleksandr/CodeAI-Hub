@@ -6,27 +6,27 @@ import {
 } from "../../api/orchestrator/initiatives-client";
 import { resolveCoreHttpUrl } from "../../services/idea-collector-support";
 
-type InitiativeContextState = {
-  readonly initiatives: readonly InitiativeSummary[];
-  readonly selectedInitiativeSlug: string | null;
-  readonly initiativeTitle: string;
+interface InitiativeContextState {
   readonly canStartFlow: boolean;
   readonly controlsDisabled: boolean;
+  readonly initiatives: readonly InitiativeSummary[];
+  readonly initiativeTitle: string;
+  readonly selectedInitiativeSlug: string | null;
   readonly statusMessage: string | null;
-};
+}
 
-type CreateInput = {
-  readonly displayName: string;
+interface CreateInput {
   readonly description?: string;
-};
+  readonly displayName: string;
+}
 
-type InitiativeContextActions = {
+interface InitiativeContextActions {
+  readonly clearStatus: () => void;
+  readonly createInitiative: (input: CreateInput) => Promise<boolean>;
   readonly handleInitiativeChange: (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => void;
-  readonly createInitiative: (input: CreateInput) => Promise<boolean>;
-  readonly clearStatus: () => void;
-};
+}
 
 export type InitiativeContext = InitiativeContextState &
   InitiativeContextActions;

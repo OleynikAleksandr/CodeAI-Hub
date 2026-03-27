@@ -16,9 +16,9 @@ const TOKEN_FIELD_CANDIDATES = [
   "token",
 ] as const;
 const WHITESPACE_PATTERN = /\s/;
-type ExtractTokenOptions = {
+interface ExtractTokenOptions {
   readonly allowRawToken?: boolean;
-};
+}
 
 const isLikelyRawToken = (value: string): boolean => {
   const trimmed = value.trim();

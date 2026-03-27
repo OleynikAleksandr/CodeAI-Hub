@@ -1,12 +1,12 @@
 export type CodexResponseMode = "strict" | "hybrid" | "debug_raw";
 
-export type CodexStrictOutputPolicy = {
-  readonly schemaText: string;
+export interface CodexStrictOutputPolicy {
   readonly instructionText: string;
   readonly schemaObject: Record<string, unknown>;
-};
+  readonly schemaText: string;
+}
 
-export type CodexResponsePolicy = {
+export interface CodexResponsePolicy {
   readonly mode: CodexResponseMode;
   readonly strictOutput: CodexStrictOutputPolicy;
-};
+}

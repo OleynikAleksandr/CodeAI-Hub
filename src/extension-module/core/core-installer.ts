@@ -22,13 +22,13 @@ import {
 } from "./core-install-helpers";
 import { resolveEntryPoint, resolveNodeExecutable } from "./runtime-paths";
 
-export type CoreRuntimeInfo = {
-  readonly version: string;
+export interface CoreRuntimeInfo {
+  readonly entryPoint: string;
+  readonly nodePath: string;
   readonly platform: PlatformKey;
   readonly runtimeDir: string;
-  readonly nodePath: string;
-  readonly entryPoint: string;
-};
+  readonly version: string;
+}
 
 const buildRuntimeInfo = (
   manifestEntry: ManifestEntry,

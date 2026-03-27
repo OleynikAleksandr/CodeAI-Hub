@@ -1,6 +1,9 @@
 import path from "node:path";
 
-const AGENT_ROOT_PATH = path.resolve(__dirname, "../../../../agents");
+const AGENT_ROOT_PATH = path.resolve(
+  path.dirname(require.resolve("./diagram-contract-prompt-assets")),
+  "../../../../agents"
+);
 
 export const resolveDiagramAgentAssetPath = (
   agentName: string,

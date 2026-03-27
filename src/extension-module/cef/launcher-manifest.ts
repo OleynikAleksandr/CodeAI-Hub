@@ -3,18 +3,18 @@ import path from "node:path";
 import type { ExtensionContext } from "vscode";
 import type { PlatformKey } from "./platform";
 
-export type LauncherManifestEntry = {
+export interface LauncherManifestEntry {
   readonly launcherVersion: string;
   readonly package: string;
   readonly sha1?: string;
   readonly size: number;
-};
+}
 
-export type LauncherManifest = {
-  readonly schema: number;
+export interface LauncherManifest {
   readonly baseUrl: string;
   readonly platforms: Record<PlatformKey, LauncherManifestEntry | undefined>;
-};
+  readonly schema: number;
+}
 
 export const readLauncherManifest = async (
   context: ExtensionContext

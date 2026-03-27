@@ -34,15 +34,15 @@ import {
 } from "./gemini-model-card-styles";
 import GeminiThinkingDialog from "./gemini-thinking-dialog";
 
-type GeminiDefaultModelCardProps = {
+interface GeminiDefaultModelCardProps {
   readonly defaultModel: GeminiModelId;
-  readonly thinkingLevelByModel: GeminiThinkingByModel;
   readonly onDefaultModelChange: (model: GeminiModelId) => void;
   readonly onThinkingChange: (
     modelId: GeminiModelId,
     level: GeminiThinkingLevel
   ) => void;
-};
+  readonly thinkingLevelByModel: GeminiThinkingByModel;
+}
 
 const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
   <div

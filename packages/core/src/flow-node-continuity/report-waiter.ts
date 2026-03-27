@@ -1,18 +1,18 @@
 import { access, stat } from "node:fs/promises";
 
-type WaitForReportOptions = {
+interface WaitForReportOptions {
+  readonly clock?: () => number;
+  readonly pollIntervalMs: number;
   readonly reportPath: string;
   readonly timeoutMs: number;
-  readonly pollIntervalMs: number;
-  readonly clock?: () => number;
-};
+}
 
-export type WaitForReportResult = {
+export interface WaitForReportResult {
+  readonly modifiedAtMs: number;
   readonly reportPath: string;
   readonly sizeBytes: number;
-  readonly modifiedAtMs: number;
   readonly waitedMs: number;
-};
+}
 
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => {

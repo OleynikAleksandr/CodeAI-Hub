@@ -2,21 +2,21 @@ import { getVsCodeApi } from "../../vscode";
 import type { DragDropLogger } from "./data-transfer-file-extractor";
 import { requestLauncherFileDrop } from "./launcher-file-drop-bridge";
 
-export type MessageCallbacks = {
-  readonly onPathInsert?: (path: string) => void;
+export interface MessageCallbacks {
   readonly onClipboardContent?: (content: string) => void;
-};
+  readonly onPathInsert?: (path: string) => void;
+}
 
 type OutgoingCommand = "grabFilePathFromDrop" | "clearAllClipboards";
 
-type GrabPayload = {
+interface GrabPayload {
   readonly timestamp: number;
-};
+}
 
-type FileDropResponse = {
-  readonly paths?: readonly string[];
+interface FileDropResponse {
   readonly formatted?: string;
-};
+  readonly paths?: readonly string[];
+}
 
 const FILE_DROP_ENDPOINT = "/api/v1/file-drop";
 const MAX_CAPTURE_ATTEMPTS = 4;

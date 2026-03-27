@@ -2,12 +2,12 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { ExtensionLogger } from "../logging/extension-logger";
 
-type BundledTemplateInstallOptions = {
-  readonly destinationPath: string;
+interface BundledTemplateInstallOptions {
   readonly bundledPath: string;
+  readonly destinationPath: string;
   readonly logger: ExtensionLogger;
   readonly logPrefix: string;
-};
+}
 
 const readTextFile = async (filePath: string): Promise<string | null> => {
   try {

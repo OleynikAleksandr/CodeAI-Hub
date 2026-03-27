@@ -10,19 +10,19 @@ type CodexUsageLimitSource = Extract<
   "codex_rollout_fallback" | "codex_rpc"
 >;
 
-export type CodexRolloutUsageLimitsSnapshot = {
+export interface CodexRolloutUsageLimitsSnapshot {
   readonly collectedAt: string | null;
   readonly currentSession: ProviderUsageLimitBucket | null;
   readonly currentWeekAllModels: ProviderUsageLimitBucket | null;
   readonly currentWeekSonnetOnly: ProviderUsageLimitBucket | null;
-};
+}
 
-export type CodexUsageLimitsNormalizeInput = {
+export interface CodexUsageLimitsNormalizeInput {
   readonly collectedAt?: string;
   readonly providerScopeKey: string;
   readonly snapshot: CodexRolloutUsageLimitsSnapshot;
   readonly source?: CodexUsageLimitSource;
-};
+}
 
 const DIGITS_ONLY_PATTERN = /^\d+$/;
 

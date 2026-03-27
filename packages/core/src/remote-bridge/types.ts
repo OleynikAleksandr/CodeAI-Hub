@@ -15,40 +15,40 @@ export type WorkspaceScopeSyncReason =
   | "reconnect"
   | "workspace_cleared";
 
-export type WorkspaceScopeSetPayload = {
+export interface WorkspaceScopeSetPayload {
+  readonly reason: WorkspaceScopeSyncReason;
+  readonly requestId: string;
   readonly workspacePath: string | null;
   readonly workspaceSlug?: string | null;
-  readonly requestId: string;
-  readonly reason: WorkspaceScopeSyncReason;
-};
+}
 
-export type WorkspaceScopeAckPayload = {
+export interface WorkspaceScopeAckPayload {
+  readonly error?: string | null;
   readonly requestId: string;
   readonly status: "applied" | "rejected";
   readonly workspacePath: string | null;
-  readonly error?: string | null;
-};
+}
 
-export type SerializedSession = {
-  readonly id: string;
-  readonly providerId: string;
-  readonly workspacePath: string;
-  readonly initiativeSlug: string | null;
-  readonly stage: string | null;
-  readonly runSlug: string | null;
-  readonly continuationParentId: string | null;
+export interface SerializedSession {
   readonly continuationIndex: number;
-  readonly title: string;
+  readonly continuationParentId: string | null;
   readonly createdAt: string;
-  readonly updatedAt: string;
+  readonly id: string;
+  readonly initiativeSlug: string | null;
+  readonly providerId: string;
   readonly providerSessionId: string | null;
   readonly providerSessionStatus: "pending" | "ready" | "failed";
-};
+  readonly runSlug: string | null;
+  readonly stage: string | null;
+  readonly title: string;
+  readonly updatedAt: string;
+  readonly workspacePath: string;
+}
 
-export type CoreStatePayload = {
-  readonly sessions: readonly SerializedSession[];
+export interface CoreStatePayload {
   readonly providers: ReturnType<ProviderRegistry["listProviders"]>;
-};
+  readonly sessions: readonly SerializedSession[];
+}
 
 export type BridgeEvent =
   | { readonly type: "core:state"; readonly payload: CoreStatePayload }
@@ -296,11 +296,11 @@ export const serializeSession = (session: Session): SerializedSession => ({
   providerSessionStatus: session.providerSessionStatus,
 });
 
-export type TurnStateStreamData = {
+export interface TurnStateStreamData {
   readonly kind: "turn_state";
-  readonly state: "running" | "idle";
   readonly providerId?: string;
-};
+  readonly state: "running" | "idle";
+}
 
 export type ProviderFailureClass =
   | "transient_turn_failure"
@@ -315,21 +315,21 @@ export type DialogSwitchMode =
 
 export type DialogSwitchInitiator = "core_recovery" | "user_request";
 
-export type DialogSwitchTarget = {
-  readonly providerId: string;
-  readonly modelId: string | null;
+export interface DialogSwitchTarget {
   readonly mode: DialogSwitchMode;
-};
+  readonly modelId: string | null;
+  readonly providerId: string;
+}
 
-export type DialogSwitchOfferPayload = {
+export interface DialogSwitchOfferPayload {
+  readonly alternativeTargets: readonly DialogSwitchTarget[];
+  readonly canRetryInPlace: boolean;
   readonly dialogId: string;
-  readonly sessionId: string;
   readonly initiator: DialogSwitchInitiator;
   readonly reason: string;
   readonly recommendedTarget: DialogSwitchTarget;
-  readonly alternativeTargets: readonly DialogSwitchTarget[];
-  readonly canRetryInPlace: boolean;
-};
+  readonly sessionId: string;
+}
 
 export type DialogSwitchProgressPhase =
   | "analyzing"
@@ -340,26 +340,26 @@ export type DialogSwitchProgressPhase =
   | "done"
   | "failed";
 
-export type DialogSwitchProgressPayload = {
+export interface DialogSwitchProgressPayload {
   readonly dialogId: string;
-  readonly sessionId: string;
   readonly phase: DialogSwitchProgressPhase;
-};
-
-export type DialogSwitchResultPayload = {
-  readonly dialogId: string;
-  readonly previousSessionId: string;
-  readonly newSessionId: string | null;
-  readonly newProviderId: string | null;
-  readonly success: boolean;
-  readonly error: string | null;
-};
-
-export type TurnFailedPayload = {
   readonly sessionId: string;
-  readonly providerId: string;
+}
+
+export interface DialogSwitchResultPayload {
+  readonly dialogId: string;
+  readonly error: string | null;
+  readonly newProviderId: string | null;
+  readonly newSessionId: string | null;
+  readonly previousSessionId: string;
+  readonly success: boolean;
+}
+
+export interface TurnFailedPayload {
   readonly failureClass: ProviderFailureClass;
-  readonly retryable: boolean;
   readonly message: string;
   readonly pendingIntentExpired?: boolean;
-};
+  readonly providerId: string;
+  readonly retryable: boolean;
+  readonly sessionId: string;
+}

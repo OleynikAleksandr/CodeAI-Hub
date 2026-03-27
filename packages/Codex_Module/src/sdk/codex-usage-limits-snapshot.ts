@@ -1,13 +1,13 @@
-export type CodexUsageLimitBucket = {
+export interface CodexUsageLimitBucket {
   readonly percentUsed: number;
   readonly resetsAt: string | null;
-};
+}
 
-export type CodexUsageLimitsSnapshot = {
+export interface CodexUsageLimitsSnapshot {
   readonly currentSession: CodexUsageLimitBucket | null;
   readonly currentWeekAllModels: CodexUsageLimitBucket | null;
   readonly currentWeekSonnetOnly: CodexUsageLimitBucket | null;
-};
+}
 
 const DIGITS_ONLY_PATTERN = /^\d+$/;
 

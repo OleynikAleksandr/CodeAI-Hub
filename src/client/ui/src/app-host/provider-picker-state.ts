@@ -17,19 +17,19 @@ import { postVsCodeMessage } from "../vscode";
 
 export type ProviderLabels = ReturnType<typeof buildProviderLabels>;
 
-export type UseProviderPickerStateResult = {
+export interface UseProviderPickerStateResult {
+  readonly cancelSelection: () => void;
+  readonly clearStageSelection: () => void;
+  readonly confirmSelection: (providerIds: readonly ProviderStackId[]) => void;
+  readonly lockStageSelection: () => void;
+  readonly openPicker: (providers: readonly ProviderStackDescriptor[]) => void;
   readonly pickerState: ProviderPickerState;
   readonly providerLabels: ProviderLabels;
-  readonly selectedStage: FlowStageId | null;
-  readonly stageSelectionLocked: boolean;
-  readonly openPicker: (providers: readonly ProviderStackDescriptor[]) => void;
-  readonly confirmSelection: (providerIds: readonly ProviderStackId[]) => void;
-  readonly cancelSelection: () => void;
   readonly resetPicker: () => void;
+  readonly selectedStage: FlowStageId | null;
   readonly selectStage: (stage: FlowStageId) => void;
-  readonly clearStageSelection: () => void;
-  readonly lockStageSelection: () => void;
-};
+  readonly stageSelectionLocked: boolean;
+}
 
 export const useProviderPickerState = (): UseProviderPickerStateResult => {
   const [pickerState, setPickerState] =

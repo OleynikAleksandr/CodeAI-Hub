@@ -1,7 +1,7 @@
-type ResetFormatOptions = {
-  readonly timeZone?: string;
+interface ResetFormatOptions {
   readonly locale?: string;
-};
+  readonly timeZone?: string;
+}
 
 const TIMEZONE_SUFFIX_PATTERN = /^(.*)\s+\([^)]+\)\s*$/u;
 const UTC_RESET_PATTERN =

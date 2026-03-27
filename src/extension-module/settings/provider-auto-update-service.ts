@@ -13,18 +13,18 @@ import { installGlobalPackageLatest } from "./provider-version-npm";
 import { ProviderVersionService } from "./provider-version-service";
 import type { SettingsSnapshot } from "./types";
 
-type UpdateAction = {
+interface UpdateAction {
   readonly label: string;
   readonly run: () => Promise<void>;
-};
+}
 
 type ProgressReporter = Progress<{ message?: string; increment?: number }>;
 
-type ProviderAutoUpdateSettings = {
+interface ProviderAutoUpdateSettings {
   readonly claude: boolean;
   readonly codex: boolean;
   readonly gemini: boolean;
-};
+}
 
 const resolveAutoUpdateSettings = (
   settings: SettingsSnapshot

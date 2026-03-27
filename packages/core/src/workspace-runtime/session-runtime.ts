@@ -13,36 +13,36 @@ export type SessionRuntimeChangedField =
   | "finalTurnCompleted"
   | "lastHeartbeatAt";
 
-export type SessionRuntimeStateSnapshot = {
-  readonly turnState: SessionTurnState;
+export interface SessionRuntimeStateSnapshot {
   readonly continuityLockActive: boolean;
   readonly continuityLockReason: SessionContinuityLockReason | null;
   readonly continuityLockTransition: SessionContinuityLockTransition | null;
   readonly finalTurnCompleted: boolean;
   readonly lastHeartbeatAt: number | null;
-};
+  readonly turnState: SessionTurnState;
+}
 
-type SessionRuntimeEntry = {
-  readonly key: SessionKey;
-  turnState: SessionTurnState;
+interface SessionRuntimeEntry {
   continuityLockActive: boolean;
   continuityLockReason: SessionContinuityLockReason | null;
   continuityLockTransition: SessionContinuityLockTransition | null;
   finalTurnCompleted: boolean;
+  readonly key: SessionKey;
   lastHeartbeatAt: number | null;
   runningSince: number | null;
-};
+  turnState: SessionTurnState;
+}
 
-type SessionRuntimeDeps = {
-  readonly watchdogTimeoutMs?: number;
-  readonly watchdogTickMs?: number;
+interface SessionRuntimeDeps {
   readonly now?: () => number;
   readonly onStateChanged?: (
     sessionKey: SessionKey,
     field: SessionRuntimeChangedField,
     snapshot: SessionRuntimeStateSnapshot
   ) => void;
-};
+  readonly watchdogTickMs?: number;
+  readonly watchdogTimeoutMs?: number;
+}
 
 // Watchdog is an escape hatch for stuck sessions, but it must never unlock
 // a session mid-turn by default. Disable auto-idle unless explicitly enabled

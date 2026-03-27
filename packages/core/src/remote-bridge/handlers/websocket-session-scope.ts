@@ -1,10 +1,10 @@
 import { isAbsolute } from "node:path";
 import type { BridgeEvent } from "../types";
 
-export type ClientScopeState = {
+export interface ClientScopeState {
   readonly enabled: boolean;
   readonly workspacePath: string | null;
-};
+}
 
 export type ParsedWorkspaceScopeSetPayload =
   | {

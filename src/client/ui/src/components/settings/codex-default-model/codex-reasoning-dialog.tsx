@@ -10,12 +10,12 @@ import {
   providerOptionDialogButtonStyles,
 } from "../shared/provider-option-dialog";
 
-type CodexReasoningDialogProps = {
-  readonly model: CodexRecommendedModelDescriptor;
+interface CodexReasoningDialogProps {
   readonly initialReasoning: CodexReasoningLevel;
-  readonly onSave: (reasoning: CodexReasoningLevel) => void;
+  readonly model: CodexRecommendedModelDescriptor;
   readonly onCancel: () => void;
-};
+  readonly onSave: (reasoning: CodexReasoningLevel) => void;
+}
 
 const CodexReasoningDialog: FC<CodexReasoningDialogProps> = ({
   model,

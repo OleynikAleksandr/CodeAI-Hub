@@ -8,11 +8,11 @@ export type DragDropLogger = (
   ...details: readonly unknown[]
 ) => void;
 
-export type DataTransferExtractionOptions = {
-  readonly logger?: DragDropLogger;
+export interface DataTransferExtractionOptions {
   readonly debug?: boolean;
+  readonly logger?: DragDropLogger;
   readonly logPrefix?: string;
-};
+}
 
 const WINDOWS_PATH_PATTERN = /^[a-zA-Z]:[\\/]/;
 

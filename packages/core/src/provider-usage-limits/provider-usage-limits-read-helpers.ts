@@ -4,11 +4,11 @@ import type {
   ReadProviderUsageLimitsParams,
 } from "./provider-usage-limits-types";
 
-type ProviderUsageLimitsReader = {
+interface ProviderUsageLimitsReader {
   read(
     params: ReadProviderUsageLimitsParams
   ): Promise<ProviderUsageLimitsSnapshot | null>;
-};
+}
 
 export const readProviderUsageLimitsSnapshot = async (params: {
   readonly reader: ProviderUsageLimitsReader;

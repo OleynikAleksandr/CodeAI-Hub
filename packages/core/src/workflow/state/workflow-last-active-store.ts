@@ -17,17 +17,17 @@ const isWorkflowStageId = (value: unknown): value is WorkflowStageId =>
   value === "virtual_simulation" ||
   value === "diagram_modules";
 
-export type WorkflowLastActiveSnapshot = {
+export interface WorkflowLastActiveSnapshot {
+  readonly artifactPath?: string;
   readonly stage: WorkflowStageId;
   readonly updatedAt: string;
-  readonly artifactPath?: string;
-};
+}
 
-type WorkflowStateDiskSnapshot = {
-  readonly workspaceSlug: string;
-  readonly updatedAt: string;
+interface WorkflowStateDiskSnapshot {
   readonly lastActive?: WorkflowLastActiveSnapshot;
-};
+  readonly updatedAt: string;
+  readonly workspaceSlug: string;
+}
 
 const buildStatePath = (workspaceRoot: string, workspaceSlug: string): string =>
   path.join(

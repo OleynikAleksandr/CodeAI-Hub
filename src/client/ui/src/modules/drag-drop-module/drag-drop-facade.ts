@@ -4,12 +4,12 @@ import { DragDropHandler } from "./drag-drop-handler";
 import { FilePathProcessor } from "./file-path-processor";
 import { MessageHandler } from "./message-handler";
 
-export type DragDropConfig = {
+export interface DragDropConfig {
   readonly container: HTMLElement;
-  readonly onValueChange: (newValue: string) => void;
   readonly getCurrentValue: () => string;
   readonly onDragStateChange?: (isDragging: boolean) => void;
-};
+  readonly onValueChange: (newValue: string) => void;
+}
 
 export class DragDropFacade {
   private readonly dragHandler: DragDropHandler;

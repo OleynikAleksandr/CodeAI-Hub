@@ -7,11 +7,11 @@
  * `@codeai-hub/idea-collector` at runtime.
  */
 
-export type IdeaCollectorStructuredOutput = {
-  readonly suggestedResponse: string | null;
-  readonly nextAction: string | null;
+export interface IdeaCollectorStructuredOutput {
   readonly artifact: Record<string, unknown> | null;
-};
+  readonly nextAction: string | null;
+  readonly suggestedResponse: string | null;
+}
 
 const CODE_FENCE_PATTERN = /```(?:json)?\s*([\s\S]*?)```/i;
 

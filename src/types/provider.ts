@@ -1,12 +1,12 @@
 export type ProviderStackId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
-export type ProviderStackDescriptor = {
-  readonly id: ProviderStackId;
-  readonly title: string;
-  readonly description: string;
+export interface ProviderStackDescriptor {
   readonly connected: boolean;
+  readonly description: string;
+  readonly id: ProviderStackId;
   readonly statusMessage?: string | null;
-};
+  readonly title: string;
+}
 
 const PROVIDER_TITLE_MAP: Record<ProviderStackId, string> = {
   claudeCodeCli: "Claude",

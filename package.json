@@ -76,7 +76,9 @@
     "compile": "npm run build:webview && npm run typecheck:webview && tsc -p .",
     "format:fix": "npx ultracite fix",
     "fetch:models": "npx tsx scripts/fetch-available-models.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check": "ultracite check",
+    "fix": "ultracite fix"
   },
   "keywords": [
     "AI",

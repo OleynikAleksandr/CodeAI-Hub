@@ -19,49 +19,73 @@ export type FlowNodeRolloverPhase =
   | "resume_sent"
   | "failed";
 
-export type FlowNodeRolloverNotification = {
-  readonly kind: "flow_node_rollover";
-  readonly phase: FlowNodeRolloverPhase;
-  readonly sourceSessionId: string;
-  readonly nextSessionId?: string;
-  readonly providerId: string;
-  readonly stageId: string;
-  readonly runSlug: string | null;
-  readonly remainingPercent?: number;
-  readonly thresholdPercent?: number;
-  readonly continuityRequestId?: string;
+export interface FlowNodeRolloverNotification {
   readonly continuityAttempt?: number;
-  readonly reportPath?: string;
-  readonly tmpReportPath?: string;
+  readonly continuityRequestId?: string;
   readonly error?: string;
+  readonly kind: "flow_node_rollover";
+  readonly nextSessionId?: string;
+  readonly phase: FlowNodeRolloverPhase;
+  readonly providerId: string;
+  readonly remainingPercent?: number;
+  readonly reportPath?: string;
+  readonly runSlug: string | null;
+  readonly sourceSessionId: string;
+  readonly stageId: string;
+  readonly thresholdPercent?: number;
   readonly timestamp: string;
-};
+  readonly tmpReportPath?: string;
+}
 
-export type FlowNodeContinuityCreateReportRequestState = {
-  readonly requestId: string;
+export interface FlowNodeContinuityCreateReportRequestState {
   readonly attempt: number;
-  readonly stage: "waiting_for_report" | "completed" | "failed";
-  readonly reportPath: string;
-  readonly tmpReportPath: string;
   readonly createdAtIso: string;
+  readonly reportPath: string;
+  readonly requestId: string;
+  readonly stage: "waiting_for_report" | "completed" | "failed";
+  readonly tmpReportPath: string;
   readonly updatedAtIso: string;
-};
+}
 
-type SessionContinuityRolloverOrchestratorDependencies = {
-  readonly logger: Logger;
-  readonly registerPostTurnRolloverRequiredDecision: (
-    sessionId: string
-  ) => void;
+interface SessionContinuityRolloverOrchestratorDependencies {
+  readonly deleteCreateReportRequest: (sessionId: string) => void;
   readonly elevateSessionToRolloverResumeMode: (session: Session) => void;
-  readonly registerFlowNodeContinuityLockContext: (
-    context: FlowNodeContinuityLockContext
-  ) => FlowNodeContinuityLockContext;
+  readonly emitContinuityFailedEvent: (options: {
+    readonly sessionId: string;
+    readonly providerId: string | null;
+    readonly providerSessionId: string | null;
+    readonly request: FlowNodeContinuityCreateReportRequestState;
+    readonly reason: "report_timeout" | "unknown";
+    readonly errorMessage: string;
+  }) => void;
   readonly emitContinuityLockEvent: (
     options: EmitContinuityLockEventOptions
   ) => void;
   readonly emitFlowNodeRolloverNotification: (
     sessionId: string,
     notification: Omit<FlowNodeRolloverNotification, "timestamp">
+  ) => void;
+  readonly emitTurnStateEvent: (options: {
+    readonly sessionId: string;
+    readonly state: "running" | "idle";
+  }) => void;
+  readonly finalizeFlowNodeContinuityLock: (options: {
+    readonly sessionId: string;
+    readonly reason: Extract<
+      ContinuityLockReason,
+      "resume_ready" | "resume_failed" | "resume_timeout"
+    >;
+  }) => void;
+  readonly getCreateReportRequest: (
+    sessionId: string
+  ) => FlowNodeContinuityCreateReportRequestState | null;
+  readonly isContinuityReportTimeoutError: (error: unknown) => boolean;
+  readonly logger: Logger;
+  readonly registerFlowNodeContinuityLockContext: (
+    context: FlowNodeContinuityLockContext
+  ) => FlowNodeContinuityLockContext;
+  readonly registerPostTurnRolloverRequiredDecision: (
+    sessionId: string
   ) => void;
   readonly rolloverFlowNodeSession: (
     session: Session,
@@ -72,17 +96,6 @@ type SessionContinuityRolloverOrchestratorDependencies = {
     },
     options?: { readonly silent: boolean }
   ) => Promise<void>;
-  readonly getCreateReportRequest: (
-    sessionId: string
-  ) => FlowNodeContinuityCreateReportRequestState | null;
-  readonly deleteCreateReportRequest: (sessionId: string) => void;
-  readonly finalizeFlowNodeContinuityLock: (options: {
-    readonly sessionId: string;
-    readonly reason: Extract<
-      ContinuityLockReason,
-      "resume_ready" | "resume_failed" | "resume_timeout"
-    >;
-  }) => void;
   readonly updateSessionResumeLifecycleState: (
     session: Session,
     patch: {
@@ -91,20 +104,7 @@ type SessionContinuityRolloverOrchestratorDependencies = {
       readonly terminalLockReason?: "terminal_no_resume" | null;
     }
   ) => void;
-  readonly emitTurnStateEvent: (options: {
-    readonly sessionId: string;
-    readonly state: "running" | "idle";
-  }) => void;
-  readonly emitContinuityFailedEvent: (options: {
-    readonly sessionId: string;
-    readonly providerId: string | null;
-    readonly providerSessionId: string | null;
-    readonly request: FlowNodeContinuityCreateReportRequestState;
-    readonly reason: "report_timeout" | "unknown";
-    readonly errorMessage: string;
-  }) => void;
-  readonly isContinuityReportTimeoutError: (error: unknown) => boolean;
-};
+}
 
 export class SessionContinuityRolloverOrchestrator {
   private readonly deps: SessionContinuityRolloverOrchestratorDependencies;

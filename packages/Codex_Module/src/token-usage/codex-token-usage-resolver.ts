@@ -56,10 +56,10 @@ const extractSessionIdFromMeta = (events: unknown[]): string | null => {
   return null;
 };
 
-type DirectoryEntry = {
+interface DirectoryEntry {
   readonly name: string;
   readonly path: string;
-};
+}
 
 const sortByNameDescending = (
   entries: readonly DirectoryEntry[]
@@ -214,9 +214,9 @@ const findRolloutFileByScan = async (
   return null;
 };
 
-export type RolloutResolverOptions = {
+export interface RolloutResolverOptions {
   readonly codexHome?: string;
-};
+}
 
 export const resolveRolloutFilePath = async (
   providerSessionId: string,

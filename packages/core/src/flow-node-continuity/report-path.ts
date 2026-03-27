@@ -11,19 +11,19 @@ const sanitizeSegment = (input: string): string =>
     .replace(TRAILING_DASH_REGEX, "")
     .trim() || "unknown";
 
-export type ContinuityReportPathOptions = {
+export interface ContinuityReportPathOptions {
+  readonly nodeId: string;
+  readonly providerId: string;
+  readonly role: string;
+  readonly timestamp: string;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
-  readonly nodeId: string;
-  readonly role: string;
-  readonly providerId: string;
-  readonly timestamp: string;
-};
+}
 
-export type ContinuityReportPaths = {
+export interface ContinuityReportPaths {
   readonly reportPath: string;
   readonly tmpReportPath: string;
-};
+}
 
 export const buildContinuityReportPaths = (
   options: ContinuityReportPathOptions

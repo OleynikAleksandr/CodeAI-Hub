@@ -16,7 +16,6 @@ type ClaudeUsageLimitsStreamPayload = ClaudeUsageLimitsStreamPayloadType;
 type ClaudeWorkspaceOptions = ClaudeWorkspaceOptionsType;
 type ModuleReporter = ModuleReporterType;
 
-export { ClaudeProviderAdapter };
 export type {
   ClaudeInstallerPaths,
   ClaudeModuleOptions,
@@ -25,3 +24,4 @@ export type {
   ClaudeWorkspaceOptions,
   ModuleReporter,
 };
+export { ClaudeProviderAdapter };

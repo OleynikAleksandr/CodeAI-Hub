@@ -5,10 +5,10 @@ import { ensureDirectory } from "../cef/runtime-files";
 
 const EXECUTABLE_MODE = 0o755;
 
-export type ShortcutTarget = {
-  path: string;
+export interface ShortcutTarget {
   args: readonly string[];
-};
+  path: string;
+}
 
 const formatArgsForPosix = (args: readonly string[]): string =>
   args.map((arg) => `"${arg}"`).join(" ");

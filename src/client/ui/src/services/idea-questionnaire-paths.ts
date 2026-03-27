@@ -8,10 +8,10 @@ const LEGACY_IDEA_RUN_PATH_RE =
   /^\.codeai-hub\/([^/]+)\/description\/runs\/([^/]+)\/idea\/idea\.md$/;
 const FALLBACK_PATH_SEGMENT_RE = /[^/]+$/;
 
-export type QuestionnairePathTargets = {
+export interface QuestionnairePathTargets {
   readonly primaryPath: string;
   readonly readFallbackPaths: readonly string[];
-};
+}
 
 export const buildCanonicalQuestionnairePath = (
   workspaceSlug: string

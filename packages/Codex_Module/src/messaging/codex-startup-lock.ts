@@ -1,19 +1,19 @@
-export type CodexStartupLockOwner = {
+export interface CodexStartupLockOwner {
   readonly sessionId: string;
-};
+}
 
 export type CodexStartupLockRelease = () => void;
 
-export type CodexStartupLockAcquireOptions = {
+export interface CodexStartupLockAcquireOptions {
   readonly timeoutMs?: number;
-};
+}
 
-type QueueEntry = {
-  readonly owner: CodexStartupLockOwner;
+interface QueueEntry {
   readonly grant: () => void;
+  readonly owner: CodexStartupLockOwner;
   readonly reject: (error: Error) => void;
   timeoutId?: NodeJS.Timeout;
-};
+}
 
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 30_000;
 

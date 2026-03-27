@@ -13,20 +13,20 @@ const USAGE_PROBE_TIMEOUT_MS = 20_000;
 const MAX_RESPONSE_BODY_CHARS = 4000;
 const RATE_LIMIT_HEADER_PREFIX = "anthropic-ratelimit-unified";
 
-export type ClaudeLiveHeadersSnapshot = {
+export interface ClaudeLiveHeadersSnapshot {
   readonly collectedAt: string;
   readonly headers: ReadonlyMap<string, string>;
   readonly source: Extract<ProviderUsageLimitSource, "claude_probe">;
-};
+}
 
 export type ClaudeOAuthTokenResolver = (
   environment: NodeJS.ProcessEnv | undefined
 ) => Promise<string | null>;
 
-export type ClaudeLiveHeadersReaderOptions = {
+export interface ClaudeLiveHeadersReaderOptions {
   readonly now?: () => string;
   readonly resolveOAuthToken: ClaudeOAuthTokenResolver;
-};
+}
 
 const toHeaderMap = (
   headers: Headers | ReadonlyMap<string, string>

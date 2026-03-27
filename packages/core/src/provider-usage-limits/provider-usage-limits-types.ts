@@ -18,10 +18,10 @@ export type ProviderUsageLimitSource =
   | "gemini_quota_api"
   | "gemini_cli_fallback";
 
-export type ProviderUsageLimitBucket = {
+export interface ProviderUsageLimitBucket {
   readonly percentUsed: number;
   readonly resetsAt: string | null;
-};
+}
 
 export type CompatibleSessionUsageLimits = {
   readonly currentSession?: ProviderUsageLimitBucket | null;
@@ -35,23 +35,23 @@ export type CompatibleSessionUsageLimitLabels = {
   readonly currentWeekSonnetOnly?: string | null;
 } | null;
 
-export type ProviderUsageLimitsDiagnostics = {
-  readonly result:
-    | "cache_hit"
-    | "fresh_read"
-    | "fallback_cached"
-    | "unavailable";
+export interface ProviderUsageLimitsDiagnostics {
+  readonly changed?: boolean;
   readonly fallbackReason?:
     | "min_refresh_interval"
     | "reader_missing"
     | "read_failed"
     | "snapshot_unavailable";
-  readonly source: ProviderUsageLimitSource | null;
+  readonly force: boolean;
   readonly fromCache: boolean;
   readonly readerRegistered: boolean;
-  readonly force: boolean;
-  readonly changed?: boolean;
-};
+  readonly result:
+    | "cache_hit"
+    | "fresh_read"
+    | "fallback_cached"
+    | "unavailable";
+  readonly source: ProviderUsageLimitSource | null;
+}
 
 export type ProviderUsageLimitWindow = ProviderUsageLimitBucket & {
   readonly id: ProviderUsageLimitWindowId;
@@ -59,47 +59,47 @@ export type ProviderUsageLimitWindow = ProviderUsageLimitBucket & {
   readonly windowKind: ProviderUsageLimitWindowKind;
 };
 
-export type ProviderUsageLimitsSnapshot = {
+export interface ProviderUsageLimitsSnapshot {
+  readonly collectedAt: string;
   readonly providerId: ProviderUsageLimitProviderId;
   readonly providerScopeKey: string;
   readonly source: ProviderUsageLimitSource;
   readonly windows: readonly ProviderUsageLimitWindow[];
-  readonly collectedAt: string;
-};
+}
 
-export type ReadProviderUsageLimitsParams = {
-  readonly providerId: ProviderUsageLimitProviderId;
-  readonly workspacePath: string;
-  readonly runtimeSessionId: string;
-  readonly providerSessionId: string | null;
+export interface ReadProviderUsageLimitsParams {
   readonly environment?: NodeJS.ProcessEnv;
   readonly force?: boolean;
-};
+  readonly providerId: ProviderUsageLimitProviderId;
+  readonly providerSessionId: string | null;
+  readonly runtimeSessionId: string;
+  readonly workspacePath: string;
+}
 
-export type ProviderUsageLimitsReadResult = {
-  readonly snapshot: ProviderUsageLimitsSnapshot | null;
+export interface ProviderUsageLimitsReadResult {
   readonly compat: CompatibleSessionUsageLimits;
   readonly diagnostics?: ProviderUsageLimitsDiagnostics;
-};
+  readonly snapshot: ProviderUsageLimitsSnapshot | null;
+}
 
-export type ProviderUsageLimitsStreamEventData = {
-  readonly kind: "usage_limits";
-  readonly usageLimits: CompatibleSessionUsageLimits;
-  readonly usageLimitLabels?: CompatibleSessionUsageLimitLabels;
-  readonly providerScopeKey: string;
-  readonly source: ProviderUsageLimitSource;
+export interface ProviderUsageLimitsStreamEventData {
   readonly collectedAt: string;
   readonly diagnostics?: ProviderUsageLimitsDiagnostics;
-};
+  readonly kind: "usage_limits";
+  readonly providerScopeKey: string;
+  readonly source: ProviderUsageLimitSource;
+  readonly usageLimitLabels?: CompatibleSessionUsageLimitLabels;
+  readonly usageLimits: CompatibleSessionUsageLimits;
+}
 
-export type ProviderUsageLimitsStreamPayload = {
+export interface ProviderUsageLimitsStreamPayload {
+  readonly data: ProviderUsageLimitsStreamEventData;
   readonly providerScopeKey: string;
   readonly usageLimits: CompatibleSessionUsageLimits;
-  readonly data: ProviderUsageLimitsStreamEventData;
-};
+}
 
-export type ProviderUsageLimitsAdapter = {
+export interface ProviderUsageLimitsAdapter {
   toCompat(
     snapshot: ProviderUsageLimitsSnapshot | null
   ): CompatibleSessionUsageLimits;
-};
+}

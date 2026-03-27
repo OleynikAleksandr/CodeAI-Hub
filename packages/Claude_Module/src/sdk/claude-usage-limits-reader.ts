@@ -9,10 +9,10 @@ import { ClaudeUsageLimitsProbeLog } from "./claude-usage-limits-probe-log";
 import type { UsageLimitsSnapshot } from "./claude-usage-limits-snapshot";
 import { extractUsageLimitsFromRateLimitHeaders } from "./claude-usage-limits-snapshot";
 
-type UsageLimitsReaderOptions = {
-  readonly executablePath: string;
+interface UsageLimitsReaderOptions {
   readonly env: NodeJS.ProcessEnv;
-};
+  readonly executablePath: string;
+}
 
 const TEMP_SESSION_PREFIX = "temp_";
 const CLAUDE_CREDENTIALS_FILENAME = ".credentials.json";

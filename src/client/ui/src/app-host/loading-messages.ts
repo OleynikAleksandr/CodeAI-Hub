@@ -1,10 +1,10 @@
 export type MessageId = "core" | "claude" | "codex" | "gemini";
 
-export type LoadingMessage = {
+export interface LoadingMessage {
+  readonly detail?: string;
   readonly id: MessageId;
   readonly status: string;
-  readonly detail?: string;
-};
+}
 
 export const MESSAGE_ORDER: readonly MessageId[] = [
   "core",

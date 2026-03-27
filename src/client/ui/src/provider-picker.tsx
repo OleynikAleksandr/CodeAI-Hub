@@ -5,30 +5,30 @@ import type {
   ProviderStackId,
 } from "../../../types/provider";
 
-export type ProviderPickerState = {
-  readonly visible: boolean;
+export interface ProviderPickerState {
   readonly providers: readonly ProviderStackDescriptor[];
-};
+  readonly visible: boolean;
+}
 
 export const defaultPickerState: ProviderPickerState = {
   visible: false,
   providers: [],
 };
 
-type ProviderPickerProps = {
-  readonly visible: boolean;
-  readonly providers: readonly ProviderStackDescriptor[];
+interface ProviderPickerProps {
   readonly onConfirm: (providerIds: readonly ProviderStackId[]) => void;
   readonly onSecondary: () => void;
+  readonly providers: readonly ProviderStackDescriptor[];
   readonly secondaryLabel?: string;
-};
+  readonly visible: boolean;
+}
 
-type ProviderOptionProps = {
-  readonly provider: ProviderStackDescriptor;
+interface ProviderOptionProps {
   readonly checked: boolean;
-  readonly onToggle: (id: ProviderStackId) => void;
   readonly inputRef?: (element: HTMLInputElement | null) => void;
-};
+  readonly onToggle: (id: ProviderStackId) => void;
+  readonly provider: ProviderStackDescriptor;
+}
 
 const RADIO_GROUP_NAME = "provider-picker";
 

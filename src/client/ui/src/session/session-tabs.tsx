@@ -38,12 +38,12 @@ const getAgentLabel = (
   return null;
 };
 
-type TabDisplayData = {
+interface TabDisplayData {
   readonly displaySummary: readonly string[];
-  readonly spokenSummary: string;
   readonly fullSummary: string;
+  readonly spokenSummary: string;
   readonly tabClassName: string;
-};
+}
 
 const buildTabDisplayData = (
   session: SessionRecord,
@@ -100,13 +100,13 @@ const buildTabDisplayData = (
   return { displaySummary, spokenSummary, fullSummary, tabClassName };
 };
 
-type SessionTabsProps = {
-  readonly sessions: readonly SessionRecord[];
-  readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
+interface SessionTabsProps {
   readonly activeSessionId: string | null;
-  readonly onSelect: (sessionId: string) => void;
   readonly onClose: (sessionId: string) => void;
-};
+  readonly onSelect: (sessionId: string) => void;
+  readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
+  readonly sessions: readonly SessionRecord[];
+}
 
 const SessionTabs = ({
   sessions,

@@ -42,16 +42,15 @@ const extractProviderSessionId = (event: unknown): string | null => {
   );
 };
 
-type PendingHandoff = {
+interface PendingHandoff {
   readonly rootSessionId: string;
-  readonly workspaceRoot: string;
-  readonly workspaceSlug: string;
   readonly stageId: string | null;
   readonly timestamp: string;
-};
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}
 
-type ContinuityCallbacks = {
-  readonly sendMessage: (sessionId: string, content: string) => Promise<void>;
+interface ContinuityCallbacks {
   readonly createSession: (options: {
     readonly providerId: string;
     readonly workspacePath: string;
@@ -61,7 +60,8 @@ type ContinuityCallbacks = {
     };
     readonly rootSessionId: string;
   }) => Promise<Session | null>;
-};
+  readonly sendMessage: (sessionId: string, content: string) => Promise<void>;
+}
 
 export class SessionContinuityFacade {
   static readWorkspaceChains(options: {

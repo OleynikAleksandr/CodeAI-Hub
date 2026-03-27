@@ -68,13 +68,13 @@ import {
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
 
-type UnifiedSessionSegmentSummaryPayload = {
+interface UnifiedSessionSegmentSummaryPayload {
   readonly kind: "segment_summary";
   readonly segments: readonly {
     readonly index: number;
     readonly remainingPercent?: number;
   }[];
-};
+}
 
 const isUnifiedSessionSegmentSummaryPayload = (
   value: unknown
@@ -114,56 +114,56 @@ const isUnifiedSessionSegmentSummaryPayload = (
   return true;
 };
 
-export type ProviderSessionBinding = {
+export interface ProviderSessionBinding {
   readonly providerId: string;
   providerSessionId: string;
   readonly unsubscribe: () => void;
-};
+}
 
-export type ProviderEventEnvelope = {
-  readonly type?: string;
+export interface ProviderEventEnvelope {
   readonly payload?: unknown;
-};
+  readonly type?: string;
+}
 
 export type DescriptionDialogResolution = DescriptionDialogResolutionModel;
 
-export type ContinuityRootResolutionOptions = {
-  readonly rootSessionIdOverride: string | null;
-  readonly workspaceRoot: string;
-  readonly providerId: string;
-  readonly sessionId: string;
+export interface ContinuityRootResolutionOptions {
   readonly context: {
     readonly initiativeSlug: string | null;
     readonly stage: string | null;
     readonly runSlug: string | null;
     readonly providerSessionId: string | null;
   };
-};
-
-export type CreateAndRegisterSessionOptions = {
   readonly providerId: string;
-  readonly workspacePath: string;
-  readonly adapter: NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
-  readonly resumeMode?: SessionResumeMode;
-  readonly silent?: boolean;
-  readonly context: ContinuityRootResolutionOptions["context"];
-  readonly rootSessionId?: string | null;
-  readonly continuationParentId?: string | null;
-};
+  readonly rootSessionIdOverride: string | null;
+  readonly sessionId: string;
+  readonly workspaceRoot: string;
+}
 
-export type ShellSessionCreationResult = {
-  readonly session: Session;
+export interface CreateAndRegisterSessionOptions {
+  readonly adapter: NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
+  readonly context: ContinuityRootResolutionOptions["context"];
+  readonly continuationParentId?: string | null;
+  readonly providerId: string;
+  readonly resumeMode?: SessionResumeMode;
+  readonly rootSessionId?: string | null;
+  readonly silent?: boolean;
+  readonly workspacePath: string;
+}
+
+export interface ShellSessionCreationResult {
   readonly continuityRootSessionId: string;
-};
+  readonly session: Session;
+}
 
 const MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS = 8000;
 
-export type DialogMessagePayload = {
-  readonly role?: string;
+export interface DialogMessagePayload {
   readonly content?: unknown;
-  readonly timestamp?: string;
+  readonly role?: string;
   readonly tag?: string;
-};
+  readonly timestamp?: string;
+}
 
 type MessageContentPayload =
   | string
@@ -173,31 +173,31 @@ type MessageContentPayload =
       readonly turnOptions?: unknown;
     };
 
-type MessageContentExtraction = {
+interface MessageContentExtraction {
   readonly content: string;
   readonly turnOptions?: Record<string, unknown>;
-};
+}
 
-type SessionResumeLifecycleState = {
-  readonly mode: SessionResumeMode;
+interface SessionResumeLifecycleState {
   readonly finalTurnCompleted: boolean;
+  readonly mode: SessionResumeMode;
   readonly terminalLockReason: SessionTerminalLockReason | null;
-};
+}
 
-type SessionResumeLifecycleStoreHost = {
+interface SessionResumeLifecycleStoreHost {
   sessionResumeLifecycleStates?: Map<string, SessionResumeLifecycleState>;
-};
+}
 
 type PostTurnContextDecision = "no_rollover" | "rollover_required";
 
 type WorkflowStageId = "description" | "virtual_simulation" | "diagram_modules";
 
-type WorkflowTurnOptionsResolution = {
-  readonly turnOptions?: Record<string, unknown>;
+interface WorkflowTurnOptionsResolution {
   readonly appliedSchema: boolean;
   readonly source: "turnOptions" | "template" | "none";
   readonly stageMatched: boolean;
-};
+  readonly turnOptions?: Record<string, unknown>;
+}
 
 const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
@@ -303,17 +303,17 @@ const resolveWorkflowTurnOptions = (params: {
   };
 };
 
-export type SessionRequestHandlerOptions = {
-  readonly config: CoreConfig;
-  readonly sessionManager: SessionManager;
-  readonly providerRegistry: ProviderRegistry;
-  readonly sessionStorage: UnifiedSessionStorage;
-  readonly logger: Logger;
+export interface SessionRequestHandlerOptions {
   readonly broadcaster: (event: BridgeEvent) => void;
-  readonly stateBroadcaster: () => void;
+  readonly config: CoreConfig;
   readonly continuityClock?: () => string;
+  readonly logger: Logger;
+  readonly providerRegistry: ProviderRegistry;
+  readonly sessionManager: SessionManager;
+  readonly sessionStorage: UnifiedSessionStorage;
+  readonly stateBroadcaster: () => void;
   readonly workspaceRuntime?: WorkspaceRuntimeFacade;
-};
+}
 
 export class SessionRequestHandler {
   private readonly providerSessions = new Map<string, ProviderSessionBinding>();
@@ -2648,7 +2648,7 @@ export class SessionRequestHandler {
             index: index + 1,
             providerId: segment.providerId,
             providerSessionId: segment.providerSessionId,
-            ...(remainingPercent !== null ? { remainingPercent } : {}),
+            ...(remainingPercent === null ? {} : { remainingPercent }),
           } as const;
         });
 

@@ -13,11 +13,11 @@ import { TemplateLoader } from "./template-loader";
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-export type FlowNodeContinuityFacadeOptions = {
-  readonly templatesDir: string;
-  readonly preemptRemainingPercentThreshold: number;
+export interface FlowNodeContinuityFacadeOptions {
   readonly clock?: () => number;
-};
+  readonly preemptRemainingPercentThreshold: number;
+  readonly templatesDir: string;
+}
 
 export class FlowNodeContinuityFacade {
   readonly #templateLoader: TemplateLoader;

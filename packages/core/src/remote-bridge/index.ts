@@ -35,18 +35,18 @@ import {
   serializeSession,
 } from "./types";
 
-export type CoreTtlState = {
+export interface CoreTtlState {
+  readonly idleSince: string | null;
   readonly idleTtlMs: number | null;
   readonly lastActivityAt: string | null;
-  readonly idleSince: string | null;
   readonly secondsUntilShutdown: number | null;
-};
+}
 
-type RemoteBridgeHooks = {
+interface RemoteBridgeHooks {
   readonly onClientConnected?: (clientId: string, total: number) => void;
   readonly onClientDisconnected?: (clientId: string, total: number) => void;
   readonly onShutdownRequested?: () => void;
-};
+}
 
 export class RemoteBridge {
   private readonly config: CoreConfig;

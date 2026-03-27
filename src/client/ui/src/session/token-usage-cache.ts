@@ -1,7 +1,7 @@
-type TokenUsageSnapshot = {
-  readonly used: number;
+interface TokenUsageSnapshot {
   readonly limit: number;
-};
+  readonly used: number;
+}
 
 type StoredTokenUsageSnapshot = TokenUsageSnapshot & {
   readonly updatedAt: number;

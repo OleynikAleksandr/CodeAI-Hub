@@ -14,17 +14,17 @@ const DEFAULT_MAX_BYTES = 300_000;
 const MIN_MAX_BYTES = 1000;
 const MAX_MAX_BYTES = 500_000;
 
-type WorkspaceFilePayload = {
-  readonly sessionId: string;
-  readonly path: string;
+interface WorkspaceFilePayload {
   readonly maxBytes?: number;
-};
-
-type WorkspaceFileWritePayload = {
-  readonly sessionId: string;
   readonly path: string;
+  readonly sessionId: string;
+}
+
+interface WorkspaceFileWritePayload {
   readonly content: string;
-};
+  readonly path: string;
+  readonly sessionId: string;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);

@@ -35,18 +35,21 @@ const resolveNodeRequire = (): NodeRequireLike | null => {
   }
 };
 
-export type Line = { readonly number: number; readonly text: string };
-export type Block = {
+export interface Line {
+  readonly number: number;
+  readonly text: string;
+}
+export interface Block {
   readonly id: string;
   readonly line: number;
   readonly lines: readonly Line[];
-};
-export type Fields = {
-  readonly scalars: ReadonlyMap<string, string>;
+}
+export interface Fields {
   readonly lists: ReadonlyMap<string, readonly string[]>;
   readonly notes?: string;
   readonly rationale?: string;
-};
+  readonly scalars: ReadonlyMap<string, string>;
+}
 
 const stripUtf8Bom = (content: string): string =>
   content.startsWith("\uFEFF") ? content.slice(1) : content;

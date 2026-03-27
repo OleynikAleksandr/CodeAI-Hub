@@ -22,35 +22,35 @@ import type {
   WorkspaceSnapshotPushPayload,
 } from "./workspace-wire-types";
 
-type WorkspaceRuntimeFacadeDeps = {
-  readonly snapshotDebounceMs?: number;
-  readonly selectionIdFactory?: () => string;
-  readonly nowIso?: () => string;
-  readonly store?: WorkspaceStore;
-  readonly sessionRuntime?: SessionRuntime;
-  readonly taskTimerStorageFactory?: (
-    workspaceRoot: string
-  ) => TaskTimerStorage;
+interface WorkspaceRuntimeFacadeDeps {
   readonly hydrateWorkspaceSessions?: (workspaceRoot: string) => readonly {
-    sessionId: string;
+    bindingStatus?: SessionBindingStatus;
     nodeId: string;
     providerId?: string;
     providerSessionId?: string | null;
-    bindingStatus?: SessionBindingStatus;
+    sessionId: string;
   }[];
-};
+  readonly nowIso?: () => string;
+  readonly selectionIdFactory?: () => string;
+  readonly sessionRuntime?: SessionRuntime;
+  readonly snapshotDebounceMs?: number;
+  readonly store?: WorkspaceStore;
+  readonly taskTimerStorageFactory?: (
+    workspaceRoot: string
+  ) => TaskTimerStorage;
+}
 
-type ClientSelection = {
-  workspaceRoot: string | null;
+interface ClientSelection {
   selectionId: string | null;
   sequence: number;
-};
+  workspaceRoot: string | null;
+}
 
-type MutableTaskTimerState = {
-  totalSeconds: number;
-  runningSinceMs: number | null;
+interface MutableTaskTimerState {
   runningAccumulates: boolean;
-};
+  runningSinceMs: number | null;
+  totalSeconds: number;
+}
 
 type NotifySessionPatch = Partial<
   Pick<

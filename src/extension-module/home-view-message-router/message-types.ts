@@ -1,8 +1,8 @@
 import type { SettingsMessage } from "../message-handlers/settings-message-handler";
 
-type ProviderPickerConfirmPayload = {
+interface ProviderPickerConfirmPayload {
   readonly providerIds: readonly unknown[];
-};
+}
 
 export type WebviewCommand =
   | "newSession"
@@ -16,26 +16,28 @@ export type WebviewCommand =
   | "custom3"
   | "custom4";
 
-export type CommandMessage = { readonly command: WebviewCommand };
+export interface CommandMessage {
+  readonly command: WebviewCommand;
+}
 
-export type LayoutMessage = {
+export interface LayoutMessage {
+  readonly payload?: unknown;
   readonly type: "ui:updateLayout";
-  readonly payload?: unknown;
-};
+}
 
-export type GenericMessage = {
+export interface GenericMessage {
+  readonly payload?: unknown;
   readonly type: string;
-  readonly payload?: unknown;
-};
+}
 
-export type ProviderPickerConfirmMessage = {
-  readonly type: "providerPicker:confirm";
+export interface ProviderPickerConfirmMessage {
   readonly payload: ProviderPickerConfirmPayload;
-};
+  readonly type: "providerPicker:confirm";
+}
 
-export type ProviderPickerCancelMessage = {
+export interface ProviderPickerCancelMessage {
   readonly type: "providerPicker:cancel";
-};
+}
 
 export type ProviderPickerMessage =
   | ProviderPickerConfirmMessage

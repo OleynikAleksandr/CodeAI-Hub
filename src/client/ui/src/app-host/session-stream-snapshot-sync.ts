@@ -33,8 +33,8 @@ const applyFlowNodeRolloverNotificationToSnapshot = (
       ...snapshot.status,
       rollover: {
         phase,
-        ...(remainingPercent !== null ? { remainingPercent } : {}),
-        ...(thresholdPercent !== null ? { thresholdPercent } : {}),
+        ...(remainingPercent === null ? {} : { remainingPercent }),
+        ...(thresholdPercent === null ? {} : { thresholdPercent }),
         ...(reportPath ? { reportPath } : {}),
         ...(error ? { error } : {}),
         updatedAt,

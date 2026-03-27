@@ -7,10 +7,10 @@ import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-c
 import { type Session, SessionManager } from "../../session-manager";
 import { SessionRequestHandler } from "./session-request-handler";
 
-type RecordedInternalMessage = {
-  readonly sessionId: string;
+interface RecordedInternalMessage {
   readonly content: string;
-};
+  readonly sessionId: string;
+}
 
 const createTempDir = (prefix: string): string =>
   mkdtempSync(path.join(os.tmpdir(), prefix));

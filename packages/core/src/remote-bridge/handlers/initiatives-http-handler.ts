@@ -33,11 +33,11 @@ const resolveWorkspaceRoot = (req: Request, body: unknown): string | null => {
   return path.resolve(candidate);
 };
 
-type CreateInitiativeRequest = {
-  readonly workspacePath: string;
-  readonly displayName: string;
+interface CreateInitiativeRequest {
   readonly description?: string;
-};
+  readonly displayName: string;
+  readonly workspacePath: string;
+}
 
 const parseCreateInitiativeRequest = (
   value: unknown

@@ -12,14 +12,14 @@ import {
   type GeneralSettings,
 } from "./general-settings";
 
-export type SettingsSnapshot = {
+export interface SettingsSnapshot {
   readonly general: GeneralSettings;
   readonly providers: {
     readonly claude: ClaudeSettings;
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettings;
   };
-};
+}
 
 export const DEFAULT_SETTINGS_SNAPSHOT: SettingsSnapshot = {
   general: DEFAULT_GENERAL_SETTINGS,

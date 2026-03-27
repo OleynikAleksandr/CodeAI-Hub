@@ -1,9 +1,9 @@
 import type { ClaudeStreamMessage } from "../types";
 
-export type VariantBArtifact = {
-  readonly slot: string;
+export interface VariantBArtifact {
   readonly markdown: string;
-};
+  readonly slot: string;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);

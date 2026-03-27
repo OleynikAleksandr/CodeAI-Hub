@@ -1,13 +1,13 @@
-export type WorkspaceProject = {
-  readonly id: string;
-  readonly name: string;
-  readonly slug: string;
-  readonly path: string;
-  readonly lastUsed: string;
+export interface WorkspaceProject {
   readonly icon?: string;
-};
+  readonly id: string;
+  readonly lastUsed: string;
+  readonly name: string;
+  readonly path: string;
+  readonly slug: string;
+}
 
-export type ProjectRegistrySchema = {
-  readonly workspaces: WorkspaceProject[];
+export interface ProjectRegistrySchema {
   readonly lastActiveWorkspaceId?: string;
-};
+  readonly workspaces: WorkspaceProject[];
+}

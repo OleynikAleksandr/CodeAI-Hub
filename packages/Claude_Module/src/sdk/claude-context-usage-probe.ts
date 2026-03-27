@@ -1,22 +1,22 @@
 import { spawn } from "node:child_process";
 
-type ExecFailure = {
+interface ExecFailure {
   readonly code?: unknown;
-  readonly signal?: unknown;
-  readonly stdout?: unknown;
-  readonly stderr?: unknown;
   readonly message?: unknown;
-};
+  readonly signal?: unknown;
+  readonly stderr?: unknown;
+  readonly stdout?: unknown;
+}
 
-export type ContextUsageProbeResult = {
-  readonly code: number | null;
-  readonly signal: NodeJS.Signals | null;
-  readonly stdoutTail: string;
-  readonly stderrTail: string;
-  readonly durationMs: number;
-  readonly timeout: boolean;
+export interface ContextUsageProbeResult {
   readonly cmd: string;
-};
+  readonly code: number | null;
+  readonly durationMs: number;
+  readonly signal: NodeJS.Signals | null;
+  readonly stderrTail: string;
+  readonly stdoutTail: string;
+  readonly timeout: boolean;
+}
 
 const isWindows = process.platform === "win32";
 

@@ -5,26 +5,26 @@ import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { BridgeEvent } from "../types";
 
-type ProviderSessionBindingLike = {
+interface ProviderSessionBindingLike {
   readonly providerId: string;
   providerSessionId: string;
   readonly unsubscribe: () => void;
-};
+}
 
-type SessionProviderBindingServiceDependencies = {
+interface SessionProviderBindingServiceDependencies {
+  readonly broadcaster: (event: BridgeEvent) => void;
+  readonly continuity: SessionContinuityFacade;
+  readonly logger: Logger;
+  readonly providerSessions: Map<string, ProviderSessionBindingLike>;
   readonly sessionManager: SessionManager;
   readonly sessionStorage: UnifiedSessionStorage;
-  readonly continuity: SessionContinuityFacade;
-  readonly providerSessions: Map<string, ProviderSessionBindingLike>;
-  readonly broadcaster: (event: BridgeEvent) => void;
   readonly stateBroadcaster: () => void;
-  readonly logger: Logger;
-  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   readonly updateDescriptionSessionRef: (
     session: Session,
     providerSessionId?: string
   ) => Promise<void>;
-};
+  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
+}
 
 export class SessionProviderBindingService {
   private readonly deps: SessionProviderBindingServiceDependencies;

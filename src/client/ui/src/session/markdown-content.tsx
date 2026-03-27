@@ -2,12 +2,12 @@ import type { HTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-type MarkdownContentProps = {
+interface MarkdownContentProps {
+  readonly allowEmphasis?: boolean;
   readonly className?: string;
   readonly content: string;
   readonly id?: string;
-  readonly allowEmphasis?: boolean;
-};
+}
 
 const MarkdownContent = ({
   className,

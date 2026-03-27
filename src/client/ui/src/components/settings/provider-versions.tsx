@@ -11,16 +11,16 @@ import {
 import SettingsCard from "./settings-card";
 import type { UseSettingsStateResult } from "./use-settings-state";
 
-type ProviderVersionsProps = {
-  readonly provider: Provider;
-  readonly versions: UseSettingsStateResult["versions"];
+interface ProviderVersionsProps {
   readonly autoUpdateEnabled: boolean;
   readonly onAutoUpdateChange: (provider: Provider, enabled: boolean) => void;
   readonly onUpdate: (
     provider: Provider,
     target: "cli" | "sdk" | "core"
   ) => void;
-};
+  readonly provider: Provider;
+  readonly versions: UseSettingsStateResult["versions"];
+}
 
 const rowsContainerStyles: CSSProperties = {
   display: "flex",

@@ -1,8 +1,8 @@
 type SupervisorRequestMode = "ensure-started" | "restart" | "stop";
 
-type LauncherBridge = {
+interface LauncherBridge {
   readonly ensureCoreRunning?: () => unknown;
-};
+}
 
 type BridgeWindow = typeof window & {
   acquireVsCodeApi?: () => { postMessage: (m: unknown) => void };

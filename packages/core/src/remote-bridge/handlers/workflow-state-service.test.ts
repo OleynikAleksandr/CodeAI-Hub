@@ -45,25 +45,25 @@ const createProductPartsIndex = (partIds: readonly string[]): string =>
     ]),
   ].join("\n");
 
-type WorkflowStageArtifacts = {
-  readonly status: string;
+interface WorkflowStageArtifacts {
   readonly artifacts?: readonly { readonly path: string }[];
   readonly gates?: readonly { readonly gateId: string }[];
-};
+  readonly status: string;
+}
 
-type DiagramModulesProgressPayload = {
-  readonly substep: string;
-  readonly plannedCount: number;
-  readonly generatedCount: number;
-  readonly currentPartId?: string;
+interface DiagramModulesProgressPayload {
   readonly aggregateReady: boolean;
-};
+  readonly currentPartId?: string;
+  readonly generatedCount: number;
+  readonly plannedCount: number;
+  readonly substep: string;
+}
 
-type WorkflowStatePayload = {
-  readonly state?: { readonly stages: Record<string, WorkflowStageArtifacts> };
-  readonly gating: { readonly blocked: Record<string, boolean> };
+interface WorkflowStatePayload {
   readonly diagramModulesProgress?: DiagramModulesProgressPayload | null;
-};
+  readonly gating: { readonly blocked: Record<string, boolean> };
+  readonly state?: { readonly stages: Record<string, WorkflowStageArtifacts> };
+}
 
 const readWorkflowStatePayload = async (params: {
   readonly service: WorkflowStateService;

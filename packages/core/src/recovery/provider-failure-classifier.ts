@@ -11,19 +11,19 @@ export type ProviderFailureClass =
   | "provider_runtime_failure"
   | "terminal_session_failure";
 
-export type ProviderFailureClassification = {
+export interface ProviderFailureClassification {
   readonly failureClass: ProviderFailureClass;
-  readonly retryable: boolean;
-  readonly shouldRemoveBinding: boolean;
-  readonly shouldDegradeProvider: boolean;
   readonly reason: string;
-};
+  readonly retryable: boolean;
+  readonly shouldDegradeProvider: boolean;
+  readonly shouldRemoveBinding: boolean;
+}
 
-type ClassifierContext = {
+interface ClassifierContext {
+  readonly adapterAvailable: boolean;
   readonly hasBinding: boolean;
   readonly hasProviderSessionId: boolean;
-  readonly adapterAvailable: boolean;
-};
+}
 
 // Patterns that indicate transient server-side issues
 const TRANSIENT_ERROR_PATTERNS: readonly RegExp[] = [

@@ -18,10 +18,10 @@ import { notifyConnectionListeners } from "./core-process-notifiers";
 
 const SUPERVISOR_LOG_TRIM_PATTERN = /\s+$/u;
 
-type EnsureStartedOptions = {
+interface EnsureStartedOptions {
   readonly forceRestart?: boolean;
   readonly targetVersion?: string;
-};
+}
 export class CoreProcessManager {
   private declaredVersion?: string;
   private readonly channel = window.createOutputChannel("CodeAI Hub Core");

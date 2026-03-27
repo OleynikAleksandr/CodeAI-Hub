@@ -14,50 +14,50 @@ export type SessionRecord =
   | SessionCloseRecord
   | SessionMessageRecord;
 
-export type SessionOpenRecord = {
+export interface SessionOpenRecord {
+  readonly provider: string;
+  readonly sessionId: string;
+  readonly timestamp: string;
   readonly type: "session-open";
-  readonly timestamp: string;
-  readonly provider: string;
-  readonly sessionId: string;
-};
+}
 
-export type SessionCloseRecord = {
+export interface SessionCloseRecord {
+  readonly provider: string;
+  readonly reason?: string;
+  readonly sessionId: string;
+  readonly timestamp: string;
   readonly type: "session-close";
-  readonly timestamp: string;
-  readonly provider: string;
-  readonly sessionId: string;
-  readonly reason?: string;
-};
+}
 
-export type SessionMessageRecord = {
+export interface SessionMessageRecord {
+  readonly content: string;
+  readonly messageId: string;
+  readonly provider: string;
+  readonly role: MessageRole;
+  readonly tag?: string;
+  readonly timestamp: string;
   readonly type: "message";
-  readonly timestamp: string;
-  readonly provider: string;
-  readonly messageId: string;
-  readonly role: MessageRole;
-  readonly content: string;
-  readonly tag?: string;
-};
+}
 
-export type SessionWriterOptions = {
+export interface SessionWriterOptions {
+  readonly provider: string;
   readonly rootDirectory: string;
-  readonly workspaceSlug: string;
-  readonly provider: string;
   readonly sessionId: string;
-};
+  readonly workspaceSlug: string;
+}
 
-export type AppendMessageOptions = {
+export interface AppendMessageOptions {
+  readonly content: string;
   readonly messageId: string;
   readonly role: MessageRole;
-  readonly content: string;
-  readonly timestamp?: string;
   readonly tag?: string;
-};
-
-export type CloseSessionOptions = {
   readonly timestamp?: string;
+}
+
+export interface CloseSessionOptions {
   readonly reason?: string;
-};
+  readonly timestamp?: string;
+}
 
 type InternalRecord = SessionRecord;
 

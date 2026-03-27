@@ -10,21 +10,21 @@ import {
 } from "./auto-update-settings";
 import { isRecord } from "./settings-utils";
 
-export type ClaudeThinkingSettings = {
+export interface ClaudeThinkingSettings {
   readonly enabled: boolean;
   readonly maxTokens: number;
-};
+}
 
-export type ClaudeSessionContinuitySettings = {
+export interface ClaudeSessionContinuitySettings {
   readonly remainingPercentThreshold: number;
-};
+}
 
-export type ClaudeSettings = {
-  readonly thinking: ClaudeThinkingSettings;
+export interface ClaudeSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: ClaudeModelAliasId;
   readonly sessionContinuity: ClaudeSessionContinuitySettings;
-};
+  readonly thinking: ClaudeThinkingSettings;
+}
 
 export const MIN_THINKING_TOKENS = 2000;
 export const MAX_THINKING_TOKENS = 32_000;

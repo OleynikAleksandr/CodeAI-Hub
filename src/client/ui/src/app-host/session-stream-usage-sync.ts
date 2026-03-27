@@ -24,17 +24,20 @@ const readNumber = (value: unknown): number | null => {
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
-type TokenUsage = { readonly used: number; readonly limit: number };
+interface TokenUsage {
+  readonly limit: number;
+  readonly used: number;
+}
 
-type ExtractedTokenUsage = {
-  readonly tokenUsage: TokenUsage;
+interface ExtractedTokenUsage {
   readonly threadId: string | null;
-};
+  readonly tokenUsage: TokenUsage;
+}
 
-type UsageSyncResult = {
-  readonly snapshots: SessionSnapshots;
+interface UsageSyncResult {
   readonly snapshot: SessionSnapshot;
-};
+  readonly snapshots: SessionSnapshots;
+}
 
 const readTokenUsage = (value: unknown): TokenUsage | null => {
   if (!isRecord(value)) {

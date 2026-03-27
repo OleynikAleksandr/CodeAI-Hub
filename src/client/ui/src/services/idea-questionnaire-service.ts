@@ -16,28 +16,28 @@ import {
   WorkspaceFileService,
 } from "./workspace-file-service";
 
-type QuestionnaireField = {
+interface QuestionnaireField {
+  readonly description?: string;
+  readonly hint?: string;
   readonly id: string;
   readonly title: string;
   readonly titleHint?: string;
-  readonly description?: string;
-  readonly hint?: string;
-};
+}
 
-export type QuestionnaireSnapshot = {
-  readonly sessionId: string;
+export interface QuestionnaireSnapshot {
+  readonly answers: Record<string, string>;
   readonly path: string;
-  readonly template: string;
   readonly placeholders: Record<string, string>;
   readonly questions: readonly QuestionnaireField[];
-  readonly answers: Record<string, string>;
-};
+  readonly sessionId: string;
+  readonly template: string;
+}
 
-type QuestionnaireReadResult = {
-  readonly existingStatus: WorkspaceFileFetchResult["status"];
+interface QuestionnaireReadResult {
   readonly existingContent: string | null;
+  readonly existingStatus: WorkspaceFileFetchResult["status"];
   readonly resolvedContent: string | null;
-};
+}
 
 const DEFAULT_TEMPLATE = "# Idea Questionnaire\n\n";
 const SAVE_DEBOUNCE_MS = 400;

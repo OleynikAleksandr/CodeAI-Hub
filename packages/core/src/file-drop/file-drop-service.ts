@@ -31,10 +31,10 @@ const isPathCandidate = (value: string): boolean =>
   value.startsWith("../") ||
   WINDOWS_PATH_PATTERN.test(value);
 
-export type FileDropSnapshot = {
-  readonly paths: readonly string[];
+export interface FileDropSnapshot {
   readonly formatted: string;
-};
+  readonly paths: readonly string[];
+}
 
 const CACHE_TTL_MS = 5000;
 

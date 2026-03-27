@@ -1,9 +1,9 @@
 import type { CSSProperties, FC } from "react";
 
-type ThinkingToggleProps = {
+interface ThinkingToggleProps {
   readonly enabled: boolean;
   readonly onToggle: (enabled: boolean) => void;
-};
+}
 
 const toggleContainerStyles: CSSProperties = {
   display: "flex",
