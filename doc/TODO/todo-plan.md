@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session164.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session165.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
@@ -20,10 +20,10 @@
 ## Phase 76 — Runtime God-Modules Decomposition (owner: Oleksandr, updated: 2026-03-27)
 
 ### Stream: Gate hardening — full source surface
-1. [IN_PROGRESS] Расширить architecture gate на весь handwritten source surface и заменить скрытый blind spot явным debt allowlist. Scope: `scripts/check-architecture.sh`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `scripts/README.md`. Expected commit: `chore(architecture): expand source-surface line-limit gate`
-2. [TODO] Git Commit: `chore(architecture): expand source-surface line-limit gate` (hash: TBD)
-3. [TODO] Синхронизировать hook bootstrap и архитектурный contract quality gates под Husky + explicit debt allowlist. Scope: `package.json`, `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md`. Expected commit: `docs(workflow): sync architecture gate contract with Husky`
-4. [TODO] Git Commit: `docs(workflow): sync architecture gate contract with Husky` (hash: TBD)
+1. [DONE] Расширить architecture gate на весь handwritten source surface и заменить скрытый blind spot явным debt allowlist. Scope: `scripts/check-architecture.sh`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `scripts/README.md`. Expected commit: `chore(architecture): expand source-surface line-limit gate` (hash: 49629f58)
+2. [DONE] Git Commit: `chore(architecture): expand source-surface line-limit gate` (hash: 49629f58)
+3. [DONE] Синхронизировать hook bootstrap и архитектурный contract quality gates под Husky + explicit debt allowlist. Scope: `package.json`, `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md`. Expected commit: `docs(workflow): sync architecture gate contract with Husky` (hash: b97aef9c)
+4. [DONE] Git Commit: `docs(workflow): sync architecture gate contract with Husky` (hash: b97aef9c)
 
 ### Stream: Core remote-bridge — `session-request-handler` becomes a facade
 5. [TODO] Вынести provider session create/resume resolution и shell/bound session factories из `session-request-handler.ts` в отдельные micro-modules. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-provider-session-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`. Expected commit: `refactor(core): extract session bootstrap factories from request handler`
