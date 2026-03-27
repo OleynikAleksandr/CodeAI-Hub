@@ -33,12 +33,21 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type {
-  SessionContinuityLockReason,
-  SessionContinuityLockTransition,
   SessionResumeMode,
   SessionTerminalLockReason,
 } from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
+import {
+  type ContinuityLockReason,
+  type EmitContinuityLockEventOptions,
+  type FlowNodeContinuityLockContext,
+  SessionContinuityLockService,
+} from "./session-continuity-lock-service";
+import {
+  type FlowNodeContinuityCreateReportRequestState,
+  type FlowNodeRolloverNotification,
+  SessionContinuityRolloverOrchestrator,
+} from "./session-continuity-rollover-orchestrator";
 import {
   type DescriptionDialogResolution as DescriptionDialogResolutionModel,
   SessionDescriptionDialogSync,
@@ -179,74 +188,6 @@ type ProviderErrorEnvelope = {
   readonly error?: unknown;
   readonly payload?: unknown;
   readonly type?: unknown;
-};
-
-type FlowNodeRolloverPhase =
-  | "start"
-  | "create_report_sent"
-  | "waiting_for_report_ack"
-  | "waiting_for_report"
-  | "report_ready"
-  | "new_session_created"
-  | "resume_sent"
-  | "failed";
-
-type FlowNodeRolloverNotification = {
-  readonly kind: "flow_node_rollover";
-  readonly phase: FlowNodeRolloverPhase;
-  readonly sourceSessionId: string;
-  readonly nextSessionId?: string;
-  readonly providerId: string;
-  readonly stageId: string;
-  readonly runSlug: string | null;
-  readonly remainingPercent?: number;
-  readonly thresholdPercent?: number;
-  readonly continuityRequestId?: string;
-  readonly continuityAttempt?: number;
-  readonly reportPath?: string;
-  readonly tmpReportPath?: string;
-  readonly error?: string;
-  readonly timestamp: string;
-};
-
-type FlowNodeContinuityCreateReportRequestStage =
-  | "waiting_for_report"
-  | "completed"
-  | "failed";
-
-type FlowNodeContinuityCreateReportRequestState = {
-  readonly requestId: string;
-  readonly attempt: number;
-  readonly stage: FlowNodeContinuityCreateReportRequestStage;
-  readonly reportPath: string;
-  readonly tmpReportPath: string;
-  readonly createdAtIso: string;
-  readonly updatedAtIso: string;
-};
-
-type ContinuityLockState = "locked" | "unlocked";
-
-type ContinuityLockReason = SessionContinuityLockReason;
-
-type ContinuityLockPayload = {
-  readonly kind: "continuity_lock";
-  readonly state: ContinuityLockState;
-  readonly rolloverId: string;
-  readonly sourceSessionId: string;
-  readonly targetSessionId?: string;
-  readonly stageId: string;
-  readonly runSlug: string | null;
-  readonly reason: ContinuityLockReason;
-  readonly timestamp: string;
-};
-
-type FlowNodeContinuityLockContext = {
-  readonly rolloverId: string;
-  readonly sourceSessionId: string;
-  readonly targetSessionId?: string;
-  readonly stageId: string;
-  readonly runSlug: string | null;
-  readonly awaitingBootstrapTurn: boolean;
 };
 
 type SessionResumeLifecycleState = {
@@ -401,18 +342,10 @@ export class SessionRequestHandler {
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionDialogSync: SessionDescriptionDialogSync;
   private readonly providerBindingService: SessionProviderBindingService;
+  private readonly continuityLockService: SessionContinuityLockService;
+  private readonly continuityRolloverOrchestrator: SessionContinuityRolloverOrchestrator;
   private readonly sessionShellFactory: SessionShellFactory;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
-  private readonly flowNodeRolloverInFlight = new Set<string>();
-  private readonly flowNodeRolloverStarted = new Set<string>();
-  private readonly flowNodeTokenUsageSnapshots = new Map<
-    string,
-    TokenUsageSnapshot
-  >();
-  private readonly flowNodeContinuityLockContexts = new Map<
-    string,
-    FlowNodeContinuityLockContext
-  >();
   private readonly flowNodeContinuityCreateReportRequests = new Map<
     string,
     FlowNodeContinuityCreateReportRequestState
@@ -559,7 +492,7 @@ export class SessionRequestHandler {
       finalTurnCompleted: true,
       terminalLockReason: "terminal_no_resume",
     });
-    this.emitContinuityLockEvent({
+    this.continuityLockService.emitContinuityLockEvent({
       sessionId: session.id,
       rolloverId,
       sourceSessionId: session.id,
@@ -598,7 +531,7 @@ export class SessionRequestHandler {
   private clearPostTurnContextDecision(sessionId: string): void {
     this.postTurnContextDecisionPendingSessions.delete(sessionId);
     this.postTurnContextDecisionBySessionId.delete(sessionId);
-    this.flowNodeTokenUsageSnapshots.delete(sessionId);
+    this.continuityRolloverOrchestrator.clearTokenUsageSnapshot(sessionId);
   }
 
   private recordPostTurnContextDecision(
@@ -873,106 +806,18 @@ export class SessionRequestHandler {
     return options.attempt;
   }
 
-  private emitContinuityLockEvent(options: {
-    readonly sessionId: string;
-    readonly rolloverId: string;
-    readonly sourceSessionId: string;
-    readonly targetSessionId?: string;
-    readonly stageId: string;
-    readonly runSlug: string | null;
-    readonly state: ContinuityLockState;
-    readonly reason: ContinuityLockReason;
-  }): void {
-    const session = this.sessionManager.getSession(options.sessionId);
-    const providerId = session?.providerId ?? null;
-    const lifecycleState = session
-      ? this.getSessionResumeLifecycleState(session)
-      : null;
-    const timestamp = new Date().toISOString();
-    const lockTransition: SessionContinuityLockTransition | null =
-      options.state === "locked"
-        ? {
-            rolloverId: options.rolloverId,
-            sourceSessionId: options.sourceSessionId,
-            ...(options.targetSessionId
-              ? { targetSessionId: options.targetSessionId }
-              : {}),
-            stageId: options.stageId,
-            runSlug: options.runSlug,
-            reason: options.reason,
-            rolloverPending:
-              options.state === "locked" &&
-              (options.reason === "threshold_reached" ||
-                options.reason === "report_in_progress" ||
-                options.reason === "resume_bootstrap"),
-            awaitingBootstrapTurn: options.reason === "resume_bootstrap",
-            resumeMode: lifecycleState?.mode,
-            finalTurnCompleted: lifecycleState?.finalTurnCompleted,
-            terminalLockReason: lifecycleState?.terminalLockReason ?? undefined,
-            updatedAt: timestamp,
-          }
-        : null;
-    if (session) {
-      this.workspaceRuntime?.notifyLockChanged(
-        {
-          workspaceRoot: session.workspacePath,
-          nodeId: session.stage ?? "session",
-          sessionId: session.id,
-        },
-        {
-          active: options.state === "locked",
-          reason: options.reason,
-          transition: lockTransition,
-        }
-      );
-    }
-    const payload = {
-      kind: "continuity_lock",
-      state: options.state,
-      rolloverId: options.rolloverId,
-      sourceSessionId: options.sourceSessionId,
-      ...(options.targetSessionId
-        ? { targetSessionId: options.targetSessionId }
-        : {}),
-      stageId: options.stageId,
-      runSlug: options.runSlug,
-      reason: options.reason,
-      timestamp,
-    } satisfies ContinuityLockPayload;
-
-    this.broadcaster({
-      type: "session:stream",
-      payload: {
-        sessionId: options.sessionId,
-        event: {
-          type: "stream_event",
-          provider: providerId ?? "core",
-          sessionId: options.sessionId,
-          data: payload,
-          uuid: `${crypto.randomUUID()}::continuity_lock`,
-          timestamp,
-        },
-      },
-    });
+  private emitContinuityLockEvent(
+    options: EmitContinuityLockEventOptions
+  ): void {
+    this.continuityLockService.emitContinuityLockEvent(options);
   }
 
   private registerFlowNodeContinuityLockContext(
     context: FlowNodeContinuityLockContext
   ): FlowNodeContinuityLockContext {
-    const previous = this.flowNodeContinuityLockContexts.get(
-      context.sourceSessionId
+    return this.continuityLockService.registerFlowNodeContinuityLockContext(
+      context
     );
-    if (
-      previous?.targetSessionId &&
-      previous.targetSessionId !== context.targetSessionId
-    ) {
-      this.flowNodeContinuityLockContexts.delete(previous.targetSessionId);
-    }
-    this.flowNodeContinuityLockContexts.set(context.sourceSessionId, context);
-    if (context.targetSessionId) {
-      this.flowNodeContinuityLockContexts.set(context.targetSessionId, context);
-    }
-    return context;
   }
 
   private finalizeFlowNodeContinuityLock(options: {
@@ -982,83 +827,7 @@ export class SessionRequestHandler {
       "resume_ready" | "resume_failed" | "resume_timeout"
     >;
   }): void {
-    const context = this.flowNodeContinuityLockContexts.get(options.sessionId);
-    if (!context) {
-      return;
-    }
-    const targetSessionId = context.targetSessionId ?? context.sourceSessionId;
-    const payloadBase = {
-      rolloverId: context.rolloverId,
-      sourceSessionId: context.sourceSessionId,
-      ...(context.targetSessionId
-        ? { targetSessionId: context.targetSessionId }
-        : {}),
-      stageId: context.stageId,
-      runSlug: context.runSlug,
-      reason: options.reason,
-    };
-    // Resume bootstrap should never leave the UI hard-locked permanently.
-    // `resume_failed` / `resume_timeout` must unblock the UI and clear rollover
-    // pending flags so the user can retry or continue manually.
-    const state: ContinuityLockState = "unlocked";
-    this.emitContinuityLockEvent({
-      sessionId: targetSessionId,
-      state,
-      ...payloadBase,
-    });
-    if (context.sourceSessionId !== targetSessionId) {
-      this.emitContinuityLockEvent({
-        sessionId: context.sourceSessionId,
-        state,
-        ...payloadBase,
-      });
-    }
-    this.flowNodeContinuityLockContexts.delete(context.sourceSessionId);
-    if (context.targetSessionId) {
-      this.flowNodeContinuityLockContexts.delete(context.targetSessionId);
-    }
-    this.finalizePostBootstrapRolloverLifecycle(context, {
-      updateResumeMode: true,
-    });
-  }
-
-  private finalizePostBootstrapRolloverLifecycle(
-    context: FlowNodeContinuityLockContext,
-    options?: { readonly updateResumeMode?: boolean }
-  ): void {
-    const sessionIds = [
-      context.sourceSessionId,
-      context.targetSessionId,
-    ].filter(
-      (candidate): candidate is string =>
-        typeof candidate === "string" && candidate.length > 0
-    );
-    for (const sessionId of sessionIds) {
-      this.flowNodeRolloverStarted.delete(sessionId);
-      this.flowNodeRolloverInFlight.delete(sessionId);
-      this.clearPostTurnContextDecision(sessionId);
-    }
-    if (!context.targetSessionId) {
-      return;
-    }
-    if (!options?.updateResumeMode) {
-      return;
-    }
-    const targetSession = this.sessionManager.getSession(
-      context.targetSessionId
-    );
-    if (!targetSession) {
-      return;
-    }
-    const lifecycleState = this.getSessionResumeLifecycleState(targetSession);
-    if (lifecycleState.mode === "no_resume") {
-      return;
-    }
-    this.updateSessionResumeLifecycleState(targetSession, {
-      mode: "resume_in_place",
-      finalTurnCompleted: false,
-      terminalLockReason: null,
-    });
+    this.continuityLockService.finalizeFlowNodeContinuityLock(options);
   }
 
   private finalizeFlowNodeContinuityLockOnBootstrapGate(options: {
@@ -1068,20 +837,9 @@ export class SessionRequestHandler {
       "resume_ready" | "resume_failed" | "resume_timeout"
     >;
   }): void {
-    const context = this.flowNodeContinuityLockContexts.get(options.sessionId);
-    if (
-      !(
-        context &&
-        context.targetSessionId === options.sessionId &&
-        context.awaitingBootstrapTurn
-      )
-    ) {
-      return;
-    }
-    this.finalizeFlowNodeContinuityLock({
-      sessionId: options.sessionId,
-      reason: options.reason,
-    });
+    this.continuityLockService.finalizeFlowNodeContinuityLockOnBootstrapGate(
+      options
+    );
   }
 
   constructor(options: SessionRequestHandlerOptions) {
@@ -1113,6 +871,55 @@ export class SessionRequestHandler {
       preemptRemainingPercentThreshold:
         this.config.continuityPreemptRemainingPercentThreshold,
     });
+    this.continuityLockService = new SessionContinuityLockService({
+      sessionManager: this.sessionManager,
+      broadcaster: this.broadcaster,
+      workspaceRuntime: this.workspaceRuntime,
+      clearPostTurnContextDecision: (sessionId) =>
+        this.clearPostTurnContextDecision(sessionId),
+      clearRolloverSessionState: (sessionId) =>
+        this.continuityRolloverOrchestrator.clearPendingState(sessionId),
+      getSessionResumeLifecycleState: (session) =>
+        this.getSessionResumeLifecycleState(session),
+      updateSessionResumeLifecycleState: (session, patch) =>
+        this.updateSessionResumeLifecycleState(session, patch),
+    });
+    this.continuityRolloverOrchestrator =
+      new SessionContinuityRolloverOrchestrator({
+        logger: this.logger,
+        registerPostTurnRolloverRequiredDecision: (sessionId) =>
+          this.registerPostTurnRolloverRequiredDecision(sessionId),
+        elevateSessionToRolloverResumeMode: (session) =>
+          this.elevateSessionToRolloverResumeMode(session),
+        registerFlowNodeContinuityLockContext: (context) =>
+          this.continuityLockService.registerFlowNodeContinuityLockContext(
+            context
+          ),
+        emitContinuityLockEvent: (lockEvent) =>
+          this.continuityLockService.emitContinuityLockEvent(lockEvent),
+        emitFlowNodeRolloverNotification: (sessionId, notification) =>
+          this.emitFlowNodeRolloverNotification(sessionId, notification),
+        rolloverFlowNodeSession: (session, rollover, rolloverOptions) =>
+          this.rolloverFlowNodeSession(session, rollover, rolloverOptions),
+        getCreateReportRequest: (sessionId) =>
+          this.flowNodeContinuityCreateReportRequests.get(sessionId) ?? null,
+        deleteCreateReportRequest: (sessionId) => {
+          this.flowNodeContinuityCreateReportRequests.delete(sessionId);
+        },
+        finalizeFlowNodeContinuityLock: (lockOptions) =>
+          this.continuityLockService.finalizeFlowNodeContinuityLock(
+            lockOptions
+          ),
+        updateSessionResumeLifecycleState: (session, patch) => {
+          this.updateSessionResumeLifecycleState(session, patch);
+        },
+        emitTurnStateEvent: (turnStateOptions) =>
+          this.emitTurnStateEvent(turnStateOptions),
+        emitContinuityFailedEvent: (failureOptions) =>
+          this.emitContinuityFailedEvent(failureOptions),
+        isContinuityReportTimeoutError: (error) =>
+          this.isContinuityReportTimeoutError(error),
+      });
     this.descriptionDialogSync = new SessionDescriptionDialogSync({
       sessionStorage: this.sessionStorage,
       continuityRootBySessionId: this.continuityRootBySessionId,
@@ -1472,7 +1279,7 @@ export class SessionRequestHandler {
         targetSessionId: null,
       };
     }
-    const context = this.flowNodeContinuityLockContexts.get(sessionId);
+    const context = this.continuityLockService.getContext(sessionId);
     if (!context) {
       return { allowed: true };
     }
@@ -1504,9 +1311,8 @@ export class SessionRequestHandler {
 
   private isFlowNodeRolloverPending(sessionId: string): boolean {
     return (
-      this.flowNodeRolloverStarted?.has(sessionId) === true ||
-      this.flowNodeRolloverInFlight?.has(sessionId) === true ||
-      this.flowNodeContinuityLockContexts?.has(sessionId) === true
+      this.continuityRolloverOrchestrator.hasPending(sessionId) ||
+      this.continuityLockService.hasContext(sessionId)
     );
   }
 
@@ -2223,30 +2029,6 @@ export class SessionRequestHandler {
     });
   }
 
-  private isStaleFlowNodeContinuitySegment(session: Session): boolean {
-    if (!session.stage) {
-      return false;
-    }
-
-    const stage = session.stage;
-    const runSlug = session.runSlug ?? null;
-    const initiativeSlug = session.initiativeSlug ?? null;
-    const workspacePath = session.workspacePath;
-
-    for (const candidate of this.sessionManager.listSessions()) {
-      if (
-        candidate.continuationParentId === session.id &&
-        candidate.workspacePath === workspacePath &&
-        (candidate.initiativeSlug ?? null) === initiativeSlug &&
-        candidate.stage === stage &&
-        (candidate.runSlug ?? null) === runSlug
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   private handleTurnCompletedWithFlowNodeArbitration(
     sessionId: string,
     flowNodeContinuityTask: Promise<void>
@@ -2293,9 +2075,10 @@ export class SessionRequestHandler {
       : null;
     const shouldDeferPostTurnCompletion = typedEvent?.type === "turn_completed";
     const usage = extractTokenUsage(event);
-    if (usage) {
-      this.flowNodeTokenUsageSnapshots.set(sessionId, usage);
-    }
+    this.continuityRolloverOrchestrator.recordTokenUsageSnapshot(
+      sessionId,
+      usage
+    );
 
     const shouldEvaluatePostTurnDecision =
       shouldDeferPostTurnCompletion ||
@@ -2311,6 +2094,30 @@ export class SessionRequestHandler {
       usage,
       deferPostTurnCompletion: shouldDeferPostTurnCompletion,
     });
+  }
+
+  private isStaleFlowNodeContinuitySegment(session: Session): boolean {
+    if (!session.stage) {
+      return false;
+    }
+
+    const stage = session.stage;
+    const runSlug = session.runSlug ?? null;
+    const initiativeSlug = session.initiativeSlug ?? null;
+    const workspacePath = session.workspacePath;
+
+    for (const candidate of this.sessionManager.listSessions()) {
+      if (
+        candidate.continuationParentId === session.id &&
+        candidate.workspacePath === workspacePath &&
+        (candidate.initiativeSlug ?? null) === initiativeSlug &&
+        candidate.stage === stage &&
+        (candidate.runSlug ?? null) === runSlug
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private async resolveFlowNodePostTurnContextDecision(options: {
@@ -2338,30 +2145,34 @@ export class SessionRequestHandler {
       this.registerPostTurnRolloverRequiredDecision(options.sessionId);
     };
 
-    if (
-      this.flowNodeRolloverStarted.has(options.sessionId) ||
-      this.flowNodeRolloverInFlight.has(options.sessionId)
-    ) {
+    if (this.continuityRolloverOrchestrator.hasPending(options.sessionId)) {
       recordRolloverRequiredDecision();
       return;
     }
-
     if (this.isStaleFlowNodeContinuitySegment(options.session)) {
       recordNoRolloverDecision();
       return;
     }
-
     if (!(options.session.initiativeSlug && options.session.stage)) {
       recordNoRolloverDecision();
       return;
     }
-
-    const eligibleForRollover = this.flowNodeContinuity.isEligibleForRollover({
-      stageId: options.session.stage,
-      runSlug: options.session.runSlug,
-    });
-    if (!eligibleForRollover) {
+    if (
+      !this.flowNodeContinuity.isEligibleForRollover({
+        stageId: options.session.stage,
+        runSlug: options.session.runSlug,
+      })
+    ) {
       recordNoRolloverDecision();
+      return;
+    }
+
+    const usage =
+      options.usage ??
+      this.continuityRolloverOrchestrator.getTokenUsageSnapshot(
+        options.sessionId
+      );
+    if (!usage) {
       return;
     }
 
@@ -2369,24 +2180,12 @@ export class SessionRequestHandler {
       await this.resolveLiveContinuityRemainingPercentThreshold(
         options.session
       );
-    const usage =
-      options.usage ??
-      this.flowNodeTokenUsageSnapshots.get(options.sessionId) ??
-      null;
-    if (!usage) {
-      return;
-    }
     if (!isBelowRemainingPercentThreshold(usage, remainingPercentThreshold)) {
       recordNoRolloverDecision();
       return;
     }
 
-    if (this.flowNodeRolloverInFlight.has(options.sessionId)) {
-      recordRolloverRequiredDecision();
-      return;
-    }
-
-    await this.startFlowNodeRolloverFromUsage({
+    await this.continuityRolloverOrchestrator.startFlowNodeRolloverFromUsage({
       session: options.session,
       sessionId: options.sessionId,
       stageId: options.session.stage,
@@ -2396,125 +2195,8 @@ export class SessionRequestHandler {
     });
   }
 
-  private async startFlowNodeRolloverFromUsage(options: {
-    readonly session: Session;
-    readonly sessionId: string;
-    readonly stageId: string;
-    readonly runSlug: string | null;
-    readonly usage: TokenUsageSnapshot;
-    readonly remainingPercentThreshold: number;
-  }): Promise<void> {
-    this.flowNodeRolloverInFlight.add(options.sessionId);
-    this.flowNodeRolloverStarted.add(options.sessionId);
-    this.registerPostTurnRolloverRequiredDecision(options.sessionId);
-    this.elevateSessionToRolloverResumeMode(options.session);
-    const remainingPercent = computeRemainingPercent(options.usage);
-    const continuityLockContext = this.registerFlowNodeContinuityLockContext({
-      rolloverId: crypto.randomUUID(),
-      sourceSessionId: options.sessionId,
-      stageId: options.stageId,
-      runSlug: options.runSlug,
-      awaitingBootstrapTurn: false,
-    });
-    this.emitContinuityLockEvent({
-      sessionId: options.sessionId,
-      rolloverId: continuityLockContext.rolloverId,
-      sourceSessionId: continuityLockContext.sourceSessionId,
-      stageId: continuityLockContext.stageId,
-      runSlug: continuityLockContext.runSlug,
-      state: "locked",
-      reason: "threshold_reached",
-    });
-    this.emitFlowNodeRolloverNotification(options.sessionId, {
-      kind: "flow_node_rollover",
-      phase: "start",
-      sourceSessionId: options.sessionId,
-      providerId: options.session.providerId,
-      stageId: options.stageId,
-      runSlug: options.runSlug,
-      remainingPercent,
-      thresholdPercent: options.remainingPercentThreshold,
-    });
-    try {
-      await this.rolloverFlowNodeSession(
-        options.session,
-        {
-          remainingPercent,
-          thresholdPercent: options.remainingPercentThreshold,
-          rolloverId: continuityLockContext.rolloverId,
-        },
-        { silent: false }
-      );
-    } catch (error) {
-      const request =
-        this.flowNodeContinuityCreateReportRequests.get(options.sessionId) ??
-        null;
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      const reason: "report_timeout" | "unknown" =
-        this.isContinuityReportTimeoutError(error)
-          ? "report_timeout"
-          : "unknown";
-
-      this.finalizeFlowNodeContinuityLock({
-        sessionId: options.sessionId,
-        reason: "resume_failed",
-      });
-      // Allow the user to keep working even when rollover fails.
-      this.updateSessionResumeLifecycleState(options.session, {
-        mode: "resume_in_place",
-        finalTurnCompleted: false,
-        terminalLockReason: null,
-      });
-      this.emitTurnStateEvent({ sessionId: options.sessionId, state: "idle" });
-      if (request) {
-        this.emitContinuityFailedEvent({
-          sessionId: options.sessionId,
-          providerId: options.session.providerId ?? null,
-          providerSessionId: options.session.providerSessionId ?? null,
-          request,
-          reason,
-          errorMessage,
-        });
-      }
-      this.flowNodeContinuityCreateReportRequests.delete(options.sessionId);
-      this.flowNodeRolloverStarted.delete(options.sessionId);
-      this.emitFlowNodeRolloverNotification(options.sessionId, {
-        kind: "flow_node_rollover",
-        phase: "failed",
-        sourceSessionId: options.sessionId,
-        providerId: options.session.providerId,
-        stageId: options.stageId,
-        runSlug: options.runSlug,
-        remainingPercent,
-        thresholdPercent: options.remainingPercentThreshold,
-        error: errorMessage,
-      });
-      this.logger.warn("Flow node rollover failed", {
-        sessionId: options.sessionId,
-        providerId: options.session.providerId,
-        providerSessionId: options.session.providerSessionId ?? null,
-        stageId: options.stageId,
-        runSlug: options.runSlug,
-        reason,
-        error: errorMessage,
-      });
-      return;
-    } finally {
-      this.flowNodeRolloverInFlight.delete(options.sessionId);
-    }
-  }
-
   private emitResumeInPlaceNoRolloverUnlock(session: Session): void {
-    this.emitContinuityLockEvent({
-      sessionId: session.id,
-      rolloverId: crypto.randomUUID(),
-      sourceSessionId: session.id,
-      stageId: session.stage ?? "session",
-      runSlug: session.runSlug ?? null,
-      state: "unlocked",
-      reason: "no_rollover_needed",
-    });
+    this.continuityLockService.emitResumeInPlaceNoRolloverUnlock(session);
   }
 
   private handleTurnCompletedEvent(sessionId: string): void {
@@ -2534,7 +2216,7 @@ export class SessionRequestHandler {
     // Continuity resume bootstrap turns should unlock promptly once the provider
     // reports completion; we cannot wait for context-decision arbitration here
     // because the bootstrap session is still flagged as "rollover pending".
-    const lockContext = this.flowNodeContinuityLockContexts.get(sessionId);
+    const lockContext = this.continuityLockService.getContext(sessionId);
     if (
       lockContext &&
       lockContext.targetSessionId === sessionId &&
