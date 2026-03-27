@@ -73,6 +73,12 @@
 - Provider registry façade cluster: `packages/core/src/provider-registry/`
   - `index.ts` = façade
   - `provider-installer-paths.ts`, `provider-installed-path-resolver.ts`, `provider-module-loader.ts`, `provider-descriptor-factory.ts`, `provider-usage-limits-bridge-factory.ts`, `provider-recovery-{scheduler,coordinator}.ts` = runtime internals
+- Core remote bridge cluster: `packages/core/src/remote-bridge/`
+  - `index.ts` = thin façade / top-level runtime bridge entrypoint
+  - `remote-bridge-bootstrap.ts` = runtime service/bootstrap wiring
+  - `remote-bridge-server-lifecycle.ts` = HTTP/WebSocket lifecycle ownership
+  - `remote-bridge-message-router.ts` = websocket command orchestration façade
+  - `remote-bridge-dialog-command-router.ts`, `remote-bridge-workspace-command-router.ts` = scoped websocket command clusters
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`

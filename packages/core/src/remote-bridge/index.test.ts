@@ -3,62 +3,78 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 
-const SOURCE_PATH = path.resolve(
+const INDEX_SOURCE_PATH = path.resolve(
   process.cwd(),
   "packages/core/src/remote-bridge/index.ts"
 );
+const ROUTER_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "packages/core/src/remote-bridge/remote-bridge-message-router.ts"
+);
+const DIALOG_ROUTER_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts"
+);
+const WORKSPACE_ROUTER_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "packages/core/src/remote-bridge/remote-bridge-workspace-command-router.ts"
+);
+const WORKSPACE_SELECT_DELEGATION_PATTERN =
+  /this\.workspaceCommandRouter\.handleWorkspaceSelect\(\s*clientId,\s*incoming\.payload\s*\)/;
+const DIALOG_LIST_DELEGATION_PATTERN =
+  /await this\.dialogCommandRouter\.handleDialogList\(\s*clientId,\s*incoming\.payload\s*\)/;
+const DIALOG_RUNTIME_SESSIONS_PATTERN =
+  /runtimeSessions: this\.deps\.sessionManager\.getSessionsByWorkspacePath\(\s*scoped\.workspaceRoot\s*\)/;
 
-test("RemoteBridge handles workspace:scope:set and responds with workspace:scope:ack", async () => {
-  const source = await readFile(SOURCE_PATH, "utf8");
+test("RemoteBridge delegates websocket command routing to RemoteBridgeMessageRouter", async () => {
+  const source = await readFile(INDEX_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("new RemoteBridgeMessageRouter({"),
+    true,
+    "remote bridge facade must wire the dedicated websocket command router"
+  );
+  assert.equal(
+    source.includes(
+      "await this.messageRouter.handleIncomingMessage(clientId, incoming);"
+    ),
+    true,
+    "server lifecycle must delegate incoming websocket payloads to the command router"
+  );
+});
+
+test("RemoteBridgeMessageRouter delegates workspace scope commands to the dedicated workspace helper", async () => {
+  const source = await readFile(ROUTER_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes('case "workspace:scope:set":'),
     true,
-    "incoming websocket stream must handle workspace scope sync messages"
+    "command router must handle workspace scope sync messages"
   );
   assert.equal(
-    source.includes(
-      "this.handleWorkspaceScopeSet(clientId, incoming.payload);"
-    ),
+    source.includes("this.workspaceCommandRouter.handleWorkspaceScopeSet("),
     true,
-    "scope:set branch must route payload to scope handler"
+    "workspace scope sync branch must delegate to the workspace command helper"
   );
   assert.equal(
-    source.includes(
-      "const ack = wsManager.setWorkspaceScope(clientId, payload);"
-    ),
+    WORKSPACE_SELECT_DELEGATION_PATTERN.test(source),
     true,
-    "scope handler must apply per-client scope and capture ack payload"
-  );
-  assert.equal(
-    source.includes('type: "workspace:scope:ack",'),
-    true,
-    "scope handler must send explicit ack to the same client"
+    "workspace select branch must delegate to the workspace command helper"
   );
 });
 
-test("RemoteBridge handles workspace:select and routes through runtime facade", async () => {
-  const source = await readFile(SOURCE_PATH, "utf8");
+test("RemoteBridgeWorkspaceCommandRouter handles workspace scope sync and workspace selection", async () => {
+  const source = await readFile(WORKSPACE_ROUTER_SOURCE_PATH, "utf8");
 
   assert.equal(
-    source.includes('case "workspace:select":'),
+    source.includes('type: "workspace:scope:ack",'),
     true,
-    "incoming websocket stream must handle workspace select messages"
+    "scope:set branch must return explicit ack to the same client"
   );
   assert.equal(
-    source.includes("this.handleWorkspaceSelect(clientId, incoming.payload);"),
+    source.includes("const ack = this.deps.workspaceRuntime.select({"),
     true,
-    "workspace:select branch must route payload to select handler"
-  );
-  assert.equal(
-    source.includes("const ack = this.workspaceRuntime.select({"),
-    true,
-    "select handler must delegate selection to workspace runtime facade"
-  );
-  assert.equal(
-    source.includes("workspaceRuntime: this.workspaceRuntime,"),
-    true,
-    "session request handler wiring must receive runtime facade instance"
+    "workspace:select branch must delegate selection to workspace runtime facade"
   );
   assert.equal(
     source.includes('type: "workspace:select:ack",'),
@@ -67,8 +83,8 @@ test("RemoteBridge handles workspace:select and routes through runtime facade", 
   );
 });
 
-test("RemoteBridge binds workflow watcher on session:create with workspace context", async () => {
-  const source = await readFile(SOURCE_PATH, "utf8");
+test("RemoteBridgeMessageRouter binds workflow watcher on session:create with workspace context", async () => {
+  const source = await readFile(ROUTER_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes("const resolvedWorkspacePath ="),
@@ -81,7 +97,7 @@ test("RemoteBridge binds workflow watcher on session:create with workspace conte
     "session:create path must capture initiative/workflow slug"
   );
   assert.equal(
-    source.includes("await this.workflowRuntime.connectWorkspace({"),
+    source.includes("await this.deps.workflowRuntime.connectWorkspace({"),
     true,
     "session:create path must connect workflow runtime when workspace context is present"
   );
@@ -92,13 +108,17 @@ test("RemoteBridge binds workflow watcher on session:create with workspace conte
   );
 });
 
-test("RemoteBridge dialog:list wires runtime sessions for latestSessionId reconciliation", async () => {
-  const source = await readFile(SOURCE_PATH, "utf8");
+test("RemoteBridgeMessageRouter delegates dialog commands and preserves runtime session reconciliation", async () => {
+  const routerSource = await readFile(ROUTER_SOURCE_PATH, "utf8");
+  const dialogSource = await readFile(DIALOG_ROUTER_SOURCE_PATH, "utf8");
 
   assert.equal(
-    source.includes(
-      "runtimeSessions: this.sessionManager.getSessionsByWorkspacePath("
-    ),
+    DIALOG_LIST_DELEGATION_PATTERN.test(routerSource),
+    true,
+    "dialog:list branch must delegate to the dedicated dialog command helper"
+  );
+  assert.equal(
+    DIALOG_RUNTIME_SESSIONS_PATTERN.test(dialogSource),
     true,
     "dialog:list must pass workspace runtime sessions to dialog-list-service reconciliation"
   );

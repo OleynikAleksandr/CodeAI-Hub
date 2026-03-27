@@ -36,7 +36,6 @@ packages/core/src/remote-bridge/handlers/idea-contract-service.ts
 packages/core/src/remote-bridge/handlers/session-request-handler.test.ts
 packages/core/src/remote-bridge/handlers/session-request-handler.ts
 packages/core/src/remote-bridge/handlers/websocket-manager.ts
-packages/core/src/remote-bridge/index.ts
 packages/core/src/remote-bridge/types.ts
 packages/core/src/session-continuity/continuity-tracker.ts
 packages/core/src/session-continuity/session-continuity-facade.ts
