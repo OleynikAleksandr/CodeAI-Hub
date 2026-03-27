@@ -62,7 +62,7 @@
 32. [TODO] Git Commit: `docs(architecture): reprioritize oversized debt wave two` (hash: TBD)
 
 ### Stream: Workflow quality-surface cleanup
-33. [TODO] Синхронизировать исполняемый quality-gate contract между `.husky/pre-commit`, root `package.json` scripts и `scripts/README.md`, не смешивая эти правки с runtime refactor stream-ами. Scope: `.husky/pre-commit`, `package.json`, `scripts/README.md`. Expected commit: `chore(workflow): align quality gate scripts with Husky`
-34. [TODO] Git Commit: `chore(workflow): align quality gate scripts with Husky` (hash: TBD)
-35. [TODO] Синхронизировать локальные инструкции разработки с обновлённым quality-gate contract после cleanup. Scope: `AGENTS.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(workflow): sync local instructions with quality gates`
+33. [DONE] Синхронизировать исполняемый quality-gate contract между `.husky/pre-commit`, root `package.json` scripts и `scripts/README.md`, не смешивая эти правки с runtime refactor stream-ами. Scope: `.husky/pre-commit`, `package.json`, `scripts/README.md`. Expected commit: `chore(workflow): align quality gate scripts with Husky` (hash: 010c555f)
+34. [DONE] Git Commit: `chore(workflow): align quality gate scripts with Husky` (hash: 010c555f)
+35. [IN_PROGRESS] Синхронизировать локальные инструкции разработки с обновлённым quality-gate contract после cleanup. Scope: `AGENTS.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(workflow): sync local instructions with quality gates`
 36. [TODO] Git Commit: `docs(workflow): sync local instructions with quality gates` (hash: TBD)

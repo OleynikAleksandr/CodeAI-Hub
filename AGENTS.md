@@ -96,7 +96,7 @@ doc/TODO/Archive/
   - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
   - Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
   - **Gates (автоматически через Husky hooks):**
-    - `git commit` → `.husky/pre-commit`: `npm test`, `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:tsprune`, `npx ultracite fix`
+    - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:tsprune`, `npm run format:fix`
     - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
     - Ручной прогон этих команд обычно не нужен (только для диагностики).
   - **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
@@ -123,11 +123,10 @@ doc/TODO/Archive/
 2.  **Документация (Real-time)**: Если меняется логика или архитектура — **ОБНОВИ** `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (или другие доки) **ПРЯМО СЕЙЧАС**. Коммит должен содержать и код, и обновленную документацию.
 3.  **Верификация**: Гейты запускаются автоматически через Husky (`.husky/pre-commit`, `.husky/pre-push`). Ручной прогон нужен только для диагностики:
     ```bash
-    npm test
     ./scripts/check-architecture.sh
     npm run lint
     npm run check:tsprune
-    npx ultracite fix
+    npm run format:fix
     npm run check:dup
     npm run check:links
     ```
