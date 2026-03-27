@@ -61,15 +61,23 @@
    - Канон: `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`.
 11. **Provider-neutral switch transfer**: cross-provider takeover обязан использовать `unified-dialog.prompt.md` (plain `User:/Assistant:` transcript) и `provider-switch-handoff.md`, а не provider-native JSONL/rollout/SDK logs. `dialog:switch:*` protocol является единственным bridge contract для recovery и manual switch.
    - Канон: `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`.
+12. **Quality-gate contract is workflow-critical**: локальный `pre-commit` обязан прогонять architecture gate, repo-wide `npm run lint`, `npm run check:tsprune` и staged-only formatting. Хук не имеет права форматировать весь репозиторий поверх незастейдженных изменений.
+   - Канон: `.husky/pre-commit`, `doc/TODO/todo-plan.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
 - Extension entry: `src/extension.ts`
 - Core: `packages/core/`
+- Provider registry façade cluster: `packages/core/src/provider-registry/`
+  - `index.ts` = façade
+  - `provider-installer-paths.ts`, `provider-installed-path-resolver.ts`, `provider-module-loader.ts`, `provider-descriptor-factory.ts`, `provider-usage-limits-bridge-factory.ts`, `provider-recovery-{scheduler,coordinator}.ts` = runtime internals
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
+- Gemini session façade cluster: `packages/Gemini_Module/src/session/`
+  - `gemini-session-manager.ts` = façade
+  - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 - Gemini Thought Translator: `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
   - Translates Gemini agent thoughts EN→RU via free Google Translate API (~100ms)

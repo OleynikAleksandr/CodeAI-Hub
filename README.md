@@ -7,14 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.818
-- **Rate limit display**: only known Gemini models shown with human-readable names ("Gemini 3.1 Pro", "Gemini 3 Flash"); stale API buckets filtered out.
-- **Model switch label**: StatusPanel updates immediately after model switch via recovery banner (broadcast + ID fallback + settings sync guard).
-- **Optimistic user message**: PM dialog messages appear instantly on send, no round-trip delay.
-- **Google Translate thoughts**: Gemini thinking events translated via Google Translate API (~100ms) with "Gemini · Thinking" label and `tag: "thinking"` in JSONL.
-- **Recovery UX**: `CoreHealthBanner`, `SwitchRecoveryBanner`, `dialog:switch:*` protocol for retry/switch across Gemini/Claude/Codex.
+## Current Release — v1.1.819
+- **Quality gates restored**: `npm run lint` is green again, and Husky `pre-commit` formats only staged files without damaging parallel local work.
+- **Provider registry façade**: Core provider bootstrap/recovery logic is split into dedicated path, loader, descriptor, usage-limits, and recovery modules; `provider-registry/index.ts` is no longer oversized debt.
+- **Gemini session façade**: `gemini-session-manager` now delegates bootstrap, settings, lifecycle, turn loop, and tool-call orchestration to focused micro-modules.
+- **Gemini regression split**: bootstrap and turn-runner flows have dedicated tests, keeping the façade smoke suite small and stable.
+- **Architecture debt reduced**: the oversized allowlist no longer includes `provider-registry/index.ts` or `gemini-session-manager.ts`.
 
-Previous releases (summary): `1.1.800–1.1.815` — Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, provider failure resilience with bounded retry, `dialog:switch:*` protocol, cross-provider recovery orchestration, Flash-Lite removal, Google Translate thought translation, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation. `1.1.57x–1.1.799` — SSOT routing, snapshot-first lock/usage, continuity/resume reliability, Virtual Simulation workflow, Diagram Modules DSL runtime, PM/UI contract cleanup, visual shell, semantic editing, ownership-aware Product Part hierarchy, staged product-part decomposition, step-by-step workflow, parser recoveries, layout/readability fixes, and canonical template alignment.
+Previous releases (summary): `1.1.800–1.1.818` — rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

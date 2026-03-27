@@ -2,6 +2,18 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+## [1.1.819] - 2026-03-27
+### Changed
+- **Repository quality gates**: repo-wide `npm run lint` is green again; `.husky/pre-commit` now runs architecture + lint + ts-prune and formats only staged files via stash-safe restore.
+- **Provider registry façade**: `packages/core/src/provider-registry/index.ts` is now a façade over dedicated installer-path, installed-path, module-loader, descriptor-factory, usage-limits bridge, and recovery modules.
+- **Gemini session façade**: `packages/Gemini_Module/src/session/gemini-session-manager.ts` now delegates bootstrap, settings, store/lifecycle, turn runner, and tool-call orchestration to focused submodules.
+
+### Added
+- **Gemini session regression split**: dedicated `gemini-session-bootstrapper.test.ts` and `gemini-turn-runner.test.ts` suites alongside the façade smoke test.
+
+### Fixed
+- **Oversized architecture debt**: `packages/core/src/provider-registry/index.ts` and `packages/Gemini_Module/src/session/gemini-session-manager.ts` were removed from the explicit oversized-file allowlist after the façade cuts.
+
 ## [1.1.818] - 2026-03-26
 ### Fixed
 - **Rate limit display**: filter stale model buckets (e.g. `gemini-3-pro-preview`) from Google Quota API and show human-readable display names ("Gemini 3.1 Pro", "Gemini 3 Flash") instead of raw model IDs.
