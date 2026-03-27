@@ -69,7 +69,7 @@
     "check:links": "node ./scripts/check-markdown-links.js",
     "typecheck:webview": "tsc -p tsconfig.webview.json --pretty false",
     "quality": "npm run check:architecture && npm run lint && npm run typecheck:webview",
-    "setup:hooks": "npx lefthook install",
+    "setup:hooks": "husky",
     "build:webview": "node ./scripts/build-webview.js",
     "build:project-manager": "node ./scripts/build-project-manager.js",
     "build:core": "npm run build --workspace=@codeai-hub/core",

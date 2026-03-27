@@ -546,6 +546,11 @@ flowchart TD
 - мы не создаём отдельный параллельный механизм проверки архитектуры;
 - мы расширяем уже существующие script-based gates;
 - главным местом интеграции должен стать текущий `scripts/check-architecture.sh` и дополнительные rule-скрипты рядом с ним;
+- `scripts/check-architecture.sh` обязан сканировать весь живой handwritten source surface, а не только один исторический subtree:
+  - корневой `src/`;
+  - каждый package source root `packages/**/src/`;
+  - build outputs (`dist/`, `build/`, `node_modules/`) исключаются по директориям как generated artefacts, а не через неявное сужение scan surface;
+- любые временные исключения для already oversized handwritten files должны фиксироваться только адресно через явный debt allowlist, а не через выпадение целых директорий из проверки;
 - новые правила для `Archetype Profile`, `Cluster`, `Module`, `Module Facade` и `Cluster Facade` должны добавляться в эти existing gates по мере утверждения grammar;
 - каждое новое обязательное архитектурное правило должно сначала получить script-checkable form, и только потом становиться обязательным quality gate.
 
