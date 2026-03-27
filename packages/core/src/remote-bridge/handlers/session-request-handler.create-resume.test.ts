@@ -1,0 +1,299 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+import {
+  collectTurnStateSequence,
+  createHarness,
+  EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS,
+  flushAsyncWork,
+  getHandlerSourceInvariantChecks,
+  noop,
+  SOURCE_PATH,
+} from "./session-request-handler.test";
+
+test("SessionRequestHandler routes provider lifecycle and preserves provider timestamps", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-provider-lifecycle"
+  );
+  const persistedTimestamps: string[] = [];
+  harness.sessionStorage.appendMessage = (
+    _sessionId: unknown,
+    message: unknown
+  ) => {
+    persistedTimestamps.push(
+      (message as { readonly timestamp: string }).timestamp
+    );
+    return Promise.resolve();
+  };
+
+  (harness.api as any).handleProviderEvent(session.id, {
+    type: "turn_started",
+  });
+  (harness.api as any).handleProviderEvent(session.id, {
+    type: "turn_completed",
+  });
+  await flushAsyncWork();
+  (harness.api as any).handleProviderEvent(session.id, {
+    type: "assistant",
+    content: "Late provider commentary",
+    timestamp: "2026-03-23T10:54:30.000Z",
+  });
+  await flushAsyncWork();
+
+  assert.deepEqual(collectTurnStateSequence(harness.events), [
+    "running",
+    "idle",
+  ]);
+  const lastMessage = harness.events
+    .filter((event) => event.type === "session:message")
+    .at(-1);
+  assert.equal(
+    (lastMessage?.payload as { readonly timestamp?: string }).timestamp,
+    "2026-03-23T10:54:30.000Z"
+  );
+  assert.equal(persistedTimestamps.at(-1), "2026-03-23T10:54:30.000Z");
+});
+
+test("SessionRequestHandler keeps internal sends in provider turn lifecycle", async () => {
+  for (const scenario of [
+    {
+      name: "success",
+      adapter: { sendMessage: async () => Promise.resolve() },
+      expected: ["running"],
+    },
+    {
+      name: "failure",
+      adapter: {
+        sendMessage: () => {
+          throw new Error("kaboom");
+        },
+      },
+      expected: ["running", "idle", "idle"],
+    },
+  ]) {
+    const harness = createHarness();
+    const session = harness.sessionManager.createSession(
+      "claudeCodeCli",
+      `/tmp/core-internal-${scenario.name}`
+    );
+    harness.providerSessions.set(session.id, {
+      providerId: "claudeCodeCli",
+      providerSessionId: "temp_123",
+      unsubscribe: noop,
+    });
+    harness.providerRegistry.getAdapter = () => scenario.adapter;
+
+    await (harness.api as any).sendInternalMessage(session.id, "INTERNAL");
+    assert.deepEqual(
+      collectTurnStateSequence(harness.events),
+      scenario.expected,
+      scenario.name
+    );
+  }
+});
+
+test("SessionRequestHandler updates provider binding on sessionIdChanged", () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-binding"
+  );
+  harness.providerSessions.set(session.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "temp_123",
+    unsubscribe: noop,
+  });
+
+  (harness.api as any).handleProviderEvent(session.id, {
+    type: "sessionIdChanged",
+    payload: { newId: "real-session-123" },
+  });
+
+  const updatedSession = harness.sessionManager.getSession(session.id);
+  assert.equal(updatedSession?.providerSessionId, "real-session-123");
+  assert.equal(updatedSession?.providerSessionStatus, "ready");
+  assert.equal(
+    harness.providerSessions.get(session.id)?.providerSessionId,
+    "real-session-123"
+  );
+  assert.deepEqual(harness.promoted, [
+    { sessionId: session.id, providerSessionId: "real-session-123" },
+  ]);
+  assert.deepEqual(harness.continuityUpdates, [
+    { sessionId: session.id, providerSessionId: "real-session-123" },
+  ]);
+});
+
+test("SessionRequestHandler eagerly tracks freshly bound provider sessions", async () => {
+  const harness = createHarness();
+  (harness.api as any).resolveContinuityRootSessionId = async ({
+    sessionId,
+  }: {
+    readonly sessionId: string;
+  }) => `root-${sessionId}`;
+  Object.assign((harness.api as any).descriptionDialogSync, {
+    resolveDescriptionDialog: async () => null,
+    maybePromoteLegacyDescriptionDialogHistory: noop,
+    maybeBackfillDescriptionDialogHistory: async () => Promise.resolve(),
+    updateDescriptionSessionRef: async () => Promise.resolve(),
+  });
+
+  const factory = (harness.api as any).sessionShellFactory;
+  const createOptions = {
+    providerId: "codex",
+    workspacePath: "/tmp/core-continuity-created",
+    adapter: { subscribe: () => noop },
+    silent: true,
+    context: {
+      initiativeSlug: "demo",
+      stage: "diagram_modules",
+      runSlug: null,
+      providerSessionId: null,
+    },
+  };
+
+  const createdSession = await factory.createBoundSession(
+    createOptions,
+    "provider-created-1",
+    true
+  );
+  const shell = await factory.createShellSession(createOptions);
+  await factory.bindShellSession(
+    createOptions,
+    shell,
+    "provider-shell-2",
+    true
+  );
+
+  assert.deepEqual(harness.continuityTracked, [
+    {
+      sessionId: createdSession.id,
+      providerSessionId: "provider-created-1",
+    },
+    {
+      sessionId: shell.session.id,
+      providerSessionId: "provider-shell-2",
+    },
+  ]);
+});
+
+test("SessionRequestHandler keeps outbound sends in running and rollback contract", async () => {
+  const success = createHarness();
+  const successSession = success.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-immediate-running"
+  );
+  let resolveSend: () => void = noop;
+  const sendCalls: string[] = [];
+  const sendPromise = new Promise<void>((resolve) => {
+    resolveSend = resolve;
+  });
+  success.providerRegistry.getAdapter = () => ({
+    sendMessage: (_providerSessionId: string, content: string) => {
+      sendCalls.push(content);
+      return sendPromise;
+    },
+  });
+  success.providerSessions.set(successSession.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-3",
+    unsubscribe: noop,
+  });
+
+  const pendingSend = success.handler.handleMessage(successSession.id, "hello");
+  await flushAsyncWork();
+  assert.deepEqual(collectTurnStateSequence(success.events), ["running"]);
+  assert.deepEqual(sendCalls, ["hello"]);
+  resolveSend();
+  await pendingSend;
+
+  const failure = createHarness();
+  const failureSession = failure.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-running-rollback"
+  );
+  failure.providerRegistry.getAdapter = () => ({
+    sendMessage: () => Promise.reject(new Error("simulated send failure")),
+  });
+  failure.providerSessions.set(failureSession.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-4",
+    unsubscribe: noop,
+  });
+
+  await failure.handler.handleMessage(failureSession.id, "rollback me");
+  assert.deepEqual(collectTurnStateSequence(failure.events), [
+    "running",
+    "idle",
+    "idle",
+  ]);
+});
+
+test("SessionRequestHandler keeps primary description dialog contracts", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/core-description-session-ref",
+    "provider-session-current",
+    {
+      initiativeSlug: "description-workspace",
+      stage: "description",
+      runSlug: null,
+    }
+  );
+  let capturedUpdate: Record<string, unknown> | null = null;
+  (harness.api as any).descriptionDialogSync.descriptionStepStore = {
+    read: async () => ({
+      primarySession: {
+        providerId: "claudeCodeCli",
+        providerSessionId: "provider-session-primary",
+        jsonlPath: "/tmp/primary-session.jsonl",
+        dialogSessionId: "primary-description-dialog",
+      },
+      session: {
+        providerId: "claudeCodeCli",
+        providerSessionId: "provider-session-legacy",
+        jsonlPath: "/tmp/legacy-session.jsonl",
+        dialogSessionId: "legacy-description-dialog",
+      },
+    }),
+    upsert: (
+      _workspacePath: string,
+      _workspaceSlug: string,
+      update: Record<string, unknown>
+    ) => {
+      capturedUpdate = update;
+      return Promise.resolve({});
+    },
+  };
+
+  const dialog = await (
+    harness.api as any
+  ).descriptionDialogSync.resolveDescriptionDialog({
+    session,
+    providerSessionId: "provider-session-current",
+  });
+  assert.equal(dialog?.dialogSessionId, "primary-description-dialog");
+  assert.equal(dialog?.shouldBackfill, false);
+
+  await (harness.api as any).descriptionDialogSync.updateDescriptionSessionRef(
+    session,
+    "provider-session-updated"
+  );
+  assert.deepEqual(Object.keys(capturedUpdate ?? {}).sort(), [
+    "primarySession",
+  ]);
+  const primarySession = (
+    capturedUpdate as {
+      readonly primarySession?: { readonly providerSessionId?: string };
+    } | null
+  )?.primarySession;
+  assert.equal(primarySession?.providerSessionId, "provider-session-updated");
+  const source = await readFile(SOURCE_PATH, "utf8");
+  assert.deepEqual(
+    getHandlerSourceInvariantChecks(source),
+    EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS
+  );
+});
