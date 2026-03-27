@@ -10,8 +10,6 @@ import {
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
-import { buildSwitchOfferPayload } from "../../recovery/failure-recovery-bridge";
-import { classifyProviderFailure } from "../../recovery/provider-failure-classifier";
 import {
   ContinuityChainStore,
   promoteContinuityChainRootIfPresent,
@@ -53,6 +51,8 @@ import {
   SessionDescriptionDialogSync,
 } from "./session-description-dialog-sync";
 import { SessionProviderBindingService } from "./session-provider-binding-service";
+import { SessionProviderEventRouter } from "./session-provider-event-router";
+import { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import { resolveProviderSessionId } from "./session-provider-session-resolver";
 import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
@@ -176,18 +176,6 @@ type MessageContentPayload =
 type MessageContentExtraction = {
   readonly content: string;
   readonly turnOptions?: Record<string, unknown>;
-};
-
-type SessionIdChangedPayload = {
-  readonly newId?: string;
-};
-
-type ProviderErrorEnvelope = {
-  readonly provider?: unknown;
-  readonly message?: unknown;
-  readonly error?: unknown;
-  readonly payload?: unknown;
-  readonly type?: unknown;
 };
 
 type SessionResumeLifecycleState = {
@@ -342,6 +330,8 @@ export class SessionRequestHandler {
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionDialogSync: SessionDescriptionDialogSync;
   private readonly providerBindingService: SessionProviderBindingService;
+  private readonly providerEventRouter: SessionProviderEventRouter;
+  private readonly providerFailureRecovery: SessionProviderFailureRecovery;
   private readonly continuityLockService: SessionContinuityLockService;
   private readonly continuityRolloverOrchestrator: SessionContinuityRolloverOrchestrator;
   private readonly sessionShellFactory: SessionShellFactory;
@@ -939,6 +929,58 @@ export class SessionRequestHandler {
           session,
           providerSessionId
         ),
+    });
+    this.providerEventRouter = new SessionProviderEventRouter({
+      sessionManager: this.sessionManager,
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+      workspaceRuntime: this.workspaceRuntime,
+      handleSessionContinuityProviderEvent: (sessionId, event) =>
+        this.continuity.handleProviderEvent(sessionId, event),
+      handleFlowNodeContinuityProviderEvent: (sessionId, event) =>
+        this.handleFlowNodeContinuityProviderEvent(sessionId, event),
+      updateBindingWithResolvedId: (sessionId, providerSessionId) =>
+        this.providerBindingService.updateBindingWithResolvedId(
+          sessionId,
+          providerSessionId
+        ),
+      markPostTurnContextDecisionPending: (sessionId) =>
+        this.markPostTurnContextDecisionPending(sessionId),
+      handleTurnCompletedWithFlowNodeArbitration: (
+        sessionId,
+        flowNodeContinuityTask
+      ) =>
+        this.handleTurnCompletedWithFlowNodeArbitration(
+          sessionId,
+          flowNodeContinuityTask
+        ),
+      clearPostTurnContextDecision: (sessionId) =>
+        this.clearPostTurnContextDecision(sessionId),
+      emitTurnStateEvent: (turnStateOptions) =>
+        this.emitTurnStateEvent(turnStateOptions),
+      finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
+        this.finalizeFlowNodeContinuityLockOnBootstrapGate(lockOptions),
+      appendProviderMessage: (sessionId, role, event) =>
+        this.appendProviderMessage(sessionId, role, event),
+      appendDialogMessage: (sessionId, payload) =>
+        this.appendDialogMessage(sessionId, payload),
+    });
+    this.providerFailureRecovery = new SessionProviderFailureRecovery({
+      providerRegistry: this.providerRegistry,
+      sessionManager: this.sessionManager,
+      sessionStorage: this.sessionStorage,
+      providerSessions: this.providerSessions,
+      broadcaster: this.broadcaster,
+      stateBroadcaster: this.stateBroadcaster,
+      logger: this.logger,
+      broadcastSessionBinding: (sessionId) =>
+        this.providerBindingService.broadcastSessionBinding(sessionId),
+      emitTurnStateEvent: (turnStateOptions) =>
+        this.emitTurnStateEvent(turnStateOptions),
+      consumeRetryBudget: (sessionId, failureClass) =>
+        this.consumeRetryBudget(sessionId, failureClass),
+      expirePendingUserIntent: (sessionId) =>
+        this.expirePendingUserIntent(sessionId),
     });
     this.sessionShellFactory = new SessionShellFactory({
       sessionManager: this.sessionManager,
@@ -1970,63 +2012,7 @@ export class SessionRequestHandler {
   }
 
   private handleProviderEvent(sessionId: string, event: unknown): void {
-    this.continuity.handleProviderEvent(sessionId, event).catch((error) => {
-      this.logger.warn("Session continuity handler failed", {
-        sessionId,
-        error: error instanceof Error ? error.message : String(error),
-      });
-    });
-
-    if (typeof event === "string") {
-      this.handleFlowNodeContinuityProviderEvent(sessionId, event).catch(
-        (error) => {
-          this.logFlowNodeContinuityHandlerFailed(sessionId, error);
-        }
-      );
-      this.updateBindingWithResolvedId(sessionId, event);
-      return;
-    }
-    if (!event || typeof event !== "object") {
-      this.handleFlowNodeContinuityProviderEvent(sessionId, event).catch(
-        (error) => {
-          this.logFlowNodeContinuityHandlerFailed(sessionId, error);
-        }
-      );
-      return;
-    }
-    const typedEvent = event as ProviderEventEnvelope;
-    if (typedEvent.type === "turn_completed") {
-      this.markPostTurnContextDecisionPending(sessionId);
-    }
-    const flowNodeContinuityTask = this.handleFlowNodeContinuityProviderEvent(
-      sessionId,
-      event
-    );
-    if (typedEvent.type === "turn_completed") {
-      this.broadcaster({
-        type: "session:stream",
-        payload: { sessionId, event: typedEvent },
-      });
-      this.handleTurnCompletedWithFlowNodeArbitration(
-        sessionId,
-        flowNodeContinuityTask
-      );
-      return;
-    }
-    flowNodeContinuityTask.catch((error) => {
-      this.logFlowNodeContinuityHandlerFailed(sessionId, error);
-    });
-    this.handleTypedProviderEvent(sessionId, typedEvent);
-  }
-
-  private logFlowNodeContinuityHandlerFailed(
-    sessionId: string,
-    error: unknown
-  ): void {
-    this.logger.warn("Flow node continuity handler failed", {
-      sessionId,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    this.providerEventRouter.handleProviderEvent(sessionId, event);
   }
 
   private handleTurnCompletedWithFlowNodeArbitration(
@@ -2034,8 +2020,11 @@ export class SessionRequestHandler {
     flowNodeContinuityTask: Promise<void>
   ): void {
     flowNodeContinuityTask
-      .catch((error) => {
-        this.logFlowNodeContinuityHandlerFailed(sessionId, error);
+      .catch((error: unknown) => {
+        this.logger.warn("Flow node continuity handler failed", {
+          sessionId,
+          error: error instanceof Error ? error.message : String(error),
+        });
       })
       .finally(() => {
         this.runTurnCompletedArbitration(sessionId);
@@ -2745,252 +2734,16 @@ export class SessionRequestHandler {
     return latestSummary;
   }
 
-  private handleTypedProviderEvent(
-    sessionId: string,
-    event: ProviderEventEnvelope
-  ): void {
-    switch (event.type) {
-      case "sessionIdChanged":
-        this.handleSessionIdChangedEvent(sessionId, event.payload);
-        break;
-      case "realSessionId":
-        this.handleRealSessionIdEvent(sessionId, event.payload);
-        break;
-      case "turn_started":
-        this.emitTurnStateEvent({ sessionId, state: "running" });
-        break;
-      case "turn_completed":
-        this.markPostTurnContextDecisionPending(sessionId);
-        this.runTurnCompletedArbitration(sessionId);
-        break;
-      case "turn_failed":
-        this.clearPostTurnContextDecision(sessionId);
-        this.emitTurnStateEvent({ sessionId, state: "idle" });
-        this.finalizeFlowNodeContinuityLockOnBootstrapGate({
-          sessionId,
-          reason: "resume_failed",
-        });
-        this.broadcastProviderError(sessionId, event);
-        break;
-      case "stream_error":
-      case "error":
-        this.finalizeFlowNodeContinuityLockOnBootstrapGate({
-          sessionId,
-          reason: "resume_failed",
-        });
-        this.broadcastProviderError(sessionId, event);
-        break;
-      case "stream_event":
-        {
-          const session = this.sessionManager.getSession(sessionId);
-          if (session) {
-            this.workspaceRuntime?.recordHeartbeat({
-              workspaceRoot: session.workspacePath,
-              nodeId: session.stage ?? "session",
-              sessionId: session.id,
-            });
-          }
-        }
-        this.broadcaster({
-          type: "session:stream",
-          payload: { sessionId, event },
-        });
-        break;
-      case "assistant":
-        this.appendProviderMessage(sessionId, "assistant", event);
-        break;
-      case "thinking":
-        this.appendProviderMessage(sessionId, "thinking", event);
-        break;
-      case "dialog_message":
-        this.appendDialogMessage(sessionId, event as DialogMessagePayload);
-        break;
-      case "system":
-        this.appendProviderMessage(sessionId, "system", event);
-        this.broadcastRuntimeModelUpdate(sessionId, event);
-        break;
-      default:
-        break;
-    }
-  }
-
-  private broadcastRuntimeModelUpdate(
-    sessionId: string,
-    event: ProviderEventEnvelope
-  ): void {
-    const data = (event as { data?: unknown }).data;
-    if (!data || typeof data !== "object") {
-      return;
-    }
-    const modelId = (data as { model?: unknown }).model;
-    if (typeof modelId !== "string" || modelId.trim().length === 0) {
-      return;
-    }
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      return;
-    }
-    this.broadcaster({
-      type: "session:model:update",
-      payload: {
-        sessionId,
-        providerId: session.providerId,
-        modelId: modelId.trim(),
-      },
-    });
-  }
-
-  private broadcastProviderError(
-    sessionId: string,
-    event: ProviderEventEnvelope
-  ): void {
-    const typed = event as ProviderErrorEnvelope;
-    const providerId =
-      typeof typed.provider === "string" && typed.provider.trim().length > 0
-        ? typed.provider.trim()
-        : null;
-
-    const message = this.extractProviderErrorMessage(typed);
-    this.broadcaster({
-      type: "session:error",
-      payload: {
-        sessionId,
-        providerId,
-        message,
-      },
-    });
-  }
-
-  private extractProviderErrorMessage(event: ProviderErrorEnvelope): string {
-    if (typeof event.message === "string" && event.message.trim().length > 0) {
-      return event.message.trim();
-    }
-    if (typeof event.error === "string" && event.error.trim().length > 0) {
-      return event.error.trim();
-    }
-    if (event.error && typeof event.error === "object") {
-      const candidate = event.error as { readonly message?: unknown };
-      if (
-        typeof candidate.message === "string" &&
-        candidate.message.trim().length > 0
-      ) {
-        return candidate.message.trim();
-      }
-      return JSON.stringify(event.error);
-    }
-    if (event.payload && typeof event.payload === "object") {
-      const candidate = event.payload as { readonly message?: unknown };
-      if (
-        typeof candidate.message === "string" &&
-        candidate.message.trim().length > 0
-      ) {
-        return candidate.message.trim();
-      }
-      return JSON.stringify(event.payload);
-    }
-    return "Provider error.";
-  }
-
-  private applyClassifiedSessionCleanup(
-    sessionId: string,
-    binding: ProviderSessionBinding | undefined,
-    classification: {
-      shouldRemoveBinding: boolean;
-      retryable: boolean;
-      failureClass: string;
-    }
-  ): void {
-    if (classification.shouldRemoveBinding && binding) {
-      binding.unsubscribe();
-      this.providerSessions.delete(sessionId);
-      this.sessionManager.markProviderSessionFailed(sessionId);
-      this.sessionStorage.close(sessionId, "provider-failure");
-      this.broadcastSessionBinding(sessionId);
-    } else {
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
-    }
-
-    if (classification.retryable) {
-      this.consumeRetryBudget(sessionId, classification.failureClass);
-    } else {
-      this.expirePendingUserIntent(sessionId);
-    }
-  }
-
   private handleProviderFailure(
     providerId: string,
     error: unknown,
     sessionId?: string
   ): void {
-    const binding = sessionId
-      ? this.providerSessions.get(sessionId)
-      : undefined;
-    const adapter = this.providerRegistry.getAdapter(providerId);
-
-    const classification = classifyProviderFailure(error, {
-      hasBinding: Boolean(binding),
-      hasProviderSessionId: Boolean(binding?.providerSessionId),
-      adapterAvailable: Boolean(adapter),
-    });
-
-    this.logger.error(
-      `Provider operation failed [${classification.failureClass}]`,
-      error instanceof Error ? error : new Error(String(error)),
-      {
-        providerId,
-        sessionId: sessionId ?? undefined,
-        failureClass: classification.failureClass,
-        retryable: classification.retryable,
-      }
+    this.providerFailureRecovery.handleProviderFailure(
+      providerId,
+      error,
+      sessionId
     );
-
-    if (classification.shouldDegradeProvider) {
-      this.providerRegistry.handleRuntimeFailure(providerId, error);
-    }
-
-    if (sessionId) {
-      this.applyClassifiedSessionCleanup(sessionId, binding, classification);
-    }
-
-    this.broadcaster({
-      type: "session:error",
-      payload: {
-        sessionId: sessionId ?? null,
-        providerId,
-        message:
-          error instanceof Error ? error.message : "Provider unavailable",
-        failureClass: classification.failureClass,
-        retryable: classification.retryable,
-      },
-    });
-
-    // Emit recovery offer when session context is available
-    if (sessionId) {
-      const session = this.sessionManager.getSession(sessionId);
-      const offerPayload = buildSwitchOfferPayload(
-        classification,
-        {
-          sessionId,
-          dialogId: sessionId,
-          providerId,
-          providerSessionId: binding?.providerSessionId ?? null,
-          stage: session?.stage ?? null,
-          adapterAvailable: Boolean(adapter),
-        },
-        (pid: string) => Boolean(this.providerRegistry.getAdapter(pid))
-      );
-
-      if (offerPayload) {
-        this.broadcaster({
-          type: "dialog:switch:offer",
-          payload: offerPayload,
-        });
-      }
-    }
-
-    if (!sessionId) {
-      this.stateBroadcaster();
-    }
   }
 
   private getRetryBudget(sessionId: string): {
@@ -3280,23 +3033,6 @@ export class SessionRequestHandler {
 
   private broadcastSessionBinding(sessionId: string): void {
     this.providerBindingService.broadcastSessionBinding(sessionId);
-  }
-
-  private handleSessionIdChangedEvent(
-    sessionId: string,
-    payload: unknown
-  ): void {
-    const typed = payload as SessionIdChangedPayload;
-    if (typed?.newId) {
-      this.updateBindingWithResolvedId(sessionId, typed.newId);
-    }
-  }
-
-  private handleRealSessionIdEvent(sessionId: string, payload: unknown): void {
-    const typed = payload as { readonly sessionId?: unknown };
-    if (typeof typed?.sessionId === "string") {
-      this.updateBindingWithResolvedId(sessionId, typed.sessionId);
-    }
   }
 
   private logSessionMessageReceived(
