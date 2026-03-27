@@ -40,17 +40,17 @@ import type {
   SessionTerminalLockReason,
 } from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
+import { resolveProviderSessionId } from "./session-provider-session-resolver";
 import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
+import { SessionShellFactory } from "./session-shell-factory";
 import {
   shouldHideUserMessage,
   stripInternalWorkflowTurnOptions,
 } from "./workflow-turn-control";
-
-type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
 const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__collector$/;
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
@@ -102,35 +102,6 @@ const isUnifiedSessionSegmentSummaryPayload = (
   return true;
 };
 
-type ProviderSessionResolution =
-  | {
-      readonly providerSessionId: string;
-      readonly didResume: boolean;
-      readonly supportsImmediateBinding: boolean;
-    }
-  | { readonly error: string };
-
-type CreateAndRegisterSessionOptions = {
-  readonly providerId: string;
-  readonly workspacePath: string;
-  readonly adapter: ProviderAdapter;
-  readonly resumeMode?: SessionResumeMode;
-  readonly silent?: boolean;
-  readonly context: {
-    readonly initiativeSlug: string | null;
-    readonly stage: string | null;
-    readonly runSlug: string | null;
-    readonly providerSessionId: string | null;
-  };
-  readonly rootSessionId?: string | null;
-  readonly continuationParentId?: string | null;
-};
-
-type ShellSessionCreationResult = {
-  readonly session: Session;
-  readonly continuityRootSessionId: string;
-};
-
 export type ProviderSessionBinding = {
   readonly providerId: string;
   providerSessionId: string;
@@ -140,6 +111,40 @@ export type ProviderSessionBinding = {
 export type ProviderEventEnvelope = {
   readonly type?: string;
   readonly payload?: unknown;
+};
+
+export type DescriptionDialogResolution = {
+  readonly dialogSessionId: string;
+  readonly shouldBackfill: boolean;
+} | null;
+
+export type ContinuityRootResolutionOptions = {
+  readonly rootSessionIdOverride: string | null;
+  readonly workspaceRoot: string;
+  readonly providerId: string;
+  readonly sessionId: string;
+  readonly context: {
+    readonly initiativeSlug: string | null;
+    readonly stage: string | null;
+    readonly runSlug: string | null;
+    readonly providerSessionId: string | null;
+  };
+};
+
+export type CreateAndRegisterSessionOptions = {
+  readonly providerId: string;
+  readonly workspacePath: string;
+  readonly adapter: NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
+  readonly resumeMode?: SessionResumeMode;
+  readonly silent?: boolean;
+  readonly context: ContinuityRootResolutionOptions["context"];
+  readonly rootSessionId?: string | null;
+  readonly continuationParentId?: string | null;
+};
+
+export type ShellSessionCreationResult = {
+  readonly session: Session;
+  readonly continuityRootSessionId: string;
 };
 
 const MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS = 8000;
@@ -394,6 +399,7 @@ export class SessionRequestHandler {
   private readonly stateBroadcaster: () => void;
   private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   private readonly continuity: SessionContinuityFacade;
+  private readonly sessionShellFactory: SessionShellFactory;
   private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeRolloverInFlight = new Set<string>();
@@ -1106,6 +1112,36 @@ export class SessionRequestHandler {
       preemptRemainingPercentThreshold:
         this.config.continuityPreemptRemainingPercentThreshold,
     });
+    this.sessionShellFactory = new SessionShellFactory({
+      sessionManager: this.sessionManager,
+      sessionStorage: this.sessionStorage,
+      continuity: this.continuity,
+      continuityRootBySessionId: this.continuityRootBySessionId,
+      providerSessions: this.providerSessions,
+      broadcaster: this.broadcaster,
+      broadcastSessionBinding: (sessionId) =>
+        this.broadcastSessionBinding(sessionId),
+      notifyRuntimeSessionCreated: (session) =>
+        this.notifyRuntimeSessionCreated(session),
+      registerInitialSessionLifecycle: (session, explicitMode) =>
+        this.registerInitialSessionLifecycle(session, explicitMode),
+      resolveContinuityRootSessionId: (resolutionOptions) =>
+        this.resolveContinuityRootSessionId(resolutionOptions),
+      resolveDescriptionDialog: (dialogOptions) =>
+        this.resolveDescriptionDialog(dialogOptions),
+      maybePromoteLegacyDescriptionDialogHistory: (promotionOptions) =>
+        this.maybePromoteLegacyDescriptionDialogHistory(promotionOptions),
+      maybeBackfillDescriptionDialogHistory: (backfillOptions) =>
+        this.maybeBackfillDescriptionDialogHistory(backfillOptions),
+      updateDescriptionSessionRef: (session, providerSessionId) =>
+        this.updateDescriptionSessionRef(session, providerSessionId),
+      handleProviderEvent: (sessionId, event) =>
+        this.handleProviderEvent(sessionId, event),
+      updateProviderBinding: (sessionId, providerSessionId) =>
+        this.updateProviderBinding(sessionId, providerSessionId),
+      appendDialogSegmentBoundaryMeta: (boundaryOptions) =>
+        this.appendDialogSegmentBoundaryMeta(boundaryOptions),
+    });
   }
 
   private resolveRunBoundProviderContext(options: {
@@ -1122,71 +1158,6 @@ export class SessionRequestHandler {
       providerId: options.providerId,
       providerSessionId: options.requestedProviderSessionId,
     };
-  }
-
-  private async resolveProviderSessionId(options: {
-    readonly adapter: ProviderAdapter;
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly requestedProviderSessionId: string | null;
-  }): Promise<ProviderSessionResolution> {
-    const { adapter, providerId, workspacePath, requestedProviderSessionId } =
-      options;
-    const shouldResume =
-      typeof requestedProviderSessionId === "string" &&
-      requestedProviderSessionId.trim().length > 0;
-
-    if (shouldResume) {
-      if (!adapter.resumeSession) {
-        return {
-          error: `Provider ${providerId} does not support resume`,
-        };
-      }
-
-      const trimmedSessionId = requestedProviderSessionId.trim();
-      try {
-        const providerSessionId = await adapter.resumeSession(
-          trimmedSessionId,
-          workspacePath
-        );
-        return {
-          providerSessionId,
-          didResume: true,
-          supportsImmediateBinding: true,
-        };
-      } catch (error) {
-        return {
-          error: `Failed to resume ${providerId} session ${trimmedSessionId}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        };
-      }
-    }
-
-    try {
-      const providerSessionId = await adapter.createSession(workspacePath);
-      return {
-        providerSessionId,
-        didResume: false,
-        supportsImmediateBinding:
-          providerId === "geminiCli" && providerSessionId.length > 0,
-      };
-    } catch (error) {
-      return {
-        error: `Failed to create ${providerId} session: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      };
-    }
-  }
-
-  private shouldBroadcastCreatedEarly(
-    options: CreateAndRegisterSessionOptions
-  ): boolean {
-    return (
-      options.context.stage === "description" &&
-      !options.context.providerSessionId
-    );
   }
 
   private notifyRuntimeSessionCreated(session: Session): void {
@@ -1225,265 +1196,14 @@ export class SessionRequestHandler {
     this.broadcastSessionResumeLifecycleState(session, initialLifecycleState);
   }
 
-  private async createShellSession(
-    options: CreateAndRegisterSessionOptions
-  ): Promise<ShellSessionCreationResult> {
-    const session = this.sessionManager.createSession(
-      options.providerId,
-      options.workspacePath,
-      undefined,
-      {
-        initiativeSlug: options.context.initiativeSlug,
-        stage: options.context.stage,
-        runSlug: options.context.runSlug ?? null,
-        continuationParentId: options.continuationParentId ?? null,
-      }
-    );
-    const continuityRootSessionId = await this.resolveContinuityRootSessionId({
-      rootSessionIdOverride: options.rootSessionId ?? null,
-      workspaceRoot: options.workspacePath,
-      providerId: options.providerId,
-      sessionId: session.id,
-      context: options.context,
-    });
-    this.continuityRootBySessionId.set(session.id, continuityRootSessionId);
-
-    // Keep a single UI transcript across continuity rollovers by pinning the
-    // unified-session history id to the continuity root.
-    this.sessionStorage.register(session, {
-      historySessionId: continuityRootSessionId,
-    });
-
-    this.notifyRuntimeSessionCreated(session);
-    this.registerInitialSessionLifecycle(session, options.resumeMode);
-
-    this.broadcaster({
-      type: "session:created",
-      payload: serializeSession(session),
-    });
-    this.broadcastSessionBinding(session.id);
-
-    return { session, continuityRootSessionId };
-  }
-
-  private handleShellSessionProviderResolutionError(options: {
-    readonly session: Session;
-    readonly providerId: string;
-    readonly error: string;
-  }): void {
-    this.sessionManager.markProviderSessionFailed(options.session.id);
-    this.sessionStorage.close(
-      options.session.id,
-      "provider-session-create-failed"
-    );
-    this.broadcastSessionBinding(options.session.id);
-    this.broadcaster({
-      type: "session:error",
-      payload: {
-        sessionId: options.session.id,
-        providerId: options.providerId,
-        message: options.error,
-      },
-    });
-  }
-
-  private async createBoundSession(
-    options: CreateAndRegisterSessionOptions,
-    providerSessionId: string,
-    supportsImmediateBinding: boolean
-  ): Promise<Session> {
-    const session = this.sessionManager.createSession(
-      options.providerId,
-      options.workspacePath,
-      supportsImmediateBinding ? providerSessionId : undefined,
-      {
-        initiativeSlug: options.context.initiativeSlug,
-        stage: options.context.stage,
-        runSlug: options.context.runSlug ?? null,
-        continuationParentId: options.continuationParentId ?? null,
-      }
-    );
-    const continuityRootSessionId = await this.resolveContinuityRootSessionId({
-      rootSessionIdOverride: options.rootSessionId ?? null,
-      workspaceRoot: options.workspacePath,
-      providerId: options.providerId,
-      sessionId: session.id,
-      context: options.context,
-    });
-    this.continuityRootBySessionId.set(session.id, continuityRootSessionId);
-    if (!supportsImmediateBinding) {
-      this.sessionManager.seedProviderSessionId(session.id, providerSessionId);
-    }
-
-    const descriptionDialog = await this.resolveDescriptionDialog({
-      session,
-      providerSessionId,
-    });
-
-    this.maybePromoteLegacyDescriptionDialogHistory({
-      session,
-      dialogSessionId: descriptionDialog?.dialogSessionId ?? null,
-    });
-
-    await this.maybeBackfillDescriptionDialogHistory({
-      session,
-      providerSessionId,
-      dialog: descriptionDialog,
-    });
-
-    // Keep a single UI transcript across continuity rollovers by pinning the
-    // unified-session history id to the continuity root.
-    this.sessionStorage.register(session, {
-      historySessionId: continuityRootSessionId,
-    });
-    await this.updateDescriptionSessionRef(session, providerSessionId);
-
-    const sessionId = session.id;
-    const unsubscribe = options.adapter.subscribe(
-      providerSessionId,
-      (event: unknown) => {
-        this.handleProviderEvent(sessionId, event);
-      }
-    );
-
-    this.providerSessions.set(sessionId, {
-      providerId: options.providerId,
-      providerSessionId,
-      unsubscribe,
-    });
-
-    if (supportsImmediateBinding) {
-      this.updateProviderBinding(sessionId, providerSessionId);
-    }
-
-    this.continuity.registerSession({
-      session,
-      providerSessionId,
-      rootSessionId: continuityRootSessionId,
-    });
-    await this.continuity.ensureTrackedOnOutboundMessage({
-      sessionId: session.id,
-      providerSessionId,
-    });
-
-    const workspaceSlug = session.initiativeSlug;
-    const stageId = session.stage;
-    if (
-      options.silent !== true &&
-      options.continuationParentId &&
-      workspaceSlug &&
-      stageId
-    ) {
-      await this.appendDialogSegmentBoundaryMeta({
-        session,
-        workspaceSlug,
-        stageId,
-        silent: false,
-      });
-    }
-
-    this.notifyRuntimeSessionCreated(session);
-    this.registerInitialSessionLifecycle(session, options.resumeMode);
-
-    this.broadcaster({
-      type: "session:created",
-      payload: serializeSession(session),
-    });
-    this.broadcastSessionBinding(session.id);
-
-    return session;
-  }
-
-  private async bindShellSession(
-    options: CreateAndRegisterSessionOptions,
-    shell: ShellSessionCreationResult,
-    providerSessionId: string,
-    supportsImmediateBinding: boolean
-  ): Promise<Session> {
-    const session = shell.session;
-    if (supportsImmediateBinding) {
-      this.sessionManager.updateProviderSessionId(
-        session.id,
-        providerSessionId
-      );
-    } else {
-      this.sessionManager.seedProviderSessionId(session.id, providerSessionId);
-    }
-
-    const descriptionDialog = await this.resolveDescriptionDialog({
-      session,
-      providerSessionId,
-    });
-
-    this.maybePromoteLegacyDescriptionDialogHistory({
-      session,
-      dialogSessionId: descriptionDialog?.dialogSessionId ?? null,
-    });
-
-    await this.maybeBackfillDescriptionDialogHistory({
-      session,
-      providerSessionId,
-      dialog: descriptionDialog,
-    });
-
-    await this.updateDescriptionSessionRef(session, providerSessionId);
-
-    const sessionId = session.id;
-    const unsubscribe = options.adapter.subscribe(
-      providerSessionId,
-      (event: unknown) => {
-        this.handleProviderEvent(sessionId, event);
-      }
-    );
-
-    this.providerSessions.set(sessionId, {
-      providerId: options.providerId,
-      providerSessionId,
-      unsubscribe,
-    });
-
-    if (supportsImmediateBinding) {
-      this.updateProviderBinding(sessionId, providerSessionId);
-    }
-
-    this.continuity.registerSession({
-      session,
-      providerSessionId,
-      rootSessionId: shell.continuityRootSessionId,
-    });
-    await this.continuity.ensureTrackedOnOutboundMessage({
-      sessionId: session.id,
-      providerSessionId,
-    });
-
-    const workspaceSlug = session.initiativeSlug;
-    const stageId = session.stage;
-    if (
-      options.silent !== true &&
-      options.continuationParentId &&
-      workspaceSlug &&
-      stageId
-    ) {
-      await this.appendDialogSegmentBoundaryMeta({
-        session,
-        workspaceSlug,
-        stageId,
-        silent: false,
-      });
-    }
-
-    this.broadcastSessionBinding(session.id);
-    return session;
-  }
-
   private async createAndRegisterSession(
     options: CreateAndRegisterSessionOptions
   ): Promise<Session | null> {
-    const shell = this.shouldBroadcastCreatedEarly(options)
-      ? await this.createShellSession(options)
+    const shell = this.sessionShellFactory.shouldBroadcastCreatedEarly(options)
+      ? await this.sessionShellFactory.createShellSession(options)
       : null;
 
-    const providerSessionResolution = await this.resolveProviderSessionId({
+    const providerSessionResolution = await resolveProviderSessionId({
       adapter: options.adapter,
       providerId: options.providerId,
       workspacePath: options.workspacePath,
@@ -1491,7 +1211,7 @@ export class SessionRequestHandler {
     });
     if ("error" in providerSessionResolution) {
       if (shell) {
-        this.handleShellSessionProviderResolutionError({
+        this.sessionShellFactory.handleProviderResolutionError({
           session: shell.session,
           providerId: options.providerId,
           error: providerSessionResolution.error,
@@ -1509,7 +1229,7 @@ export class SessionRequestHandler {
       providerSessionResolution;
 
     if (shell) {
-      return await this.bindShellSession(
+      return await this.sessionShellFactory.bindShellSession(
         options,
         shell,
         providerSessionId,
@@ -1517,7 +1237,7 @@ export class SessionRequestHandler {
       );
     }
 
-    return await this.createBoundSession(
+    return await this.sessionShellFactory.createBoundSession(
       options,
       providerSessionId,
       supportsImmediateBinding
@@ -1567,18 +1287,9 @@ export class SessionRequestHandler {
     return match.dialogId ?? match.rootSessionId ?? null;
   }
 
-  private async resolveContinuityRootSessionId(options: {
-    readonly rootSessionIdOverride: string | null;
-    readonly workspaceRoot: string;
-    readonly providerId: string;
-    readonly sessionId: string;
-    readonly context: {
-      readonly initiativeSlug: string | null;
-      readonly stage: string | null;
-      readonly runSlug: string | null;
-      readonly providerSessionId: string | null;
-    };
-  }): Promise<string> {
+  private async resolveContinuityRootSessionId(
+    options: ContinuityRootResolutionOptions
+  ): Promise<string> {
     if (options.rootSessionIdOverride) {
       return await this.maybePromoteLegacyDescriptionAgentRootId({
         rootSessionId: options.rootSessionIdOverride,
@@ -1678,10 +1389,7 @@ export class SessionRequestHandler {
   private resolveDescriptionDialog(options: {
     readonly session: Session;
     readonly providerSessionId: string;
-  }): Promise<{
-    readonly dialogSessionId: string;
-    readonly shouldBackfill: boolean;
-  } | null> {
+  }): Promise<DescriptionDialogResolution> {
     if (
       !(
         options.session.stage === "description" &&
