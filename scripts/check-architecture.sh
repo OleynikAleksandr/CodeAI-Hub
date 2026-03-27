@@ -3,6 +3,11 @@
 # Architecture Check Script for CodeAI Hub
 # This script MUST run before every compile to prevent architecture violations
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+MAX_LINES=300
+WARNING_LINES=250
+MAX_LINES_ALLOWLIST_FILE="$SCRIPT_DIR/check-architecture-rules/max-lines-debt-allowlist.txt"
+
 echo "🏗️  Architecture Check Starting..."
 echo "================================"
 
@@ -16,57 +21,137 @@ NC='\033[0m' # No Color
 HAS_VIOLATIONS=0
 HAS_WARNINGS=0
 
-# Collect TS/TSX file lengths safely (handles large arg lists and spaces)
-# Note: this check intentionally targets runtime code only (src/**).
-# Documentation under doc/** is excluded and may exceed 300 lines.
+discover_source_roots() {
+  if [ -d "src" ]; then
+    printf '%s\n' "src"
+  fi
+
+  if [ -d "packages" ]; then
+    find packages -type d -name "src" \
+      -not -path "*/node_modules/*" \
+      -not -path "*/dist/*" \
+      -not -path "*/build/*" \
+      | sort -u
+  fi
+}
+
+load_allowlist() {
+  if [ ! -f "$MAX_LINES_ALLOWLIST_FILE" ]; then
+    return 0
+  fi
+
+  sed \
+    -e 's/[[:space:]]*#.*$//' \
+    -e '/^[[:space:]]*$/d' \
+    "$MAX_LINES_ALLOWLIST_FILE"
+}
+
+is_allowlisted_path() {
+  local candidate="$1"
+  if [ -z "$MAX_LINES_ALLOWLIST" ]; then
+    return 1
+  fi
+  printf '%s\n' "$MAX_LINES_ALLOWLIST" | grep -F -x -- "$candidate" >/dev/null 2>&1
+}
+
 collect_file_lengths() {
-  find src -type f \( -name "*.ts" -o -name "*.tsx" \) -not -path "*/node_modules/*" -print0 \
+  while IFS= read -r root; do
+    [ -n "$root" ] || continue
+    find "$root" -type f \( -name "*.ts" -o -name "*.tsx" \) \
+      -not -path "*/node_modules/*" \
+      -not -path "*/dist/*" \
+      -not -path "*/build/*" \
+      -print0
+  done < <(printf '%s\n' "$SOURCE_ROOTS") \
     | while IFS= read -r -d '' file; do
         lines=$(wc -l < "$file")
-        printf "%s %s\n" "$lines" "$file"
+        printf "%s\t%s\n" "$lines" "$file"
       done
 }
 
+SOURCE_ROOTS=$(discover_source_roots)
+SOURCE_ROOT_COUNT=$(printf '%s\n' "$SOURCE_ROOTS" | sed '/^$/d' | wc -l | awk '{print $1}')
+MAX_LINES_ALLOWLIST=$(load_allowlist)
+ALLOWLIST_COUNT=$(printf '%s\n' "$MAX_LINES_ALLOWLIST" | sed '/^$/d' | wc -l | awk '{print $1}')
 FILE_LENGTHS=$(collect_file_lengths)
+
+echo ""
+echo "📚 Source roots under architecture guard:"
+echo "-----------------------------------"
+printf '%s\n' "$SOURCE_ROOTS"
+echo ""
+echo "Source roots scanned: $SOURCE_ROOT_COUNT"
+echo "Explicit oversized-file debt allowlist: $ALLOWLIST_COUNT"
 
 # Check 1: Files > 300 lines (CRITICAL)
 echo ""
-echo "📏 Checking file sizes (max 300 lines)..."
+echo "📏 Checking file sizes (max ${MAX_LINES} lines)..."
 echo "-----------------------------------"
 
-LARGE_FILES=$(echo "$FILE_LENGTHS" | awk '$1 > 300 {print $2 " - " $1 " lines"}')
-LARGE_FILE_COUNT=$(echo "$FILE_LENGTHS" | awk '$1 > 300 {count++} END {if (count=="") {count=0} print count}')
+LARGE_FILES=""
+ALLOWLISTED_LARGE_FILES=""
+WARNING_FILES=""
+LARGE_FILE_COUNT=0
+ALLOWLISTED_LARGE_FILE_COUNT=0
+WARNING_FILE_COUNT=0
 
-if [ ! -z "$LARGE_FILES" ]; then
-    echo -e "${RED}❌ VIOLATION: Files exceeding 300 lines:${NC}"
-    echo "$LARGE_FILES"
-    echo ""
-    echo "Total files over limit: $LARGE_FILE_COUNT"
-    echo ""
-    echo -e "${RED}⚠️  STOP! You MUST refactor these files before adding new features!${NC}"
-    echo -e "${RED}Create new micro-classes instead of adding to existing large files!${NC}"
-    HAS_VIOLATIONS=1
+while IFS=$'\t' read -r line_count file_path; do
+  [ -n "$file_path" ] || continue
+
+  if [ "$line_count" -gt "$MAX_LINES" ]; then
+    if is_allowlisted_path "$file_path"; then
+      ALLOWLISTED_LARGE_FILES="${ALLOWLISTED_LARGE_FILES}${file_path} - ${line_count} lines\n"
+      ALLOWLISTED_LARGE_FILE_COUNT=$((ALLOWLISTED_LARGE_FILE_COUNT + 1))
+    else
+      LARGE_FILES="${LARGE_FILES}${file_path} - ${line_count} lines\n"
+      LARGE_FILE_COUNT=$((LARGE_FILE_COUNT + 1))
+    fi
+    continue
+  fi
+
+  if [ "$line_count" -ge "$WARNING_LINES" ]; then
+    WARNING_FILES="${WARNING_FILES}${file_path} - ${line_count} lines\n"
+    WARNING_FILE_COUNT=$((WARNING_FILE_COUNT + 1))
+  fi
+done <<< "$FILE_LENGTHS"
+
+if [ -n "$LARGE_FILES" ]; then
+  echo -e "${RED}❌ VIOLATION: Files exceeding ${MAX_LINES} lines outside the debt allowlist:${NC}"
+  printf '%b' "$LARGE_FILES"
+  echo ""
+  echo "Total blocking files over limit: $LARGE_FILE_COUNT"
+  echo ""
+  echo -e "${RED}⚠️  STOP! You MUST refactor these files before adding new features!${NC}"
+  echo -e "${RED}Create new micro-classes instead of adding to existing large files!${NC}"
+  HAS_VIOLATIONS=1
 else
-    echo -e "${GREEN}✅ All files under 300 lines${NC}"
+  echo -e "${GREEN}✅ No non-allowlisted files exceed ${MAX_LINES} lines${NC}"
+fi
+
+if [ -n "$ALLOWLISTED_LARGE_FILES" ]; then
+  echo ""
+  echo -e "${YELLOW}⚠️  TEMPORARY DEBT: allowlisted oversized source files still over ${MAX_LINES} lines:${NC}"
+  printf '%b' "$ALLOWLISTED_LARGE_FILES"
+  echo ""
+  echo "Total allowlisted oversized files: $ALLOWLISTED_LARGE_FILE_COUNT"
+  echo -e "${YELLOW}These files are tracked debt, not hidden exclusions. New oversized files must not be added.${NC}"
+  HAS_WARNINGS=1
 fi
 
 # Check 2: Files approaching limit (WARNING at 250 lines)
 echo ""
-echo "⚠️  Checking files approaching limit (250+ lines)..."
+echo "⚠️  Checking files approaching limit (${WARNING_LINES}-${MAX_LINES} lines)..."
 echo "-----------------------------------"
 
-WARNING_FILES=$(echo "$FILE_LENGTHS" | awk '$1 >= 250 && $1 <= 300 {print $2 " - " $1 " lines"}')
-WARNING_FILE_COUNT=$(echo "$FILE_LENGTHS" | awk '$1 >= 250 && $1 <= 300 {count++} END {if (count=="") {count=0} print count}')
-
-if [ ! -z "$WARNING_FILES" ]; then
-    echo -e "${YELLOW}⚠️  WARNING: Files approaching 300 line limit:${NC}"
-    echo "$WARNING_FILES"
-    echo ""
-    echo "Total files in warning zone: $WARNING_FILE_COUNT"
-    echo -e "${YELLOW}Consider refactoring these files BEFORE adding new code!${NC}"
-    HAS_WARNINGS=1
+if [ -n "$WARNING_FILES" ]; then
+  echo -e "${YELLOW}⚠️  WARNING: Files approaching ${MAX_LINES}-line limit:${NC}"
+  printf '%b' "$WARNING_FILES"
+  echo ""
+  echo "Total files in warning zone: $WARNING_FILE_COUNT"
+  echo -e "${YELLOW}Consider refactoring these files BEFORE adding new code!${NC}"
+  HAS_WARNINGS=1
 else
-    echo -e "${GREEN}✅ No files in warning zone (250-300 lines)${NC}"
+  echo -e "${GREEN}✅ No files in warning zone (${WARNING_LINES}-${MAX_LINES} lines)${NC}"
 fi
 
 # Check 3: Facade pattern check
@@ -74,8 +159,14 @@ echo ""
 echo "🏛️  Checking facade pattern compliance..."
 echo "-----------------------------------"
 
-# Count facade files (case-insensitive, supports hyphenated names)
-FACADE_FILES=$(find src -type f \( -iname "*facade.ts" -o -iname "*facade.tsx" \) -not -path "*/node_modules/*")
+FACADE_FILES=$(while IFS= read -r root; do
+  [ -n "$root" ] || continue
+  find "$root" -type f \( -iname "*facade.ts" -o -iname "*facade.tsx" \) \
+    -not -path "*/node_modules/*" \
+    -not -path "*/dist/*" \
+    -not -path "*/build/*"
+done <<< "$SOURCE_ROOTS")
+
 if [ -z "$FACADE_FILES" ]; then
   FACADE_COUNT=0
 else
@@ -86,12 +177,37 @@ if [ "$FACADE_COUNT" -gt 0 ]; then
   printf '%s\n' "$FACADE_FILES"
 fi
 
-# Check if large files are facades (facades can be slightly larger but should still be < 400)
-LARGE_NON_FACADES=$(echo "$FILE_LENGTHS" | awk '$1 > 300 && $2 !~ /[Ff]acade/ {print $2}' | head -5)
+LARGE_NON_FACADES=""
+while IFS=$'\t' read -r line_count file_path; do
+  [ -n "$file_path" ] || continue
+  if [ "$line_count" -gt "$MAX_LINES" ] && ! is_allowlisted_path "$file_path" && [[ ! "$file_path" =~ [Ff]acade ]]; then
+    LARGE_NON_FACADES="${LARGE_NON_FACADES}${file_path}\n"
+  fi
+done <<< "$FILE_LENGTHS"
 
-if [ ! -z "$LARGE_NON_FACADES" ]; then
-    echo -e "${RED}❌ Non-facade files over 300 lines detected!${NC}"
-    echo "These should be refactored into micro-classes with a facade"
+if [ -n "$LARGE_NON_FACADES" ]; then
+  echo -e "${RED}❌ Non-facade files over ${MAX_LINES} lines detected!${NC}"
+  echo "These should be refactored into micro-classes with a facade"
+fi
+
+STALE_ALLOWLIST=""
+while IFS= read -r allowlisted_path; do
+  [ -n "$allowlisted_path" ] || continue
+  if [ ! -f "$allowlisted_path" ]; then
+    STALE_ALLOWLIST="${STALE_ALLOWLIST}${allowlisted_path} - missing file\n"
+    continue
+  fi
+  allowlisted_lines=$(wc -l < "$allowlisted_path")
+  if [ "$allowlisted_lines" -le "$MAX_LINES" ]; then
+    STALE_ALLOWLIST="${STALE_ALLOWLIST}${allowlisted_path} - now ${allowlisted_lines} lines (remove from allowlist)\n"
+  fi
+done <<< "$MAX_LINES_ALLOWLIST"
+
+if [ -n "$STALE_ALLOWLIST" ]; then
+  echo ""
+  echo -e "${YELLOW}⚠️  WARNING: stale oversized-file allowlist entries detected:${NC}"
+  printf '%b' "$STALE_ALLOWLIST"
+  HAS_WARNINGS=1
 fi
 
 # Check 4: Empty directory detection
@@ -147,8 +263,10 @@ fi
 echo ""
 echo "================================"
 echo "Summary:"
-echo "  >300 lines: $LARGE_FILE_COUNT file(s)"
-echo "  250-300 lines: $WARNING_FILE_COUNT file(s)"
+echo "  Source roots scanned: $SOURCE_ROOT_COUNT"
+echo "  Blocking >${MAX_LINES} lines: $LARGE_FILE_COUNT file(s)"
+echo "  Allowlisted >${MAX_LINES} lines: $ALLOWLISTED_LARGE_FILE_COUNT file(s)"
+echo "  ${WARNING_LINES}-${MAX_LINES} lines: $WARNING_FILE_COUNT file(s)"
 echo "  Facades detected: $FACADE_COUNT"
 echo "  Empty directories: $EMPTY_DIR_COUNT"
 echo ""

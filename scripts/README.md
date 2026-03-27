@@ -1,6 +1,6 @@
 # Scripts and Quality Gates
 
-This folder contains local scripts and Lefthook automation used to enforce quality gates for CodeAI‑Hub. Scripts are versioned in Git, but excluded from the VSIX package via `.vscodeignore`.
+This folder contains local scripts and Husky automation used to enforce quality gates for CodeAI‑Hub. Scripts are versioned in Git, but excluded from the VSIX package via `.vscodeignore`.
 
 ## One‑time Setup
 
@@ -9,9 +9,10 @@ This folder contains local scripts and Lefthook automation used to enforce quali
 
 ## What Runs Automatically
 
-- Pre‑commit (via Lefthook):
+- Pre‑commit (via Husky):
   - `npx ultracite fix` — formats and applies safe Biome/Ultracite fixes, restaging files
-  - `scripts/check-architecture.sh` — architecture limits (≤ 300 lines, facades, duplicates)
+  - `scripts/check-architecture.sh` — architecture limits across `src/` plus every `packages/**/src/` root, excluding generated outputs (`dist/`, `build/`, `node_modules/`)
+  - `scripts/check-architecture-rules/max-lines-debt-allowlist.txt` — explicit temporary registry of pre-existing oversized source files; this is tracked debt, not a hidden exclusion
   - `npm run lint` — static analysis via Ultracite (Biome check)
   - `npm run check:tsprune` — unused export detection
 
@@ -35,6 +36,6 @@ This folder contains local scripts and Lefthook automation used to enforce quali
 
 ## Notes
 
-- Lefthook configuration lives in `lefthook.yml`; install hooks with `npm run setup:hooks`.
+- Husky hooks live in `.husky/`; install or refresh them with `npm run setup:hooks` (or `npm install`, which runs `prepare`).
 - Provider CLIs/SDKs are global; provider SDKs must not reside under `node_modules/` in this repo.
 - All scripts print results to the terminal so developers and the agent get immediate feedback.
