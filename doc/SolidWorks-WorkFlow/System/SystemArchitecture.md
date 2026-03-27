@@ -63,6 +63,8 @@
    - Канон: `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`.
 12. **Quality-gate contract is workflow-critical**: локальный `pre-commit` обязан прогонять architecture gate, repo-wide `npm run lint`, `npm run check:tsprune` и staged-only formatting. Хук не имеет права форматировать весь репозиторий поверх незастейдженных изменений.
    - Канон: `.husky/pre-commit`, `doc/TODO/todo-plan.md`.
+13. **Release package truthfulness**: VSIX/package surface не должен тащить repo-only workflow files и hook helpers (`.husky/**`, `.gitignore`, `GEMINI.md`, `AGENTS.md`, `doc/`, `scripts/`), если runtime не использует их напрямую.
+   - Канон: `.vscodeignore`, `README.md`, `CHANGELOG.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 

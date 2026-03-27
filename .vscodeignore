@@ -26,10 +26,12 @@ dist/**
 .claude/**
 .vscode/**
 .gemini/**
+.gitignore
 .husky/**
 .codeai-hub/**
 doc/**
 AGENTS.md
+GEMINI.md
 biome.jsonc
 lefthook.yml
 doc/TODO/**

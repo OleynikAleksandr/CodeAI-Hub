@@ -40,7 +40,7 @@
 2. [DONE] Git Commit: `docs(architecture): sync post-audit cleanup scope` (hash: `661b217b`)
 3. [DONE] Исключить `.husky/_` helper files из VSIX/package surface и зафиксировать release-facing packaging contract, не меняя runtime behavior. Scope: `.vscodeignore`, `README.md`, `CHANGELOG.md`. Expected commit: `chore(packaging): exclude husky helper files from VSIX`
 4. [DONE] Git Commit: `chore(packaging): exclude husky helper files from VSIX` (hash: `d027e5d4`)
-5. [TODO] После exclusion `.husky/**` зачистить оставшийся non-runtime release surface (`.gitignore` и аналогичные repo-only файлы, если они всё ещё попадают в `vsce ls`) и синхронно зафиксировать правило в SSOT. Scope: `.vscodeignore`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(workflow): sync post-audit packaging cleanup`
+5. [DONE] После exclusion `.husky/**` зачистить оставшийся non-runtime release surface (`.gitignore`, `GEMINI.md` и аналогичные repo-only файлы, если они всё ещё попадают в `vsce ls`) и синхронно зафиксировать правило в SSOT. Scope: `.vscodeignore`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(workflow): sync post-audit packaging cleanup`
 6. [TODO] Git Commit: `docs(workflow): sync post-audit packaging cleanup` (hash: TBD)
 
 ---
