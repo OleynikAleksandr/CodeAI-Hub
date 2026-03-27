@@ -32,7 +32,6 @@ packages/core-supervisor/src/index.ts
 packages/core/src/config/index.ts
 packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts
 packages/core/src/provider-usage-limits/providers/gemini/gemini-quota-api-reader.ts
-packages/core/src/remote-bridge/handlers/http-api-router.ts
 packages/core/src/remote-bridge/handlers/idea-contract-service.ts
 packages/core/src/remote-bridge/handlers/session-request-handler.test.ts
 packages/core/src/remote-bridge/handlers/session-request-handler.ts
