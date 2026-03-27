@@ -41,15 +41,15 @@
 3. [DONE] Исключить `.husky/_` helper files из VSIX/package surface и зафиксировать release-facing packaging contract, не меняя runtime behavior. Scope: `.vscodeignore`, `README.md`, `CHANGELOG.md`. Expected commit: `chore(packaging): exclude husky helper files from VSIX`
 4. [DONE] Git Commit: `chore(packaging): exclude husky helper files from VSIX` (hash: `d027e5d4`)
 5. [DONE] После exclusion `.husky/**` зачистить оставшийся non-runtime release surface (`.gitignore`, `GEMINI.md` и аналогичные repo-only файлы, если они всё ещё попадают в `vsce ls`) и синхронно зафиксировать правило в SSOT. Scope: `.vscodeignore`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(workflow): sync post-audit packaging cleanup`
-6. [TODO] Git Commit: `docs(workflow): sync post-audit packaging cleanup` (hash: TBD)
+6. [DONE] Git Commit: `docs(workflow): sync post-audit packaging cleanup` (hash: `37ca1dcf`)
 
 ---
 
 ## Phase 78 — Wave 2 Oversized Debt After Audit (owner: Oleksandr, updated: 2026-03-27)
 
 ### Stream: Core remote-bridge edge surfaces
-1. [TODO] Декомпозировать `http-api-router.ts` по route responsibilities, оставив в корневом файле только thin router façade. Scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/http-api-session-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`. Expected commit: `refactor(core): extract http api router route clusters`
-2. [TODO] Git Commit: `refactor(core): extract http api router route clusters` (hash: TBD)
+1. [DONE] Декомпозировать `http-api-router.ts` по route responsibilities, оставив в корневом файле thin router façade; в ходе реализации scope расширился дополнительными helper-модулями, чтобы сохранить `artifact-upsert` behavior после форматирования/Ultracite и снять root router с oversized allowlist. Scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/http-api-session-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-artifact-upsert-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`. Expected commit: `refactor(core): extract http api router route clusters`
+2. [DONE] Git Commit: `refactor(core): extract http api router route clusters` (hash: `b21ca3c6`)
 3. [TODO] Свести `remote-bridge/index.ts` к bootstrap façade через вынос lifecycle/bootstrap wiring в отдельные modules. Scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts`, `packages/core/src/remote-bridge/remote-bridge-server-lifecycle.ts`. Expected commit: `refactor(core): extract remote bridge bootstrap facade`
 4. [TODO] Git Commit: `refactor(core): extract remote bridge bootstrap facade` (hash: TBD)
 

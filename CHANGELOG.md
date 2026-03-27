@@ -3,6 +3,9 @@
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
 ## [Unreleased]
+### Changed
+- **Core HTTP router decomposition**: `packages/core/src/remote-bridge/handlers/http-api-router.ts` is now a thin façade over dedicated session, system, artifact validation, and artifact upsert helpers; the root router left the explicit oversized-file debt allowlist.
+
 ### Fixed
 - **VSIX packaging surface**: `.husky/_` helper files and repository hook scripts are no longer shipped inside the extension package.
 
