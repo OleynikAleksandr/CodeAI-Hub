@@ -31,7 +31,6 @@ import type {
 } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import { DescriptionStepStore } from "../../workflow/description";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type {
   SessionContinuityLockReason,
@@ -40,6 +39,11 @@ import type {
   SessionTerminalLockReason,
 } from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
+import {
+  type DescriptionDialogResolution as DescriptionDialogResolutionModel,
+  SessionDescriptionDialogSync,
+} from "./session-description-dialog-sync";
+import { SessionProviderBindingService } from "./session-provider-binding-service";
 import { resolveProviderSessionId } from "./session-provider-session-resolver";
 import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
@@ -52,7 +56,6 @@ import {
   stripInternalWorkflowTurnOptions,
 } from "./workflow-turn-control";
 
-const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__collector$/;
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
 
@@ -113,10 +116,7 @@ export type ProviderEventEnvelope = {
   readonly payload?: unknown;
 };
 
-export type DescriptionDialogResolution = {
-  readonly dialogSessionId: string;
-  readonly shouldBackfill: boolean;
-} | null;
+export type DescriptionDialogResolution = DescriptionDialogResolutionModel;
 
 export type ContinuityRootResolutionOptions = {
   readonly rootSessionIdOverride: string | null;
@@ -399,8 +399,9 @@ export class SessionRequestHandler {
   private readonly stateBroadcaster: () => void;
   private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
   private readonly continuity: SessionContinuityFacade;
+  private readonly descriptionDialogSync: SessionDescriptionDialogSync;
+  private readonly providerBindingService: SessionProviderBindingService;
   private readonly sessionShellFactory: SessionShellFactory;
-  private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeRolloverInFlight = new Set<string>();
   private readonly flowNodeRolloverStarted = new Set<string>();
@@ -1112,6 +1113,26 @@ export class SessionRequestHandler {
       preemptRemainingPercentThreshold:
         this.config.continuityPreemptRemainingPercentThreshold,
     });
+    this.descriptionDialogSync = new SessionDescriptionDialogSync({
+      sessionStorage: this.sessionStorage,
+      continuityRootBySessionId: this.continuityRootBySessionId,
+      logger: this.logger,
+    });
+    this.providerBindingService = new SessionProviderBindingService({
+      sessionManager: this.sessionManager,
+      sessionStorage: this.sessionStorage,
+      continuity: this.continuity,
+      providerSessions: this.providerSessions,
+      broadcaster: this.broadcaster,
+      stateBroadcaster: this.stateBroadcaster,
+      logger: this.logger,
+      workspaceRuntime: this.workspaceRuntime,
+      updateDescriptionSessionRef: (session, providerSessionId) =>
+        this.descriptionDialogSync.updateDescriptionSessionRef(
+          session,
+          providerSessionId
+        ),
+    });
     this.sessionShellFactory = new SessionShellFactory({
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
@@ -1120,7 +1141,7 @@ export class SessionRequestHandler {
       providerSessions: this.providerSessions,
       broadcaster: this.broadcaster,
       broadcastSessionBinding: (sessionId) =>
-        this.broadcastSessionBinding(sessionId),
+        this.providerBindingService.broadcastSessionBinding(sessionId),
       notifyRuntimeSessionCreated: (session) =>
         this.notifyRuntimeSessionCreated(session),
       registerInitialSessionLifecycle: (session, explicitMode) =>
@@ -1128,17 +1149,27 @@ export class SessionRequestHandler {
       resolveContinuityRootSessionId: (resolutionOptions) =>
         this.resolveContinuityRootSessionId(resolutionOptions),
       resolveDescriptionDialog: (dialogOptions) =>
-        this.resolveDescriptionDialog(dialogOptions),
+        this.descriptionDialogSync.resolveDescriptionDialog(dialogOptions),
       maybePromoteLegacyDescriptionDialogHistory: (promotionOptions) =>
-        this.maybePromoteLegacyDescriptionDialogHistory(promotionOptions),
+        this.descriptionDialogSync.maybePromoteLegacyDescriptionDialogHistory(
+          promotionOptions
+        ),
       maybeBackfillDescriptionDialogHistory: (backfillOptions) =>
-        this.maybeBackfillDescriptionDialogHistory(backfillOptions),
+        this.descriptionDialogSync.maybeBackfillDescriptionDialogHistory(
+          backfillOptions
+        ),
       updateDescriptionSessionRef: (session, providerSessionId) =>
-        this.updateDescriptionSessionRef(session, providerSessionId),
+        this.descriptionDialogSync.updateDescriptionSessionRef(
+          session,
+          providerSessionId
+        ),
       handleProviderEvent: (sessionId, event) =>
         this.handleProviderEvent(sessionId, event),
       updateProviderBinding: (sessionId, providerSessionId) =>
-        this.updateProviderBinding(sessionId, providerSessionId),
+        this.providerBindingService.updateProviderBinding(
+          sessionId,
+          providerSessionId
+        ),
       appendDialogSegmentBoundaryMeta: (boundaryOptions) =>
         this.appendDialogSegmentBoundaryMeta(boundaryOptions),
     });
@@ -1390,18 +1421,7 @@ export class SessionRequestHandler {
     readonly session: Session;
     readonly providerSessionId: string;
   }): Promise<DescriptionDialogResolution> {
-    if (
-      !(
-        options.session.stage === "description" &&
-        options.session.initiativeSlug
-      )
-    ) {
-      return Promise.resolve(null);
-    }
-    return this.resolveDescriptionDialogSessionId({
-      session: options.session,
-      providerSessionId: options.providerSessionId,
-    });
+    return this.descriptionDialogSync.resolveDescriptionDialog(options);
   }
 
   private async createContinuitySession(options: {
@@ -3560,114 +3580,24 @@ export class SessionRequestHandler {
     sessionId: string,
     providerSessionId?: string
   ): void {
-    if (!providerSessionId) {
-      return;
-    }
-    const binding = this.providerSessions.get(sessionId);
-    if (binding) {
-      binding.providerSessionId = providerSessionId;
-    }
+    this.providerBindingService.updateProviderBinding(
+      sessionId,
+      providerSessionId
+    );
   }
 
   private updateBindingWithResolvedId(
     sessionId: string,
     providerSessionId: string
   ): void {
-    const session = this.sessionManager.getSession(sessionId);
-    if (
-      !session ||
-      (session.providerSessionStatus === "ready" &&
-        session.providerSessionId === providerSessionId)
-    ) {
-      return;
-    }
-    this.sessionManager.updateProviderSessionId(sessionId, providerSessionId);
-    this.sessionStorage.promote(sessionId, providerSessionId);
-    this.updateProviderBinding(sessionId, providerSessionId);
-    this.continuity.updateProviderSessionId(sessionId, providerSessionId);
-    this.updateDescriptionSessionRef(session, providerSessionId).catch(
-      (error: unknown) => {
-        this.logger.warn("Failed to persist updated description session ref", {
-          sessionId,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
+    this.providerBindingService.updateBindingWithResolvedId(
+      sessionId,
+      providerSessionId
     );
-
-    this.broadcastSessionBinding(sessionId);
   }
 
   private broadcastSessionBinding(sessionId: string): void {
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      return;
-    }
-    this.broadcaster({
-      type: "session:binding",
-      payload: {
-        sessionId,
-        providerSessionId: session.providerSessionId ?? null,
-        status: session.providerSessionStatus,
-      },
-    });
-    this.workspaceRuntime?.notifyBindingChanged(
-      {
-        workspaceRoot: session.workspacePath,
-        nodeId: session.stage ?? "session",
-        sessionId: session.id,
-      },
-      {
-        providerId: session.providerId,
-        providerSessionId: session.providerSessionId ?? null,
-        bindingStatus: session.providerSessionStatus,
-      }
-    );
-    this.stateBroadcaster();
-
-    const providerSessionId = session.providerSessionId ?? null;
-    const workspaceSlug = session.initiativeSlug ?? null;
-    if (!(providerSessionId && workspaceSlug)) {
-      return;
-    }
-
-    SessionContinuityFacade.readLastTokenUsageSnapshot({
-      workspaceRoot: session.workspacePath,
-      workspaceSlug,
-      providerSessionId,
-    })
-      .then((snapshot) => {
-        if (!snapshot) {
-          return;
-        }
-        this.broadcaster({
-          type: "session:stream",
-          payload: {
-            sessionId,
-            event: {
-              type: "stream_event",
-              providerSessionId,
-              tokenUsage: { used: snapshot.used, limit: snapshot.limit },
-              data: {
-                kind: "token_usage",
-                used: snapshot.used,
-                limit: snapshot.limit,
-              },
-              uuid: "continuity::token_usage",
-              timestamp: snapshot.updatedAt,
-            },
-          },
-        });
-      })
-      .catch((error: unknown) => {
-        this.logger.warn(
-          "Failed to load token usage snapshot from continuity",
-          {
-            sessionId,
-            providerSessionId,
-            error: error instanceof Error ? error.message : String(error),
-          }
-        );
-      });
+    this.providerBindingService.broadcastSessionBinding(sessionId);
   }
 
   private handleSessionIdChangedEvent(
@@ -3777,35 +3707,9 @@ export class SessionRequestHandler {
     readonly session: Session;
     readonly dialogSessionId?: string | null;
   }): void {
-    const session = options.session;
-    if (session.stage !== "description") {
-      return;
-    }
-    const dialogSessionId = options.dialogSessionId;
-    if (!dialogSessionId) {
-      return;
-    }
-    if (!DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX.test(dialogSessionId)) {
-      return;
-    }
-    const legacyDialogSessionId = dialogSessionId.replace(
-      DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX,
-      ""
+    this.descriptionDialogSync.maybePromoteLegacyDescriptionDialogHistory(
+      options
     );
-    if (
-      legacyDialogSessionId.length === 0 ||
-      legacyDialogSessionId === dialogSessionId
-    ) {
-      return;
-    }
-
-    const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
-    this.sessionStorage.promoteHistoryFile({
-      workspaceSlug: workspaceKey,
-      providerId: session.providerId,
-      fromHistorySessionId: legacyDialogSessionId,
-      toHistorySessionId: dialogSessionId,
-    });
   }
 
   private async maybeBackfillDescriptionDialogHistory(options: {
@@ -3816,166 +3720,19 @@ export class SessionRequestHandler {
       readonly shouldBackfill: boolean;
     } | null;
   }): Promise<void> {
-    if (!options.dialog?.shouldBackfill) {
-      return;
-    }
-    await this.backfillDescriptionDialogHistory({
-      session: options.session,
-      dialogSessionId: options.dialog.dialogSessionId,
-      providerSessionId: options.providerSessionId,
-    });
-  }
-
-  private async resolveDescriptionDialogSessionId(options: {
-    readonly session: Session;
-    readonly providerSessionId: string;
-  }): Promise<{
-    readonly dialogSessionId: string;
-    readonly shouldBackfill: boolean;
-  }> {
-    const { session } = options;
-    if (session.stage !== "description") {
-      return {
-        dialogSessionId: options.providerSessionId,
-        shouldBackfill: false,
-      };
-    }
-    if (!session.initiativeSlug) {
-      return {
-        dialogSessionId: options.providerSessionId,
-        shouldBackfill: false,
-      };
-    }
-
-    const snapshot = await this.descriptionStepStore.read(
-      session.workspacePath,
-      session.initiativeSlug
+    await this.descriptionDialogSync.maybeBackfillDescriptionDialogHistory(
+      options
     );
-
-    const slot = snapshot?.primarySession;
-    const existingDialogSessionId = slot?.dialogSessionId ?? null;
-    if (existingDialogSessionId) {
-      return {
-        dialogSessionId: existingDialogSessionId,
-        shouldBackfill: false,
-      };
-    }
-
-    const baseSessionId = slot?.providerSessionId ?? options.providerSessionId;
-
-    return {
-      dialogSessionId: `${baseSessionId}__collector`,
-      shouldBackfill: false,
-    };
-  }
-
-  private async backfillDescriptionDialogHistory(options: {
-    readonly session: Session;
-    readonly dialogSessionId: string;
-    readonly providerSessionId: string;
-  }): Promise<void> {
-    const session = options.session;
-    if (session.stage !== "description" || !session.initiativeSlug) {
-      return;
-    }
-
-    const chains = await SessionContinuityFacade.readWorkspaceChains({
-      workspaceRoot: session.workspacePath,
-      workspaceSlug: session.initiativeSlug,
-    });
-
-    const sourceIds = new Set<string>([
-      options.dialogSessionId,
-      options.providerSessionId,
-    ]);
-    for (const chain of chains) {
-      if (chain.stage !== "description") {
-        continue;
-      }
-      for (const segment of chain.segments) {
-        if (segment.providerId !== session.providerId) {
-          continue;
-        }
-        sourceIds.add(segment.providerSessionId);
-      }
-    }
-
-    // Nothing to merge.
-    if (sourceIds.size <= 1) {
-      return;
-    }
-
-    const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
-    await this.sessionStorage
-      .backfillHistory({
-        workspaceSlug: workspaceKey,
-        providerId: session.providerId,
-        historySessionId: options.dialogSessionId,
-        sourceSessionIds: Array.from(sourceIds),
-      })
-      .catch((error: unknown) => {
-        this.logger.warn(
-          "Failed to backfill description unified-session file",
-          {
-            sessionId: session.id,
-            providerId: session.providerId,
-            dialogSessionId: options.dialogSessionId,
-            error: error instanceof Error ? error.message : String(error),
-          }
-        );
-      });
   }
 
   private async updateDescriptionSessionRef(
     session: Session,
     providerSessionId?: string
   ): Promise<void> {
-    if (session.stage !== "description") {
-      return;
-    }
-    if (!session.initiativeSlug) {
-      return;
-    }
-    const resolvedProviderSessionId =
-      providerSessionId ?? session.providerSessionId;
-    if (!resolvedProviderSessionId) {
-      return;
-    }
-    const continuityRootSessionId =
-      this.continuityRootBySessionId.get(session.id) ?? session.id;
-
-    // Unified session history is stored under a workspace key derived from the
-    // absolute workspace path (not the workflow slug/initiative slug).
-    const workspaceKey = sanitizeWorkspaceSlug(session.workspacePath);
-
-    const jsonlPath = buildSessionFilePath({
-      rootDirectory: SESSION_ROOT,
-      workspaceSlug: workspaceKey,
-      provider: session.providerId,
-      sessionId: sanitizeWorkspaceSlug(continuityRootSessionId),
-    });
-
-    const sessionRef = {
-      providerId: session.providerId,
-      providerSessionId: resolvedProviderSessionId,
-      jsonlPath,
-      dialogSessionId: continuityRootSessionId,
-    } as const;
-
-    try {
-      await this.descriptionStepStore.upsert(
-        session.workspacePath,
-        session.initiativeSlug,
-        {
-          primarySession: sessionRef,
-        }
-      );
-    } catch (error: unknown) {
-      this.logger.warn("Failed to persist description session ref", {
-        sessionId: session.id,
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
+    await this.descriptionDialogSync.updateDescriptionSessionRef(
+      session,
+      providerSessionId
+    );
   }
 
   private getDefaultProviderId(): string {
