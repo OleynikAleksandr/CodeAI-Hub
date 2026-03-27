@@ -28,8 +28,8 @@
 ### Stream: Core remote-bridge — `session-request-handler` becomes a facade
 5. [DONE] Вынести provider session create/resume resolution и shell/bound session factories из `session-request-handler.ts` в отдельные micro-modules. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-provider-session-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`. Expected commit: `refactor(core): extract session bootstrap factories from request handler` (hash: 93503524)
 6. [DONE] Git Commit: `refactor(core): extract session bootstrap factories from request handler` (hash: 93503524)
-7. [TODO] Вынести description dialog history sync и provider binding wiring из `session-request-handler.ts` в dedicated services. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-description-dialog-sync.ts`, `packages/core/src/remote-bridge/handlers/session-provider-binding-service.ts`. Expected commit: `refactor(core): extract dialog sync from request handler`
-8. [TODO] Git Commit: `refactor(core): extract dialog sync from request handler` (hash: TBD)
+7. [DONE] Вынести description dialog history sync и provider binding wiring из `session-request-handler.ts` в dedicated services. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-description-dialog-sync.ts`, `packages/core/src/remote-bridge/handlers/session-provider-binding-service.ts`. Expected commit: `refactor(core): extract dialog sync from request handler` (hash: 9215ef6b)
+8. [DONE] Git Commit: `refactor(core): extract dialog sync from request handler` (hash: 9215ef6b)
 9. [TODO] Вынести flow-node rollover и continuity lock orchestration в самостоятельные runtime services. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-rollover-orchestrator.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-lock-service.ts`. Expected commit: `refactor(core): extract continuity rollover orchestration`
 10. [TODO] Git Commit: `refactor(core): extract continuity rollover orchestration` (hash: TBD)
 11. [TODO] Вынести provider event routing и failure recovery из `session-request-handler.ts` в отдельные модули, оставив в файле только façade entrypoint. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-provider-failure-recovery.ts`. Expected commit: `refactor(core): extract provider event routing from request handler`
@@ -60,3 +60,9 @@
 ### Stream: Wave 2 debt inventory after first façade cuts
 31. [TODO] После декомпозиции трёх ключевых файлов переприоритизировать вторую волну oversized debt и обновить explicit allowlist только в сторону уменьшения. Scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): reprioritize oversized debt wave two`
 32. [TODO] Git Commit: `docs(architecture): reprioritize oversized debt wave two` (hash: TBD)
+
+### Stream: Workflow quality-surface cleanup
+33. [TODO] Синхронизировать исполняемый quality-gate contract между `.husky/pre-commit`, root `package.json` scripts и `scripts/README.md`, не смешивая эти правки с runtime refactor stream-ами. Scope: `.husky/pre-commit`, `package.json`, `scripts/README.md`. Expected commit: `chore(workflow): align quality gate scripts with Husky`
+34. [TODO] Git Commit: `chore(workflow): align quality gate scripts with Husky` (hash: TBD)
+35. [TODO] Синхронизировать локальные инструкции разработки с обновлённым quality-gate contract после cleanup. Scope: `AGENTS.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(workflow): sync local instructions with quality gates`
+36. [TODO] Git Commit: `docs(workflow): sync local instructions with quality gates` (hash: TBD)
