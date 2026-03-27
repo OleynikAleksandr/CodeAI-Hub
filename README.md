@@ -7,14 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.819
-- **Quality gates restored**: `npm run lint` is green again, and Husky `pre-commit` formats only staged files without damaging parallel local work.
-- **Provider registry façade**: Core provider bootstrap/recovery logic is split into dedicated path, loader, descriptor, usage-limits, and recovery modules; `provider-registry/index.ts` is no longer oversized debt.
-- **Gemini session façade**: `gemini-session-manager` now delegates bootstrap, settings, lifecycle, turn loop, and tool-call orchestration to focused micro-modules.
-- **Gemini regression split**: bootstrap and turn-runner flows have dedicated tests, keeping the façade smoke suite small and stable.
-- **Architecture debt reduced**: the oversized allowlist no longer includes `provider-registry/index.ts` or `gemini-session-manager.ts`.
+## Current Release — v1.1.821
+- **Remote bridge façade split**: `packages/core/src/remote-bridge/index.ts` is now a thin bridge entrypoint over dedicated bootstrap, lifecycle, and websocket command-router modules.
+- **Websocket command clustering**: dialog and workspace/scope commands moved into focused helper routers, keeping the root runtime bridge surface under the 300-line handwritten limit.
+- **Architecture debt reduced**: `packages/core/src/remote-bridge/index.ts` left the explicit oversized-file allowlist immediately after the façade cut.
+- **HTTP router decomposition**: `http-api-router.ts` remains a thin façade over dedicated session/system/artifact helper modules.
+- **Packaging truthfulness**: the shipped VSIX continues to exclude repo-only Husky helper files and other non-runtime workflow noise.
 
-Previous releases (summary): `1.1.800–1.1.818` — rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
+Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

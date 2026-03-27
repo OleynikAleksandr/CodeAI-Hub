@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.821] - 2026-03-27
+### Changed
+- **Remote bridge façade split**: `packages/core/src/remote-bridge/index.ts` is now a thin façade over dedicated bootstrap, server-lifecycle, websocket command-router, dialog command-router, and workspace command-router modules.
+
+### Fixed
+- **Oversized architecture debt**: `packages/core/src/remote-bridge/index.ts` was removed from the explicit oversized-file allowlist immediately after the façade cut.
+
 ## [1.1.820] - 2026-03-27
 ### Changed
 - **Core HTTP router decomposition**: `packages/core/src/remote-bridge/handlers/http-api-router.ts` is now a thin façade over dedicated session, system, artifact validation, and artifact upsert helpers; the root router left the explicit oversized-file debt allowlist.
