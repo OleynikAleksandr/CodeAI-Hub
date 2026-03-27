@@ -10,11 +10,11 @@ This folder contains local scripts and Husky automation used to enforce quality 
 ## What Runs Automatically
 
 - Pre‑commit (via Husky):
-  - `npx ultracite fix` — formats and applies safe Biome/Ultracite fixes, restaging files
   - `scripts/check-architecture.sh` — architecture limits across `src/` plus every `packages/**/src/` root, excluding generated outputs (`dist/`, `build/`, `node_modules/`)
   - `scripts/check-architecture-rules/max-lines-debt-allowlist.txt` — explicit temporary registry of pre-existing oversized source files; this is tracked debt, not a hidden exclusion
-  - `npm run lint` — static analysis via Ultracite (Biome check)
+  - `npm run lint` — static analysis via Ultracite (`npx ultracite check`)
   - `npm run check:tsprune` — unused export detection
+  - `npm run format:fix` — formats and applies safe Biome/Ultracite fixes, restaging files
 
 - Pre‑push:
   - `npm run check:dup` — jscpd duplication check (3% threshold, fails if exceeded)

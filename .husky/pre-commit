@@ -2,10 +2,7 @@
 # Exit on any error
 set -e
 
-# Run tests first (from Ultracite's default hook)
-npm test
-
-# Run project-specific quality gates (migrated from lefthook)
+# Run project-specific quality gates
 ./scripts/check-architecture.sh
 npm run lint
 npm run check:tsprune
@@ -32,8 +29,8 @@ if git stash list -n 1 | grep -F -q "$STASH_MESSAGE"; then
   STASHED=1
 fi
 
-# Run formatter on the staged files (Ultracite)
-npx ultracite fix
+# Run formatter on the staged files
+npm run format:fix
 FORMAT_EXIT_CODE=$?
 
 # Restore working directory state

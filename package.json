@@ -62,7 +62,7 @@
   },
   "scripts": {
     "check:architecture": "./scripts/check-architecture.sh",
-    "lint": "echo \"lint script not configured yet\"",
+    "lint": "npx ultracite check",
     "check:tsprune": "ts-prune",
     "check:dup": "npm run -s check:dup:repo",
     "check:dup:repo": "jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"",
@@ -74,8 +74,7 @@
     "build:project-manager": "node ./scripts/build-project-manager.js",
     "build:core": "npm run build --workspace=@codeai-hub/core",
     "compile": "npm run build:webview && npm run typecheck:webview && tsc -p .",
-    "test": "echo \"No automated tests defined yet\"",
-    "format:check": "echo \"format check script not configured yet\"",
+    "format:fix": "npx ultracite fix",
     "fetch:models": "npx tsx scripts/fetch-available-models.ts",
     "prepare": "husky"
   },
