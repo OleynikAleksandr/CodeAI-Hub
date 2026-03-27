@@ -1,8 +1,8 @@
-# Session 166 — Phase 76: Quality-Gate Recovery and Facade Commit Series
+# Session 166 — Phase 76: Quality-Gate Recovery, Facade Cuts, and Release 1.1.819
 
-**Date:** 2026-03-27 16:40 (CET)
+**Date:** 2026-03-27 15:17 (CET)
 **Branch:** main
-**Version:** 1.1.818
+**Version:** 1.1.819
 
 ---
 
@@ -16,7 +16,8 @@
 - Весь stream `Core provider registry — installer, loader, recovery clusters` завершён и зафиксирован одним атомарным commit-ом; `packages/core/src/provider-registry/index.ts` теперь фасад на `272` строках.
 - Весь stream `Gemini runtime — gemini-session-manager becomes a facade` завершён и зафиксирован одним атомарным commit-ом; `packages/Gemini_Module/src/session/gemini-session-manager.ts` теперь фасад на `295` строках.
 - Из oversized allowlist удалены `packages/core/src/provider-registry/index.ts` и `packages/Gemini_Module/src/session/gemini-session-manager.ts`; новое состояние architecture gate: `30` allowlisted oversized files и `64` warning-zone files.
-- `doc/TODO/todo-plan.md` синхронизирован под реальные hash-и recovery commit-series; до релиза остался только stream `103/104`.
+- Собран новый release `1.1.819`: `build-all` выпустил tarball-артефакты provider/core/UI/CEF, `build-release --use-current-version` собрал `codeai-hub-1.1.819.vsix`.
+- `doc/TODO/todo-plan.md` синхронизирован под реальные hash-и recovery commit-series и закрытый release stream `103/104`.
 
 ## Verification status
 
@@ -27,6 +28,8 @@
 - `npm run build --workspace=@codeai-hub/gemini-module` — OK
 - `npm run build:webview` — OK
 - `node --test packages/Gemini_Module/dist/session/gemini-session-manager.test.js packages/Gemini_Module/dist/session/gemini-session-bootstrapper.test.js packages/Gemini_Module/dist/session/gemini-turn-runner.test.js` — `5/5` pass
+- `./scripts/build-all.sh` — OK; версия повышена до `1.1.819`, tarball-артефакты размещены в `~/.codeai-hub/releases/` и `doc/tmp/releases/`
+- `./scripts/build-release.sh --use-current-version` — OK; создан `codeai-hub-1.1.819.vsix`, package size `1.6M`
 
 ## Git commits
 
@@ -52,12 +55,16 @@
 - `86ca09af refactor(core): extract provider registry facade clusters`
 - `87a4425a refactor(gemini): extract session manager facade clusters`
 - `0072cb12 docs(architecture): reprioritize oversized debt wave two`
+- `cdf28138 docs(session): record phase 76 recovery commit series`
+- `65786ea9 chore(release): prepare 1.1.819 assets`
 
 ## Working tree state
 
-- Все code/doc changes этой commit-series зафиксированы.
-- Дерево должно быть чистым после коммита этого отчёта.
-- Следующий шаг в текущей сессии: пройти `Release Build Checklist`, выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`.
+- Release artefacts на диске:
+  - `codeai-hub-1.1.819.vsix`
+  - `doc/tmp/releases/{claude-module,codex-module,gemini-module,codeai-hub-core-darwin-arm64,CodeAIHubLauncher-macos-arm64,vscode-webview,project-manager}-1.1.819.tar.bz2`
+- Рабочее дерево чистое после release scripts.
+- Следующий рабочий контекст: новая волна oversized debt после завершения `Phase 76` release block.
 
 ---
 
@@ -74,5 +81,5 @@
 
 ## Plans for next session
 
-- Если релиз ещё не собран в этой сессии: сначала завершить `103/104` через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем закоммитить version/manifests/session-report updates.
-- После релиза начать новый `todo-plan.md` или следующую фазу Wave 2 backlog, начиная с `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/config/index.ts`, `packages/core/src/remote-bridge/types.ts`.
+- Начать новый `todo-plan.md` или следующую фазу Wave 2 backlog, начиная с `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/config/index.ts`, `packages/core/src/remote-bridge/types.ts`.
+- Отдельно оценить, нужен ли следующий release-facing sweep по `.vscodeignore` и packaging surface: VSIX собран чисто, но package по-прежнему включает служебные `.husky/_` helper files.
