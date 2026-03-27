@@ -12,8 +12,10 @@
 - Provider event order не симметричен другим модулям: `Gemini` может эмитить `token_usage` раньше `turn_completed`, поэтому usage не считается признаком завершения turn-а.
 - Для flow/document continuity `token_usage` используется только как вход в post-turn arbitration; Core не имеет права запускать rollover до фактического `turn_completed`.
 - Если provider отдал несколько assistant segments в одном turn-е, модуль обязан флашить их по реальным `finished` boundaries и не дублировать финальным aggregate block, когда segmented history уже была сохранена.
+- Переведённые Gemini thoughts не должны выглядеть как отдельный provider role в UI: текущий продуктовый контракт хранит их как `assistant` + `tag: "thinking"` и показывает как видимые tagged assistant messages.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Session continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+- Thought translation: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`

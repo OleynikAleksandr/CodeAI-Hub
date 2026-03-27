@@ -85,6 +85,7 @@
   - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" (visible, not collapsed)
   - No API key or auth required (uses `translate.googleapis.com` free endpoint)
   - Graceful degradation: on failure, English original is emitted as fallback
+  - Канон: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
 
 ## 5) Workflow Boundary (Description, 2026-03-01)
 
