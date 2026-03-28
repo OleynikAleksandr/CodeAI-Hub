@@ -98,6 +98,12 @@
   - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking routing
   - `claude-message-finish-handler.ts` = turn lifecycle completion façade
   - `claude-usage-sync.ts`, `claude-token-usage-sync.ts` = usage-limits/context-token synchronization internals
+- Codex messaging cluster: `packages/Codex_Module/src/messaging/`
+  - `message-processor.ts` = thin façade / turn orchestration surface
+  - `codex-event-stream-consumer.ts` = startup-lock / idle-pulse event stream consumer
+  - `codex-stream-event-router.ts` = thread/item/assistant/structured-output routing
+  - `codex-message-finish-handler.ts` = turn lifecycle completion façade
+  - `codex-usage-sync.ts`, `codex-token-usage-sync.ts` = usage-limits/token synchronization internals
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
   - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals

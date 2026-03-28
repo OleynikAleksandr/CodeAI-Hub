@@ -14,7 +14,6 @@ packages/Claude_Module/src/sdk/claude-sdk-manager.ts
 
 # Codex module
 packages/Codex_Module/src/installer/codex-installer.ts
-packages/Codex_Module/src/messaging/message-processor.ts
 packages/Codex_Module/src/messaging/structured-output-stream-controller.ts
 packages/Codex_Module/src/sdk/codex-sdk-manager.ts
 packages/Codex_Module/src/sdk/codex-sdk-patches.ts

@@ -1,0 +1,292 @@
+import crypto from "node:crypto";
+import type {
+  ThreadErrorEvent,
+  ThreadEvent,
+  ThreadItem,
+} from "@openai/codex-sdk";
+import type { CodexSessionManager } from "../session/session-manager";
+import type { ActiveSession } from "../session/types";
+import type { ModuleReporter } from "../types";
+import type { CodexMessageFinishHandler } from "./codex-message-finish-handler";
+import {
+  isAgentMessageItem,
+  PROVIDER,
+  shouldSuppressAgentMessageItem,
+  type ThreadItemEvent,
+} from "./codex-message-processor-shared";
+import type { CodexReasoningStreams } from "./codex-reasoning-streams";
+import type { CodexSessionEventEmitter } from "./codex-session-event-emitter";
+import { handleCodexThreadStarted } from "./codex-thread-start-handler";
+import type {
+  StructuredOutputResult,
+  StructuredOutputStreamController,
+} from "./structured-output-stream-controller";
+
+export class CodexStreamEventRouter {
+  private readonly emitter: CodexSessionEventEmitter;
+  private readonly finishHandler: CodexMessageFinishHandler;
+  readonly reasoningStreams: CodexReasoningStreams;
+  private readonly reporter?: ModuleReporter;
+  private readonly sessionManager: CodexSessionManager;
+  readonly structuredOutput: StructuredOutputStreamController;
+
+  constructor(
+    sessionManager: CodexSessionManager,
+    structuredOutput: StructuredOutputStreamController,
+    reasoningStreams: CodexReasoningStreams,
+    emitter: CodexSessionEventEmitter,
+    finishHandler: CodexMessageFinishHandler,
+    reporter?: ModuleReporter
+  ) {
+    this.sessionManager = sessionManager;
+    this.structuredOutput = structuredOutput;
+    this.reasoningStreams = reasoningStreams;
+    this.emitter = emitter;
+    this.finishHandler = finishHandler;
+    this.reporter = reporter;
+  }
+
+  async dispatchEvent(
+    session: ActiveSession,
+    event: ThreadEvent
+  ): Promise<void> {
+    session.logger?.logSDKEvent(event.type, event);
+    switch (event.type) {
+      case "thread.started":
+        this.handleThreadStarted(session, event.thread_id);
+        return;
+      case "turn.started":
+        this.finishHandler.handleTurnStarted(session);
+        return;
+      case "turn.completed":
+        await this.finishHandler.handleTurnCompleted(session, event);
+        return;
+      case "turn.failed":
+        this.finishHandler.handleTurnFailed(session, event.error);
+        return;
+      case "item.started":
+      case "item.updated":
+      case "item.completed":
+        this.handleThreadItem(session, event);
+        return;
+      case "error":
+        this.handleStreamError(session, event);
+        return;
+      default:
+        if (await this.finishHandler.handleRuntimeUsageEvent(session, event)) {
+          return;
+        }
+        this.reporter?.warn?.(
+          `Unhandled Codex event ${(event as { type: string }).type}`
+        );
+    }
+  }
+
+  private handleThreadStarted(session: ActiveSession, threadId: string): void {
+    handleCodexThreadStarted({
+      session,
+      threadId,
+      sessionManager: this.sessionManager,
+      structuredOutput: this.structuredOutput,
+      reasoningStreams: this.reasoningStreams,
+      emitter: this.emitter,
+      reporter: this.reporter,
+    });
+  }
+
+  private handleStreamError(
+    session: ActiveSession,
+    event: ThreadErrorEvent
+  ): void {
+    this.emitter.emitMessage(session, {
+      type: "stream_error",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      message: event.message,
+      timestamp: new Date().toISOString(),
+    });
+    this.finishHandler.clearSessionState(session);
+  }
+
+  private handleThreadItem(
+    session: ActiveSession,
+    event: ThreadItemEvent
+  ): void {
+    const item = event.item as ThreadItem;
+    if (item.type === "reasoning") {
+      this.handleReasoningItem(session, event, item);
+      return;
+    }
+    if (isAgentMessageItem(item)) {
+      this.handleAgentMessageItem(session, event, item);
+    }
+  }
+
+  private handleReasoningItem(
+    session: ActiveSession,
+    event: ThreadItemEvent,
+    item: ThreadItem & { readonly type: "reasoning"; readonly text?: unknown }
+  ): void {
+    if (session.internalTurn || typeof item.text !== "string") {
+      return;
+    }
+    if (event.type === "item.updated") {
+      const delta = this.reasoningStreams.append(
+        session.sessionId,
+        item.id,
+        item.text
+      );
+      if (delta) {
+        this.emitter.emitDialogMessage(session, "thinking", delta, item.id);
+      }
+      return;
+    }
+    if (event.type === "item.completed") {
+      const delta = this.reasoningStreams.complete(
+        session.sessionId,
+        item.id,
+        item.text
+      );
+      if (delta) {
+        this.emitter.emitDialogMessage(session, "thinking", delta, item.id);
+      }
+    }
+  }
+
+  private handleAgentMessageItem(
+    session: ActiveSession,
+    event: ThreadItemEvent,
+    item: ThreadItem & {
+      readonly type: "agent_message";
+      readonly text?: unknown;
+    }
+  ): void {
+    if (
+      shouldSuppressAgentMessageItem(
+        this.structuredOutput,
+        session.sessionId,
+        item
+      )
+    ) {
+      return;
+    }
+    if (event.type === "item.updated") {
+      this.handleAgentMessageUpdate(session, item.id, item.text);
+      return;
+    }
+    if (event.type === "item.completed") {
+      this.handleAgentMessageComplete(session, item.id, item.text);
+    }
+  }
+
+  private handleAgentMessageUpdate(
+    session: ActiveSession,
+    itemId: string,
+    text: unknown
+  ): void {
+    if (session.internalTurn || typeof text !== "string") {
+      return;
+    }
+    const delta = this.structuredOutput.appendChunk(
+      session.sessionId,
+      itemId,
+      text
+    );
+    if (delta) {
+      this.emitAssistantChunk(session, itemId, delta);
+    }
+  }
+
+  private handleAgentMessageComplete(
+    session: ActiveSession,
+    itemId: string,
+    text: unknown
+  ): void {
+    if (session.internalTurn) {
+      return;
+    }
+
+    const result = this.structuredOutput.complete(
+      session.sessionId,
+      itemId,
+      typeof text === "string" ? text : ""
+    );
+    if (result.streamDelta) {
+      this.emitAssistantChunk(session, itemId, result.streamDelta);
+    }
+    this.emitStructuredOutput(session, itemId, result);
+    if (result.assistantText) {
+      this.emitter.emitMessage(session, {
+        type: "assistant",
+        provider: PROVIDER,
+        sessionId: session.sessionId,
+        threadId: session.codexThreadId,
+        content: result.assistantText,
+        uuid: itemId,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+
+  private emitAssistantChunk(
+    session: ActiveSession,
+    itemId: string,
+    text: string
+  ): void {
+    this.emitter.emitMessage(session, {
+      type: "stream_event",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      data: { kind: "assistant_chunk", itemId, text },
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private emitStructuredOutput(
+    session: ActiveSession,
+    itemId: string,
+    result: StructuredOutputResult
+  ): void {
+    const hasArtifacts =
+      Array.isArray(result.artifacts) && result.artifacts.length > 0;
+    if (!(result.artifact || hasArtifacts)) {
+      return;
+    }
+
+    const dedupeId = result.outputHash ?? itemId;
+    if (!this.shouldEmitStructuredOutput(session, dedupeId)) {
+      return;
+    }
+    this.emitter.emitMessage(session, {
+      type: "stream_event",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      data: {
+        kind: "structured_output",
+        artifact: result.artifact,
+        artifacts: hasArtifacts ? result.artifacts : undefined,
+        nextAction: result.nextAction,
+        suggested_response: result.assistantText,
+      },
+      uuid: crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private shouldEmitStructuredOutput(
+    session: ActiveSession,
+    dedupeId: string
+  ): boolean {
+    if (!session.structuredOutputUuids) {
+      session.structuredOutputUuids = new Set();
+    }
+    if (session.structuredOutputUuids.has(dedupeId)) {
+      return false;
+    }
+    session.structuredOutputUuids.add(dedupeId);
+    return true;
+  }
+}
