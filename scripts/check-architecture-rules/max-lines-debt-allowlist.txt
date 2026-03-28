@@ -19,7 +19,6 @@ packages/Codex_Module/src/sdk/codex-sdk-patches.ts
 
 # Gemini module
 packages/Gemini_Module/src/installer/gemini-installer.ts
-packages/Gemini_Module/src/messaging/message-processor.ts
 packages/Gemini_Module/src/runtime/cli-bridge.ts
 
 # Core supervisor

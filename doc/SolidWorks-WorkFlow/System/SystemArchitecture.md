@@ -106,6 +106,11 @@
   - `structured-output-stream-controller.ts` = façade over structured output parser/state helpers
   - `structured-output-parser.ts`, `structured-output-state.ts` = prompt/schema parsing and extractor/session state internals
   - `codex-usage-sync.ts`, `codex-token-usage-sync.ts` = usage-limits/token synchronization internals
+- Gemini messaging cluster: `packages/Gemini_Module/src/messaging/`
+  - `message-processor.ts` = thin façade / turn event normalization entrypoint
+  - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
+  - `gemini-assistant-event-normalizer.ts` = assistant/thinking/finished boundary normalization
+  - `gemini-system-event-normalizer.ts` = tool/system/warning event normalization
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
   - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals
