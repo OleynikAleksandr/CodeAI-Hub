@@ -1,4 +1,6 @@
+import assert from "node:assert/strict";
 import path from "node:path";
+import test from "node:test";
 import type { CoreConfig } from "../../config";
 import { SessionManager } from "../../session-manager";
 import type { BridgeEvent } from "../types";
@@ -378,3 +380,33 @@ export const EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS = [
   false,
   true,
 ] as const;
+
+test("SessionRequestHandler emits model update from applied turn config on outbound send", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-runtime-model-update"
+  );
+  harness.providerRegistry.getAdapter = () => ({
+    sendMessage: async () => Promise.resolve(),
+  });
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-5",
+    unsubscribe: noop,
+  });
+
+  await harness.handler.handleMessage(session.id, "switch on next turn");
+
+  const modelUpdate = harness.events.find(
+    (event) => event.type === "session:model:update"
+  );
+  assert.deepEqual(modelUpdate, {
+    type: "session:model:update",
+    payload: {
+      sessionId: session.id,
+      providerId: "codexCli",
+      modelId: "gpt-5.3-codex",
+    },
+  });
+});

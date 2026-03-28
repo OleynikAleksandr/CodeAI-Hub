@@ -126,6 +126,7 @@
 - Project Manager applied-config sync:
   - `src/client/project-manager/components/sessions/use-runtime-model-sync.ts` = session label updates only from Core-confirmed runtime model events, including reasoning refresh for same-model turns
   - `src/client/ui/src/app-host/use-settings-models-sync.ts` = ready sessions no longer guess a new model from settings before Core confirms the applied runtime config
+  - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` now emits `session:model:update` from the outbound applied turn-config itself for regular new turns, so PM label sync does not depend on a provider-specific `model_info` or `system` event being emitted afterward
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 - Gemini Thought Translator: `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
   - Translates Gemini agent thoughts EN→RU via free Google Translate API (~100ms)

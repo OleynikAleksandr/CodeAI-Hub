@@ -3,7 +3,7 @@ import type { SessionContinuityFacade } from "../../session-continuity/session-c
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import type { BridgeEvent } from "../types";
+import { type BridgeEvent, readAppliedProviderTurnConfig } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
@@ -67,16 +67,17 @@ export class SessionRequestHandlerMessageDispatch {
       return;
     }
 
-    this.logDispatchingMessageToProvider(
+    this.deps.logger.info("Dispatching message to provider adapter", {
       sessionId,
-      resolved.binding,
-      content.length
-    );
+      providerId: resolved.binding.providerId,
+      providerSessionId: resolved.binding.providerSessionId,
+      contentLength: content.length,
+    });
     try {
-      const providerTurnOptions =
-        this.deps.appliedTurnConfig.attachToTurnOptions({
-          providerId: resolved.binding.providerId,
-        });
+      const providerTurnOptions = this.attachProviderTurnOptions(
+        sessionId,
+        resolved.binding.providerId
+      );
       await resolved.adapter.sendMessage(
         resolved.binding.providerSessionId,
         content,
@@ -84,7 +85,12 @@ export class SessionRequestHandlerMessageDispatch {
       );
     } catch (error) {
       this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
-      this.logProviderSendMessageFailed(sessionId, resolved.binding, error);
+      this.deps.logger.warn("Provider sendMessage failed", {
+        sessionId,
+        providerId: resolved.binding.providerId,
+        providerSessionId: resolved.binding.providerSessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
       this.deps.handleProviderFailure(
         resolved.binding.providerId,
         error,
@@ -138,16 +144,17 @@ export class SessionRequestHandlerMessageDispatch {
         sessionId: options.sessionId,
         providerSessionId: resolved.binding.providerSessionId,
       });
-      this.logDispatchingMessageToProvider(
+      this.deps.logger.info("Dispatching message to provider adapter", {
+        sessionId: options.sessionId,
+        providerId: resolved.binding.providerId,
+        providerSessionId: resolved.binding.providerSessionId,
+        contentLength: options.content.length,
+      });
+      const providerTurnOptions = this.attachProviderTurnOptions(
         options.sessionId,
-        resolved.binding,
-        options.content.length
+        resolved.binding.providerId,
+        stripInternalWorkflowTurnOptions(options.turnOptions)
       );
-      const providerTurnOptions =
-        this.deps.appliedTurnConfig.attachToTurnOptions({
-          providerId: resolved.binding.providerId,
-          turnOptions: stripInternalWorkflowTurnOptions(options.turnOptions),
-        });
       await resolved.adapter.sendMessage(
         resolved.binding.providerSessionId,
         options.content,
@@ -158,11 +165,12 @@ export class SessionRequestHandlerMessageDispatch {
         sessionId: options.sessionId,
         state: "idle",
       });
-      this.logProviderSendMessageFailed(
-        options.sessionId,
-        resolved.binding,
-        error
-      );
+      this.deps.logger.warn("Provider sendMessage failed", {
+        sessionId: options.sessionId,
+        providerId: resolved.binding.providerId,
+        providerSessionId: resolved.binding.providerSessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
       this.deps.handleProviderFailure(
         resolved.binding.providerId,
         error,
@@ -234,6 +242,35 @@ export class SessionRequestHandlerMessageDispatch {
     return { binding, adapter };
   }
 
+  private attachProviderTurnOptions(
+    sessionId: string,
+    providerId: string,
+    turnOptions?: Record<string, unknown>
+  ): Record<string, unknown> | undefined {
+    const providerTurnOptions = this.deps.appliedTurnConfig.attachToTurnOptions(
+      {
+        providerId,
+        turnOptions,
+      }
+    );
+    const appliedConfig = readAppliedProviderTurnConfig(providerTurnOptions);
+    if (
+      !appliedConfig?.modelId ||
+      appliedConfig.source !== "settings_snapshot"
+    ) {
+      return providerTurnOptions;
+    }
+    this.deps.broadcaster({
+      type: "session:model:update",
+      payload: {
+        sessionId,
+        providerId: appliedConfig.providerId,
+        modelId: appliedConfig.modelId,
+      },
+    });
+    return providerTurnOptions;
+  }
+
   private logMissingProviderBindingForIncomingMessage(
     sessionId: string,
     providerId: string | undefined,
@@ -249,33 +286,6 @@ export class SessionRequestHandlerMessageDispatch {
     this.deps.logger.warn("Known provider session bindings", {
       sessionId,
       knownSessionIds: Array.from(this.deps.providerSessions.keys()),
-    });
-  }
-
-  private logDispatchingMessageToProvider(
-    sessionId: string,
-    binding: ProviderSessionBinding,
-    contentLength: number
-  ): void {
-    this.deps.logger.info("Dispatching message to provider adapter", {
-      sessionId,
-      providerId: binding.providerId,
-      providerSessionId: binding.providerSessionId,
-      contentLength,
-    });
-  }
-
-  private logProviderSendMessageFailed(
-    sessionId: string,
-    binding: ProviderSessionBinding,
-    error: unknown
-  ): void {
-    const message = error instanceof Error ? error.message : String(error);
-    this.deps.logger.warn("Provider sendMessage failed", {
-      sessionId,
-      providerId: binding.providerId,
-      providerSessionId: binding.providerSessionId,
-      error: message,
     });
   }
 }
