@@ -91,7 +91,7 @@
   - `index.ts` = thin config façade / environment assembly entrypoint
   - `provider-settings-snapshot.ts` = persisted provider settings readers
   - `provider-defaults-resolver.ts` = provider default model/reasoning normalization
-  - `provider-turn-config-resolver.ts` = Core-owned resolver for next-turn Codex/Gemini applied config from persisted Settings snapshot; `index.ts` consumes it before wiring provider defaults into runtime bootstrap
+  - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini applied config from persisted Settings snapshot; `index.ts` consumes the same source before wiring provider defaults into runtime bootstrap, and remote-bridge can query the provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
@@ -122,7 +122,7 @@
   - `gemini-applied-turn-config.ts` = reads Core-applied next-turn model payload for Gemini sends
   - `gemini-provider-adapter.ts` = consumes Core-applied model override on outbound send; provider-local bootstrap defaults remain only first-turn fallback until the next Core-owned send path applies a newer model
 - Claude SDK send path: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
-  - `claude-sdk-manager.ts` now derives active turn model from Core-applied turn config on send path; provider-local settings snapshot remains only for Claude thinking token options, not for deciding the current runtime model
+  - `claude-sdk-manager.ts` derives the active turn model from Core-applied turn config on send path; `handlers/session-request-handler-applied-turn-config.ts` resolves Claude `defaultModel` from the shared persisted settings snapshot before outbound send, so Claude no longer falls back to a stale process-start env alias when Settings change during a live Core session
 - Project Manager applied-config sync:
   - `src/client/project-manager/components/sessions/use-runtime-model-sync.ts` = session label updates only from Core-confirmed runtime model events, including reasoning refresh for same-model turns
   - `src/client/ui/src/app-host/use-settings-models-sync.ts` = ready sessions no longer guess a new model from settings before Core confirms the applied runtime config

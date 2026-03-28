@@ -23,6 +23,7 @@
 - Core частично шлёт runtime `session:model:update` events.
 - Provider modules частично читают settings сами.
 - Codex SDK manager дополнительно кеширует собственные `workspaceDefaults` и не гарантирует refresh перед каждым новым turn.
+- Даже после частичных фиксов легко остаться в branch-per-provider режиме, где новый provider или соседний send path требуют отдельного hotfix вместо расширения одного общего контракта.
 
 Пользовательский requirement для этого scope жёсткий:
 
@@ -97,6 +98,16 @@ Codex path особенно показателен:
 - operational plan врёт о реально активной работе;
 - carry-over tail нужно выделить в отдельную фазу и выполнять после закрытия model-switch work.
 
+### 3.5. Частичный parity fix не равен provider-neutral контракту
+
+Даже если конкретный provider временно починен, это ещё не означает, что архитектурный дефект класса закрыт.
+
+Следствие:
+
+- ветки `if (providerId === ...)` в Core bridge helpers продолжают разрастаться;
+- соседний provider может остаться на старом fallback path;
+- добавление нового provider рискует снова потребовать ручного hotfix в UI/bridge/runtime glue code.
+
 ---
 
 ## 4. Architecture Decisions
@@ -167,6 +178,16 @@ Project Manager должен показывать:
 - снять ложный `IN_PROGRESS`;
 - продолжать decomposition после закрытия проблем со сменой модели, не смешивая оба scope в один stream.
 
+### 4.7. Applied-config contract must become provider-neutral
+
+Фикс не должен масштабироваться как серия provider-specific patches.
+
+Решение:
+
+- `settings -> applied turn config -> outbound send -> runtime label sync` должен жить в одном provider-neutral Core contract;
+- новый provider должен подключаться через регистрацию capabilities / resolver hooks, а не через новые hardcoded ветки в remote-bridge и PM sync path;
+- provider-local код может оставаться provider-specific только в части технического применения уже вычисленного config к SDK/CLI runtime.
+
 ---
 
 ## 5. Work Packages
@@ -202,7 +223,15 @@ Project Manager должен показывать:
   - Core-owned effective config;
   - provider без собственного truth-layer поверх `settings.json`.
 
-### 5.5. Carry-Over SessionRequestHandler Tail
+### 5.5. Provider-Neutral Contract Generalization
+
+Цель пакета:
+
+- обобщить текущий model-switch pipeline до provider-neutral контракта;
+- убрать зависимость от branch-per-provider bridge logic;
+- сделать так, чтобы новый provider подключался через одну integration point, а не через новый набор hotfix-правок в Core/UI.
+
+### 5.6. Carry-Over SessionRequestHandler Tail
 
 Цель пакета:
 
@@ -224,4 +253,5 @@ Project Manager должен показывать:
 - PM session panel показывает ту же applied config, что реально ушла в runtime;
 - Core становится единственным владельцем расчёта applied turn config;
 - provider modules больше не принимают решение о текущем turn model/reasoning через самостоятельное чтение `settings.json`;
+- добавление нового provider не требует отдельного патча в PM label sync или remote-bridge applied-config glue code; достаточно зарегистрировать provider capabilities и provider-side apply path;
 - оставшийся хвост `session-request-handler.ts` decomposition закрыт отдельной фазой после model-switch scope и без ложных `IN_PROGRESS` статусов в operational plan.

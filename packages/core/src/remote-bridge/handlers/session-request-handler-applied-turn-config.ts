@@ -1,5 +1,7 @@
 import path from "node:path";
 import type { CoreConfig } from "../../config";
+import { resolveClaudeDefaultModel } from "../../config/provider-defaults-resolver";
+import { loadClaudeSettingsSnapshot } from "../../config/provider-settings-snapshot";
 import { resolveProviderTurnConfig } from "../../config/provider-turn-config-resolver";
 import {
   type AppliedProviderTurnConfig,
@@ -63,7 +65,34 @@ export class SessionRequestHandlerAppliedTurnConfig {
       };
     }
 
+    if (providerId === "claudeCodeCli") {
+      return {
+        providerId,
+        modelId: targetModelId ?? this.resolveClaudeSettingsDefaultModel(),
+        source: targetModelId ? "switch_request" : "settings_snapshot",
+      };
+    }
+
     return null;
+  }
+
+  private resolveClaudeSettingsDefaultModel(): string {
+    const snapshot = loadClaudeSettingsSnapshot(
+      this.resolveSharedSettingsPath()
+    ) as unknown;
+    const providers =
+      isRecord(snapshot) && isRecord(snapshot.providers)
+        ? snapshot.providers
+        : null;
+    const claude =
+      providers && isRecord(providers.claude) ? providers.claude : null;
+    const defaultModel =
+      typeof claude?.defaultModel === "string"
+        ? claude.defaultModel
+        : undefined;
+    return defaultModel
+      ? resolveClaudeDefaultModel(defaultModel)
+      : this.config.claudeDefaultModel;
   }
 
   private resolveSharedSettingsPath(): string {
@@ -73,3 +102,6 @@ export class SessionRequestHandlerAppliedTurnConfig {
     );
   }
 }
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);

@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { CoreConfig } from "../../config";
 import { SessionManager } from "../../session-manager";
-import type { BridgeEvent } from "../types";
+import { type BridgeEvent, readAppliedProviderTurnConfig } from "../types";
 import {
   type ProviderSessionBinding,
   SessionRequestHandler,
@@ -83,7 +85,13 @@ export const flushAsyncWork = async (): Promise<void> => {
   await new Promise<void>((resolve) => setImmediate(resolve));
 };
 
-export const createHarness = (): HandlerHarness => {
+export const createHarness = (
+  configOverrides: Partial<CoreConfig> = {}
+): HandlerHarness => {
+  const config: CoreConfig = {
+    ...TEST_CORE_CONFIG,
+    ...configOverrides,
+  };
   const sessionManager = new SessionManager();
   const events: BridgeEvent[] = [];
   const promoted: BindingUpdate[] = [];
@@ -107,7 +115,7 @@ export const createHarness = (): HandlerHarness => {
   };
 
   const handler = new SessionRequestHandler({
-    config: TEST_CORE_CONFIG,
+    config,
     sessionManager,
     providerRegistry: providerRegistry as never,
     sessionStorage: sessionStorage as never,
@@ -409,4 +417,79 @@ test("SessionRequestHandler emits model update from applied turn config on outbo
       modelId: "gpt-5.3-codex",
     },
   });
+});
+
+test("SessionRequestHandler applies Claude model from live settings snapshot on outbound send", async () => {
+  const tempDir = await mkdtemp(
+    path.join(tmpdir(), "codeai-hub-claude-model-sync-")
+  );
+  const sharedSettingsPath = path.join(tempDir, "settings.json");
+
+  try {
+    await writeFile(
+      sharedSettingsPath,
+      `${JSON.stringify(
+        {
+          providers: {
+            claude: {
+              defaultModel: "sonnet",
+            },
+          },
+        },
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+
+    const harness = createHarness({
+      claudeSettingsPath: path.join(tempDir, "claude.json"),
+      claudeDefaultModel: "opus",
+    });
+    const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+    const session = harness.sessionManager.createSession(
+      "claudeCodeCli",
+      "/tmp/claude-runtime-model-update"
+    );
+
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        _content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sentTurnOptions.push(turnOptions);
+        return Promise.resolve();
+      },
+    });
+    harness.providerSessions.set(session.id, {
+      providerId: "claudeCodeCli",
+      providerSessionId: "provider-session-claude",
+      unsubscribe: noop,
+    });
+
+    await harness.handler.handleMessage(session.id, "start on sonnet");
+
+    assert.deepEqual(readAppliedProviderTurnConfig(sentTurnOptions[0]), {
+      providerId: "claudeCodeCli",
+      modelId: "sonnet",
+      source: "settings_snapshot",
+      reasoningEffort: undefined,
+      thinkingLevel: undefined,
+    });
+
+    const modelUpdate = harness.events.find(
+      (event) => event.type === "session:model:update"
+    );
+    assert.deepEqual(modelUpdate, {
+      type: "session:model:update",
+      payload: {
+        sessionId: session.id,
+        providerId: "claudeCodeCli",
+        modelId: "sonnet",
+      },
+    });
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
 });

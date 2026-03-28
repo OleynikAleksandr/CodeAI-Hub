@@ -3,7 +3,7 @@
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session181.md`, `doc/SolidWorks-WorkFlow/Plans/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- Этот `TODO Plan` реализует два согласованных scope: (1) refactor `settings -> Core -> provider runtime -> PM` для единой source of truth по `model` / `reasoning`, (2) carry-over tail декомпозиции `session-request-handler.ts`
+- Этот `TODO Plan` реализует три согласованных scope: (1) refactor `settings -> Core -> provider runtime -> PM` для единой source of truth по `model` / `reasoning`, (2) provider-neutral generalization этого контракта без branch-per-provider hotfix path, (3) carry-over tail декомпозиции `session-request-handler.ts`
 - Текущий baseline `1.1.829` считается рабочим; scope ограничен behavior-preserving refactor + runtime config contract cleanup, без нового product feature scope
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
@@ -28,6 +28,7 @@
 - Codex реально переключает модель/`reasoning` на очередном новом turn, а не только в UI label;
 - PM показывает applied runtime config, а не независимую локальную догадку;
 - Gemini / Claude / Codex приходят к одному контракту next-turn model switching;
+- новый provider подключается к model-sync pipeline через одну provider-neutral integration point, без отдельных патчей в PM sync и remote-bridge glue code;
 - после этого остаточный tail декомпозиции `session-request-handler.ts` закрыт отдельной честной фазой без ложных `IN_PROGRESS` статусов.
 
 ---
@@ -62,20 +63,42 @@
 13. [DONE] После закрытия всех stream-ов `Phase 80` выполнить отдельную сборку промежуточного релиза строго по Release Build Checklist: актуализировать release-facing docs, добиться чистого дерева, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты и session report для отдельного пользовательского тестирования model-switch scope. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release 1.1.830`
 14. [DONE] Git Commit: `chore: release 1.1.830` (hash: `2b831e8a`)
 
+## Phase 80A — Provider-Neutral Applied Config Generalization (owner: Oleksandr, updated: 2026-03-28)
+
+### Stream: Core provider turn-config registry
+15. [DONE] Убрать branch-per-provider вычисление applied config из bridge helper path и свести `settings -> applied turn config` к единому registry/resolver contract, который покрывает Claude/Codex/Gemini и масштабируется на новые provider ids без новых `if (providerId === ...)` в runtime bridge. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/config/provider-settings-snapshot.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): centralize provider turn config registry`
+16. [DONE] Git Commit: `refactor(core): centralize provider turn config registry` (hash: TBD)
+
+### Stream: Provider-neutral outbound bridge contract
+17. [TODO] Свести attachment outbound applied config и `session:model:update` broadcast к одному provider-neutral helper, чтобы send/switch/UI sync path работал через единый envelope и не знал деталей отдельных провайдеров. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/types.ts`. Expected commit: `refactor(core): unify applied config bridge contract`
+18. [TODO] Git Commit: `refactor(core): unify applied config bridge contract` (hash: TBD)
+
+### Stream: Provider capability registration
+19. [TODO] Ввести в provider registry явный capability/contract для runtime model apply и label-sync eligibility, чтобы новый provider подключался через регистрацию возможностей, а не через разрозненные hardcoded checks по `providerId`. Scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): register provider model sync capabilities`
+20. [TODO] Git Commit: `refactor(core): register provider model sync capabilities` (hash: TBD)
+
+### Stream: Provider adoption parity sweep
+21. [TODO] Привести Claude/Codex/Gemini к одному provider-side apply contract поверх общего envelope: каждый модуль применяет runtime model/thinking через одинаковую точку чтения applied config без собственного truth-layer из `settings.json`. Scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`. Expected commit: `refactor(providers): adopt shared applied config contract`
+22. [TODO] Git Commit: `refactor(providers): adopt shared applied config contract` (hash: TBD)
+
+### Stream: Verification release after provider-neutral generalization
+23. [TODO] После закрытия `Phase 80A` выполнить отдельную verification-сборку и регрессионную проверку model-switch matrix для Claude/Codex/Gemini на fresh-session и existing-session путях, затем зафиксировать артефакты и session report. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release provider-neutral model sync verification`
+24. [TODO] Git Commit: `chore: release provider-neutral model sync verification` (hash: TBD)
+
 ## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-28)
 
 ### Stream: Continuity root carry-over
-15. [TODO] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
-16. [TODO] Git Commit: `refactor(core): extract session request continuity root` (hash: TBD)
+25. [TODO] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
+26. [TODO] Git Commit: `refactor(core): extract session request continuity root` (hash: TBD)
 
 ### Stream: Turn arbitration carry-over
-17. [TODO] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в отдельный helper, сохранив `turn_completed` / `token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`
-18. [TODO] Git Commit: `refactor(core): extract session request turn arbitration` (hash: TBD)
+27. [TODO] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в отдельный helper, сохранив `turn_completed` / `token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`
+28. [TODO] Git Commit: `refactor(core): extract session request turn arbitration` (hash: TBD)
 
 ### Stream: Thin façade closure
-19. [TODO] Свести `session-request-handler.ts` к thin orchestration surface, синхронно обновить SSOT и снять root file с explicit oversized allowlist, если после предыдущих cuts он реально опустится до `300` строк или ниже. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thin session request handler facade`
-20. [TODO] Git Commit: `refactor(core): thin session request handler facade` (hash: TBD)
+29. [TODO] Свести `session-request-handler.ts` к thin orchestration surface, синхронно обновить SSOT и снять root file с explicit oversized allowlist, если после предыдущих cuts он реально опустится до `300` строк или ниже. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thin session request handler facade`
+30. [TODO] Git Commit: `refactor(core): thin session request handler facade` (hash: TBD)
 
 ### Stream: Final release build after full plan closure
-21. [TODO] После закрытия `Phase 81` выполнить финальную сборку релиза строго по Release Build Checklist: обновить release-facing docs, убедиться в чистом дереве, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить артефакты, обновить `todo-plan.md` и оформить новый session report для отдельного полного регрессионного тестирования. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release post-plan verification build`
-22. [TODO] Git Commit: `chore: release post-plan verification build` (hash: TBD)
+31. [TODO] После закрытия `Phase 81` выполнить финальную сборку релиза строго по Release Build Checklist: обновить release-facing docs, убедиться в чистом дереве, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить артефакты, обновить `todo-plan.md` и оформить новый session report для отдельного полного регрессионного тестирования. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release post-plan verification build`
+32. [TODO] Git Commit: `chore: release post-plan verification build` (hash: TBD)

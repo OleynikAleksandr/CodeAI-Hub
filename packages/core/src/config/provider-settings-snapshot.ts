@@ -5,14 +5,26 @@ export interface CodexSettingsSnapshot {
   readonly reasoningByModel?: unknown;
 }
 
+export interface ClaudeProviderSettingsSnapshot {
+  readonly defaultModel?: unknown;
+  readonly sessionContinuity?: {
+    readonly remainingPercentThreshold?: unknown;
+  };
+  readonly thinking?: unknown;
+}
+
 export interface ClaudeSettingsSnapshot {
+  readonly defaultModel?: unknown;
   readonly providers?: {
     readonly claude?: {
+      readonly defaultModel?: unknown;
       readonly sessionContinuity?: {
         readonly remainingPercentThreshold?: unknown;
       };
+      readonly thinking?: unknown;
     };
   };
+  readonly thinking?: unknown;
 }
 
 export interface GeminiSettingsSnapshot {
@@ -50,6 +62,12 @@ const loadProviderSnapshot = (
   return provider;
 };
 
+export const loadProviderSettingsSnapshot = (
+  settingsPath: string,
+  providerId: string
+): Record<string, unknown> | null =>
+  loadProviderSnapshot(settingsPath, providerId);
+
 export const loadCodexSettingsSnapshot = (
   settingsPath: string
 ): CodexSettingsSnapshot | null => {
@@ -75,6 +93,26 @@ export const loadGeminiSettingsSnapshot = (
   return {
     defaultModel: gemini.defaultModel,
     thinkingLevelByModel: gemini.thinkingLevelByModel,
+  };
+};
+
+export const loadClaudeProviderSettingsSnapshot = (
+  settingsPath: string
+): ClaudeProviderSettingsSnapshot | null => {
+  const claude = loadProviderSnapshot(settingsPath, "claude");
+  if (!claude) {
+    return null;
+  }
+
+  return {
+    defaultModel: claude.defaultModel,
+    thinking: claude.thinking,
+    sessionContinuity: isRecord(claude.sessionContinuity)
+      ? {
+          remainingPercentThreshold:
+            claude.sessionContinuity.remainingPercentThreshold,
+        }
+      : undefined,
   };
 };
 

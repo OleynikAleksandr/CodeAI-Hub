@@ -2,11 +2,13 @@ import type { CodexReasoningEffort } from "./provider-defaults-resolver";
 import {
   normalizeCodexModelFromSettings,
   normalizeCodexReasoningEffort,
+  resolveClaudeDefaultModel,
   resolveCodexReasoningFromSettings,
   resolveGeminiThinkingFromSettings,
   resolvePreferredCodexDefaultModel,
 } from "./provider-defaults-resolver";
 import {
+  loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
 } from "./provider-settings-snapshot";
@@ -30,7 +32,23 @@ export interface ResolvedGeminiTurnConfig {
   readonly thinkingLevelByModel: Record<string, string>;
 }
 
+export interface ResolvedClaudeTurnConfig {
+  readonly defaultModel: string;
+}
+
+export interface ResolvedProviderTurnConfigEntry {
+  readonly defaultModel?: string;
+  readonly defaultReasoningEffort?: CodexReasoningEffort;
+  readonly providerId: string;
+  readonly reasoningByModel?: Record<string, CodexReasoningEffort>;
+  readonly thinkingLevelByModel?: Record<string, string>;
+}
+
 export interface ResolvedProviderTurnConfig {
+  readonly byProviderId: Readonly<
+    Record<string, ResolvedProviderTurnConfigEntry>
+  >;
+  readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
 }
@@ -86,9 +104,67 @@ const resolveGeminiTurnConfig = (
   };
 };
 
+const resolveClaudeTurnConfig = (
+  options: ProviderTurnConfigResolverOptions
+): ResolvedClaudeTurnConfig => {
+  const snapshot = loadClaudeProviderSettingsSnapshot(options.settingsPath);
+  const settingsDefaultModel =
+    typeof snapshot?.defaultModel === "string"
+      ? resolveClaudeDefaultModel(snapshot.defaultModel)
+      : undefined;
+
+  return {
+    defaultModel:
+      settingsDefaultModel ??
+      normalizeOptionalString(options.env.CLAUDE_DEFAULT_MODEL) ??
+      "sonnet",
+  };
+};
+
+const buildResolvedProviderConfigRegistry = (resolved: {
+  readonly claude: ResolvedClaudeTurnConfig;
+  readonly codex: ResolvedCodexTurnConfig;
+  readonly gemini: ResolvedGeminiTurnConfig;
+}): Readonly<Record<string, ResolvedProviderTurnConfigEntry>> => ({
+  claudeCodeCli: {
+    providerId: "claudeCodeCli",
+    defaultModel: resolved.claude.defaultModel,
+  },
+  codexCli: {
+    providerId: "codexCli",
+    defaultModel: resolved.codex.defaultModel,
+    defaultReasoningEffort: resolved.codex.defaultReasoningEffort,
+    reasoningByModel: resolved.codex.reasoningByModel,
+  },
+  geminiCli: {
+    providerId: "geminiCli",
+    defaultModel: resolved.gemini.defaultModel,
+    thinkingLevelByModel: resolved.gemini.thinkingLevelByModel,
+  },
+});
+
 export const resolveProviderTurnConfig = (
   options: ProviderTurnConfigResolverOptions
-): ResolvedProviderTurnConfig => ({
-  codex: resolveCodexTurnConfig(options),
-  gemini: resolveGeminiTurnConfig(options),
-});
+): ResolvedProviderTurnConfig => {
+  const claude = resolveClaudeTurnConfig(options);
+  const codex = resolveCodexTurnConfig(options);
+  const gemini = resolveGeminiTurnConfig(options);
+
+  return {
+    claude,
+    codex,
+    gemini,
+    byProviderId: buildResolvedProviderConfigRegistry({
+      claude,
+      codex,
+      gemini,
+    }),
+  };
+};
+
+export const resolveProviderTurnConfigEntry = (
+  options: ProviderTurnConfigResolverOptions & {
+    readonly providerId: string;
+  }
+): ResolvedProviderTurnConfigEntry | null =>
+  resolveProviderTurnConfig(options).byProviderId[options.providerId] ?? null;
