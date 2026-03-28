@@ -1,8 +1,8 @@
-# Session 174 — Gemini/Core crash investigation for release 1.1.822
+# Session 174 — Gemini/Core crash investigation and diagnostic release 1.1.823
 
-**Date:** 2026-03-28 12:59 (CET)
+**Date:** 2026-03-28 13:26 (CET)
 **Branch:** main
-**Version:** 1.1.822
+**Version:** 1.1.823
 
 ---
 
@@ -16,6 +16,8 @@
 - Выявлено, что Gemini как provider завершает turn успешно, но Core погибает уже после или во время post-turn обработки событий.
 - Зафиксирована вторая важная аномалия: одни и те же `thinking`-сообщения Gemini сохраняются в session history по 2-3 раза, хотя в SDK log такого дублирования нет.
 - Для следующего диагностического релиза добавлены два внешних контура логирования: `~/.codeai-hub/logs/core/core-fatal.log` для аварийных падений Core и `~/.codeai-hub/logs/observer/bridge-observer.log` для extension-side keepalive/observer событий.
+- Собран диагностический релиз `1.1.823`: `build-all.sh` выполнил version bump и tarball packaging, затем `build-release.sh --use-current-version` успешно собрал VSIX `codeai-hub-1.1.823.vsix`.
+- `README.md` и `CHANGELOG.md` синхронизированы с релизом `1.1.823` и описывают новый диагностический лог-контур.
 
 ## Reproduction summary
 
@@ -141,7 +143,8 @@
 
 ## Git commits
 
-- Нет новых commit-ов в этой сессии расследования; изменения ограничены session report.
+- `99df487c chore: add core crash diagnostics`
+- `00c80e54 chore: release 1.1.823`
 
 ---
 
@@ -151,19 +154,20 @@
 
 1. `doc/Sessions/Session174.md` (THIS REPORT)
 2. `doc/Sessions/Session173.md`
-3. `doc/TODO/todo-plan.md`
-4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-5. `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
-6. `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`
-7. `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`
-8. `packages/Gemini_Module/src/session/gemini-session-manager.ts`
-9. `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`
+3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+4. `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
+5. `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`
+6. `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`
+7. `packages/Gemini_Module/src/session/gemini-session-manager.ts`
+8. `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`
+9. `packages/core/src/index.ts`
+10. `src/extension-module/core/core-keep-alive.ts`
 
 ## Plans for next session
 
+- Не трогать текущий `doc/TODO/todo-plan.md`: по прямой инструкции пользователя он уже содержит другой scope и должен оставаться без изменений до устранения Gemini crash bug.
 - Предметно разобрать Gemini/Core event path после `sendMessage()` до финальных post-turn событий.
 - Проверить, где и почему на один `providerSessionId` возникает повторная подписка или повторный bind.
-- Добавить диагностическое логирование вокруг финального event dispatch path и around post-turn events.
-- Проверить, есть ли в Core startup глобальная защита/логирование для `uncaughtException` и `unhandledRejection`.
-- Снять новый repro уже на диагностическом релизе и сверить `core-fatal.log` с `bridge-observer.log`.
+- Снять новый repro уже на релизе `1.1.823` и собрать артефакты из `~/.codeai-hub/logs/core/core-fatal.log` и `~/.codeai-hub/logs/observer/bridge-observer.log`.
+- Добавить точечное диагностическое логирование вокруг финального event dispatch path и around post-turn events, если текущих двух контуров окажется недостаточно.
 - После локализации точки падения подготовить минимальный фикс без расширения scope за пределы bugfix.
