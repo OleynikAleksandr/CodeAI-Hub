@@ -27,11 +27,12 @@
 
 ## Git commits
 
-- `TBD docs(architecture): plan phase79 remaining audit debt closure`
+- `dd203a6e docs(architecture): plan phase79 remaining audit debt closure`
 
 ## Working tree state
 
-- Этот docs/session commit фиксирует новый planning-doc и активацию `Phase 79`.
+- После structural docs commit рабочее дерево было чистым.
+- Текущий docs/session commit только фиксирует `Session173.md` с реальным hash planning-коммита.
 - Следующая рабочая сессия должна стартовать уже не с placeholder, а с первого stream-а `Phase 79`.
 
 ---
