@@ -11,11 +11,13 @@ import {
   type ModuleEntity,
   type ModuleKind,
   type ModuleMapModel,
-  type ModuleRelation,
   type ProductPartEntity,
-  RELATION_TYPES,
-  type RelationType,
 } from "./diagram-dsl-types";
+import {
+  type ParsedRelation,
+  parseRelationsSection,
+  validateRelationEndpoints,
+} from "./diagram-relations-parser";
 import {
   type Block,
   buildParseFailure,
@@ -34,7 +36,6 @@ const PRODUCT_PART_HEADER_RE = /^### Product Part: (.+)$/;
 const CLUSTER_HEADER_RE = /^### Cluster: (.+)$/;
 const STANDALONE_MODULE_HEADER_RE = /^### Module: (.+)$/;
 const NESTED_MODULE_HEADER_RE = /^#### Module: (.+)$/;
-const RELATION_HEADER_RE = /^### Relation: (.+)$/;
 const INVENTORY_SECTION_NAMES = new Set([
   "Metadata",
   "Product Parts",
@@ -57,10 +58,6 @@ type ParsedProductPart = ProductPartEntity & {
 };
 
 type ParsedModule = ModuleEntity & {
-  readonly sourceLine: number;
-};
-
-type ParsedRelation = ModuleRelation & {
   readonly sourceLine: number;
 };
 
@@ -433,50 +430,6 @@ const parseModule = (
     status: base.status,
     notes: fields.notes,
     rationale: fields.rationale,
-    sourceLine: block.line,
-  };
-};
-
-const parseRelation = (
-  block: Block,
-  warnings: MarkdownDslParseWarning[]
-): ParsedRelation | MarkdownDslParseError => {
-  const fields = parseFields(block, warnings);
-  const base = parseBaseEntity(fields, block, "Relation");
-  const from = required(fields, "From", block.line);
-  const to = required(fields, "To", block.line);
-  const type = required(fields, "Type", block.line);
-  const criticality = fields.scalars.get("Criticality")?.trim();
-  if ("code" in base) {
-    return base;
-  }
-  if (typeof from !== "string") {
-    return from;
-  }
-  if (typeof to !== "string") {
-    return to;
-  }
-  if (typeof type !== "string") {
-    return type;
-  }
-  if (
-    !isOneOf(type, RELATION_TYPES) ||
-    (criticality && !isOneOf(criticality, ["high", "medium", "low"] as const))
-  ) {
-    return {
-      code: "invalid-metadata",
-      line: block.line,
-      message: `Invalid relation enum value for ${base.id}`,
-    };
-  }
-  return {
-    ...base,
-    from,
-    to,
-    type: type as RelationType,
-    label: fields.scalars.get("Label")?.trim() || undefined,
-    criticality: criticality as ParsedRelation["criticality"],
-    notes: fields.notes,
     sourceLine: block.line,
   };
 };
@@ -945,30 +898,6 @@ const validateModuleUniqueness = (
   return null;
 };
 
-const validateRelationEndpoints = (
-  modules: readonly { readonly id: string }[],
-  relations: readonly ParsedRelation[]
-): MarkdownDslParseError | null => {
-  const moduleIds = new Set(modules.map((module) => module.id));
-  for (const relation of relations) {
-    if (!moduleIds.has(relation.from)) {
-      return {
-        code: "invalid-metadata",
-        line: relation.sourceLine,
-        message: `Relation ${relation.id} references unknown module ${relation.from}`,
-      };
-    }
-    if (!moduleIds.has(relation.to)) {
-      return {
-        code: "invalid-metadata",
-        line: relation.sourceLine,
-        message: `Relation ${relation.id} references unknown module ${relation.to}`,
-      };
-    }
-  }
-  return null;
-};
-
 const validateInventorySections = (
   titleLine: number,
   warnings: readonly MarkdownDslParseWarning[],
@@ -1173,16 +1102,14 @@ export const parseDiagramModulesDsl = (
   if ("ok" in ownership) {
     return ownership;
   }
-  const parsedRelations = parseEntityCollection(
-    collectBlocks(validatedSections.relations, RELATION_HEADER_RE, warnings),
-    warnings,
-    parseRelation,
-    "relation"
+  const relationResult = parseRelationsSection(
+    validatedSections.relations,
+    warnings
   );
-  if (!Array.isArray(parsedRelations)) {
-    return parsedRelations as MarkdownDslParseResult;
+  if ("ok" in relationResult) {
+    return relationResult;
   }
-  const relationRecords = parsedRelations as readonly ParsedRelation[];
+  const relationRecords = relationResult;
 
   const uniqueModulesError = validateModuleUniqueness(
     ownership.clusters,
