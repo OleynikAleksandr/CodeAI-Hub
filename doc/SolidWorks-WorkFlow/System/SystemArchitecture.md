@@ -191,6 +191,7 @@
 - The Module Graph is built progressively from individual `product-parts/<part-id>.md` files; no single aggregate file is generated.
 - Начиная с ownership-aware migration (`2026-03-21`), canonical inventory model для `Diagram Modules` включает явный верхний уровень `Product Part -> Cluster -> Module`.
 - Parser/runtime обязаны поддерживать dual-read migration path: новый hierarchical DSL читает explicit `Product Parts`, а legacy flat inventories временно materialize synthetic `default-product-part`, чтобы старые workspace artifacts оставались parseable без ручной миграции.
+- Начиная с cleanup wave `2026-03-28`, `diagram-modules-parser.ts` больше не является god-parser: root file сведен к thin orchestration surface, а relation/module/cluster/product-part/legacy ownership parsing вынесены в отдельные focused helpers.
 - Graph canvas continues to allow manual layout edits, and those changes remain in `module-map.flow.json` only.
 - Provenance and merge handling stay in the agent/runtime path, not in the visible surface.
 
