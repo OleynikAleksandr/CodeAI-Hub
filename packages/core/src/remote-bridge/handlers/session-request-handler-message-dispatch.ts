@@ -1,9 +1,14 @@
 import type { ProviderRegistry } from "../../provider-registry";
+import { resolveProviderModelSyncCapabilities } from "../../provider-registry/provider-descriptor-factory";
 import type { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import { type BridgeEvent, readAppliedProviderTurnConfig } from "../types";
+import {
+  type BridgeEvent,
+  readAppliedProviderTurnConfig,
+  shouldBroadcastAppliedProviderModelUpdate,
+} from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
@@ -253,19 +258,22 @@ export class SessionRequestHandlerMessageDispatch {
         turnOptions,
       }
     );
-    const appliedConfig = readAppliedProviderTurnConfig(providerTurnOptions);
-    if (
-      !appliedConfig?.modelId ||
-      appliedConfig.source !== "settings_snapshot"
-    ) {
+    const modelUpdateEligibility = {
+      turnConfig: readAppliedProviderTurnConfig(providerTurnOptions),
+      syncsLabelFromAppliedConfig:
+        resolveProviderModelSyncCapabilities(providerId)
+          .syncsLabelFromAppliedConfig,
+    };
+    if (!shouldBroadcastAppliedProviderModelUpdate(modelUpdateEligibility)) {
       return providerTurnOptions;
     }
+    const { turnConfig } = modelUpdateEligibility;
     this.deps.broadcaster({
       type: "session:model:update",
       payload: {
         sessionId,
-        providerId: appliedConfig.providerId,
-        modelId: appliedConfig.modelId,
+        providerId: turnConfig.providerId,
+        modelId: turnConfig.modelId,
       },
     });
     return providerTurnOptions;

@@ -90,6 +90,18 @@ export const readAppliedProviderTurnConfig = (
   };
 };
 
+export const shouldBroadcastAppliedProviderModelUpdate = (options: {
+  readonly syncsLabelFromAppliedConfig: boolean;
+  readonly turnConfig: AppliedProviderTurnConfig | null;
+}): options is {
+  readonly syncsLabelFromAppliedConfig: true;
+  readonly turnConfig: AppliedProviderTurnConfig & { readonly modelId: string };
+} =>
+  options.syncsLabelFromAppliedConfig &&
+  typeof options.turnConfig?.modelId === "string" &&
+  options.turnConfig.modelId.trim().length > 0 &&
+  options.turnConfig.source === "settings_snapshot";
+
 export interface CoreStatePayload {
   readonly providers: ReturnType<ProviderRegistry["listProviders"]>;
   readonly sessions: readonly SerializedSession[];

@@ -129,6 +129,7 @@ export const loadConfig = (): CoreConfig => {
   const providerTurnConfig = resolveProviderTurnConfig({
     settingsPath: CODEX_SETTINGS_PATH,
     env: process.env,
+    fallbackClaudeModel: claudeDefaultModel,
     fallbackCodexModel: DEFAULT_CODEX_MODEL_ID,
     fallbackCodexReasoningEffort: DEFAULT_CODEX_REASONING_EFFORT,
     fallbackGeminiModel: process.env.GEMINI_DEFAULT_MODEL ?? undefined,

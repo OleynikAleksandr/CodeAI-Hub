@@ -1,8 +1,7 @@
 import path from "node:path";
 import type { CoreConfig } from "../../config";
-import { resolveClaudeDefaultModel } from "../../config/provider-defaults-resolver";
-import { loadClaudeSettingsSnapshot } from "../../config/provider-settings-snapshot";
-import { resolveProviderTurnConfig } from "../../config/provider-turn-config-resolver";
+import { resolveProviderTurnConfigEntry } from "../../config/provider-turn-config-resolver";
+import { resolveProviderModelSyncCapabilities } from "../../provider-registry/provider-descriptor-factory";
 import {
   type AppliedProviderTurnConfig,
   withAppliedProviderTurnConfig,
@@ -32,67 +31,40 @@ export class SessionRequestHandlerAppliedTurnConfig {
     providerId: string,
     targetModelId?: string
   ): AppliedProviderTurnConfig | null {
-    const resolved = resolveProviderTurnConfig({
+    const capabilities = resolveProviderModelSyncCapabilities(providerId);
+    if (!capabilities.acceptsAppliedTurnConfig) {
+      return null;
+    }
+
+    const resolved = resolveProviderTurnConfigEntry({
       settingsPath: this.resolveSharedSettingsPath(),
       env: process.env,
+      providerId,
+      fallbackClaudeModel: this.config.claudeDefaultModel,
       fallbackCodexModel: this.config.codexDefaultModel ?? "gpt-5.3-codex",
       fallbackCodexReasoningEffort:
         this.config.codexDefaultReasoningEffort ?? "medium",
       fallbackGeminiModel: this.config.geminiDefaultModel,
     });
-
-    if (providerId === "codexCli") {
-      const modelId = targetModelId ?? resolved.codex.defaultModel;
-      return {
-        providerId,
-        modelId,
-        reasoningEffort:
-          resolved.codex.reasoningByModel[modelId] ??
-          resolved.codex.defaultReasoningEffort,
-        source: targetModelId ? "switch_request" : "settings_snapshot",
-      };
+    if (!resolved) {
+      return null;
     }
 
-    if (providerId === "geminiCli") {
-      const modelId = targetModelId ?? resolved.gemini.defaultModel;
-      return {
-        providerId,
-        modelId,
-        thinkingLevel: modelId
-          ? resolved.gemini.thinkingLevelByModel[modelId]
+    const modelId = targetModelId ?? resolved.defaultModel;
+    return {
+      providerId,
+      modelId,
+      reasoningEffort:
+        modelId && resolved.reasoningByModel
+          ? (resolved.reasoningByModel[modelId] ??
+            resolved.defaultReasoningEffort)
+          : resolved.defaultReasoningEffort,
+      source: targetModelId ? "switch_request" : "settings_snapshot",
+      thinkingLevel:
+        modelId && resolved.thinkingLevelByModel
+          ? resolved.thinkingLevelByModel[modelId]
           : undefined,
-        source: targetModelId ? "switch_request" : "settings_snapshot",
-      };
-    }
-
-    if (providerId === "claudeCodeCli") {
-      return {
-        providerId,
-        modelId: targetModelId ?? this.resolveClaudeSettingsDefaultModel(),
-        source: targetModelId ? "switch_request" : "settings_snapshot",
-      };
-    }
-
-    return null;
-  }
-
-  private resolveClaudeSettingsDefaultModel(): string {
-    const snapshot = loadClaudeSettingsSnapshot(
-      this.resolveSharedSettingsPath()
-    ) as unknown;
-    const providers =
-      isRecord(snapshot) && isRecord(snapshot.providers)
-        ? snapshot.providers
-        : null;
-    const claude =
-      providers && isRecord(providers.claude) ? providers.claude : null;
-    const defaultModel =
-      typeof claude?.defaultModel === "string"
-        ? claude.defaultModel
-        : undefined;
-    return defaultModel
-      ? resolveClaudeDefaultModel(defaultModel)
-      : this.config.claudeDefaultModel;
+    };
   }
 
   private resolveSharedSettingsPath(): string {
@@ -102,6 +74,3 @@ export class SessionRequestHandlerAppliedTurnConfig {
     );
   }
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);

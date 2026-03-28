@@ -15,6 +15,7 @@ import {
 
 interface ProviderTurnConfigResolverOptions {
   readonly env: NodeJS.ProcessEnv;
+  readonly fallbackClaudeModel: string;
   readonly fallbackCodexModel: string;
   readonly fallbackCodexReasoningEffort: CodexReasoningEffort;
   readonly fallbackGeminiModel?: string;
@@ -117,7 +118,7 @@ const resolveClaudeTurnConfig = (
     defaultModel:
       settingsDefaultModel ??
       normalizeOptionalString(options.env.CLAUDE_DEFAULT_MODEL) ??
-      "sonnet",
+      options.fallbackClaudeModel,
   };
 };
 
