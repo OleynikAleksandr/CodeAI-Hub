@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.829] - 2026-03-28
+### Fixed
+- **Runtime model labels now refresh reasoning/thinking from settings**: Project Manager no longer freezes the `reasoning` / `thinking` suffix when a session is already marked with a runtime model override. The active runtime model is preserved, but its reasoning/thinking label is rebuilt from the latest settings snapshot on refresh.
+
 ## [1.1.828] - 2026-03-28
 ### Fixed
 - **Forced live session model refresh**: Project Manager now tracks whether a session status model label came from `settings` or from a runtime `session:model:update` event. This prevents stale settings-era model IDs from being preserved as fake runtime overrides after a model change, and the standard runtime session panel now subscribes to `session:model:update` just like the dialog panel.
