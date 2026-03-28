@@ -1,29 +1,8 @@
 import { useEffect } from "react";
-import type { ModelInfo, SessionRecord } from "../../../../types/session";
+import type { SessionRecord } from "../../../../types/session";
 import type { Settings } from "../components/settings/settings-state-model";
 import type { SessionSnapshots } from "../session/helpers";
-import {
-  buildModelInfo,
-  buildModelInfoList,
-} from "../session/model-info-builder";
-
-const hasRuntimeModelOverride = (
-  snapshot: SessionSnapshots[string]
-): boolean => {
-  const currentModel = snapshot.status.models?.[0];
-  return currentModel?.source === "runtime";
-};
-
-const syncRuntimeModelWithSettings = (
-  currentModel: ModelInfo,
-  settings: Settings
-): ModelInfo =>
-  buildModelInfo(
-    currentModel.providerId,
-    settings,
-    currentModel.modelId,
-    "runtime"
-  );
+import { buildModelInfoList } from "../session/model-info-builder";
 
 const applySettingsModels = (
   previous: SessionSnapshots,
@@ -37,29 +16,15 @@ const applySettingsModels = (
     if (!snapshot) {
       continue;
     }
-    const newModels = buildModelInfoList(session.providerIds, settings);
-    // Runtime model was changed (e.g., switch_model) — preserve the override.
-    if (hasRuntimeModelOverride(snapshot)) {
-      const currentModels = snapshot.status.models ?? [];
-      const mergedRuntimeModels = currentModels.map((model, index) =>
-        model.source === "runtime"
-          ? syncRuntimeModelWithSettings(model, settings)
-          : (newModels[index] ?? model)
-      );
-      const modelsChanged =
-        JSON.stringify(mergedRuntimeModels) !==
-        JSON.stringify(snapshot.status.models);
-      if (modelsChanged) {
-        hasChanges = true;
-        next[session.id] = {
-          ...snapshot,
-          status: { ...snapshot.status, models: mergedRuntimeModels },
-        };
-        continue;
-      }
+    const currentModels = snapshot.status.models ?? [];
+    const currentModel = currentModels[0];
+    const sessionReady = snapshot.binding.status === "ready";
+    if (sessionReady && currentModel) {
       next[session.id] = snapshot;
       continue;
     }
+
+    const newModels = buildModelInfoList(session.providerIds, settings);
     const modelsChanged =
       JSON.stringify(newModels) !== JSON.stringify(snapshot.status.models);
     if (modelsChanged) {

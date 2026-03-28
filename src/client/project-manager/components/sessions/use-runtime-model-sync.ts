@@ -10,18 +10,38 @@
 import { useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { api } from "../../api";
+import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
+import { buildModelInfo } from "../../../ui/src/session/model-info-builder";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 
-const formatModelDisplayName = (modelId: string): string =>
-  modelId
-    .split("-")
-    .map((part) => (part.length > 0 ? part[0].toUpperCase() + part.slice(1) : part))
-    .join(" ");
+const modelInfoChanged = (
+  left: {
+    readonly modelDisplayName: string;
+    readonly modelId: string;
+    readonly providerId: string;
+    readonly reasoning?: string;
+    readonly source?: "settings" | "runtime";
+  },
+  right: {
+    readonly modelDisplayName: string;
+    readonly modelId: string;
+    readonly providerId: string;
+    readonly reasoning?: string;
+    readonly source?: "settings" | "runtime";
+  }
+): boolean =>
+  left.modelId !== right.modelId ||
+  left.modelDisplayName !== right.modelDisplayName ||
+  left.providerId !== right.providerId ||
+  left.reasoning !== right.reasoning ||
+  left.source !== right.source;
 
 export const useRuntimeModelSync = (
   activeSessionId: string | null,
   setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>
 ): void => {
+  const { settings } = useProjectManagerSettings();
+
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message) => {
       if (message.type !== "session:model:update") {
@@ -55,16 +75,18 @@ export const useRuntimeModelSync = (
           return previous;
         }
         const currentModel = models[0];
-        if (currentModel.modelId === modelId) {
+        const updatedModel = buildModelInfo(
+          (payload.providerId as typeof currentModel.providerId | undefined) ??
+            currentModel.providerId,
+          settings,
+          modelId,
+          "runtime"
+        );
+        if (!modelInfoChanged(currentModel, updatedModel)) {
           return previous;
         }
         const updatedModels = [
-          {
-            ...currentModel,
-            modelId,
-            modelDisplayName: formatModelDisplayName(modelId),
-            source: "runtime" as const,
-          },
+          updatedModel,
           ...models.slice(1),
         ];
         return {
@@ -79,5 +101,5 @@ export const useRuntimeModelSync = (
     return () => {
       unsubscribe();
     };
-  }, [activeSessionId, setSnapshots]);
+  }, [activeSessionId, settings, setSnapshots]);
 };
