@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.826] - 2026-03-28
+### Changed
+- **Phase 79 session-request-handler decomposition**: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` now offloads bootstrap, session resolution, message dispatch, flow-node rollover/report state, dialog segment metadata, provider-event message persistence/parsing, and retry/pending-intent state into dedicated helper modules while preserving the existing runtime behavior.
+- **Repository truthfulness baseline**: root metadata, release workflow wording, and hook ownership are aligned around the real Husky-first process; stale Lefthook leftovers are removed from the active dependency/workflow surface.
+
+### Added
+- **Public CI baseline**: `.github/workflows/ci.yml` now runs the root repository gates (`check:architecture`, `lint`, `check:tsprune`, `compile`) on pushes to `main` and on pull requests.
+
 ## [1.1.825] - 2026-03-28
 ### Fixed
 - **Broken Gemini global runtime installs**: `packages/Gemini_Module/src/installer/gemini-installer.ts` now validates the installed top-level `@google/gemini-cli-core` dependency graph before provider startup and automatically reinstalls Gemini CLI/Core when corrupted dependencies like a truncated `fast-uri` payload are detected.

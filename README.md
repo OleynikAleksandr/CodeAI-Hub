@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.825
-- **Gemini runtime self-healing**: the Gemini installer now validates both the loaded bridge dependency graph and the top-level global `@google/gemini-cli-core` install, then automatically reinstalls Gemini CLI/Core if a broken dependency payload is detected.
-- **Corrupted npm install recovery**: repair flows now remove stale hidden npm rename directories like `.gemini-cli-core-*` before reinstall, unblocking recovery from `ENOTEMPTY` global-package failures.
-- **Core crash diagnostics retained**: fatal Core traces still land in `~/.codeai-hub/logs/core/core-fatal.log`, and extension-side bridge traces still land in `~/.codeai-hub/logs/observer/bridge-observer.log`.
-- **Wave 2 cleanup baseline preserved**: core runtime/config/contract/diagram hotspots remain split into focused helper clusters, with provider messaging façades and Codex structured-output helpers shipped intact from `1.1.822`.
+## Current Release — v1.1.826
+- **Phase 79 core hotspot decomposition**: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` now delegates bootstrap, session resolution, message dispatch, flow-node rollover/report state, dialog segment metadata, provider-event message plumbing, and retry/pending-intent state to focused helpers.
+- **Public CI baseline**: `.github/workflows/ci.yml` now enforces the root repository truthfulness checks on push/PR (`check:architecture`, `lint`, `check:tsprune`, `compile`) alongside the local Husky workflow.
+- **Workflow truthfulness cleanup**: repository metadata, release script guidance, and hook surface are aligned around a Husky-only contract; stale Lefthook leftovers are no longer part of the active workflow story.
+- **Gemini runtime self-healing preserved**: the `1.1.825` repair path for broken global Gemini CLI/Core installs remains the runtime baseline for this release.
 
 Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
 
