@@ -10,9 +10,14 @@ interface LoadCliConfigCall {
   readonly workspacePath: string;
 }
 
+const createClient = () => ({
+  resetChat: () => Promise.resolve(),
+});
+
 const createModules = (
   calls: LoadCliConfigCall[],
-  resolvedSessionIds: string[]
+  resolvedSessionIds: string[],
+  clientFactory: () => Record<string, unknown> = createClient
 ): GeminiCliModules =>
   ({
     config: {
@@ -30,9 +35,7 @@ const createModules = (
             // noop
           },
           initialize: () => Promise.resolve(),
-          getGeminiClient: () => ({
-            resetChat: () => Promise.resolve(),
-          }),
+          getGeminiClient: () => clientFactory(),
           getModel: () => "gemini-2.5-pro",
           getSessionId: () => providerSessionId,
         });
@@ -97,4 +100,52 @@ test("GeminiSessionBootstrapper forwards requested resume id to argv.resume", as
   assert.equal(calls[0]?.sessionId, "resume-session-123");
   assert.equal(calls[0]?.argv.resume, "resume-session-123");
   assert.equal(calls[0]?.workspacePath, "/tmp/workspace-resumed");
+});
+
+test("GeminiSessionBootstrapper patches vulnerable loop recovery path", async () => {
+  const calls: LoadCliConfigCall[] = [];
+  const recoverArgs: unknown[][] = [];
+  const client = {
+    resetChat: () => Promise.resolve(),
+    startChat: () => Promise.resolve({}),
+    _recoverFromLoop: (...args: unknown[]) => {
+      recoverArgs.push(args);
+      const controllerToAbort = args[6] as AbortController | undefined;
+      controllerToAbort?.abort();
+      return args;
+    },
+  };
+
+  const bootstrapper = new GeminiSessionBootstrapper(
+    createModules(calls, ["provider-session-loop"], () => client)
+  );
+
+  const result = await bootstrapper.bootstrap({
+    workspacePath: "/tmp/workspace-loop",
+  });
+
+  const abortController = new AbortController();
+  const patchedClient = result.session.client as unknown as typeof client;
+  const returned = patchedClient._recoverFromLoop?.(
+    { count: 1 },
+    abortController.signal,
+    "prompt-loop",
+    5,
+    false,
+    undefined,
+    abortController
+  );
+
+  assert.deepEqual(returned, [
+    { count: 1 },
+    abortController.signal,
+    "prompt-loop",
+    5,
+    false,
+    undefined,
+    undefined,
+  ]);
+  assert.equal(recoverArgs.length, 1);
+  assert.equal(recoverArgs[0]?.[6], undefined);
+  assert.equal(abortController.signal.aborted, false);
 });

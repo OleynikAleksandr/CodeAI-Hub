@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
 import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client";
 import type { GeminiCliModules } from "../runtime/cli-types";
+import type { ModuleReporter } from "../types";
 import { GeminiSessionSettingsResolver } from "./gemini-session-settings-resolver";
 import type { ActiveSession, SessionCreationOptions } from "./types";
 
@@ -11,6 +12,14 @@ const GEMINI_ENV_KEYS_TO_CLEAR = [
   "GOOGLE_CLOUD_LOCATION",
   "GOOGLE_API_KEY",
 ] as const;
+const GEMINI_START_CHAT_PATCH_FLAG = "__codeaiHubStartChatPatchApplied";
+const GEMINI_LOOP_RECOVERY_PATCH_FLAG = "__codeaiHubLoopRecoveryPatchApplied";
+
+type PatchableGeminiClient = GeminiClient & {
+  _recoverFromLoop?: (...args: unknown[]) => unknown;
+  [GEMINI_LOOP_RECOVERY_PATCH_FLAG]?: boolean;
+  [GEMINI_START_CHAT_PATCH_FLAG]?: boolean;
+};
 
 interface GeminiSessionBootstrapResult {
   readonly providerSessionId: string | null;
@@ -65,13 +74,12 @@ export class GeminiSessionBootstrapper {
 
     await config.initialize();
     const client = config.getGeminiClient();
-    if (resolvedSettings.resolvedThinkingLevel) {
-      this.monkeyPatchGeminiClient(
-        client,
-        resolvedSettings.resolvedModel ?? "",
-        resolvedSettings.resolvedThinkingLevel
-      );
-    }
+    this.monkeyPatchGeminiClient(
+      client,
+      resolvedSettings.resolvedModel ?? "",
+      resolvedSettings.resolvedThinkingLevel ?? "",
+      options.reporter
+    );
 
     return {
       providerSessionId: config.getSessionId() ?? null,
@@ -93,25 +101,94 @@ export class GeminiSessionBootstrapper {
   }
 
   private monkeyPatchGeminiClient(
-    // biome-ignore lint/suspicious/noExplicitAny: library client typing is not exposed here
-    client: GeminiClient | any,
+    client: PatchableGeminiClient,
     modelId: string,
-    level: string
+    level: string,
+    reporter?: ModuleReporter
   ): void {
-    if (!client || typeof client.startChat !== "function") {
+    this.patchGeminiLoopRecovery(client, reporter);
+    this.patchGeminiStartChat(client, modelId, level);
+  }
+
+  private patchGeminiLoopRecovery(
+    client: PatchableGeminiClient,
+    reporter?: ModuleReporter
+  ): void {
+    if (client[GEMINI_LOOP_RECOVERY_PATCH_FLAG]) {
       return;
     }
 
+    const originalRecoverMethod =
+      typeof client._recoverFromLoop === "function"
+        ? client._recoverFromLoop
+        : null;
+    if (!originalRecoverMethod) {
+      return;
+    }
+
+    const recoverSource = String(originalRecoverMethod);
+    if (!recoverSource.includes("controllerToAbort?.abort()")) {
+      return;
+    }
+
+    const originalRecoverFromLoop = originalRecoverMethod.bind(client);
+    client[GEMINI_LOOP_RECOVERY_PATCH_FLAG] = true;
+    reporter?.warn?.(
+      "Patched Gemini loop recovery to avoid abort-driven core crash."
+    );
+    client._recoverFromLoop = (...args: unknown[]) => {
+      const [
+        loopResult,
+        signal,
+        promptId,
+        boundedTurns,
+        isInvalidStreamRetry,
+        displayContent,
+      ] = args as [unknown, AbortSignal, string, number, boolean, unknown];
+      return originalRecoverFromLoop(
+        loopResult,
+        signal,
+        promptId,
+        boundedTurns,
+        isInvalidStreamRetry,
+        displayContent,
+        undefined
+      );
+    };
+  }
+
+  private patchGeminiStartChat(
+    client: PatchableGeminiClient,
+    modelId: string,
+    level: string
+  ): void {
+    if (
+      client[GEMINI_START_CHAT_PATCH_FLAG] ||
+      typeof client.startChat !== "function"
+    ) {
+      return;
+    }
+
+    client[GEMINI_START_CHAT_PATCH_FLAG] = true;
     const originalStartChat = client.startChat.bind(client);
 
     // biome-ignore lint/suspicious/noExplicitAny: overriding library method
     client.startChat = async (...args: any[]) => {
       const chat = await originalStartChat(...args);
+      const chatAny = chat as unknown as {
+        generationConfig?: {
+          thinkingConfig?: {
+            includeThoughts: boolean;
+            thinkingBudget?: number;
+            thinkingLevel?: string;
+          };
+        };
+      };
 
-      if (chat?.generationConfig) {
+      if (chatAny.generationConfig) {
         const thinkingConfig = this.resolveThinkingConfig(modelId, level);
         if (thinkingConfig) {
-          chat.generationConfig.thinkingConfig = thinkingConfig;
+          chatAny.generationConfig.thinkingConfig = thinkingConfig;
         }
       }
       return chat;
