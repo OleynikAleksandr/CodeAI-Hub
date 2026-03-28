@@ -350,7 +350,7 @@ if [ $SIZE_MB -gt 20 ]; then
   echo "Check if large assets or SDKs are included"
 fi
 
-# Step 9: Summary
+# Step 11: Summary
 echo ""
 echo "============================================"
 echo "✅ Release build complete!"
@@ -361,8 +361,8 @@ unzip -l "$VSIX_FILE" | head -20
 echo ""
 echo "Next steps:"
 echo "1. Test the extension locally"
-echo "2. Commit changes: git add . && git commit -m \"feat: v$VERSION - <description>\""
-echo "3. Push to GitHub: git push origin <branch>"
-echo "4. Create GitHub release (if stable)"
+echo "2. Keep the release commit history intact; do not hand-edit versions after packaging"
+echo "3. Copy fresh tarballs from doc/tmp/releases/ or ~/.codeai-hub/releases/ if you are distributing the full release bundle"
+echo "4. Share or install $VSIX_FILE once local validation is complete"
 echo ""
 echo "⚠️  Reminder: Provider CLIs/SDKs must remain globally installed, not inside the extension."

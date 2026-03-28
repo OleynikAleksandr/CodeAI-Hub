@@ -146,8 +146,8 @@ doc/TODO/Archive/
 3. Проверь, что `git status` пустой (никаких staged/unstaged). Версии пакетов/манифестов руками не меняем — это сделает скрипт.
 4. Выполни `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт Claude/Codex/Gemini, core, CEF launcher, UI и соберёт tarball’ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправь проблему и перезапусти **только** `build-all.sh`.
 5. Снова убедись, что `git status` пустой (все изменения от `build-all.sh` закоммичены, если это отдельная итерация).
-6. Выполни `./scripts/build-release.sh --use-current-version`. Скрипт использует текущую версию из `package.json`, прогоняет финальные гейты (архитектура, type-check, compile, SDK exclusions, prune dev deps) и собирает VSIX. При падении повторно запускаем **только** `build-release.sh` после исправления причин.
-7. После успеха проверь вывод `scripts/build-release.sh`: должны появиться строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`. Забери `codeai-hub-<version>.vsix` из корня и при необходимости скопируй свежие tarball’ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`.
+6. Выполни `./scripts/build-release.sh --use-current-version`. Скрипт ожидает чистое дерево, использует текущую версию из `package.json`, прогоняет финальные гейты (архитектура, type-check, compile, SDK exclusions, advisory `check:links` / `check:dup`, prune dev deps) и собирает VSIX. При падении повторно запускаем **только** `build-release.sh` после исправления причин.
+7. После успеха проверь вывод `scripts/build-release.sh`: должны появиться строки `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Забери `codeai-hub-<version>.vsix` из корня и при необходимости скопируй свежие tarball’ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`.
 8. Зафиксируй изменения (включая версии и манифесты), обнови `doc/TODO/todo-plan.md`, создай новый `doc/Sessions/SessionXXX.md`.
 9. Только после этого передавай VSIX или делись релизом.
 

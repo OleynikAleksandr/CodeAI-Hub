@@ -1,6 +1,6 @@
 # Scripts and Quality Gates
 
-This folder contains local scripts and Husky automation used to enforce quality gates for CodeAI‑Hub. Scripts are versioned in Git, but excluded from the VSIX package via `.vscodeignore`.
+This folder contains local scripts and Husky automation used to enforce quality gates for CodeAI‑Hub. Husky is the only active hook engine. Scripts are versioned in Git, but excluded from the VSIX package via `.vscodeignore`.
 
 ## One‑time Setup
 
@@ -20,9 +20,10 @@ This folder contains local scripts and Husky automation used to enforce quality 
   - `npm run check:dup` — jscpd duplication check (3% threshold, fails if exceeded)
   - `npm run check:links` — documentation link validation (`doc/**`, `README.md`)
 
-- Release build: `./scripts/build-release.sh <version>`
-  1) Architecture check → 2) `tsc --noEmit` smoke → 3) `npm run compile` →
-  4) Markdown link check (advisory) → 5) Duplication check (advisory) → 6) VSIX packaging.
+- Canonical release flow:
+  1) `./scripts/build-all.sh` — bumps versions, rebuilds provider/core/launcher/UI artefacts, refreshes manifests and publishes tarballs into `~/.codeai-hub/releases/` plus `doc/tmp/releases/`
+  2) Commit the resulting version/manifest changes on a clean tree
+  3) `./scripts/build-release.sh --use-current-version` — revalidates the committed release from a clean tree, then runs architecture check, `tsc --noEmit`, `npm run compile`, advisory `check:links` / `check:dup`, prunes dev dependencies, and packages the VSIX
 
 ## Manual Commands (on demand)
 
@@ -32,10 +33,11 @@ This folder contains local scripts and Husky automation used to enforce quality 
 - Unused exports (ts‑prune): `npm run check:tsprune`
 - Duplicates (jscpd): `npm run check:dup`
 - Docs links: `npm run check:links`
-- Release build: `./scripts/build-release.sh 0.0.X`
+- Release build (final packaging on a clean tree): `./scripts/build-release.sh --use-current-version`
 
 ## Notes
 
 - Husky hooks live in `.husky/`; install or refresh them with `npm run setup:hooks` (or `npm install`, which runs `prepare`).
+- `build-release.sh` expects a clean working tree unless `--allow-dirty` is passed explicitly for diagnostics; the normal release path should not rely on `--allow-dirty`.
 - Provider CLIs/SDKs are global; provider SDKs must not reside under `node_modules/` in this repo.
 - All scripts print results to the terminal so developers and the agent get immediate feedback.
