@@ -4,6 +4,7 @@ import { DEFAULT_CODEX_RESPONSE_POLICY } from "../response-policy/response-polic
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type { CodexTurnOptions } from "../types";
+import { applyCodexTurnRuntimeConfig } from "./codex-applied-turn-config";
 import { CodexEventStreamConsumer } from "./codex-event-stream-consumer";
 import { CodexMessageFinishHandler } from "./codex-message-finish-handler";
 import {
@@ -174,7 +175,8 @@ export class CodexMessageProcessor {
 
     let startupLock: StartupLockContext | null = null;
     try {
-      const turnOptions = message.turnOptions ?? {};
+      const turnOptions =
+        applyCodexTurnRuntimeConfig(session, message.turnOptions) ?? {};
       const promptState = this.prepareTurnPrompt(
         session,
         message.content,

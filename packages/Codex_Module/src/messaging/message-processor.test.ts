@@ -1,8 +1,18 @@
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 import test from "node:test";
+import type { ActiveSession } from "../session/types";
+import { applyCodexTurnRuntimeConfig } from "./codex-applied-turn-config";
 import { waitForNextResultWithIdlePulses } from "./message-processor";
 
 const STREAM_FAILED_RE = /stream failed/;
+
+interface ThreadRuntimeState {
+  readonly _threadOptions?: {
+    readonly model?: string;
+    readonly modelReasoningEffort?: string;
+  };
+}
 
 test("waitForNextResultWithIdlePulses resolves without idle callback when next event is immediate", async () => {
   const idlePulses: number[] = [];
@@ -48,4 +58,74 @@ test("waitForNextResultWithIdlePulses preserves generator failures", async () =>
       }),
     STREAM_FAILED_RE
   );
+});
+
+test("applyCodexTurnRuntimeConfig mutates active thread model and strips internal payload", () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.3-codex",
+    modelReasoningEffort: "medium",
+  });
+  const outputSchema = { type: "object" };
+
+  const turnOptions = applyCodexTurnRuntimeConfig(session, {
+    outputSchema,
+    __codeaiAppliedTurnConfig: {
+      providerId: "codexCli",
+      modelId: "gpt-5.4",
+      reasoningEffort: "high",
+      source: "settings_snapshot",
+    },
+  } as never);
+
+  assert.equal(
+    (session.thread as unknown as ThreadRuntimeState)._threadOptions?.model,
+    "gpt-5.4"
+  );
+  assert.equal(
+    (session.thread as unknown as ThreadRuntimeState)._threadOptions
+      ?.modelReasoningEffort,
+    "high"
+  );
+  assert.deepEqual(turnOptions, { outputSchema });
+});
+
+test("applyCodexTurnRuntimeConfig ignores non-codex payloads", () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.3-codex",
+    modelReasoningEffort: "medium",
+  });
+
+  const turnOptions = applyCodexTurnRuntimeConfig(session, {
+    __codeaiAppliedTurnConfig: {
+      providerId: "geminiCli",
+      modelId: "gemini-3-flash-preview",
+      source: "settings_snapshot",
+    },
+  } as never);
+
+  assert.equal(
+    (session.thread as unknown as ThreadRuntimeState)._threadOptions?.model,
+    "gpt-5.3-codex"
+  );
+  assert.equal(turnOptions, undefined);
+});
+
+const createSessionWithThread = (threadOptions: {
+  readonly model?: string;
+  readonly modelReasoningEffort?: string;
+}): ActiveSession => ({
+  sessionId: "codex-session",
+  workspacePath: "/tmp/workspace",
+  createdAt: Date.now(),
+  eventEmitter: new EventEmitter(),
+  messageController: {
+    pendingMessages: [],
+    resolveNext: null,
+  },
+  logger: null,
+  codexThreadId: "codex-thread",
+  internalTurn: false,
+  thread: {
+    _threadOptions: threadOptions,
+  } as never,
 });
