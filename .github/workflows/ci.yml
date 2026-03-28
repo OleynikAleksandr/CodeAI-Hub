@@ -1,0 +1,40 @@
+name: Repository CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Architecture check
+        run: npm run check:architecture
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Ts-prune
+        run: npm run check:tsprune
+
+      - name: Compile
+        run: npm run compile

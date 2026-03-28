@@ -20,6 +20,12 @@ This folder contains local scripts and Husky automation used to enforce quality 
   - `npm run check:dup` — jscpd duplication check (3% threshold, fails if exceeded)
   - `npm run check:links` — documentation link validation (`doc/**`, `README.md`)
 
+- GitHub Actions CI (public baseline on `push` to `main` + `pull_request`):
+  - `npm run check:architecture`
+  - `npm run lint`
+  - `npm run check:tsprune`
+  - `npm run compile`
+
 - Canonical release flow:
   1) `./scripts/build-all.sh` — bumps versions, rebuilds provider/core/launcher/UI artefacts, refreshes manifests and publishes tarballs into `~/.codeai-hub/releases/` plus `doc/tmp/releases/`
   2) Commit the resulting version/manifest changes on a clean tree

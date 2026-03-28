@@ -45,6 +45,11 @@ Before starting, read `doc/SolidWorks-WorkFlow/Docs_Index.md` and follow the SSO
    npm run compile        # ensure TypeScript builds cleanly
    ```
 
+## Public CI
+- GitHub Actions now runs a minimal public CI baseline on every push to `main` and on every pull request.
+- The workflow enforces the same root quality gates used as the local baseline: `npm run check:architecture`, `npm run lint`, `npm run check:tsprune`, and `npm run compile`.
+- Local Husky hooks remain the fastest feedback path; CI is the public verification surface, not a replacement for the local release ritual.
+
 ## Building a Release
 ```bash
 ./scripts/build-all.sh
