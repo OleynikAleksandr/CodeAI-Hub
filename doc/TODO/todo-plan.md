@@ -1,84 +1,21 @@
 # План разработки (Development TODO Plan)
 
 ## Правила выполнения (Execution Rules):
-- **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session166.md`, `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
-- Этот `TODO Plan` реализует один scope: **post-audit tail cleanup** после успешного и вручную подтверждённого релиза `1.1.819`
-- Текущий baseline считается рабочим: пользователь подтвердил, что релиз `1.1.819` функционирует корректно; значит текущая работа ограничена **behavior-preserving cleanup/refactor**, а не feature-expansion
-- Главная цель плана: подчищать хвосты после аудита, убирать release/package noise и довести handwritten codebase до контракта `1 class / 1 file` и `≤300` строк handwritten source на файл
-- Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
-- Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
-- Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
-- Husky gates не обходить (`--no-verify` запрещён)
-- Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
-- Перед закрытием каждого stream выполнять таргетные проверки затронутых пакетов/клиентов
-- Для Core stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/core`
-- Для provider package stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/gemini-module`, `npm run build --workspace=@codeai-hub/codex-module`, `npm run build --workspace=@codeai-hub/claude-module`
-- Для PM/UI stream-ов таргетная проверка по умолчанию: `npm run build:webview` + `npm run typecheck:webview`
-- Новый oversized handwritten source file вне explicit debt allowlist запрещён
-- Generated/build directories (`dist/`, `build/`, `node_modules/`) исключаются из line-limit gate только по директориям, а не через выпадение целых source-root’ов
-- Oversized allowlist должен только уменьшаться; если файл реально опустился до `300` строк или ниже, он должен покинуть allowlist без откладывания «на потом»
-- Audit `CODEAI_HUB_HONEST_AUDIT_20260327.md` уже принят как baseline: его findings про source-surface blind spot, false-green gate surface, god-module concentration и release/package truthfulness должны учитываться в порядке задач ниже, но без расширения scope за пределы двух фаз этого плана
+- **Required reading (прочитать перед каждым новым фиксом):** `AGENTS.md`, `doc/Sessions/Session171.md`, `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Новый implementation scope стартует только после утверждённого planning-дока в `doc/SolidWorks-WorkFlow/Plans/`
+- Завершённый план архивируется сразу после закрытия всех phase/stream и перед стартом нового scope
+- Любые будущие изменения архитектуры/логики должны синхронно обновлять `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и профильные документы модулей
 
 ---
 
-## Goal
+## Текущий статус
 
-Критерий завершения этого плана:
+- Активных implementation phase сейчас нет.
+- Последний полностью закрытый план архивирован в `doc/TODO/Archive/todo-plan-up-to-phase78-2026-03-28.md`.
+- Следующая сессия должна начать с нового planning-дока и только после этого сформировать новый `doc/TODO/todo-plan.md`.
 
-- `.husky/_` helper files и прочий служебный packaging noise не попадают в VSIX/package surface
-- `Wave 2` backlog режет oversized hotspots последовательно, без смешивания с feature-work
-- handwritten source surface движется к состоянию без файлов `>300` строк
-- class-based runtime логика распадается на отдельные файлы по responsibility seams, а root giant files превращаются в thin façade surfaces
+## Next Activation Checklist
 
----
-
-## Phase 77 — Post-Audit Packaging Tail Cleanup (owner: Oleksandr, updated: 2026-03-27)
-
-### Stream: Audit intake and packaging surface
-1. [DONE] Синхронизировать findings audit-а `CODEAI_HUB_HONEST_AUDIT_20260327.md` с canonical planning doc и подтвердить, что текущий scope ограничен cleanup-хвостами после успешного релиза `1.1.819`, без feature-expansion. Scope: `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): sync post-audit cleanup scope`
-2. [DONE] Git Commit: `docs(architecture): sync post-audit cleanup scope` (hash: `661b217b`)
-3. [DONE] Исключить `.husky/_` helper files из VSIX/package surface и зафиксировать release-facing packaging contract, не меняя runtime behavior. Scope: `.vscodeignore`, `README.md`, `CHANGELOG.md`. Expected commit: `chore(packaging): exclude husky helper files from VSIX`
-4. [DONE] Git Commit: `chore(packaging): exclude husky helper files from VSIX` (hash: `d027e5d4`)
-5. [DONE] После exclusion `.husky/**` зачистить оставшийся non-runtime release surface (`.gitignore`, `GEMINI.md` и аналогичные repo-only файлы, если они всё ещё попадают в `vsce ls`) и синхронно зафиксировать правило в SSOT. Scope: `.vscodeignore`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(workflow): sync post-audit packaging cleanup`
-6. [DONE] Git Commit: `docs(workflow): sync post-audit packaging cleanup` (hash: `37ca1dcf`)
-
----
-
-## Phase 78 — Wave 2 Oversized Debt After Audit (owner: Oleksandr, updated: 2026-03-28)
-
-### Stream: Core remote-bridge edge surfaces
-1. [DONE] Декомпозировать `http-api-router.ts` по route responsibilities, оставив в корневом файле thin router façade; в ходе реализации scope расширился дополнительными helper-модулями, чтобы сохранить `artifact-upsert` behavior после форматирования/Ultracite и снять root router с oversized allowlist. Scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/http-api-session-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-artifact-upsert-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`. Expected commit: `refactor(core): extract http api router route clusters`
-2. [DONE] Git Commit: `refactor(core): extract http api router route clusters` (hash: `b21ca3c6`)
-3. [DONE] Свести `remote-bridge/index.ts` к thin façade через вынос bootstrap/lifecycle wiring и websocket command routing в отдельные modules; по факту safe decomposition потребовала выделить отдельные dialog/workspace command helpers, чтобы новые handwritten files тоже остались `<=300` строк, а `index.ts` сразу покинул explicit oversized allowlist. Scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/index.test.ts`, `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts`, `packages/core/src/remote-bridge/remote-bridge-server-lifecycle.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts`, `packages/core/src/remote-bridge/remote-bridge-workspace-command-router.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract remote bridge bootstrap facade`
-4. [DONE] Git Commit: `refactor(core): extract remote bridge bootstrap facade` (hash: `25c9e554`)
-
-### Stream: Core runtime/config contract surfaces
-5. [DONE] Декомпозировать `workspace-runtime-facade.ts` по lock/binding/session-sync seams, оставив корневой файл façade-entrypoint; по факту safe cut потребовал синхронно снять root façade с explicit oversized allowlist и зафиксировать новый cluster boundary в SSOT. Scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/workspace-runtime/workspace-runtime-lock-sync.ts`, `packages/core/src/workspace-runtime/workspace-runtime-session-sync.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract workspace runtime facade clusters`
-6. [DONE] Git Commit: `refactor(core): extract workspace runtime facade clusters` (hash: `530b5c05`)
-7. [DONE] Разрезать `config/index.ts` на snapshot/default resolver helpers и свести root file к config façade/export surface; safe cut также потребовал снять root config façade со stale oversized allowlist и зафиксировать cluster boundary в SSOT. Scope: `packages/core/src/config/index.ts`, `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/config/provider-defaults-resolver.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract config resolver clusters`
-8. [DONE] Git Commit: `refactor(core): extract config resolver clusters` (hash: `d3459ebf`)
-9. [DONE] Разделить `remote-bridge/types.ts` на когерентные contract modules, чтобы root `types.ts` стал thin aggregation surface; safe cut также потребовал снять root contract surface со stale oversized allowlist и зафиксировать новый stream-contract boundary в SSOT. Scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/workspace-stream-contracts.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract remote bridge contract modules`
-10. [DONE] Git Commit: `refactor(core): extract remote bridge contract modules` (hash: `ab1815b9`)
-
-### Stream: Diagram DSL and provider messaging hotspots
-11. [DONE] Выделить relation parsing и endpoint validation из `diagram-modules-parser.ts` в отдельный helper как safe intermediate step; root parser остаётся oversized до следующего ownership cut. Scope: `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workflow/diagram-dsl/diagram-relations-parser.ts`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract diagram relation parser`
-12. [DONE] Git Commit: `refactor(core): extract diagram relation parser` (hash: `8865c8cf`)
-13. [DONE] Выделить module entity parsing и ownership validation из `diagram-modules-parser.ts` в отдельный helper, чтобы отрезать первый крупный кусок ownership logic без изменения DSL behavior. Scope: `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workflow/diagram-dsl/diagram-module-parser.ts`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract diagram module parser`
-14. [DONE] Git Commit: `refactor(core): extract diagram module parser` (hash: `93e80401`)
-15. [DONE] Выделить cluster parsing из `diagram-modules-parser.ts` в отдельный helper поверх нового module parser, сохранив текущий hierarchical/legacy dual-read path. Scope: `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workflow/diagram-dsl/diagram-cluster-parser.ts`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract diagram cluster parser`
-16. [DONE] Git Commit: `refactor(core): extract diagram cluster parser` (hash: `c6fe3ecb`)
-17. [DONE] Выделить `Product Parts` state machine и cursor orchestration из `diagram-modules-parser.ts` в `diagram-ownership-parser.ts`, сохранив текущий hierarchical parse path поверх уже вынесенных module/cluster helpers. Scope: `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workflow/diagram-dsl/diagram-ownership-parser.ts`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract diagram ownership parser`
-18. [DONE] Git Commit: `refactor(core): extract diagram ownership parser` (hash: `8aaa9416`)
-19. [DONE] Выделить legacy ownership materialization и ownership section parsing в отдельный helper, чтобы root parser потерял synthetic legacy/product-part orchestration code. Scope: `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `packages/core/src/workflow/diagram-dsl/diagram-legacy-ownership-parser.ts`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract diagram legacy ownership parser`
-20. [DONE] Git Commit: `refactor(core): extract diagram legacy ownership parser` (hash: `9fdd33d8`)
-21. [DONE] Свести `diagram-modules-parser.ts` к thin façade/orchestration surface, снять root parser с explicit oversized allowlist и синхронно обновить SSOT. Scope: `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): thin diagram modules parser facade`
-22. [DONE] Git Commit: `refactor(core): thin diagram modules parser facade` (hash: `d403f331`)
-23. [DONE] Декомпозировать Claude message processor на thin façade, stream-event router и finish/usage sync helpers, сохранив behavior текущего релиза; safe cut потребовал дополнительный вынос usage/token synchronization, чтобы каждый новый handwritten file остался `<=300` строк, а root `message-processor.ts` сразу покинул explicit oversized allowlist. Scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-message-finish-handler.ts`, `packages/Claude_Module/src/messaging/claude-usage-sync.ts`, `packages/Claude_Module/src/messaging/claude-token-usage-sync.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(claude): extract message processor clusters`
-24. [DONE] Git Commit: `refactor(claude): extract message processor clusters` (hash: `c92acdb0`)
-25. [DONE] Декомпозировать Codex message processor на thin façade, event consumer, stream router и finish/usage sync helpers, сохранив startup-lock, idle-pulse и structured-output behavior текущего релиза; safe cut потребовал дополнительный вынос shared/emitter/reasoning/usage internals, чтобы каждый новый handwritten file остался `<=300` строк, а root `message-processor.ts` сразу покинул explicit oversized allowlist. Scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/codex-async-helpers.ts`, `packages/Codex_Module/src/messaging/codex-event-stream-consumer.ts`, `packages/Codex_Module/src/messaging/codex-message-finish-handler.ts`, `packages/Codex_Module/src/messaging/codex-message-processor-shared.ts`, `packages/Codex_Module/src/messaging/codex-reasoning-streams.ts`, `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/codex-thread-start-handler.ts`, `packages/Codex_Module/src/messaging/codex-token-usage-sync.ts`, `packages/Codex_Module/src/messaging/codex-usage-sync.ts`, `packages/Codex_Module/src/messaging/codex-usage-sync-shared.ts`, `packages/Codex_Module/src/messaging/codex-usage-stream-event-emitter.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(codex): extract message processor clusters`
-26. [DONE] Git Commit: `refactor(codex): extract message processor clusters` (hash: `b3e3f581`)
-27. [DONE] Свести `structured-output-stream-controller.ts` к focused façade над parser/state helpers и снять root file с explicit oversized allowlist, сохранив passthrough/session-promotion behavior текущего релиза. Scope: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`, `packages/Codex_Module/src/messaging/structured-output-parser.ts`, `packages/Codex_Module/src/messaging/structured-output-state.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(codex): extract structured output stream controller helpers`
-28. [DONE] Git Commit: `refactor(codex): extract structured output stream controller helpers` (hash: TBD)
-29. [DONE] Декомпозировать Gemini message processor на thin façade, event routing и assistant/thinking normalization helpers, сохранив finished-boundary flush и translated-thought UI contract; safe cut потребовал дополнительный system-event normalizer и отдельный stream-error helper, чтобы каждый новый handwritten file остался `<=300` строк, а root `message-processor.ts` сразу покинул explicit oversized allowlist. Scope: `packages/Gemini_Module/src/messaging/message-processor.ts`, `packages/Gemini_Module/src/messaging/gemini-stream-event-router.ts`, `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/gemini-stream-error.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(gemini): extract message processor clusters`
-30. [DONE] Git Commit: `refactor(gemini): extract message processor clusters` (hash: TBD)
+1. Создать или обновить planning-док в `doc/SolidWorks-WorkFlow/Plans/`.
+2. Зафиксировать scope, class boundaries и контракты.
+3. После утверждения нарезать новый `todo-plan.md` на phase/stream/микро-задачи с обязательными `Git Commit:` пунктами.
