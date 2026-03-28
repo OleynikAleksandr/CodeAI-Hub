@@ -139,7 +139,7 @@ export class GeminiSessionManager {
       throw new Error("Cannot send empty Gemini prompt.");
     }
 
-    this.sessionLifecycle.applyPendingModelOverride(
+    this.sessionLifecycle.applyPendingRuntimeOverrides(
       this as unknown as Record<string, unknown>,
       session
     );

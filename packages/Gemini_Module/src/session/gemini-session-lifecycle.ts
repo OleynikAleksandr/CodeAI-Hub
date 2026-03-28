@@ -8,20 +8,38 @@ export class GeminiSessionLifecycle {
     GeminiSessionEvent["type"]
   >(["assistant"]);
 
-  applyPendingModelOverride(
+  applyPendingRuntimeOverrides(
     owner: Record<string, unknown>,
-    session: { config: { setModel: (model: string) => void } }
+    session: {
+      config: { setModel: (model: string) => void };
+      runtimeTurnConfig: { modelId?: string; thinkingLevel?: string };
+    }
   ): void {
     const pendingModel = owner.pendingModelOverride as string | undefined;
-    if (!pendingModel) {
+    const pendingThinkingLevel = owner.pendingThinkingLevelOverride as
+      | string
+      | undefined;
+    if (!(pendingModel || pendingThinkingLevel)) {
+      owner.pendingModelOverride = undefined;
+      owner.pendingThinkingLevelOverride = undefined;
       return;
     }
-    try {
-      session.config.setModel(pendingModel);
-    } catch {
-      // Model override failed, so continue with the active model.
+
+    if (pendingModel) {
+      try {
+        session.config.setModel(pendingModel);
+      } catch {
+        // Model override failed, so continue with the active model.
+      }
+      session.runtimeTurnConfig.modelId = pendingModel;
     }
+
+    if (pendingThinkingLevel) {
+      session.runtimeTurnConfig.thinkingLevel = pendingThinkingLevel;
+    }
+
     owner.pendingModelOverride = undefined;
+    owner.pendingThinkingLevelOverride = undefined;
   }
 
   async closeSession(

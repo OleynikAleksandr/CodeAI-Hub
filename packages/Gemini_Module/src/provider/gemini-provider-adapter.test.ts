@@ -14,6 +14,7 @@ interface ResumeCall {
 
 const createAdapterHarness = () => {
   const resumeCalls: ResumeCall[] = [];
+  const sendCalls: Array<{ sessionId: string; content: string }> = [];
   const eventEmitter = new EventEmitter();
 
   const manager = {
@@ -34,7 +35,10 @@ const createAdapterHarness = () => {
       });
     },
     closeSession: () => Promise.resolve(),
-    sendMessage: () => Promise.resolve(),
+    sendMessage: (sessionId: string, content: string) => {
+      sendCalls.push({ sessionId, content });
+      return Promise.resolve();
+    },
   };
 
   const adapter = new GeminiProviderAdapter({
@@ -59,7 +63,7 @@ const createAdapterHarness = () => {
     }
   ).sessionManager = manager;
 
-  return { adapter, eventEmitter, resumeCalls };
+  return { adapter, eventEmitter, manager, resumeCalls, sendCalls };
 };
 
 test("GeminiProviderAdapter resumeSession delegates to manager and wires events", async () => {
@@ -104,5 +108,35 @@ test("GeminiProviderAdapter resumeSession rejects empty session id", async () =>
       assert.match((error as Error).message, EMPTY_RESUME_SESSION_ID_ERROR_RE);
       return true;
     }
+  );
+});
+
+test("GeminiProviderAdapter applies shared runtime overrides before send", async () => {
+  const { adapter, manager, sendCalls } = createAdapterHarness();
+
+  await adapter.sendMessage("runtime-session", "switch model", {
+    __codeaiAppliedTurnConfig: {
+      providerId: "geminiCli",
+      modelId: "gemini-3-pro",
+      thinkingLevel: "high",
+      source: "settings_snapshot",
+    },
+  });
+
+  assert.deepEqual(sendCalls, [
+    {
+      sessionId: "runtime-session",
+      content: "switch model",
+    },
+  ]);
+  assert.equal(
+    (manager as unknown as { pendingModelOverride?: string })
+      .pendingModelOverride,
+    "gemini-3-pro"
+  );
+  assert.equal(
+    (manager as unknown as { pendingThinkingLevelOverride?: string })
+      .pendingThinkingLevelOverride,
+    "high"
   );
 });

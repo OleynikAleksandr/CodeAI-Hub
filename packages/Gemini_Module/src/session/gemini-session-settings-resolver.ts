@@ -66,12 +66,12 @@ export class GeminiSessionSettingsResolver {
     const settingsSnapshot = this.loadSettingsSnapshot(options.settingsPath);
     const defaultModelOverride =
       this.resolveDefaultModelFromSnapshot(settingsSnapshot);
-    const resolvedModel = defaultModelOverride ?? options.defaultModel;
+    const resolvedModel = options.defaultModel ?? defaultModelOverride;
     const thinkingLevelOverride = resolvedModel
       ? this.resolveThinkingLevelFromSnapshot(settingsSnapshot, resolvedModel)
       : undefined;
     const resolvedThinkingLevel =
-      thinkingLevelOverride ?? options.thinkingLevel;
+      options.thinkingLevel ?? thinkingLevelOverride;
 
     return {
       argv: this.createArgv({

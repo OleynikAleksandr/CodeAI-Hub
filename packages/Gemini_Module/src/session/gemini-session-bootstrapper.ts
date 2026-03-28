@@ -4,7 +4,11 @@ import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client"
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { ModuleReporter } from "../types";
 import { GeminiSessionSettingsResolver } from "./gemini-session-settings-resolver";
-import type { ActiveSession, SessionCreationOptions } from "./types";
+import type {
+  ActiveSession,
+  GeminiRuntimeTurnConfig,
+  SessionCreationOptions,
+} from "./types";
 
 const GEMINI_ENV_KEYS_TO_CLEAR = [
   "GOOGLE_CLOUD_PROJECT",
@@ -74,12 +78,11 @@ export class GeminiSessionBootstrapper {
 
     await config.initialize();
     const client = config.getGeminiClient();
-    this.monkeyPatchGeminiClient(
-      client,
-      resolvedSettings.resolvedModel ?? "",
-      resolvedSettings.resolvedThinkingLevel ?? "",
-      options.reporter
-    );
+    const runtimeTurnConfig: GeminiRuntimeTurnConfig = {
+      modelId: resolvedSettings.resolvedModel,
+      thinkingLevel: resolvedSettings.resolvedThinkingLevel,
+    };
+    this.monkeyPatchGeminiClient(client, runtimeTurnConfig, options.reporter);
 
     return {
       providerSessionId: config.getSessionId() ?? null,
@@ -94,6 +97,7 @@ export class GeminiSessionBootstrapper {
         contextWindowTokenLimit: resolvedSettings.contextWindowTokenLimit,
         status: "idle",
         abortController: null,
+        runtimeTurnConfig,
         reporter: options.reporter,
         logger: options.logger ?? undefined,
       },
@@ -102,12 +106,11 @@ export class GeminiSessionBootstrapper {
 
   private monkeyPatchGeminiClient(
     client: PatchableGeminiClient,
-    modelId: string,
-    level: string,
+    runtimeTurnConfig: GeminiRuntimeTurnConfig,
     reporter?: ModuleReporter
   ): void {
     this.patchGeminiLoopRecovery(client, reporter);
-    this.patchGeminiStartChat(client, modelId, level);
+    this.patchGeminiStartChat(client, runtimeTurnConfig);
   }
 
   private patchGeminiLoopRecovery(
@@ -159,8 +162,7 @@ export class GeminiSessionBootstrapper {
 
   private patchGeminiStartChat(
     client: PatchableGeminiClient,
-    modelId: string,
-    level: string
+    runtimeTurnConfig: GeminiRuntimeTurnConfig
   ): void {
     if (
       client[GEMINI_START_CHAT_PATCH_FLAG] ||
@@ -186,9 +188,14 @@ export class GeminiSessionBootstrapper {
       };
 
       if (chatAny.generationConfig) {
-        const thinkingConfig = this.resolveThinkingConfig(modelId, level);
+        const thinkingConfig = this.resolveThinkingConfig(
+          runtimeTurnConfig.modelId ?? "",
+          runtimeTurnConfig.thinkingLevel ?? ""
+        );
         if (thinkingConfig) {
           chatAny.generationConfig.thinkingConfig = thinkingConfig;
+        } else {
+          chatAny.generationConfig.thinkingConfig = undefined;
         }
       }
       return chat;

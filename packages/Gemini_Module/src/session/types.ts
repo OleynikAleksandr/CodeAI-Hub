@@ -13,9 +13,15 @@ export interface ActiveSession {
   readonly eventEmitter: EventEmitter;
   logger?: GeminiSessionLogger;
   reporter?: ModuleReporter;
+  readonly runtimeTurnConfig: GeminiRuntimeTurnConfig;
   sessionId: string;
   status: "idle" | "streaming" | "closing" | "closed";
   readonly workspacePath: string;
+}
+
+export interface GeminiRuntimeTurnConfig {
+  modelId?: string;
+  thinkingLevel?: string;
 }
 
 export interface SessionCreationOptions {

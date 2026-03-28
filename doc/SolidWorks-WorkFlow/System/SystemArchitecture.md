@@ -119,10 +119,10 @@
   - `gemini-system-event-normalizer.ts` = tool/system/warning event normalization
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
-  - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals
+  - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals; bootstrap/lifecycle now keep a mutable `runtimeTurnConfig` so Core-applied model/thinking changes can retune existing Gemini sessions without re-deriving model/thinking authority from local provider settings
 - Gemini provider send path: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
-  - `gemini-applied-turn-config.ts` = reads Core-applied next-turn model payload for Gemini sends
-  - `gemini-provider-adapter.ts` = consumes Core-applied model override on outbound send; provider-local bootstrap defaults remain only first-turn fallback until the next Core-owned send path applies a newer model
+  - `gemini-applied-turn-config.ts` = reads Core-applied next-turn model/thinking payload for Gemini sends and stages runtime overrides before provider execution
+  - `gemini-provider-adapter.ts` = consumes the shared Core-applied runtime envelope on outbound send; `gemini-session-settings-resolver.ts` now treats Core-provided model/thinking as authoritative over local snapshot values, leaving `settings.json` only as fallback for continuity/runtime defaults that are not part of the applied turn contract
 - Claude SDK send path: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
   - `claude-sdk-manager.ts` derives the active turn model from Core-applied turn config on send path; `handlers/session-request-handler-applied-turn-config.ts` resolves Claude `defaultModel` from the shared persisted settings snapshot before outbound send, so Claude no longer falls back to a stale process-start env alias when Settings change during a live Core session
 - Project Manager applied-config sync:
