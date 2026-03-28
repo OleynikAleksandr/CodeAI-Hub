@@ -1,6 +1,29 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
+import {
+  type CodexApprovalMode,
+  type CodexReasoningEffort,
+  type CodexSandboxMode,
+  DEFAULT_CODEX_MODEL_ID,
+  DEFAULT_CODEX_REASONING_EFFORT,
+  normalizeCodexModelFromSettings,
+  normalizeCodexReasoningEffort,
+  resolveClaudeContinuityRemainingPercentThreshold,
+  resolveClaudeDefaultModel,
+  resolveCodexReasoningFromSettings,
+  resolveGeminiThinkingFromSettings,
+  resolvePreferredCodexDefaultModel,
+  toApprovalMode,
+  toSandboxMode,
+} from "./provider-defaults-resolver";
+import {
+  loadClaudeSettingsSnapshot,
+  loadCodexSettingsSnapshot,
+  loadGeminiSettingsSnapshot,
+} from "./provider-settings-snapshot";
+
+export { resolvePreferredCodexDefaultModel } from "./provider-defaults-resolver";
 
 export interface CoreConfig {
   readonly claudeContinuityRemainingPercentThreshold: number;
@@ -8,17 +31,10 @@ export interface CoreConfig {
   readonly claudeProjectSlug: string;
   readonly claudeSettingsPath: string;
   readonly claudeWorkspacePath?: string;
-  readonly codexApprovalMode?:
-    | "never"
-    | "on-request"
-    | "on-failure"
-    | "untrusted";
+  readonly codexApprovalMode?: CodexApprovalMode;
   readonly codexDefaultModel?: string;
   readonly codexDefaultReasoningEffort?: CodexReasoningEffort;
-  readonly codexSandboxMode?:
-    | "read-only"
-    | "workspace-write"
-    | "danger-full-access";
+  readonly codexSandboxMode?: CodexSandboxMode;
   readonly codexSkipGitRepoCheck: boolean;
   readonly codexWorkspacePath?: string;
   readonly continuityPreemptRemainingPercentThreshold: number;
@@ -34,8 +50,6 @@ export interface CoreConfig {
   readonly shutdownGracePeriodMs: number;
   readonly templatesDir: string;
 }
-
-type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
 
 const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 3_600_000;
@@ -53,52 +67,13 @@ const CODEX_SETTINGS_PATH = path.join(
   "settings",
   "settings.json"
 );
-const DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
-const DEFAULT_CODEX_REASONING_EFFORT: CodexReasoningEffort = "medium";
-const CODEX_MODEL_IDS = new Set(["gpt-5.3-codex", "gpt-5.4"]);
-const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
-  "low",
-  "medium",
-  "high",
-  "xhigh",
-]);
-const CLAUDE_MODEL_ALIAS_SET = new Set(["default", "sonnet", "opus", "haiku"]);
-const DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
-const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
-const DEFAULT_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 50;
-const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
-const MIN_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 0;
-const MAX_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD = 100;
-const resolveClaudeDefaultModel = (value: string | undefined): string => {
-  if (value === "default") {
-    // "default" is legacy. Persist and operate on explicit aliases.
-    return "sonnet";
-  }
-
-  return value && CLAUDE_MODEL_ALIAS_SET.has(value)
-    ? value
-    : DEFAULT_CLAUDE_MODEL_ALIAS;
-};
+const DEFAULT_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 50;
+const MIN_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 0;
+const MAX_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 100;
 const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_REGEX = /-+/g;
 const TRAILING_DASH_REGEX = /-$/;
 const BOOLEAN_TRUTHY = new Set(["1", "true", "yes", "on"]);
-
-interface CodexSettingsSnapshot {
-  readonly defaultModel?: unknown;
-  readonly reasoningByModel?: unknown;
-}
-
-interface ClaudeSettingsSnapshot {
-  readonly providers?: {
-    readonly claude?: {
-      readonly sessionContinuity?: {
-        readonly remainingPercentThreshold?: unknown;
-      };
-    };
-  };
-}
 
 const toNumber = (value: string | undefined, fallback: number): number => {
   if (!value) {
@@ -125,186 +100,6 @@ const toBoolean = (value: string | undefined, fallback: boolean): boolean => {
     return fallback;
   }
   return BOOLEAN_TRUTHY.has(value.trim().toLowerCase());
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
-
-const clampNumber = (value: number, min: number, max: number): number =>
-  Math.min(max, Math.max(min, value));
-
-const normalizeCodexReasoningEffort = (
-  value: unknown
-): CodexReasoningEffort | undefined =>
-  typeof value === "string" &&
-  CODEX_REASONING_EFFORTS.has(value as CodexReasoningEffort)
-    ? (value as CodexReasoningEffort)
-    : undefined;
-
-const normalizeCodexModelFromSettings = (value: unknown): string | undefined =>
-  typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : undefined;
-
-const normalizeOptionalString = (
-  value: string | undefined
-): string | undefined => (value?.trim() ? value.trim() : undefined);
-
-export const resolvePreferredCodexDefaultModel = (options: {
-  readonly settingsDefaultModel?: string;
-  readonly envDefaultModel?: string;
-  readonly fallbackModel: string;
-}): string =>
-  options.settingsDefaultModel ??
-  normalizeOptionalString(options.envDefaultModel) ??
-  options.fallbackModel;
-
-const loadCodexSettingsSnapshot = (): CodexSettingsSnapshot | null => {
-  try {
-    const raw = readFileSync(CODEX_SETTINGS_PATH, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
-    if (!isRecord(parsed)) {
-      return null;
-    }
-    const providers = isRecord(parsed.providers) ? parsed.providers : null;
-    const codex =
-      providers && isRecord(providers.codex) ? providers.codex : null;
-    if (!codex) {
-      return null;
-    }
-    return {
-      defaultModel: codex.defaultModel,
-      reasoningByModel: codex.reasoningByModel,
-    };
-  } catch {
-    return null;
-  }
-};
-
-const resolveCodexReasoningFromSettings = (
-  value: unknown
-): Record<string, CodexReasoningEffort> => {
-  if (!isRecord(value)) {
-    return {};
-  }
-
-  const normalized: Record<string, CodexReasoningEffort> = {};
-  for (const [modelId, reasoning] of Object.entries(value)) {
-    const normalizedReasoning = normalizeCodexReasoningEffort(reasoning);
-    if (normalizedReasoning) {
-      normalized[modelId] = normalizedReasoning;
-    }
-  }
-
-  return normalized;
-};
-
-interface GeminiSettingsSnapshot {
-  readonly defaultModel?: unknown;
-  readonly thinkingLevelByModel?: unknown;
-}
-
-const loadGeminiSettingsSnapshot = (): GeminiSettingsSnapshot | null => {
-  try {
-    const raw = readFileSync(CLAUDE_SETTINGS_FILE, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
-    if (!isRecord(parsed)) {
-      return null;
-    }
-    const providers = isRecord(parsed.providers) ? parsed.providers : null;
-    const gemini =
-      providers && isRecord(providers.gemini) ? providers.gemini : null;
-    if (!gemini) {
-      return null;
-    }
-    return {
-      defaultModel: gemini.defaultModel,
-      thinkingLevelByModel: gemini.thinkingLevelByModel,
-    };
-  } catch {
-    return null;
-  }
-};
-
-const resolveGeminiThinkingFromSettings = (
-  value: unknown
-): Record<string, string> => {
-  if (!isRecord(value)) {
-    return {};
-  }
-
-  const normalized: Record<string, string> = {};
-  for (const [modelId, level] of Object.entries(value)) {
-    if (typeof level === "string") {
-      normalized[modelId] = level;
-    }
-  }
-
-  return normalized;
-};
-
-const toSandboxMode = (
-  value: string | undefined
-): CoreConfig["codexSandboxMode"] => {
-  if (!value) {
-    return;
-  }
-  const normalized = value.trim().toLowerCase();
-  if (
-    normalized === "read-only" ||
-    normalized === "workspace-write" ||
-    normalized === "danger-full-access"
-  ) {
-    return normalized;
-  }
-  return;
-};
-
-const toApprovalMode = (
-  value: string | undefined
-): CoreConfig["codexApprovalMode"] => {
-  if (!value) {
-    return;
-  }
-  const normalized = value.trim().toLowerCase();
-  if (
-    normalized === "never" ||
-    normalized === "on-request" ||
-    normalized === "on-failure" ||
-    normalized === "untrusted"
-  ) {
-    return normalized;
-  }
-  return;
-};
-
-const loadClaudeSettingsSnapshot = (
-  settingsPath: string
-): ClaudeSettingsSnapshot | null => {
-  try {
-    const raw = readFileSync(settingsPath, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
-    if (!isRecord(parsed)) {
-      return null;
-    }
-    return parsed as ClaudeSettingsSnapshot;
-  } catch {
-    return null;
-  }
-};
-
-const resolveClaudeContinuityRemainingPercentThreshold = (
-  snapshot: ClaudeSettingsSnapshot | null
-): number => {
-  const value =
-    snapshot?.providers?.claude?.sessionContinuity?.remainingPercentThreshold;
-  const numeric = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(numeric)) {
-    return DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
-  }
-  return clampNumber(
-    numeric,
-    MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-    MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD
-  );
 };
 
 export const loadConfig = (): CoreConfig => {
@@ -339,7 +134,7 @@ export const loadConfig = (): CoreConfig => {
     process.env.CODEX_SKIP_GIT_REPO_CHECK,
     false
   );
-  const codexSettings = loadCodexSettingsSnapshot();
+  const codexSettings = loadCodexSettingsSnapshot(CODEX_SETTINGS_PATH);
   const codexSettingsDefaultModel = normalizeCodexModelFromSettings(
     codexSettings?.defaultModel
   );
@@ -365,21 +160,22 @@ export const loadConfig = (): CoreConfig => {
     process.env.GEMINI_CREDENTIALS_DIRECTORY ??
     process.env.GEMINI_CREDENTIALS_DIR ??
     undefined;
-
-  const geminiSettings = loadGeminiSettingsSnapshot();
+  const geminiSettings = loadGeminiSettingsSnapshot(CLAUDE_SETTINGS_FILE);
   const geminiThinkingLevelByModel = resolveGeminiThinkingFromSettings(
     geminiSettings?.thinkingLevelByModel
   );
   const claudeSettings = loadClaudeSettingsSnapshot(claudeSettingsPath);
   const claudeContinuityRemainingPercentThreshold =
     resolveClaudeContinuityRemainingPercentThreshold(claudeSettings);
-  const continuityPreemptRemainingPercentThreshold = clampNumber(
-    toNumber(
-      process.env.CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD,
-      DEFAULT_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD
-    ),
-    MIN_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD,
-    MAX_CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD
+  const continuityPreemptRemainingPercentThreshold = Math.min(
+    MAX_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD,
+    Math.max(
+      MIN_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD,
+      toNumber(
+        process.env.CONTINUITY_PREEMPT_REMAINING_PERCENT_THRESHOLD,
+        DEFAULT_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD
+      )
+    )
   );
 
   return {

@@ -83,6 +83,10 @@
   - `workspace-runtime-facade.ts` = thin façade / module entrypoint
   - `workspace-runtime-session-sync.ts` = workspace selection, snapshot push, session-store sync
   - `workspace-runtime-lock-sync.ts` = lock/runtime projection and task-timer persistence
+- Config cluster: `packages/core/src/config/`
+  - `index.ts` = thin config façade / environment assembly entrypoint
+  - `provider-settings-snapshot.ts` = persisted provider settings readers
+  - `provider-defaults-resolver.ts` = provider default model/reasoning normalization
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
