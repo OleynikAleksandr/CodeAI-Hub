@@ -35,19 +35,19 @@
 
 ### Stream: Metadata and workflow truthfulness
 1. [DONE] Синхронизировать canonical repo metadata и licensing answer между `README.md` и `package.json`, чтобы закрыть remaining audit drift по clone target / repository URL / license wording без изменения runtime behavior. Scope: `README.md`, `package.json`. Expected commit: `docs(metadata): align repository and license contract`
-2. [IN_PROGRESS] Git Commit: `docs(metadata): align repository and license contract` (hash: TBD)
-3. [TODO] Удалить stale Lefthook leftovers из active workflow surface и dependency graph, зафиксировав Husky как единственный hook engine. Scope: `lefthook.yml`, `package.json`, `package-lock.json`. Expected commit: `chore(workflow): remove stale lefthook leftovers`
-4. [TODO] Git Commit: `chore(workflow): remove stale lefthook leftovers` (hash: TBD)
-5. [TODO] Свести `scripts/build-release.sh`, `scripts/README.md` и `AGENTS.md` к одному правдивому release contract: checks/next-steps wording не должны конфликтовать с локальным Husky-first workflow. Scope: `scripts/build-release.sh`, `scripts/README.md`, `AGENTS.md`. Expected commit: `docs(workflow): align release script contract`
-6. [TODO] Git Commit: `docs(workflow): align release script contract` (hash: TBD)
+2. [DONE] Git Commit: `docs(metadata): align repository and license contract` (hash: `1ecc4652`)
+3. [DONE] Удалить stale Lefthook leftovers из active workflow surface и dependency graph, зафиксировав Husky как единственный hook engine. Scope: `lefthook.yml`, `package.json`, `package-lock.json`. Expected commit: `chore(workflow): remove stale lefthook leftovers`
+4. [DONE] Git Commit: `chore(workflow): remove stale lefthook leftovers` (hash: `70d8d1af`)
+5. [DONE] Свести `scripts/build-release.sh`, `scripts/README.md` и `AGENTS.md` к одному правдивому release contract: checks/next-steps wording не должны конфликтовать с локальным Husky-first workflow. Scope: `scripts/build-release.sh`, `scripts/README.md`, `AGENTS.md`. Expected commit: `docs(workflow): align release script contract`
+6. [DONE] Git Commit: `docs(workflow): align release script contract` (hash: `855da1ce`)
 
 ### Stream: Public CI baseline
-7. [TODO] Добавить минимальный GitHub CI workflow как публичный enforcement surface для root quality gates (`architecture`, `lint`, `tsprune`, `compile`) на push/PR и синхронно задокументировать его в root docs. Scope: `.github/workflows/ci.yml`, `README.md`, `scripts/README.md`. Expected commit: `ci: add repository truthfulness workflow`
-8. [TODO] Git Commit: `ci: add repository truthfulness workflow` (hash: TBD)
+7. [DONE] Добавить минимальный GitHub CI workflow как публичный enforcement surface для root quality gates (`architecture`, `lint`, `tsprune`, `compile`) на push/PR и синхронно задокументировать его в root docs. Scope: `.github/workflows/ci.yml`, `README.md`, `scripts/README.md`. Expected commit: `ci: add repository truthfulness workflow`
+8. [DONE] Git Commit: `ci: add repository truthfulness workflow` (hash: `697dee62`)
 
 ### Stream: Core session-request-handler hotspot
-9. [TODO] Выделить session resume lifecycle и post-turn context arbitration state из `session-request-handler.ts` в отдельный helper как safe first cut giant hotspot-а, сохранив current `no_resume` / `resume_in_place` / rollover locking semantics. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-resume-lifecycle.ts`. Expected commit: `refactor(core): extract session request resume lifecycle`
-10. [TODO] Git Commit: `refactor(core): extract session request resume lifecycle` (hash: TBD)
+9. [DONE] Выделить session resume lifecycle и post-turn context arbitration state из `session-request-handler.ts` в отдельный helper как safe first cut giant hotspot-а, сохранив current `no_resume` / `resume_in_place` / rollover locking semantics. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-resume-lifecycle.ts`. Expected commit: `refactor(core): extract session request resume lifecycle`
+10. [DONE] Git Commit: `refactor(core): extract session request resume lifecycle` (hash: `34d924b8`)
 11. [TODO] Выделить create/register shell session + provider-session resolution path из `session-request-handler.ts`, оставив root file orchestrator-ом вокруг session shell factory и continuity root promotion. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.ts`. Expected commit: `refactor(core): extract session request bootstrap path`
 12. [TODO] Git Commit: `refactor(core): extract session request bootstrap path` (hash: TBD)
 13. [TODO] Выделить outbound/internal message dispatch и missing-binding guard path из `session-request-handler.ts`, сохранив turn lifecycle, pending-intent TTL и continuity tracking behavior текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`. Expected commit: `refactor(core): extract session request message dispatch`
