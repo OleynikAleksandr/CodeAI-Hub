@@ -31,6 +31,7 @@ export interface ModelInfo {
   readonly providerId: ProviderStackId;
   readonly providerName: string;
   readonly reasoning?: string;
+  readonly source?: "settings" | "runtime";
 }
 
 export type SessionUsageLimitLabels = {

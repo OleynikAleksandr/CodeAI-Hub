@@ -17,6 +17,7 @@ import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId } from "./runtime-session-auto-select";
+import { useRuntimeModelSync } from "./use-runtime-model-sync";
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
@@ -255,6 +256,7 @@ export const ProjectManagerRuntimeSessionView = ({
     reload();
   }, [activeSessionId, reload]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
+  useRuntimeModelSync(activeSessionId, setSnapshots);
   useSessionResumeIntent({
     sessionsRef,
     focusSession: (sessionId) => {

@@ -8,9 +8,11 @@ const hasRuntimeModelOverride = (
   snapshot: SessionSnapshots[string],
   settingsModelId: string | undefined
 ): boolean => {
-  const currentModelId = snapshot.status.models?.[0]?.modelId;
+  const currentModel = snapshot.status.models?.[0];
   return Boolean(
-    currentModelId && settingsModelId && currentModelId !== settingsModelId
+    currentModel?.source === "runtime" &&
+      currentModel.modelId &&
+      settingsModelId
   );
 };
 

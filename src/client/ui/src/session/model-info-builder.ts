@@ -63,6 +63,7 @@ export const buildModelInfoList = (
       providerName: getDefaultProviderTitle(providerId),
       modelId: "unknown",
       modelDisplayName: getDefaultProviderTitle(providerId),
+      source: "settings",
     }));
   }
 
@@ -98,6 +99,7 @@ export const buildModelInfoList = (
       modelId,
       modelDisplayName,
       reasoning,
+      source: "settings",
     };
   });
 };

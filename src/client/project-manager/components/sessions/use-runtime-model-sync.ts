@@ -63,6 +63,7 @@ export const useRuntimeModelSync = (
             ...currentModel,
             modelId,
             modelDisplayName: formatModelDisplayName(modelId),
+            source: "runtime" as const,
           },
           ...models.slice(1),
         ];
