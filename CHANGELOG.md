@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.823] - 2026-03-28
+### Added
+- **Core fatal crash log**: `packages/core/src/index.ts` now appends `uncaughtExceptionMonitor` crash records to `~/.codeai-hub/logs/core/core-fatal.log` so abrupt provider-boundary failures leave a synchronous stack trace on disk.
+- **Bridge observer log**: `src/extension-module/core/core-keep-alive.ts` now mirrors extension-side bridge lifecycle messages into `~/.codeai-hub/logs/observer/bridge-observer.log`, giving post-mortem visibility even when Core exits before flushing its own logs.
+
 ## [1.1.822] - 2026-03-28
 ### Changed
 - **Wave 2 oversized debt cleanup**: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/config/index.ts`, `packages/core/src/remote-bridge/types.ts`, and `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts` are now thin façade/aggregation surfaces over focused helper clusters.
