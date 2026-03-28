@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.830] - 2026-03-28
+### Changed
+- **Settings SSOT next-turn config path**: Core now resolves persisted `model` / `reasoning` once and threads the applied turn config through remote-bridge outbound send and switch paths instead of leaving providers to refresh those values independently.
+
+### Fixed
+- **Codex real next-turn model switching**: Codex now applies Core-owned model/reasoning overrides directly onto the active thread runtime before each turn, so the provider-native rollout uses the same model that Project Manager and Core expect.
+- **Codex split-brain removal**: `codex-sdk-manager` no longer re-reads `settings.json` to decide the current runtime model for live turns; bootstrap defaults come from Core and live overrides come from the applied turn config contract.
+- **PM applied model labels**: ready session labels no longer jump to a new model purely because settings changed; they now wait for `session:model:update` and can still refresh reasoning/thinking when Core confirms another turn on the same model.
+- **Gemini/Claude next-turn parity**: Gemini and Claude outbound send paths now consume the same Core-applied next-turn model payload, so they no longer rely on provider-local current-model refresh for live send behavior.
+
 ## [1.1.829] - 2026-03-28
 ### Fixed
 - **Runtime model labels now refresh reasoning/thinking from settings**: Project Manager no longer freezes the `reasoning` / `thinking` suffix when a session is already marked with a runtime model override. The active runtime model is preserved, but its reasoning/thinking label is rebuilt from the latest settings snapshot on refresh.

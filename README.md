@@ -7,13 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.829
-- **Live reasoning/thinking label refresh**: Project Manager session panels now reapply reasoning/thinking labels from the latest settings even when the session is already pinned to a runtime-reported model override. This keeps the lower status bar aligned with updated Codex/Gemini reasoning or Claude thinking settings without losing the actual runtime model in use.
-- **Forced live model refresh**: Project Manager session panels now treat settings-driven model labels and runtime-reported model overrides as separate sources of truth. Active sessions reload settings without preserving stale labels as fake runtime overrides, and the standard runtime session view now listens to `session:model:update` the same way as the dialog view, so the lower status bar can switch to the actual selected model without requiring a Project Manager restart.
-- **Phase 79 core hotspot decomposition**: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` now delegates bootstrap, session resolution, message dispatch, flow-node rollover/report state, dialog segment metadata, provider-event message plumbing, and retry/pending-intent state to focused helpers.
-- **Public CI baseline**: `.github/workflows/ci.yml` now enforces the root repository truthfulness checks on push/PR (`check:architecture`, `lint`, `check:tsprune`, `compile`) alongside the local Husky workflow.
-- **Workflow truthfulness cleanup**: repository metadata, release script guidance, and hook surface are aligned around a Husky-only contract; stale Lefthook leftovers are no longer part of the active workflow story.
-- **Gemini runtime self-healing preserved**: the `1.1.825` repair path for broken global Gemini CLI/Core installs remains the runtime baseline for this release.
+## Current Release — v1.1.830
+- **Settings SSOT for next turns**: Core now resolves persisted provider `model` / `reasoning` once and threads the applied turn config through outbound send/switch paths instead of letting each provider refresh current-model truth independently.
+- **Codex runtime model switching actually applies**: the next Codex turn now updates the active thread runtime with the Core-provided model/reasoning before execution, so provider rollout logs and UI labels stop diverging after a model change.
+- **Ready-session labels wait for runtime confirmation**: Project Manager no longer guesses a new model for an already-ready session just because settings changed. The lower status bar now updates from Core-confirmed runtime model events and can still refresh reasoning/thinking when the confirmed model stays the same across turns.
+- **Gemini/Claude parity on send path**: Gemini and Claude now consume the same Core-applied next-turn model payload on outbound send, bringing their live model-selection contract in line with Codex for this verification release.
+- **Phase 80 verification baseline**: this release isolates the model-switch scope before the remaining `session-request-handler.ts` carry-over cleanup in `Phase 81`.
+- **Gemini runtime self-healing preserved**: the `1.1.825` repair path for broken global Gemini CLI/Core installs remains part of the runtime baseline.
 
 Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
 
