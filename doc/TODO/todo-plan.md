@@ -67,15 +67,15 @@
 
 ### Stream: Core provider turn-config registry
 15. [DONE] Убрать branch-per-provider вычисление applied config из bridge helper path и свести `settings -> applied turn config` к единому registry/resolver contract, который покрывает Claude/Codex/Gemini и масштабируется на новые provider ids без новых `if (providerId === ...)` в runtime bridge. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/config/provider-settings-snapshot.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): centralize provider turn config registry`
-16. [DONE] Git Commit: `refactor(core): centralize provider turn config registry` (hash: TBD)
+16. [DONE] Git Commit: `refactor(core): centralize provider turn config registry` (hash: `8507fea2`)
 
 ### Stream: Provider-neutral outbound bridge contract
 17. [TODO] Свести attachment outbound applied config и `session:model:update` broadcast к одному provider-neutral helper, чтобы send/switch/UI sync path работал через единый envelope и не знал деталей отдельных провайдеров. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/types.ts`. Expected commit: `refactor(core): unify applied config bridge contract`
 18. [TODO] Git Commit: `refactor(core): unify applied config bridge contract` (hash: TBD)
 
 ### Stream: Provider capability registration
-19. [TODO] Ввести в provider registry явный capability/contract для runtime model apply и label-sync eligibility, чтобы новый provider подключался через регистрацию возможностей, а не через разрозненные hardcoded checks по `providerId`. Scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): register provider model sync capabilities`
-20. [TODO] Git Commit: `refactor(core): register provider model sync capabilities` (hash: TBD)
+19. [DONE] Ввести в provider registry явный capability/contract для runtime model apply и label-sync eligibility, чтобы новый provider подключался через регистрацию возможностей, а не через разрозненные hardcoded checks по `providerId`. Scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): register provider model sync capabilities`
+20. [DONE] Git Commit: `refactor(core): register provider model sync capabilities` (hash: TBD)
 
 ### Stream: Provider adoption parity sweep
 21. [TODO] Привести Claude/Codex/Gemini к одному provider-side apply contract поверх общего envelope: каждый модуль применяет runtime model/thinking через одинаковую точку чтения applied config без собственного truth-layer из `settings.json`. Scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`. Expected commit: `refactor(providers): adopt shared applied config contract`

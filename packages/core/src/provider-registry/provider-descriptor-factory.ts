@@ -12,6 +12,7 @@ import type {
   MutableProviderDescriptor,
   ProviderAdapter,
   ProviderDescriptor,
+  ProviderModelSyncCapabilities,
 } from "./provider-module-loader.types";
 import {
   createClaudeUsageLimitsFacadeBridge,
@@ -54,6 +55,35 @@ const tryAttachAdapter = (
     onFailure(descriptor, error, failureLabel);
   }
 };
+
+const DEFAULT_PROVIDER_MODEL_SYNC_CAPABILITIES: ProviderModelSyncCapabilities =
+  {
+    acceptsAppliedTurnConfig: false,
+    syncsLabelFromAppliedConfig: false,
+  };
+
+const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
+  Record<string, ProviderModelSyncCapabilities>
+> = {
+  claudeCodeCli: {
+    acceptsAppliedTurnConfig: true,
+    syncsLabelFromAppliedConfig: true,
+  },
+  codexCli: {
+    acceptsAppliedTurnConfig: true,
+    syncsLabelFromAppliedConfig: true,
+  },
+  geminiCli: {
+    acceptsAppliedTurnConfig: true,
+    syncsLabelFromAppliedConfig: true,
+  },
+};
+
+export const resolveProviderModelSyncCapabilities = (
+  providerId: string
+): ProviderModelSyncCapabilities =>
+  PROVIDER_MODEL_SYNC_CAPABILITIES[providerId] ??
+  DEFAULT_PROVIDER_MODEL_SYNC_CAPABILITIES;
 
 export const createClaudeAdapterInstance = (
   options: Pick<
@@ -107,6 +137,9 @@ const buildClaudeDescriptor = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor => {
   const descriptor: MutableProviderDescriptor = {
+    capabilities: {
+      modelSync: resolveProviderModelSyncCapabilities("claudeCodeCli"),
+    },
     id: "claudeCodeCli",
     name: "Claude",
     description: "Using your authentication Claude Code CLI",
@@ -125,6 +158,9 @@ const buildCodexDescriptor = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor => {
   const descriptor: MutableProviderDescriptor = {
+    capabilities: {
+      modelSync: resolveProviderModelSyncCapabilities("codexCli"),
+    },
     id: "codexCli",
     name: "Codex",
     description: "Using your authentication Codex CLI",
@@ -140,6 +176,9 @@ const buildCodexDescriptor = (
 };
 
 const buildGeminiDescriptor = (): ProviderDescriptor => ({
+  capabilities: {
+    modelSync: resolveProviderModelSyncCapabilities("geminiCli"),
+  },
   id: "geminiCli",
   name: "Gemini",
   description: "Using your authentication Gemini CLI",

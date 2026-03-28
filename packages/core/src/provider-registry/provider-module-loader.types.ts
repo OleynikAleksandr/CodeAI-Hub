@@ -59,11 +59,21 @@ export interface GeminiUsageLimitsFacadeBridge {
 }
 
 export interface Provider {
+  readonly capabilities?: ProviderCapabilities;
   readonly description: string;
   readonly id: string;
   readonly name: string;
   readonly status: "active" | "inactive" | "degraded";
   readonly statusMessage?: string;
+}
+
+export interface ProviderCapabilities {
+  readonly modelSync: ProviderModelSyncCapabilities;
+}
+
+export interface ProviderModelSyncCapabilities {
+  readonly acceptsAppliedTurnConfig: boolean;
+  readonly syncsLabelFromAppliedConfig: boolean;
 }
 
 export interface ProviderAdapter {
