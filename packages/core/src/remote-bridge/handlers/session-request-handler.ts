@@ -1,24 +1,14 @@
 import crypto from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
-import { homedir } from "node:os";
-import path from "node:path";
-import {
-  buildSessionFilePath,
-  readSessionEvents,
-  sanitizeWorkspaceSlug,
-} from "@codeai-hub/unified-session";
+import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
-import {
-  ContinuityChainStore,
-  promoteContinuityChainRootIfPresent,
-} from "../../session-continuity/continuity-store";
+import { promoteContinuityChainRootIfPresent } from "../../session-continuity/continuity-store";
 import type { TokenUsageSnapshot } from "../../session-continuity/continuity-types";
 import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
-  computeRemainingPercent,
   extractTokenUsage,
   isBelowRemainingPercentThreshold,
 } from "../../session-continuity/token-usage";
@@ -51,6 +41,7 @@ import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
+import { SessionRequestHandlerDialogSegmentMeta } from "./session-request-handler-dialog-segment-meta";
 import { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
 import { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
@@ -61,55 +52,6 @@ import {
 import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
 import { shouldHideUserMessage } from "./workflow-turn-control";
-
-const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
-const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
-
-interface UnifiedSessionSegmentSummaryPayload {
-  readonly kind: "segment_summary";
-  readonly segments: readonly {
-    readonly index: number;
-    readonly remainingPercent?: number;
-  }[];
-}
-
-const isUnifiedSessionSegmentSummaryPayload = (
-  value: unknown
-): value is UnifiedSessionSegmentSummaryPayload => {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-  const record = value as {
-    readonly kind?: unknown;
-    readonly segments?: unknown;
-  };
-  if (record.kind !== "segment_summary" || !Array.isArray(record.segments)) {
-    return false;
-  }
-  for (const segment of record.segments) {
-    if (!segment || typeof segment !== "object") {
-      return false;
-    }
-    const candidate = segment as {
-      readonly index?: unknown;
-      readonly remainingPercent?: unknown;
-    };
-    if (
-      typeof candidate.index !== "number" ||
-      !Number.isFinite(candidate.index)
-    ) {
-      return false;
-    }
-    if (
-      candidate.remainingPercent !== undefined &&
-      (typeof candidate.remainingPercent !== "number" ||
-        !Number.isFinite(candidate.remainingPercent))
-    ) {
-      return false;
-    }
-  }
-  return true;
-};
 
 export interface ProviderSessionBinding {
   readonly providerId: string;
@@ -172,8 +114,6 @@ interface MessageContentExtraction {
   readonly content: string;
   readonly turnOptions?: Record<string, unknown>;
 }
-
-const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 
 const DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
@@ -257,7 +197,6 @@ export interface SessionRequestHandlerOptions {
 export class SessionRequestHandler {
   private readonly providerSessions = new Map<string, ProviderSessionBinding>();
   private readonly continuityRootBySessionId = new Map<string, string>();
-  private readonly dialogSegmentMetaWriteInFlight = new Set<string>();
   private readonly config: CoreConfig;
   private readonly sessionManager: SessionManager;
   private readonly providerRegistry: ProviderRegistry;
@@ -277,6 +216,7 @@ export class SessionRequestHandler {
   private readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
   private readonly sessionResolution: SessionRequestHandlerSessionResolution;
   private readonly messageDispatch: SessionRequestHandlerMessageDispatch;
+  private readonly dialogSegmentMeta: SessionRequestHandlerDialogSegmentMeta;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeReportState: SessionRequestHandlerFlowNodeReportState;
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
@@ -583,6 +523,14 @@ export class SessionRequestHandler {
       trackPendingUserIntent: (sessionId, content) =>
         this.trackPendingUserIntent(sessionId, content),
     });
+    this.dialogSegmentMeta = new SessionRequestHandlerDialogSegmentMeta({
+      broadcaster: this.broadcaster,
+      continuity: this.continuity,
+      continuityRootBySessionId: this.continuityRootBySessionId,
+      logger: this.logger,
+      sessionManager: this.sessionManager,
+      sessionStorage: this.sessionStorage,
+    });
     this.sessionBootstrap = new SessionRequestHandlerSessionBootstrap({
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
@@ -617,7 +565,7 @@ export class SessionRequestHandler {
           providerSessionId
         ),
       appendDialogSegmentBoundaryMeta: (boundaryOptions) =>
-        this.appendDialogSegmentBoundaryMeta(boundaryOptions),
+        this.dialogSegmentMeta.appendDialogSegmentBoundaryMeta(boundaryOptions),
       resumeLifecycle: this.resumeLifecycle,
       workspaceRuntime: this.workspaceRuntime,
     });
@@ -1375,165 +1323,6 @@ export class SessionRequestHandler {
         this.config.claudeContinuityRemainingPercentThreshold ??
         DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
     });
-  }
-
-  private async appendDialogSegmentBoundaryMeta(options: {
-    readonly session: Session;
-    readonly workspaceSlug: string;
-    readonly stageId: string;
-    readonly silent: boolean;
-  }): Promise<void> {
-    if (options.silent) {
-      return;
-    }
-
-    const rootDialogId =
-      this.continuityRootBySessionId.get(options.session.id) ??
-      options.session.id;
-
-    try {
-      const workspaceKey = sanitizeWorkspaceSlug(options.session.workspacePath);
-      const jsonlPath = buildSessionFilePath({
-        rootDirectory: SESSION_ROOT,
-        workspaceSlug: workspaceKey,
-        provider: options.session.providerId,
-        sessionId: sanitizeWorkspaceSlug(rootDialogId),
-      });
-
-      await this.continuity.ensureTrackedOnOutboundMessage({
-        sessionId: options.session.id,
-        providerSessionId: options.session.providerSessionId,
-      });
-
-      const store = new ContinuityChainStore({
-        workspaceRoot: options.session.workspacePath,
-        workspaceSlug: options.workspaceSlug,
-        stage: options.stageId,
-        rootSessionId: rootDialogId,
-      });
-
-      const chain = await store.read();
-      if (!chain || chain.segments.length <= 1) {
-        return;
-      }
-
-      const inFlightKey = `${jsonlPath}#${chain.segments.length}`;
-      if (this.dialogSegmentMetaWriteInFlight.has(inFlightKey)) {
-        this.logger.warn("Skipping dialog segment meta append (in-flight)", {
-          dialogId: rootDialogId,
-          sessionId: options.session.id,
-          segments: chain.segments.length,
-        });
-        return;
-      }
-      this.dialogSegmentMetaWriteInFlight.add(inFlightKey);
-      try {
-        const latestSummary = await this.readLatestSegmentSummary(jsonlPath);
-        if (
-          latestSummary &&
-          latestSummary.segments.length === chain.segments.length
-        ) {
-          this.logger.info("Dialog segment meta already up-to-date", {
-            dialogId: rootDialogId,
-            sessionId: options.session.id,
-            segments: chain.segments.length,
-          });
-          return;
-        }
-
-        const segments = chain.segments.map((segment, index) => {
-          const snapshot = segment.tokenUsage ?? null;
-          const remainingPercent = snapshot
-            ? computeRemainingPercent(snapshot)
-            : null;
-          return {
-            index: index + 1,
-            providerId: segment.providerId,
-            providerSessionId: segment.providerSessionId,
-            ...(remainingPercent === null ? {} : { remainingPercent }),
-          } as const;
-        });
-
-        const payload = {
-          kind: "segment_summary",
-          dialogId: rootDialogId,
-          segments,
-        } as const;
-
-        const content = [
-          DIALOG_SEGMENT_BOUNDARY_MARKER,
-          "Новая сессия",
-          `${DIALOG_SEGMENT_META_MARKER}${JSON.stringify(payload)}`,
-        ].join("\n");
-
-        const metaMessage = this.sessionManager.appendMessage(
-          options.session.id,
-          "system",
-          content
-        );
-        if (!metaMessage) {
-          return;
-        }
-        await this.sessionStorage.appendMessage(
-          options.session.id,
-          metaMessage
-        );
-        this.broadcaster({ type: "session:message", payload: metaMessage });
-        this.broadcastDialogMessage(options.session.id, metaMessage);
-      } finally {
-        this.dialogSegmentMetaWriteInFlight.delete(inFlightKey);
-      }
-    } catch (error: unknown) {
-      this.logger.warn("Failed to append dialog segment meta", {
-        dialogId: rootDialogId,
-        sessionId: options.session.id,
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  }
-
-  private tryParseSegmentSummaryPayloadFromBoundaryMessage(
-    content: string
-  ): UnifiedSessionSegmentSummaryPayload | null {
-    const lines = content.split("\n").map((line) => line.trim());
-    if (lines[0] !== DIALOG_SEGMENT_BOUNDARY_MARKER) {
-      return null;
-    }
-    const metaLine = lines.find((line) =>
-      line.startsWith(DIALOG_SEGMENT_META_MARKER)
-    );
-    if (!metaLine) {
-      return null;
-    }
-    const json = metaLine.slice(DIALOG_SEGMENT_META_MARKER.length).trim();
-    if (!json) {
-      return null;
-    }
-    try {
-      const parsed = JSON.parse(json) as unknown;
-      return isUnifiedSessionSegmentSummaryPayload(parsed) ? parsed : null;
-    } catch {
-      return null;
-    }
-  }
-
-  private async readLatestSegmentSummary(
-    jsonlPath: string
-  ): Promise<UnifiedSessionSegmentSummaryPayload | null> {
-    const existingRecords = await readSessionEvents(jsonlPath);
-    let latestSummary: UnifiedSessionSegmentSummaryPayload | null = null;
-    for (const record of existingRecords) {
-      if (record.type !== "message" || record.role !== "system") {
-        continue;
-      }
-      const parsed = this.tryParseSegmentSummaryPayloadFromBoundaryMessage(
-        record.content
-      );
-      if (parsed) {
-        latestSummary = parsed;
-      }
-    }
-    return latestSummary;
   }
 
   private handleProviderFailure(
