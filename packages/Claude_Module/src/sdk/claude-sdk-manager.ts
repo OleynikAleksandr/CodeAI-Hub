@@ -157,6 +157,7 @@ export class ClaudeSDKManager {
             session: payload.session,
             prompt: payload.turn.content,
             outputSchema,
+            turnOptions: payload.turn.turnOptions,
           });
         },
         onRealSessionId: (payload) => {
@@ -200,14 +201,19 @@ export class ClaudeSDKManager {
     readonly session: ActiveSession;
     readonly prompt: string;
     readonly outputSchema: Record<string, unknown> | null;
+    readonly turnOptions?: Record<string, unknown>;
   }): AsyncIterableIterator<ClaudeStreamMessage> & {
     interrupt?: () => Promise<void>;
   } {
     if (!this.queryFunction) {
       throw new Error("SDK query function not initialized");
     }
-    const { outputSchema, prompt, session } = payload;
-    const options = this.buildQueryOptions({ session, outputSchema });
+    const { outputSchema, prompt, session, turnOptions } = payload;
+    const options = this.buildQueryOptions({
+      session,
+      outputSchema,
+      turnOptions,
+    });
     const queryInstance = this.queryFunction({
       prompt,
       options,
@@ -225,13 +231,12 @@ export class ClaudeSDKManager {
   private buildQueryOptions(payload: {
     readonly session: ActiveSession;
     readonly outputSchema: Record<string, unknown> | null;
+    readonly turnOptions?: Record<string, unknown>;
   }): ClaudeQueryOptions {
-    const { outputSchema, session } = payload;
+    const { outputSchema, session, turnOptions } = payload;
     const settingsSnapshot = this.loadClaudeSettingsSnapshot();
-    const defaultModelOverride =
-      this.resolveDefaultModelFromSnapshot(settingsSnapshot);
     const resolvedModel =
-      defaultModelOverride ?? this.deps.workspace.defaultModel;
+      readAppliedClaudeModelId(turnOptions) ?? this.deps.workspace.defaultModel;
     const thinkingOptions = this.resolveThinkingOptions(settingsSnapshot);
     const resumeSessionId = this.resolveResumeSessionId(session);
     const options: ClaudeQueryOptions = {
@@ -301,17 +306,6 @@ export class ClaudeSDKManager {
     };
   }
 
-  private resolveDefaultModelFromSnapshot(
-    snapshot: ClaudeSettingsSnapshot | null
-  ): string | undefined {
-    const candidate =
-      snapshot?.providers?.claude?.defaultModel ?? snapshot?.defaultModel;
-    if (typeof candidate === "string" && candidate.trim().length > 0) {
-      return candidate.trim();
-    }
-    return;
-  }
-
   private loadClaudeSettingsSnapshot(): ClaudeSettingsSnapshot | null {
     const settingsPath = this.deps.workspace.settingsPath;
     if (!settingsPath) {
@@ -337,4 +331,23 @@ const readOutputSchema = (
   }
   const schema = turnOptions.outputSchema;
   return isRecord(schema) ? schema : null;
+};
+
+const readAppliedClaudeModelId = (
+  turnOptions?: Record<string, unknown>
+): string | undefined => {
+  if (!turnOptions) {
+    return undefined;
+  }
+  const appliedConfig = turnOptions.__codeaiAppliedTurnConfig;
+  if (
+    !isRecord(appliedConfig) ||
+    appliedConfig.providerId !== "claudeCodeCli"
+  ) {
+    return undefined;
+  }
+  return typeof appliedConfig.modelId === "string" &&
+    appliedConfig.modelId.trim().length > 0
+    ? appliedConfig.modelId.trim()
+    : undefined;
 };

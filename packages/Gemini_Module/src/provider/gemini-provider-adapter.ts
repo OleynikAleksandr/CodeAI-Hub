@@ -11,6 +11,7 @@ import type {
   GeminiUsageLimitsFacadeBridge,
 } from "../types";
 import { areGeminiUsageLimitsPayloadEqual } from "../types";
+import { readAppliedGeminiModelId } from "./gemini-applied-turn-config";
 
 export type SessionListener = (payload: unknown) => void;
 
@@ -22,13 +23,9 @@ const isTurnCompletedPayload = (payload: unknown): boolean =>
 
 export class GeminiProviderAdapter {
   private readonly installer: GeminiInstaller;
-
   private sessionManager: GeminiSessionManager | null = null;
-
   private cliBridge: GeminiCliBridge | null = null;
-
   private readonly listeners = new Map<string, Set<SessionListener>>();
-
   private readonly options: GeminiModuleOptions;
   private readonly usageLimitsFacade?: GeminiUsageLimitsFacadeBridge;
 
@@ -202,8 +199,16 @@ export class GeminiProviderAdapter {
     this.options.reporter?.info?.("Gemini model override set", { modelId });
   }
 
-  async sendMessage(sessionId: string, content: string): Promise<void> {
+  async sendMessage(
+    sessionId: string,
+    content: string,
+    turnOptions?: Record<string, unknown>
+  ): Promise<void> {
     const manager = this.requireSessionManager();
+    const appliedModelId = readAppliedGeminiModelId(turnOptions);
+    if (appliedModelId) {
+      this.setModelOverride(appliedModelId);
+    }
     try {
       await manager.sendMessage(sessionId, content);
     } catch (error) {
