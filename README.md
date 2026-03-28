@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.821
-- **Remote bridge façade split**: `packages/core/src/remote-bridge/index.ts` is now a thin bridge entrypoint over dedicated bootstrap, lifecycle, and websocket command-router modules.
-- **Websocket command clustering**: dialog and workspace/scope commands moved into focused helper routers, keeping the root runtime bridge surface under the 300-line handwritten limit.
-- **Architecture debt reduced**: `packages/core/src/remote-bridge/index.ts` left the explicit oversized-file allowlist immediately after the façade cut.
-- **HTTP router decomposition**: `http-api-router.ts` remains a thin façade over dedicated session/system/artifact helper modules.
-- **Packaging truthfulness**: the shipped VSIX continues to exclude repo-only Husky helper files and other non-runtime workflow noise.
+## Current Release — v1.1.822
+- **Wave 2 cleanup closed**: core runtime/config/contract/diagram hotspots were cut into focused helper clusters, leaving the root files as thin façade or aggregation surfaces.
+- **Provider messaging façades**: Claude, Codex, and Gemini `message-processor.ts` roots now delegate stream routing, finish/usage sync, and assistant/system normalization to dedicated helpers.
+- **Codex structured output split**: `structured-output-stream-controller.ts` is now a focused façade over parser/state helpers while preserving passthrough and session-promotion behavior.
+- **Architecture truthfulness**: each root file that dropped to `<=300` handwritten lines left the explicit oversized-file allowlist immediately in the same cleanup wave.
+- **Packaging truthfulness**: the shipped VSIX still excludes repo-only Husky helper files and other non-runtime workflow noise.
 
 Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
 

@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.822] - 2026-03-28
+### Changed
+- **Wave 2 oversized debt cleanup**: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/config/index.ts`, `packages/core/src/remote-bridge/types.ts`, and `packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts` are now thin façade/aggregation surfaces over focused helper clusters.
+- **Provider messaging clusters**: Claude, Codex, and Gemini `message-processor.ts` roots now delegate stream routing, finish/usage sync, and assistant/system normalization to dedicated helper modules.
+- **Codex structured output controller**: `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts` is now a focused façade over parser/state helpers, preserving passthrough and session-promotion behavior.
+
+### Fixed
+- **Oversized allowlist truthfulness**: root files that dropped under the 300-line handwritten limit were removed from the explicit debt allowlist in the same refactor wave; blocking non-allowlisted oversized source files remain at zero.
+
 ## [1.1.821] - 2026-03-27
 ### Changed
 - **Remote bridge façade split**: `packages/core/src/remote-bridge/index.ts` is now a thin façade over dedicated bootstrap, server-lifecycle, websocket command-router, dialog command-router, and workspace command-router modules.
