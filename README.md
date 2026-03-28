@@ -7,13 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.831
-- **PM label now follows the real next-turn model apply**: Core emits `session:model:update` from the outbound applied turn config itself on regular sends, so the lower session bar updates when the next turn actually starts on a new model even if the provider does not emit a separate runtime model event.
-- **Settings SSOT for next turns**: Core now resolves persisted provider `model` / `reasoning` once and threads the applied turn config through outbound send/switch paths instead of letting each provider refresh current-model truth independently.
-- **Codex runtime model switching actually applies**: the next Codex turn now updates the active thread runtime with the Core-provided model/reasoning before execution, so provider rollout logs and UI labels stop diverging after a model change.
-- **Ready-session labels wait for runtime confirmation**: Project Manager no longer guesses a new model for an already-ready session just because settings changed. The lower status bar now updates from Core-confirmed runtime model events and can still refresh reasoning/thinking when the confirmed model stays the same across turns.
-- **Gemini/Claude parity on send path**: Gemini and Claude now consume the same Core-applied next-turn model payload on outbound send, bringing their live model-selection contract in line with Codex for this verification release.
-- **Phase 80 verification baseline**: this release isolates the model-switch scope before the remaining `session-request-handler.ts` carry-over cleanup in `Phase 81`.
+## Current Release — v1.1.832
+- **Provider-neutral model sync contract**: Core now resolves next-turn provider config through a shared registry + capability layer, so outbound applied config attachment and Project Manager runtime label sync no longer grow provider-specific bridge branches.
+- **Claude/Codex/Gemini share the same onboarding path**: model-switch behavior is now centered on one Core contract instead of separate provider-by-provider PM/runtime hotfixes.
+- **Gemini now applies model and thinking together**: fresh and existing Gemini sessions stage both `model` and `thinkingLevel` from the shared applied envelope, eliminating the stale bootstrap-thinking gap during live model switches.
+- **Gemini no longer overrides Core defaults from local settings**: when Core already provides authoritative model/thinking defaults, Gemini bootstrap stops reasserting them from provider-local `settings.json`.
+- **PM label still follows real runtime apply**: Core continues to emit `session:model:update` from outbound applied config on regular sends, so the lower session bar tracks the model that actually started the next turn.
+- **Phase 80A verification baseline**: this release closes the provider-neutral generalization pass before the remaining `session-request-handler.ts` decomposition tail in `Phase 81`.
 - **Gemini runtime self-healing preserved**: the `1.1.825` repair path for broken global Gemini CLI/Core installs remains part of the runtime baseline.
 
 Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.

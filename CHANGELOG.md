@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.832] - 2026-03-28
+### Changed
+- **Provider-neutral applied config contract**: Core now resolves per-provider next-turn model/thinking through a shared registry + capability contract, so outbound send attachment and PM runtime label sync no longer depend on `if (providerId === ...)` bridge branches.
+
+### Fixed
+- **Claude/Codex/Gemini model-sync onboarding path**: adding a provider to the model-switch pipeline now centers on Core resolver/capability registration instead of separate PM sync and outbound-bridge hotfixes.
+- **Gemini runtime thinking parity**: Gemini now stages both `model` and `thinkingLevel` from the shared applied turn config for fresh and existing sessions, instead of only overriding the model while leaving bootstrap thinking state stale.
+- **Gemini local settings precedence**: Gemini session bootstrap no longer reasserts `model` / `thinkingLevel` from provider-local `settings.json` when Core already supplied authoritative runtime defaults.
+
 ## [1.1.831] - 2026-03-28
 ### Fixed
 - **Applied runtime model label sync on regular next turns**: Core now emits `session:model:update` directly from the outbound applied turn config on normal send paths, so Project Manager updates the lower session label even when the provider does not emit a follow-up runtime `model_info` / `system` event.
