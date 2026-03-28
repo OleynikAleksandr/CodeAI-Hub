@@ -90,6 +90,7 @@
   - `index.ts` = thin config façade / environment assembly entrypoint
   - `provider-settings-snapshot.ts` = persisted provider settings readers
   - `provider-defaults-resolver.ts` = provider default model/reasoning normalization
+  - `provider-turn-config-resolver.ts` = Core-owned resolver for next-turn Codex/Gemini applied config from persisted Settings snapshot; `index.ts` consumes it before wiring provider defaults into runtime bootstrap
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`

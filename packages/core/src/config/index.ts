@@ -7,21 +7,13 @@ import {
   type CodexSandboxMode,
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_EFFORT,
-  normalizeCodexModelFromSettings,
-  normalizeCodexReasoningEffort,
   resolveClaudeContinuityRemainingPercentThreshold,
   resolveClaudeDefaultModel,
-  resolveCodexReasoningFromSettings,
-  resolveGeminiThinkingFromSettings,
-  resolvePreferredCodexDefaultModel,
   toApprovalMode,
   toSandboxMode,
 } from "./provider-defaults-resolver";
-import {
-  loadClaudeSettingsSnapshot,
-  loadCodexSettingsSnapshot,
-  loadGeminiSettingsSnapshot,
-} from "./provider-settings-snapshot";
+import { loadClaudeSettingsSnapshot } from "./provider-settings-snapshot";
+import { resolveProviderTurnConfig } from "./provider-turn-config-resolver";
 
 export { resolvePreferredCodexDefaultModel } from "./provider-defaults-resolver";
 
@@ -134,36 +126,26 @@ export const loadConfig = (): CoreConfig => {
     process.env.CODEX_SKIP_GIT_REPO_CHECK,
     false
   );
-  const codexSettings = loadCodexSettingsSnapshot(CODEX_SETTINGS_PATH);
-  const codexSettingsDefaultModel = normalizeCodexModelFromSettings(
-    codexSettings?.defaultModel
-  );
-  const codexSettingsReasoningByModel = resolveCodexReasoningFromSettings(
-    codexSettings?.reasoningByModel
-  );
-  const codexDefaultModel = resolvePreferredCodexDefaultModel({
-    // Persisted settings are the user-facing SSOT. Process env can stay stale
-    // in long-lived core/runtime processes after the user changes Settings.
-    settingsDefaultModel: codexSettingsDefaultModel,
-    envDefaultModel: process.env.CODEX_DEFAULT_MODEL,
-    fallbackModel: DEFAULT_CODEX_MODEL_ID,
+  const providerTurnConfig = resolveProviderTurnConfig({
+    settingsPath: CODEX_SETTINGS_PATH,
+    env: process.env,
+    fallbackCodexModel: DEFAULT_CODEX_MODEL_ID,
+    fallbackCodexReasoningEffort: DEFAULT_CODEX_REASONING_EFFORT,
+    fallbackGeminiModel: process.env.GEMINI_DEFAULT_MODEL ?? undefined,
   });
+  const codexDefaultModel = providerTurnConfig.codex.defaultModel;
   const codexDefaultReasoningEffort =
-    normalizeCodexReasoningEffort(process.env.CODEX_DEFAULT_REASONING_EFFORT) ??
-    codexSettingsReasoningByModel[codexDefaultModel] ??
-    DEFAULT_CODEX_REASONING_EFFORT;
+    providerTurnConfig.codex.defaultReasoningEffort;
   const geminiWorkspacePath =
     process.env.GEMINI_WORKSPACE_PATH ?? workspacePath;
-  const geminiDefaultModel = process.env.GEMINI_DEFAULT_MODEL ?? undefined;
+  const geminiDefaultModel = providerTurnConfig.gemini.defaultModel;
   const geminiSettingsPath = claudeSettingsPath;
   const geminiCredentialsDirectory =
     process.env.GEMINI_CREDENTIALS_DIRECTORY ??
     process.env.GEMINI_CREDENTIALS_DIR ??
     undefined;
-  const geminiSettings = loadGeminiSettingsSnapshot(CLAUDE_SETTINGS_FILE);
-  const geminiThinkingLevelByModel = resolveGeminiThinkingFromSettings(
-    geminiSettings?.thinkingLevelByModel
-  );
+  const geminiThinkingLevelByModel =
+    providerTurnConfig.gemini.thinkingLevelByModel;
   const claudeSettings = loadClaudeSettingsSnapshot(claudeSettingsPath);
   const claudeContinuityRemainingPercentThreshold =
     resolveClaudeContinuityRemainingPercentThreshold(claudeSettings);

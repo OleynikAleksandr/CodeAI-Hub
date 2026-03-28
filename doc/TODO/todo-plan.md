@@ -35,8 +35,8 @@
 ## Phase 80 — Settings SSOT And Next-Turn Model Switching (owner: Oleksandr, updated: 2026-03-28)
 
 ### Stream: Core applied-config resolver
-1. [TODO] Ввести единый Core resolver для `model` / `reasoning` следующего turn из persisted Settings snapshot и задокументировать его как единственную source of truth для applied turn config. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/config/index.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): add provider turn config resolver`
-2. [TODO] Git Commit: `refactor(core): add provider turn config resolver` (hash: TBD)
+1. [DONE] Ввести единый Core resolver для `model` / `reasoning` следующего turn из persisted Settings snapshot и задокументировать его как единственную source of truth для applied turn config. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/config/index.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): add provider turn config resolver`
+2. [DONE] Git Commit: `refactor(core): add provider turn config resolver` (hash: TBD)
 
 ### Stream: Remote-bridge applied-config contract
 3. [TODO] Протянуть explicit applied turn config через remote-bridge send/switch path, чтобы Core передавал провайдеру уже вычисленную конфигурацию, а не полагался на разрозненные локальные refresh paths. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thread applied turn config`
