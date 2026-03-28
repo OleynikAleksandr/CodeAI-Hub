@@ -11,6 +11,7 @@ import {
   parseModule,
   validateParsedModuleUniqueness,
 } from "./diagram-module-parser";
+import { parseProductPartsSection } from "./diagram-ownership-parser";
 import {
   type ParsedRelation,
   parseRelationsSection,
@@ -29,10 +30,8 @@ import {
 
 const DIAGRAM_MODULES_LEGACY_TITLE_RE = /^# Module Inventory$/;
 const INVENTORY_SECTION_RE = /^## (.+)$/;
-const PRODUCT_PART_HEADER_RE = /^### Product Part: (.+)$/;
 const CLUSTER_HEADER_RE = /^### Cluster: (.+)$/;
 const STANDALONE_MODULE_HEADER_RE = /^### Module: (.+)$/;
-const NESTED_MODULE_HEADER_RE = /^#### Module: (.+)$/;
 const INVENTORY_SECTION_NAMES = new Set([
   "Metadata",
   "Product Parts",
@@ -59,23 +58,6 @@ interface ParsedOwnershipStructure {
   readonly standaloneModules: readonly ParsedModule[];
 }
 
-interface ProductPartSectionParseState {
-  currentPartClusters: ParsedCluster[];
-  currentPartStandalone: ParsedModule[];
-  currentProductPart: ParsedProductPart | null;
-  parsedClusters: ParsedCluster[];
-  parsedProductParts: ParsedProductPart[];
-  parsedStandaloneModules: ParsedModule[];
-}
-
-interface ProductPartCursorContext {
-  readonly cursor: number;
-  readonly lines: readonly InventoryLine[];
-  readonly productPartId: string;
-  readonly state: ProductPartSectionParseState;
-  readonly warnings: readonly MarkdownDslParseWarning[];
-}
-
 const required = (
   fields: Fields,
   key: string,
@@ -92,58 +74,6 @@ const listValue = (fields: Fields, key: string): readonly string[] =>
   (fields.scalars.get(key)?.trim()
     ? [fields.scalars.get(key)?.trim() ?? ""]
     : []);
-
-const isInventoryBoundary = (text: string): boolean =>
-  INVENTORY_SECTION_RE.test(text) ||
-  PRODUCT_PART_HEADER_RE.test(text) ||
-  CLUSTER_HEADER_RE.test(text) ||
-  STANDALONE_MODULE_HEADER_RE.test(text) ||
-  NESTED_MODULE_HEADER_RE.test(text);
-
-const takeScalarBlockLines = (
-  lines: readonly { readonly number: number; readonly text: string }[],
-  startIndex: number
-): number => {
-  let cursor = startIndex;
-  while (
-    cursor < lines.length &&
-    !isInventoryBoundary(lines[cursor]?.text.trim() ?? "")
-  ) {
-    cursor += 1;
-  }
-  return cursor;
-};
-
-const takeModuleBlockLines = (
-  lines: readonly { readonly number: number; readonly text: string }[],
-  startIndex: number,
-  headerPattern: RegExp
-): {
-  readonly block: Block;
-  readonly nextIndex: number;
-} => {
-  const id =
-    headerPattern.exec(lines[startIndex]?.text.trim() ?? "")?.[1]?.trim() ?? "";
-  let cursor = startIndex + 1;
-  while (
-    cursor < lines.length &&
-    !PRODUCT_PART_HEADER_RE.test(lines[cursor]?.text.trim() ?? "") &&
-    !CLUSTER_HEADER_RE.test(lines[cursor]?.text.trim() ?? "") &&
-    !STANDALONE_MODULE_HEADER_RE.test(lines[cursor]?.text.trim() ?? "") &&
-    !NESTED_MODULE_HEADER_RE.test(lines[cursor]?.text.trim() ?? "") &&
-    !INVENTORY_SECTION_RE.test(lines[cursor]?.text.trim() ?? "")
-  ) {
-    cursor += 1;
-  }
-  return {
-    block: {
-      id,
-      line: lines[startIndex]?.number ?? startIndex + 1,
-      lines: lines.slice(startIndex + 1, cursor),
-    },
-    nextIndex: cursor,
-  };
-};
 
 const parseMetadata = (
   lines: readonly { readonly number: number; readonly text: string }[],
@@ -310,220 +240,6 @@ const validateProductPartMembership = (
   return null;
 };
 
-const createProductPartSectionState = (): ProductPartSectionParseState => ({
-  currentPartClusters: [],
-  currentPartStandalone: [],
-  currentProductPart: null,
-  parsedClusters: [],
-  parsedProductParts: [],
-  parsedStandaloneModules: [],
-});
-
-const finalizeCurrentProductPartState = (
-  state: ProductPartSectionParseState,
-  warnings: readonly MarkdownDslParseWarning[]
-): MarkdownDslParseResult | null => {
-  if (!state.currentProductPart) {
-    return null;
-  }
-  const membershipError = validateProductPartMembership(
-    state.currentProductPart,
-    state.currentPartClusters,
-    state.currentPartStandalone
-  );
-  if (membershipError) {
-    return toFailureResult(membershipError, warnings);
-  }
-  state.parsedProductParts.push(state.currentProductPart);
-  state.parsedClusters.push(...state.currentPartClusters);
-  state.parsedStandaloneModules.push(...state.currentPartStandalone);
-  state.currentProductPart = null;
-  state.currentPartClusters = [];
-  state.currentPartStandalone = [];
-  return null;
-};
-
-const parseProductPartAtCursor = (
-  lines: readonly InventoryLine[],
-  cursor: number,
-  warnings: readonly MarkdownDslParseWarning[],
-  state: ProductPartSectionParseState
-): number | MarkdownDslParseResult => {
-  const finalized = finalizeCurrentProductPartState(state, warnings);
-  if (finalized) {
-    return finalized;
-  }
-  const nextIndex = takeScalarBlockLines(lines, cursor + 1);
-  const productPart = parseProductPart(
-    {
-      id:
-        PRODUCT_PART_HEADER_RE.exec(
-          lines[cursor]?.text.trim() ?? ""
-        )?.[1]?.trim() ?? "",
-      line: lines[cursor]?.number ?? cursor + 1,
-      lines: lines.slice(cursor + 1, nextIndex),
-    },
-    warnings as MarkdownDslParseWarning[]
-  );
-  if ("code" in productPart) {
-    return toFailureResult(productPart, warnings);
-  }
-  state.currentProductPart = productPart;
-  return nextIndex;
-};
-
-const requireCurrentProductPart = (
-  state: ProductPartSectionParseState,
-  line: number,
-  warnings: readonly MarkdownDslParseWarning[]
-): MarkdownDslParseResult | null =>
-  state.currentProductPart
-    ? null
-    : buildParseFailure(
-        "invalid-metadata",
-        line,
-        "Product Parts section must start with a Product Part block",
-        warnings
-      );
-
-const findProductPartChildBoundary = (
-  lines: readonly InventoryLine[],
-  cursor: number
-): number => {
-  for (let index = cursor + 1; index < lines.length; index += 1) {
-    const trimmed = lines[index]?.text.trim() ?? "";
-    if (
-      PRODUCT_PART_HEADER_RE.test(trimmed) ||
-      CLUSTER_HEADER_RE.test(trimmed) ||
-      STANDALONE_MODULE_HEADER_RE.test(trimmed) ||
-      INVENTORY_SECTION_RE.test(trimmed)
-    ) {
-      return index;
-    }
-  }
-  return lines.length;
-};
-
-const parseProductPartClusterAtCursor = (
-  context: ProductPartCursorContext
-): number | MarkdownDslParseResult => {
-  const boundary = findProductPartChildBoundary(context.lines, context.cursor);
-  const cluster = parseCluster(
-    {
-      id:
-        CLUSTER_HEADER_RE.exec(
-          context.lines[context.cursor]?.text.trim() ?? ""
-        )?.[1]?.trim() ?? "",
-      line: context.lines[context.cursor]?.number ?? context.cursor + 1,
-      lines: context.lines.slice(context.cursor + 1, boundary),
-    },
-    context.warnings as MarkdownDslParseWarning[],
-    context.productPartId
-  );
-  if ("code" in cluster) {
-    return toFailureResult(cluster, context.warnings);
-  }
-  context.state.currentPartClusters.push(cluster);
-  return boundary;
-};
-
-const isProductPartStandaloneModuleHeader = (text: string): boolean =>
-  STANDALONE_MODULE_HEADER_RE.test(text) || NESTED_MODULE_HEADER_RE.test(text);
-
-const parseProductPartStandaloneModuleAtCursor = (
-  context: ProductPartCursorContext
-): number | MarkdownDslParseResult => {
-  const headerPattern = STANDALONE_MODULE_HEADER_RE.test(
-    context.lines[context.cursor]?.text.trim() ?? ""
-  )
-    ? STANDALONE_MODULE_HEADER_RE
-    : NESTED_MODULE_HEADER_RE;
-  const { block, nextIndex } = takeModuleBlockLines(
-    context.lines,
-    context.cursor,
-    headerPattern
-  );
-  const module = parseModule(
-    block,
-    context.warnings as MarkdownDslParseWarning[],
-    {
-      expectedCluster: null,
-      expectedProductPart: context.productPartId,
-    }
-  );
-  if ("code" in module) {
-    return toFailureResult(module, context.warnings);
-  }
-  context.state.currentPartStandalone.push(module);
-  return nextIndex;
-};
-
-const advanceProductPartsCursor = (
-  lines: readonly InventoryLine[],
-  cursor: number,
-  warnings: readonly MarkdownDslParseWarning[],
-  state: ProductPartSectionParseState
-): number | MarkdownDslParseResult => {
-  const lineNumber = lines[cursor]?.number ?? cursor + 1;
-  const trimmed = lines[cursor]?.text.trim() ?? "";
-  if (trimmed.length === 0) {
-    return cursor + 1;
-  }
-  if (PRODUCT_PART_HEADER_RE.test(trimmed)) {
-    return parseProductPartAtCursor(lines, cursor, warnings, state);
-  }
-  const missingProductPart = requireCurrentProductPart(
-    state,
-    lineNumber,
-    warnings
-  );
-  if (missingProductPart) {
-    return missingProductPart;
-  }
-  const context: ProductPartCursorContext = {
-    cursor,
-    lines,
-    productPartId: state.currentProductPart?.id ?? "",
-    state,
-    warnings,
-  };
-  if (CLUSTER_HEADER_RE.test(trimmed)) {
-    return parseProductPartClusterAtCursor(context);
-  }
-  return isProductPartStandaloneModuleHeader(trimmed)
-    ? parseProductPartStandaloneModuleAtCursor(context)
-    : cursor + 1;
-};
-
-const parseProductPartsSection = (
-  lines: readonly InventoryLine[],
-  warnings: MarkdownDslParseWarning[]
-): ParsedOwnershipStructure | MarkdownDslParseResult => {
-  const state = createProductPartSectionState();
-  let cursor = 0;
-  while (cursor < lines.length) {
-    const nextCursor = advanceProductPartsCursor(
-      lines,
-      cursor,
-      warnings,
-      state
-    );
-    if (typeof nextCursor !== "number") {
-      return nextCursor;
-    }
-    cursor = nextCursor;
-  }
-  const finalized = finalizeCurrentProductPartState(state, warnings);
-  if (finalized) {
-    return finalized;
-  }
-  return {
-    productParts: state.parsedProductParts,
-    clusters: state.parsedClusters,
-    standaloneModules: state.parsedStandaloneModules,
-  };
-};
-
 const validateInventorySections = (
   titleLine: number,
   warnings: readonly MarkdownDslParseWarning[],
@@ -637,7 +353,12 @@ const parseOwnershipSections = (
   warnings: MarkdownDslParseWarning[]
 ): ParsedOwnershipStructure | MarkdownDslParseResult => {
   if (sections.productParts) {
-    return parseProductPartsSection(sections.productParts, warnings);
+    return parseProductPartsSection({
+      lines: sections.productParts,
+      warnings,
+      parseProductPart,
+      validateProductPartMembership,
+    });
   }
   if (sections.clusters && sections.standalone) {
     return parseLegacyOwnershipSections(
