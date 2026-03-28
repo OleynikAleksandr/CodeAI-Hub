@@ -17,6 +17,7 @@ const writeTextFile = async (
 };
 
 const createGeminiFixture = async (options: {
+  readonly fastUriMode: "broken" | "missing" | "valid";
   readonly includeLegacyExecutor: boolean;
   readonly includeThoughtUtils: boolean;
 }): Promise<{ readonly root: string; readonly cliRoot: string }> => {
@@ -107,6 +108,31 @@ const createGeminiFixture = async (options: {
       "export const executeToolCall = async () => ({ status: 'success' });\n"
     );
   }
+  if (options.fastUriMode !== "missing") {
+    await writeTextFile(
+      path.join(cliCoreRoot, "node_modules", "fast-uri", "package.json"),
+      JSON.stringify(
+        {
+          name: "fast-uri",
+          version: "3.1.0-fixture",
+          main: "index.js",
+          type: "commonjs",
+        },
+        null,
+        2
+      )
+    );
+    await writeTextFile(
+      path.join(cliCoreRoot, "node_modules", "fast-uri", "index.js"),
+      "module.exports = require('./lib/schemes.js');\n"
+    );
+    await writeTextFile(
+      path.join(cliCoreRoot, "node_modules", "fast-uri", "lib", "schemes.js"),
+      options.fastUriMode === "broken"
+        ? "'use strict'\n/**"
+        : "module.exports = { http: {}, https: {} };\n"
+    );
+  }
 
   return {
     root: fixtureRoot,
@@ -116,6 +142,7 @@ const createGeminiFixture = async (options: {
 
 test("loadCliBridgeFromGlobal loads modules without legacy executor", async () => {
   const fixture = await createGeminiFixture({
+    fastUriMode: "valid",
     includeLegacyExecutor: false,
     includeThoughtUtils: true,
   });
@@ -137,8 +164,37 @@ test("loadCliBridgeFromGlobal loads modules without legacy executor", async () =
 
 test("loadCliBridgeFromGlobal wraps required-module failures as compatibility errors", async () => {
   const fixture = await createGeminiFixture({
+    fastUriMode: "valid",
     includeLegacyExecutor: false,
     includeThoughtUtils: false,
+  });
+  const previousRoot = process.env.CODEAI_HUB_GEMINI_CLI_ROOT;
+  process.env.CODEAI_HUB_GEMINI_CLI_ROOT = fixture.cliRoot;
+  try {
+    await assert.rejects(
+      async () => {
+        await loadCliBridgeFromGlobal();
+      },
+      (error: unknown) => {
+        assert.equal(isGeminiCliCompatibilityError(error), true);
+        return true;
+      }
+    );
+  } finally {
+    if (previousRoot === undefined) {
+      process.env.CODEAI_HUB_GEMINI_CLI_ROOT = undefined;
+    } else {
+      process.env.CODEAI_HUB_GEMINI_CLI_ROOT = previousRoot;
+    }
+    await rm(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test("loadCliBridgeFromGlobal wraps broken fast-uri dependency as compatibility error", async () => {
+  const fixture = await createGeminiFixture({
+    fastUriMode: "broken",
+    includeLegacyExecutor: false,
+    includeThoughtUtils: true,
   });
   const previousRoot = process.env.CODEAI_HUB_GEMINI_CLI_ROOT;
   process.env.CODEAI_HUB_GEMINI_CLI_ROOT = fixture.cliRoot;

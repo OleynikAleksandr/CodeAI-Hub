@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import https from "node:https";
+import nodeModule from "node:module";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -16,6 +17,7 @@ import type {
 
 import { runNpmCommand } from "./npm-runner";
 
+const { createRequire } = nodeModule;
 const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const HTTP_ERROR_STATUS_THRESHOLD = 400;
@@ -60,12 +62,26 @@ export class GeminiInstaller {
     await this.ensurePackageInstalled(GEMINI_CLI_PACKAGE, "cli");
     this.emitProgress("Gemini CLI components ready.", { phase: "provider" });
     await this.verifyCliExecutable();
-
-    this.bridge = await this.loadBridgeWithDiagnostics({
+    const expectedVersions = {
       expectedCliVersion: this.currentCliVersion ?? undefined,
       expectedCoreVersion: this.currentCoreVersion ?? undefined,
-    });
-    return this.bridge;
+    };
+
+    try {
+      this.validateInstalledRuntimeIntegrity();
+      this.bridge = await this.loadBridgeWithDiagnostics(expectedVersions);
+      return this.bridge;
+    } catch (error) {
+      if (!isGeminiCliCompatibilityError(error)) {
+        throw error;
+      }
+      await this.reinstallPackagesForCompatibilityRecovery();
+      this.bridge = await this.loadBridgeWithDiagnostics({
+        expectedCliVersion: this.currentCliVersion ?? undefined,
+        expectedCoreVersion: this.currentCoreVersion ?? undefined,
+      });
+      return this.bridge;
+    }
   }
 
   async updateToLatest(): Promise<GeminiUpdateResult> {
@@ -210,6 +226,7 @@ export class GeminiInstaller {
     this.reportStatus(
       `Installing ${this.describePackage(kind)} ${versionLabel}`
     );
+    await this.removeStaleInstallDirectories(packageName);
     await this.runNpm(["install", "-g", specifier, "--force"]);
     await this.checkPackageInstalled(packageName, kind);
   }
@@ -234,6 +251,51 @@ export class GeminiInstaller {
       detail: "Fetching the latest improvements.",
     });
     await this.installPackage(packageName, latestVersion, kind);
+  }
+
+  private async reinstallPackagesForCompatibilityRecovery(): Promise<void> {
+    this.reportStatus(
+      "Gemini runtime compatibility check failed. Reinstalling CLI components."
+    );
+    this.emitProgress("Repairing Gemini CLI installation...", {
+      detail:
+        "Reinstalling Gemini CLI/Core after a failed runtime sanity check.",
+    });
+    await this.installPackage(
+      GEMINI_CLI_CORE_PACKAGE,
+      this.currentCoreVersion ?? "latest",
+      "core"
+    );
+    await this.installPackage(
+      GEMINI_CLI_PACKAGE,
+      this.currentCliVersion ?? "latest",
+      "cli"
+    );
+  }
+
+  private validateInstalledRuntimeIntegrity(): void {
+    const cliCoreRoot = path.join(
+      this.npmPrefix,
+      "lib",
+      "node_modules",
+      "@google",
+      "gemini-cli-core"
+    );
+    const requireFromInstalledCore = createRequire(
+      path.join(cliCoreRoot, "package.json")
+    );
+    try {
+      requireFromInstalledCore("fast-uri");
+    } catch (error) {
+      const baseMessage =
+        error instanceof Error ? error.message : String(error);
+      const wrapped = new Error(
+        `Installed Gemini CLI Core runtime dependency check failed for fast-uri: ${baseMessage}`
+      ) as Error & { code?: string };
+      wrapped.name = "GeminiCliCompatibilityError";
+      wrapped.code = "GEMINI_CLI_COMPATIBILITY_ERROR";
+      throw wrapped;
+    }
   }
 
   private getLatestVersionFromRegistry(
@@ -318,6 +380,36 @@ export class GeminiInstaller {
 
   private describePackage(kind: "cli" | "core"): string {
     return kind === "cli" ? "Gemini CLI" : "Gemini CLI Core";
+  }
+
+  private async removeStaleInstallDirectories(
+    packageName: string
+  ): Promise<void> {
+    const packageDirectory = path.join(
+      this.npmPrefix,
+      "lib",
+      "node_modules",
+      ...packageName.split("/")
+    );
+    const parentDirectory = path.dirname(packageDirectory);
+    const temporaryPrefix = `.${path.basename(packageDirectory)}-`;
+
+    const entries = await fs
+      .readdir(parentDirectory, {
+        withFileTypes: true,
+      })
+      .catch(() => []);
+    for (const entry of entries) {
+      if (!(entry.isDirectory() && entry.name.startsWith(temporaryPrefix))) {
+        continue;
+      }
+      const stalePath = path.join(parentDirectory, entry.name);
+      await fs.rm(stalePath, { recursive: true, force: true });
+      this.reportStatus("Removed stale Gemini npm install directory", {
+        packageName,
+        stalePath,
+      });
+    }
   }
 
   private runNpm(

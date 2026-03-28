@@ -373,6 +373,20 @@ const loadGeminiModules = async (
   };
 };
 
+const validateCliCoreDependencyGraph = (cliCoreRoot: string): void => {
+  const requireFromCliCore = createRequire(
+    path.join(cliCoreRoot, "package.json")
+  );
+  try {
+    requireFromCliCore("fast-uri");
+  } catch (error) {
+    const baseMessage = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Gemini CLI Core runtime dependency check failed for fast-uri: ${baseMessage}`
+    );
+  }
+};
+
 export interface LoadCliBridgeOptions {
   readonly expectedCliVersion?: string;
   readonly expectedCoreVersion?: string;
@@ -435,6 +449,19 @@ export const loadCliBridgeFromGlobal = async (
       throw compatibilityError;
     }
   );
+  try {
+    validateCliCoreDependencyGraph(cliCoreRoot);
+  } catch (error) {
+    const compatibilityError = createGeminiCliCompatibilityError(error, {
+      cliRoot,
+      cliCoreRoot,
+    });
+    options.reporter?.error?.(
+      "Gemini CLI runtime dependency check failed",
+      compatibilityError
+    );
+    throw compatibilityError;
+  }
 
   const metadata: GeminiCliBridgeMetadata = {
     version: resolvedCliVersion,
