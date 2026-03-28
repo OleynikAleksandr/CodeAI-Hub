@@ -30,10 +30,7 @@ import type {
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
-import type {
-  SessionResumeMode,
-  SessionTerminalLockReason,
-} from "../../workspace-runtime/workspace-runtime-types";
+import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
 import {
   type ContinuityLockReason,
@@ -59,6 +56,10 @@ import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
+import {
+  type PostTurnContextDecision,
+  SessionRequestHandlerResumeLifecycle,
+} from "./session-request-handler-resume-lifecycle";
 import { SessionShellFactory } from "./session-shell-factory";
 import {
   shouldHideUserMessage,
@@ -177,18 +178,6 @@ interface MessageContentExtraction {
   readonly content: string;
   readonly turnOptions?: Record<string, unknown>;
 }
-
-interface SessionResumeLifecycleState {
-  readonly finalTurnCompleted: boolean;
-  readonly mode: SessionResumeMode;
-  readonly terminalLockReason: SessionTerminalLockReason | null;
-}
-
-interface SessionResumeLifecycleStoreHost {
-  sessionResumeLifecycleStates?: Map<string, SessionResumeLifecycleState>;
-}
-
-type PostTurnContextDecision = "no_rollover" | "rollover_required";
 
 type WorkflowStageId = "description" | "virtual_simulation" | "diagram_modules";
 
@@ -334,20 +323,12 @@ export class SessionRequestHandler {
   private readonly providerFailureRecovery: SessionProviderFailureRecovery;
   private readonly continuityLockService: SessionContinuityLockService;
   private readonly continuityRolloverOrchestrator: SessionContinuityRolloverOrchestrator;
+  private readonly resumeLifecycle: SessionRequestHandlerResumeLifecycle;
   private readonly sessionShellFactory: SessionShellFactory;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeContinuityCreateReportRequests = new Map<
     string,
     FlowNodeContinuityCreateReportRequestState
-  >();
-  private readonly sessionResumeLifecycleStates = new Map<
-    string,
-    SessionResumeLifecycleState
-  >();
-  private readonly postTurnContextDecisionPendingSessions = new Set<string>();
-  private readonly postTurnContextDecisionBySessionId = new Map<
-    string,
-    PostTurnContextDecision
   >();
   private readonly retryBudgetBySessionId = new Map<
     string,
@@ -370,167 +351,6 @@ export class SessionRequestHandler {
     readonly settings: unknown;
   } | null = null;
 
-  private getSessionResumeLifecycleStore(): Map<
-    string,
-    SessionResumeLifecycleState
-  > {
-    const host = this as unknown as SessionResumeLifecycleStoreHost;
-    if (host.sessionResumeLifecycleStates) {
-      return host.sessionResumeLifecycleStates;
-    }
-    host.sessionResumeLifecycleStates = new Map<
-      string,
-      SessionResumeLifecycleState
-    >();
-    return host.sessionResumeLifecycleStates;
-  }
-
-  private resolveInitialResumeMode(options: {
-    readonly stage: string | null;
-    readonly runSlug: string | null;
-    readonly explicitMode?: SessionResumeMode | null;
-  }): SessionResumeMode {
-    if (options.explicitMode) {
-      return options.explicitMode;
-    }
-    return "resume_in_place";
-  }
-
-  private getSessionResumeLifecycleState(
-    session: Session
-  ): SessionResumeLifecycleState {
-    const existing = this.getSessionResumeLifecycleStore().get(session.id);
-    if (existing) {
-      return existing;
-    }
-    return {
-      mode: this.resolveInitialResumeMode({
-        stage: session.stage,
-        runSlug: session.runSlug,
-      }),
-      finalTurnCompleted: false,
-      terminalLockReason: null,
-    };
-  }
-
-  private broadcastSessionResumeLifecycleState(
-    session: Session,
-    state: SessionResumeLifecycleState
-  ): void {
-    const sessionKey = {
-      workspaceRoot: session.workspacePath,
-      nodeId: session.stage ?? "session",
-      sessionId: session.id,
-    };
-    this.workspaceRuntime?.notifySessionCreated(sessionKey, {
-      resumeMode: state.mode,
-      terminalLockReason: state.terminalLockReason ?? undefined,
-    });
-    this.workspaceRuntime?.notifyFinalTurnCompleted(
-      sessionKey,
-      state.finalTurnCompleted
-    );
-  }
-
-  private updateSessionResumeLifecycleState(
-    session: Session,
-    patch: Partial<SessionResumeLifecycleState>
-  ): SessionResumeLifecycleState {
-    const current = this.getSessionResumeLifecycleState(session);
-    const next: SessionResumeLifecycleState = {
-      mode: patch.mode ?? current.mode,
-      finalTurnCompleted:
-        patch.finalTurnCompleted ?? current.finalTurnCompleted,
-      terminalLockReason:
-        patch.terminalLockReason === undefined
-          ? current.terminalLockReason
-          : patch.terminalLockReason,
-    };
-    if (
-      next.mode === current.mode &&
-      next.finalTurnCompleted === current.finalTurnCompleted &&
-      next.terminalLockReason === current.terminalLockReason
-    ) {
-      return current;
-    }
-    this.getSessionResumeLifecycleStore().set(session.id, next);
-    this.broadcastSessionResumeLifecycleState(session, next);
-    return next;
-  }
-
-  private elevateSessionToRolloverResumeMode(session: Session): void {
-    this.updateSessionResumeLifecycleState(session, {
-      mode: "resume_via_rollover",
-      finalTurnCompleted: false,
-      terminalLockReason: null,
-    });
-  }
-
-  private handleNoResumeTurnCompleted(session: Session): void {
-    const state = this.getSessionResumeLifecycleState(session);
-    if (
-      state.finalTurnCompleted &&
-      state.terminalLockReason === "terminal_no_resume"
-    ) {
-      return;
-    }
-    const rolloverId = crypto.randomUUID();
-    const stageId = session.stage ?? "session";
-    const runSlug = session.runSlug ?? null;
-    this.updateSessionResumeLifecycleState(session, {
-      mode: "no_resume",
-      finalTurnCompleted: true,
-      terminalLockReason: "terminal_no_resume",
-    });
-    this.continuityLockService.emitContinuityLockEvent({
-      sessionId: session.id,
-      rolloverId,
-      sourceSessionId: session.id,
-      stageId,
-      runSlug,
-      state: "locked",
-      reason: "terminal_no_resume",
-    });
-  }
-
-  private markPostTurnContextDecisionPending(sessionId: string): void {
-    this.postTurnContextDecisionBySessionId.delete(sessionId);
-    this.postTurnContextDecisionPendingSessions.add(sessionId);
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      return;
-    }
-    const lifecycleState = this.getSessionResumeLifecycleState(session);
-    if (lifecycleState.mode === "no_resume") {
-      return;
-    }
-    if (this.isFlowNodeRolloverPending(sessionId)) {
-      return;
-    }
-    this.emitContinuityLockEvent({
-      sessionId: session.id,
-      rolloverId: crypto.randomUUID(),
-      sourceSessionId: session.id,
-      stageId: session.stage ?? "session",
-      runSlug: session.runSlug ?? null,
-      state: "locked",
-      reason: "context_check_pending",
-    });
-  }
-
-  private clearPostTurnContextDecision(sessionId: string): void {
-    this.postTurnContextDecisionPendingSessions.delete(sessionId);
-    this.postTurnContextDecisionBySessionId.delete(sessionId);
-    this.continuityRolloverOrchestrator.clearTokenUsageSnapshot(sessionId);
-  }
-
-  private recordPostTurnContextDecision(
-    sessionId: string,
-    decision: PostTurnContextDecision
-  ): void {
-    this.postTurnContextDecisionBySessionId.set(sessionId, decision);
-  }
-
   private resolveImmediatePostTurnContextDecision(
     session: Session
   ): PostTurnContextDecision | null {
@@ -549,35 +369,6 @@ export class SessionRequestHandler {
       return "no_rollover";
     }
     return null;
-  }
-
-  private resolveRecordedPostTurnContextDecision(
-    session: Session
-  ): PostTurnContextDecision | null {
-    const immediateDecision =
-      this.resolveImmediatePostTurnContextDecision(session);
-    if (immediateDecision) {
-      this.recordPostTurnContextDecision(session.id, immediateDecision);
-      return immediateDecision;
-    }
-    return this.postTurnContextDecisionBySessionId.get(session.id) ?? null;
-  }
-
-  private finalizePendingTurnCompletion(sessionId: string): void {
-    if (!this.postTurnContextDecisionPendingSessions.has(sessionId)) {
-      return;
-    }
-    this.runTurnCompletedArbitration(sessionId);
-  }
-
-  private registerPostTurnNoRolloverDecision(sessionId: string): void {
-    this.recordPostTurnContextDecision(sessionId, "no_rollover");
-    this.finalizePendingTurnCompletion(sessionId);
-  }
-
-  private registerPostTurnRolloverRequiredDecision(sessionId: string): void {
-    this.recordPostTurnContextDecision(sessionId, "rollover_required");
-    this.finalizePendingTurnCompletion(sessionId);
   }
 
   private emitFlowNodeRolloverNotification(
@@ -861,26 +652,40 @@ export class SessionRequestHandler {
       preemptRemainingPercentThreshold:
         this.config.continuityPreemptRemainingPercentThreshold,
     });
+    this.resumeLifecycle = new SessionRequestHandlerResumeLifecycle({
+      sessionManager: this.sessionManager,
+      workspaceRuntime: this.workspaceRuntime,
+      clearTokenUsageSnapshot: (sessionId) =>
+        this.continuityRolloverOrchestrator.clearTokenUsageSnapshot(sessionId),
+      emitContinuityLockEvent: (lockEvent) =>
+        this.continuityLockService.emitContinuityLockEvent(lockEvent),
+      finalizePendingTurnCompletion: (sessionId) =>
+        this.runTurnCompletedArbitration(sessionId),
+      isFlowNodeRolloverPending: (sessionId) =>
+        this.isFlowNodeRolloverPending(sessionId),
+    });
     this.continuityLockService = new SessionContinuityLockService({
       sessionManager: this.sessionManager,
       broadcaster: this.broadcaster,
       workspaceRuntime: this.workspaceRuntime,
       clearPostTurnContextDecision: (sessionId) =>
-        this.clearPostTurnContextDecision(sessionId),
+        this.resumeLifecycle.clearPostTurnContextDecision(sessionId),
       clearRolloverSessionState: (sessionId) =>
         this.continuityRolloverOrchestrator.clearPendingState(sessionId),
       getSessionResumeLifecycleState: (session) =>
-        this.getSessionResumeLifecycleState(session),
+        this.resumeLifecycle.getSessionResumeLifecycleState(session),
       updateSessionResumeLifecycleState: (session, patch) =>
-        this.updateSessionResumeLifecycleState(session, patch),
+        this.resumeLifecycle.updateSessionResumeLifecycleState(session, patch),
     });
     this.continuityRolloverOrchestrator =
       new SessionContinuityRolloverOrchestrator({
         logger: this.logger,
         registerPostTurnRolloverRequiredDecision: (sessionId) =>
-          this.registerPostTurnRolloverRequiredDecision(sessionId),
+          this.resumeLifecycle.registerPostTurnRolloverRequiredDecision(
+            sessionId
+          ),
         elevateSessionToRolloverResumeMode: (session) =>
-          this.elevateSessionToRolloverResumeMode(session),
+          this.resumeLifecycle.elevateSessionToRolloverResumeMode(session),
         registerFlowNodeContinuityLockContext: (context) =>
           this.continuityLockService.registerFlowNodeContinuityLockContext(
             context
@@ -901,7 +706,10 @@ export class SessionRequestHandler {
             lockOptions
           ),
         updateSessionResumeLifecycleState: (session, patch) => {
-          this.updateSessionResumeLifecycleState(session, patch);
+          this.resumeLifecycle.updateSessionResumeLifecycleState(
+            session,
+            patch
+          );
         },
         emitTurnStateEvent: (turnStateOptions) =>
           this.emitTurnStateEvent(turnStateOptions),
@@ -945,7 +753,7 @@ export class SessionRequestHandler {
           providerSessionId
         ),
       markPostTurnContextDecisionPending: (sessionId) =>
-        this.markPostTurnContextDecisionPending(sessionId),
+        this.resumeLifecycle.markPostTurnContextDecisionPending(sessionId),
       handleTurnCompletedWithFlowNodeArbitration: (
         sessionId,
         flowNodeContinuityTask
@@ -955,7 +763,7 @@ export class SessionRequestHandler {
           flowNodeContinuityTask
         ),
       clearPostTurnContextDecision: (sessionId) =>
-        this.clearPostTurnContextDecision(sessionId),
+        this.resumeLifecycle.clearPostTurnContextDecision(sessionId),
       emitTurnStateEvent: (turnStateOptions) =>
         this.emitTurnStateEvent(turnStateOptions),
       finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
@@ -1060,20 +868,7 @@ export class SessionRequestHandler {
     session: Session,
     explicitMode?: SessionResumeMode
   ): void {
-    const initialLifecycleState: SessionResumeLifecycleState = {
-      mode: this.resolveInitialResumeMode({
-        stage: session.stage,
-        runSlug: session.runSlug,
-        explicitMode: explicitMode ?? null,
-      }),
-      finalTurnCompleted: false,
-      terminalLockReason: null,
-    };
-    this.getSessionResumeLifecycleStore().set(
-      session.id,
-      initialLifecycleState
-    );
-    this.broadcastSessionResumeLifecycleState(session, initialLifecycleState);
+    this.resumeLifecycle.registerInitialSessionLifecycle(session, explicitMode);
   }
 
   private async createAndRegisterSession(
@@ -1312,7 +1107,7 @@ export class SessionRequestHandler {
   private resolveFlowNodeRolloverSendGuard(
     sessionId: string
   ): FlowNodeRolloverSendGuardDecision {
-    if (this.postTurnContextDecisionPendingSessions.has(sessionId)) {
+    if (this.resumeLifecycle.hasPendingPostTurnContextDecision(sessionId)) {
       return {
         allowed: false,
         code: CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
@@ -1811,7 +1606,8 @@ export class SessionRequestHandler {
     }
 
     this.logResolvedSessionForIncomingMessage(sessionId, session);
-    const lifecycleState = this.getSessionResumeLifecycleState(session);
+    const lifecycleState =
+      this.resumeLifecycle.getSessionResumeLifecycleState(session);
     if (
       lifecycleState.mode === "no_resume" &&
       lifecycleState.finalTurnCompleted
@@ -1832,12 +1628,12 @@ export class SessionRequestHandler {
       lifecycleState.finalTurnCompleted ||
       lifecycleState.terminalLockReason !== null
     ) {
-      this.updateSessionResumeLifecycleState(session, {
+      this.resumeLifecycle.updateSessionResumeLifecycleState(session, {
         finalTurnCompleted: false,
         terminalLockReason: null,
       });
     }
-    this.clearPostTurnContextDecision(sessionId);
+    this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
 
     const rolloverSendGuard = this.resolveFlowNodeRolloverSendGuard(sessionId);
     if (!rolloverSendGuard.allowed) {
@@ -2001,8 +1797,7 @@ export class SessionRequestHandler {
     }
 
     this.sessionStorage.close(sessionId, "session-deleted");
-    this.getSessionResumeLifecycleStore().delete(sessionId);
-    this.clearPostTurnContextDecision(sessionId);
+    this.resumeLifecycle.clearSessionLifecycle(sessionId);
     this.workspaceRuntime?.notifySessionDeleted({
       workspaceRoot: session.workspacePath,
       nodeId: session.stage ?? "session",
@@ -2039,7 +1834,7 @@ export class SessionRequestHandler {
         sessionId,
         error: error instanceof Error ? error.message : String(error),
       });
-      this.clearPostTurnContextDecision(sessionId);
+      this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
       if (!this.isFlowNodeRolloverPending(sessionId)) {
         this.emitTurnStateEvent({ sessionId, state: "idle" });
       }
@@ -2071,7 +1866,7 @@ export class SessionRequestHandler {
 
     const shouldEvaluatePostTurnDecision =
       shouldDeferPostTurnCompletion ||
-      (this.postTurnContextDecisionPendingSessions.has(sessionId) &&
+      (this.resumeLifecycle.hasPendingPostTurnContextDecision(sessionId) &&
         usage !== undefined);
     if (!shouldEvaluatePostTurnDecision) {
       return;
@@ -2117,21 +1912,28 @@ export class SessionRequestHandler {
   }): Promise<void> {
     const recordNoRolloverDecision = () => {
       if (options.deferPostTurnCompletion) {
-        this.recordPostTurnContextDecision(options.sessionId, "no_rollover");
+        this.resumeLifecycle.recordPostTurnContextDecision(
+          options.sessionId,
+          "no_rollover"
+        );
         return;
       }
-      this.registerPostTurnNoRolloverDecision(options.sessionId);
+      this.resumeLifecycle.registerPostTurnNoRolloverDecision(
+        options.sessionId
+      );
     };
 
     const recordRolloverRequiredDecision = () => {
       if (options.deferPostTurnCompletion) {
-        this.recordPostTurnContextDecision(
+        this.resumeLifecycle.recordPostTurnContextDecision(
           options.sessionId,
           "rollover_required"
         );
         return;
       }
-      this.registerPostTurnRolloverRequiredDecision(options.sessionId);
+      this.resumeLifecycle.registerPostTurnRolloverRequiredDecision(
+        options.sessionId
+      );
     };
 
     if (this.continuityRolloverOrchestrator.hasPending(options.sessionId)) {
@@ -2191,13 +1993,14 @@ export class SessionRequestHandler {
   private handleTurnCompletedEvent(sessionId: string): void {
     const session = this.sessionManager.getSession(sessionId);
     if (!session) {
-      this.clearPostTurnContextDecision(sessionId);
+      this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
       return;
     }
-    const resumeMode = this.getSessionResumeLifecycleState(session).mode;
+    const resumeMode =
+      this.resumeLifecycle.getSessionResumeLifecycleState(session).mode;
     if (resumeMode === "no_resume") {
-      this.clearPostTurnContextDecision(sessionId);
-      this.handleNoResumeTurnCompleted(session);
+      this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
+      this.resumeLifecycle.handleNoResumeTurnCompleted(session);
       this.emitTurnStateEvent({ sessionId, state: "idle" });
       return;
     }
@@ -2219,18 +2022,21 @@ export class SessionRequestHandler {
       return;
     }
 
-    this.updateSessionResumeLifecycleState(session, {
+    this.resumeLifecycle.updateSessionResumeLifecycleState(session, {
       finalTurnCompleted: true,
       terminalLockReason: null,
     });
 
     const contextDecision =
-      this.resolveRecordedPostTurnContextDecision(session);
+      this.resumeLifecycle.resolveRecordedPostTurnContextDecision(
+        session,
+        (candidate) => this.resolveImmediatePostTurnContextDecision(candidate)
+      );
     if (!contextDecision) {
       return;
     }
 
-    this.clearPostTurnContextDecision(sessionId);
+    this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
     if (
       contextDecision === "rollover_required" ||
       this.isFlowNodeRolloverPending(sessionId)
