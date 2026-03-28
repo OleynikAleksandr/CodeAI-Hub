@@ -49,6 +49,7 @@ import {
   type PostTurnContextDecision,
   SessionRequestHandlerResumeLifecycle,
 } from "./session-request-handler-resume-lifecycle";
+import { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
 import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
 import { shouldHideUserMessage } from "./workflow-turn-control";
@@ -198,25 +199,10 @@ export class SessionRequestHandler {
   private readonly messageDispatch: SessionRequestHandlerMessageDispatch;
   private readonly dialogSegmentMeta: SessionRequestHandlerDialogSegmentMeta;
   private readonly eventMessages: SessionRequestHandlerEventMessages;
+  private readonly retryState: SessionRequestHandlerRetryState;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeReportState: SessionRequestHandlerFlowNodeReportState;
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
-  private readonly retryBudgetBySessionId = new Map<
-    string,
-    { transientRetries: number; autoResumeAttempts: number }
-  >();
-  private readonly pendingUserIntentBySessionId = new Map<
-    string,
-    {
-      content: string;
-      timestamp: number;
-      timerId: ReturnType<typeof setTimeout>;
-    }
-  >();
-
-  private static readonly MAX_TRANSIENT_RETRIES = 1;
-  private static readonly MAX_AUTO_RESUME_ATTEMPTS = 1;
-  private static readonly PENDING_INTENT_TTL_MS = 60_000;
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
@@ -429,6 +415,10 @@ export class SessionRequestHandler {
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
     });
+    this.retryState = new SessionRequestHandlerRetryState({
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+    });
     this.providerBindingService = new SessionProviderBindingService({
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
@@ -492,9 +482,9 @@ export class SessionRequestHandler {
       emitTurnStateEvent: (turnStateOptions) =>
         this.emitTurnStateEvent(turnStateOptions),
       consumeRetryBudget: (sessionId, failureClass) =>
-        this.consumeRetryBudget(sessionId, failureClass),
+        this.retryState.consumeRetryBudget(sessionId, failureClass),
       expirePendingUserIntent: (sessionId) =>
-        this.expirePendingUserIntent(sessionId),
+        this.retryState.expirePendingUserIntent(sessionId),
     });
     this.messageDispatch = new SessionRequestHandlerMessageDispatch({
       sessionManager: this.sessionManager,
@@ -509,7 +499,7 @@ export class SessionRequestHandler {
       handleProviderFailure: (providerId, error, sessionId) =>
         this.handleProviderFailure(providerId, error, sessionId),
       trackPendingUserIntent: (sessionId, content) =>
-        this.trackPendingUserIntent(sessionId, content),
+        this.retryState.trackPendingUserIntent(sessionId, content),
     });
     this.dialogSegmentMeta = new SessionRequestHandlerDialogSegmentMeta({
       broadcaster: this.broadcaster,
@@ -1326,112 +1316,20 @@ export class SessionRequestHandler {
     );
   }
 
-  private getRetryBudget(sessionId: string): {
-    transientRetries: number;
-    autoResumeAttempts: number;
-  } {
-    const existing = this.retryBudgetBySessionId.get(sessionId);
-    if (existing) {
-      return existing;
-    }
-    const budget = { transientRetries: 0, autoResumeAttempts: 0 };
-    this.retryBudgetBySessionId.set(sessionId, budget);
-    return budget;
-  }
-
-  private consumeRetryBudget(sessionId: string, failureClass: string): void {
-    const budget = this.getRetryBudget(sessionId);
-    if (failureClass === "transient_turn_failure") {
-      budget.transientRetries += 1;
-      if (
-        budget.transientRetries > SessionRequestHandler.MAX_TRANSIENT_RETRIES
-      ) {
-        this.logger.warn("Transient retry budget exhausted", {
-          sessionId,
-          retries: budget.transientRetries,
-        });
-      }
-    } else if (failureClass === "session_binding_recoverable") {
-      budget.autoResumeAttempts += 1;
-      if (
-        budget.autoResumeAttempts >
-        SessionRequestHandler.MAX_AUTO_RESUME_ATTEMPTS
-      ) {
-        this.logger.warn("Auto-resume budget exhausted", {
-          sessionId,
-          attempts: budget.autoResumeAttempts,
-        });
-      }
-    }
-  }
-
   hasRetryBudget(sessionId: string): boolean {
-    const budget = this.getRetryBudget(sessionId);
-    return (
-      budget.transientRetries <= SessionRequestHandler.MAX_TRANSIENT_RETRIES &&
-      budget.autoResumeAttempts <=
-        SessionRequestHandler.MAX_AUTO_RESUME_ATTEMPTS
-    );
+    return this.retryState.hasRetryBudget(sessionId);
   }
 
   resetRetryBudget(sessionId: string): void {
-    this.retryBudgetBySessionId.delete(sessionId);
+    this.retryState.resetRetryBudget(sessionId);
   }
 
   trackPendingUserIntent(sessionId: string, content: string): void {
-    this.clearPendingUserIntent(sessionId);
-    const timerId = setTimeout(() => {
-      this.expirePendingUserIntent(sessionId);
-    }, SessionRequestHandler.PENDING_INTENT_TTL_MS);
-    this.pendingUserIntentBySessionId.set(sessionId, {
-      content,
-      timestamp: Date.now(),
-      timerId,
-    });
+    this.retryState.trackPendingUserIntent(sessionId, content);
   }
 
   getPendingUserIntent(sessionId: string): string | null {
-    const intent = this.pendingUserIntentBySessionId.get(sessionId);
-    if (!intent) {
-      return null;
-    }
-    const elapsed = Date.now() - intent.timestamp;
-    if (elapsed > SessionRequestHandler.PENDING_INTENT_TTL_MS) {
-      this.expirePendingUserIntent(sessionId);
-      return null;
-    }
-    return intent.content;
-  }
-
-  private clearPendingUserIntent(sessionId: string): void {
-    const existing = this.pendingUserIntentBySessionId.get(sessionId);
-    if (existing) {
-      clearTimeout(existing.timerId);
-      this.pendingUserIntentBySessionId.delete(sessionId);
-    }
-  }
-
-  private expirePendingUserIntent(sessionId: string): void {
-    const existing = this.pendingUserIntentBySessionId.get(sessionId);
-    if (existing) {
-      clearTimeout(existing.timerId);
-      this.pendingUserIntentBySessionId.delete(sessionId);
-      this.logger.warn("Pending user intent TTL expired", {
-        sessionId,
-        contentLength: existing.content.length,
-        elapsedMs: Date.now() - existing.timestamp,
-      });
-      this.broadcaster({
-        type: "session:error",
-        payload: {
-          sessionId,
-          message:
-            "Your previous message was not delivered. Please send it again.",
-          code: "pending_intent_expired",
-          pendingIntentExpired: true,
-        },
-      });
-    }
+    return this.retryState.getPendingUserIntent(sessionId);
   }
 
   private updateProviderBinding(
