@@ -22,10 +22,11 @@
 - Added two dedicated release-build streams to the operational plan:
   - an interim release build immediately after `Phase 80` for isolated model-switch verification;
   - a final release build after `Phase 81` for separate full-plan regression testing.
-- No code changes to runtime behavior were made yet in this session; the repository is currently in planning state before starting the first implementation stream of `Phase 80`.
+- Started `Phase 80` and completed the first implementation stream: introduced `packages/core/src/config/provider-turn-config-resolver.ts` as a single Core-owned resolver for Codex/Gemini next-turn defaults from persisted Settings, simplified `packages/core/src/config/index.ts` to consume it, and synchronized `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` plus `doc/TODO/todo-plan.md`.
 
 ## Git commits
-- None yet in this session. Current work is planning/documentation only; the first implementation commit should start with `Phase 80` Stream `Core applied-config resolver`.
+- `e19bbdb7 docs(plan): add settings ssot execution scope`
+- `9ef3dc2a refactor(core): add provider turn config resolver`
 
 ---
 
@@ -42,6 +43,6 @@
 > Then open the relevant Core/provider contracts from `doc/SolidWorks-WorkFlow/System/`, `Modules/`, and `Contracts/` for the active `Phase 80` stream.
 
 ## Plans for next session
-- Start `Phase 80` with the first micro-task: introduce a single Core resolver for next-turn `model` / `reasoning` derived from persisted Settings and wire it into the Core config path.
+- Continue `Phase 80` with the second micro-task: thread explicit applied turn config through the remote-bridge send/switch path.
 - Keep the model-switch scope first; do not return to the `session-request-handler.ts` carry-over tail until `Phase 80` and its interim release build are complete.
-- After the Core applied-config resolver lands, continue with explicit remote-bridge threading of applied config, Codex runtime application, removal of provider-local settings truth, PM applied-config sync, and provider parity.
+- After remote-bridge threading lands, continue with Codex runtime application, removal of provider-local settings truth, PM applied-config sync, and provider parity.
