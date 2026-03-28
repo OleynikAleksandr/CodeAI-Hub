@@ -7,9 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.823
-- **Core crash diagnostics**: core startup now appends fatal `uncaughtExceptionMonitor` entries to `~/.codeai-hub/logs/core/core-fatal.log` so provider-triggered crashes leave a last-resort stack trace.
-- **External bridge observer**: the extension-side keep-alive path now mirrors bridge lifecycle messages into `~/.codeai-hub/logs/observer/bridge-observer.log`, preserving a trace even when Core dies first.
+## Current Release — v1.1.824
+- **Gemini loop-recovery hardening**: the session bootstrapper now patches the vulnerable `gemini-cli-core` loop-recovery abort path so internal recovery no longer propagates `AbortError` back into CodeAI Hub and kill Core.
+- **Core crash diagnostics retained**: fatal Core traces still land in `~/.codeai-hub/logs/core/core-fatal.log`, and extension-side bridge traces still land in `~/.codeai-hub/logs/observer/bridge-observer.log`.
 - **Wave 2 cleanup baseline preserved**: core runtime/config/contract/diagram hotspots remain split into focused helper clusters, with provider messaging façades and Codex structured-output helpers shipped intact from `1.1.822`.
 - **Packaging truthfulness**: the shipped VSIX still excludes repo-only Husky helper files and other non-runtime workflow noise.
 
