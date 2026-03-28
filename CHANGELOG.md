@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.827] - 2026-03-28
+### Fixed
+- **Session status model labels now follow live settings**: Project Manager reloads the shared settings snapshot when a runtime/dialog session becomes active and immediately before each user send, so the lower session status bar reflects the currently selected provider model and reasoning/thinking level across Claude, Codex, and Gemini without requiring a Core restart.
+
 ## [1.1.826] - 2026-03-28
 ### Changed
 - **Phase 79 session-request-handler decomposition**: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` now offloads bootstrap, session resolution, message dispatch, flow-node rollover/report state, dialog segment metadata, provider-event message persistence/parsing, and retry/pending-intent state into dedicated helper modules while preserving the existing runtime behavior.

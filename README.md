@@ -7,7 +7,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.826
+## Current Release — v1.1.827
+- **Live session model label refresh**: Project Manager now reloads the current provider settings snapshot when a session becomes active and immediately before each send, so the lower session status bar follows the actual selected model/thinking configuration across Claude, Codex, and Gemini without requiring a Core restart.
 - **Phase 79 core hotspot decomposition**: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` now delegates bootstrap, session resolution, message dispatch, flow-node rollover/report state, dialog segment metadata, provider-event message plumbing, and retry/pending-intent state to focused helpers.
 - **Public CI baseline**: `.github/workflows/ci.yml` now enforces the root repository truthfulness checks on push/PR (`check:architecture`, `lint`, `check:tsprune`, `compile`) alongside the local Husky workflow.
 - **Workflow truthfulness cleanup**: repository metadata, release script guidance, and hook surface are aligned around a Husky-only contract; stale Lefthook leftovers are no longer part of the active workflow story.
