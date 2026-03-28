@@ -49,6 +49,64 @@ const formatModelDisplayName = (modelId: string): string => {
     .replace(VERSION_JOIN_REGEX, "$1.$2"); // Join version numbers like "4 5" -> "4.5"
 };
 
+const resolveModelDisplayName = (
+  providerKey: ProviderKey,
+  modelId: string
+): string =>
+  providerKey === "claude"
+    ? formatClaudeSessionModelDisplayName(modelId)
+    : formatModelDisplayName(modelId);
+
+const resolveModelReasoning = (
+  providerKey: ProviderKey,
+  modelId: string,
+  settings: Settings
+): string | undefined => {
+  if (providerKey === "claude") {
+    return settings.providers.claude.thinking.enabled
+      ? "thinking on"
+      : "thinking off";
+  }
+  if (providerKey === "codex") {
+    return settings.providers.codex.reasoningByModel[modelId];
+  }
+  return settings.providers.gemini.thinkingLevelByModel[modelId];
+};
+
+export const buildModelInfo = (
+  providerId: ProviderStackId,
+  settings: Settings | null,
+  modelIdOverride?: string,
+  source: ModelInfo["source"] = "settings"
+): ModelInfo => {
+  if (!settings) {
+    return {
+      providerId,
+      providerName: getDefaultProviderTitle(providerId),
+      modelId: modelIdOverride ?? "unknown",
+      modelDisplayName:
+        modelIdOverride && modelIdOverride.trim().length > 0
+          ? formatModelDisplayName(modelIdOverride)
+          : getDefaultProviderTitle(providerId),
+      source,
+    };
+  }
+
+  const providerKey = PROVIDER_ID_TO_KEY[providerId];
+  const providerName = getDefaultProviderTitle(providerId);
+  const providerSettings = settings.providers[providerKey];
+  const modelId = modelIdOverride ?? providerSettings.defaultModel;
+
+  return {
+    providerId,
+    providerName,
+    modelId,
+    modelDisplayName: resolveModelDisplayName(providerKey, modelId),
+    reasoning: resolveModelReasoning(providerKey, modelId, settings),
+    source,
+  };
+};
+
 /**
  * Build ModelInfo array from session provider IDs and settings.
  */
@@ -56,50 +114,5 @@ export const buildModelInfoList = (
   providerIds: readonly ProviderStackId[],
   settings: Settings | null
 ): readonly ModelInfo[] => {
-  if (!settings) {
-    // Return basic info without model details
-    return providerIds.map((providerId) => ({
-      providerId,
-      providerName: getDefaultProviderTitle(providerId),
-      modelId: "unknown",
-      modelDisplayName: getDefaultProviderTitle(providerId),
-      source: "settings",
-    }));
-  }
-
-  return providerIds.map((providerId) => {
-    const providerKey = PROVIDER_ID_TO_KEY[providerId];
-    const providerName = getDefaultProviderTitle(providerId);
-    const providerSettings = settings.providers[providerKey];
-
-    const modelId = providerSettings.defaultModel;
-    const modelDisplayName =
-      providerKey === "claude"
-        ? formatClaudeSessionModelDisplayName(modelId)
-        : formatModelDisplayName(modelId);
-
-    // Get reasoning level for Codex or Gemini
-    let reasoning: string | undefined;
-    if (providerKey === "claude") {
-      const claudeSettings = settings.providers.claude;
-      reasoning = claudeSettings.thinking.enabled
-        ? "thinking on"
-        : "thinking off";
-    } else if (providerKey === "codex") {
-      const codexSettings = settings.providers.codex;
-      reasoning = codexSettings.reasoningByModel[modelId];
-    } else if (providerKey === "gemini") {
-      const geminiSettings = settings.providers.gemini;
-      reasoning = geminiSettings.thinkingLevelByModel[modelId];
-    }
-
-    return {
-      providerId,
-      providerName,
-      modelId,
-      modelDisplayName,
-      reasoning,
-      source: "settings",
-    };
-  });
+  return providerIds.map((providerId) => buildModelInfo(providerId, settings));
 };

@@ -1,20 +1,29 @@
 import { useEffect } from "react";
-import type { SessionRecord } from "../../../../types/session";
+import type { ModelInfo, SessionRecord } from "../../../../types/session";
 import type { Settings } from "../components/settings/settings-state-model";
 import type { SessionSnapshots } from "../session/helpers";
-import { buildModelInfoList } from "../session/model-info-builder";
+import {
+  buildModelInfo,
+  buildModelInfoList,
+} from "../session/model-info-builder";
 
 const hasRuntimeModelOverride = (
-  snapshot: SessionSnapshots[string],
-  settingsModelId: string | undefined
+  snapshot: SessionSnapshots[string]
 ): boolean => {
   const currentModel = snapshot.status.models?.[0];
-  return Boolean(
-    currentModel?.source === "runtime" &&
-      currentModel.modelId &&
-      settingsModelId
-  );
+  return currentModel?.source === "runtime";
 };
+
+const syncRuntimeModelWithSettings = (
+  currentModel: ModelInfo,
+  settings: Settings
+): ModelInfo =>
+  buildModelInfo(
+    currentModel.providerId,
+    settings,
+    currentModel.modelId,
+    "runtime"
+  );
 
 const applySettingsModels = (
   previous: SessionSnapshots,
@@ -30,7 +39,24 @@ const applySettingsModels = (
     }
     const newModels = buildModelInfoList(session.providerIds, settings);
     // Runtime model was changed (e.g., switch_model) — preserve the override.
-    if (hasRuntimeModelOverride(snapshot, newModels[0]?.modelId)) {
+    if (hasRuntimeModelOverride(snapshot)) {
+      const currentModels = snapshot.status.models ?? [];
+      const mergedRuntimeModels = currentModels.map((model, index) =>
+        model.source === "runtime"
+          ? syncRuntimeModelWithSettings(model, settings)
+          : (newModels[index] ?? model)
+      );
+      const modelsChanged =
+        JSON.stringify(mergedRuntimeModels) !==
+        JSON.stringify(snapshot.status.models);
+      if (modelsChanged) {
+        hasChanges = true;
+        next[session.id] = {
+          ...snapshot,
+          status: { ...snapshot.status, models: mergedRuntimeModels },
+        };
+        continue;
+      }
       next[session.id] = snapshot;
       continue;
     }
