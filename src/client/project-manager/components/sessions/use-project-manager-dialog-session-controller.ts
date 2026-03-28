@@ -3,10 +3,7 @@ import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
-import {
-  createInitialSnapshot,
-  type SessionSnapshots,
-} from "../../../ui/src/session/helpers";
+import { createInitialSnapshot, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import {
   buildProviderLabels,
@@ -14,10 +11,7 @@ import {
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
-import {
-  applyWorkspaceSnapshotToSnapshots,
-  useProjectManagerSessionStream,
-} from "./session-stream";
+import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { appendOptimisticUserMessage } from "./session-message-dedupe";
@@ -39,9 +33,7 @@ export const useProjectManagerDialogSessionController = (
 ): ProjectManagerDialogSessionController => {
   const [session, setSession] = useState<SessionRecord | null>(null);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
-  const [tokenDebugSummaryOverride, setTokenDebugSummaryOverride] = useState<
-    string | undefined
-  >(undefined);
+  const [tokenDebugSummaryOverride, setTokenDebugSummaryOverride] = useState<string | undefined>(undefined);
   const latestWorkspaceSnapshotRef = useRef<WorkspaceSnapshotPushPayload | null>(
     null
   );
@@ -54,11 +46,17 @@ export const useProjectManagerDialogSessionController = (
   const pendingIntentRef = useRef<DialogOpenIntent | null>(null);
   const dialogIdRef = useRef<string | null>(null);
 
-  const { settings } = useProjectManagerSettings();
+  const { settings, reload } = useProjectManagerSettings();
   const settingsRef = useRef(settings);
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
+  useEffect(() => {
+    if (!session?.id) {
+      return;
+    }
+    reload();
+  }, [reload, session?.id]);
 
   const sessionRef = useRef<SessionRecord | null>(null);
   useEffect(() => {
@@ -287,11 +285,12 @@ export const useProjectManagerDialogSessionController = (
     if (!intent || !currentDialogId) {
       return;
     }
+    reload();
     api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content);
     // Optimistic: render user message immediately instead of waiting for dialog:history:result
     const currentSessionId = sessionRef.current?.id ?? currentDialogId;
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
-  }, [setSnapshots]);
+  }, [reload, setSnapshots]);
 
   return { connection, providerLabels, session, snapshots, setSnapshots, tokenDebugSummaryOverride, sendMessage };
 };

@@ -10,7 +10,8 @@ import { resolveSchemaStage } from "./session-schema-stage";
 
 export const useSessionMessageSender = (
   sessionsRef: MutableRefObject<readonly SessionRecord[]>,
-  workspacePath?: string
+  workspacePath?: string,
+  onBeforeSend?: () => void
 ) =>
   useCallback(
     (sessionId: string, content: string) => {
@@ -24,6 +25,7 @@ export const useSessionMessageSender = (
       ) {
         return;
       }
+      onBeforeSend?.();
       const schemaStage = resolveSchemaStage(record?.stage);
       if (!schemaStage) {
         api.sendSessionMessage(sessionId, content);
@@ -41,5 +43,5 @@ export const useSessionMessageSender = (
           api.sendSessionMessage(sessionId, content);
         });
     },
-    [sessionsRef, workspacePath]
+    [onBeforeSend, sessionsRef, workspacePath]
   );

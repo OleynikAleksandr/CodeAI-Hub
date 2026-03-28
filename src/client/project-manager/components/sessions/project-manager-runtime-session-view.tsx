@@ -29,7 +29,7 @@ export const ProjectManagerRuntimeSessionView = ({
 }: ProjectManagerSessionViewProps) => {
   const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
   const providerLabels = useMemo(() => buildProviderLabels(providerCatalog), [providerCatalog]);
-  const { settings } = useProjectManagerSettings();
+  const { settings, reload } = useProjectManagerSettings();
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -248,6 +248,12 @@ export const ProjectManagerRuntimeSessionView = ({
     }
     setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
   }, [activeSessionId, forcedHiddenSessionIds, visibleSessions]);
+  useEffect(() => {
+    if (!activeSessionId) {
+      return;
+    }
+    reload();
+  }, [activeSessionId, reload]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useSessionResumeIntent({
     sessionsRef,
@@ -258,7 +264,11 @@ export const ProjectManagerRuntimeSessionView = ({
     createSession: api.createSession,
   });
   const scopedActiveSessionId = visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;
-  const handleSendMessage = useSessionMessageSender(sessionsRef, workspacePath);
+  const handleSendMessage = useSessionMessageSender(
+    sessionsRef,
+    workspacePath,
+    reload
+  );
   return (
     <SessionView
       activeSessionId={scopedActiveSessionId}
