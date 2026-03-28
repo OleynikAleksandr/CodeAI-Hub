@@ -4,8 +4,11 @@ import type {
   CodexThreadOptions,
   CodexTurnOptions,
 } from "../types";
+import {
+  CODEX_APPLIED_TURN_CONFIG_KEY,
+  type CodexAppliedTurnConfig,
+} from "../types";
 
-const APPLIED_PROVIDER_TURN_CONFIG_KEY = "__codeaiAppliedTurnConfig";
 const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "low",
   "medium",
@@ -13,23 +16,22 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "xhigh",
 ]);
 
-interface AppliedCodexTurnConfig {
-  readonly modelId?: string;
-  readonly reasoningEffort?: CodexReasoningEffort;
-}
-
 interface ThreadRuntimeState {
   _threadOptions?: CodexThreadOptions;
 }
+
+type ResolvedAppliedCodexTurnConfig = Pick<
+  CodexAppliedTurnConfig,
+  "modelId" | "reasoningEffort"
+>;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 const readAppliedCodexTurnConfig = (
   turnOptions?: CodexTurnOptions
-): AppliedCodexTurnConfig | null => {
-  const candidate =
-    turnOptions?.[APPLIED_PROVIDER_TURN_CONFIG_KEY as keyof CodexTurnOptions];
+): ResolvedAppliedCodexTurnConfig | null => {
+  const candidate = turnOptions?.[CODEX_APPLIED_TURN_CONFIG_KEY];
   if (!isRecord(candidate) || candidate.providerId !== "codexCli") {
     return null;
   }
@@ -63,12 +65,12 @@ export const applyCodexTurnRuntimeConfig = (
     };
   }
 
-  if (!(turnOptions && APPLIED_PROVIDER_TURN_CONFIG_KEY in turnOptions)) {
+  if (!(turnOptions && CODEX_APPLIED_TURN_CONFIG_KEY in turnOptions)) {
     return turnOptions;
   }
 
   const {
-    [APPLIED_PROVIDER_TURN_CONFIG_KEY]: _ignoredAppliedConfig,
+    [CODEX_APPLIED_TURN_CONFIG_KEY]: _ignoredAppliedConfig,
     ...strippedOptions
   } = turnOptions as CodexTurnOptions & Record<string, unknown>;
   return Object.keys(strippedOptions).length > 0

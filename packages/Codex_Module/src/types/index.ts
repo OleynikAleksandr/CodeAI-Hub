@@ -15,6 +15,14 @@ export interface CodexInstallerPaths {
 }
 
 export type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
+export const CODEX_APPLIED_TURN_CONFIG_KEY = "__codeaiAppliedTurnConfig";
+
+export interface CodexAppliedTurnConfig {
+  readonly modelId?: string;
+  readonly providerId: "codexCli";
+  readonly reasoningEffort?: CodexReasoningEffort;
+  readonly source: "settings_snapshot" | "switch_request";
+}
 
 export interface CodexWorkspaceOptions {
   readonly defaultApprovalMode?: ApprovalMode;
@@ -88,6 +96,7 @@ export interface CodexThreadOptions extends ThreadOptions {
 }
 export interface CodexTurnOptions extends TurnOptions {
   readonly outputSchema?: unknown;
+  readonly [CODEX_APPLIED_TURN_CONFIG_KEY]?: CodexAppliedTurnConfig;
 }
 export type CodexSandboxMode = SandboxMode;
 export type CodexApprovalMode = ApprovalMode;

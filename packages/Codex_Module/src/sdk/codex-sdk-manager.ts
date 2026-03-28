@@ -1,17 +1,13 @@
 import { promises as fs } from "node:fs";
-import { homedir } from "node:os";
 import path from "node:path";
 import type { Codex as CodexCtor, Thread } from "@openai/codex-sdk";
 import type { CodexAuthManager } from "../auth/sdk-auth-manager";
 import type { CodexInstaller } from "../installer/codex-installer";
 import { CodexSessionLogger } from "../logging/session-logger";
 import type { CodexMessageProcessor } from "../messaging/message-processor";
-import { CodexResponsePolicyFacade } from "../response-policy/codex-response-policy-facade";
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
-  CodexReasoningEffort,
-  CodexResponsePolicy,
   CodexThreadOptions,
   CodexTurnOptions,
   CodexWorkspaceOptions,
@@ -22,12 +18,6 @@ import {
   patchCodexThreadPrototype,
 } from "./codex-sdk-patches";
 
-const CODEX_SETTINGS_FILE = path.join(
-  homedir(),
-  ".codeai-hub",
-  "settings",
-  "settings.json"
-);
 const CODEX_MODELS_CACHE_FILE = "models_cache.json";
 const CODEX_CONFIG_FILE = "config.toml";
 const CODEX_MIGRATION_FROM = "gpt-5.4";
@@ -35,18 +25,6 @@ const CODEX_MIGRATION_TO = "gpt-5.3-codex";
 const NEWLINE_SPLIT_REGEX = /\r?\n/u;
 const MIGRATION_LINE_REGEX =
   /^\s*(["']?)gpt-5\.4\1\s*=\s*(["']?)gpt-5\.3-codex\2\s*(#.*)?$/u;
-const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
-  "low",
-  "medium",
-  "high",
-  "xhigh",
-]);
-
-interface CodexSettingsSnapshot {
-  readonly defaultModel?: string;
-  readonly reasoningByModel: Record<string, CodexReasoningEffort>;
-  readonly responsePolicy?: CodexResponsePolicy;
-}
 
 interface CodexManagerDependencies {
   readonly authManager: CodexAuthManager;
@@ -57,11 +35,11 @@ interface CodexManagerDependencies {
   readonly workspace: CodexWorkspaceOptions;
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
-
 const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim() ? value.trim() : undefined;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
 export const resolvePreferredCodexDefaultModel = (options: {
   readonly settingsDefaultModel?: string;
@@ -71,32 +49,6 @@ export const resolvePreferredCodexDefaultModel = (options: {
   options.settingsDefaultModel ??
   normalizeOptionalString(options.envDefaultModel) ??
   options.fallbackModel;
-
-const normalizeCodexReasoningEffort = (
-  value: unknown
-): CodexReasoningEffort | undefined =>
-  typeof value === "string" &&
-  CODEX_REASONING_EFFORTS.has(value as CodexReasoningEffort)
-    ? (value as CodexReasoningEffort)
-    : undefined;
-
-const normalizeCodexReasoningByModel = (
-  value: unknown
-): Record<string, CodexReasoningEffort> => {
-  if (!isRecord(value)) {
-    return {};
-  }
-
-  const normalized: Record<string, CodexReasoningEffort> = {};
-  for (const [modelId, reasoning] of Object.entries(value)) {
-    const normalizedReasoning = normalizeCodexReasoningEffort(reasoning);
-    if (normalizedReasoning) {
-      normalized[modelId] = normalizedReasoning;
-    }
-  }
-
-  return normalized;
-};
 
 const removeModelMigrationFromConfigToml = (
   raw: string
@@ -171,8 +123,7 @@ export class CodexSDKManager {
   private codexInstance: CodexCtor | null = null;
   private initialized = false;
   private readonly deps: CodexManagerDependencies;
-  private readonly responsePolicyFacade = new CodexResponsePolicyFacade();
-  private workspaceDefaults: CodexWorkspaceOptions;
+  private readonly workspaceDefaults: CodexWorkspaceOptions;
 
   constructor(deps: CodexManagerDependencies) {
     this.deps = deps;
@@ -180,7 +131,6 @@ export class CodexSDKManager {
   }
 
   async initialize(): Promise<void> {
-    await this.refreshWorkspaceDefaults();
     if (this.initialized) {
       return;
     }
@@ -348,77 +298,6 @@ export class CodexSDKManager {
       sandboxMode: this.workspaceDefaults.defaultSandboxMode,
       workingDirectory: session.workspacePath,
       skipGitRepoCheck: this.workspaceDefaults.skipGitRepoCheck,
-    };
-  }
-
-  private async refreshWorkspaceDefaults(): Promise<void> {
-    const settings = await this.loadCodexSettingsSnapshot();
-    const envDefaultModel = normalizeOptionalString(
-      process.env.CODEX_DEFAULT_MODEL
-    );
-    const envReasoningEffort = normalizeCodexReasoningEffort(
-      process.env.CODEX_DEFAULT_REASONING_EFFORT
-    );
-    const settingsDefaultModel = settings?.defaultModel;
-    const resolvedDefaultModel = resolvePreferredCodexDefaultModel({
-      // Persisted settings are the runtime SSOT. Process env may be stale if
-      // the host process outlives a settings change and never refreshes env.
-      settingsDefaultModel,
-      envDefaultModel,
-      fallbackModel: this.deps.workspace.defaultModel,
-    });
-    const settingsReasoningEffort = resolvedDefaultModel
-      ? settings?.reasoningByModel[resolvedDefaultModel]
-      : undefined;
-    const resolvedReasoningEffort =
-      envReasoningEffort ??
-      settingsReasoningEffort ??
-      this.deps.workspace.defaultReasoningEffort;
-    const resolvedResponsePolicy =
-      settings?.responsePolicy ?? this.deps.workspace.defaultResponsePolicy;
-
-    this.workspaceDefaults = {
-      ...this.deps.workspace,
-      defaultModel: resolvedDefaultModel,
-      defaultReasoningEffort: resolvedReasoningEffort,
-      defaultResponsePolicy: resolvedResponsePolicy,
-    };
-  }
-
-  private async loadCodexSettingsSnapshot(): Promise<CodexSettingsSnapshot | null> {
-    try {
-      const raw = await fs.readFile(CODEX_SETTINGS_FILE, "utf8");
-      const parsed = JSON.parse(raw) as unknown;
-      return this.parseCodexSettingsSnapshot(parsed);
-    } catch (error) {
-      const candidate = error as NodeJS.ErrnoException;
-      if (candidate.code === "ENOENT") {
-        return null;
-      }
-      return null;
-    }
-  }
-
-  private parseCodexSettingsSnapshot(
-    value: unknown
-  ): CodexSettingsSnapshot | null {
-    if (!isRecord(value)) {
-      return null;
-    }
-
-    const providers = isRecord(value.providers) ? value.providers : null;
-    const codex =
-      providers && isRecord(providers.codex) ? providers.codex : null;
-    if (!codex) {
-      return null;
-    }
-
-    return {
-      defaultModel: normalizeOptionalString(codex.defaultModel),
-      reasoningByModel: normalizeCodexReasoningByModel(codex.reasoningByModel),
-      responsePolicy: this.responsePolicyFacade.resolve(
-        isRecord(value.general) ? value.general.responsePolicy : undefined
-      ),
     };
   }
 
