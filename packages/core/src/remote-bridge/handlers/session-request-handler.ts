@@ -55,15 +55,13 @@ import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
+import { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import {
   type PostTurnContextDecision,
   SessionRequestHandlerResumeLifecycle,
 } from "./session-request-handler-resume-lifecycle";
 import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
-import {
-  shouldHideUserMessage,
-  stripInternalWorkflowTurnOptions,
-} from "./workflow-turn-control";
+import { shouldHideUserMessage } from "./workflow-turn-control";
 
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
@@ -178,21 +176,6 @@ interface MessageContentExtraction {
   readonly turnOptions?: Record<string, unknown>;
 }
 
-type WorkflowStageId = "description" | "virtual_simulation" | "diagram_modules";
-
-interface WorkflowTurnOptionsResolution {
-  readonly appliedSchema: boolean;
-  readonly source: "turnOptions" | "template" | "none";
-  readonly stageMatched: boolean;
-  readonly turnOptions?: Record<string, unknown>;
-}
-
-const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
-  "description",
-  "virtual_simulation",
-  "diagram_modules",
-]);
-
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 
 const DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
@@ -262,35 +245,6 @@ const extractContinuityThresholdPercentFromSettings = (options: {
   });
 };
 
-const resolveWorkflowStage = (
-  stage: string | null | undefined
-): WorkflowStageId | null =>
-  stage && WORKFLOW_STAGE_SET.has(stage as WorkflowStageId)
-    ? (stage as WorkflowStageId)
-    : null;
-
-const resolveWorkflowTurnOptions = (params: {
-  readonly stage: string | null | undefined;
-  readonly turnOptions?: Record<string, unknown>;
-}): WorkflowTurnOptionsResolution => {
-  const stage = resolveWorkflowStage(params.stage);
-  if (!stage) {
-    return {
-      turnOptions: params.turnOptions,
-      appliedSchema: false,
-      source: "none",
-      stageMatched: false,
-    };
-  }
-
-  return {
-    turnOptions: stripInternalWorkflowTurnOptions(params.turnOptions),
-    appliedSchema: false,
-    source: "none",
-    stageMatched: true,
-  };
-};
-
 export interface SessionRequestHandlerOptions {
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly config: CoreConfig;
@@ -324,6 +278,7 @@ export class SessionRequestHandler {
   private readonly continuityRolloverOrchestrator: SessionContinuityRolloverOrchestrator;
   private readonly resumeLifecycle: SessionRequestHandlerResumeLifecycle;
   private readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
+  private readonly messageDispatch: SessionRequestHandlerMessageDispatch;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeContinuityCreateReportRequests = new Map<
     string,
@@ -544,7 +499,10 @@ export class SessionRequestHandler {
       patch: { attempt, stage: "waiting_for_report" },
     });
 
-    await this.sendInternalMessage(options.sessionId, options.prompt);
+    await this.messageDispatch.sendInternalMessage(
+      options.sessionId,
+      options.prompt
+    );
 
     if (!options.silent) {
       this.emitFlowNodeRolloverNotification(options.sessionId, {
@@ -641,7 +599,7 @@ export class SessionRequestHandler {
       enableLegacyHandoff: false,
       callbacks: {
         sendMessage: async (sessionId, content) =>
-          this.sendInternalMessage(sessionId, content),
+          this.messageDispatch.sendInternalMessage(sessionId, content),
         createSession: async (request) => this.createContinuitySession(request),
       },
       sessionLookup: (sessionId) => this.sessionManager.getSession(sessionId),
@@ -788,6 +746,21 @@ export class SessionRequestHandler {
         this.consumeRetryBudget(sessionId, failureClass),
       expirePendingUserIntent: (sessionId) =>
         this.expirePendingUserIntent(sessionId),
+    });
+    this.messageDispatch = new SessionRequestHandlerMessageDispatch({
+      sessionManager: this.sessionManager,
+      sessionStorage: this.sessionStorage,
+      continuity: this.continuity,
+      providerRegistry: this.providerRegistry,
+      providerSessions: this.providerSessions,
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+      emitTurnStateEvent: (turnStateOptions) =>
+        this.emitTurnStateEvent(turnStateOptions),
+      handleProviderFailure: (providerId, error, sessionId) =>
+        this.handleProviderFailure(providerId, error, sessionId),
+      trackPendingUserIntent: (sessionId, content) =>
+        this.trackPendingUserIntent(sessionId, content),
     });
     this.sessionBootstrap = new SessionRequestHandlerSessionBootstrap({
       sessionManager: this.sessionManager,
@@ -1061,65 +1034,6 @@ export class SessionRequestHandler {
       this.continuityRolloverOrchestrator.hasPending(sessionId) ||
       this.continuityLockService.hasContext(sessionId)
     );
-  }
-
-  private async sendInternalMessage(
-    sessionId: string,
-    content: string
-  ): Promise<void> {
-    const binding = this.providerSessions.get(sessionId);
-    const adapter = binding
-      ? this.providerRegistry.getAdapter(binding.providerId)
-      : null;
-
-    if (!(binding && adapter)) {
-      this.logMissingProviderBindingForIncomingMessage(
-        sessionId,
-        binding?.providerId,
-        Boolean(binding),
-        Boolean(adapter)
-      );
-      this.broadcaster({
-        type: "session:error",
-        payload: {
-          sessionId,
-          message: "Provider binding is unavailable for internal message.",
-          code: "missing_provider_binding",
-          retryable: false,
-        },
-      });
-      return;
-    }
-
-    // Internal workflow messages must participate in the same turn lifecycle as
-    // user-submitted messages; otherwise PM/UI can incorrectly unlock input while
-    // the provider is still working (some providers do not emit `turn_started`
-    // for these internal dispatches).
-    this.emitTurnStateEvent({ sessionId, state: "running" });
-    try {
-      await this.continuity.ensureTrackedOnOutboundMessage({
-        sessionId,
-        providerSessionId: binding.providerSessionId,
-      });
-    } catch (error) {
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
-      this.logger.warn("Continuity tracking failed for internal message", {
-        sessionId,
-        providerId: binding.providerId,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      return;
-    }
-
-    this.logDispatchingMessageToProvider(sessionId, binding, content.length);
-
-    try {
-      await adapter.sendMessage(binding.providerSessionId, content);
-    } catch (error) {
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
-      this.logProviderSendMessageFailed(sessionId, binding, error);
-      this.handleProviderFailure(binding.providerId, error, sessionId);
-    }
   }
 
   private normalizeProviderId(value?: string): string | null {
@@ -1566,117 +1480,13 @@ export class SessionRequestHandler {
       return;
     }
 
-    if (
-      !(
-        hiddenUserMessage ||
-        (await this.appendVisibleUserMessage(session, sessionId, content))
-      )
-    ) {
-      return;
-    }
-
-    const binding = this.providerSessions.get(sessionId);
-    const adapter = binding
-      ? this.providerRegistry.getAdapter(binding.providerId)
-      : null;
-
-    if (!(binding && adapter)) {
-      this.logMissingProviderBindingForIncomingMessage(
-        sessionId,
-        binding?.providerId,
-        Boolean(binding),
-        Boolean(adapter)
-      );
-      this.trackPendingUserIntent(sessionId, content);
-      this.broadcaster({
-        type: "session:error",
-        payload: {
-          sessionId,
-          message:
-            "Provider binding is unavailable. Your message has been saved and will be retried when the provider recovers.",
-          code: "missing_provider_binding",
-          retryable: true,
-        },
-      });
-      return;
-    }
-
-    this.emitTurnStateEvent({ sessionId, state: "running" });
-    try {
-      await this.continuity.ensureTrackedOnOutboundMessage({
-        sessionId,
-        providerSessionId: binding.providerSessionId,
-      });
-
-      this.logDispatchingMessageToProvider(sessionId, binding, content.length);
-
-      const workflowTurnOptions = await resolveWorkflowTurnOptions({
-        stage: session.stage,
-        turnOptions,
-      });
-      const providerTurnOptions = workflowTurnOptions.stageMatched
-        ? workflowTurnOptions.turnOptions
-        : stripInternalWorkflowTurnOptions(turnOptions);
-      if (workflowTurnOptions.appliedSchema) {
-        this.logger.info("Applied workflow output schema", {
-          sessionId,
-          stage: session.stage,
-          source: workflowTurnOptions.source,
-        });
-      }
-      await adapter.sendMessage(
-        binding.providerSessionId,
-        content,
-        providerTurnOptions
-      );
-    } catch (error) {
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
-      this.logProviderSendMessageFailed(sessionId, binding, error);
-      this.handleProviderFailure(binding.providerId, error, sessionId);
-    }
-  }
-
-  private async appendVisibleUserMessage(
-    session: Session,
-    sessionId: string,
-    content: string
-  ): Promise<boolean> {
-    const userMessage = this.sessionManager.appendMessage(
+    await this.messageDispatch.dispatchUserMessage({
+      session,
       sessionId,
-      "user",
-      content
-    );
-    if (!userMessage) {
-      this.broadcaster({
-        type: "session:error",
-        payload: { sessionId, message: "Session not found" },
-      });
-      return false;
-    }
-
-    try {
-      await this.sessionStorage.appendMessage(sessionId, userMessage);
-    } catch (error: unknown) {
-      this.logger.error(
-        "Failed to append unified session record",
-        error as Error,
-        {
-          sessionId,
-          providerId: session.providerId,
-        }
-      );
-      this.broadcaster({
-        type: "session:error",
-        payload: {
-          sessionId,
-          message: "Failed to persist message to history",
-        },
-      });
-      return false;
-    }
-
-    this.broadcaster({ type: "session:message", payload: userMessage });
-    return true;
+      content,
+      turnOptions,
+      hiddenUserMessage,
+    });
   }
 
   async handleDelete(sessionId: string): Promise<void> {
@@ -2277,7 +2087,10 @@ export class SessionRequestHandler {
     );
 
     const resumePromptTrimmed = resumePrompt.trim();
-    await this.sendInternalMessage(nextSession.id, resumePromptTrimmed);
+    await this.messageDispatch.sendInternalMessage(
+      nextSession.id,
+      resumePromptTrimmed
+    );
 
     if (!options?.silent) {
       this.emitFlowNodeRolloverNotification(nextSession.id, {
@@ -2789,51 +2602,6 @@ export class SessionRequestHandler {
       stage: session.stage ?? null,
       initiativeSlug: session.initiativeSlug ?? null,
       runSlug: session.runSlug ?? null,
-    });
-  }
-
-  private logMissingProviderBindingForIncomingMessage(
-    sessionId: string,
-    providerId: string | undefined,
-    hasBinding: boolean,
-    hasAdapter: boolean
-  ): void {
-    this.logger.warn("Provider binding or adapter missing for session", {
-      sessionId,
-      providerId: providerId ?? null,
-      hasBinding,
-      hasAdapter,
-    });
-    this.logger.warn("Known provider session bindings", {
-      sessionId,
-      knownSessionIds: Array.from(this.providerSessions.keys()),
-    });
-  }
-
-  private logDispatchingMessageToProvider(
-    sessionId: string,
-    binding: ProviderSessionBinding,
-    contentLength: number
-  ): void {
-    this.logger.info("Dispatching message to provider adapter", {
-      sessionId,
-      providerId: binding.providerId,
-      providerSessionId: binding.providerSessionId,
-      contentLength,
-    });
-  }
-
-  private logProviderSendMessageFailed(
-    sessionId: string,
-    binding: ProviderSessionBinding,
-    error: unknown
-  ): void {
-    const message = error instanceof Error ? error.message : String(error);
-    this.logger.warn("Provider sendMessage failed", {
-      sessionId,
-      providerId: binding.providerId,
-      providerSessionId: binding.providerSessionId,
-      error: message,
     });
   }
 
