@@ -34,8 +34,8 @@
 ## Phase 79 — Remaining Audit Truthfulness and Core Hotspot Closure (owner: Oleksandr, updated: 2026-03-28)
 
 ### Stream: Metadata and workflow truthfulness
-1. [TODO] Синхронизировать canonical repo metadata и licensing answer между `README.md` и `package.json`, чтобы закрыть remaining audit drift по clone target / repository URL / license wording без изменения runtime behavior. Scope: `README.md`, `package.json`. Expected commit: `docs(metadata): align repository and license contract`
-2. [TODO] Git Commit: `docs(metadata): align repository and license contract` (hash: TBD)
+1. [DONE] Синхронизировать canonical repo metadata и licensing answer между `README.md` и `package.json`, чтобы закрыть remaining audit drift по clone target / repository URL / license wording без изменения runtime behavior. Scope: `README.md`, `package.json`. Expected commit: `docs(metadata): align repository and license contract`
+2. [IN_PROGRESS] Git Commit: `docs(metadata): align repository and license contract` (hash: TBD)
 3. [TODO] Удалить stale Lefthook leftovers из active workflow surface и dependency graph, зафиксировав Husky как единственный hook engine. Scope: `lefthook.yml`, `package.json`, `package-lock.json`. Expected commit: `chore(workflow): remove stale lefthook leftovers`
 4. [TODO] Git Commit: `chore(workflow): remove stale lefthook leftovers` (hash: TBD)
 5. [TODO] Свести `scripts/build-release.sh`, `scripts/README.md` и `AGENTS.md` к одному правдивому release contract: checks/next-steps wording не должны конфликтовать с локальным Husky-first workflow. Scope: `scripts/build-release.sh`, `scripts/README.md`, `AGENTS.md`. Expected commit: `docs(workflow): align release script contract`

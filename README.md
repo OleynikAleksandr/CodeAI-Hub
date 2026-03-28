@@ -63,4 +63,4 @@ doc/                         Architecture and knowledge base.
 ```
 
 ## License
-License information will be added in a future update. Until then, treat the repository as proprietary and request permission before redistribution.
+This repository is currently distributed as `UNLICENSED`. Source is visible for audit and development collaboration, but redistribution requires explicit permission from the repository owner.
