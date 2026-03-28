@@ -45,7 +45,7 @@
 
 ---
 
-## Phase 78 — Wave 2 Oversized Debt After Audit (owner: Oleksandr, updated: 2026-03-27)
+## Phase 78 — Wave 2 Oversized Debt After Audit (owner: Oleksandr, updated: 2026-03-28)
 
 ### Stream: Core remote-bridge edge surfaces
 1. [DONE] Декомпозировать `http-api-router.ts` по route responsibilities, оставив в корневом файле thin router façade; в ходе реализации scope расширился дополнительными helper-модулями, чтобы сохранить `artifact-upsert` behavior после форматирования/Ultracite и снять root router с oversized allowlist. Scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/http-api-session-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-artifact-upsert-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`. Expected commit: `refactor(core): extract http api router route clusters`
@@ -54,7 +54,7 @@
 4. [DONE] Git Commit: `refactor(core): extract remote bridge bootstrap facade` (hash: `25c9e554`)
 
 ### Stream: Core runtime/config contract surfaces
-5. [TODO] Декомпозировать `workspace-runtime-facade.ts` по lock/binding/session-sync seams, оставив корневой файл façade-entrypoint. Scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/workspace-runtime/workspace-runtime-lock-sync.ts`, `packages/core/src/workspace-runtime/workspace-runtime-session-sync.ts`. Expected commit: `refactor(core): extract workspace runtime facade clusters`
+5. [DONE] Декомпозировать `workspace-runtime-facade.ts` по lock/binding/session-sync seams, оставив корневой файл façade-entrypoint; по факту safe cut потребовал синхронно снять root façade с explicit oversized allowlist и зафиксировать новый cluster boundary в SSOT. Scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.ts`, `packages/core/src/workspace-runtime/workspace-runtime-lock-sync.ts`, `packages/core/src/workspace-runtime/workspace-runtime-session-sync.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `refactor(core): extract workspace runtime facade clusters`
 6. [TODO] Git Commit: `refactor(core): extract workspace runtime facade clusters` (hash: TBD)
 7. [TODO] Разрезать `config/index.ts` на snapshot/default resolver helpers и свести root file к config façade/export surface. Scope: `packages/core/src/config/index.ts`, `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/config/provider-defaults-resolver.ts`. Expected commit: `refactor(core): extract config resolver clusters`
 8. [TODO] Git Commit: `refactor(core): extract config resolver clusters` (hash: TBD)

@@ -44,4 +44,3 @@ packages/core/src/workflow/diagram-dsl/diagram-modules-parser.ts
 packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts
 packages/core/src/workflow/state/workflow-state-store.ts
 packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts
-packages/core/src/workspace-runtime/workspace-runtime-facade.ts

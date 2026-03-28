@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { SessionRuntime } from "./session-runtime";
+import type { SessionRuntime } from "./session-runtime";
 import { TaskTimerStorage } from "./task-timer-storage";
+import { WorkspaceRuntimeLockSync } from "./workspace-runtime-lock-sync";
+import { WorkspaceRuntimeSessionSync } from "./workspace-runtime-session-sync";
 import type {
   ArtifactPointer,
   NodeKey,
@@ -9,17 +11,14 @@ import type {
   SessionContinuityLockTransition,
   SessionKey,
   SessionSnapshot,
-  SessionTaskTimerSnapshot,
   SessionTurnState,
   WorkspaceSnapshot,
 } from "./workspace-runtime-types";
-import { buildSnapshot } from "./workspace-snapshot-builder";
 import { WorkspaceStore } from "./workspace-store";
 import type {
   WorkspaceSelectAckPayload,
   WorkspaceSelectPayload,
   WorkspaceSnapshotPush,
-  WorkspaceSnapshotPushPayload,
 } from "./workspace-wire-types";
 
 interface WorkspaceRuntimeFacadeDeps {
@@ -45,35 +44,7 @@ interface ClientSelection {
   sequence: number;
   workspaceRoot: string | null;
 }
-
-interface MutableTaskTimerState {
-  runningAccumulates: boolean;
-  runningSinceMs: number | null;
-  totalSeconds: number;
-}
-
-type NotifySessionPatch = Partial<
-  Pick<
-    SessionSnapshot,
-    | "nodeId"
-    | "providerId"
-    | "providerSessionId"
-    | "bindingStatus"
-    | "turnState"
-    | "continuityLockActive"
-    | "continuityLockReason"
-    | "continuityLockTransition"
-    | "resumeMode"
-    | "finalTurnCompleted"
-    | "terminalLockReason"
-    | "lastHeartbeatAt"
-  >
->;
-
-type SessionSnapshotPatch = Partial<{
-  -readonly [Key in keyof SessionSnapshot]: SessionSnapshot[Key];
-}>;
-
+type WorkspaceSnapshotSubscriber = (message: WorkspaceSnapshotPush) => void;
 const DEFAULT_SNAPSHOT_DEBOUNCE_MS = 50;
 
 const fallbackSelectionIdFactory = (): string => {
@@ -83,197 +54,112 @@ const fallbackSelectionIdFactory = (): string => {
     return `selection-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 };
-
-const isSessionBusyForTimer = (session: SessionSnapshot): boolean => {
-  if (session.terminalLockReason === "terminal_no_resume") {
-    return false;
-  }
-  if (session.turnState === "running") {
-    return true;
-  }
-  if (session.continuityLockActive) {
-    return true;
-  }
-  return session.continuityLockTransition?.awaitingBootstrapTurn === true;
-};
-
-const isSessionAccumulativeForTimer = (session: SessionSnapshot): boolean => {
-  if (session.resumeMode === "no_resume") {
-    return false;
-  }
-  return session.terminalLockReason !== "terminal_no_resume";
-};
-
-const isStaleRunningSession = (session: SessionSnapshot): boolean => {
-  if (session.turnState !== "running") {
-    return false;
-  }
-  if (session.finalTurnCompleted !== true) {
-    return false;
-  }
-  if (session.continuityLockActive) {
-    return false;
-  }
-  return session.continuityLockTransition?.awaitingBootstrapTurn !== true;
-};
-
 export class WorkspaceRuntimeFacade {
-  private readonly store: WorkspaceStore;
-  private readonly sessionRuntime: SessionRuntime;
-  private readonly taskTimerStorageFactory: (
-    workspaceRoot: string
-  ) => TaskTimerStorage;
-  private readonly snapshotDebounceMs: number;
-  private readonly selectionIdFactory: () => string;
+  private readonly lockSync: WorkspaceRuntimeLockSync;
   private readonly nowIso: () => string;
-  private readonly hydrateWorkspaceSessions;
   private readonly selectionByClientId = new Map<string, ClientSelection>();
+  private readonly selectionIdFactory: () => string;
+  private readonly sessionSync: WorkspaceRuntimeSessionSync;
+  private readonly snapshotDebounceMs: number;
+  private readonly snapshotTimers = new Map<string, NodeJS.Timeout>();
   private readonly subscriberByClientId = new Map<
     string,
-    (message: WorkspaceSnapshotPush) => void
-  >();
-  private readonly snapshotTimers = new Map<string, NodeJS.Timeout>();
-  private readonly taskTimersByWorkspaceRoot = new Map<
-    string,
-    Map<string, MutableTaskTimerState>
-  >();
-  private readonly seededTaskTimersByWorkspaceRoot = new Set<string>();
-  private readonly taskTimerStoragesByWorkspaceRoot = new Map<
-    string,
-    TaskTimerStorage
+    WorkspaceSnapshotSubscriber
   >();
 
   constructor(deps: WorkspaceRuntimeFacadeDeps = {}) {
-    this.store = deps.store ?? new WorkspaceStore();
-    this.taskTimerStorageFactory =
+    const store = deps.store ?? new WorkspaceStore();
+    const taskTimerStorageFactory =
       deps.taskTimerStorageFactory ?? ((root) => new TaskTimerStorage(root));
     TaskTimerStorage.cleanupLegacy();
-    this.snapshotDebounceMs =
-      deps.snapshotDebounceMs ?? DEFAULT_SNAPSHOT_DEBOUNCE_MS;
+
+    this.nowIso = deps.nowIso ?? (() => new Date().toISOString());
     this.selectionIdFactory =
       deps.selectionIdFactory ?? fallbackSelectionIdFactory;
-    this.nowIso = deps.nowIso ?? (() => new Date().toISOString());
-    this.hydrateWorkspaceSessions = deps.hydrateWorkspaceSessions;
+    this.snapshotDebounceMs =
+      deps.snapshotDebounceMs ?? DEFAULT_SNAPSHOT_DEBOUNCE_MS;
 
-    this.sessionRuntime =
-      deps.sessionRuntime ??
-      new SessionRuntime({
-        onStateChanged: (sessionKey, field, snapshot) => {
-          this.store.updateSession(sessionKey, {
-            nodeId: sessionKey.nodeId,
-            turnState: snapshot.turnState,
-            continuityLockActive: snapshot.continuityLockActive,
-            continuityLockReason: snapshot.continuityLockReason ?? undefined,
-            continuityLockTransition:
-              snapshot.continuityLockTransition ?? undefined,
-            finalTurnCompleted: snapshot.finalTurnCompleted,
-            lastHeartbeatAt:
-              snapshot.lastHeartbeatAt === null
-                ? undefined
-                : new Date(snapshot.lastHeartbeatAt).toISOString(),
-          });
-          this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
-          const priority =
-            field === "turnState" ||
-            field === "continuityLockActive" ||
-            field === "continuityLockReason" ||
-            field === "continuityLockTransition" ||
-            field === "finalTurnCompleted";
-          this.scheduleSnapshot(sessionKey.workspaceRoot, priority);
-        },
-      });
+    this.lockSync = new WorkspaceRuntimeLockSync({
+      onWorkspaceChanged: (workspaceRoot, priority) => {
+        this.scheduleSnapshot(workspaceRoot, priority);
+      },
+      sessionRuntime: deps.sessionRuntime,
+      store,
+      taskTimerStorageFactory,
+    });
+    this.sessionSync = new WorkspaceRuntimeSessionSync({
+      hydrateWorkspaceSessions: deps.hydrateWorkspaceSessions,
+      onWorkspaceChanged: (workspaceRoot) => {
+        this.scheduleSnapshot(workspaceRoot, false);
+      },
+      store,
+      taskTimerSync: this.lockSync,
+    });
   }
 
   select(params: {
     readonly clientId: string;
     readonly request: WorkspaceSelectPayload;
   }): WorkspaceSelectAckPayload {
-    const { clientId, request } = params;
-    const reject = (error: string): WorkspaceSelectAckPayload => ({
-      requestId: request.requestId,
-      status: "rejected",
-      workspaceRoot: null,
-      selectionId: null,
-      error,
-    });
-
     if (
-      request.reason === "workspace_cleared" &&
-      request.workspaceRoot !== null
+      params.request.reason === "workspace_cleared" &&
+      params.request.workspaceRoot !== null
     ) {
-      return reject("workspaceRoot must be null for workspace_cleared");
+      return {
+        requestId: params.request.requestId,
+        status: "rejected",
+        workspaceRoot: null,
+        selectionId: null,
+        error: "workspaceRoot must be null for workspace_cleared",
+      };
     }
-
     if (
-      request.workspaceRoot !== null &&
-      request.workspaceRoot.trim().length === 0
+      params.request.workspaceRoot !== null &&
+      params.request.workspaceRoot.trim().length === 0
     ) {
-      return reject("workspaceRoot must be non-empty");
+      return {
+        requestId: params.request.requestId,
+        status: "rejected",
+        workspaceRoot: null,
+        selectionId: null,
+        error: "workspaceRoot must be non-empty",
+      };
     }
-
-    if (request.workspaceRoot === null) {
-      this.selectionByClientId.set(clientId, {
+    if (params.request.workspaceRoot === null) {
+      this.selectionByClientId.set(params.clientId, {
         workspaceRoot: null,
         selectionId: null,
         sequence: 0,
       });
       return {
-        requestId: request.requestId,
+        requestId: params.request.requestId,
         status: "applied",
         workspaceRoot: null,
         selectionId: null,
         error: null,
       };
     }
-
-    const workspaceRoot = request.workspaceRoot;
-    const selectionId = this.selectionIdFactory();
-
-    this.store.setLoadState(workspaceRoot, "ready");
-    const hydrateRows = this.hydrateWorkspaceSessions?.(workspaceRoot) ?? [];
-    for (const row of hydrateRows) {
-      this.store.updateSession(
-        {
-          workspaceRoot,
-          nodeId: row.nodeId,
-          sessionId: row.sessionId,
-        },
-        {
-          nodeId: row.nodeId,
-          providerId: row.providerId,
-          providerSessionId: row.providerSessionId ?? undefined,
-          bindingStatus: row.bindingStatus,
-        }
-      );
-    }
-    this.normalizeStaleRunningSessions(workspaceRoot);
-    this.seedTaskTimers(workspaceRoot);
-    this.selectionByClientId.set(clientId, {
+    const workspaceRoot = params.request.workspaceRoot;
+    this.sessionSync.hydrateWorkspaceSelection(workspaceRoot);
+    this.selectionByClientId.set(params.clientId, {
       workspaceRoot,
-      selectionId,
+      selectionId: this.selectionIdFactory(),
       sequence: 0,
     });
-
     this.flushWorkspaceSnapshot(workspaceRoot, true);
-
     return {
-      requestId: request.requestId,
+      requestId: params.request.requestId,
       status: "applied",
       workspaceRoot,
-      selectionId,
+      selectionId:
+        this.selectionByClientId.get(params.clientId)?.selectionId ?? null,
       error: null,
     };
   }
 
   getSnapshot(workspaceRoot: string): WorkspaceSnapshot {
-    const state = this.store.getOrCreate(workspaceRoot);
-    return buildSnapshot(
-      workspaceRoot,
-      state,
-      this.readTaskTimers(workspaceRoot)
-    );
+    return this.sessionSync.getSnapshot(workspaceRoot);
   }
-
   subscribe(
     clientId: string,
     callback: (message: WorkspaceSnapshotPush) => void
@@ -284,18 +170,12 @@ export class WorkspaceRuntimeFacade {
       this.selectionByClientId.delete(clientId);
     };
   }
-
   notifyTurnStateChanged(
     sessionKey: SessionKey,
     state: SessionTurnState
   ): void {
-    if (state === "running") {
-      this.sessionRuntime.markRunning(sessionKey);
-      return;
-    }
-    this.sessionRuntime.markIdle(sessionKey);
+    this.lockSync.notifyTurnStateChanged(sessionKey, state);
   }
-
   notifyLockChanged(
     sessionKey: SessionKey,
     options: {
@@ -304,69 +184,20 @@ export class WorkspaceRuntimeFacade {
       readonly transition?: SessionContinuityLockTransition | null;
     }
   ): void {
-    this.sessionRuntime.setLock(sessionKey, options.active);
-    if (options.reason !== undefined) {
-      this.sessionRuntime.setLockReason(sessionKey, options.reason);
-    }
-    if (options.transition !== undefined) {
-      this.sessionRuntime.setLockTransition(sessionKey, options.transition);
-    }
+    this.lockSync.notifyLockChanged(sessionKey, options);
   }
-
   notifyFinalTurnCompleted(
     sessionKey: SessionKey,
     finalTurnCompleted: boolean
   ): void {
-    this.sessionRuntime.setFinalTurnCompleted(sessionKey, finalTurnCompleted);
+    this.lockSync.notifyFinalTurnCompleted(sessionKey, finalTurnCompleted);
   }
-
   notifySessionCreated(
     sessionKey: SessionKey,
-    patch: NotifySessionPatch = {}
+    patch: Partial<SessionSnapshot> = {}
   ): void {
-    const hasOwn = (key: keyof NotifySessionPatch): boolean =>
-      Object.hasOwn(patch, key);
-    const update: SessionSnapshotPatch = {
-      nodeId: patch.nodeId ?? sessionKey.nodeId,
-    };
-    if (hasOwn("providerId")) {
-      update.providerId = patch.providerId;
-    }
-    if (hasOwn("providerSessionId")) {
-      update.providerSessionId = patch.providerSessionId;
-    }
-    if (hasOwn("bindingStatus")) {
-      update.bindingStatus = patch.bindingStatus;
-    }
-    if (hasOwn("turnState")) {
-      update.turnState = patch.turnState;
-    }
-    if (hasOwn("continuityLockActive")) {
-      update.continuityLockActive = patch.continuityLockActive;
-    }
-    if (hasOwn("continuityLockReason")) {
-      update.continuityLockReason = patch.continuityLockReason;
-    }
-    if (hasOwn("continuityLockTransition")) {
-      update.continuityLockTransition = patch.continuityLockTransition;
-    }
-    if (hasOwn("resumeMode")) {
-      update.resumeMode = patch.resumeMode;
-    }
-    if (hasOwn("finalTurnCompleted")) {
-      update.finalTurnCompleted = patch.finalTurnCompleted;
-    }
-    if (hasOwn("terminalLockReason")) {
-      update.terminalLockReason = patch.terminalLockReason;
-    }
-    if (hasOwn("lastHeartbeatAt")) {
-      update.lastHeartbeatAt = patch.lastHeartbeatAt;
-    }
-    this.store.updateSession(sessionKey, update);
-    this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
-    this.scheduleSnapshot(sessionKey.workspaceRoot, false);
+    this.sessionSync.notifySessionCreated(sessionKey, patch);
   }
-
   notifyBindingChanged(
     sessionKey: SessionKey,
     patch: {
@@ -375,187 +206,35 @@ export class WorkspaceRuntimeFacade {
       readonly providerId?: string;
     }
   ): void {
-    const update: SessionSnapshotPatch = { nodeId: sessionKey.nodeId };
-    if (Object.hasOwn(patch, "providerSessionId")) {
-      update.providerSessionId = patch.providerSessionId ?? undefined;
-    }
-    if (Object.hasOwn(patch, "bindingStatus")) {
-      update.bindingStatus = patch.bindingStatus;
-    }
-    if (Object.hasOwn(patch, "providerId")) {
-      update.providerId = patch.providerId;
-    }
-    this.store.updateSession(sessionKey, update);
-    this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
-    this.scheduleSnapshot(sessionKey.workspaceRoot, false);
+    this.sessionSync.notifyBindingChanged(sessionKey, patch);
   }
-
   notifySessionDeleted(sessionKey: SessionKey): void {
-    this.store.removeSession(sessionKey);
-    this.updateTaskTimer(sessionKey.workspaceRoot, sessionKey.nodeId);
-    this.scheduleSnapshot(sessionKey.workspaceRoot, false);
+    this.sessionSync.notifySessionDeleted(sessionKey);
   }
-
   notifyArtifactWritten(
     nodeKey: NodeKey,
     artifactId: string,
     pointer: ArtifactPointer
   ): void {
-    this.store.updateArtifact(nodeKey, artifactId, pointer);
-    this.scheduleSnapshot(nodeKey.workspaceRoot, false);
+    this.sessionSync.notifyArtifactWritten(nodeKey, artifactId, pointer);
   }
-
   recordHeartbeat(sessionKey: SessionKey): void {
-    this.sessionRuntime.recordHeartbeat(sessionKey);
+    this.lockSync.recordHeartbeat(sessionKey);
   }
-
   requestSnapshot(clientId: string): WorkspaceSnapshotPush | null {
     const selection = this.selectionByClientId.get(clientId);
     if (!(selection?.workspaceRoot && selection.selectionId)) {
       return null;
     }
-    const state = this.store.getOrCreate(selection.workspaceRoot);
-    const snapshot = buildSnapshot(
-      selection.workspaceRoot,
-      state,
-      this.readTaskTimers(selection.workspaceRoot)
-    );
     selection.sequence += 1;
-    return {
-      type: "workspace:snapshot",
-      payload: {
-        workspaceRoot: selection.workspaceRoot,
-        selectionId: selection.selectionId,
-        sequence: selection.sequence,
-        generatedAt: this.nowIso(),
-        snapshot,
-      },
-    };
+    return this.createSnapshotPush(selection.workspaceRoot, selection);
   }
-
   dispose(): void {
-    this.persistTaskTimers();
-    this.sessionRuntime.dispose();
     for (const timer of this.snapshotTimers.values()) {
       clearTimeout(timer);
     }
     this.snapshotTimers.clear();
-  }
-
-  private getOrCreateStorage(workspaceRoot: string): TaskTimerStorage {
-    let storage = this.taskTimerStoragesByWorkspaceRoot.get(workspaceRoot);
-    if (!storage) {
-      storage = this.taskTimerStorageFactory(workspaceRoot);
-      this.taskTimerStoragesByWorkspaceRoot.set(workspaceRoot, storage);
-    }
-    return storage;
-  }
-
-  private seedTaskTimers(workspaceRoot: string): void {
-    if (this.seededTaskTimersByWorkspaceRoot.has(workspaceRoot)) {
-      return;
-    }
-
-    const totals = this.getOrCreateStorage(workspaceRoot).load();
-    const entries = Object.entries(totals);
-    const timers =
-      this.taskTimersByWorkspaceRoot.get(workspaceRoot) ??
-      new Map<string, MutableTaskTimerState>();
-    for (const [nodeId, totalSeconds] of entries) {
-      if (typeof totalSeconds !== "number" || !Number.isFinite(totalSeconds)) {
-        continue;
-      }
-      const clamped = Math.max(0, Math.floor(totalSeconds));
-      if (clamped <= 0) {
-        continue;
-      }
-      const existing = timers.get(nodeId);
-      if (existing) {
-        existing.totalSeconds =
-          Math.max(0, Math.floor(existing.totalSeconds)) + clamped;
-        continue;
-      }
-      timers.set(nodeId, {
-        totalSeconds: clamped,
-        runningSinceMs: null,
-        runningAccumulates: false,
-      });
-    }
-
-    if (timers.size > 0) {
-      this.taskTimersByWorkspaceRoot.set(workspaceRoot, timers);
-    }
-    this.seededTaskTimersByWorkspaceRoot.add(workspaceRoot);
-  }
-
-  private normalizeStaleRunningSessions(workspaceRoot: string): void {
-    const state = this.store.get(workspaceRoot);
-    if (!state) {
-      return;
-    }
-
-    for (const [sessionId, session] of state.sessions) {
-      if (!isStaleRunningSession(session)) {
-        continue;
-      }
-      this.store.updateSession(
-        {
-          workspaceRoot,
-          nodeId: session.nodeId,
-          sessionId,
-        },
-        {
-          turnState: "idle",
-        }
-      );
-    }
-  }
-
-  private persistTaskTimers(): void {
-    if (this.taskTimersByWorkspaceRoot.size === 0) {
-      return;
-    }
-
-    for (const [workspaceRoot, timers] of this.taskTimersByWorkspaceRoot) {
-      const totals = this.serializeTaskTimerTotals(timers);
-      if (Object.keys(totals).length === 0) {
-        continue;
-      }
-      this.getOrCreateStorage(workspaceRoot).save(totals);
-    }
-  }
-
-  private serializeTaskTimerTotals(
-    timers: Map<string, MutableTaskTimerState>
-  ): Record<string, number> {
-    const totals: Record<string, number> = {};
-
-    for (const [nodeId, timer] of timers) {
-      this.commitRunningTaskTimer(timer);
-      const normalizedTotal = Math.max(0, Math.floor(timer.totalSeconds));
-      if (normalizedTotal > 0) {
-        totals[nodeId] = normalizedTotal;
-      }
-    }
-
-    return totals;
-  }
-
-  private commitRunningTaskTimer(timer: MutableTaskTimerState): void {
-    if (timer.runningSinceMs === null) {
-      return;
-    }
-
-    const deltaSeconds = Math.max(
-      0,
-      Math.floor((Date.now() - timer.runningSinceMs) / 1000)
-    );
-    if (timer.runningAccumulates) {
-      timer.totalSeconds =
-        Math.max(0, Math.floor(timer.totalSeconds)) + deltaSeconds;
-    }
-    timer.runningSinceMs = null;
-    timer.runningAccumulates = false;
+    this.lockSync.dispose();
   }
 
   private scheduleSnapshot(workspaceRoot: string, priority: boolean): void {
@@ -563,12 +242,9 @@ export class WorkspaceRuntimeFacade {
       this.flushWorkspaceSnapshot(workspaceRoot, false);
       return;
     }
-
-    const existing = this.snapshotTimers.get(workspaceRoot);
-    if (existing) {
+    if (this.snapshotTimers.has(workspaceRoot)) {
       return;
     }
-
     const timer = setTimeout(() => {
       this.snapshotTimers.delete(workspaceRoot);
       this.flushWorkspaceSnapshot(workspaceRoot, false);
@@ -583,20 +259,11 @@ export class WorkspaceRuntimeFacade {
       clearTimeout(timer);
       this.snapshotTimers.delete(workspaceRoot);
     }
-
-    const shouldPush = force || this.store.consumeDirty(workspaceRoot);
-    if (!shouldPush) {
+    if (!(force || this.sessionSync.consumeDirty(workspaceRoot))) {
       return;
     }
-
-    const state = this.store.getOrCreate(workspaceRoot);
-    const snapshot = buildSnapshot(
-      workspaceRoot,
-      state,
-      this.readTaskTimers(workspaceRoot)
-    );
-
-    for (const [clientId, selection] of this.selectionByClientId.entries()) {
+    const snapshot = this.getSnapshot(workspaceRoot);
+    for (const [clientId, selection] of this.selectionByClientId) {
       if (selection.workspaceRoot !== workspaceRoot || !selection.selectionId) {
         continue;
       }
@@ -605,76 +272,24 @@ export class WorkspaceRuntimeFacade {
         continue;
       }
       selection.sequence += 1;
-      const payload: WorkspaceSnapshotPushPayload = {
-        workspaceRoot,
-        selectionId: selection.selectionId,
-        sequence: selection.sequence,
+      callback(this.createSnapshotPush(workspaceRoot, selection, snapshot));
+    }
+  }
+
+  private createSnapshotPush(
+    workspaceRoot: string,
+    selection: ClientSelection,
+    snapshot?: WorkspaceSnapshot
+  ): WorkspaceSnapshotPush {
+    return {
+      type: "workspace:snapshot",
+      payload: this.sessionSync.createSnapshotPayload({
         generatedAt: this.nowIso(),
+        selectionId: selection.selectionId ?? "",
+        sequence: selection.sequence,
         snapshot,
-      };
-      callback({
-        type: "workspace:snapshot",
-        payload,
-      });
-    }
-  }
-
-  private readTaskTimers(
-    workspaceRoot: string
-  ): ReadonlyMap<string, SessionTaskTimerSnapshot> {
-    const timers = this.taskTimersByWorkspaceRoot.get(workspaceRoot);
-    return timers ?? new Map<string, SessionTaskTimerSnapshot>();
-  }
-
-  private updateTaskTimer(workspaceRoot: string, nodeId: string): void {
-    const state = this.store.getOrCreate(workspaceRoot);
-    const timers =
-      this.taskTimersByWorkspaceRoot.get(workspaceRoot) ??
-      new Map<string, MutableTaskTimerState>();
-    if (!this.taskTimersByWorkspaceRoot.has(workspaceRoot)) {
-      this.taskTimersByWorkspaceRoot.set(workspaceRoot, timers);
-    }
-
-    const nodeSessions = Array.from(state.sessions.values()).filter(
-      (session) => session.nodeId === nodeId
-    );
-    const busySessions = nodeSessions.filter(isSessionBusyForTimer);
-    const busy = busySessions.length > 0;
-    const accumulative = busySessions.some(isSessionAccumulativeForTimer);
-
-    const timer = timers.get(nodeId) ?? {
-      totalSeconds: 0,
-      runningSinceMs: null,
-      runningAccumulates: false,
+        workspaceRoot,
+      }),
     };
-    if (busy) {
-      if (timer.runningSinceMs === null) {
-        timer.runningSinceMs = Date.now();
-        timer.runningAccumulates = accumulative;
-        timers.set(nodeId, timer);
-      } else if (accumulative && !timer.runningAccumulates) {
-        timer.runningAccumulates = true;
-        timers.set(nodeId, timer);
-      }
-      return;
-    }
-
-    if (timer.runningSinceMs === null) {
-      timer.runningAccumulates = false;
-      timers.set(nodeId, timer);
-      return;
-    }
-
-    const deltaSeconds = Math.max(
-      0,
-      Math.floor((Date.now() - timer.runningSinceMs) / 1000)
-    );
-    if (timer.runningAccumulates) {
-      timer.totalSeconds =
-        Math.max(0, Math.floor(timer.totalSeconds)) + deltaSeconds;
-    }
-    timer.runningSinceMs = null;
-    timer.runningAccumulates = false;
-    timers.set(nodeId, timer);
   }
 }

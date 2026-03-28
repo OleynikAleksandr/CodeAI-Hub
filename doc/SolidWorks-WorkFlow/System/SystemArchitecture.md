@@ -79,6 +79,10 @@
   - `remote-bridge-server-lifecycle.ts` = HTTP/WebSocket lifecycle ownership
   - `remote-bridge-message-router.ts` = websocket command orchestration façade
   - `remote-bridge-dialog-command-router.ts`, `remote-bridge-workspace-command-router.ts` = scoped websocket command clusters
+- Workspace runtime cluster: `packages/core/src/workspace-runtime/`
+  - `workspace-runtime-facade.ts` = thin façade / module entrypoint
+  - `workspace-runtime-session-sync.ts` = workspace selection, snapshot push, session-store sync
+  - `workspace-runtime-lock-sync.ts` = lock/runtime projection and task-timer persistence
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
