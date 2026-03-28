@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.825] - 2026-03-28
+### Fixed
+- **Broken Gemini global runtime installs**: `packages/Gemini_Module/src/installer/gemini-installer.ts` now validates the installed top-level `@google/gemini-cli-core` dependency graph before provider startup and automatically reinstalls Gemini CLI/Core when corrupted dependencies like a truncated `fast-uri` payload are detected.
+- **Nested/bridge Gemini dependency sanity**: `packages/Gemini_Module/src/runtime/cli-bridge.ts` now treats broken bridge-side runtime dependencies as compatibility failures during bridge loading instead of letting them surface later as Core-killing crashes.
+- **Stale npm rename debris during repair**: Gemini runtime reinstall now removes leftover hidden npm temp directories (for example `.gemini-cli-core-*`) before `npm install -g`, preventing `ENOTEMPTY` rename failures from blocking automatic recovery.
+
 ## [1.1.824] - 2026-03-28
 ### Fixed
 - **Gemini loop-recovery crash**: `packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts` now patches the vulnerable `gemini-cli-core` loop-recovery path so internal aborts no longer propagate `AbortError: The user aborted a request.` into Core and tear down the process mid-turn.
