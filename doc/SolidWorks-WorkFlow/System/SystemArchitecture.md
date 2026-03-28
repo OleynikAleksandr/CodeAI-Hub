@@ -79,6 +79,8 @@
   - `remote-bridge-server-lifecycle.ts` = HTTP/WebSocket lifecycle ownership
   - `remote-bridge-message-router.ts` = websocket command orchestration façade
   - `remote-bridge-dialog-command-router.ts`, `remote-bridge-workspace-command-router.ts` = scoped websocket command clusters
+  - `types.ts` = thin aggregation surface for remote-bridge contracts
+  - `session-stream-contracts.ts`, `workspace-stream-contracts.ts` = stream-scoped contract modules
 - Workspace runtime cluster: `packages/core/src/workspace-runtime/`
   - `workspace-runtime-facade.ts` = thin façade / module entrypoint
   - `workspace-runtime-session-sync.ts` = workspace selection, snapshot push, session-store sync
