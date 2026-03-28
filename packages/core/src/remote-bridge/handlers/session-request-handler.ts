@@ -12,11 +12,7 @@ import {
   extractTokenUsage,
   isBelowRemainingPercentThreshold,
 } from "../../session-continuity/token-usage";
-import type {
-  Session,
-  SessionManager,
-  SessionMessage,
-} from "../../session-manager";
+import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
@@ -42,6 +38,10 @@ import {
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
 import { SessionRequestHandlerDialogSegmentMeta } from "./session-request-handler-dialog-segment-meta";
+import {
+  type MessageContentPayload,
+  SessionRequestHandlerEventMessages,
+} from "./session-request-handler-event-messages";
 import { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
 import { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
@@ -93,26 +93,6 @@ export interface CreateAndRegisterSessionOptions {
 export interface ShellSessionCreationResult {
   readonly continuityRootSessionId: string;
   readonly session: Session;
-}
-
-export interface DialogMessagePayload {
-  readonly content?: unknown;
-  readonly role?: string;
-  readonly tag?: string;
-  readonly timestamp?: string;
-}
-
-type MessageContentPayload =
-  | string
-  | {
-      readonly text?: unknown;
-      readonly content?: unknown;
-      readonly turnOptions?: unknown;
-    };
-
-interface MessageContentExtraction {
-  readonly content: string;
-  readonly turnOptions?: Record<string, unknown>;
 }
 
 const DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
@@ -217,6 +197,7 @@ export class SessionRequestHandler {
   private readonly sessionResolution: SessionRequestHandlerSessionResolution;
   private readonly messageDispatch: SessionRequestHandlerMessageDispatch;
   private readonly dialogSegmentMeta: SessionRequestHandlerDialogSegmentMeta;
+  private readonly eventMessages: SessionRequestHandlerEventMessages;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeReportState: SessionRequestHandlerFlowNodeReportState;
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
@@ -441,6 +422,13 @@ export class SessionRequestHandler {
       continuityRootBySessionId: this.continuityRootBySessionId,
       logger: this.logger,
     });
+    this.eventMessages = new SessionRequestHandlerEventMessages({
+      broadcaster: this.broadcaster,
+      continuityRootBySessionId: this.continuityRootBySessionId,
+      logger: this.logger,
+      sessionManager: this.sessionManager,
+      sessionStorage: this.sessionStorage,
+    });
     this.providerBindingService = new SessionProviderBindingService({
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
@@ -487,9 +475,9 @@ export class SessionRequestHandler {
       finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
         this.finalizeFlowNodeContinuityLockOnBootstrapGate(lockOptions),
       appendProviderMessage: (sessionId, role, event) =>
-        this.appendProviderMessage(sessionId, role, event),
+        this.eventMessages.appendProviderMessage(sessionId, role, event),
       appendDialogMessage: (sessionId, payload) =>
-        this.appendDialogMessage(sessionId, payload),
+        this.eventMessages.appendDialogMessage(sessionId, payload),
     });
     this.providerFailureRecovery = new SessionProviderFailureRecovery({
       providerRegistry: this.providerRegistry,
@@ -914,7 +902,8 @@ export class SessionRequestHandler {
     messagePayload: MessageContentPayload
   ): Promise<void> {
     this.logSessionMessageReceived(sessionId, messagePayload);
-    const extracted = this.extractMessageContentAndTurnOptions(messagePayload);
+    const extracted =
+      this.eventMessages.extractMessageContentAndTurnOptions(messagePayload);
     if (!extracted) {
       this.logger.warn("Received invalid message payload", { sessionId });
       return;
@@ -1443,163 +1432,6 @@ export class SessionRequestHandler {
         },
       });
     }
-  }
-
-  private appendProviderMessage(
-    sessionId: string,
-    role: "assistant" | "system" | "thinking",
-    event: unknown
-  ): void {
-    const content = this.extractMessageContent(event);
-    if (!content) {
-      return;
-    }
-    const timestamp = this.extractEventTimestamp(event);
-    const message = this.sessionManager.appendMessage(
-      sessionId,
-      role,
-      content,
-      { timestamp: timestamp ?? undefined }
-    );
-    if (message) {
-      this.sessionStorage
-        .appendMessage(sessionId, message)
-        .then(() => {
-          this.broadcaster({ type: "session:message", payload: message });
-          this.broadcastDialogMessage(sessionId, message);
-        })
-        .catch((error: unknown) => {
-          this.logger.error(
-            "Failed to append unified session record",
-            error as Error,
-            { sessionId }
-          );
-        });
-    }
-  }
-
-  private appendDialogMessage(
-    sessionId: string,
-    payload: DialogMessagePayload
-  ): void {
-    if (!payload?.content || typeof payload.content !== "string") {
-      return;
-    }
-    const role =
-      payload.role === "user" ||
-      payload.role === "assistant" ||
-      payload.role === "thinking"
-        ? payload.role
-        : "assistant";
-    const tag =
-      payload.tag && typeof payload.tag === "string" ? payload.tag : undefined;
-    const message = this.sessionManager.appendMessage(
-      sessionId,
-      role,
-      payload.content,
-      { timestamp: payload.timestamp, tag }
-    );
-    if (message) {
-      this.sessionStorage
-        .appendMessage(sessionId, message)
-        .then(() => {
-          this.broadcaster({ type: "session:message", payload: message });
-          this.broadcastDialogMessage(sessionId, message);
-        })
-        .catch((error: unknown) => {
-          this.logger.error(
-            "Failed to append unified session record",
-            error as Error,
-            { sessionId }
-          );
-        });
-    }
-  }
-
-  private broadcastDialogMessage(
-    sessionId: string,
-    message: SessionMessage
-  ): void {
-    const dialogId = this.continuityRootBySessionId.get(sessionId) ?? null;
-    if (!dialogId) {
-      return;
-    }
-    this.broadcaster({
-      type: "dialog:message",
-      payload: {
-        dialogId,
-        sessionId,
-        message,
-      },
-    });
-  }
-
-  private extractMessageContent(event: unknown): string | null {
-    if (!event || typeof event !== "object") {
-      return null;
-    }
-    const typed = event as {
-      readonly content?: unknown;
-      readonly data?: unknown;
-    };
-    if (typeof typed.content === "string") {
-      return typed.content;
-    }
-    if (typed.content && typeof typed.content === "object") {
-      return JSON.stringify(typed.content);
-    }
-    if (typed.data) {
-      return JSON.stringify(typed.data);
-    }
-    return null;
-  }
-
-  private extractEventTimestamp(event: unknown): string | null {
-    if (!event || typeof event !== "object") {
-      return null;
-    }
-    const typed = event as { readonly timestamp?: unknown };
-    if (typeof typed.timestamp !== "string") {
-      return null;
-    }
-    const normalized = typed.timestamp.trim();
-    return Number.isNaN(Date.parse(normalized)) ? null : normalized;
-  }
-
-  private extractMessageContentAndTurnOptions(
-    payload: MessageContentPayload
-  ): MessageContentExtraction | null {
-    if (typeof payload === "string") {
-      return { content: payload };
-    }
-    if (!payload || typeof payload !== "object") {
-      return null;
-    }
-
-    const typed = payload as {
-      readonly text?: unknown;
-      readonly content?: unknown;
-      readonly turnOptions?: unknown;
-    };
-    let content: string | null = null;
-    if (typeof typed.text === "string") {
-      content = typed.text;
-    } else if (typeof typed.content === "string") {
-      content = typed.content;
-    }
-
-    if (!content) {
-      return null;
-    }
-
-    const turnOptions =
-      typed.turnOptions &&
-      typeof typed.turnOptions === "object" &&
-      !Array.isArray(typed.turnOptions)
-        ? (typed.turnOptions as Record<string, unknown>)
-        : undefined;
-
-    return { content, turnOptions };
   }
 
   private updateProviderBinding(
