@@ -79,7 +79,7 @@
   - `remote-bridge-server-lifecycle.ts` = HTTP/WebSocket lifecycle ownership
   - `remote-bridge-message-router.ts` = websocket command orchestration façade
   - `remote-bridge-dialog-command-router.ts`, `remote-bridge-workspace-command-router.ts` = scoped websocket command clusters
-  - `handlers/session-request-handler.ts` = still-oversized orchestration root for dialog send/resume/switch paths; resume lifecycle state ownership lives in `handlers/session-request-handler-resume-lifecycle.ts`, shell/bootstrap creation path starts in `handlers/session-request-handler-session-bootstrap.ts`, and outbound/internal send path is isolated in `handlers/session-request-handler-message-dispatch.ts`
+  - `handlers/session-request-handler.ts` = still-oversized orchestration root for dialog send/resume/switch paths; resume lifecycle state ownership lives in `handlers/session-request-handler-resume-lifecycle.ts`, shell/bootstrap creation path starts in `handlers/session-request-handler-session-bootstrap.ts`, outbound/internal send path is isolated in `handlers/session-request-handler-message-dispatch.ts`, and flow-node rollover/report state now lives in `handlers/session-request-handler-flow-node-{rollover,report-state}.ts`
   - `types.ts` = thin aggregation surface for remote-bridge contracts
   - `session-stream-contracts.ts`, `workspace-stream-contracts.ts` = stream-scoped contract modules
 - Workspace runtime cluster: `packages/core/src/workspace-runtime/`

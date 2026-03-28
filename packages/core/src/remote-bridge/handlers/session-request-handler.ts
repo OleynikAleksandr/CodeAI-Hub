@@ -38,11 +38,7 @@ import {
   type FlowNodeContinuityLockContext,
   SessionContinuityLockService,
 } from "./session-continuity-lock-service";
-import {
-  type FlowNodeContinuityCreateReportRequestState,
-  type FlowNodeRolloverNotification,
-  SessionContinuityRolloverOrchestrator,
-} from "./session-continuity-rollover-orchestrator";
+import { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
 import {
   type DescriptionDialogResolution as DescriptionDialogResolutionModel,
   SessionDescriptionDialogSync,
@@ -55,6 +51,8 @@ import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
+import { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
+import { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
 import { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import {
   type PostTurnContextDecision,
@@ -153,8 +151,6 @@ export interface ShellSessionCreationResult {
   readonly continuityRootSessionId: string;
   readonly session: Session;
 }
-
-const MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS = 8000;
 
 export interface DialogMessagePayload {
   readonly content?: unknown;
@@ -280,10 +276,8 @@ export class SessionRequestHandler {
   private readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
   private readonly messageDispatch: SessionRequestHandlerMessageDispatch;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
-  private readonly flowNodeContinuityCreateReportRequests = new Map<
-    string,
-    FlowNodeContinuityCreateReportRequestState
-  >();
+  private readonly flowNodeReportState: SessionRequestHandlerFlowNodeReportState;
+  private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
   private readonly retryBudgetBySessionId = new Map<
     string,
     { transientRetries: number; autoResumeAttempts: number }
@@ -325,22 +319,6 @@ export class SessionRequestHandler {
     return null;
   }
 
-  private emitFlowNodeRolloverNotification(
-    sessionId: string,
-    notification: Omit<FlowNodeRolloverNotification, "timestamp">
-  ): void {
-    this.broadcaster({
-      type: "session:stream",
-      payload: {
-        sessionId,
-        event: {
-          ...notification,
-          timestamp: new Date().toISOString(),
-        } satisfies FlowNodeRolloverNotification,
-      },
-    });
-  }
-
   private emitTurnStateEvent(options: {
     readonly sessionId: string;
     readonly state: "running" | "idle";
@@ -376,172 +354,6 @@ export class SessionRequestHandler {
         },
       },
     });
-  }
-
-  private emitContinuityFailedEvent(options: {
-    readonly sessionId: string;
-    readonly providerId: string | null;
-    readonly providerSessionId: string | null;
-    readonly request: FlowNodeContinuityCreateReportRequestState;
-    readonly reason: "report_timeout" | "unknown";
-    readonly errorMessage: string;
-  }): void {
-    this.broadcaster({
-      type: "session:stream",
-      payload: {
-        sessionId: options.sessionId,
-        event: {
-          type: "stream_event",
-          provider: "core",
-          sessionId: options.sessionId,
-          data: {
-            kind: "continuity_failed",
-            reason: options.reason,
-            error: options.errorMessage,
-            requestId: options.request.requestId,
-            attempt: options.request.attempt,
-            stage: options.request.stage,
-            reportPath: options.request.reportPath,
-            tmpReportPath: options.request.tmpReportPath,
-            ...(options.providerId ? { providerId: options.providerId } : {}),
-            ...(options.providerSessionId
-              ? { providerSessionId: options.providerSessionId }
-              : {}),
-          },
-          uuid: `${crypto.randomUUID()}::continuity_failed`,
-          timestamp: new Date().toISOString(),
-        },
-      },
-    });
-  }
-
-  private patchFlowNodeContinuityCreateReportRequest(options: {
-    readonly sessionId: string;
-    readonly requestId: string;
-    readonly patch: Partial<
-      Pick<FlowNodeContinuityCreateReportRequestState, "attempt" | "stage">
-    >;
-  }): void {
-    const request = this.flowNodeContinuityCreateReportRequests.get(
-      options.sessionId
-    );
-    if (!(request && request.requestId === options.requestId)) {
-      return;
-    }
-
-    const updatedAtIso = new Date().toISOString();
-    this.flowNodeContinuityCreateReportRequests.set(options.sessionId, {
-      ...request,
-      attempt: options.patch.attempt ?? request.attempt,
-      stage: options.patch.stage ?? request.stage,
-      updatedAtIso,
-    });
-  }
-
-  private isContinuityReportTimeoutError(error: unknown): boolean {
-    return (
-      error instanceof Error &&
-      error.message.startsWith("Timed out waiting for continuity report:")
-    );
-  }
-
-  private truncateContinuityResumeReportBody(value: string): string {
-    const normalized = value.trim();
-    if (normalized.length <= MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS) {
-      return normalized;
-    }
-    return [
-      normalized.slice(0, MAX_CONTINUITY_RESUME_REPORT_BODY_CHARS),
-      "",
-      "[...truncated...]",
-    ].join("\n");
-  }
-
-  private async loadContinuityResumeReportBody(
-    reportPath: string
-  ): Promise<string> {
-    try {
-      const content = await readFile(reportPath, "utf8");
-      return this.truncateContinuityResumeReportBody(content);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      return this.truncateContinuityResumeReportBody(
-        `Failed to read continuity report from disk (${reportPath}): ${message}`
-      );
-    }
-  }
-
-  private async dispatchFlowNodeContinuityCreateReportWithAck(options: {
-    readonly sessionId: string;
-    readonly requestId: string;
-    readonly prompt: string;
-    readonly notificationBase: Omit<
-      FlowNodeRolloverNotification,
-      | "timestamp"
-      | "phase"
-      | "continuityRequestId"
-      | "continuityAttempt"
-      | "reportPath"
-      | "tmpReportPath"
-    >;
-    readonly reportPath: string;
-    readonly tmpReportPath: string;
-    readonly silent: boolean;
-    readonly startAttempt?: number;
-    readonly maxAttempts?: number;
-  }): Promise<number> {
-    const startAttempt = Math.max(1, Math.floor(options.startAttempt ?? 1));
-    const attempt = startAttempt;
-
-    this.patchFlowNodeContinuityCreateReportRequest({
-      sessionId: options.sessionId,
-      requestId: options.requestId,
-      patch: { attempt, stage: "waiting_for_report" },
-    });
-
-    await this.messageDispatch.sendInternalMessage(
-      options.sessionId,
-      options.prompt
-    );
-
-    if (!options.silent) {
-      this.emitFlowNodeRolloverNotification(options.sessionId, {
-        ...options.notificationBase,
-        phase: "waiting_for_report",
-        continuityRequestId: options.requestId,
-        continuityAttempt: attempt,
-        reportPath: options.reportPath,
-        tmpReportPath: options.tmpReportPath,
-      });
-    }
-
-    return attempt;
-  }
-
-  private async waitForFlowNodeContinuityReportWithRetry(options: {
-    readonly sessionId: string;
-    readonly requestId: string;
-    readonly prompt: string;
-    readonly notificationBase: Omit<
-      FlowNodeRolloverNotification,
-      | "timestamp"
-      | "phase"
-      | "continuityRequestId"
-      | "continuityAttempt"
-      | "reportPath"
-      | "tmpReportPath"
-    >;
-    readonly reportPath: string;
-    readonly tmpReportPath: string;
-    readonly silent: boolean;
-    readonly attempt: number;
-  }): Promise<number> {
-    await this.flowNodeContinuity.waitForReport({
-      reportPath: options.reportPath,
-      timeoutMs: Number.POSITIVE_INFINITY,
-      pollIntervalMs: 250,
-    });
-    return options.attempt;
   }
 
   private emitContinuityLockEvent(
@@ -650,14 +462,20 @@ export class SessionRequestHandler {
         emitContinuityLockEvent: (lockEvent) =>
           this.continuityLockService.emitContinuityLockEvent(lockEvent),
         emitFlowNodeRolloverNotification: (sessionId, notification) =>
-          this.emitFlowNodeRolloverNotification(sessionId, notification),
+          this.flowNodeReportState.emitFlowNodeRolloverNotification(
+            sessionId,
+            notification
+          ),
         rolloverFlowNodeSession: (session, rollover, rolloverOptions) =>
-          this.rolloverFlowNodeSession(session, rollover, rolloverOptions),
+          this.flowNodeRollover.rolloverFlowNodeSession(
+            session,
+            rollover,
+            rolloverOptions
+          ),
         getCreateReportRequest: (sessionId) =>
-          this.flowNodeContinuityCreateReportRequests.get(sessionId) ?? null,
-        deleteCreateReportRequest: (sessionId) => {
-          this.flowNodeContinuityCreateReportRequests.delete(sessionId);
-        },
+          this.flowNodeReportState.getCreateReportRequest(sessionId),
+        deleteCreateReportRequest: (sessionId) =>
+          this.flowNodeReportState.deleteCreateReportRequest(sessionId),
         finalizeFlowNodeContinuityLock: (lockOptions) =>
           this.continuityLockService.finalizeFlowNodeContinuityLock(
             lockOptions
@@ -671,9 +489,9 @@ export class SessionRequestHandler {
         emitTurnStateEvent: (turnStateOptions) =>
           this.emitTurnStateEvent(turnStateOptions),
         emitContinuityFailedEvent: (failureOptions) =>
-          this.emitContinuityFailedEvent(failureOptions),
+          this.flowNodeReportState.emitContinuityFailedEvent(failureOptions),
         isContinuityReportTimeoutError: (error) =>
-          this.isContinuityReportTimeoutError(error),
+          this.flowNodeReportState.isContinuityReportTimeoutError(error),
       });
     this.descriptionDialogSync = new SessionDescriptionDialogSync({
       sessionStorage: this.sessionStorage,
@@ -799,6 +617,25 @@ export class SessionRequestHandler {
         this.appendDialogSegmentBoundaryMeta(boundaryOptions),
       resumeLifecycle: this.resumeLifecycle,
       workspaceRuntime: this.workspaceRuntime,
+    });
+    this.flowNodeReportState = new SessionRequestHandlerFlowNodeReportState({
+      broadcaster: this.broadcaster,
+    });
+    this.flowNodeRollover = new SessionRequestHandlerFlowNodeRollover({
+      continuityRootBySessionId: this.continuityRootBySessionId,
+      providerRegistry: this.providerRegistry,
+      flowNodeContinuity: this.flowNodeContinuity,
+      sessionBootstrap: this.sessionBootstrap,
+      messageDispatch: this.messageDispatch,
+      reportState: this.flowNodeReportState,
+      emitTurnStateEvent: (turnStateOptions) =>
+        this.emitTurnStateEvent(turnStateOptions),
+      registerFlowNodeContinuityLockContext: (context) =>
+        this.registerFlowNodeContinuityLockContext(context),
+      emitContinuityLockEvent: (lockEvent) =>
+        this.emitContinuityLockEvent(lockEvent),
+      finalizeFlowNodeContinuityLock: (lockOptions) =>
+        this.finalizeFlowNodeContinuityLock(lockOptions),
     });
   }
 
@@ -1774,16 +1611,6 @@ export class SessionRequestHandler {
     }
   }
 
-  private toSafeTimestamp(value: string): string {
-    return (
-      value
-        .trim()
-        .replace(/[^a-zA-Z0-9]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/-$/g, "") || "unknown"
-    );
-  }
-
   private resolveSettingsProviderKey(
     providerId: string
   ): "claude" | "codex" | "gemini" {
@@ -1829,279 +1656,6 @@ export class SessionRequestHandler {
         this.config.claudeContinuityRemainingPercentThreshold ??
         DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
     });
-  }
-
-  private resolveFlowNodeId(stageId: string, runSlug: string | null): string {
-    return runSlug ? `${stageId}/${runSlug}` : stageId;
-  }
-
-  private resolveFlowNodeRole(runSlug: string | null): string {
-    if (!runSlug) {
-      return "Agent";
-    }
-    return `${runSlug.slice(0, 1).toUpperCase()}${runSlug.slice(1)}`;
-  }
-
-  private resolveFlowNodeContinuityTemplate(): {
-    readonly templateId:
-      | "flow/continuity/create-report-doc.md"
-      | "flow/continuity/create-report-code.md";
-    readonly canonicalArtifactPath: string;
-    readonly isReviewerBootstrapEligible: boolean;
-  } {
-    return {
-      templateId: "flow/continuity/create-report-code.md",
-      canonicalArtifactPath: "",
-      isReviewerBootstrapEligible: false,
-    };
-  }
-
-  private async rolloverFlowNodeSession(
-    session: Session,
-    rollover: {
-      readonly remainingPercent: number;
-      readonly thresholdPercent: number;
-      readonly rolloverId: string;
-    },
-    options?: { readonly silent: boolean }
-  ): Promise<void> {
-    const adapter = this.providerRegistry.getAdapter(session.providerId);
-    if (!adapter) {
-      this.finalizeFlowNodeContinuityLock({
-        sessionId: session.id,
-        reason: "resume_failed",
-      });
-      return;
-    }
-
-    const workspaceSlug = session.initiativeSlug;
-    const stageId = session.stage;
-    if (!(workspaceSlug && stageId)) {
-      this.finalizeFlowNodeContinuityLock({
-        sessionId: session.id,
-        reason: "resume_failed",
-      });
-      return;
-    }
-
-    const runSlug = session.runSlug ?? null;
-    const nodeId = this.resolveFlowNodeId(stageId, runSlug);
-    const role = this.resolveFlowNodeRole(runSlug);
-    const timestamp = this.toSafeTimestamp(new Date().toISOString());
-    const requestId = crypto.randomUUID();
-    const requestAttempt = 1;
-
-    const reportPaths = this.flowNodeContinuity.buildReportPaths({
-      workspaceRoot: session.workspacePath,
-      workspaceSlug,
-      nodeId,
-      role,
-      providerId: session.providerId,
-      timestamp,
-    });
-
-    const requestTimestampIso = new Date().toISOString();
-    this.flowNodeContinuityCreateReportRequests.set(session.id, {
-      requestId,
-      attempt: requestAttempt,
-      stage: "waiting_for_report",
-      reportPath: reportPaths.reportPath,
-      tmpReportPath: reportPaths.tmpReportPath,
-      createdAtIso: requestTimestampIso,
-      updatedAtIso: requestTimestampIso,
-    });
-
-    const notificationBase = {
-      kind: "flow_node_rollover",
-      sourceSessionId: session.id,
-      providerId: session.providerId,
-      stageId,
-      runSlug,
-      remainingPercent: rollover.remainingPercent,
-      thresholdPercent: rollover.thresholdPercent,
-    } as const;
-
-    const sourceLockContext = this.registerFlowNodeContinuityLockContext({
-      rolloverId: rollover.rolloverId,
-      sourceSessionId: session.id,
-      stageId,
-      runSlug,
-      awaitingBootstrapTurn: false,
-    });
-    this.emitContinuityLockEvent({
-      sessionId: session.id,
-      rolloverId: sourceLockContext.rolloverId,
-      sourceSessionId: sourceLockContext.sourceSessionId,
-      stageId: sourceLockContext.stageId,
-      runSlug: sourceLockContext.runSlug,
-      state: "locked",
-      reason: "report_in_progress",
-    });
-
-    if (!options?.silent) {
-      this.emitFlowNodeRolloverNotification(session.id, {
-        ...notificationBase,
-        phase: "create_report_sent",
-        continuityRequestId: requestId,
-        continuityAttempt: requestAttempt,
-        reportPath: reportPaths.reportPath,
-        tmpReportPath: reportPaths.tmpReportPath,
-      });
-    }
-
-    const { canonicalArtifactPath, templateId } =
-      this.resolveFlowNodeContinuityTemplate();
-
-    const createReportPrompt = this.flowNodeContinuity.renderTemplate(
-      templateId,
-      {
-        nodeId,
-        role,
-        reportPath: reportPaths.reportPath,
-        canonicalArtifactPath,
-      }
-    );
-
-    const wrappedCreateReportPrompt = [
-      "INTERNAL: Context budget is low. Prepare continuity report and save it on disk.",
-      `- Temp path: \`${reportPaths.tmpReportPath}\``,
-      `- Final path: \`${reportPaths.reportPath}\``,
-      "",
-      createReportPrompt.trim(),
-    ].join("\n");
-
-    const ackedAttempt =
-      await this.dispatchFlowNodeContinuityCreateReportWithAck({
-        sessionId: session.id,
-        requestId,
-        prompt: wrappedCreateReportPrompt,
-        notificationBase,
-        reportPath: reportPaths.reportPath,
-        tmpReportPath: reportPaths.tmpReportPath,
-        silent: options?.silent === true,
-      });
-
-    const finalAttempt = await this.waitForFlowNodeContinuityReportWithRetry({
-      sessionId: session.id,
-      requestId,
-      prompt: wrappedCreateReportPrompt,
-      notificationBase,
-      reportPath: reportPaths.reportPath,
-      tmpReportPath: reportPaths.tmpReportPath,
-      silent: options?.silent === true,
-      attempt: ackedAttempt,
-    });
-
-    const completedRequestState =
-      this.flowNodeContinuityCreateReportRequests.get(session.id);
-    if (
-      completedRequestState &&
-      completedRequestState.requestId === requestId
-    ) {
-      const updatedAtIso = new Date().toISOString();
-      this.flowNodeContinuityCreateReportRequests.set(session.id, {
-        ...completedRequestState,
-        stage: "completed",
-        updatedAtIso,
-      });
-    }
-
-    if (!options?.silent) {
-      this.emitFlowNodeRolloverNotification(session.id, {
-        ...notificationBase,
-        phase: "report_ready",
-        continuityRequestId: requestId,
-        continuityAttempt: finalAttempt,
-        reportPath: reportPaths.reportPath,
-      });
-    }
-    // Providers may sometimes miss `turn_completed` after internal prompts. Ensure
-    // the UI is not left in a perpetual "working" state once the report is ready.
-    this.emitTurnStateEvent({ sessionId: session.id, state: "idle" });
-
-    const nextSession = await this.sessionBootstrap.createAndRegisterSession({
-      providerId: session.providerId,
-      workspacePath: session.workspacePath,
-      adapter,
-      resumeMode: "resume_via_rollover",
-      silent: options?.silent === true,
-      context: {
-        initiativeSlug: workspaceSlug,
-        stage: stageId,
-        runSlug: session.runSlug,
-        providerSessionId: null,
-      },
-      rootSessionId:
-        this.continuityRootBySessionId.get(session.id) ?? session.id,
-      continuationParentId: session.id,
-    });
-
-    if (!nextSession) {
-      this.finalizeFlowNodeContinuityLock({
-        sessionId: session.id,
-        reason: "resume_failed",
-      });
-      return;
-    }
-
-    const targetLockContext = this.registerFlowNodeContinuityLockContext({
-      rolloverId: rollover.rolloverId,
-      sourceSessionId: session.id,
-      targetSessionId: nextSession.id,
-      stageId,
-      runSlug,
-      awaitingBootstrapTurn: true,
-    });
-
-    if (!options?.silent) {
-      this.emitFlowNodeRolloverNotification(session.id, {
-        ...notificationBase,
-        phase: "new_session_created",
-        continuityRequestId: requestId,
-        continuityAttempt: finalAttempt,
-        nextSessionId: nextSession.id,
-      });
-    }
-
-    this.emitContinuityLockEvent({
-      sessionId: nextSession.id,
-      rolloverId: targetLockContext.rolloverId,
-      sourceSessionId: targetLockContext.sourceSessionId,
-      targetSessionId: targetLockContext.targetSessionId,
-      stageId: targetLockContext.stageId,
-      runSlug: targetLockContext.runSlug,
-      state: "locked",
-      reason: "resume_bootstrap",
-    });
-
-    const resumePrompt = this.flowNodeContinuity.renderTemplate(
-      "flow/continuity/resume.md",
-      {
-        nodeId,
-        role,
-        reportPath: reportPaths.reportPath,
-        reportBody: await this.loadContinuityResumeReportBody(
-          reportPaths.reportPath
-        ),
-      }
-    );
-
-    const resumePromptTrimmed = resumePrompt.trim();
-    await this.messageDispatch.sendInternalMessage(
-      nextSession.id,
-      resumePromptTrimmed
-    );
-
-    if (!options?.silent) {
-      this.emitFlowNodeRolloverNotification(nextSession.id, {
-        ...notificationBase,
-        phase: "resume_sent",
-        continuityRequestId: requestId,
-        continuityAttempt: finalAttempt,
-        nextSessionId: nextSession.id,
-        reportPath: reportPaths.reportPath,
-      });
-    }
   }
 
   private async appendDialogSegmentBoundaryMeta(options: {
