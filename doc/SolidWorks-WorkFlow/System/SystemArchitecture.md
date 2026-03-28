@@ -93,6 +93,11 @@
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
+- Claude messaging cluster: `packages/Claude_Module/src/messaging/`
+  - `message-processor.ts` = thin façade / queue orchestration surface
+  - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking routing
+  - `claude-message-finish-handler.ts` = turn lifecycle completion façade
+  - `claude-usage-sync.ts`, `claude-token-usage-sync.ts` = usage-limits/context-token synchronization internals
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
   - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals

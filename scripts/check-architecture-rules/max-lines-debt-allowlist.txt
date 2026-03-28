@@ -10,7 +10,6 @@
 
 # Claude module
 packages/Claude_Module/src/auth/sdk-auth-manager.ts
-packages/Claude_Module/src/messaging/message-processor.ts
 packages/Claude_Module/src/sdk/claude-sdk-manager.ts
 
 # Codex module
