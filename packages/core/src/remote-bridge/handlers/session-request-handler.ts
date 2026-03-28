@@ -37,6 +37,7 @@ import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
+import { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import { SessionRequestHandlerDialogSegmentMeta } from "./session-request-handler-dialog-segment-meta";
 import {
   type MessageContentPayload,
@@ -197,6 +198,7 @@ export class SessionRequestHandler {
   private readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
   private readonly sessionResolution: SessionRequestHandlerSessionResolution;
   private readonly messageDispatch: SessionRequestHandlerMessageDispatch;
+  private readonly appliedTurnConfig: SessionRequestHandlerAppliedTurnConfig;
   private readonly dialogSegmentMeta: SessionRequestHandlerDialogSegmentMeta;
   private readonly eventMessages: SessionRequestHandlerEventMessages;
   private readonly retryState: SessionRequestHandlerRetryState;
@@ -486,7 +488,11 @@ export class SessionRequestHandler {
       expirePendingUserIntent: (sessionId) =>
         this.retryState.expirePendingUserIntent(sessionId),
     });
+    this.appliedTurnConfig = new SessionRequestHandlerAppliedTurnConfig(
+      this.config
+    );
     this.messageDispatch = new SessionRequestHandlerMessageDispatch({
+      appliedTurnConfig: this.appliedTurnConfig,
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
       continuity: this.continuity,
@@ -842,7 +848,14 @@ export class SessionRequestHandler {
         mode: options.mode,
         contentLength: lastUserMessage.content.length,
       });
-      await this.handleMessage(options.sessionId, lastUserMessage.content);
+      await this.handleMessage(options.sessionId, {
+        content: lastUserMessage.content,
+        turnOptions: this.appliedTurnConfig.attachToTurnOptions({
+          providerId: session.providerId,
+          targetModelId:
+            options.mode === "switch_model" ? options.targetModelId : undefined,
+        }),
+      });
     } else {
       this.logger.warn("Switch request: no user message to resend", {
         sessionId: options.sessionId,

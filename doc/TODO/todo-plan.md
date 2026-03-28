@@ -39,8 +39,8 @@
 2. [DONE] Git Commit: `refactor(core): add provider turn config resolver` (hash: `9ef3dc2a`)
 
 ### Stream: Remote-bridge applied-config contract
-3. [TODO] Протянуть explicit applied turn config через remote-bridge send/switch path, чтобы Core передавал провайдеру уже вычисленную конфигурацию, а не полагался на разрозненные локальные refresh paths. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thread applied turn config`
-4. [TODO] Git Commit: `refactor(core): thread applied turn config` (hash: TBD)
+3. [DONE] Протянуть explicit applied turn config через remote-bridge send/switch path, чтобы Core передавал провайдеру уже вычисленную конфигурацию, а не полагался на разрозненные локальные refresh paths. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/types.ts`. Expected commit: `refactor(core): thread applied turn config`
+4. [DONE] Git Commit: `refactor(core): thread applied turn config` (hash: TBD)
 
 ### Stream: Codex next-turn runtime apply
 5. [TODO] Сделать так, чтобы очередной новый Codex turn реально стартовал на Core-provided `model` / `reasoning`: обновить runtime application path и убрать зависимость от ранее зафиксированного thread config для следующего send. Scope: `packages/Codex_Module/src/provider/codex-provider-adapter.ts`, `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`. Expected commit: `refactor(codex): apply next-turn model config`

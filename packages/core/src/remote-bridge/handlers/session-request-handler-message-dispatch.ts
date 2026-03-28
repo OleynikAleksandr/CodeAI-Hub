@@ -5,9 +5,11 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { BridgeEvent } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
+import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
 
 interface SessionRequestHandlerMessageDispatchDependencies {
+  readonly appliedTurnConfig: SessionRequestHandlerAppliedTurnConfig;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly continuity: SessionContinuityFacade;
   readonly emitTurnStateEvent: (options: {
@@ -71,9 +73,14 @@ export class SessionRequestHandlerMessageDispatch {
       content.length
     );
     try {
+      const providerTurnOptions =
+        this.deps.appliedTurnConfig.attachToTurnOptions({
+          providerId: resolved.binding.providerId,
+        });
       await resolved.adapter.sendMessage(
         resolved.binding.providerSessionId,
-        content
+        content,
+        providerTurnOptions
       );
     } catch (error) {
       this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
@@ -136,10 +143,11 @@ export class SessionRequestHandlerMessageDispatch {
         resolved.binding,
         options.content.length
       );
-
-      const providerTurnOptions = stripInternalWorkflowTurnOptions(
-        options.turnOptions
-      );
+      const providerTurnOptions =
+        this.deps.appliedTurnConfig.attachToTurnOptions({
+          providerId: resolved.binding.providerId,
+          turnOptions: stripInternalWorkflowTurnOptions(options.turnOptions),
+        });
       await resolved.adapter.sendMessage(
         resolved.binding.providerSessionId,
         options.content,

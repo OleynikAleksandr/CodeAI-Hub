@@ -36,6 +36,60 @@ export type {
   WorkspaceScopeSyncReason,
 } from "./workspace-stream-contracts";
 
+export interface AppliedProviderTurnConfig {
+  readonly modelId?: string;
+  readonly providerId: string;
+  readonly reasoningEffort?: string;
+  readonly source: "settings_snapshot" | "switch_request";
+  readonly thinkingLevel?: string;
+}
+
+const APPLIED_PROVIDER_TURN_CONFIG_KEY = "__codeaiAppliedTurnConfig";
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+export const withAppliedProviderTurnConfig = (
+  turnOptions: Record<string, unknown> | undefined,
+  config: AppliedProviderTurnConfig | null
+): Record<string, unknown> | undefined => {
+  if (!config) {
+    return turnOptions;
+  }
+
+  return {
+    ...(turnOptions ?? {}),
+    [APPLIED_PROVIDER_TURN_CONFIG_KEY]: config,
+  };
+};
+
+export const readAppliedProviderTurnConfig = (
+  turnOptions?: Record<string, unknown>
+): AppliedProviderTurnConfig | null => {
+  const candidate = turnOptions?.[APPLIED_PROVIDER_TURN_CONFIG_KEY];
+  if (!isRecord(candidate) || typeof candidate.providerId !== "string") {
+    return null;
+  }
+
+  return {
+    providerId: candidate.providerId,
+    source:
+      candidate.source === "switch_request"
+        ? "switch_request"
+        : "settings_snapshot",
+    modelId:
+      typeof candidate.modelId === "string" ? candidate.modelId : undefined,
+    reasoningEffort:
+      typeof candidate.reasoningEffort === "string"
+        ? candidate.reasoningEffort
+        : undefined,
+    thinkingLevel:
+      typeof candidate.thinkingLevel === "string"
+        ? candidate.thinkingLevel
+        : undefined,
+  };
+};
+
 export interface CoreStatePayload {
   readonly providers: ReturnType<ProviderRegistry["listProviders"]>;
   readonly sessions: readonly SerializedSession[];
