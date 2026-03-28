@@ -15,6 +15,8 @@
 - `packages/Codex_Module/src/messaging/codex-event-stream-consumer.ts` — startup lock, idle-pulse waiting, terminal event cancellation of SDK generators.
 - `packages/Codex_Module/src/messaging/codex-stream-event-router.ts` — `thread.started`, reasoning items, assistant chunks, structured-output and stream-error normalization.
 - `packages/Codex_Module/src/messaging/codex-message-finish-handler.ts` — user-turn lifecycle signals плюс cleanup structured-output/reasoning state.
+- `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts` — focused façade над structured-output prompt/schema preparation и finalize path.
+- `packages/Codex_Module/src/messaging/structured-output-parser.ts`, `structured-output-state.ts` — JSON/parsing rules, passthrough delta/output hash, extractor/session state storage.
 - `packages/Codex_Module/src/messaging/codex-usage-sync.ts`, `codex-token-usage-sync.ts` — usage-limits/token usage refresh; runtime `token_count` signals мержатся в shared usage-limits stream payload.
 
 ## Инварианты
@@ -22,6 +24,7 @@
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Internal turns не должны эмитить user-facing `assistant` / `stream_event` / lifecycle events; suppression централизован в messaging emitter helper.
 - Commentary-phase `agent_message` для structured output остаётся скрытым, чтобы финальный ответ не дублировался в UI.
+- Structured-output passthrough (`hybrid` / `debug_raw`) обязан переживать `sessionId` promotion без потери accumulated state.
 - User-facing Codex settings в baseline line экспонируют только две модели: `gpt-5.3-codex` и `gpt-5.4`.
 - Persisted `settings.json` для Codex не должен разрастаться устаревшими model ids; `reasoningByModel` хранит только active user-facing keys этой линии.
 - `Settings -> General -> Response Mode` управляет turn shaping policy:

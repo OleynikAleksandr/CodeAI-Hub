@@ -103,6 +103,8 @@
   - `codex-event-stream-consumer.ts` = startup-lock / idle-pulse event stream consumer
   - `codex-stream-event-router.ts` = thread/item/assistant/structured-output routing
   - `codex-message-finish-handler.ts` = turn lifecycle completion façade
+  - `structured-output-stream-controller.ts` = façade over structured output parser/state helpers
+  - `structured-output-parser.ts`, `structured-output-state.ts` = prompt/schema parsing and extractor/session state internals
   - `codex-usage-sync.ts`, `codex-token-usage-sync.ts` = usage-limits/token synchronization internals
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
