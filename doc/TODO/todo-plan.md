@@ -59,8 +59,8 @@
 12. [DONE] Git Commit: `refactor(providers): align next-turn config contract` (hash: `9f243183`)
 
 ### Stream: Interim release build after model-switch scope
-13. [IN_PROGRESS] После закрытия всех stream-ов `Phase 80` выполнить отдельную сборку промежуточного релиза строго по Release Build Checklist: актуализировать release-facing docs, добиться чистого дерева, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты и session report для отдельного пользовательского тестирования model-switch scope. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release model-switch verification build`
-14. [TODO] Git Commit: `chore: release model-switch verification build` (hash: TBD)
+13. [DONE] После закрытия всех stream-ов `Phase 80` выполнить отдельную сборку промежуточного релиза строго по Release Build Checklist: актуализировать release-facing docs, добиться чистого дерева, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты и session report для отдельного пользовательского тестирования model-switch scope. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release 1.1.830`
+14. [DONE] Git Commit: `chore: release 1.1.830` (hash: `2b831e8a`)
 
 ## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-28)
 
