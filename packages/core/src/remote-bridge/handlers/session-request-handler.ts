@@ -31,7 +31,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
-import { type BridgeEvent, serializeSession } from "../types";
+import type { BridgeEvent } from "../types";
 import {
   type ContinuityLockReason,
   type EmitContinuityLockEventOptions,
@@ -59,6 +59,7 @@ import {
   SessionRequestHandlerResumeLifecycle,
 } from "./session-request-handler-resume-lifecycle";
 import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
+import { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
 import { shouldHideUserMessage } from "./workflow-turn-control";
 
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
@@ -274,6 +275,7 @@ export class SessionRequestHandler {
   private readonly continuityRolloverOrchestrator: SessionContinuityRolloverOrchestrator;
   private readonly resumeLifecycle: SessionRequestHandlerResumeLifecycle;
   private readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
+  private readonly sessionResolution: SessionRequestHandlerSessionResolution;
   private readonly messageDispatch: SessionRequestHandlerMessageDispatch;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeReportState: SessionRequestHandlerFlowNodeReportState;
@@ -412,7 +414,8 @@ export class SessionRequestHandler {
       callbacks: {
         sendMessage: async (sessionId, content) =>
           this.messageDispatch.sendInternalMessage(sessionId, content),
-        createSession: async (request) => this.createContinuitySession(request),
+        createSession: async (request) =>
+          this.sessionResolution.createContinuitySession(request),
       },
       sessionLookup: (sessionId) => this.sessionManager.getSession(sessionId),
     });
@@ -618,6 +621,21 @@ export class SessionRequestHandler {
       resumeLifecycle: this.resumeLifecycle,
       workspaceRuntime: this.workspaceRuntime,
     });
+    this.sessionResolution = new SessionRequestHandlerSessionResolution({
+      broadcaster: this.broadcaster,
+      broadcastSessionBinding: (sessionId) =>
+        this.providerBindingService.broadcastSessionBinding(sessionId),
+      getDefaultProviderId: () => this.getDefaultProviderId(),
+      handleMessage: (sessionId, payload) =>
+        this.handleMessage(sessionId, payload),
+      handleProviderFailure: (providerId, error, sessionId) =>
+        this.handleProviderFailure(providerId, error, sessionId),
+      logger: this.logger,
+      providerRegistry: this.providerRegistry,
+      sessionBootstrap: this.sessionBootstrap,
+      sessionManager: this.sessionManager,
+      workspacePathOverride: this.config.claudeWorkspacePath,
+    });
     this.flowNodeReportState = new SessionRequestHandlerFlowNodeReportState({
       broadcaster: this.broadcaster,
     });
@@ -661,25 +679,19 @@ export class SessionRequestHandler {
     if (providerSessionId.length === 0) {
       return null;
     }
-
     const stage = this.normalizeContinuityStageId(options.stageId);
     const chains = await SessionContinuityFacade.readWorkspaceChains({
       workspaceRoot: options.workspaceRoot,
       workspaceSlug: options.workspaceSlug,
     });
-    const match = chains.find((chain) => {
-      if (chain.stage !== stage) {
-        return false;
-      }
-      return chain.segments.some(
-        (segment) => segment.providerSessionId === providerSessionId
-      );
-    });
-    if (!match) {
-      return null;
-    }
-
-    return match.dialogId ?? match.rootSessionId ?? null;
+    const match = chains.find(
+      (chain) =>
+        chain.stage === stage &&
+        chain.segments.some(
+          (segment) => segment.providerSessionId === providerSessionId
+        )
+    );
+    return match ? (match.dialogId ?? match.rootSessionId ?? null) : null;
   }
 
   private async resolveContinuityRootSessionId(
@@ -695,38 +707,37 @@ export class SessionRequestHandler {
         runSlug: options.context.runSlug,
       });
     }
-
     const workspaceSlug = options.context.initiativeSlug;
     const stageId = options.context.stage;
-    if (workspaceSlug && stageId) {
-      const requestedProviderSessionId = options.context.providerSessionId;
-      if (requestedProviderSessionId) {
-        const existingRoot =
-          await this.tryResolveExistingContinuityRootSessionId({
-            workspaceRoot: options.workspaceRoot,
-            workspaceSlug,
-            stageId,
-            providerSessionId: requestedProviderSessionId,
-          });
-        if (existingRoot) {
-          return await this.maybePromoteLegacyDescriptionAgentRootId({
-            rootSessionId: existingRoot,
-            workspaceRoot: options.workspaceRoot,
-            providerId: options.providerId,
-            workspaceSlug: options.context.initiativeSlug,
-            stageId: options.context.stage,
-            runSlug: options.context.runSlug,
-          });
-        }
-      }
-
-      return buildHumanReadableDialogId({
-        providerId: options.providerId,
-        uuid: options.sessionId,
-        agentRole: options.context.runSlug ?? options.context.stage ?? null,
-      });
+    if (!(workspaceSlug && stageId)) {
+      return options.sessionId;
     }
-    return options.sessionId;
+    const requestedProviderSessionId = options.context.providerSessionId;
+    if (requestedProviderSessionId) {
+      const existingRoot = await this.tryResolveExistingContinuityRootSessionId(
+        {
+          workspaceRoot: options.workspaceRoot,
+          workspaceSlug,
+          stageId,
+          providerSessionId: requestedProviderSessionId,
+        }
+      );
+      if (existingRoot) {
+        return await this.maybePromoteLegacyDescriptionAgentRootId({
+          rootSessionId: existingRoot,
+          workspaceRoot: options.workspaceRoot,
+          providerId: options.providerId,
+          workspaceSlug: options.context.initiativeSlug,
+          stageId: options.context.stage,
+          runSlug: options.context.runSlug,
+        });
+      }
+    }
+    return buildHumanReadableDialogId({
+      providerId: options.providerId,
+      uuid: options.sessionId,
+      agentRole: options.context.runSlug ?? options.context.stage ?? null,
+    });
   }
 
   private async maybePromoteLegacyDescriptionAgentRootId(options: {
@@ -737,26 +748,19 @@ export class SessionRequestHandler {
     readonly stageId: string | null;
     readonly runSlug: string | null;
   }): Promise<string> {
-    if (options.stageId !== "description") {
+    if (
+      options.stageId !== "description" ||
+      !options.rootSessionId.endsWith("-agent")
+    ) {
       return options.rootSessionId;
     }
-    if (!options.rootSessionId.endsWith("-agent")) {
-      return options.rootSessionId;
-    }
-
-    const normalizedRootSessionId = `${options.rootSessionId.slice(
-      0,
-      Math.max(0, options.rootSessionId.length - "-agent".length)
-    )}-description`;
-
-    const workspaceKey = sanitizeWorkspaceSlug(options.workspaceRoot);
+    const normalizedRootSessionId = `${options.rootSessionId.slice(0, -"-agent".length)}-description`;
     this.sessionStorage.promoteHistoryFile({
-      workspaceSlug: workspaceKey,
+      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
       providerId: options.providerId,
       fromHistorySessionId: options.rootSessionId,
       toHistorySessionId: normalizedRootSessionId,
     });
-
     if (options.workspaceSlug) {
       try {
         await promoteContinuityChainRootIfPresent({
@@ -777,51 +781,7 @@ export class SessionRequestHandler {
         });
       }
     }
-
     return normalizedRootSessionId;
-  }
-
-  private resolveDescriptionDialog(options: {
-    readonly session: Session;
-    readonly providerSessionId: string;
-  }): Promise<DescriptionDialogResolution> {
-    return this.descriptionDialogSync.resolveDescriptionDialog(options);
-  }
-
-  private async createContinuitySession(options: {
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly context: {
-      readonly initiativeSlug: string | null;
-      readonly stage: string | null;
-    };
-    readonly rootSessionId: string;
-  }): Promise<Session | null> {
-    const adapter = this.providerRegistry.getAdapter(options.providerId);
-    if (!adapter) {
-      this.logger.warn("Continuity session creation failed: provider missing", {
-        providerId: options.providerId,
-      });
-      return null;
-    }
-
-    try {
-      return await this.sessionBootstrap.createAndRegisterSession({
-        providerId: options.providerId,
-        workspacePath: options.workspacePath,
-        adapter,
-        context: {
-          initiativeSlug: options.context.initiativeSlug,
-          stage: options.context.stage,
-          runSlug: null,
-          providerSessionId: null,
-        },
-        rootSessionId: options.rootSessionId,
-      });
-    } catch (error) {
-      this.handleProviderFailure(options.providerId, error);
-      return null;
-    }
   }
 
   private resolveFlowNodeRolloverSendGuard(
@@ -873,143 +833,6 @@ export class SessionRequestHandler {
     );
   }
 
-  private normalizeProviderId(value?: string): string | null {
-    if (typeof value !== "string") {
-      return null;
-    }
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }
-
-  private resolveWorkspacePath(workspacePath?: string): string {
-    const trimmed =
-      typeof workspacePath === "string" && workspacePath.trim().length > 0
-        ? workspacePath.trim()
-        : undefined;
-    const cwdPath = process.cwd();
-    const environmentWorkspacePath = this.config.claudeWorkspacePath;
-
-    if (
-      environmentWorkspacePath &&
-      (!trimmed || path.resolve(trimmed) === path.resolve(cwdPath))
-    ) {
-      return environmentWorkspacePath;
-    }
-
-    return trimmed ?? environmentWorkspacePath ?? cwdPath;
-  }
-
-  private normalizeNullableToken(
-    value: string | null | undefined
-  ): string | null {
-    if (typeof value !== "string") {
-      return null;
-    }
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  }
-
-  private sessionMatchesResume(options: {
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly initiativeSlug: string | null;
-    readonly stage: string | null;
-    readonly runSlug: string | null;
-    readonly providerSessionId: string;
-    readonly session: Session;
-  }): boolean {
-    const session = options.session;
-    if (session.providerId !== options.providerId) {
-      return false;
-    }
-    if (session.workspacePath !== options.workspacePath) {
-      return false;
-    }
-    if (options.stage !== null && session.stage !== options.stage) {
-      return false;
-    }
-    if (options.runSlug !== null && session.runSlug !== options.runSlug) {
-      return false;
-    }
-    if (
-      options.initiativeSlug !== null &&
-      session.initiativeSlug !== options.initiativeSlug
-    ) {
-      return false;
-    }
-    return session.providerSessionId === options.providerSessionId;
-  }
-
-  private resolveExistingResumeSession(options: {
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly initiativeSlug: string | null;
-    readonly stage: string | null;
-    readonly runSlug: string | null;
-    readonly providerSessionId: string;
-  }): Session | null {
-    const stage = this.normalizeNullableToken(options.stage);
-    const initiativeSlug = this.normalizeNullableToken(options.initiativeSlug);
-    const runSlug = this.normalizeNullableToken(options.runSlug);
-    const providerSessionId = options.providerSessionId.trim();
-
-    for (const session of this.sessionManager.listSessions()) {
-      if (
-        this.sessionMatchesResume({
-          session,
-          providerId: options.providerId,
-          workspacePath: options.workspacePath,
-          stage,
-          runSlug,
-          initiativeSlug,
-          providerSessionId,
-        })
-      ) {
-        return session;
-      }
-    }
-    return null;
-  }
-
-  private broadcastExistingSession(session: Session): void {
-    this.broadcaster({
-      type: "session:created",
-      payload: serializeSession(session),
-    });
-    this.broadcastSessionBinding(session.id);
-  }
-
-  private tryReuseExistingResumeSession(options: {
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly providerSessionId: string | null;
-    readonly context?: {
-      readonly initiativeSlug?: string | null;
-      readonly stage?: string | null;
-      readonly runSlug?: string | null;
-    };
-  }): boolean {
-    const providerSessionId = this.normalizeNullableToken(
-      options.providerSessionId
-    );
-    if (!providerSessionId) {
-      return false;
-    }
-    const existing = this.resolveExistingResumeSession({
-      providerId: options.providerId,
-      workspacePath: options.workspacePath,
-      initiativeSlug: options.context?.initiativeSlug ?? null,
-      stage: options.context?.stage ?? null,
-      runSlug: options.context?.runSlug ?? null,
-      providerSessionId,
-    });
-    if (!existing) {
-      return false;
-    }
-    this.broadcastExistingSession(existing);
-    return true;
-  }
-
   async handleCreate(
     providerId?: string,
     workspacePath?: string,
@@ -1020,58 +843,11 @@ export class SessionRequestHandler {
       readonly providerSessionId?: string | null;
     }
   ): Promise<void> {
-    const normalizedRequestedProviderId = this.normalizeProviderId(providerId);
-    const requestedProviderId =
-      normalizedRequestedProviderId ?? this.getDefaultProviderId();
-    const actualWorkspacePath = this.resolveWorkspacePath(workspacePath);
-
-    const runBound = this.sessionBootstrap.resolveRunBoundProviderContext({
-      providerId: requestedProviderId,
-      workspacePath: actualWorkspacePath,
-      initiativeSlug: context?.initiativeSlug ?? null,
-      runSlug: context?.runSlug ?? null,
-      requestedProviderSessionId: context?.providerSessionId ?? null,
-    });
-    const actualProviderId = runBound.providerId;
-    if (
-      this.tryReuseExistingResumeSession({
-        providerId: actualProviderId,
-        workspacePath: actualWorkspacePath,
-        providerSessionId: runBound.providerSessionId,
-        context: {
-          initiativeSlug: context?.initiativeSlug ?? null,
-          stage: context?.stage ?? null,
-          runSlug: context?.runSlug ?? null,
-        },
-      })
-    ) {
-      return;
-    }
-    const adapter = this.providerRegistry.getAdapter(actualProviderId);
-
-    if (!adapter) {
-      this.broadcaster({
-        type: "session:error",
-        payload: { message: `Provider ${actualProviderId} unavailable` },
-      });
-      return;
-    }
-
-    try {
-      await this.sessionBootstrap.createAndRegisterSession({
-        providerId: actualProviderId,
-        workspacePath: actualWorkspacePath,
-        adapter,
-        context: {
-          initiativeSlug: context?.initiativeSlug ?? null,
-          stage: context?.stage ?? null,
-          runSlug: context?.runSlug ?? null,
-          providerSessionId: runBound.providerSessionId,
-        },
-      });
-    } catch (error) {
-      this.handleProviderFailure(actualProviderId, error);
-    }
+    await this.sessionResolution.handleCreate(
+      providerId,
+      workspacePath,
+      context
+    );
   }
 
   async handleDialogSend(options: {
@@ -1082,56 +858,7 @@ export class SessionRequestHandler {
   }): Promise<
     { readonly ok: true } | { readonly ok: false; readonly error: string }
   > {
-    const chains = await SessionContinuityFacade.readWorkspaceChains({
-      workspaceRoot: options.workspaceRoot,
-      workspaceSlug: options.workspaceSlug,
-    });
-    const chain = chains.find(
-      (candidate) =>
-        (candidate.dialogId ?? candidate.rootSessionId) === options.dialogId
-    );
-    if (!chain) {
-      return { ok: false, error: "Dialog chain not found" };
-    }
-    const last = chain.segments.at(-1) ?? null;
-    if (!last) {
-      return { ok: false, error: "Dialog has no segments" };
-    }
-
-    const existingSession = this.sessionManager
-      .getSessionsByWorkspacePath(options.workspaceRoot)
-      .find(
-        (candidate) =>
-          candidate.providerId === last.providerId &&
-          candidate.providerSessionId === last.providerSessionId
-      );
-
-    const adapter = this.providerRegistry.getAdapter(last.providerId);
-    if (!adapter) {
-      return { ok: false, error: `Provider ${last.providerId} unavailable` };
-    }
-
-    const resolvedSession =
-      existingSession ??
-      (await this.sessionBootstrap.createAndRegisterSession({
-        providerId: last.providerId,
-        workspacePath: options.workspaceRoot,
-        adapter,
-        context: {
-          initiativeSlug: options.workspaceSlug,
-          stage: chain.stage === "unknown" ? null : chain.stage,
-          runSlug: this.inferRunSlugFromDialogId(options.dialogId),
-          providerSessionId: last.providerSessionId,
-        },
-        rootSessionId: options.dialogId,
-      }));
-
-    if (!resolvedSession) {
-      return { ok: false, error: "Failed to resume dialog session" };
-    }
-
-    await this.handleMessage(resolvedSession.id, options.content);
-    return { ok: true };
+    return await this.sessionResolution.handleDialogSend(options);
   }
 
   async handleSwitchRequest(options: {
@@ -1195,14 +922,6 @@ export class SessionRequestHandler {
         sessionId: options.sessionId,
       });
     }
-  }
-
-  private inferRunSlugFromDialogId(dialogId: string): string | null {
-    const trimmed = dialogId.trim().toLowerCase();
-    if (trimmed.endsWith("__collector") || trimmed.endsWith("-collector")) {
-      return "collector";
-    }
-    return null;
   }
 
   async createSessionForWorkflow(options: {
