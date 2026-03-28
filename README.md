@@ -7,7 +7,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.830
+## Current Release — v1.1.831
+- **PM label now follows the real next-turn model apply**: Core emits `session:model:update` from the outbound applied turn config itself on regular sends, so the lower session bar updates when the next turn actually starts on a new model even if the provider does not emit a separate runtime model event.
 - **Settings SSOT for next turns**: Core now resolves persisted provider `model` / `reasoning` once and threads the applied turn config through outbound send/switch paths instead of letting each provider refresh current-model truth independently.
 - **Codex runtime model switching actually applies**: the next Codex turn now updates the active thread runtime with the Core-provided model/reasoning before execution, so provider rollout logs and UI labels stop diverging after a model change.
 - **Ready-session labels wait for runtime confirmation**: Project Manager no longer guesses a new model for an already-ready session just because settings changed. The lower status bar now updates from Core-confirmed runtime model events and can still refresh reasoning/thinking when the confirmed model stays the same across turns.

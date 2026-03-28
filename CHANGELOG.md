@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.831] - 2026-03-28
+### Fixed
+- **Applied runtime model label sync on regular next turns**: Core now emits `session:model:update` directly from the outbound applied turn config on normal send paths, so Project Manager updates the lower session label even when the provider does not emit a follow-up runtime `model_info` / `system` event.
+
 ## [1.1.830] - 2026-03-28
 ### Changed
 - **Settings SSOT next-turn config path**: Core now resolves persisted `model` / `reasoning` once and threads the applied turn config through remote-bridge outbound send and switch paths instead of leaving providers to refresh those values independently.
