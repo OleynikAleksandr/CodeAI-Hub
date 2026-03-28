@@ -79,11 +79,11 @@
 
 ### Stream: Provider adoption parity sweep
 21. [DONE] Закрыть provider-side parity поверх общего applied-config envelope: Codex и Claude продолжают читать Core-fed runtime config без локального model truth-layer, а Gemini переводится на shared model/thinking override path для fresh/existing sessions и перестаёт перекрывать Core defaults snapshot-ом `settings.json`. Scope: `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-{bootstrapper,lifecycle,manager,settings-resolver}.ts`, `packages/Gemini_Module/src/session/types.ts`. Expected commit: `refactor(providers): adopt shared applied config contract`
-22. [DONE] Git Commit: `refactor(providers): adopt shared applied config contract` (hash: TBD)
+22. [DONE] Git Commit: `refactor(providers): adopt shared applied config contract` (hash: `5b78ce2d`)
 
 ### Stream: Verification release after provider-neutral generalization
-23. [TODO] После закрытия `Phase 80A` выполнить отдельную verification-сборку и регрессионную проверку model-switch matrix для Claude/Codex/Gemini на fresh-session и existing-session путях, затем зафиксировать артефакты и session report. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release provider-neutral model sync verification`
-24. [TODO] Git Commit: `chore: release provider-neutral model sync verification` (hash: TBD)
+23. [DONE] После закрытия `Phase 80A` выполнить отдельную verification-сборку и регрессионную проверку model-switch matrix для Claude/Codex/Gemini на fresh-session и existing-session путях, затем зафиксировать артефакты и session report. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release 1.1.832`
+24. [DONE] Git Commit: `chore: release 1.1.832` (hash: `97a95e3b`)
 
 ## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-28)
 
