@@ -23,10 +23,20 @@
   - an interim release build immediately after `Phase 80` for isolated model-switch verification;
   - a final release build after `Phase 81` for separate full-plan regression testing.
 - Started `Phase 80` and completed the first implementation stream: introduced `packages/core/src/config/provider-turn-config-resolver.ts` as a single Core-owned resolver for Codex/Gemini next-turn defaults from persisted Settings, simplified `packages/core/src/config/index.ts` to consume it, and synchronized `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` plus `doc/TODO/todo-plan.md`.
+- Completed `Phase 80` remote-bridge threading: Core now attaches explicit applied turn config to outbound send/switch paths via `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, and remote-bridge contracts carry that payload to providers.
+- Completed Codex next-turn runtime apply: `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts` now mutates the active thread runtime from Core-applied config immediately before execution, and `packages/Codex_Module/src/messaging/message-processor.ts` strips internal transport metadata before SDK execution.
+- Removed the Codex provider-local settings truth path for current model/reasoning: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` no longer re-reads `settings.json` to decide the current runtime model, and `packages/Codex_Module/src/types/index.ts` now exposes the internal applied-turn payload contract.
+- Completed PM applied-config sync: ready session labels now wait for Core-confirmed runtime model events instead of guessing from changed settings, while same-model runtime events can still refresh reasoning labels.
+- Aligned Gemini and Claude send paths with the same next-turn model contract: Gemini now consumes Core-applied model override on outbound send, and Claude derives the active turn model from applied turn config instead of re-reading the current model from its local settings snapshot.
 
 ## Git commits
 - `e19bbdb7 docs(plan): add settings ssot execution scope`
 - `9ef3dc2a refactor(core): add provider turn config resolver`
+- `32bc0f7d refactor(core): thread applied turn config`
+- `4d6226ad refactor(codex): apply next-turn model config`
+- `a4ac21c7 refactor(codex): remove local settings truth path`
+- `df23290d refactor(pm): sync applied turn config labels`
+- `9f243183 refactor(providers): align next-turn config contract`
 
 ---
 
@@ -43,6 +53,6 @@
 > Then open the relevant Core/provider contracts from `doc/SolidWorks-WorkFlow/System/`, `Modules/`, and `Contracts/` for the active `Phase 80` stream.
 
 ## Plans for next session
-- Continue `Phase 80` with the second micro-task: thread explicit applied turn config through the remote-bridge send/switch path.
-- Keep the model-switch scope first; do not return to the `session-request-handler.ts` carry-over tail until `Phase 80` and its interim release build are complete.
-- After remote-bridge threading lands, continue with Codex runtime application, removal of provider-local settings truth, PM applied-config sync, and provider parity.
+- Finish the interim release-build stream for `Phase 80`: update release-facing docs, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, and capture the new artifacts plus session report.
+- Keep the model-switch scope first; do not return to the `session-request-handler.ts` carry-over tail until the dedicated `Phase 80` verification release is built and tested.
+- After the interim release is built and tested, resume `Phase 81` carry-over work on `session-request-handler.ts` (`continuity-root`, `turn-arbitration`, thin façade closure).

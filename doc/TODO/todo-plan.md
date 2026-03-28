@@ -40,26 +40,26 @@
 
 ### Stream: Remote-bridge applied-config contract
 3. [DONE] Протянуть explicit applied turn config через remote-bridge send/switch path, чтобы Core передавал провайдеру уже вычисленную конфигурацию, а не полагался на разрозненные локальные refresh paths. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/types.ts`. Expected commit: `refactor(core): thread applied turn config`
-4. [DONE] Git Commit: `refactor(core): thread applied turn config` (hash: TBD)
+4. [DONE] Git Commit: `refactor(core): thread applied turn config` (hash: `32bc0f7d`)
 
 ### Stream: Codex next-turn runtime apply
-5. [TODO] Сделать так, чтобы очередной новый Codex turn реально стартовал на Core-provided `model` / `reasoning`: обновить runtime application path и убрать зависимость от ранее зафиксированного thread config для следующего send. Scope: `packages/Codex_Module/src/provider/codex-provider-adapter.ts`, `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`. Expected commit: `refactor(codex): apply next-turn model config`
-6. [TODO] Git Commit: `refactor(codex): apply next-turn model config` (hash: TBD)
+5. [DONE] Сделать так, чтобы очередной новый Codex turn реально стартовал на Core-provided `model` / `reasoning`: обновить runtime application path и убрать зависимость от ранее зафиксированного thread config для следующего send. Scope: `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`. Expected commit: `refactor(codex): apply next-turn model config`
+6. [DONE] Git Commit: `refactor(codex): apply next-turn model config` (hash: `4d6226ad`)
 
 ### Stream: Codex local settings-truth removal
-7. [TODO] Убрать из Codex provider path самостоятельное принятие решения о текущем `model` / `reasoning` через локальное чтение `settings.json`, оставив только Core-fed applied config и derived cache. Scope: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/types/index.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(codex): remove local settings truth path`
-8. [TODO] Git Commit: `refactor(codex): remove local settings truth path` (hash: TBD)
+7. [DONE] Убрать из Codex provider path самостоятельное принятие решения о текущем `model` / `reasoning` через локальное чтение `settings.json`, оставив только Core-fed applied config и derived cache. Scope: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/types/index.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`. Expected commit: `refactor(codex): remove local settings truth path`
+8. [DONE] Git Commit: `refactor(codex): remove local settings truth path` (hash: `a4ac21c7`)
 
 ### Stream: PM applied-config sync
-9. [TODO] Перевести нижний PM label модели/`reasoning` с raw settings projection на Core-confirmed applied config events, сохранив live UX без нового split-brain между интерфейсом и runtime. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(pm): sync applied turn config labels`
-10. [TODO] Git Commit: `refactor(pm): sync applied turn config labels` (hash: TBD)
+9. [DONE] Перевести нижний PM label модели/`reasoning` с raw settings projection на Core-confirmed applied config events, сохранив live UX без нового split-brain между интерфейсом и runtime. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.ts`. Expected commit: `refactor(pm): sync applied turn config labels`
+10. [DONE] Git Commit: `refactor(pm): sync applied turn config labels` (hash: `df23290d`)
 
 ### Stream: Gemini and Claude parity
-11. [TODO] Привести Gemini и Claude к тому же next-turn config contract, что и Codex: Settings как SSOT, Core-owned applied config, provider без собственного truth-layer для текущего `model` / `reasoning`. Scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(providers): align next-turn config contract`
-12. [TODO] Git Commit: `refactor(providers): align next-turn config contract` (hash: TBD)
+11. [DONE] Привести Gemini и Claude к тому же next-turn config contract, что и Codex: Settings как SSOT, Core-owned applied config, provider без собственного truth-layer для текущего `model` / `reasoning`. Scope: `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`. Expected commit: `refactor(providers): align next-turn config contract`
+12. [DONE] Git Commit: `refactor(providers): align next-turn config contract` (hash: `9f243183`)
 
 ### Stream: Interim release build after model-switch scope
-13. [TODO] После закрытия всех stream-ов `Phase 80` выполнить отдельную сборку промежуточного релиза строго по Release Build Checklist: актуализировать release-facing docs, добиться чистого дерева, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты и session report для отдельного пользовательского тестирования model-switch scope. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release model-switch verification build`
+13. [IN_PROGRESS] После закрытия всех stream-ов `Phase 80` выполнить отдельную сборку промежуточного релиза строго по Release Build Checklist: актуализировать release-facing docs, добиться чистого дерева, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты и session report для отдельного пользовательского тестирования model-switch scope. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release model-switch verification build`
 14. [TODO] Git Commit: `chore: release model-switch verification build` (hash: TBD)
 
 ## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-28)

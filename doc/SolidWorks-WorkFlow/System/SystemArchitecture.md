@@ -103,6 +103,7 @@
   - `claude-usage-sync.ts`, `claude-token-usage-sync.ts` = usage-limits/context-token synchronization internals
 - Codex messaging cluster: `packages/Codex_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn orchestration surface
+  - `codex-applied-turn-config.ts` = applies Core-owned next-turn model/reasoning payload onto the active thread runtime and strips internal transport metadata before SDK execution
   - `codex-event-stream-consumer.ts` = startup-lock / idle-pulse event stream consumer
   - `codex-stream-event-router.ts` = thread/item/assistant/structured-output routing
   - `codex-message-finish-handler.ts` = turn lifecycle completion façade
@@ -117,6 +118,14 @@
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
   - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals
+- Gemini provider send path: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
+  - `gemini-applied-turn-config.ts` = reads Core-applied next-turn model payload for Gemini sends
+  - `gemini-provider-adapter.ts` = consumes Core-applied model override on outbound send; provider-local bootstrap defaults remain only first-turn fallback until the next Core-owned send path applies a newer model
+- Claude SDK send path: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
+  - `claude-sdk-manager.ts` now derives active turn model from Core-applied turn config on send path; provider-local settings snapshot remains only for Claude thinking token options, not for deciding the current runtime model
+- Project Manager applied-config sync:
+  - `src/client/project-manager/components/sessions/use-runtime-model-sync.ts` = session label updates only from Core-confirmed runtime model events, including reasoning refresh for same-model turns
+  - `src/client/ui/src/app-host/use-settings-models-sync.ts` = ready sessions no longer guess a new model from settings before Core confirms the applied runtime config
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 - Gemini Thought Translator: `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
   - Translates Gemini agent thoughts EN→RU via free Google Translate API (~100ms)
