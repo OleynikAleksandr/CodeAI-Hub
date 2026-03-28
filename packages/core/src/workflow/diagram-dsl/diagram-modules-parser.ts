@@ -1,18 +1,16 @@
-import {
-  type ClusterEntity,
-  ENTITY_ORIGINS,
-  ENTITY_STATUSES,
-  type EntityOrigin,
-  type EntityStatus,
-  type MarkdownDslParseError,
-  type MarkdownDslParseResult,
-  type MarkdownDslParseWarning,
-  MODULE_KINDS,
-  type ModuleEntity,
-  type ModuleKind,
-  type ModuleMapModel,
-  type ProductPartEntity,
+import type {
+  ClusterEntity,
+  MarkdownDslParseError,
+  MarkdownDslParseResult,
+  MarkdownDslParseWarning,
+  ModuleMapModel,
+  ProductPartEntity,
 } from "./diagram-dsl-types";
+import {
+  type ParsedModule,
+  parseModule,
+  validateParsedModuleUniqueness,
+} from "./diagram-module-parser";
 import {
   type ParsedRelation,
   parseRelationsSection,
@@ -24,7 +22,6 @@ import {
   collectBlocks,
   computeDiagramRevision,
   type Fields,
-  isOneOf,
   parseEntityCollection,
   parseFields,
   toLines,
@@ -47,17 +44,7 @@ const INVENTORY_SECTION_NAMES = new Set([
 const SYNTHETIC_PRODUCT_PART_ID = "default-product-part";
 const SYNTHETIC_PRODUCT_PART_TITLE = "Default Product Part";
 
-interface BaseEntity {
-  readonly id: string;
-  readonly origin: EntityOrigin;
-  readonly status: EntityStatus;
-}
-
 type ParsedProductPart = ProductPartEntity & {
-  readonly sourceLine: number;
-};
-
-type ParsedModule = ModuleEntity & {
   readonly sourceLine: number;
 };
 
@@ -69,11 +56,6 @@ type ParsedCluster = ClusterEntity & {
 interface InventoryLine {
   readonly number: number;
   readonly text: string;
-}
-
-interface ModuleParseOptions {
-  readonly expectedCluster?: string | null;
-  readonly expectedProductPart?: string;
 }
 
 interface ParsedOwnershipStructure {
@@ -221,40 +203,6 @@ const parseMetadata = (
   return { version: parsedVersion, updated };
 };
 
-const parseBaseEntity = (
-  fields: Fields,
-  block: Block,
-  entityLabel: string
-): BaseEntity | MarkdownDslParseError => {
-  const id = required(fields, "Id", block.line);
-  const origin = required(fields, "Origin", block.line);
-  const status = required(fields, "Status", block.line);
-  if (typeof id !== "string") {
-    return id;
-  }
-  if (typeof origin !== "string") {
-    return origin;
-  }
-  if (typeof status !== "string") {
-    return status;
-  }
-  if (id !== block.id) {
-    return {
-      code: "invalid-entity-id",
-      line: block.line,
-      message: `${entityLabel} header Id must match field Id`,
-    };
-  }
-  if (!(isOneOf(origin, ENTITY_ORIGINS) && isOneOf(status, ENTITY_STATUSES))) {
-    return {
-      code: "invalid-metadata",
-      line: block.line,
-      message: `Invalid ${entityLabel.toLowerCase()} enum value for ${id}`,
-    };
-  }
-  return { id, origin, status };
-};
-
 const collectInventorySections = (
   lines: readonly { readonly number: number; readonly text: string }[],
   warnings: MarkdownDslParseWarning[]
@@ -326,113 +274,6 @@ const missingRequiredFieldError = (
   line,
   message,
 });
-
-const validateModuleKind = (
-  kind: string,
-  moduleId: string,
-  line: number
-): MarkdownDslParseError | null =>
-  isOneOf(kind, MODULE_KINDS)
-    ? null
-    : invalidMetadataError(line, `Invalid module enum value for ${moduleId}`);
-
-const validateModuleProductPart = (
-  moduleId: string,
-  line: number,
-  declaredProductPart: string | undefined,
-  options?: ModuleParseOptions
-): MarkdownDslParseError | null =>
-  options?.expectedProductPart &&
-  declaredProductPart !== options.expectedProductPart
-    ? invalidMetadataError(
-        line,
-        `Module ${moduleId} must declare Product Part: ${options.expectedProductPart}`
-      )
-    : null;
-
-const validateModuleCluster = (
-  moduleId: string,
-  line: number,
-  declaredCluster: string | undefined,
-  options?: ModuleParseOptions
-): MarkdownDslParseError | null => {
-  if (options?.expectedCluster) {
-    return declaredCluster === options.expectedCluster
-      ? null
-      : invalidMetadataError(
-          line,
-          `Cluster module ${moduleId} must declare Cluster: ${options.expectedCluster}`
-        );
-  }
-  if (options?.expectedCluster === null && declaredCluster) {
-    return invalidMetadataError(
-      line,
-      `Standalone module ${moduleId} must not declare Cluster`
-    );
-  }
-  return null;
-};
-
-const resolveModuleOwnership = (
-  declaredProductPart: string | undefined,
-  options?: ModuleParseOptions
-): Pick<ParsedModule, "cluster" | "productPart"> => ({
-  cluster: options?.expectedCluster ?? undefined,
-  productPart: options?.expectedProductPart ?? declaredProductPart,
-});
-
-const parseModule = (
-  block: Block,
-  warnings: MarkdownDslParseWarning[],
-  options?: ModuleParseOptions
-): ParsedModule | MarkdownDslParseError => {
-  const fields = parseFields(block, warnings);
-  const base = parseBaseEntity(fields, block, "Module");
-  const kind = required(fields, "Kind", block.line);
-  const title = required(fields, "Title", block.line);
-  const responsibility = required(fields, "Responsibility", block.line);
-  const productPart = fields.scalars.get("Product Part")?.trim() || undefined;
-  const cluster = fields.scalars.get("Cluster")?.trim() || undefined;
-  if ("code" in base) {
-    return base;
-  }
-  if (typeof kind !== "string") {
-    return kind;
-  }
-  if (typeof title !== "string") {
-    return title;
-  }
-  if (typeof responsibility !== "string") {
-    return responsibility;
-  }
-  for (const validationError of [
-    validateModuleKind(kind, base.id, block.line),
-    validateModuleProductPart(base.id, block.line, productPart, options),
-    validateModuleCluster(base.id, block.line, cluster, options),
-  ]) {
-    if (validationError) {
-      return validationError;
-    }
-  }
-  const ownership = resolveModuleOwnership(productPart, options);
-  return {
-    ...base,
-    kind: kind as ModuleKind,
-    title,
-    responsibility,
-    ...ownership,
-    inputs: listValue(fields, "Inputs"),
-    outputs: listValue(fields, "Outputs"),
-    specTarget: fields.scalars.get("Spec Target")?.trim() || undefined,
-    contractTargets: listValue(fields, "Contract Targets"),
-    codeTargets: listValue(fields, "Code Targets"),
-    origin: base.origin,
-    status: base.status,
-    notes: fields.notes,
-    rationale: fields.rationale,
-    sourceLine: block.line,
-  };
-};
 
 const splitClusterBlockLines = (
   block: Block
@@ -876,28 +717,6 @@ const parseProductPartsSection = (
   };
 };
 
-const validateModuleUniqueness = (
-  clusters: readonly ParsedCluster[],
-  standaloneModules: readonly ParsedModule[]
-): MarkdownDslParseError | null => {
-  const seen = new Map<string, number>();
-  for (const module of [
-    ...clusters.flatMap((cluster) => cluster.modules),
-    ...standaloneModules,
-  ]) {
-    const existingLine = seen.get(module.id);
-    if (typeof existingLine === "number") {
-      return {
-        code: "duplicate-entity-id",
-        line: module.sourceLine,
-        message: `Duplicate module id: ${module.id}`,
-      };
-    }
-    seen.set(module.id, module.sourceLine);
-  }
-  return null;
-};
-
 const validateInventorySections = (
   titleLine: number,
   warnings: readonly MarkdownDslParseWarning[],
@@ -1111,7 +930,7 @@ export const parseDiagramModulesDsl = (
   }
   const relationRecords = relationResult;
 
-  const uniqueModulesError = validateModuleUniqueness(
+  const uniqueModulesError = validateParsedModuleUniqueness(
     ownership.clusters,
     ownership.standaloneModules
   );
