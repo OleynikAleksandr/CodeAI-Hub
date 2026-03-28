@@ -50,7 +50,6 @@ import {
 import { SessionProviderBindingService } from "./session-provider-binding-service";
 import { SessionProviderEventRouter } from "./session-provider-event-router";
 import { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
-import { resolveProviderSessionId } from "./session-provider-session-resolver";
 import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
@@ -60,7 +59,7 @@ import {
   type PostTurnContextDecision,
   SessionRequestHandlerResumeLifecycle,
 } from "./session-request-handler-resume-lifecycle";
-import { SessionShellFactory } from "./session-shell-factory";
+import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import {
   shouldHideUserMessage,
   stripInternalWorkflowTurnOptions,
@@ -324,7 +323,7 @@ export class SessionRequestHandler {
   private readonly continuityLockService: SessionContinuityLockService;
   private readonly continuityRolloverOrchestrator: SessionContinuityRolloverOrchestrator;
   private readonly resumeLifecycle: SessionRequestHandlerResumeLifecycle;
-  private readonly sessionShellFactory: SessionShellFactory;
+  private readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeContinuityCreateReportRequests = new Map<
     string,
@@ -790,7 +789,7 @@ export class SessionRequestHandler {
       expirePendingUserIntent: (sessionId) =>
         this.expirePendingUserIntent(sessionId),
     });
-    this.sessionShellFactory = new SessionShellFactory({
+    this.sessionBootstrap = new SessionRequestHandlerSessionBootstrap({
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
       continuity: this.continuity,
@@ -799,10 +798,6 @@ export class SessionRequestHandler {
       broadcaster: this.broadcaster,
       broadcastSessionBinding: (sessionId) =>
         this.providerBindingService.broadcastSessionBinding(sessionId),
-      notifyRuntimeSessionCreated: (session) =>
-        this.notifyRuntimeSessionCreated(session),
-      registerInitialSessionLifecycle: (session, explicitMode) =>
-        this.registerInitialSessionLifecycle(session, explicitMode),
       resolveContinuityRootSessionId: (resolutionOptions) =>
         this.resolveContinuityRootSessionId(resolutionOptions),
       resolveDescriptionDialog: (dialogOptions) =>
@@ -829,94 +824,9 @@ export class SessionRequestHandler {
         ),
       appendDialogSegmentBoundaryMeta: (boundaryOptions) =>
         this.appendDialogSegmentBoundaryMeta(boundaryOptions),
+      resumeLifecycle: this.resumeLifecycle,
+      workspaceRuntime: this.workspaceRuntime,
     });
-  }
-
-  private resolveRunBoundProviderContext(options: {
-    readonly providerId: string;
-    readonly workspacePath: string;
-    readonly initiativeSlug: string | null;
-    readonly runSlug: string | null;
-    readonly requestedProviderSessionId: string | null;
-  }): {
-    readonly providerId: string;
-    readonly providerSessionId: string | null;
-  } {
-    return {
-      providerId: options.providerId,
-      providerSessionId: options.requestedProviderSessionId,
-    };
-  }
-
-  private notifyRuntimeSessionCreated(session: Session): void {
-    this.workspaceRuntime?.notifySessionCreated(
-      {
-        workspaceRoot: session.workspacePath,
-        nodeId: session.stage ?? "session",
-        sessionId: session.id,
-      },
-      {
-        nodeId: session.stage ?? "session",
-        providerId: session.providerId,
-        providerSessionId: session.providerSessionId ?? undefined,
-        bindingStatus: session.providerSessionStatus,
-      }
-    );
-  }
-
-  private registerInitialSessionLifecycle(
-    session: Session,
-    explicitMode?: SessionResumeMode
-  ): void {
-    this.resumeLifecycle.registerInitialSessionLifecycle(session, explicitMode);
-  }
-
-  private async createAndRegisterSession(
-    options: CreateAndRegisterSessionOptions
-  ): Promise<Session | null> {
-    const shell = this.sessionShellFactory.shouldBroadcastCreatedEarly(options)
-      ? await this.sessionShellFactory.createShellSession(options)
-      : null;
-
-    const providerSessionResolution = await resolveProviderSessionId({
-      adapter: options.adapter,
-      providerId: options.providerId,
-      workspacePath: options.workspacePath,
-      requestedProviderSessionId: options.context.providerSessionId,
-    });
-    if ("error" in providerSessionResolution) {
-      if (shell) {
-        this.sessionShellFactory.handleProviderResolutionError({
-          session: shell.session,
-          providerId: options.providerId,
-          error: providerSessionResolution.error,
-        });
-        return shell.session;
-      }
-      this.broadcaster({
-        type: "session:error",
-        payload: { message: providerSessionResolution.error },
-      });
-      return null;
-    }
-
-    const { providerSessionId, supportsImmediateBinding } =
-      providerSessionResolution;
-
-    if (shell) {
-      return await this.sessionShellFactory.bindShellSession(
-        options,
-        shell,
-        providerSessionId,
-        supportsImmediateBinding
-      );
-    }
-
-    return await this.sessionShellFactory.createBoundSession(
-      options,
-      providerSessionId,
-      supportsImmediateBinding
-    );
   }
 
   private normalizeContinuityStageId(value: string | null): string {
@@ -1086,7 +996,7 @@ export class SessionRequestHandler {
     }
 
     try {
-      return await this.createAndRegisterSession({
+      return await this.sessionBootstrap.createAndRegisterSession({
         providerId: options.providerId,
         workspacePath: options.workspacePath,
         adapter,
@@ -1364,7 +1274,7 @@ export class SessionRequestHandler {
       normalizedRequestedProviderId ?? this.getDefaultProviderId();
     const actualWorkspacePath = this.resolveWorkspacePath(workspacePath);
 
-    const runBound = this.resolveRunBoundProviderContext({
+    const runBound = this.sessionBootstrap.resolveRunBoundProviderContext({
       providerId: requestedProviderId,
       workspacePath: actualWorkspacePath,
       initiativeSlug: context?.initiativeSlug ?? null,
@@ -1397,7 +1307,7 @@ export class SessionRequestHandler {
     }
 
     try {
-      await this.createAndRegisterSession({
+      await this.sessionBootstrap.createAndRegisterSession({
         providerId: actualProviderId,
         workspacePath: actualWorkspacePath,
         adapter,
@@ -1452,7 +1362,7 @@ export class SessionRequestHandler {
 
     const resolvedSession =
       existingSession ??
-      (await this.createAndRegisterSession({
+      (await this.sessionBootstrap.createAndRegisterSession({
         providerId: last.providerId,
         workspacePath: options.workspaceRoot,
         adapter,
@@ -1563,7 +1473,7 @@ export class SessionRequestHandler {
     }
 
     try {
-      return await this.createAndRegisterSession({
+      return await this.sessionBootstrap.createAndRegisterSession({
         providerId: options.providerId,
         workspacePath: options.workspacePath,
         adapter,
@@ -2299,7 +2209,7 @@ export class SessionRequestHandler {
     // the UI is not left in a perpetual "working" state once the report is ready.
     this.emitTurnStateEvent({ sessionId: session.id, state: "idle" });
 
-    const nextSession = await this.createAndRegisterSession({
+    const nextSession = await this.sessionBootstrap.createAndRegisterSession({
       providerId: session.providerId,
       workspacePath: session.workspacePath,
       adapter,
