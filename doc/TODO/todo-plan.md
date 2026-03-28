@@ -2,18 +2,18 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session173.md`, `doc/SolidWorks-WorkFlow/Plans/Remaining_Audit_Debt_Closure_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- Этот `TODO Plan` реализует один scope: **remaining audit debt closure** после завершённой `Phase 78` и собранного релиза `1.1.822`
-- Текущий baseline считается рабочим, поэтому scope ограничен **truthfulness cleanup + behavior-preserving refactor**, без feature-expansion
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session181.md`, `doc/SolidWorks-WorkFlow/Plans/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Этот `TODO Plan` реализует два согласованных scope: (1) refactor `settings -> Core -> provider runtime -> PM` для единой source of truth по `model` / `reasoning`, (2) carry-over tail декомпозиции `session-request-handler.ts`
+- Текущий baseline `1.1.829` считается рабочим; scope ограничен behavior-preserving refactor + runtime config contract cleanup, без нового product feature scope
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещён)
 - Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
 - Перед закрытием каждого stream выполнять таргетные проверки затронутых файлов/пакетов
-- Для docs/workflow stream-ов таргетная проверка по умолчанию: `npm run lint`, `npm run check:links`
-- Для CI/workflow stream-ов таргетная проверка по умолчанию: локальный smoke-check workflow команд через `npm run check:architecture`, `npm run lint`, `npm run check:tsprune`, `npm run compile`
-- Для Core stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/core`
+- Для Core/config stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/core`
+- Для provider stream-ов таргетная проверка по умолчанию: `npm run build --workspace packages/Codex_Module`, `npm run build --workspace packages/Gemini_Module`, `npm run build --workspace packages/Claude_Module` по затронутому пакету
+- Для webview/PM stream-ов таргетная проверка по умолчанию: `npm run build:webview`, `npm run typecheck:webview`
 - Новый oversized handwritten source file вне explicit debt allowlist запрещён
 - Oversized allowlist должен только уменьшаться; если файл реально опустился до `300` строк или ниже, он должен покинуть allowlist без откладывания
 
@@ -23,48 +23,59 @@
 
 Критерий завершения этого плана:
 
-- metadata и workflow surface больше не расходятся с реальным состоянием репозитория;
-- Husky остаётся единственным живым hook workflow без stale Lefthook tail;
-- в репозитории появляется минимальный публичный CI baseline;
-- audit-visible giant hotspot `session-request-handler.ts` начинает системную декомпозицию по responsibility seams;
-- oversized allowlist продолжает уменьшаться, а не стабилизироваться как постоянное состояние.
+- `settings` становятся единственной source of truth для `model` / `reasoning` следующего turn;
+- Core централизованно вычисляет applied turn config и передаёт её провайдерам;
+- Codex реально переключает модель/`reasoning` на очередном новом turn, а не только в UI label;
+- PM показывает applied runtime config, а не независимую локальную догадку;
+- Gemini / Claude / Codex приходят к одному контракту next-turn model switching;
+- после этого остаточный tail декомпозиции `session-request-handler.ts` закрыт отдельной честной фазой без ложных `IN_PROGRESS` статусов.
 
 ---
 
-## Phase 79 — Remaining Audit Truthfulness and Core Hotspot Closure (owner: Oleksandr, updated: 2026-03-28)
+## Phase 80 — Settings SSOT And Next-Turn Model Switching (owner: Oleksandr, updated: 2026-03-28)
 
-### Stream: Metadata and workflow truthfulness
-1. [DONE] Синхронизировать canonical repo metadata и licensing answer между `README.md` и `package.json`, чтобы закрыть remaining audit drift по clone target / repository URL / license wording без изменения runtime behavior. Scope: `README.md`, `package.json`. Expected commit: `docs(metadata): align repository and license contract`
-2. [DONE] Git Commit: `docs(metadata): align repository and license contract` (hash: `1ecc4652`)
-3. [DONE] Удалить stale Lefthook leftovers из active workflow surface и dependency graph, зафиксировав Husky как единственный hook engine. Scope: `lefthook.yml`, `package.json`, `package-lock.json`. Expected commit: `chore(workflow): remove stale lefthook leftovers`
-4. [DONE] Git Commit: `chore(workflow): remove stale lefthook leftovers` (hash: `70d8d1af`)
-5. [DONE] Свести `scripts/build-release.sh`, `scripts/README.md` и `AGENTS.md` к одному правдивому release contract: checks/next-steps wording не должны конфликтовать с локальным Husky-first workflow. Scope: `scripts/build-release.sh`, `scripts/README.md`, `AGENTS.md`. Expected commit: `docs(workflow): align release script contract`
-6. [DONE] Git Commit: `docs(workflow): align release script contract` (hash: `855da1ce`)
+### Stream: Core applied-config resolver
+1. [TODO] Ввести единый Core resolver для `model` / `reasoning` следующего turn из persisted Settings snapshot и задокументировать его как единственную source of truth для applied turn config. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/config/index.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): add provider turn config resolver`
+2. [TODO] Git Commit: `refactor(core): add provider turn config resolver` (hash: TBD)
 
-### Stream: Public CI baseline
-7. [DONE] Добавить минимальный GitHub CI workflow как публичный enforcement surface для root quality gates (`architecture`, `lint`, `tsprune`, `compile`) на push/PR и синхронно задокументировать его в root docs. Scope: `.github/workflows/ci.yml`, `README.md`, `scripts/README.md`. Expected commit: `ci: add repository truthfulness workflow`
-8. [DONE] Git Commit: `ci: add repository truthfulness workflow` (hash: `697dee62`)
+### Stream: Remote-bridge applied-config contract
+3. [TODO] Протянуть explicit applied turn config через remote-bridge send/switch path, чтобы Core передавал провайдеру уже вычисленную конфигурацию, а не полагался на разрозненные локальные refresh paths. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thread applied turn config`
+4. [TODO] Git Commit: `refactor(core): thread applied turn config` (hash: TBD)
 
-### Stream: Core session-request-handler hotspot
-9. [DONE] Выделить session resume lifecycle и post-turn context arbitration state из `session-request-handler.ts` в отдельный helper как safe first cut giant hotspot-а, сохранив current `no_resume` / `resume_in_place` / rollover locking semantics. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-resume-lifecycle.ts`. Expected commit: `refactor(core): extract session request resume lifecycle`
-10. [DONE] Git Commit: `refactor(core): extract session request resume lifecycle` (hash: `34d924b8`)
-11. [DONE] Выделить create/register shell session + provider-session resolution path из `session-request-handler.ts`, оставив root file orchestrator-ом вокруг session shell factory и continuity root promotion. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.ts`. Expected commit: `refactor(core): extract session request bootstrap path`
-12. [DONE] Git Commit: `refactor(core): extract session request bootstrap path` (hash: `993bdc43`)
-13. [DONE] Выделить outbound/internal message dispatch и missing-binding guard path из `session-request-handler.ts`, сохранив turn lifecycle, pending-intent TTL и continuity tracking behavior текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`. Expected commit: `refactor(core): extract session request message dispatch`
-14. [DONE] Git Commit: `refactor(core): extract session request message dispatch` (hash: `fc1303a4`)
-15. [DONE] Выделить flow-node rollover/report orchestration и continuity-request state machine из `session-request-handler.ts` в dedicated helper, сохранив continuity lock/report/resume pipeline текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-rollover.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-report-state.ts`. Expected commit: `refactor(core): extract session request flow-node rollover`
-16. [DONE] Git Commit: `refactor(core): extract session request flow-node rollover` (hash: `c310e07c`)
-17. [DONE] Выделить continuity/create-resume/dialog-send resolution из `session-request-handler.ts` в отдельный helper, сохранив continuity-root promotion, existing-session reuse и dialog-resume semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request session resolution`
-18. [DONE] Git Commit: `refactor(core): extract session request session resolution` (hash: `7dcfe48a`)
-19. [DONE] Выделить dialog segment boundary/meta append и latest segment summary reader из `session-request-handler.ts`, сохранив continuity tracking и duplicate-write guard текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-dialog-segment-meta.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request dialog segment meta`
-20. [DONE] Git Commit: `refactor(core): extract session request dialog segment meta` (hash: `1e260729`)
-21. [DONE] Выделить provider-event message append/parsing и incoming payload extraction хвост из `session-request-handler.ts`, сохранив broadcast/persistence behavior текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request event messages`
-22. [DONE] Git Commit: `refactor(core): extract session request event messages` (hash: `7e9108f0`)
-23. [DONE] Выделить retry-budget и pending-user-intent state из `session-request-handler.ts` в отдельный helper, сохранив current TTL=60s, transient/auto-resume budget semantics и `pending_intent_expired` broadcast текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-retry-state.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request retry state`
-24. [DONE] Git Commit: `refactor(core): extract session request retry state` (hash: `f1224de2`)
-25. [IN_PROGRESS] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
-26. [TODO] Git Commit: `refactor(core): extract session request continuity root` (hash: TBD)
-27. [TODO] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в отдельный helper, сохранив `turn_completed`/`token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`
-28. [TODO] Git Commit: `refactor(core): extract session request turn arbitration` (hash: TBD)
-29. [TODO] Свести `session-request-handler.ts` к thin orchestration surface, синхронно обновить SSOT и снять root file с explicit oversized allowlist, если после предыдущих cuts он реально опустится до `300` строк или ниже. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thin session request handler facade`
-30. [TODO] Git Commit: `refactor(core): thin session request handler facade` (hash: TBD)
+### Stream: Codex next-turn runtime apply
+5. [TODO] Сделать так, чтобы очередной новый Codex turn реально стартовал на Core-provided `model` / `reasoning`: обновить runtime application path и убрать зависимость от ранее зафиксированного thread config для следующего send. Scope: `packages/Codex_Module/src/provider/codex-provider-adapter.ts`, `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`. Expected commit: `refactor(codex): apply next-turn model config`
+6. [TODO] Git Commit: `refactor(codex): apply next-turn model config` (hash: TBD)
+
+### Stream: Codex local settings-truth removal
+7. [TODO] Убрать из Codex provider path самостоятельное принятие решения о текущем `model` / `reasoning` через локальное чтение `settings.json`, оставив только Core-fed applied config и derived cache. Scope: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/types/index.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(codex): remove local settings truth path`
+8. [TODO] Git Commit: `refactor(codex): remove local settings truth path` (hash: TBD)
+
+### Stream: PM applied-config sync
+9. [TODO] Перевести нижний PM label модели/`reasoning` с raw settings projection на Core-confirmed applied config events, сохранив live UX без нового split-brain между интерфейсом и runtime. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(pm): sync applied turn config labels`
+10. [TODO] Git Commit: `refactor(pm): sync applied turn config labels` (hash: TBD)
+
+### Stream: Gemini and Claude parity
+11. [TODO] Привести Gemini и Claude к тому же next-turn config contract, что и Codex: Settings как SSOT, Core-owned applied config, provider без собственного truth-layer для текущего `model` / `reasoning`. Scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(providers): align next-turn config contract`
+12. [TODO] Git Commit: `refactor(providers): align next-turn config contract` (hash: TBD)
+
+### Stream: Interim release build after model-switch scope
+13. [TODO] После закрытия всех stream-ов `Phase 80` выполнить отдельную сборку промежуточного релиза строго по Release Build Checklist: актуализировать release-facing docs, добиться чистого дерева, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты и session report для отдельного пользовательского тестирования model-switch scope. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release model-switch verification build`
+14. [TODO] Git Commit: `chore: release model-switch verification build` (hash: TBD)
+
+## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-28)
+
+### Stream: Continuity root carry-over
+15. [TODO] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
+16. [TODO] Git Commit: `refactor(core): extract session request continuity root` (hash: TBD)
+
+### Stream: Turn arbitration carry-over
+17. [TODO] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в отдельный helper, сохранив `turn_completed` / `token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`
+18. [TODO] Git Commit: `refactor(core): extract session request turn arbitration` (hash: TBD)
+
+### Stream: Thin façade closure
+19. [TODO] Свести `session-request-handler.ts` к thin orchestration surface, синхронно обновить SSOT и снять root file с explicit oversized allowlist, если после предыдущих cuts он реально опустится до `300` строк или ниже. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thin session request handler facade`
+20. [TODO] Git Commit: `refactor(core): thin session request handler facade` (hash: TBD)
+
+### Stream: Final release build after full plan closure
+21. [TODO] После закрытия `Phase 81` выполнить финальную сборку релиза строго по Release Build Checklist: обновить release-facing docs, убедиться в чистом дереве, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить артефакты, обновить `todo-plan.md` и оформить новый session report для отдельного полного регрессионного тестирования. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release post-plan verification build`
+22. [TODO] Git Commit: `chore: release post-plan verification build` (hash: TBD)
