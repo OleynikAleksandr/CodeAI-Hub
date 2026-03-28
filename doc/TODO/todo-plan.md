@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Правила выполнения (Execution Rules):
-- **Required reading (прочитать перед каждым новым фиксом):** `AGENTS.md`, `doc/Sessions/Session171.md`, `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- **Required reading (прочитать перед каждым новым фиксом):** `AGENTS.md`, `doc/Sessions/Session172.md`, `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Новый implementation scope стартует только после утверждённого planning-дока в `doc/SolidWorks-WorkFlow/Plans/`
 - Завершённый план архивируется сразу после закрытия всех phase/stream и перед стартом нового scope
 - Любые будущие изменения архитектуры/логики должны синхронно обновлять `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и профильные документы модулей
