@@ -104,10 +104,13 @@ export const useMainAreaWorkflowState = (
     workflowStateStore.activate(slug, params.activeWorkspace.path);
   }, [params.activeWorkspace?.id, params.activeWorkspace?.path, params.activeWorkspace?.slug, params.activeWorkspace?.name, params.setDescriptionDocument, params.setHasDescriptionSession, params.setQuestionnaireDocument]);
 
-  // Derive UI state from the shared store snapshot
+  // Derive UI state from the shared store snapshot.
+  // Skip until the store has completed its first poll — prevents
+  // null-snapshot derivation from resetting hasDescriptionSession
+  // and unmounting ProjectManagerSessionView.
   useEffect(() => {
-    const { snapshot: state, workspaceSlug, workspacePath } = storeState;
-    if (!workspaceSlug || !workspacePath) return;
+    const { snapshot: state, workspaceSlug, workspacePath, loaded } = storeState;
+    if (!workspaceSlug || !workspacePath || !loaded) return;
     const branch = state?.description;
     const resolvedActiveTool = resolveLastActiveTool(state);
     if (state && autoResolvedActiveToolRef.current !== workspaceSlug) {

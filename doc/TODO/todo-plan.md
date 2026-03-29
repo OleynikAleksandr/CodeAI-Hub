@@ -71,11 +71,11 @@
 
 ### Stream: P0-C eliminate null-snapshot intermediate emit
 31. [DONE] Убрать промежуточный emit `{ snapshot: null }` из `WorkflowStateStore.activate()` — не emit-ить до первого реального poll-ответа. Scope: `src/client/project-manager/services/workflow-state-store.ts`. Expected commit: `fix: suppress null-snapshot emit on store activation`
-32. [IN_PROGRESS] Git Commit: `fix: suppress null-snapshot emit on store activation` (hash: TBD)
+32. [DONE] Git Commit: `fix: suppress null-snapshot emit on store activation` (hash: 3b73a5d3)
 
 ### Stream: P0-C skip derivation until store loaded
-33. [TODO] Добавить early-return `if (!storeState.loaded) return;` в деривационный effect `useMainAreaWorkflowState`, чтобы не вызывать setters до первого реального snapshot. Scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: skip workflow derivation until store loaded`
-34. [TODO] Git Commit: `fix: skip workflow derivation until store loaded` (hash: TBD)
+33. [DONE] Добавить early-return `if (!storeState.loaded) return;` в деривационный effect `useMainAreaWorkflowState`, чтобы не вызывать setters до первого реального snapshot. Scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: skip workflow derivation until store loaded`
+34. [IN_PROGRESS] Git Commit: `fix: skip workflow derivation until store loaded` (hash: TBD)
 
 ### Stream: P0-C verify webview build
 35. [TODO] Прогнать `npm run build:webview` и `npx tsc --noEmit` для верификации; прогнать таргетную сборку core. Expected commit: (no separate commit, verification only)
