@@ -19,8 +19,12 @@ const dispatchStageActivated = (stage: string): void => {
   );
 };
 
+const isCanonicalDescriptionPath = (path: string): boolean =>
+  /\/description\/Final_Description\.md$/.test(path);
+
 export const buildDescriptionBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
+  readonly descriptionArtifactAvailable: boolean;
   readonly workspaceSlug: string | null;
   readonly workspacePath?: string;
   readonly selectArtifact: (artifactPath: string, label: string) => void;
@@ -32,10 +36,12 @@ export const buildDescriptionBranchNodes = (options: {
   }
   const session = branch.primarySession;
   const nodes: TreeNode[] = [];
-  const artifactPath = branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
+  // Only show draftPath as Final_Description.md if it matches canonical contract
+  const validDraftPath = branch.draftPath && isCanonicalDescriptionPath(branch.draftPath) ? branch.draftPath : null;
+  const artifactPath = branch.finalPath ?? validDraftPath ?? branch.questionnairePath;
   const artifactLabel = branch.finalPath
     ? "Final_Description.md"
-    : branch.draftPath
+    : validDraftPath
       ? "Final_Description.md"
       : "questionnaire.md";
   const artifactStatus = branch.finalPath ? "active" : "draft";

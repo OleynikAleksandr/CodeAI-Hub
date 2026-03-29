@@ -11,6 +11,7 @@ export type StageChildrenContext = {
   readonly workflowState: WorkflowStateSnapshot;
   readonly workspaceSlug: string | null;
   readonly workspacePath?: string;
+  readonly descriptionArtifactAvailable: boolean;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable: boolean;
   readonly selectArtifact: (artifactPath: string, label: string) => void;
@@ -25,6 +26,7 @@ export const resolveStageChildren = (
   if (stage === "description") {
     return buildDescriptionBranchNodes({
       workflowState: ctx.workflowState,
+      descriptionArtifactAvailable: ctx.descriptionArtifactAvailable,
       workspaceSlug: ctx.workspaceSlug,
       workspacePath: ctx.workspacePath,
       selectArtifact: ctx.selectArtifact,

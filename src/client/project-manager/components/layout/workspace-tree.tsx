@@ -13,6 +13,7 @@ import {
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
 import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED_TITLE, resolveTreeStatus, type TreeNode } from "./workspace-tree-model";
+import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 interface WorkspaceTreeProps {
@@ -38,6 +39,11 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
 
+  const descriptionArtifactAvailable = useDescriptionArtifactAvailability({
+    enabled: Boolean(selectedWorkspaceId),
+    workspacePath,
+    workspaceSlug,
+  });
   const virtualSimulationArtifactAvailable =
     useVirtualSimulationArtifactAvailability({
       enabled: Boolean(selectedWorkspaceId),
@@ -181,6 +187,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       workflowState,
       workspaceSlug,
       workspacePath,
+      descriptionArtifactAvailable,
       virtualSimulationArtifactAvailable,
       diagramModulesArtifactAvailable,
       selectArtifact,

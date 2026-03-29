@@ -28,11 +28,11 @@
 
 ### Stream: P0-B main-area description readability gate
 7. [DONE] Добавить description-specific availability hook и встроить file/path readability gate в main-area artifact resolution для `Description`. Scope: `src/client/project-manager/components/layout/use-description-artifact-availability.ts`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: gate description artifacts by readability`
-8. [IN_PROGRESS] Git Commit: `fix: gate description artifacts by readability` (hash: TBD)
+8. [DONE] Git Commit: `fix: gate description artifacts by readability` (hash: adbf6ed1)
 
 ### Stream: P0-B workspace tree availability propagation
-9. [TODO] Вычислить и прокинуть `descriptionArtifactAvailable` на уровне tree context; при необходимости поглотить branch-node wiring в этот же шаг, чтобы остаться в лимите `≤3 файлов`. Scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`. Expected commit: `fix: sync description artifact availability into tree`
-10. [TODO] Git Commit: `fix: sync description artifact availability into tree` (hash: TBD)
+9. [DONE] Вычислить и прокинуть `descriptionArtifactAvailable` на уровне tree context; при необходимости поглотить branch-node wiring в этот же шаг, чтобы остаться в лимите `≤3 файлов`. Scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`. Expected commit: `fix: sync description artifact availability into tree`
+10. [IN_PROGRESS] Git Commit: `fix: sync description artifact availability into tree` (hash: TBD)
 11. [TODO] Запретить stage sync и auto-select выбирать несуществующий или нечитаемый description artifact. Scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`. Expected commit: `fix: stop auto-selecting invalid description artifact`
 12. [TODO] Git Commit: `fix: stop auto-selecting invalid description artifact` (hash: TBD)
 
