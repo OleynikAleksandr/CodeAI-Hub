@@ -1,56 +1,55 @@
 import crypto from "node:crypto";
 import type { CoreConfig } from "../../config";
-import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
+import type { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
-import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
+import type { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { BridgeEvent } from "../types";
-import {
-  type ContinuityLockReason,
-  type EmitContinuityLockEventOptions,
-  type FlowNodeContinuityLockContext,
+import type {
+  ContinuityLockReason,
+  EmitContinuityLockEventOptions,
+  FlowNodeContinuityLockContext,
   SessionContinuityLockService,
 } from "./session-continuity-lock-service";
-import { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
-import {
-  type DescriptionDialogResolution as DescriptionDialogResolutionModel,
+import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
+import type {
+  DescriptionDialogResolution as DescriptionDialogResolutionModel,
   SessionDescriptionDialogSync,
 } from "./session-description-dialog-sync";
-import { SessionProviderBindingService } from "./session-provider-binding-service";
-import { SessionProviderEventRouter } from "./session-provider-event-router";
-import { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
+import type { SessionProviderBindingService } from "./session-provider-binding-service";
+import type { SessionProviderEventRouter } from "./session-provider-event-router";
+import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import {
   CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
   CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
-import { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import {
   normalizeContinuityStageId as normalizeContinuityStageIdValue,
-  SessionRequestHandlerContinuityRoot,
+  type SessionRequestHandlerContinuityRoot,
 } from "./session-request-handler-continuity-root";
-import { SessionRequestHandlerDialogSegmentMeta } from "./session-request-handler-dialog-segment-meta";
-import {
-  type MessageContentPayload,
+import type { SessionRequestHandlerDialogSegmentMeta } from "./session-request-handler-dialog-segment-meta";
+import type {
+  MessageContentPayload,
   SessionRequestHandlerEventMessages,
 } from "./session-request-handler-event-messages";
-import { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
-import { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
-import { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
-import {
-  type PostTurnContextDecision,
+import type { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
+import type { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
+import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
+import type {
+  PostTurnContextDecision,
   SessionRequestHandlerResumeLifecycle,
 } from "./session-request-handler-resume-lifecycle";
-import { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
-import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
-import { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
-import { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
-import { SessionRequestHandlerTurnCompletion } from "./session-request-handler-turn-completion";
-import { SessionRequestHandlerTurnThresholdResolver } from "./session-request-handler-turn-threshold-resolver";
+import type { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
+import { createSessionRequestHandlerRuntime } from "./session-request-handler-runtime";
+import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
+import type { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
+import type { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
 import { shouldHideUserMessage } from "./workflow-turn-control";
 
 export interface ProviderSessionBinding {
@@ -236,309 +235,77 @@ export class SessionRequestHandler {
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
     this.workspaceRuntime = options.workspaceRuntime;
-    this.continuity = new SessionContinuityFacade({
-      logger: this.logger,
-      clock: options.continuityClock,
-      remainingRatioThreshold: Math.min(
-        1,
-        Math.max(0, this.config.claudeContinuityRemainingPercentThreshold / 100)
-      ),
-      enableLegacyHandoff: false,
-      callbacks: {
-        sendMessage: async (sessionId, content) =>
-          this.messageDispatch.sendInternalMessage(sessionId, content),
-        createSession: async (request) =>
-          this.sessionResolution.createContinuitySession(request),
-      },
-      sessionLookup: (sessionId) => this.sessionManager.getSession(sessionId),
-    });
-    this.flowNodeContinuity = new FlowNodeContinuityFacade({
-      templatesDir: this.config.templatesDir,
-      preemptRemainingPercentThreshold:
-        this.config.continuityPreemptRemainingPercentThreshold,
-    });
-    this.resumeLifecycle = new SessionRequestHandlerResumeLifecycle({
-      sessionManager: this.sessionManager,
-      workspaceRuntime: this.workspaceRuntime,
-      clearTokenUsageSnapshot: (sessionId) =>
-        this.continuityRolloverOrchestrator.clearTokenUsageSnapshot(sessionId),
-      emitContinuityLockEvent: (lockEvent) =>
-        this.continuityLockService.emitContinuityLockEvent(lockEvent),
-      finalizePendingTurnCompletion: (sessionId) =>
-        this.runTurnCompletedArbitration(sessionId),
-      isFlowNodeRolloverPending: (sessionId) =>
-        this.isFlowNodeRolloverPending(sessionId),
-    });
-    this.continuityLockService = new SessionContinuityLockService({
-      sessionManager: this.sessionManager,
+    const runtime = createSessionRequestHandlerRuntime({
       broadcaster: this.broadcaster,
-      workspaceRuntime: this.workspaceRuntime,
-      clearPostTurnContextDecision: (sessionId) =>
-        this.resumeLifecycle.clearPostTurnContextDecision(sessionId),
-      clearRolloverSessionState: (sessionId) =>
-        this.continuityRolloverOrchestrator.clearPendingState(sessionId),
-      getSessionResumeLifecycleState: (session) =>
-        this.resumeLifecycle.getSessionResumeLifecycleState(session),
-      updateSessionResumeLifecycleState: (session, patch) =>
-        this.resumeLifecycle.updateSessionResumeLifecycleState(session, patch),
-    });
-    this.continuityRolloverOrchestrator =
-      new SessionContinuityRolloverOrchestrator({
-        logger: this.logger,
-        registerPostTurnRolloverRequiredDecision: (sessionId) =>
-          this.resumeLifecycle.registerPostTurnRolloverRequiredDecision(
-            sessionId
-          ),
-        elevateSessionToRolloverResumeMode: (session) =>
-          this.resumeLifecycle.elevateSessionToRolloverResumeMode(session),
-        registerFlowNodeContinuityLockContext: (context) =>
-          this.continuityLockService.registerFlowNodeContinuityLockContext(
-            context
-          ),
+      callbacks: {
         emitContinuityLockEvent: (lockEvent) =>
           this.continuityLockService.emitContinuityLockEvent(lockEvent),
-        emitFlowNodeRolloverNotification: (sessionId, notification) =>
-          this.flowNodeReportState.emitFlowNodeRolloverNotification(
-            sessionId,
-            notification
-          ),
-        rolloverFlowNodeSession: (session, rollover, rolloverOptions) =>
-          this.flowNodeRollover.rolloverFlowNodeSession(
-            session,
-            rollover,
-            rolloverOptions
-          ),
-        getCreateReportRequest: (sessionId) =>
-          this.flowNodeReportState.getCreateReportRequest(sessionId),
-        deleteCreateReportRequest: (sessionId) =>
-          this.flowNodeReportState.deleteCreateReportRequest(sessionId),
-        finalizeFlowNodeContinuityLock: (lockOptions) =>
-          this.continuityLockService.finalizeFlowNodeContinuityLock(
-            lockOptions
-          ),
-        updateSessionResumeLifecycleState: (session, patch) => {
-          this.resumeLifecycle.updateSessionResumeLifecycleState(
-            session,
-            patch
-          );
-        },
         emitTurnStateEvent: (turnStateOptions) =>
           this.emitTurnStateEvent(turnStateOptions),
-        emitContinuityFailedEvent: (failureOptions) =>
-          this.flowNodeReportState.emitContinuityFailedEvent(failureOptions),
-        isContinuityReportTimeoutError: (error) =>
-          this.flowNodeReportState.isContinuityReportTimeoutError(error),
-      });
-    this.descriptionDialogSync = new SessionDescriptionDialogSync({
-      sessionStorage: this.sessionStorage,
-      continuityRootBySessionId: this.continuityRootBySessionId,
-      logger: this.logger,
-    });
-    this.continuityRoot = new SessionRequestHandlerContinuityRoot({
-      logger: this.logger,
-      sessionStorage: this.sessionStorage,
-    });
-    this.eventMessages = new SessionRequestHandlerEventMessages({
-      broadcaster: this.broadcaster,
-      continuityRootBySessionId: this.continuityRootBySessionId,
-      logger: this.logger,
-      sessionManager: this.sessionManager,
-      sessionStorage: this.sessionStorage,
-    });
-    this.retryState = new SessionRequestHandlerRetryState({
-      broadcaster: this.broadcaster,
-      logger: this.logger,
-    });
-    this.providerBindingService = new SessionProviderBindingService({
-      sessionManager: this.sessionManager,
-      sessionStorage: this.sessionStorage,
-      continuity: this.continuity,
-      providerSessions: this.providerSessions,
-      broadcaster: this.broadcaster,
-      stateBroadcaster: this.stateBroadcaster,
-      logger: this.logger,
-      workspaceRuntime: this.workspaceRuntime,
-      updateDescriptionSessionRef: (session, providerSessionId) =>
-        this.descriptionDialogSync.updateDescriptionSessionRef(
-          session,
-          providerSessionId
-        ),
-    });
-    this.providerEventRouter = new SessionProviderEventRouter({
-      sessionManager: this.sessionManager,
-      broadcaster: this.broadcaster,
-      logger: this.logger,
-      workspaceRuntime: this.workspaceRuntime,
-      handleSessionContinuityProviderEvent: (sessionId, event) =>
-        this.continuity.handleProviderEvent(sessionId, event),
-      handleFlowNodeContinuityProviderEvent: (sessionId, event) =>
-        this.handleFlowNodeContinuityProviderEvent(sessionId, event),
-      updateBindingWithResolvedId: (sessionId, providerSessionId) =>
-        this.providerBindingService.updateBindingWithResolvedId(
-          sessionId,
-          providerSessionId
-        ),
-      markPostTurnContextDecisionPending: (sessionId) =>
-        this.resumeLifecycle.markPostTurnContextDecisionPending(sessionId),
-      handleTurnCompletedWithFlowNodeArbitration: (
-        sessionId,
-        flowNodeContinuityTask
-      ) =>
-        this.handleTurnCompletedWithFlowNodeArbitration(
+        finalizeFlowNodeContinuityLock: (lockOptions) =>
+          this.finalizeFlowNodeContinuityLock(lockOptions),
+        finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
+          this.finalizeFlowNodeContinuityLockOnBootstrapGate(lockOptions),
+        getDefaultProviderId: () => this.getDefaultProviderId(),
+        handleFlowNodeContinuityProviderEvent: async (sessionId, event) =>
+          await this.handleFlowNodeContinuityProviderEvent(sessionId, event),
+        handleMessage: async (sessionId, payload) =>
+          await this.handleMessage(sessionId, payload),
+        handleProviderEvent: (sessionId, event) =>
+          this.handleProviderEvent(sessionId, event),
+        handleProviderFailure: (providerId, error, sessionId) =>
+          this.handleProviderFailure(providerId, error, sessionId),
+        handleTurnCompletedWithFlowNodeArbitration: (
           sessionId,
           flowNodeContinuityTask
-        ),
-      clearPostTurnContextDecision: (sessionId) =>
-        this.resumeLifecycle.clearPostTurnContextDecision(sessionId),
-      emitTurnStateEvent: (turnStateOptions) =>
-        this.emitTurnStateEvent(turnStateOptions),
-      finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
-        this.finalizeFlowNodeContinuityLockOnBootstrapGate(lockOptions),
-      appendProviderMessage: (sessionId, role, event) =>
-        this.eventMessages.appendProviderMessage(sessionId, role, event),
-      appendDialogMessage: (sessionId, payload) =>
-        this.eventMessages.appendDialogMessage(sessionId, payload),
-    });
-    this.providerFailureRecovery = new SessionProviderFailureRecovery({
+        ) =>
+          this.handleTurnCompletedWithFlowNodeArbitration(
+            sessionId,
+            flowNodeContinuityTask
+          ),
+        isFlowNodeRolloverPending: (sessionId) =>
+          this.isFlowNodeRolloverPending(sessionId),
+        registerFlowNodeContinuityLockContext: (context) =>
+          this.registerFlowNodeContinuityLockContext(context),
+        resolveContinuityRootSessionId: async (resolutionOptions) =>
+          await this.resolveContinuityRootSessionId(resolutionOptions),
+        resolveImmediatePostTurnContextDecision: (session) =>
+          this.resolveImmediatePostTurnContextDecision(session),
+        runTurnCompletedArbitration: (sessionId) =>
+          this.runTurnCompletedArbitration(sessionId),
+      },
+      config: this.config,
+      continuityClock: options.continuityClock,
+      continuityRootBySessionId: this.continuityRootBySessionId,
+      logger: this.logger,
       providerRegistry: this.providerRegistry,
+      providerSessions: this.providerSessions,
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
-      providerSessions: this.providerSessions,
-      broadcaster: this.broadcaster,
       stateBroadcaster: this.stateBroadcaster,
-      logger: this.logger,
-      broadcastSessionBinding: (sessionId) =>
-        this.providerBindingService.broadcastSessionBinding(sessionId),
-      emitTurnStateEvent: (turnStateOptions) =>
-        this.emitTurnStateEvent(turnStateOptions),
-      consumeRetryBudget: (sessionId, failureClass) =>
-        this.retryState.consumeRetryBudget(sessionId, failureClass),
-      expirePendingUserIntent: (sessionId) =>
-        this.retryState.expirePendingUserIntent(sessionId),
-    });
-    this.appliedTurnConfig = new SessionRequestHandlerAppliedTurnConfig(
-      this.config
-    );
-    this.messageDispatch = new SessionRequestHandlerMessageDispatch({
-      appliedTurnConfig: this.appliedTurnConfig,
-      sessionManager: this.sessionManager,
-      sessionStorage: this.sessionStorage,
-      continuity: this.continuity,
-      providerRegistry: this.providerRegistry,
-      providerSessions: this.providerSessions,
-      broadcaster: this.broadcaster,
-      logger: this.logger,
-      emitTurnStateEvent: (turnStateOptions) =>
-        this.emitTurnStateEvent(turnStateOptions),
-      handleProviderFailure: (providerId, error, sessionId) =>
-        this.handleProviderFailure(providerId, error, sessionId),
-      trackPendingUserIntent: (sessionId, content) =>
-        this.retryState.trackPendingUserIntent(sessionId, content),
-    });
-    this.dialogSegmentMeta = new SessionRequestHandlerDialogSegmentMeta({
-      broadcaster: this.broadcaster,
-      continuity: this.continuity,
-      continuityRootBySessionId: this.continuityRootBySessionId,
-      logger: this.logger,
-      sessionManager: this.sessionManager,
-      sessionStorage: this.sessionStorage,
-    });
-    this.sessionBootstrap = new SessionRequestHandlerSessionBootstrap({
-      sessionManager: this.sessionManager,
-      sessionStorage: this.sessionStorage,
-      continuity: this.continuity,
-      continuityRootBySessionId: this.continuityRootBySessionId,
-      providerSessions: this.providerSessions,
-      broadcaster: this.broadcaster,
-      broadcastSessionBinding: (sessionId) =>
-        this.providerBindingService.broadcastSessionBinding(sessionId),
-      resolveContinuityRootSessionId: (resolutionOptions) =>
-        this.resolveContinuityRootSessionId(resolutionOptions),
-      resolveDescriptionDialog: (dialogOptions) =>
-        this.descriptionDialogSync.resolveDescriptionDialog(dialogOptions),
-      maybePromoteLegacyDescriptionDialogHistory: (promotionOptions) =>
-        this.descriptionDialogSync.maybePromoteLegacyDescriptionDialogHistory(
-          promotionOptions
-        ),
-      maybeBackfillDescriptionDialogHistory: (backfillOptions) =>
-        this.descriptionDialogSync.maybeBackfillDescriptionDialogHistory(
-          backfillOptions
-        ),
-      updateDescriptionSessionRef: (session, providerSessionId) =>
-        this.descriptionDialogSync.updateDescriptionSessionRef(
-          session,
-          providerSessionId
-        ),
-      handleProviderEvent: (sessionId, event) =>
-        this.handleProviderEvent(sessionId, event),
-      updateProviderBinding: (sessionId, providerSessionId) =>
-        this.providerBindingService.updateProviderBinding(
-          sessionId,
-          providerSessionId
-        ),
-      appendDialogSegmentBoundaryMeta: (boundaryOptions) =>
-        this.dialogSegmentMeta.appendDialogSegmentBoundaryMeta(boundaryOptions),
-      resumeLifecycle: this.resumeLifecycle,
       workspaceRuntime: this.workspaceRuntime,
     });
-    this.sessionResolution = new SessionRequestHandlerSessionResolution({
-      broadcaster: this.broadcaster,
-      broadcastSessionBinding: (sessionId) =>
-        this.providerBindingService.broadcastSessionBinding(sessionId),
-      getDefaultProviderId: () => this.getDefaultProviderId(),
-      handleMessage: (sessionId, payload) =>
-        this.handleMessage(sessionId, payload),
-      handleProviderFailure: (providerId, error, sessionId) =>
-        this.handleProviderFailure(providerId, error, sessionId),
-      logger: this.logger,
-      providerRegistry: this.providerRegistry,
-      sessionBootstrap: this.sessionBootstrap,
-      sessionManager: this.sessionManager,
-      workspacePathOverride: this.config.claudeWorkspacePath,
-    });
-    this.flowNodeReportState = new SessionRequestHandlerFlowNodeReportState({
-      broadcaster: this.broadcaster,
-    });
-    this.flowNodeRollover = new SessionRequestHandlerFlowNodeRollover({
-      continuityRootBySessionId: this.continuityRootBySessionId,
-      providerRegistry: this.providerRegistry,
-      flowNodeContinuity: this.flowNodeContinuity,
-      sessionBootstrap: this.sessionBootstrap,
-      messageDispatch: this.messageDispatch,
-      reportState: this.flowNodeReportState,
-      emitTurnStateEvent: (turnStateOptions) =>
-        this.emitTurnStateEvent(turnStateOptions),
-      registerFlowNodeContinuityLockContext: (context) =>
-        this.registerFlowNodeContinuityLockContext(context),
-      emitContinuityLockEvent: (lockEvent) =>
-        this.emitContinuityLockEvent(lockEvent),
-      finalizeFlowNodeContinuityLock: (lockOptions) =>
-        this.finalizeFlowNodeContinuityLock(lockOptions),
-    });
-    const turnCompletion = new SessionRequestHandlerTurnCompletion({
-      continuityLockService: this.continuityLockService,
-      emitTurnStateEvent: (turnStateOptions) =>
-        this.emitTurnStateEvent(turnStateOptions),
-      finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
-        this.finalizeFlowNodeContinuityLockOnBootstrapGate(lockOptions),
-      isFlowNodeRolloverPending: (sessionId) =>
-        this.isFlowNodeRolloverPending(sessionId),
-      logger: this.logger,
-      resolveImmediatePostTurnContextDecision: (session) =>
-        this.resolveImmediatePostTurnContextDecision(session),
-      resumeLifecycle: this.resumeLifecycle,
-      sessionManager: this.sessionManager,
-    });
-    const turnThresholdResolver =
-      new SessionRequestHandlerTurnThresholdResolver(this.config);
-    this.turnArbitration = new SessionRequestHandlerTurnArbitration({
-      continuityRolloverOrchestrator: this.continuityRolloverOrchestrator,
-      flowNodeContinuity: this.flowNodeContinuity,
-      resumeLifecycle: this.resumeLifecycle,
-      sessionManager: this.sessionManager,
-      turnCompletion,
-      turnThresholdResolver,
-    });
+    this.appliedTurnConfig = runtime.appliedTurnConfig;
+    this.continuity = runtime.continuity;
+    this.continuityLockService = runtime.continuityLockService;
+    this.continuityRoot = runtime.continuityRoot;
+    this.continuityRolloverOrchestrator =
+      runtime.continuityRolloverOrchestrator;
+    this.descriptionDialogSync = runtime.descriptionDialogSync;
+    this.dialogSegmentMeta = runtime.dialogSegmentMeta;
+    this.eventMessages = runtime.eventMessages;
+    this.flowNodeContinuity = runtime.flowNodeContinuity;
+    this.flowNodeReportState = runtime.flowNodeReportState;
+    this.flowNodeRollover = runtime.flowNodeRollover;
+    this.messageDispatch = runtime.messageDispatch;
+    this.providerBindingService = runtime.providerBindingService;
+    this.providerEventRouter = runtime.providerEventRouter;
+    this.providerFailureRecovery = runtime.providerFailureRecovery;
+    this.resumeLifecycle = runtime.resumeLifecycle;
+    this.retryState = runtime.retryState;
+    this.sessionBootstrap = runtime.sessionBootstrap;
+    this.sessionResolution = runtime.sessionResolution;
+    this.turnArbitration = runtime.turnArbitration;
   }
 
   protected normalizeContinuityStageId(value: string | null): string {
