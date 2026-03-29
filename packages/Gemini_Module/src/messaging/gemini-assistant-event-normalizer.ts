@@ -76,15 +76,6 @@ export class GeminiAssistantEventNormalizer {
       promptId: accumulator.promptId,
       summary: value,
     });
-    session.logger?.logEvent({
-      type: "provider_feedback",
-      provider: "gemini",
-      feedbackType: "thought",
-      sessionId: session.sessionId,
-      promptId: accumulator.promptId,
-      subject: value.subject,
-      description: value.description,
-    });
     const formatted =
       value.subject && value.subject.trim().length > 0
         ? `${value.subject.trim()}: ${value.description}`
@@ -138,16 +129,6 @@ export class GeminiAssistantEventNormalizer {
       value && typeof value === "object"
         ? (value as { usageMetadata?: UsageMetadata }).usageMetadata
         : undefined;
-    if (typeof accumulator.usage?.thoughtsTokenCount === "number") {
-      session.logger?.logEvent({
-        type: "provider_feedback",
-        provider: "gemini",
-        feedbackType: "thought_usage",
-        sessionId: session.sessionId,
-        promptId: accumulator.promptId,
-        thoughtsTokenCount: accumulator.usage.thoughtsTokenCount,
-      });
-    }
 
     const assistantSegment = accumulator.currentAssistantChunks.join("");
     accumulator.currentAssistantChunks.length = 0;

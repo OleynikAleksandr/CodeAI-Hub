@@ -14,13 +14,13 @@
 ## Phase 98 — Provider Feedback Rollback Scope (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Planning and rollback boundary
-1. [IN_PROGRESS] Зафиксировать rollback scope: удалить provider-feedback logging code и active SSOT-пункты, которые не дают полезного exact-level signal, но сохранить исторические session/release документы как факт релиза `1.1.836`. Scope: `doc/SolidWorks-WorkFlow/Plans/ProviderFeedbackRollback_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): define provider feedback rollback`
-2. [TODO] Git Commit: `docs(plan): define provider feedback rollback` (hash: `TBD`)
+1. [DONE] Зафиксировать rollback scope: удалить provider-feedback logging code и active SSOT-пункты, которые не дают полезного exact-level signal, но сохранить исторические session/release документы как факт релиза `1.1.836`. Scope: `doc/SolidWorks-WorkFlow/Plans/ProviderFeedbackRollback_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): define provider feedback rollback`
+2. [DONE] Git Commit: `docs(plan): define provider feedback rollback` (hash: `58c234a2`)
 
 ## Phase 99 — Provider Feedback Rollback Execution (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Revert provider logging seams by provider
-3. [TODO] Откатить Gemini thought-feedback seam и связанные тесты через `git revert`, не переписывая исторические release/session документы. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider thought feedback`
+3. [IN_PROGRESS] Откатить Gemini thought-feedback seam и связанные тесты через `git revert`, не переписывая исторические release/session документы. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider thought feedback`
 4. [TODO] Git Commit: `revert: remove gemini provider thought feedback` (hash: `TBD`)
 5. [TODO] Откатить Gemini model-feedback seam и связанные тесты через `git revert`, сохранив rollback-plan актуальным. Scope: `packages/Gemini_Module/src/logging/session-logger.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider model feedback`
 6. [TODO] Git Commit: `revert: remove gemini provider model feedback` (hash: `TBD`)
