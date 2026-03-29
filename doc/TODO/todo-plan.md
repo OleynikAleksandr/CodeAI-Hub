@@ -68,11 +68,11 @@
 
 ### Stream: Gemini stalled-stream watchdog
 15. [DONE] Добавить stalled-turn watchdog для Gemini stream path, чтобы зависание после `model_info` / partial progress переводилось в controlled recoverable outcome, а не в вечное ожидание terminal event. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Expected commit: `fix(gemini): recover stalled turn streams`
-16. [DONE] Git Commit: `fix(gemini): recover stalled turn streams` (hash: `TBD`)
+16. [DONE] Git Commit: `fix(gemini): recover stalled turn streams` (hash: `fefa2c97`)
 
 ### Stream: Gemini recoverable idle reset
-17. [TODO] Перевести stalled-turn outcome в recoverable session state внутри Gemini manager/adapter: session должна уходить в `idle`, а Core/UI получать управляемый failure surface вместо зависшего `working`. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): surface stalled turn recovery`
-18. [TODO] Git Commit: `fix(gemini): surface stalled turn recovery` (hash: `TBD`)
+17. [DONE] Перевести stalled-turn outcome в recoverable session state внутри Gemini manager/adapter: session должна уходить в `idle`, а Core/UI получать управляемый failure surface вместо зависшего `working`. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): surface stalled turn recovery`
+18. [DONE] Git Commit: `fix(gemini): surface stalled turn recovery` (hash: `TBD`)
 
 ### Stream: Gemini regression coverage
 19. [TODO] Добавить regression tests на silent stall и на восстановление session после forced stop/recoverable stall outcome. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `test(gemini): guard stalled turn recovery`

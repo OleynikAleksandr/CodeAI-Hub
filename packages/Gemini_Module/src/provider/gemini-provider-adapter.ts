@@ -20,6 +20,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const isTurnCompletedPayload = (payload: unknown): boolean =>
   isRecord(payload) && payload.type === "turn_completed";
+const RECOVERABLE_TURN_FAILURE_CODE = "GEMINI_RECOVERABLE_TURN_FAILURE";
 
 export class GeminiProviderAdapter {
   private readonly installer: GeminiInstaller;
@@ -204,6 +205,15 @@ export class GeminiProviderAdapter {
     try {
       await manager.sendMessage(sessionId, content);
     } catch (error) {
+      if (
+        (error as { code?: string })?.code === RECOVERABLE_TURN_FAILURE_CODE
+      ) {
+        this.options.reporter?.warn?.("Gemini turn failed recoverably", {
+          sessionId,
+          message: error instanceof Error ? error.message : String(error),
+        });
+        return;
+      }
       this.options.reporter?.error?.(
         "Failed to send message to Gemini provider",
         error,

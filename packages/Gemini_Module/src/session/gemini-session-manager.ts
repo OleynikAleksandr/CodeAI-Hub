@@ -15,6 +15,8 @@ import type {
   SessionCreationResult,
 } from "./types";
 
+const RECOVERABLE_TURN_FAILURE_CODE = "GEMINI_RECOVERABLE_TURN_FAILURE";
+
 export class GeminiSessionManager {
   private readonly sessionLifecycle: GeminiSessionLifecycle;
   private readonly sessionBootstrapper: GeminiSessionBootstrapper;
@@ -84,13 +86,6 @@ export class GeminiSessionManager {
     session.logger?.start(requestedSessionId);
     this.sessionStore.registerSession(requestedSessionId, session);
 
-    this.sessionLifecycle.emitEvents(session, [
-      {
-        type: "system",
-        provider: "gemini",
-        content: `Gemini session initialized (model: ${session.config.getModel()}).`,
-      },
-    ]);
     let resolvedSessionId: string = requestedSessionId;
     if (providerSessionId && providerSessionId.length > 0) {
       resolvedSessionId = this.sessionStore.promoteSessionId(
@@ -233,19 +228,26 @@ export class GeminiSessionManager {
       }
       didComplete = true;
     } catch (error) {
+      const failure = error instanceof Error ? error : new Error(String(error));
+      if (failure.message.startsWith("Gemini stream stalled after ")) {
+        (failure as Error & { code?: string }).code =
+          RECOVERABLE_TURN_FAILURE_CODE;
+        session.eventEmitter.emit("message", {
+          type: "turn_failed",
+          provider: "gemini",
+          sessionId: session.sessionId,
+          message: failure.message,
+          error: failure,
+          uuid: `${randomUUID()}::turn_failed`,
+          timestamp: new Date().toISOString(),
+        });
+      }
       session.logger?.logError({
-        error,
+        error: failure,
         promptId,
         stage: "send",
       });
-      this.sessionLifecycle.emitEvents(session, [
-        {
-          type: "error",
-          provider: "gemini",
-          content: error instanceof Error ? error.message : String(error),
-        },
-      ]);
-      throw error;
+      throw failure;
     } finally {
       clearWatchdog();
       (session as unknown as Record<string, unknown>).resetWatchdog = undefined;
