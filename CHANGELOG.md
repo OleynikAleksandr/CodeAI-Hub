@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.841] - 2026-03-29
+### Fixed
+- **Session panel connects after submit**: after submitting the Description questionnaire, the session panel now switches to dialog mode (same path as clicking a session node in the tree), so it connects to the newly created session via dialog API immediately instead of relying on Core stream events that runtime mode may miss during mount timing. Fixes "Creating session..." stuck state for all providers.
+
 ## [1.1.840] - 2026-03-29
 ### Fixed
 - **Session display after questionnaire submit**: the runtime session view no longer resets `activeSessionId` when the preferred session is not yet in the visible list. Previously the visibility sync effect raced against Core's `session:created` delivery, causing the session panel to stay stuck on "Creating session..." until the user manually clicked the session node. Fix is provider-agnostic (Claude, Codex, Gemini).

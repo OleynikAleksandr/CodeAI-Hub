@@ -114,7 +114,7 @@ Fix: dispatch `pm:dialog:open` после создания сессии в submi
 
 ### Stream: P0-E dispatch dialog open after submit
 49. [DONE] Dispatch `pm:dialog:open` из `description-questionnaire-panel.tsx` после `submitQuestionnaire` success. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Expected commit: `fix: dispatch dialog open after description session creation`
-50. [IN_PROGRESS] Git Commit: `fix: dispatch dialog open after description session creation` (hash: TBD)
+50. [DONE] Git Commit: `fix: dispatch dialog open after description session creation` (hash: f9a974bd)
 
 ## Phase 111 — Hotfix Release Build v1.1.841 (owner: Oleksandr, updated: 2026-03-29)
 
