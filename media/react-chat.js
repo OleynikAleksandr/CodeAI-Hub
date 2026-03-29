@@ -8621,7 +8621,7 @@
       if (!parsed || typeof parsed.type !== "string") {
         return null;
       }
-      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "session:error" || parsed.type === "core:loading-status" || parsed.type === "session:binding") {
+      if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "session:error" || parsed.type === "core:loading-status" || parsed.type === "session:binding" || parsed.type === "session:model:update") {
         return { type: parsed.type, payload: parsed.payload };
       }
     } catch {
@@ -8631,6 +8631,7 @@
   };
   var isDeletedPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
   var isStreamPayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string";
+  var isModelUpdatePayload = (payload) => typeof payload === "object" && payload !== null && typeof payload.sessionId === "string" && typeof payload.providerId === "string" && typeof payload.modelId === "string";
   var createServerMessageHandler = (notify) => {
     const handleSessionMessage = (payload) => {
       const normalized = sanitizeSessionMessagePayload(payload);
@@ -8673,6 +8674,26 @@
         }
       });
     };
+    const handleSessionModelUpdate = (payload) => {
+      if (!isModelUpdatePayload(payload)) {
+        return;
+      }
+      notify({
+        type: "session:stream",
+        payload: {
+          sessionId: payload.sessionId,
+          event: {
+            type: "stream_event",
+            data: {
+              kind: "model_update",
+              providerId: payload.providerId,
+              modelId: payload.modelId,
+              ...typeof payload.baseModelId === "string" ? { baseModelId: payload.baseModelId } : {}
+            }
+          }
+        }
+      });
+    };
     const handleSessionError = (payload) => {
       const normalized = sanitizeSessionErrorPayload(payload);
       if (!normalized) {
@@ -8707,7 +8728,8 @@
           type: "session:binding",
           payload: normalized
         });
-      }
+      },
+      "session:model:update": handleSessionModelUpdate
     };
     return (raw) => {
       const envelope = parseEnvelope(raw);

@@ -10,7 +10,6 @@
 import { useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { api } from "../../api";
-import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { buildModelInfo } from "../../../ui/src/session/model-info-builder";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 
@@ -40,8 +39,6 @@ export const useRuntimeModelSync = (
   activeSessionId: string | null,
   setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>
 ): void => {
-  const { settings } = useProjectManagerSettings();
-
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message) => {
       if (message.type !== "session:model:update") {
@@ -78,7 +75,7 @@ export const useRuntimeModelSync = (
         const updatedModel = buildModelInfo(
           (payload.providerId as typeof currentModel.providerId | undefined) ??
             currentModel.providerId,
-          settings,
+          null,
           modelId,
           "runtime"
         );
@@ -101,5 +98,5 @@ export const useRuntimeModelSync = (
     return () => {
       unsubscribe();
     };
-  }, [activeSessionId, settings, setSnapshots]);
+  }, [activeSessionId, setSnapshots]);
 };

@@ -1,5 +1,7 @@
+import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionSnapshot } from "../../../../types/session";
 import type { SessionSnapshots } from "../session/helpers";
+import { buildModelInfo } from "../session/model-info-builder";
 import {
   applyTokenUsageSyncFromStreamEvent,
   applyUsageLimitsSyncFromStreamEvent,
@@ -127,6 +129,45 @@ const applyContinuityFailedStreamDataToSnapshot = (
   };
 };
 
+const applyModelUpdateStreamDataToSnapshot = (
+  snapshot: SessionSnapshot,
+  data: Record<string, unknown>,
+  updatedAt: number
+): SessionSnapshot => {
+  const modelId = typeof data.modelId === "string" ? data.modelId : null;
+  const providerId =
+    typeof data.providerId === "string" ? data.providerId : null;
+  const currentModel = snapshot.status.models?.[0];
+  if (!(modelId && currentModel)) {
+    return snapshot;
+  }
+
+  const updatedModel = buildModelInfo(
+    (providerId as ProviderStackId | null) ?? currentModel.providerId,
+    null,
+    modelId,
+    "runtime"
+  );
+  if (
+    updatedModel.modelId === currentModel.modelId &&
+    updatedModel.modelDisplayName === currentModel.modelDisplayName &&
+    updatedModel.providerId === currentModel.providerId &&
+    updatedModel.reasoning === currentModel.reasoning &&
+    updatedModel.source === currentModel.source
+  ) {
+    return snapshot;
+  }
+
+  return {
+    ...snapshot,
+    status: {
+      ...snapshot.status,
+      models: [updatedModel, ...snapshot.status.models.slice(1)],
+      updatedAt,
+    },
+  };
+};
+
 const applyStreamEventEnvelopeToSnapshot = (
   snapshot: SessionSnapshot,
   event: Record<string, unknown>
@@ -153,6 +194,8 @@ const applyStreamEventEnvelopeToSnapshot = (
         data,
         updatedAt
       );
+    case "model_update":
+      return applyModelUpdateStreamDataToSnapshot(snapshot, data, updatedAt);
     default:
       return snapshot;
   }

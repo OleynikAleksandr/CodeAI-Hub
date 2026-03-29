@@ -65,13 +65,13 @@
 
 ### Stream: Core outbound update for effective identity
 13. [DONE] Исправить outbound Core model update path для Codex и shared runtime events так, чтобы следующий turn публиковал именно effective identity, а не только base model id. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(core): publish effective model updates`
-14. [DONE] Git Commit: `fix(core): publish effective model updates` (hash: `TBD`)
+14. [DONE] Git Commit: `fix(core): publish effective model updates` (hash: `ac0499c5`)
 
 ## Phase 89 — UI/PM Sync And Regression Coverage (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Runtime sync in PM and webview
-15. [TODO] Научить PM и обычный webview одинаково принимать runtime effective model update без локальной реконструкции identity из split fields и без silent ignore path. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/app-host/session-store.ts`. Expected commit: `fix(ui): consume effective model updates`
-16. [TODO] Git Commit: `fix(ui): consume effective model updates` (hash: `TBD`)
+15. [DONE] Научить PM и обычный webview одинаково принимать runtime effective model update без локальной реконструкции identity из split fields и без silent ignore path. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/app-host/session-stream-snapshot-sync.ts`. Expected commit: `fix(ui): consume effective model updates`
+16. [DONE] Git Commit: `fix(ui): consume effective model updates` (hash: `TBD`)
 
 ### Stream: Ready-session settings sync and display parity
 17. [TODO] Убрать рассогласование ready-session labels и settings-driven display logic: reasoning/thinking для той же base model не должны теряться или оставаться stale в session status. Scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`. Expected commit: `fix(ui): sync effective identity labels`

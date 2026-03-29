@@ -20,7 +20,8 @@ type ServerEventType =
   | "session:stream"
   | "session:error"
   | "core:loading-status"
-  | "session:binding";
+  | "session:binding"
+  | "session:model:update";
 
 interface ServerEnvelope {
   readonly payload: unknown;
@@ -32,6 +33,12 @@ interface DeletedPayload {
 }
 interface StreamPayload {
   readonly event?: unknown;
+  readonly sessionId: string;
+}
+interface ModelUpdatePayload {
+  readonly baseModelId?: string;
+  readonly modelId: string;
+  readonly providerId: string;
   readonly sessionId: string;
 }
 
@@ -51,7 +58,8 @@ const parseEnvelope = (raw: string): ServerEnvelope | null => {
       parsed.type === "session:stream" ||
       parsed.type === "session:error" ||
       parsed.type === "core:loading-status" ||
-      parsed.type === "session:binding"
+      parsed.type === "session:binding" ||
+      parsed.type === "session:model:update"
     ) {
       return { type: parsed.type, payload: parsed.payload };
     }
@@ -70,6 +78,16 @@ const isStreamPayload = (payload: unknown): payload is StreamPayload =>
   typeof payload === "object" &&
   payload !== null &&
   typeof (payload as { readonly sessionId?: unknown }).sessionId === "string";
+
+const isModelUpdatePayload = (
+  payload: unknown
+): payload is ModelUpdatePayload =>
+  typeof payload === "object" &&
+  payload !== null &&
+  typeof (payload as { readonly sessionId?: unknown }).sessionId === "string" &&
+  typeof (payload as { readonly providerId?: unknown }).providerId ===
+    "string" &&
+  typeof (payload as { readonly modelId?: unknown }).modelId === "string";
 
 export const createServerMessageHandler = (
   notify: MessageNotifier
@@ -119,6 +137,29 @@ export const createServerMessageHandler = (
     });
   };
 
+  const handleSessionModelUpdate = (payload: unknown): void => {
+    if (!isModelUpdatePayload(payload)) {
+      return;
+    }
+    notify({
+      type: "session:stream",
+      payload: {
+        sessionId: payload.sessionId,
+        event: {
+          type: "stream_event",
+          data: {
+            kind: "model_update",
+            providerId: payload.providerId,
+            modelId: payload.modelId,
+            ...(typeof payload.baseModelId === "string"
+              ? { baseModelId: payload.baseModelId }
+              : {}),
+          },
+        },
+      },
+    });
+  };
+
   const handleSessionError = (payload: unknown): void => {
     const normalized = sanitizeSessionErrorPayload(payload);
     if (!normalized) {
@@ -156,6 +197,7 @@ export const createServerMessageHandler = (
         payload: normalized satisfies CoreBridgeSessionBindingPayload,
       });
     },
+    "session:model:update": handleSessionModelUpdate,
   };
 
   return (raw: string) => {
