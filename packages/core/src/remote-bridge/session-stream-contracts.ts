@@ -167,6 +167,12 @@ export type SessionIncomingMessage =
       };
     }
   | {
+      readonly type: "session:stop";
+      readonly payload: {
+        readonly sessionId: string;
+      };
+    }
+  | {
       readonly type: "dialog:switch:request";
       readonly payload: {
         readonly dialogId: string;

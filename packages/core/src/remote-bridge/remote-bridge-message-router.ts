@@ -11,6 +11,7 @@ import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import type { SettingsRequestHandler } from "./handlers/settings-request-handler";
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import { RemoteBridgeDialogCommandRouter } from "./remote-bridge-dialog-command-router";
+import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 import { RemoteBridgeWorkspaceCommandRouter } from "./remote-bridge-workspace-command-router";
 import type { IncomingMessage } from "./types";
 
@@ -31,6 +32,7 @@ interface RemoteBridgeMessageRouterDependencies {
 export class RemoteBridgeMessageRouter {
   private readonly deps: RemoteBridgeMessageRouterDependencies;
   private readonly dialogCommandRouter: RemoteBridgeDialogCommandRouter;
+  private readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
   private readonly workspaceCommandRouter: RemoteBridgeWorkspaceCommandRouter;
 
   constructor(deps: RemoteBridgeMessageRouterDependencies) {
@@ -45,6 +47,12 @@ export class RemoteBridgeMessageRouter {
       },
       sessionHandler: deps.sessionHandler,
       sessionManager: deps.sessionManager,
+    });
+    this.sessionCreateRouter = new RemoteBridgeSessionCreateRouter({
+      getManager: deps.getManager,
+      logger: deps.logger,
+      sessionHandler: deps.sessionHandler,
+      workflowRuntime: deps.workflowRuntime,
     });
     this.workspaceCommandRouter = new RemoteBridgeWorkspaceCommandRouter({
       getManager: deps.getManager,
@@ -65,7 +73,7 @@ export class RemoteBridgeMessageRouter {
     }
     switch (incoming.type) {
       case "session:create":
-        await this.handleSessionCreateMessage(clientId, incoming);
+        await this.sessionCreateRouter.handle(clientId, incoming);
         break;
       case "settings:load":
         await this.deps.settingsHandler.handleLoad();
@@ -78,6 +86,9 @@ export class RemoteBridgeMessageRouter {
         break;
       case "session:delete":
         await this.deps.sessionHandler.handleDelete(incoming.payload.sessionId);
+        break;
+      case "session:stop":
+        await this.handleSessionStopMessage(incoming.payload);
         break;
       case "projects:list":
         this.deps.projectHandler.handleList();
@@ -171,7 +182,8 @@ export class RemoteBridgeMessageRouter {
     }
     if (
       incoming.type === "session:message" ||
-      incoming.type === "session:delete"
+      incoming.type === "session:delete" ||
+      incoming.type === "session:stop"
     ) {
       if (!scope.workspacePath) {
         this.sendScopeViolation(
@@ -194,6 +206,27 @@ export class RemoteBridgeMessageRouter {
       }
     }
     return true;
+  }
+
+  private async handleSessionStopMessage(payload: {
+    readonly sessionId?: unknown;
+  }): Promise<void> {
+    const sessionId =
+      typeof payload.sessionId === "string" ? payload.sessionId : null;
+    if (!sessionId) {
+      return;
+    }
+    const stopHandler = this.deps.sessionHandler as SessionRequestHandler & {
+      readonly handleStop?: (sessionId: string) => Promise<void>;
+    };
+    if (typeof stopHandler.handleStop !== "function") {
+      this.deps.logger.warn(
+        "session:stop transport command received before runtime stop handler is wired",
+        { sessionId }
+      );
+      return;
+    }
+    await stopHandler.handleStop(sessionId);
   }
 
   private async handleDialogSwitchRequest(payload: {
@@ -220,61 +253,6 @@ export class RemoteBridgeMessageRouter {
           ? payload.targetModelId
           : undefined,
     });
-  }
-
-  private handleSessionCreateMessage(
-    clientId: string,
-    incoming: Extract<IncomingMessage, { readonly type: "session:create" }>
-  ): Promise<void> {
-    const resolvedWorkspacePath =
-      incoming.payload?.workspacePath ??
-      this.deps.getManager()?.getWorkspaceScope(clientId)?.workspacePath ??
-      undefined;
-    const initiativeSlug = incoming.payload?.initiativeSlug ?? null;
-
-    return this.createSessionWithWorkflowBinding({
-      incoming,
-      initiativeSlug,
-      resolvedWorkspacePath,
-    });
-  }
-
-  private async createSessionWithWorkflowBinding(params: {
-    readonly incoming: Extract<
-      IncomingMessage,
-      { readonly type: "session:create" }
-    >;
-    readonly initiativeSlug: string | null;
-    readonly resolvedWorkspacePath: string | undefined;
-  }): Promise<void> {
-    await this.deps.sessionHandler.handleCreate(
-      params.incoming.payload?.providerId,
-      params.resolvedWorkspacePath,
-      {
-        initiativeSlug: params.initiativeSlug,
-        providerSessionId: params.incoming.payload?.providerSessionId ?? null,
-        stage: params.incoming.payload?.stage ?? null,
-        runSlug: params.incoming.payload?.runSlug ?? null,
-      }
-    );
-    if (!(params.resolvedWorkspacePath && params.initiativeSlug)) {
-      return;
-    }
-    try {
-      await this.deps.workflowRuntime.connectWorkspace({
-        workspaceRoot: params.resolvedWorkspacePath,
-        workspaceSlug: params.initiativeSlug,
-      });
-    } catch (error) {
-      this.deps.logger.warn(
-        "Failed to connect workflow runtime from session:create",
-        {
-          workspacePath: params.resolvedWorkspacePath,
-          workspaceSlug: params.initiativeSlug,
-          error: error instanceof Error ? error.message : String(error),
-        }
-      );
-    }
   }
 
   private sendScopeViolation(

@@ -36,11 +36,11 @@
 
 ### Stream: Contract reset for Stop semantics
 1. [DONE] Зафиксировать баг и переписать продуктовый контракт `Stop`: больше не `shutdown Core`, а `stop current turn / unlock stuck session`, с явной привязкой к logical session и MVP-оговоркой про fresh provider session при испорченном transcript. Scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`. Expected commit: `docs(contract): redefine session stop semantics`
-2. [DONE] Git Commit: `docs(contract): redefine session stop semantics` (hash: `TBD`)
+2. [DONE] Git Commit: `docs(contract): redefine session stop semantics` (hash: `df917787`)
 
 ### Stream: Session-scoped stop bridge command
-3. [TODO] Добавить в remote-bridge отдельную команду `session:stop`, чтобы transport слой различал stop текущей session и global runtime shutdown. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): add session stop bridge command`
-4. [TODO] Git Commit: `feat(core): add session stop bridge command` (hash: `TBD`)
+3. [DONE] Добавить в remote-bridge отдельную команду `session:stop`, чтобы transport слой различал stop текущей session и global runtime shutdown. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): add session stop bridge command`
+4. [DONE] Git Commit: `feat(core): add session stop bridge command` (hash: `TBD`)
 
 ### Stream: UI stop path without core shutdown
 5. [TODO] Перевести Session UI на session-scoped stop path: убрать stop-core смысл из action-кнопки, заменить copy и больше не использовать `core-shutdown` helper из input action flow. Scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-play-stop-button.tsx`. Expected commit: `fix(ui): route stop to session turn cancel`
