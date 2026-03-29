@@ -7,13 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.832
-- **Provider-neutral model sync contract**: Core now resolves next-turn provider config through a shared registry + capability layer, so outbound applied config attachment and Project Manager runtime label sync no longer grow provider-specific bridge branches.
-- **Claude/Codex/Gemini share the same onboarding path**: model-switch behavior is now centered on one Core contract instead of separate provider-by-provider PM/runtime hotfixes.
-- **Gemini now applies model and thinking together**: fresh and existing Gemini sessions stage both `model` and `thinkingLevel` from the shared applied envelope, eliminating the stale bootstrap-thinking gap during live model switches.
-- **Gemini no longer overrides Core defaults from local settings**: when Core already provides authoritative model/thinking defaults, Gemini bootstrap stops reasserting them from provider-local `settings.json`.
-- **PM label still follows real runtime apply**: Core continues to emit `session:model:update` from outbound applied config on regular sends, so the lower session bar tracks the model that actually started the next turn.
-- **Phase 80A verification baseline**: this release closes the provider-neutral generalization pass before the remaining `session-request-handler.ts` decomposition tail in `Phase 81`.
+## Current Release — v1.1.833
+- **Phase 81 carry-over closed**: the remaining `session-request-handler.ts` tail is no longer one giant inline service graph plus outbound/session orchestration blob; runtime wiring and user-facing actions are now split into dedicated handler helpers.
+- **Runtime graph extraction**: constructor/service bootstrap for continuity, binding, resume, flow-node rollover, dispatch, and turn arbitration now lives in `session-request-handler-runtime{,-core,-types}.ts`, reducing inline dependency assembly inside the root handler.
+- **User send/switch/delete orchestration split**: regular message ingress, switch resend logic, rollover-pending send guards, and delete cleanup now live in `session-request-handler-session-actions.ts`, so the root handler acts as a narrower façade over specialized collaborators.
+- **Provider-neutral model sync baseline preserved**: the `1.1.832` next-turn resolver/capability contract remains intact, including Core-owned applied config attachment and PM runtime label sync for Claude, Codex, and Gemini.
+- **Manual provider validation kept green**: the baseline verified before this release remains unchanged: all three providers still honor settings-driven model changes on the next turn.
 - **Gemini runtime self-healing preserved**: the `1.1.825` repair path for broken global Gemini CLI/Core installs remains part of the runtime baseline.
 
 Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.

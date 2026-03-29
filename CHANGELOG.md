@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.833] - 2026-03-29
+### Changed
+- **SessionRequestHandler runtime graph split**: constructor/service bootstrap for continuity, resume, provider binding, flow-node rollover, and turn arbitration now lives in `session-request-handler-runtime{,-core,-types}.ts` instead of one inline root constructor block.
+- **SessionRequestHandler action split**: switch resend flow, regular message ingress, rollover-pending send guards, and delete cleanup now live in `session-request-handler-session-actions.ts`, reducing the root handler to a narrower orchestration surface.
+
+### Fixed
+- **Phase 81 carry-over closure**: the remaining post-`1.1.832` decomposition tail is now isolated into dedicated helpers without regressing the provider-neutral applied-config contract or the already verified Claude/Codex/Gemini next-turn model switching path.
+- **Release docs/runtime alignment**: this build is the doc-synced post-plan verification release after the full `Phase 81` refactor pass, so release-facing docs, SSOT, and packaged artifacts now describe the same architecture baseline.
+
 ## [1.1.832] - 2026-03-28
 ### Changed
 - **Provider-neutral applied config contract**: Core now resolves per-provider next-turn model/thinking through a shared registry + capability contract, so outbound send attachment and PM runtime label sync no longer depend on `if (providerId === ...)` bridge branches.
