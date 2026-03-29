@@ -87,7 +87,22 @@
 37. [DONE] Git Commit: `docs(release): prepare store derivation hotfix` (hash: 3d43edcd)
 
 ### Stream: Hotfix clean-tree build
-38. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.839 artifacts. Expected commit: `chore: prepare v1.1.839 artifacts`
-39. [TODO] Git Commit: `chore: prepare v1.1.839 artifacts` (hash: TBD)
-40. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX verified. Expected commit: `chore: release store derivation hotfix`
-41. [TODO] Git Commit: `chore: release store derivation hotfix` (hash: TBD)
+38. [DONE] `./scripts/build-all.sh` → v1.1.839 artifacts. Hash: ccf64eeb
+39. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.839.vsix` verified.
+
+## Phase 108 — Runtime Session Preferred-ID Race Fix (owner: Oleksandr, updated: 2026-03-29)
+
+Root cause: `ProjectManagerRuntimeSessionView` effect (line 241) сбрасывает `activeSessionId` в `null` если сессия ещё не в `visibleSessions`, уничтожая `preferredSessionId` установленный effect-ом на строке 235. Гонка универсальна для всех провайдеров — Core ещё не доставил `session:created` event через stream к моменту когда `preferredSessionId` устанавливается.
+
+### Stream: P0-D preserve preferredSessionId in visibility sync
+42. [DONE] В `project-manager-runtime-session-view.tsx`: не сбрасывать `activeSessionId` если он совпадает с `preferredSessionId` и сессия ещё не в `visibleSessions`; дать preferred session приоритет в `scopedActiveSessionId`. Scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`. Expected commit: `fix: preserve preferred session id during visibility sync`
+43. [IN_PROGRESS] Git Commit: `fix: preserve preferred session id during visibility sync` (hash: TBD)
+
+## Phase 109 — Hotfix Release Build v1.1.840 (owner: Oleksandr, updated: 2026-03-29)
+
+### Stream: Hotfix release docs and build
+44. [TODO] Обновить `README.md` и `CHANGELOG.md` под v1.1.840. Expected commit: `docs(release): prepare session preferred-id hotfix`
+45. [TODO] Git Commit: `docs(release): prepare session preferred-id hotfix` (hash: TBD)
+46. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.840. Expected commit: `chore: prepare v1.1.840 artifacts`
+47. [TODO] Git Commit: `chore: prepare v1.1.840 artifacts` (hash: TBD)
+48. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX. Expected commit: n/a (verify only).

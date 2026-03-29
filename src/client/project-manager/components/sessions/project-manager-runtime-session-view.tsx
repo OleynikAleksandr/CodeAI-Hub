@@ -243,12 +243,17 @@ export const ProjectManagerRuntimeSessionView = ({
       setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
       return;
     }
+    // Keep preferred session even if not yet in visibleSessions —
+    // Core stream delivers session:created after preferredSessionId is set.
+    if (preferredSessionId && activeSessionId === preferredSessionId) {
+      return;
+    }
     const isVisible = visibleSessions.some((session) => session.id === activeSessionId);
     if (!(forcedHiddenSessionIds.has(activeSessionId) || !isVisible)) {
       return;
     }
     setActiveSessionId(resolveMostRecentVisibleSessionId(visibleSessions));
-  }, [activeSessionId, forcedHiddenSessionIds, visibleSessions]);
+  }, [activeSessionId, forcedHiddenSessionIds, preferredSessionId, visibleSessions]);
   useEffect(() => {
     if (!activeSessionId) {
       return;
@@ -265,7 +270,8 @@ export const ProjectManagerRuntimeSessionView = ({
     },
     createSession: api.createSession,
   });
-  const scopedActiveSessionId = visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;
+  const isPreferredPending = Boolean(preferredSessionId && activeSessionId === preferredSessionId && !visibleSessions.some((s) => s.id === activeSessionId));
+  const scopedActiveSessionId = isPreferredPending || visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;
   const handleSendMessage = useSessionMessageSender(
     sessionsRef,
     workspacePath,
