@@ -111,26 +111,24 @@ export class SessionRequestHandlerMessageDispatch {
     readonly sessionId: string;
     readonly turnOptions?: Record<string, unknown>;
   }): Promise<void> {
+    const { content, hiddenUserMessage, session, sessionId, turnOptions } =
+      options;
     if (
       !(
-        options.hiddenUserMessage ||
-        (await this.appendVisibleUserMessage(
-          options.session,
-          options.sessionId,
-          options.content
-        ))
+        hiddenUserMessage ||
+        (await this.appendVisibleUserMessage(session, sessionId, content))
       )
     ) {
       return;
     }
 
-    const resolved = this.resolveBoundProviderChannel(options.sessionId);
+    const resolved = this.resolveBoundProviderChannel(sessionId);
     if (!resolved) {
-      this.deps.trackPendingUserIntent(options.sessionId, options.content);
+      this.deps.trackPendingUserIntent(sessionId, content);
       this.deps.broadcaster({
         type: "session:error",
         payload: {
-          sessionId: options.sessionId,
+          sessionId,
           message:
             "Provider binding is unavailable. Your message has been saved and will be retried when the provider recovers.",
           code: "missing_provider_binding",
@@ -140,35 +138,29 @@ export class SessionRequestHandlerMessageDispatch {
       return;
     }
 
-    this.deps.emitTurnStateEvent({
-      sessionId: options.sessionId,
-      state: "running",
-    });
+    this.deps.emitTurnStateEvent({ sessionId, state: "running" });
     try {
       await this.deps.continuity.ensureTrackedOnOutboundMessage({
-        sessionId: options.sessionId,
+        sessionId,
         providerSessionId: resolved.binding.providerSessionId,
       });
       const providerTurnOptions = this.attachProviderTurnOptions(
-        options.sessionId,
+        sessionId,
         resolved.binding.providerId,
-        stripInternalWorkflowTurnOptions(options.turnOptions)
+        stripInternalWorkflowTurnOptions(turnOptions)
       );
       await this.providerSend.dispatch({
         adapter: resolved.adapter,
-        content: options.content,
+        content,
         providerId: resolved.binding.providerId,
         providerSessionId: resolved.binding.providerSessionId,
         providerTurnOptions,
-        sessionId: options.sessionId,
+        sessionId,
       });
     } catch (error) {
-      this.deps.emitTurnStateEvent({
-        sessionId: options.sessionId,
-        state: "idle",
-      });
+      this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
       this.deps.logger.warn("Provider sendMessage failed", {
-        sessionId: options.sessionId,
+        sessionId,
         providerId: resolved.binding.providerId,
         providerSessionId: resolved.binding.providerSessionId,
         error: error instanceof Error ? error.message : String(error),
@@ -176,7 +168,7 @@ export class SessionRequestHandlerMessageDispatch {
       this.deps.handleProviderFailure(
         resolved.binding.providerId,
         error,
-        options.sessionId
+        sessionId
       );
     }
   }
@@ -265,12 +257,17 @@ export class SessionRequestHandlerMessageDispatch {
       return providerTurnOptions;
     }
     const { turnConfig } = modelUpdateEligibility;
+    const modelId = turnConfig.effectiveModelId ?? turnConfig.modelId;
+    const baseModelId =
+      turnConfig.baseModelId ??
+      (turnConfig.effectiveModelId ? turnConfig.modelId : undefined);
     this.deps.broadcaster({
       type: "session:model:update",
       payload: {
         sessionId,
         providerId: turnConfig.providerId,
-        modelId: turnConfig.modelId,
+        baseModelId,
+        modelId,
       },
     });
     return providerTurnOptions;

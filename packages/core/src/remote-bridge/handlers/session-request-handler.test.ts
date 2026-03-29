@@ -546,9 +546,10 @@ test("SessionRequestHandler emits model update from applied turn config on outbo
   assert.deepEqual(modelUpdate, {
     type: "session:model:update",
     payload: {
+      baseModelId: "gpt-5.3-codex",
       sessionId: session.id,
       providerId: "codexCli",
-      modelId: "gpt-5.3-codex",
+      modelId: "gpt-5.3-codex reasoning:medium",
     },
   });
 });
@@ -605,6 +606,8 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
     await harness.handler.handleMessage(session.id, "start on sonnet");
 
     assert.deepEqual(readAppliedProviderTurnConfig(sentTurnOptions[0]), {
+      baseModelId: "sonnet",
+      effectiveModelId: "sonnet thinking:off",
       providerId: "claudeCodeCli",
       modelId: "sonnet",
       source: "settings_snapshot",
@@ -618,9 +621,10 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
     assert.deepEqual(modelUpdate, {
       type: "session:model:update",
       payload: {
+        baseModelId: "sonnet",
         sessionId: session.id,
         providerId: "claudeCodeCli",
-        modelId: "sonnet",
+        modelId: "sonnet thinking:off",
       },
     });
   } finally {

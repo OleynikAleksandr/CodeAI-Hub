@@ -61,11 +61,11 @@
 
 ### Stream: Message dispatch send-path extraction
 11. [DONE] Вынести общий outbound provider send path из oversized dispatch handler в отдельный микро-класс, чтобы следующий identity-fix stream не нарушал лимит в 300 строк и оставался в рамках микро-архитектуры. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-provider-send.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract message dispatch sender`
-12. [DONE] Git Commit: `refactor(core): extract message dispatch sender` (hash: `TBD`)
+12. [DONE] Git Commit: `refactor(core): extract message dispatch sender` (hash: `f837b9ce`)
 
 ### Stream: Core outbound update for effective identity
-13. [TODO] Исправить outbound Core model update path для Codex и shared runtime events так, чтобы следующий turn публиковал именно effective identity, а не только base model id. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(core): publish effective model updates`
-14. [TODO] Git Commit: `fix(core): publish effective model updates` (hash: `TBD`)
+13. [DONE] Исправить outbound Core model update path для Codex и shared runtime events так, чтобы следующий turn публиковал именно effective identity, а не только base model id. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(core): publish effective model updates`
+14. [DONE] Git Commit: `fix(core): publish effective model updates` (hash: `TBD`)
 
 ## Phase 89 — UI/PM Sync And Regression Coverage (owner: Oleksandr, updated: 2026-03-29)
 
