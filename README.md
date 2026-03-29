@@ -7,13 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.834
-- **Session Stop is no longer a Core shutdown**: the Session UI button now routes through the session-scoped `session:stop` bridge command and stops only the active turn / stuck logical session state instead of calling the global shutdown endpoint.
-- **Logical sessions survive Stop**: Core now invalidates only the live provider binding, keeps dialog history and the logical session alive, and rebinds a fresh provider session on the next send when the previous binding was intentionally stopped.
-- **Gemini stalled-turn recovery is now recoverable**: stalled Gemini streams fail through a watchdog, surface as provider `turn_failed` on the recoverable path, and return Core/UI to `idle` instead of leaving the dialog in perpetual `working`.
-- **Stop/stall regressions are covered end-to-end**: Core tests guard stop mid-turn, stuck-lock unlock, and rebind-on-next-send, while Gemini tests guard stalled stream timeout, recoverable retry, and no phantom partial assistant flush before `finished`.
+## Current Release — v1.1.835
+- **`modelId` now means effective model identity**: Core transport/runtime contracts now treat reasoning/thinking as part of the model identity instead of a side field, and `~/.codeai-hub/settings/settings.json` is the single source of truth for next-turn model selection.
+- **Codex next-turn reasoning changes are runtime-applied**: changing reasoning effort on the same base Codex model now follows the same applied-turn path as a model switch, so the runtime thread config and Core bridge stay in sync.
+- **PM and webview consume runtime effective identity directly**: `session:model:update` now carries the effective identity that the next turn will actually use, and both Project Manager and the standard webview stop reconstructing live model labels from stale split fields.
+- **Ready-session labels keep reasoning/thinking parity**: once a session is bound, settings refreshes preserve the active runtime `modelId` and only rebuild labels from that effective identity, preventing stale or missing reasoning/thinking suffixes for the same base model.
 
-Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
+Previous releases (summary): `1.1.800–1.1.834` — session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

@@ -75,10 +75,14 @@
 
 ### Stream: Ready-session settings sync and display parity
 17. [DONE] Убрать рассогласование ready-session labels и settings-driven display logic: reasoning/thinking для той же base model не должны теряться или оставаться stale в session status. Scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`. Expected commit: `fix(ui): sync effective identity labels`
-18. [DONE] Git Commit: `fix(ui): sync effective identity labels` (hash: `TBD`)
+18. [DONE] Git Commit: `fix(ui): sync effective identity labels` (hash: `6fcc97bc`)
 
 ## Phase 90 — Release Build After Effective Identity Closure (owner: Oleksandr, updated: 2026-03-29)
 
-### Stream: Final release build after phases 86–89
-19. [TODO] После закрытия `Phase 86`–`Phase 89` выполнить финальную сборку релиза строго по Release Build Checklist: сначала актуализировать release-facing docs и session report под новый effective model identity contract, затем добиться чистого дерева, прогнать `./scripts/build-all.sh`, после этого `./scripts/build-release.sh --use-current-version`, проверить артефакты и зафиксировать их в отчёте новой сессии. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release effective model identity contract`
-20. [TODO] Git Commit: `chore: release effective model identity contract` (hash: `TBD`)
+### Stream: Pre-build release docs for v1.1.835
+19. [DONE] Актуализировать release-facing docs под целевую `v1.1.835` до запуска release-скриптов: обновить `README.md`, `CHANGELOG.md` и release-plan статус так, чтобы `build-all.sh` стартовал уже с согласованным release narrative и чистым деревом. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): prepare v1.1.835`
+20. [DONE] Git Commit: `docs(release): prepare v1.1.835` (hash: `TBD`)
+
+### Stream: Clean-tree build and packaging for v1.1.835
+21. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать результаты в `doc/Sessions/Session190.md`, проверить артефакты в `doc/tmp/releases/` и завершить release baseline effective model identity. Scope: `doc/Sessions/Session190.md`, version/manifests from build scripts, release artefact report. Expected commit: `chore: release effective model identity contract`
+22. [TODO] Git Commit: `chore: release effective model identity contract` (hash: `TBD`)

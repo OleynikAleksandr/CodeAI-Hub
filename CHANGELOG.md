@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.835] - 2026-03-29
+### Changed
+- **Effective model identity contract**: `modelId` across Core transport/runtime/UI now represents the full effective identity, with Codex reasoning and Claude/Gemini thinking semantics treated as part of the runtime identity instead of auxiliary UI-only fields.
+- **Provider-neutral next-turn resolver**: Core now resolves `baseModelId`, effective `modelId`, and provider-specific reasoning/thinking payload from the shared persisted settings snapshot before outbound send, then threads that contract through provider capabilities and applied turn config.
+
+### Fixed
+- **Codex reasoning-only switches**: changing Codex reasoning on the same base model now mutates the live thread runtime on the next turn instead of staying split between settings, runtime model, and UI labels.
+- **Outbound runtime model updates**: `session:model:update` now publishes the effective identity that Core will actually use on the next turn, rather than only the base model id.
+- **PM/webview label parity**: Project Manager and the standard webview now consume runtime effective model updates directly and preserve ready-session reasoning/thinking labels instead of rebuilding stale labels from settings-only defaults.
+
 ## [1.1.834] - 2026-03-29
 ### Changed
 - **Session-scoped Stop contract**: Session UI, websocket bridge, and Core now use `session:stop` as the canonical stop path, so `Stop` targets only the active logical session/turn instead of triggering global Core shutdown.
