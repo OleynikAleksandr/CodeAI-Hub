@@ -39,6 +39,7 @@ const SESSION_TITLE_PREFIX_LENGTH = 4;
 
 export class SessionManager {
   private readonly sessions: Map<string, Session> = new Map();
+  private readonly stopInvalidatedBindingSessionIds = new Set<string>();
 
   private computeContinuationIndex(
     continuationParentId: string | null | undefined
@@ -142,6 +143,7 @@ export class SessionManager {
     if (!session) {
       return;
     }
+    this.stopInvalidatedBindingSessionIds.delete(sessionId);
     session.providerSessionId = providerSessionId;
     session.providerSessionStatus = "ready";
     session.updatedAt = new Date().toISOString();
@@ -155,6 +157,7 @@ export class SessionManager {
     if (session.providerSessionId === providerSessionId) {
       return;
     }
+    this.stopInvalidatedBindingSessionIds.delete(sessionId);
     session.providerSessionId = providerSessionId;
     session.updatedAt = new Date().toISOString();
   }
@@ -164,11 +167,28 @@ export class SessionManager {
     if (!session) {
       return;
     }
+    this.stopInvalidatedBindingSessionIds.delete(sessionId);
     session.providerSessionStatus = "failed";
     session.updatedAt = new Date().toISOString();
   }
 
+  invalidateProviderBinding(sessionId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      return;
+    }
+    this.stopInvalidatedBindingSessionIds.add(sessionId);
+    session.providerSessionId = undefined;
+    session.providerSessionStatus = "pending";
+    session.updatedAt = new Date().toISOString();
+  }
+
+  hasStopInvalidatedBinding(sessionId: string): boolean {
+    return this.stopInvalidatedBindingSessionIds.has(sessionId);
+  }
+
   deleteSession(sessionId: string): boolean {
+    this.stopInvalidatedBindingSessionIds.delete(sessionId);
     return this.sessions.delete(sessionId);
   }
 }

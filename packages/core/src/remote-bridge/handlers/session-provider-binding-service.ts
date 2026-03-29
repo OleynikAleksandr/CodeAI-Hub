@@ -77,6 +77,16 @@ export class SessionProviderBindingService {
     this.broadcastSessionBinding(sessionId);
   }
 
+  invalidateProviderBinding(sessionId: string): void {
+    const binding = this.deps.providerSessions.get(sessionId);
+    if (binding) {
+      binding.unsubscribe();
+      this.deps.providerSessions.delete(sessionId);
+    }
+    this.deps.sessionManager.invalidateProviderBinding(sessionId);
+    this.broadcastSessionBinding(sessionId);
+  }
+
   broadcastSessionBinding(sessionId: string): void {
     const session = this.deps.sessionManager.getSession(sessionId);
     if (!session) {

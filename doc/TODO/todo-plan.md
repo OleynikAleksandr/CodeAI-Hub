@@ -40,7 +40,7 @@
 
 ### Stream: Session-scoped stop bridge command
 3. [DONE] Добавить в remote-bridge отдельную команду `session:stop`, чтобы transport слой различал stop текущей session и global runtime shutdown. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): add session stop bridge command`
-4. [DONE] Git Commit: `feat(core): add session stop bridge command` (hash: `TBD`)
+4. [DONE] Git Commit: `feat(core): add session stop bridge command` (hash: `c41228d7`)
 
 ### Stream: UI stop path without core shutdown
 5. [TODO] Перевести Session UI на session-scoped stop path: убрать stop-core смысл из action-кнопки, заменить copy и больше не использовать `core-shutdown` helper из input action flow. Scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-play-stop-button.tsx`. Expected commit: `fix(ui): route stop to session turn cancel`
@@ -49,8 +49,8 @@
 ## Phase 83 — Core Session Stop And Rebind Semantics (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Binding invalidation without session deletion
-7. [TODO] Ввести Core-side primitive для invalidation текущего provider binding без удаления logical session, чтобы stop-path мог честно перевести session в recoverable state. Scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/handlers/session-provider-binding-service.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): support stop-invalidated session bindings`
-8. [TODO] Git Commit: `feat(core): support stop-invalidated session bindings` (hash: `TBD`)
+7. [DONE] Ввести Core-side primitive для invalidation текущего provider binding без удаления logical session, чтобы stop-path мог честно перевести session в recoverable state. Scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/handlers/session-provider-binding-service.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): support stop-invalidated session bindings`
+8. [DONE] Git Commit: `feat(core): support stop-invalidated session bindings` (hash: `TBD`)
 
 ### Stream: Session stop action handler
 9. [TODO] Реализовать `handleStop(sessionId)` в session request path: закрывать текущую provider session, не трогать Core runtime, переводить logical session в unlock/retryable state и не удалять dialog history. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`. Expected commit: `feat(core): stop active turn without core shutdown`
