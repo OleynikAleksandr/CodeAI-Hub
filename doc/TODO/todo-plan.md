@@ -18,11 +18,11 @@
 1. [DONE] Добавить sessionId-bound optimistic guard для post-submit `Description` и запретить premature downgrade `hasDescriptionSession` до завершения binding lifecycle. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: stabilize description session guard`
 2. [DONE] Git Commit: `fix: stabilize description session guard` (hash: 82db344c)
 3. [DONE] Подтвердить точную причину polling overwrite после `session:created` и зафиксировать findings в planning-source без блокировки user-facing fix. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `doc/SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`. Expected commit: `docs(debug): capture description overwrite cause`
-4. [IN_PROGRESS] Git Commit: `docs(debug): capture description overwrite cause` (hash: TBD)
+4. [DONE] Git Commit: `docs(debug): capture description overwrite cause` (hash: 3bdcb0b6)
 
 ### Stream: P0-A re-mount pending-state protection
-5. [TODO] Защитить `DescriptionQuestionnairePanel` от сброса pending-state при re-mount во время submit и сохранить корректный panel-state во время post-submit transition. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`. Expected commit: `fix: prevent description questionnaire remount reset`
-6. [TODO] Git Commit: `fix: prevent description questionnaire remount reset` (hash: TBD)
+5. [DONE] Защитить `DescriptionQuestionnairePanel` от сброса pending-state при re-mount во время submit и сохранить корректный panel-state во время post-submit transition. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Expected commit: `fix: prevent description questionnaire remount reset`
+6. [IN_PROGRESS] Git Commit: `fix: prevent description questionnaire remount reset` (hash: TBD)
 
 ## Phase 102 — Description Artifact Availability And Tree Sync (owner: Oleksandr, updated: 2026-03-29)
 

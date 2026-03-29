@@ -85,9 +85,11 @@ export const DescriptionQuestionnairePanel: React.FC<
 
     setAnswers({});
     setSubmitError(null);
-    onDescriptionSessionCreatePendingChange?.(null);
     setProviderPickerOpen(false);
-    submitInFlightRef.current = false;
+    // Preserve pending state during re-mount if submit is still in-flight
+    if (!submitInFlightRef.current) {
+      onDescriptionSessionCreatePendingChange?.(null);
+    }
     setPanelState({ status: "loading" });
     service
       .load({
