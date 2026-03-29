@@ -20,9 +20,9 @@
 ## Phase 99 — Provider Feedback Rollback Execution (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Revert provider logging seams by provider
-3. [IN_PROGRESS] Откатить Gemini thought-feedback seam и связанные тесты через `git revert`, не переписывая исторические release/session документы. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider thought feedback`
-4. [TODO] Git Commit: `revert: remove gemini provider thought feedback` (hash: `TBD`)
-5. [TODO] Откатить Gemini model-feedback seam и связанные тесты через `git revert`, сохранив rollback-plan актуальным. Scope: `packages/Gemini_Module/src/logging/session-logger.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider model feedback`
+3. [DONE] Откатить Gemini thought-feedback seam и связанные тесты через `git revert`, не переписывая исторические release/session документы. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider thought feedback`
+4. [DONE] Git Commit: `revert: remove gemini provider thought feedback` (hash: `b652d3c6`)
+5. [IN_PROGRESS] Откатить Gemini model-feedback seam и связанные тесты через `git revert`, сохранив rollback-plan актуальным. Scope: `packages/Gemini_Module/src/logging/session-logger.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider model feedback`
 6. [TODO] Git Commit: `revert: remove gemini provider model feedback` (hash: `TBD`)
 7. [TODO] Откатить Claude provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/provider-feedback.ts`, `packages/Claude_Module/src/messaging/provider-feedback.test.ts`. Expected commit: `revert: remove claude provider feedback`
 8. [TODO] Git Commit: `revert: remove claude provider feedback` (hash: `TBD`)
