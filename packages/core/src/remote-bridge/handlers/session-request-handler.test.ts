@@ -386,7 +386,7 @@ export const EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS = [
   false,
   false,
   false,
-  true,
+  false,
 ] as const;
 
 test("SessionRequestHandler emits model update from applied turn config on outbound send", async () => {

@@ -89,11 +89,11 @@
 
 ### Stream: Continuity root carry-over
 25. [DONE] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
-26. [DONE] Git Commit: `refactor(core): extract session request continuity root` (hash: `TBD`)
+26. [DONE] Git Commit: `refactor(core): extract session request continuity root` (hash: `a6853cbb`)
 
 ### Stream: Turn arbitration carry-over
-27. [TODO] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в отдельный helper, сохранив `turn_completed` / `token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`
-28. [TODO] Git Commit: `refactor(core): extract session request turn arbitration` (hash: TBD)
+27. [DONE] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в dedicated helper cluster, сохранив `turn_completed` / `token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-{arbitration,completion,threshold-resolver}.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`
+28. [DONE] Git Commit: `refactor(core): extract session request turn arbitration` (hash: `TBD`)
 
 ### Stream: Thin façade closure
 29. [TODO] Свести `session-request-handler.ts` к thin orchestration surface, синхронно обновить SSOT и снять root file с explicit oversized allowlist, если после предыдущих cuts он реально опустится до `300` строк или ниже. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thin session request handler facade`

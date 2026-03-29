@@ -1,14 +1,8 @@
 import crypto from "node:crypto";
-import { readFile, stat } from "node:fs/promises";
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
-import type { TokenUsageSnapshot } from "../../session-continuity/continuity-types";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
-import {
-  extractTokenUsage,
-  isBelowRemainingPercentThreshold,
-} from "../../session-continuity/token-usage";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
@@ -54,17 +48,15 @@ import {
 import { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
 import { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
+import { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
+import { SessionRequestHandlerTurnCompletion } from "./session-request-handler-turn-completion";
+import { SessionRequestHandlerTurnThresholdResolver } from "./session-request-handler-turn-threshold-resolver";
 import { shouldHideUserMessage } from "./workflow-turn-control";
 
 export interface ProviderSessionBinding {
   readonly providerId: string;
   providerSessionId: string;
   readonly unsubscribe: () => void;
-}
-
-export interface ProviderEventEnvelope {
-  readonly payload?: unknown;
-  readonly type?: string;
 }
 
 export type DescriptionDialogResolution = DescriptionDialogResolutionModel;
@@ -97,73 +89,6 @@ export interface ShellSessionCreationResult {
   readonly continuityRootSessionId: string;
   readonly session: Session;
 }
-
-const DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
-const MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-const MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
-const clampNumber = (value: number, min: number, max: number): number =>
-  Math.min(max, Math.max(min, value));
-
-const normalizeContinuityThresholdPercent = (options: {
-  readonly raw: unknown;
-  readonly fallback: number;
-}): number => {
-  const numeric =
-    typeof options.raw === "number" ? options.raw : Number(options.raw);
-  if (!Number.isFinite(numeric)) {
-    return clampNumber(
-      options.fallback,
-      MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-      MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD
-    );
-  }
-  return clampNumber(
-    numeric,
-    MIN_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-    MAX_CONTINUITY_REMAINING_PERCENT_THRESHOLD
-  );
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const extractContinuityThresholdPercentFromSettings = (options: {
-  readonly settings: unknown;
-  readonly providerKey: "claude" | "codex" | "gemini";
-  readonly fallback: number;
-}): number => {
-  if (!isRecord(options.settings)) {
-    return normalizeContinuityThresholdPercent({
-      raw: undefined,
-      fallback: options.fallback,
-    });
-  }
-  const providers = options.settings.providers;
-  if (!isRecord(providers)) {
-    return normalizeContinuityThresholdPercent({
-      raw: undefined,
-      fallback: options.fallback,
-    });
-  }
-  const provider = providers[options.providerKey];
-  if (!isRecord(provider)) {
-    return normalizeContinuityThresholdPercent({
-      raw: undefined,
-      fallback: options.fallback,
-    });
-  }
-  const sessionContinuity = provider.sessionContinuity;
-  if (!isRecord(sessionContinuity)) {
-    return normalizeContinuityThresholdPercent({
-      raw: undefined,
-      fallback: options.fallback,
-    });
-  }
-  return normalizeContinuityThresholdPercent({
-    raw: sessionContinuity.remainingPercentThreshold,
-    fallback: options.fallback,
-  });
-};
 
 export interface SessionRequestHandlerOptions {
   readonly broadcaster: (event: BridgeEvent) => void;
@@ -207,10 +132,7 @@ export class SessionRequestHandler {
   private readonly flowNodeReportState: SessionRequestHandlerFlowNodeReportState;
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
   private readonly continuityRoot: SessionRequestHandlerContinuityRoot;
-  private flowNodeContinuitySettingsCache: {
-    readonly mtimeMs: number;
-    readonly settings: unknown;
-  } | null = null;
+  private readonly turnArbitration: SessionRequestHandlerTurnArbitration;
 
   private resolveImmediatePostTurnContextDecision(
     session: Session
@@ -592,6 +514,30 @@ export class SessionRequestHandler {
         this.emitContinuityLockEvent(lockEvent),
       finalizeFlowNodeContinuityLock: (lockOptions) =>
         this.finalizeFlowNodeContinuityLock(lockOptions),
+    });
+    const turnCompletion = new SessionRequestHandlerTurnCompletion({
+      continuityLockService: this.continuityLockService,
+      emitTurnStateEvent: (turnStateOptions) =>
+        this.emitTurnStateEvent(turnStateOptions),
+      finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
+        this.finalizeFlowNodeContinuityLockOnBootstrapGate(lockOptions),
+      isFlowNodeRolloverPending: (sessionId) =>
+        this.isFlowNodeRolloverPending(sessionId),
+      logger: this.logger,
+      resolveImmediatePostTurnContextDecision: (session) =>
+        this.resolveImmediatePostTurnContextDecision(session),
+      resumeLifecycle: this.resumeLifecycle,
+      sessionManager: this.sessionManager,
+    });
+    const turnThresholdResolver =
+      new SessionRequestHandlerTurnThresholdResolver(this.config);
+    this.turnArbitration = new SessionRequestHandlerTurnArbitration({
+      continuityRolloverOrchestrator: this.continuityRolloverOrchestrator,
+      flowNodeContinuity: this.flowNodeContinuity,
+      resumeLifecycle: this.resumeLifecycle,
+      sessionManager: this.sessionManager,
+      turnCompletion,
+      turnThresholdResolver,
     });
   }
 
@@ -976,278 +922,27 @@ export class SessionRequestHandler {
   }
 
   private runTurnCompletedArbitration(sessionId: string): void {
-    try {
-      this.handleTurnCompletedEvent(sessionId);
-    } catch (error) {
-      this.logger.warn("Turn completion arbitration failed", {
-        sessionId,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
-      if (!this.isFlowNodeRolloverPending(sessionId)) {
-        this.emitTurnStateEvent({ sessionId, state: "idle" });
-      }
-      this.finalizeFlowNodeContinuityLockOnBootstrapGate({
-        sessionId,
-        reason: "resume_failed",
-      });
-    }
+    this.turnArbitration.runTurnCompletedArbitration(sessionId);
   }
 
   private async handleFlowNodeContinuityProviderEvent(
     sessionId: string,
     event: unknown
   ): Promise<void> {
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      return;
-    }
-
-    const typedEvent = isRecord(event)
-      ? (event as ProviderEventEnvelope)
-      : null;
-    const shouldDeferPostTurnCompletion = typedEvent?.type === "turn_completed";
-    const usage = extractTokenUsage(event);
-    this.continuityRolloverOrchestrator.recordTokenUsageSnapshot(
+    await this.turnArbitration.handleFlowNodeContinuityProviderEvent({
       sessionId,
-      usage
-    );
-
-    const shouldEvaluatePostTurnDecision =
-      shouldDeferPostTurnCompletion ||
-      (this.resumeLifecycle.hasPendingPostTurnContextDecision(sessionId) &&
-        usage !== undefined);
-    if (!shouldEvaluatePostTurnDecision) {
-      return;
-    }
-
-    await this.resolveFlowNodePostTurnContextDecision({
-      session,
-      sessionId,
-      usage,
-      deferPostTurnCompletion: shouldDeferPostTurnCompletion,
+      event,
+      resolveLiveContinuityRemainingPercentThreshold: async (session) =>
+        await this.resolveLiveContinuityRemainingPercentThreshold(session),
     });
-  }
-
-  private isStaleFlowNodeContinuitySegment(session: Session): boolean {
-    if (!session.stage) {
-      return false;
-    }
-
-    const stage = session.stage;
-    const runSlug = session.runSlug ?? null;
-    const initiativeSlug = session.initiativeSlug ?? null;
-    const workspacePath = session.workspacePath;
-
-    for (const candidate of this.sessionManager.listSessions()) {
-      if (
-        candidate.continuationParentId === session.id &&
-        candidate.workspacePath === workspacePath &&
-        (candidate.initiativeSlug ?? null) === initiativeSlug &&
-        candidate.stage === stage &&
-        (candidate.runSlug ?? null) === runSlug
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private async resolveFlowNodePostTurnContextDecision(options: {
-    readonly session: Session;
-    readonly sessionId: string;
-    readonly usage: TokenUsageSnapshot | null;
-    readonly deferPostTurnCompletion: boolean;
-  }): Promise<void> {
-    const recordNoRolloverDecision = () => {
-      if (options.deferPostTurnCompletion) {
-        this.resumeLifecycle.recordPostTurnContextDecision(
-          options.sessionId,
-          "no_rollover"
-        );
-        return;
-      }
-      this.resumeLifecycle.registerPostTurnNoRolloverDecision(
-        options.sessionId
-      );
-    };
-
-    const recordRolloverRequiredDecision = () => {
-      if (options.deferPostTurnCompletion) {
-        this.resumeLifecycle.recordPostTurnContextDecision(
-          options.sessionId,
-          "rollover_required"
-        );
-        return;
-      }
-      this.resumeLifecycle.registerPostTurnRolloverRequiredDecision(
-        options.sessionId
-      );
-    };
-
-    if (this.continuityRolloverOrchestrator.hasPending(options.sessionId)) {
-      recordRolloverRequiredDecision();
-      return;
-    }
-    if (this.isStaleFlowNodeContinuitySegment(options.session)) {
-      recordNoRolloverDecision();
-      return;
-    }
-    if (!(options.session.initiativeSlug && options.session.stage)) {
-      recordNoRolloverDecision();
-      return;
-    }
-    if (
-      !this.flowNodeContinuity.isEligibleForRollover({
-        stageId: options.session.stage,
-        runSlug: options.session.runSlug,
-      })
-    ) {
-      recordNoRolloverDecision();
-      return;
-    }
-
-    const usage =
-      options.usage ??
-      this.continuityRolloverOrchestrator.getTokenUsageSnapshot(
-        options.sessionId
-      );
-    if (!usage) {
-      return;
-    }
-
-    const remainingPercentThreshold =
-      await this.resolveLiveContinuityRemainingPercentThreshold(
-        options.session
-      );
-    if (!isBelowRemainingPercentThreshold(usage, remainingPercentThreshold)) {
-      recordNoRolloverDecision();
-      return;
-    }
-
-    await this.continuityRolloverOrchestrator.startFlowNodeRolloverFromUsage({
-      session: options.session,
-      sessionId: options.sessionId,
-      stageId: options.session.stage,
-      runSlug: options.session.runSlug ?? null,
-      usage,
-      remainingPercentThreshold,
-    });
-  }
-
-  private emitResumeInPlaceNoRolloverUnlock(session: Session): void {
-    this.continuityLockService.emitResumeInPlaceNoRolloverUnlock(session);
-  }
-
-  private handleTurnCompletedEvent(sessionId: string): void {
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
-      return;
-    }
-    const resumeMode =
-      this.resumeLifecycle.getSessionResumeLifecycleState(session).mode;
-    if (resumeMode === "no_resume") {
-      this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
-      this.resumeLifecycle.handleNoResumeTurnCompleted(session);
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
-      return;
-    }
-
-    // Continuity resume bootstrap turns should unlock promptly once the provider
-    // reports completion; we cannot wait for context-decision arbitration here
-    // because the bootstrap session is still flagged as "rollover pending".
-    const lockContext = this.continuityLockService.getContext(sessionId);
-    if (
-      lockContext &&
-      lockContext.targetSessionId === sessionId &&
-      lockContext.awaitingBootstrapTurn
-    ) {
-      this.finalizeFlowNodeContinuityLock({
-        sessionId,
-        reason: "resume_ready",
-      });
-      this.emitTurnStateEvent({ sessionId, state: "idle" });
-      return;
-    }
-
-    this.resumeLifecycle.updateSessionResumeLifecycleState(session, {
-      finalTurnCompleted: true,
-      terminalLockReason: null,
-    });
-
-    const contextDecision =
-      this.resumeLifecycle.resolveRecordedPostTurnContextDecision(
-        session,
-        (candidate) => this.resolveImmediatePostTurnContextDecision(candidate)
-      );
-    if (!contextDecision) {
-      return;
-    }
-
-    this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
-    if (
-      contextDecision === "rollover_required" ||
-      this.isFlowNodeRolloverPending(sessionId)
-    ) {
-      return;
-    }
-
-    this.finalizeFlowNodeContinuityLockOnBootstrapGate({
-      sessionId,
-      reason: "resume_ready",
-    });
-    this.emitTurnStateEvent({ sessionId, state: "idle" });
-    if (resumeMode === "resume_in_place") {
-      this.emitResumeInPlaceNoRolloverUnlock(session);
-    }
-  }
-
-  private resolveSettingsProviderKey(
-    providerId: string
-  ): "claude" | "codex" | "gemini" {
-    if (providerId.startsWith("codex")) {
-      return "codex";
-    }
-    if (providerId.startsWith("gemini")) {
-      return "gemini";
-    }
-    return "claude";
-  }
-
-  private async loadContinuitySettingsSnapshot(): Promise<unknown> {
-    const settingsPath = this.config.claudeSettingsPath;
-    try {
-      const fileStat = await stat(settingsPath);
-      const mtimeMs = fileStat.mtimeMs;
-      if (
-        this.flowNodeContinuitySettingsCache &&
-        this.flowNodeContinuitySettingsCache.mtimeMs === mtimeMs
-      ) {
-        return this.flowNodeContinuitySettingsCache.settings;
-      }
-
-      const raw = await readFile(settingsPath, "utf8");
-      const parsed = JSON.parse(raw) as unknown;
-      this.flowNodeContinuitySettingsCache = { mtimeMs, settings: parsed };
-      return parsed;
-    } catch {
-      return null;
-    }
   }
 
   private async resolveLiveContinuityRemainingPercentThreshold(
     session: Session
   ): Promise<number> {
-    const providerKey = this.resolveSettingsProviderKey(session.providerId);
-    const settings = await this.loadContinuitySettingsSnapshot();
-    return extractContinuityThresholdPercentFromSettings({
-      settings,
-      providerKey,
-      fallback:
-        this.config.claudeContinuityRemainingPercentThreshold ??
-        DEFAULT_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-    });
+    return await this.turnArbitration.resolveLiveContinuityRemainingPercentThreshold(
+      session
+    );
   }
 
   private handleProviderFailure(
