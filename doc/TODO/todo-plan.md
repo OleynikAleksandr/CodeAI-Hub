@@ -41,13 +41,13 @@
 ### Stream: P1-A descriptionDone audit and gating fix
 13. [DONE] Провести compat-аудит потребителей `draftPath` / `descriptionDone` и зафиксировать выбранную политику. Compat audit: единственный consumer `descriptionDone` — функция `resolveWorkflowBlockedStages` в `workflow-state-service.ts`. Изменение `finalPath ?? draftPath` на `finalPath` only безопасно.
 14. [DONE] Выровнять backend gating до canonical `finalPath` semantics. Scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`. Pre-existing test failure in test 3 не связана с gating change (подтверждено на `main`).
-15. [IN_PROGRESS] Git Commit: `fix: require final description for workflow gating` (hash: TBD)
+15. [DONE] Git Commit: `fix: require final description for workflow gating` (hash: 850de29d)
 
 ## Phase 104 — Shared Workflow State Store (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: P1-B store foundation
-17. [TODO] Добавить общий `WorkflowStateStore` по паттерну `workspace-snapshot-store.ts` как единый polling/source-of-truth для активного workspace. Scope: `src/client/project-manager/services/workflow-state-store.ts`. Expected commit: `feat: add workflow state store`
-18. [TODO] Git Commit: `feat: add workflow state store` (hash: TBD)
+17. [DONE] Добавить общий `WorkflowStateStore` по паттерну `workspace-snapshot-store.ts` как единый polling/source-of-truth для активного workspace. Scope: `src/client/project-manager/services/workflow-state-store.ts`. Expected commit: `feat: add workflow state store`
+18. [IN_PROGRESS] Git Commit: `feat: add workflow state store` (hash: TBD)
 19. [TODO] Перевести `MainArea` на чтение workflow snapshot из общего store, сохранив рабочий optimistic guard на период миграции. Scope: `src/client/project-manager/services/workflow-state-store.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/main-area.tsx`. Expected commit: `refactor: route main area through workflow state store`
 20. [TODO] Git Commit: `refactor: route main area through workflow state store` (hash: TBD)
 21. [TODO] Перевести `WorkspaceTree` на общий store и убрать дублирующий polling-cycle дерева. Scope: `src/client/project-manager/services/workflow-state-store.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Expected commit: `refactor: route workspace tree through workflow state store`
