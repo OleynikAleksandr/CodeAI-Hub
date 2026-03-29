@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.836] - 2026-03-29
+### Added
+- **Provider-confirmed SDK feedback logs**: Claude, Codex, and Gemini now write normalized `provider_feedback` records into their SDK JSONL diagnostics only when the provider runtime actually echoes model/thinking/reasoning signals back.
+
+### Changed
+- **Codex observability seam**: raw `turn_context` feedback is now promoted into `sdk-codex-*.jsonl`, preserving provider-confirmed `model`, `effort`, and `reasoningEffort` instead of treating outbound applied config as proof.
+- **Claude observability seam**: `sdk-claude-*.jsonl` now records provider-confirmed `message.model` and `thinking` blocks as dedicated `provider_feedback` entries.
+- **Gemini observability seam**: `sdk-gemini-*.jsonl` now persists structured `logEvent(...)`, normalizes provider-confirmed `model_info`, `thought`, and `usageMetadata.thoughtsTokenCount`, and explicitly avoids faking feedback from local `thinkingLevel`.
+
+
 ## [1.1.835] - 2026-03-29
 ### Changed
 - **Effective model identity contract**: `modelId` across Core transport/runtime/UI now represents the full effective identity, with Codex reasoning and Claude/Gemini thinking semantics treated as part of the runtime identity instead of auxiliary UI-only fields.

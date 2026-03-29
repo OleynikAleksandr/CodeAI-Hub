@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.835
-- **`modelId` now means effective model identity**: Core transport/runtime contracts now treat reasoning/thinking as part of the model identity instead of a side field, and `~/.codeai-hub/settings/settings.json` is the single source of truth for next-turn model selection.
-- **Codex next-turn reasoning changes are runtime-applied**: changing reasoning effort on the same base Codex model now follows the same applied-turn path as a model switch, so the runtime thread config and Core bridge stay in sync.
-- **PM and webview consume runtime effective identity directly**: `session:model:update` now carries the effective identity that the next turn will actually use, and both Project Manager and the standard webview stop reconstructing live model labels from stale split fields.
-- **Ready-session labels keep reasoning/thinking parity**: once a session is bound, settings refreshes preserve the active runtime `modelId` and only rebuild labels from that effective identity, preventing stale or missing reasoning/thinking suffixes for the same base model.
+## Current Release — v1.1.836
+- **Provider-confirmed SDK feedback logs**: SDK diagnostics for Claude, Codex, and Gemini now write `provider_feedback` only when the provider runtime actually echoed model/thinking/reasoning signals back.
+- **Codex logs real runtime `turn_context` feedback**: `sdk-codex-*.jsonl` now records provider-confirmed `model`, `effort`, and `reasoningEffort` from raw Codex `turn_context` events.
+- **Claude logs observed model and thinking blocks**: `sdk-claude-*.jsonl` now stores dedicated `provider_feedback` entries for provider-confirmed `message.model` and `thinking` blocks.
+- **Gemini logs observed model and thought usage**: `sdk-gemini-*.jsonl` now persists provider-confirmed `model_info`, `thought`, and `usageMetadata.thoughtsTokenCount`, while refusing to fake feedback from local `thinkingLevel`.
 
 Previous releases (summary): `1.1.800–1.1.834` — session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
