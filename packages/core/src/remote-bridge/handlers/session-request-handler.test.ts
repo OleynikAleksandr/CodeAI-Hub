@@ -295,6 +295,15 @@ export const createDescriptionSession = (
     }
   );
 
+export const stubDescriptionDialogSync = (harness: HandlerHarness): void => {
+  Object.assign((harness.api as any).descriptionDialogSync, {
+    resolveDescriptionDialog: async () => null,
+    maybePromoteLegacyDescriptionDialogHistory: noop,
+    maybeBackfillDescriptionDialogHistory: async () => Promise.resolve(),
+    updateDescriptionSessionRef: async () => Promise.resolve(),
+  });
+};
+
 export const setLifecycle = (
   harness: HandlerHarness,
   sessionId: string,
@@ -388,6 +397,131 @@ export const EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS = [
   false,
   false,
 ] as const;
+
+test("SessionRequestHandler stop invalidates provider binding without deleting logical session", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "geminiCli",
+    "/tmp/core-stop-invalidates-binding",
+    "provider-session-before-stop"
+  );
+  const closeCalls: string[] = [];
+  harness.providerSessions.set(session.id, {
+    providerId: "geminiCli",
+    providerSessionId: "provider-session-before-stop",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    closeSession: (providerSessionId: string) => {
+      closeCalls.push(providerSessionId);
+      return Promise.resolve();
+    },
+  });
+
+  await harness.handler.handleStop(session.id);
+
+  const updatedSession = harness.sessionManager.getSession(session.id);
+  assert.ok(updatedSession);
+  assert.equal(updatedSession?.providerSessionId, undefined);
+  assert.equal(updatedSession?.providerSessionStatus, "pending");
+  assert.equal(
+    harness.sessionManager.hasStopInvalidatedBinding(session.id),
+    true
+  );
+  assert.equal(harness.providerSessions.has(session.id), false);
+  assert.deepEqual(closeCalls, ["provider-session-before-stop"]);
+  assert.deepEqual(collectTurnStateSequence(harness.events), ["idle"]);
+  assert.equal(
+    harness.events.some((event) => {
+      if (event.type !== "session:deleted") {
+        return false;
+      }
+      const payload = event.payload as { readonly sessionId?: string };
+      return payload.sessionId === session.id;
+    }),
+    false
+  );
+});
+
+test("SessionRequestHandler rebinds stop-invalidated sessions on the next send", async () => {
+  const harness = createHarness();
+  const session = createDescriptionSession(
+    harness,
+    "/tmp/core-stop-rebind-send",
+    "provider-session-before-stop",
+    "geminiCli"
+  );
+  const closeCalls: string[] = [];
+  const createCalls: string[] = [];
+  const subscribeCalls: string[] = [];
+  const sendCalls: Array<{
+    readonly content: string;
+    readonly providerSessionId: string;
+  }> = [];
+  stubDescriptionDialogSync(harness);
+  harness.providerSessions.set(session.id, {
+    providerId: "geminiCli",
+    providerSessionId: "provider-session-before-stop",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    closeSession: (providerSessionId: string) => {
+      closeCalls.push(providerSessionId);
+      return Promise.resolve();
+    },
+    createSession: (workspacePath: string) => {
+      createCalls.push(workspacePath);
+      return Promise.resolve("provider-session-after-stop");
+    },
+    subscribe: (providerSessionId: string) => {
+      subscribeCalls.push(providerSessionId);
+      return noop;
+    },
+    sendMessage: (providerSessionId: string, content: string) => {
+      sendCalls.push({ providerSessionId, content });
+      return Promise.resolve();
+    },
+  });
+
+  await harness.handler.handleStop(session.id);
+  await harness.handler.handleMessage(session.id, "resume after stop");
+
+  const updatedSession = harness.sessionManager.getSession(session.id);
+  assert.equal(
+    updatedSession?.providerSessionId,
+    "provider-session-after-stop"
+  );
+  assert.equal(updatedSession?.providerSessionStatus, "ready");
+  assert.equal(
+    harness.sessionManager.hasStopInvalidatedBinding(session.id),
+    false
+  );
+  assert.deepEqual(closeCalls, ["provider-session-before-stop"]);
+  assert.deepEqual(createCalls, ["/tmp/core-stop-rebind-send"]);
+  assert.deepEqual(subscribeCalls, ["provider-session-after-stop"]);
+  assert.deepEqual(sendCalls, [
+    {
+      providerSessionId: "provider-session-after-stop",
+      content: "resume after stop",
+    },
+  ]);
+  assert.deepEqual(harness.continuityUpdates, [
+    {
+      sessionId: session.id,
+      providerSessionId: "provider-session-after-stop",
+    },
+  ]);
+  assert.equal(
+    harness.events.some((event) => {
+      if (event.type !== "session:error") {
+        return false;
+      }
+      const payload = event.payload as { readonly code?: string };
+      return payload.code === "missing_provider_binding";
+    }),
+    false
+  );
+});
 
 test("SessionRequestHandler emits model update from applied turn config on outbound send", async () => {
   const harness = createHarness();

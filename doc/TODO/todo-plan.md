@@ -44,7 +44,7 @@
 
 ### Stream: UI stop path without core shutdown
 5. [DONE] Перевести Session UI на session-scoped stop path: убрать stop-core смысл из action-кнопки, заменить copy и больше не использовать `core-shutdown` helper из input action flow. Scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/{input-panel,input-play-stop-button,session-view}.tsx`. Expected commit: `fix(ui): route stop to session turn cancel`
-6. [DONE] Git Commit: `fix(ui): route stop to session turn cancel` (hash: `TBD`)
+6. [DONE] Git Commit: `fix(ui): route stop to session turn cancel` (hash: `889980e2`)
 
 ## Phase 83 — Core Session Stop And Rebind Semantics (owner: Oleksandr, updated: 2026-03-29)
 
@@ -61,8 +61,8 @@
 12. [DONE] Git Commit: `feat(core): rebind session after stop invalidation` (hash: `ad183b46`)
 
 ### Stream: Core regression coverage
-13. [TODO] Добавить регрессионные Core tests на два сценария: `Stop` mid-turn не удаляет logical session и не гасит runtime, а следующий send rebinding-ит рабочую provider session; `Stop` после stuck-state снимает lock и возвращает send path. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`. Expected commit: `test(core): cover session stop and rebind flow`
-14. [TODO] Git Commit: `test(core): cover session stop and rebind flow` (hash: `TBD`)
+13. [DONE] Добавить регрессионные Core tests на два сценария: `Stop` mid-turn не удаляет logical session и не гасит runtime, а следующий send rebinding-ит рабочую provider session; `Stop` после stuck-state снимает lock и возвращает send path. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`. Expected commit: `test(core): cover session stop and rebind flow`
+14. [DONE] Git Commit: `test(core): cover session stop and rebind flow` (hash: `TBD`)
 
 ## Phase 84 — Gemini Stalled-Turn Recovery (owner: Oleksandr, updated: 2026-03-29)
 
