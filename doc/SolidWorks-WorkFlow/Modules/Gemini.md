@@ -22,6 +22,8 @@
 - Для Gemini `thinking` входит в effective model identity: одинаковый base model с разным `thinkingLevel` считается разным `modelId`, и UI/runtime не должны восстанавливать этот уровень по локальной догадке.
 - Gemini runtime не имеет права владеть next-turn identity отдельно от Core: единственный source of truth для следующего turn остаётся `~/.codeai-hub/settings/settings.json`, а provider получает уже вычисленную effective identity через applied turn config.
 - Если Gemini stream завис после `model_info`, partial text или другого промежуточного progress event и больше не отдаёт terminal event, stalled-turn watchdog обязан завершить turn контролируемой recoverable ошибкой вместо вечного `working`.
+- `sdk-gemini-*.jsonl` обязан сохранять structured `logEvent(...)`; provider-confirmed observability для модели/размышлений пишется как `provider_feedback` только по реально пришедшим `model_info`, `thought` и `usageMetadata.thoughtsTokenCount`.
+- Локальный `thinkingLevel` из settings/applied turn config не может логироваться как подтверждённый feedback, пока Gemini runtime сам не эхо-вернул этот уровень.
 - `formatGeminiStreamErrorMessage()` остаётся единым formatter-ом для nested Gemini stream payload errors, чтобы router и тесты не расходились по тексту ошибок.
 
 ## Связанные контракты

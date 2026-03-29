@@ -37,12 +37,12 @@
 
 ### Stream: Capture Gemini thought usage feedback
 9. [DONE] Дописать provider feedback для реально наблюдаемых `thought` и `finished.usageMetadata.thoughtsTokenCount`, без фиктивного echo `thinkingLevel`. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(gemini): log provider thought feedback`
-10. [TODO] Git Commit: `feat(gemini): log provider thought feedback` (hash: `TBD`)
+10. [DONE] Git Commit: `feat(gemini): log provider thought feedback` (hash: `1113f6cb`)
 
 ## Phase 95 — Documentation And Verification (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: SSOT sync for provider feedback logging
-11. [TODO] Синхронизировать SSOT-документацию с новым observability contract для provider-confirmed feedback logs. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Expected commit: `docs(observability): document provider feedback logs`
+11. [DONE] Синхронизировать SSOT-документацию с новым observability contract для provider-confirmed feedback logs. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Expected commit: `docs(observability): document provider feedback logs`
 12. [TODO] Git Commit: `docs(observability): document provider feedback logs` (hash: `TBD`)
 
 ### Stream: Targeted verification of provider feedback logs

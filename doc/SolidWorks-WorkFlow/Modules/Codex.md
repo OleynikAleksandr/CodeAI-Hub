@@ -36,6 +36,7 @@
   - `debug_raw` — убирает baseline default schema pressure с обычных turn-ов ради диагностики новых моделей.
 - Raw provider rollout JSONL остаётся диагностическим SSOT; user-facing dialog/history является уже нормализованным display-слоем.
 - SDK diagnostics пишутся в `~/.codeai-hub/logs/codex/sdk-codex-*.jsonl` и больше не должны затираться при `resume` на том же `thread_id`.
+- `sdk-codex-*.jsonl` имеет право писать `provider_feedback` только из provider-confirmed raw `turn_context`: наблюдаемые `model`, `effort` и `reasoningEffort` являются observability truth, а исходящий applied turn config сам по себе не считается подтверждённым runtime фактом.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
