@@ -1,11 +1,11 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { api } from "../../api";
 import {
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
+import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
 import { resolveStageChildren } from "./workspace-tree-stage-children";
 import { useStagePanelSync } from "./use-stage-panel-sync";
 import {
@@ -29,8 +29,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   workspaceSlug: resolvedWorkspaceSlug,
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Readonly<Record<string, boolean>>>({});
-  const [workflowState, setWorkflowState] =
-    useState<WorkflowStateSnapshot | null>(null);
+  const storeState = useWorkflowStateSnapshot();
+  const workflowState: WorkflowStateSnapshot | null = storeState.snapshot;
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
   const workspaceSlug =
@@ -128,50 +128,19 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   useEffect(() => {
     if (!selectedWorkspaceId) {
       setExpandedNodes({});
-      setWorkflowState(null);
       resetPendingSelection();
       return;
     }
     markWorkspaceChanged();
-    setExpandedNodes({
-      workspace: true,
-    });
-  }, [
-    markWorkspaceChanged,
-    resetPendingSelection,
-    selectedWorkspaceId,
-    workspacePath,
-    workspaceSlug,
-  ]);
+    setExpandedNodes({ workspace: true });
+  }, [markWorkspaceChanged, resetPendingSelection, selectedWorkspaceId, workspacePath, workspaceSlug]);
 
+  // Forward shared store snapshot to auto-select logic
   useEffect(() => {
-    if (!selectedWorkspaceId || !workspaceSlug) {
-      setWorkflowState(null);
-      return;
+    if (storeState.loaded) {
+      handleStateUpdate(storeState.snapshot);
     }
-    let cancelled = false;
-    let timer = 0;
-    let fastPolling = true;
-    const loadState = async () => {
-      const state = await api.getWorkflowState(workspaceSlug, workspacePath);
-      if (cancelled) {
-        return;
-      }
-      if (state && fastPolling) {
-        fastPolling = false;
-        window.clearInterval(timer);
-        timer = window.setInterval(loadState, 15_000);
-      }
-      setWorkflowState(state);
-      handleStateUpdate(state);
-    };
-    loadState();
-    timer = window.setInterval(loadState, 3_000);
-    return () => {
-      cancelled = true;
-      window.clearInterval(timer);
-    };
-  }, [handleStateUpdate, selectedWorkspaceId, workspacePath, workspaceSlug]);
+  }, [handleStateUpdate, storeState]);
 
   const resolveStageNodes = (): readonly TreeNode[] => {
     if (!workflowState) {

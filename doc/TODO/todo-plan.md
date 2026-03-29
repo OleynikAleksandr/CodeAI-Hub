@@ -49,9 +49,9 @@
 17. [DONE] Добавить общий `WorkflowStateStore` по паттерну `workspace-snapshot-store.ts` как единый polling/source-of-truth для активного workspace. Scope: `src/client/project-manager/services/workflow-state-store.ts`. Expected commit: `feat: add workflow state store`
 18. [DONE] Git Commit: `feat: add workflow state store` (hash: 145a0be9)
 19. [DONE] Перевести `MainArea` на чтение workflow snapshot из общего store, сохранив рабочий optimistic guard. Scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `refactor: route main area through workflow state store`
-20. [IN_PROGRESS] Git Commit: `refactor: route main area through workflow state store` (hash: TBD)
-21. [TODO] Перевести `WorkspaceTree` на общий store и убрать дублирующий polling-cycle дерева. Scope: `src/client/project-manager/services/workflow-state-store.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Expected commit: `refactor: route workspace tree through workflow state store`
-22. [TODO] Git Commit: `refactor: route workspace tree through workflow state store` (hash: TBD)
+20. [DONE] Git Commit: `refactor: route main area through workflow state store` (hash: 6bfe5890)
+21. [DONE] Перевести `WorkspaceTree` на общий store и убрать дублирующий polling-cycle дерева. Scope: `src/client/project-manager/components/layout/workspace-tree.tsx`. Expected commit: `refactor: route workspace tree through workflow state store`
+22. [IN_PROGRESS] Git Commit: `refactor: route workspace tree through workflow state store` (hash: TBD)
 23. [TODO] Перенести optimistic guard lifecycle из локального `MainArea` wiring в shared store logic и дочистить временные переходные seam'ы. Scope: `src/client/project-manager/services/workflow-state-store.ts`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `refactor: centralize description session guard in workflow store`
 24. [TODO] Git Commit: `refactor: centralize description session guard in workflow store` (hash: TBD)
 
