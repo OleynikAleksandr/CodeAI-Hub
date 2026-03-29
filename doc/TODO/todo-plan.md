@@ -31,8 +31,8 @@
 
 ### Stream: SSOT and release sync after rollback
 11. [DONE] Синхронизировать active SSOT core/provider docs с rollback baseline и убрать active-architecture ссылки на provider-feedback scope. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`. Expected commit: `docs(ssot): rollback provider feedback core docs`
-12. [TODO] Git Commit: `docs(ssot): rollback provider feedback core docs` (hash: `TBD`)
-13. [TODO] Синхронизировать оставшиеся release-facing документы с rollback baseline: обновить `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md` под новый rollback релиз. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare provider feedback rollback`
+12. [DONE] Git Commit: `docs(ssot): rollback provider feedback core docs` (hash: `3c1c76d3`)
+13. [DONE] Синхронизировать оставшиеся release-facing документы с rollback baseline: обновить `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md` под новый rollback релиз. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare provider feedback rollback`
 14. [TODO] Git Commit: `docs(release): prepare provider feedback rollback` (hash: `TBD`)
 
 ## Phase 100 — Rollback Release Build (owner: Oleksandr, updated: 2026-03-29)

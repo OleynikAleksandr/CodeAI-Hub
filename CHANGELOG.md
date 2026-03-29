@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.837] - 2026-03-29
+### Changed
+- **Provider-feedback rollback**: removed the normalized `provider_feedback` observability seam for Claude, Codex, and Gemini from the active baseline after real runs showed that it did not provide trustworthy cross-provider exact-level confirmation.
+- **Provider-native audit path restored**: exact applied model/reasoning/thinking should again be verified from provider-native artifacts such as Claude provider-home JSONL, Codex raw rollout `turn_context`, and Gemini raw session/stream traces.
+- **Effective model identity baseline preserved**: the runtime/UI effective identity contract from `1.1.835` remains active; only the extra SDK observability layer from `1.1.836` was rolled back.
+
 ## [1.1.836] - 2026-03-29
 ### Added
 - **Provider-confirmed SDK feedback logs**: Claude, Codex, and Gemini now write normalized `provider_feedback` records into their SDK JSONL diagnostics only when the provider runtime actually echoes model/thinking/reasoning signals back.

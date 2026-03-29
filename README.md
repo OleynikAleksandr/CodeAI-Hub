@@ -7,13 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.836
-- **Provider-confirmed SDK feedback logs**: SDK diagnostics for Claude, Codex, and Gemini now write `provider_feedback` only when the provider runtime actually echoed model/thinking/reasoning signals back.
-- **Codex logs real runtime `turn_context` feedback**: `sdk-codex-*.jsonl` now records provider-confirmed `model`, `effort`, and `reasoningEffort` from raw Codex `turn_context` events.
-- **Claude logs observed model and thinking blocks**: `sdk-claude-*.jsonl` now stores dedicated `provider_feedback` entries for provider-confirmed `message.model` and `thinking` blocks.
-- **Gemini logs observed model and thought usage**: `sdk-gemini-*.jsonl` now persists provider-confirmed `model_info`, `thought`, and `usageMetadata.thoughtsTokenCount`, while refusing to fake feedback from local `thinkingLevel`.
+## Current Release — v1.1.837
+- **Provider-feedback observability rollback**: the normalized `provider_feedback` experiment for Claude, Codex, and Gemini was removed from the active baseline because real provider runs did not yield trustworthy cross-provider exact-level confirmation.
+- **Provider-native audit path remains canonical**: exact applied model/reasoning/thinking must be verified from provider-native artifacts such as Claude provider-home JSONL, Codex raw rollout `turn_context`, and Gemini raw session/stream traces.
+- **Effective model identity contract stays active**: runtime and UI still treat reasoning/thinking as part of the effective model identity derived from `~/.codeai-hub/settings/settings.json`; only the extra SDK observability layer was rolled back.
 
-Previous releases (summary): `1.1.800–1.1.834` — session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
+Previous releases (summary): `1.1.800–1.1.836` — provider-feedback observability experiment, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
