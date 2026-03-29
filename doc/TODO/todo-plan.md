@@ -72,11 +72,11 @@
 
 ### Stream: Gemini recoverable idle reset
 17. [DONE] Перевести stalled-turn outcome в recoverable session state внутри Gemini manager/adapter: session должна уходить в `idle`, а Core/UI получать управляемый failure surface вместо зависшего `working`. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): surface stalled turn recovery`
-18. [DONE] Git Commit: `fix(gemini): surface stalled turn recovery` (hash: `TBD`)
+18. [DONE] Git Commit: `fix(gemini): surface stalled turn recovery` (hash: `8bdf304b`)
 
 ### Stream: Gemini regression coverage
-19. [TODO] Добавить regression tests на silent stall и на восстановление session после forced stop/recoverable stall outcome. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `test(gemini): guard stalled turn recovery`
-20. [TODO] Git Commit: `test(gemini): guard stalled turn recovery` (hash: `TBD`)
+19. [DONE] Добавить regression tests на silent stall и на восстановление session после forced stop/recoverable stall outcome. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `test(gemini): guard stalled turn recovery`
+20. [DONE] Git Commit: `test(gemini): guard stalled turn recovery` (hash: `TBD`)
 
 ## Phase 85 — Release Build After Stop/Recovery Closure (owner: Oleksandr, updated: 2026-03-29)
 

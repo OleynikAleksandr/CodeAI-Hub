@@ -4,13 +4,17 @@ import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import { GeminiSessionManager } from "./gemini-session-manager";
 
+type StreamPlan = readonly unknown[] | "stall_after_model_info";
+const STALLED_TURN_TIMEOUT_RE =
+  /Gemini stream stalled after 20ms without progress\./;
+
 const createModules = (
   resolvedSessionIds: string[],
-  streamEventsByCall: Array<readonly unknown[]>
+  streamPlansByCall: StreamPlan[]
 ): GeminiCliModules => {
-  const getNextStreamEvents = (): readonly unknown[] => {
-    const next = streamEventsByCall.shift();
-    return Array.isArray(next) ? next : [];
+  const getNextStreamPlan = (): StreamPlan => {
+    const next = streamPlansByCall.shift();
+    return next ?? [];
   };
 
   return {
@@ -31,8 +35,16 @@ const createModules = (
           getGeminiClient: () => ({
             resetChat: () => Promise.resolve(),
             async *sendMessageStream() {
+              const plan = getNextStreamPlan();
+              if (plan === "stall_after_model_info") {
+                yield { type: "model_info", value: "gemini-2.5-pro" };
+                await new Promise(() => {
+                  // Intentionally never resolves to simulate a silent stall.
+                });
+                return;
+              }
               await Promise.resolve();
-              for (const event of getNextStreamEvents()) {
+              for (const event of plan) {
                 yield event;
               }
             },
@@ -183,5 +195,33 @@ test("Gemini turn runner falls back to final assistant emit when no segment fini
   assert.equal(
     (assistantEvents[0] as { content?: string }).content,
     "Fallback assistant text"
+  );
+});
+
+test("Gemini turn runner fails stalled streams after watchdog timeout", async () => {
+  const manager = new GeminiSessionManager(
+    createModules(["provider-session-stalled"], ["stall_after_model_info"])
+  );
+
+  const result = await manager.createSession({
+    workspacePath: "/tmp/workspace-stalled",
+  });
+  (result.session as unknown as Record<string, unknown>).stalledTurnWatchdogMs =
+    20;
+  const events: unknown[] = [];
+  result.session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+
+  await assert.rejects(async () => {
+    await manager.sendMessage(result.sessionId, "Stall this response");
+  }, STALLED_TURN_TIMEOUT_RE);
+
+  assert.equal(result.session.status, "idle");
+  assert.equal(
+    events.some(
+      (payload) => (payload as { type?: string }).type === "turn_completed"
+    ),
+    false
   );
 });

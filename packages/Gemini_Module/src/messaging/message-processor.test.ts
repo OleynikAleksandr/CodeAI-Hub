@@ -135,3 +135,33 @@ test("GeminiMessageProcessor flushes assistant segments on finished", () => {
   assert.equal(finalized.responseText, "First segmentSecond segment");
   assert.equal(finalized.usage?.totalTokenCount, 22);
 });
+
+test("GeminiMessageProcessor keeps partial assistant chunks buffered until finished", () => {
+  const processor = new GeminiMessageProcessor({
+    modules: createModules(),
+  });
+  const session = createSession();
+  const accumulator = processor.createAccumulator("prompt-stalled");
+  const messages: unknown[] = [];
+
+  session.eventEmitter.on("message", (payload) => {
+    messages.push(payload);
+  });
+
+  processor.handleEvent(
+    session,
+    { type: "content", value: "Partial " } as never,
+    accumulator
+  );
+  processor.handleEvent(
+    session,
+    { type: "content", value: "response" } as never,
+    accumulator
+  );
+
+  assert.equal(messages.length, 0);
+  assert.equal(
+    processor.finalize(accumulator).responseText,
+    "Partial response"
+  );
+});
