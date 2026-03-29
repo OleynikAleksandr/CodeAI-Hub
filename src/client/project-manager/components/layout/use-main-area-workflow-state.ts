@@ -123,10 +123,12 @@ export const useMainAreaWorkflowState = (
         autoResolvedActiveToolRef.current = workspaceSlug;
         params.setActiveTool(resolvedActiveTool);
       }
+      const isCanonicalDescriptionPath = (path: string): boolean =>
+        /\/description\/Final_Description\.md$/.test(path);
       const nextDescription =
         branch?.finalPath && branch.finalPath.trim().length > 0
           ? { path: branch.finalPath, label: "Final_Description.md" as const }
-          : branch?.draftPath && branch.draftPath.trim().length > 0
+          : branch?.draftPath && branch.draftPath.trim().length > 0 && isCanonicalDescriptionPath(branch.draftPath)
             ? { path: branch.draftPath, label: "Final_Description.md" as const }
             : null;
 

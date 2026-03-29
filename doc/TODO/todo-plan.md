@@ -22,13 +22,13 @@
 
 ### Stream: P0-A re-mount pending-state protection
 5. [DONE] Защитить `DescriptionQuestionnairePanel` от сброса pending-state при re-mount во время submit и сохранить корректный panel-state во время post-submit transition. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Expected commit: `fix: prevent description questionnaire remount reset`
-6. [IN_PROGRESS] Git Commit: `fix: prevent description questionnaire remount reset` (hash: TBD)
+6. [DONE] Git Commit: `fix: prevent description questionnaire remount reset` (hash: db0ded50)
 
 ## Phase 102 — Description Artifact Availability And Tree Sync (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: P0-B main-area description readability gate
-7. [TODO] Добавить description-specific availability hook и встроить file/path readability gate в main-area artifact resolution для `Description`. Scope: `src/client/project-manager/components/layout/use-description-artifact-availability.ts`, `src/client/project-manager/components/layout/use-artifact-availability.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: gate description artifacts by readability`
-8. [TODO] Git Commit: `fix: gate description artifacts by readability` (hash: TBD)
+7. [DONE] Добавить description-specific availability hook и встроить file/path readability gate в main-area artifact resolution для `Description`. Scope: `src/client/project-manager/components/layout/use-description-artifact-availability.ts`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: gate description artifacts by readability`
+8. [IN_PROGRESS] Git Commit: `fix: gate description artifacts by readability` (hash: TBD)
 
 ### Stream: P0-B workspace tree availability propagation
 9. [TODO] Вычислить и прокинуть `descriptionArtifactAvailable` на уровне tree context; при необходимости поглотить branch-node wiring в этот же шаг, чтобы остаться в лимите `≤3 файлов`. Scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`. Expected commit: `fix: sync description artifact availability into tree`

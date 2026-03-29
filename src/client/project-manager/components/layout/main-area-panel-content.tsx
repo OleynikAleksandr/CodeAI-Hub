@@ -6,6 +6,7 @@ import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
+import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import {
   isDiagramTool,
@@ -85,6 +86,11 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     workspacePath: activeWorkspacePath,
     workspaceSlug: activeWorkspaceSlug,
   });
+  const descriptionArtifactAvailable = useDescriptionArtifactAvailability({
+    enabled: activeTool === "Description" && descriptionDocumentExists,
+    workspacePath: activeWorkspacePath,
+    workspaceSlug: activeWorkspaceSlug,
+  });
   const diagramModulesSourceAvailable = useDiagramModulesArtifactAvailability({
     enabled: headerMode === "source" && activeTool === "Diagram Modules",
     workspacePath: activeWorkspacePath,
@@ -141,6 +147,14 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     );
   }
   if (showArtifactViewer && selectedArtifact) {
+    const isDescriptionArtifact = selectedArtifact.label === "Final_Description.md";
+    if (isDescriptionArtifact && !descriptionArtifactAvailable) {
+      return (
+        <div className="pm-placeholder">
+          Description artifact is not available yet. The session may still be generating.
+        </div>
+      );
+    }
     return (
       <WorkflowArtifactViewer
         label={selectedArtifact.label}
