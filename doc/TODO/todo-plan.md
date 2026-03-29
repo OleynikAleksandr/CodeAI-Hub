@@ -33,10 +33,12 @@
 11. [DONE] Синхронизировать active SSOT core/provider docs с rollback baseline и убрать active-architecture ссылки на provider-feedback scope. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`. Expected commit: `docs(ssot): rollback provider feedback core docs`
 12. [DONE] Git Commit: `docs(ssot): rollback provider feedback core docs` (hash: `3c1c76d3`)
 13. [DONE] Синхронизировать оставшиеся release-facing документы с rollback baseline: обновить `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md` под новый rollback релиз. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare provider feedback rollback`
-14. [TODO] Git Commit: `docs(release): prepare provider feedback rollback` (hash: `TBD`)
+14. [DONE] Git Commit: `docs(release): prepare provider feedback rollback` (hash: `6224cd66`)
 
 ## Phase 100 — Rollback Release Build (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Clean-tree build and packaging after rollback
-15. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить новый VSIX rollback-релиза и зафиксировать результаты в session report. Scope: release scripts, version/manifests from build scripts, `doc/Sessions/Session192.md`. Expected commit: `chore: release provider feedback rollback`
-16. [TODO] Git Commit: `chore: release provider feedback rollback` (hash: `TBD`)
+15. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, проверить version/manifest bumps и подготовить rollback baseline `1.1.837` к финальной упаковке. Scope: release scripts, `package.json`, workspace package manifests, `assets/**/manifest.json`. Expected commit: `chore: prepare v1.1.837 artifacts`
+16. [TODO] Git Commit: `chore: prepare v1.1.837 artifacts` (hash: `TBD`)
+17. [TODO] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX rollback-релиза и зафиксировать результаты в session report. Scope: VSIX packaging output, `doc/Sessions/Session192.md`, release result notes. Expected commit: `chore: release provider feedback rollback`
+18. [TODO] Git Commit: `chore: release provider feedback rollback` (hash: `TBD`)
