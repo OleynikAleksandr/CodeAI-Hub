@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.838] - 2026-03-29
+### Fixed
+- **Description session flicker**: post-submit Description UI no longer reverts to Help+Questionnaire when polling returns a snapshot before backend persists the session binding.
+- **False Final_Description.md**: legacy `description.md` draftPath no longer appears as `Final_Description.md` in the workspace tree or central panel; only the canonical path contract is shown.
+- **Description gating alignment**: downstream workflow steps now require `finalPath` (not legacy `draftPath`) to unblock, matching the actual step-start contract.
+
+### Added
+- **Shared WorkflowStateStore**: MainArea and WorkspaceTree now share a single polling cycle, eliminating split-brain between the two components.
+- **Description artifact availability probe**: a readability gate prevents showing Description artifacts that don't exist at the canonical HTTP endpoint.
+
 ## [1.1.837] - 2026-03-29
 ### Changed
 - **Provider-feedback rollback**: removed the normalized `provider_feedback` observability seam for Claude, Codex, and Gemini from the active baseline after real runs showed that it did not provide trustworthy cross-provider exact-level confirmation.

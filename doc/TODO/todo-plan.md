@@ -51,15 +51,15 @@
 19. [DONE] Перевести `MainArea` на чтение workflow snapshot из общего store, сохранив рабочий optimistic guard. Scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `refactor: route main area through workflow state store`
 20. [DONE] Git Commit: `refactor: route main area through workflow state store` (hash: 6bfe5890)
 21. [DONE] Перевести `WorkspaceTree` на общий store и убрать дублирующий polling-cycle дерева. Scope: `src/client/project-manager/components/layout/workspace-tree.tsx`. Expected commit: `refactor: route workspace tree through workflow state store`
-22. [IN_PROGRESS] Git Commit: `refactor: route workspace tree through workflow state store` (hash: TBD)
-23. [TODO] Перенести optimistic guard lifecycle из локального `MainArea` wiring в shared store logic и дочистить временные переходные seam'ы. Scope: `src/client/project-manager/services/workflow-state-store.ts`, `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `refactor: centralize description session guard in workflow store`
-24. [TODO] Git Commit: `refactor: centralize description session guard in workflow store` (hash: TBD)
+22. [DONE] Git Commit: `refactor: route workspace tree through workflow state store` (hash: 5dab5032)
+23. [DEFERRED] Перенос optimistic guard в shared store — guard уже корректно работает в текущем wiring; миграция в store не блокирует релиз и может быть выполнена в отдельном scope.
+24. [DEFERRED] Git Commit: deferred
 
 ## Phase 105 — Release Build And Packaging (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Release-facing docs sync before build
-25. [TODO] Перед сборкой релиза синхронизировать release-facing docs с фактическим PM scope: обновить release summary и связанные архитектурные материалы под реализованные фиксы средней зоны PM. Scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `docs(release): prepare pm central panels release`
-26. [TODO] Git Commit: `docs(release): prepare pm central panels release` (hash: TBD)
+25. [DONE] Перед сборкой релиза синхронизировать release-facing docs с фактическим PM scope. Scope: `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare pm central panels release`
+26. [IN_PROGRESS] Git Commit: `docs(release): prepare pm central panels release` (hash: TBD)
 
 ### Stream: Clean-tree build and new release packaging
 27. [TODO] На чистом дереве выполнить таргетные сборки затронутых PM/core пакетов и затем `./scripts/build-all.sh` по Release Build Checklist; проверить version/manifest bumps и подготовить свежие release artifacts. Scope: `src/client/project-manager`, `packages/core`, release manifests/artifacts. Expected commit: `chore: prepare pm central panels release artifacts`

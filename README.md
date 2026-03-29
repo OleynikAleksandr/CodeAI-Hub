@@ -7,12 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.837
-- **Provider-feedback observability rollback**: the normalized `provider_feedback` experiment for Claude, Codex, and Gemini was removed from the active baseline because real provider runs did not yield trustworthy cross-provider exact-level confirmation.
-- **Provider-native audit path remains canonical**: exact applied model/reasoning/thinking must be verified from provider-native artifacts such as Claude provider-home JSONL, Codex raw rollout `turn_context`, and Gemini raw session/stream traces.
-- **Effective model identity contract stays active**: runtime and UI still treat reasoning/thinking as part of the effective model identity derived from `~/.codeai-hub/settings/settings.json`; only the extra SDK observability layer was rolled back.
+## Current Release — v1.1.838
+- **Description session flicker fix**: post-submit Description UI now stays in session mode while the provider binding completes, instead of reverting to Help+Questionnaire.
+- **False Final_Description.md eliminated**: only the canonical path contract is shown in the tree and central panel; legacy `description.md` fallback no longer appears as the final artifact.
+- **Shared WorkflowStateStore**: MainArea and WorkspaceTree share a single polling cycle, removing the timing split-brain between the two.
+- **Description gating aligned**: downstream workflow steps require `finalPath` to unblock, matching the actual step-start contract.
 
-Previous releases (summary): `1.1.800–1.1.836` — provider-feedback observability experiment, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
+Previous releases (summary): `1.1.800–1.1.837` — provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
