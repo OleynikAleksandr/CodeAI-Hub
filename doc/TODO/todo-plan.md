@@ -33,10 +33,10 @@
 
 ### Stream: Persist Gemini provider feedback records
 7. [DONE] Сохранять structured `logEvent(...)` в `sdk-gemini-*.jsonl` и нормализовать provider feedback для `model_info`. Scope: `packages/Gemini_Module/src/logging/session-logger.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(gemini): persist provider model feedback`
-8. [TODO] Git Commit: `feat(gemini): persist provider model feedback` (hash: `TBD`)
+8. [DONE] Git Commit: `feat(gemini): persist provider model feedback` (hash: `b0db4fe2`)
 
 ### Stream: Capture Gemini thought usage feedback
-9. [TODO] Дописать provider feedback для реально наблюдаемых `thought` и `finished.usageMetadata.thoughtsTokenCount`, без фиктивного echo `thinkingLevel`. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(gemini): log provider thought feedback`
+9. [DONE] Дописать provider feedback для реально наблюдаемых `thought` и `finished.usageMetadata.thoughtsTokenCount`, без фиктивного echo `thinkingLevel`. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(gemini): log provider thought feedback`
 10. [TODO] Git Commit: `feat(gemini): log provider thought feedback` (hash: `TBD`)
 
 ## Phase 95 — Documentation And Verification (owner: Oleksandr, updated: 2026-03-29)
