@@ -2,6 +2,7 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
+import { useDescriptionSessionGuard } from "./use-description-session-guard";
 import { type WorkflowEvent, startWorkflowEventPolling } from "../../services/workflow-events-client";
 import { dispatchStageActivated, resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
 import { MainAreaArtifactContent, MainAreaSessionContent } from "./main-area-panel-content";
@@ -60,6 +61,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   } | null>(null);
   const [artifactHeaderMode, setArtifactHeaderMode] =
     useState<ArtifactHeaderMode>("artifacts");
+  const { guardRef: descriptionGuardRef, activateGuard, resetGuard } =
+    useDescriptionSessionGuard(hasDescriptionSession);
   const handleToolSelect = useWorkflowToolSelect({
     activeWorkspace,
     setActiveTool,
@@ -112,6 +115,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setHasDescriptionSession(false);
     setPendingSessionCreate(null);
     setArtifactHeaderMode("artifacts");
+    resetGuard();
     if (!activeWorkspace) {
       setActiveTool(null);
       return;
@@ -120,9 +124,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   }, [activeWorkspace?.id]);
 
   useEffect(() => {
-    setArtifactHeaderMode((current) =>
-      normalizeArtifactHeaderMode(activeTool, current)
-    );
+    setArtifactHeaderMode((current) => normalizeArtifactHeaderMode(activeTool, current));
   }, [activeTool]);
 
   const handleWorkflowEvents = useCallback(
@@ -148,7 +150,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const handleDescriptionSessionCreated = useCallback((sessionId: string) => {
     setPreferredSessionId(sessionId);
     setHasDescriptionSession(true);
-  }, []);
+    activateGuard(sessionId);
+  }, [activateGuard]);
 
   useEffect(() => {
     if (!activeWorkspace?.path) {
@@ -187,6 +190,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setDescriptionDocument,
     setQuestionnaireDocument,
     setHasDescriptionSession,
+    descriptionGuardRef,
   });
 
   useEffect(() => {
@@ -239,9 +243,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     !hasDescriptionSessionPending;
   const artifactHeaderModes = resolveArtifactHeaderModes(activeTool);
   const artifactHeaderTitle = activeTool === VIRTUAL_SIMULATION_TOOL_LABEL ? "Virtual Simulation" : activeTool;
-
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
-
   return (
     <main className="pm-main-area">
       <Toolbar

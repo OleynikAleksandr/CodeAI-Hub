@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
+import { type MutableRefObject, useEffect, useRef } from "react";
 import { api } from "../../api";
 import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import type { WorkspaceProject } from "../../types";
 import { resolveWorkspaceSlug } from "./main-area-utils";
 import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
 import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import type { DescriptionSessionGuard } from "./use-description-session-guard";
 
 type DescriptionDocument = {
   readonly workspacePath: string;
@@ -27,6 +28,7 @@ type UseMainAreaWorkflowStateParams = {
   readonly setDescriptionDocument: (value: DescriptionDocument | null) => void;
   readonly setQuestionnaireDocument: (value: QuestionnaireDocument | null) => void;
   readonly setHasDescriptionSession: (value: boolean) => void;
+  readonly descriptionGuardRef: MutableRefObject<DescriptionSessionGuard>;
 };
 
 const TOOL_BY_STAGE: Record<WorkflowStageId, string> = {
@@ -135,7 +137,12 @@ export const useMainAreaWorkflowState = (
       const nextHasDescriptionSession = Boolean(
         branch?.primarySession?.providerSessionId
       );
-      params.setHasDescriptionSession(nextHasDescriptionSession);
+      // Prevent premature downgrade while optimistic guard is active
+      if (!nextHasDescriptionSession && params.descriptionGuardRef.current.active) {
+        // Guard active — skip downgrade, keep session state optimistic
+      } else {
+        params.setHasDescriptionSession(nextHasDescriptionSession);
+      }
 
       const questionnairePath =
         branch?.questionnairePath && branch.questionnairePath.trim().length > 0

@@ -15,8 +15,8 @@
 ## Phase 101 — Description Session Flicker Stabilization (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: P0-A optimistic guard and overwrite prevention
-1. [TODO] Добавить sessionId-bound optimistic guard для post-submit `Description` и запретить premature downgrade `hasDescriptionSession` до завершения binding lifecycle. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: stabilize description session guard`
-2. [TODO] Git Commit: `fix: stabilize description session guard` (hash: TBD)
+1. [DONE] Добавить sessionId-bound optimistic guard для post-submit `Description` и запретить premature downgrade `hasDescriptionSession` до завершения binding lifecycle. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: stabilize description session guard`
+2. [IN_PROGRESS] Git Commit: `fix: stabilize description session guard` (hash: TBD)
 3. [TODO] Подтвердить точную причину polling overwrite после `session:created` и зафиксировать findings в planning-source без блокировки user-facing fix. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `doc/SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`. Expected commit: `docs(debug): capture description overwrite cause`
 4. [TODO] Git Commit: `docs(debug): capture description overwrite cause` (hash: TBD)
 
