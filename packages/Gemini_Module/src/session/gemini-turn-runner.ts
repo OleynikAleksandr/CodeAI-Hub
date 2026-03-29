@@ -7,6 +7,7 @@ import { GeminiMessageProcessor } from "../messaging/message-processor";
 import type { ThoughtTranslatorService } from "../messaging/thought-translator-service";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
+import { GeminiSessionLifecycle } from "./gemini-session-lifecycle";
 import type {
   GeminiToolCallOrchestrator,
   ToolExecutionOutcome,
@@ -56,6 +57,7 @@ export class GeminiTurnRunner {
   private readonly emitEventsCallback: GeminiTurnRunnerOptions["emitEvents"];
   private readonly modules: GeminiCliModules;
   private readonly reporter?: ModuleReporter;
+  private readonly sessionLifecycle = new GeminiSessionLifecycle();
   private readonly thoughtTranslator: ThoughtTranslatorService;
   private readonly toolCallOrchestrator: GeminiToolCallOrchestrator;
 
@@ -183,20 +185,32 @@ export class GeminiTurnRunner {
       signal,
       promptId
     );
+    const stalledTurnWatchdog = this.sessionLifecycle.createStalledTurnWatchdog(
+      session,
+      promptId
+    );
+    const iterator = (stream as AsyncIterable<ServerGeminiStreamEvent>)[
+      Symbol.asyncIterator
+    ]();
 
     try {
-      for await (const event of stream as AsyncGenerator<ServerGeminiStreamEvent>) {
+      while (true) {
+        const next = await stalledTurnWatchdog.waitForNext(iterator.next());
+        if (next.done) {
+          break;
+        }
         const resetFn = (session as unknown as Record<string, unknown>)
           .resetWatchdog as (() => void) | undefined;
         resetFn?.();
         const outcome = messageProcessor.handleEvent(
           session,
-          event,
+          next.value,
           accumulator
         );
         this.emitEventsCallback(session, outcome.events);
       }
     } finally {
+      stalledTurnWatchdog.clear();
       session.eventEmitter.off("message", countAssistantSegment);
     }
 

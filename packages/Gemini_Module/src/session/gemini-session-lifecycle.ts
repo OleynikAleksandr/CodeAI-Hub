@@ -7,6 +7,17 @@ export class GeminiSessionLifecycle {
   private static readonly ALLOWED_EVENT_TYPES = new Set<
     GeminiSessionEvent["type"]
   >(["assistant"]);
+  private static readonly DEFAULT_STALLED_TURN_WATCHDOG_MS = 60_000;
+
+  private static formatStalledTurnTimeout(timeoutMs: number): string {
+    if (timeoutMs < 1000) {
+      return `${timeoutMs}ms`;
+    }
+    if (timeoutMs % 1000 === 0) {
+      return `${timeoutMs / 1000}s`;
+    }
+    return `${(timeoutMs / 1000).toFixed(1)}s`;
+  }
 
   applyPendingRuntimeOverrides(
     owner: Record<string, unknown>,
@@ -100,6 +111,55 @@ export class GeminiSessionLifecycle {
     return { reset, clear };
   }
 
+  createStalledTurnWatchdog(
+    session: ActiveSession,
+    promptId: string
+  ): {
+    clear: () => void;
+    waitForNext: <T>(
+      nextPromise: Promise<IteratorResult<T>>
+    ) => Promise<IteratorResult<T>>;
+  } {
+    const timeoutMs = this.resolveStalledTurnWatchdogMs(session);
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const clear = (): void => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+
+    const waitForNext = async <T>(
+      nextPromise: Promise<IteratorResult<T>>
+    ): Promise<IteratorResult<T>> => {
+      clear();
+      const stalledTurn = new Promise<IteratorResult<T>>((_, reject) => {
+        timer = setTimeout(() => {
+          session.reporter?.warn?.("Gemini stream stalled without progress", {
+            promptId,
+            sessionId: session.sessionId,
+            timeoutMs,
+          });
+          reject(
+            new Error(
+              `Gemini stream stalled after ${GeminiSessionLifecycle.formatStalledTurnTimeout(
+                timeoutMs
+              )} without progress.`
+            )
+          );
+        }, timeoutMs);
+      });
+
+      try {
+        return await Promise.race([nextPromise, stalledTurn]);
+      } finally {
+        clear();
+      }
+    };
+
+    return { clear, waitForNext };
+  }
+
   emitEvents(
     session: ActiveSession,
     events: readonly GeminiSessionEvent[]
@@ -120,5 +180,15 @@ export class GeminiSessionLifecycle {
       return null;
     }
     return Math.floor(numeric);
+  }
+
+  private resolveStalledTurnWatchdogMs(session: ActiveSession): number {
+    const candidate = Number(
+      (session as unknown as Record<string, unknown>).stalledTurnWatchdogMs
+    );
+    if (Number.isFinite(candidate) && candidate >= 1) {
+      return Math.floor(candidate);
+    }
+    return GeminiSessionLifecycle.DEFAULT_STALLED_TURN_WATCHDOG_MS;
   }
 }
