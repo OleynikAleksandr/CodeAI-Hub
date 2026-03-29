@@ -4,10 +4,7 @@ import type {
   CodexThreadOptions,
   CodexTurnOptions,
 } from "../types";
-import {
-  CODEX_APPLIED_TURN_CONFIG_KEY,
-  type CodexAppliedTurnConfig,
-} from "../types";
+import { CODEX_APPLIED_TURN_CONFIG_KEY } from "../types";
 
 const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "low",
@@ -17,13 +14,17 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
 ]);
 
 interface ThreadRuntimeState {
-  _threadOptions?: CodexThreadOptions;
+  _threadOptions?: CodexThreadOptions & {
+    readonly effectiveModelId?: string;
+  };
 }
 
-type ResolvedAppliedCodexTurnConfig = Pick<
-  CodexAppliedTurnConfig,
-  "modelId" | "reasoningEffort"
->;
+interface ResolvedAppliedCodexTurnConfig {
+  readonly effectiveModelId?: string;
+  readonly modelId?: string;
+  readonly reasoningEffort?: CodexReasoningEffort;
+  readonly runtimeModelId?: string;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -36,9 +37,20 @@ const readAppliedCodexTurnConfig = (
     return null;
   }
 
+  const modelId =
+    typeof candidate.modelId === "string" ? candidate.modelId : undefined;
+  const baseModelId =
+    typeof candidate.baseModelId === "string"
+      ? candidate.baseModelId
+      : undefined;
+  const effectiveModelId =
+    typeof candidate.effectiveModelId === "string"
+      ? candidate.effectiveModelId
+      : modelId;
+
   return {
-    modelId:
-      typeof candidate.modelId === "string" ? candidate.modelId : undefined,
+    effectiveModelId,
+    modelId,
     reasoningEffort:
       typeof candidate.reasoningEffort === "string" &&
       CODEX_REASONING_EFFORTS.has(
@@ -46,6 +58,7 @@ const readAppliedCodexTurnConfig = (
       )
         ? (candidate.reasoningEffort as CodexReasoningEffort)
         : undefined,
+    runtimeModelId: baseModelId ?? modelId,
   };
 };
 
@@ -58,7 +71,10 @@ export const applyCodexTurnRuntimeConfig = (
     const thread = session.thread as unknown as ThreadRuntimeState;
     thread._threadOptions = {
       ...(thread._threadOptions ?? {}),
-      model: appliedConfig.modelId ?? thread._threadOptions?.model,
+      effectiveModelId:
+        appliedConfig.effectiveModelId ??
+        thread._threadOptions?.effectiveModelId,
+      model: appliedConfig.runtimeModelId ?? thread._threadOptions?.model,
       modelReasoningEffort:
         appliedConfig.reasoningEffort ??
         thread._threadOptions?.modelReasoningEffort,

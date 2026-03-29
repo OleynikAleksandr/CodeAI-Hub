@@ -51,13 +51,13 @@
 
 ### Stream: Provider capability alignment
 7. [DONE] Согласовать provider capability слой с новым identity contract, чтобы все провайдеры подключались к одному effective-model pipeline, а provider-specific код оставался только last-mile adapter path. Scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): align provider identity capabilities`
-8. [DONE] Git Commit: `refactor(core): align provider identity capabilities` (hash: `TBD`)
+8. [DONE] Git Commit: `refactor(core): align provider identity capabilities` (hash: `2e73b9f7`)
 
 ## Phase 88 — Codex Runtime Adoption (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Codex effective identity apply
-9. [TODO] Сделать Codex runtime полностью identity-driven: одинаковый base model с разным reasoning должен приводить к разному applied runtime config и проходить по тому же next-turn path, что и смена самой модели. Scope: `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`. Expected commit: `fix(codex): apply effective model identity`
-10. [TODO] Git Commit: `fix(codex): apply effective model identity` (hash: `TBD`)
+9. [DONE] Сделать Codex runtime полностью identity-driven: одинаковый base model с разным reasoning должен приводить к разному applied runtime config и проходить по тому же next-turn path, что и смена самой модели. Scope: `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`. Expected commit: `fix(codex): apply effective model identity`
+10. [DONE] Git Commit: `fix(codex): apply effective model identity` (hash: `TBD`)
 
 ### Stream: Core outbound update for effective identity
 11. [TODO] Исправить outbound Core model update path для Codex и shared runtime events так, чтобы следующий turn публиковал именно effective identity, а не только base model id. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(core): publish effective model updates`

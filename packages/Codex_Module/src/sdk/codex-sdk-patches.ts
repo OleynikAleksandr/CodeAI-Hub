@@ -20,6 +20,7 @@ interface ConfigOverride {
 }
 
 type PatchedThreadOptions = ThreadOptions & {
+  readonly effectiveModelId?: string;
   readonly modelReasoningEffort?: string;
 };
 

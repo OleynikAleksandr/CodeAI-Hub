@@ -9,6 +9,7 @@ const STREAM_FAILED_RE = /stream failed/;
 
 interface ThreadRuntimeState {
   readonly _threadOptions?: {
+    readonly effectiveModelId?: string;
     readonly model?: string;
     readonly modelReasoningEffort?: string;
   };
@@ -86,7 +87,46 @@ test("applyCodexTurnRuntimeConfig mutates active thread model and strips interna
       ?.modelReasoningEffort,
     "high"
   );
+  assert.equal(
+    (session.thread as unknown as ThreadRuntimeState)._threadOptions
+      ?.effectiveModelId,
+    "gpt-5.4"
+  );
   assert.deepEqual(turnOptions, { outputSchema });
+});
+
+test("applyCodexTurnRuntimeConfig preserves base model and updates effective identity for reasoning-only changes", () => {
+  const session = createSessionWithThread({
+    effectiveModelId: "gpt-5.3-codex reasoning:medium",
+    model: "gpt-5.3-codex",
+    modelReasoningEffort: "medium",
+  });
+
+  applyCodexTurnRuntimeConfig(session, {
+    __codeaiAppliedTurnConfig: {
+      providerId: "codexCli",
+      baseModelId: "gpt-5.3-codex",
+      effectiveModelId: "gpt-5.3-codex reasoning:xhigh",
+      modelId: "gpt-5.3-codex reasoning:xhigh",
+      reasoningEffort: "xhigh",
+      source: "settings_snapshot",
+    },
+  } as never);
+
+  assert.equal(
+    (session.thread as unknown as ThreadRuntimeState)._threadOptions?.model,
+    "gpt-5.3-codex"
+  );
+  assert.equal(
+    (session.thread as unknown as ThreadRuntimeState)._threadOptions
+      ?.modelReasoningEffort,
+    "xhigh"
+  );
+  assert.equal(
+    (session.thread as unknown as ThreadRuntimeState)._threadOptions
+      ?.effectiveModelId,
+    "gpt-5.3-codex reasoning:xhigh"
+  );
 });
 
 test("applyCodexTurnRuntimeConfig ignores non-codex payloads", () => {
@@ -111,6 +151,7 @@ test("applyCodexTurnRuntimeConfig ignores non-codex payloads", () => {
 });
 
 const createSessionWithThread = (threadOptions: {
+  readonly effectiveModelId?: string;
   readonly model?: string;
   readonly modelReasoningEffort?: string;
 }): ActiveSession => ({
