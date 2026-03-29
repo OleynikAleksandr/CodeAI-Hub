@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { requestCoreShutdown } from "../core-bridge/core-shutdown";
-import {
-  isCoreStopRequestedByUser,
-  requestCoreFromSupervisor,
-} from "../core-bridge/supervisor-requests";
+import { stopSession } from "../core-bridge/core-bridge";
 import type { ProviderTheme } from "./helpers";
 import { resolveProviderWaitColor } from "./helpers";
 import { resolveInputPlaceholder } from "./input-panel-placeholders";
@@ -20,12 +16,12 @@ interface InputPanelProps {
   readonly isQueued?: boolean;
   readonly onSubmit: (text: string) => void;
   readonly providerTheme?: ProviderTheme | null;
+  readonly sessionId?: string;
   readonly taskTimer?: TaskTimerSnapshot | null;
   readonly terminalNoResume?: boolean;
 }
 
 const MAX_TEXTAREA_HEIGHT = 200;
-const CORE_START_DELAY_MS = 2000;
 
 const InputPanel = ({
   draft,
@@ -34,19 +30,17 @@ const InputPanel = ({
   continuityErrorCopy = null,
   isQueued = false,
   providerTheme = null,
+  sessionId,
   terminalNoResume = false,
   taskTimer = null,
   onSubmit,
 }: InputPanelProps) => {
-  const [forceUnlocked, setForceUnlocked] = useState(false);
   const [optimisticStopActive, setOptimisticStopActive] = useState(false);
-  const stopStartTimerRef = useRef<number | null>(null);
   const inputLocked =
-    (connectionState !== "idle" ||
-      continuityLockActive ||
-      isQueued ||
-      terminalNoResume) &&
-    !forceUnlocked;
+    connectionState !== "idle" ||
+    continuityLockActive ||
+    isQueued ||
+    terminalNoResume;
   const agentBusy =
     !terminalNoResume &&
     (connectionState !== "idle" || continuityLockActive || isQueued);
@@ -60,29 +54,17 @@ const InputPanel = ({
   ]
     .filter(Boolean)
     .join(" ");
-  const placeholder = forceUnlocked
-    ? "Core stopped. Type message and press Enter/▶ to restart and send."
-    : resolveInputPlaceholder({
-        isQueued,
-        terminalNoResume,
-        connectionState,
-        continuityLockActive,
-        continuityErrorCopy,
-      });
+  const placeholder = resolveInputPlaceholder({
+    isQueued,
+    terminalNoResume,
+    connectionState,
+    continuityLockActive,
+    continuityErrorCopy,
+  });
   const [value, setValue] = useState(draft);
   const formRef = useRef<HTMLFormElement | null>(null);
 
   const waitCopyOverlayActive = waitCopyActive && value.length === 0;
-
-  useEffect(
-    () => () => {
-      const timer = stopStartTimerRef.current;
-      if (timer !== null) {
-        window.clearTimeout(timer);
-      }
-    },
-    []
-  );
 
   useEffect(() => {
     setValue(draft);
@@ -146,24 +128,8 @@ const InputPanel = ({
     if (!trimmed) {
       return;
     }
-
-    if (stopStartTimerRef.current !== null) {
-      window.clearTimeout(stopStartTimerRef.current);
-      stopStartTimerRef.current = null;
-    }
-
-    setForceUnlocked(false);
     setOptimisticStopActive(true);
     setValue("");
-
-    if (isCoreStopRequestedByUser()) {
-      requestCoreFromSupervisor("ensure-started");
-      stopStartTimerRef.current = window.setTimeout(() => {
-        stopStartTimerRef.current = null;
-        onSubmit(trimmed);
-      }, CORE_START_DELAY_MS);
-      return;
-    }
 
     onSubmit(trimmed);
   }, [inputLocked, onSubmit, value]);
@@ -220,19 +186,18 @@ const InputPanel = ({
     </div>
   );
 
-  const stopActive = (agentBusy || optimisticStopActive) && !forceUnlocked;
+  const stopActive = agentBusy || optimisticStopActive;
 
   const handleActionClick = useCallback(() => {
     if (stopActive) {
-      requestCoreFromSupervisor("stop");
-      requestCoreShutdown().catch(() => false);
-      setForceUnlocked(true);
-      setOptimisticStopActive(false);
+      if (sessionId) {
+        stopSession(sessionId);
+      }
       return;
     }
 
     sendMessage();
-  }, [sendMessage, stopActive]);
+  }, [sendMessage, sessionId, stopActive]);
 
   return (
     <form

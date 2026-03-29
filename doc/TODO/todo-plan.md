@@ -43,8 +43,8 @@
 4. [DONE] Git Commit: `feat(core): add session stop bridge command` (hash: `c41228d7`)
 
 ### Stream: UI stop path without core shutdown
-5. [TODO] Перевести Session UI на session-scoped stop path: убрать stop-core смысл из action-кнопки, заменить copy и больше не использовать `core-shutdown` helper из input action flow. Scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-play-stop-button.tsx`. Expected commit: `fix(ui): route stop to session turn cancel`
-6. [TODO] Git Commit: `fix(ui): route stop to session turn cancel` (hash: `TBD`)
+5. [DONE] Перевести Session UI на session-scoped stop path: убрать stop-core смысл из action-кнопки, заменить copy и больше не использовать `core-shutdown` helper из input action flow. Scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/{input-panel,input-play-stop-button,session-view}.tsx`. Expected commit: `fix(ui): route stop to session turn cancel`
+6. [DONE] Git Commit: `fix(ui): route stop to session turn cancel` (hash: `TBD`)
 
 ## Phase 83 — Core Session Stop And Rebind Semantics (owner: Oleksandr, updated: 2026-03-29)
 
@@ -58,7 +58,7 @@
 
 ### Stream: Rebind on next send after stop
 11. [DONE] На следующем send/retry path научить Core поднимать fresh provider session и rebinding-ить её к той же logical session, если предыдущий binding был stop-invalidated, чтобы обычный resend и switch-request не падали в `missing_provider_binding`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-{session-actions,stop-rebind}.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): rebind session after stop invalidation`
-12. [DONE] Git Commit: `feat(core): rebind session after stop invalidation` (hash: `TBD`)
+12. [DONE] Git Commit: `feat(core): rebind session after stop invalidation` (hash: `ad183b46`)
 
 ### Stream: Core regression coverage
 13. [TODO] Добавить регрессионные Core tests на два сценария: `Stop` mid-turn не удаляет logical session и не гасит runtime, а следующий send rebinding-ит рабочую provider session; `Stop` после stuck-state снимает lock и возвращает send path. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`. Expected commit: `test(core): cover session stop and rebind flow`

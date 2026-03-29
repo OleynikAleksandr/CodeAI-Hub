@@ -240,6 +240,13 @@ export const deleteSession = (sessionId: string): void => {
     },
   });
 };
+
+export const stopSession = (sessionId: string): void => {
+  enqueueMessage({
+    type: "session:stop",
+    payload: { sessionId },
+  });
+};
 export const handleOutgoingVsCodeMessage = (message: unknown): boolean => {
   if (!message || typeof message !== "object") {
     return false;

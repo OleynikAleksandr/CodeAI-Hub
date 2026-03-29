@@ -263,6 +263,7 @@ const SessionViewBody = ({
             isQueued={isQueued}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
+            sessionId={activeSessionId}
             taskTimer={activeSession.status.taskTimer ?? null}
             terminalNoResume={terminalNoResume}
           />

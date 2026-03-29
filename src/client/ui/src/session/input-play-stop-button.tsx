@@ -10,7 +10,7 @@ const InputPlayStopButton = ({
   onClick,
 }: InputPlayStopButtonProps) => {
   const showStop = stopActive;
-  const label = showStop ? "Stop (stop core)" : "Send message (Enter)";
+  const label = showStop ? "Stop current turn" : "Send message (Enter)";
   const iconModifierClass = showStop
     ? "session-input__action-icon--stop"
     : "session-input__action-icon--play";
