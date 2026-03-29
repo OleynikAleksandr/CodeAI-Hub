@@ -9,7 +9,6 @@
 ## Messaging cluster
 - `src/messaging/message-processor.ts` — thin façade для queue/processResponses orchestration.
 - `src/messaging/claude-stream-event-router.ts` — routing assistant/result events, thinking chunks и structured output emission.
-- `src/messaging/provider-feedback.ts` — нормализация provider-confirmed `message.model` и `thinking` blocks в `sdk-claude-*.jsonl` `provider_feedback` записи.
 - `src/messaging/claude-message-finish-handler.ts` — lifecycle completion façade (`turn_started` / `turn_completed` / `turn_failed`).
 - `src/messaging/claude-usage-sync.ts`, `src/messaging/claude-token-usage-sync.ts` — usage limits + `/context` token usage synchronization.
 
@@ -26,7 +25,7 @@
 - Один user/internal turn = один `query(...)` запуск (one-shot), FIFO.
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Rate-limit и `/context` token usage остаются post-message synchronization concern и не должны смешиваться с assistant/result routing в одном giant file.
-- `sdk-claude-*.jsonl` может писать `provider_feedback` только по signal-ам, которые Claude runtime реально вернул в stream (`message.model`, `thinking` blocks); локальные thinking settings и outbound intent не считаются подтверждённым feedback.
+- `sdk-claude-*.jsonl` остаётся диагностическим SDK логом; exact provider-applied model/thinking при аудите нужно подтверждать по provider-home Claude JSONL, а не по отдельным normalized `provider_feedback` записям.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

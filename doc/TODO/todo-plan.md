@@ -26,15 +26,17 @@
 6. [DONE] Git Commit: `revert: remove gemini provider model feedback` (hash: `59a72fdf`)
 7. [DONE] Откатить Claude provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/provider-feedback.ts`, `packages/Claude_Module/src/messaging/provider-feedback.test.ts`. Expected commit: `revert: remove claude provider feedback`
 8. [DONE] Git Commit: `revert: remove claude provider feedback` (hash: `58d39c1d`)
-9. [IN_PROGRESS] Откатить Codex provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`. Expected commit: `revert: remove codex provider feedback`
-10. [TODO] Git Commit: `revert: remove codex provider feedback` (hash: `TBD`)
+9. [DONE] Откатить Codex provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`. Expected commit: `revert: remove codex provider feedback`
+10. [DONE] Git Commit: `revert: remove codex provider feedback` (hash: `1eff30cd`)
 
 ### Stream: SSOT and release sync after rollback
-11. [TODO] Синхронизировать текущие SSOT/release документы с rollback baseline: убрать active-architecture ссылки на provider-feedback scope, обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session192.md` и related docs под новый релиз rollback. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, provider module docs, `README.md`, `CHANGELOG.md`, `doc/Sessions/Session192.md`. Expected commit: `docs(release): prepare provider feedback rollback`
-12. [TODO] Git Commit: `docs(release): prepare provider feedback rollback` (hash: `TBD`)
+11. [DONE] Синхронизировать active SSOT core/provider docs с rollback baseline и убрать active-architecture ссылки на provider-feedback scope. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`. Expected commit: `docs(ssot): rollback provider feedback core docs`
+12. [TODO] Git Commit: `docs(ssot): rollback provider feedback core docs` (hash: `TBD`)
+13. [TODO] Синхронизировать оставшиеся release-facing документы с rollback baseline: обновить `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md` под новый rollback релиз. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare provider feedback rollback`
+14. [TODO] Git Commit: `docs(release): prepare provider feedback rollback` (hash: `TBD`)
 
 ## Phase 100 — Rollback Release Build (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Clean-tree build and packaging after rollback
-13. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить новый VSIX rollback-релиза и зафиксировать результаты в session report. Scope: release scripts, version/manifests from build scripts, `doc/Sessions/Session192.md`. Expected commit: `chore: release provider feedback rollback`
-14. [TODO] Git Commit: `chore: release provider feedback rollback` (hash: `TBD`)
+15. [TODO] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить новый VSIX rollback-релиза и зафиксировать результаты в session report. Scope: release scripts, version/manifests from build scripts, `doc/Sessions/Session192.md`. Expected commit: `chore: release provider feedback rollback`
+16. [TODO] Git Commit: `chore: release provider feedback rollback` (hash: `TBD`)

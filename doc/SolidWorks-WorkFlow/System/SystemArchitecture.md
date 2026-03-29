@@ -67,7 +67,7 @@
    - Канон: `.vscodeignore`, `README.md`, `CHANGELOG.md`.
 14. **Effective model identity SSOT**: `modelId` в transport/runtime/UI контракте означает полную effective model identity, а не только base model; reasoning/thinking являются частью identity, и единственным source of truth для next-turn model identity является `~/.codeai-hub/settings/settings.json`.
    - Канон: `doc/SolidWorks-WorkFlow/Plans/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`, `packages/core/src/config/provider-turn-config-resolver.ts`.
-15. **Provider feedback observability is provider-confirmed only**: `sdk-claude`, `sdk-codex`, `sdk-gemini` logs имеют право фиксировать model/thinking/reasoning только по signal-ам, которые runtime действительно эхо-вернул обратно из провайдера (`turn_context`, `message.model`, `thinking` block, `model_info`, `thought`, `usageMetadata.thoughtsTokenCount`). Outbound intent/settings/applied turn config сами по себе не являются observability truth.
+15. **Provider-applied model/reasoning proof stays provider-native**: active baseline не поддерживает cross-provider normalizing contract для exact model/thinking/reasoning feedback в `sdk-*` логах; для аудита реально применённого provider state нужно опираться на provider-native runtime artifacts (`Claude` provider-home JSONL, `Codex` raw rollout `turn_context`, `Gemini` raw stream/session traces), а не на локальный outbound intent.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`.
 
 ## 4) Где искать правду в коде (high-signal)
@@ -107,13 +107,12 @@
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
   - `message-processor.ts` = thin façade / queue orchestration surface
   - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking routing
-  - `provider-feedback.ts` = нормализует только provider-confirmed `message.model` и `thinking` blocks в `sdk-claude-*.jsonl` `provider_feedback` записи, не подменяя их локальным thinking intent
   - `claude-message-finish-handler.ts` = turn lifecycle completion façade
   - `claude-usage-sync.ts`, `claude-token-usage-sync.ts` = usage-limits/context-token synchronization internals
 - Codex messaging cluster: `packages/Codex_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn orchestration surface
   - `codex-applied-turn-config.ts` = applies Core-owned next-turn effective model identity onto the active thread runtime and strips internal transport metadata before SDK execution
-  - `packages/Codex_Module/src/logging/session-logger.ts` + `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` = переносят provider-confirmed raw `turn_context` в `sdk-codex-*.jsonl` как `provider_feedback`, не логируя голый outbound intent как подтверждённый runtime факт
+  - `packages/Codex_Module/src/logging/session-logger.ts` + `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` = отвечают за SDK diagnostics и reasoning config patching; подтверждать реально применённые model/reasoning значения нужно по raw provider rollout JSONL, а не по отдельному normalized feedback contract в `sdk-codex-*.jsonl`
   - `codex-event-stream-consumer.ts` = startup-lock / idle-pulse event stream consumer
   - `codex-stream-event-router.ts` = thread/item/assistant/structured-output routing
   - `codex-message-finish-handler.ts` = turn lifecycle completion façade
@@ -125,7 +124,7 @@
   - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
   - `gemini-assistant-event-normalizer.ts` = assistant/thinking/finished boundary normalization
   - `gemini-system-event-normalizer.ts` = tool/system/warning event normalization
-  - `packages/Gemini_Module/src/logging/session-logger.ts` + `gemini-system-event-normalizer.ts` + `gemini-assistant-event-normalizer.ts` = сохраняют в `sdk-gemini-*.jsonl` только provider-confirmed `model_info`, `thought` и `usageMetadata.thoughtsTokenCount` feedback без фиктивного echo локального `thinkingLevel`
+  - `packages/Gemini_Module/src/logging/session-logger.ts` + `gemini-system-event-normalizer.ts` + `gemini-assistant-event-normalizer.ts` = сохраняют raw/diagnostic Gemini session artifacts; active baseline не промотирует `model_info`, `thought` или `thinkingLevel` в отдельный normalized provider-feedback contract
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
   - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals; bootstrap/lifecycle now keep a mutable `runtimeTurnConfig` so Core-applied model/thinking changes can retune existing Gemini sessions without re-deriving model/thinking authority from local provider settings
