@@ -55,14 +55,39 @@
 23. [DEFERRED] Перенос optimistic guard в shared store — guard уже корректно работает в текущем wiring; миграция в store не блокирует релиз и может быть выполнена в отдельном scope.
 24. [DEFERRED] Git Commit: deferred
 
-## Phase 105 — Release Build And Packaging (owner: Oleksandr, updated: 2026-03-29)
+## Phase 105 — Release Build And Packaging v1.1.838 (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Release-facing docs sync before build
 25. [DONE] Перед сборкой релиза синхронизировать release-facing docs с фактическим PM scope. Scope: `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare pm central panels release`
 26. [DONE] Git Commit: `docs(release): prepare pm central panels release` (hash: 95cd7d73)
 
-### Stream: Clean-tree build and new release packaging
-27. [TODO] На чистом дереве выполнить таргетные сборки затронутых PM/core пакетов и затем `./scripts/build-all.sh` по Release Build Checklist; проверить version/manifest bumps и подготовить свежие release artifacts. Scope: `src/client/project-manager`, `packages/core`, release manifests/artifacts. Expected commit: `chore: prepare pm central panels release artifacts`
-28. [TODO] Git Commit: `chore: prepare pm central panels release artifacts` (hash: TBD)
-29. [TODO] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX, зафиксировать release result в новом session report и release notes. Scope: VSIX packaging output, `doc/Sessions/SessionXXX.md`, release result docs. Expected commit: `chore: release pm central panels fixes`
-30. [TODO] Git Commit: `chore: release pm central panels fixes` (hash: TBD)
+### Stream: Clean-tree build and new release packaging (v1.1.838 — released)
+27. [DONE] `./scripts/build-all.sh` → v1.1.838 artifacts.
+28. [DONE] Git Commit: `chore: prepare v1.1.838 artifacts` (hash: a84e8ded)
+29. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.838.vsix` (1.8 MB).
+30. [DONE] (release packaged, VSIX verified)
+
+## Phase 106 — Store Derivation Render-Cycle Fix (owner: Oleksandr, updated: 2026-03-29)
+
+### Stream: P0-C eliminate null-snapshot intermediate emit
+31. [DONE] Убрать промежуточный emit `{ snapshot: null }` из `WorkflowStateStore.activate()` — не emit-ить до первого реального poll-ответа. Scope: `src/client/project-manager/services/workflow-state-store.ts`. Expected commit: `fix: suppress null-snapshot emit on store activation`
+32. [IN_PROGRESS] Git Commit: `fix: suppress null-snapshot emit on store activation` (hash: TBD)
+
+### Stream: P0-C skip derivation until store loaded
+33. [TODO] Добавить early-return `if (!storeState.loaded) return;` в деривационный effect `useMainAreaWorkflowState`, чтобы не вызывать setters до первого реального snapshot. Scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: skip workflow derivation until store loaded`
+34. [TODO] Git Commit: `fix: skip workflow derivation until store loaded` (hash: TBD)
+
+### Stream: P0-C verify webview build
+35. [TODO] Прогнать `npm run build:webview` и `npx tsc --noEmit` для верификации; прогнать таргетную сборку core. Expected commit: (no separate commit, verification only)
+
+## Phase 107 — Hotfix Release Build v1.1.839 (owner: Oleksandr, updated: 2026-03-29)
+
+### Stream: Hotfix release docs
+36. [TODO] Обновить `README.md` и `CHANGELOG.md` под v1.1.839 hotfix scope. Scope: `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare store derivation hotfix`
+37. [TODO] Git Commit: `docs(release): prepare store derivation hotfix` (hash: TBD)
+
+### Stream: Hotfix clean-tree build
+38. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.839 artifacts. Expected commit: `chore: prepare v1.1.839 artifacts`
+39. [TODO] Git Commit: `chore: prepare v1.1.839 artifacts` (hash: TBD)
+40. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX verified. Expected commit: `chore: release store derivation hotfix`
+41. [TODO] Git Commit: `chore: release store derivation hotfix` (hash: TBD)

@@ -50,8 +50,10 @@ export class WorkflowStateStore {
       return;
     }
     this.stopPolling();
+    // Set intermediate state without emitting — subscribers only see
+    // real snapshots, never the null-snapshot transition that would
+    // cause a render-cycle with stale hasDescriptionSession.
     this.state = { workspaceSlug, workspacePath, snapshot: null, loaded: false };
-    this.emit();
     this.startPolling(workspaceSlug, workspacePath);
   }
 
