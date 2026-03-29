@@ -57,24 +57,28 @@
 
 ### Stream: Codex effective identity apply
 9. [DONE] Сделать Codex runtime полностью identity-driven: одинаковый base model с разным reasoning должен приводить к разному applied runtime config и проходить по тому же next-turn path, что и смена самой модели. Scope: `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`. Expected commit: `fix(codex): apply effective model identity`
-10. [DONE] Git Commit: `fix(codex): apply effective model identity` (hash: `TBD`)
+10. [DONE] Git Commit: `fix(codex): apply effective model identity` (hash: `412f5e07`)
+
+### Stream: Message dispatch send-path extraction
+11. [DONE] Вынести общий outbound provider send path из oversized dispatch handler в отдельный микро-класс, чтобы следующий identity-fix stream не нарушал лимит в 300 строк и оставался в рамках микро-архитектуры. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-provider-send.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract message dispatch sender`
+12. [DONE] Git Commit: `refactor(core): extract message dispatch sender` (hash: `TBD`)
 
 ### Stream: Core outbound update for effective identity
-11. [TODO] Исправить outbound Core model update path для Codex и shared runtime events так, чтобы следующий turn публиковал именно effective identity, а не только base model id. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(core): publish effective model updates`
-12. [TODO] Git Commit: `fix(core): publish effective model updates` (hash: `TBD`)
+13. [TODO] Исправить outbound Core model update path для Codex и shared runtime events так, чтобы следующий turn публиковал именно effective identity, а не только base model id. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(core): publish effective model updates`
+14. [TODO] Git Commit: `fix(core): publish effective model updates` (hash: `TBD`)
 
 ## Phase 89 — UI/PM Sync And Regression Coverage (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Runtime sync in PM and webview
-13. [TODO] Научить PM и обычный webview одинаково принимать runtime effective model update без локальной реконструкции identity из split fields и без silent ignore path. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/app-host/session-store.ts`. Expected commit: `fix(ui): consume effective model updates`
-14. [TODO] Git Commit: `fix(ui): consume effective model updates` (hash: `TBD`)
+15. [TODO] Научить PM и обычный webview одинаково принимать runtime effective model update без локальной реконструкции identity из split fields и без silent ignore path. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/app-host/session-store.ts`. Expected commit: `fix(ui): consume effective model updates`
+16. [TODO] Git Commit: `fix(ui): consume effective model updates` (hash: `TBD`)
 
 ### Stream: Ready-session settings sync and display parity
-15. [TODO] Убрать рассогласование ready-session labels и settings-driven display logic: reasoning/thinking для той же base model не должны теряться или оставаться stale в session status. Scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`. Expected commit: `fix(ui): sync effective identity labels`
-16. [TODO] Git Commit: `fix(ui): sync effective identity labels` (hash: `TBD`)
+17. [TODO] Убрать рассогласование ready-session labels и settings-driven display logic: reasoning/thinking для той же base model не должны теряться или оставаться stale в session status. Scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`. Expected commit: `fix(ui): sync effective identity labels`
+18. [TODO] Git Commit: `fix(ui): sync effective identity labels` (hash: `TBD`)
 
 ## Phase 90 — Release Build After Effective Identity Closure (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Final release build after phases 86–89
-17. [TODO] После закрытия `Phase 86`–`Phase 89` выполнить финальную сборку релиза строго по Release Build Checklist: сначала актуализировать release-facing docs и session report под новый effective model identity contract, затем добиться чистого дерева, прогнать `./scripts/build-all.sh`, после этого `./scripts/build-release.sh --use-current-version`, проверить артефакты и зафиксировать их в отчёте новой сессии. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release effective model identity contract`
-18. [TODO] Git Commit: `chore: release effective model identity contract` (hash: `TBD`)
+19. [TODO] После закрытия `Phase 86`–`Phase 89` выполнить финальную сборку релиза строго по Release Build Checklist: сначала актуализировать release-facing docs и session report под новый effective model identity contract, затем добиться чистого дерева, прогнать `./scripts/build-all.sh`, после этого `./scripts/build-release.sh --use-current-version`, проверить артефакты и зафиксировать их в отчёте новой сессии. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release effective model identity contract`
+20. [TODO] Git Commit: `chore: release effective model identity contract` (hash: `TBD`)

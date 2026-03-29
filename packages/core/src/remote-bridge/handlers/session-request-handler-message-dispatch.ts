@@ -11,6 +11,7 @@ import {
 } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import { SessionRequestHandlerProviderSend } from "./session-request-handler-provider-send";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
 
 interface SessionRequestHandlerMessageDispatchDependencies {
@@ -36,9 +37,11 @@ interface SessionRequestHandlerMessageDispatchDependencies {
 
 export class SessionRequestHandlerMessageDispatch {
   private readonly deps: SessionRequestHandlerMessageDispatchDependencies;
+  private readonly providerSend: SessionRequestHandlerProviderSend;
 
   constructor(deps: SessionRequestHandlerMessageDispatchDependencies) {
     this.deps = deps;
+    this.providerSend = new SessionRequestHandlerProviderSend(deps.logger);
   }
 
   async sendInternalMessage(sessionId: string, content: string): Promise<void> {
@@ -72,22 +75,19 @@ export class SessionRequestHandlerMessageDispatch {
       return;
     }
 
-    this.deps.logger.info("Dispatching message to provider adapter", {
-      sessionId,
-      providerId: resolved.binding.providerId,
-      providerSessionId: resolved.binding.providerSessionId,
-      contentLength: content.length,
-    });
     try {
       const providerTurnOptions = this.attachProviderTurnOptions(
         sessionId,
         resolved.binding.providerId
       );
-      await resolved.adapter.sendMessage(
-        resolved.binding.providerSessionId,
+      await this.providerSend.dispatch({
+        adapter: resolved.adapter,
         content,
-        providerTurnOptions
-      );
+        providerId: resolved.binding.providerId,
+        providerSessionId: resolved.binding.providerSessionId,
+        providerTurnOptions,
+        sessionId,
+      });
     } catch (error) {
       this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
       this.deps.logger.warn("Provider sendMessage failed", {
@@ -149,22 +149,19 @@ export class SessionRequestHandlerMessageDispatch {
         sessionId: options.sessionId,
         providerSessionId: resolved.binding.providerSessionId,
       });
-      this.deps.logger.info("Dispatching message to provider adapter", {
-        sessionId: options.sessionId,
-        providerId: resolved.binding.providerId,
-        providerSessionId: resolved.binding.providerSessionId,
-        contentLength: options.content.length,
-      });
       const providerTurnOptions = this.attachProviderTurnOptions(
         options.sessionId,
         resolved.binding.providerId,
         stripInternalWorkflowTurnOptions(options.turnOptions)
       );
-      await resolved.adapter.sendMessage(
-        resolved.binding.providerSessionId,
-        options.content,
-        providerTurnOptions
-      );
+      await this.providerSend.dispatch({
+        adapter: resolved.adapter,
+        content: options.content,
+        providerId: resolved.binding.providerId,
+        providerSessionId: resolved.binding.providerSessionId,
+        providerTurnOptions,
+        sessionId: options.sessionId,
+      });
     } catch (error) {
       this.deps.emitTurnStateEvent({
         sessionId: options.sessionId,
