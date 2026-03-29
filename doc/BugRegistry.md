@@ -46,8 +46,36 @@
 | BUG-2026-03-14-01 | FIXED | Codex Runtime | saved `gpt-5.4` default model пересиливается stale `CODEX_DEFAULT_MODEL=gpt-5.3-codex` | 1.1.726 |
 | BUG-2026-03-20-01 | FIXED | Codex/Core/PM | reopen/recovery цикл держит `diagram_modules` dialog в вечном `Agent is working...` после restart Core / PM | 1.1.753 |
 | BUG-2026-03-25-01 | FIXED | Core/Gemini/PM | Provider error → binding lost → UI deadlock → Core crash → workspace vanishes | 1.1.804 |
+| BUG-2026-03-29-01 | OPEN | Core/UI/Gemini | Session Stop semantics shutdown-ит Core вместо остановки turn; stalled Gemini turn оставляет dialog locked | TBD |
 
 ---
+
+## BUG-2026-03-29-01 — Core/UI/Gemini: Session Stop must cancel turn, not shutdown independent Core
+
+**Status:** OPEN
+
+**Symptom:**
+- Во время Gemini one-shot turn сессия может зависнуть после системного события `model_info`: пользовательский input остаётся в `Agent is working... Please wait.`, а новых `assistant` / `turn_completed` событий не приходит.
+- Текущий Session UI контракт трактует `Stop` как остановку всего Core runtime, а не текущего turn / текущей provider session.
+- Для независимого Core это неверно: проблема внутри одного dialog turn не должна останавливать весь runtime и ломать остальные сессии/workspace state.
+
+**Confirmed evidence:**
+- `~/.codeai-hub/logs/gemini/sdk-gemini-a213fe63-64f7-4f8a-bbcc-1fe82c583b28.jsonl`: второй тестовый turn доходит только до `model_info` и не даёт ни `finished`, ни `error`.
+- `~/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-gemini/geminiCli/gemini-1ddc259b-2f91-4ba8-b6c8-c7dcb25e141e-description.jsonl`: история заканчивается пользовательским сообщением `Еще один точно такой же тест.` без нового ответа агента.
+- `~/.codeai-hub/logs/core/core.log`: вместо provider-side crash trace есть явный `Shutdown request received via API`, то есть Core уходит по shutdown-path, а не по собственному fatal exception.
+
+**Accepted product decision (2026-03-29):**
+- `Stop` в Session UI означает только остановку текущего turn или аварийный force-unlock stuck session.
+- `Stop` никогда не должен останавливать Core runtime.
+- Logical session должна сохраняться; если после stop/resume underlying provider transcript испорчен, следующий send в MVP может создать fresh provider session и перебиндить её к той же logical session.
+- Очистка "мусора" в старом provider transcript / raw JSONL не входит в MVP этого фикса.
+- До начала кодового фикса SSOT-контракт `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md` должен быть синхронизирован с этой семантикой.
+
+**Required fix direction:**
+- синхронизировать продуктовый/SSOT контракт `Stop` до transport и runtime изменений;
+- заменить `Stop => /api/v1/shutdown` на session-scoped stop command;
+- реализовать Core-side stop/rebind path без остановки runtime;
+- добавить recoverable stalled-turn handling для Gemini, чтобы зависший turn переводился в unlock/retryable path, а не в бесконечный `working`.
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 

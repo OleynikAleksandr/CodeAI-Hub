@@ -2,20 +2,20 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session181.md`, `doc/SolidWorks-WorkFlow/Plans/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- Этот `TODO Plan` реализует три согласованных scope: (1) refactor `settings -> Core -> provider runtime -> PM` для единой source of truth по `model` / `reasoning`, (2) provider-neutral generalization этого контракта без branch-per-provider hotfix path, (3) carry-over tail декомпозиции `session-request-handler.ts`
-- Текущий baseline `1.1.829` считается рабочим; scope ограничен behavior-preserving refactor + runtime config contract cleanup, без нового product feature scope
-- Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
-- Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
-- Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
-- Husky gates не обходить (`--no-verify` запрещён)
-- Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита
-- Перед закрытием каждого stream выполнять таргетные проверки затронутых файлов/пакетов
-- Для Core/config stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/core`
-- Для provider stream-ов таргетная проверка по умолчанию: `npm run build --workspace packages/Codex_Module`, `npm run build --workspace packages/Gemini_Module`, `npm run build --workspace packages/Claude_Module` по затронутому пакету
-- Для webview/PM stream-ов таргетная проверка по умолчанию: `npm run build:webview`, `npm run typecheck:webview`
-- Новый oversized handwritten source file вне explicit debt allowlist запрещён
-- Oversized allowlist должен только уменьшаться; если файл реально опустился до `300` строк или ниже, он должен покинуть allowlist без откладывания
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Этот `TODO Plan` реализует согласованный scope: `Stop` в Session UI больше не shutdown-ит Core, а останавливает только текущий turn / снимает stuck-state текущей logical session; следующий send rebinding-ит fresh provider session только если старый binding испорчен или принудительно остановлен.
+- Текущий baseline `1.1.833` считается входной точкой; scope ограничен stop/turn-abort semantics, session rebind и Gemini stalled-turn recovery без расширения продукта за пределы этих границ.
+- Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново.
+- Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
+- Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
+- Husky gates не обходить (`--no-verify` запрещён).
+- Любые изменения логики/архитектуры синхронно отражать в документации `doc/` до коммита.
+- Перед закрытием каждого stream выполнять таргетные проверки затронутых файлов/пакетов.
+- Для Core/bridge stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/core`.
+- Для Gemini stream-ов таргетная проверка по умолчанию: `npm run build --workspace=@codeai-hub/gemini-module`.
+- Для UI/webview stream-ов таргетная проверка по умолчанию: `npm run build:webview`, `npm run typecheck:webview`.
+- Новый oversized handwritten source file вне explicit debt allowlist запрещён.
+- В конце связанного блока фаз обязателен отдельный release-stream по Release Build Checklist с актуализацией release-facing docs до финальной сборки.
 
 ---
 
@@ -23,84 +23,63 @@
 
 Критерий завершения этого плана:
 
-- `settings` становятся единственной source of truth для `model` / `reasoning` следующего turn;
-- Core централизованно вычисляет applied turn config и передаёт её провайдерам;
-- Codex реально переключает модель/`reasoning` на очередном новом turn, а не только в UI label;
-- PM показывает applied runtime config, а не независимую локальную догадку;
-- Gemini / Claude / Codex приходят к одному контракту next-turn model switching;
-- новый provider подключается к model-sync pipeline через одну provider-neutral integration point, без отдельных патчей в PM sync и remote-bridge glue code;
-- после этого остаточный tail декомпозиции `session-request-handler.ts` закрыт отдельной честной фазой без ложных `IN_PROGRESS` статусов.
+- `Stop` в Session UI больше не вызывает shutdown Core runtime;
+- Core получает session-scoped stop command и умеет остановить только текущий turn / снять stuck-state текущей logical session;
+- logical session остаётся живой после `Stop`;
+- следующий send либо продолжает существующий binding, либо создаёт fresh provider session и ребиндит её к той же logical session;
+- Gemini silent stall больше не оставляет dialog в бесконечном `Agent is working... Please wait.`;
+- после закрытия связанных фаз собран новый релиз по полной release checklist с обновлёнными документами.
 
 ---
 
-## Phase 80 — Settings SSOT And Next-Turn Model Switching (owner: Oleksandr, updated: 2026-03-28)
+## Phase 82 — Session Stop Contract And UI/Bridge Reframing (owner: Oleksandr, updated: 2026-03-29)
 
-### Stream: Core applied-config resolver
-1. [DONE] Ввести единый Core resolver для `model` / `reasoning` следующего turn из persisted Settings snapshot и задокументировать его как единственную source of truth для applied turn config. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/config/index.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): add provider turn config resolver`
-2. [DONE] Git Commit: `refactor(core): add provider turn config resolver` (hash: `9ef3dc2a`)
+### Stream: Contract reset for Stop semantics
+1. [DONE] Зафиксировать баг и переписать продуктовый контракт `Stop`: больше не `shutdown Core`, а `stop current turn / unlock stuck session`, с явной привязкой к logical session и MVP-оговоркой про fresh provider session при испорченном transcript. Scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`. Expected commit: `docs(contract): redefine session stop semantics`
+2. [DONE] Git Commit: `docs(contract): redefine session stop semantics` (hash: `TBD`)
 
-### Stream: Remote-bridge applied-config contract
-3. [DONE] Протянуть explicit applied turn config через remote-bridge send/switch path, чтобы Core передавал провайдеру уже вычисленную конфигурацию, а не полагался на разрозненные локальные refresh paths. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/types.ts`. Expected commit: `refactor(core): thread applied turn config`
-4. [DONE] Git Commit: `refactor(core): thread applied turn config` (hash: `32bc0f7d`)
+### Stream: Session-scoped stop bridge command
+3. [TODO] Добавить в remote-bridge отдельную команду `session:stop`, чтобы transport слой различал stop текущей session и global runtime shutdown. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): add session stop bridge command`
+4. [TODO] Git Commit: `feat(core): add session stop bridge command` (hash: `TBD`)
 
-### Stream: Codex next-turn runtime apply
-5. [DONE] Сделать так, чтобы очередной новый Codex turn реально стартовал на Core-provided `model` / `reasoning`: обновить runtime application path и убрать зависимость от ранее зафиксированного thread config для следующего send. Scope: `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`. Expected commit: `refactor(codex): apply next-turn model config`
-6. [DONE] Git Commit: `refactor(codex): apply next-turn model config` (hash: `4d6226ad`)
+### Stream: UI stop path without core shutdown
+5. [TODO] Перевести Session UI на session-scoped stop path: убрать stop-core смысл из action-кнопки, заменить copy и больше не использовать `core-shutdown` helper из input action flow. Scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/input-play-stop-button.tsx`. Expected commit: `fix(ui): route stop to session turn cancel`
+6. [TODO] Git Commit: `fix(ui): route stop to session turn cancel` (hash: `TBD`)
 
-### Stream: Codex local settings-truth removal
-7. [DONE] Убрать из Codex provider path самостоятельное принятие решения о текущем `model` / `reasoning` через локальное чтение `settings.json`, оставив только Core-fed applied config и derived cache. Scope: `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`, `packages/Codex_Module/src/types/index.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`. Expected commit: `refactor(codex): remove local settings truth path`
-8. [DONE] Git Commit: `refactor(codex): remove local settings truth path` (hash: `a4ac21c7`)
+## Phase 83 — Core Session Stop And Rebind Semantics (owner: Oleksandr, updated: 2026-03-29)
 
-### Stream: PM applied-config sync
-9. [DONE] Перевести нижний PM label модели/`reasoning` с raw settings projection на Core-confirmed applied config events, сохранив live UX без нового split-brain между интерфейсом и runtime. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.ts`. Expected commit: `refactor(pm): sync applied turn config labels`
-10. [DONE] Git Commit: `refactor(pm): sync applied turn config labels` (hash: `df23290d`)
+### Stream: Binding invalidation without session deletion
+7. [TODO] Ввести Core-side primitive для invalidation текущего provider binding без удаления logical session, чтобы stop-path мог честно перевести session в recoverable state. Scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/handlers/session-provider-binding-service.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): support stop-invalidated session bindings`
+8. [TODO] Git Commit: `feat(core): support stop-invalidated session bindings` (hash: `TBD`)
 
-### Stream: Gemini and Claude parity
-11. [DONE] Привести Gemini и Claude к тому же next-turn config contract, что и Codex: Settings как SSOT, Core-owned applied config, provider без собственного truth-layer для текущего `model` / `reasoning`. Scope: `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`. Expected commit: `refactor(providers): align next-turn config contract`
-12. [DONE] Git Commit: `refactor(providers): align next-turn config contract` (hash: `9f243183`)
+### Stream: Session stop action handler
+9. [TODO] Реализовать `handleStop(sessionId)` в session request path: закрывать текущую provider session, не трогать Core runtime, переводить logical session в unlock/retryable state и не удалять dialog history. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`. Expected commit: `feat(core): stop active turn without core shutdown`
+10. [TODO] Git Commit: `feat(core): stop active turn without core shutdown` (hash: `TBD`)
 
-### Stream: Interim release build after model-switch scope
-13. [DONE] После закрытия всех stream-ов `Phase 80` выполнить отдельную сборку промежуточного релиза строго по Release Build Checklist: актуализировать release-facing docs, добиться чистого дерева, прогнать `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать артефакты и session report для отдельного пользовательского тестирования model-switch scope. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release 1.1.830`
-14. [DONE] Git Commit: `chore: release 1.1.830` (hash: `2b831e8a`)
+### Stream: Rebind on next send after stop
+11. [TODO] На следующем send научить Core поднимать fresh provider session и rebinding-ить её к той же logical session, если предыдущий binding был stop-invalidated или признан непригодным. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(core): rebind session after stop invalidation`
+12. [TODO] Git Commit: `feat(core): rebind session after stop invalidation` (hash: `TBD`)
 
-## Phase 80A — Provider-Neutral Applied Config Generalization (owner: Oleksandr, updated: 2026-03-28)
+### Stream: Core regression coverage
+13. [TODO] Добавить регрессионные Core tests на два сценария: `Stop` mid-turn не удаляет logical session и не гасит runtime, а следующий send rebinding-ит рабочую provider session; `Stop` после stuck-state снимает lock и возвращает send path. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`. Expected commit: `test(core): cover session stop and rebind flow`
+14. [TODO] Git Commit: `test(core): cover session stop and rebind flow` (hash: `TBD`)
 
-### Stream: Core provider turn-config registry
-15. [DONE] Убрать branch-per-provider вычисление applied config из bridge helper path и свести `settings -> applied turn config` к единому registry/resolver contract, который покрывает Claude/Codex/Gemini и масштабируется на новые provider ids без новых `if (providerId === ...)` в runtime bridge. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/config/provider-settings-snapshot.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): centralize provider turn config registry`
-16. [DONE] Git Commit: `refactor(core): centralize provider turn config registry` (hash: `8507fea2`)
+## Phase 84 — Gemini Stalled-Turn Recovery (owner: Oleksandr, updated: 2026-03-29)
 
-### Stream: Provider-neutral outbound bridge contract
-17. [DONE] Свести attachment outbound applied config и `session:model:update` broadcast к одному provider-neutral helper, чтобы send/switch/UI sync path работал через единый envelope и не знал деталей отдельных провайдеров. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/types.ts`. Expected commit: `refactor(core): unify applied config bridge contract`
-18. [DONE] Git Commit: `refactor(core): unify applied config bridge contract` (hash: `16951a36`)
+### Stream: Gemini stalled-stream watchdog
+15. [TODO] Добавить stalled-turn watchdog для Gemini stream path, чтобы зависание после `model_info` / partial progress переводилось в controlled recoverable outcome, а не в вечное ожидание terminal event. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Expected commit: `fix(gemini): recover stalled turn streams`
+16. [TODO] Git Commit: `fix(gemini): recover stalled turn streams` (hash: `TBD`)
 
-### Stream: Provider capability registration
-19. [DONE] Ввести в provider registry явный capability/contract для runtime model apply и label-sync eligibility, чтобы новый provider подключался через регистрацию возможностей, а не через разрозненные hardcoded checks по `providerId`. Scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): register provider model sync capabilities`
-20. [DONE] Git Commit: `refactor(core): register provider model sync capabilities` (hash: `498cfa62`)
+### Stream: Gemini recoverable idle reset
+17. [TODO] Перевести stalled-turn outcome в recoverable session state внутри Gemini manager/adapter: session должна уходить в `idle`, а Core/UI получать управляемый failure surface вместо зависшего `working`. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): surface stalled turn recovery`
+18. [TODO] Git Commit: `fix(gemini): surface stalled turn recovery` (hash: `TBD`)
 
-### Stream: Provider adoption parity sweep
-21. [DONE] Закрыть provider-side parity поверх общего applied-config envelope: Codex и Claude продолжают читать Core-fed runtime config без локального model truth-layer, а Gemini переводится на shared model/thinking override path для fresh/existing sessions и перестаёт перекрывать Core defaults snapshot-ом `settings.json`. Scope: `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-{bootstrapper,lifecycle,manager,settings-resolver}.ts`, `packages/Gemini_Module/src/session/types.ts`. Expected commit: `refactor(providers): adopt shared applied config contract`
-22. [DONE] Git Commit: `refactor(providers): adopt shared applied config contract` (hash: `5b78ce2d`)
+### Stream: Gemini regression coverage
+19. [TODO] Добавить regression tests на silent stall и на восстановление session после forced stop/recoverable stall outcome. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `test(gemini): guard stalled turn recovery`
+20. [TODO] Git Commit: `test(gemini): guard stalled turn recovery` (hash: `TBD`)
 
-### Stream: Verification release after provider-neutral generalization
-23. [DONE] После закрытия `Phase 80A` выполнить отдельную verification-сборку и регрессионную проверку model-switch matrix для Claude/Codex/Gemini на fresh-session и existing-session путях, затем зафиксировать артефакты и session report. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release 1.1.832`
-24. [DONE] Git Commit: `chore: release 1.1.832` (hash: `97a95e3b`)
+## Phase 85 — Release Build After Stop/Recovery Closure (owner: Oleksandr, updated: 2026-03-29)
 
-## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-29)
-
-### Stream: Continuity root carry-over
-25. [DONE] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
-26. [DONE] Git Commit: `refactor(core): extract session request continuity root` (hash: `a6853cbb`)
-
-### Stream: Turn arbitration carry-over
-27. [DONE] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в dedicated helper cluster, сохранив `turn_completed` / `token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-{arbitration,completion,threshold-resolver}.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`
-28. [DONE] Git Commit: `refactor(core): extract session request turn arbitration` (hash: `89000d13`)
-
-### Stream: Thin façade closure
-29. [DONE] Вынести constructor/service-graph wiring из `session-request-handler.ts` в dedicated runtime builder cluster, сохранив текущий callback contract между resume, continuity, binding и outbound dispatch service graph. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime*.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request runtime graph`
-30. [DONE] Git Commit: `refactor(core): extract session request runtime graph` (hash: `c2e10c0a`)
-31. [DONE] Вынести switch/message/delete orchestration и локальные guard/logging решения из `session-request-handler.ts` в dedicated actions helper, синхронно обновить SSOT и повторно проверить oversized debt. Результат: root handler стал orchestration-first façade, но остался в allowlist, потому что после cut всё ещё имеет `537` строк и не прошёл порог `<=300`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): thin session request handler facade`
-32. [DONE] Git Commit: `refactor(core): thin session request handler facade` (hash: `18d28ee6`)
-
-### Stream: Final release build after full plan closure
-33. [DONE] После закрытия `Phase 81` выполнена финальная сборка релиза `1.1.833` по Release Build Checklist: release-facing docs обновлены, `./scripts/build-all.sh` успешно собрал provider/core/UI/launcher tarball-ы, `./scripts/build-release.sh --use-current-version --allow-dirty` успешно собрал VSIX `codeai-hub-1.1.833.vsix`, а session report оформлен для отдельного полного регрессионного тестирования. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session186.md`. Expected commit: `chore: release post-plan verification build`
-34. [DONE] Git Commit: `chore: release post-plan verification build` (hash: `TBD`)
+### Stream: Final release build after phases 82–84
+21. [TODO] После закрытия `Phase 82`–`Phase 84` выполнить финальную сборку релиза строго по Release Build Checklist: сначала актуализировать release-facing docs и session report под новый stop/recovery contract, затем добиться чистого дерева, прогнать `./scripts/build-all.sh`, после этого `./scripts/build-release.sh --use-current-version`, проверить артефакты и зафиксировать их в отчёте новой сессии. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release stop recovery contract`
+22. [TODO] Git Commit: `chore: release stop recovery contract` (hash: `TBD`)

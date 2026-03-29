@@ -106,10 +106,21 @@ Force unlock — локальный UI override:
 ### 6.2 Play/Stop
 
 - ▶ отправляет сообщение как Enter.
-- ■ останавливает Core и снимает локальную блокировку ввода для подготовки следующего шага recovery.
-- Следующая отправка должна сначала восстановить Core, затем отправить сообщение.
+- ■ отправляет session-scoped stop command для активной logical session.
+- `Stop` обязан:
+  - остановить текущий turn, если он ещё выполняется;
+  - либо снять stuck-state текущей logical session, если turn фактически завершился, но UI/Core остались в `working`;
+  - не останавливать Core runtime;
+  - не затрагивать другие dialog sessions/workspaces.
+- `Stop` не должен вызывать supervisor stop или `POST /api/v1/shutdown`.
+- После `Stop` logical session остаётся доступной для следующего сообщения пользователя.
+- Если текущий provider binding после `Stop` признан непригодным, следующий send может создать fresh provider session и перебиндить её к той же logical session.
 
 Scope: в первую очередь для resume-сессий.
+
+### 6.3 Global runtime controls
+
+Остановка или перезапуск Core runtime остаются отдельными runtime-control действиями и не входят в Session input contract.
 
 ---
 
@@ -151,6 +162,14 @@ Scope: в первую очередь для resume-сессий.
 6. **Cold start idle snapshot without reason**
    - `turnState="idle"`, `continuityLockActive=false`, без `continuityLockReason`.
    - Ввод остаётся доступным.
+
+7. **Stop mid-turn does not stop Core**
+   - Во время активного turn нажать `Stop`.
+   - Core runtime продолжает жить, а ввод возвращается в recoverable state без global shutdown.
+
+8. **Stop unlocks stuck session**
+   - При stuck-сессии без terminal event нажать `Stop`.
+   - Ввод снова доступен для следующего send без рестарта Core.
 
 ---
 
