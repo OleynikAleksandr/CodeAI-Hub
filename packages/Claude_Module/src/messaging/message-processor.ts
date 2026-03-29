@@ -18,7 +18,6 @@ import {
   ClaudeStreamEventRouter,
   shouldSkipClaudeSDKMessageLog,
 } from "./claude-stream-event-router";
-import { logObservedProviderFeedback } from "./provider-feedback";
 
 interface ProcessResponseOptions {
   readonly iterator: AsyncIterable<ClaudeStreamMessage>;
@@ -248,7 +247,6 @@ export class SDKMessageProcessor {
       return;
     }
 
-    logObservedProviderFeedback(session, message);
     if (!shouldSkipClaudeSDKMessageLog(message)) {
       session?.logger?.logSDKMessage(message.type, message);
     }
