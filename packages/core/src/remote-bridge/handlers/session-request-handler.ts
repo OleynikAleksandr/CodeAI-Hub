@@ -23,11 +23,6 @@ import type {
 import type { SessionProviderBindingService } from "./session-provider-binding-service";
 import type { SessionProviderEventRouter } from "./session-provider-event-router";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
-import {
-  CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
-  CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
-  type FlowNodeRolloverSendGuardDecision,
-} from "./session-request-handler.types";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import {
   normalizeContinuityStageId as normalizeContinuityStageIdValue,
@@ -47,10 +42,10 @@ import type {
 } from "./session-request-handler-resume-lifecycle";
 import type { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
 import { createSessionRequestHandlerRuntime } from "./session-request-handler-runtime";
+import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import type { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
 import type { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
-import { shouldHideUserMessage } from "./workflow-turn-control";
 
 export interface ProviderSessionBinding {
   readonly providerId: string;
@@ -132,99 +127,7 @@ export class SessionRequestHandler {
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
   private readonly continuityRoot: SessionRequestHandlerContinuityRoot;
   private readonly turnArbitration: SessionRequestHandlerTurnArbitration;
-
-  private resolveImmediatePostTurnContextDecision(
-    session: Session
-  ): PostTurnContextDecision | null {
-    if (this.isFlowNodeRolloverPending(session.id)) {
-      return "rollover_required";
-    }
-    if (!(session.initiativeSlug && session.stage)) {
-      return "no_rollover";
-    }
-    if (
-      !this.flowNodeContinuity.isEligibleForRollover({
-        stageId: session.stage,
-        runSlug: session.runSlug,
-      })
-    ) {
-      return "no_rollover";
-    }
-    return null;
-  }
-
-  private emitTurnStateEvent(options: {
-    readonly sessionId: string;
-    readonly state: "running" | "idle";
-  }): void {
-    const session = this.sessionManager.getSession(options.sessionId);
-    const providerId = session?.providerId ?? null;
-    if (session) {
-      this.workspaceRuntime?.notifyTurnStateChanged(
-        {
-          workspaceRoot: session.workspacePath,
-          nodeId: session.stage ?? "session",
-          sessionId: session.id,
-        },
-        options.state
-      );
-    }
-
-    this.broadcaster({
-      type: "session:stream",
-      payload: {
-        sessionId: options.sessionId,
-        event: {
-          type: "stream_event",
-          provider: providerId ?? "core",
-          sessionId: options.sessionId,
-          data: {
-            kind: "turn_state",
-            state: options.state,
-            ...(providerId ? { providerId } : {}),
-          },
-          uuid: `${crypto.randomUUID()}::turn_state`,
-          timestamp: new Date().toISOString(),
-        },
-      },
-    });
-  }
-
-  private emitContinuityLockEvent(
-    options: EmitContinuityLockEventOptions
-  ): void {
-    this.continuityLockService.emitContinuityLockEvent(options);
-  }
-
-  private registerFlowNodeContinuityLockContext(
-    context: FlowNodeContinuityLockContext
-  ): FlowNodeContinuityLockContext {
-    return this.continuityLockService.registerFlowNodeContinuityLockContext(
-      context
-    );
-  }
-
-  private finalizeFlowNodeContinuityLock(options: {
-    readonly sessionId: string;
-    readonly reason: Extract<
-      ContinuityLockReason,
-      "resume_ready" | "resume_failed" | "resume_timeout"
-    >;
-  }): void {
-    this.continuityLockService.finalizeFlowNodeContinuityLock(options);
-  }
-
-  private finalizeFlowNodeContinuityLockOnBootstrapGate(options: {
-    readonly sessionId: string;
-    readonly reason: Extract<
-      ContinuityLockReason,
-      "resume_ready" | "resume_failed" | "resume_timeout"
-    >;
-  }): void {
-    this.continuityLockService.finalizeFlowNodeContinuityLockOnBootstrapGate(
-      options
-    );
-  }
+  private readonly sessionActions: SessionRequestHandlerSessionActions;
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -235,44 +138,153 @@ export class SessionRequestHandler {
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
     this.workspaceRuntime = options.workspaceRuntime;
+    const isFlowNodeRolloverPending = (sessionId: string): boolean =>
+      this.continuityRolloverOrchestrator.hasPending(sessionId) ||
+      this.continuityLockService.hasContext(sessionId);
+    const resolveImmediatePostTurnContextDecision = (
+      session: Session
+    ): PostTurnContextDecision | null => {
+      if (isFlowNodeRolloverPending(session.id)) {
+        return "rollover_required";
+      }
+      if (!(session.initiativeSlug && session.stage)) {
+        return "no_rollover";
+      }
+      if (
+        !this.flowNodeContinuity.isEligibleForRollover({
+          stageId: session.stage,
+          runSlug: session.runSlug,
+        })
+      ) {
+        return "no_rollover";
+      }
+      return null;
+    };
+    const emitTurnStateEvent = (turnStateOptions: {
+      readonly sessionId: string;
+      readonly state: "running" | "idle";
+    }): void => {
+      const session = this.sessionManager.getSession(
+        turnStateOptions.sessionId
+      );
+      const providerId = session?.providerId ?? null;
+      if (session) {
+        this.workspaceRuntime?.notifyTurnStateChanged(
+          {
+            workspaceRoot: session.workspacePath,
+            nodeId: session.stage ?? "session",
+            sessionId: session.id,
+          },
+          turnStateOptions.state
+        );
+      }
+      this.broadcaster({
+        type: "session:stream",
+        payload: {
+          sessionId: turnStateOptions.sessionId,
+          event: {
+            type: "stream_event",
+            provider: providerId ?? "core",
+            sessionId: turnStateOptions.sessionId,
+            data: {
+              kind: "turn_state",
+              state: turnStateOptions.state,
+              ...(providerId ? { providerId } : {}),
+            },
+            uuid: `${crypto.randomUUID()}::turn_state`,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      });
+    };
+    const getDefaultProviderId = (): string => {
+      const providers = this.providerRegistry.listProviders();
+      const activeProvider = providers.find(
+        (provider) =>
+          provider.status === "active" &&
+          Boolean(this.providerRegistry.getAdapter(provider.id))
+      );
+      if (activeProvider) {
+        return activeProvider.id;
+      }
+      const fallbackProvider = providers.find((provider) =>
+        Boolean(this.providerRegistry.getAdapter(provider.id))
+      );
+      return fallbackProvider?.id ?? "claudeCodeCli";
+    };
+    const handleProviderFailure = (
+      providerId: string,
+      error: unknown,
+      sessionId?: string
+    ): void => {
+      this.providerFailureRecovery.handleProviderFailure(
+        providerId,
+        error,
+        sessionId
+      );
+    };
+    const runTurnCompletedArbitration = (sessionId: string): void => {
+      this.turnArbitration.runTurnCompletedArbitration(sessionId);
+    };
+    const handleTurnCompletedWithFlowNodeArbitration = (
+      sessionId: string,
+      flowNodeContinuityTask: Promise<void>
+    ): void => {
+      flowNodeContinuityTask
+        .catch((error: unknown) => {
+          this.logger.warn("Flow node continuity handler failed", {
+            sessionId,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        })
+        .finally(() => {
+          runTurnCompletedArbitration(sessionId);
+        });
+    };
+    const handleFlowNodeContinuityProviderEvent = async (
+      sessionId: string,
+      event: unknown
+    ): Promise<void> => {
+      await this.turnArbitration.handleFlowNodeContinuityProviderEvent({
+        sessionId,
+        event,
+        resolveLiveContinuityRemainingPercentThreshold: async (session) =>
+          await this.turnArbitration.resolveLiveContinuityRemainingPercentThreshold(
+            session
+          ),
+      });
+    };
     const runtime = createSessionRequestHandlerRuntime({
       broadcaster: this.broadcaster,
       callbacks: {
         emitContinuityLockEvent: (lockEvent) =>
           this.continuityLockService.emitContinuityLockEvent(lockEvent),
-        emitTurnStateEvent: (turnStateOptions) =>
-          this.emitTurnStateEvent(turnStateOptions),
+        emitTurnStateEvent,
         finalizeFlowNodeContinuityLock: (lockOptions) =>
-          this.finalizeFlowNodeContinuityLock(lockOptions),
+          this.continuityLockService.finalizeFlowNodeContinuityLock(
+            lockOptions
+          ),
         finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
-          this.finalizeFlowNodeContinuityLockOnBootstrapGate(lockOptions),
-        getDefaultProviderId: () => this.getDefaultProviderId(),
-        handleFlowNodeContinuityProviderEvent: async (sessionId, event) =>
-          await this.handleFlowNodeContinuityProviderEvent(sessionId, event),
+          this.continuityLockService.finalizeFlowNodeContinuityLockOnBootstrapGate(
+            lockOptions
+          ),
+        getDefaultProviderId,
+        handleFlowNodeContinuityProviderEvent,
         handleMessage: async (sessionId, payload) =>
           await this.handleMessage(sessionId, payload),
         handleProviderEvent: (sessionId, event) =>
-          this.handleProviderEvent(sessionId, event),
-        handleProviderFailure: (providerId, error, sessionId) =>
-          this.handleProviderFailure(providerId, error, sessionId),
-        handleTurnCompletedWithFlowNodeArbitration: (
-          sessionId,
-          flowNodeContinuityTask
-        ) =>
-          this.handleTurnCompletedWithFlowNodeArbitration(
-            sessionId,
-            flowNodeContinuityTask
-          ),
-        isFlowNodeRolloverPending: (sessionId) =>
-          this.isFlowNodeRolloverPending(sessionId),
+          this.providerEventRouter.handleProviderEvent(sessionId, event),
+        handleProviderFailure,
+        handleTurnCompletedWithFlowNodeArbitration,
+        isFlowNodeRolloverPending,
         registerFlowNodeContinuityLockContext: (context) =>
-          this.registerFlowNodeContinuityLockContext(context),
+          this.continuityLockService.registerFlowNodeContinuityLockContext(
+            context
+          ),
         resolveContinuityRootSessionId: async (resolutionOptions) =>
           await this.resolveContinuityRootSessionId(resolutionOptions),
-        resolveImmediatePostTurnContextDecision: (session) =>
-          this.resolveImmediatePostTurnContextDecision(session),
-        runTurnCompletedArbitration: (sessionId) =>
-          this.runTurnCompletedArbitration(sessionId),
+        resolveImmediatePostTurnContextDecision,
+        runTurnCompletedArbitration,
       },
       config: this.config,
       continuityClock: options.continuityClock,
@@ -306,6 +318,22 @@ export class SessionRequestHandler {
     this.sessionBootstrap = runtime.sessionBootstrap;
     this.sessionResolution = runtime.sessionResolution;
     this.turnArbitration = runtime.turnArbitration;
+    this.sessionActions = new SessionRequestHandlerSessionActions({
+      appliedTurnConfig: this.appliedTurnConfig,
+      broadcaster: this.broadcaster,
+      continuityLockService: this.continuityLockService,
+      continuityRolloverOrchestrator: this.continuityRolloverOrchestrator,
+      eventMessages: this.eventMessages,
+      logger: this.logger,
+      messageDispatch: this.messageDispatch,
+      onProviderFailure: handleProviderFailure,
+      providerRegistry: this.providerRegistry,
+      providerSessions: this.providerSessions,
+      resumeLifecycle: this.resumeLifecycle,
+      sessionManager: this.sessionManager,
+      sessionStorage: this.sessionStorage,
+      workspaceRuntime: this.workspaceRuntime,
+    });
   }
 
   protected normalizeContinuityStageId(value: string | null): string {
@@ -362,53 +390,46 @@ export class SessionRequestHandler {
     );
   }
 
-  private resolveFlowNodeRolloverSendGuard(
-    sessionId: string
-  ): FlowNodeRolloverSendGuardDecision {
-    if (this.resumeLifecycle.hasPendingPostTurnContextDecision(sessionId)) {
-      return {
-        allowed: false,
-        code: CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
-        message: "Session continuity context decision is pending. Please wait.",
-        sourceSessionId: sessionId,
-        targetSessionId: null,
-      };
-    }
-    const context = this.continuityLockService.getContext(sessionId);
-    if (!context) {
-      return { allowed: true };
-    }
-
-    if (
-      context.targetSessionId === sessionId &&
-      context.awaitingBootstrapTurn
-    ) {
-      return {
-        allowed: false,
-        code: CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
-        message: CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
-        sourceSessionId: context.sourceSessionId,
-        targetSessionId: context.targetSessionId ?? null,
-      };
-    }
-
-    if (context.sourceSessionId !== sessionId) {
-      return { allowed: true };
-    }
-    return {
-      allowed: false,
-      code: CONTINUITY_ROLLOVER_PENDING_ERROR_CODE,
-      message: CONTINUITY_ROLLOVER_PENDING_ERROR_MESSAGE,
-      sourceSessionId: context.sourceSessionId,
-      targetSessionId: context.targetSessionId ?? null,
-    };
+  private handleProviderEvent(sessionId: string, event: unknown): void {
+    this.providerEventRouter.handleProviderEvent(sessionId, event);
   }
 
-  private isFlowNodeRolloverPending(sessionId: string): boolean {
-    return (
-      this.continuityRolloverOrchestrator.hasPending(sessionId) ||
-      this.continuityLockService.hasContext(sessionId)
+  private registerFlowNodeContinuityLockContext(
+    context: FlowNodeContinuityLockContext
+  ): FlowNodeContinuityLockContext {
+    return this.continuityLockService.registerFlowNodeContinuityLockContext(
+      context
     );
+  }
+
+  private emitContinuityLockEvent(
+    options: EmitContinuityLockEventOptions
+  ): void {
+    this.continuityLockService.emitContinuityLockEvent(options);
+  }
+
+  private finalizeFlowNodeContinuityLock(options: {
+    readonly sessionId: string;
+    readonly reason: Extract<
+      ContinuityLockReason,
+      "resume_ready" | "resume_failed" | "resume_timeout"
+    >;
+  }): void {
+    this.continuityLockService.finalizeFlowNodeContinuityLock(options);
+  }
+
+  private async handleFlowNodeContinuityProviderEvent(
+    sessionId: string,
+    event: unknown
+  ): Promise<void> {
+    await this.turnArbitration.handleFlowNodeContinuityProviderEvent({
+      sessionId,
+      event,
+      resolveLiveContinuityRemainingPercentThreshold: async (session) =>
+        await this.turnArbitration.resolveLiveContinuityRemainingPercentThreshold(
+          session
+        ),
+    });
   }
 
   async handleCreate(
@@ -445,68 +466,7 @@ export class SessionRequestHandler {
     readonly targetProviderId?: string;
     readonly targetModelId?: string;
   }): Promise<void> {
-    const session = this.sessionManager.getSession(options.sessionId);
-    if (!session) {
-      this.logger.warn("Switch request: session not found", {
-        sessionId: options.sessionId,
-      });
-      return;
-    }
-
-    const adapter = this.providerRegistry.getAdapter(session.providerId);
-    if (!adapter) {
-      this.logger.warn("Switch request: provider adapter unavailable", {
-        sessionId: options.sessionId,
-        providerId: session.providerId,
-      });
-      return;
-    }
-
-    // For switch_model: override model on adapter before resend
-    if (options.mode === "switch_model" && options.targetModelId) {
-      const adapterAny = adapter as { setModelOverride?: (m: string) => void };
-      if (typeof adapterAny.setModelOverride === "function") {
-        adapterAny.setModelOverride(options.targetModelId);
-        this.logger.info("Switch request: model override applied", {
-          sessionId: options.sessionId,
-          targetModelId: options.targetModelId,
-        });
-        // Immediately broadcast so StatusPanel updates without waiting for ModelInfo event
-        this.broadcaster({
-          type: "session:model:update",
-          payload: {
-            sessionId: options.sessionId,
-            providerId: session.providerId,
-            modelId: options.targetModelId,
-          },
-        });
-      }
-    }
-
-    // Resend the last user message from session history
-    const lastUserMessage = [...session.messages]
-      .reverse()
-      .find((m) => m.role === "user");
-
-    if (lastUserMessage) {
-      this.logger.info("Switch request: resending last user message", {
-        sessionId: options.sessionId,
-        mode: options.mode,
-        contentLength: lastUserMessage.content.length,
-      });
-      await this.handleMessage(options.sessionId, {
-        content: lastUserMessage.content,
-        turnOptions: this.appliedTurnConfig.attachToTurnOptions({
-          providerId: session.providerId,
-          targetModelId:
-            options.mode === "switch_model" ? options.targetModelId : undefined,
-        }),
-      });
-    } else {
-      this.logger.warn("Switch request: no user message to resend", {
-        sessionId: options.sessionId,
-      });
-    }
+    await this.sessionActions.handleSwitchRequest(options);
   }
 
   async createSessionForWorkflow(options: {
@@ -526,7 +486,6 @@ export class SessionRequestHandler {
       });
       return null;
     }
-
     try {
       return await this.sessionBootstrap.createAndRegisterSession({
         providerId: options.providerId,
@@ -541,7 +500,10 @@ export class SessionRequestHandler {
         },
       });
     } catch (error) {
-      this.handleProviderFailure(options.providerId, error);
+      this.providerFailureRecovery.handleProviderFailure(
+        options.providerId,
+        error
+      );
       return null;
     }
   }
@@ -550,178 +512,11 @@ export class SessionRequestHandler {
     sessionId: string,
     messagePayload: MessageContentPayload
   ): Promise<void> {
-    this.logSessionMessageReceived(sessionId, messagePayload);
-    const extracted =
-      this.eventMessages.extractMessageContentAndTurnOptions(messagePayload);
-    if (!extracted) {
-      this.logger.warn("Received invalid message payload", { sessionId });
-      return;
-    }
-
-    const { content, turnOptions } = extracted;
-    const hiddenUserMessage = shouldHideUserMessage(turnOptions);
-    this.logSessionMessageExtracted(sessionId, content, turnOptions);
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      this.broadcaster({
-        type: "session:error",
-        payload: { sessionId, message: "Session not found" },
-      });
-      this.logSessionNotFoundForIncomingMessage(sessionId);
-      return;
-    }
-
-    this.logResolvedSessionForIncomingMessage(sessionId, session);
-    const lifecycleState =
-      this.resumeLifecycle.getSessionResumeLifecycleState(session);
-    if (
-      lifecycleState.mode === "no_resume" &&
-      lifecycleState.finalTurnCompleted
-    ) {
-      this.broadcaster({
-        type: "session:error",
-        payload: {
-          sessionId,
-          code: "session_terminal_read_only",
-          message:
-            "This session is terminal and read-only. Create a new session to continue.",
-        },
-      });
-      return;
-    }
-
-    if (
-      lifecycleState.finalTurnCompleted ||
-      lifecycleState.terminalLockReason !== null
-    ) {
-      this.resumeLifecycle.updateSessionResumeLifecycleState(session, {
-        finalTurnCompleted: false,
-        terminalLockReason: null,
-      });
-    }
-    this.resumeLifecycle.clearPostTurnContextDecision(sessionId);
-
-    const rolloverSendGuard = this.resolveFlowNodeRolloverSendGuard(sessionId);
-    if (!rolloverSendGuard.allowed) {
-      this.logger.warn("Blocked send while flow-node rollover is pending", {
-        sessionId,
-        sourceSessionId: rolloverSendGuard.sourceSessionId,
-        targetSessionId: rolloverSendGuard.targetSessionId,
-        code: rolloverSendGuard.code,
-      });
-      this.broadcaster({
-        type: "session:error",
-        payload: {
-          sessionId,
-          message: rolloverSendGuard.message,
-          code: rolloverSendGuard.code,
-          sourceSessionId: rolloverSendGuard.sourceSessionId,
-          targetSessionId: rolloverSendGuard.targetSessionId,
-        },
-      });
-      return;
-    }
-
-    await this.messageDispatch.dispatchUserMessage({
-      session,
-      sessionId,
-      content,
-      turnOptions,
-      hiddenUserMessage,
-    });
+    await this.sessionActions.handleMessage(sessionId, messagePayload);
   }
 
   async handleDelete(sessionId: string): Promise<void> {
-    const session = this.sessionManager.getSession(sessionId);
-    if (!session) {
-      this.broadcaster({
-        type: "session:error",
-        payload: { sessionId, message: "Session not found" },
-      });
-      return;
-    }
-
-    const binding = this.providerSessions.get(sessionId);
-    if (binding) {
-      const adapter = this.providerRegistry.getAdapter(binding.providerId);
-      binding.unsubscribe();
-      this.providerSessions.delete(sessionId);
-      try {
-        await adapter?.closeSession(binding.providerSessionId);
-      } catch (error) {
-        this.handleProviderFailure(binding.providerId, error, sessionId);
-      }
-    }
-
-    const deleted = this.sessionManager.deleteSession(sessionId);
-    if (!deleted) {
-      return;
-    }
-
-    this.sessionStorage.close(sessionId, "session-deleted");
-    this.resumeLifecycle.clearSessionLifecycle(sessionId);
-    this.workspaceRuntime?.notifySessionDeleted({
-      workspaceRoot: session.workspacePath,
-      nodeId: session.stage ?? "session",
-      sessionId: session.id,
-    });
-    this.broadcaster({ type: "session:deleted", payload: { sessionId } });
-  }
-
-  private handleProviderEvent(sessionId: string, event: unknown): void {
-    this.providerEventRouter.handleProviderEvent(sessionId, event);
-  }
-
-  private handleTurnCompletedWithFlowNodeArbitration(
-    sessionId: string,
-    flowNodeContinuityTask: Promise<void>
-  ): void {
-    flowNodeContinuityTask
-      .catch((error: unknown) => {
-        this.logger.warn("Flow node continuity handler failed", {
-          sessionId,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      })
-      .finally(() => {
-        this.runTurnCompletedArbitration(sessionId);
-      });
-  }
-
-  private runTurnCompletedArbitration(sessionId: string): void {
-    this.turnArbitration.runTurnCompletedArbitration(sessionId);
-  }
-
-  private async handleFlowNodeContinuityProviderEvent(
-    sessionId: string,
-    event: unknown
-  ): Promise<void> {
-    await this.turnArbitration.handleFlowNodeContinuityProviderEvent({
-      sessionId,
-      event,
-      resolveLiveContinuityRemainingPercentThreshold: async (session) =>
-        await this.resolveLiveContinuityRemainingPercentThreshold(session),
-    });
-  }
-
-  private async resolveLiveContinuityRemainingPercentThreshold(
-    session: Session
-  ): Promise<number> {
-    return await this.turnArbitration.resolveLiveContinuityRemainingPercentThreshold(
-      session
-    );
-  }
-
-  private handleProviderFailure(
-    providerId: string,
-    error: unknown,
-    sessionId?: string
-  ): void {
-    this.providerFailureRecovery.handleProviderFailure(
-      providerId,
-      error,
-      sessionId
-    );
+    await this.sessionActions.handleDelete(sessionId);
   }
 
   hasRetryBudget(sessionId: string): boolean {
@@ -738,121 +533,5 @@ export class SessionRequestHandler {
 
   getPendingUserIntent(sessionId: string): string | null {
     return this.retryState.getPendingUserIntent(sessionId);
-  }
-
-  private updateProviderBinding(
-    sessionId: string,
-    providerSessionId?: string
-  ): void {
-    this.providerBindingService.updateProviderBinding(
-      sessionId,
-      providerSessionId
-    );
-  }
-
-  private updateBindingWithResolvedId(
-    sessionId: string,
-    providerSessionId: string
-  ): void {
-    this.providerBindingService.updateBindingWithResolvedId(
-      sessionId,
-      providerSessionId
-    );
-  }
-
-  private broadcastSessionBinding(sessionId: string): void {
-    this.providerBindingService.broadcastSessionBinding(sessionId);
-  }
-
-  private logSessionMessageReceived(
-    sessionId: string,
-    messagePayload: MessageContentPayload
-  ): void {
-    this.logger.info("Session message received", {
-      sessionId,
-      payloadType: typeof messagePayload,
-    });
-  }
-
-  private logSessionMessageExtracted(
-    sessionId: string,
-    content: string,
-    turnOptions?: Record<string, unknown>
-  ): void {
-    this.logger.info("Session message extracted", {
-      sessionId,
-      contentLength: content.length,
-      hasTurnOptions: turnOptions !== undefined,
-    });
-  }
-
-  private logSessionNotFoundForIncomingMessage(sessionId: string): void {
-    this.logger.warn("Session not found for incoming message", { sessionId });
-  }
-
-  private logResolvedSessionForIncomingMessage(
-    sessionId: string,
-    session: Session
-  ): void {
-    this.logger.info("Resolved session for incoming message", {
-      sessionId,
-      providerId: session.providerId,
-      providerSessionId: session.providerSessionId ?? null,
-      providerSessionStatus: session.providerSessionStatus,
-      stage: session.stage ?? null,
-      initiativeSlug: session.initiativeSlug ?? null,
-      runSlug: session.runSlug ?? null,
-    });
-  }
-
-  private maybePromoteLegacyDescriptionDialogHistory(options: {
-    readonly session: Session;
-    readonly dialogSessionId?: string | null;
-  }): void {
-    this.descriptionDialogSync.maybePromoteLegacyDescriptionDialogHistory(
-      options
-    );
-  }
-
-  private async maybeBackfillDescriptionDialogHistory(options: {
-    readonly session: Session;
-    readonly providerSessionId: string;
-    readonly dialog: {
-      readonly dialogSessionId: string;
-      readonly shouldBackfill: boolean;
-    } | null;
-  }): Promise<void> {
-    await this.descriptionDialogSync.maybeBackfillDescriptionDialogHistory(
-      options
-    );
-  }
-
-  private async updateDescriptionSessionRef(
-    session: Session,
-    providerSessionId?: string
-  ): Promise<void> {
-    await this.descriptionDialogSync.updateDescriptionSessionRef(
-      session,
-      providerSessionId
-    );
-  }
-
-  private getDefaultProviderId(): string {
-    const providers = this.providerRegistry.listProviders();
-    const activeProvider = providers.find(
-      (provider) =>
-        provider.status === "active" &&
-        Boolean(this.providerRegistry.getAdapter(provider.id))
-    );
-    if (activeProvider) {
-      return activeProvider.id;
-    }
-    const fallbackProvider = providers.find((provider) =>
-      Boolean(this.providerRegistry.getAdapter(provider.id))
-    );
-    if (fallbackProvider) {
-      return fallbackProvider.id;
-    }
-    return "claudeCodeCli";
   }
 }
