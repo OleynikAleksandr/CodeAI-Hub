@@ -76,7 +76,7 @@
 
 ### Stream: Gemini regression coverage
 19. [DONE] Добавить regression tests на silent stall и на восстановление session после forced stop/recoverable stall outcome. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `test(gemini): guard stalled turn recovery`
-20. [DONE] Git Commit: `test(gemini): guard stalled turn recovery` (hash: `TBD`)
+20. [DONE] Git Commit: `test(gemini): guard stalled turn recovery` (hash: `d4517041`)
 
 ## Phase 85 — Release Build After Stop/Recovery Closure (owner: Oleksandr, updated: 2026-03-29)
 

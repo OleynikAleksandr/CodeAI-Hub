@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.834] - 2026-03-29
+### Changed
+- **Session-scoped Stop contract**: Session UI, websocket bridge, and Core now use `session:stop` as the canonical stop path, so `Stop` targets only the active logical session/turn instead of triggering global Core shutdown.
+- **Stop-triggered provider rebind path**: Core now keeps the logical session alive after `Stop`, invalidates only the live provider binding, and creates a fresh provider session on the next send when that binding was intentionally stopped.
+- **Gemini recoverable stalled-turn path**: Gemini stalled-stream watchdog failures now surface as provider `turn_failed` on the recoverable session path instead of escalating through generic provider-runtime failure recovery.
+
+### Fixed
+- **Stop no longer kills Core runtime**: the Session input button no longer calls `/api/v1/shutdown`, no longer relies on supervisor restart on the next send, and no longer drops the active dialog into a stop-core UX.
+- **Gemini silent stall deadlock**: stalled Gemini streams after `model_info` or partial progress now fail back to `idle` instead of leaving Core/UI in an infinite `Agent is working... Please wait.` state.
+- **Recovery regression coverage**: Core and Gemini test suites now lock in stop-mid-turn survival, stuck-lock release, rebinding on next send, stalled-stream timeout, recoverable retry, and the absence of phantom partial assistant flush before `finished`.
+
 ## [1.1.833] - 2026-03-29
 ### Changed
 - **SessionRequestHandler runtime graph split**: constructor/service bootstrap for continuity, resume, provider binding, flow-node rollover, and turn arbitration now lives in `session-request-handler-runtime{,-core,-types}.ts` instead of one inline root constructor block.

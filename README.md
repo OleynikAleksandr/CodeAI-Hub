@@ -7,13 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.833
-- **Phase 81 carry-over closed**: the remaining `session-request-handler.ts` tail is no longer one giant inline service graph plus outbound/session orchestration blob; runtime wiring and user-facing actions are now split into dedicated handler helpers.
-- **Runtime graph extraction**: constructor/service bootstrap for continuity, binding, resume, flow-node rollover, dispatch, and turn arbitration now lives in `session-request-handler-runtime{,-core,-types}.ts`, reducing inline dependency assembly inside the root handler.
-- **User send/switch/delete orchestration split**: regular message ingress, switch resend logic, rollover-pending send guards, and delete cleanup now live in `session-request-handler-session-actions.ts`, so the root handler acts as a narrower façade over specialized collaborators.
-- **Provider-neutral model sync baseline preserved**: the `1.1.832` next-turn resolver/capability contract remains intact, including Core-owned applied config attachment and PM runtime label sync for Claude, Codex, and Gemini.
-- **Manual provider validation kept green**: the baseline verified before this release remains unchanged: all three providers still honor settings-driven model changes on the next turn.
-- **Gemini runtime self-healing preserved**: the `1.1.825` repair path for broken global Gemini CLI/Core installs remains part of the runtime baseline.
+## Current Release — v1.1.834
+- **Session Stop is no longer a Core shutdown**: the Session UI button now routes through the session-scoped `session:stop` bridge command and stops only the active turn / stuck logical session state instead of calling the global shutdown endpoint.
+- **Logical sessions survive Stop**: Core now invalidates only the live provider binding, keeps dialog history and the logical session alive, and rebinds a fresh provider session on the next send when the previous binding was intentionally stopped.
+- **Gemini stalled-turn recovery is now recoverable**: stalled Gemini streams fail through a watchdog, surface as provider `turn_failed` on the recoverable path, and return Core/UI to `idle` instead of leaving the dialog in perpetual `working`.
+- **Stop/stall regressions are covered end-to-end**: Core tests guard stop mid-turn, stuck-lock unlock, and rebind-on-next-send, while Gemini tests guard stalled stream timeout, recoverable retry, and no phantom partial assistant flush before `finished`.
 
 Previous releases (summary): `1.1.800–1.1.820` — quality gate restoration, provider-registry and Gemini-session façade splits, rate limit display cleanup, instant model label sync, optimistic user messages, Google Translate thought translation, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, collision avoidance, multi-column layout, `dialog:switch:*` protocol, tag pipeline (Gemini Module → Core → JSONL → PM → UI), scenario validator relaxation, and earlier workflow/parser/layout stabilization work.
 
