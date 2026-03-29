@@ -160,7 +160,6 @@ export class SessionRequestHandlerSessionBootstrap {
       supportsImmediateBinding
     );
   }
-
   private notifyRuntimeSessionCreated(session: Session): void {
     this.deps.workspaceRuntime?.notifySessionCreated(
       {

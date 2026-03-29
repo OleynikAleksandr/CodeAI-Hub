@@ -46,6 +46,7 @@ import { SessionRequestHandlerSessionActions } from "./session-request-handler-s
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import type { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
 import { SessionRequestHandlerStopAction } from "./session-request-handler-stop-action";
+import { SessionRequestHandlerStopRebind } from "./session-request-handler-stop-rebind";
 import type { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
 
 export interface ProviderSessionBinding {
@@ -130,6 +131,7 @@ export class SessionRequestHandler {
   private readonly turnArbitration: SessionRequestHandlerTurnArbitration;
   private readonly sessionActions: SessionRequestHandlerSessionActions;
   private readonly stopAction: SessionRequestHandlerStopAction;
+  private readonly stopRebind: SessionRequestHandlerStopRebind;
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -320,6 +322,39 @@ export class SessionRequestHandler {
     this.sessionBootstrap = runtime.sessionBootstrap;
     this.sessionResolution = runtime.sessionResolution;
     this.turnArbitration = runtime.turnArbitration;
+    this.stopRebind = new SessionRequestHandlerStopRebind({
+      broadcastSessionBinding: (sessionId) =>
+        this.providerBindingService.broadcastSessionBinding(sessionId),
+      continuity: this.continuity,
+      continuityRootBySessionId: this.continuityRootBySessionId,
+      handleProviderEvent: (sessionId, event) =>
+        this.providerEventRouter.handleProviderEvent(sessionId, event),
+      logger: this.logger,
+      maybeBackfillDescriptionDialogHistory: async (options) =>
+        await this.descriptionDialogSync.maybeBackfillDescriptionDialogHistory(
+          options
+        ),
+      maybePromoteLegacyDescriptionDialogHistory: (options) =>
+        this.descriptionDialogSync.maybePromoteLegacyDescriptionDialogHistory(
+          options
+        ),
+      onProviderFailure: handleProviderFailure,
+      providerRegistry: this.providerRegistry,
+      providerSessions: this.providerSessions,
+      resolveDescriptionDialog: async (options) =>
+        await this.descriptionDialogSync.resolveDescriptionDialog(options),
+      sessionManager: this.sessionManager,
+      updateDescriptionSessionRef: async (session, providerSessionId) =>
+        await this.descriptionDialogSync.updateDescriptionSessionRef(
+          session,
+          providerSessionId
+        ),
+      updateProviderBinding: (sessionId, providerSessionId) =>
+        this.providerBindingService.updateProviderBinding(
+          sessionId,
+          providerSessionId
+        ),
+    });
     this.sessionActions = new SessionRequestHandlerSessionActions({
       appliedTurnConfig: this.appliedTurnConfig,
       broadcaster: this.broadcaster,
@@ -334,6 +369,7 @@ export class SessionRequestHandler {
       resumeLifecycle: this.resumeLifecycle,
       sessionManager: this.sessionManager,
       sessionStorage: this.sessionStorage,
+      stopRebind: this.stopRebind,
       workspaceRuntime: this.workspaceRuntime,
     });
     this.stopAction = new SessionRequestHandlerStopAction({

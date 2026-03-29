@@ -19,6 +19,7 @@ import type {
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import type { SessionRequestHandlerResumeLifecycle } from "./session-request-handler-resume-lifecycle";
 import type { ProviderSessionBindingLike } from "./session-request-handler-runtime-types";
+import type { SessionRequestHandlerStopRebind } from "./session-request-handler-stop-rebind";
 import { shouldHideUserMessage } from "./workflow-turn-control";
 
 interface SessionRequestHandlerSessionActionsOptions {
@@ -39,6 +40,7 @@ interface SessionRequestHandlerSessionActionsOptions {
   readonly resumeLifecycle: SessionRequestHandlerResumeLifecycle;
   readonly sessionManager: SessionManager;
   readonly sessionStorage: UnifiedSessionStorage;
+  readonly stopRebind: SessionRequestHandlerStopRebind;
   readonly workspaceRuntime?: WorkspaceRuntimeFacade;
 }
 
@@ -188,6 +190,9 @@ export class SessionRequestHandlerSessionActions {
           targetSessionId: rolloverSendGuard.targetSessionId,
         },
       });
+      return;
+    }
+    if (!(await this.deps.stopRebind.ensureSessionReadyForSend(session))) {
       return;
     }
     await this.deps.messageDispatch.dispatchUserMessage({
