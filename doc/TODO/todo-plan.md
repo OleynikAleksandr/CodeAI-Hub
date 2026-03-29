@@ -24,9 +24,9 @@
 4. [DONE] Git Commit: `revert: remove gemini provider thought feedback` (hash: `b652d3c6`)
 5. [DONE] Откатить Gemini model-feedback seam и связанные тесты через `git revert`, сохранив rollback-plan актуальным. Scope: `packages/Gemini_Module/src/logging/session-logger.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `revert: remove gemini provider model feedback`
 6. [DONE] Git Commit: `revert: remove gemini provider model feedback` (hash: `59a72fdf`)
-7. [IN_PROGRESS] Откатить Claude provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/provider-feedback.ts`, `packages/Claude_Module/src/messaging/provider-feedback.test.ts`. Expected commit: `revert: remove claude provider feedback`
-8. [TODO] Git Commit: `revert: remove claude provider feedback` (hash: `TBD`)
-9. [TODO] Откатить Codex provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`. Expected commit: `revert: remove codex provider feedback`
+7. [DONE] Откатить Claude provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/provider-feedback.ts`, `packages/Claude_Module/src/messaging/provider-feedback.test.ts`. Expected commit: `revert: remove claude provider feedback`
+8. [DONE] Git Commit: `revert: remove claude provider feedback` (hash: `58d39c1d`)
+9. [IN_PROGRESS] Откатить Codex provider-feedback seam и связанные тесты через `git revert`. Scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`. Expected commit: `revert: remove codex provider feedback`
 10. [TODO] Git Commit: `revert: remove codex provider feedback` (hash: `TBD`)
 
 ### Stream: SSOT and release sync after rollback
