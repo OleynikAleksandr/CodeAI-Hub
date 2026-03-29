@@ -1,6 +1,9 @@
 import path from "node:path";
 import type { CoreConfig } from "../../config";
-import { resolveProviderTurnConfigEntry } from "../../config/provider-turn-config-resolver";
+import {
+  buildProviderEffectiveModelId,
+  resolveProviderTurnConfigEntry,
+} from "../../config/provider-turn-config-resolver";
 import { resolveProviderModelSyncCapabilities } from "../../provider-registry/provider-descriptor-factory";
 import {
   type AppliedProviderTurnConfig,
@@ -50,20 +53,33 @@ export class SessionRequestHandlerAppliedTurnConfig {
       return null;
     }
 
-    const modelId = targetModelId ?? resolved.defaultModel;
+    const baseModelId =
+      targetModelId ?? resolved.baseModelId ?? resolved.defaultModel;
+    const reasoningEffort =
+      baseModelId && resolved.reasoningByModel
+        ? (resolved.reasoningByModel[baseModelId] ??
+          resolved.defaultReasoningEffort)
+        : resolved.defaultReasoningEffort;
+    const thinkingLevel =
+      baseModelId && resolved.thinkingLevelByModel
+        ? resolved.thinkingLevelByModel[baseModelId]
+        : undefined;
+
     return {
       providerId,
-      modelId,
-      reasoningEffort:
-        modelId && resolved.reasoningByModel
-          ? (resolved.reasoningByModel[modelId] ??
-            resolved.defaultReasoningEffort)
-          : resolved.defaultReasoningEffort,
+      baseModelId,
+      effectiveModelId:
+        buildProviderEffectiveModelId({
+          providerId,
+          baseModelId,
+          reasoningEffort,
+          thinkingEnabled: resolved.thinkingEnabled,
+          thinkingLevel,
+        }) ?? resolved.effectiveModelId,
+      modelId: baseModelId,
+      reasoningEffort,
       source: targetModelId ? "switch_request" : "settings_snapshot",
-      thinkingLevel:
-        modelId && resolved.thinkingLevelByModel
-          ? resolved.thinkingLevelByModel[modelId]
-          : undefined,
+      thinkingLevel,
     };
   }
 

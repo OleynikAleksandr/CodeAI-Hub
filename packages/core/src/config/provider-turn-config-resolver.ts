@@ -1,5 +1,6 @@
-import type { CodexReasoningEffort } from "./provider-defaults-resolver";
 import {
+  type CodexReasoningEffort,
+  DEFAULT_CODEX_REASONING_EFFORT,
   normalizeCodexModelFromSettings,
   normalizeCodexReasoningEffort,
   resolveClaudeDefaultModel,
@@ -8,6 +9,7 @@ import {
   resolvePreferredCodexDefaultModel,
 } from "./provider-defaults-resolver";
 import {
+  type ClaudeProviderSettingsSnapshot,
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
@@ -23,25 +25,35 @@ interface ProviderTurnConfigResolverOptions {
 }
 
 export interface ResolvedCodexTurnConfig {
+  readonly baseModelId: string;
   readonly defaultModel: string;
   readonly defaultReasoningEffort: CodexReasoningEffort;
+  readonly effectiveModelId: string;
   readonly reasoningByModel: Record<string, CodexReasoningEffort>;
 }
 
 export interface ResolvedGeminiTurnConfig {
+  readonly baseModelId?: string;
   readonly defaultModel?: string;
+  readonly effectiveModelId?: string;
   readonly thinkingLevelByModel: Record<string, string>;
 }
 
 export interface ResolvedClaudeTurnConfig {
+  readonly baseModelId: string;
   readonly defaultModel: string;
+  readonly effectiveModelId: string;
+  readonly thinkingEnabled: boolean;
 }
 
 export interface ResolvedProviderTurnConfigEntry {
+  readonly baseModelId?: string;
   readonly defaultModel?: string;
   readonly defaultReasoningEffort?: CodexReasoningEffort;
+  readonly effectiveModelId?: string;
   readonly providerId: string;
   readonly reasoningByModel?: Record<string, CodexReasoningEffort>;
+  readonly thinkingEnabled?: boolean;
   readonly thinkingLevelByModel?: Record<string, string>;
 }
 
@@ -57,6 +69,68 @@ export interface ResolvedProviderTurnConfig {
 const normalizeOptionalString = (
   value: string | undefined
 ): string | undefined => (value?.trim() ? value.trim() : undefined);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const buildCodexEffectiveModelId = (
+  baseModelId: string,
+  reasoningEffort: CodexReasoningEffort
+): string => `${baseModelId} reasoning:${reasoningEffort}`;
+
+const buildGeminiEffectiveModelId = (
+  baseModelId: string,
+  thinkingLevel?: string
+): string =>
+  thinkingLevel ? `${baseModelId} thinking:${thinkingLevel}` : baseModelId;
+
+const buildClaudeEffectiveModelId = (
+  baseModelId: string,
+  thinkingEnabled: boolean
+): string => `${baseModelId} thinking:${thinkingEnabled ? "on" : "off"}`;
+
+const resolveClaudeThinkingEnabled = (
+  snapshot: ClaudeProviderSettingsSnapshot | null
+): boolean => {
+  if (!isRecord(snapshot?.thinking)) {
+    return false;
+  }
+
+  return snapshot.thinking.enabled === true;
+};
+
+export const buildProviderEffectiveModelId = (options: {
+  readonly baseModelId?: string;
+  readonly providerId: string;
+  readonly reasoningEffort?: CodexReasoningEffort;
+  readonly thinkingEnabled?: boolean;
+  readonly thinkingLevel?: string;
+}): string | undefined => {
+  const baseModelId = normalizeOptionalString(options.baseModelId);
+  if (!baseModelId) {
+    return undefined;
+  }
+
+  if (options.providerId === "codexCli") {
+    return buildCodexEffectiveModelId(
+      baseModelId,
+      options.reasoningEffort ?? DEFAULT_CODEX_REASONING_EFFORT
+    );
+  }
+
+  if (options.providerId === "geminiCli") {
+    return buildGeminiEffectiveModelId(baseModelId, options.thinkingLevel);
+  }
+
+  if (options.providerId === "claudeCodeCli") {
+    return buildClaudeEffectiveModelId(
+      baseModelId,
+      options.thinkingEnabled === true
+    );
+  }
+
+  return baseModelId;
+};
 
 const resolveCodexTurnConfig = (
   options: ProviderTurnConfigResolverOptions
@@ -79,8 +153,13 @@ const resolveCodexTurnConfig = (
     options.fallbackCodexReasoningEffort;
 
   return {
+    baseModelId: defaultModel,
     defaultModel,
     defaultReasoningEffort,
+    effectiveModelId: buildCodexEffectiveModelId(
+      defaultModel,
+      defaultReasoningEffort
+    ),
     reasoningByModel,
   };
 };
@@ -89,19 +168,28 @@ const resolveGeminiTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedGeminiTurnConfig => {
   const snapshot = loadGeminiSettingsSnapshot(options.settingsPath);
+  const defaultModel =
+    normalizeOptionalString(
+      typeof snapshot?.defaultModel === "string"
+        ? snapshot.defaultModel
+        : undefined
+    ) ??
+    normalizeOptionalString(options.env.GEMINI_DEFAULT_MODEL) ??
+    options.fallbackGeminiModel;
+  const thinkingLevelByModel = resolveGeminiThinkingFromSettings(
+    snapshot?.thinkingLevelByModel
+  );
 
   return {
-    defaultModel:
-      normalizeOptionalString(
-        typeof snapshot?.defaultModel === "string"
-          ? snapshot.defaultModel
-          : undefined
-      ) ??
-      normalizeOptionalString(options.env.GEMINI_DEFAULT_MODEL) ??
-      options.fallbackGeminiModel,
-    thinkingLevelByModel: resolveGeminiThinkingFromSettings(
-      snapshot?.thinkingLevelByModel
-    ),
+    baseModelId: defaultModel,
+    defaultModel,
+    effectiveModelId: defaultModel
+      ? buildGeminiEffectiveModelId(
+          defaultModel,
+          thinkingLevelByModel[defaultModel]
+        )
+      : undefined,
+    thinkingLevelByModel,
   };
 };
 
@@ -113,12 +201,20 @@ const resolveClaudeTurnConfig = (
     typeof snapshot?.defaultModel === "string"
       ? resolveClaudeDefaultModel(snapshot.defaultModel)
       : undefined;
+  const defaultModel =
+    settingsDefaultModel ??
+    normalizeOptionalString(options.env.CLAUDE_DEFAULT_MODEL) ??
+    options.fallbackClaudeModel;
+  const thinkingEnabled = resolveClaudeThinkingEnabled(snapshot);
 
   return {
-    defaultModel:
-      settingsDefaultModel ??
-      normalizeOptionalString(options.env.CLAUDE_DEFAULT_MODEL) ??
-      options.fallbackClaudeModel,
+    baseModelId: defaultModel,
+    defaultModel,
+    effectiveModelId: buildClaudeEffectiveModelId(
+      defaultModel,
+      thinkingEnabled
+    ),
+    thinkingEnabled,
   };
 };
 
@@ -129,17 +225,24 @@ const buildResolvedProviderConfigRegistry = (resolved: {
 }): Readonly<Record<string, ResolvedProviderTurnConfigEntry>> => ({
   claudeCodeCli: {
     providerId: "claudeCodeCli",
+    baseModelId: resolved.claude.baseModelId,
     defaultModel: resolved.claude.defaultModel,
+    effectiveModelId: resolved.claude.effectiveModelId,
+    thinkingEnabled: resolved.claude.thinkingEnabled,
   },
   codexCli: {
     providerId: "codexCli",
+    baseModelId: resolved.codex.baseModelId,
     defaultModel: resolved.codex.defaultModel,
     defaultReasoningEffort: resolved.codex.defaultReasoningEffort,
+    effectiveModelId: resolved.codex.effectiveModelId,
     reasoningByModel: resolved.codex.reasoningByModel,
   },
   geminiCli: {
     providerId: "geminiCli",
+    baseModelId: resolved.gemini.baseModelId,
     defaultModel: resolved.gemini.defaultModel,
+    effectiveModelId: resolved.gemini.effectiveModelId,
     thinkingLevelByModel: resolved.gemini.thinkingLevelByModel,
   },
 });

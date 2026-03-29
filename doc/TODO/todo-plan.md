@@ -41,13 +41,13 @@
 
 ### Stream: Bridge payload identity contract
 3. [DONE] Переписать bridge/session contract так, чтобы applied turn config и `session:model:update` переносили effective `modelId`, а optional base-model данные были только вспомогательными и не использовались как главный runtime identity key. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): carry effective model identity`
-4. [DONE] Git Commit: `refactor(core): carry effective model identity` (hash: `TBD`)
+4. [DONE] Git Commit: `refactor(core): carry effective model identity` (hash: `f9db849f`)
 
 ## Phase 87 — Provider-Neutral Effective Identity Resolver (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Shared resolver from settings SSOT
-5. [TODO] Довести Core resolver до provider-neutral effective identity contract: из `settings.json` вычислять `baseModelId`, effective `modelId`, reasoning/thinking payload и единый descriptor для bridge/runtime/UI без branch-per-provider identity logic в потребителях. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): resolve effective model identity`
-6. [TODO] Git Commit: `refactor(core): resolve effective model identity` (hash: `TBD`)
+5. [DONE] Довести Core resolver до provider-neutral effective identity contract: из `settings.json` вычислять `baseModelId`, effective `modelId`, reasoning/thinking payload и единый descriptor для bridge/runtime/UI без branch-per-provider identity logic в потребителях. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): resolve effective model identity`
+6. [DONE] Git Commit: `refactor(core): resolve effective model identity` (hash: `TBD`)
 
 ### Stream: Provider capability alignment
 7. [TODO] Согласовать provider capability слой с новым identity contract, чтобы все провайдеры подключались к одному effective-model pipeline, а provider-specific код оставался только last-mile adapter path. Scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): align provider identity capabilities`

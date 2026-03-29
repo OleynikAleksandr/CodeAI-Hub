@@ -97,7 +97,7 @@
   - `index.ts` = thin config façade / environment assembly entrypoint
   - `provider-settings-snapshot.ts` = persisted provider settings readers
   - `provider-defaults-resolver.ts` = provider default model/reasoning normalization
-  - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini effective model identity from persisted `~/.codeai-hub/settings/settings.json`; it must derive base model, effective `modelId`, and provider-specific reasoning/thinking payload from the same settings snapshot, while remote-bridge queries one provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches
+  - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini effective model identity from persisted `~/.codeai-hub/settings/settings.json`; it derives `baseModelId`, effective identity descriptor, and provider-specific reasoning/thinking payload from one settings snapshot, while remote-bridge queries one provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
