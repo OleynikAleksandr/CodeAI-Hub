@@ -166,7 +166,13 @@ export class GeminiSystemEventNormalizer {
     value: unknown
   ): readonly GeminiSessionEvent[] {
     const modelName = typeof value === "string" ? value : "unknown";
-    session.logger?.logEvent({ type: "model_info", model: modelName });
+    session.logger?.logEvent({
+      type: "provider_feedback",
+      provider: "gemini",
+      feedbackType: "model_info",
+      sessionId: session.sessionId,
+      model: modelName,
+    });
     return [
       {
         type: "system",

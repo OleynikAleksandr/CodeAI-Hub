@@ -27,12 +27,12 @@
 
 ### Stream: Normalize Claude model and thinking feedback
 5. [DONE] Писать в `sdk-claude-*.jsonl` отдельные `provider_feedback` записи только по реально наблюдаемым provider signals: `message.model` и `thinking` blocks. Scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/provider-feedback.ts`, `packages/Claude_Module/src/messaging/provider-feedback.test.ts`. Expected commit: `feat(claude): log provider feedback`
-6. [TODO] Git Commit: `feat(claude): log provider feedback` (hash: `TBD`)
+6. [DONE] Git Commit: `feat(claude): log provider feedback` (hash: `ee63c5da`)
 
 ## Phase 94 — Gemini Provider Feedback Echo (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Persist Gemini provider feedback records
-7. [TODO] Сохранять structured `logEvent(...)` в `sdk-gemini-*.jsonl` и нормализовать provider feedback для `model_info`. Scope: `packages/Gemini_Module/src/logging/session-logger.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(gemini): persist provider model feedback`
+7. [DONE] Сохранять structured `logEvent(...)` в `sdk-gemini-*.jsonl` и нормализовать provider feedback для `model_info`. Scope: `packages/Gemini_Module/src/logging/session-logger.ts`, `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(gemini): persist provider model feedback`
 8. [TODO] Git Commit: `feat(gemini): persist provider model feedback` (hash: `TBD`)
 
 ### Stream: Capture Gemini thought usage feedback

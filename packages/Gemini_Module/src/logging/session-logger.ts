@@ -23,6 +23,11 @@ type LogEntry =
       readonly type: "raw_event";
       readonly payload: unknown;
       readonly timestamp: number;
+    }
+  | {
+      readonly type: "event" | "provider_feedback";
+      readonly payload: Record<string, unknown>;
+      readonly timestamp: number;
     };
 
 export class GeminiSessionLogger {
@@ -90,6 +95,11 @@ export class GeminiSessionLogger {
 
   logEvent(event: Record<string, unknown>): void {
     this.reporter?.info?.("Gemini session event", event);
+    this.queueEntry({
+      type: event.type === "provider_feedback" ? "provider_feedback" : "event",
+      payload: event,
+      timestamp: Date.now(),
+    });
   }
 
   logRawEvent(event: unknown): void {

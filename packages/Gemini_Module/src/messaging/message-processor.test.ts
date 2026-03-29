@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
+import { access, readFile, rm } from "node:fs/promises";
+import { homedir } from "node:os";
+import path from "node:path";
 import test from "node:test";
+import { GeminiSessionLogger } from "../logging/session-logger";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { ActiveSession } from "../session/types";
 import {
   formatGeminiStreamErrorMessage,
   GeminiMessageProcessor,
 } from "./message-processor";
+
+const LOG_ROOT = path.join(homedir(), ".codeai-hub", "logs", "gemini");
+const FILE_PREFIX = "sdk-gemini";
+const GEMINI_MODEL_INFO_PATTERN = /gemini-2\.5-pro/u;
+const GEMINI_FEEDBACK_TYPE_PATTERN = /model_info/u;
 
 const createModules = (): GeminiCliModules =>
   ({
@@ -31,7 +40,7 @@ const createModules = (): GeminiCliModules =>
     },
   }) as GeminiCliModules;
 
-const createSession = (): ActiveSession =>
+const createSession = (logger?: ActiveSession["logger"]): ActiveSession =>
   ({
     sessionId: "gemini-test-session",
     createdAt: Date.now(),
@@ -42,15 +51,40 @@ const createSession = (): ActiveSession =>
     contextWindowTokenLimit: 300_000,
     status: "idle",
     abortController: null,
-    logger: {
+    logger: (logger ?? {
       logRawEvent: () => {
         // noop
       },
       logEvent: () => {
         // noop
       },
-    },
+    }) as unknown as ActiveSession["logger"],
   }) as unknown as ActiveSession;
+
+const toLogFilePath = (sessionId: string): string => {
+  const safeId = sessionId.replace(/[^a-zA-Z0-9]/g, "-");
+  return path.join(LOG_ROOT, `${FILE_PREFIX}-${safeId}.jsonl`);
+};
+
+const waitForLogContent = async (
+  filePath: string,
+  token: string
+): Promise<string> => {
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    try {
+      await access(filePath);
+      const content = await readFile(filePath, "utf8");
+      if (content.includes(token)) {
+        return content;
+      }
+    } catch {
+      // keep polling until logger flushes the file
+    }
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+
+  throw new Error(`Timed out waiting for log token "${token}" in ${filePath}`);
+};
 
 test("formatGeminiStreamErrorMessage extracts nested error message", () => {
   const message = formatGeminiStreamErrorMessage({
@@ -164,4 +198,28 @@ test("GeminiMessageProcessor keeps partial assistant chunks buffered until finis
     processor.finalize(accumulator).responseText,
     "Partial response"
   );
+});
+
+test("GeminiMessageProcessor persists provider-confirmed model_info feedback", async () => {
+  const processor = new GeminiMessageProcessor({ modules: createModules() });
+  const sessionId = `gemini-model-info-${Date.now()}`;
+  const filePath = toLogFilePath(sessionId);
+  await rm(filePath, { force: true });
+
+  const logger = new GeminiSessionLogger();
+  logger.start(sessionId);
+  const session = createSession(logger);
+  session.sessionId = sessionId;
+  processor.handleEvent(
+    session,
+    { type: "model_info", value: "gemini-2.5-pro" } as never,
+    processor.createAccumulator("prompt-model-info")
+  );
+  logger.end();
+
+  const content = await waitForLogContent(filePath, "provider_feedback");
+  assert.match(content, GEMINI_MODEL_INFO_PATTERN);
+  assert.match(content, GEMINI_FEEDBACK_TYPE_PATTERN);
+
+  await rm(filePath, { force: true });
 });
