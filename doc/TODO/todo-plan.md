@@ -43,8 +43,8 @@
 
 ### Stream: SSOT sync for provider feedback logging
 11. [DONE] Синхронизировать SSOT-документацию с новым observability contract для provider-confirmed feedback logs. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Expected commit: `docs(observability): document provider feedback logs`
-12. [TODO] Git Commit: `docs(observability): document provider feedback logs` (hash: `TBD`)
+12. [DONE] Git Commit: `docs(observability): document provider feedback logs` (hash: `40d016f1`)
 
 ### Stream: Targeted verification of provider feedback logs
-13. [TODO] Прогнать таргетные тесты затронутых провайдеров и зафиксировать, какие provider feedback записи реально появляются в SDK logs после тестового turn. Scope: provider package tests + log verification notes in session handoff if needed. Expected commit: `test(observability): verify provider feedback logs`
+13. [DONE] Прогнать таргетные тесты затронутых провайдеров и зафиксировать, какие provider feedback записи реально появляются в SDK logs после тестового turn. Scope: provider package tests + log verification notes in session handoff if needed. Expected commit: `test(observability): verify provider feedback logs`
 14. [TODO] Git Commit: `test(observability): verify provider feedback logs` (hash: `TBD`)
