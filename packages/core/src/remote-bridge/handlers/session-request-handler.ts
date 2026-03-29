@@ -45,6 +45,7 @@ import { createSessionRequestHandlerRuntime } from "./session-request-handler-ru
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import type { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
+import { SessionRequestHandlerStopAction } from "./session-request-handler-stop-action";
 import type { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
 
 export interface ProviderSessionBinding {
@@ -128,6 +129,7 @@ export class SessionRequestHandler {
   private readonly continuityRoot: SessionRequestHandlerContinuityRoot;
   private readonly turnArbitration: SessionRequestHandlerTurnArbitration;
   private readonly sessionActions: SessionRequestHandlerSessionActions;
+  private readonly stopAction: SessionRequestHandlerStopAction;
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -334,6 +336,22 @@ export class SessionRequestHandler {
       sessionStorage: this.sessionStorage,
       workspaceRuntime: this.workspaceRuntime,
     });
+    this.stopAction = new SessionRequestHandlerStopAction({
+      continuityLockService: this.continuityLockService,
+      emitSessionError: (sessionId, message) => {
+        this.broadcaster({
+          type: "session:error",
+          payload: { sessionId, message },
+        });
+      },
+      emitTurnStateEvent,
+      logger: this.logger,
+      providerBindingService: this.providerBindingService,
+      providerRegistry: this.providerRegistry,
+      providerSessions: this.providerSessions,
+      resumeLifecycle: this.resumeLifecycle,
+      sessionManager: this.sessionManager,
+    });
   }
 
   protected normalizeContinuityStageId(value: string | null): string {
@@ -517,6 +535,10 @@ export class SessionRequestHandler {
 
   async handleDelete(sessionId: string): Promise<void> {
     await this.sessionActions.handleDelete(sessionId);
+  }
+
+  async handleStop(sessionId: string): Promise<void> {
+    await this.stopAction.handleStop(sessionId);
   }
 
   hasRetryBudget(sessionId: string): boolean {
