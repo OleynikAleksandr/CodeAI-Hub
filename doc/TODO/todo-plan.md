@@ -37,11 +37,11 @@
 
 ### Stream: Contract reset for model identity semantics
 1. [DONE] Синхронизировать SSOT и модульные описания: `modelId` больше не означает только base model, а включает reasoning/thinking как часть effective identity; `~/.codeai-hub/settings/settings.json` фиксируется как единственный source of truth для next-turn model identity. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Expected commit: `docs(contract): define effective model identity`
-2. [DONE] Git Commit: `docs(contract): define effective model identity` (hash: `TBD`)
+2. [DONE] Git Commit: `docs(contract): define effective model identity` (hash: `d7388df2`)
 
 ### Stream: Bridge payload identity contract
-3. [TODO] Переписать bridge/session contract так, чтобы applied turn config и `session:model:update` переносили effective `modelId`, а optional base-model данные были только вспомогательными и не использовались как главный runtime identity key. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): carry effective model identity`
-4. [TODO] Git Commit: `refactor(core): carry effective model identity` (hash: `TBD`)
+3. [DONE] Переписать bridge/session contract так, чтобы applied turn config и `session:model:update` переносили effective `modelId`, а optional base-model данные были только вспомогательными и не использовались как главный runtime identity key. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): carry effective model identity`
+4. [DONE] Git Commit: `refactor(core): carry effective model identity` (hash: `TBD`)
 
 ## Phase 87 — Provider-Neutral Effective Identity Resolver (owner: Oleksandr, updated: 2026-03-29)
 

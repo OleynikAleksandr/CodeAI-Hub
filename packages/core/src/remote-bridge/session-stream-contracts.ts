@@ -100,6 +100,13 @@ export interface TurnFailedPayload {
   readonly sessionId: string;
 }
 
+export interface SessionModelUpdatePayload {
+  readonly baseModelId?: string;
+  readonly modelId: string;
+  readonly providerId: string;
+  readonly sessionId: string;
+}
+
 export type SessionBridgeEvent =
   | { readonly type: "session:created"; readonly payload: SerializedSession }
   | { readonly type: "session:message"; readonly payload: unknown }
@@ -122,11 +129,7 @@ export type SessionBridgeEvent =
   | { readonly type: "session:error"; readonly payload: unknown }
   | {
       readonly type: "session:model:update";
-      readonly payload: {
-        readonly sessionId: string;
-        readonly providerId: string;
-        readonly modelId: string;
-      };
+      readonly payload: SessionModelUpdatePayload;
     }
   | {
       readonly type: "dialog:switch:offer";

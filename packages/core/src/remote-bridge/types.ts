@@ -24,6 +24,7 @@ export type {
   SerializedSession,
   SessionBridgeEvent,
   SessionIncomingMessage,
+  SessionModelUpdatePayload,
   TurnFailedPayload,
   TurnStateStreamData,
 } from "./session-stream-contracts";
@@ -37,6 +38,7 @@ export type {
 } from "./workspace-stream-contracts";
 
 export interface AppliedProviderTurnConfig {
+  readonly baseModelId?: string;
   readonly modelId?: string;
   readonly providerId: string;
   readonly reasoningEffort?: string;
@@ -77,6 +79,10 @@ export const readAppliedProviderTurnConfig = (
       candidate.source === "switch_request"
         ? "switch_request"
         : "settings_snapshot",
+    baseModelId:
+      typeof candidate.baseModelId === "string"
+        ? candidate.baseModelId
+        : undefined,
     modelId:
       typeof candidate.modelId === "string" ? candidate.modelId : undefined,
     reasoningEffort:
