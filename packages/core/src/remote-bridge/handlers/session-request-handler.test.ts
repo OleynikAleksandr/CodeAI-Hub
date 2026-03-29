@@ -384,7 +384,7 @@ export const EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS = [
   false,
   false,
   false,
-  true,
+  false,
   false,
   true,
 ] as const;

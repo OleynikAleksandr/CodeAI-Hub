@@ -85,11 +85,11 @@
 23. [DONE] После закрытия `Phase 80A` выполнить отдельную verification-сборку и регрессионную проверку model-switch matrix для Claude/Codex/Gemini на fresh-session и existing-session путях, затем зафиксировать артефакты и session report. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `chore: release 1.1.832`
 24. [DONE] Git Commit: `chore: release 1.1.832` (hash: `97a95e3b`)
 
-## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-28)
+## Phase 81 — SessionRequestHandler Carry-Over Tail (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Continuity root carry-over
-25. [TODO] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
-26. [TODO] Git Commit: `refactor(core): extract session request continuity root` (hash: TBD)
+25. [DONE] Выделить continuity-root resolution и legacy description-root promotion из `session-request-handler.ts` в dedicated helper, сохранив dialog-root reuse и existing chain lookup semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request continuity root`
+26. [DONE] Git Commit: `refactor(core): extract session request continuity root` (hash: `TBD`)
 
 ### Stream: Turn arbitration carry-over
 27. [TODO] Выделить post-turn continuity arbitration, live threshold settings reload и stale-segment detection из `session-request-handler.ts` в отдельный helper, сохранив `turn_completed` / `token_usage` ordering semantics текущего релиза. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session request turn arbitration`

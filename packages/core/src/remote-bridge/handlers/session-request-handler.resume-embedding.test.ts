@@ -3,9 +3,8 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
-import { type Session, SessionManager } from "../../session-manager";
-import { SessionRequestHandler } from "./session-request-handler";
+import type { Session } from "../../session-manager";
+import { createHarness } from "./session-request-handler.test";
 
 interface RecordedInternalMessage {
   readonly content: string;
@@ -25,21 +24,12 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
   mkdirSync(path.dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, largeBody, "utf8");
 
-  const templatesDir = createTempDir("codeai-hub-templates-");
-  const continuity = new FlowNodeContinuityFacade({
-    templatesDir,
-    preemptRemainingPercentThreshold: 0,
+  const harness = createHarness({
+    templatesDir: createTempDir("codeai-hub-templates-"),
+    continuityPreemptRemainingPercentThreshold: 0,
   });
-  (continuity as any).buildReportPaths = () => ({ reportPath, tmpReportPath });
-
   const recorded: RecordedInternalMessage[] = [];
-
-  const handler = Object.create(
-    SessionRequestHandler.prototype
-  ) as SessionRequestHandler & Record<string, unknown>;
-
-  const sessionManager = new SessionManager();
-  const sourceSession: Session = sessionManager.createSession(
+  const sourceSession: Session = harness.sessionManager.createSession(
     "codexCli",
     workspacePath,
     "provider-source",
@@ -50,71 +40,26 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
     }
   );
 
-  Object.assign(handler, {
-    flowNodeContinuity: continuity,
-    sessionManager,
-    flowNodeContinuityCreateReportRequests: new Map(),
-    flowNodeContinuityCreateReportAckWaiters: new Map(),
-    flowNodeContinuityLockContexts: new Map(),
-    flowNodeContinuityLockTimeouts: new Map(),
-    flowNodeRolloverInFlight: new Set(),
-    flowNodeRolloverStarted: new Set(),
-    postTurnContextDecisionPendingSessions: new Set(),
-    postTurnContextDecisionBySessionId: new Map(),
-    providerRegistry: {
-      getAdapter: () => ({}),
-    },
-    logger: {
-      info: () => {
-        // noop
-      },
-      warn: () => {
-        // noop
-      },
-      error: () => {
-        // noop
-      },
-    },
-    broadcaster: () => {
-      // noop
-    },
-    workspaceRuntime: null,
-    stateBroadcaster: () => {
-      // noop
-    },
-    registerFlowNodeContinuityLockContext: (context: unknown) => context,
-    emitContinuityLockEvent: () => {
-      // noop
-    },
-    scheduleFlowNodeContinuityLockTimeout: () => {
-      // noop
-    },
-    emitFlowNodeRolloverNotification: () => {
-      // noop
-    },
-    emitTurnStateEvent: () => {
-      // noop
-    },
-    resolveFlowNodeContinuityTemplate: () => ({
-      templateId: "flow/continuity/create-report-doc.md",
-      canonicalArtifactPath: "",
-      isReviewerBootstrapEligible: true,
-    }),
-    dispatchFlowNodeContinuityCreateReportWithAck: async () => 1,
-    waitForFlowNodeContinuityReportWithRetry: async () => 1,
+  harness.providerRegistry.getAdapter = () => ({});
+  Object.assign((harness.api as any).flowNodeContinuity, {
+    buildReportPaths: () => ({ reportPath, tmpReportPath }),
+  });
+  Object.assign((harness.api as any).sessionBootstrap, {
     createAndRegisterSession: () =>
       Promise.resolve({
         ...sourceSession,
         id: "next-session",
         providerSessionId: "provider-next",
       }),
+  });
+  Object.assign((harness.api as any).messageDispatch, {
     sendInternalMessage: (sessionId: string, content: string) => {
       recorded.push({ sessionId, content });
       return Promise.resolve();
     },
   });
 
-  await (handler as any).rolloverFlowNodeSession(
+  await (harness.api as any).rolloverFlowNodeSession(
     sourceSession,
     { remainingPercent: 1, thresholdPercent: 2, rolloverId: "rollover-1" },
     { silent: true }

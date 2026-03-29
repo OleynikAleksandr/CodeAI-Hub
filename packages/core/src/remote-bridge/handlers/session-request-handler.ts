@@ -1,12 +1,9 @@
 import crypto from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
-import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import type { CoreConfig } from "../../config";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
-import { promoteContinuityChainRootIfPresent } from "../../session-continuity/continuity-store";
 import type { TokenUsageSnapshot } from "../../session-continuity/continuity-types";
-import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
   extractTokenUsage,
@@ -38,6 +35,10 @@ import {
   type FlowNodeRolloverSendGuardDecision,
 } from "./session-request-handler.types";
 import { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import {
+  normalizeContinuityStageId as normalizeContinuityStageIdValue,
+  SessionRequestHandlerContinuityRoot,
+} from "./session-request-handler-continuity-root";
 import { SessionRequestHandlerDialogSegmentMeta } from "./session-request-handler-dialog-segment-meta";
 import {
   type MessageContentPayload,
@@ -205,6 +206,7 @@ export class SessionRequestHandler {
   private readonly flowNodeContinuity: FlowNodeContinuityFacade;
   private readonly flowNodeReportState: SessionRequestHandlerFlowNodeReportState;
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
+  private readonly continuityRoot: SessionRequestHandlerContinuityRoot;
   private flowNodeContinuitySettingsCache: {
     readonly mtimeMs: number;
     readonly settings: unknown;
@@ -410,6 +412,10 @@ export class SessionRequestHandler {
       continuityRootBySessionId: this.continuityRootBySessionId,
       logger: this.logger,
     });
+    this.continuityRoot = new SessionRequestHandlerContinuityRoot({
+      logger: this.logger,
+      sessionStorage: this.sessionStorage,
+    });
     this.eventMessages = new SessionRequestHandlerEventMessages({
       broadcaster: this.broadcaster,
       continuityRootBySessionId: this.continuityRootBySessionId,
@@ -589,131 +595,58 @@ export class SessionRequestHandler {
     });
   }
 
-  private normalizeContinuityStageId(value: string | null): string {
-    const trimmed = value?.trim() ?? "";
-    if (
-      trimmed === "description" ||
-      trimmed === "virtual_simulation" ||
-      trimmed === "diagram_modules"
-    ) {
-      return trimmed;
-    }
-    return "unknown";
+  protected normalizeContinuityStageId(value: string | null): string {
+    return normalizeContinuityStageIdValue(value);
   }
 
-  private async tryResolveExistingContinuityRootSessionId(options: {
-    readonly workspaceRoot: string;
-    readonly workspaceSlug: string;
-    readonly stageId: string;
-    readonly providerSessionId: string;
-  }): Promise<string | null> {
-    const providerSessionId = options.providerSessionId.trim();
-    if (providerSessionId.length === 0) {
-      return null;
-    }
-    const stage = this.normalizeContinuityStageId(options.stageId);
-    const chains = await SessionContinuityFacade.readWorkspaceChains({
-      workspaceRoot: options.workspaceRoot,
-      workspaceSlug: options.workspaceSlug,
-    });
-    const match = chains.find(
-      (chain) =>
-        chain.stage === stage &&
-        chain.segments.some(
-          (segment) => segment.providerSessionId === providerSessionId
-        )
-    );
-    return match ? (match.dialogId ?? match.rootSessionId ?? null) : null;
+  protected get sessionShellFactory(): unknown {
+    return (
+      this.sessionBootstrap as unknown as { sessionShellFactory: unknown }
+    ).sessionShellFactory;
   }
 
   private async resolveContinuityRootSessionId(
     options: ContinuityRootResolutionOptions
   ): Promise<string> {
-    if (options.rootSessionIdOverride) {
-      return await this.maybePromoteLegacyDescriptionAgentRootId({
-        rootSessionId: options.rootSessionIdOverride,
-        workspaceRoot: options.workspaceRoot,
-        providerId: options.providerId,
-        workspaceSlug: options.context.initiativeSlug,
-        stageId: options.context.stage,
-        runSlug: options.context.runSlug,
-      });
-    }
-    const workspaceSlug = options.context.initiativeSlug;
-    const stageId = options.context.stage;
-    if (!(workspaceSlug && stageId)) {
-      return options.sessionId;
-    }
-    const requestedProviderSessionId = options.context.providerSessionId;
-    if (requestedProviderSessionId) {
-      const existingRoot = await this.tryResolveExistingContinuityRootSessionId(
-        {
-          workspaceRoot: options.workspaceRoot,
-          workspaceSlug,
-          stageId,
-          providerSessionId: requestedProviderSessionId,
-        }
-      );
-      if (existingRoot) {
-        return await this.maybePromoteLegacyDescriptionAgentRootId({
-          rootSessionId: existingRoot,
-          workspaceRoot: options.workspaceRoot,
-          providerId: options.providerId,
-          workspaceSlug: options.context.initiativeSlug,
-          stageId: options.context.stage,
-          runSlug: options.context.runSlug,
-        });
-      }
-    }
-    return buildHumanReadableDialogId({
-      providerId: options.providerId,
-      uuid: options.sessionId,
-      agentRole: options.context.runSlug ?? options.context.stage ?? null,
-    });
+    return await this.continuityRoot.resolveContinuityRootSessionId(options);
   }
 
-  private async maybePromoteLegacyDescriptionAgentRootId(options: {
-    readonly rootSessionId: string;
-    readonly workspaceRoot: string;
-    readonly providerId: string;
-    readonly workspaceSlug: string | null;
-    readonly stageId: string | null;
-    readonly runSlug: string | null;
-  }): Promise<string> {
-    if (
-      options.stageId !== "description" ||
-      !options.rootSessionId.endsWith("-agent")
-    ) {
-      return options.rootSessionId;
-    }
-    const normalizedRootSessionId = `${options.rootSessionId.slice(0, -"-agent".length)}-description`;
-    this.sessionStorage.promoteHistoryFile({
-      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
-      providerId: options.providerId,
-      fromHistorySessionId: options.rootSessionId,
-      toHistorySessionId: normalizedRootSessionId,
-    });
-    if (options.workspaceSlug) {
-      try {
-        await promoteContinuityChainRootIfPresent({
-          workspaceRoot: options.workspaceRoot,
-          workspaceSlug: options.workspaceSlug,
-          stage: options.stageId,
-          fromRootSessionId: options.rootSessionId,
-          toRootSessionId: normalizedRootSessionId,
-        });
-      } catch (error: unknown) {
-        this.logger.warn("Failed to promote continuity chain root session id", {
-          workspaceSlug: options.workspaceSlug,
-          stageId: options.stageId,
-          providerId: options.providerId,
-          fromRootSessionId: options.rootSessionId,
-          toRootSessionId: normalizedRootSessionId,
-          error: error instanceof Error ? error.message : String(error),
-        });
+  protected async sendInternalMessage(
+    sessionId: string,
+    content: string
+  ): Promise<void> {
+    await this.messageDispatch.sendInternalMessage(sessionId, content);
+  }
+
+  protected getSessionResumeLifecycleStore(): Map<string, unknown> {
+    return (
+      this.resumeLifecycle as unknown as {
+        sessionResumeLifecycleStates: Map<string, unknown>;
       }
-    }
-    return normalizedRootSessionId;
+    ).sessionResumeLifecycleStates;
+  }
+
+  protected recordPostTurnContextDecision(
+    sessionId: string,
+    decision: PostTurnContextDecision
+  ): void {
+    this.resumeLifecycle.recordPostTurnContextDecision(sessionId, decision);
+  }
+
+  protected async rolloverFlowNodeSession(
+    session: Session,
+    rollover: {
+      readonly remainingPercent: number;
+      readonly thresholdPercent: number;
+      readonly rolloverId: string;
+    },
+    rolloverOptions?: { readonly silent: boolean }
+  ): Promise<void> {
+    await this.flowNodeRollover.rolloverFlowNodeSession(
+      session,
+      rollover,
+      rolloverOptions
+    );
   }
 
   private resolveFlowNodeRolloverSendGuard(
