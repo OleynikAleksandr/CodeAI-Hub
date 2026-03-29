@@ -1,5 +1,7 @@
 # Provider Feedback Model And Reasoning Logging Architecture
 
+> Archived after implementation in release `1.1.836` on `2026-03-29`. Актуальный SSOT находится в `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и provider module docs.
+
 ## Problem
 После релиза `1.1.835` effective model identity уже применяется внутри CodeAI Hub, но текущие SDK-логи не дают надёжного ответа на главный эксплуатационный вопрос: что именно реально подтвердил внешний provider runtime.
 
