@@ -258,9 +258,7 @@ const resolveWorkflowBlockedStages = (params: {
   } | null;
   readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
 }): Record<WorkflowStageId, boolean> => {
-  const descriptionDone = Boolean(
-    params.description?.finalPath ?? params.description?.draftPath
-  );
+  const descriptionDone = Boolean(params.description?.finalPath);
   const virtualSimulationArtifactAvailable = stageHasArtifact({
     state: params.state,
     stage: "virtual_simulation",
