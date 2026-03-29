@@ -188,7 +188,7 @@ export const DescriptionQuestionnairePanel: React.FC<
         panelState.placeholders,
         answers
       );
-      await descriptionSubmitRef.current.submitQuestionnaire({
+      const sessionId = await descriptionSubmitRef.current.submitQuestionnaire({
         workspaceName: resolvedWorkspaceName,
         workspaceSlug: resolvedWorkspaceSlug,
         workspacePath: workspacePath ?? "",
@@ -205,6 +205,22 @@ export const DescriptionQuestionnairePanel: React.FC<
               path: panelState.questionnairePath,
               workspacePath,
               workspaceSlug: resolvedWorkspaceSlug,
+            },
+          })
+        );
+        // Switch session panel to dialog mode so it connects to the
+        // newly created session immediately, same as a tree-node click.
+        window.dispatchEvent(
+          new CustomEvent("pm:dialog:open", {
+            detail: {
+              providerId,
+              providerSessionId: null,
+              workspacePath,
+              workspaceSlug: resolvedWorkspaceSlug,
+              initiativeSlug: resolvedWorkspaceSlug,
+              stage: "description",
+              sessionKind: null,
+              runSlug: null,
             },
           })
         );

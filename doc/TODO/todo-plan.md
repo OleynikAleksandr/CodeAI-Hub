@@ -102,7 +102,25 @@ Root cause: `ProjectManagerRuntimeSessionView` effect (line 241) сбрасыв�
 
 ### Stream: Hotfix release docs and build
 44. [DONE] Обновить `README.md` и `CHANGELOG.md` под v1.1.840.
-45. [IN_PROGRESS] Git Commit: `docs(release): prepare session preferred-id hotfix` (hash: TBD)
-46. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.840. Expected commit: `chore: prepare v1.1.840 artifacts`
-47. [TODO] Git Commit: `chore: prepare v1.1.840 artifacts` (hash: TBD)
-48. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX. Expected commit: n/a (verify only).
+45. [DONE] Git Commit: `docs(release): prepare session preferred-id hotfix` (hash: 0a23ba34)
+46. [DONE] `./scripts/build-all.sh` → v1.1.840 artifacts. Hash: 7f15dde0
+47. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.840.vsix` verified.
+
+## Phase 110 — Dialog Mode Dispatch After Session Creation (owner: Oleksandr, updated: 2026-03-29)
+
+Root cause: `ProjectManagerSessionView` показывает `ProjectManagerRuntimeSessionView` после submit (runtime mode), но runtime view полагается на Core stream event `session:created` для заполнения `sessions/visibleSessions`. Гонка между mount runtime view, hydration, и доставкой event неизбежна для медленных провайдеров (Claude SDK). Dialog mode (используемый при клике по дереву) подключается к сессии напрямую через dialog API и не зависит от stream events.
+
+Fix: dispatch `pm:dialog:open` после создания сессии в submit flow, переводя session panel в dialog mode — тот же path что и клик по сессии в дереве.
+
+### Stream: P0-E dispatch dialog open after submit
+49. [DONE] Dispatch `pm:dialog:open` из `description-questionnaire-panel.tsx` после `submitQuestionnaire` success. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Expected commit: `fix: dispatch dialog open after description session creation`
+50. [IN_PROGRESS] Git Commit: `fix: dispatch dialog open after description session creation` (hash: TBD)
+
+## Phase 111 — Hotfix Release Build v1.1.841 (owner: Oleksandr, updated: 2026-03-29)
+
+### Stream: Hotfix release docs and build
+51. [TODO] Обновить `README.md` и `CHANGELOG.md` под v1.1.841. Expected commit: `docs(release): prepare dialog dispatch hotfix`
+52. [TODO] Git Commit: `docs(release): prepare dialog dispatch hotfix` (hash: TBD)
+53. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.841. Expected commit: `chore: prepare v1.1.841 artifacts`
+54. [TODO] Git Commit: `chore: prepare v1.1.841 artifacts` (hash: TBD)
+55. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX. Expected commit: n/a (verify only).
