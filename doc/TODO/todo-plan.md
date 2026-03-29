@@ -96,13 +96,13 @@ Root cause: `ProjectManagerRuntimeSessionView` effect (line 241) сбрасыв�
 
 ### Stream: P0-D preserve preferredSessionId in visibility sync
 42. [DONE] В `project-manager-runtime-session-view.tsx`: не сбрасывать `activeSessionId` если он совпадает с `preferredSessionId` и сессия ещё не в `visibleSessions`; дать preferred session приоритет в `scopedActiveSessionId`. Scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`. Expected commit: `fix: preserve preferred session id during visibility sync`
-43. [IN_PROGRESS] Git Commit: `fix: preserve preferred session id during visibility sync` (hash: TBD)
+43. [DONE] Git Commit: `fix: preserve preferred session id during visibility sync` (hash: 7df3fcd9)
 
 ## Phase 109 — Hotfix Release Build v1.1.840 (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Hotfix release docs and build
-44. [TODO] Обновить `README.md` и `CHANGELOG.md` под v1.1.840. Expected commit: `docs(release): prepare session preferred-id hotfix`
-45. [TODO] Git Commit: `docs(release): prepare session preferred-id hotfix` (hash: TBD)
+44. [DONE] Обновить `README.md` и `CHANGELOG.md` под v1.1.840.
+45. [IN_PROGRESS] Git Commit: `docs(release): prepare session preferred-id hotfix` (hash: TBD)
 46. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.840. Expected commit: `chore: prepare v1.1.840 artifacts`
 47. [TODO] Git Commit: `chore: prepare v1.1.840 artifacts` (hash: TBD)
 48. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX. Expected commit: n/a (verify only).

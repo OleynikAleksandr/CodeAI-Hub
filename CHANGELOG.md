@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.840] - 2026-03-29
+### Fixed
+- **Session display after questionnaire submit**: the runtime session view no longer resets `activeSessionId` when the preferred session is not yet in the visible list. Previously the visibility sync effect raced against Core's `session:created` delivery, causing the session panel to stay stuck on "Creating session..." until the user manually clicked the session node. Fix is provider-agnostic (Claude, Codex, Gemini).
+
 ## [1.1.839] - 2026-03-29
 ### Fixed
 - **Session view unmount on store activation**: suppressed the intermediate null-snapshot emit from `WorkflowStateStore.activate()` that caused a render-cycle lag, briefly flipping `showDescriptionHelpInSessionPanel` to true and unmounting the active `ProjectManagerSessionView`.
