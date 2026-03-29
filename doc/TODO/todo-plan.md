@@ -32,9 +32,9 @@
 
 ### Stream: P0-B workspace tree availability propagation
 9. [DONE] Вычислить и прокинуть `descriptionArtifactAvailable` на уровне tree context; при необходимости поглотить branch-node wiring в этот же шаг, чтобы остаться в лимите `≤3 файлов`. Scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`. Expected commit: `fix: sync description artifact availability into tree`
-10. [IN_PROGRESS] Git Commit: `fix: sync description artifact availability into tree` (hash: TBD)
-11. [TODO] Запретить stage sync и auto-select выбирать несуществующий или нечитаемый description artifact. Scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`. Expected commit: `fix: stop auto-selecting invalid description artifact`
-12. [TODO] Git Commit: `fix: stop auto-selecting invalid description artifact` (hash: TBD)
+10. [DONE] Git Commit: `fix: sync description artifact availability into tree` (hash: 003f37b8)
+11. [DONE] Запретить stage sync и auto-select выбирать несуществующий или нечитаемый description artifact. Scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`. Expected commit: `fix: stop auto-selecting invalid description artifact`
+12. [IN_PROGRESS] Git Commit: `fix: stop auto-selecting invalid description artifact` (hash: TBD)
 
 ## Phase 103 — Description Semantics Alignment (owner: Oleksandr, updated: 2026-03-29)
 

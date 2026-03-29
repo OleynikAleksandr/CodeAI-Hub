@@ -142,10 +142,11 @@ export const resolveStageSyncPayload = (options: {
   if (stage === "description") {
     const branch = workflowState.description;
     if (!branch) return { artifact: null, clearTool: null, session: null };
-    const artifactPath = branch.finalPath ?? branch.draftPath ?? branch.questionnairePath;
+    const validDraft = branch.draftPath && isCanonicalDescriptionPath(branch.draftPath) ? branch.draftPath : null;
+    const artifactPath = branch.finalPath ?? validDraft ?? branch.questionnairePath;
     const artifactLabel = branch.finalPath
       ? "Final_Description.md"
-      : branch.draftPath
+      : validDraft
         ? "Final_Description.md"
         : "questionnaire.md";
     const session = branch.primarySession;

@@ -112,16 +112,18 @@ export const useWorkspaceTreeAutoSelect = (
       // Fallback: open Description step
       const branch = state.description;
       const descriptionSession = branch?.primarySession;
-      const hasDraftOrFinal = Boolean(branch?.finalPath || branch?.draftPath);
+      const isCanonicalDraft = branch?.draftPath && /\/description\/Final_Description\.md$/.test(branch.draftPath);
+      const validDraft = isCanonicalDraft ? branch?.draftPath : null;
+      const hasDraftOrFinal = Boolean(branch?.finalPath || validDraft);
       const hasUnsubmittedQuestionnaire = Boolean(
         branch?.questionnairePath &&
           !hasDraftOrFinal &&
           !descriptionSession?.providerSessionId
       );
-      const artifactPath = branch?.finalPath ?? branch?.draftPath ?? null;
+      const artifactPath = branch?.finalPath ?? validDraft ?? null;
       const artifactLabel = branch?.finalPath
         ? "Final_Description.md"
-        : branch?.draftPath
+        : validDraft
           ? "Final_Description.md"
           : null;
       dispatchStageActivated("description");
