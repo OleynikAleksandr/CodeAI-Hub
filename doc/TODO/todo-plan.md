@@ -84,7 +84,7 @@
 
 ### Stream: Hotfix release docs
 36. [DONE] Обновить `README.md` и `CHANGELOG.md` под v1.1.839 hotfix scope. Scope: `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare store derivation hotfix`
-37. [IN_PROGRESS] Git Commit: `docs(release): prepare store derivation hotfix` (hash: TBD)
+37. [DONE] Git Commit: `docs(release): prepare store derivation hotfix` (hash: 3d43edcd)
 
 ### Stream: Hotfix clean-tree build
 38. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.839 artifacts. Expected commit: `chore: prepare v1.1.839 artifacts`
