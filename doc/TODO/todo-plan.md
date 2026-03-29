@@ -59,7 +59,7 @@
 
 ### Stream: Release-facing docs sync before build
 25. [DONE] Перед сборкой релиза синхронизировать release-facing docs с фактическим PM scope. Scope: `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare pm central panels release`
-26. [IN_PROGRESS] Git Commit: `docs(release): prepare pm central panels release` (hash: TBD)
+26. [DONE] Git Commit: `docs(release): prepare pm central panels release` (hash: 95cd7d73)
 
 ### Stream: Clean-tree build and new release packaging
 27. [TODO] На чистом дереве выполнить таргетные сборки затронутых PM/core пакетов и затем `./scripts/build-all.sh` по Release Build Checklist; проверить version/manifest bumps и подготовить свежие release artifacts. Scope: `src/client/project-manager`, `packages/core`, release manifests/artifacts. Expected commit: `chore: prepare pm central panels release artifacts`
