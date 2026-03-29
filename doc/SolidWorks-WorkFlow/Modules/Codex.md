@@ -27,6 +27,9 @@
 - Structured-output passthrough (`hybrid` / `debug_raw`) обязан переживать `sessionId` promotion без потери accumulated state.
 - User-facing Codex settings в baseline line экспонируют только две модели: `gpt-5.3-codex` и `gpt-5.4`.
 - Persisted `settings.json` для Codex не должен разрастаться устаревшими model ids; `reasoningByModel` хранит только active user-facing keys этой линии.
+- Для Codex `modelId` в Core/bridge/UI contract означает полную effective model identity; `gpt-5.3-codex reasoning:xhigh` и `gpt-5.3-codex reasoning:high` считаются разными runtime identities.
+- `reasoning` не является вторичным локальным decoration-полем внутри Codex runtime: следующий turn обязан получать effective identity из Core-applied turn config, выведенного из `~/.codeai-hub/settings/settings.json`.
+- Codex provider path не имеет права держать второй независимый source of truth для next-turn identity поверх shared settings snapshot и Core resolver.
 - `Settings -> General -> Response Mode` управляет turn shaping policy:
   - `hybrid` — baseline default для workflow;
   - `strict` — включает editable schema/instruction contract;

@@ -19,6 +19,8 @@
 - Для flow/document continuity `token_usage` используется только как вход в post-turn arbitration; Core не имеет права запускать rollover до фактического `turn_completed`.
 - Если provider отдал несколько assistant segments в одном turn-е, модуль обязан флашить их по реальным `finished` boundaries и не дублировать финальным aggregate block, когда segmented history уже была сохранена.
 - Переведённые Gemini thoughts не должны выглядеть как отдельный provider role в UI: текущий продуктовый контракт хранит их как `assistant` + `tag: "thinking"` и показывает как видимые tagged assistant messages.
+- Для Gemini `thinking` входит в effective model identity: одинаковый base model с разным `thinkingLevel` считается разным `modelId`, и UI/runtime не должны восстанавливать этот уровень по локальной догадке.
+- Gemini runtime не имеет права владеть next-turn identity отдельно от Core: единственный source of truth для следующего turn остаётся `~/.codeai-hub/settings/settings.json`, а provider получает уже вычисленную effective identity через applied turn config.
 - Если Gemini stream завис после `model_info`, partial text или другого промежуточного progress event и больше не отдаёт terminal event, stalled-turn watchdog обязан завершить turn контролируемой recoverable ошибкой вместо вечного `working`.
 - `formatGeminiStreamErrorMessage()` остаётся единым formatter-ом для nested Gemini stream payload errors, чтобы router и тесты не расходились по тексту ошибок.
 
