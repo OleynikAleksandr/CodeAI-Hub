@@ -8,12 +8,42 @@ const FILE_PREFIX = "sdk-codex";
 const PROVISIONAL_PREFIXES = ["codex_"];
 
 export class CodexSessionLogger implements SessionLogger {
+  private static readonly liveLoggers = new Map<string, CodexSessionLogger>();
+  private static readonly pendingProviderFeedback = new Map<
+    string,
+    unknown[]
+  >();
   private readonly buffer: unknown[] = [];
   private logFilePath: string | null = null;
   private writeQueue = Promise.resolve();
   private committedSessionId: string | null = null;
   private currentSessionId: string | null = null;
   private fileReady = false;
+
+  static logProviderFeedback(sessionId: string, payload: unknown): void {
+    const normalizedSessionId = sessionId.trim();
+    if (!normalizedSessionId) {
+      return;
+    }
+    const entry = {
+      type: "provider_feedback",
+      payload,
+      timestamp: Date.now(),
+    };
+    const logger = CodexSessionLogger.liveLoggers.get(normalizedSessionId);
+    if (logger) {
+      logger.queueEntry(entry);
+      return;
+    }
+
+    const pending =
+      CodexSessionLogger.pendingProviderFeedback.get(normalizedSessionId) ?? [];
+    pending.push(entry);
+    CodexSessionLogger.pendingProviderFeedback.set(
+      normalizedSessionId,
+      pending
+    );
+  }
 
   start(sessionId: string): void {
     this.currentSessionId = sessionId;
@@ -38,12 +68,15 @@ export class CodexSessionLogger implements SessionLogger {
         this.commitSession(this.currentSessionId);
       } else {
         this.buffer.length = 0;
+        this.unregisterLiveLogger(this.currentSessionId);
         this.currentSessionId = null;
         return;
       }
     }
     this.queueEntry({ type: "session_end", timestamp: Date.now() });
     this.flushBuffer();
+    this.unregisterLiveLogger(this.currentSessionId);
+    this.unregisterLiveLogger(this.committedSessionId);
     this.currentSessionId = null;
   }
 
@@ -51,6 +84,7 @@ export class CodexSessionLogger implements SessionLogger {
     if (!newId) {
       return;
     }
+    this.unregisterLiveLogger(oldId);
     this.currentSessionId = newId;
     if (oldId && oldId !== newId) {
       this.queueEntry({
@@ -80,9 +114,11 @@ export class CodexSessionLogger implements SessionLogger {
       return;
     }
     if (this.committedSessionId === sessionId && this.fileReady) {
+      this.flushPendingProviderFeedback(sessionId);
       this.flushBuffer();
       return;
     }
+    this.unregisterLiveLogger(this.committedSessionId);
     this.committedSessionId = sessionId;
     const filePath = this.buildLogFilePath(sessionId);
     this.logFilePath = filePath;
@@ -91,6 +127,8 @@ export class CodexSessionLogger implements SessionLogger {
       .then(() => fs.appendFile(filePath, "", "utf8"))
       .then(() => {
         this.fileReady = true;
+        CodexSessionLogger.liveLoggers.set(sessionId, this);
+        this.flushPendingProviderFeedback(sessionId);
         this.flushBuffer();
       })
       .catch(() => {
@@ -101,6 +139,16 @@ export class CodexSessionLogger implements SessionLogger {
   private buildLogFilePath(sessionId: string): string {
     const safeId = sessionId.replace(/[^a-zA-Z0-9]/gu, "-");
     return path.join(LOG_ROOT, `${FILE_PREFIX}-${safeId}.jsonl`);
+  }
+
+  private flushPendingProviderFeedback(sessionId: string): void {
+    const pending =
+      CodexSessionLogger.pendingProviderFeedback.get(sessionId) ?? [];
+    if (pending.length === 0) {
+      return;
+    }
+    this.buffer.push(...pending);
+    CodexSessionLogger.pendingProviderFeedback.delete(sessionId);
   }
 
   private queueEntry(entry: unknown): void {
@@ -137,5 +185,14 @@ export class CodexSessionLogger implements SessionLogger {
       .catch(() => {
         /* ignore log append errors */
       });
+  }
+
+  private unregisterLiveLogger(sessionId: string | null): void {
+    if (!sessionId) {
+      return;
+    }
+    if (CodexSessionLogger.liveLoggers.get(sessionId) === this) {
+      CodexSessionLogger.liveLoggers.delete(sessionId);
+    }
   }
 }

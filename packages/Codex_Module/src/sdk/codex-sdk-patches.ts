@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import readline from "node:readline";
 import type { ThreadOptions } from "@openai/codex-sdk";
+import { CodexSessionLogger } from "../logging/session-logger";
 
 const MODEL_REASONING_KEY = "model_reasoning_effort";
 const NOTICE_MODEL_MIGRATIONS_KEY = "notice.model_migrations";
@@ -74,6 +75,45 @@ const isThreadStartedEvent = (
   value !== null &&
   (value as { type?: unknown }).type === "thread.started" &&
   typeof (value as { thread_id?: unknown }).thread_id === "string";
+
+const readOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+
+const buildTurnContextProviderFeedback = (
+  value: unknown,
+  threadId: string | null
+): Record<string, unknown> | null => {
+  if (!(threadId && isJsonObject(value) && value.type === "turn_context")) {
+    return null;
+  }
+  const payload = isJsonObject(value.payload) ? value.payload : null;
+  if (!payload) {
+    return null;
+  }
+
+  const collaborationMode = isJsonObject(payload.collaboration_mode)
+    ? payload.collaboration_mode
+    : null;
+  const collaborationSettings =
+    collaborationMode && isJsonObject(collaborationMode.settings)
+      ? collaborationMode.settings
+      : null;
+
+  return {
+    provider: "codex",
+    feedbackType: "turn_context",
+    threadId,
+    model: readOptionalString(payload.model) ?? null,
+    effort: readOptionalString(payload.effort) ?? null,
+    reasoningEffort:
+      readOptionalString(collaborationSettings?.reasoning_effort) ??
+      readOptionalString(payload.effort) ??
+      null,
+    timestamp: readOptionalString(value.timestamp) ?? new Date().toISOString(),
+  };
+};
 
 const createOutputSchemaFile = async (schema?: unknown) => {
   if (schema === undefined) {
@@ -309,6 +349,13 @@ const patchedThreadRunStreamedInternal: ThreadRunStreamedInternal =
         }
         if (isThreadStartedEvent(parsed) && this._id === null) {
           this._id = parsed.thread_id;
+        }
+        const providerFeedback = buildTurnContextProviderFeedback(
+          parsed,
+          this._id
+        );
+        if (providerFeedback && this._id) {
+          CodexSessionLogger.logProviderFeedback(this._id, providerFeedback);
         }
         yield parsed;
       }

@@ -14,19 +14,19 @@
 ## Phase 91 — Provider Feedback Logging Scope Reset (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Planning and execution backlog for provider feedback
-1. [IN_PROGRESS] Зафиксировать planning scope для provider-confirmed observability: нормализовать только тот feedback, который реально пришёл обратно из runtime Claude/Codex/Gemini, и разрезать реализацию на отдельные provider streams. Scope: `doc/SolidWorks-WorkFlow/Plans/ProviderFeedback_ModelAndReasoning_Logging_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): define provider feedback scope`
-2. [TODO] Git Commit: `docs(plan): define provider feedback scope` (hash: `TBD`)
+1. [DONE] Зафиксировать planning scope для provider-confirmed observability: нормализовать только тот feedback, который реально пришёл обратно из runtime Claude/Codex/Gemini, и разрезать реализацию на отдельные provider streams. Scope: `doc/SolidWorks-WorkFlow/Plans/ProviderFeedback_ModelAndReasoning_Logging_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): define provider feedback scope`
+2. [DONE] Git Commit: `docs(plan): define provider feedback scope` (hash: `53481807`)
 
 ## Phase 92 — Codex Provider Feedback Echo (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Promote raw turn_context into sdk-codex log
-3. [TODO] Логировать в `sdk-codex-*.jsonl` только provider-confirmed raw `turn_context` feedback с реально наблюдаемыми `model` и `effort`, не смешивая это с внутренним message processor state. Scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`. Expected commit: `feat(codex): log provider feedback`
-4. [TODO] Git Commit: `feat(codex): log provider feedback` (hash: `TBD`)
+3. [DONE] Логировать в `sdk-codex-*.jsonl` только provider-confirmed raw `turn_context` feedback с реально наблюдаемыми `model` и `effort`, не смешивая это с внутренним message processor state. Scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`. Expected commit: `feat(codex): log provider feedback`
+4. [DONE] Git Commit: `feat(codex): log provider feedback` (hash: `TBD`)
 
 ## Phase 93 — Claude Provider Feedback Echo (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Normalize Claude model and thinking feedback
-5. [TODO] Писать в `sdk-claude-*.jsonl` отдельные `provider_feedback` записи только по реально наблюдаемым provider signals: `message.model` и `thinking` blocks. Scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(claude): log provider feedback`
+5. [IN_PROGRESS] Писать в `sdk-claude-*.jsonl` отдельные `provider_feedback` записи только по реально наблюдаемым provider signals: `message.model` и `thinking` blocks. Scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(claude): log provider feedback`
 6. [TODO] Git Commit: `feat(claude): log provider feedback` (hash: `TBD`)
 
 ## Phase 94 — Gemini Provider Feedback Echo (owner: Oleksandr, updated: 2026-03-29)
