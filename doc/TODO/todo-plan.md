@@ -21,12 +21,12 @@
 
 ### Stream: Promote raw turn_context into sdk-codex log
 3. [DONE] Логировать в `sdk-codex-*.jsonl` только provider-confirmed raw `turn_context` feedback с реально наблюдаемыми `model` и `effort`, не смешивая это с внутренним message processor state. Scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`, `packages/Codex_Module/src/logging/session-logger.test.ts`. Expected commit: `feat(codex): log provider feedback`
-4. [DONE] Git Commit: `feat(codex): log provider feedback` (hash: `TBD`)
+4. [DONE] Git Commit: `feat(codex): log provider feedback` (hash: `25f848b8`)
 
 ## Phase 93 — Claude Provider Feedback Echo (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Normalize Claude model and thinking feedback
-5. [IN_PROGRESS] Писать в `sdk-claude-*.jsonl` отдельные `provider_feedback` записи только по реально наблюдаемым provider signals: `message.model` и `thinking` blocks. Scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`. Expected commit: `feat(claude): log provider feedback`
+5. [DONE] Писать в `sdk-claude-*.jsonl` отдельные `provider_feedback` записи только по реально наблюдаемым provider signals: `message.model` и `thinking` blocks. Scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/provider-feedback.ts`, `packages/Claude_Module/src/messaging/provider-feedback.test.ts`. Expected commit: `feat(claude): log provider feedback`
 6. [TODO] Git Commit: `feat(claude): log provider feedback` (hash: `TBD`)
 
 ## Phase 94 — Gemini Provider Feedback Echo (owner: Oleksandr, updated: 2026-03-29)
