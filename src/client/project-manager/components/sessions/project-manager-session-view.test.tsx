@@ -7,6 +7,10 @@ const SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-session-view.tsx"
 );
+const RUNTIME_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
+);
 
 test("project-manager-session-view keeps cross-workspace session-created focus guard", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
@@ -25,6 +29,19 @@ test("project-manager-session-view keeps cross-workspace session-created focus g
   );
   assert.equal(
     source.includes("const handleSendMessage = useSessionMessageSender(sessionsRef, workspacePath);"),
+    true
+  );
+});
+
+test("project-manager-runtime-session-view keeps runtime and settings model sync hooks together", async () => {
+  const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("useSettingsModelsSync(sessions, settings, setSnapshots);"),
+    true
+  );
+  assert.equal(
+    source.includes("useRuntimeModelSync(activeSessionId, setSnapshots);"),
     true
   );
 });

@@ -15,15 +15,36 @@ const PROVIDER_ID_TO_KEY: Record<ProviderStackId, ProviderKey> = {
 const SINGLE_DIGIT_REGEX = /^\d+$/;
 const DECIMAL_VERSION_REGEX = /^\d+\.\d+$/;
 const VERSION_JOIN_REGEX = /(\d+)\s+(\d+)/g;
+const EFFECTIVE_MODEL_ID_REGEX = /^(.*)\s+(reasoning|thinking):([^\s]+)$/;
+
+interface EffectiveModelDescriptor {
+  readonly baseModelId: string;
+  readonly label?: string;
+}
+
+const parseEffectiveModelId = (modelId: string): EffectiveModelDescriptor => {
+  const trimmed = modelId.trim();
+  const match = EFFECTIVE_MODEL_ID_REGEX.exec(trimmed);
+  if (!match) {
+    return { baseModelId: trimmed };
+  }
+
+  const [, baseModelId, modifier, value] = match;
+  return {
+    baseModelId,
+    label: modifier === "thinking" ? `thinking ${value}` : value,
+  };
+};
 
 const formatClaudeSessionModelDisplayName = (modelId: string): string => {
+  const { baseModelId } = parseEffectiveModelId(modelId);
   // Claude uses alias ids in settings ("default", "sonnet", "opus", "haiku").
   // In Session UI we want to show the effective family name, not "Default".
-  if (modelId === "default" || modelId === "sonnet") {
+  if (baseModelId === "default" || baseModelId === "sonnet") {
     return "Sonnet";
   }
 
-  return formatModelDisplayName(modelId);
+  return formatModelDisplayName(baseModelId);
 };
 
 const formatModelDisplayName = (modelId: string): string => {
@@ -55,13 +76,17 @@ const resolveModelDisplayName = (
 ): string =>
   providerKey === "claude"
     ? formatClaudeSessionModelDisplayName(modelId)
-    : formatModelDisplayName(modelId);
+    : formatModelDisplayName(parseEffectiveModelId(modelId).baseModelId);
 
 const resolveModelReasoning = (
   providerKey: ProviderKey,
   modelId: string,
   settings: Settings
 ): string | undefined => {
+  const effectiveModel = parseEffectiveModelId(modelId);
+  if (effectiveModel.label) {
+    return effectiveModel.label;
+  }
   if (providerKey === "claude") {
     return settings.providers.claude.thinking.enabled
       ? "thinking on"
@@ -79,15 +104,25 @@ export const buildModelInfo = (
   modelIdOverride?: string,
   source: ModelInfo["source"] = "settings"
 ): ModelInfo => {
+  const effectiveModelId =
+    typeof modelIdOverride === "string" && modelIdOverride.trim().length > 0
+      ? modelIdOverride.trim()
+      : null;
+
   if (!settings) {
+    const fallbackModelId = effectiveModelId ?? "unknown";
+    const effectiveModel = parseEffectiveModelId(fallbackModelId);
     return {
       providerId,
       providerName: getDefaultProviderTitle(providerId),
-      modelId: modelIdOverride ?? "unknown",
-      modelDisplayName:
-        modelIdOverride && modelIdOverride.trim().length > 0
-          ? formatModelDisplayName(modelIdOverride)
-          : getDefaultProviderTitle(providerId),
+      modelId: fallbackModelId,
+      modelDisplayName: effectiveModelId
+        ? resolveModelDisplayName(
+            PROVIDER_ID_TO_KEY[providerId],
+            fallbackModelId
+          )
+        : getDefaultProviderTitle(providerId),
+      ...(effectiveModel.label ? { reasoning: effectiveModel.label } : {}),
       source,
     };
   }
@@ -95,7 +130,7 @@ export const buildModelInfo = (
   const providerKey = PROVIDER_ID_TO_KEY[providerId];
   const providerName = getDefaultProviderTitle(providerId);
   const providerSettings = settings.providers[providerKey];
-  const modelId = modelIdOverride ?? providerSettings.defaultModel;
+  const modelId = effectiveModelId ?? providerSettings.defaultModel;
 
   return {
     providerId,

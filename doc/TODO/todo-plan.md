@@ -71,11 +71,11 @@
 
 ### Stream: Runtime sync in PM and webview
 15. [DONE] Научить PM и обычный webview одинаково принимать runtime effective model update без локальной реконструкции identity из split fields и без silent ignore path. Scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/app-host/session-stream-snapshot-sync.ts`. Expected commit: `fix(ui): consume effective model updates`
-16. [DONE] Git Commit: `fix(ui): consume effective model updates` (hash: `TBD`)
+16. [DONE] Git Commit: `fix(ui): consume effective model updates` (hash: `e37390b2`)
 
 ### Stream: Ready-session settings sync and display parity
-17. [TODO] Убрать рассогласование ready-session labels и settings-driven display logic: reasoning/thinking для той же base model не должны теряться или оставаться stale в session status. Scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`. Expected commit: `fix(ui): sync effective identity labels`
-18. [TODO] Git Commit: `fix(ui): sync effective identity labels` (hash: `TBD`)
+17. [DONE] Убрать рассогласование ready-session labels и settings-driven display logic: reasoning/thinking для той же base model не должны теряться или оставаться stale в session status. Scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`. Expected commit: `fix(ui): sync effective identity labels`
+18. [DONE] Git Commit: `fix(ui): sync effective identity labels` (hash: `TBD`)
 
 ## Phase 90 — Release Build After Effective Identity Closure (owner: Oleksandr, updated: 2026-03-29)
 

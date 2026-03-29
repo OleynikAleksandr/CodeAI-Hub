@@ -1,8 +1,24 @@
 import { useEffect } from "react";
-import type { SessionRecord } from "../../../../types/session";
+import type { ModelInfo, SessionRecord } from "../../../../types/session";
 import type { Settings } from "../components/settings/settings-state-model";
 import type { SessionSnapshots } from "../session/helpers";
-import { buildModelInfoList } from "../session/model-info-builder";
+import {
+  buildModelInfo,
+  buildModelInfoList,
+} from "../session/model-info-builder";
+
+const rebuildReadySessionModels = (
+  models: readonly ModelInfo[],
+  settings: Settings
+): readonly ModelInfo[] =>
+  models.map((model) =>
+    buildModelInfo(
+      model.providerId,
+      settings,
+      model.modelId,
+      model.source ?? "runtime"
+    )
+  );
 
 const applySettingsModels = (
   previous: SessionSnapshots,
@@ -17,14 +33,11 @@ const applySettingsModels = (
       continue;
     }
     const currentModels = snapshot.status.models ?? [];
-    const currentModel = currentModels[0];
     const sessionReady = snapshot.binding.status === "ready";
-    if (sessionReady && currentModel) {
-      next[session.id] = snapshot;
-      continue;
-    }
-
-    const newModels = buildModelInfoList(session.providerIds, settings);
+    const newModels =
+      sessionReady && currentModels.length > 0
+        ? rebuildReadySessionModels(currentModels, settings)
+        : buildModelInfoList(session.providerIds, settings);
     const modelsChanged =
       JSON.stringify(newModels) !== JSON.stringify(snapshot.status.models);
     if (modelsChanged) {
