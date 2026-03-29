@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.839] - 2026-03-29
+### Fixed
+- **Session view unmount on store activation**: suppressed the intermediate null-snapshot emit from `WorkflowStateStore.activate()` that caused a render-cycle lag, briefly flipping `showDescriptionHelpInSessionPanel` to true and unmounting the active `ProjectManagerSessionView`.
+- **Derivation guard**: workflow state derivation now skips all setter calls until the store completes its first poll (`loaded` flag), preventing stale state from reaching the UI between workspace switches.
+
 ## [1.1.838] - 2026-03-29
 ### Fixed
 - **Description session flicker**: post-submit Description UI no longer reverts to Help+Questionnaire when polling returns a snapshot before backend persists the session binding.

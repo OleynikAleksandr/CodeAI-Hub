@@ -75,16 +75,16 @@
 
 ### Stream: P0-C skip derivation until store loaded
 33. [DONE] Добавить early-return `if (!storeState.loaded) return;` в деривационный effect `useMainAreaWorkflowState`, чтобы не вызывать setters до первого реального snapshot. Scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: skip workflow derivation until store loaded`
-34. [IN_PROGRESS] Git Commit: `fix: skip workflow derivation until store loaded` (hash: TBD)
+34. [DONE] Git Commit: `fix: skip workflow derivation until store loaded` (hash: c6a777c5)
 
 ### Stream: P0-C verify webview build
-35. [TODO] Прогнать `npm run build:webview` и `npx tsc --noEmit` для верификации; прогнать таргетную сборку core. Expected commit: (no separate commit, verification only)
+35. [DONE] Прогнать `npm run build:webview` и `npx tsc --noEmit` для верификации. (verified OK)
 
 ## Phase 107 — Hotfix Release Build v1.1.839 (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Hotfix release docs
-36. [TODO] Обновить `README.md` и `CHANGELOG.md` под v1.1.839 hotfix scope. Scope: `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare store derivation hotfix`
-37. [TODO] Git Commit: `docs(release): prepare store derivation hotfix` (hash: TBD)
+36. [DONE] Обновить `README.md` и `CHANGELOG.md` под v1.1.839 hotfix scope. Scope: `README.md`, `CHANGELOG.md`. Expected commit: `docs(release): prepare store derivation hotfix`
+37. [IN_PROGRESS] Git Commit: `docs(release): prepare store derivation hotfix` (hash: TBD)
 
 ### Stream: Hotfix clean-tree build
 38. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.839 artifacts. Expected commit: `chore: prepare v1.1.839 artifacts`

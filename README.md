@@ -7,11 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.838
-- **Description session flicker fix**: post-submit Description UI now stays in session mode while the provider binding completes, instead of reverting to Help+Questionnaire.
-- **False Final_Description.md eliminated**: only the canonical path contract is shown in the tree and central panel; legacy `description.md` fallback no longer appears as the final artifact.
-- **Shared WorkflowStateStore**: MainArea and WorkspaceTree share a single polling cycle, removing the timing split-brain between the two.
-- **Description gating aligned**: downstream workflow steps require `finalPath` to unblock, matching the actual step-start contract.
+## Current Release — v1.1.839
+- **Store derivation hotfix**: suppressed intermediate null-snapshot emit and added `loaded` guard so that `ProjectManagerSessionView` is never unmounted by a stale render-cycle between workspace switches or session creation.
+- **v1.1.838 scope preserved**: description session flicker fix, false `Final_Description.md` elimination, shared `WorkflowStateStore`, description gating alignment.
 
 Previous releases (summary): `1.1.800–1.1.837` — provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
