@@ -83,16 +83,18 @@ UI оптимистично считает, что Description-сессия уж
 `hasDescriptionSession` только из `branch.primarySession.providerSessionId`.
 Если polling возвращает snapshot без этого поля, optimistic state затирается.
 
-Важно: точная причина, почему polling в этот момент иногда получает snapshot без
-`primarySession.providerSessionId`, ещё не доказана окончательно. Возможные направления:
+**Confirmed cause (Session 194, 82db344c):** the race is between the already-in-flight
+`loadState()` interval callback (started at 3s/10s) and the synchronous
+`setHasDescriptionSession(true)` called inside `handleDescriptionSessionCreated`.
+Because `loadState` is async, the earlier-scheduled timer fires, receives a snapshot
+that does not yet contain `primarySession.providerSessionId` (backend has not persisted
+the binding yet), and unconditionally calls `setHasDescriptionSession(false)`.
+This overwrites the optimistic `true` set moments before by the submit handler.
 
-- race между уже запущенным polling и поздним optimistic update;
-- useEffect reset при смене workspace;
-- несовпадение пути/slug при чтении;
-- иной timing-фактор.
-
-Для `P0` это не блокер. Для фикса важно не точное объяснение задержки, а сам факт:
-polling не должен иметь право безусловно затирать только что созданный session state.
+**Fix applied:** `use-description-session-guard.ts` (82db344c) introduces a
+`DescriptionSessionGuard` ref that blocks any downgrade of `hasDescriptionSession`
+while the guard is active. Guard deactivates on `session:binding` ready/failed or
+a 60s fallback timeout. This makes polling harmless during the binding window.
 
 ### 3.4. Каскадный `re-mount` уничтожает последний guard
 
