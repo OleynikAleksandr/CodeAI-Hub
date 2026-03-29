@@ -71,8 +71,13 @@ export interface ProviderCapabilities {
   readonly modelSync: ProviderModelSyncCapabilities;
 }
 
+export type ProviderAppliedConfigIdentityKey = "effective_model_id";
+export type ProviderRuntimeModelSelectionKey = "base_model_id" | "model_id";
+
 export interface ProviderModelSyncCapabilities {
   readonly acceptsAppliedTurnConfig: boolean;
+  readonly appliedConfigIdentityKey: ProviderAppliedConfigIdentityKey;
+  readonly runtimeModelSelectionKey: ProviderRuntimeModelSelectionKey;
   readonly syncsLabelFromAppliedConfig: boolean;
 }
 

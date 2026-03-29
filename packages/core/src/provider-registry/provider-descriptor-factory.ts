@@ -59,6 +59,8 @@ const tryAttachAdapter = (
 const DEFAULT_PROVIDER_MODEL_SYNC_CAPABILITIES: ProviderModelSyncCapabilities =
   {
     acceptsAppliedTurnConfig: false,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: false,
   };
 
@@ -67,14 +69,20 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
 > = {
   claudeCodeCli: {
     acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
   codexCli: {
     acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
   geminiCli: {
     acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
 };

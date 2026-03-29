@@ -47,11 +47,11 @@
 
 ### Stream: Shared resolver from settings SSOT
 5. [DONE] Довести Core resolver до provider-neutral effective identity contract: из `settings.json` вычислять `baseModelId`, effective `modelId`, reasoning/thinking payload и единый descriptor для bridge/runtime/UI без branch-per-provider identity logic в потребителях. Scope: `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): resolve effective model identity`
-6. [DONE] Git Commit: `refactor(core): resolve effective model identity` (hash: `TBD`)
+6. [DONE] Git Commit: `refactor(core): resolve effective model identity` (hash: `804fc61e`)
 
 ### Stream: Provider capability alignment
-7. [TODO] Согласовать provider capability слой с новым identity contract, чтобы все провайдеры подключались к одному effective-model pipeline, а provider-specific код оставался только last-mile adapter path. Scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): align provider identity capabilities`
-8. [TODO] Git Commit: `refactor(core): align provider identity capabilities` (hash: `TBD`)
+7. [DONE] Согласовать provider capability слой с новым identity contract, чтобы все провайдеры подключались к одному effective-model pipeline, а provider-specific код оставался только last-mile adapter path. Scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): align provider identity capabilities`
+8. [DONE] Git Commit: `refactor(core): align provider identity capabilities` (hash: `TBD`)
 
 ## Phase 88 — Codex Runtime Adoption (owner: Oleksandr, updated: 2026-03-29)
 

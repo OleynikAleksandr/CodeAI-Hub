@@ -75,7 +75,7 @@
 - Provider registry façade cluster: `packages/core/src/provider-registry/`
   - `index.ts` = façade
   - `provider-installer-paths.ts`, `provider-installed-path-resolver.ts`, `provider-module-loader.ts`, `provider-descriptor-factory.ts`, `provider-usage-limits-bridge-factory.ts`, `provider-recovery-{scheduler,coordinator}.ts` = runtime internals
-  - `provider-descriptor-factory.ts` now owns provider model-sync capability registration (`acceptsAppliedTurnConfig`, `syncsLabelFromAppliedConfig`), so adding a new provider does not require hidden hardcoded assumptions in remote-bridge/UI glue code
+  - `provider-descriptor-factory.ts` now owns provider model-sync capability registration (`acceptsAppliedTurnConfig`, `appliedConfigIdentityKey`, `runtimeModelSelectionKey`, `syncsLabelFromAppliedConfig`), so adding a new provider does not require hidden hardcoded assumptions in remote-bridge/UI glue code about where effective identity lives and which field is still used as the actual runtime model selector
 - Core remote bridge cluster: `packages/core/src/remote-bridge/`
   - `index.ts` = thin façade / top-level runtime bridge entrypoint
   - `remote-bridge-bootstrap.ts` = runtime service/bootstrap wiring
