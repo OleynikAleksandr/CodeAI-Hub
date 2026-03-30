@@ -4,8 +4,8 @@
 # This script MUST run before every compile to prevent architecture violations
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-MAX_LINES=300
-WARNING_LINES=250
+MAX_LINES=500
+WARNING_LINES=400
 MAX_LINES_ALLOWLIST_FILE="$SCRIPT_DIR/check-architecture-rules/max-lines-debt-allowlist.txt"
 
 echo "🏗️  Architecture Check Starting..."

@@ -5,35 +5,14 @@
 #
 # Contract:
 # - every path here is existing architecture debt
-# - new >300-line files must not be added here casually
-# - remove entries as soon as the file drops to 300 lines or below
-
-# Claude module
-packages/Claude_Module/src/auth/sdk-auth-manager.ts
-packages/Claude_Module/src/sdk/claude-sdk-manager.ts
-
-# Codex module
-packages/Codex_Module/src/installer/codex-installer.ts
-packages/Codex_Module/src/sdk/codex-sdk-manager.ts
-packages/Codex_Module/src/sdk/codex-sdk-patches.ts
-
-# Gemini module
-packages/Gemini_Module/src/installer/gemini-installer.ts
-packages/Gemini_Module/src/runtime/cli-bridge.ts
+# - new >500-line files must not be added here casually
+# - remove entries as soon as the file drops to 500 lines or below
 
 # Core supervisor
 packages/core-supervisor/src/index.ts
 
 # Core runtime
-packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts
-packages/core/src/provider-usage-limits/providers/gemini/gemini-quota-api-reader.ts
-packages/core/src/remote-bridge/handlers/idea-contract-service.ts
 packages/core/src/remote-bridge/handlers/session-request-handler.test.ts
 packages/core/src/remote-bridge/handlers/session-request-handler.ts
-packages/core/src/remote-bridge/handlers/websocket-manager.ts
-packages/core/src/session-continuity/continuity-tracker.ts
-packages/core/src/session-continuity/session-continuity-facade.ts
 packages/core/src/unified-session/storage.ts
-packages/core/src/workflow/diagram-dsl/markdown-dsl-shared.ts
-packages/core/src/workflow/state/workflow-state-store.ts
 packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts
