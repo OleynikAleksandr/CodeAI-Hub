@@ -39,7 +39,7 @@ Goal: behavior-preserving decomposition of the last remaining production hotspot
 
 ### Stream: Claude Auth Verification
 5. [DONE] Verification: прогнать `npm run build --workspace @codeai-hub/claude-module` и focused auth bootstrap/provider-home sanity checks, затем синхронизировать execution status. Scope: `packages/Claude_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(claude): verify auth manager decomposition`
-6. [DONE] Git Commit: `test(claude): verify auth manager decomposition` (hash: `TBD`)
+6. [DONE] Git Commit: `test(claude): verify auth manager decomposition` (hash: `7149d9e5`)
 
 ### Stream: Release Build
 7. [IN_PROGRESS] Release: после закрытия structural stream-ов и verification актуализировать release-facing docs при необходимости, затем прогнать `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, сохранить свежие артефакты в `doc/tmp/releases/` и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `build(release): assemble sdk auth decomposition release`
