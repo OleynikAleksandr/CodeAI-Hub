@@ -12,6 +12,10 @@
 - `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts` — assistant chunks, translated thoughts и flush по `finished` boundaries.
 - `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts` — tool/system/warning events без смешивания с assistant сегментами.
 
+## Runtime cluster
+- `packages/Gemini_Module/src/runtime/cli-bridge.ts` — runtime bridge loader and compatibility entrypoint; root/core resolution now delegates to `cli-bridge-root-resolver.ts`.
+- `packages/Gemini_Module/src/runtime/cli-bridge-root-resolver.ts` — CLI/Core package root candidate scanning and version resolution helper.
+
 ## Инварианты
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Любые auth/quota ошибки не должны оставлять UI в stuck working.
