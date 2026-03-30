@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.850] - 2026-03-30
+### Fixed
+- **Gemini final-answer deduplication**: deferred translated-thought flush now completes before segmented-vs-fallback assistant accounting, so a terminal Gemini answer emitted once by the provider is written once to dialog history instead of being duplicated locally.
+- **Deferred finalization ordering**: `GeminiTurnRunner` now waits for deferred Gemini dialog emits before detaching assistant-segment listeners or deciding late-stall-after-answer completion, keeping terminal-answer accounting consistent with the actual emitted segments.
+
+### Added
+- **Dedup regression coverage**: added a focused Gemini session test for delayed translated `thinking` followed by one terminal assistant answer and no aggregate fallback duplicate.
+
 ## [1.1.849] - 2026-03-30
 ### Fixed
 - **Gemini post-tool terminal-leg contract**: assistant progress output from a leg that emitted `tool_call_request` no longer satisfies whole-turn completion; only the nested terminal leg without new tool requests can complete the turn.

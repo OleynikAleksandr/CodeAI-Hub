@@ -89,10 +89,10 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Verification
 27. [DONE] Verification: прогнать таргетную сборку Gemini и focused regression tests, затем зафиксировать результаты дедупликации в session report до релизной подготовки. Scope: `packages/Gemini_Module`, `doc/Sessions/Session199.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: record gemini final answer dedup verification`
-28. [TODO] Git Commit: `docs: record gemini final answer dedup verification` (hash: TBD)
+28. [DONE] Git Commit: `docs: record gemini final answer dedup verification` (hash: `9c0586a5`)
 
 ### Stream: Release Docs Sync
-29. [TODO] Release Docs: синхронизировать `README.md` и `CHANGELOG.md` под patch release `1.1.850`, чтобы release-facing docs отражали Gemini final answer deduplication до запуска release scripts. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): sync 1.1.850 release notes`
+29. [DONE] Release Docs: синхронизировать `README.md` и `CHANGELOG.md` под patch release `1.1.850`, чтобы release-facing docs отражали Gemini final answer deduplication до запуска release scripts. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): sync 1.1.850 release notes`
 30. [TODO] Git Commit: `docs(release): sync 1.1.850 release notes` (hash: TBD)
 
 ### Stream: Release Build-All

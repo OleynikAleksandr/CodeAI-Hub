@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.849
-- **Gemini post-tool terminal-leg fix**: assistant progress text emitted before `write_file` or other tool follow-up no longer counts as whole-turn completion; only the terminal nested leg without new tool requests can finish the turn.
-- **Adaptive post-tool stalled watchdog**: Gemini nested `post_tool` follow-up now uses a longer watchdog window than the initial leg, reducing false recoverable failures right after successful tool execution.
-- **Post-tool regression coverage**: targeted Gemini verification now covers `progress -> write_file -> nested stall`, delayed post-tool final answer, and late silent tail after terminal nested answer.
+## Current Release — v1.1.850
+- **Gemini final-answer deduplication**: a terminal Gemini answer emitted once by the provider is now persisted once in dialog history; the runtime no longer appends a duplicate fallback answer after delayed thought translation flush.
+- **Deferred thought-flush ordering**: translated Gemini `thinking` is drained before segmented-vs-fallback assistant accounting completes, so the turn still ends with one real assistant answer instead of a late duplicate race.
+- **Expanded Gemini regression coverage**: targeted verification now covers delayed translated `thinking` before the terminal answer, alongside the earlier post-tool stall and delayed-follow-up scenarios.
 
-Previous releases (summary): `1.1.800–1.1.848` — thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
+Previous releases (summary): `1.1.800–1.1.849` — Gemini post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
@@ -36,11 +36,11 @@ Before starting, read `doc/SolidWorks-WorkFlow/Docs_Index.md` and follow the SSO
    npm install
    npm run setup:hooks    # installs Husky git hooks
    ```
-2. Implement changes in `src/` and `packages/**` (micro-classes + facades; keep files under 300 lines).
+2. Implement changes in `src/` and `packages/**` (micro-classes + facades; keep files under 500 lines).
 3. Run quality checks before committing:
    ```bash
    npm run quality        # architecture gate + Ultracite lint
-   npm run check:tsprune  # detect unused exports
+   npm run check:knip     # detect unused files/exports
    npm run compile        # ensure TypeScript builds cleanly
    ```
 
