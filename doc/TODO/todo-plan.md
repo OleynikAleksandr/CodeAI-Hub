@@ -97,8 +97,8 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Release Build-All
 31. [DONE] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и fresh `1.1.850` tarball-артефакты, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.850 artifacts`
-32. [TODO] Git Commit: `chore(release): prepare 1.1.850 artifacts` (hash: TBD)
+32. [DONE] Git Commit: `chore(release): prepare 1.1.850 artifacts` (hash: `be403511`)
 
 ### Stream: Release VSIX
-33. [TODO] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.850.vsix`, затем синхронизировать `doc/Sessions/Session200.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session200.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.850 vsix`
+33. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.850.vsix`, затем синхронизировать `doc/Sessions/Session200.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session200.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.850 vsix`
 34. [TODO] Git Commit: `chore(release): finalize 1.1.850 vsix` (hash: TBD)
