@@ -286,6 +286,15 @@ Oversized debt как blocking-class на текущем этапе закрыт
 - `claude-usage-limits-facade.ts` уже ближе к корректной фасадной роли и не должен смешиваться с более срочными orchestration/runtime cuts;
 - `launcher_handler.cc` требует отдельной осторожности из-за CEF/native boundary.
 
+### 7.3. Closure status after `Session204`
+
+К завершению `Session204` wave-1 scope фактически дал следующий результат:
+
+- `session-request-handler.ts` закрыт;
+- `gemini-installer.ts` + `cli-bridge.ts` закрыты;
+- follow-up wave также уже закрыла `claude-usage-limits-facade.ts` и `launcher_handler.cc`;
+- единственный незакрытый production hotspot из исходного согласованного списка — `packages/Claude_Module/src/auth/sdk-auth-manager.ts`.
+
 ---
 
 ## 8. Wave-1 Target Architecture
@@ -359,3 +368,56 @@ Wave-1 expectation:
 - не менять внешний installer/bridge contract;
 - не смешивать structural split с новой Gemini feature work;
 - если нужно выбирать очередность, сначала режем resolution/loading seams в runtime, затем package-management seam в installer.
+
+---
+
+## 9. Follow-Up Wave — `sdk-auth-manager.ts` closure (2026-03-30)
+
+После закрытия `Session204` исходная warning-zone wave больше не требует broad runtime scope. Следующая фаза должна быть узкой и однозначной:
+
+- scope only: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`;
+- цель: добить последний незакрытый production hotspot из исходного согласованного списка;
+- phase type: behavior-preserving decomposition without Claude feature work.
+
+### 9.1. Remaining root responsibilities
+
+Сейчас `SDKAuthManager` всё ещё смешивает:
+
+- provider-home/macOS keychain bridge;
+- legacy `.claude.json` state linking/copy fallback;
+- legacy credentials migration;
+- OAuth token bootstrap/cache refresh;
+- auth environment assembly;
+- auth probe execution и final auth check.
+
+Это всё не должно оставаться в одном root file на `496` строк.
+
+### 9.2. Target helper seams
+
+Целевая декомпозиция для новой волны:
+
+- `claude-auth-home-bridge.ts`
+  - provider-home bootstrap for macOS keychain bridge;
+  - legacy `.claude.json` link/copy management;
+  - credentials migration from legacy `~/.claude`;
+  - file-link/copy helper ownership.
+- `claude-auth-runtime.ts`
+  - `CLAUDE_CODE_OAUTH_TOKEN` bootstrap/cache refresh;
+  - provider auth environment assembly;
+  - `npx @anthropic-ai/claude-code` auth probe execution;
+  - final lightweight authentication check.
+
+`SDKAuthManager` после этого должен остаться coordinator/facade:
+
+- `ensureSubscriptionAuth()`;
+- `ensureProviderHomeSessionBootstrap(...)`;
+- `getAuthEnvironment()`;
+- cached/bootstrap state ownership only when it реально нужно как façade state.
+
+### 9.3. Scope rules for the follow-up wave
+
+- первая микрозадача режет только provider-home / legacy-state bridge seam;
+- вторая микрозадача режет OAuth bootstrap + auth probe/runtime seam;
+- verification идёт отдельным stream;
+- `doc/SolidWorks-WorkFlow/Modules/Claude.md` синхронизируется в каждом structural commit;
+- если при реализации выяснится, что `getAuthEnvironment()` лучше переехать в runtime helper, это допустимо только если внешний public contract `SDKAuthManager` остаётся стабильным.
