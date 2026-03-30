@@ -145,6 +145,34 @@
   - `codeai-hub-1.1.849.vsix` (`1.7M`) at repository root.
 - Confirmed release packaging restored development dependencies and left the git worktree clean afterward.
 
+### Phase 11: Gemini final answer deduplication follow-up and automated verification
+- Post-release validation of `1.1.849` exposed a new residual UX/runtime race after the stalled-turn family was fixed:
+  - Gemini now reaches a true terminal answer;
+  - raw provider stream emits that terminal answer only once;
+  - dialog history duplicates the same final answer because our runtime schedules the segmented final emit after pending translated thoughts, then still falls back to aggregate assistant emit.
+- Recorded the deduplication contract in the active planning materials:
+  - turn must end with exactly one non-thinking final assistant answer;
+  - translated `thinking` remains side-channel;
+  - fallback aggregate emit is allowed only after deferred Gemini dialog flush has completed.
+- Added explicit deferred Gemini dialog flush plumbing in the messaging layer:
+  - `GeminiAssistantEventNormalizer` now serializes finished-leg final segments behind pending thought translations;
+  - `GeminiMessageProcessor` now exposes an explicit `drain()` for pending Gemini dialog emits.
+- Updated `GeminiTurnRunner` finalization semantics:
+  - stalled watchdog is still cleared immediately after stream exit/error;
+  - runner now awaits deferred Gemini dialog flush before detaching assistant-segment accounting;
+  - stalled-after-terminal-answer heuristic now evaluates after deferred emits had a chance to materialize.
+- Added a dedicated regression test for the exact duplicate bug family:
+  - delayed translated `thinking`;
+  - one segmented final assistant answer;
+  - no aggregate fallback duplicate.
+- Rebuilt and revalidated the affected Gemini package after the remediation:
+  - `npm run build --workspace @codeai-hub/gemini-module`
+  - `node --test packages/Gemini_Module/dist/session/gemini-session-manager.test.js packages/Gemini_Module/dist/session/gemini-turn-runner.test.js`
+- Automated verification result after commit `d1d99e02`:
+  - Gemini session tests: `11/11` passing;
+  - the new delayed-thought dedup regression passes;
+  - manual validation is still pending on the next packaged patch release.
+
 ## Git commits
 - `ba84659a` `docs(architecture): approve gemini stalled turn terminal answer contract`
 - `f2651b1d` `docs: add Session 199 report for gemini stalled turn investigation`
@@ -164,6 +192,10 @@
 - `6782e21b` `docs: record gemini post-tool stall verification results`
 - `1bbf3b19` `docs(release): sync 1.1.849 release notes`
 - `495e9d60` `chore(release): prepare 1.1.849 artifacts`
+- `0e1b72d2` `docs(architecture): define gemini final flush dedup contract`
+- `13b66272` `fix(gemini): serialize final segment flush after translated thoughts`
+- `a0620fa4` `fix(gemini): await deferred final segment before fallback`
+- `d1d99e02` `test(gemini): cover translated thought final answer dedup`
 
 ---
 
@@ -192,11 +224,13 @@
 - The next remediation scope is to distinguish progress legs from terminal legs and to relax stalled timeout specifically for Gemini post-tool follow-up.
 
 ## Next active work according to todo-plan
-- Record the final VSIX packaging result in git via `chore(release): finalize 1.1.849 vsix`.
-- Then run the next manual Gemini `Description` validation specifically against release `1.1.849` and compare the runtime outcome with the now-covered post-tool regression matrix.
+- Sync `README.md` and `CHANGELOG.md` for patch release `1.1.850`.
+- Run `./scripts/build-all.sh` and then `./scripts/build-release.sh --use-current-version` on a clean tree.
+- Validate Gemini `Description` manually against packaged release `1.1.850` to confirm that the duplicate-final-answer race is gone in real logs/history.
 
 ## Implementation direction agreed in this session
 - Treat translated thoughts as side-channel, not as terminal assistant answer.
 - For Gemini, stalled-turn timeout must resolve differently depending on whether a real non-thinking terminal answer was already seen.
 - If only thoughts were seen, timeout must stay explicit failure.
 - Failure outcome must be visible in dialog/session history after reload.
+- Deferred translated-thought flush must finish before segmented-vs-fallback assistant accounting is finalized, otherwise Gemini duplicates the final answer locally even when provider emitted it once.

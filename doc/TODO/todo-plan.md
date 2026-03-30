@@ -85,10 +85,10 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Regression Tests
 25. [DONE] Tests: покрыть сценарий late translated thinking перед final answer и убедиться, что финальный assistant segment materialize-ится ровно один раз без aggregate duplicate. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover translated thought final answer dedup`
-26. [TODO] Git Commit: `test(gemini): cover translated thought final answer dedup` (hash: TBD)
+26. [DONE] Git Commit: `test(gemini): cover translated thought final answer dedup` (hash: `d1d99e02`)
 
 ### Stream: Verification
-27. [TODO] Verification: прогнать таргетную сборку Gemini и focused regression tests, затем зафиксировать результаты дедупликации в session report до релизной подготовки. Scope: `packages/Gemini_Module`, `doc/Sessions/Session199.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: record gemini final answer dedup verification`
+27. [DONE] Verification: прогнать таргетную сборку Gemini и focused regression tests, затем зафиксировать результаты дедупликации в session report до релизной подготовки. Scope: `packages/Gemini_Module`, `doc/Sessions/Session199.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: record gemini final answer dedup verification`
 28. [TODO] Git Commit: `docs: record gemini final answer dedup verification` (hash: TBD)
 
 ### Stream: Release Docs Sync
