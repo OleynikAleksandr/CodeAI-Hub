@@ -42,6 +42,103 @@ export interface ShellSessionCreationResult {
   readonly session: Session;
 }
 
+/** Typed access to private/internal fields of SessionRequestHandler for test harness monkey-patching. */
+export interface HandlerTestInternals {
+  continuity: Record<string, unknown>;
+  continuityLockService: {
+    emitContinuityLockEvent: (options: Record<string, unknown>) => void;
+    finalizeFlowNodeContinuityLock: (options: {
+      readonly sessionId: string;
+      readonly reason: string;
+    }) => void;
+    hasContext: (sessionId: string) => boolean;
+    registerFlowNodeContinuityLockContext: (
+      context: Record<string, unknown>
+    ) => void;
+  };
+  continuityRolloverOrchestrator: {
+    getTokenUsageSnapshot: (sessionId: string) => unknown;
+    hasPending: (sessionId: string) => boolean;
+    rolloverInFlight: Set<string>;
+    rolloverStarted: Set<string>;
+    startFlowNodeRolloverFromUsage: (
+      options: { readonly sessionId: string } & Record<string, unknown>
+    ) => Promise<void>;
+  };
+  descriptionDialogSync: Record<string, unknown> & {
+    resolveDescriptionDialog: (
+      options: Record<string, unknown>
+    ) => Promise<{ dialogSessionId: string; shouldBackfill: boolean } | null>;
+    updateDescriptionSessionRef: (
+      session: unknown,
+      providerSessionId: string
+    ) => Promise<void>;
+  };
+  flowNodeContinuity: Record<string, unknown>;
+  flowNodeRollover: {
+    rolloverFlowNodeSession: (
+      session: unknown,
+      rollover: Record<string, unknown>,
+      options?: Record<string, unknown>
+    ) => Promise<void>;
+  };
+  handleFlowNodeContinuityProviderEvent: (
+    sessionId: string,
+    event: unknown
+  ) => Promise<void>;
+  handleFlowNodeContinuitySilentPreemptiveRollover: () => Promise<boolean>;
+  messageDispatch: {
+    sendInternalMessage: (sessionId: string, content: string) => Promise<void>;
+  };
+  providerEventRouter: {
+    handleProviderEvent: (sessionId: string, event: unknown) => void;
+  };
+  providerSessions: Map<string, ProviderSessionBinding>;
+  resolveContinuityRootSessionId: (
+    options: { readonly sessionId: string } & Record<string, unknown>
+  ) => Promise<string>;
+  resolveLiveContinuityRemainingPercentThreshold: (
+    session: unknown
+  ) => Promise<number>;
+  resumeLifecycle: {
+    recordPostTurnContextDecision: (
+      sessionId: string,
+      decision: string
+    ) => void;
+    sessionResumeLifecycleStates: Map<string, unknown>;
+  };
+  sendInternalMessage: (sessionId: string, content: string) => Promise<void>;
+  sessionBootstrap: Record<string, unknown>;
+  sessionShellFactory: {
+    createBoundSession: (
+      options: Record<string, unknown>,
+      providerSessionId: string,
+      silent: boolean
+    ) => Promise<{ readonly id: string }>;
+    createShellSession: (
+      options: Record<string, unknown>
+    ) => Promise<{ readonly session: { readonly id: string } }>;
+    bindShellSession: (
+      options: Record<string, unknown>,
+      shell: unknown,
+      providerSessionId: string,
+      silent: boolean
+    ) => Promise<void>;
+  };
+  turnArbitration: {
+    handleFlowNodeContinuityProviderEvent: (options: {
+      readonly sessionId: string;
+      readonly event: unknown;
+      readonly resolveLiveContinuityRemainingPercentThreshold: (
+        session: unknown
+      ) => Promise<number>;
+    }) => Promise<void>;
+    resolveLiveContinuityRemainingPercentThreshold: (
+      session: unknown
+    ) => Promise<number>;
+  };
+}
+
 export interface SessionRequestHandlerOptions {
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly config: CoreConfig;

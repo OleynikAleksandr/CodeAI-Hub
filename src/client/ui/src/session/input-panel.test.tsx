@@ -3,10 +3,26 @@ import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
+interface BrowserLikeGlobal {
+  addEventListener: (...args: unknown[]) => void;
+  clearTimeout: typeof clearTimeout;
+  postMessage: (...args: unknown[]) => void;
+  removeEventListener: (...args: unknown[]) => void;
+  setTimeout: typeof setTimeout;
+  [key: string]: unknown;
+}
+
+interface TestGlobalScope {
+  cancelAnimationFrame: (id: number) => void;
+  requestAnimationFrame: (callback: FrameRequestCallback) => number;
+  window: BrowserLikeGlobal;
+  [key: string]: unknown;
+}
+
 const ensureBrowserLikeGlobals = (): void => {
-  const globalScope = globalThis as any;
+  const globalScope = globalThis as unknown as TestGlobalScope;
   if (!globalScope.window) {
-    globalScope.window = globalScope;
+    globalScope.window = globalScope as unknown as BrowserLikeGlobal;
   }
   if (typeof globalScope.window.postMessage !== "function") {
     globalScope.window.postMessage = () => {

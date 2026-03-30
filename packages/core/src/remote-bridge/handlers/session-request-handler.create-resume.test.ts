@@ -7,6 +7,7 @@ import {
   EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS,
   flushAsyncWork,
   getHandlerSourceInvariantChecks,
+  internals,
   noop,
   SOURCE_PATH,
 } from "./session-request-handler.test";
@@ -28,18 +29,27 @@ test("SessionRequestHandler routes provider lifecycle and preserves provider tim
     return Promise.resolve();
   };
 
-  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
-    type: "turn_started",
-  });
-  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
-    type: "turn_completed",
-  });
+  internals(harness.handler).providerEventRouter.handleProviderEvent(
+    session.id,
+    {
+      type: "turn_started",
+    }
+  );
+  internals(harness.handler).providerEventRouter.handleProviderEvent(
+    session.id,
+    {
+      type: "turn_completed",
+    }
+  );
   await flushAsyncWork();
-  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
-    type: "assistant",
-    content: "Late provider commentary",
-    timestamp: "2026-03-23T10:54:30.000Z",
-  });
+  internals(harness.handler).providerEventRouter.handleProviderEvent(
+    session.id,
+    {
+      type: "assistant",
+      content: "Late provider commentary",
+      timestamp: "2026-03-23T10:54:30.000Z",
+    }
+  );
   await flushAsyncWork();
 
   assert.deepEqual(collectTurnStateSequence(harness.events), [
@@ -85,7 +95,10 @@ test("SessionRequestHandler keeps internal sends in provider turn lifecycle", as
     });
     harness.providerRegistry.getAdapter = () => scenario.adapter;
 
-    await (harness.api as any).sendInternalMessage(session.id, "INTERNAL");
+    await internals(harness.handler).sendInternalMessage(
+      session.id,
+      "INTERNAL"
+    );
     assert.deepEqual(
       collectTurnStateSequence(harness.events),
       scenario.expected,
@@ -106,10 +119,13 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
     unsubscribe: noop,
   });
 
-  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
-    type: "sessionIdChanged",
-    payload: { newId: "real-session-123" },
-  });
+  internals(harness.handler).providerEventRouter.handleProviderEvent(
+    session.id,
+    {
+      type: "sessionIdChanged",
+      payload: { newId: "real-session-123" },
+    }
+  );
 
   const updatedSession = harness.sessionManager.getSession(session.id);
   assert.equal(updatedSession?.providerSessionId, "real-session-123");
@@ -128,19 +144,19 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
 
 test("SessionRequestHandler eagerly tracks freshly bound provider sessions", async () => {
   const harness = createHarness();
-  (harness.api as any).resolveContinuityRootSessionId = async ({
+  internals(harness.handler).resolveContinuityRootSessionId = async ({
     sessionId,
   }: {
     readonly sessionId: string;
   }) => `root-${sessionId}`;
-  Object.assign((harness.api as any).descriptionDialogSync, {
+  Object.assign(internals(harness.handler).descriptionDialogSync, {
     resolveDescriptionDialog: async () => null,
     maybePromoteLegacyDescriptionDialogHistory: noop,
     maybeBackfillDescriptionDialogHistory: async () => Promise.resolve(),
     updateDescriptionSessionRef: async () => Promise.resolve(),
   });
 
-  const factory = (harness.api as any).sessionShellFactory;
+  const factory = internals(harness.handler).sessionShellFactory;
   const createOptions = {
     providerId: "codex",
     workspacePath: "/tmp/core-continuity-created",
@@ -244,7 +260,7 @@ test("SessionRequestHandler keeps primary description dialog contracts", async (
     }
   );
   let capturedUpdate: Record<string, unknown> | null = null;
-  (harness.api as any).descriptionDialogSync.descriptionStepStore = {
+  internals(harness.handler).descriptionDialogSync.descriptionStepStore = {
     read: async () => ({
       primarySession: {
         providerId: "claudeCodeCli",
@@ -269,8 +285,8 @@ test("SessionRequestHandler keeps primary description dialog contracts", async (
     },
   };
 
-  const dialog = await (
-    harness.api as any
+  const dialog = await internals(
+    harness.handler
   ).descriptionDialogSync.resolveDescriptionDialog({
     session,
     providerSessionId: "provider-session-current",
@@ -278,7 +294,9 @@ test("SessionRequestHandler keeps primary description dialog contracts", async (
   assert.equal(dialog?.dialogSessionId, "primary-description-dialog");
   assert.equal(dialog?.shouldBackfill, false);
 
-  await (harness.api as any).descriptionDialogSync.updateDescriptionSessionRef(
+  await internals(
+    harness.handler
+  ).descriptionDialogSync.updateDescriptionSessionRef(
     session,
     "provider-session-updated"
   );

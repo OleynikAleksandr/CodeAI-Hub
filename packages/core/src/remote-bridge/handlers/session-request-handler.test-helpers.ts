@@ -7,49 +7,13 @@ import {
   SessionRequestHandler,
 } from "./session-request-handler";
 
-/** Typed access to private/internal fields of SessionRequestHandler for test harness monkey-patching. */
-interface HandlerTestInternals {
-  continuity: Record<string, unknown>;
-  continuityLockService: {
-    emitContinuityLockEvent: (options: Record<string, unknown>) => void;
-    registerFlowNodeContinuityLockContext: (
-      context: Record<string, unknown>
-    ) => void;
-  };
-  descriptionDialogSync: Record<string, unknown>;
-  flowNodeContinuity: Record<string, unknown>;
-  handleFlowNodeContinuityProviderEvent: (
-    sessionId: string,
-    event: unknown
-  ) => Promise<void>;
-  handleFlowNodeContinuitySilentPreemptiveRollover: () => Promise<boolean>;
-  providerEventRouter: {
-    handleProviderEvent: (sessionId: string, event: unknown) => void;
-  };
-  providerSessions: Map<string, ProviderSessionBinding>;
-  resumeLifecycle: {
-    recordPostTurnContextDecision: (
-      sessionId: string,
-      decision: string
-    ) => void;
-    sessionResumeLifecycleStates: Map<string, unknown>;
-  };
-  turnArbitration: {
-    handleFlowNodeContinuityProviderEvent: (options: {
-      readonly sessionId: string;
-      readonly event: unknown;
-      readonly resolveLiveContinuityRemainingPercentThreshold: (
-        session: unknown
-      ) => Promise<number>;
-    }) => Promise<void>;
-    resolveLiveContinuityRemainingPercentThreshold: (
-      session: unknown
-    ) => Promise<number>;
-  };
-}
+export type { HandlerTestInternals } from "./session-request-handler-types";
 
-const internals = (handler: SessionRequestHandler): HandlerTestInternals =>
-  handler as unknown as HandlerTestInternals;
+import type { HandlerTestInternals } from "./session-request-handler-types";
+
+export const internals = (
+  handler: SessionRequestHandler
+): HandlerTestInternals => handler as unknown as HandlerTestInternals;
 
 export const SOURCE_PATH = path.resolve(
   process.cwd(),

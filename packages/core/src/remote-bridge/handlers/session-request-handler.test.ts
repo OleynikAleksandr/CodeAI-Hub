@@ -26,6 +26,8 @@ export {
   flushAsyncWork,
   getHandlerSourceInvariantChecks,
   type HandlerHarness,
+  type HandlerTestInternals,
+  internals,
   noop,
   type RuntimeLockUpdate,
   registerBootstrapLock,

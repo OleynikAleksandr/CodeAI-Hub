@@ -5,6 +5,7 @@ import {
   createDescriptionSession,
   createHarness,
   flushAsyncWork,
+  internals,
   noop,
   registerBootstrapLock,
   setLifecycle,
@@ -56,14 +57,9 @@ test("SessionRequestHandler stop clears bootstrap locks and restores send path",
   await harness.handler.handleMessage(targetSession.id, "retry after stop");
   await flushAsyncWork();
 
-  assert.equal(
-    (harness.api as any).continuityLockService.hasContext(sourceSession.id),
-    false
-  );
-  assert.equal(
-    (harness.api as any).continuityLockService.hasContext(targetSession.id),
-    false
-  );
+  const api = internals(harness.handler);
+  assert.equal(api.continuityLockService.hasContext(sourceSession.id), false);
+  assert.equal(api.continuityLockService.hasContext(targetSession.id), false);
   assert.equal(countContinuityUnlocks(harness, "resume_failed"), 2);
   assert.deepEqual(sendCalls, [
     {

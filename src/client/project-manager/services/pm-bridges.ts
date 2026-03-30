@@ -7,15 +7,16 @@ export type LauncherBridge = {
 };
 
 export const resolveVscodeBridge = (): VscodeBridge | null => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const acquire = (window as any).acquireVsCodeApi;
+  const acquire = (
+    window as unknown as { acquireVsCodeApi?: () => VscodeBridge }
+  ).acquireVsCodeApi;
   if (typeof acquire !== "function") {
     return null;
   }
   try {
     const api = acquire();
     if (api && typeof api.postMessage === "function") {
-      return api as VscodeBridge;
+      return api;
     }
   } catch {
     return null;

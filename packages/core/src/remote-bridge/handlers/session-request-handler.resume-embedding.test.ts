@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Session } from "../../session-manager";
-import { createHarness } from "./session-request-handler.test";
+import { createHarness, internals } from "./session-request-handler.test";
 
 interface RecordedInternalMessage {
   readonly content: string;
@@ -40,11 +40,12 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
     }
   );
 
+  const api = internals(harness.handler);
   harness.providerRegistry.getAdapter = () => ({});
-  Object.assign((harness.api as any).flowNodeContinuity, {
+  Object.assign(api.flowNodeContinuity, {
     buildReportPaths: () => ({ reportPath, tmpReportPath }),
   });
-  Object.assign((harness.api as any).sessionBootstrap, {
+  Object.assign(api.sessionBootstrap, {
     createAndRegisterSession: () =>
       Promise.resolve({
         ...sourceSession,
@@ -52,14 +53,14 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
         providerSessionId: "provider-next",
       }),
   });
-  Object.assign((harness.api as any).messageDispatch, {
+  Object.assign(api.messageDispatch, {
     sendInternalMessage: (sessionId: string, content: string) => {
       recorded.push({ sessionId, content });
       return Promise.resolve();
     },
   });
 
-  await (harness.api as any).flowNodeRollover.rolloverFlowNodeSession(
+  await api.flowNodeRollover.rolloverFlowNodeSession(
     sourceSession,
     { remainingPercent: 1, thresholdPercent: 2, rolloverId: "rollover-1" },
     { silent: true }

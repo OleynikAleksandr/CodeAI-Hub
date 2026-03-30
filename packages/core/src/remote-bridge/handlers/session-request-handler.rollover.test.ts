@@ -9,6 +9,7 @@ import {
   createHarness,
   emitProviderEvent,
   flushAsyncWork,
+  internals,
   noop,
   registerBootstrapLock,
   setLifecycle,
@@ -42,8 +43,8 @@ test("SessionRequestHandler unlocks continuity locks for ready, failed and timed
     [
       "resume_timeout",
       () =>
-        (
-          harness.api as any
+        internals(
+          harness.handler
         ).continuityLockService.finalizeFlowNodeContinuityLock({
           sessionId: targetSession.id,
           reason: "resume_timeout",
@@ -58,7 +59,9 @@ test("SessionRequestHandler unlocks continuity locks for ready, failed and timed
     assert.equal(countContinuityUnlocks(harness, reason), 2, reason);
   }
   assert.equal(
-    (harness.api as any).continuityLockService.hasContext(sourceSession.id),
+    internals(harness.handler).continuityLockService.hasContext(
+      sourceSession.id
+    ),
     false
   );
 });
@@ -75,8 +78,9 @@ test("SessionRequestHandler normalizes post-resume lifecycle and avoids relock",
     "/tmp/core-post-resume-target",
     "provider-session-post-resume-target"
   );
-  const orchestrator = (harness.api as any)
-    .continuityRolloverOrchestrator as any;
+  const orchestrator = internals(
+    harness.handler
+  ).continuityRolloverOrchestrator;
 
   setLifecycle(harness, sourceSession.id, "resume_via_rollover");
   setLifecycle(harness, targetSession.id, "resume_via_rollover");
@@ -91,14 +95,18 @@ test("SessionRequestHandler normalizes post-resume lifecycle and avoids relock",
     "rollover-post-resume"
   );
   useProductionFlowNodeHandler(harness);
-  (harness.api as any).resolveLiveContinuityRemainingPercentThreshold =
+  internals(harness.handler).resolveLiveContinuityRemainingPercentThreshold =
     async () => 30;
 
   emitProviderEvent(harness, targetSession.id, { type: "turn_completed" });
   await flushAsyncWork();
   assert.equal(
-    (harness.api as any).resumeLifecycle.sessionResumeLifecycleStates.get(
-      targetSession.id
+    (
+      internals(
+        harness.handler
+      ).resumeLifecycle.sessionResumeLifecycleStates.get(targetSession.id) as
+        | { readonly mode: string }
+        | undefined
     )?.mode,
     "resume_in_place"
   );
@@ -124,11 +132,11 @@ test("SessionRequestHandler suppresses premature idle while async rollover arbit
   );
   setLifecycle(asyncGate, asyncSession.id, "resume_in_place");
   let resolveArbitration: () => void = noop;
-  (asyncGate.api as any).handleFlowNodeContinuityProviderEvent = () =>
+  internals(asyncGate.handler).handleFlowNodeContinuityProviderEvent = () =>
     new Promise<void>((resolve) => {
       resolveArbitration = () => {
-        (
-          asyncGate.api as any
+        internals(
+          asyncGate.handler
         ).continuityLockService.registerFlowNodeContinuityLockContext({
           rolloverId: "rollover-async-dual-gate",
           sourceSessionId: asyncSession.id,
@@ -156,7 +164,7 @@ test("SessionRequestHandler resolves delayed no-rollover on the production token
   );
   setLifecycle(harness, session.id, "resume_in_place");
   useProductionFlowNodeHandler(harness);
-  (harness.api as any).resolveLiveContinuityRemainingPercentThreshold =
+  internals(harness.handler).resolveLiveContinuityRemainingPercentThreshold =
     async () => 30;
 
   emitProviderEvent(harness, session.id, { type: "turn_completed" });
@@ -182,16 +190,16 @@ test("SessionRequestHandler starts rollover only after turn_completed and clears
   );
   setLifecycle(harness, session.id, "resume_in_place");
   useProductionFlowNodeHandler(harness);
-  (harness.api as any).resolveLiveContinuityRemainingPercentThreshold =
+  internals(harness.handler).resolveLiveContinuityRemainingPercentThreshold =
     async () => 80;
   const rolloverStarts: string[] = [];
-  (
-    harness.api as any
+  internals(
+    harness.handler
   ).continuityRolloverOrchestrator.startFlowNodeRolloverFromUsage = (options: {
     readonly sessionId: string;
   }) => {
     rolloverStarts.push(options.sessionId);
-    (harness.api as any).resumeLifecycle.recordPostTurnContextDecision(
+    internals(harness.handler).resumeLifecycle.recordPostTurnContextDecision(
       options.sessionId,
       "rollover_required"
     );
@@ -220,9 +228,9 @@ test("SessionRequestHandler starts rollover only after turn_completed and clears
   await harness.handler.handleMessage(session.id, "next turn");
   await flushAsyncWork();
   assert.equal(
-    (harness.api as any).continuityRolloverOrchestrator.getTokenUsageSnapshot(
-      session.id
-    ),
+    internals(
+      harness.handler
+    ).continuityRolloverOrchestrator.getTokenUsageSnapshot(session.id),
     null
   );
 });
@@ -238,8 +246,8 @@ test("SessionRequestHandler enforces rollover-pending send guards", async () => 
     "claudeCodeCli",
     "/tmp/core-send-guard"
   );
-  (
-    pending.api as any
+  internals(
+    pending.handler
   ).continuityLockService.registerFlowNodeContinuityLockContext({
     rolloverId: "rollover-guard",
     sourceSessionId: sourceSession.id,
