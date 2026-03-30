@@ -1,6 +1,5 @@
 import { promises as fs } from "node:fs";
 import https from "node:https";
-import nodeModule from "node:module";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -8,6 +7,7 @@ import {
   isGeminiCliCompatibilityError,
   loadCliBridgeFromGlobal,
 } from "../runtime/cli-bridge";
+import { validateGeminiCliCoreDependencyGraph } from "../runtime/cli-bridge-module-loader";
 import type { GeminiCliBridge } from "../runtime/cli-types";
 import type {
   GeminiInstallerPaths,
@@ -17,7 +17,6 @@ import type {
 
 import { runNpmCommand } from "./npm-runner";
 
-const { createRequire } = nodeModule;
 const GEMINI_CLI_CORE_PACKAGE = "@google/gemini-cli-core";
 const GEMINI_CLI_PACKAGE = "@google/gemini-cli";
 const HTTP_ERROR_STATUS_THRESHOLD = 400;
@@ -281,11 +280,11 @@ export class GeminiInstaller {
       "@google",
       "gemini-cli-core"
     );
-    const requireFromInstalledCore = createRequire(
-      path.join(cliCoreRoot, "package.json")
-    );
     try {
-      requireFromInstalledCore("fast-uri");
+      validateGeminiCliCoreDependencyGraph(
+        cliCoreRoot,
+        "Installed Gemini CLI Core"
+      );
     } catch (error) {
       const baseMessage =
         error instanceof Error ? error.message : String(error);
