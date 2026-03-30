@@ -30,11 +30,11 @@
 Goal: behavior-preserving decomposition of the last remaining production hotspot from the originally agreed warning-zone list, without mixing in new Claude feature work.
 
 ### Stream: Claude Auth Home Bridge Split
-1. [TODO] Claude_Module: вынести provider-home/macOS keychain bridge, legacy `.claude.json` link/copy handling и credentials migration seam из `sdk-auth-manager.ts` в focused helper и синхронизировать `Modules/Claude.md`. Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, новый helper в `packages/Claude_Module/src/auth/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(claude): extract auth home bridge helpers`
-2. [TODO] Git Commit: `refactor(claude): extract auth home bridge helpers` (hash: TBD)
+1. [DONE] Claude_Module: вынести provider-home/macOS keychain bridge, legacy `.claude.json` link/copy handling и credentials migration seam из `sdk-auth-manager.ts` в focused helper и синхронизировать `Modules/Claude.md`. Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, новый helper в `packages/Claude_Module/src/auth/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(claude): extract auth home bridge helpers`
+2. [DONE] Git Commit: `refactor(claude): extract auth home bridge helpers` (hash: `9862d4d4`)
 
 ### Stream: Claude Auth Runtime Split
-3. [TODO] Claude_Module: вынести OAuth bootstrap/cache refresh, auth environment assembly и auth probe/check execution seam из `sdk-auth-manager.ts`, сохранив внешний API manager-а стабильным, и синхронизировать `Modules/Claude.md`. Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, новый helper в `packages/Claude_Module/src/auth/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(claude): split auth probe and token bootstrap`
+3. [IN_PROGRESS] Claude_Module: вынести OAuth bootstrap/cache refresh, auth environment assembly и auth probe/check execution seam из `sdk-auth-manager.ts`, сохранив внешний API manager-а стабильным, и синхронизировать `Modules/Claude.md`. Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, новый helper в `packages/Claude_Module/src/auth/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(claude): split auth probe and token bootstrap`
 4. [TODO] Git Commit: `refactor(claude): split auth probe and token bootstrap` (hash: TBD)
 
 ### Stream: Claude Auth Verification
