@@ -354,6 +354,84 @@ test("GeminiSessionManager completes delayed post-tool final answer with longer 
   );
 });
 
+test("GeminiSessionManager flushes delayed translated thinking before one final assistant answer", async () => {
+  const finalAnswer = "Финальное описание готово.";
+  const translatedThinking = "Сначала закончу внутреннюю проверку.";
+  const manager = new GeminiSessionManager(
+    createModules(
+      ["provider-session-translated-thinking-dedup"],
+      [
+        [
+          {
+            type: "thought",
+            value: {
+              subject: "Planning",
+              description: "Need to finalize the description before answering",
+            },
+          },
+          { type: "content", value: finalAnswer },
+          {
+            type: "finished",
+            value: { usageMetadata: { totalTokenCount: 14 } },
+          },
+        ],
+      ]
+    )
+  );
+
+  (
+    manager as unknown as {
+      thoughtTranslator: {
+        translateThought: (
+          thought: Readonly<{ description: string; subject: string }>
+        ) => Promise<string | null>;
+      };
+    }
+  ).thoughtTranslator.translateThought = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    return translatedThinking;
+  };
+
+  const result = await manager.createSession({
+    workspacePath: "/tmp/workspace-translated-thinking-dedup",
+  });
+  const events: unknown[] = [];
+  result.session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+
+  await manager.sendMessage(result.sessionId, "Подготовь финальное описание");
+
+  const dialogAssistantEvents = events.filter(
+    (payload) =>
+      (payload as { type?: string }).type === "dialog_message" &&
+      (payload as { role?: string }).role === "assistant"
+  );
+  const fallbackAssistantEvents = events.filter(
+    (payload) => (payload as { type?: string }).type === "assistant"
+  );
+
+  assert.deepEqual(
+    dialogAssistantEvents.map(
+      (payload) => (payload as { content?: string }).content
+    ),
+    [translatedThinking, finalAnswer]
+  );
+  assert.equal(
+    dialogAssistantEvents.filter(
+      (payload) => (payload as { content?: string }).content === finalAnswer
+    ).length,
+    1
+  );
+  assert.equal(fallbackAssistantEvents.length, 0);
+  assert.equal(
+    events.filter(
+      (payload) => (payload as { type?: string }).type === "turn_completed"
+    ).length,
+    1
+  );
+});
+
 test("GeminiSessionManager treats late post-tool stall after terminal nested answer as completed turn", async () => {
   const manager = new GeminiSessionManager(
     createModules(

@@ -81,10 +81,10 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Turn Runner Finalization
 23. [DONE] Gemini_Module: дождаться deferred Gemini dialog emits до снятия assistant segment listener, чтобы fallback aggregate emit не дублировал реальный terminal answer. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): await deferred final segment before fallback`
-24. [TODO] Git Commit: `fix(gemini): await deferred final segment before fallback` (hash: TBD)
+24. [DONE] Git Commit: `fix(gemini): await deferred final segment before fallback` (hash: `a0620fa4`)
 
 ### Stream: Regression Tests
-25. [TODO] Tests: покрыть сценарий late translated thinking перед final answer и убедиться, что финальный assistant segment materialize-ится ровно один раз без aggregate duplicate. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test-helpers.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover translated thought final answer dedup`
+25. [DONE] Tests: покрыть сценарий late translated thinking перед final answer и убедиться, что финальный assistant segment materialize-ится ровно один раз без aggregate duplicate. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover translated thought final answer dedup`
 26. [TODO] Git Commit: `test(gemini): cover translated thought final answer dedup` (hash: TBD)
 
 ### Stream: Verification
