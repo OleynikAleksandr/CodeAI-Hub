@@ -43,10 +43,10 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Runtime Docs Sync
 7. [DONE] Docs: синхронизировать новый terminal-leg contract и post-tool watchdog policy в архитектурных документах Gemini до regression tests. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`. Expected commit: `docs(architecture): sync gemini post-tool terminal leg contract`
-8. [TODO] Git Commit: `docs(architecture): sync gemini post-tool terminal leg contract` (hash: TBD)
+8. [DONE] Git Commit: `docs(architecture): sync gemini post-tool terminal leg contract` (hash: `691c6f57`)
 
 ### Stream: Regression Tests
-9. [TODO] Tests: покрыть сценарии `progress -> write_file -> nested stall`, `progress -> write_file -> delayed final answer` и `terminal-leg answer -> late silent tail` без подмены terminal semantics translated thoughts. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.test.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover post-tool terminal leg semantics`
+9. [DONE] Tests: покрыть сценарии `progress -> write_file -> nested stall`, `progress -> write_file -> delayed final answer` и `terminal-leg answer -> late silent tail` без подмены terminal semantics translated thoughts. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test-helpers.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover post-tool terminal leg semantics`
 10. [TODO] Git Commit: `test(gemini): cover post-tool terminal leg semantics` (hash: TBD)
 
 ### Stream: Verification
