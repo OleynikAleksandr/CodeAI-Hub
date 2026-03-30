@@ -97,6 +97,28 @@
   - current Gemini heuristic still does not distinguish progress output from true terminal-leg answer;
   - the base `60s` watchdog is likely too aggressive for post-tool Gemini follow-up.
 
+### Phase 9: Post-tool terminal leg remediation and automated verification
+- Added a dedicated post-release remediation plan and archived the previous completed TODO state.
+- Split Gemini tool-chain semantics into non-terminal progress legs and a true terminal leg:
+  - progress text from a leg that emitted `tool_call_request` is no longer accepted as whole-turn completion proof;
+  - a late silent stall is only downgraded to success if the terminal nested leg already emitted a real answer.
+- Added a Gemini-specific post-tool stalled watchdog window:
+  - initial and `post_tool` legs now resolve watchdog timeouts independently;
+  - nested post-tool follow-up is no longer forced into the same window as the initial leg.
+- Synced runtime and architecture docs for the new terminal-leg contract and post-tool watchdog policy.
+- Added dedicated regression coverage for the remaining post-tool failure family:
+  - `progress -> write_file -> nested stall` remains recoverable failure;
+  - `progress -> write_file -> delayed final answer` completes successfully under the longer post-tool watchdog;
+  - `progress -> write_file -> terminal nested answer -> late silent tail` completes successfully.
+- Rebuilt and revalidated the affected packages after the remediation commits:
+  - `npm run build --workspace @codeai-hub/gemini-module`
+  - `npm run build --workspace @codeai-hub/core`
+  - `node --test packages/Gemini_Module/dist/session/gemini-session-manager.test.js packages/Gemini_Module/dist/session/gemini-turn-runner.test.js`
+- Automated verification state after commit `a39e623e`:
+  - Gemini session tests: `10/10` passing;
+  - no blocking architecture violations;
+  - manual Gemini `Description` rerun after the new post-tool fix commit is still pending user validation.
+
 ## Git commits
 - `ba84659a` `docs(architecture): approve gemini stalled turn terminal answer contract`
 - `f2651b1d` `docs: add Session 199 report for gemini stalled turn investigation`
@@ -108,6 +130,11 @@
 - `5a6b1760` `chore(release): prepare 1.1.848 artifacts`
 - `66836171` `chore(release): finalize 1.1.848 vsix`
 - `6db998f0` `docs(architecture): intake gemini post-tool terminal leg remediation`
+- `c1320c03` `docs: record post-release gemini post-tool stall validation`
+- `61a9cc69` `fix(gemini): require terminal leg answer after tool chain`
+- `ab437b7a` `fix(gemini): add adaptive post-tool stalled watchdog`
+- `691c6f57` `docs(architecture): sync gemini post-tool terminal leg contract`
+- `a39e623e` `test(gemini): cover post-tool terminal leg semantics`
 
 ---
 
@@ -136,9 +163,12 @@
 - The next remediation scope is to distinguish progress legs from terminal legs and to relax stalled timeout specifically for Gemini post-tool follow-up.
 
 ## Next active work according to todo-plan
-- Execute the new `Gemini post-tool terminal leg and adaptive watchdog` plan from `doc/TODO/todo-plan.md`.
-- First code stream: separate progress output from terminal-leg answer in Gemini tool chains.
-- Then add a longer Gemini-specific stalled policy for nested post-tool follow-up and rebuild a new release with synced docs before final packaging.
+- Record the current automated verification in git via `docs: record gemini post-tool stall verification results`.
+- Then execute the release streams in order:
+  - sync `README.md`, `CHANGELOG.md`, `doc/Sessions/Session199.md` and related Gemini docs before release prep;
+  - run `./scripts/build-all.sh`;
+  - run `./scripts/build-release.sh --use-current-version`;
+  - only after that do the next manual Gemini `Description` validation on the rebuilt release.
 
 ## Implementation direction agreed in this session
 - Treat translated thoughts as side-channel, not as terminal assistant answer.

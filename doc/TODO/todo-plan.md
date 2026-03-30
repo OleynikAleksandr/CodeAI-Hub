@@ -47,10 +47,10 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Regression Tests
 9. [DONE] Tests: покрыть сценарии `progress -> write_file -> nested stall`, `progress -> write_file -> delayed final answer` и `terminal-leg answer -> late silent tail` без подмены terminal semantics translated thoughts. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test-helpers.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover post-tool terminal leg semantics`
-10. [TODO] Git Commit: `test(gemini): cover post-tool terminal leg semantics` (hash: TBD)
+10. [DONE] Git Commit: `test(gemini): cover post-tool terminal leg semantics` (hash: `a39e623e`)
 
 ### Stream: Verification
-11. [TODO] Verification: прогнать таргетные сборки/тесты по Gemini и затронутому Core, повторно проверить Description flow expectations и зафиксировать результат в `doc/Sessions/Session199.md`. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/Session199.md`. Expected commit: `docs: record gemini post-tool stall verification results`
+11. [DONE] Verification: прогнать таргетные сборки/тесты по Gemini и затронутому Core, повторно проверить Description flow expectations и зафиксировать результат в `doc/Sessions/Session199.md`. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/Session199.md`. Expected commit: `docs: record gemini post-tool stall verification results`
 12. [TODO] Git Commit: `docs: record gemini post-tool stall verification results` (hash: TBD)
 
 ### Stream: Release Preparation
