@@ -7582,24 +7582,6 @@
   var import_react3 = __toESM(require_react());
 
   // src/types/codex-model-registry.ts
-  var CODEX_RECOMMENDED_MODELS = [
-    {
-      id: "gpt-5.3-codex",
-      displayName: "GPT-5.3-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "flagship"
-    },
-    {
-      id: "gpt-5.4",
-      displayName: "GPT-5.4",
-      description: "Best general agentic model for tasks across industries",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "general"
-    }
-  ];
   var CODEX_SETTINGS_MODELS = [
     {
       id: "gpt-5.3-codex",
@@ -7617,11 +7599,6 @@
       status: "active",
       tier: "general"
     }
-  ];
-  var CODEX_LEGACY_MODELS = [];
-  var CODEX_ALL_MODELS = [
-    ...CODEX_RECOMMENDED_MODELS,
-    ...CODEX_LEGACY_MODELS
   ];
   var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
   var CODEX_REASONING_LEVELS = [
