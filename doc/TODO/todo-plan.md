@@ -116,11 +116,28 @@ Fix: dispatch `pm:dialog:open` после создания сессии в submi
 49. [DONE] Dispatch `pm:dialog:open` из `description-questionnaire-panel.tsx` после `submitQuestionnaire` success. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Expected commit: `fix: dispatch dialog open after description session creation`
 50. [DONE] Git Commit: `fix: dispatch dialog open after description session creation` (hash: f9a974bd)
 
-## Phase 111 — Hotfix Release Build v1.1.841 (owner: Oleksandr, updated: 2026-03-29)
+## Phase 111 — Hotfix Release Build v1.1.841 (owner: Oleksandr, updated: 2026-03-30)
 
 ### Stream: Hotfix release docs and build
-51. [TODO] Обновить `README.md` и `CHANGELOG.md` под v1.1.841. Expected commit: `docs(release): prepare dialog dispatch hotfix`
-52. [TODO] Git Commit: `docs(release): prepare dialog dispatch hotfix` (hash: TBD)
-53. [TODO] Чистое дерево → `./scripts/build-all.sh` → v1.1.841. Expected commit: `chore: prepare v1.1.841 artifacts`
-54. [TODO] Git Commit: `chore: prepare v1.1.841 artifacts` (hash: TBD)
-55. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX. Expected commit: n/a (verify only).
+51. [DONE] Обновить `README.md` и `CHANGELOG.md` под v1.1.841. Expected commit: `docs(release): prepare dialog dispatch hotfix`
+52. [DONE] Git Commit: `docs(release): prepare dialog dispatch hotfix` (hash: a79cff39)
+53. [DONE] Чистое дерево → `./scripts/build-all.sh` → v1.1.841. Expected commit: `chore: prepare v1.1.841 artifacts`
+54. [DONE] Git Commit: `chore: prepare v1.1.841 artifacts` (hash: 6fdac8d9)
+55. [DONE] `./scripts/build-release.sh --use-current-version` → VSIX verified.
+
+## Phase 112 — Workspace Switch Session Visibility Fix (owner: Oleksandr, updated: 2026-03-30)
+
+Root cause: при переключении workspace reset effect в `main-area.tsx:115` безусловно ставит `hasDescriptionSession = false` ДО того, как `WorkflowStateStore` завершит первый poll для нового workspace. Это размонтирует `ProjectManagerSessionView` и показывает placeholder "Start with Description questionnaire" на 0.5–3 сек. Клик по сессии в дереве обходит этот путь через `pm:dialog:open` → dialog mode, поэтому работает мгновенно.
+
+### Stream: P0-F remove unconditional session reset on workspace switch
+1. [DONE] Убрать `setHasDescriptionSession(false)` из reset effect в `main-area.tsx` — пусть derivation в `use-main-area-workflow-state.ts` управляет этим значением после poll. Добавить `workflowStoreLoaded` guard в `main-area-panel-content.tsx` и `main-area.tsx`: пока store `!loaded`, не показывать questionnaire placeholder и description help. Scope: `main-area.tsx`, `main-area-panel-content.tsx`. Expected commit: `fix: prevent false questionnaire placeholder on workspace switch`
+2. [DONE] Git Commit: `fix: prevent false questionnaire placeholder on workspace switch` (hash: da1a8d97)
+
+## Phase 113 — Hotfix Release Build (owner: Oleksandr, updated: 2026-03-30)
+
+### Stream: Hotfix release docs and build
+3. [TODO] Обновить `README.md` и `CHANGELOG.md` под новую версию. Expected commit: `docs(release): prepare workspace switch visibility hotfix`
+4. [TODO] Git Commit: `docs(release): prepare workspace switch visibility hotfix` (hash: TBD)
+5. [TODO] Чистое дерево → `./scripts/build-all.sh` → новая версия. Expected commit: `chore: prepare v<next> artifacts`
+6. [TODO] Git Commit: `chore: prepare v<next> artifacts` (hash: TBD)
+7. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX verified.

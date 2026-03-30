@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.842] - 2026-03-30
+### Fixed
+- **Workspace switch session visibility**: switching between workspaces with active Description sessions no longer flashes the "Start with the Description questionnaire" placeholder. The reset effect no longer unconditionally clears `hasDescriptionSession`; a `workflowStoreLoaded` guard prevents both the questionnaire panel and the description help from rendering until the store completes its first poll for the new workspace.
+
 ## [1.1.841] - 2026-03-29
 ### Fixed
 - **Session panel connects after submit**: after submitting the Description questionnaire, the session panel now switches to dialog mode (same path as clicking a session node in the tree), so it connects to the newly created session via dialog API immediately instead of relying on Core stream events that runtime mode may miss during mount timing. Fixes "Creating session..." stuck state for all providers.
