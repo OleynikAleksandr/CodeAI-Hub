@@ -45,11 +45,11 @@ Goal: устранить сценарий, в котором Gemini turn виз�
 8. [DONE] Git Commit: `fix(gemini): gate stalled turn outcome by terminal answer presence` (hash: `0fe3d203`)
 
 ### Stream: Failure Visibility In History
-9. [IN_PROGRESS] Core: materialize-ить recoverable Gemini `turn_failed` в session/dialog history, чтобы после reload пользователь видел terminal failure рядом с последними thinking messages. Scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`. Expected commit: `fix(session): persist gemini stalled turn failures in history`
-10. [TODO] Git Commit: `fix(session): persist gemini stalled turn failures in history` (hash: TBD)
+9. [DONE] Core: materialize-ить recoverable Gemini `turn_failed` в session/dialog history, чтобы после reload пользователь видел terminal failure рядом с последними thinking messages. Scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`. Expected commit: `fix(session): persist gemini stalled turn failures in history`
+10. [DONE] Git Commit: `fix(session): persist gemini stalled turn failures in history` (hash: `ccd29f06`)
 
 ### Stream: Regression Tests
-11. [TODO] Tests: покрыть сценарии `thoughts-only stall`, `answer-then-stall`, `tool-followup with late thoughts` без моков terminal semantics. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`. Expected commit: `test(gemini): cover terminal answer and stalled turn semantics`
+11. [DONE] Tests: покрыть сценарии `thinking-without-terminal-answer stall`, `answer-then-stall` и materialization `turn_failed` в history без подмены terminal semantics. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover terminal answer and stalled turn semantics`
 12. [TODO] Git Commit: `test(gemini): cover terminal answer and stalled turn semantics` (hash: TBD)
 
 ### Stream: Verification

@@ -4,7 +4,10 @@ import type { CliArgs } from "@google/gemini-cli/dist/src/config/config";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import { GeminiSessionManager } from "./gemini-session-manager";
 
-type StreamPlan = readonly unknown[] | "stall_after_model_info";
+type StreamPlan =
+  | readonly unknown[]
+  | "stall_after_model_info"
+  | "stall_after_terminal_answer";
 const RECOVERABLE_TURN_FAILURE_CODE = "GEMINI_RECOVERABLE_TURN_FAILURE";
 const STALLED_TURN_TIMEOUT_RE =
   /Gemini stream stalled after 20ms without progress\./;
@@ -36,6 +39,17 @@ const createModules = (
                 yield { type: "model_info", value: "gemini-2.5-pro" };
                 await new Promise(() => {
                   // Intentionally never resolves to simulate a silent stall.
+                });
+                return;
+              }
+              if (plan === "stall_after_terminal_answer") {
+                yield { type: "content", value: "Terminal answer" };
+                yield {
+                  type: "finished",
+                  value: { usageMetadata: { totalTokenCount: 11 } },
+                };
+                await new Promise(() => {
+                  // Intentionally never resolves to simulate a late silent stall.
                 });
                 return;
               }
@@ -171,6 +185,118 @@ test("GeminiSessionManager emits recoverable turn_failed and allows next send af
         (payload as { content?: string }).content === "Recovered answer"
     ),
     true
+  );
+  assert.equal(
+    events.filter(
+      (payload) => (payload as { type?: string }).type === "turn_completed"
+    ).length,
+    1
+  );
+});
+
+test("GeminiSessionManager does not treat translated thinking as terminal answer", async () => {
+  const manager = new GeminiSessionManager(
+    createModules(
+      ["provider-session-thinking-only"],
+      ["stall_after_model_info"]
+    )
+  );
+
+  const result = await manager.createSession({
+    workspacePath: "/tmp/workspace-thinking-only",
+  });
+  (result.session as unknown as Record<string, unknown>).stalledTurnWatchdogMs =
+    20;
+  const events: unknown[] = [];
+  result.session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+
+  const sendPromise = manager.sendMessage(
+    result.sessionId,
+    "Think first, but do not answer"
+  );
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  result.session.eventEmitter.emit("message", {
+    type: "dialog_message",
+    role: "assistant",
+    tag: "thinking",
+    content: "Промежуточная мысль",
+    uuid: "thinking-only-1",
+    timestamp: new Date().toISOString(),
+  });
+
+  await assert.rejects(
+    async () => {
+      await sendPromise;
+    },
+    (error: unknown) => {
+      assert.equal(error instanceof Error, true);
+      assert.equal(
+        (error as Error & { code?: string }).code,
+        RECOVERABLE_TURN_FAILURE_CODE
+      );
+      assert.match((error as Error).message, STALLED_TURN_TIMEOUT_RE);
+      return true;
+    }
+  );
+
+  assert.equal(
+    events.some(
+      (payload) =>
+        (payload as { type?: string }).type === "dialog_message" &&
+        (payload as { tag?: string }).tag === "thinking"
+    ),
+    true
+  );
+  assert.equal(
+    events.some(
+      (payload) => (payload as { type?: string }).type === "turn_failed"
+    ),
+    true
+  );
+  assert.equal(
+    events.some(
+      (payload) => (payload as { type?: string }).type === "turn_completed"
+    ),
+    false
+  );
+});
+
+test("GeminiSessionManager treats late stall after terminal answer as completed turn", async () => {
+  const manager = new GeminiSessionManager(
+    createModules(
+      ["provider-session-terminal-answer"],
+      ["stall_after_terminal_answer"]
+    )
+  );
+
+  const result = await manager.createSession({
+    workspacePath: "/tmp/workspace-terminal-answer",
+  });
+  (result.session as unknown as Record<string, unknown>).stalledTurnWatchdogMs =
+    20;
+  const events: unknown[] = [];
+  result.session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+
+  await manager.sendMessage(result.sessionId, "Complete before stall");
+
+  assert.equal(
+    events.some(
+      (payload) =>
+        (payload as { type?: string }).type === "dialog_message" &&
+        (payload as { role?: string }).role === "assistant" &&
+        (payload as { content?: string }).content === "Terminal answer"
+    ),
+    true
+  );
+  assert.equal(
+    events.some(
+      (payload) => (payload as { type?: string }).type === "turn_failed"
+    ),
+    false
   );
   assert.equal(
     events.filter(
