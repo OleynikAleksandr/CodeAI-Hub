@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type {
   MarkdownDslParseError,
   MarkdownDslParseResult,
@@ -7,7 +8,6 @@ import type {
 const SECTION_RE = /^## (.+)$/;
 const KEY_VALUE_RE = /^- ([^:]+):\s*(.*)$/;
 const LIST_ITEM_RE = /^ {2}- (.+)$/;
-const REVISION_FIELD_RE = /^- Revision:\s*([a-f0-9]{8})$/m;
 const KNOWN_SECTIONS = new Set([
   "Metadata",
   "Modules",
@@ -15,25 +15,6 @@ const KNOWN_SECTIONS = new Set([
   "Facades",
   "Facade Relations",
 ]);
-
-type NodeRequireLike = (specifier: string) => {
-  readonly createHash: (algorithm: string) => {
-    update(input: string): { digest(format: "hex"): string };
-  };
-};
-
-const resolveNodeRequire = (): NodeRequireLike | null => {
-  try {
-    const candidate = Function(
-      "return typeof require === 'function' ? require : null;"
-    )() as unknown;
-    return typeof candidate === "function"
-      ? (candidate as NodeRequireLike)
-      : null;
-  } catch {
-    return null;
-  }
-};
 
 export interface Line {
   readonly number: number;
@@ -83,27 +64,17 @@ const normalizeMarkdownDsl = (content: string): string => {
   return out.join("\n").trim();
 };
 
-export const computeDiagramRevision = (content: string): string =>
-  (() => {
-    const normalized = normalizeMarkdownDsl(
-      content
-        .replace(/\r\n?/g, "\n")
-        .split("\n")
-        .filter((line) => !line.trimStart().startsWith("- Revision:"))
-        .join("\n")
-    );
+export const computeDiagramRevision = (content: string): string => {
+  const normalized = normalizeMarkdownDsl(
+    content
+      .replace(/\r\n?/g, "\n")
+      .split("\n")
+      .filter((line) => !line.trimStart().startsWith("- Revision:"))
+      .join("\n")
+  );
 
-    const nodeRequire = resolveNodeRequire();
-    if (nodeRequire) {
-      return nodeRequire("node:crypto")
-        .createHash("sha256")
-        .update(normalized)
-        .digest("hex")
-        .slice(0, 8);
-    }
-
-    return REVISION_FIELD_RE.exec(content)?.[1] ?? "00000000";
-  })();
+  return createHash("sha256").update(normalized).digest("hex").slice(0, 8);
+};
 
 export const buildParseFailure = (
   code: MarkdownDslParseError["code"],
