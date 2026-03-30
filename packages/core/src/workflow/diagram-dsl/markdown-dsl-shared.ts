@@ -1,9 +1,28 @@
-import { createHash } from "node:crypto";
 import type {
   MarkdownDslParseError,
   MarkdownDslParseResult,
   MarkdownDslParseWarning,
 } from "./diagram-dsl-types";
+
+type CreateHashFn = (algorithm: string) => {
+  update(input: string): { digest(format: "hex"): string };
+};
+
+let _createHash: CreateHashFn | null | undefined;
+
+const getCreateHash = (): CreateHashFn | null => {
+  if (_createHash !== undefined) {
+    return _createHash;
+  }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    _createHash = (require("node:crypto") as { createHash: CreateHashFn })
+      .createHash;
+  } catch {
+    _createHash = null;
+  }
+  return _createHash;
+};
 
 const SECTION_RE = /^## (.+)$/;
 const KEY_VALUE_RE = /^- ([^:]+):\s*(.*)$/;
@@ -73,7 +92,11 @@ export const computeDiagramRevision = (content: string): string => {
       .join("\n")
   );
 
-  return createHash("sha256").update(normalized).digest("hex").slice(0, 8);
+  const hash = getCreateHash();
+  if (hash) {
+    return hash("sha256").update(normalized).digest("hex").slice(0, 8);
+  }
+  return "00000000";
 };
 
 export const buildParseFailure = (
