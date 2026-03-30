@@ -82,13 +82,16 @@ export class GeminiTurnRunner {
     }
 
     const turnResult = await this.runTurn(session, parts, promptId, signal);
-    let responseText = turnResult.responseText;
+    const currentLegIsTerminal = turnResult.toolRequests.length === 0;
+    let responseText = currentLegIsTerminal ? turnResult.responseText : "";
     let citations = [...turnResult.citations];
     let usage = turnResult.usage;
     let depthExceeded = false;
-    let assistantSegmentsEmitted = turnResult.assistantSegmentsEmitted;
+    let assistantSegmentsEmitted = currentLegIsTerminal
+      ? turnResult.assistantSegmentsEmitted
+      : 0;
 
-    if (turnResult.toolRequests.length === 0) {
+    if (currentLegIsTerminal) {
       return {
         text: responseText,
         citations,
@@ -123,11 +126,11 @@ export class GeminiTurnRunner {
       depth: depth + 1,
     });
 
-    responseText += nested.text;
+    responseText = nested.text;
     citations = citations.concat(nested.citations);
     usage = nested.usage ?? usage;
     depthExceeded = nested.depthExceeded;
-    assistantSegmentsEmitted += nested.assistantSegmentsEmitted;
+    assistantSegmentsEmitted = nested.assistantSegmentsEmitted;
 
     return {
       text: responseText,
@@ -213,7 +216,8 @@ export class GeminiTurnRunner {
     } catch (error) {
       if (
         this.sessionLifecycle.isStalledTurnError(error) &&
-        assistantSegmentsEmitted > 0
+        assistantSegmentsEmitted > 0 &&
+        accumulator.toolRequests.length === 0
       ) {
         session.reporter?.warn?.(
           "Gemini stalled after terminal answer; treating turn as completed",

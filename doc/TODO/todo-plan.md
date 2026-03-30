@@ -31,10 +31,10 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Session Report
 1. [DONE] Docs: обновить `doc/Sessions/Session199.md` пост-релизной валидацией `1.1.848`, зафиксировать новый provider session `3a6fb414-22d4-4a43-a7f9-7e5f5cb92d07`, `Final_Description.md` materialization и вывод о том, что последний assistant message был progress-output, а не terminal answer. Scope: `doc/Sessions/Session199.md`. Expected commit: `docs: record post-release gemini post-tool stall validation`
-2. [TODO] Git Commit: `docs: record post-release gemini post-tool stall validation` (hash: TBD)
+2. [DONE] Git Commit: `docs: record post-release gemini post-tool stall validation` (hash: `c1320c03`)
 
 ### Stream: Gemini Terminal Leg Contract
-3. [TODO] Gemini_Module: отделить progress assistant output из leg с `tool_call_request` от terminal-leg answer, чтобы pre-tool текст не считался завершением всей tool chain. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/session/types.ts`. Expected commit: `fix(gemini): require terminal leg answer after tool chain`
+3. [DONE] Gemini_Module: отделить progress assistant output из leg с `tool_call_request` от terminal-leg answer, чтобы pre-tool текст не считался завершением всей tool chain. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/session/types.ts`. Expected commit: `fix(gemini): require terminal leg answer after tool chain`
 4. [TODO] Git Commit: `fix(gemini): require terminal leg answer after tool chain` (hash: TBD)
 
 ### Stream: Gemini Post-Tool Watchdog
