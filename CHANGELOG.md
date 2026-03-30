@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.844] - 2026-03-30
+### Changed
+- **Dead code detection**: replaced deprecated `ts-prune` with `knip` in pre-commit hook, CI workflow, and AGENTS.md; knip now blocks commits on unused files, unused exports, and duplicate exports.
+- **Dead code cleanup**: removed 59 verified dead files (~6900 lines) and cleaned 105 unused exports across all packages; each deletion manually verified via grep before removal.
+- **Quality gate docs**: updated `AGENTS.md`, CI workflow, and continuity templates to reference `knip` instead of `ts-prune`.
+
 ## [1.1.843] - 2026-03-30
 ### Fixed
 - **Workspace switch session visibility**: switching between workspaces with active sessions no longer flashes the "Start with the Description questionnaire" placeholder. Root cause: workspace-tree auto-select fired `handleStateUpdate` with a stale previous-workspace snapshot before the store emitted data for the new workspace, permanently consuming `pendingWorkspaceIdRef` and preventing the correct `pm:dialog:open` dispatch. Fix: added `storeState.workspaceSlug === workspaceSlug` guard so auto-select only processes snapshots that belong to the current workspace. Additionally, the reset effect no longer unconditionally clears `hasDescriptionSession`, and a `workflowStoreLoaded` guard prevents the questionnaire panel from rendering until the store loads.

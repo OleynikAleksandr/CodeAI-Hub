@@ -7,9 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.843
-- **Workspace switch restores last active step**: switching between workspaces with active sessions now immediately shows the correct session and artifact for the last completed workflow step (Description / Virtual Simulation / Diagram Modules) instead of flashing the "Start with the Description questionnaire" placeholder.
-- **v1.1.838-841 scope preserved**: dialog-mode dispatch after submit, description session flicker fix, false `Final_Description.md` elimination, shared `WorkflowStateStore`, description gating alignment, store derivation hotfix, preferred session ID preservation.
+## Current Release — v1.1.844
+- **Dead code detection upgrade**: replaced deprecated `ts-prune` with `knip` in pre-commit hook and CI; removed 59 verified dead files (~6900 lines) and cleaned 105 unused exports across all packages.
+- **v1.1.843 scope preserved**: workspace switch session restore, dialog-mode dispatch after submit, description session flicker fix, false `Final_Description.md` elimination, shared `WorkflowStateStore`, description gating alignment, store derivation hotfix, preferred session ID preservation.
 
 Previous releases (summary): `1.1.800–1.1.837` — provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
@@ -18,7 +18,7 @@ Previous releases (summary): `1.1.800–1.1.837` — provider-feedback observabi
 - **Description-first workflow**: the first guided workflow step is `Description`, producing `questionnaire.md` and `Final_Description.md` as the canonical entry into `Virtual Simulation`.
 - **Persistent standalone UI**: the macOS launcher (CEF) stores window position and size in real time, so Project Manager reopens exactly where you left it—even across monitor changes.
 - **Offline-first packaging**: manifests point to the local `~/.codeai-hub/releases/` cache, build scripts publish fresh tarballs for core, launcher, and provider modules without relying on GitHub downloads, and the shipped VSIX excludes repository-only Husky hook helpers.
-- **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, ts-prune export checks, and Biome formatting are orchestrated through Husky pre-commit/pre-push hooks.
+- **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, knip dead-code detection, and Biome formatting are orchestrated through Husky pre-commit/pre-push hooks.
 
 ## Getting Started
 ```bash
