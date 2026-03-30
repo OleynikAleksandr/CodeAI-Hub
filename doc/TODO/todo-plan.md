@@ -34,11 +34,11 @@ Goal: behavior-preserving decomposition of the last remaining production hotspot
 2. [DONE] Git Commit: `refactor(claude): extract auth home bridge helpers` (hash: `9862d4d4`)
 
 ### Stream: Claude Auth Runtime Split
-3. [IN_PROGRESS] Claude_Module: вынести OAuth bootstrap/cache refresh, auth environment assembly и auth probe/check execution seam из `sdk-auth-manager.ts`, сохранив внешний API manager-а стабильным, и синхронизировать `Modules/Claude.md`. Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, новый helper в `packages/Claude_Module/src/auth/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(claude): split auth probe and token bootstrap`
-4. [TODO] Git Commit: `refactor(claude): split auth probe and token bootstrap` (hash: TBD)
+3. [DONE] Claude_Module: вынести OAuth bootstrap/cache refresh, auth environment assembly и auth probe/check execution seam из `sdk-auth-manager.ts`, сохранив внешний API manager-а стабильным, и синхронизировать `Modules/Claude.md`. Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, новый helper в `packages/Claude_Module/src/auth/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(claude): split auth probe and token bootstrap`
+4. [DONE] Git Commit: `refactor(claude): split auth probe and token bootstrap` (hash: `bf50a3d3`)
 
 ### Stream: Claude Auth Verification
-5. [TODO] Verification: прогнать `npm run build --workspace @codeai-hub/claude-module` и focused auth bootstrap/provider-home sanity checks, затем синхронизировать execution status. Scope: `packages/Claude_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(claude): verify auth manager decomposition`
+5. [IN_PROGRESS] Verification: прогнать `npm run build --workspace @codeai-hub/claude-module` и focused auth bootstrap/provider-home sanity checks, затем синхронизировать execution status. Scope: `packages/Claude_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(claude): verify auth manager decomposition`
 6. [TODO] Git Commit: `test(claude): verify auth manager decomposition` (hash: TBD)
 
 ### Stream: Release Build
