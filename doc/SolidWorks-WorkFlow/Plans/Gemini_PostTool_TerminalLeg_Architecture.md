@@ -299,3 +299,28 @@
 3. финальный assistant answer в history появляется один раз
 4. translated `thinking` остаётся перед final answer
 5. aggregate fallback assistant emit не срабатывает
+
+---
+
+## 8. Scope closure after `1.1.850` and upstream pause
+
+Ручная проверка релиза `1.1.850`, уже после локального dedup fix, не подтвердила новую локальную регрессию.
+Вместо этого была зафиксирована нестабильность upstream Gemini path:
+
+- один и тот же `Description` flow мог зависнуть после progress/tool follow-up без новых raw events;
+- аналогичные mid-turn hangs наблюдались и в нативном Gemini CLI вне `CodeAI Hub`;
+- повторные прогоны тем же CLI могли позже завершаться успешно без изменений локального кода;
+- внешний публичный фон на конец марта 2026 также показывал признаки traffic prioritization / high-demand / unstable terminal path.
+
+Следствие для текущего scope:
+
+1. Текущий Gemini remediation scope считается локально завершённым на `1.1.850`.
+2. Новые Gemini code changes не являются next default step.
+3. Рабочая позиция проекта: Gemini временно выводится из активного ручного тестирования и из ближайшего engineering цикла до появления нового внешнего сигнала.
+4. Следующий productive scope должен быть открыт через новый planning-док и новый `todo-plan`, отдельно от Gemini remediation trail.
+
+Операционный вывод:
+
+- текущий Gemini-focused `todo-plan` нужно закрыть и архивировать;
+- `Session200` и `Session201` должны быть синхронизированы с фактическим git history и решением об upstream pause;
+- если Gemini-трек позже возобновится, стартовать нужно с нового intake: внешний статус + fresh native CLI smoke-test + сравнение с артефактами `Session200`/`Session201`, а не с немедленного нового runtime refactor.

@@ -101,4 +101,26 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Release VSIX
 33. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.850.vsix`, затем синхронизировать `doc/Sessions/Session200.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session200.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.850 vsix`
-34. [TODO] Git Commit: `chore(release): finalize 1.1.850 vsix` (hash: TBD)
+34. [DONE] Git Commit: `chore(release): finalize 1.1.850 vsix` (hash: `2160ba28`)
+
+---
+
+## Phase 3 — Gemini upstream pause closure and planning reset (owner: Oleksandr, updated: 2026-03-30)
+
+Goal: синхронизировать session reports и active planning trail с фактом завершённого локального Gemini remediation на `1.1.850`, зафиксировать upstream pause и подготовить чистую точку входа для следующего утверждённого scope.
+
+### Stream: Closure Intake
+35. [DONE] Docs: расширить planning-док closure-note про `1.1.850` и upstream pause, закрыть пропущенный release commit `2160ba28` и добавить Phase 3 в active `todo-plan`. Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): note gemini upstream pause closure`
+36. [TODO] Git Commit: `docs(architecture): note gemini upstream pause closure` (hash: TBD)
+
+### Stream: Session Reports Sync
+37. [TODO] Docs: синхронизировать `doc/Sessions/Session200.md` с фактическим release-finalize commit и завести `doc/Sessions/Session201.md` как canonical report upstream pause, одновременно обновив статусы текущего `todo-plan`. Scope: `doc/Sessions/Session200.md`, `doc/Sessions/Session201.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: sync gemini release and pause reports`
+38. [TODO] Git Commit: `docs: sync gemini release and pause reports` (hash: TBD)
+
+### Stream: Archive Active Gemini Plan
+39. [TODO] Docs: перенести завершённый Gemini-focused `todo-plan` в `doc/TODO/Archive/` и создать новый placeholder `doc/TODO/todo-plan.md` с правилом, что следующий execution scope открывается только после нового approved planning-дока. Scope: `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: archive gemini todo plan after upstream pause`
+40. [TODO] Git Commit: `docs: archive gemini todo plan after upstream pause` (hash: TBD)
+
+### Stream: Session Handoff
+41. [TODO] Docs: создать `doc/Sessions/Session202.md` по итогам cleanup-сессии и закрыть hash bookkeeping в archived Gemini plan. Scope: `doc/Sessions/Session202.md`, `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`. Expected commit: `docs: record session 202 handoff`
+42. [TODO] Git Commit: `docs: record session 202 handoff` (hash: TBD)
