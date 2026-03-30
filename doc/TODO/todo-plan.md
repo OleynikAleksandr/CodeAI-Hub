@@ -72,4 +72,4 @@ Goal: behavior-preserving decomposition of the first three production warning-zo
 27. [DONE] CEF Launcher: вынести URL/classification + bridge injection seam из `launcher_handler.cc` в focused helper boundary и синхронизировать `SystemArchitecture.md`. Scope: `packages/cef-launcher/src/launcher_handler.cc`, `packages/cef-launcher/src/launcher_handler.h`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(cef-launcher): split launcher bridge helpers`
 28. [DONE] Git Commit: `refactor(cef-launcher): split launcher bridge helpers` (hash: `52d82a42`)
 29. [DONE] Verification: прогнать CEF launcher build/compile verification или targeted native sanity check, затем синхронизировать execution status. Scope: `packages/cef-launcher`, `doc/TODO/todo-plan.md`. Expected commit: `test(cef-launcher): verify launcher handler split`
-30. [TODO] Git Commit: `test(cef-launcher): verify launcher handler split` (hash: TBD)
+30. [DONE] Git Commit: `test(cef-launcher): verify launcher handler split` (hash: `a66df9d9`)
