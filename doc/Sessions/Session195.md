@@ -40,8 +40,10 @@ Effect ordering race: when `selectedWorkspaceId` changed, `handleStateUpdate` ca
 
 > Далее: в зависимости от задачи открыть нужные документы из `doc/SolidWorks-WorkFlow/Clusters/`, `doc/SolidWorks-WorkFlow/Modules/`, `doc/SolidWorks-WorkFlow/Contracts/`.
 
+## User feedback
+- v1.1.843 tested and confirmed working: workspace switch between 3 workspaces with 3 different providers works correctly, session and artifact for the last completed step restore immediately.
+
 ## Plans for next session
-- Тестирование v1.1.843: workspace switch end-to-end (3 workspaces, 3 провайдера, переключение между ними)
 - Deferred (Phase 104 item 23): перенос optimistic guard в shared WorkflowStateStore
 - Deferred: Gemini delay after submit — `queueMicrotask()` в session ID emission + polling intervals
 - Архивация завершённого todo-plan.md при необходимости

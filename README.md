@@ -7,7 +7,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.842
+## Current Release — v1.1.843
 - **Workspace switch restores last active step**: switching between workspaces with active sessions now immediately shows the correct session and artifact for the last completed workflow step (Description / Virtual Simulation / Diagram Modules) instead of flashing the "Start with the Description questionnaire" placeholder.
 - **v1.1.838-841 scope preserved**: dialog-mode dispatch after submit, description session flicker fix, false `Final_Description.md` elimination, shared `WorkflowStateStore`, description gating alignment, store derivation hotfix, preferred session ID preservation.
 
