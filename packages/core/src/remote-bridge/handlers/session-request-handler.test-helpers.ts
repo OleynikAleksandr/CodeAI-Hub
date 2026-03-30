@@ -16,8 +16,8 @@ export const internals = (
 ): HandlerTestInternals => handler as unknown as HandlerTestInternals;
 
 export const SOURCE_PATH = path.resolve(
-  process.cwd(),
-  "packages/core/src/remote-bridge/handlers/session-request-handler.ts"
+  import.meta.dirname.replace(/\/dist\//, "/src/"),
+  "session-request-handler.ts"
 );
 
 export interface BindingUpdate {
