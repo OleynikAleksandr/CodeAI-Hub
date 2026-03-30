@@ -233,3 +233,69 @@
 - terminality для Gemini должна определяться не наличием любого assistant text, а наличием **terminal-leg answer**;
 - post-tool legs должны иметь отдельную stalled policy;
 - progress/status output до tool completion не должен скрывать реальную незавершённость turn-а.
+
+---
+
+## 7. Пост-релизный follow-up после `1.1.849`: duplicate final answer race
+
+Ручная валидация релиза `1.1.849` подтвердила, что nested post-tool leg теперь доходит до настоящего конца turn-а, но выявила новый остаточный дефект:
+
+- Gemini реально завершает turn;
+- в конце dialog history появляются **два одинаковых финальных ответа**;
+- между ними виден поздно приехавший translated `thinking`.
+
+Наблюдаемые артефакты:
+
+- raw provider log: `~/.codeai-hub/logs/gemini/sdk-gemini-5af41d27-b5eb-472f-8e83-c289ed49cede.jsonl`
+- dialog session history: `~/.codeai-hub/sessions/.../gemini-67a12c85-876b-494f-b578-12356a4fa526-description.jsonl`
+
+Подтверждённый таймлайн:
+
+1. Raw Gemini stream отдаёт финальный `content` только один раз.
+2. Raw Gemini stream отдаёт один `finished`.
+3. В session history сначала появляется финальный assistant answer.
+4. Затем завершается отложенный перевод `thinking`.
+5. Затем в history появляется тот же финальный answer повторно.
+
+Следствие:
+
+- duplicate создаёт не provider;
+- duplicate создаём мы в runtime/session layer.
+
+### 7.1. Root cause
+
+Текущий runtime path устроен так:
+
+1. `handleFinishedEvent()` в `gemini-assistant-event-normalizer.ts` откладывает final assistant segment через `Promise.allSettled(pendingTranslations).then(...)`.
+2. `GeminiTurnRunner` снимает listener, который считает streamed assistant segments, раньше, чем этот deferred emit реально происходит.
+3. `GeminiSessionManager` видит `assistantSegmentsEmitted === 0` и включает fallback aggregate assistant emit.
+4. Deferred emit и fallback emit публикуют один и тот же финальный текст дважды.
+
+Это не новый terminality bug и не provider duplication bug.
+Это **race между deferred translation flush и fallback финального assistant emit**.
+
+### 7.2. Новый инвариант завершения Gemini turn
+
+Для Gemini требуется более строгий contract:
+
+1. Turn обязан заканчиваться **ровно одним** non-thinking final assistant answer.
+2. Translated `thinking` остаются side-channel assistant messages с `tag: "thinking"`, но не участвуют в terminality.
+3. Если к моменту `finished` есть pending thought translations, turn не должен считаться завершённым, пока этот pending flush не будет дожат.
+4. Fallback aggregate assistant emit разрешён только после того, как runtime убедился, что deferred assistant segment действительно не был эмитнут.
+5. Late translated `thinking` из того же logical leg не должны визуально оказываться после уже зафиксированного terminal answer.
+
+### 7.3. Импликации для реализации
+
+- Нужен явный `drain` pending Gemini dialog emits внутри message processor / assistant normalizer.
+- `GeminiTurnRunner` должен ждать этот `drain` до снятия listener-а и до возврата `assistantSegmentsEmitted`.
+- `GeminiSessionManager` может сохранить текущий fallback contract, если `assistantSegmentsEmitted` после такого drain уже отражает фактически эмитнутые segmented assistant messages.
+
+### 7.4. Тестовая матрица follow-up scope
+
+Нужно добавить regression как минимум на сценарий:
+
+1. `thought -> content -> finished`
+2. translation для `thought` резолвится позже `finished`
+3. финальный assistant answer в history появляется один раз
+4. translated `thinking` остаётся перед final answer
+5. aggregate fallback assistant emit не срабатывает

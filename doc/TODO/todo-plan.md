@@ -63,4 +63,42 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Release VSIX
 17. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.849.vsix`, затем синхронизировать `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session199.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.849 vsix`
-18. [TODO] Git Commit: `chore(release): finalize 1.1.849 vsix` (hash: TBD)
+18. [DONE] Git Commit: `chore(release): finalize 1.1.849 vsix` (hash: `e0572eb2`)
+
+---
+
+## Phase 2 — Gemini deferred final flush deduplication and release 1.1.850 (owner: Oleksandr, updated: 2026-03-30)
+
+Goal: устранить гонку, при которой финальный Gemini answer уже получен один раз от provider, но runtime дублирует его из-за отложенного flush translated thoughts и fallback aggregate emit.
+
+### Stream: Architecture Intake
+19. [DONE] Docs: зафиксировать duplicate-final-answer root cause и новый final flush contract Gemini в planning-доке, затем расширить текущий `todo-plan` новым Phase под remediation и релиз `1.1.850`. Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): define gemini final flush dedup contract`
+20. [TODO] Git Commit: `docs(architecture): define gemini final flush dedup contract` (hash: TBD)
+
+### Stream: Deferred Flush Plumbing
+21. [TODO] Gemini_Module: добавить явный deferred-flush/drain для translated thoughts и final assistant segment, чтобы ordering внутри finished leg оставался deterministic до возврата из message processor. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.ts`, `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`. Expected commit: `fix(gemini): serialize final segment flush after translated thoughts`
+22. [TODO] Git Commit: `fix(gemini): serialize final segment flush after translated thoughts` (hash: TBD)
+
+### Stream: Turn Runner Finalization
+23. [TODO] Gemini_Module: дождаться deferred Gemini dialog emits до снятия assistant segment listener, чтобы fallback aggregate emit не дублировал реальный terminal answer. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): await deferred final segment before fallback`
+24. [TODO] Git Commit: `fix(gemini): await deferred final segment before fallback` (hash: TBD)
+
+### Stream: Regression Tests
+25. [TODO] Tests: покрыть сценарий late translated thinking перед final answer и убедиться, что финальный assistant segment materialize-ится ровно один раз без aggregate duplicate. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.test-helpers.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover translated thought final answer dedup`
+26. [TODO] Git Commit: `test(gemini): cover translated thought final answer dedup` (hash: TBD)
+
+### Stream: Verification
+27. [TODO] Verification: прогнать таргетную сборку Gemini и focused regression tests, затем зафиксировать результаты дедупликации в session report до релизной подготовки. Scope: `packages/Gemini_Module`, `doc/Sessions/Session199.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: record gemini final answer dedup verification`
+28. [TODO] Git Commit: `docs: record gemini final answer dedup verification` (hash: TBD)
+
+### Stream: Release Docs Sync
+29. [TODO] Release Docs: синхронизировать `README.md` и `CHANGELOG.md` под patch release `1.1.850`, чтобы release-facing docs отражали Gemini final answer deduplication до запуска release scripts. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): sync 1.1.850 release notes`
+30. [TODO] Git Commit: `docs(release): sync 1.1.850 release notes` (hash: TBD)
+
+### Stream: Release Build-All
+31. [TODO] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и fresh `1.1.850` tarball-артефакты, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.850 artifacts`
+32. [TODO] Git Commit: `chore(release): prepare 1.1.850 artifacts` (hash: TBD)
+
+### Stream: Release VSIX
+33. [TODO] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.850.vsix`, затем синхронизировать `doc/Sessions/Session200.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session200.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.850 vsix`
+34. [TODO] Git Commit: `chore(release): finalize 1.1.850 vsix` (hash: TBD)
