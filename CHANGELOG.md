@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.846] - 2026-03-30
+### Fixed
+- **Test debt eliminated**: all 145 tests passing (was 139/151). Removed stale dist artifacts, replaced `Function()` hack with static `import { createHash }` in `computeDiagramRevision`, synchronized 5 test assertions with current template/router content.
+
 ## [1.1.845] - 2026-03-30
 ### Changed
 - **Architecture line limit raised to 500**: `MAX_LINES` 300→500, `WARNING_LINES` 250→400 in `check-architecture.sh`; updated `AGENTS.md` principles.

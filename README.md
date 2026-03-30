@@ -7,9 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.845
-- **Architecture gate raised to 500 lines**: `MAX_LINES` 300→500, `WARNING_LINES` 250→400; all 5 formerly oversized files split into focused modules; debt allowlist cleared to zero.
-- **v1.1.844 scope preserved**: knip dead-code gate, 59 dead files removed, 105 unused exports cleaned, workspace switch session restore, dialog-mode dispatch, description session flicker fix, shared `WorkflowStateStore`.
+## Current Release — v1.1.846
+- **Test debt eliminated**: 145/145 tests passing (was 139/151). Stale dist cleanup, static crypto import in `computeDiagramRevision`, 5 test assertions synced with current code.
+- **v1.1.845 scope preserved**: architecture gate 500 lines, oversized files split, `as any` eliminated, knip dead-code gate, 59 dead files removed.
 
 Previous releases (summary): `1.1.800–1.1.837` — provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
