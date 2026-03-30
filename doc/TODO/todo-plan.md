@@ -93,10 +93,10 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Release Docs Sync
 29. [DONE] Release Docs: синхронизировать `README.md` и `CHANGELOG.md` под patch release `1.1.850`, чтобы release-facing docs отражали Gemini final answer deduplication до запуска release scripts. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): sync 1.1.850 release notes`
-30. [TODO] Git Commit: `docs(release): sync 1.1.850 release notes` (hash: TBD)
+30. [DONE] Git Commit: `docs(release): sync 1.1.850 release notes` (hash: `7eb2bffb`)
 
 ### Stream: Release Build-All
-31. [TODO] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и fresh `1.1.850` tarball-артефакты, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.850 artifacts`
+31. [IN_PROGRESS] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и fresh `1.1.850` tarball-артефакты, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.850 artifacts`
 32. [TODO] Git Commit: `chore(release): prepare 1.1.850 artifacts` (hash: TBD)
 
 ### Stream: Release VSIX
