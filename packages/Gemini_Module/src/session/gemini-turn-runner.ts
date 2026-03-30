@@ -204,6 +204,7 @@ export class GeminiTurnRunner {
     const iterator = (stream as AsyncIterable<ServerGeminiStreamEvent>)[
       Symbol.asyncIterator
     ]();
+    let turnError: unknown;
 
     try {
       while (true) {
@@ -222,8 +223,20 @@ export class GeminiTurnRunner {
         this.emitEventsCallback(session, outcome.events);
       }
     } catch (error) {
+      turnError = error;
+    } finally {
+      stalledTurnWatchdog.clear();
+    }
+
+    try {
+      await messageProcessor.drain(accumulator);
+    } finally {
+      session.eventEmitter.off("message", countAssistantSegment);
+    }
+
+    if (turnError) {
       if (
-        this.sessionLifecycle.isStalledTurnError(error) &&
+        this.sessionLifecycle.isStalledTurnError(turnError) &&
         assistantSegmentsEmitted > 0 &&
         accumulator.toolRequests.length === 0
       ) {
@@ -236,11 +249,8 @@ export class GeminiTurnRunner {
           }
         );
       } else {
-        throw error;
+        throw turnError;
       }
-    } finally {
-      stalledTurnWatchdog.clear();
-      session.eventEmitter.off("message", countAssistantSegment);
     }
 
     return {

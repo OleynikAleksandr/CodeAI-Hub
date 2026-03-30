@@ -77,10 +77,10 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Deferred Flush Plumbing
 21. [DONE] Gemini_Module: добавить явный deferred-flush/drain для translated thoughts и final assistant segment, чтобы ordering внутри finished leg оставался deterministic до возврата из message processor. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.ts`, `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`. Expected commit: `fix(gemini): serialize final segment flush after translated thoughts`
-22. [TODO] Git Commit: `fix(gemini): serialize final segment flush after translated thoughts` (hash: TBD)
+22. [DONE] Git Commit: `fix(gemini): serialize final segment flush after translated thoughts` (hash: `13b66272`)
 
 ### Stream: Turn Runner Finalization
-23. [TODO] Gemini_Module: дождаться deferred Gemini dialog emits до снятия assistant segment listener, чтобы fallback aggregate emit не дублировал реальный terminal answer. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): await deferred final segment before fallback`
+23. [DONE] Gemini_Module: дождаться deferred Gemini dialog emits до снятия assistant segment listener, чтобы fallback aggregate emit не дублировал реальный terminal answer. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(gemini): await deferred final segment before fallback`
 24. [TODO] Git Commit: `fix(gemini): await deferred final segment before fallback` (hash: TBD)
 
 ### Stream: Regression Tests
