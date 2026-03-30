@@ -44,6 +44,7 @@ import type {
   ProviderSessionBinding,
   SessionRequestHandlerOptions,
 } from "./session-request-handler-types";
+import { SessionRequestHandlerWorkflowSession } from "./session-request-handler-workflow-session";
 
 export type {
   ContinuityRootResolutionOptions,
@@ -88,6 +89,7 @@ export class SessionRequestHandler {
   private readonly sessionActions: SessionRequestHandlerSessionActions;
   private readonly stopAction: SessionRequestHandlerStopAction;
   private readonly stopRebind: SessionRequestHandlerStopRebind;
+  private readonly workflowSession: SessionRequestHandlerWorkflowSession;
 
   constructor(options: SessionRequestHandlerOptions) {
     this.config = options.config;
@@ -222,6 +224,13 @@ export class SessionRequestHandler {
       resumeLifecycle: this.resumeLifecycle,
       sessionManager: this.sessionManager,
     });
+    this.workflowSession = new SessionRequestHandlerWorkflowSession({
+      createAndRegisterSession: (createOptions) =>
+        this.sessionBootstrap.createAndRegisterSession(createOptions),
+      logger: this.logger,
+      providerFailureRecovery: this.providerFailureRecovery,
+      providerRegistry: this.providerRegistry,
+    });
   }
 
   protected normalizeContinuityStageId(value: string | null): string {
@@ -288,33 +297,7 @@ export class SessionRequestHandler {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
-    const adapter = this.providerRegistry.getAdapter(options.providerId);
-    if (!adapter) {
-      this.logger.warn("Workflow session creation failed: provider missing", {
-        providerId: options.providerId,
-      });
-      return null;
-    }
-    try {
-      return await this.sessionBootstrap.createAndRegisterSession({
-        providerId: options.providerId,
-        workspacePath: options.workspacePath,
-        adapter,
-        resumeMode: options.context.resumeMode,
-        context: {
-          initiativeSlug: options.context.initiativeSlug,
-          stage: options.context.stage,
-          runSlug: options.context.runSlug ?? null,
-          providerSessionId: null,
-        },
-      });
-    } catch (error) {
-      this.providerFailureRecovery.handleProviderFailure(
-        options.providerId,
-        error
-      );
-      return null;
-    }
+    return await this.workflowSession.createSessionForWorkflow(options);
   }
 
   async handleMessage(
