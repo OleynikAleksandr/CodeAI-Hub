@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-30 16:25 (CEST)
 **Branch:** main
-**Version:** 1.1.847
+**Version:** 1.1.848
 
 ---
 
@@ -58,6 +58,18 @@
   - answer-then-stall completes successfully;
   - `turn_failed` is persisted into history-visible system output.
 
+### Phase 6: Release preparation
+- Ran `./scripts/build-all.sh` on a clean tree and promoted the unified workspace version from `1.1.847` to `1.1.848`.
+- Produced fresh local release artefacts for the new version:
+  - `claude-module-1.1.848.tar.bz2`
+  - `codex-module-1.1.848.tar.bz2`
+  - `gemini-module-1.1.848.tar.bz2`
+  - `codeai-hub-core-darwin-arm64-1.1.848.tar.bz2`
+  - `CodeAIHubLauncher-macos-arm64-1.1.848.tar.bz2`
+  - `vscode-webview-1.1.848.tar.bz2`
+  - `project-manager-1.1.848.tar.bz2`
+- Synced release-facing docs for `1.1.848` in `README.md` and `CHANGELOG.md`.
+
 ## Git commits
 - `ba84659a` `docs(architecture): approve gemini stalled turn terminal answer contract`
 - `f2651b1d` `docs: add Session 199 report for gemini stalled turn investigation`
@@ -65,6 +77,7 @@
 - `0fe3d203` `fix(gemini): gate stalled turn outcome by terminal answer presence`
 - `ccd29f06` `fix(session): persist gemini stalled turn failures in history`
 - `4207f53b` `test(gemini): cover terminal answer and stalled turn semantics`
+- `b72c6b48` `docs: record gemini stalled turn verification results`
 
 ---
 
@@ -89,11 +102,10 @@
   - `thinkingLevelByModel["gemini-3-flash-preview"] = "high"`
 
 ## Next active work according to todo-plan
-- Record the verification docs commit in `todo-plan.md`.
-- Execute the final `Release Build` stream on a clean tree:
-  - `./scripts/build-all.sh`
+- Record the release-preparation commit hash in `todo-plan.md`.
+- Execute the final `Release VSIX` stream on a clean tree:
   - `./scripts/build-release.sh --use-current-version`
-- Capture resulting tarballs/VSIX and append the release outcome to this session report.
+- Verify the resulting `codeai-hub-1.1.848.vsix` and append the final packaging outcome to this session report.
 - Keep micro-task scope within 3 files and do not skip commit steps between streams.
 
 ## Implementation direction agreed in this session

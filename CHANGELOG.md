@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.848] - 2026-03-30
+### Fixed
+- **Gemini terminal-answer contract**: `thinking`/translated thoughts no longer satisfy terminal answer accounting, so a Gemini turn cannot silently complete on thoughts alone.
+- **Late-stall handling**: Gemini stalled-turn timeout now resolves based on whether a real non-thinking assistant answer was already emitted; answer-then-stall completes, no-answer stall remains recoverable failure.
+- **History-visible failure outcome**: recoverable Gemini `turn_failed` is now appended to session/dialog history as a system message, so reload preserves the failure outcome beside prior thinking output.
+
+### Added
+- **Regression coverage**: added focused Gemini/Core tests for thinking-without-answer stall, answer-then-stall completion, and `turn_failed` history materialization.
+
 ## [1.1.847] - 2026-03-30
 ### Fixed
 - **Test debt eliminated**: all 145 tests passing (was 139/151). Removed stale dist artifacts, replaced `Function()` hack with lazy `require("node:crypto")` in `computeDiagramRevision`, synchronized 5 test assertions with current template/router content.

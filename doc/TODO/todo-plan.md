@@ -54,8 +54,12 @@ Goal: устранить сценарий, в котором Gemini turn виз�
 
 ### Stream: Verification
 13. [DONE] Verification: прогнать таргетные тесты/сборки по Gemini и затронутому Core, затем зафиксировать результаты в docs/session report. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/`. Expected commit: `docs: record gemini stalled turn verification results`
-14. [TODO] Git Commit: `docs: record gemini stalled turn verification results` (hash: TBD)
+14. [DONE] Git Commit: `docs: record gemini stalled turn verification results` (hash: `b72c6b48`)
 
-### Stream: Release Build
-15. [TODO] Release: после закрытия всех стримов и чистого дерева выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить tarball/VSIX и зафиксировать результат в `doc/Sessions/`. Scope: release scripts + manifests + docs. Expected commit: `chore(release): build gemini stalled turn fix release`
-16. [TODO] Git Commit: `chore(release): build gemini stalled turn fix release` (hash: TBD)
+### Stream: Release Preparation
+15. [DONE] Release: выполнить `./scripts/build-all.sh`, обновить version manifests до `1.1.848`, синхронизировать `README.md`, `CHANGELOG.md` и `doc/Sessions/Session199.md` под новый релизный snapshot. Scope: release manifests + docs. Expected commit: `chore(release): prepare 1.1.848 artifacts`
+16. [TODO] Git Commit: `chore(release): prepare 1.1.848 artifacts` (hash: TBD)
+
+### Stream: Release VSIX
+17. [TODO] Release: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.848.vsix` и финальные release checks, затем зафиксировать результат в `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md`. Scope: packaging + docs. Expected commit: `chore(release): finalize 1.1.848 vsix`
+18. [TODO] Git Commit: `chore(release): finalize 1.1.848 vsix` (hash: TBD)
