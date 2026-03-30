@@ -7,6 +7,50 @@ import {
   SessionRequestHandler,
 } from "./session-request-handler";
 
+/** Typed access to private/internal fields of SessionRequestHandler for test harness monkey-patching. */
+interface HandlerTestInternals {
+  continuity: Record<string, unknown>;
+  continuityLockService: {
+    emitContinuityLockEvent: (options: Record<string, unknown>) => void;
+    registerFlowNodeContinuityLockContext: (
+      context: Record<string, unknown>
+    ) => void;
+  };
+  descriptionDialogSync: Record<string, unknown>;
+  flowNodeContinuity: Record<string, unknown>;
+  handleFlowNodeContinuityProviderEvent: (
+    sessionId: string,
+    event: unknown
+  ) => Promise<void>;
+  handleFlowNodeContinuitySilentPreemptiveRollover: () => Promise<boolean>;
+  providerEventRouter: {
+    handleProviderEvent: (sessionId: string, event: unknown) => void;
+  };
+  providerSessions: Map<string, ProviderSessionBinding>;
+  resumeLifecycle: {
+    recordPostTurnContextDecision: (
+      sessionId: string,
+      decision: string
+    ) => void;
+    sessionResumeLifecycleStates: Map<string, unknown>;
+  };
+  turnArbitration: {
+    handleFlowNodeContinuityProviderEvent: (options: {
+      readonly sessionId: string;
+      readonly event: unknown;
+      readonly resolveLiveContinuityRemainingPercentThreshold: (
+        session: unknown
+      ) => Promise<number>;
+    }) => Promise<void>;
+    resolveLiveContinuityRemainingPercentThreshold: (
+      session: unknown
+    ) => Promise<number>;
+  };
+}
+
+const internals = (handler: SessionRequestHandler): HandlerTestInternals =>
+  handler as unknown as HandlerTestInternals;
+
 export const SOURCE_PATH = path.resolve(
   process.cwd(),
   "packages/core/src/remote-bridge/handlers/session-request-handler.ts"
@@ -152,9 +196,8 @@ export const createHarness = (
   });
 
   const api = handler as SessionRequestHandler & Record<string, unknown>;
-  // biome-ignore lint/suspicious/noExplicitAny: test harness monkey-patching
-  const mutableApi = api as any;
-  Object.assign(mutableApi.continuity as Record<string, unknown>, {
+  const testApi = internals(handler);
+  Object.assign(testApi.continuity, {
     handleProviderEvent: async () => Promise.resolve(),
     ensureTrackedOnOutboundMessage: ({
       sessionId,
@@ -168,22 +211,17 @@ export const createHarness = (
       continuityUpdates.push({ sessionId, providerSessionId });
     },
   });
-  Object.assign(mutableApi.flowNodeContinuity as Record<string, unknown>, {
+  Object.assign(testApi.flowNodeContinuity, {
     isEligibleForRollover: () => true,
   });
-  Object.assign(mutableApi, {
-    handleFlowNodeContinuityProviderEvent: async () => Promise.resolve(),
-    handleFlowNodeContinuitySilentPreemptiveRollover: async () => false,
-  });
+  testApi.handleFlowNodeContinuityProviderEvent = async () => Promise.resolve();
+  testApi.handleFlowNodeContinuitySilentPreemptiveRollover = async () => false;
 
   return {
     handler,
     api,
     sessionManager,
-    providerSessions: mutableApi.providerSessions as Map<
-      string,
-      ProviderSessionBinding
-    >,
+    providerSessions: testApi.providerSessions,
     providerRegistry,
     sessionStorage,
     events,
@@ -293,8 +331,7 @@ export const createDescriptionSession = (
   );
 
 export const stubDescriptionDialogSync = (harness: HandlerHarness): void => {
-  // biome-ignore lint/suspicious/noExplicitAny: test harness monkey-patching
-  Object.assign((harness.api as any).descriptionDialogSync, {
+  Object.assign(internals(harness.handler).descriptionDialogSync, {
     resolveDescriptionDialog: async () => null,
     maybePromoteLegacyDescriptionDialogHistory: noop,
     maybeBackfillDescriptionDialogHistory: async () => Promise.resolve(),
@@ -307,14 +344,10 @@ export const setLifecycle = (
   sessionId: string,
   mode: "resume_in_place" | "resume_via_rollover" | "no_resume"
 ): void => {
-  // biome-ignore lint/suspicious/noExplicitAny: test harness monkey-patching
-  const store = (harness.api as any).resumeLifecycle
-    .sessionResumeLifecycleStates as Map<string, unknown>;
-  store.set(sessionId, {
-    mode,
-    finalTurnCompleted: false,
-    terminalLockReason: null,
-  });
+  internals(harness.handler).resumeLifecycle.sessionResumeLifecycleStates.set(
+    sessionId,
+    { mode, finalTurnCompleted: false, terminalLockReason: null }
+  );
 };
 
 export const emitProviderEvent = (
@@ -322,18 +355,15 @@ export const emitProviderEvent = (
   sessionId: string,
   event: Record<string, unknown>
 ): void => {
-  // biome-ignore lint/suspicious/noExplicitAny: test harness monkey-patching
-  (harness.api as any).providerEventRouter.handleProviderEvent(
+  internals(harness.handler).providerEventRouter.handleProviderEvent(
     sessionId,
     event
   );
 };
 
 export const useProductionFlowNodeHandler = (harness: HandlerHarness): void => {
-  // biome-ignore lint/suspicious/noExplicitAny: test harness monkey-patching
-  const ta = (harness.api as any).turnArbitration;
-  // biome-ignore lint/suspicious/noExplicitAny: test harness monkey-patching
-  (harness.api as any).handleFlowNodeContinuityProviderEvent = async (
+  const ta = internals(harness.handler).turnArbitration;
+  internals(harness.handler).handleFlowNodeContinuityProviderEvent = async (
     sid: string,
     evt: unknown
   ) => {
@@ -352,8 +382,7 @@ export const registerBootstrapLock = (
   targetSessionId: string,
   rolloverId: string
 ): void => {
-  // biome-ignore lint/suspicious/noExplicitAny: test harness monkey-patching
-  const lockService = (harness.api as any).continuityLockService;
+  const lockService = internals(harness.handler).continuityLockService;
   lockService.registerFlowNodeContinuityLockContext({
     rolloverId,
     sourceSessionId,
