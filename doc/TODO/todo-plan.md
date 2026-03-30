@@ -37,10 +37,10 @@ Goal: behavior-preserving decomposition of the first three production warning-zo
 2. [TODO] Git Commit: `docs(plan): start 400-500 hotspot decomposition wave` (hash: TBD)
 
 ### Stream: Core Remote-Bridge Thin Facade Closure
-3. [TODO] Core: вынести оставшийся constructor/runtime helper seam из `session-request-handler.ts` в focused helper рядом с existing runtime cluster и синхронизировать `SystemArchitecture.md`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session-request-handler runtime helpers`
-4. [TODO] Git Commit: `refactor(core): extract session-request-handler runtime helpers` (hash: TBD)
-5. [TODO] Core: завершить перевод `session-request-handler.ts` в thin façade, вынеся оставшийся procedural/state glue в отдельный helper без изменения public handler API. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): finish session-request-handler thin facade`
-6. [TODO] Git Commit: `refactor(core): finish session-request-handler thin facade` (hash: TBD)
+3. [DONE] Core: вынести оставшийся constructor/runtime helper seam из `session-request-handler.ts` в focused helper рядом с existing runtime cluster и синхронизировать `SystemArchitecture.md`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session-request-handler runtime helpers`
+4. [DONE] Git Commit: `refactor(core): extract session-request-handler runtime helpers` (hash: `0e566369`)
+5. [DONE] Core: завершить перевод `session-request-handler.ts` в thin façade, вынеся оставшийся procedural/state glue в отдельный helper без изменения public handler API. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): finish session-request-handler thin facade`
+6. [DONE] Git Commit: `refactor(core): finish session-request-handler thin facade` (hash: `ed1205ca`)
 7. [TODO] Verification: прогнать таргетную сборку и focused tests по remote-bridge handler path, затем синхронизировать execution status. Scope: `packages/core`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): verify session-request-handler facade split`
 8. [TODO] Git Commit: `test(core): verify session-request-handler facade split` (hash: TBD)
 
