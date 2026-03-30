@@ -47,4 +47,4 @@ Goal: behavior-preserving decomposition of the last remaining production hotspot
 
 ### Stream: Phase Closeout
 9. [DONE] Docs: архивировать завершённый active plan, выпустить новый placeholder `todo-plan.md` и записать session handoff по итогам волны. Scope: `doc/TODO/Archive/`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `docs(plan): archive sdk auth manager decomposition wave`
-10. [DONE] Git Commit: `docs(plan): archive sdk auth manager decomposition wave` (hash: `TBD`)
+10. [DONE] Git Commit: `docs(plan): archive sdk auth manager decomposition wave` (hash: `c8425fd6`)

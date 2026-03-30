@@ -23,6 +23,7 @@
 - `1bccd626 docs(plan): record auth verification`
 - `be76103b docs(release): prepare 1.1.851 notes`
 - `127af640 build(release): assemble sdk auth decomposition release`
+- `c8425fd6 docs(plan): archive sdk auth manager decomposition wave`
 
 ---
 
