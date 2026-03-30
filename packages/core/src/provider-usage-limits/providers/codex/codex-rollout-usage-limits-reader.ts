@@ -178,7 +178,7 @@ export interface CodexRolloutUsageLimitsReaderOptions {
   readonly codexHome?: string;
 }
 
-export const resolveCodexRolloutFilePath = async (
+const resolveCodexRolloutFilePath = async (
   providerSessionId: string,
   options: CodexRolloutUsageLimitsReaderOptions = {}
 ): Promise<string | null> => {

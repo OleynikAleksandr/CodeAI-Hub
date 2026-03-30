@@ -85,21 +85,6 @@ const resolveProviderSlug = (providerId: string): string => {
   return normalized;
 };
 
-const resolveAgentRoleSlug = (role: string | null): string => {
-  const normalized = role ? sanitizeSlugToken(role.trim().toLowerCase()) : "";
-  return normalized.length === 0 ? "agent" : normalized;
-};
-
-export const buildDescriptionCollectorRunSlug = (
-  providerId: string,
-  sessionId: string
-): string =>
-  sanitizeSlugToken(
-    `${resolveProviderSlug(providerId)}-${sanitizeSlugToken(
-      sessionId.trim().toLowerCase()
-    )}-${resolveAgentRoleSlug("description")}`
-  );
-
 const resolveRunSlug = (value: string | undefined): string | null => {
   const trimmed = value?.trim() ?? "";
   return RUN_SLUG_RE.test(trimmed) ? trimmed : null;

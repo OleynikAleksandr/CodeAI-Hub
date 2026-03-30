@@ -52,7 +52,7 @@ export const persistIdeaArtifacts = async (params: {
   return { ok: true, saved: savedEntries ?? [] };
 };
 
-export const tryReadCoreErrorDetails = async (
+const tryReadCoreErrorDetails = async (
   response: Response
 ): Promise<string | null> => {
   try {

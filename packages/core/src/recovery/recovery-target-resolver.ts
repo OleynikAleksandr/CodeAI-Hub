@@ -41,10 +41,6 @@ const STAGE_CROSS_PROVIDER_FALLBACK: Record<string, Record<string, string>> = {
   },
 };
 
-const GEMINI_MODEL_FALLBACK: Record<string, string> = {
-  "gemini-3.1-pro-preview": "gemini-3-flash-preview",
-};
-
 export function resolveRecoveryTargets(
   context: RecoveryContext,
   isProviderHealthy: ProviderHealthCheck
@@ -103,10 +99,4 @@ export function resolveRecoveryTargets(
   }
 
   return targets;
-}
-
-export function resolveGeminiModelFallback(
-  currentModel: string
-): string | null {
-  return GEMINI_MODEL_FALLBACK[currentModel] ?? null;
 }

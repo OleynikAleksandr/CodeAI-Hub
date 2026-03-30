@@ -166,7 +166,7 @@ const upsertById = <T extends { readonly id: string }>(
   return [...byId.values()];
 };
 
-export const mergeDiagramModulesModels = (params: {
+const mergeDiagramModulesModels = (params: {
   readonly skeleton: ModuleMapModel;
   readonly parts: readonly ModuleMapModel[];
 }): ModuleMapModel => {

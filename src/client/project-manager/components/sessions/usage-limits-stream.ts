@@ -237,39 +237,3 @@ export const updateSnapshotsWithUsageLimits = (
   return changed ? nextSnapshots : snapshots;
 };
 
-export const resolveLatestUsageLimitsForProvider = (
-  snapshots: SessionSnapshots,
-  providerScopeKey: string
-): SessionSnapshots[string]["status"]["usageLimits"] | null => {
-  const providerKey = normalizeProviderScopeKey(providerScopeKey);
-  if (!providerKey) {
-    return null;
-  }
-
-  let latest:
-    | {
-        readonly usageLimits: NonNullable<
-          SessionSnapshots[string]["status"]["usageLimits"]
-        >;
-        readonly updatedAt: number;
-      }
-    | null = null;
-
-  for (const snapshot of Object.values(snapshots)) {
-    if (resolveProviderScopeKey(snapshot) !== providerKey) {
-      continue;
-    }
-    if (!hasUsageLimits(snapshot.status.usageLimits)) {
-      continue;
-    }
-    const updatedAt = snapshot.status.updatedAt;
-    if (!latest || updatedAt >= latest.updatedAt) {
-      latest = {
-        usageLimits: snapshot.status.usageLimits,
-        updatedAt,
-      };
-    }
-  }
-
-  return latest?.usageLimits ?? null;
-};

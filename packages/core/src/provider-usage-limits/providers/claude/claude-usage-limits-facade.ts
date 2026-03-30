@@ -438,13 +438,3 @@ export class ClaudeUsageLimitsFacade {
     });
   }
 }
-
-export const createClaudeUsageLimitsReader = (
-  facade: ClaudeUsageLimitsFacade = new ClaudeUsageLimitsFacade()
-): {
-  read(
-    params: ReadProviderUsageLimitsParams
-  ): Promise<ProviderUsageLimitsSnapshot | null>;
-} => ({
-  read: async (params) => await facade.read(params),
-});

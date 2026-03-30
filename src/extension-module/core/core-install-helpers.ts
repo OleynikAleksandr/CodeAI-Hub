@@ -59,7 +59,7 @@ export const getBaseCoreInstallDir = async (): Promise<string> => {
   return baseDir;
 };
 
-export const loadCoreInstallMarker = async (
+const loadCoreInstallMarker = async (
   runtimeDir: string
 ): Promise<InstallMarker | null> => {
   try {

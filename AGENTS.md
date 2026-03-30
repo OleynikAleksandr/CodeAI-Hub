@@ -96,7 +96,7 @@ doc/TODO/Archive/
   - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
   - Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
   - **Gates (автоматически через Husky hooks):**
-    - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:tsprune`, `npm run format:fix`
+    - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:knip`, `npm run format:fix`
     - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
     - Ручной прогон этих команд обычно не нужен (только для диагностики).
   - **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
@@ -125,7 +125,7 @@ doc/TODO/Archive/
     ```bash
     ./scripts/check-architecture.sh
     npm run lint
-    npm run check:tsprune
+    npm run check:knip
     npm run format:fix
     npm run check:dup
     npm run check:links

@@ -28,8 +28,8 @@ export interface CodexSettings {
   readonly sessionContinuity: CodexSessionContinuitySettings;
 }
 
-export const MIN_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-export const MAX_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+const MIN_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+const MAX_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 
 const CODEX_MODEL_IDS = new Set<string>(
   CODEX_SETTINGS_MODELS.map((model) => model.id)
@@ -49,7 +49,7 @@ const createDefaultReasoningByModel = (): CodexReasoningByModel =>
 
 const DEFAULT_CODEX_REASONING_BY_MODEL = createDefaultReasoningByModel();
 
-export const DEFAULT_CODEX_SESSION_CONTINUITY_SETTINGS: CodexSessionContinuitySettings =
+const DEFAULT_CODEX_SESSION_CONTINUITY_SETTINGS: CodexSessionContinuitySettings =
   {
     remainingPercentThreshold: 30,
   };
@@ -98,7 +98,7 @@ const clampContinuityRemainingPercentThreshold = (value: number): number =>
     Math.max(MIN_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD, value)
   );
 
-export const normalizeCodexSessionContinuitySettings = (
+const normalizeCodexSessionContinuitySettings = (
   value: unknown
 ): CodexSessionContinuitySettings => {
   if (!isRecord(value)) {

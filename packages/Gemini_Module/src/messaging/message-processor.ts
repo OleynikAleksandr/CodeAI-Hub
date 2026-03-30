@@ -24,8 +24,6 @@ interface GeminiMessageProcessorOptions {
   readonly thoughtTranslator?: ThoughtTranslatorService;
 }
 
-export { formatGeminiStreamErrorMessage } from "./gemini-stream-error";
-
 export class GeminiMessageProcessor {
   private readonly assistantNormalizer: GeminiAssistantEventNormalizer;
   private readonly router: GeminiStreamEventRouter;

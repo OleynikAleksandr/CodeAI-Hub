@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { SessionSnapshot } from "../../../../types/session";
 import {
-  resolveLatestUsageLimitsForProvider,
   updateSnapshotsWithUsageLimits,
 } from "./usage-limits-stream";
 
@@ -140,34 +139,3 @@ test("updateSnapshotsWithUsageLimits propagates latest limits to all sessions of
   assert.equal(next.s3.status.usageLimits, undefined);
 });
 
-test("resolveLatestUsageLimitsForProvider returns newest limits in provider scope", () => {
-  const snapshots = {
-    s1: createSnapshot({
-      providerSummary: "Claude",
-      updatedAt: 10,
-      usageLimits: {
-        currentSession: { percentUsed: 6, resetsAt: "2026-02-12T16:00:00.000Z" },
-      },
-    }),
-    s2: createSnapshot({
-      providerSummary: "Claude",
-      updatedAt: 20,
-      usageLimits: {
-        currentSession: { percentUsed: 9, resetsAt: "2026-02-12T17:00:00.000Z" },
-      },
-    }),
-    s3: createSnapshot({
-      providerSummary: "Codex",
-      updatedAt: 30,
-      usageLimits: {
-        currentSession: { percentUsed: 88, resetsAt: "2026-02-13T10:00:00.000Z" },
-      },
-    }),
-  };
-
-  const latestClaude = resolveLatestUsageLimitsForProvider(snapshots, "Claude");
-  const latestCodex = resolveLatestUsageLimitsForProvider(snapshots, "Codex");
-
-  assert.equal(latestClaude?.currentSession?.percentUsed, 9);
-  assert.equal(latestCodex?.currentSession?.percentUsed, 88);
-});

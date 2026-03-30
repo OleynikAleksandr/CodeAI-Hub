@@ -90,7 +90,7 @@ const mapGeminiSessionContinuitySettings = (
   return { contextWindowTokenLimit, remainingPercentThreshold };
 };
 
-export const mapGeminiThinkingLevelByModel = (
+const mapGeminiThinkingLevelByModel = (
   value: unknown
 ): GeminiThinkingByModel => {
   const nextThinkingLevelByModel = {

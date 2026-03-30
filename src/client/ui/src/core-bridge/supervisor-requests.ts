@@ -19,10 +19,6 @@ let coreStopRequestedByUser = false;
 
 export const isCoreStopRequestedByUser = (): boolean => coreStopRequestedByUser;
 
-export const clearCoreStopRequestedByUser = (): void => {
-  coreStopRequestedByUser = false;
-};
-
 const tryRequestCoreFromVsCode = (type: string): boolean => {
   const api = (window as BridgeWindow).acquireVsCodeApi?.();
   if (!api) {

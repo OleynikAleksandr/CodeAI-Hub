@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   getDefaultProviderTitle,
   type ProviderStackId,
@@ -91,42 +90,6 @@ export const resolveActiveSessionSnapshot = (options: {
   return snapshot ?? null;
 };
 
-export const useAgentWorkingIndicator = (options: {
-  readonly activeSessionId: string | null;
-  readonly lastMessageRole: string | null;
-  readonly lastMessageCreatedAt: number | null;
-}): boolean => {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setVisible(false);
-
-    if (
-      !options.activeSessionId ||
-      options.lastMessageRole !== "user" ||
-      !options.lastMessageCreatedAt
-    ) {
-      return;
-    }
-
-    const elapsedMs = Date.now() - options.lastMessageCreatedAt;
-    const delayMs = Math.max(0, 10_000 - elapsedMs);
-    const timer = window.setTimeout(() => {
-      setVisible(true);
-    }, delayMs);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [
-    options.activeSessionId,
-    options.lastMessageCreatedAt,
-    options.lastMessageRole,
-  ]);
-
-  return visible;
-};
-
 interface SessionHeaderProps {
   readonly activeSessionId: string | null;
   readonly onCloseSession: (sessionId: string) => void;
@@ -164,40 +127,6 @@ export const resolveProviderDisplayLabel = (options: {
     options.providerLabels.get(options.providerId) ??
     getDefaultProviderTitle(options.providerId)
   );
-};
-
-export const computeFallbackContinuationIndex = (options: {
-  readonly record: SessionRecord | null;
-  readonly sessions: readonly SessionRecord[];
-}): number | null => {
-  const record = options.record;
-  if (!record) {
-    return null;
-  }
-  if (!record.continuationParentId) {
-    return 1;
-  }
-
-  const sessionsById = new Map(
-    options.sessions.map((session) => [session.id, session] as const)
-  );
-  const visited = new Set<string>();
-  let index = 1;
-  let cursor: SessionRecord | undefined = record;
-
-  while (cursor?.continuationParentId) {
-    if (visited.has(cursor.id)) {
-      break;
-    }
-    visited.add(cursor.id);
-    index += 1;
-    cursor = sessionsById.get(cursor.continuationParentId);
-    if (!cursor) {
-      break;
-    }
-  }
-
-  return Math.max(index, 2);
 };
 
 interface MessageWithSegmentIndex {

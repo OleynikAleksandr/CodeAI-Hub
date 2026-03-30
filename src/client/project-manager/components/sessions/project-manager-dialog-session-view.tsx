@@ -5,7 +5,7 @@ import { useProjectManagerDialogSessionController } from "./use-project-manager-
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
 export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
-export const ProjectManagerDialogSessionView = (props: {
+const ProjectManagerDialogSessionView = (props: {
   readonly intent: DialogOpenIntent | null;
   readonly onExit: () => void;
   readonly emptyStatePending?: boolean;

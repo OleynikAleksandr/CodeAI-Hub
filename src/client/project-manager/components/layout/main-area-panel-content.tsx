@@ -24,7 +24,7 @@ interface SelectedArtifact {
   readonly label: string;
 }
 
-export const renderStagePanel = (
+const renderStagePanel = (
   Panel: React.FC<{
     readonly workspacePath: string;
     readonly workspaceSlug: string;

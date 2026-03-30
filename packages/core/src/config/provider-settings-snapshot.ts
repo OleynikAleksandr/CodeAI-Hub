@@ -62,12 +62,6 @@ const loadProviderSnapshot = (
   return provider;
 };
 
-export const loadProviderSettingsSnapshot = (
-  settingsPath: string,
-  providerId: string
-): Record<string, unknown> | null =>
-  loadProviderSnapshot(settingsPath, providerId);
-
 export const loadCodexSettingsSnapshot = (
   settingsPath: string
 ): CodexSettingsSnapshot | null => {

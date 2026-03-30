@@ -3,7 +3,7 @@ import { EventEmitter } from "node:events";
 import test from "node:test";
 import type { ActiveSession } from "../session/types";
 import { applyCodexTurnRuntimeConfig } from "./codex-applied-turn-config";
-import { waitForNextResultWithIdlePulses } from "./message-processor";
+import { waitForNextResultWithIdlePulses } from "./codex-async-helpers";
 
 const STREAM_FAILED_RE = /stream failed/;
 

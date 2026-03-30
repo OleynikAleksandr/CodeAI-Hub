@@ -12,7 +12,7 @@ interface FieldMeta {
   readonly titleHint?: string;
 }
 
-export const FIELD_REGEX =
+const FIELD_REGEX =
   /<!--\s*field:([^\s]+)\s*-->([\s\S]*?)<!--\s*\/field\s*-->/g;
 
 const HEADING_PREFIX_RE = /^#+\s*/;

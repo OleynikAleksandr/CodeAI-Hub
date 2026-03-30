@@ -3,10 +3,8 @@ import { EventEmitter } from "node:events";
 import test from "node:test";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { ActiveSession } from "../session/types";
-import {
-  formatGeminiStreamErrorMessage,
-  GeminiMessageProcessor,
-} from "./message-processor";
+import { formatGeminiStreamErrorMessage } from "./gemini-stream-error";
+import { GeminiMessageProcessor } from "./message-processor";
 
 const createModules = (): GeminiCliModules =>
   ({

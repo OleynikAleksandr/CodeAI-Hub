@@ -63,7 +63,7 @@
   "scripts": {
     "check:architecture": "./scripts/check-architecture.sh",
     "lint": "npx ultracite check",
-    "check:tsprune": "ts-prune",
+    "check:knip": "knip",
     "check:dup": "npm run -s check:dup:repo",
     "check:dup:repo": "jscpd --threshold 3 --silent --reporters console src --ignore \"**/node_modules/**\"",
     "check:links": "node ./scripts/check-markdown-links.js",
@@ -101,10 +101,10 @@
     "@types/vscode": "^1.85.0",
     "esbuild": "^0.27.2",
     "jscpd": "4.0.5",
+    "knip": "^6.1.0",
     "markdown-link-check": "^3.14.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "ts-prune": "0.10.3",
     "typescript": "^5.6.3",
     "zod-to-json-schema": "^3.24.6"
   },

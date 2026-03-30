@@ -24,7 +24,7 @@ const INITIAL_STATE: WorkflowStateStoreState = {
  * Both MainArea and WorkspaceTree subscribe to the same store,
  * eliminating the split-brain caused by two independent polling cycles.
  */
-export class WorkflowStateStore {
+class WorkflowStateStore {
   private state: WorkflowStateStoreState = INITIAL_STATE;
   private readonly listeners = new Set<() => void>();
   private timer = 0;

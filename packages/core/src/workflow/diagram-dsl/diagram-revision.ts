@@ -4,10 +4,7 @@ const REVISION_LINE_RE = /^- Revision: .+$/m;
 
 export const DIAGRAM_REVISION_PLACEHOLDER = "00000000";
 
-export const replaceDiagramRevision = (
-  content: string,
-  revision: string
-): string => {
+const replaceDiagramRevision = (content: string, revision: string): string => {
   const revisionLine = `- Revision: ${revision}`;
   return REVISION_LINE_RE.test(content)
     ? content.replace(REVISION_LINE_RE, revisionLine)
@@ -24,7 +21,4 @@ export const materializeDiagramRevision = (
   };
 };
 
-export {
-  computeDiagramRevision,
-  normalizeMarkdownDsl,
-} from "./markdown-dsl-shared";
+export { computeDiagramRevision } from "./markdown-dsl-shared";

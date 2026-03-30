@@ -1,4 +1,3 @@
-import { useSyncExternalStore } from "react";
 import type {
   WorkspaceSelectAckPayload,
   WorkspaceSnapshot,
@@ -19,7 +18,7 @@ const INITIAL_STATE: WorkspaceSnapshotStoreState = {
   currentSnapshot: null,
 };
 
-export class WorkspaceSnapshotStore {
+class WorkspaceSnapshotStore {
   private state: WorkspaceSnapshotStoreState = INITIAL_STATE;
   private readonly listeners = new Set<() => void>();
 
@@ -103,10 +102,3 @@ export class WorkspaceSnapshotStore {
 }
 
 export const workspaceSnapshotStore = new WorkspaceSnapshotStore();
-
-export const useWorkspaceSnapshot = (): WorkspaceSnapshotStoreState =>
-  useSyncExternalStore(
-    workspaceSnapshotStore.subscribe.bind(workspaceSnapshotStore),
-    workspaceSnapshotStore.getState.bind(workspaceSnapshotStore),
-    workspaceSnapshotStore.getState.bind(workspaceSnapshotStore)
-  );

@@ -215,32 +215,6 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
     },
   });
 };
-export const sendChatMessage = (
-  sessionId: string,
-  content: string,
-  turnOptions?: Record<string, unknown>
-): void => {
-  if (!content.trim()) {
-    return;
-  }
-  const messageContent = turnOptions ? { text: content, turnOptions } : content;
-  enqueueMessage({
-    type: "session:message",
-    payload: {
-      sessionId,
-      content: messageContent,
-    },
-  });
-};
-export const deleteSession = (sessionId: string): void => {
-  enqueueMessage({
-    type: "session:delete",
-    payload: {
-      sessionId,
-    },
-  });
-};
-
 export const stopSession = (sessionId: string): void => {
   enqueueMessage({
     type: "session:stop",

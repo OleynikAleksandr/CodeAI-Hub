@@ -42,7 +42,7 @@ const toHeaderMap = (
   return normalized;
 };
 
-export const pickClaudeRateLimitHeaders = (
+const pickClaudeRateLimitHeaders = (
   headers: Headers | ReadonlyMap<string, string>
 ): ReadonlyMap<string, string> => {
   const selected = new Map<string, string>();

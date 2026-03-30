@@ -60,7 +60,7 @@ export const toLines = (content: string): readonly Line[] =>
     .split("\n")
     .map((text, index) => ({ number: index + 1, text }));
 
-export const normalizeMarkdownDsl = (content: string): string => {
+const normalizeMarkdownDsl = (content: string): string => {
   const out: string[] = [];
   let lastBlank = false;
 

@@ -13,25 +13,3 @@ export const buildProviderUsageLimitScopeKey = (options: {
   readonly providerSessionId: string | null;
 }): string =>
   `${normalizeProviderId(options.providerId)}:${normalizeProviderSessionId(options.providerSessionId)}`;
-
-export const normalizeProviderUsageLimitScopeKey = (
-  value: string | null | undefined
-): string => {
-  const trimmed = value?.trim() ?? "";
-  if (!trimmed) {
-    return "";
-  }
-
-  const separatorIndex = trimmed.indexOf(":");
-  if (separatorIndex <= 0) {
-    return "";
-  }
-
-  const providerId = trimmed.slice(0, separatorIndex).trim().toLowerCase();
-  const providerSessionId = trimmed.slice(separatorIndex + 1).trim();
-  if (!providerId) {
-    return "";
-  }
-
-  return `${providerId}:${providerSessionId || GLOBAL_SCOPE_SUFFIX}`;
-};

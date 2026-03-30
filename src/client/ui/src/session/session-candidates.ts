@@ -10,7 +10,7 @@ export const providerIdSet = new Set<ProviderStackId>([
   "geminiCli",
 ]);
 
-export const isProviderDescriptorCandidate = (
+const isProviderDescriptorCandidate = (
   value: unknown
 ): value is ProviderStackDescriptor => {
   if (!value || typeof value !== "object") {

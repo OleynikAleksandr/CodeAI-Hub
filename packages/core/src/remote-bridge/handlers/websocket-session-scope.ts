@@ -62,7 +62,7 @@ export const parseWorkspaceScopeSetPayload = (
   return { ok: true, requestId, workspacePath };
 };
 
-export const isSessionEvent = (event: BridgeEvent): boolean =>
+const isSessionEvent = (event: BridgeEvent): boolean =>
   event.type === "session:created" ||
   event.type === "session:message" ||
   event.type === "session:binding" ||
@@ -71,7 +71,7 @@ export const isSessionEvent = (event: BridgeEvent): boolean =>
   event.type === "session:error" ||
   event.type === "dialog:message";
 
-export const resolveEventSessionId = (event: BridgeEvent): string | null => {
+const resolveEventSessionId = (event: BridgeEvent): string | null => {
   if (
     event.type === "session:binding" ||
     event.type === "session:deleted" ||
@@ -90,7 +90,7 @@ export const resolveEventSessionId = (event: BridgeEvent): string | null => {
   return null;
 };
 
-export const resolveEventWorkspacePath = (
+const resolveEventWorkspacePath = (
   event: BridgeEvent,
   sessionWorkspaceById: ReadonlyMap<string, string>
 ): string | null => {

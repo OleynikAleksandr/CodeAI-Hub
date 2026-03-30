@@ -75,14 +75,3 @@ export const extractLatestSnapshotFromRollout = (
   }
   return null;
 };
-
-export const calculateRemainingPercent = (payload: {
-  readonly used: number;
-  readonly limit: number;
-}): number => {
-  if (payload.limit === 0) {
-    return 0;
-  }
-  const remaining = payload.limit - payload.used;
-  return Math.round((remaining / payload.limit) * 100);
-};

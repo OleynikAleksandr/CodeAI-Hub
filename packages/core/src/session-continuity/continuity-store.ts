@@ -44,7 +44,7 @@ const writeJson = async (filePath: string, value: unknown): Promise<void> => {
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 };
 
-export const buildContinuityChainPath = (options: {
+const buildContinuityChainPath = (options: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
   readonly stage: string | null | undefined;

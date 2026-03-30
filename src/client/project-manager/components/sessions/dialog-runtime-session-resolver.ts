@@ -31,11 +31,3 @@ export const resolveRuntimeSessionFromWorkspaceSnapshot = (options: {
     ? { runtimeSessionId: fallback[0], hasRuntimeSession: true }
     : { runtimeSessionId: options.preferredSessionId, hasRuntimeSession: false };
 };
-
-export const resolveRuntimeSessionIdFromWorkspaceSnapshot = (options: {
-  readonly payload: WorkspaceSnapshotPushPayload | null;
-  readonly preferredSessionId: string;
-  readonly dialogId: string;
-  readonly providerSessionId: string | null;
-}): string =>
-  resolveRuntimeSessionFromWorkspaceSnapshot(options).runtimeSessionId;

@@ -5,7 +5,7 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 
 export const CLAUDE_OAUTH_ENV_KEY = "CLAUDE_CODE_OAUTH_TOKEN";
-export const CLAUDE_OAUTH_STORE_SERVICE = "Claude Code-credentials";
+const CLAUDE_OAUTH_STORE_SERVICE = "Claude Code-credentials";
 const MAC_SECURITY = "/usr/bin/security";
 const WINDOWS_POWERSHELL = "powershell.exe";
 const TOKEN_FIELD_CANDIDATES = [

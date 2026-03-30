@@ -30,7 +30,7 @@ Required structure:
 ## Gates / Builds (last known)
 - `./scripts/check-architecture.sh`: <OK/FAIL/NOT RUN>
 - `npx ultracite check`: <OK/FAIL/NOT RUN>
-- `npx ts-prune`: <OK/FAIL/NOT RUN>
+- `npx knip`: <OK/FAIL/NOT RUN>
 - `npx jscpd ...`: <OK/FAIL/NOT RUN>
 - `npm run check:links`: <OK/FAIL/NOT RUN>
 - Target build: <command>: <OK/FAIL/NOT RUN>

@@ -1,4 +1,1 @@
-export {
-  buildQuestionnaireSubmissionMessage as buildDescriptionQuestionnaireSubmissionMessage,
-  notifyMissingIdeaContext as notifyMissingDescriptionContext,
-} from "./idea-questionnaire-messages";
+export { notifyMissingIdeaContext as notifyMissingDescriptionContext } from "./idea-questionnaire-messages";

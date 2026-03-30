@@ -36,13 +36,3 @@ export class GeminiUsageLimitsFacade {
     return await this.#quotaApiReader.read(params);
   }
 }
-
-export const createGeminiUsageLimitsReader = (
-  facade: GeminiUsageLimitsFacade = new GeminiUsageLimitsFacade()
-): {
-  read(
-    params: ReadProviderUsageLimitsParams
-  ): Promise<ProviderUsageLimitsSnapshot | null>;
-} => ({
-  read: async (params) => await facade.read(params),
-});

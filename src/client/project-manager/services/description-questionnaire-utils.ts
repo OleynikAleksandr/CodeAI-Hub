@@ -100,9 +100,6 @@ const buildDefaults = (
   "meta.title": workspaceName,
 });
 
-const resolveQuestionnairePath = (workspaceSlug: string): string =>
-  `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
-
 export type {
   QuestionnaireLoadResult,
   QuestionnaireSnapshot,
@@ -117,7 +114,6 @@ export {
   isWorkspaceSessionResponse,
   joinUrl,
   resolveCoreHttpUrl,
-  resolveQuestionnairePath,
   resolveWorkspaceName,
   toWorkspaceSlug,
 };

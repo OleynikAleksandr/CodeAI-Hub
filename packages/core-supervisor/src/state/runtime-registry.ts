@@ -25,7 +25,7 @@ const ensureStateDir = async (): Promise<void> => {
   await fs.mkdir(STATE_DIR, { recursive: true });
 };
 
-export const readRuntimeRegistry = async (): Promise<RuntimeRegistry> => {
+const readRuntimeRegistry = async (): Promise<RuntimeRegistry> => {
   try {
     const raw = await fs.readFile(RUNTIME_REGISTRY_FILE, "utf8");
     return JSON.parse(raw) as RuntimeRegistry;
@@ -66,10 +66,4 @@ export const clearCorePortPreference = async (): Promise<void> => {
     updatedAt: new Date().toISOString(),
   };
   await writeRuntimeRegistry(registry);
-};
-
-export const readPreferredCorePort = async (): Promise<number | undefined> => {
-  const registry = await readRuntimeRegistry();
-  const port = registry.network?.corePort;
-  return typeof port === "number" && Number.isFinite(port) ? port : undefined;
 };

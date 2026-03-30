@@ -10,7 +10,7 @@ export interface GeneralResponsePolicySettings {
   readonly strictOutput: GeneralStrictOutputSettings;
 }
 
-export const DEFAULT_STRICT_OUTPUT_SCHEMA = {
+const DEFAULT_STRICT_OUTPUT_SCHEMA = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -28,7 +28,7 @@ export const DEFAULT_STRICT_OUTPUT_SCHEMA_TEXT = `${JSON.stringify(
   2
 )}\n`;
 
-export const DEFAULT_STRICT_OUTPUT_INSTRUCTION_TEXT = [
+const DEFAULT_STRICT_OUTPUT_INSTRUCTION_TEXT = [
   "You must respond with a JSON object that matches the provided schema.",
   "Populate the field:",
   "- answer: the user-facing answer.",

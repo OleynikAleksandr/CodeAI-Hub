@@ -30,7 +30,7 @@ type CoreEventListener = (message: IncomingMessage) => void;
 
 const vscode = resolveVscodeBridge();
 
-export class ProjectManagerApi {
+class ProjectManagerApi {
   private socket: WebSocket | null = null;
   private readonly listeners = new Set<ProjectListener>();
   private readonly coreListeners = new Set<CoreEventListener>();

@@ -20,7 +20,7 @@ const getPlatformSpecificRequiredPaths = (
   return [];
 };
 
-export const getRequiredLauncherPaths = (
+const getRequiredLauncherPaths = (
   installDir: string,
   platform: PlatformKey
 ): string[] => [

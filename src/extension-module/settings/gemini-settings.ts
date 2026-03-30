@@ -23,10 +23,10 @@ export interface GeminiSettings {
   readonly thinkingLevelByModel: Record<string, GeminiThinkingLevel>;
 }
 
-export const MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-export const MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
-export const MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 10_000;
-export const MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1_000_000;
+const MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+const MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+const MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 10_000;
+const MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1_000_000;
 
 export const DEFAULT_GEMINI_SETTINGS: GeminiSettings = {
   autoUpdate: DEFAULT_AUTO_UPDATE_SETTINGS,
@@ -75,7 +75,7 @@ const clampContextWindowTokenLimit = (value: number): number =>
     Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
   );
 
-export const normalizeGeminiSessionContinuitySettings = (
+const normalizeGeminiSessionContinuitySettings = (
   value: unknown
 ): GeminiSessionContinuitySettings => {
   if (!isRecord(value)) {

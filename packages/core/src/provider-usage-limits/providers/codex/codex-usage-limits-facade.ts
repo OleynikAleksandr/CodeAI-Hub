@@ -72,13 +72,3 @@ export class CodexUsageLimitsFacade {
     });
   }
 }
-
-export const createCodexUsageLimitsReader = (
-  facade: CodexUsageLimitsFacade = new CodexUsageLimitsFacade()
-): {
-  read(
-    params: ReadProviderUsageLimitsParams
-  ): Promise<ProviderUsageLimitsSnapshot | null>;
-} => ({
-  read: async (params) => await facade.read(params),
-});

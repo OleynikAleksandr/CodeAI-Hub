@@ -1,4 +1,4 @@
-export const DEFAULT_CORE_HOST = "127.0.0.1";
+const DEFAULT_CORE_HOST = "127.0.0.1";
 export const DEFAULT_CORE_PORT = 8080;
 export const CORE_HOST = process.env.CODEAI_CORE_HOST ?? DEFAULT_CORE_HOST;
 export const ENV_CORE_PORT = Number(

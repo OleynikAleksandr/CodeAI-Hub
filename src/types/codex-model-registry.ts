@@ -79,11 +79,6 @@ export type CodexModelDescriptor =
   | CodexRecommendedModelDescriptor
   | CodexLegacyModelDescriptor;
 
-export const CODEX_ALL_MODELS: readonly CodexModelDescriptor[] = [
-  ...CODEX_RECOMMENDED_MODELS,
-  ...CODEX_LEGACY_MODELS,
-];
-
 export const DEFAULT_CODEX_MODEL_ID: CodexRecommendedModelId = "gpt-5.3-codex";
 
 export type CodexReasoningLevel = "low" | "medium" | "high" | "xhigh";

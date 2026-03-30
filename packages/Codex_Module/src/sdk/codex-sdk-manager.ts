@@ -35,20 +35,8 @@ interface CodexManagerDependencies {
   readonly workspace: CodexWorkspaceOptions;
 }
 
-const normalizeOptionalString = (value: unknown): string | undefined =>
-  typeof value === "string" && value.trim() ? value.trim() : undefined;
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
-
-export const resolvePreferredCodexDefaultModel = (options: {
-  readonly settingsDefaultModel?: string;
-  readonly envDefaultModel?: string;
-  readonly fallbackModel?: string;
-}): string | undefined =>
-  options.settingsDefaultModel ??
-  normalizeOptionalString(options.envDefaultModel) ??
-  options.fallbackModel;
 
 const removeModelMigrationFromConfigToml = (
   raw: string

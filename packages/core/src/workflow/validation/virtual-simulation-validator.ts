@@ -31,9 +31,7 @@ const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE =
   /^(?:#{1,6}\s+)?(?:Сценарий|Scenario)\s+\d+\b/gm;
 
-export const validateVirtualSimulationMarkdown = (
-  content: string
-): string | null => {
+const validateVirtualSimulationMarkdown = (content: string): string | null => {
   if (content.trim().length === 0) {
     return "virtual-simulation markdown is empty";
   }

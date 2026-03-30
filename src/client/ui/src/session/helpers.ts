@@ -11,7 +11,6 @@ import type {
   SessionStatusInfo,
 } from "../../../../types/session";
 import type { Settings } from "../components/settings/settings-state-model";
-import type { CoreBridgeSessionMessagePayload } from "../core-bridge/types";
 import { buildModelInfoList } from "./model-info-builder";
 import { readLastKnownTokenUsage } from "./token-usage-cache";
 import { readLastKnownUsageLimits } from "./usage-limits-cache";
@@ -32,13 +31,12 @@ export const mergeCatalog = (
 };
 
 export {
-  isProviderDescriptorCandidate,
   isSessionRecordCandidate,
   parseProviderList,
   providerIdSet,
 } from "./session-candidates";
 
-export const createDefaultBinding = (): SessionBindingInfo => ({
+const createDefaultBinding = (): SessionBindingInfo => ({
   providerSessionId: null,
   status: "pending",
 });
@@ -87,7 +85,7 @@ export const normalizeBinding = (
   };
 };
 
-export const resolveSessionUsageLimitScopeKey = (
+const resolveSessionUsageLimitScopeKey = (
   session: Pick<SessionRecord, "providerIds" | "binding">
 ): string | null =>
   buildUsageLimitScopeKey(
@@ -212,23 +210,6 @@ export const removeSnapshot = (
 };
 
 export type SessionSnapshots = Record<string, SessionSnapshot>;
-
-export const appendMessageToSnapshots = (
-  snapshots: SessionSnapshots,
-  payload: CoreBridgeSessionMessagePayload
-): SessionSnapshots => {
-  const snapshot = snapshots[payload.sessionId];
-  if (!snapshot) {
-    return snapshots;
-  }
-  return {
-    ...snapshots,
-    [payload.sessionId]: {
-      ...snapshot,
-      messages: [...snapshot.messages, payload.message],
-    },
-  } satisfies SessionSnapshots;
-};
 
 export const mergeHistoryIntoSnapshots = (
   snapshots: SessionSnapshots,

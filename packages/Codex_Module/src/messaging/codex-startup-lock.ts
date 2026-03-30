@@ -17,7 +17,7 @@ interface QueueEntry {
 
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 30_000;
 
-export class CodexStartupLock {
+class CodexStartupLock {
   private active = false;
   private readonly queue: QueueEntry[] = [];
 

@@ -28,27 +28,27 @@ export interface InstallMarker {
   readonly platform: PlatformKey;
 }
 
-export const INSTALL_MARKER_FILE = "install.json";
-export const DOWNLOADS_DIR_NAME = "downloads";
-export const LAUNCHER_LABEL = "CodeAIHubLauncher";
+const INSTALL_MARKER_FILE = "install.json";
+const DOWNLOADS_DIR_NAME = "downloads";
+const LAUNCHER_LABEL = "CodeAIHubLauncher";
 
-export const pathExists = async (targetPath: string): Promise<boolean> =>
+const pathExists = async (targetPath: string): Promise<boolean> =>
   fs.access(targetPath).then(
     () => true,
     () => false
   );
 
-export const toErrorMessage = (error: unknown): string =>
+const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-export const getBaseInstallDir = async (): Promise<string> => {
+const getBaseInstallDir = async (): Promise<string> => {
   const homeDir = process.env.HOME ?? tmpdir();
   const baseDir = path.join(homeDir, ".codeai-hub", "packages", "launcher");
   await ensureDirectory(baseDir);
   return baseDir;
 };
 
-export const getLegacyBaseInstallDir = async (): Promise<string> => {
+const getLegacyBaseInstallDir = async (): Promise<string> => {
   const homeDir = process.env.HOME ?? tmpdir();
   const legacyDir = path.join(homeDir, ".codeai-hub", "cef-launcher");
   await ensureDirectory(legacyDir);
@@ -75,7 +75,7 @@ export const getInstallPaths = async (
   return { platformDir, installDir, legacyPlatformDir, legacyInstallDir };
 };
 
-export const loadInstallMarker = async (
+const loadInstallMarker = async (
   installDir: string
 ): Promise<InstallMarker | null> => {
   try {
@@ -86,12 +86,10 @@ export const loadInstallMarker = async (
   }
 };
 
-export const getExecutablePath = (
-  installDir: string,
-  platform: PlatformKey
-): string => path.join(installDir, getLauncherExecutableRelativePath(platform));
+const getExecutablePath = (installDir: string, platform: PlatformKey): string =>
+  path.join(installDir, getLauncherExecutableRelativePath(platform));
 
-export const verifyExistingInstall = async (
+const verifyExistingInstall = async (
   installDir: string,
   manifestEntry: LauncherManifestEntry,
   platform: PlatformKey

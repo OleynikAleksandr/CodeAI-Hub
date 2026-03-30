@@ -274,22 +274,3 @@ export const createSystemSessionMessage = (
   content,
   createdAt: Date.now(),
 });
-
-export const extractIdeaContractQuestionnaireTemplate = (
-  contract: Record<string, unknown> | null
-): string | null => {
-  if (!contract) {
-    return null;
-  }
-  const questionnaire = isRecord(contract.questionnaire)
-    ? contract.questionnaire
-    : null;
-  if (!questionnaire) {
-    return null;
-  }
-  const templateMarkdown = questionnaire.templateMarkdown;
-  return typeof templateMarkdown === "string" &&
-    templateMarkdown.trim().length > 0
-    ? templateMarkdown
-    : null;
-};

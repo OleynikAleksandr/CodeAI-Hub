@@ -61,7 +61,7 @@ const resolveInstalledProviderPathByScan = (
   }
 };
 
-export const resolveInstalledProviderPath = (
+const resolveInstalledProviderPath = (
   providerId: ProviderModuleId
 ): string | null => {
   const providerRoot = path.join(PROVIDERS_ROOT, providerId);

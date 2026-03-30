@@ -23,7 +23,7 @@ type ProjectManagerSessionViewProps = {
   readonly preferredSessionId?: string | null;
   readonly emptyStatePending?: boolean;
 };
-export const ProjectManagerRuntimeSessionView = ({
+const ProjectManagerRuntimeSessionView = ({
   workspacePath,
   preferredSessionId,
   emptyStatePending = false,

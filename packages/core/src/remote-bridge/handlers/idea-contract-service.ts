@@ -346,7 +346,3 @@ export const buildVirtualSimulationContract =
 export const buildDiagramModulesContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(DIAGRAM_MODULES_TEMPLATE_PATHS);
-
-// Legacy endpoint alias for disabled Idea flows. The canonical first workflow step
-// is Description, and this alias is no longer backed by a separate idea-collector package.
-export const buildIdeaContract = buildDescriptionContract;

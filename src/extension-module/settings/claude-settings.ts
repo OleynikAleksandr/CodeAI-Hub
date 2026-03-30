@@ -26,17 +26,17 @@ export interface ClaudeSettings {
   readonly thinking: ClaudeThinkingSettings;
 }
 
-export const MIN_THINKING_TOKENS = 2000;
-export const MAX_THINKING_TOKENS = 32_000;
-export const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-export const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+const MIN_THINKING_TOKENS = 2000;
+const MAX_THINKING_TOKENS = 32_000;
+const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 
-export const DEFAULT_CLAUDE_THINKING_SETTINGS: ClaudeThinkingSettings = {
+const DEFAULT_CLAUDE_THINKING_SETTINGS: ClaudeThinkingSettings = {
   enabled: false,
   maxTokens: 4000,
 };
 
-export const DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS: ClaudeSessionContinuitySettings =
+const DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS: ClaudeSessionContinuitySettings =
   {
     remainingPercentThreshold: 30,
   };
@@ -79,7 +79,7 @@ export const normalizeClaudeThinkingSettings = (
   };
 };
 
-export const normalizeClaudeSessionContinuitySettings = (
+const normalizeClaudeSessionContinuitySettings = (
   value: unknown
 ): ClaudeSessionContinuitySettings => {
   if (!isRecord(value)) {

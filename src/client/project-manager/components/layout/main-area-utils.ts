@@ -17,7 +17,7 @@ const STAGE_TO_TOOL_MAP: Readonly<Record<WorkflowStageId, string>> = {
   diagram_modules: "Diagram Modules",
 };
 
-export const resolveStageByTool = (tool: string): string | null =>
+const resolveStageByTool = (tool: string): string | null =>
   TOOL_TO_STAGE_MAP[tool] ?? null;
 
 export const dispatchStageActivated = (tool: string): void => {

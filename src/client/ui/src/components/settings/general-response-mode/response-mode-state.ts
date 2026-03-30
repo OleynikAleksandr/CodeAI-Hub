@@ -43,7 +43,7 @@ const DEFAULT_STRICT_OUTPUT_INSTRUCTION_TEXT = [
   "User request:",
 ].join("\n");
 
-export const DEFAULT_GENERAL_RESPONSE_POLICY: GeneralResponsePolicySettings = {
+const DEFAULT_GENERAL_RESPONSE_POLICY: GeneralResponsePolicySettings = {
   mode: "hybrid",
   strictOutput: {
     schemaText: DEFAULT_STRICT_OUTPUT_SCHEMA_TEXT,

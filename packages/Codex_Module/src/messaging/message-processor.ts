@@ -20,8 +20,6 @@ import { CodexTokenUsageSync } from "./codex-token-usage-sync";
 import { CodexUsageSync } from "./codex-usage-sync";
 import { StructuredOutputStreamController } from "./structured-output-stream-controller";
 
-export { waitForNextResultWithIdlePulses } from "./codex-async-helpers";
-
 export class CodexMessageProcessor {
   private readonly consumer: CodexEventStreamConsumer;
   private readonly emitter: CodexSessionEventEmitter;

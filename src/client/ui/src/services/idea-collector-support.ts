@@ -8,17 +8,6 @@ const generateLocalMessageId = (): string => {
   return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
-export const resolveCoreHttpUrl = (): string | null => {
-  const globalScope = window as typeof window & {
-    __CODEAI_CORE_CONFIG?: { readonly httpUrl?: string };
-  };
-  const httpUrl = globalScope.__CODEAI_CORE_CONFIG?.httpUrl;
-  if (typeof httpUrl !== "string" || httpUrl.length === 0) {
-    return null;
-  }
-  return httpUrl;
-};
-
 export const joinUrl = (baseUrl: string, path: string): string =>
   baseUrl.endsWith("/")
     ? `${baseUrl.slice(0, -1)}${path}`

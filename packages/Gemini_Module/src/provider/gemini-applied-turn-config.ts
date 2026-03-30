@@ -18,7 +18,7 @@ const readOptionalTrimmedString = (value: unknown): string | undefined =>
     ? value.trim()
     : undefined;
 
-export const readAppliedGeminiTurnConfig = (
+const readAppliedGeminiTurnConfig = (
   turnOptions?: Record<string, unknown>
 ): AppliedGeminiTurnConfig | null => {
   const candidate = turnOptions?.__codeaiAppliedTurnConfig;

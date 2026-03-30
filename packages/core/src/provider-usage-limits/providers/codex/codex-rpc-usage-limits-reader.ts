@@ -11,7 +11,7 @@ import {
   extractCodexUsageLimitsSnapshotFromRateLimits,
 } from "./codex-usage-limits-normalizer";
 
-export const CODEAI_CODEX_RATE_LIMITS_PAYLOAD_ENV_KEY =
+const CODEAI_CODEX_RATE_LIMITS_PAYLOAD_ENV_KEY =
   "CODEAI_CODEX_RATE_LIMITS_PAYLOAD";
 const CODEAI_CODEX_CLI_PATH_ENV_KEY = "CODEAI_CODEX_CLI_PATH";
 const DEFAULT_APP_SERVER_TIMEOUT_MS = 10_000;

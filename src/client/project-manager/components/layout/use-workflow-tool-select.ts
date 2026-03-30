@@ -6,7 +6,7 @@ import { resolvePreferredWorkflowProviderId } from "../../services/workflow-prov
 import { resolveWorkspaceSlug } from "./main-area-utils";
 
 export const VIRTUAL_SIMULATION_TOOL_LABEL = "VIRTUAL SIMULATION" as const;
-export const DIAGRAM_MODULES_TOOL_LABEL = "Diagram Modules" as const;
+const DIAGRAM_MODULES_TOOL_LABEL = "Diagram Modules" as const;
 
 type DiagramStageToolLabel = typeof DIAGRAM_MODULES_TOOL_LABEL;
 
