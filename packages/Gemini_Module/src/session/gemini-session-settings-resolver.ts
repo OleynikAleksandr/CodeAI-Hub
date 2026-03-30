@@ -132,8 +132,7 @@ export class GeminiSessionSettingsResolver {
       fakeResponses: undefined,
       recordResponses: undefined,
       thinkingLevel: options.thinkingLevel,
-      // biome-ignore lint/suspicious/noExplicitAny: custom property thinkingLevel
-    } as any as CliArgs;
+    } as unknown as CliArgs;
   }
 
   private loadSettingsSnapshot(

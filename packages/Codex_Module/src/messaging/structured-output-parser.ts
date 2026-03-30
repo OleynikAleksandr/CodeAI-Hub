@@ -77,11 +77,7 @@ export const resolveTurnConfig = (
   if (
     isRecord(schema) &&
     ((isRecord(schema.properties) &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: TS lib target lacks Object.hasOwn.
-      Object.prototype.hasOwnProperty.call(
-        schema.properties,
-        "suggested_response"
-      )) ||
+      "suggested_response" in schema.properties) ||
       (Array.isArray(schema.required) &&
         schema.required.includes("suggested_response")))
   ) {

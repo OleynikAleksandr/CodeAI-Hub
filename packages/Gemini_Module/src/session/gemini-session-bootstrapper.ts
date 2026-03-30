@@ -174,8 +174,9 @@ export class GeminiSessionBootstrapper {
     client[GEMINI_START_CHAT_PATCH_FLAG] = true;
     const originalStartChat = client.startChat.bind(client);
 
-    // biome-ignore lint/suspicious/noExplicitAny: overriding library method
-    client.startChat = async (...args: any[]) => {
+    client.startChat = async (
+      ...args: Parameters<typeof originalStartChat>
+    ) => {
       const chat = await originalStartChat(...args);
       const chatAny = chat as unknown as {
         generationConfig?: {
