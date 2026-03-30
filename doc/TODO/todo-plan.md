@@ -41,11 +41,11 @@ Goal: устранить сценарий, в котором Gemini turn виз�
 6. [DONE] Git Commit: `fix(gemini): separate thinking messages from terminal assistant answer` (hash: `70a4d7ac`)
 
 ### Stream: Gemini Stalled Turn Policy
-7. [IN_PROGRESS] Gemini_Module: сделать stalled-turn outcome Gemini-specific — если terminal answer уже был, late silent gap не должен ломать turn; если были только thoughts, timeout обязан вести к explicit failure. Scope: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): gate stalled turn outcome by terminal answer presence`
-8. [TODO] Git Commit: `fix(gemini): gate stalled turn outcome by terminal answer presence` (hash: TBD)
+7. [DONE] Gemini_Module: сделать stalled-turn outcome Gemini-specific — если terminal answer уже был, late silent gap не должен ломать turn; если были только thoughts, timeout обязан вести к explicit failure. Scope: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): gate stalled turn outcome by terminal answer presence`
+8. [DONE] Git Commit: `fix(gemini): gate stalled turn outcome by terminal answer presence` (hash: `0fe3d203`)
 
 ### Stream: Failure Visibility In History
-9. [TODO] Core: materialize-ить recoverable Gemini `turn_failed` в session/dialog history, чтобы после reload пользователь видел terminal failure рядом с последними thinking messages. Scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`. Expected commit: `fix(session): persist gemini stalled turn failures in history`
+9. [IN_PROGRESS] Core: materialize-ить recoverable Gemini `turn_failed` в session/dialog history, чтобы после reload пользователь видел terminal failure рядом с последними thinking messages. Scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/remote-bridge/handlers/dialog-history-service.ts`. Expected commit: `fix(session): persist gemini stalled turn failures in history`
 10. [TODO] Git Commit: `fix(session): persist gemini stalled turn failures in history` (hash: TBD)
 
 ### Stream: Regression Tests

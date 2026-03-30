@@ -159,6 +159,7 @@ export class SessionProviderEventRouter {
           sessionId,
           reason: "resume_failed",
         });
+        this.appendTurnFailureHistoryMessage(sessionId, event);
         this.broadcastProviderError(sessionId, event);
         break;
       case "stream_error":
@@ -248,6 +249,23 @@ export class SessionProviderEventRouter {
         providerId,
         message: this.extractProviderErrorMessage(typed),
       },
+    });
+  }
+
+  private appendTurnFailureHistoryMessage(
+    sessionId: string,
+    event: ProviderEventEnvelope
+  ): void {
+    const message = this.extractProviderErrorMessage(event);
+    if (!message) {
+      return;
+    }
+    this.deps.appendProviderMessage(sessionId, "system", {
+      content: `Provider turn failed: ${message}`,
+      ...(typeof (event as { readonly timestamp?: unknown }).timestamp ===
+      "string"
+        ? { timestamp: (event as { readonly timestamp?: string }).timestamp }
+        : {}),
     });
   }
 
