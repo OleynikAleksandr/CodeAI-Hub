@@ -87,15 +87,12 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
     assert.equal(
       countOccurrences(
         contract?.prompt ?? "",
-        "# Module Inventory Field Reference"
+        "# Diagram Modules Field Reference"
       ),
       1
     );
     assert.equal(
-      countOccurrences(
-        contract?.prompt ?? "",
-        "# Module Inventory Merge Rules"
-      ),
+      countOccurrences(contract?.prompt ?? "", "# Diagram Modules Merge Rules"),
       1
     );
     assert.equal(contract?.template, "");
