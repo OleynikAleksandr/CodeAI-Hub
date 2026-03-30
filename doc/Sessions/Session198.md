@@ -32,6 +32,7 @@
 - Full test suite: 145/145 pass, 0 failures
 - `build-all.sh` → v1.1.847 tarballs
 - `build-release.sh --use-current-version` → `codeai-hub-1.1.847.vsix` (1.7M)
+- Pushed to GitHub (all pre-push gates green)
 
 ## Git commits
 - `431cb589` `fix: use static crypto import in computeDiagramRevision`
@@ -46,12 +47,14 @@
 - `6929feb2` `fix: use lazy require for node:crypto in computeDiagramRevision`
 - `aaab45fd` `chore: prepare v1.1.846 artifacts`
 - `b2476518` `chore: prepare v1.1.847 artifacts`
+- `363d76d3` `docs: add Session 198 report and close test debt todo-plan`
 
 ## Gates (final state)
 - Architecture: 0 blocking, 0 allowlisted, 7 warning zone
 - Lint (ultracite): 552 files, 0 errors
 - Knip: 0 issues
 - Duplication: 2.01% (under 3%)
+- Markdown links: 432 files, 0 broken
 - Tests: 145/145 pass, 0 failures
 - VSIX: codeai-hub-1.1.847.vsix verified
 
