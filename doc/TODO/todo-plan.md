@@ -54,8 +54,8 @@ Target: привести все 5 файлов >500 строк в лимит. П
 ## Phase 3 — Release Build (owner: Oleksandr, updated: 2026-03-30)
 
 ### Stream: Release docs and build
-13. [TODO] Обновить `README.md` и `CHANGELOG.md`. Expected commit: `docs(release): prepare architecture refactor release`
-14. [TODO] Git Commit: `docs(release): prepare architecture refactor release` (hash: TBD)
-15. [TODO] Чистое дерево → `./scripts/build-all.sh` → новая версия.
-16. [TODO] Git Commit: `chore: prepare v<next> artifacts` (hash: TBD)
-17. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX verified.
+13. [DONE] Обновить `README.md` и `CHANGELOG.md`.
+14. [DONE] Git Commit: `docs(release): prepare architecture refactor release v1.1.845` (hash: 2b9afb5d)
+15. [DONE] Чистое дерево → `./scripts/build-all.sh` → v1.1.845 artifacts.
+16. [DONE] Git Commit: `chore: prepare v1.1.845 artifacts` (hash: dbe2eb03)
+17. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.845.vsix` verified.

@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-30
 **Branch:** main
-**Version:** 1.1.844
+**Version:** 1.1.844 → 1.1.845
 
 ---
 
@@ -31,6 +31,9 @@
 
 ## Git commits
 - `2f35d3ab` `refactor: raise architecture line limit to 500`
+- `ba08d805` `refactor: split oversized files to comply with 500-line limit`
+- `2b9afb5d` `docs(release): prepare architecture refactor release v1.1.845`
+- `dbe2eb03` `chore: prepare v1.1.845 artifacts`
 
 ---
 
