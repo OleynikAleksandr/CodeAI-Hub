@@ -59,7 +59,7 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
     },
   });
 
-  await (harness.api as any).rolloverFlowNodeSession(
+  await (harness.api as any).flowNodeRollover.rolloverFlowNodeSession(
     sourceSession,
     { remainingPercent: 1, thresholdPercent: 2, rolloverId: "rollover-1" },
     { silent: true }

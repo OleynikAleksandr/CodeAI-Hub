@@ -191,7 +191,7 @@ test("SessionRequestHandler starts rollover only after turn_completed and clears
     readonly sessionId: string;
   }) => {
     rolloverStarts.push(options.sessionId);
-    (harness.api as any).recordPostTurnContextDecision(
+    (harness.api as any).resumeLifecycle.recordPostTurnContextDecision(
       options.sessionId,
       "rollover_required"
     );

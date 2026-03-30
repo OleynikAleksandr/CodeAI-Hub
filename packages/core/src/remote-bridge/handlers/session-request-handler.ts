@@ -368,29 +368,6 @@ export class SessionRequestHandler {
     await this.messageDispatch.sendInternalMessage(sessionId, content);
   }
 
-  protected recordPostTurnContextDecision(
-    sessionId: string,
-    decision: PostTurnContextDecision
-  ): void {
-    this.resumeLifecycle.recordPostTurnContextDecision(sessionId, decision);
-  }
-
-  protected async rolloverFlowNodeSession(
-    session: Session,
-    rollover: {
-      readonly remainingPercent: number;
-      readonly thresholdPercent: number;
-      readonly rolloverId: string;
-    },
-    rolloverOptions?: { readonly silent: boolean }
-  ): Promise<void> {
-    await this.flowNodeRollover.rolloverFlowNodeSession(
-      session,
-      rollover,
-      rolloverOptions
-    );
-  }
-
   async handleCreate(
     providerId?: string,
     workspacePath?: string,
