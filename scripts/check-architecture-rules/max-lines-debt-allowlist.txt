@@ -8,11 +8,4 @@
 # - new >500-line files must not be added here casually
 # - remove entries as soon as the file drops to 500 lines or below
 
-# Core supervisor
-packages/core-supervisor/src/index.ts
-
-# Core runtime
-packages/core/src/remote-bridge/handlers/session-request-handler.test.ts
-packages/core/src/remote-bridge/handlers/session-request-handler.ts
-packages/core/src/unified-session/storage.ts
-packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts
+# (all former entries resolved — no files exceed 500 lines)

@@ -42,7 +42,9 @@ test("SessionRequestHandler unlocks continuity locks for ready, failed and timed
     [
       "resume_timeout",
       () =>
-        (harness.api as any).finalizeFlowNodeContinuityLock({
+        (
+          harness.api as any
+        ).continuityLockService.finalizeFlowNodeContinuityLock({
           sessionId: targetSession.id,
           reason: "resume_timeout",
         }),
@@ -95,8 +97,9 @@ test("SessionRequestHandler normalizes post-resume lifecycle and avoids relock",
   emitProviderEvent(harness, targetSession.id, { type: "turn_completed" });
   await flushAsyncWork();
   assert.equal(
-    (harness.api as any).getSessionResumeLifecycleStore().get(targetSession.id)
-      ?.mode,
+    (harness.api as any).resumeLifecycle.sessionResumeLifecycleStates.get(
+      targetSession.id
+    )?.mode,
     "resume_in_place"
   );
   assert.equal(orchestrator.hasPending(sourceSession.id), false);
@@ -124,7 +127,9 @@ test("SessionRequestHandler suppresses premature idle while async rollover arbit
   (asyncGate.api as any).handleFlowNodeContinuityProviderEvent = () =>
     new Promise<void>((resolve) => {
       resolveArbitration = () => {
-        (asyncGate.api as any).registerFlowNodeContinuityLockContext({
+        (
+          asyncGate.api as any
+        ).continuityLockService.registerFlowNodeContinuityLockContext({
           rolloverId: "rollover-async-dual-gate",
           sourceSessionId: asyncSession.id,
           stageId: "description",
@@ -233,7 +238,9 @@ test("SessionRequestHandler enforces rollover-pending send guards", async () => 
     "claudeCodeCli",
     "/tmp/core-send-guard"
   );
-  (pending.api as any).registerFlowNodeContinuityLockContext({
+  (
+    pending.api as any
+  ).continuityLockService.registerFlowNodeContinuityLockContext({
     rolloverId: "rollover-guard",
     sourceSessionId: sourceSession.id,
     targetSessionId: targetSession.id,

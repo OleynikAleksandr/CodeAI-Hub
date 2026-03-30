@@ -28,14 +28,14 @@ test("SessionRequestHandler routes provider lifecycle and preserves provider tim
     return Promise.resolve();
   };
 
-  (harness.api as any).handleProviderEvent(session.id, {
+  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
     type: "turn_started",
   });
-  (harness.api as any).handleProviderEvent(session.id, {
+  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
     type: "turn_completed",
   });
   await flushAsyncWork();
-  (harness.api as any).handleProviderEvent(session.id, {
+  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
     type: "assistant",
     content: "Late provider commentary",
     timestamp: "2026-03-23T10:54:30.000Z",
@@ -106,7 +106,7 @@ test("SessionRequestHandler updates provider binding on sessionIdChanged", () =>
     unsubscribe: noop,
   });
 
-  (harness.api as any).handleProviderEvent(session.id, {
+  (harness.api as any).providerEventRouter.handleProviderEvent(session.id, {
     type: "sessionIdChanged",
     payload: { newId: "real-session-123" },
   });

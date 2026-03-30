@@ -25,31 +25,31 @@ Scope: поднять лимит строк с 300 до 500, warning zone с 250
 
 ### Stream: Update architecture gate config
 1. [DONE] Обновить `scripts/check-architecture.sh`: `MAX_LINES=500`, `WARNING_LINES=400`. Обновить `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`: оставить только 5 файлов >500, удалить остальные 14 записей. Обновить `AGENTS.md` раздел "Архитектурные принципы": 300→500. Scope: `check-architecture.sh`, `max-lines-debt-allowlist.txt`, `AGENTS.md`. Expected commit: `refactor: raise architecture line limit to 500`
-2. [TODO] Git Commit: `refactor: raise architecture line limit to 500` (hash: TBD)
+2. [DONE] Git Commit: `refactor: raise architecture line limit to 500` (hash: 2f35d3ab)
 
 ## Phase 2 — Refactor files >500 lines (owner: Oleksandr, updated: 2026-03-30)
 
 Target: привести все 5 файлов >500 строк в лимит. Порядок — от наименьшего к наибольшему.
 
 ### Stream 2A: unified-session/storage.ts (506 lines)
-3. [TODO] Проанализировать `packages/core/src/unified-session/storage.ts` и выделить логику в отдельные micro-class(ы). Scope: ≤3 файлов. Expected commit: `refactor: split unified-session storage`
-4. [TODO] Git Commit: `refactor: split unified-session storage` (hash: TBD)
+3. [DONE] Extract `backfillHistory` and `tryPromoteSessionFile` into `unified-session-backfill.ts` (506→392 lines).
+4. [DONE] Git Commit: combined in single Phase 2 commit (hash: TBD)
 
 ### Stream 2B: workspace-runtime-facade.test.ts (529 lines)
-5. [TODO] Проанализировать `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts` и разделить test suites на отдельные файлы по concern. Scope: ≤3 файлов. Expected commit: `refactor: split workspace-runtime-facade tests`
-6. [TODO] Git Commit: `refactor: split workspace-runtime-facade tests` (hash: TBD)
+5. [DONE] Extract task timer tests into `workspace-runtime-facade-task-timer.test.ts` (529→400 lines).
+6. [DONE] Git Commit: combined in single Phase 2 commit (hash: TBD)
 
 ### Stream 2C: core-supervisor/src/index.ts (585 lines)
-7. [TODO] Проанализировать `packages/core-supervisor/src/index.ts` и выделить подсистемы в отдельные micro-class(ы). Scope: ≤3 файлов. Expected commit: `refactor: split core-supervisor entry point`
-8. [TODO] Git Commit: `refactor: split core-supervisor entry point` (hash: TBD)
+7. [DONE] Extract CLI parsing into `cli-parser.ts`, runtime resolution into `core-runtime-resolver.ts` (585→339 lines).
+8. [DONE] Git Commit: combined in single Phase 2 commit (hash: TBD)
 
 ### Stream 2D: session-request-handler.ts (595 lines)
-9. [TODO] Проанализировать `packages/core/src/remote-bridge/handlers/session-request-handler.ts` и выделить handler groups в отдельные модули. Scope: ≤3 файлов. Expected commit: `refactor: split session-request-handler`
-10. [TODO] Git Commit: `refactor: split session-request-handler` (hash: TBD)
+9. [DONE] Extract types into `session-request-handler-types.ts`, remove unused private delegate methods (595→500 lines).
+10. [DONE] Git Commit: combined in single Phase 2 commit (hash: TBD)
 
 ### Stream 2E: session-request-handler.test.ts (633 lines)
-11. [TODO] Проанализировать `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts` и разделить test suites по concerns в соответствии с рефакторингом handler. Scope: ≤3 файлов. Expected commit: `refactor: split session-request-handler tests`
-12. [TODO] Git Commit: `refactor: split session-request-handler tests` (hash: TBD)
+11. [DONE] Extract test helpers into `session-request-handler-test-helpers.ts`, update direct-access patterns in related tests (633→270 lines).
+12. [DONE] Git Commit: combined in single Phase 2 commit (hash: TBD)
 
 ## Phase 3 — Release Build (owner: Oleksandr, updated: 2026-03-30)
 

@@ -9,12 +9,7 @@ import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { BridgeEvent } from "../types";
-import type {
-  ContinuityLockReason,
-  EmitContinuityLockEventOptions,
-  FlowNodeContinuityLockContext,
-  SessionContinuityLockService,
-} from "./session-continuity-lock-service";
+import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
 import type {
   DescriptionDialogResolution as DescriptionDialogResolutionModel,
@@ -48,55 +43,19 @@ import type { SessionRequestHandlerSessionResolution } from "./session-request-h
 import { SessionRequestHandlerStopAction } from "./session-request-handler-stop-action";
 import { SessionRequestHandlerStopRebind } from "./session-request-handler-stop-rebind";
 import type { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
+import type {
+  ProviderSessionBinding,
+  SessionRequestHandlerOptions,
+} from "./session-request-handler-types";
 
-export interface ProviderSessionBinding {
-  readonly providerId: string;
-  providerSessionId: string;
-  readonly unsubscribe: () => void;
-}
-
+export type {
+  ContinuityRootResolutionOptions,
+  CreateAndRegisterSessionOptions,
+  ProviderSessionBinding,
+  SessionRequestHandlerOptions,
+  ShellSessionCreationResult,
+} from "./session-request-handler-types";
 export type DescriptionDialogResolution = DescriptionDialogResolutionModel;
-
-export interface ContinuityRootResolutionOptions {
-  readonly context: {
-    readonly initiativeSlug: string | null;
-    readonly stage: string | null;
-    readonly runSlug: string | null;
-    readonly providerSessionId: string | null;
-  };
-  readonly providerId: string;
-  readonly rootSessionIdOverride: string | null;
-  readonly sessionId: string;
-  readonly workspaceRoot: string;
-}
-
-export interface CreateAndRegisterSessionOptions {
-  readonly adapter: NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
-  readonly context: ContinuityRootResolutionOptions["context"];
-  readonly continuationParentId?: string | null;
-  readonly providerId: string;
-  readonly resumeMode?: SessionResumeMode;
-  readonly rootSessionId?: string | null;
-  readonly silent?: boolean;
-  readonly workspacePath: string;
-}
-
-export interface ShellSessionCreationResult {
-  readonly continuityRootSessionId: string;
-  readonly session: Session;
-}
-
-export interface SessionRequestHandlerOptions {
-  readonly broadcaster: (event: BridgeEvent) => void;
-  readonly config: CoreConfig;
-  readonly continuityClock?: () => string;
-  readonly logger: Logger;
-  readonly providerRegistry: ProviderRegistry;
-  readonly sessionManager: SessionManager;
-  readonly sessionStorage: UnifiedSessionStorage;
-  readonly stateBroadcaster: () => void;
-  readonly workspaceRuntime?: WorkspaceRuntimeFacade;
-}
 
 export class SessionRequestHandler {
   private readonly providerSessions = new Map<string, ProviderSessionBinding>();
@@ -286,7 +245,9 @@ export class SessionRequestHandler {
             context
           ),
         resolveContinuityRootSessionId: async (resolutionOptions) =>
-          await this.resolveContinuityRootSessionId(resolutionOptions),
+          await this.continuityRoot.resolveContinuityRootSessionId(
+            resolutionOptions
+          ),
         resolveImmediatePostTurnContextDecision,
         runTurnCompletedArbitration,
       },
@@ -400,25 +361,11 @@ export class SessionRequestHandler {
     ).sessionShellFactory;
   }
 
-  private async resolveContinuityRootSessionId(
-    options: ContinuityRootResolutionOptions
-  ): Promise<string> {
-    return await this.continuityRoot.resolveContinuityRootSessionId(options);
-  }
-
   protected async sendInternalMessage(
     sessionId: string,
     content: string
   ): Promise<void> {
     await this.messageDispatch.sendInternalMessage(sessionId, content);
-  }
-
-  protected getSessionResumeLifecycleStore(): Map<string, unknown> {
-    return (
-      this.resumeLifecycle as unknown as {
-        sessionResumeLifecycleStates: Map<string, unknown>;
-      }
-    ).sessionResumeLifecycleStates;
   }
 
   protected recordPostTurnContextDecision(
@@ -442,48 +389,6 @@ export class SessionRequestHandler {
       rollover,
       rolloverOptions
     );
-  }
-
-  private handleProviderEvent(sessionId: string, event: unknown): void {
-    this.providerEventRouter.handleProviderEvent(sessionId, event);
-  }
-
-  private registerFlowNodeContinuityLockContext(
-    context: FlowNodeContinuityLockContext
-  ): FlowNodeContinuityLockContext {
-    return this.continuityLockService.registerFlowNodeContinuityLockContext(
-      context
-    );
-  }
-
-  private emitContinuityLockEvent(
-    options: EmitContinuityLockEventOptions
-  ): void {
-    this.continuityLockService.emitContinuityLockEvent(options);
-  }
-
-  private finalizeFlowNodeContinuityLock(options: {
-    readonly sessionId: string;
-    readonly reason: Extract<
-      ContinuityLockReason,
-      "resume_ready" | "resume_failed" | "resume_timeout"
-    >;
-  }): void {
-    this.continuityLockService.finalizeFlowNodeContinuityLock(options);
-  }
-
-  private async handleFlowNodeContinuityProviderEvent(
-    sessionId: string,
-    event: unknown
-  ): Promise<void> {
-    await this.turnArbitration.handleFlowNodeContinuityProviderEvent({
-      sessionId,
-      event,
-      resolveLiveContinuityRemainingPercentThreshold: async (session) =>
-        await this.turnArbitration.resolveLiveContinuityRemainingPercentThreshold(
-          session
-        ),
-    });
   }
 
   async handleCreate(

@@ -30,7 +30,7 @@
 - Files removed from allowlist (now within 500 limit): 14
 
 ## Git commits
-- `TBD` `refactor: raise architecture line limit to 500`
+- `2f35d3ab` `refactor: raise architecture line limit to 500`
 
 ---
 
