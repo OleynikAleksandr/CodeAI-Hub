@@ -10,7 +10,7 @@
 
 ## Work summary
 - Проведена перекрёстная ревизия двух planning-документов по проблемам отображения средней зоны Project Manager: post-submit flicker в `Description` и ложный `Final_Description.md`.
-- На основе двух документов собран единый execution-source документ [ProjectManager_CentralPanels_ExecutionPlanning_Source.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md), уже ориентированный на следующий `doc/TODO/todo-plan.md`.
+- На основе двух документов собран единый execution-source документ [ProjectManager_CentralPanels_ExecutionPlanning_Source.md](../SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md), уже ориентированный на следующий `doc/TODO/todo-plan.md`.
 - В merged-документ добавлены: `P0/P1` стратегия, open investigation item по race бага 1, path-contract/readability checks для `draftPath`, acceptance criteria и рекомендуемая нарезка на будущие microtasks.
 - Выполнен cleanup структуры `Plans`: merged-док перенесён из временной подпапки `Codex` в основной `doc/SolidWorks-WorkFlow/Plans/`, папки `doc/SolidWorks-WorkFlow/Plans/Codex/` и `doc/SolidWorks-WorkFlow/Plans/Claude/` удалены, чтобы не оставлять конкурирующие planning-источники.
 - Placeholder `doc/TODO/todo-plan.md` заменён на полноценный phase/stream execution-plan с `Phase 101–105`, включая обязательный финальный stream релизной сборки по release checklist.
