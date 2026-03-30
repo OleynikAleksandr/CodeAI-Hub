@@ -1,16 +1,14 @@
 #include "launcher_handler.h"
 
-#include <sstream>
 #include <string>
 
 #include "base/cef_callback.h"
 #include "cef_app.h"
-#include "cef_parser.h"
 #include "include/cef_drag_data.h"
-#include "include/cef_values.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
 #include "core_launcher.h"
+#include "launcher_handler_bridge_helpers.h"
 #include "wrapper/cef_closure_task.h"
 #include "wrapper/cef_helpers.h"
 
@@ -21,163 +19,10 @@ bool PickFolderFromFinder(std::string* out_path);
 namespace {
 
 LauncherHandler* g_handler_instance = nullptr;
-constexpr char kLauncherScheme[] = "codeai";
-constexpr char kLauncherPickFolderHost[] = "pick-folder";
-constexpr char kLauncherFileDropHost[] = "file-drop";
-constexpr char kLauncherCoreStartHost[] = "core-start";
-
-std::string ToDataUri(const std::string& data, const std::string& mime_type) {
-  return "data:" + mime_type + ";base64," +
-         CefURIEncode(CefBase64Encode(data.data(), data.size()), false)
-             .ToString();
-}
-
-bool IsPickFolderRequest(const std::string& url) {
-  CefURLParts parts;
-  if (!CefParseURL(url, parts)) {
-    return false;
-  }
-  const std::string scheme = CefString(&parts.scheme);
-  if (scheme != kLauncherScheme) {
-    return false;
-  }
-  const std::string host = CefString(&parts.host);
-  if (host == kLauncherPickFolderHost) {
-    return true;
-  }
-  const std::string path = CefString(&parts.path);
-  return path == std::string("/") + kLauncherPickFolderHost;
-}
-
-bool IsFileDropRequest(const std::string& url) {
-  CefURLParts parts;
-  if (!CefParseURL(url, parts)) {
-    return false;
-  }
-  const std::string scheme = CefString(&parts.scheme);
-  if (scheme != kLauncherScheme) {
-    return false;
-  }
-  const std::string host = CefString(&parts.host);
-  if (host == kLauncherFileDropHost) {
-    return true;
-  }
-  const std::string path = CefString(&parts.path);
-  return path == std::string("/") + kLauncherFileDropHost;
-}
-
-bool IsCoreStartRequest(const std::string& url) {
-  CefURLParts parts;
-  if (!CefParseURL(url, parts)) {
-    return false;
-  }
-  const std::string scheme = CefString(&parts.scheme);
-  if (scheme != kLauncherScheme) {
-    return false;
-  }
-  const std::string host = CefString(&parts.host);
-  if (host == kLauncherCoreStartHost) {
-    return true;
-  }
-  const std::string path = CefString(&parts.path);
-  return path == std::string("/") + kLauncherCoreStartHost;
-}
-
-void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
-  if (!frame) {
-    return;
-  }
-  const std::string script = R"JS(
-(() => {
-  if (typeof window.codeaiLauncher !== "object" || !window.codeaiLauncher) {
-    window.codeaiLauncher = {};
-  }
-
-  if (typeof window.codeaiLauncher.requestFileDrop !== "function") {
-    window.codeaiLauncher.requestFileDrop = () => {
-      window.location.href = "codeai://file-drop";
-      return true;
-    };
-  }
-
-	  if (typeof window.codeaiLauncher.pickFolder !== "function") {
-	    window.codeaiLauncher.pickFolder = () => {
-	      window.location.href = "codeai://pick-folder";
-	      return true;
-	    };
-	  }
-
-  if (typeof window.codeaiLauncher.ensureCoreRunning !== "function") {
-    window.codeaiLauncher.ensureCoreRunning = () => {
-      window.location.href = "codeai://core-start";
-      return true;
-    };
-  }
-})()
-)JS";
-  frame->ExecuteJavaScript(script, frame->GetURL(), 0);
-}
-
-void SendFolderPicked(CefRefPtr<CefBrowser> browser, const std::string& path) {
-  if (!browser) {
-    return;
-  }
-  CefRefPtr<CefFrame> frame = browser->GetMainFrame();
-  if (!frame) {
-    return;
-  }
-  CefRefPtr<CefDictionaryValue> payload = CefDictionaryValue::Create();
-  payload->SetString("path", path);
-  CefRefPtr<CefDictionaryValue> message = CefDictionaryValue::Create();
-  message->SetString("type", "projects:folderPicked");
-  message->SetDictionary("payload", payload);
-  CefRefPtr<CefValue> message_value = CefValue::Create();
-  message_value->SetDictionary(message);
-  CefString json = CefWriteJSON(message_value, JSON_WRITER_DEFAULT);
-  std::string script = "window.postMessage(" + json.ToString() + ", '*');";
-  frame->ExecuteJavaScript(script, frame->GetURL(), 0);
-}
-
-std::string FormatDroppedPathsForInsert(
-    const std::vector<std::string>& paths) {
-  if (paths.empty()) {
-    return "";
-  }
-
-  std::ostringstream out;
-  for (size_t i = 0; i < paths.size(); ++i) {
-    out << "\"" << paths[i] << "\"";
-    if (i + 1 < paths.size()) {
-      out << "\n";
-    }
-  }
-  out << "\n";
-  return out.str();
-}
-
-void SendDroppedFiles(CefRefPtr<CefBrowser> browser,
-                      const std::vector<std::string>& paths) {
-  if (!browser || paths.empty()) {
-    return;
-  }
-
-  CefRefPtr<CefFrame> frame = browser->GetMainFrame();
-  if (!frame) {
-    return;
-  }
-
-  CefRefPtr<CefDictionaryValue> message = CefDictionaryValue::Create();
-  message->SetString("command", "insertPath");
-  message->SetString("path", FormatDroppedPathsForInsert(paths));
-
-  CefRefPtr<CefValue> message_value = CefValue::Create();
-  message_value->SetDictionary(message);
-  CefString json = CefWriteJSON(message_value, JSON_WRITER_DEFAULT);
-  std::string script = "window.postMessage(" + json.ToString() + ", '*');";
-  frame->ExecuteJavaScript(script, frame->GetURL(), 0);
-}
 
 }  // namespace
+
+namespace launcher_bridge = launcher_handler_bridge_helpers;
 
 LauncherHandler::LauncherHandler(bool use_views_style)
     : use_views_style_(use_views_style) {
@@ -289,21 +134,11 @@ void LauncherHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
     return;
   }
 
-  std::stringstream ss;
-  ss << "<html><body bgcolor=\"white\">"
-        "<h2>Unable to load CodeAI Hub UI</h2>"
-        "<p>Failed to load URL <code>"
-     << failed_url.ToString()
-     << "</code> with error "
-     << error_text.ToString() << " (" << error_code
-     << ").</p>"
-        "<p>The core process is managed by the Core Supervisor. "
-        "Please check the core runtime status at "
-        "<code>/api/v1/status</code> or consult the launcher logs under "
-        "<code>~/.codeai-hub/logs/launcher/launcher.log</code>.</p>"
-        "</body></html>";
-
-  frame->LoadURL(ToDataUri(ss.str(), "text/html"));
+  frame->LoadURL(launcher_bridge::ToDataUri(
+                     launcher_bridge::BuildLoadErrorHtml(
+                         failed_url.ToString(), error_text.ToString(),
+                         error_code),
+                     "text/html"));
 }
 
 void LauncherHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
@@ -314,7 +149,7 @@ void LauncherHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   static_cast<void>(httpStatusCode);
 
   if (frame && frame->IsMain()) {
-    InjectLauncherBridge(frame);
+    launcher_bridge::InjectLauncherBridge(frame);
   }
 }
 
@@ -332,7 +167,7 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
   }
   const std::string url = request->GetURL();
 
-  if (IsCoreStartRequest(url)) {
+  if (launcher_bridge::IsCoreStartRequest(url)) {
     CefPostTask(
       TID_FILE_BACKGROUND,
       base::BindOnce([]() {
@@ -341,20 +176,20 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
     return true;
   }
 
-  if (IsFileDropRequest(url)) {
-    SendDroppedFiles(browser, last_drag_file_paths_);
+  if (launcher_bridge::IsFileDropRequest(url)) {
+    launcher_bridge::SendDroppedFiles(browser, last_drag_file_paths_);
     last_drag_file_paths_.clear();
     return true;
   }
 
-  if (!IsPickFolderRequest(url)) {
+  if (!launcher_bridge::IsPickFolderRequest(url)) {
     return false;
   }
 
 #if defined(__APPLE__)
   std::string selected_path;
   if (PickFolderFromFinder(&selected_path) && !selected_path.empty()) {
-    SendFolderPicked(browser, selected_path);
+    launcher_bridge::SendFolderPicked(browser, selected_path);
   }
   return true;
 #else
