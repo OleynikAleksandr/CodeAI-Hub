@@ -29,47 +29,39 @@ const createExpectedBridge = () => ({
   modules: {},
 });
 
-const installBaseStubs = (
+const installManagerStubs = (
   installer: GeminiInstaller,
   steps: string[]
 ): void => {
-  (installer as unknown as Record<string, unknown>).ensureCliPrefixDirectories =
-    async () => {
+  (installer as unknown as Record<string, unknown>).bridgePackageManager = {
+    prepareBridgeEnvironment: async () => {
       await Promise.resolve();
-    };
-  (installer as unknown as Record<string, unknown>).ensurePackageInstalled =
-    async (_packageName: string, kind: "cli" | "core") => {
+      steps.push("prepare");
+    },
+    getCurrentVersions: () => ({
+      cliVersion: "0.35.3",
+      coreVersion: "0.35.3",
+    }),
+    validateInstalledRuntimeIntegrity: () => undefined,
+    recoverCompatibility: async () => {
       await Promise.resolve();
-      steps.push(`ensure:${kind}`);
-      if (kind === "cli") {
-        (installer as unknown as Record<string, unknown>).currentCliVersion =
-          "0.35.3";
-      } else {
-        (installer as unknown as Record<string, unknown>).currentCoreVersion =
-          "0.35.3";
-      }
-    };
-  (installer as unknown as Record<string, unknown>).verifyCliExecutable =
-    async () => {
+      steps.push("recover");
+    },
+    updatePackagesToLatest: async () => {
       await Promise.resolve();
-    };
-  (installer as unknown as Record<string, unknown>).installPackage = async (
-    _packageName: string,
-    version: string,
-    kind: "cli" | "core"
-  ) => {
-    await Promise.resolve();
-    steps.push(`install:${kind}:${version}`);
+      steps.push("update");
+      return {
+        cliVersion: "0.35.3",
+        coreVersion: "0.35.3",
+      };
+    },
   };
 };
 
 test("GeminiInstaller retries reinstall after compatibility error", async () => {
   const installer = createInstaller();
   const steps: string[] = [];
-  installBaseStubs(installer, steps);
-  (
-    installer as unknown as Record<string, unknown>
-  ).validateInstalledRuntimeIntegrity = () => undefined;
+  installManagerStubs(installer, steps);
 
   let attempts = 0;
   const expectedBridge = createExpectedBridge();
@@ -91,25 +83,18 @@ test("GeminiInstaller retries reinstall after compatibility error", async () => 
   const bridge = await installer.ensureCliBridge();
 
   assert.equal(bridge, expectedBridge);
-  assert.deepEqual(steps, [
-    "ensure:core",
-    "ensure:cli",
-    "load:1",
-    "install:core:0.35.3",
-    "install:cli:0.35.3",
-    "load:2",
-  ]);
+  assert.deepEqual(steps, ["prepare", "load:1", "recover", "load:2"]);
 });
 
 test("GeminiInstaller retries reinstall after installed runtime integrity failure", async () => {
   const installer = createInstaller();
   const steps: string[] = [];
-  installBaseStubs(installer, steps);
+  installManagerStubs(installer, steps);
 
   let integrityChecks = 0;
-  (
-    installer as unknown as Record<string, unknown>
-  ).validateInstalledRuntimeIntegrity = () => {
+  const bridgePackageManager = (installer as unknown as Record<string, unknown>)
+    .bridgePackageManager as Record<string, unknown>;
+  bridgePackageManager.validateInstalledRuntimeIntegrity = () => {
     integrityChecks += 1;
     steps.push(`integrity:${integrityChecks}`);
     if (integrityChecks === 1) {
@@ -132,12 +117,5 @@ test("GeminiInstaller retries reinstall after installed runtime integrity failur
   const bridge = await installer.ensureCliBridge();
 
   assert.equal(bridge, expectedBridge);
-  assert.deepEqual(steps, [
-    "ensure:core",
-    "ensure:cli",
-    "integrity:1",
-    "install:core:0.35.3",
-    "install:cli:0.35.3",
-    "load",
-  ]);
+  assert.deepEqual(steps, ["prepare", "integrity:1", "recover", "load"]);
 });
