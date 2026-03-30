@@ -14,6 +14,7 @@
 
 ## Runtime cluster
 - `packages/Gemini_Module/src/runtime/cli-bridge.ts` — runtime bridge loader and compatibility entrypoint; root/core resolution now delegates to `cli-bridge-root-resolver.ts`.
+- `packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts` — module loading and compatibility validation helper shared by `cli-bridge.ts` and `gemini-installer.ts`.
 - `packages/Gemini_Module/src/runtime/cli-bridge-root-resolver.ts` — CLI/Core package root candidate scanning and version resolution helper.
 
 ## Инварианты
