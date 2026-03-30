@@ -8,6 +8,7 @@ export class GeminiSessionLifecycle {
     GeminiSessionEvent["type"]
   >(["assistant"]);
   private static readonly DEFAULT_STALLED_TURN_WATCHDOG_MS = 60_000;
+  private static readonly DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS = 120_000;
   private static readonly STALLED_TURN_ERROR_PREFIX =
     "Gemini stream stalled after ";
 
@@ -115,14 +116,15 @@ export class GeminiSessionLifecycle {
 
   createStalledTurnWatchdog(
     session: ActiveSession,
-    promptId: string
+    promptId: string,
+    phase: "initial" | "post_tool"
   ): {
     clear: () => void;
     waitForNext: <T>(
       nextPromise: Promise<IteratorResult<T>>
     ) => Promise<IteratorResult<T>>;
   } {
-    const timeoutMs = this.resolveStalledTurnWatchdogMs(session);
+    const timeoutMs = this.resolveStalledTurnWatchdogMs(session, phase);
     let timer: ReturnType<typeof setTimeout> | null = null;
     const clear = (): void => {
       if (timer) {
@@ -140,6 +142,7 @@ export class GeminiSessionLifecycle {
           session.reporter?.warn?.("Gemini stream stalled without progress", {
             promptId,
             sessionId: session.sessionId,
+            phase,
             timeoutMs,
           });
           reject(
@@ -191,13 +194,22 @@ export class GeminiSessionLifecycle {
     );
   }
 
-  private resolveStalledTurnWatchdogMs(session: ActiveSession): number {
+  private resolveStalledTurnWatchdogMs(
+    session: ActiveSession,
+    phase: "initial" | "post_tool" = "initial"
+  ): number {
+    const overrideKey =
+      phase === "post_tool"
+        ? "postToolStalledTurnWatchdogMs"
+        : "stalledTurnWatchdogMs";
     const candidate = Number(
-      (session as unknown as Record<string, unknown>).stalledTurnWatchdogMs
+      (session as unknown as Record<string, unknown>)[overrideKey]
     );
     if (Number.isFinite(candidate) && candidate >= 1) {
       return Math.floor(candidate);
     }
-    return GeminiSessionLifecycle.DEFAULT_STALLED_TURN_WATCHDOG_MS;
+    return phase === "post_tool"
+      ? GeminiSessionLifecycle.DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS
+      : GeminiSessionLifecycle.DEFAULT_STALLED_TURN_WATCHDOG_MS;
   }
 }

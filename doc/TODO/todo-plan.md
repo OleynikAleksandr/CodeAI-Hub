@@ -35,10 +35,10 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Gemini Terminal Leg Contract
 3. [DONE] Gemini_Module: отделить progress assistant output из leg с `tool_call_request` от terminal-leg answer, чтобы pre-tool текст не считался завершением всей tool chain. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/session/types.ts`. Expected commit: `fix(gemini): require terminal leg answer after tool chain`
-4. [TODO] Git Commit: `fix(gemini): require terminal leg answer after tool chain` (hash: TBD)
+4. [DONE] Git Commit: `fix(gemini): require terminal leg answer after tool chain` (hash: `61a9cc69`)
 
 ### Stream: Gemini Post-Tool Watchdog
-5. [TODO] Gemini_Module: ввести Gemini-specific longer stalled window и phase-aware timeout policy для nested post-tool legs, чтобы follow-up после successful `write_file` не обрывался тем же базовым окном, что и initial leg. Scope: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): add adaptive post-tool stalled watchdog`
+5. [DONE] Gemini_Module: ввести Gemini-specific longer stalled window и phase-aware timeout policy для nested post-tool legs, чтобы follow-up после successful `write_file` не обрывался тем же базовым окном, что и initial leg. Scope: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): add adaptive post-tool stalled watchdog`
 6. [TODO] Git Commit: `fix(gemini): add adaptive post-tool stalled watchdog` (hash: TBD)
 
 ### Stream: Runtime Docs Sync

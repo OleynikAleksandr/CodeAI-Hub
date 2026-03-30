@@ -81,7 +81,13 @@ export class GeminiTurnRunner {
       };
     }
 
-    const turnResult = await this.runTurn(session, parts, promptId, signal);
+    const turnResult = await this.runTurn(
+      session,
+      parts,
+      promptId,
+      signal,
+      depth > 0 ? "post_tool" : "initial"
+    );
     const currentLegIsTerminal = turnResult.toolRequests.length === 0;
     let responseText = currentLegIsTerminal ? turnResult.responseText : "";
     let citations = [...turnResult.citations];
@@ -162,7 +168,8 @@ export class GeminiTurnRunner {
     session: ActiveSession,
     parts: readonly Part[],
     promptId: string,
-    signal: AbortSignal
+    signal: AbortSignal,
+    phase: "initial" | "post_tool"
   ): Promise<GeminiTurnResult> {
     const messageProcessor = new GeminiMessageProcessor({
       reporter: this.reporter ?? session.reporter,
@@ -191,7 +198,8 @@ export class GeminiTurnRunner {
     );
     const stalledTurnWatchdog = this.sessionLifecycle.createStalledTurnWatchdog(
       session,
-      promptId
+      promptId,
+      phase
     );
     const iterator = (stream as AsyncIterable<ServerGeminiStreamEvent>)[
       Symbol.asyncIterator
