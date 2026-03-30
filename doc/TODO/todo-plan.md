@@ -41,6 +41,10 @@ Goal: behavior-preserving decomposition of the last remaining production hotspot
 5. [TODO] Verification: прогнать `npm run build --workspace @codeai-hub/claude-module` и focused auth bootstrap/provider-home sanity checks, затем синхронизировать execution status. Scope: `packages/Claude_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(claude): verify auth manager decomposition`
 6. [TODO] Git Commit: `test(claude): verify auth manager decomposition` (hash: TBD)
 
+### Stream: Release Build
+7. [TODO] Release: после закрытия structural stream-ов и verification актуализировать release-facing docs при необходимости, затем прогнать `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, сохранить свежие артефакты в `doc/tmp/releases/` и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `build(release): assemble sdk auth decomposition release`
+8. [TODO] Git Commit: `build(release): assemble sdk auth decomposition release` (hash: TBD)
+
 ### Stream: Phase Closeout
-7. [TODO] Docs: архивировать завершённый active plan, выпустить новый placeholder `todo-plan.md` и записать session handoff по итогам волны. Scope: `doc/TODO/Archive/`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `docs(plan): archive sdk auth manager decomposition wave`
-8. [TODO] Git Commit: `docs(plan): archive sdk auth manager decomposition wave` (hash: TBD)
+9. [TODO] Docs: архивировать завершённый active plan, выпустить новый placeholder `todo-plan.md` и записать session handoff по итогам волны. Scope: `doc/TODO/Archive/`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `docs(plan): archive sdk auth manager decomposition wave`
+10. [TODO] Git Commit: `docs(plan): archive sdk auth manager decomposition wave` (hash: TBD)

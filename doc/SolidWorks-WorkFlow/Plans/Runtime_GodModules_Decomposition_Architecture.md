@@ -419,5 +419,7 @@ Wave-1 expectation:
 - первая микрозадача режет только provider-home / legacy-state bridge seam;
 - вторая микрозадача режет OAuth bootstrap + auth probe/runtime seam;
 - verification идёт отдельным stream;
+- после verification обязателен отдельный release stream: сначала `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`;
+- archival closeout разрешён только после успешной release-сборки и фиксации release artifacts / handoff-доков;
 - `doc/SolidWorks-WorkFlow/Modules/Claude.md` синхронизируется в каждом structural commit;
 - если при реализации выяснится, что `getAuthEnvironment()` лучше переехать в runtime helper, это допустимо только если внешний public contract `SDKAuthManager` остаётся стабильным.
