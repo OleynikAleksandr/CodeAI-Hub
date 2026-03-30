@@ -34,15 +34,15 @@ Goal: behavior-preserving decomposition of the first three production warning-zo
 
 ### Stream: Planning Intake
 1. [DONE] Docs: обновить planning-док `Runtime_GodModules_Decomposition_Architecture.md` под актуальную волну `400-500`, зафиксировать, что в этой фазе идут только `session-request-handler.ts`, `sdk-auth-manager.ts`, `gemini-installer.ts` + `cli-bridge.ts`, и переоткрыть active `todo-plan`. Scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): start 400-500 hotspot decomposition wave`
-2. [TODO] Git Commit: `docs(plan): start 400-500 hotspot decomposition wave` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): start 400-500 hotspot decomposition wave` (hash: `f890575c`)
 
 ### Stream: Core Remote-Bridge Thin Facade Closure
 3. [DONE] Core: вынести оставшийся constructor/runtime helper seam из `session-request-handler.ts` в focused helper рядом с existing runtime cluster и синхронизировать `SystemArchitecture.md`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): extract session-request-handler runtime helpers`
 4. [DONE] Git Commit: `refactor(core): extract session-request-handler runtime helpers` (hash: `0e566369`)
 5. [DONE] Core: завершить перевод `session-request-handler.ts` в thin façade, вынеся оставшийся procedural/state glue в отдельный helper без изменения public handler API. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(core): finish session-request-handler thin facade`
 6. [DONE] Git Commit: `refactor(core): finish session-request-handler thin facade` (hash: `ed1205ca`)
-7. [TODO] Verification: прогнать таргетную сборку и focused tests по remote-bridge handler path, затем синхронизировать execution status. Scope: `packages/core`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): verify session-request-handler facade split`
-8. [TODO] Git Commit: `test(core): verify session-request-handler facade split` (hash: TBD)
+7. [DONE] Verification: прогнать таргетную сборку и focused tests по remote-bridge handler path, затем синхронизировать execution status. Scope: `packages/core`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): verify session-request-handler facade split`
+8. [DONE] Git Commit: `test(core): verify session-request-handler facade split` (hash: `TBD`)
 
 ### Stream: Claude SDK Auth Manager Decomposition
 9. [TODO] Claude_Module: вынести provider-home bridge / legacy state linking and migration seam из `sdk-auth-manager.ts` и синхронизировать `Modules/Claude.md`. Scope: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`, новый helper в `packages/Claude_Module/src/auth/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(claude): extract auth home bridge helpers`
@@ -61,3 +61,15 @@ Goal: behavior-preserving decomposition of the first three production warning-zo
 20. [TODO] Git Commit: `refactor(gemini): extract installer package management` (hash: TBD)
 21. [TODO] Verification: прогнать таргетную сборку Gemini module и focused installer/runtime checks, затем синхронизировать execution status. Scope: `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): verify installer runtime decomposition`
 22. [TODO] Git Commit: `test(gemini): verify installer runtime decomposition` (hash: TBD)
+
+### Stream: Claude Usage Limits Token Resolution Split
+23. [TODO] Core: вынести platform/env/credential OAuth token resolution из `claude-usage-limits-facade.ts` в focused helper рядом с existing Claude usage-limits cluster и синхронизировать `Modules/Claude.md`. Scope: `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`, новый helper в `packages/core/src/provider-usage-limits/providers/claude/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(core): extract claude usage token resolution`
+24. [TODO] Git Commit: `refactor(core): extract claude usage token resolution` (hash: TBD)
+25. [TODO] Verification: прогнать `npm run build --workspace @codeai-hub/core` и focused Claude usage-limits tests/verification, затем синхронизировать execution status. Scope: `packages/core`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): verify claude usage limits split`
+26. [TODO] Git Commit: `test(core): verify claude usage limits split` (hash: TBD)
+
+### Stream: CEF Launcher Native Boundary Split
+27. [TODO] CEF Launcher: вынести URL/classification + bridge injection seam из `launcher_handler.cc` в focused helper boundary и синхронизировать `SystemArchitecture.md`. Scope: `packages/cef-launcher/src/launcher_handler.cc`, `packages/cef-launcher/src/launcher_handler.h`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(cef-launcher): split launcher bridge helpers`
+28. [TODO] Git Commit: `refactor(cef-launcher): split launcher bridge helpers` (hash: TBD)
+29. [TODO] Verification: прогнать CEF launcher build/compile verification или targeted native sanity check, затем синхронизировать execution status. Scope: `packages/cef-launcher`, `doc/TODO/todo-plan.md`. Expected commit: `test(cef-launcher): verify launcher handler split`
+30. [TODO] Git Commit: `test(cef-launcher): verify launcher handler split` (hash: TBD)
