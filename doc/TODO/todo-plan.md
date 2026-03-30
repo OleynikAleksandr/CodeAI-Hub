@@ -66,7 +66,7 @@ Goal: behavior-preserving decomposition of the first three production warning-zo
 23. [DONE] Core: вынести platform/env/credential OAuth token resolution из `claude-usage-limits-facade.ts` в focused helper рядом с existing Claude usage-limits cluster и синхронизировать `Modules/Claude.md`. Scope: `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`, новый helper в `packages/core/src/provider-usage-limits/providers/claude/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(core): extract claude usage token resolution`
 24. [DONE] Git Commit: `refactor(core): extract claude usage token resolution` (hash: `5e54a5b7`)
 25. [DONE] Verification: прогнать `npm run build --workspace @codeai-hub/core` и focused Claude usage-limits tests/verification, затем синхронизировать execution status. Scope: `packages/core`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): verify claude usage limits split`
-26. [TODO] Git Commit: `test(core): verify claude usage limits split` (hash: TBD)
+26. [DONE] Git Commit: `test(core): verify claude usage limits split` (hash: `088dedd8`)
 
 ### Stream: CEF Launcher Native Boundary Split
 27. [TODO] CEF Launcher: вынести URL/classification + bridge injection seam из `launcher_handler.cc` в focused helper boundary и синхронизировать `SystemArchitecture.md`. Scope: `packages/cef-launcher/src/launcher_handler.cc`, `packages/cef-launcher/src/launcher_handler.h`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(cef-launcher): split launcher bridge helpers`
