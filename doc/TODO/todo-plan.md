@@ -59,8 +59,8 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Release Build-All
 15. [DONE] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и появление `1.1.849` tarball-артефактов, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.849 artifacts`
-16. [TODO] Git Commit: `chore(release): prepare 1.1.849 artifacts` (hash: TBD)
+16. [DONE] Git Commit: `chore(release): prepare 1.1.849 artifacts` (hash: `495e9d60`)
 
 ### Stream: Release VSIX
-17. [TODO] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.849.vsix`, затем синхронизировать `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session199.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.849 vsix`
+17. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.849.vsix`, затем синхронизировать `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session199.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.849 vsix`
 18. [TODO] Git Commit: `chore(release): finalize 1.1.849 vsix` (hash: TBD)

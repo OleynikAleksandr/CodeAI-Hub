@@ -1,8 +1,8 @@
-# Session 199 — Gemini Stalled Turn Investigation, Fixes, Release 1.1.848, And Post-Release Validation
+# Session 199 — Gemini Stalled Turn Investigation, Post-Tool Remediation, And Release 1.1.849
 
-**Date:** 2026-03-30 16:25 (CEST)
+**Date:** 2026-03-30 17:15 (CEST)
 **Branch:** main
-**Version:** 1.1.848
+**Version:** 1.1.849
 
 ---
 
@@ -119,6 +119,32 @@
   - no blocking architecture violations;
   - manual Gemini `Description` rerun after the new post-tool fix commit is still pending user validation.
 
+### Phase 10: Release 1.1.849 preparation and packaging
+- Synced release-facing docs for the next patch release before rebuild:
+  - `README.md`
+  - `CHANGELOG.md`
+- Reworked the release section in `doc/TODO/todo-plan.md` into three real streams:
+  - release docs sync;
+  - `build-all` version/artifact preparation;
+  - final VSIX packaging.
+- Ran `./scripts/build-all.sh` on a clean tree and promoted the unified workspace version from `1.1.848` to `1.1.849`.
+- Produced fresh `1.1.849` tarball artefacts in both `~/.codeai-hub/releases/` and `doc/tmp/releases/`:
+  - `claude-module-1.1.849.tar.bz2`
+  - `codex-module-1.1.849.tar.bz2`
+  - `gemini-module-1.1.849.tar.bz2`
+  - `codeai-hub-core-darwin-arm64-1.1.849.tar.bz2`
+  - `CodeAIHubLauncher-macos-arm64-1.1.849.tar.bz2`
+  - `vscode-webview-1.1.849.tar.bz2`
+  - `project-manager-1.1.849.tar.bz2`
+- Ran `./scripts/build-release.sh --use-current-version` on a clean `1.1.849` tree.
+- Verified the required release markers in script output:
+  - `Step 7: Verifying SDK exclusions`
+  - `Removing dev dependencies before packaging`
+  - `✅ Package created`
+- Produced the final VSIX:
+  - `codeai-hub-1.1.849.vsix` (`1.7M`) at repository root.
+- Confirmed release packaging restored development dependencies and left the git worktree clean afterward.
+
 ## Git commits
 - `ba84659a` `docs(architecture): approve gemini stalled turn terminal answer contract`
 - `f2651b1d` `docs: add Session 199 report for gemini stalled turn investigation`
@@ -135,6 +161,9 @@
 - `ab437b7a` `fix(gemini): add adaptive post-tool stalled watchdog`
 - `691c6f57` `docs(architecture): sync gemini post-tool terminal leg contract`
 - `a39e623e` `test(gemini): cover post-tool terminal leg semantics`
+- `6782e21b` `docs: record gemini post-tool stall verification results`
+- `1bbf3b19` `docs(release): sync 1.1.849 release notes`
+- `495e9d60` `chore(release): prepare 1.1.849 artifacts`
 
 ---
 
@@ -163,12 +192,8 @@
 - The next remediation scope is to distinguish progress legs from terminal legs and to relax stalled timeout specifically for Gemini post-tool follow-up.
 
 ## Next active work according to todo-plan
-- Record the current automated verification in git via `docs: record gemini post-tool stall verification results`.
-- Then execute the release streams in order:
-  - sync `README.md`, `CHANGELOG.md`, `doc/Sessions/Session199.md` and related Gemini docs before release prep;
-  - run `./scripts/build-all.sh`;
-  - run `./scripts/build-release.sh --use-current-version`;
-  - only after that do the next manual Gemini `Description` validation on the rebuilt release.
+- Record the final VSIX packaging result in git via `chore(release): finalize 1.1.849 vsix`.
+- Then run the next manual Gemini `Description` validation specifically against release `1.1.849` and compare the runtime outcome with the now-covered post-tool regression matrix.
 
 ## Implementation direction agreed in this session
 - Treat translated thoughts as side-channel, not as terminal assistant answer.
