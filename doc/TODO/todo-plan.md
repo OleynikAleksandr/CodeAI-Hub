@@ -133,11 +133,11 @@ Root cause: при переключении workspace reset effect в `main-area
 1. [DONE] Убрать `setHasDescriptionSession(false)` из reset effect в `main-area.tsx` — пусть derivation в `use-main-area-workflow-state.ts` управляет этим значением после poll. Добавить `workflowStoreLoaded` guard в `main-area-panel-content.tsx` и `main-area.tsx`: пока store `!loaded`, не показывать questionnaire placeholder и description help. Scope: `main-area.tsx`, `main-area-panel-content.tsx`. Expected commit: `fix: prevent false questionnaire placeholder on workspace switch`
 2. [DONE] Git Commit: `fix: prevent false questionnaire placeholder on workspace switch` (hash: da1a8d97)
 
-## Phase 113 — Hotfix Release Build (owner: Oleksandr, updated: 2026-03-30)
+## Phase 113 — Hotfix Release Build v1.1.842 (owner: Oleksandr, updated: 2026-03-30)
 
 ### Stream: Hotfix release docs and build
-3. [TODO] Обновить `README.md` и `CHANGELOG.md` под новую версию. Expected commit: `docs(release): prepare workspace switch visibility hotfix`
-4. [TODO] Git Commit: `docs(release): prepare workspace switch visibility hotfix` (hash: TBD)
-5. [TODO] Чистое дерево → `./scripts/build-all.sh` → новая версия. Expected commit: `chore: prepare v<next> artifacts`
-6. [TODO] Git Commit: `chore: prepare v<next> artifacts` (hash: TBD)
-7. [TODO] `./scripts/build-release.sh --use-current-version` → VSIX verified.
+3. [DONE] Обновить `README.md` и `CHANGELOG.md` под v1.1.842.
+4. [DONE] Git Commit: `docs(release): prepare workspace switch visibility hotfix` (hash: d236ba4d)
+5. [DONE] Чистое дерево → `./scripts/build-all.sh` → v1.1.842 artifacts.
+6. [DONE] Git Commit: `chore: prepare v1.1.842 artifacts` (hash: 5918cae4)
+7. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.842.vsix` verified.
