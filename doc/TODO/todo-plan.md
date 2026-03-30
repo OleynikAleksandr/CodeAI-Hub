@@ -39,10 +39,10 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Gemini Post-Tool Watchdog
 5. [DONE] Gemini_Module: ввести Gemini-specific longer stalled window и phase-aware timeout policy для nested post-tool legs, чтобы follow-up после successful `write_file` не обрывался тем же базовым окном, что и initial leg. Scope: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): add adaptive post-tool stalled watchdog`
-6. [TODO] Git Commit: `fix(gemini): add adaptive post-tool stalled watchdog` (hash: TBD)
+6. [DONE] Git Commit: `fix(gemini): add adaptive post-tool stalled watchdog` (hash: `ab437b7a`)
 
 ### Stream: Runtime Docs Sync
-7. [TODO] Docs: синхронизировать новый terminal-leg contract и post-tool watchdog policy в архитектурных документах Gemini до regression tests. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`. Expected commit: `docs(architecture): sync gemini post-tool terminal leg contract`
+7. [DONE] Docs: синхронизировать новый terminal-leg contract и post-tool watchdog policy в архитектурных документах Gemini до regression tests. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`. Expected commit: `docs(architecture): sync gemini post-tool terminal leg contract`
 8. [TODO] Git Commit: `docs(architecture): sync gemini post-tool terminal leg contract` (hash: TBD)
 
 ### Stream: Regression Tests
