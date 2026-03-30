@@ -96,7 +96,7 @@ Goal: устранить гонку, при которой финальный Ge
 30. [DONE] Git Commit: `docs(release): sync 1.1.850 release notes` (hash: `7eb2bffb`)
 
 ### Stream: Release Build-All
-31. [IN_PROGRESS] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и fresh `1.1.850` tarball-артефакты, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.850 artifacts`
+31. [DONE] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и fresh `1.1.850` tarball-артефакты, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.850 artifacts`
 32. [TODO] Git Commit: `chore(release): prepare 1.1.850 artifacts` (hash: TBD)
 
 ### Stream: Release VSIX
