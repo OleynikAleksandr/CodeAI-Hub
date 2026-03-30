@@ -62,6 +62,7 @@ interface ArtifactContentProps {
   readonly questionnaireDocumentExists: boolean;
   readonly selectedArtifact: SelectedArtifact | null;
   readonly shouldShowQuestionnaireEditor: boolean;
+  readonly workflowStoreLoaded: boolean;
 }
 
 export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
@@ -80,6 +81,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   questionnaireDocumentExists,
   selectedArtifact,
   shouldShowQuestionnaireEditor,
+  workflowStoreLoaded,
 }) => {
   const sourceArtifact = resolveDiagramSourceArtifact({
     activeTool,
@@ -113,6 +115,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     headerMode === "artifacts" &&
     !showArtifactViewer &&
     !showSourceViewer &&
+    workflowStoreLoaded &&
     (shouldShowQuestionnaireEditor || (!descriptionDocumentExists && !questionnaireDocumentExists));
 
   if (helpMode) {

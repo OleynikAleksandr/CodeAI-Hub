@@ -12,6 +12,7 @@ import {
   type ArtifactHeaderMode,
 } from "./stage-artifact-mode";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
+import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
 import { useDetachDiagramButton } from "./detach-diagram-button";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
@@ -112,7 +113,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setSelectedArtifact(null);
     setDescriptionDocument(null);
     setQuestionnaireDocument(null);
-    setHasDescriptionSession(false);
+    // hasDescriptionSession: owned by useMainAreaWorkflowState after store poll
     setPendingSessionCreate(null);
     setArtifactHeaderMode("artifacts");
     resetGuard();
@@ -195,12 +196,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
 
   useEffect(() => {
     const autoDocument = descriptionDocument ?? questionnaireDocument;
-    if (!autoDocument) {
-      return;
-    }
-    if (activeTool !== "Description") {
-      return;
-    }
+    if (!autoDocument || activeTool !== "Description") return;
 
     const shouldAutoReplace =
       selectedArtifact === null ||
@@ -226,10 +222,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
     selectedArtifact?.workspaceSlug,
   ]);
 
+  const { loaded: workflowStoreLoaded } = useWorkflowStateSnapshot();
   const isDescriptionActive = activeTool === "Description";
-  const activeWorkspaceSlug = activeWorkspace
-    ? resolveWorkspaceSlug(activeWorkspace)
-    : null;
+  const activeWorkspaceSlug = activeWorkspace ? resolveWorkspaceSlug(activeWorkspace) : null;
   const shouldShowQuestionnaireEditor = Boolean(
     isDescriptionActive &&
       selectedArtifact?.label === "questionnaire.md" &&
@@ -240,7 +235,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const showDescriptionHelpInSessionPanel =
     isDescriptionActive &&
     !hasDescriptionSession &&
-    !hasDescriptionSessionPending;
+    !hasDescriptionSessionPending &&
+    workflowStoreLoaded;
   const artifactHeaderModes = resolveArtifactHeaderModes(activeTool);
   const artifactHeaderTitle = activeTool === VIRTUAL_SIMULATION_TOOL_LABEL ? "Virtual Simulation" : activeTool;
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
@@ -269,6 +265,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             questionnaireDocumentExists={questionnaireDocument !== null}
             selectedArtifact={selectedArtifact}
             shouldShowQuestionnaireEditor={shouldShowQuestionnaireEditor}
+            workflowStoreLoaded={workflowStoreLoaded}
           />
         }
         artifactHeaderContent={
