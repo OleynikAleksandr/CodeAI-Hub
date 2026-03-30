@@ -73,10 +73,10 @@ Goal: устранить гонку, при которой финальный Ge
 
 ### Stream: Architecture Intake
 19. [DONE] Docs: зафиксировать duplicate-final-answer root cause и новый final flush contract Gemini в planning-доке, затем расширить текущий `todo-plan` новым Phase под remediation и релиз `1.1.850`. Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): define gemini final flush dedup contract`
-20. [TODO] Git Commit: `docs(architecture): define gemini final flush dedup contract` (hash: TBD)
+20. [DONE] Git Commit: `docs(architecture): define gemini final flush dedup contract` (hash: `0e1b72d2`)
 
 ### Stream: Deferred Flush Plumbing
-21. [TODO] Gemini_Module: добавить явный deferred-flush/drain для translated thoughts и final assistant segment, чтобы ordering внутри finished leg оставался deterministic до возврата из message processor. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.ts`, `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`. Expected commit: `fix(gemini): serialize final segment flush after translated thoughts`
+21. [DONE] Gemini_Module: добавить явный deferred-flush/drain для translated thoughts и final assistant segment, чтобы ordering внутри finished leg оставался deterministic до возврата из message processor. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.ts`, `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`. Expected commit: `fix(gemini): serialize final segment flush after translated thoughts`
 22. [TODO] Git Commit: `fix(gemini): serialize final segment flush after translated thoughts` (hash: TBD)
 
 ### Stream: Turn Runner Finalization

@@ -63,4 +63,8 @@ export class GeminiMessageProcessor {
   } {
     return this.assistantNormalizer.finalize(accumulator);
   }
+
+  async drain(accumulator: TurnAccumulator): Promise<void> {
+    await this.assistantNormalizer.drainPendingDialogMessages(accumulator);
+  }
 }

@@ -85,11 +85,17 @@ Code owner:
 - при failure эмитит original English formatted text с тем же `tag: "thinking"`.
 
 Далее `handleFinishedEvent()`:
-- собирает все `pendingTranslations`;
-- ждёт их через `Promise.allSettled(...).then(...)`;
+- собирает все `pendingTranslations`, относящиеся к текущему finished leg;
+- ставит финальный assistant response segment в serial flush chain;
+- этот chain ждёт `Promise.allSettled(...)` по всем pending thought translations данного leg;
 - только после этого эмитит реальный assistant response segment.
 
 Это удерживает translated thoughts перед final assistant reply для того же finished segment.
+
+Дополнительный runtime contract:
+- message processor обязан иметь явный `drain` pending Gemini dialog emits;
+- turn нельзя считать локально завершённым, пока этот `drain` не завершился;
+- это предотвращает late translated `thinking` и final assistant segment от выхода за границу turn finalization/fallback accounting.
 
 ### 3.3. Wiring в Session manager
 
@@ -159,10 +165,13 @@ UI contract:
 3. Ordering является частью контракта.
    Final assistant segment для того же finished stream не должен обгонять unresolved translated thoughts из этого же segment.
 
-4. Видимая translated thought должна оставаться семантически помеченной.
+4. Pending translation flush должен быть наблюдаемым для runtime finalization.
+   Если turn дошёл до `finished`, но translated thoughts ещё не дофлашены, provider layer обязан дождаться `drain` до принятия решения о segmented-vs-fallback final emit.
+
+5. Видимая translated thought должна оставаться семантически помеченной.
    `tag: "thinking"` является единственным поддерживаемым semantic marker для этого path.
 
-5. Feature намеренно не является generic localization subsystem.
+6. Feature намеренно не является generic localization subsystem.
    Любой будущий переход к shared runtime localization будет новым architecture scope, а не подразумеваемым расширением этого контракта.
 
 ---

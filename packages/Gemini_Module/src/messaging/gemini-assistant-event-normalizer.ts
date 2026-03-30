@@ -9,6 +9,7 @@ import type { ThoughtTranslatorService } from "./thought-translator-service";
 export interface TurnAccumulator {
   citations: string[];
   currentAssistantChunks: string[];
+  pendingDialogMessageFlush: Promise<void>;
   pendingTranslations: Promise<void>[];
   readonly promptId: string;
   responseChunks: string[];
@@ -30,6 +31,7 @@ export class GeminiAssistantEventNormalizer {
       responseChunks: [],
       citations: [],
       toolRequests: [],
+      pendingDialogMessageFlush: Promise.resolve(),
       pendingTranslations: [],
     };
   }
@@ -132,21 +134,32 @@ export class GeminiAssistantEventNormalizer {
 
     const assistantSegment = accumulator.currentAssistantChunks.join("");
     accumulator.currentAssistantChunks.length = 0;
-    if (accumulator.pendingTranslations.length > 0) {
-      const pending = [...accumulator.pendingTranslations];
-      accumulator.pendingTranslations.length = 0;
-      Promise.allSettled(pending).then(() => {
+    const pendingTranslations = [...accumulator.pendingTranslations];
+    accumulator.pendingTranslations.length = 0;
+    accumulator.pendingDialogMessageFlush =
+      accumulator.pendingDialogMessageFlush.then(async () => {
+        if (pendingTranslations.length > 0) {
+          await Promise.allSettled(pendingTranslations);
+        }
         this.emitDialogMessage(session, "assistant", assistantSegment, {
           seed: accumulator.promptId,
         });
       });
-      return [];
+    return [];
+  }
+
+  async drainPendingDialogMessages(
+    accumulator: TurnAccumulator
+  ): Promise<void> {
+    await accumulator.pendingDialogMessageFlush;
+    if (accumulator.pendingTranslations.length === 0) {
+      return;
     }
 
-    this.emitDialogMessage(session, "assistant", assistantSegment, {
-      seed: accumulator.promptId,
-    });
-    return [];
+    const pendingTranslations = [...accumulator.pendingTranslations];
+    accumulator.pendingTranslations.length = 0;
+    await Promise.allSettled(pendingTranslations);
+    await accumulator.pendingDialogMessageFlush;
   }
 
   private emitDialogMessage(
