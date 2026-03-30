@@ -11,6 +11,10 @@ const ROUTER_SOURCE_PATH = path.resolve(
   process.cwd(),
   "packages/core/src/remote-bridge/remote-bridge-message-router.ts"
 );
+const SESSION_CREATE_ROUTER_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "packages/core/src/remote-bridge/remote-bridge-session-create-router.ts"
+);
 const DIALOG_ROUTER_SOURCE_PATH = path.resolve(
   process.cwd(),
   "packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts"
@@ -84,7 +88,7 @@ test("RemoteBridgeWorkspaceCommandRouter handles workspace scope sync and worksp
 });
 
 test("RemoteBridgeMessageRouter binds workflow watcher on session:create with workspace context", async () => {
-  const source = await readFile(ROUTER_SOURCE_PATH, "utf8");
+  const source = await readFile(SESSION_CREATE_ROUTER_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes("const resolvedWorkspacePath ="),
