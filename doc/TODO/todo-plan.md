@@ -51,12 +51,16 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Verification
 11. [DONE] Verification: прогнать таргетные сборки/тесты по Gemini и затронутому Core, повторно проверить Description flow expectations и зафиксировать результат в `doc/Sessions/Session199.md`. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/Session199.md`. Expected commit: `docs: record gemini post-tool stall verification results`
-12. [TODO] Git Commit: `docs: record gemini post-tool stall verification results` (hash: TBD)
+12. [DONE] Git Commit: `docs: record gemini post-tool stall verification results` (hash: `6782e21b`)
 
-### Stream: Release Preparation
-13. [TODO] Release: перед финальной сборкой синхронизировать `README.md`, `CHANGELOG.md`, `doc/Sessions/Session199.md` и при необходимости связанные Gemini docs, затем на чистом дереве выполнить `./scripts/build-all.sh`. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session199.md`. Expected commit: `chore(release): prepare gemini post-tool stall fix release`
-14. [TODO] Git Commit: `chore(release): prepare gemini post-tool stall fix release` (hash: TBD)
+### Stream: Release Docs Sync
+13. [TODO] Release Docs: синхронизировать `README.md` и `CHANGELOG.md` под следующий patch release `1.1.849`, чтобы release-facing docs совпадали с post-tool Gemini remediation до запуска release scripts. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): sync 1.1.849 release notes`
+14. [TODO] Git Commit: `docs(release): sync 1.1.849 release notes` (hash: TBD)
+
+### Stream: Release Build-All
+15. [TODO] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и появление `1.1.849` tarball-артефактов, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.849 artifacts`
+16. [TODO] Git Commit: `chore(release): prepare 1.1.849 artifacts` (hash: TBD)
 
 ### Stream: Release VSIX
-15. [TODO] Release: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-<version>.vsix`, затем зафиксировать финальный результат в `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md`. Scope: packaging + docs. Expected commit: `chore(release): finalize gemini post-tool stall fix release`
-16. [TODO] Git Commit: `chore(release): finalize gemini post-tool stall fix release` (hash: TBD)
+17. [TODO] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.849.vsix`, затем синхронизировать `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session199.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.849 vsix`
+18. [TODO] Git Commit: `chore(release): finalize 1.1.849 vsix` (hash: TBD)

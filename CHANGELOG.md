@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.849] - 2026-03-30
+### Fixed
+- **Gemini post-tool terminal-leg contract**: assistant progress output from a leg that emitted `tool_call_request` no longer satisfies whole-turn completion; only the nested terminal leg without new tool requests can complete the turn.
+- **Adaptive post-tool timeout policy**: Gemini stalled-turn watchdog now distinguishes `initial` and `post_tool` legs, so follow-up after successful tool execution uses a longer timeout window instead of inheriting the aggressive initial-leg threshold.
+
+### Added
+- **Post-tool regression coverage**: added Gemini session tests for `progress -> write_file -> nested stall`, delayed post-tool final answer, and late silent tail after a terminal nested answer.
+
 ## [1.1.848] - 2026-03-30
 ### Fixed
 - **Gemini terminal-answer contract**: `thinking`/translated thoughts no longer satisfy terminal answer accounting, so a Gemini turn cannot silently complete on thoughts alone.

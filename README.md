@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.848
-- **Gemini terminal-answer fix**: translated `thinking` no longer counts as a final assistant answer, and a late Gemini stall only fails turns that never produced a real non-thinking response.
-- **History-visible recoverable failure**: recoverable Gemini `turn_failed` now materializes in dialog/session history as a system message instead of leaving the user with only the last thinking entries after reload.
-- **Regression coverage refreshed**: targeted Gemini/Core verification now covers thinking-without-answer stall, answer-then-stall completion, and `turn_failed` history persistence.
+## Current Release — v1.1.849
+- **Gemini post-tool terminal-leg fix**: assistant progress text emitted before `write_file` or other tool follow-up no longer counts as whole-turn completion; only the terminal nested leg without new tool requests can finish the turn.
+- **Adaptive post-tool stalled watchdog**: Gemini nested `post_tool` follow-up now uses a longer watchdog window than the initial leg, reducing false recoverable failures right after successful tool execution.
+- **Post-tool regression coverage**: targeted Gemini verification now covers `progress -> write_file -> nested stall`, delayed post-tool final answer, and late silent tail after terminal nested answer.
 
-Previous releases (summary): `1.1.800–1.1.847` — test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
+Previous releases (summary): `1.1.800–1.1.848` — thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
