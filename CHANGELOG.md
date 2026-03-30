@@ -4,9 +4,9 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.1.846] - 2026-03-30
+## [1.1.847] - 2026-03-30
 ### Fixed
-- **Test debt eliminated**: all 145 tests passing (was 139/151). Removed stale dist artifacts, replaced `Function()` hack with static `import { createHash }` in `computeDiagramRevision`, synchronized 5 test assertions with current template/router content.
+- **Test debt eliminated**: all 145 tests passing (was 139/151). Removed stale dist artifacts, replaced `Function()` hack with lazy `require("node:crypto")` in `computeDiagramRevision`, synchronized 5 test assertions with current template/router content.
 
 ## [1.1.845] - 2026-03-30
 ### Changed
