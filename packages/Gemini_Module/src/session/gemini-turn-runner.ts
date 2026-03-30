@@ -210,6 +210,22 @@ export class GeminiTurnRunner {
         );
         this.emitEventsCallback(session, outcome.events);
       }
+    } catch (error) {
+      if (
+        this.sessionLifecycle.isStalledTurnError(error) &&
+        assistantSegmentsEmitted > 0
+      ) {
+        session.reporter?.warn?.(
+          "Gemini stalled after terminal answer; treating turn as completed",
+          {
+            promptId,
+            sessionId: session.sessionId,
+            assistantSegmentsEmitted,
+          }
+        );
+      } else {
+        throw error;
+      }
     } finally {
       stalledTurnWatchdog.clear();
       session.eventEmitter.off("message", countAssistantSegment);

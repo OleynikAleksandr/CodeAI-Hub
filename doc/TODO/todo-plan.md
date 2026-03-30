@@ -37,11 +37,11 @@ Goal: устранить сценарий, в котором Gemini turn виз�
 4. [DONE] Git Commit: `docs(architecture): approve gemini stalled turn terminal answer contract` (hash: `ba84659a`)
 
 ### Stream: Gemini Terminality Separation
-5. [IN_PROGRESS] Gemini_Module: отделить `thinking`/translated thoughts от terminal assistant answer и перестать считать `assistant + tag=thinking` финальным streamed answer. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): separate thinking messages from terminal assistant answer`
-6. [TODO] Git Commit: `fix(gemini): separate thinking messages from terminal assistant answer` (hash: TBD)
+5. [DONE] Gemini_Module: отделить `thinking`/translated thoughts от terminal assistant answer и перестать считать `assistant + tag=thinking` финальным streamed answer. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): separate thinking messages from terminal assistant answer`
+6. [DONE] Git Commit: `fix(gemini): separate thinking messages from terminal assistant answer` (hash: `70a4d7ac`)
 
 ### Stream: Gemini Stalled Turn Policy
-7. [TODO] Gemini_Module: сделать stalled-turn outcome Gemini-specific — если terminal answer уже был, late silent gap не должен ломать turn; если были только thoughts, timeout обязан вести к explicit failure. Scope: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): gate stalled turn outcome by terminal answer presence`
+7. [IN_PROGRESS] Gemini_Module: сделать stalled-turn outcome Gemini-specific — если terminal answer уже был, late silent gap не должен ломать turn; если были только thoughts, timeout обязан вести к explicit failure. Scope: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): gate stalled turn outcome by terminal answer presence`
 8. [TODO] Git Commit: `fix(gemini): gate stalled turn outcome by terminal answer presence` (hash: TBD)
 
 ### Stream: Failure Visibility In History

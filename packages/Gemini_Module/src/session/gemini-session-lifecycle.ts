@@ -8,6 +8,8 @@ export class GeminiSessionLifecycle {
     GeminiSessionEvent["type"]
   >(["assistant"]);
   private static readonly DEFAULT_STALLED_TURN_WATCHDOG_MS = 60_000;
+  private static readonly STALLED_TURN_ERROR_PREFIX =
+    "Gemini stream stalled after ";
 
   private static formatStalledTurnTimeout(timeoutMs: number): string {
     if (timeoutMs < 1000) {
@@ -180,6 +182,13 @@ export class GeminiSessionLifecycle {
       return null;
     }
     return Math.floor(numeric);
+  }
+
+  isStalledTurnError(error: unknown): error is Error {
+    return (
+      error instanceof Error &&
+      error.message.startsWith(GeminiSessionLifecycle.STALLED_TURN_ERROR_PREFIX)
+    );
   }
 
   private resolveStalledTurnWatchdogMs(session: ActiveSession): number {
