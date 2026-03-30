@@ -141,3 +141,20 @@ Root cause: при переключении workspace reset effect в `main-area
 5. [DONE] Чистое дерево → `./scripts/build-all.sh` → v1.1.842 artifacts.
 6. [DONE] Git Commit: `chore: prepare v1.1.842 artifacts` (hash: 5918cae4)
 7. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.842.vsix` verified.
+
+## Phase 114 — Workspace Switch Auto-Select Stale Snapshot Fix (owner: Oleksandr, updated: 2026-03-30)
+
+Root cause (refined after v1.1.842 testing): эффект в `workspace-tree.tsx` пробрасывал storeState в `handleStateUpdate` как только менялся `handleStateUpdate` (из-за смены `selectedWorkspaceId`), но `storeState` ещё содержал snapshot предыдущего workspace (`loaded: true`). Это потребляло `pendingWorkspaceIdRef` (ставил в `null`) с данными СТАРОГО workspace, и когда приходил правильный snapshot нового workspace — auto-select уже не срабатывал (`pendingWorkspaceIdRef === null`).
+
+### Stream: P0-G guard auto-select against stale workspace snapshot
+8. [DONE] Добавить guard `storeState.workspaceSlug === workspaceSlug` в forwarding-effect `workspace-tree.tsx`: auto-select теперь вызывается только когда store содержит данные текущего workspace. Scope: `workspace-tree.tsx`. Expected commit: `fix: guard auto-select against stale workspace snapshot`
+9. [DONE] Git Commit: `fix: guard auto-select against stale workspace snapshot` (hash: f2ca39c8)
+
+## Phase 115 — Hotfix Release Build v1.1.843 (owner: Oleksandr, updated: 2026-03-30)
+
+### Stream: Hotfix release docs and build
+10. [DONE] Обновить `README.md` и `CHANGELOG.md` под v1.1.843.
+11. [DONE] Git Commit: `docs(release): prepare workspace switch visibility hotfix` (hash: a91f68c2)
+12. [DONE] Чистое дерево → `./scripts/build-all.sh` → v1.1.843 artifacts.
+13. [DONE] Git Commit: `chore: prepare v1.1.843 artifacts` (hash: 74659ca8)
+14. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.843.vsix` (1.8 MB) verified.
