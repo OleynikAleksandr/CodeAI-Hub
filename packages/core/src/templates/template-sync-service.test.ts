@@ -91,9 +91,9 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     relativePath:
       ".codeai-hub/templates/diagram_modules/diagram-modules-field-reference.md",
     snippets: [
-      "Разделы `Module Inventory`:",
+      "Staged artifacts этого шага состоят из:",
       "`Product Part` — это верхний уровень продукта в этом DSL",
-      "Правила для `Relation`:",
+      "## Simple Relations (inside product-part file)",
     ],
   },
   {
