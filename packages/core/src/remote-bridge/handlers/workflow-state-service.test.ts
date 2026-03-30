@@ -254,7 +254,7 @@ test("workflow-state cold start keeps invalid status but still unlocks diagram m
     await writeWorkspaceFile(
       workspaceRoot,
       `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
-      "# Virtual Simulation: Demo Workspace\n\n## Сценарий 1\nТолько один сценарий.\n"
+      "# Virtual Simulation: Demo Workspace\n"
     );
 
     const service = new WorkflowStateService({
