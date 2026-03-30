@@ -81,9 +81,7 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
       1
     );
     assert.equal(
-      contract?.prompt.includes(
-        "This staged file should materialize exactly one Product Part"
-      ),
+      contract?.prompt.includes("File materializes exactly one Product Part"),
       true
     );
     assert.equal(
