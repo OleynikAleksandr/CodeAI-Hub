@@ -55,10 +55,10 @@ Goal: устранить сценарий, в котором Gemini успева
 
 ### Stream: Release Docs Sync
 13. [TODO] Release Docs: синхронизировать `README.md` и `CHANGELOG.md` под следующий patch release `1.1.849`, чтобы release-facing docs совпадали с post-tool Gemini remediation до запуска release scripts. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): sync 1.1.849 release notes`
-14. [TODO] Git Commit: `docs(release): sync 1.1.849 release notes` (hash: TBD)
+14. [DONE] Git Commit: `docs(release): sync 1.1.849 release notes` (hash: `1bbf3b19`)
 
 ### Stream: Release Build-All
-15. [TODO] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и появление `1.1.849` tarball-артефактов, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.849 artifacts`
+15. [DONE] Release Build: на чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump и появление `1.1.849` tarball-артефактов, затем подготовить clean baseline для VSIX packaging. Scope: release/version files + generated manifests/artifacts. Expected commit: `chore(release): prepare 1.1.849 artifacts`
 16. [TODO] Git Commit: `chore(release): prepare 1.1.849 artifacts` (hash: TBD)
 
 ### Stream: Release VSIX
