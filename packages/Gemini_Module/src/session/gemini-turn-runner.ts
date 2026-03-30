@@ -173,7 +173,8 @@ export class GeminiTurnRunner {
         payload &&
         typeof payload === "object" &&
         (payload as { type?: string }).type === "dialog_message" &&
-        (payload as { role?: string }).role === "assistant"
+        (payload as { role?: string }).role === "assistant" &&
+        (payload as { tag?: string }).tag !== "thinking"
       ) {
         assistantSegmentsEmitted += 1;
       }

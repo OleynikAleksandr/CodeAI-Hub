@@ -29,15 +29,15 @@
 Goal: устранить сценарий, в котором Gemini turn визуально заканчивается translated thoughts без финального user-visible assistant answer и без явного terminal failure.
 
 ### Stream: Session Report
-1. [IN_PROGRESS] Docs: создать `doc/Sessions/Session199.md` как отчёт текущей сессии по расследованию Gemini stall, planning-доку и старту execution plan, чтобы следующая сессия могла восстановить контекст без потерь. Scope: `doc/Sessions/Session199.md`. Expected commit: `docs: add Session 199 report for gemini stalled turn investigation`
-2. [TODO] Git Commit: `docs: add Session 199 report for gemini stalled turn investigation` (hash: TBD)
+1. [DONE] Docs: создать `doc/Sessions/Session199.md` как отчёт текущей сессии по расследованию Gemini stall, planning-доку и старту execution plan, чтобы следующая сессия могла восстановить контекст без потерь. Scope: `doc/Sessions/Session199.md`. Expected commit: `docs: add Session 199 report for gemini stalled turn investigation`
+2. [DONE] Git Commit: `docs: add Session 199 report for gemini stalled turn investigation` (hash: `f2651b1d`)
 
 ### Stream: Docs Gate
 3. [DONE] Docs: согласовать и при необходимости уточнить planning-док по Gemini stalled turn, включая invariant "turn не может завершаться только размышлениями". Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`. Expected commit: `docs(architecture): approve gemini stalled turn terminal answer contract`
 4. [DONE] Git Commit: `docs(architecture): approve gemini stalled turn terminal answer contract` (hash: `ba84659a`)
 
 ### Stream: Gemini Terminality Separation
-5. [TODO] Gemini_Module: отделить `thinking`/translated thoughts от terminal assistant answer и перестать считать `assistant + tag=thinking` финальным streamed answer. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): separate thinking messages from terminal assistant answer`
+5. [IN_PROGRESS] Gemini_Module: отделить `thinking`/translated thoughts от terminal assistant answer и перестать считать `assistant + tag=thinking` финальным streamed answer. Scope: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`. Expected commit: `fix(gemini): separate thinking messages from terminal assistant answer`
 6. [TODO] Git Commit: `fix(gemini): separate thinking messages from terminal assistant answer` (hash: TBD)
 
 ### Stream: Gemini Stalled Turn Policy
