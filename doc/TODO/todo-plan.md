@@ -50,10 +50,10 @@ Goal: устранить сценарий, в котором Gemini turn виз�
 
 ### Stream: Regression Tests
 11. [DONE] Tests: покрыть сценарии `thinking-without-terminal-answer stall`, `answer-then-stall` и materialization `turn_failed` в history без подмены terminal semantics. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): cover terminal answer and stalled turn semantics`
-12. [TODO] Git Commit: `test(gemini): cover terminal answer and stalled turn semantics` (hash: TBD)
+12. [DONE] Git Commit: `test(gemini): cover terminal answer and stalled turn semantics` (hash: `4207f53b`)
 
 ### Stream: Verification
-13. [TODO] Verification: прогнать таргетные тесты/сборки по Gemini и затронутому Core, затем зафиксировать результаты в docs/session report. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/`. Expected commit: `docs: record gemini stalled turn verification results`
+13. [DONE] Verification: прогнать таргетные тесты/сборки по Gemini и затронутому Core, затем зафиксировать результаты в docs/session report. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/`. Expected commit: `docs: record gemini stalled turn verification results`
 14. [TODO] Git Commit: `docs: record gemini stalled turn verification results` (hash: TBD)
 
 ### Stream: Release Build

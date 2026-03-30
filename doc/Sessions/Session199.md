@@ -1,4 +1,4 @@
-# Session 199 — Gemini Stalled Turn Investigation + Execution Planning
+# Session 199 — Gemini Stalled Turn Investigation, Fixes, And Verification
 
 **Date:** 2026-03-30 16:25 (CEST)
 **Branch:** main
@@ -39,8 +39,32 @@
   - if timeout happens without terminal answer, outcome must remain explicit failure.
 - Added a final release-build stream to the new `todo-plan` per release checklist instructions.
 
+### Phase 4: Gemini terminal answer and stalled-turn fixes
+- Updated Gemini terminality accounting so `dialog_message` events tagged as `thinking` are no longer counted as final assistant answer segments.
+- Made Gemini stalled-turn recovery depend on real terminal answer presence:
+  - if only non-terminal activity exists, stalled timeout still raises recoverable failure;
+  - if a real non-thinking assistant answer was already emitted, a late silent stall no longer flips the turn into failure.
+- Materialized provider `turn_failed` events into session history as a system-visible message, so reload no longer leaves the user with only the last thinking entries.
+
+### Phase 5: Targeted verification
+- Rebuilt the affected workspaces successfully:
+  - `npm run build --workspace @codeai-hub/gemini-module`
+  - `npm run build --workspace @codeai-hub/core`
+- Re-ran the focused regression suite successfully:
+  - `node --test packages/Gemini_Module/dist/session/gemini-turn-runner.test.js packages/Gemini_Module/dist/session/gemini-session-manager.test.js`
+  - `node --test packages/core/dist/remote-bridge/handlers/session-provider-event-router.test.js`
+- Verified the new regression coverage:
+  - translated `thinking` without terminal answer still ends in recoverable failure;
+  - answer-then-stall completes successfully;
+  - `turn_failed` is persisted into history-visible system output.
+
 ## Git commits
 - `ba84659a` `docs(architecture): approve gemini stalled turn terminal answer contract`
+- `f2651b1d` `docs: add Session 199 report for gemini stalled turn investigation`
+- `70a4d7ac` `fix(gemini): separate thinking messages from terminal assistant answer`
+- `0fe3d203` `fix(gemini): gate stalled turn outcome by terminal answer presence`
+- `ccd29f06` `fix(session): persist gemini stalled turn failures in history`
+- `4207f53b` `test(gemini): cover terminal answer and stalled turn semantics`
 
 ---
 
@@ -65,10 +89,12 @@
   - `thinkingLevelByModel["gemini-3-flash-preview"] = "high"`
 
 ## Next active work according to todo-plan
-- Finish the `Session Report` stream commit for this report.
-- Then move to `Gemini Terminality Separation`.
-- Keep micro-task scope within 3 files.
-- Do not skip commit steps between streams.
+- Record the verification docs commit in `todo-plan.md`.
+- Execute the final `Release Build` stream on a clean tree:
+  - `./scripts/build-all.sh`
+  - `./scripts/build-release.sh --use-current-version`
+- Capture resulting tarballs/VSIX and append the release outcome to this session report.
+- Keep micro-task scope within 3 files and do not skip commit steps between streams.
 
 ## Implementation direction agreed in this session
 - Treat translated thoughts as side-channel, not as terminal assistant answer.
