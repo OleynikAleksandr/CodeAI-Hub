@@ -58,8 +58,8 @@ Goal: устранить сценарий, в котором Gemini turn виз�
 
 ### Stream: Release Preparation
 15. [DONE] Release: выполнить `./scripts/build-all.sh`, обновить version manifests до `1.1.848`, синхронизировать `README.md`, `CHANGELOG.md` и `doc/Sessions/Session199.md` под новый релизный snapshot. Scope: release manifests + docs. Expected commit: `chore(release): prepare 1.1.848 artifacts`
-16. [TODO] Git Commit: `chore(release): prepare 1.1.848 artifacts` (hash: TBD)
+16. [DONE] Git Commit: `chore(release): prepare 1.1.848 artifacts` (hash: `5a6b1760`)
 
 ### Stream: Release VSIX
-17. [TODO] Release: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.848.vsix` и финальные release checks, затем зафиксировать результат в `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md`. Scope: packaging + docs. Expected commit: `chore(release): finalize 1.1.848 vsix`
+17. [DONE] Release: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.848.vsix` и финальные release checks, затем зафиксировать результат в `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md`. Scope: packaging + docs. Expected commit: `chore(release): finalize 1.1.848 vsix`
 18. [TODO] Git Commit: `chore(release): finalize 1.1.848 vsix` (hash: TBD)

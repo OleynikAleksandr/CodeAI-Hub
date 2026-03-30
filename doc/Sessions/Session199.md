@@ -1,4 +1,4 @@
-# Session 199 — Gemini Stalled Turn Investigation, Fixes, And Verification
+# Session 199 — Gemini Stalled Turn Investigation, Fixes, Verification, And Release 1.1.848
 
 **Date:** 2026-03-30 16:25 (CEST)
 **Branch:** main
@@ -70,6 +70,16 @@
   - `project-manager-1.1.848.tar.bz2`
 - Synced release-facing docs for `1.1.848` in `README.md` and `CHANGELOG.md`.
 
+### Phase 7: Release packaging
+- Ran `./scripts/build-release.sh --use-current-version` on a clean tree for `1.1.848`.
+- Verified the expected release markers in script output:
+  - `Step 7: Verifying SDK exclusions`
+  - `Removing dev dependencies before packaging`
+  - `✅ Package created`
+- Produced the final VSIX:
+  - `codeai-hub-1.1.848.vsix` (`1.7M`) at repository root.
+- Confirmed packaging left no tracked git changes after restoring development dependencies.
+
 ## Git commits
 - `ba84659a` `docs(architecture): approve gemini stalled turn terminal answer contract`
 - `f2651b1d` `docs: add Session 199 report for gemini stalled turn investigation`
@@ -78,6 +88,7 @@
 - `ccd29f06` `fix(session): persist gemini stalled turn failures in history`
 - `4207f53b` `test(gemini): cover terminal answer and stalled turn semantics`
 - `b72c6b48` `docs: record gemini stalled turn verification results`
+- `5a6b1760` `chore(release): prepare 1.1.848 artifacts`
 
 ---
 
@@ -102,11 +113,9 @@
   - `thinkingLevelByModel["gemini-3-flash-preview"] = "high"`
 
 ## Next active work according to todo-plan
-- Record the release-preparation commit hash in `todo-plan.md`.
-- Execute the final `Release VSIX` stream on a clean tree:
-  - `./scripts/build-release.sh --use-current-version`
-- Verify the resulting `codeai-hub-1.1.848.vsix` and append the final packaging outcome to this session report.
-- Keep micro-task scope within 3 files and do not skip commit steps between streams.
+- This release track is functionally complete.
+- If a new session starts, first record the final release commit hash in `doc/TODO/todo-plan.md`, then archive the completed plan and begin the next scope from a new planning document.
+- Reuse this report as the continuity source for what changed in Gemini stalled-turn handling and for the `1.1.848` release artefacts.
 
 ## Implementation direction agreed in this session
 - Treat translated thoughts as side-channel, not as terminal assistant answer.
