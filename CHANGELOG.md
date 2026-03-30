@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.845] - 2026-03-30
+### Changed
+- **Architecture line limit raised to 500**: `MAX_LINES` 300→500, `WARNING_LINES` 250→400 in `check-architecture.sh`; updated `AGENTS.md` principles.
+- **Oversized file refactoring**: split all 5 files that exceeded 500 lines into focused modules: `unified-session-backfill.ts`, `workspace-runtime-facade-task-timer.test.ts`, `cli-parser.ts`, `core-runtime-resolver.ts`, `session-request-handler-types.ts`, `session-request-handler.test-helpers.ts`. Debt allowlist cleared to zero entries.
+
 ## [1.1.844] - 2026-03-30
 ### Changed
 - **Dead code detection**: replaced deprecated `ts-prune` with `knip` in pre-commit hook, CI workflow, and AGENTS.md; knip now blocks commits on unused files, unused exports, and duplicate exports.
