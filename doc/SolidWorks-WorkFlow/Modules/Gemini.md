@@ -17,6 +17,10 @@
 - `packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts` — module loading and compatibility validation helper shared by `cli-bridge.ts` and `gemini-installer.ts`.
 - `packages/Gemini_Module/src/runtime/cli-bridge-root-resolver.ts` — CLI/Core package root candidate scanning and version resolution helper.
 
+## Installer cluster
+- `packages/Gemini_Module/src/installer/gemini-installer.ts` — bridge/install orchestrator facade for package preparation and recovery.
+- `packages/Gemini_Module/src/installer/gemini-package-manager.ts` — package install/update/recovery helper owned by the installer boundary.
+
 ## Инварианты
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Любые auth/quota ошибки не должны оставлять UI в stuck working.
