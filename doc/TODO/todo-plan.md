@@ -59,8 +59,8 @@ Goal: behavior-preserving decomposition of the first three production warning-zo
 18. [DONE] Git Commit: `refactor(gemini): split cli bridge loading and compatibility` (hash: `e00789c7`)
 19. [DONE] Gemini_Module: вынести npm/package-install/update/recovery helpers из `gemini-installer.ts` в focused installer helper и синхронизировать `Modules/Gemini.md`. Scope: `packages/Gemini_Module/src/installer/gemini-installer.ts`, новый helper в `packages/Gemini_Module/src/installer/`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Expected commit: `refactor(gemini): extract installer package management`
 20. [DONE] Git Commit: `refactor(gemini): extract installer package management` (hash: `e3d2749a`)
-21. [TODO] Verification: прогнать таргетную сборку Gemini module и focused installer/runtime checks, затем синхронизировать execution status. Scope: `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): verify installer runtime decomposition`
-22. [TODO] Git Commit: `test(gemini): verify installer runtime decomposition` (hash: TBD)
+21. [DONE] Verification: прогнать таргетную сборку Gemini module и focused installer/runtime checks, затем синхронизировать execution status. Scope: `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): verify installer runtime decomposition`
+22. [DONE] Git Commit: `test(gemini): verify installer runtime decomposition` (hash: `f0d74e0e`)
 
 ### Stream: Claude Usage Limits Token Resolution Split
 23. [DONE] Core: вынести platform/env/credential OAuth token resolution из `claude-usage-limits-facade.ts` в focused helper рядом с existing Claude usage-limits cluster и синхронизировать `Modules/Claude.md`. Scope: `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts`, новый helper в `packages/core/src/provider-usage-limits/providers/claude/`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Expected commit: `refactor(core): extract claude usage token resolution`
