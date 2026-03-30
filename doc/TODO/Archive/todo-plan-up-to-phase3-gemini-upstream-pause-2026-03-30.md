@@ -119,8 +119,8 @@ Goal: синхронизировать session reports и active planning trail 
 
 ### Stream: Archive Active Gemini Plan
 39. [DONE] Docs: перенести завершённый Gemini-focused `todo-plan` в `doc/TODO/Archive/` и создать новый placeholder `doc/TODO/todo-plan.md` с правилом, что следующий execution scope открывается только после нового approved planning-дока. Scope: `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: archive gemini todo plan after upstream pause`
-40. [TODO] Git Commit: `docs: archive gemini todo plan after upstream pause` (hash: TBD)
+40. [DONE] Git Commit: `docs: archive gemini todo plan after upstream pause` (hash: `d12d6a20`)
 
 ### Stream: Session Handoff
-41. [TODO] Docs: создать `doc/Sessions/Session202.md` по итогам cleanup-сессии и закрыть hash bookkeeping в archived Gemini plan. Scope: `doc/Sessions/Session202.md`, `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`. Expected commit: `docs: record session 202 handoff`
+41. [DONE] Docs: создать `doc/Sessions/Session202.md` по итогам cleanup-сессии и закрыть hash bookkeeping в archived Gemini plan. Scope: `doc/Sessions/Session202.md`, `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`. Expected commit: `docs: record session 202 handoff`
 42. [TODO] Git Commit: `docs: record session 202 handoff` (hash: TBD)
