@@ -1,4 +1,4 @@
-# Session 199 — Gemini Stalled Turn Investigation, Fixes, Verification, And Release 1.1.848
+# Session 199 — Gemini Stalled Turn Investigation, Fixes, Release 1.1.848, And Post-Release Validation
 
 **Date:** 2026-03-30 16:25 (CEST)
 **Branch:** main
@@ -80,6 +80,23 @@
   - `codeai-hub-1.1.848.vsix` (`1.7M`) at repository root.
 - Confirmed packaging left no tracked git changes after restoring development dependencies.
 
+### Phase 8: Post-release validation and next bug intake
+- Tested release `1.1.848` on a fresh Gemini `Description` run after packaging.
+- Confirmed the fixed part of the previous incident:
+  - `Final_Description.md` now materializes successfully in the Gemini workspace.
+- Confirmed the remaining failure shape:
+  - provider session: `3a6fb414-22d4-4a43-a7f9-7e5f5cb92d07`
+  - logical session: `a7e0598e-8fee-410d-8cf2-7ba28d4457d8`
+  - `write_file` for `Final_Description.md` reached raw Gemini log at `2026-03-30T14:43:57.265Z`
+  - Core emitted `Provider turn failed: Gemini stream stalled after 60s without progress.` at `2026-03-30T14:44:57.285Z`
+- Confirmed by session history that the last non-thinking assistant text was still only progress output:
+  - “Сейчас я сформирую первый черновик `Final_Description.md`...”
+- New architecture conclusion:
+  - the remaining bug is not `thinking`-only completion anymore;
+  - it is a nested post-tool follow-up stall after successful `write_file`;
+  - current Gemini heuristic still does not distinguish progress output from true terminal-leg answer;
+  - the base `60s` watchdog is likely too aggressive for post-tool Gemini follow-up.
+
 ## Git commits
 - `ba84659a` `docs(architecture): approve gemini stalled turn terminal answer contract`
 - `f2651b1d` `docs: add Session 199 report for gemini stalled turn investigation`
@@ -89,6 +106,8 @@
 - `4207f53b` `test(gemini): cover terminal answer and stalled turn semantics`
 - `b72c6b48` `docs: record gemini stalled turn verification results`
 - `5a6b1760` `chore(release): prepare 1.1.848 artifacts`
+- `66836171` `chore(release): finalize 1.1.848 vsix`
+- `6db998f0` `docs(architecture): intake gemini post-tool terminal leg remediation`
 
 ---
 
@@ -101,7 +120,7 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
-7. `doc/SolidWorks-WorkFlow/Plans/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`
 
 ## Confirmed technical findings
 - Raw Gemini `finished` is not equal to full turn completion; upstream stream can continue after it.
@@ -111,11 +130,15 @@
 - Current user settings intensify the issue:
   - default Gemini model: `gemini-3-flash-preview`
   - `thinkingLevelByModel["gemini-3-flash-preview"] = "high"`
+- Release `1.1.848` fixed the original “no file materialization” problem: `Final_Description.md` is now created successfully.
+- The remaining failure now happens after successful `write_file`, on the nested post-tool follow-up leg.
+- The last visible non-thinking assistant text in the failing run is progress output, not a trustworthy terminal answer.
+- The next remediation scope is to distinguish progress legs from terminal legs and to relax stalled timeout specifically for Gemini post-tool follow-up.
 
 ## Next active work according to todo-plan
-- This release track is functionally complete.
-- If a new session starts, first record the final release commit hash in `doc/TODO/todo-plan.md`, then archive the completed plan and begin the next scope from a new planning document.
-- Reuse this report as the continuity source for what changed in Gemini stalled-turn handling and for the `1.1.848` release artefacts.
+- Execute the new `Gemini post-tool terminal leg and adaptive watchdog` plan from `doc/TODO/todo-plan.md`.
+- First code stream: separate progress output from terminal-leg answer in Gemini tool chains.
+- Then add a longer Gemini-specific stalled policy for nested post-tool follow-up and rebuild a new release with synced docs before final packaging.
 
 ## Implementation direction agreed in this session
 - Treat translated thoughts as side-channel, not as terminal assistant answer.

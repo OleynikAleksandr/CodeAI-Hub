@@ -30,7 +30,7 @@
 Goal: устранить сценарий, в котором Gemini успевает создать `Final_Description.md`, но затем зависает на nested post-tool follow-up и падает по stalled timeout до финального ответа или точечных вопросов пользователю.
 
 ### Stream: Session Report
-1. [TODO] Docs: обновить `doc/Sessions/Session199.md` пост-релизной валидацией `1.1.848`, зафиксировать новый provider session `3a6fb414-22d4-4a43-a7f9-7e5f5cb92d07`, `Final_Description.md` materialization и вывод о том, что последний assistant message был progress-output, а не terminal answer. Scope: `doc/Sessions/Session199.md`. Expected commit: `docs: record post-release gemini post-tool stall validation`
+1. [DONE] Docs: обновить `doc/Sessions/Session199.md` пост-релизной валидацией `1.1.848`, зафиксировать новый provider session `3a6fb414-22d4-4a43-a7f9-7e5f5cb92d07`, `Final_Description.md` materialization и вывод о том, что последний assistant message был progress-output, а не terminal answer. Scope: `doc/Sessions/Session199.md`. Expected commit: `docs: record post-release gemini post-tool stall validation`
 2. [TODO] Git Commit: `docs: record post-release gemini post-tool stall validation` (hash: TBD)
 
 ### Stream: Gemini Terminal Leg Contract
