@@ -135,12 +135,18 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     setExpandedNodes({ workspace: true });
   }, [markWorkspaceChanged, resetPendingSelection, selectedWorkspaceId, workspacePath, workspaceSlug]);
 
-  // Forward shared store snapshot to auto-select logic
+  // Forward shared store snapshot to auto-select logic.
+  // Guard: only forward when the store has loaded data for the CURRENT
+  // workspace.  Without this, a stale previous-workspace snapshot can
+  // fire handleStateUpdate (which uses the new selectedWorkspaceId)
+  // and permanently null out pendingWorkspaceIdRef before the correct
+  // snapshot arrives, preventing auto-select from ever dispatching
+  // pm:dialog:open for the new workspace.
   useEffect(() => {
-    if (storeState.loaded) {
+    if (storeState.loaded && storeState.workspaceSlug === workspaceSlug) {
       handleStateUpdate(storeState.snapshot);
     }
-  }, [handleStateUpdate, storeState]);
+  }, [handleStateUpdate, storeState, workspaceSlug]);
 
   const resolveStageNodes = (): readonly TreeNode[] => {
     if (!workflowState) {
