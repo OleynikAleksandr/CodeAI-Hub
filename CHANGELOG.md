@@ -6,7 +6,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [1.1.842] - 2026-03-30
 ### Fixed
-- **Workspace switch session visibility**: switching between workspaces with active Description sessions no longer flashes the "Start with the Description questionnaire" placeholder. The reset effect no longer unconditionally clears `hasDescriptionSession`; a `workflowStoreLoaded` guard prevents both the questionnaire panel and the description help from rendering until the store completes its first poll for the new workspace.
+- **Workspace switch session visibility**: switching between workspaces with active sessions no longer flashes the "Start with the Description questionnaire" placeholder. Root cause: workspace-tree auto-select fired `handleStateUpdate` with a stale previous-workspace snapshot before the store emitted data for the new workspace, permanently consuming `pendingWorkspaceIdRef` and preventing the correct `pm:dialog:open` dispatch. Fix: added `storeState.workspaceSlug === workspaceSlug` guard so auto-select only processes snapshots that belong to the current workspace. Additionally, the reset effect no longer unconditionally clears `hasDescriptionSession`, and a `workflowStoreLoaded` guard prevents the questionnaire panel from rendering until the store loads.
 
 ## [1.1.841] - 2026-03-29
 ### Fixed

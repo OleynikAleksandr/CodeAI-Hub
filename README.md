@@ -8,7 +8,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Bug registry: `doc/BugRegistry.md`
 
 ## Current Release — v1.1.842
-- **Workspace switch no longer flashes questionnaire placeholder**: switching between workspaces with active sessions now shows the session instantly instead of briefly displaying "Start with the Description questionnaire" for 0.5-3 seconds while the workflow state store loads.
+- **Workspace switch restores last active step**: switching between workspaces with active sessions now immediately shows the correct session and artifact for the last completed workflow step (Description / Virtual Simulation / Diagram Modules) instead of flashing the "Start with the Description questionnaire" placeholder.
 - **v1.1.838-841 scope preserved**: dialog-mode dispatch after submit, description session flicker fix, false `Final_Description.md` elimination, shared `WorkflowStateStore`, description gating alignment, store derivation hotfix, preferred session ID preservation.
 
 Previous releases (summary): `1.1.800–1.1.837` — provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
