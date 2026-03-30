@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.851] - 2026-03-30
+### Changed
+- **Claude auth façade decomposition**: `packages/Claude_Module/src/auth/sdk-auth-manager.ts` is now a thin coordinator over dedicated helpers instead of a mixed provider-home/runtime auth root.
+- **Provider-home auth bridge**: macOS Keychain bridge, legacy `.claude.json` link/copy handling, and legacy credentials migration now live in `packages/Claude_Module/src/auth/claude-auth-home-bridge.ts`.
+- **Runtime auth split**: OAuth bootstrap/cache refresh, auth environment assembly, `npx @anthropic-ai/claude-code` preflight probe, and final auth check now live in `packages/Claude_Module/src/auth/claude-auth-runtime.ts`.
+
+### Fixed
+- **Warning-zone closure**: the last production hotspot from the originally agreed runtime `400-500` wave (`sdk-auth-manager.ts`) is now below the architecture warning threshold without changing the public Claude auth contract.
+- **Release verification coverage**: Claude auth decomposition was verified with `@codeai-hub/claude-module` build, package tests, and a compiled `SDKAuthManager` env-contract smoke check before release packaging.
+
 ## [1.1.850] - 2026-03-30
 ### Fixed
 - **Gemini final-answer deduplication**: deferred translated-thought flush now completes before segmented-vs-fallback assistant accounting, so a terminal Gemini answer emitted once by the provider is written once to dialog history instead of being duplicated locally.
