@@ -111,10 +111,10 @@ Goal: синхронизировать session reports и active planning trail 
 
 ### Stream: Closure Intake
 35. [DONE] Docs: расширить planning-док closure-note про `1.1.850` и upstream pause, закрыть пропущенный release commit `2160ba28` и добавить Phase 3 в active `todo-plan`. Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): note gemini upstream pause closure`
-36. [TODO] Git Commit: `docs(architecture): note gemini upstream pause closure` (hash: TBD)
+36. [DONE] Git Commit: `docs(architecture): note gemini upstream pause closure` (hash: `802ed541`)
 
 ### Stream: Session Reports Sync
-37. [TODO] Docs: синхронизировать `doc/Sessions/Session200.md` с фактическим release-finalize commit и завести `doc/Sessions/Session201.md` как canonical report upstream pause, одновременно обновив статусы текущего `todo-plan`. Scope: `doc/Sessions/Session200.md`, `doc/Sessions/Session201.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: sync gemini release and pause reports`
+37. [DONE] Docs: синхронизировать `doc/Sessions/Session200.md` с фактическим release-finalize commit и завести `doc/Sessions/Session201.md` как canonical report upstream pause, одновременно обновив статусы текущего `todo-plan`. Scope: `doc/Sessions/Session200.md`, `doc/Sessions/Session201.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: sync gemini release and pause reports`
 38. [TODO] Git Commit: `docs: sync gemini release and pause reports` (hash: TBD)
 
 ### Stream: Archive Active Gemini Plan

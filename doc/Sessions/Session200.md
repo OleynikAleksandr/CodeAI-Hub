@@ -50,6 +50,7 @@
 - `7eb2bffb` `docs(release): sync 1.1.850 release notes`
 - `e278268e` `docs(plan): sync release stream checkpoints`
 - `be403511` `chore(release): prepare 1.1.850 artifacts`
+- `2160ba28` `chore(release): finalize 1.1.850 vsix`
 
 ---
 
