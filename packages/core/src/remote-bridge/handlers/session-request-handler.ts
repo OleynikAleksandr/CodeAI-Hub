@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import type { CoreConfig } from "../../config";
 import type { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import type { ProviderRegistry } from "../../provider-registry";
@@ -31,12 +30,10 @@ import type {
 import type { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import type { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
-import type {
-  PostTurnContextDecision,
-  SessionRequestHandlerResumeLifecycle,
-} from "./session-request-handler-resume-lifecycle";
+import type { SessionRequestHandlerResumeLifecycle } from "./session-request-handler-resume-lifecycle";
 import type { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
 import { createSessionRequestHandlerRuntime } from "./session-request-handler-runtime";
+import { createSessionRequestHandlerRuntimeCallbacks } from "./session-request-handler-runtime-callbacks";
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import type { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
@@ -101,156 +98,32 @@ export class SessionRequestHandler {
     this.broadcaster = options.broadcaster;
     this.stateBroadcaster = options.stateBroadcaster;
     this.workspaceRuntime = options.workspaceRuntime;
-    const isFlowNodeRolloverPending = (sessionId: string): boolean =>
-      this.continuityRolloverOrchestrator.hasPending(sessionId) ||
-      this.continuityLockService.hasContext(sessionId);
-    const resolveImmediatePostTurnContextDecision = (
-      session: Session
-    ): PostTurnContextDecision | null => {
-      if (isFlowNodeRolloverPending(session.id)) {
-        return "rollover_required";
-      }
-      if (!(session.initiativeSlug && session.stage)) {
-        return "no_rollover";
-      }
-      if (
-        !this.flowNodeContinuity.isEligibleForRollover({
-          stageId: session.stage,
-          runSlug: session.runSlug,
-        })
-      ) {
-        return "no_rollover";
-      }
-      return null;
-    };
-    const emitTurnStateEvent = (turnStateOptions: {
-      readonly sessionId: string;
-      readonly state: "running" | "idle";
-    }): void => {
-      const session = this.sessionManager.getSession(
-        turnStateOptions.sessionId
-      );
-      const providerId = session?.providerId ?? null;
-      if (session) {
-        this.workspaceRuntime?.notifyTurnStateChanged(
-          {
-            workspaceRoot: session.workspacePath,
-            nodeId: session.stage ?? "session",
-            sessionId: session.id,
-          },
-          turnStateOptions.state
-        );
-      }
-      this.broadcaster({
-        type: "session:stream",
-        payload: {
-          sessionId: turnStateOptions.sessionId,
-          event: {
-            type: "stream_event",
-            provider: providerId ?? "core",
-            sessionId: turnStateOptions.sessionId,
-            data: {
-              kind: "turn_state",
-              state: turnStateOptions.state,
-              ...(providerId ? { providerId } : {}),
-            },
-            uuid: `${crypto.randomUUID()}::turn_state`,
-            timestamp: new Date().toISOString(),
-          },
-        },
-      });
-    };
-    const getDefaultProviderId = (): string => {
-      const providers = this.providerRegistry.listProviders();
-      const activeProvider = providers.find(
-        (provider) =>
-          provider.status === "active" &&
-          Boolean(this.providerRegistry.getAdapter(provider.id))
-      );
-      if (activeProvider) {
-        return activeProvider.id;
-      }
-      const fallbackProvider = providers.find((provider) =>
-        Boolean(this.providerRegistry.getAdapter(provider.id))
-      );
-      return fallbackProvider?.id ?? "claudeCodeCli";
-    };
-    const handleProviderFailure = (
-      providerId: string,
-      error: unknown,
-      sessionId?: string
-    ): void => {
-      this.providerFailureRecovery.handleProviderFailure(
-        providerId,
-        error,
-        sessionId
-      );
-    };
-    const runTurnCompletedArbitration = (sessionId: string): void => {
-      this.turnArbitration.runTurnCompletedArbitration(sessionId);
-    };
-    const handleTurnCompletedWithFlowNodeArbitration = (
-      sessionId: string,
-      flowNodeContinuityTask: Promise<void>
-    ): void => {
-      flowNodeContinuityTask
-        .catch((error: unknown) => {
-          this.logger.warn("Flow node continuity handler failed", {
-            sessionId,
-            error: error instanceof Error ? error.message : String(error),
-          });
-        })
-        .finally(() => {
-          runTurnCompletedArbitration(sessionId);
-        });
-    };
-    const handleFlowNodeContinuityProviderEvent = async (
-      sessionId: string,
-      event: unknown
-    ): Promise<void> => {
-      await this.turnArbitration.handleFlowNodeContinuityProviderEvent({
-        sessionId,
-        event,
-        resolveLiveContinuityRemainingPercentThreshold: async (session) =>
-          await this.turnArbitration.resolveLiveContinuityRemainingPercentThreshold(
-            session
-          ),
-      });
-    };
+    const runtimeCallbacks = createSessionRequestHandlerRuntimeCallbacks({
+      getBroadcaster: () => this.broadcaster,
+      getContinuityLockService: () => this.continuityLockService,
+      getContinuityRolloverOrchestrator: () =>
+        this.continuityRolloverOrchestrator,
+      getFlowNodeContinuity: () => this.flowNodeContinuity,
+      getTurnArbitration: () => this.turnArbitration,
+      handleMessage: async (sessionId, payload) =>
+        await this.handleMessage(sessionId, payload),
+      handleProviderEvent: (sessionId, event) =>
+        this.providerEventRouter.handleProviderEvent(sessionId, event),
+      getLogger: () => this.logger,
+      getProviderFailureRecovery: () => this.providerFailureRecovery,
+      getProviderRegistry: () => this.providerRegistry,
+      resolveContinuityRootSessionId: async (resolutionOptions) =>
+        await this.continuityRoot.resolveContinuityRootSessionId(
+          resolutionOptions
+        ),
+      getSessionManager: () => this.sessionManager,
+      getWorkspaceRuntime: () => this.workspaceRuntime,
+    });
+    const handleProviderFailure = runtimeCallbacks.handleProviderFailure;
+    const emitTurnStateEvent = runtimeCallbacks.emitTurnStateEvent;
     const runtime = createSessionRequestHandlerRuntime({
       broadcaster: this.broadcaster,
-      callbacks: {
-        emitContinuityLockEvent: (lockEvent) =>
-          this.continuityLockService.emitContinuityLockEvent(lockEvent),
-        emitTurnStateEvent,
-        finalizeFlowNodeContinuityLock: (lockOptions) =>
-          this.continuityLockService.finalizeFlowNodeContinuityLock(
-            lockOptions
-          ),
-        finalizeFlowNodeContinuityLockOnBootstrapGate: (lockOptions) =>
-          this.continuityLockService.finalizeFlowNodeContinuityLockOnBootstrapGate(
-            lockOptions
-          ),
-        getDefaultProviderId,
-        handleFlowNodeContinuityProviderEvent,
-        handleMessage: async (sessionId, payload) =>
-          await this.handleMessage(sessionId, payload),
-        handleProviderEvent: (sessionId, event) =>
-          this.providerEventRouter.handleProviderEvent(sessionId, event),
-        handleProviderFailure,
-        handleTurnCompletedWithFlowNodeArbitration,
-        isFlowNodeRolloverPending,
-        registerFlowNodeContinuityLockContext: (context) =>
-          this.continuityLockService.registerFlowNodeContinuityLockContext(
-            context
-          ),
-        resolveContinuityRootSessionId: async (resolutionOptions) =>
-          await this.continuityRoot.resolveContinuityRootSessionId(
-            resolutionOptions
-          ),
-        resolveImmediatePostTurnContextDecision,
-        runTurnCompletedArbitration,
-      },
+      callbacks: runtimeCallbacks,
       config: this.config,
       continuityClock: options.continuityClock,
       continuityRootBySessionId: this.continuityRootBySessionId,
