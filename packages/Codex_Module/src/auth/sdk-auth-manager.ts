@@ -9,6 +9,7 @@ import {
 } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import { CodexProviderConfigMaterializer } from "./codex-provider-config-materializer";
 
 const CODEX_LOGIN_HINT =
   "Codex authentication required. Run `codex login` in a terminal session.";
@@ -25,9 +26,15 @@ const CODEAI_CODEX_HOME = path.join(
 
 export class CodexAuthManager {
   private readonly codexHome: string;
+  private readonly configMaterializer: CodexProviderConfigMaterializer;
 
   constructor() {
     this.codexHome = process.env.CODEX_HOME ?? CODEAI_CODEX_HOME;
+    this.configMaterializer = new CodexProviderConfigMaterializer({
+      legacyCodexHome: LEGACY_CODEX_HOME,
+      overrides: { modelReasoningSummary: "auto" },
+      providerCodexHome: this.codexHome,
+    });
   }
 
   async ensureAuthenticated(): Promise<void> {
@@ -55,7 +62,7 @@ export class CodexAuthManager {
 
   private async migrateLegacyAuthIfNeeded(): Promise<void> {
     await this.ensureLegacyFileLinked("auth.json");
-    await this.ensureLegacyFileLinked("config.toml");
+    await this.configMaterializer.ensureProviderConfigToml();
   }
 
   private async ensureLegacyFileLinked(filename: string): Promise<void> {
