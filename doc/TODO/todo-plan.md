@@ -74,8 +74,8 @@ Goal: rewire Gemini thought translation onto the new shared facade with zero vis
 18. [DONE] Git Commit: `docs(release): prepare shared translation release notes` (hash: `fa714d2f`)
 
 ### Stream: Release Build
-19. [TODO] Release: после зелёной structural verification и doc sync выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, сохранить свежие артефакты и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `build(release): assemble shared translation release`
-20. [TODO] Git Commit: `build(release): assemble shared translation release` (hash: TBD)
+19. [DONE] Release: после зелёной structural verification и doc sync выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, сохранить свежие артефакты и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `build(release): assemble shared translation release`
+20. [DONE] Git Commit: `build(release): assemble shared translation release` (hash: `adf70909`)
 
 ### Stream: Phase Closeout
 21. [TODO] Docs: архивировать завершённый active plan, выпустить placeholder `todo-plan.md` и записать session handoff по итогам release wave. Scope: `doc/TODO/Archive/`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `docs(plan): archive shared translation release wave`
