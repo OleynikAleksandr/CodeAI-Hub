@@ -6,10 +6,16 @@ import {
   type ProviderSessionBinding,
   SessionRequestHandler,
 } from "./session-request-handler";
-
-export type { HandlerTestInternals } from "./session-request-handler-types";
-
 import type { HandlerTestInternals } from "./session-request-handler-types";
+
+export {
+  collectTurnStateSequence,
+  countContextCheckPendingLockEvents,
+  countContinuityUnlocks,
+  countIdleTurnStateEvents,
+  countNoRolloverUnlockEvents,
+} from "./session-request-handler.test-event-helpers";
+export type { HandlerTestInternals } from "./session-request-handler-types";
 
 export const internals = (
   handler: SessionRequestHandler
@@ -197,87 +203,6 @@ export const createHarness = (
   };
 };
 
-export const collectTurnStateSequence = (
-  events: readonly BridgeEvent[]
-): string[] =>
-  events
-    .filter((event) => event.type === "session:stream")
-    .map((event) => {
-      const payload = event.payload as {
-        readonly event?: {
-          readonly data?: { readonly kind?: string; readonly state?: string };
-        };
-      };
-      return payload.event?.data?.kind === "turn_state"
-        ? (payload.event.data.state ?? null)
-        : null;
-    })
-    .filter((state): state is string => typeof state === "string");
-
-export const countIdleTurnStateEvents = (
-  events: readonly BridgeEvent[]
-): number =>
-  events.filter((event) => {
-    if (event.type !== "session:stream") {
-      return false;
-    }
-    const payload = event.payload as {
-      readonly event?: {
-        readonly data?: { readonly kind?: string; readonly state?: string };
-      };
-    };
-    return (
-      payload.event?.data?.kind === "turn_state" &&
-      payload.event.data.state === "idle"
-    );
-  }).length;
-
-export const countNoRolloverUnlockEvents = (
-  events: readonly BridgeEvent[]
-): number =>
-  events.filter((event) => {
-    if (event.type !== "session:stream") {
-      return false;
-    }
-    const payload = event.payload as {
-      readonly event?: {
-        readonly data?: {
-          readonly kind?: string;
-          readonly state?: string;
-          readonly reason?: string;
-        };
-      };
-    };
-    return (
-      payload.event?.data?.kind === "continuity_lock" &&
-      payload.event.data.state === "unlocked" &&
-      payload.event.data.reason === "no_rollover_needed"
-    );
-  }).length;
-
-export const countContextCheckPendingLockEvents = (
-  events: readonly BridgeEvent[]
-): number =>
-  events.filter((event) => {
-    if (event.type !== "session:stream") {
-      return false;
-    }
-    const payload = event.payload as {
-      readonly event?: {
-        readonly data?: {
-          readonly kind?: string;
-          readonly state?: string;
-          readonly reason?: string;
-        };
-      };
-    };
-    return (
-      payload.event?.data?.kind === "continuity_lock" &&
-      payload.event.data.state === "locked" &&
-      payload.event.data.reason === "context_check_pending"
-    );
-  }).length;
-
 export const createDescriptionSession = (
   harness: HandlerHarness,
   workspacePath: string,
@@ -367,30 +292,6 @@ export const registerBootstrapLock = (
     reason: "resume_bootstrap",
   });
 };
-
-export const countContinuityUnlocks = (
-  harness: HandlerHarness,
-  reason: string
-): number =>
-  harness.events.filter((event) => {
-    if (event.type !== "session:stream") {
-      return false;
-    }
-    const payload = event.payload as {
-      readonly event?: {
-        readonly data?: {
-          readonly kind?: string;
-          readonly state?: string;
-          readonly reason?: string;
-        };
-      };
-    };
-    return (
-      payload.event?.data?.kind === "continuity_lock" &&
-      payload.event.data.state === "unlocked" &&
-      payload.event.data.reason === reason
-    );
-  }).length;
 
 export const getHandlerSourceInvariantChecks = (source: string): boolean[] => [
   source.includes("shouldResetDescriptionCollectorArtifacts"),
