@@ -144,6 +144,10 @@
   - `src/client/ui/src/app-host/use-settings-models-sync.ts` = ready sessions no longer guess a new runtime identity from settings before Core confirms the applied effective model config
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` now emits `session:model:update` from the outbound applied turn-config itself for regular new turns, so PM label sync does not depend on a provider-specific `model_info` or `system` event being emitted afterward and does not reconstruct identity from split fields on the UI side
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
+- Codex thought translation and visible thinking: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `src/client/ui/src/session/dialog-panel-message-utils.ts`
+  - reasoning deltas are translated through the shared runtime translation module;
+  - visible output uses `role: "assistant"` with `tag: "thinking"` and the standard assistant bubble path;
+  - legacy hidden collapsible thinking UI remains only for archived `role: "thinking"` history.
 - Gemini Thought Translator: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
   - Adapts Gemini agent thoughts into shared `@codeai-hub/translation` facade calls; current engine path is Google GTX / `translate.googleapis.com`
   - Buffered in `GeminiMessageProcessor.handleThoughtEvent()`: pending translations are awaited before real response emit, and the no-pending-translations path emits the final assistant segment synchronously

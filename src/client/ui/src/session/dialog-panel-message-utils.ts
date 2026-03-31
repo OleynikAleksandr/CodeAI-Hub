@@ -52,18 +52,37 @@ export const resolveRoleLabel = (
   return "System";
 };
 
+const isAssistantThinkingMessage = (message: SessionMessage): boolean =>
+  message.role === "assistant" && message.tag === "thinking";
+
+const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
+  message.role === "thinking" || isAssistantThinkingMessage(message);
+
+const mergeThinkingDisplayMessage = (
+  previous: SessionMessage,
+  next: SessionMessage
+): SessionMessage => {
+  const useAssistantThinking =
+    isAssistantThinkingMessage(previous) || isAssistantThinkingMessage(next);
+  return {
+    ...previous,
+    content: `${previous.content}\n${next.content}`,
+    ...(useAssistantThinking ? { role: "assistant", tag: "thinking" } : {}),
+  };
+};
+
 export const mergeThinkingMessages = (
   source: readonly SessionMessage[]
 ): SessionMessage[] => {
   const result: SessionMessage[] = [];
   for (const message of source) {
-    if (message.role === "thinking") {
+    if (isThinkingDisplayMessage(message)) {
       const previous = result.at(-1);
-      if (previous?.role === "thinking") {
-        result[result.length - 1] = {
-          ...previous,
-          content: `${previous.content}\n${message.content}`,
-        };
+      if (previous && isThinkingDisplayMessage(previous)) {
+        result[result.length - 1] = mergeThinkingDisplayMessage(
+          previous,
+          message
+        );
         continue;
       }
       result.push({ ...message });
