@@ -28,6 +28,7 @@
 - **UI bundles**: `project-manager`, `vscode-webview`.
 - **CEF Launcher**: локальный клиент для Project Manager.
 - **Providers**: Claude/Codex/Gemini модули (CLI/SDK контуры).
+- **Shared runtime translation module**: `packages/translation/` (engine-neutral facade used by Gemini today and future localization adapters tomorrow).
 
 ## 2) SSOT уровни (иерархия документов)
 
@@ -123,11 +124,12 @@
   - `message-processor.ts` = thin façade / turn event normalization entrypoint
   - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
   - `gemini-assistant-event-normalizer.ts` = assistant/thinking/finished boundary normalization
+  - `gemini-thought-translation-adapter.ts` = Gemini-local adapter over shared translation facade; `thought-translator-service.ts` is compatibility re-export only
   - `gemini-system-event-normalizer.ts` = tool/system/warning event normalization
   - `packages/Gemini_Module/src/logging/session-logger.ts` + `gemini-system-event-normalizer.ts` + `gemini-assistant-event-normalizer.ts` = сохраняют raw/diagnostic Gemini session artifacts; active baseline не промотирует `model_info`, `thought` или `thinkingLevel` в отдельный normalized provider-feedback contract; translated thoughts и segmented final assistant output now drain through one deferred flush boundary before runtime fallback accounting
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
-  - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals; bootstrap/lifecycle now keep a mutable `runtimeTurnConfig` so Core-applied model/thinking changes can retune existing Gemini sessions without re-deriving model/thinking authority from local provider settings; `gemini-turn-runner.ts` treats assistant output from tool-producing legs as progress-only output, drains deferred Gemini dialog emits before detaching segment accounting listeners, and `gemini-session-lifecycle.ts` differentiates `initial` and `post_tool` stalled watchdog windows for Gemini follow-up legs
+  - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals; bootstrap/lifecycle now keep a mutable `runtimeTurnConfig` so Core-applied model/thinking changes can retune existing Gemini sessions without re-deriving model/thinking authority from local provider settings; `gemini-turn-runner.ts` treats assistant output from tool-producing legs as progress-only output, drains deferred Gemini dialog emits before detaching segment accounting listeners, and `gemini-session-lifecycle.ts` differentiates `initial` and `post_tool` stalled watchdog windows for Gemini follow-up legs; GeminiSessionManager owns the GeminiThoughtTranslationAdapter instance directly and passes it down the turn pipeline
 - Gemini provider send path: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
   - `gemini-applied-turn-config.ts` = reads Core-applied next-turn effective model identity for Gemini sends and stages runtime overrides before provider execution
   - `gemini-provider-adapter.ts` = consumes the shared Core-applied runtime envelope on outbound send; `gemini-session-settings-resolver.ts` now treats Core-provided model/thinking as authoritative over local snapshot values, leaving `settings.json` only as fallback for continuity/runtime defaults that are not part of the applied turn contract; stalled-turn watchdog failures are surfaced as provider `turn_failed` events and kept on the recoverable session path instead of escalating through generic provider-runtime failure recovery, while non-thinking assistant text from a leg that still emitted tool calls is no longer accepted as whole-turn completion proof
@@ -140,13 +142,13 @@
   - `src/client/ui/src/app-host/use-settings-models-sync.ts` = ready sessions no longer guess a new runtime identity from settings before Core confirms the applied effective model config
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` now emits `session:model:update` from the outbound applied turn-config itself for regular new turns, so PM label sync does not depend on a provider-specific `model_info` or `system` event being emitted afterward and does not reconstruct identity from split fields on the UI side
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
-- Gemini Thought Translator: `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
-  - Translates Gemini agent thoughts EN→RU via free Google Translate API (~100ms)
-  - Buffered in `GeminiMessageProcessor.handleThoughtEvent()`: pending translations are awaited before real response emit
+- Gemini Thought Translator: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
+  - Adapts Gemini agent thoughts into shared `@codeai-hub/translation` facade calls; current engine path is Google GTX / `translate.googleapis.com`
+  - Buffered in `GeminiMessageProcessor.handleThoughtEvent()`: pending translations are awaited before real response emit, and the no-pending-translations path emits the final assistant segment synchronously
   - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" (visible, not collapsed)
-  - No API key or auth required (uses `translate.googleapis.com` free endpoint)
+  - `thought-translator-service.ts` remains a compatibility re-export for historical imports
   - Graceful degradation: on failure, English original is emitted as fallback
-  - Канон: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
+  - Канон: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`, `packages/translation/src/translation-facade.ts`
 
 ## 5) Workflow Boundary (Description, 2026-03-01)
 

@@ -10,6 +10,8 @@
 - `packages/Gemini_Module/src/messaging/message-processor.ts` — thin façade: `createAccumulator`, `handleEvent`, `finalize`.
 - `packages/Gemini_Module/src/messaging/gemini-stream-event-router.ts` — dispatch по Gemini stream event types и error normalization.
 - `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts` — assistant chunks, translated thoughts и flush по `finished` boundaries.
+- `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts` — provider-local adapter поверх shared translation facade.
+- `packages/Gemini_Module/src/messaging/thought-translator-service.ts` — compatibility re-export старого имени поверх adapter class.
 - `packages/Gemini_Module/src/messaging/gemini-system-event-normalizer.ts` — tool/system/warning events без смешивания с assistant сегментами.
 
 ## Runtime cluster
@@ -27,7 +29,7 @@
 - Provider event order не симметричен другим модулям: `Gemini` может эмитить `token_usage` раньше `turn_completed`, поэтому usage не считается признаком завершения turn-а.
 - Для flow/document continuity `token_usage` используется только как вход в post-turn arbitration; Core не имеет права запускать rollover до фактического `turn_completed`.
 - Если provider отдал несколько assistant segments в одном turn-е, модуль обязан флашить их по реальным `finished` boundaries и не дублировать финальным aggregate block, когда segmented history уже была сохранена.
-- Переведённые Gemini thoughts не должны выглядеть как отдельный provider role в UI: текущий продуктовый контракт хранит их как `assistant` + `tag: "thinking"` и показывает как видимые tagged assistant messages.
+- Переведённые Gemini thoughts не должны выглядеть как отдельный provider role в UI: текущий продуктовый контракт хранит их как `assistant` + `tag: "thinking"` и показывает как видимые tagged assistant messages, а реализация теперь проходит через shared translation facade.
 - Для Gemini assistant output из leg, который породил `tool_call_request`, считается progress/status output, а не terminal answer всей chain; terminal completion может подтверждаться только output-ом terminal leg без новых tool requests.
 - Для Gemini deferred flush translated thoughts и segmented final assistant output должен быть полностью дожат до завершения `runTurn()`: fallback aggregate emit допустим только если после этого flush real non-thinking assistant segment так и не materialize-ился.
 - Для Gemini `thinking` входит в effective model identity: одинаковый base model с разным `thinkingLevel` считается разным `modelId`, и UI/runtime не должны восстанавливать этот уровень по локальной догадке.

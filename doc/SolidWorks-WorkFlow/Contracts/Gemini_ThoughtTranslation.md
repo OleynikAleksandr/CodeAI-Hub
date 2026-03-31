@@ -1,22 +1,22 @@
 # Контракт Gemini Thought Translation
 
 **Статус:** Implemented on `main`  
-**Обновлено:** 2026-03-27  
+**Обновлено:** 2026-03-31  
 **Owner:** Oleksandr + Codex  
-**Validated on:** `main` (`v1.1.819`)
+**Validated on:** `main` (`v1.1.852`)
 
 ---
 
 ## Status checkpoint
 
-- `Gemini` thoughts переводятся только внутри Gemini provider pipeline.
-- Текущая реализация использует бесплатный Google Translate HTTP endpoint `translate.googleapis.com`, а не `Flash-Lite`, не `@google/genai` и не Cloud Translation с auth.
+- `Gemini` thoughts переводятся внутри Gemini provider pipeline, но execution path теперь проходит через Gemini-local adapter поверх shared runtime translation package `@codeai-hub/translation`.
+- Текущая engine path использует бесплатный Google Translate HTTP endpoint `translate.googleapis.com`, но уже через `TranslationFacade` + `GoogleTranslateClient`, а не как отдельный provider-only helper.
 - Направление перевода фиксировано: English thought text -> Russian output.
 - Переведённая мысль persist-ится и broadcast-ится как `role: "assistant"` с `tag: "thinking"`.
 - UI рендерит это сообщение как обычный видимый assistant bubble с label `Gemini · Thinking`.
-- Реализация намеренно маленькая: без cache, без batching, без retry queue, без user-locale negotiation и без shared translation module в Core.
+- Реализация намеренно маленькая: без cache, без batching, без retry queue, без user-locale negotiation и без generic translation module в Core.
 
-Этот документ является implemented SSOT для текущего поведения. Он заменяет старые planning-материалы, которые сначала описывали эту же feature через `Flash-Lite`, затем через Google Translate migration plan, а затем как спекулятивный глобальный localization layer.
+Этот документ является implemented SSOT для текущего поведения. Он заменяет старые planning-материалы, которые сначала описывали эту же feature через `Flash-Lite`, затем через Google Translate migration plan, а затем как спекулятивный глобальный localization layer. Shared runtime translation module теперь является отдельным reusable boundary, а Gemini держит только provider-local adapter и session wiring.
 
 ---
 
@@ -25,7 +25,7 @@
 Этот контракт описывает один конкретный runtime path:
 
 1. Gemini SDK эмитит `Thought` event.
-2. CodeAI Hub переводит эту мысль на русский язык.
+2. CodeAI Hub переводит эту мысль на русский язык через shared translation facade.
 3. Core сохраняет и повторно рассылает переведённый текст как tagged assistant message.
 4. UI показывает его как видимое "thinking" assistant message.
 
@@ -36,7 +36,7 @@
 ## 2. Non-goals
 
 - Нет перевода для Claude или Codex provider streams.
-- Нет generic translation service в `packages/core/src/translation/`.
+- Нет generic translation service в `packages/core/src/translation/`; shared translation module живёт в `packages/translation/`.
 - Нет перевода user prompts перед отправкой в providers.
 - Нет persistent cache для translated thoughts.
 - Нет multi-language support, управляемого user settings.
@@ -48,23 +48,18 @@
 
 ### 3.1. Реализация translator
 
-Code owner:
-- `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
+Code owners:
+- `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
+- `packages/Gemini_Module/src/messaging/thought-translator-service.ts` (compatibility re-export)
+- `packages/translation/src/translation-facade.ts`
+- `packages/translation/src/google-translate-client.ts`
 
 Текущее поведение:
-- Строит input как `subject: description`, если есть `subject`, иначе использует `description`.
-- Отправляет один `fetch()` request на:
-  - `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t`
-- Добавляет `q=<urlencoded input>` как query text.
-- Использует `AbortController` с жёстким timeout `3000ms`.
-- Парсит сырой Google response, конкатенируя translated sentence segments из `response[0][n][0]`.
-
-Важные ограничения:
-- Без API key.
-- Без auth handshake.
-- Без SDK wrapper.
-- Без custom prompt engineering.
-- Если response malformed или пустой, translator возвращает `null`.
+- Adapter строит input как `subject: description`, если есть `subject`, иначе использует `description`.
+- Adapter отправляет один `TranslationFacade.translate()` request с `category: "reasoning"`, `providerId: "gemini"`, `engineId: "google-gtx"`, `sourceLanguage: "en"`, `targetLanguage: "ru"` и timeout `3000ms`.
+- Shared facade normalizes request, resolves engine, and delegates to `GoogleTranslateClient`.
+- `GoogleTranslateClient` вызывает free Google Translate endpoint `translate.googleapis.com`.
+- Если shared translation возвращает non-translated/fallback/skipped result, adapter возвращает `null`, а caller falls back to original formatted thought text.
 
 ### 3.2. Обработка Gemini messages
 
@@ -76,7 +71,7 @@ Code owner:
 Вместо этого он:
 - логирует incoming thought summary;
 - форматирует original English fallback text;
-- запускает async translation через `ThoughtTranslatorService`;
+- запускает async translation через `ThoughtTranslatorService` compatibility surface, backed by `GeminiThoughtTranslationAdapter`;
 - сохраняет promise в `pendingTranslations`;
 - при success эмитит `dialog_message` с:
   - `role: "assistant"`
@@ -86,7 +81,8 @@ Code owner:
 
 Далее `handleFinishedEvent()`:
 - собирает все `pendingTranslations`, относящиеся к текущему finished leg;
-- ставит финальный assistant response segment в serial flush chain;
+- если `pendingTranslations` пуст, эмитит финальный assistant response segment сразу;
+- иначе ставит финальный assistant response segment в serial flush chain;
 - этот chain ждёт `Promise.allSettled(...)` по всем pending thought translations данного leg;
 - только после этого эмитит реальный assistant response segment.
 
@@ -103,9 +99,11 @@ Code owners:
 - `packages/Gemini_Module/src/session/gemini-session-manager.ts`
 - `packages/Gemini_Module/src/session/gemini-turn-runner.ts`
 
-`GeminiSessionManager` создаёт один экземпляр `ThoughtTranslatorService` на manager и передаёт его в `GeminiTurnRunner`.
+`GeminiSessionManager` создаёт один экземпляр `GeminiThoughtTranslationAdapter` на manager и передаёт его в `GeminiTurnRunner`.
 
-`GeminiTurnRunner` инжектит этот translator в каждый свежий экземпляр `GeminiMessageProcessor`, создаваемый на turn.
+`GeminiTurnRunner` инжектит этот adapter в каждый свежий экземпляр `GeminiMessageProcessor`, создаваемый на turn.
+
+`thought-translator-service.ts` остаётся compatibility re-export для исторических импортов, но больше не владеет translation logic.
 
 Для этой feature нет отдельного translation bootstrap, API key resolution или model selection layer.
 
@@ -178,8 +176,12 @@ UI contract:
 
 ## 5. Code map
 
-- Gemini translation client:
+- Gemini translation adapter and compatibility surface:
+  - `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
   - `packages/Gemini_Module/src/messaging/thought-translator-service.ts`
+- Shared translation engine:
+  - `packages/translation/src/translation-facade.ts`
+  - `packages/translation/src/google-translate-client.ts`
 - Gemini event buffering и tagged emit:
   - `packages/Gemini_Module/src/messaging/message-processor.ts`
 - Gemini session wiring:
@@ -205,4 +207,4 @@ UI contract:
 - UI rendering path соответствует tagged assistant contract.
 
 Текущий gap:
-- нет targeted automated test, который фиксирует полный translation pipeline, включая `tag: "thinking"` и ordering между thought и final response.
+- нет standalone unit test, который прямо бьёт failure path shared translation engine/adapter; текущая coverage фиксирует end-to-end Gemini visible contract через message processor и session manager tests.
