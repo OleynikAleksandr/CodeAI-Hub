@@ -47,14 +47,14 @@ Goal: extract provider-neutral EN -> target-language translation capability into
 
 ### Stream: Translation Package Verification
 7. [DONE] Verification: прогнать targeted build/diagnostics для нового translation package и синхронизировать execution status. Scope: `packages/translation`, `doc/TODO/todo-plan.md`. Expected commit: `test(translation): verify shared translation package`
-8. [DONE] Git Commit: `test(translation): verify shared translation package` (hash: TBD)
+8. [DONE] Git Commit: `test(translation): verify shared translation package` (hash: `7c2fde14`)
 
 ## Phase 2 — Gemini Adapter Parity And Release (owner: Oleksandr, updated: 2026-03-31)
 
 Goal: rewire Gemini thought translation onto the new shared facade with zero visible regression, then sync docs and assemble a new release.
 
 ### Stream: Gemini Translation Adapter
-9. [TODO] Gemini_Module: добавить provider-local adapter поверх shared translation facade и перевести Gemini normalizer/message processor на adapter abstraction, сохранив `assistant + tag: thinking` contract. Scope: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/Gemini_Module/src/messaging/message-processor.ts`. Expected commit: `refactor(gemini): add shared translation adapter`
+9. [TODO] Gemini_Module: добавить provider-local adapter поверх shared translation facade и превратить legacy thought translator entrypoint в compatibility re-export, сохранив `assistant + tag: thinking` contract. Scope: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/thought-translator-service.ts`, `package-lock.json`. Expected commit: `refactor(gemini): add shared translation adapter`
 10. [TODO] Git Commit: `refactor(gemini): add shared translation adapter` (hash: TBD)
 
 ### Stream: Gemini Session Wiring
