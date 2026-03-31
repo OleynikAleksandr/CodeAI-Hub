@@ -13,7 +13,7 @@
 3. `doc/SolidWorks-Flow/Workflow/Workflow_CLI_Steps_And_Watcher_Architecture.md`
 4. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
 5. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
-6. `doc/Sessions/Session026.md`
+6. `doc/Sessions/Archive/Session026.md`
 7. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -51,7 +51,7 @@
 ### Stream: Release build — 1.1.458 (verification)
 1. [DONE] Release(build): собрать релиз 1.1.458 (build-all → tarballs; build-release → VSIX) — scope: `scripts/build-all.sh`, `scripts/build-release.sh`, `doc/tmp/releases/*-1.1.458.tar.bz2`, `codeai-hub-1.1.458.vsix`; expected commit message: `chore(release): bump versions to 1.1.458`
 2. [DONE] Git Commit: `chore(release): bump versions to 1.1.458` (hash: 52cf166e)
-3. [DONE] Docs(session): зафиксировать результаты проверки релиза 1.1.458 и список коммитов — scope: `doc/Sessions/Session027.md`; expected commit message: `docs(session): add Session027 report`
+3. [DONE] Docs(session): зафиксировать результаты проверки релиза 1.1.458 и список коммитов — scope: `doc/Sessions/Archive/Session027.md`; expected commit message: `docs(session): add Session027 report`
 4. [DONE] Git Commit: `docs(session): add Session027 report` (hash: d930ad66)
 
 ### Stream: Verification

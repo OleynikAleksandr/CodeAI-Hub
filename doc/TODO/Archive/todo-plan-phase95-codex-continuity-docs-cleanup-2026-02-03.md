@@ -60,5 +60,5 @@
 6. [DONE] Git Commit: `docs: remove obsolete token-usage and draft docs` (hash: 9109bf78)
 
 ### Stream: session report
-7. [DONE] Docs(session): создать отчёт `doc/Sessions/Session079.md` (docs cleanup + GitHub push) — scope: `doc/Sessions/Session079.md`; expected commit message: `docs(session): add Session079 docs cleanup and GitHub publish`
+7. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session079.md` (docs cleanup + GitHub push) — scope: `doc/Sessions/Archive/Session079.md`; expected commit message: `docs(session): add Session079 docs cleanup and GitHub publish`
 8. [DONE] Git Commit: `docs(session): add Session079 docs cleanup and GitHub publish` (hash: c0d210ea)

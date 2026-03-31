@@ -7,7 +7,7 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session041.md`
+1. `doc/Sessions/Archive/Session041.md`
 2. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
 3. `doc/TODO/Archive/todo-plan-phase156-release-1.1.585-2026-02-13.md`
 4. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`

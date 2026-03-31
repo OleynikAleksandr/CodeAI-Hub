@@ -7,7 +7,7 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session039.md`
+1. `doc/Sessions/Archive/Session039.md`
 2. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 3. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
 4. `packages/Codex_Module/src/messaging/message-processor.ts`
@@ -38,5 +38,5 @@
 ### Stream: Quality Gates + Release Build
 1. [DONE] Release: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version` (scope: versions/manifests via build scripts; expected commit message: `chore(release): run build-all for v1.1.582`)
 2. [DONE] Git Commit: `chore(release): run build-all for v1.1.582` (hash: `f69a320d`)
-3. [DONE] Todo: archive plan + session report update (scope: `doc/TODO/Archive/*`, `doc/Sessions/Session040.md`; expected commit message: `docs(session): add session040 phase154 codex diagnostics`)
+3. [DONE] Todo: archive plan + session report update (scope: `doc/TODO/Archive/*`, `doc/Sessions/Archive/Session040.md`; expected commit message: `docs(session): add session040 phase154 codex diagnostics`)
 4. [DONE] Git Commit: `docs(session): add session040 phase154 codex diagnostics` (hash: `858fd3c6`)

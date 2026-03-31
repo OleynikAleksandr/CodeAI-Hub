@@ -10,8 +10,8 @@
   - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session057.md`
-  - `doc/Sessions/Session058.md` (после создания)
+  - `doc/Sessions/Archive/Session057.md`
+  - `doc/Sessions/Archive/Session058.md` (после создания)
 - TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -68,7 +68,7 @@
 2. [DONE] Git Commit: `docs(bug): register pm workflow navigation desync` (hash: `7a0c5ab1`)
 
 ### Stream 5: Release build (по чеклисту)
-1. [DONE] Обновить Session-отчёт с результатами валидации и списком коммитов (scope: `doc/Sessions/Session059.md`; expected commit: `docs(session): record Session059 pm navigation sync`).
+1. [DONE] Обновить Session-отчёт с результатами валидации и списком коммитов (scope: `doc/Sessions/Archive/Session059.md`; expected commit: `docs(session): record Session059 pm navigation sync`).
 2. [DONE] Git Commit: `docs(session): record Session059 pm navigation sync` (hash: `2dcc8b38`)
 3. [DONE] Выполнить релизный цикл: `./scripts/build-all.sh` → проверка чистого дерева → `./scripts/build-release.sh --use-current-version` → верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + docs; expected commit: `chore(release): build-all vX.Y.Z`).
 4. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `37d799fa`)

@@ -10,7 +10,7 @@
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
 3. `doc/TODO/Archive/todo-plan-phase160-pm-cold-start-2026-02-14.md`
-4. `doc/Sessions/Session047.md`
+4. `doc/Sessions/Archive/Session047.md`
 
 ---
 

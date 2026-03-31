@@ -8,7 +8,7 @@
   - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-  - `doc/Sessions/Session050.md`
+  - `doc/Sessions/Archive/Session050.md`
 - TODO Plan состоит из Phase/Stream, каждая подзадача затрагивает не более 3 файлов.
 - Каждая подзадача оформляется парой: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -56,5 +56,5 @@
 4. [DONE] Git Commit: `docs(template): draft description help template for step1` (hash: `013c3f00`)
 
 ### Stream 4: Validation (после UI правок)
-1. [DONE] Прогнать таргетную валидацию PM/UI (typecheck/build/test по необходимости) и зафиксировать итог в session report (scope: `doc/Sessions/Session052.md`; expected commit: `docs(session): record description refactor validation`).
+1. [DONE] Прогнать таргетную валидацию PM/UI (typecheck/build/test по необходимости) и зафиксировать итог в session report (scope: `doc/Sessions/Archive/Session052.md`; expected commit: `docs(session): record description refactor validation`).
 2. [DONE] Git Commit: `docs(session): record description refactor validation` (hash: `9542566c`)

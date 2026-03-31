@@ -10,10 +10,10 @@
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
-- `doc/Sessions/Session106.md`
-- `doc/Sessions/Session107.md`
-- `doc/Sessions/Session109.md`
-- `doc/Sessions/Session110.md`
+- `doc/Sessions/Archive/Session106.md`
+- `doc/Sessions/Archive/Session107.md`
+- `doc/Sessions/Archive/Session109.md`
+- `doc/Sessions/Archive/Session110.md`
 - `doc/TODO/todo-plan.md`
 
 ---

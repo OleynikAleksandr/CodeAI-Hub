@@ -191,4 +191,4 @@ Cleanup считается успешным, когда одновременно
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-- `doc/Sessions/Session122.md`
+- `doc/Sessions/Archive/Session122.md`

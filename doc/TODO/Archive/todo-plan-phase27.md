@@ -19,7 +19,7 @@
 1. `doc/Architecture/Architecture.md`
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md`
-4. `doc/Sessions/Session086.md`
+4. `doc/Sessions/Archive/Session086.md`
 
 ## Phase 16 — Run-bound resume + release 1.1.403 (owner: Oleksandr, updated: 2026-01-11)
 ### Stream: Provider session binding for existing runs
@@ -112,7 +112,7 @@
 12. [DONE] Git Commit: `docs: update architecture for 1.1.408` (hash: 47823009)
 13. [DONE] Build VSIX (build-release) — scope: `scripts/build-release.sh`; expected commit message: `docs: add session 93 report`
 14. [DONE] Git Commit: `docs: add session 93 report` (hash: d1ecbbc7)
-15. [DONE] Update Session093 report (final commit list + next session focus) — scope: `doc/Sessions/Session093.md`; expected commit message: `docs: update session 93 report`
+15. [DONE] Update Session093 report (final commit list + next session focus) — scope: `doc/Sessions/Archive/Session093.md`; expected commit message: `docs: update session 93 report`
 16. [DONE] Git Commit: `docs: update session 93 report` (hash: d01e2ff8)
 
 ## Phase 22 — Idea artifacts persistence fix + release 1.1.409 (owner: Oleksandr, updated: 2026-01-12)
@@ -149,7 +149,7 @@
 2. [DONE] Git Commit: `fix(core): fail-fast on refine provider mismatch` (hash: 31ae4865)
 3. [DONE] Mirror run questionnaire to initiative copy on each save/append — scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `fix(core): mirror run questionnaire to initiative copy`
 4. [DONE] Git Commit: `fix(core): mirror run questionnaire to initiative copy` (hash: b41126ea)
-5. [DONE] Add session 96 report — scope: `doc/Sessions/Session096.md`; expected commit message: `docs: add session 96 report`
+5. [DONE] Add session 96 report — scope: `doc/Sessions/Archive/Session096.md`; expected commit message: `docs: add session 96 report`
 6. [DONE] Git Commit: `docs: add session 96 report` (hash: 8db7a1e3)
 
 ## Phase 25 — Idea questionnaire: Agent Q/A persistence (owner: Oleksandr, updated: 2026-01-12)
@@ -158,7 +158,7 @@
 2. [DONE] Git Commit: `fix(templates): add agent Q/A section to questionnaire` (hash: 41c36077)
 3. [DONE] Persist agent Q/A in questionnaire field + migrate legacy clarifications — scope: `src/client/ui/src/services/idea-questionnaire-service.ts`, `src/client/ui/src/services/idea-questionnaire-template.ts`, `src/client/ui/src/services/idea-questionnaire-agent-qna.ts`; expected commit message: `fix(ui): persist agent Q/A in questionnaire`
 4. [DONE] Git Commit: `fix(ui): persist agent Q/A in questionnaire` (hash: df1690de)
-5. [DONE] Add session 97 report — scope: `doc/Sessions/Session097.md`; expected commit message: `docs: add session 97 report`
+5. [DONE] Add session 97 report — scope: `doc/Sessions/Archive/Session097.md`; expected commit message: `docs: add session 97 report`
 6. [DONE] Git Commit: `docs: add session 97 report` (hash: 2665917d)
 
 ## Phase 26 — Safe idea artifact revisions (owner: Oleksandr, updated: 2026-01-12)

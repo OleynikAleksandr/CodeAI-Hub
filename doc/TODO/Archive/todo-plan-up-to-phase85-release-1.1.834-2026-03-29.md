@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/SessionTurnStop_And_Core_Independence_Architecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Этот `TODO Plan` реализует согласованный scope: `Stop` в Session UI больше не shutdown-ит Core, а останавливает только текущий turn / снимает stuck-state текущей logical session; следующий send rebinding-ит fresh provider session только если старый binding испорчен или принудительно остановлен.
 - Текущий baseline `1.1.833` считается входной точкой; scope ограничен stop/turn-abort semantics, session rebind и Gemini stalled-turn recovery без расширения продукта за пределы этих границ.
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново.
@@ -35,7 +35,7 @@
 ## Phase 82 — Session Stop Contract And UI/Bridge Reframing (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Contract reset for Stop semantics
-1. [DONE] Зафиксировать баг и переписать продуктовый контракт `Stop`: больше не `shutdown Core`, а `stop current turn / unlock stuck session`, с явной привязкой к logical session и MVP-оговоркой про fresh provider session при испорченном transcript. Scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`. Expected commit: `docs(contract): redefine session stop semantics`
+1. [DONE] Зафиксировать баг и переписать продуктовый контракт `Stop`: больше не `shutdown Core`, а `stop current turn / unlock stuck session`, с явной привязкой к logical session и MVP-оговоркой про fresh provider session при испорченном transcript. Scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/SessionTurnStop_And_Core_Independence_Architecture.md`. Expected commit: `docs(contract): redefine session stop semantics`
 2. [DONE] Git Commit: `docs(contract): redefine session stop semantics` (hash: `df917787`)
 
 ### Stream: Session-scoped stop bridge command

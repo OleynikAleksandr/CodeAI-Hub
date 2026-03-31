@@ -23,7 +23,7 @@
 - **Real-time Документация:** если в ходе decomposition меняется agreed test/support cluster boundary или verification surface, planning-doc и `todo-plan.md` обновляются в том же коммите.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session207.md`
+1. `doc/Sessions/Archive/Session207.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 4. `doc/SolidWorks-WorkFlow/Plans/TestSupport_WarningZone_Cleanup_Architecture.md`

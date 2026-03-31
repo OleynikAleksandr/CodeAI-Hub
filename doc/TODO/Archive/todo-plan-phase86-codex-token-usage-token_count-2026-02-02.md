@@ -13,9 +13,9 @@
 3. `doc/SolidWorks-Flow/System/TokenUsage/CodexTokenUsage_Architecture.md` (revised: source-of-truth = `token_count` in rollout JSONL)
 4. `doc/SolidWorks-Flow/System/TokenUsage/ClaudeTokenUsage_Architecture.md` (reference pattern + pitfalls)
 5. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md` (workspace scoping pitfalls)
-6. `doc/Sessions/Session065.md` (token usage persistence via continuity)
-7. `doc/Sessions/Session068.md` (historical; `/status` approach superseded)
-8. `doc/Sessions/Session069.md` (plan cleanup + reading checklist)
+6. `doc/Sessions/Archive/Session065.md` (token usage persistence via continuity)
+7. `doc/Sessions/Archive/Session068.md` (historical; `/status` approach superseded)
+8. `doc/Sessions/Archive/Session069.md` (plan cleanup + reading checklist)
 9. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -60,7 +60,7 @@
 12. [TODO] Git Commit: `chore: verify codex token_count token usage` (hash: TBD)
 
 ### Stream: session report (after implementation)
-13. [TODO] Docs(session): создать отчёт `doc/Sessions/Session070.md` (Codex token usage via `token_count` — implementation + verification) — scope: `doc/Sessions/Session070.md`; expected commit message: `docs(session): Session070 codex token_count token usage`
+13. [TODO] Docs(session): создать отчёт `doc/Sessions/Archive/Session070.md` (Codex token usage via `token_count` — implementation + verification) — scope: `doc/Sessions/Archive/Session070.md`; expected commit message: `docs(session): Session070 codex token_count token usage`
 14. [TODO] Git Commit: `docs(session): Session070 codex token_count token usage` (hash: TBD)
 =======
 11. [DONE] Verification: прогнать гейты + таргетный билд `npm run build --workspace @codeai-hub/codex-module`; ручная проверка:
@@ -70,6 +70,6 @@
 12. [DONE] Git Commit: `chore: verify codex token_count token usage` (hash: TBD)
 
 ### Stream: session report (after implementation)
-13. [DONE] Docs(session): создать отчёт `doc/Sessions/Session070.md` (Codex token usage via `token_count` — implementation + verification) — scope: `doc/Sessions/Session070.md`; expected commit message: `docs(session): Session070 codex token_count token usage`
+13. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session070.md` (Codex token usage via `token_count` — implementation + verification) — scope: `doc/Sessions/Archive/Session070.md`; expected commit message: `docs(session): Session070 codex token_count token usage`
 14. [DONE] Git Commit: `docs(session): Session070 codex token_count token usage` (hash: TBD)
 >>>>>>> Stashed changes

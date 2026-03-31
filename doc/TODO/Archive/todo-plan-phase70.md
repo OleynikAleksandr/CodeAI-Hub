@@ -11,7 +11,7 @@
 1. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
-4. `doc/Sessions/Session040.md`
+4. `doc/Sessions/Archive/Session040.md`
 
 ---
 

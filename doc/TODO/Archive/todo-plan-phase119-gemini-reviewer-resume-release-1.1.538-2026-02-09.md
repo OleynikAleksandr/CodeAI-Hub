@@ -12,7 +12,7 @@
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
 3. `doc/SolidWorks-Flow/Stacks/Gemini_Reviewer_Resume_Architecture.md`
-4. `doc/Sessions/Session131.md`
+4. `doc/Sessions/Archive/Session131.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -60,5 +60,5 @@
 ### Stream: Release Build (Final)
 1. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini reviewer resume integration`; result: script completed successfully with version bump to `1.1.538` and regenerated manifests/packages)
 2. [DONE] Git Commit: `chore(release): run build-all for gemini reviewer resume integration` (hash: 9bc7b69c)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и smoke сценарий `description(gemini) -> reviewer(gemini)` на чистом runtime (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session132.md`; expected commit: `chore(release): build and validate vsix for gemini reviewer resume integration`; result: release build passed, `codeai-hub-1.1.538.vsix` created, tarballs `1.1.538` present in `doc/tmp/releases/`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и smoke сценарий `description(gemini) -> reviewer(gemini)` на чистом runtime (scope: `codeai-hub-<version>.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Archive/Session132.md`; expected commit: `chore(release): build and validate vsix for gemini reviewer resume integration`; result: release build passed, `codeai-hub-1.1.538.vsix` created, tarballs `1.1.538` present in `doc/tmp/releases/`)
 4. [DONE] Git Commit: `chore(release): build and validate vsix for gemini reviewer resume integration` (hash: 3333a220)

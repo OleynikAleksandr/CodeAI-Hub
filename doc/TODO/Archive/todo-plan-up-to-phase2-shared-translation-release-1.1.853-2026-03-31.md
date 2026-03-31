@@ -20,7 +20,7 @@
 - **Real-time Документация:** изменения модульных границ, facade/API контракта и Gemini translation ownership должны синхронно отражаться в `SystemArchitecture.md`, `Modules/Gemini.md` и `Contracts/Gemini_ThoughtTranslation.md` в той же execution wave.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session208.md`
+1. `doc/Sessions/Archive/Session208.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`

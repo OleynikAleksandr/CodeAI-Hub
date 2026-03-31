@@ -1,38 +1,34 @@
-# Session 002 — Release notes sync + repack (v1.1.647)
+# Session 002 — Shared runtime translation module SSOT move
 
-**Date:** 2026-02-22 11:49 (CET)
+**Date:** 2026-03-31 17:21 (CEST)
 **Branch:** main
-**Version:** 1.1.647
+**Version:** 1.1.854
 
 ---
 
 # 1. Work Done in This Session
 
 ## Work summary
-- Разобрали причину, почему в VSIX релиза `1.1.646` оказались устаревшие `README.md`/`CHANGELOG.md`: пакет был собран до коммита с актуализацией документов.
-- Подготовили release notes под новую версию `1.1.647` и пересобрали релиз (version bump через `./scripts/build-all.sh`) с последующей упаковкой `./scripts/build-release.sh --use-current-version`.
-- Дополнили `CHANGELOG.md`, чтобы `1.1.647` явно включал ключевое исправление по авто-разблокировке ввода и пометили, что `1.1.646` был собран со stale docs (superseded by `1.1.647`).
-
-## Build / verification
-- `./scripts/build-release.sh --use-current-version` (v1.1.647): ✅ success; produced `codeai-hub-1.1.647.vsix`.
-- Local artifact: `codeai-hub-1.1.647.vsix` (rebuilt after changelog update).
+- Перенес архитектурный документ shared runtime translation module из `doc/SolidWorks-WorkFlow/Plans/` в рабочую SSOT-зону `doc/SolidWorks-WorkFlow/Modules/` под ясным именем `Shared_RuntimeTranslation_Module.md`.
+- Привёл сам документ в формат module SSOT: описал boundary, public API, runtime invariant для Gemini bundle и текущие consumer/adapters.
+- Обновил ссылки в `SystemArchitecture.md`, `Modules/Gemini.md`, `Contracts/Gemini_ThoughtTranslation.md` и архивном `todo-plan`, чтобы новый путь был единственным актуальным reference.
+- Проверки сборки не запускал: изменения были только в документации и ссылках.
 
 ## Git commits
-(ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
-- `170bbdfa docs(release): prepare notes for v1.1.647`
-- `3d02bf01 feat(release): v1.1.647 - docs synced`
-- `1a644998 docs(release): clarify v1.1.647 changelog`
+- `f362769e docs(translation): move shared runtime module to modules`
 
 ---
 
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `README.md`
-2. `CHANGELOG.md`
-3. `doc/Sessions/Session002.md` (THIS REPORT)
-4. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
+1. `doc/SolidWorks-WorkFlow/README.md`
+2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
+3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+4. `doc/TODO/todo-plan.md`
+5. `doc/Sessions/Session002.md` (THIS REPORT)
 
 ## Plans for next session
-- После пуша в GitHub: при необходимости оформить GitHub Release/notes (только по явному запросу).
-- Продолжить следующий Phase в `doc/TODO/todo-plan.md`.
+- Активного execution plan нет.
+- Если появится новый scope по translation/runtime adapters, сначала открыть новый planning-doc в `doc/SolidWorks-WorkFlow/Plans/`.
+- Для будущего Codex reasoning translation использовать новый planning-doc и затем отдельный execution plan, не смешивая его с уже завершённой Gemini/shared translation волной.

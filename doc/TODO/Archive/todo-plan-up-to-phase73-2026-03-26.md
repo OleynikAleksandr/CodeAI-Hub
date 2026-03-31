@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session158.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session158.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`
 - Этот `TODO Plan` реализует **один MVP scope**: resilience bugfix + provider/model switch + PM health guardian как база для будущего multi-provider orchestration
 - Отдельного сокращённого варианта внутри этого плана нет: **все Phase 67-71 вместе и есть MVP**
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново

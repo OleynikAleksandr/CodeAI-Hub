@@ -53,5 +53,5 @@
 ### Stream 5: Mandatory release build (final)
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all v1.1.687` (hash: 844a8af5)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session039.md` итогами релизной сборки (scope: `doc/Sessions/Session039.md`; expected commit: `docs(session): record phase260 release build results`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Archive/Session039.md` итогами релизной сборки (scope: `doc/Sessions/Archive/Session039.md`; expected commit: `docs(session): record phase260 release build results`).
 4. [IN_PROGRESS] Git Commit: `docs(session): record phase260 release build results` (hash: TBD)

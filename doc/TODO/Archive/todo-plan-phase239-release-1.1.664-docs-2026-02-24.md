@@ -23,7 +23,7 @@
 ## Phase 239 — Release 1.1.664: docs + report (owner: Codex, updated: 2026-02-24)
 
 ### Stream 0: Release docs
-1. [DONE] Обновить `doc/BugRegistry.md`: BUG-2026-02-24-01 → Release `1.1.664` + указать commits; создать `doc/Sessions/Session018.md` (scope: `doc/BugRegistry.md`, `doc/Sessions/Session018.md`; expected commit: `chore(release): package vsix v1.1.664`).
+1. [DONE] Обновить `doc/BugRegistry.md`: BUG-2026-02-24-01 → Release `1.1.664` + указать commits; создать `doc/Sessions/Archive/Session018.md` (scope: `doc/BugRegistry.md`, `doc/Sessions/Archive/Session018.md`; expected commit: `chore(release): package vsix v1.1.664`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.664` (hash: `a4e52890`)
 
 ### Stream 1: TODO bookkeeping

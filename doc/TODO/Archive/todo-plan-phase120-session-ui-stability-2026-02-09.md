@@ -13,7 +13,7 @@
 2. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md`
-5. `doc/Sessions/Session137.md` (CURRENT REPORT)
+5. `doc/Sessions/Archive/Session137.md` (CURRENT REPORT)
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---

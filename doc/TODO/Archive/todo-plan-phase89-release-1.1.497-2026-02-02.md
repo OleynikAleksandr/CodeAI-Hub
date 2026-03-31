@@ -18,7 +18,7 @@
 8. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
 9. `packages/core/src/workflow/description/description-step-store.ts`
 10. `packages/ui/project-manager/dist/app.js` (current: UI-driven auto-resume)
-11. `doc/Sessions/Session071.md` (THIS REPORT)
+11. `doc/Sessions/Archive/Session071.md` (THIS REPORT)
 
 ---
 
@@ -51,7 +51,7 @@
 14. [DONE] Git Commit: `chore: verify core-driven auto-resume lastActive` (hash: 149f1647)
 
 ### Stream: session report
-15. [DONE] Docs(session): создать отчёт `doc/Sessions/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
+15. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session072.md` (implementation + verification Phase 88) — scope: `doc/Sessions/Archive/Session072.md`; expected commit message: `docs(session): Session072 core-driven auto-resume lastActive`
 16. [DONE] Git Commit: `docs(session): Session072 core-driven auto-resume lastActive` (hash: 84aad329)
 
 ---
@@ -71,5 +71,5 @@
 8. [DONE] Git Commit: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore)
 
 ### Stream: release report
-9. [DONE] Docs(session): создать `doc/Sessions/Session073.md` (релиз + результаты гейтов/сборок) — scope: `doc/Sessions/Session073.md`; expected commit message: `docs(session): add Session073 release build`
+9. [DONE] Docs(session): создать `doc/Sessions/Archive/Session073.md` (релиз + результаты гейтов/сборок) — scope: `doc/Sessions/Archive/Session073.md`; expected commit message: `docs(session): add Session073 release build`
 10. [DONE] Git Commit: `docs(session): add Session073 release build` (hash: 14590f55)

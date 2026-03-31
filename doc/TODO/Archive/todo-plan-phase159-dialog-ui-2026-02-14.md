@@ -26,7 +26,7 @@
 - Механизм универсален для любых провайдеров.
 
 ### Stream: Report (Session)
-1. [DONE] Docs: создать отчет сессии с описанием проблемы/причин/решения (scope: `doc/Sessions/Session044.md`; expected commit message: `docs(sessions): start Session044 (pm dialog restore + dedupe plan)`)
+1. [DONE] Docs: создать отчет сессии с описанием проблемы/причин/решения (scope: `doc/Sessions/Archive/Session044.md`; expected commit message: `docs(sessions): start Session044 (pm dialog restore + dedupe plan)`)
 2. [DONE] Git Commit: `docs(sessions): start Session044 (pm dialog restore + dedupe plan)` (hash: 41e7d84b)
 
 ### Stream: PM — Reconnect Must Activate Workspace

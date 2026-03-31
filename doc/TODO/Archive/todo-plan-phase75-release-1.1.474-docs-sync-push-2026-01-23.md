@@ -22,7 +22,7 @@
 3. [DONE] Docs: описать семантику “lazy continuity chain activation” — scope: `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`; expected commit message: `docs(continuity): document lazy chain activation`
 4. [DONE] Git Commit: `docs(continuity): document lazy chain activation` (hash: cedab00a)
 
-5. [DONE] Docs(session): зафиксировать результаты и гейты — scope: `doc/Sessions/Session045.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session045 continuity activation`
+5. [DONE] Docs(session): зафиксировать результаты и гейты — scope: `doc/Sessions/Archive/Session045.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session045 continuity activation`
 6. [DONE] Git Commit: `docs(session): Session045 continuity activation` (hash: 8e5c809f)
 
 ### Stream: Release build (1.1.473)
@@ -44,7 +44,7 @@
 3. [DONE] Release: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests; expected commit message: `chore(release): build next version`
 4. [DONE] Git Commit: `chore(release): build next version` (hash: fa35c159)
 
-5. [DONE] Docs(session): Session046 report + update todo-plan — scope: `doc/Sessions/Session046.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session046 session labels release`
+5. [DONE] Docs(session): Session046 report + update todo-plan — scope: `doc/Sessions/Archive/Session046.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session046 session labels release`
 6. [DONE] Git Commit: `docs(session): Session046 session labels release` (hash: 0d31db99)
 
 ---
@@ -60,7 +60,7 @@
 2. [DONE] Git Commit: `docs(flow): align session labels with UI` (hash: 1729c6b9)
 
 ### Stream: Session report + push
-1. [DONE] Docs(session): создать отчет `Session047` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Session047.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session047 release docs sync`
+1. [DONE] Docs(session): создать отчет `Session047` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Archive/Session047.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session047 release docs sync`
 2. [DONE] Git Commit: `docs(session): Session047 release docs sync` (hash: f25dff28)
 
 3. [DONE] Push: `git push origin main` — scope: git; expected commit message: `chore: push release 1.1.474`

@@ -7,7 +7,7 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session034.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session034.md` (THIS REPORT)
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-Flow/Stacks/Project_Manager.md`
 4. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
@@ -56,5 +56,5 @@
 1. [DONE] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (core + UI), обновить `README/CHANGELOG`, собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (результат: `codeai-hub-1.1.580.vsix`) (scope: `CHANGELOG.md`, `README.md`, docs в `doc/SolidWorks-Flow/`; expected commit message: `docs(release): sync docs for v<next>`)
 2. [DONE] Git Commit: `docs(release): sync docs for v1.1.580` (hash: `cc6c4ad6`)
 3. [DONE] Git Commit: `chore(release): run build-all for v1.1.580` (hash: `588714bc`)
-4. [DONE] Создать session report по результатам (scope: `doc/Sessions/Session036.md`; expected commit message: `docs(session): add session036 continuity failure context`)
+4. [DONE] Создать session report по результатам (scope: `doc/Sessions/Archive/Session036.md`; expected commit message: `docs(session): add session036 continuity failure context`)
 5. [DONE] Git Commit: `docs(session): add session036 continuity failure context` (hash: `a3947b95`)

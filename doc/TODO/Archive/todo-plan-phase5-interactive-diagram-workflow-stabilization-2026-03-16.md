@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/Sessions/Session083.md`
+- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/Sessions/Archive/Session083.md`
 - Execution-plan основан на planning-доке `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 - TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи
 - Каждая микро-задача затрагивает не более 3 файлов или пакетов
@@ -202,5 +202,5 @@
 
 ## Notes
 - Planning doc for this scope: `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
-- Session reports to review before the first implementation stream: `doc/Sessions/Session078.md`, `doc/Sessions/Session079.md`, `doc/Sessions/Session080.md`, `doc/Sessions/Session081.md`, `doc/Sessions/Session082.md`
+- Session reports to review before the first implementation stream: `doc/Sessions/Archive/Session078.md`, `doc/Sessions/Archive/Session079.md`, `doc/Sessions/Archive/Session080.md`, `doc/Sessions/Archive/Session081.md`, `doc/Sessions/Archive/Session082.md`
 - Target verification principle for the whole scope: после каждой Phase должен существовать новый локальный релиз, в котором пользователь может проверить либо новый artifact/gating behavior, либо новый visual layer, либо новый semantic roundtrip, а не ждать финала всего scope

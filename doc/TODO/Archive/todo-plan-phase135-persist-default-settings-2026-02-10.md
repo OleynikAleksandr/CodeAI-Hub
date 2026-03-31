@@ -54,7 +54,7 @@
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.552` (hash: 5994b7a7)
 
 ### Stream: Session Report (Phase 133)
-1. [DONE] Создать `doc/Sessions/Session010.md` и зафиксировать итоги Phase 133 (scope: `doc/Sessions/Session010.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session010 and close phase133`)
+1. [DONE] Создать `doc/Sessions/Archive/Session010.md` и зафиксировать итоги Phase 133 (scope: `doc/Sessions/Archive/Session010.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session010 and close phase133`)
 2. [DONE] Git Commit: `docs(session): add Session010 and close phase133` (hash: febb998b)
 
 ---
@@ -78,7 +78,7 @@
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.553` (hash: 7cbdf6ed)
 
 ### Stream: Session Report (Phase 134)
-1. [DONE] Создать `doc/Sessions/Session011.md` и зафиксировать итоги Phase 134 (scope: `doc/Sessions/Session011.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session011 and close phase134`)
+1. [DONE] Создать `doc/Sessions/Archive/Session011.md` и зафиксировать итоги Phase 134 (scope: `doc/Sessions/Archive/Session011.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session011 and close phase134`)
 2. [DONE] Git Commit: `docs(session): add Session011 and close phase134` (hash: a6997b45)
 
 ---
@@ -102,5 +102,5 @@
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.554` (hash: dc91b1fb)
 
 ### Stream: Session Report (Phase 135)
-1. [IN_PROGRESS] Создать `doc/Sessions/Session012.md` и зафиксировать итоги Phase 135 (scope: `doc/Sessions/Session012.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session012 and close phase135`)
+1. [IN_PROGRESS] Создать `doc/Sessions/Archive/Session012.md` и зафиксировать итоги Phase 135 (scope: `doc/Sessions/Archive/Session012.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session012 and close phase135`)
 2. [TODO] Git Commit: `docs(session): add Session012 and close phase135` (hash: TBD)

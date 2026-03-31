@@ -11,7 +11,7 @@
 2. `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`
 3. `doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 4. `doc/TODO/Archive/todo-plan-phase159-dialog-ui-2026-02-14.md`
-5. `doc/Sessions/Session045.md`
+5. `doc/Sessions/Archive/Session045.md`
 
 ---
 
@@ -44,7 +44,7 @@
 2. [DONE] Git Commit: `fix(pm): rehydrate sessions on ws core:state (survive core restart)` (hash: 0f1db8f2)
 
 ### Stream: Docs — Report + Plan
-1. [DONE] Docs: архивировать предыдущий план и завести новый план под Phase 160 + отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase159-dialog-ui-2026-02-14.md`, `doc/Sessions/Session045.md`; expected commit message: `docs(todo): start Phase160 (pm cold-start restore) + Session045`)
+1. [DONE] Docs: архивировать предыдущий план и завести новый план под Phase 160 + отчет сессии (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase159-dialog-ui-2026-02-14.md`, `doc/Sessions/Archive/Session045.md`; expected commit message: `docs(todo): start Phase160 (pm cold-start restore) + Session045`)
 2. [DONE] Git Commit: `docs(todo): start Phase160 (pm cold-start restore) + Session045` (hash: a5302ade)
 
 ### Stream: Release Build (New Patch Release)

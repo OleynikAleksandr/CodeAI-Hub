@@ -9,7 +9,7 @@
 - `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`
 - `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
 - `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
-- `doc/Sessions/Session110.md`
+- `doc/Sessions/Archive/Session110.md`
 - `doc/TODO/todo-plan.md`
 
 ---

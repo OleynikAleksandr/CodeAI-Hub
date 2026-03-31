@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session188.md`, `doc/Sessions/Session189.md`, `doc/SolidWorks-WorkFlow/Plans/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session188.md`, `doc/Sessions/Archive/Session189.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Этот `TODO Plan` реализует согласованный scope: `modelId` становится effective model identity, reasoning/thinking входят в состав identity, а `~/.codeai-hub/settings/settings.json` становится единственным source of truth для next-turn model identity для всех провайдеров.
 - Текущий baseline `1.1.834` считается входной точкой; scope ограничен identity contract, provider-neutral resolver, Codex runtime adoption, UI/PM sync и regression coverage без расширения продукта до нового session-side model switch UI.
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново.
@@ -84,5 +84,5 @@
 20. [DONE] Git Commit: `docs(release): prepare v1.1.835` (hash: `7b43eefa`)
 
 ### Stream: Clean-tree build and packaging for v1.1.835
-21. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать результаты в `doc/Sessions/Session190.md`, проверить артефакты в `doc/tmp/releases/` и завершить release baseline effective model identity. Scope: `doc/Sessions/Session190.md`, version/manifests from build scripts, release artefact report. Expected commit: `chore: release effective model identity contract`
+21. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать результаты в `doc/Sessions/Archive/Session190.md`, проверить артефакты в `doc/tmp/releases/` и завершить release baseline effective model identity. Scope: `doc/Sessions/Archive/Session190.md`, version/manifests from build scripts, release artefact report. Expected commit: `chore: release effective model identity contract`
 22. [DONE] Git Commit: `chore: release effective model identity contract` (hash: `2215f69f`)

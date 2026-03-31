@@ -15,8 +15,8 @@
 3. `doc/SolidWorks-Flow/SessionContinuity/Core/VirtualConversation_SeamlessContinuity_Architecture.md`
 4. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
-6. `doc/Sessions/Session097.md`
-7. `doc/Sessions/Session098.md`
+6. `doc/Sessions/Archive/Session097.md`
+7. `doc/Sessions/Archive/Session098.md`
 
 ---
 
@@ -70,7 +70,7 @@
 ### Stream: wrap-up and release-readiness
 21. [DONE] Docs(system): синхронизировать `SystemArchitecture.md` и continuity docs под новый `continuity_lock` контракт (scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`; expected commit message: `docs(system): document continuity lock contract`)
 22. [DONE] Git Commit: `docs(system): document continuity lock contract` (hash: 782ce757)
-23. [DONE] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
+23. [DONE] Docs(session): подготовить следующий session report с таймлайном событий lock/unlock и QA выводом (scope: `doc/Sessions/Archive/Session099.md`; expected commit message: `docs(session): add Session099 continuity lock implementation report`)
 24. [DONE] Git Commit: `docs(session): add Session099 continuity lock implementation report` (hash: 9e64be11)
 
 ### Stream: phase-complete release build
@@ -96,7 +96,7 @@
 34. [DONE] Git Commit: `fix(ui): synchronize input lock and continuity wait copy` (hash: d8b782a2)
 35. [DONE] Fix(continuity-template): заменить служебный ACK-token в continuity resume template на `Ready to continue working.` и синхронизировать скрытие internal continuity message в UI (scope: `assets/flow/continuity/resume.md`, `packages/core/src/flow-node-continuity/template-loader.ts`, `src/client/ui/src/session/virtual-conversation.tsx`; expected commit message: `fix(continuity): replace internal ack token with handoff phrase`)
 36. [DONE] Git Commit: `fix(continuity): replace internal ack token with handoff phrase` (hash: 28eddb0c)
-37. [DONE] Verify(runtime-template): после таргетной сборки проверить, что установленный шаблон `~/.codeai-hub/templates/flow/continuity/resume.md` синхронизирован с новым текстом, и фраза не попадает в видимый диалог (scope: `doc/Sessions/Session100.md`, `doc/TODO/todo-plan.md`; expected commit message: `chore(qa): verify installed continuity resume template sync`)
+37. [DONE] Verify(runtime-template): после таргетной сборки проверить, что установленный шаблон `~/.codeai-hub/templates/flow/continuity/resume.md` синхронизирован с новым текстом, и фраза не попадает в видимый диалог (scope: `doc/Sessions/Archive/Session100.md`, `doc/TODO/todo-plan.md`; expected commit message: `chore(qa): verify installed continuity resume template sync`)
 38. [DONE] Git Commit: `chore(qa): verify installed continuity resume template sync` (hash: 0a5dbbb0)
 
 ### Stream: matrix-rain background animation for locked input
@@ -106,11 +106,11 @@
 42. [DONE] Git Commit: `feat(ui): add subtle matrix rain background for locked input` (hash: b662cab7)
 43. [DONE] Fix(ui-theme): зафиксировать единый цвет matrix-глифов для всех провайдеров (тускло-зелёный Matrix, base `#00ff41`, `alpha: 0.30`), а wait-copy (`Agent is resuming your session… Please wait.` и `Agent is working… Please wait.`) рендерить в provider-color из табов с приглушением на 30% (`alpha: 0.70`); передать theme из `SessionView` в `InputPanel` (scope: `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/input-panel.tsx`, `src/client/ui/src/session/helpers.ts`; expected commit message: `fix(ui): align lock animation and copy with provider colors`)
 44. [DONE] Git Commit: `fix(ui): align lock animation and copy with provider colors` (hash: 0e7cfd9e)
-45. [DONE] Test(ux): добавить тесты/проверки на lock-state UX (нет рассинхрона copy/disabled), адаптацию количества колонок при изменении ширины и отсутствие утечки RAF-циклов (scope: `src/client/ui/src/session/input-panel.test.tsx`, `src/client/ui/src/session/input-lock-matrix-rain.test.ts`, `doc/Sessions/Session100.md`; expected commit message: `test(ui): verify matrix rain lock behavior and responsiveness`)
+45. [DONE] Test(ux): добавить тесты/проверки на lock-state UX (нет рассинхрона copy/disabled), адаптацию количества колонок при изменении ширины и отсутствие утечки RAF-циклов (scope: `src/client/ui/src/session/input-panel.test.tsx`, `src/client/ui/src/session/input-lock-matrix-rain.test.ts`, `doc/Sessions/Archive/Session100.md`; expected commit message: `test(ui): verify matrix rain lock behavior and responsiveness`)
 46. [DONE] Git Commit: `test(ui): verify matrix rain lock behavior and responsiveness` (hash: 56fb68a0)
 
 ### Stream: phase-complete release build (phase 100)
-47. [DONE] Docs(release): перед релизной сборкой актуализировать `README.md`, `CHANGELOG.md` и session report под итог Phase 100 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session100.md`; expected commit message: `docs(release): prepare notes for phase100 continuity ux release`)
+47. [DONE] Docs(release): перед релизной сборкой актуализировать `README.md`, `CHANGELOG.md` и session report под итог Phase 100 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session100.md`; expected commit message: `docs(release): prepare notes for phase100 continuity ux release`)
 48. [DONE] Git Commit: `docs(release): prepare notes for phase100 continuity ux release` (hash: 233825b2)
 49. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех Stream Phase 100 и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after phase100 continuity ux`)
 50. [DONE] Git Commit: `chore(release): build-all after phase100 continuity ux` (hash: 1dfbc8ef)

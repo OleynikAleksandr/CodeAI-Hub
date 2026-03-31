@@ -45,5 +45,5 @@
 ### Stream 4: Release build
 1. [TODO] Release: выполнить `./scripts/build-all.sh` на чистом дереве (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
 2. [TODO] Git Commit: `chore(release): build-all` (hash: TBD)
-3. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`; зафиксировать результаты в `doc/Sessions/Session035.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session035.md`; expected commit: `chore(release): package vsix`).
+3. [TODO] Release: выполнить `./scripts/build-release.sh --use-current-version`; зафиксировать результаты в `doc/Sessions/Archive/Session035.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Archive/Session035.md`; expected commit: `chore(release): package vsix`).
 4. [TODO] Git Commit: `chore(release): package vsix` (hash: TBD)

@@ -9,7 +9,7 @@
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/TODO/todo-plan.md`
-- `doc/Sessions/Session102.md`
+- `doc/Sessions/Archive/Session102.md`
 
 ---
 

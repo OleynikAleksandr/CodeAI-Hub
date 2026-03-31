@@ -8,7 +8,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
   - `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session001.md`
+  - `doc/Sessions/Archive/Session001.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).

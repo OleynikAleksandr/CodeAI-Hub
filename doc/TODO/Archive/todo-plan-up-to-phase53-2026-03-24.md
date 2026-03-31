@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Canonical_ProductPart_Template_And_Prompt_Delivery_Architecture.md`, `doc/Sessions/Session146.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Canonical_ProductPart_Template_And_Prompt_Delivery_Architecture.md`, `doc/Sessions/Archive/Session146.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -21,7 +21,7 @@
 2. [DONE] Git Commit: `docs(plan): archive phase52 plan and start canonical product part template scope` (hash: `bb1578f2`)
 
 ### Stream: Planning handoff
-1. [IN_PROGRESS] Оформить session report по итогам этой сессии: пользовательский retest показал, что агент создаёт все `product-parts/<part-id>.md`, но clusters/modules не materialize-ятся в графе; подтвердить root cause по live artifacts и зафиксировать, что следующая сессия начинает именно реализацию `Phase 53`, а не новый exploratory analysis (scope: `doc/Sessions/Session147.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record canonical product part template planning handoff`).
+1. [IN_PROGRESS] Оформить session report по итогам этой сессии: пользовательский retest показал, что агент создаёт все `product-parts/<part-id>.md`, но clusters/modules не materialize-ятся в графе; подтвердить root cause по live artifacts и зафиксировать, что следующая сессия начинает именно реализацию `Phase 53`, а не новый exploratory analysis (scope: `doc/Sessions/Archive/Session147.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record canonical product part template planning handoff`).
 2. [TODO] Git Commit: `docs(session): record canonical product part template planning handoff` (hash: TBD)
 
 ### Stream: Canonical template SSOT
@@ -61,7 +61,7 @@
 2. [DONE] Git Commit: `chore(release): prepare canonical product part template contract release` (hash: TBD)
 
 ### Stream: Session handoff
-1. [DONE] Session report `doc/Sessions/Session148.md` created, all stream hashes recorded in plan (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session148.md`; expected commit: `docs(session): record canonical product part template contract release`).
+1. [DONE] Session report `doc/Sessions/Archive/Session148.md` created, all stream hashes recorded in plan (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session148.md`; expected commit: `docs(session): record canonical product part template contract release`).
 2. [DONE] Git Commit: `docs(session): record canonical product part template contract release` (hash: TBD)
 
 ## Notes

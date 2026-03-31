@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session156.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Archive/Session156.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -113,7 +113,7 @@ Gemini (в отличие от Claude и Codex) не выдаёт промежу
 11. [DONE] `./scripts/build-all.sh` → version 1.1.801, all providers/core/UI/launcher built.
 12. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.801.vsix` (1.5M).
 13. [DONE] Git Commit: `chore(release): bump version to 1.1.801` (hash: 1a5d827b)
-14. [DONE] Create `doc/Sessions/Session158.md`.
+14. [DONE] Create `doc/Sessions/Archive/Session158.md`.
 
 ---
 

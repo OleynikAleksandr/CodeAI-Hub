@@ -8,8 +8,8 @@
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
-- `doc/Sessions/Session132.md`
-- `doc/Sessions/Session133.md`
+- `doc/Sessions/Archive/Session132.md`
+- `doc/Sessions/Archive/Session133.md`
 - `doc/TODO/todo-plan.md`
 
 ---

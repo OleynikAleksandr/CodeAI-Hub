@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session181.md`, `doc/SolidWorks-WorkFlow/Plans/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session181.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Этот `TODO Plan` реализует три согласованных scope: (1) refactor `settings -> Core -> provider runtime -> PM` для единой source of truth по `model` / `reasoning`, (2) provider-neutral generalization этого контракта без branch-per-provider hotfix path, (3) carry-over tail декомпозиции `session-request-handler.ts`
 - Текущий baseline `1.1.829` считается рабочим; scope ограничен behavior-preserving refactor + runtime config contract cleanup, без нового product feature scope
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -102,5 +102,5 @@
 32. [DONE] Git Commit: `refactor(core): thin session request handler facade` (hash: `18d28ee6`)
 
 ### Stream: Final release build after full plan closure
-33. [DONE] После закрытия `Phase 81` выполнена финальная сборка релиза `1.1.833` по Release Build Checklist: release-facing docs обновлены, `./scripts/build-all.sh` успешно собрал provider/core/UI/launcher tarball-ы, `./scripts/build-release.sh --use-current-version --allow-dirty` успешно собрал VSIX `codeai-hub-1.1.833.vsix`, а session report оформлен для отдельного полного регрессионного тестирования. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session186.md`. Expected commit: `chore: release post-plan verification build`
+33. [DONE] После закрытия `Phase 81` выполнена финальная сборка релиза `1.1.833` по Release Build Checklist: release-facing docs обновлены, `./scripts/build-all.sh` успешно собрал provider/core/UI/launcher tarball-ы, `./scripts/build-release.sh --use-current-version --allow-dirty` успешно собрал VSIX `codeai-hub-1.1.833.vsix`, а session report оформлен для отдельного полного регрессионного тестирования. Scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session186.md`. Expected commit: `chore: release post-plan verification build`
 34. [DONE] Git Commit: `chore: release post-plan verification build` (hash: `TBD`)

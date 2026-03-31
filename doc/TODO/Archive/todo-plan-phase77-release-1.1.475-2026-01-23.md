@@ -43,5 +43,5 @@
 2. [DONE] Git Commit: `chore(release): build next version` (hash: 8c67ef98)
 
 ### Stream: Session report
-1. [DONE] Docs(session): создать отчет `Session049` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Session049.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session049 release 1.1.475`
+1. [DONE] Docs(session): создать отчет `Session049` и обновить `todo-plan.md` с hash/verify — scope: `doc/Sessions/Archive/Session049.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session049 release 1.1.475`
 2. [DONE] Git Commit: `docs(session): Session049 release 1.1.475` (hash: 1ef0f9c6)

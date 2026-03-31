@@ -17,7 +17,7 @@
 7. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
 8. `packages/core/src/workflow/description/description-step-store.ts`
 9. `packages/ui/project-manager/dist/app.js` (auto-resume: `useWorkspaceTreeAutoSelect`)
-10. `doc/Sessions/Session070.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session070.md` (THIS REPORT)
 
 ---
 
@@ -46,5 +46,5 @@
 12. [TODO] Git Commit: `chore: verify reviewer auto-resume workspace validation` (hash: TBD)
 
 ### Stream: session report
-13. [TODO] Docs(session): создать отчёт `doc/Sessions/Session071.md` (implementation + verification Phase 87) — scope: `doc/Sessions/Session071.md`; expected commit message: `docs(session): Session071 reviewer auto-resume workspace validation`
+13. [TODO] Docs(session): создать отчёт `doc/Sessions/Archive/Session071.md` (implementation + verification Phase 87) — scope: `doc/Sessions/Archive/Session071.md`; expected commit message: `docs(session): Session071 reviewer auto-resume workspace validation`
 14. [TODO] Git Commit: `docs(session): Session071 reviewer auto-resume workspace validation` (hash: TBD)

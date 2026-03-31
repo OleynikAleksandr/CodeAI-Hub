@@ -9,7 +9,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/Sessions/Session055.md`
+  - `doc/Sessions/Archive/Session055.md`
 - TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -67,7 +67,7 @@
 4. [DONE] Git Commit: `fix(workflow): align virtual simulation prompt-only status flow` (hash: `dc10e920`)
 
 ### Stream 3: Release build (по чеклисту)
-1. [IN_PROGRESS] После закрытия всех stream запустить таргетные проверки затронутых пакетов/клиентов и зафиксировать результаты в отчёте сессии (scope: `doc/Sessions/Session056.md`; expected commit: `docs(session): record virtual simulation prompt-only validation`).
+1. [IN_PROGRESS] После закрытия всех stream запустить таргетные проверки затронутых пакетов/клиентов и зафиксировать результаты в отчёте сессии (scope: `doc/Sessions/Archive/Session056.md`; expected commit: `docs(session): record virtual simulation prompt-only validation`).
 2. [TODO] Git Commit: `docs(session): record virtual simulation prompt-only validation` (hash: TBD)
-3. [TODO] Выполнить релизный цикл: `./scripts/build-all.sh` -> проверка чистого дерева -> `./scripts/build-release.sh --use-current-version` -> верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + `doc/Sessions/Session056.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+3. [TODO] Выполнить релизный цикл: `./scripts/build-all.sh` -> проверка чистого дерева -> `./scripts/build-release.sh --use-current-version` -> верификация строк `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + `doc/Sessions/Archive/Session056.md`; expected commit: `chore(release): build-all vX.Y.Z`).
 4. [TODO] Git Commit: `chore(release): build-all vX.Y.Z` (hash: TBD)

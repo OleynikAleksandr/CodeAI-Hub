@@ -15,11 +15,11 @@
 - **Real-time Документация**: изменения логики/контрактов должны синхронно попадать в `doc/` в том же коммите.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session198.md`
+1. `doc/Sessions/Archive/Session198.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
-5. `doc/SolidWorks-WorkFlow/Plans/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`
+5. `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -29,11 +29,11 @@
 Goal: устранить сценарий, в котором Gemini turn визуально заканчивается translated thoughts без финального user-visible assistant answer и без явного terminal failure.
 
 ### Stream: Session Report
-1. [DONE] Docs: создать `doc/Sessions/Session199.md` как отчёт текущей сессии по расследованию Gemini stall, planning-доку и старту execution plan, чтобы следующая сессия могла восстановить контекст без потерь. Scope: `doc/Sessions/Session199.md`. Expected commit: `docs: add Session 199 report for gemini stalled turn investigation`
+1. [DONE] Docs: создать `doc/Sessions/Archive/Session199.md` как отчёт текущей сессии по расследованию Gemini stall, planning-доку и старту execution plan, чтобы следующая сессия могла восстановить контекст без потерь. Scope: `doc/Sessions/Archive/Session199.md`. Expected commit: `docs: add Session 199 report for gemini stalled turn investigation`
 2. [DONE] Git Commit: `docs: add Session 199 report for gemini stalled turn investigation` (hash: `f2651b1d`)
 
 ### Stream: Docs Gate
-3. [DONE] Docs: согласовать и при необходимости уточнить planning-док по Gemini stalled turn, включая invariant "turn не может завершаться только размышлениями". Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`. Expected commit: `docs(architecture): approve gemini stalled turn terminal answer contract`
+3. [DONE] Docs: согласовать и при необходимости уточнить planning-док по Gemini stalled turn, включая invariant "turn не может завершаться только размышлениями". Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`. Expected commit: `docs(architecture): approve gemini stalled turn terminal answer contract`
 4. [DONE] Git Commit: `docs(architecture): approve gemini stalled turn terminal answer contract` (hash: `ba84659a`)
 
 ### Stream: Gemini Terminality Separation
@@ -57,9 +57,9 @@ Goal: устранить сценарий, в котором Gemini turn виз�
 14. [DONE] Git Commit: `docs: record gemini stalled turn verification results` (hash: `b72c6b48`)
 
 ### Stream: Release Preparation
-15. [DONE] Release: выполнить `./scripts/build-all.sh`, обновить version manifests до `1.1.848`, синхронизировать `README.md`, `CHANGELOG.md` и `doc/Sessions/Session199.md` под новый релизный snapshot. Scope: release manifests + docs. Expected commit: `chore(release): prepare 1.1.848 artifacts`
+15. [DONE] Release: выполнить `./scripts/build-all.sh`, обновить version manifests до `1.1.848`, синхронизировать `README.md`, `CHANGELOG.md` и `doc/Sessions/Archive/Session199.md` под новый релизный snapshot. Scope: release manifests + docs. Expected commit: `chore(release): prepare 1.1.848 artifacts`
 16. [DONE] Git Commit: `chore(release): prepare 1.1.848 artifacts` (hash: `5a6b1760`)
 
 ### Stream: Release VSIX
-17. [DONE] Release: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.848.vsix` и финальные release checks, затем зафиксировать результат в `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md`. Scope: packaging + docs. Expected commit: `chore(release): finalize 1.1.848 vsix`
+17. [DONE] Release: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.848.vsix` и финальные release checks, затем зафиксировать результат в `doc/Sessions/Archive/Session199.md` и `doc/TODO/todo-plan.md`. Scope: packaging + docs. Expected commit: `chore(release): finalize 1.1.848 vsix`
 18. [DONE] Git Commit: `chore(release): finalize 1.1.848 vsix` (hash: `66836171`)

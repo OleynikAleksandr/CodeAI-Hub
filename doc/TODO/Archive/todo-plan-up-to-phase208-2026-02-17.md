@@ -105,7 +105,7 @@
 ### Stream: Session status model labels
 1. [DONE] Fix: Project Manager гарантированно подгружает settings snapshot при монтировании Session view, чтобы `Models:` показывал реальную модель (scope: `src/client/project-manager/components/settings/use-project-manager-settings.ts`; expected commit message: `fix(pm): ensure settings loaded for model display`)
 2. [DONE] Git Commit: `fix(pm): ensure settings loaded for model display` (hash: 8598bf35)
-3. [DONE] Docs: добавить отчёт прошлой сессии (scope: `doc/Sessions/Session063.md`; expected commit message: `docs(session): add Session063 report`)
+3. [DONE] Docs: добавить отчёт прошлой сессии (scope: `doc/Sessions/Archive/Session063.md`; expected commit message: `docs(session): add Session063 report`)
 4. [DONE] Git Commit: `docs(session): add Session063 report` (hash: 87bc93a1)
 5. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.608`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.608 - restore session model labels`)
 6. [DONE] Git Commit: `feat(release): v1.1.608 - restore session model labels` (hash: 458f1db6)
@@ -122,7 +122,7 @@
 3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.610`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.610 - refresh session/weekly usage limits`)
 4. [DONE] Git Commit: `feat(release): v1.1.610 - refresh session/weekly usage limits` (hash: 7717a2c7)
 5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.610.vsix`) (scope: repo build)
-6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session065.md`; expected commit message: `docs(session): add Session065 report`)
+6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Archive/Session065.md`; expected commit message: `docs(session): add Session065 report`)
 7. [DONE] Git Commit: `docs(session): add Session065 report` (hash: 51a3b0e0)
 
 ---
@@ -135,7 +135,7 @@
 3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.611`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.611 - pm auto-select latest session`)
 4. [DONE] Git Commit: `feat(release): v1.1.611 - pm auto-select latest session` (hash: 45d85a54)
 5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.611.vsix`) (scope: repo build)
-6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session066.md`; expected commit message: `docs(session): add Session066 report`)
+6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Archive/Session066.md`; expected commit message: `docs(session): add Session066 report`)
 7. [DONE] Git Commit: `docs(session): add Session066 report` (hash: 4a05c4a9)
 
 ---
@@ -148,5 +148,5 @@
 3. [DONE] Release: `./scripts/build-all.sh` (version bump -> `1.1.612`) + обновление `README.md`/`CHANGELOG.md`/`doc/SolidWorks-Flow/System/SystemArchitecture.md` (scope: repo; expected commit message: `feat(release): v1.1.612 - pm auto-open workflow session`)
 4. [DONE] Git Commit: `feat(release): v1.1.612 - pm auto-open workflow session` (hash: 6f99ed4b)
 5. [DONE] Release: `./scripts/build-release.sh --use-current-version` (VSIX: `codeai-hub-1.1.612.vsix`) (scope: repo build)
-6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): add Session067 report`)
+6. [DONE] Docs: добавить отчёт сессии (scope: `doc/Sessions/Archive/Session067.md`; expected commit message: `docs(session): add Session067 report`)
 7. [DONE] Git Commit: `docs(session): add Session067 report` (hash: c3c95d07)

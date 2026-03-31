@@ -107,11 +107,11 @@ Legacy slots:
 ### 5. Исторические артефакты не переписываются
 
 Не удаляем и не редактируем задним числом:
-- `doc/Sessions/Session017.md`
-- `doc/Sessions/Session019.md`
-- `doc/Sessions/Session021.md`
-- `doc/Sessions/Session023.md`
-- `doc/Sessions/Session024.md`
+- `doc/Sessions/Archive/Session017.md`
+- `doc/Sessions/Archive/Session019.md`
+- `doc/Sessions/Archive/Session021.md`
+- `doc/Sessions/Archive/Session023.md`
+- `doc/Sessions/Archive/Session024.md`
 - `doc/TODO/Archive/todo-plan-phase238-description-restart-attempt-2026-02-24.md`
 - исторические блоки в `doc/BugRegistry.md`
 
@@ -280,4 +280,4 @@ Cleanup считается завершённым, когда одновреме
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- `doc/Sessions/Session068.md`
+- `doc/Sessions/Archive/Session068.md`

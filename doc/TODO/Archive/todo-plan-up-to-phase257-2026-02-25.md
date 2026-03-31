@@ -120,7 +120,7 @@
 ### Stream 1: Release build (versions + VSIX)
 1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `1726e5a9`)
-3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session029.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session029.md`; expected commit: `chore(release): package vsix`).
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Archive/Session029.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Archive/Session029.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `7bf5b2d5`)
 
 ---
@@ -136,7 +136,7 @@
 ### Stream 1: Release build (versions + VSIX)
 1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `0df30b55`)
-3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session030.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session030.md`; expected commit: `chore(release): package vsix`).
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` и артефакты в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Archive/Session030.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Archive/Session030.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `22f4923b`)
 
 ---
@@ -154,7 +154,7 @@
 ### Stream 1: Release build (versions + VSIX)
 1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `2190a699`)
-3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session031.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session031.md`; expected commit: `chore(release): package vsix`).
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Archive/Session031.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Archive/Session031.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `b84bd4e0`)
 
 ---
@@ -168,7 +168,7 @@
 ### Stream 1: Release build (versions + VSIX)
 1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `4848cfbe`)
-3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session032.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session032.md`; expected commit: `chore(release): package vsix`).
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Archive/Session032.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Archive/Session032.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `72319c37`)
 
 ---
@@ -182,5 +182,5 @@
 ### Stream 1: Release build (versions + VSIX)
 1. [DONE] Release: выполнить `./scripts/build-all.sh` на чистом дереве; убедиться что tarball’ы появились в `~/.codeai-hub/releases` и `doc/tmp/releases/` (scope: `scripts/build-all.sh` (run); expected commit: `chore(release): build-all`).
 2. [DONE] Git Commit: `chore(release): build-all` (hash: `e76065d1`)
-3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Session033.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Session033.md`; expected commit: `chore(release): package vsix`).
+3. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version`; проверить `✅ Package created`; сохранить `codeai-hub-<version>.vsix` в `doc/tmp/releases/`; зафиксировать результаты в `doc/Sessions/Archive/Session033.md` (scope: `scripts/build-release.sh` (run), `doc/Sessions/Archive/Session033.md`; expected commit: `chore(release): package vsix`).
 4. [DONE] Git Commit: `chore(release): package vsix` (hash: `91902bea`)

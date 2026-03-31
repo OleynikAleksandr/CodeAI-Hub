@@ -60,7 +60,7 @@
 6. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.557` (hash: 15673506)
 7. [DONE] Синхронизировать `README.md`, `CHANGELOG.md` и `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию `1.1.557` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.557`)
 8. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.557` (hash: caa96b6e)
-9. [DONE] Docs: добавить session report `doc/Sessions/Session013.md` (scope: `doc/Sessions/Session013.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session013 for v1.1.557`)
+9. [DONE] Docs: добавить session report `doc/Sessions/Archive/Session013.md` (scope: `doc/Sessions/Archive/Session013.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session013 for v1.1.557`)
 10. [DONE] Git Commit: `docs(session): add Session013 for v1.1.557` (hash: e4217265)
 
 ---
@@ -102,7 +102,7 @@
 6. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.559` (hash: 05779dfa)
 
 ### Stream: Session Report (Phase 139)
-1. [DONE] Docs: добавить session report `doc/Sessions/Session015.md` + обновить статус Phase 139 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session015 for v1.1.559`)
+1. [DONE] Docs: добавить session report `doc/Sessions/Archive/Session015.md` + обновить статус Phase 139 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Archive/Session015.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session015 for v1.1.559`)
 2. [DONE] Git Commit: `docs(session): add Session015 for v1.1.559` (hash: fa080c05)
 
 ---
@@ -136,7 +136,7 @@
 4. [DONE] Git Commit: `chore(release): run build-all for phase 140 cleanup` (hash: 78f98498)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и собрать новый VSIX (scope: scripts; expected commit message: `chore(release): build and validate vsix for v1.1.560`)
 6. [DONE] Git Commit: `chore(release): build and validate vsix for v1.1.560` (hash: 109ab785)
-7. [DONE] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` и сессионный отчет (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/Sessions/Session016.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): sync docs and session report for v1.1.560`)
+7. [DONE] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` и сессионный отчет (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/Sessions/Archive/Session016.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): sync docs and session report for v1.1.560`)
 8. [DONE] Git Commit: `docs(release): sync docs and session report for v1.1.560` (hash: fba638b8)
 
 ---
@@ -160,7 +160,7 @@
 ### Stream: Release Docs + Session Report (Phase 141)
 1. [DONE] Синхронизировать `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md` под фактическую версию `1.1.561` (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync root notes and system architecture for v1.1.561`)
 2. [DONE] Git Commit: `docs(release): sync root notes and system architecture for v1.1.561` (hash: 427ae1c8)
-3. [DONE] Docs: добавить session report `doc/Sessions/Session018.md` + обновить статус Phase 141 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Session018.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session018 for v1.1.561`)
+3. [DONE] Docs: добавить session report `doc/Sessions/Archive/Session018.md` + обновить статус Phase 141 в `doc/TODO/todo-plan.md` (scope: `doc/Sessions/Archive/Session018.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add Session018 for v1.1.561`)
 4. [DONE] Git Commit: `docs(session): add Session018 for v1.1.561` (hash: 1b171dfe)
 
 ---

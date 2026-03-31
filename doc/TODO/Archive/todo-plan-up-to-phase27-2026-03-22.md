@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/Sessions/Session123.md`, `doc/Sessions/Session124.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/Sessions/Archive/Session123.md`, `doc/Sessions/Archive/Session124.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -19,7 +19,7 @@
 2. [DONE] Git Commit: `docs(plan): start post-release regression feedback scope` (hash: `17e23bee`)
 
 ### Stream: Session handoff baseline
-1. [DONE] Создать session report для нового `Phase 27` scope и синхронизировать active `todo-plan` после planning reset, явно зафиксировав, что code/runtime fixes ещё не начаты, а план находится в intake-mode до первого accepted system-level finding (scope: `doc/Sessions/Session124.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-release regression handoff`).
+1. [DONE] Создать session report для нового `Phase 27` scope и синхронизировать active `todo-plan` после planning reset, явно зафиксировав, что code/runtime fixes ещё не начаты, а план находится в intake-mode до первого accepted system-level finding (scope: `doc/Sessions/Archive/Session124.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record post-release regression handoff`).
 2. [DONE] Git Commit: `docs(session): record post-release regression handoff` (hash: `827d9ddf`)
 
 ### Stream: Regression intake and classification
@@ -35,7 +35,7 @@
 6. [DONE] Git Commit: `test(description): guard help provider picker wording` (hash: `c51a7a9d`)
 
 ### Stream: Ongoing regression intake
-1. [IN_PROGRESS] Продолжать принимать следующие user-observed findings на релизе `1.1.762`, классифицировать их по модели из planning-doc и открывать новые stage-local fix-stream только после подтверждённого system-level кейса (scope: `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session124.md`; expected commit: `docs(plan): classify next regression finding`).
+1. [IN_PROGRESS] Продолжать принимать следующие user-observed findings на релизе `1.1.762`, классифицировать их по модели из planning-doc и открывать новые stage-local fix-stream только после подтверждённого system-level кейса (scope: `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session124.md`; expected commit: `docs(plan): classify next regression finding`).
 2. [TODO] Git Commit: `docs(plan): classify next regression finding` (hash: TBD)
 
 ### Stream: Diagram prompt appendix deduplication
@@ -53,7 +53,7 @@
 ### Stream: Release build after accepted fixes
 1. [DONE] После закрытия принятых фиксов и таргетной верификации синхронизировать versioned manifests и release docs для `1.1.763`, зафиксировать version-bump baseline после `./scripts/build-all.sh`, чтобы рабочее дерево стало чистым перед финальным `build-release` (scope: `package*.json`, `assets/**/manifest.json`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare next regression feedback release`).
 2. [DONE] Git Commit: `chore(release): prepare next regression feedback release` (hash: `705808b2`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline `1.1.763`, обновить `todo-plan` и оформить session report по релизу (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session125.md`; expected commit: `docs(session): record 1.1.763 regression feedback release`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, зафиксировать новый regression baseline `1.1.763`, обновить `todo-plan` и оформить session report по релизу (scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session125.md`; expected commit: `docs(session): record 1.1.763 regression feedback release`).
 4. [TODO] Git Commit: `docs(session): record 1.1.763 regression feedback release` (hash: TBD)
 
 ## Notes

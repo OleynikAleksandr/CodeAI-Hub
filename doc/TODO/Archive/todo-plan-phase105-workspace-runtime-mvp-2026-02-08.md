@@ -146,7 +146,7 @@
 53. [DONE] Обновить Phase 104 doc как legacy: `doc/SolidWorks-Flow/WorkspaceRuntime/WorkspaceRuntime.md` — пометить `workspace:scope:set/ack` как deprecated и сослаться на `workspace:select + workspace:snapshot` (Phase 105) и `Phase104_LegacyDeprecationChecklist.md` (scope: 1 файл; expected commit: `docs(legacy): mark workspace scope handshake doc as deprecated`)
 54. [DONE] Git Commit: `docs(legacy): mark workspace scope handshake doc as deprecated` (hash: 5a9c9625)
 
-55. [DONE] Создать session report `doc/Sessions/Session113.md` (scope: 1 файл; expected commit: `docs(session): create session 113 report`)
+55. [DONE] Создать session report `doc/Sessions/Archive/Session113.md` (scope: 1 файл; expected commit: `docs(session): create session 113 report`)
 56. [DONE] Git Commit: `docs(session): create session 113 report` (hash: 1b204751)
 
 ### Stream 16: Release Build

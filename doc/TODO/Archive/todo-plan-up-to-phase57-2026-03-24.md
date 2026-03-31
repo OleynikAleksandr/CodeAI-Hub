@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md`, `doc/Sessions/Session149.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md`, `doc/Sessions/Archive/Session149.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
@@ -54,7 +54,7 @@
 4. [DONE] Git Commit: `chore(release): prepare step-by-step diagram modules workflow release` (hash: TBD)
 
 ### Stream 8: Session handoff (Session 150)
-1. [DONE] Session report `doc/Sessions/Session150.md`
+1. [DONE] Session report `doc/Sessions/Archive/Session150.md`
 2. [DONE] Git Commit: `docs(session): record session 150` (hash: TBD)
 
 ---

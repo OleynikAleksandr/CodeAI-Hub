@@ -8,7 +8,7 @@
   - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-  - `doc/Sessions/Session052.md`
+  - `doc/Sessions/Archive/Session052.md`
 - TODO Plan состоит из Phase/Stream, каждая подзадача затрагивает не более 3 файлов.
 - Каждая подзадача оформляется парой: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -69,9 +69,9 @@
 2. [DONE] Git Commit: `fix(core): restore description continuity threshold trigger` (hash: `8d1f47f3`)
 
 ### Stream 3: Guards + release
-1. [DONE] Прогнать таргетные проверки (минимум: тесты/сборки для затронутых UI/Core путей) и зафиксировать в отчёте сессии (scope: `doc/Sessions/Session053.md`; expected commit: `docs(session): record phase281 validation`).
+1. [DONE] Прогнать таргетные проверки (минимум: тесты/сборки для затронутых UI/Core путей) и зафиксировать в отчёте сессии (scope: `doc/Sessions/Archive/Session053.md`; expected commit: `docs(session): record phase281 validation`).
 2. [DONE] Git Commit: `docs(session): record phase281 validation` (hash: `b423a36a`)
-3. [DONE] Выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` после фикса и зафиксировать release результаты (scope: release manifests + `doc/Sessions/Session053.md`; expected commit: `chore(release): build-all vX.Y.Z`).
+3. [DONE] Выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` после фикса и зафиксировать release результаты (scope: release manifests + `doc/Sessions/Archive/Session053.md`; expected commit: `chore(release): build-all vX.Y.Z`).
 4. [DONE] Git Commit: `chore(release): build-all v1.1.704` (hashes: `3d6655d4`, `60f1053d`, `308ba8df`, `e872cf4d`, `baed7154`)
 
 ### Stream 4: Bug closure

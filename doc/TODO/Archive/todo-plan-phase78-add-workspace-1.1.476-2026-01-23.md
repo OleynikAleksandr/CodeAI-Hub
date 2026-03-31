@@ -10,7 +10,7 @@
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/System/ProjectManager/AddWorkspace_Architecture.md`
-3. `doc/Sessions/Session049.md`
+3. `doc/Sessions/Archive/Session049.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---

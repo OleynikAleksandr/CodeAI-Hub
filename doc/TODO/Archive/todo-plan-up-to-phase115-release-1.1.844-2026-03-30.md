@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session193.md`, `doc/SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session193.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Текущий baseline релиз: `1.1.837`.
 - Scope этого плана: стабилизировать среднюю зону Project Manager для `Description`, убрать ложный `Final_Description.md`, выровнять workflow semantics `descriptionDone`, затем перевести PM на общий workflow state store и завершить scope релизной сборкой.
 - Каждая микро-задача должна затрагивать не более 3 файлов; `doc/TODO/todo-plan.md` обновляется вместе с каждой подзадачей.
@@ -17,7 +17,7 @@
 ### Stream: P0-A optimistic guard and overwrite prevention
 1. [DONE] Добавить sessionId-bound optimistic guard для post-submit `Description` и запретить premature downgrade `hasDescriptionSession` до завершения binding lifecycle. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`. Expected commit: `fix: stabilize description session guard`
 2. [DONE] Git Commit: `fix: stabilize description session guard` (hash: 82db344c)
-3. [DONE] Подтвердить точную причину polling overwrite после `session:created` и зафиксировать findings в planning-source без блокировки user-facing fix. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `doc/SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`. Expected commit: `docs(debug): capture description overwrite cause`
+3. [DONE] Подтвердить точную причину polling overwrite после `session:created` и зафиксировать findings в planning-source без блокировки user-facing fix. Scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`. Expected commit: `docs(debug): capture description overwrite cause`
 4. [DONE] Git Commit: `docs(debug): capture description overwrite cause` (hash: 3bdcb0b6)
 
 ### Stream: P0-A re-mount pending-state protection

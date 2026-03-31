@@ -7,7 +7,7 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session041.md`
+1. `doc/Sessions/Archive/Session041.md`
 2. `doc/SolidWorks-Flow/Stacks/CoreOrchestrator.md`
 3. `packages/core/src/unified-session/storage.ts`
 4. `packages/core/src/remote-bridge/handlers/session-request-handler.ts`

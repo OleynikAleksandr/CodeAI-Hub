@@ -17,7 +17,7 @@
 6. `doc/SolidWorks-Flow/SessionContinuity/Core/VirtualConversation_SeamlessContinuity_Architecture.md`
 7. `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`
 8. `doc/SolidWorks-Flow/SessionContinuity/ContinuityReport_Contracts.md`
-9. `doc/Sessions/Session094.md`
+9. `doc/Sessions/Archive/Session094.md`
 10. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -90,7 +90,7 @@
 42. [DONE] Git Commit: `chore(release): build artifacts for claude one-shot qa` (hash: a9621a6c)
 
 ### Stream: session wrap-up
-43. [DONE] Docs(session): подготовить новый session report с timeline, списком commit hash и статусом continuity совместимости (scope: `doc/Sessions/Session095.md`; expected commit message: `docs(session): add Session095 claude one-shot report`)
+43. [DONE] Docs(session): подготовить новый session report с timeline, списком commit hash и статусом continuity совместимости (scope: `doc/Sessions/Archive/Session095.md`; expected commit message: `docs(session): add Session095 claude one-shot report`)
 44. [DONE] Git Commit: `docs(session): add Session095 claude one-shot report` (hash: 8e3a0a78)
 
 ### Stream: claude sdk-log noise filtering

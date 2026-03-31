@@ -11,7 +11,7 @@
 1. `doc/SolidWorks-Flow/System/WorkflowStateFastRestore_Architecture.md`
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
-4. `doc/Sessions/Session039.md`
+4. `doc/Sessions/Archive/Session039.md`
 
 ---
 

@@ -7,7 +7,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session011.md`
+  - `doc/Sessions/Archive/Session011.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -46,7 +46,7 @@
 2. [DONE] Git Commit: `docs(release): v1.1.652 notes` (hash: `650195f4`)
 3. [DONE] Прогнать `./scripts/build-all.sh` (поднимет версии до `1.1.652`, соберёт unified tarball’ы) (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.652`).
 4. [DONE] Git Commit: `chore(release): build-all v1.1.652` (hash: `b57157ec`)
-5. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.652.vsix` (scope: `doc/Sessions/Session005.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.652`).
+5. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.652.vsix` (scope: `doc/Sessions/Archive/Session005.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.652`).
 6. [DONE] Git Commit: `chore(release): package vsix v1.1.652` (hash: `c650d372`)
 
 ---
@@ -72,7 +72,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.653` (hash: `c9690093`)
 
 ### Stream 4: Package VSIX v1.1.653
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.653.vsix` (scope: `doc/Sessions/Session006.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.653`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.653.vsix` (scope: `doc/Sessions/Archive/Session006.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.653`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.653` (hash: `1fbd5ca7`)
 
 ---
@@ -98,7 +98,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.654` (hash: `8a14fce7`)
 
 ### Stream 4: Package VSIX v1.1.654
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.654.vsix` (scope: `doc/Sessions/Session007.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.654`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.654.vsix` (scope: `doc/Sessions/Archive/Session007.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.654`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.654` (hash: `64ac7ae6`)
 
 ---
@@ -120,7 +120,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.655` (hash: `379c2314`)
 
 ### Stream 3: Package VSIX v1.1.655
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.655.vsix` (scope: `doc/Sessions/Session008.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.655`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.655.vsix` (scope: `doc/Sessions/Archive/Session008.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.655`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.655` (hash: `95ba3c7a`)
 
 ---
@@ -146,7 +146,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.656` (hash: `45d9d9bb`)
 
 ### Stream 4: Package VSIX v1.1.656
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.656.vsix` (scope: `doc/Sessions/Session009.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.656`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.656.vsix` (scope: `doc/Sessions/Archive/Session009.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.656`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.656` (hash: `50ef05e6`)
 
 ---
@@ -168,7 +168,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.657` (hash: `ff14f53d`)
 
 ### Stream 3: Package VSIX v1.1.657
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.657.vsix` (scope: `doc/Sessions/Session010.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.657`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.657.vsix` (scope: `doc/Sessions/Archive/Session010.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.657`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.657` (hash: `d631911c`)
 
 ---
@@ -190,7 +190,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.658` (hash: `394319a6`)
 
 ### Stream 3: Package VSIX v1.1.658
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.658.vsix` (scope: `doc/Sessions/Session011.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.658`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.658.vsix` (scope: `doc/Sessions/Archive/Session011.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.658`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.658` (hash: `0c5b3f02`)
 ---
 
@@ -215,7 +215,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.659` (hash: `2ac01bf7`)
 
 ### Stream 4: Package VSIX v1.1.659
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.659.vsix` (scope: `doc/Sessions/Session012.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.659`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.659.vsix` (scope: `doc/Sessions/Archive/Session012.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.659`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.659` (hash: `2abf61d1`)
 
 ---
@@ -255,7 +255,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.660` (hash: `08a4f38b`)
 
 ### Stream 7: Package VSIX v1.1.660
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.660.vsix` (scope: `doc/Sessions/Session013.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.660`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.660.vsix` (scope: `doc/Sessions/Archive/Session013.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.660`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.660` (hash: `e16b31f8`)
 
 ---
@@ -281,7 +281,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.661` (hash: `61accb36`)
 
 ### Stream 4: Package VSIX v1.1.661
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.661.vsix` (scope: `doc/Sessions/Session014.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.661`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.661.vsix` (scope: `doc/Sessions/Archive/Session014.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.661`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.661` (hash: `57f9f68d`)
 
 ---
@@ -307,7 +307,7 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.662` (hash: `ccceaac0`)
 
 ### Stream 4: Package VSIX v1.1.662
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.662.vsix` (scope: `doc/Sessions/Session015.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.662`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.662.vsix` (scope: `doc/Sessions/Archive/Session015.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.662`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.662` (hash: `558ffae5`)
 
 ---
@@ -329,5 +329,5 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.663` (hash: `a3189069`)
 
 ### Stream 3: Package VSIX v1.1.663
-1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.663.vsix` (scope: `doc/Sessions/Session016.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.663`).
+1. [DONE] Прогнать `./scripts/build-release.sh --use-current-version` и проверить `codeai-hub-1.1.663.vsix` (scope: `doc/Sessions/Archive/Session016.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.663`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.663` (hash: `fae81ff4`)

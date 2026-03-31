@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Regression_Prompt_Surface_Refinements_Architecture.md`, `doc/Sessions/Session117.md`, `doc/Sessions/Session118.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Regression_Prompt_Surface_Refinements_Architecture.md`, `doc/Sessions/Archive/Session117.md`, `doc/Sessions/Archive/Session118.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -41,11 +41,11 @@
 10. [DONE] Git Commit: `docs(prompt): remove hard scenario cap from remaining entry docs` (hash: `d6519aec`)
 
 ### Stream: Release build after scenario-cap checkpoint
-1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для повторного regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `doc/Sessions/Session118.md`, `doc/Sessions/Session119.md`; expected commit: `chore(release): build prompt refinement package`).
+1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для повторного regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `doc/Sessions/Archive/Session118.md`, `doc/Sessions/Archive/Session119.md`; expected commit: `chore(release): build prompt refinement package`).
 2. [DONE] Git Commit: `chore(release): build prompt refinement package` (hash: `e620f207`)
 
 ### Stream: Release build after explicit description scenario DoD
-1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md` и `todo-plan.md`, зафиксировав новый локальный релиз с обязательным сценарным блоком `Description` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session120.md`; expected commit: `chore(release): prepare 1.1.759 assets`).
+1. [DONE] На чистом дереве прогнать таргетные prompt/help/template проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session120.md` и `todo-plan.md`, зафиксировав новый локальный релиз с обязательным сценарным блоком `Description` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session120.md`; expected commit: `chore(release): prepare 1.1.759 assets`).
 2. [DONE] Git Commit: `chore(release): prepare 1.1.759 assets` (hash: `c984741e`)
 
 ### Stream: Description help template recovery
@@ -53,7 +53,7 @@
 2. [DONE] Git Commit: `fix(workflow): restore missing description help template` (hash: `9161dd4a`)
 
 ### Stream: Release build after description help hotfix
-1. [DONE] На чистом дереве прогнать таргетные contract/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md` и `todo-plan.md`, зафиксировав новый локальный релиз с hotfix для `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session121.md`; expected commit: `chore(release): prepare 1.1.760 assets`).
+1. [DONE] На чистом дереве прогнать таргетные contract/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session121.md` и `todo-plan.md`, зафиксировав новый локальный релиз с hotfix для `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session121.md`; expected commit: `chore(release): prepare 1.1.760 assets`).
 2. [DONE] Git Commit: `chore(release): prepare 1.1.760 assets` (hash: `56574596`)
 
 ### Stream: Local PM rendering for Description Help
@@ -61,7 +61,7 @@
 2. [DONE] Git Commit: `fix(pm): render description help locally` (hash: `6fc1538b`)
 
 ### Stream: Release build after local Description Help rendering fix
-1. [DONE] На чистом дереве прогнать таргетные PM/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md` и `todo-plan.md`, зафиксировав новый локальный релиз с локальным рендером `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session122.md`; expected commit: `chore(release): prepare 1.1.761 assets`).
+1. [DONE] На чистом дереве прогнать таргетные PM/help проверки, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session122.md` и `todo-plan.md`, зафиксировав новый локальный релиз с локальным рендером `Description Help` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session122.md`; expected commit: `chore(release): prepare 1.1.761 assets`).
 2. [DONE] Git Commit: `chore(release): prepare 1.1.761 assets` (hash: `f3c9f238`)
 
 ## Notes
@@ -69,7 +69,7 @@
 - Active planning doc for this scope:
   - `doc/SolidWorks-WorkFlow/Plans/Regression_Prompt_Surface_Refinements_Architecture.md`
 - Current regression log:
-  - `doc/Sessions/Session118.md`
+  - `doc/Sessions/Archive/Session118.md`
 - Current validated release baseline before this scope:
   - `codeai-hub-1.1.761.vsix`
   - `Description Help` now follows the same local PM rendering path as `Virtual Simulation`, `Diagram Modules` and `Diagram Facades`, without runtime/template dependency in the user-facing surface

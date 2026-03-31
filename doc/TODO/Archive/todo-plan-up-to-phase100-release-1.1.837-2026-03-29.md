@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session191.md`, `doc/SolidWorks-WorkFlow/Plans/ProviderFeedbackRollback_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session191.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/ProviderFeedbackRollback_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Текущий baseline релиз: `1.1.836`.
 - Scope этого плана: откатить provider-feedback logging scope как лишний runtime-specific код, который не дал полезного exact-level signal в SDK logs, сохранить исторические документы релиза `1.1.836` и выпустить новый rollback baseline.
 - Каждая микро-задача должна затрагивать не более 3 файлов; `doc/TODO/todo-plan.md` обновляется вместе с каждой подзадачей.
@@ -14,7 +14,7 @@
 ## Phase 98 — Provider Feedback Rollback Scope (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Planning and rollback boundary
-1. [DONE] Зафиксировать rollback scope: удалить provider-feedback logging code и active SSOT-пункты, которые не дают полезного exact-level signal, но сохранить исторические session/release документы как факт релиза `1.1.836`. Scope: `doc/SolidWorks-WorkFlow/Plans/ProviderFeedbackRollback_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): define provider feedback rollback`
+1. [DONE] Зафиксировать rollback scope: удалить provider-feedback logging code и active SSOT-пункты, которые не дают полезного exact-level signal, но сохранить исторические session/release документы как факт релиза `1.1.836`. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/ProviderFeedbackRollback_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): define provider feedback rollback`
 2. [DONE] Git Commit: `docs(plan): define provider feedback rollback` (hash: `58c234a2`)
 
 ## Phase 99 — Provider Feedback Rollback Execution (owner: Oleksandr, updated: 2026-03-29)
@@ -40,5 +40,5 @@
 ### Stream: Clean-tree build and packaging after rollback
 15. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, проверить version/manifest bumps и подготовить rollback baseline `1.1.837` к финальной упаковке. Scope: release scripts, `package.json`, workspace package manifests, `assets/**/manifest.json`. Expected commit: `chore: prepare v1.1.837 artifacts`
 16. [DONE] Git Commit: `chore: prepare v1.1.837 artifacts` (hash: `d3e8b231`)
-17. [DONE] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX rollback-релиза и зафиксировать результаты в session report. Scope: VSIX packaging output, `doc/Sessions/Session192.md`, release result notes. Expected commit: `chore: release provider feedback rollback`
+17. [DONE] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX rollback-релиза и зафиксировать результаты в session report. Scope: VSIX packaging output, `doc/Sessions/Archive/Session192.md`, release result notes. Expected commit: `chore: release provider feedback rollback`
 18. [IN_PROGRESS] Git Commit: `chore: release provider feedback rollback` (hash: `pending`)

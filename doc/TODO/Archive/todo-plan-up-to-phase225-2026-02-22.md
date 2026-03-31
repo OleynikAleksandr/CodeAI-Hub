@@ -8,7 +8,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session003.md`
+  - `doc/Sessions/Archive/Session003.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -59,5 +59,5 @@
 2. [DONE] Git Commit: `chore(release): build-all v1.1.649` (hash: `e8423b40`)
 
 ### Stream 2: VSIX packaging + session report
-1. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; оформить `doc/Sessions/Session004.md` (scope: `doc/Sessions/Session004.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.649`).
+1. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; оформить `doc/Sessions/Archive/Session004.md` (scope: `doc/Sessions/Archive/Session004.md`, `doc/TODO/todo-plan.md`; expected commit: `chore(release): package vsix v1.1.649`).
 2. [DONE] Git Commit: `chore(release): package vsix v1.1.649` (hash: `ca3615df`)

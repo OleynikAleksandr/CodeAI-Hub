@@ -12,7 +12,7 @@
 2. `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`
 3. `doc/SolidWorks-Flow/SessionContinuity/Core/SessionContinuity_Architecture.md`
 4. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
-5. `doc/Sessions/Session027.md`
+5. `doc/Sessions/Archive/Session027.md`
 6. `doc/TODO/Archive/todo-plan-phase63-2026-01-21.md` (архив предыдущего плана)
 7. `doc/TODO/todo-plan.md` (THIS FILE)
 

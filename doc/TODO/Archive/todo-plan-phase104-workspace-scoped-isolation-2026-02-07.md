@@ -16,7 +16,7 @@
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
 3. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
-4. `doc/Sessions/Session109.md`
+4. `doc/Sessions/Archive/Session109.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -52,7 +52,7 @@
 20. [DONE] Git Commit: `fix(non-regression): keep restart resume compatibility with scoped workspace isolation` (hash: f6120a0b)
 
 ### Stream: release build (Phase 104)
-21. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 104 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session110.md`; expected commit message: `docs(release): prepare notes for workspace-scoped session isolation release`)
+21. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 104 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session110.md`; expected commit message: `docs(release): prepare notes for workspace-scoped session isolation release`)
 22. [DONE] Git Commit: `docs(release): prepare notes for workspace-scoped session isolation release` (hash: 0de83e53)
 23. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after workspace-scoped session isolation`)
 24. [DONE] Git Commit: `chore(release): build-all after workspace-scoped session isolation` (hash: af9fea48)

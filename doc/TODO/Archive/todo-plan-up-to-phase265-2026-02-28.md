@@ -56,7 +56,7 @@
 ### Stream 5: Optional release build (после фикса)
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `6bf1681a`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Session041.md` итогами релизной сборки (scope: `doc/Sessions/Session041.md`; expected commit: `docs(session): record phase261 release build results`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить строки `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created`, зафиксировать артефакты и обновить `doc/Sessions/Archive/Session041.md` итогами релизной сборки (scope: `doc/Sessions/Archive/Session041.md`; expected commit: `docs(session): record phase261 release build results`).
 4. [DONE] Git Commit: `docs(session): record phase261 release build results` (hash: `ef69e3b1`)
 
 ---
@@ -74,7 +74,7 @@
 ### Stream 1: Release build for retest
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `8d28e4a7`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session042.md`; expected commit: `docs(session): record phase262 release build results`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Archive/Session042.md`; expected commit: `docs(session): record phase262 release build results`).
 4. [DONE] Git Commit: `docs(session): record phase262 release build results` (hash: `3e142971`)
 
 ---
@@ -92,7 +92,7 @@
 ### Stream 1: Release build for retest
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, обновить релизные документы и зафиксировать версию (scope: release manifests + `README.md` + `CHANGELOG.md`; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `7b058a72`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session043.md`; expected commit: `docs(session): record phase263 release build results`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Archive/Session043.md`; expected commit: `docs(session): record phase263 release build results`).
 4. [DONE] Git Commit: `docs(session): record phase263 release build results` (hash: `c768cf75`)
 
 ---
@@ -110,7 +110,7 @@
 ### Stream 1: Release build for retest
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.692`).
 2. [DONE] Git Commit: `chore(release): build-all v1.1.692` (hash: `dc4681e4`)
-3. [DONE] Зафиксировать итоги сборки в `doc/Sessions/Session044.md` (scope: `doc/Sessions/Session044.md`; expected commit: `docs(session): record release v1.1.692`).
+3. [DONE] Зафиксировать итоги сборки в `doc/Sessions/Archive/Session044.md` (scope: `doc/Sessions/Archive/Session044.md`; expected commit: `docs(session): record release v1.1.692`).
 4. [DONE] Git Commit: `docs(session): record release v1.1.692` (hash: `70e14de0`)
 
 ---
@@ -128,5 +128,5 @@
 ### Stream 1: Release build for retest
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать обновлённые версии/манифесты (scope: release manifests + package versions; expected commit: `chore(release): build-all v1.1.693`).
 2. [DONE] Git Commit: `chore(release): build-all v1.1.693` (hash: `d42f4afb`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Session045.md`; expected commit: `docs(session): record phase265 release build results`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать итоги в новом session report (scope: `doc/Sessions/Archive/Session045.md`; expected commit: `docs(session): record phase265 release build results`).
 4. [DONE] Git Commit: `docs(session): record phase265 release build results` (hash: `59b7ef4c`)

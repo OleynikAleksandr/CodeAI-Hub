@@ -13,14 +13,14 @@
 - **Commit**: после зелёных гейтов — Git Commit с максимально релевантным описанием и немедленный апдейт статусов/хешей в этом файле.
 - **Принцип**: никаких моков в тестах. Тесты должны работать с реальными объектами/данными.
 - **Real-time Документация**: изменения логики/контрактов должны синхронно попадать в `doc/` в том же коммите.
-- **Релизный нюанс для этого scope:** перед `./scripts/build-all.sh` обязательно синхронизировать `README.md`, `CHANGELOG.md`, `doc/Sessions/Session199.md` и затронутые Gemini-архитектурные документы.
+- **Релизный нюанс для этого scope:** перед `./scripts/build-all.sh` обязательно синхронизировать `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session199.md` и затронутые Gemini-архитектурные документы.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session199.md`
+1. `doc/Sessions/Archive/Session199.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
-5. `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`
+5. `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md`
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -30,7 +30,7 @@
 Goal: устранить сценарий, в котором Gemini успевает создать `Final_Description.md`, но затем зависает на nested post-tool follow-up и падает по stalled timeout до финального ответа или точечных вопросов пользователю.
 
 ### Stream: Session Report
-1. [DONE] Docs: обновить `doc/Sessions/Session199.md` пост-релизной валидацией `1.1.848`, зафиксировать новый provider session `3a6fb414-22d4-4a43-a7f9-7e5f5cb92d07`, `Final_Description.md` materialization и вывод о том, что последний assistant message был progress-output, а не terminal answer. Scope: `doc/Sessions/Session199.md`. Expected commit: `docs: record post-release gemini post-tool stall validation`
+1. [DONE] Docs: обновить `doc/Sessions/Archive/Session199.md` пост-релизной валидацией `1.1.848`, зафиксировать новый provider session `3a6fb414-22d4-4a43-a7f9-7e5f5cb92d07`, `Final_Description.md` materialization и вывод о том, что последний assistant message был progress-output, а не terminal answer. Scope: `doc/Sessions/Archive/Session199.md`. Expected commit: `docs: record post-release gemini post-tool stall validation`
 2. [DONE] Git Commit: `docs: record post-release gemini post-tool stall validation` (hash: `c1320c03`)
 
 ### Stream: Gemini Terminal Leg Contract
@@ -42,7 +42,7 @@ Goal: устранить сценарий, в котором Gemini успева
 6. [DONE] Git Commit: `fix(gemini): add adaptive post-tool stalled watchdog` (hash: `ab437b7a`)
 
 ### Stream: Runtime Docs Sync
-7. [DONE] Docs: синхронизировать новый terminal-leg contract и post-tool watchdog policy в архитектурных документах Gemini до regression tests. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`. Expected commit: `docs(architecture): sync gemini post-tool terminal leg contract`
+7. [DONE] Docs: синхронизировать новый terminal-leg contract и post-tool watchdog policy в архитектурных документах Gemini до regression tests. Scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md`. Expected commit: `docs(architecture): sync gemini post-tool terminal leg contract`
 8. [DONE] Git Commit: `docs(architecture): sync gemini post-tool terminal leg contract` (hash: `691c6f57`)
 
 ### Stream: Regression Tests
@@ -50,7 +50,7 @@ Goal: устранить сценарий, в котором Gemini успева
 10. [DONE] Git Commit: `test(gemini): cover post-tool terminal leg semantics` (hash: `a39e623e`)
 
 ### Stream: Verification
-11. [DONE] Verification: прогнать таргетные сборки/тесты по Gemini и затронутому Core, повторно проверить Description flow expectations и зафиксировать результат в `doc/Sessions/Session199.md`. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/Session199.md`. Expected commit: `docs: record gemini post-tool stall verification results`
+11. [DONE] Verification: прогнать таргетные сборки/тесты по Gemini и затронутому Core, повторно проверить Description flow expectations и зафиксировать результат в `doc/Sessions/Archive/Session199.md`. Scope: `packages/Gemini_Module`, `packages/core`, `doc/Sessions/Archive/Session199.md`. Expected commit: `docs: record gemini post-tool stall verification results`
 12. [DONE] Git Commit: `docs: record gemini post-tool stall verification results` (hash: `6782e21b`)
 
 ### Stream: Release Docs Sync
@@ -62,7 +62,7 @@ Goal: устранить сценарий, в котором Gemini успева
 16. [DONE] Git Commit: `chore(release): prepare 1.1.849 artifacts` (hash: `495e9d60`)
 
 ### Stream: Release VSIX
-17. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.849.vsix`, затем синхронизировать `doc/Sessions/Session199.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session199.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.849 vsix`
+17. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.849.vsix`, затем синхронизировать `doc/Sessions/Archive/Session199.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Archive/Session199.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.849 vsix`
 18. [DONE] Git Commit: `chore(release): finalize 1.1.849 vsix` (hash: `e0572eb2`)
 
 ---
@@ -72,7 +72,7 @@ Goal: устранить сценарий, в котором Gemini успева
 Goal: устранить гонку, при которой финальный Gemini answer уже получен один раз от provider, но runtime дублирует его из-за отложенного flush translated thoughts и fallback aggregate emit.
 
 ### Stream: Architecture Intake
-19. [DONE] Docs: зафиксировать duplicate-final-answer root cause и новый final flush contract Gemini в planning-доке, затем расширить текущий `todo-plan` новым Phase под remediation и релиз `1.1.850`. Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): define gemini final flush dedup contract`
+19. [DONE] Docs: зафиксировать duplicate-final-answer root cause и новый final flush contract Gemini в planning-доке, затем расширить текущий `todo-plan` новым Phase под remediation и релиз `1.1.850`. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): define gemini final flush dedup contract`
 20. [DONE] Git Commit: `docs(architecture): define gemini final flush dedup contract` (hash: `0e1b72d2`)
 
 ### Stream: Deferred Flush Plumbing
@@ -88,7 +88,7 @@ Goal: устранить гонку, при которой финальный Ge
 26. [DONE] Git Commit: `test(gemini): cover translated thought final answer dedup` (hash: `d1d99e02`)
 
 ### Stream: Verification
-27. [DONE] Verification: прогнать таргетную сборку Gemini и focused regression tests, затем зафиксировать результаты дедупликации в session report до релизной подготовки. Scope: `packages/Gemini_Module`, `doc/Sessions/Session199.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: record gemini final answer dedup verification`
+27. [DONE] Verification: прогнать таргетную сборку Gemini и focused regression tests, затем зафиксировать результаты дедупликации в session report до релизной подготовки. Scope: `packages/Gemini_Module`, `doc/Sessions/Archive/Session199.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: record gemini final answer dedup verification`
 28. [DONE] Git Commit: `docs: record gemini final answer dedup verification` (hash: `9c0586a5`)
 
 ### Stream: Release Docs Sync
@@ -100,7 +100,7 @@ Goal: устранить гонку, при которой финальный Ge
 32. [DONE] Git Commit: `chore(release): prepare 1.1.850 artifacts` (hash: `be403511`)
 
 ### Stream: Release VSIX
-33. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.850.vsix`, затем синхронизировать `doc/Sessions/Session200.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Session200.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.850 vsix`
+33. [DONE] Release VSIX: на чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить release markers и `codeai-hub-1.1.850.vsix`, затем синхронизировать `doc/Sessions/Archive/Session200.md` и `doc/TODO/todo-plan.md` с финальным результатом упаковки. Scope: packaging output + `doc/Sessions/Archive/Session200.md` + `doc/TODO/todo-plan.md`. Expected commit: `chore(release): finalize 1.1.850 vsix`
 34. [DONE] Git Commit: `chore(release): finalize 1.1.850 vsix` (hash: `2160ba28`)
 
 ---
@@ -110,11 +110,11 @@ Goal: устранить гонку, при которой финальный Ge
 Goal: синхронизировать session reports и active planning trail с фактом завершённого локального Gemini remediation на `1.1.850`, зафиксировать upstream pause и подготовить чистую точку входа для следующего утверждённого scope.
 
 ### Stream: Closure Intake
-35. [DONE] Docs: расширить planning-док closure-note про `1.1.850` и upstream pause, закрыть пропущенный release commit `2160ba28` и добавить Phase 3 в active `todo-plan`. Scope: `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): note gemini upstream pause closure`
+35. [DONE] Docs: расширить planning-док closure-note про `1.1.850` и upstream pause, закрыть пропущенный release commit `2160ba28` и добавить Phase 3 в active `todo-plan`. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): note gemini upstream pause closure`
 36. [DONE] Git Commit: `docs(architecture): note gemini upstream pause closure` (hash: `802ed541`)
 
 ### Stream: Session Reports Sync
-37. [DONE] Docs: синхронизировать `doc/Sessions/Session200.md` с фактическим release-finalize commit и завести `doc/Sessions/Session201.md` как canonical report upstream pause, одновременно обновив статусы текущего `todo-plan`. Scope: `doc/Sessions/Session200.md`, `doc/Sessions/Session201.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: sync gemini release and pause reports`
+37. [DONE] Docs: синхронизировать `doc/Sessions/Archive/Session200.md` с фактическим release-finalize commit и завести `doc/Sessions/Archive/Session201.md` как canonical report upstream pause, одновременно обновив статусы текущего `todo-plan`. Scope: `doc/Sessions/Archive/Session200.md`, `doc/Sessions/Archive/Session201.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs: sync gemini release and pause reports`
 38. [DONE] Git Commit: `docs: sync gemini release and pause reports` (hash: `e67e4019`)
 
 ### Stream: Archive Active Gemini Plan
@@ -122,5 +122,5 @@ Goal: синхронизировать session reports и active planning trail 
 40. [DONE] Git Commit: `docs: archive gemini todo plan after upstream pause` (hash: `d12d6a20`)
 
 ### Stream: Session Handoff
-41. [DONE] Docs: создать `doc/Sessions/Session202.md` по итогам cleanup-сессии и закрыть hash bookkeeping в archived Gemini plan. Scope: `doc/Sessions/Session202.md`, `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`. Expected commit: `docs: record session 202 handoff`
+41. [DONE] Docs: создать `doc/Sessions/Archive/Session202.md` по итогам cleanup-сессии и закрыть hash bookkeeping в archived Gemini plan. Scope: `doc/Sessions/Archive/Session202.md`, `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`. Expected commit: `docs: record session 202 handoff`
 42. [TODO] Git Commit: `docs: record session 202 handoff` (hash: TBD)

@@ -27,7 +27,7 @@
 2. [DONE] Git Commit: `docs(release): update README + CHANGELOG for v1.1.665` (hash: `e0b773b0`)
 
 ### Stream 1: Session report
-1. [DONE] Создать `doc/Sessions/Session020.md` с итогами док-букинга после хотфикса `1.1.665` (scope: `doc/Sessions/Session020.md`; expected commit: `docs: session 020 report`).
+1. [DONE] Создать `doc/Sessions/Archive/Session020.md` с итогами док-букинга после хотфикса `1.1.665` (scope: `doc/Sessions/Archive/Session020.md`; expected commit: `docs: session 020 report`).
 2. [DONE] Git Commit: `docs: session 020 report` (hash: `a39ede28`)
 
 ### Stream 2: TODO bookkeeping
@@ -54,7 +54,7 @@
 5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.666.vsix` (sha256: `d6b168f62233dde6a57317effb1c3c8c1222aebcd1442a8c191459dfaae15786`) (scope: none; no git commit).
 
 ### Stream 2: Session report
-1. [DONE] Создать `doc/Sessions/Session021.md` по релизу `1.1.666` (scope: `doc/Sessions/Session021.md`; expected commit: `docs: session 021 report`).
+1. [DONE] Создать `doc/Sessions/Archive/Session021.md` по релизу `1.1.666` (scope: `doc/Sessions/Archive/Session021.md`; expected commit: `docs: session 021 report`).
 2. [DONE] Git Commit: `docs: session 021 report` (hash: `0ce475aa`)
 
 ### Stream 3: TODO bookkeeping
@@ -73,7 +73,7 @@
 5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.667.vsix` (sha256: `8a93b1c68c7e3eb922e999986ef5d07c9381e2b0d94329761ca0b0864f85c406`) (scope: none; no git commit).
 
 ### Stream 1: Session report
-1. [DONE] Создать `doc/Sessions/Session022.md` по релизу `1.1.667` (scope: `doc/Sessions/Session022.md`; expected commit: `docs: session 022 report`).
+1. [DONE] Создать `doc/Sessions/Archive/Session022.md` по релизу `1.1.667` (scope: `doc/Sessions/Archive/Session022.md`; expected commit: `docs: session 022 report`).
 2. [DONE] Git Commit: `docs: session 022 report` (hash: `29f8308e`)
 
 ### Stream 2: TODO bookkeeping
@@ -108,7 +108,7 @@
 5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.668.vsix` (sha256: `bbcdec4215221cea8ebf4510b2c1ce32999beeaee5c05bced0f9d75cda15f2fb`) (scope: none; no git commit).
 
 ### Stream 1: Session report
-1. [DONE] Создать `doc/Sessions/Session024.md` по релизу `1.1.668` (scope: `doc/Sessions/Session024.md`; expected commit: `docs: session 024 report`).
+1. [DONE] Создать `doc/Sessions/Archive/Session024.md` по релизу `1.1.668` (scope: `doc/Sessions/Archive/Session024.md`; expected commit: `docs: session 024 report`).
 2. [DONE] Git Commit: `docs: session 024 report` (hash: `794cb0f4`)
 
 ### Stream 2: TODO bookkeeping
@@ -145,7 +145,7 @@
 5. [DONE] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.669.vsix` (sha256: `2546796aa7237e33a4b8ebfa6240fad0437fae86cae37cc85b3a7c1f0b4df01e`) (scope: none; no git commit).
 
 ### Stream 1: Session report
-1. [DONE] Создать `doc/Sessions/Session026.md` по релизу `1.1.669` (scope: `doc/Sessions/Session026.md`; expected commit: `docs: session 026 report`).
+1. [DONE] Создать `doc/Sessions/Archive/Session026.md` по релизу `1.1.669` (scope: `doc/Sessions/Archive/Session026.md`; expected commit: `docs: session 026 report`).
 2. [DONE] Git Commit: `docs: session 026 report` (hash: `bcf49a91`)
 
 ### Stream 2: TODO bookkeeping

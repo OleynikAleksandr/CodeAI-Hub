@@ -7,8 +7,8 @@
 **Related documents:**
 - `doc/TODO/todo-plan.md`
 - `doc/TODO/Archive/todo-plan-phase5-interactive-diagram-workflow-stabilization-2026-03-16.md`
-- `doc/Sessions/Session086.md`
-- `doc/Sessions/Session090.md`
+- `doc/Sessions/Archive/Session086.md`
+- `doc/Sessions/Archive/Session090.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 

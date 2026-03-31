@@ -10,7 +10,7 @@
 
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
-2. `doc/Sessions/Session001.md` (архитектурный аудит двойных источников)
+2. `doc/Sessions/Archive/Session001.md` (архитектурный аудит двойных источников)
 3. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -24,7 +24,7 @@
 2. [DONE] Git Commit: `docs(architecture): define single source of truth refactor baseline` (hash: a12f06a1)
 
 ### Stream: UI Source-of-Truth Inventory (all interfaces)
-1. [DONE] Зафиксировать матрицу «UI элемент → единственный владелец стиля» для Session/PM/Settings и пометить legacy-контуры на удаление (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/Sessions/Session001.md`; expected commit message: `docs(ui): register source-of-truth matrix for all interface elements`)
+1. [DONE] Зафиксировать матрицу «UI элемент → единственный владелец стиля» для Session/PM/Settings и пометить legacy-контуры на удаление (scope: `doc/SolidWorks-Flow/System/SingleSourceOfTruth_Refactor.md`, `doc/Sessions/Archive/Session001.md`; expected commit message: `docs(ui): register source-of-truth matrix for all interface elements`)
 2. [DONE] Git Commit: `docs(ui): register source-of-truth matrix for all interface elements` (hash: c96dee4e)
 
 ### Stream: Session UI Style Source Unification

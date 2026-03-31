@@ -10,7 +10,7 @@
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md` (THIS FILE)
-3. `doc/Sessions/Session042.md`
+3. `doc/Sessions/Archive/Session042.md`
 
 ---
 

@@ -10,7 +10,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md` (будет обновлён в этой фазе)
   - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
   - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-  - `doc/Sessions/Session048.md`
+  - `doc/Sessions/Archive/Session048.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream — подзадачи.
 - **Ограничение:** каждая подзадача должна затрагивать **≤ 3 файлов**.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
@@ -108,13 +108,13 @@
 ## Phase 270 — Docs sync + release readiness (owner: Oleksandr, updated: 2026-02-28)
 
 ### Stream 0: SSOT sync and session report
-1. [DONE] Синхронизировать System/Contracts/Workflow docs по новому single-agent Description flow и зафиксировать границу отложенного reviewer-модуля, подготовить session-report (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/Sessions/Session049.md`; expected commit: `docs(workflow): sync single-agent description architecture`).
+1. [DONE] Синхронизировать System/Contracts/Workflow docs по новому single-agent Description flow и зафиксировать границу отложенного reviewer-модуля, подготовить session-report (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/Sessions/Archive/Session049.md`; expected commit: `docs(workflow): sync single-agent description architecture`).
 2. [DONE] Git Commit: `docs(workflow): sync single-agent description architecture` (hash: `29e69c31`)
 
 ### Stream 1: Optional release build
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать версию (scope: release manifests + versions; expected commit: `chore(release): build-all vX.Y.Z`).
 2. [DONE] Git Commit: `chore(release): build-all vX.Y.Z` (hash: `15c8b11c`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output-чеклист, зафиксировать итоги в session report (scope: `doc/Sessions/Session050.md`; expected commit: `docs(session): record release results for single-description flow`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить output-чеклист, зафиксировать итоги в session report (scope: `doc/Sessions/Archive/Session050.md`; expected commit: `docs(session): record release results for single-description flow`).
 4. [DONE] Git Commit: `docs(session): record release results for single-description flow` (hash: `42c8dd6c`)
 
 ---

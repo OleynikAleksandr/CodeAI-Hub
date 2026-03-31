@@ -140,7 +140,7 @@ Cached token-usage snapshot должен очищаться:
 
 Дополнительно:
 
-- `doc/Sessions/Session078.md`
+- `doc/Sessions/Archive/Session078.md`
 - `doc/TODO/todo-plan.md`
 
 ---

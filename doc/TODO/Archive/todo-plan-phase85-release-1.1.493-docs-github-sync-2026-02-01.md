@@ -9,7 +9,7 @@
 
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
-2. `doc/Sessions/Session060.md`
+2. `doc/Sessions/Archive/Session060.md`
 3. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -47,7 +47,7 @@
 17. [DONE] Release: собрать новый релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 18. [DONE] Git Commit: `chore(release): build next version` (hash: c2f088bf)
 
-19. [DONE] Docs(session): создать отчёт `doc/Sessions/Session061.md` — scope: `doc/Sessions/Session061.md`; expected commit message: `docs(session): Session061 claude /context parity planning`
+19. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session061.md` — scope: `doc/Sessions/Archive/Session061.md`; expected commit message: `docs(session): Session061 claude /context parity planning`
 20. [DONE] Git Commit: `docs(session): Session061 claude /context parity planning` (hash: 56da59dd)
 
 ### Stream: fix /context cwd (hotfix)
@@ -67,7 +67,7 @@
 28. [DONE] Git Commit: `chore(release): build next version` (hash: 2d21d32d)
 
 ### Stream: session report (close Session 62)
-29. [DONE] Docs(session): создать отчёт `doc/Sessions/Session062.md` с описанием проблемы (UI показывает `0 / 200,000 (100%)`, `/context` reader падает) — scope: `doc/Sessions/Session062.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session062 claude tokens stuck at 0`
+29. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session062.md` с описанием проблемы (UI показывает `0 / 200,000 (100%)`, `/context` reader падает) — scope: `doc/Sessions/Archive/Session062.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): Session062 claude tokens stuck at 0`
 30. [DONE] Git Commit: `docs(session): Session062 claude tokens stuck at 0` (hash: 5f114376)
 
 ### Stream: debug `/context` runtime (next session)
@@ -158,8 +158,8 @@
 8. [DONE] Git Commit: `docs: sync Project_Docs and SolidWorks-Flow for 1.1.493` (hash: 8e007210)
 9. [DONE] Docs(flow): актуализировать оставшиеся SolidWorks-Flow документы, чтобы все ссылки/anti-regression заметки по session history были согласованы — scope: `doc/SolidWorks-Flow/Architecture/WorkflowTree_UI_Architecture.md`, `doc/SolidWorks-Flow/Architecture/DescriptionNode_ReviewSession_Architecture.md`; expected commit message: `docs(flow): sync SolidWorks-Flow session persistence notes`
 10. [DONE] Git Commit: `docs(flow): sync SolidWorks-Flow session persistence notes` (hash: 7cb53c94)
-11. [DONE] Docs(session): создать отчёт `doc/Sessions/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
+11. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session067.md` по итоговому решению (history + docs) — scope: `doc/Sessions/Archive/Session067.md`; expected commit message: `docs(session): Session067 1.1.493 docs + github sync`
 12. [DONE] Git Commit: `docs(session): Session067 1.1.493 docs + github sync` (hash: 559f7269)
 13. [DONE] GitHub: push `main` (релиз `1.1.493` + docs) — pushed: 2026-02-01; head: `1ce6cf4f`
-14. [DONE] Docs(session): уточнить в `Session067` список required docs для следующей сессии (подготовка нового `todo-plan.md` для token usage по другим провайдерам) — scope: `doc/Sessions/Session067.md`; expected commit message: `docs(session): add token tracking prerequisites to Session067`
+14. [DONE] Docs(session): уточнить в `Session067` список required docs для следующей сессии (подготовка нового `todo-plan.md` для token usage по другим провайдерам) — scope: `doc/Sessions/Archive/Session067.md`; expected commit message: `docs(session): add token tracking prerequisites to Session067`
 15. [DONE] Git Commit: `docs(session): add token tracking prerequisites to Session067` (hash: 7495ad55)

@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`, `doc/Sessions/Session109.md`, `doc/Sessions/Session110.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Formal_Module_Cluster_Facade_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`, `doc/Sessions/Archive/Session109.md`, `doc/Sessions/Archive/Session110.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -117,11 +117,11 @@
 2. [DONE] Git Commit: `fix(diagram-layout): keep external provider outside product parts` (hash: `2e7be37f`)
 
 ### Stream: Release build after Phase 22 and Phase 23
-1. [DONE] Зафиксировать checkpoint после закрытия `Phase 22` и `Phase 23`: обновить session docs, синхронизировать `todo-plan.md` и очистить дерево перед release build (scope: `doc/Sessions/Session114.md`, `doc/Sessions/Session115.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): checkpoint phase22-phase23 rollout`).
+1. [DONE] Зафиксировать checkpoint после закрытия `Phase 22` и `Phase 23`: обновить session docs, синхронизировать `todo-plan.md` и очистить дерево перед release build (scope: `doc/Sessions/Archive/Session114.md`, `doc/Sessions/Archive/Session115.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): checkpoint phase22-phase23 rollout`).
 2. [DONE] Git Commit: `docs(session): checkpoint phase22-phase23 rollout` (hash: `40f26cd5`)
 3. [DONE] Синхронизировать release docs с итогом `Phase 22` / `Phase 23`, затем на чистом checkpoint выполнить таргетную verification для diagram/webview surface и `./scripts/build-all.sh`, чтобы получить локальные артефакты `1.1.756` и version/manifest refresh для релиза (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `package.json`, `package-lock.json`, `assets/**/manifest.json`, `packages/*/package.json`; expected commit: `chore(release): build 1.1.756 artifacts`).
 4. [DONE] Git Commit: `chore(release): build 1.1.756 artifacts` (hash: `8ad8e4a7`)
-5. [DONE] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball'ы, затем обновить `doc/Sessions/` и handoff для следующего regression pass на свежем релизе `1.1.756` (scope: `scripts/build-release.sh`, `doc/Sessions/Session116.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.756 release build`).
+5. [DONE] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball'ы, затем обновить `doc/Sessions/` и handoff для следующего regression pass на свежем релизе `1.1.756` (scope: `scripts/build-release.sh`, `doc/Sessions/Archive/Session116.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.756 release build`).
 6. [DONE] Git Commit: `docs(session): record 1.1.756 release build` (hash: `2ded7cae`)
 
 ## Phase 24 — Description Questionnaire Universalization And Downstream Sync (owner: Oleksandr, updated: 2026-03-22)
@@ -145,7 +145,7 @@
 4. [DONE] Git Commit: `docs(prompt): sync diagram facades with universal description baseline` (hash: `c12c2064`)
 
 ### Stream: Release build after Phase 24
-1. [DONE] На чистом дереве прогнать таргетные template/webview проверки для обновлённого questionnaire/help/prompt surface, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для реального regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `src/client/project-manager/components/description/description-step-help.tsx`, `doc/Sessions/Session117.md`; expected commit: `chore(release): build universal questionnaire package`).
+1. [DONE] На чистом дереве прогнать таргетные template/webview проверки для обновлённого questionnaire/help/prompt surface, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`; после успеха обновить `doc/Sessions/`, `todo-plan.md` и зафиксировать новый локальный релиз для реального regression pass (scope: `packages/core/src/templates/template-sync-service.test.ts`, `src/client/project-manager/components/description/description-step-help.tsx`, `doc/Sessions/Archive/Session117.md`; expected commit: `chore(release): build universal questionnaire package`).
 2. [DONE] Git Commit: `chore(release): build 1.1.757 artifacts` (hash: `75111441`)
 
 ## Notes
@@ -158,10 +158,10 @@
   - `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Description_Questionnaire_Universalization_Architecture.md`
 - Session handoff report:
-  - `doc/Sessions/Session109.md`
-  - `doc/Sessions/Session110.md`
-  - `doc/Sessions/Session111.md`
-  - `doc/Sessions/Session115.md`
+  - `doc/Sessions/Archive/Session109.md`
+  - `doc/Sessions/Archive/Session110.md`
+  - `doc/Sessions/Archive/Session111.md`
+  - `doc/Sessions/Archive/Session115.md`
 - Active mirrored workspace artifact:
   - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/diagram_modules/module-inventory.md`
 - Current verified baseline:

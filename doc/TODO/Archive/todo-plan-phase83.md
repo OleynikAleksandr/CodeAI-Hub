@@ -10,7 +10,7 @@
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/System/TokenUsage/ClaudeTokenUsage_Architecture.md`
-3. `doc/Sessions/Session059.md`
+3. `doc/Sessions/Archive/Session059.md`
 4. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -57,5 +57,5 @@
 21. [DONE] Release: собрать unified релиз через `./scripts/build-all.sh` и VSIX через `./scripts/build-release.sh --use-current-version` (артефакты в `doc/tmp/releases/`) — scope: scripts/manifests (auto); expected commit message: `chore(release): build next version`
 22. [DONE] Git Commit: `chore(release): build next version` (hash: 6af2e938)
 
-23. [DONE] Docs(session): создать отчёт `doc/Sessions/Session060.md` — scope: `doc/Sessions/Session060.md`; expected commit message: `docs(session): Session060 release`
+23. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session060.md` — scope: `doc/Sessions/Archive/Session060.md`; expected commit message: `docs(session): Session060 release`
 24. [DONE] Git Commit: `docs(session): Session060 release` (hash: 777eb396)

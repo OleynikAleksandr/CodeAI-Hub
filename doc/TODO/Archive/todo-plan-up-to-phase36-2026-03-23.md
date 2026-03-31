@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`, `doc/Sessions/Session131.md`, `doc/Sessions/Session132.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Archive/Session130.md`, `doc/Sessions/Archive/Session131.md`, `doc/Sessions/Archive/Session132.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -43,7 +43,7 @@
 2. [DONE] Git Commit: `fix(diagram-layout): compact standalone modules inside product part` (hash: `83f50d58`)
 
 ### Stream: Dense scenario regression evidence
-1. [DONE] После принятия layout fixes зафиксировать regression evidence на самом плотном `Product Part` сценарии и подтвердить, что purpose text, cluster stacking и standalone compaction читаемы без ручной раскладки (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session130.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): record dense product part regression evidence`).
+1. [DONE] После принятия layout fixes зафиксировать regression evidence на самом плотном `Product Part` сценарии и подтвердить, что purpose text, cluster stacking и standalone compaction читаемы без ручной раскладки (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Archive/Session130.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(layout): record dense product part regression evidence`).
 2. [DONE] Git Commit: `docs(layout): record dense product part regression evidence` (hash: `4685fc3b`)
 
 ## Phase 34 — Release Build After Diagram Modules Review-Step Fixes (owner: Oleksandr, updated: 2026-03-23)
@@ -67,7 +67,7 @@
 ## Phase 35 — Diagram Modules Header Boundary Second Pass (owner: Oleksandr, updated: 2026-03-23)
 
 ### Stream: Planning baseline second pass
-1. [DONE] Зафиксировать post-release findings после пользовательского retest `1.1.766`: остаточные overlaps между purpose/description и body-area, узкий purpose panel у `Product Part`, а также нестабильный start offset для cluster module-stack; на этой базе открыть второй layout pass в planning-doc, todo-plan и новом session report (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Session132.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram modules header boundary scope`).
+1. [DONE] Зафиксировать post-release findings после пользовательского retest `1.1.766`: остаточные overlaps между purpose/description и body-area, узкий purpose panel у `Product Part`, а также нестабильный start offset для cluster module-stack; на этой базе открыть второй layout pass в planning-doc, todo-plan и новом session report (scope: `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/Sessions/Archive/Session132.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): start diagram modules header boundary scope`).
 2. [DONE] Git Commit: `docs(plan): start diagram modules header boundary scope` (hash: `fbce4424`)
 
 ### Stream: Product part purpose width and header boundary

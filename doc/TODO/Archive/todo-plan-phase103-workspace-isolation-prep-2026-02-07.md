@@ -14,7 +14,7 @@
 2. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_InputLock_Contract_Architecture.md`
 3. `doc/SolidWorks-Flow/SessionContinuity/Core/FlowNodeContinuity_TurnEnd_AtomicLock_Architecture.md`
 4. `doc/TODO/Archive/todo-plan-phase100-continuity-ux-release-2026-02-06.md`
-5. `doc/Sessions/Session104.md`
+5. `doc/Sessions/Archive/Session104.md`
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -36,7 +36,7 @@
 12. [DONE] Git Commit: `test(core): cover turn-end continuity lock atomicity` (hash: 2119f937)
 13. [DONE] Test(pm-ui): добавить регрессионные тесты, что поле не становится enabled в transition window (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): prevent transient unlock between turn end and continuity lock`)
 14. [DONE] Git Commit: `test(ui): prevent transient unlock between turn end and continuity lock` (hash: 777e4be9)
-15. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 101 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session104.md`; expected commit message: `docs(release): prepare notes for turn-end lock atomicity release`)
+15. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 101 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session104.md`; expected commit message: `docs(release): prepare notes for turn-end lock atomicity release`)
 16. [DONE] Git Commit: `docs(release): prepare notes for turn-end lock atomicity release` (hash: 56e80735)
 17. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after turn-end lock atomicity`)
 18. [DONE] Git Commit: `chore(release): build-all after turn-end lock atomicity` (hash: a24af8f2)
@@ -60,7 +60,7 @@
 10. [DONE] Git Commit: `fix(ui): suppress legacy continuity ack token variants in virtual conversation` (hash: abcd8201)
 11. [DONE] Test(pm-ui): добавить регрессии на (a) unlock после `resume_sent + continuity_lock(unlocked)` и (b) suppression legacy/new ACK variants в virtual conversation (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`, `src/client/ui/src/session/virtual-conversation.test.tsx`; expected commit message: `test(ui): cover rollover unlock release and continuity ack suppression`)
 12. [DONE] Git Commit: `test(ui): cover rollover unlock release and continuity ack suppression` (hash: 38652a43)
-13. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под hotfix Phase 102 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session105.md`; expected commit message: `docs(release): prepare notes for continuity unlock and ack hotfix`)
+13. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под hotfix Phase 102 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session105.md`; expected commit message: `docs(release): prepare notes for continuity unlock and ack hotfix`)
 14. [DONE] Git Commit: `docs(release): prepare notes for continuity unlock and ack hotfix` (hash: d901b6d6)
 15. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after continuity hotfix`)
 16. [DONE] Git Commit: `chore(release): build-all after continuity hotfix` (hash: 5b380aaf)
@@ -82,7 +82,7 @@
 8. [DONE] Git Commit: `test(core): cover immediate lock and send-error rollback` (hash: a91814c4)
 9. [DONE] Test(pm-ui): добавить интеграционные регрессии parity Claude/Codex по блокировке поля ввода сразу после submit (до первого provider stream marker) (scope: `src/client/project-manager/components/sessions/token-usage-stream.test.ts`, `src/client/ui/src/session/input-panel.test.tsx`; expected commit message: `test(ui): enforce provider-agnostic immediate input lock parity`)
 10. [DONE] Git Commit: `test(ui): enforce provider-agnostic immediate input lock parity` (hash: 864d3119)
-11. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 103 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session108.md`; expected commit message: `docs(release): prepare notes for immediate input lock parity release`)
+11. [DONE] Docs(release): синхронизировать `README.md`, `CHANGELOG.md` и новый session report под итог Phase 103 (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session108.md`; expected commit message: `docs(release): prepare notes for immediate input lock parity release`)
 12. [DONE] Git Commit: `docs(release): prepare notes for immediate input lock parity release` (hash: fe7db5e5)
 13. [DONE] Release: выполнить `./scripts/build-all.sh` после закрытия всех задач Stream и чистого дерева (scope: repo-wide automated release files; expected commit message: `chore(release): build-all after immediate lock parity`)
 14. [DONE] Git Commit: `chore(release): build-all after immediate lock parity` (hash: 5a64cac5)

@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/IdeaCollector_LegacyCleanup_Architecture.md`, `doc/Sessions/Session122.md`
+- Перед работой по этому scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/IdeaCollector_LegacyCleanup_Architecture.md`, `doc/Sessions/Archive/Session122.md`
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
 - Husky gates не обходить (`--no-verify` запрещен)
@@ -77,7 +77,7 @@
 ### Stream: Release build after Idea legacy cleanup
 1. [DONE] На чистом дереве прогнать таргетные проверки/сборки для PM/UI/Core/Provider слоёв, затронутых cleanup-ом, затем выполнить `./scripts/build-all.sh` и подготовить version bump + manifests + release notes под новый локальный релиз (scope: `README.md`, `CHANGELOG.md`, version/manifest files from `build-all.sh`; expected commit: `chore(release): prepare idea legacy cleanup release`).
 2. [DONE] Git Commit: `chore(release): prepare idea legacy cleanup release` (hash: `01fab424`)
-3. [DONE] После чистого дерева выполнить `./scripts/build-release.sh --use-current-version`, затем записать результаты релиза в `doc/Sessions/Session123.md` и `todo-plan.md`, зафиксировав final baseline для post-cleanup regression (scope: `doc/Sessions/Session123.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.762 idea legacy cleanup release`).
+3. [DONE] После чистого дерева выполнить `./scripts/build-release.sh --use-current-version`, затем записать результаты релиза в `doc/Sessions/Archive/Session123.md` и `todo-plan.md`, зафиксировав final baseline для post-cleanup regression (scope: `doc/Sessions/Archive/Session123.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record 1.1.762 idea legacy cleanup release`).
 4. [DONE] Git Commit: `docs(session): record 1.1.762 idea legacy cleanup release` (hash: `8d47800b`)
 
 ## Notes

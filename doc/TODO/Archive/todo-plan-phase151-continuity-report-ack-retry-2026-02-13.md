@@ -7,7 +7,7 @@
 - После зелёных гейтов — Git Commit и немедленный апдейт статусов/хешей в этом файле.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session031.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session031.md` (THIS REPORT)
 2. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-Flow/Stacks/Codex_SDK_Module.md`
 4. `doc/SolidWorks-Flow/Stacks/Claude.md` (как эталон подхода delivery/caching)
@@ -48,7 +48,7 @@
 1. [DONE] Прогнать обязательные гейты + таргетные сборки затронутых пакетов (Codex module + UI/PM при необходимости), затем обновить release docs и собрать релиз: `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` (scope: `CHANGELOG.md`, `README.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs(release): sync docs for v<next>`)
 2. [DONE] Git Commit: `docs(release): sync docs for v<next>` (hash: `79fcad7a`)
 3. [DONE] Git Commit: `chore(release): run build-all for v<next>` (hash: `1b6d20a6`)
-4. [DONE] Создать session report по результатам реализации Codex usage limits (scope: `doc/Sessions/Session032.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session032 codex usage limits report`)
+4. [DONE] Создать session report по результатам реализации Codex usage limits (scope: `doc/Sessions/Archive/Session032.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): add session032 codex usage limits report`)
 5. [DONE] Git Commit: `docs(session): add session032 codex usage limits report` (hash: `ccb9c467`)
 
 ### Stream: Session ID Bar Usage Labels 12px + Rebuild Release

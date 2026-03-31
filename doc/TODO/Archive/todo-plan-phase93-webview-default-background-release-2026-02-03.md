@@ -11,7 +11,7 @@
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/Stacks/UI_Modules.md`
 3. `doc/SolidWorks-Flow/System/WebviewSettings_FullSize_Layout_Architecture.md`
-4. `doc/Sessions/Session074.md`
+4. `doc/Sessions/Archive/Session074.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -36,7 +36,7 @@
 9. [DONE] Release: `./scripts/build-release.sh --use-current-version` (1.1.498) — scope: scripts + VSIX; expected commit message: `chore(release): build VSIX for current version` (hash: N/A - VSIX in .gitignore) (hash: N/A - VSIX in .gitignore)
 10. [DONE] Docs: sync release docs (1.1.498) — scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-Flow/System/SystemArchitecture.md`; expected commit message: `docs: update release notes for webview settings layout`
 11. [DONE] Git Commit: `docs: update release notes for webview settings layout` (hash: 300a697f)
-12. [DONE] Docs(session): `doc/Sessions/Session074.md` — scope: `doc/Sessions/Session074.md`; expected commit message: `docs(session): add Session074 webview settings full-size release`
+12. [DONE] Docs(session): `doc/Sessions/Archive/Session074.md` — scope: `doc/Sessions/Archive/Session074.md`; expected commit message: `docs(session): add Session074 webview settings full-size release`
 13. [DONE] Git Commit: `docs(session): add Session074 webview settings full-size release` (hash: c125db1f)
 
 ---
@@ -55,7 +55,7 @@
 7. [DONE] Git Commit: `docs: update release notes for settings full-size hotfix` (hash: a0a43c7b)
 8. [DONE] Docs: update Project Docs index (1.1.499): `doc/SolidWorks-Flow/System/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for 1.1.499`
 9. [DONE] Git Commit: `docs: bump Project Docs index for 1.1.499` (hash: c70d50cb)
-10. [DONE] Docs(session): создать отчёт `doc/Sessions/Session075.md` (Phase 91 + релиз) — scope: `doc/Sessions/Session075.md`; expected commit message: `docs(session): add Session075 settings full-size hotfix release`
+10. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session075.md` (Phase 91 + релиз) — scope: `doc/Sessions/Archive/Session075.md`; expected commit message: `docs(session): add Session075 settings full-size hotfix release`
 11. [DONE] Git Commit: `docs(session): add Session075 settings full-size hotfix release` (hash: 773e756a)
 
 ---
@@ -74,7 +74,7 @@
 7. [DONE] Git Commit: `docs: update release notes for settings-only theme background` (hash: 082e49f8)
 8. [DONE] Docs: update Project Docs index (new release): `doc/SolidWorks-Flow/System/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
 9. [DONE] Git Commit: `docs: bump Project Docs index for latest release` (hash: 568cad79)
-10. [DONE] Docs(session): создать отчёт `doc/Sessions/Session076.md` (Phase 92 + релиз) — scope: `doc/Sessions/Session076.md`; expected commit message: `docs(session): add Session076 settings-only theme background release`
+10. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session076.md` (Phase 92 + релиз) — scope: `doc/Sessions/Archive/Session076.md`; expected commit message: `docs(session): add Session076 settings-only theme background release`
 11. [DONE] Git Commit: `docs(session): add Session076 settings-only theme background release` (hash: a886febd)
 
 ---
@@ -93,5 +93,5 @@
 7. [DONE] Git Commit: `docs: update release notes for webview default background` (hash: 93c928ee)
 8. [DONE] Docs: update Project Docs index (new release): `doc/SolidWorks-Flow/System/README.md` — scope: docs-only; expected commit message: `docs: bump Project Docs index for latest release`
 9. [DONE] Git Commit: `docs: bump Project Docs index for latest release` (hash: 068a2919)
-10. [DONE] Docs(session): создать отчёт `doc/Sessions/Session077.md` (Phase 93 + релиз) — scope: `doc/Sessions/Session077.md`; expected commit message: `docs(session): add Session077 webview default background release`
+10. [DONE] Docs(session): создать отчёт `doc/Sessions/Archive/Session077.md` (Phase 93 + релиз) — scope: `doc/Sessions/Archive/Session077.md`; expected commit message: `docs(session): add Session077 webview default background release`
 11. [DONE] Git Commit: `docs(session): add Session077 webview default background release` (hash: 7c996699)

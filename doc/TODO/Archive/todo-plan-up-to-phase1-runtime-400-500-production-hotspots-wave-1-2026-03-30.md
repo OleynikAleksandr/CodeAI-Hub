@@ -18,8 +18,8 @@
 - **Real-time Документация:** structural decomposition и новые helper-boundaries должны синхронно попадать в `doc/` в том же коммите.
 
 ## Required documents to review before work
-1. `doc/Sessions/Session197.md`
-2. `doc/Sessions/Session202.md`
+1. `doc/Sessions/Archive/Session197.md`
+2. `doc/Sessions/Archive/Session202.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 5. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`

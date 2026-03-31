@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session166.md`, `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session166.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 - Этот `TODO Plan` реализует один scope: **post-audit tail cleanup** после успешного и вручную подтверждённого релиза `1.1.819`
 - Текущий baseline считается рабочим: пользователь подтвердил, что релиз `1.1.819` функционирует корректно; значит текущая работа ограничена **behavior-preserving cleanup/refactor**, а не feature-expansion
 - Главная цель плана: подчищать хвосты после аудита, убирать release/package noise и довести handwritten codebase до контракта `1 class / 1 file` и `≤300` строк handwritten source на файл
@@ -36,7 +36,7 @@
 ## Phase 77 — Post-Audit Packaging Tail Cleanup (owner: Oleksandr, updated: 2026-03-27)
 
 ### Stream: Audit intake and packaging surface
-1. [DONE] Синхронизировать findings audit-а `CODEAI_HUB_HONEST_AUDIT_20260327.md` с canonical planning doc и подтвердить, что текущий scope ограничен cleanup-хвостами после успешного релиза `1.1.819`, без feature-expansion. Scope: `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): sync post-audit cleanup scope`
+1. [DONE] Синхронизировать findings audit-а `CODEAI_HUB_HONEST_AUDIT_20260327.md` с canonical planning doc и подтвердить, что текущий scope ограничен cleanup-хвостами после успешного релиза `1.1.819`, без feature-expansion. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): sync post-audit cleanup scope`
 2. [DONE] Git Commit: `docs(architecture): sync post-audit cleanup scope` (hash: `661b217b`)
 3. [DONE] Исключить `.husky/_` helper files из VSIX/package surface и зафиксировать release-facing packaging contract, не меняя runtime behavior. Scope: `.vscodeignore`, `README.md`, `CHANGELOG.md`. Expected commit: `chore(packaging): exclude husky helper files from VSIX`
 4. [DONE] Git Commit: `chore(packaging): exclude husky helper files from VSIX` (hash: `d027e5d4`)

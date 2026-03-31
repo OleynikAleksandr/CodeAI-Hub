@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Session190.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/ProviderFeedback_ModelAndReasoning_Logging_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session190.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/ProviderFeedback_ModelAndReasoning_Logging_Architecture.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Текущий baseline релиз: `1.1.835`.
 - Scope этого плана: писать в SDK logs только provider-confirmed feedback по applied model/reasoning/thinking без подмены provider echo внутренним intent.
 - Каждая микро-задача должна затрагивать не более 3 файлов; `doc/TODO/todo-plan.md` обновляется вместе с каждой подзадачей.
@@ -58,5 +58,5 @@
 ## Phase 97 — Release Build For v1.1.836 (owner: Oleksandr, updated: 2026-03-29)
 
 ### Stream: Clean-tree build and packaging for provider feedback release
-17. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.836.vsix` и release bundle `1.1.836`, а итоги зафиксировать в session report. Scope: release scripts, version/manifests from build scripts, `doc/Sessions/Session191.md`. Expected commit: `chore: prepare v1.1.836 artifacts`
+17. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.1.836.vsix` и release bundle `1.1.836`, а итоги зафиксировать в session report. Scope: release scripts, version/manifests from build scripts, `doc/Sessions/Archive/Session191.md`. Expected commit: `chore: prepare v1.1.836 artifacts`
 18. [DONE] Git Commit: `chore: prepare v1.1.836 artifacts` (hash: `c61636cf`)

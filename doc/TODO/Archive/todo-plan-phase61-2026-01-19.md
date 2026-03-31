@@ -10,7 +10,7 @@
 ## Required documents to review before work
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/TODO/todo-plan.md`
-3. `doc/Sessions/Session010.md` ← **КРИТИЧНО: содержит детали бага**
+3. `doc/Sessions/Archive/Session010.md` ← **КРИТИЧНО: содержит детали бага**
 
 ---
 

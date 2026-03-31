@@ -11,7 +11,7 @@
 2. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/System/SystemArchitecture.md`
 3. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-Flow/SessionContinuity/SessionContinuity.md`
 4. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/Archive/todo-plan-phase161-core-restart-sessions-release-1.1.594-2026-02-14.md`
-5. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Session049.md` (THIS REPORT)
+5. `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/Sessions/Archive/Session049.md` (THIS REPORT)
 
 ---
 

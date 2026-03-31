@@ -21,7 +21,7 @@
 3. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 4. `.codeai-hub/WORKFLOW_ARCHITECTURE.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session085.md`
+6. `doc/Sessions/Archive/Session085.md`
 
 ## Phase 15 — Initiative Description Runs (owner: Oleksandr, updated: 2026-01-11)
 ### Stream: Run metadata + questionnaire seeding

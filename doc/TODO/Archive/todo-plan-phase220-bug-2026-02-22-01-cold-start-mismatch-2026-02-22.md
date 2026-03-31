@@ -5,7 +5,7 @@
   - `doc/SolidWorks-WorkFlow/README.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/Sessions/Session097.md`
+  - `doc/Sessions/Archive/Session097.md`
   - `doc/BugRegistry.md`
 - **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стрим), в каждом Stream некоторое количество подзадач.
 - Каждая подзадача должна затрагивать не более 3 файлов.
@@ -29,7 +29,7 @@
 
 **SSOT/Design:**
 - `doc/BugRegistry.md` (`BUG-2026-02-22-01`)
-- `doc/Sessions/Session097.md`
+- `doc/Sessions/Archive/Session097.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 
 **Progress note (2026-02-22 08:52 CET):** Stream 1 и Stream 2 реализованы и закоммичены; открыт Stream 3 (документация + закрытие бага).
@@ -49,5 +49,5 @@
 4. [DONE] Git Commit: `test(pm): unlock input on cold-start session id drift` (hash: `90e94bd5`)
 
 ### Stream 3: Документация и завершение бага
-1. [TODO] Обновить документацию по маршрутизации continuity/runtime identity и закрыть запись бага после верификации фикса (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/BugRegistry.md`, `doc/Sessions/Session097.md`; expected commit: `docs: document runtime identity reconciliation and close bug 2026-02-22-01`).
+1. [TODO] Обновить документацию по маршрутизации continuity/runtime identity и закрыть запись бага после верификации фикса (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/BugRegistry.md`, `doc/Sessions/Archive/Session097.md`; expected commit: `docs: document runtime identity reconciliation and close bug 2026-02-22-01`).
 2. [TODO] Git Commit: `docs: document runtime identity reconciliation and close bug 2026-02-22-01` (hash: TBD)

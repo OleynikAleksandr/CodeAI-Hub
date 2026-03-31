@@ -10,7 +10,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session068.md`
+  - `doc/Sessions/Archive/Session068.md`
 - TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -146,7 +146,7 @@
 4. [DONE] Git Commit: `chore(verify): validate description cleanup targets` (hash: `273bae68`)
 
 ### Stream 2: Session handoff
-5. [DONE] Заархивировать завершенный `todo-plan.md`, развернуть новую bootstrap-болванку под следующий scope и оформить `Session070` с итоговым handoff по документационному audit/cleanup закрытого цикла (scope: `doc/TODO/Archive/todo-plan-up-to-phase303-2026-03-13.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session070.md`; expected commit: `docs(session): archive cleanup plan and bootstrap next scope`).
+5. [DONE] Заархивировать завершенный `todo-plan.md`, развернуть новую bootstrap-болванку под следующий scope и оформить `Session070` с итоговым handoff по документационному audit/cleanup закрытого цикла (scope: `doc/TODO/Archive/todo-plan-up-to-phase303-2026-03-13.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session070.md`; expected commit: `docs(session): archive cleanup plan and bootstrap next scope`).
 6. [DONE] Git Commit: `docs(session): archive cleanup plan and bootstrap next scope` (hash: `TBD - commit contains this archive + Session070.md`)
 
 ---
@@ -160,7 +160,7 @@
 4. [DONE] Git Commit: `chore(release): build description cleanup release` (hash: `d3bd953a`)
 
 ### Stream 1: Release handoff
-5. [DONE] Зафиксировать release build checkpoint для `codeai-hub-1.1.724.vsix` и tarball-набора в session report / TODO plan; пользовательский smoke-test остаётся внешним post-build шагом (scope: `doc/Sessions/Session069.md`, `doc/TODO/todo-plan.md`, `doc/tmp/releases/`; expected commit: `docs(release): record description cleanup release`).
+5. [DONE] Зафиксировать release build checkpoint для `codeai-hub-1.1.724.vsix` и tarball-набора в session report / TODO plan; пользовательский smoke-test остаётся внешним post-build шагом (scope: `doc/Sessions/Archive/Session069.md`, `doc/TODO/todo-plan.md`, `doc/tmp/releases/`; expected commit: `docs(release): record description cleanup release`).
 6. [DONE] Git Commit: `docs(release): record description cleanup release` (hash: `b10a4782`)
-7. [DONE] После пользовательского smoke-test подтвердить release checkpoint `1.1.724`: пользователь подтвердил, что релиз работает, поэтому cleanup release считается validated и готов к push/publish (scope: `doc/Sessions/Session069.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): confirm description cleanup smoke`).
+7. [DONE] После пользовательского smoke-test подтвердить release checkpoint `1.1.724`: пользователь подтвердил, что релиз работает, поэтому cleanup release считается validated и готов к push/publish (scope: `doc/Sessions/Archive/Session069.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): confirm description cleanup smoke`).
 8. [DONE] Git Commit: `docs(release): confirm description cleanup smoke` (hash: `a03b09c5`)

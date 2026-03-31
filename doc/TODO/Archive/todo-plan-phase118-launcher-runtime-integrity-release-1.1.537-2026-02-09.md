@@ -11,7 +11,7 @@
 1. `doc/SolidWorks-Flow/System/SystemArchitecture.md`
 2. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md (Appendix A: Runtime Compatibility)`
 3. `doc/SolidWorks-Flow/Stacks/Gemini_CLI_Module.md`
-4. `doc/Sessions/Session129.md`
+4. `doc/Sessions/Archive/Session129.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -55,7 +55,7 @@
 2. [DONE] Git Commit: `docs(release): prepare release notes for gemini runtime compatibility hotfix` (hash: 82b4eb82)
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated version/manifest изменения (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for gemini runtime compatibility hotfix`)
 4. [DONE] Git Commit: `chore(release): run build-all for gemini runtime compatibility hotfix` (hash: 37366687)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и smoke Gemini provider в установленном runtime (scope: `codeai-hub-1.1.536.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session130.md`; expected commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix`; executed: `./scripts/build-release.sh --use-current-version`, `CODEAI_HUB_GEMINI_CLI_ROOT=/Users/oleksandroliinyk/.npm-global/lib/node_modules/@google/gemini-cli node -e "...loadCliBridgeFromGlobal..."`; result: `OK unknown scheduler_fallback`, VSIX created)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и smoke Gemini provider в установленном runtime (scope: `codeai-hub-1.1.536.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Archive/Session130.md`; expected commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix`; executed: `./scripts/build-release.sh --use-current-version`, `CODEAI_HUB_GEMINI_CLI_ROOT=/Users/oleksandroliinyk/.npm-global/lib/node_modules/@google/gemini-cli node -e "...loadCliBridgeFromGlobal..."`; result: `OK unknown scheduler_fallback`, VSIX created)
 6. [DONE] Git Commit: `chore(release): build and validate vsix for gemini runtime compatibility hotfix` (hash: c5e7696b)
 
 ---
@@ -86,5 +86,5 @@
 2. [DONE] Git Commit: `docs(release): prepare release notes for launcher runtime integrity hotfix` (hash: 5608d20b)
 3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать auto-generated версии/манифесты (scope: `package.json`, `package-lock.json`, `assets/**`; expected commit: `chore(release): run build-all for launcher runtime integrity hotfix`)
 4. [DONE] Git Commit: `chore(release): run build-all for launcher runtime integrity hotfix` (hash: ecab5327)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и сценарий clean install (`~/.codeai-hub` пустой) + запуск Project Manager (scope: `codeai-hub-1.1.537.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Session131.md`; expected commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix`; executed: `./scripts/build-release.sh --use-current-version`, `node -e "...installFromArchive/verifyExistingInstall..."`; result: `CLEAN_INSTALL_SMOKE_OK`, `INTEGRITY_GUARD_OK`, VSIX created)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball и сценарий clean install (`~/.codeai-hub` пустой) + запуск Project Manager (scope: `codeai-hub-1.1.537.vsix`, `doc/tmp/releases/*`, `doc/Sessions/Archive/Session131.md`; expected commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix`; executed: `./scripts/build-release.sh --use-current-version`, `node -e "...installFromArchive/verifyExistingInstall..."`; result: `CLEAN_INSTALL_SMOKE_OK`, `INTEGRITY_GUARD_OK`, VSIX created)
 6. [DONE] Git Commit: `chore(release): build and validate vsix for launcher runtime integrity hotfix` (hash: c30dce21)

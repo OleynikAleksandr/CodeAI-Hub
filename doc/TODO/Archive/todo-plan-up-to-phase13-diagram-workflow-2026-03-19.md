@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/Sessions/Session102.md`
+- Дополнительно перед стартом этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/Sessions/Archive/Session102.md`
 - Для следующего diagram UI scope рабочей planning-basis остаётся `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи
 - Каждая микро-задача затрагивает не более 3 файлов или пакетов
@@ -263,7 +263,7 @@
 4. [DONE] Git Commit: `docs(release): prep duplication debt reduction release` (hash: `724dfcd6`)
 5. [DONE] На чистом дереве выполнить `./scripts/build-all.sh`, зафиксировать version bump до `1.1.742` и release artifacts для provider/core/ui/launcher перед финальной VSIX упаковкой (scope: release manifests, `package.json`, `package-lock.json`, `assets/**/manifest.json`, `media/react-chat.js`; expected commit: `chore(release): build duplication debt reduction release`).
 6. [DONE] Git Commit: `chore(release): build duplication debt reduction release` (hash: `5881cc02`)
-7. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, убедиться что repository-wide duplication больше не выдаёт advisory, затем оформить session report с точным `jscpd` result и checklist ручной проверки локального VSIX (scope: `codeai-hub-1.1.742.vsix`, `doc/Sessions/Session095.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record duplication debt reduction release`).
+7. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, убедиться что repository-wide duplication больше не выдаёт advisory, затем оформить session report с точным `jscpd` result и checklist ручной проверки локального VSIX (scope: `codeai-hub-1.1.742.vsix`, `doc/Sessions/Archive/Session095.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record duplication debt reduction release`).
 8. [DONE] Git Commit: `docs(session): record duplication debt reduction release` (hash: `7765f7ed`)
 
 ---
@@ -277,7 +277,7 @@
 4. [DONE] Git Commit: `fix(ui): refresh diagram viewport after auto-layout` (hash: `2811a78b`)
 5. [DONE] Прогнать таргетную verification цепочку для shared diagram editor: `diagram-editor-facade.test.tsx`, `typecheck:webview`, `build:webview`, затем подготовить manual checklist для повторной проверки `Diagram Modules` / `Diagram Facades` в локальном релизе (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `README.md`, `CHANGELOG.md`; expected commit: `docs(release): prep diagram auto-layout refresh verification`).
 6. [DONE] Git Commit: `docs(release): prep diagram auto-layout refresh verification` (hash: `f234ffc8`)
-7. [DONE] Выполнить release checklist для этого corrective stream: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, затем оформить новый session report с checklist ручной проверки realtime `Auto-layout` в `Diagram Modules` / `Diagram Facades` (scope: `codeai-hub-1.1.743.vsix`, `doc/Sessions/Session096.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram auto-layout refresh release`).
+7. [DONE] Выполнить release checklist для этого corrective stream: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, затем оформить новый session report с checklist ручной проверки realtime `Auto-layout` в `Diagram Modules` / `Diagram Facades` (scope: `codeai-hub-1.1.743.vsix`, `doc/Sessions/Archive/Session096.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram auto-layout refresh release`).
 8. [DONE] Git Commit: `docs(session): record diagram auto-layout refresh release` (hash: `8dc94043`)
 
 ---
@@ -297,7 +297,7 @@
 ### Stream: Phase 9 release build and verification
 1. [DONE] На чистом дереве выполнить release checklist для `Diagram Modules` layout profiles/full-height surface через `./scripts/build-all.sh`, зафиксировать version bump и release artifacts для `v1.1.744` (scope: release manifests + `doc/tmp/releases/`; expected commit: `chore(release): build diagram modules layout profiles release`).
 2. [DONE] Git Commit: `chore(release): build diagram modules layout profiles release` (hash: `f1dea5e2`)
-3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: выбор `Vertical/Horizontal/Compact/Fill space`, realtime перестроение после `Auto-layout`, сохранение layout после reopen и full-height behavior artifact panel без нижней пустой зоны (scope: `codeai-hub-1.1.744.vsix`, `doc/Sessions/Session097.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules layout profiles release`).
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: выбор `Vertical/Horizontal/Compact/Fill space`, realtime перестроение после `Auto-layout`, сохранение layout после reopen и full-height behavior artifact panel без нижней пустой зоны (scope: `codeai-hub-1.1.744.vsix`, `doc/Sessions/Archive/Session097.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram modules layout profiles release`).
 4. [TODO] Git Commit: `docs(session): record diagram modules layout profiles release` (hash: TBD)
 
 ---
@@ -321,7 +321,7 @@
 2. [DONE] Git Commit: `docs(release): prep layout profile persistence release` (hash: `4a7817b2`)
 3. [DONE] На чистом дереве выполнить release checklist для immediate layout apply и persistence profile через `./scripts/build-all.sh`, зафиксировать version bump до `1.1.746` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build layout profile persistence release`).
 4. [DONE] Git Commit: `chore(release): build layout profile persistence release` (hash: `5fc65c2d`)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile buttons не падают, переключение `Vertical/Horizontal/Compact/Fill space` немедленно перестраивает текущий graph и выбранный режим восстанавливается после reopen/restart `Diagram Modules` (scope: `codeai-hub-1.1.746.vsix`, `doc/Sessions/Session099.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record layout profile persistence release`).
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile buttons не падают, переключение `Vertical/Horizontal/Compact/Fill space` немедленно перестраивает текущий graph и выбранный режим восстанавливается после reopen/restart `Diagram Modules` (scope: `codeai-hub-1.1.746.vsix`, `doc/Sessions/Archive/Session099.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record layout profile persistence release`).
 6. [DONE] Git Commit: `docs(session): record layout profile persistence release` (hash: `c1ca457f`)
 
 ---
@@ -337,7 +337,7 @@
 2. [DONE] Git Commit: `docs(release): prep visible layout profile effect release` (hash: `9cffa2c4`)
 3. [DONE] На чистом дереве выполнить release checklist для renderer-corrected `Diagram Modules`, зафиксировать version bump до `1.1.747` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build visible layout profile effect release`).
 4. [DONE] Git Commit: `chore(release): build visible layout profile effect release` (hash: `80f64f4e`)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile switch реально меняет diagram canvas без reopen, выбранный режим переживает reopen/restart, и launcher-safe toolbar остаётся стабильным (scope: `codeai-hub-1.1.747.vsix`, `doc/Sessions/Session100.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record visible layout profile effect release`).
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: profile switch реально меняет diagram canvas без reopen, выбранный режим переживает reopen/restart, и launcher-safe toolbar остаётся стабильным (scope: `codeai-hub-1.1.747.vsix`, `doc/Sessions/Archive/Session100.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record visible layout profile effect release`).
 6. [TODO] Git Commit: `docs(session): record visible layout profile effect release` (hash: TBD)
 
 ---
@@ -355,7 +355,7 @@
 2. [DONE] Git Commit: `docs(release): prep manual-layout first release` (hash: `9e38fc01`)
 3. [DONE] На чистом дереве выполнить release checklist для manual-layout cleanup через `./scripts/build-all.sh`, зафиксировать version bump до `1.1.748` и release manifests (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build manual-layout first release`).
 4. [DONE] Git Commit: `chore(release): build manual-layout first release` (hash: `e9388a42`)
-5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: diagram toolbar без `Auto-layout`/profiles, ручной drag по-прежнему сохраняется в `*.flow.json`, `Source` остаётся вторичным raw Markdown view, а inline секции `Edit Modules` / `Edit Relations` продолжают редактировать canonical DSL без ELK fallback path (scope: `codeai-hub-1.1.748.vsix`, `doc/Sessions/Session101.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record manual-layout first release`).
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, затем оформить session report с manual checklist: diagram toolbar без `Auto-layout`/profiles, ручной drag по-прежнему сохраняется в `*.flow.json`, `Source` остаётся вторичным raw Markdown view, а inline секции `Edit Modules` / `Edit Relations` продолжают редактировать canonical DSL без ELK fallback path (scope: `codeai-hub-1.1.748.vsix`, `doc/Sessions/Archive/Session101.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record manual-layout first release`).
 6. [DONE] Git Commit: `docs(session): record manual-layout first release` (hash: `53df00e2`)
 
 ---
@@ -373,11 +373,11 @@
 2. [DONE] Git Commit: `docs(release): prep diagram surface simplification release` (hash: `15e32479`)
 3. [DONE] On a clean tree run `./scripts/build-all.sh` and record the new version bump + release manifests for the simplified diagram surface (scope: release manifests + versioned package descriptors; expected commit: `chore(release): build diagram surface simplification release`).
 4. [DONE] Git Commit: `chore(release): build diagram surface simplification release` (hash: `028f1686`)
-5. [DONE] Run `./scripts/build-release.sh --use-current-version` and capture the session report with manual checklist: diagram toolbar has no `Auto-layout`/profile chrome, no visible semantic editors under the diagram, and the bottom-right minimap is gone while the left-bottom zoom controls remain (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Session102.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram surface simplification release`).
+5. [DONE] Run `./scripts/build-release.sh --use-current-version` and capture the session report with manual checklist: diagram toolbar has no `Auto-layout`/profile chrome, no visible semantic editors under the diagram, and the bottom-right minimap is gone while the left-bottom zoom controls remain (scope: `codeai-hub-<version>.vsix`, `doc/Sessions/Archive/Session102.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record diagram surface simplification release`).
 6. [DONE] Git Commit: `docs(session): record diagram surface simplification release` (hash: `9d7f852d`)
 
 ## Notes
 - Planning doc for the next follow-up scope: `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`
 - Historical archived planning docs for the completed diagram rollout: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramSteps_InteractiveDSL_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_Audit_TODO_Plan.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/RepositoryDuplicationDebt_Reduction_Architecture.md`
-- Session reports to review before the first implementation stream: `doc/Sessions/Session078.md`, `doc/Sessions/Session079.md`, `doc/Sessions/Session080.md`, `doc/Sessions/Session081.md`, `doc/Sessions/Session082.md`
+- Session reports to review before the first implementation stream: `doc/Sessions/Archive/Session078.md`, `doc/Sessions/Archive/Session079.md`, `doc/Sessions/Archive/Session080.md`, `doc/Sessions/Archive/Session081.md`, `doc/Sessions/Archive/Session082.md`
 - Target verification principle for the whole scope: после каждой Phase должен существовать новый локальный релиз, в котором пользователь может проверить либо новый artifact/gating behavior, либо новый visual layer, либо новый semantic roundtrip, а не ждать финала всего scope

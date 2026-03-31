@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед каждым фиксом для этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/Sessions/Session102.md`
+- Перед каждым фиксом для этого scope открыть: `AGENTS.md`, `doc/SolidWorks-WorkFlow/README.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_UserSurface_Architecture.md`, `doc/Sessions/Archive/Session102.md`
 - Активный scope этой фазы: `Diagram Modules` должен получить dual-input contract (`Final_Description.md` + `virtual-simulation.md`), новый semantic bridge `module-inventory.md`, inventory-first `Source`, и visible templates contract для diagram steps
 - TODO Plan состоит из Phase (Фаз). В каждой Phase некоторое количество Stream (стримов), в каждом стриме - микро-задачи
 - Каждая микро-задача затрагивает не более 3 файлов или пакетов
@@ -50,7 +50,7 @@
 2. [DONE] Git Commit: `refactor(diagram-modules): derive module map from inventory` (hash: `628d69e2`)
 3. [DONE] Синхронизировать release docs и SSOT после реализации inventory-first `Diagram Modules` и visible diagram templates contract (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep module inventory diagram release`).
 4. [DONE] Git Commit: `docs(release): prep module inventory diagram release` (hash: `43132504`)
-5. [DONE] После ручной проверки собрать новый релиз, записать session report и закрыть хеши Phase 14 (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build module inventory diagram release`).
+5. [DONE] После ручной проверки собрать новый релиз, записать session report и закрыть хеши Phase 14 (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session103.md`; expected commit: `chore(release): build module inventory diagram release`).
 6. [DONE] Git Commit: `chore(release): build module inventory diagram release` (hash: `7c346ad0`)
 
 ## Notes
@@ -77,9 +77,9 @@
 4. [DONE] Git Commit: `fix(diagram-modules): materialize module map from inventory upload` (hash: `0740fd1f`)
 
 ### Stream: Verification and release
-1. [DONE] Синхронизировать release docs и session report под regression-fix scope для `Diagram Modules` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session103.md`; expected commit: `docs(release): prep diagram modules regression fix release`).
+1. [DONE] Синхронизировать release docs и session report под regression-fix scope для `Diagram Modules` (scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Archive/Session103.md`; expected commit: `docs(release): prep diagram modules regression fix release`).
 2. [DONE] Git Commit: `docs(release): prep diagram modules regression fix release` (hash: `d68266cd`)
-3. [DONE] Собрать и проверить новый релиз с inventory-first repair flow, закрыть Phase 15 в плане и зафиксировать новый VSIX (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session103.md`; expected commit: `chore(release): build diagram modules regression fix release`).
+3. [DONE] Собрать и проверить новый релиз с inventory-first repair flow, закрыть Phase 15 в плане и зафиксировать новый VSIX (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session103.md`; expected commit: `chore(release): build diagram modules regression fix release`).
 4. [DONE] Git Commit: `chore(release): build diagram modules regression fix release` (hash: `aece7a29`)
 
 ---
@@ -129,5 +129,5 @@
 4. [DONE] Git Commit: `docs(contracts): sync downstream inventory references` (hash: `02fe4911`)
 5. [DONE] Синхронизировать release docs под inventory-only cleanup release и убрать из SSOT последние формулировки про обязательный raw `module-map.md` в workspace (scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs(release): prep inventory-only diagram cleanup release`).
 6. [DONE] Git Commit: `docs(release): prep inventory-only diagram cleanup release` (hash: `d31a3b19`)
-7. [DONE] После ручной проверки собрать новый релиз, обновить `todo-plan.md`, создать новый session report и зафиксировать итоговый VSIX `codeai-hub-1.1.752.vsix` (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session104.md`; expected commit: `chore(release): build inventory-only diagram cleanup release`).
+7. [DONE] После ручной проверки собрать новый релиз, обновить `todo-plan.md`, создать новый session report и зафиксировать итоговый VSIX `codeai-hub-1.1.752.vsix` (scope: `release manifests/scripts`, `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session104.md`; expected commit: `chore(release): build inventory-only diagram cleanup release`).
 8. [DONE] Git Commit: `chore(release): build inventory-only diagram cleanup release` (hash: `781bdf77`)

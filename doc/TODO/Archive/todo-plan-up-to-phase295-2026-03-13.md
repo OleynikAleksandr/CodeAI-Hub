@@ -9,9 +9,9 @@
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
   - `doc/BugRegistry.md`
-  - `doc/Sessions/Session061.md`
-  - `doc/Sessions/Session062.md`
-  - `doc/Sessions/Session063.md`
+  - `doc/Sessions/Archive/Session061.md`
+  - `doc/Sessions/Archive/Session062.md`
+  - `doc/Sessions/Archive/Session063.md`
 - TODO Plan состоит из Phase/Stream; каждая подзадача затрагивает не более 3 файлов или пакетов.
 - Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
@@ -97,7 +97,7 @@
 2. [DONE] Git Commit: `docs(codex): sync response mode ssot` (hash: `56d66e2b`)
 
 ### Stream 1: Release prep
-3. [DONE] Зафиксировать `Session063` и финальный release handoff для response mode rollout; `README.md` и `CHANGELOG.md` уже синхронизированы в `56d66e2b` под версию `1.1.721` (scope: `doc/Sessions/Session063.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record response mode rollout`).
+3. [DONE] Зафиксировать `Session063` и финальный release handoff для response mode rollout; `README.md` и `CHANGELOG.md` уже синхронизированы в `56d66e2b` под версию `1.1.721` (scope: `doc/Sessions/Archive/Session063.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): record response mode rollout`).
 4. [DONE] Git Commit: `docs(release): record response mode rollout` (hash: `4f7c3ab9`)
 5. [DONE] Выполнить release cycle по чеклисту: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> проверить `Verifying SDK exclusions`, `Removing dev dependencies...`, `✅ Package created` (scope: release manifests + package versions/manifests; expected commit: `chore(release): build-all vX.Y.Z`).
 6. [DONE] Git Commit: `chore(release): build-all v1.1.721` (hash: `19dc0289`)
@@ -117,7 +117,7 @@
 6. [DONE] Git Commit: `docs(release): prepare v1.1.722 notes` (hash: `a5b5f649`)
 7. [DONE] Выполнить релизный цикл для baseline-линии с новым runtime fix: `./scripts/build-all.sh` -> clean tree -> `./scripts/build-release.sh --use-current-version` -> получить `codeai-hub-1.1.722.vsix` и tarball-набор `1.1.722` (scope: version/manifests/release artefacts; expected commit: `chore(release): build-all v1.1.722`).
 8. [DONE] Git Commit: `chore(release): build-all v1.1.722` (hash: `142e0958`)
-9. [DONE] Зафиксировать bug closure, release handoff и session report для `v1.1.722` (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session065.md`; expected commit: `docs(release): record response mode promotion fix`).
+9. [DONE] Зафиксировать bug closure, release handoff и session report для `v1.1.722` (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Archive/Session065.md`; expected commit: `docs(release): record response mode promotion fix`).
 10. [DONE] Git Commit: `docs(release): record response mode promotion fix` (hash: `2382f168`)
 
 ## Phase 295 — Mainline baseline promotion release verification (owner: Oleksandr, updated: 2026-03-13)

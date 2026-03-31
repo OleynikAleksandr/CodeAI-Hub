@@ -88,7 +88,7 @@
 ### Stream: docs + session report (wrap-up)
 38. [DONE] Docs(flow): задокументировать live reload порога `remainingPercentThreshold` + дедуп rollover (1 отчёт на сегмент) — scope: `doc/SolidWorks-Flow/SessionContinuity/NodeSessionContinuity_Architecture.md`, `doc/SolidWorks-Flow/SessionContinuity/Core/CodexSessionContinuity_Settings_Architecture.md`; expected commit message: `docs(flow): document live continuity threshold reload`
 39. [DONE] Git Commit: `docs(flow): document live continuity threshold reload` (hash: 5fe9394d)
-40. [DONE] Report: создать `doc/Sessions/Session081.md` (итоги Phase 96 + коммиты) — scope: `doc/Sessions/Session081.md`; expected commit message: `docs(session): add Session081 report`
+40. [DONE] Report: создать `doc/Sessions/Archive/Session081.md` (итоги Phase 96 + коммиты) — scope: `doc/Sessions/Archive/Session081.md`; expected commit message: `docs(session): add Session081 report`
 41. [DONE] Git Commit: `docs(session): add Session081 report` (hash: 059d4c7a)
 
 ### Stream: rollover UX parity + continuation index (post-verification)
@@ -116,7 +116,7 @@
 59. [DONE] Git Commit: `chore(release): build-all next version` (hash: c2dd3543)
 60. [DONE] Release: выполнить `./scripts/build-release.sh --use-current-version` и проверить, что VSIX создан в корне — scope: repo root artifact (`codeai-hub-<version>.vsix`); expected commit message: `chore(release): build vsix`
 61. [DONE] Git Commit: `chore(release): build vsix` (hash: c1444f4e)
-62. [DONE] Docs(session): создать `doc/Sessions/Session083.md` (итоги + артефакты релиза) — scope: `doc/Sessions/Session083.md`; expected commit message: `docs(session): add Session083 report`
+62. [DONE] Docs(session): создать `doc/Sessions/Archive/Session083.md` (итоги + артефакты релиза) — scope: `doc/Sessions/Archive/Session083.md`; expected commit message: `docs(session): add Session083 report`
 63. [DONE] Git Commit: `docs(session): add Session083 report` (hash: 0c78d281)
 
 ## Phase 97 — Session UX: Seamless Continuity (virtual conversation) + Input Lock (owner: Oleksandr, updated: 2026-02-04)
@@ -178,7 +178,7 @@
 97. [DONE] Git Commit: `chore(release): build-all next version` (hash: 5d40eedb)
 98. [DONE] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide (commands only); expected commit message: `chore(release): build vsix`
 99. [DONE] Git Commit: `chore(release): build vsix` (hash: bf28f2e3)
-100. [DONE] Docs(session): создать `doc/Sessions/Session086.md` (release artifacts + commands) — scope: `doc/Sessions/Session086.md`; expected commit message: `docs(session): add Session086 report`
+100. [DONE] Docs(session): создать `doc/Sessions/Archive/Session086.md` (release artifacts + commands) — scope: `doc/Sessions/Archive/Session086.md`; expected commit message: `docs(session): add Session086 report`
 101. [DONE] Git Commit: `docs(session): add Session086 report` (hash: fb73d17e)
 
 ## Phase 99 — UI refactor after QA feedback (owner: Oleksandr, updated: 2026-02-04)
@@ -208,7 +208,7 @@
 115. [DONE] Git Commit: `chore(release): build-all next version` (hash: 777e7c23)
 116. [DONE] Release: run `./scripts/build-release.sh --use-current-version` (VSIX) — scope: repo-wide (commands only); expected commit message: `chore(release): build vsix`
 117. [DONE] Git Commit: `chore(release): build vsix` (hash: c7a96d3d)
-118. [DONE] Docs(session): создать `doc/Sessions/Session087.md` (Phase 99 fixes + release artifacts) — scope: `doc/Sessions/Session087.md`; expected commit message: `docs(session): add Session087 report`
+118. [DONE] Docs(session): создать `doc/Sessions/Archive/Session087.md` (Phase 99 fixes + release artifacts) — scope: `doc/Sessions/Archive/Session087.md`; expected commit message: `docs(session): add Session087 report`
 119. [DONE] Git Commit: `docs(session): add Session087 report` (hash: 06d50d90)
 
 ---
@@ -304,7 +304,7 @@
 181. [TODO] Release: build a new release for tests (`./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version`) — scope: repo-wide; expected commit message: `chore(release): build-all next version` + `chore(release): build vsix`
 
 ### Stream: stuck working banner after final assistant message (root-cause hardening)
-182. [DONE] Analyze(logs): зафиксировать эталонную последовательность событий по проблемному кейсу (Claude задаёт вопрос и ждёт пользователя) и выписать таймлайн `assistant final` -> `sdk:result` -> `turn_completed` -> `turn_state=idle` с привязкой к timestamp/line — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-03af35ce-30a0-4f6c-95e6-270b2a5fca65.jsonl`, `doc/Sessions/Session093.md`; expected commit message: `docs(analysis): capture claude turn-finish timeline`
+182. [DONE] Analyze(logs): зафиксировать эталонную последовательность событий по проблемному кейсу (Claude задаёт вопрос и ждёт пользователя) и выписать таймлайн `assistant final` -> `sdk:result` -> `turn_completed` -> `turn_state=idle` с привязкой к timestamp/line — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-03af35ce-30a0-4f6c-95e6-270b2a5fca65.jsonl`, `doc/Sessions/Archive/Session093.md`; expected commit message: `docs(analysis): capture claude turn-finish timeline`
 183. [DONE] Git Commit: `docs(analysis): capture claude turn-finish timeline` (hash: 8353b6d3)
 184. [DONE] Design(core+ui): утвердить единый контракт завершения turn для UI (приоритет: `turn_state=idle` > `connectionState=blocked`; handoff lock отдельно), зафиксировать state-table и инварианты в архитектурной доке — scope: `doc/SolidWorks-Flow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(architecture): define turn-finish and working-strip invariants`
 185. [DONE] Git Commit: `docs(architecture): define turn-finish and working-strip invariants` (hash: TBD)
