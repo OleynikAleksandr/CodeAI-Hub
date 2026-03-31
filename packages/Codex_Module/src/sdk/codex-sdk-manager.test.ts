@@ -1,8 +1,14 @@
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import type { ActiveSession } from "../session/types";
 import { CodexSDKManager } from "./codex-sdk-manager";
+
+const MODEL_REASONING_SUMMARY_AUTO_REGEX = /model_reasoning_summary = "auto"/u;
+const LEGACY_REASONING_SUMMARY_REGEX = /default_reasoning_summary/u;
 
 test("resumeSession keeps existing thread id for gpt-5.4 instead of starting a fresh thread", async () => {
   const resumedSessions: Array<{
@@ -80,6 +86,62 @@ test("resumeSession keeps existing thread id for gpt-5.4 instead of starting a f
   assert.equal(fakeSession.thread, fakeThread as never);
 });
 
+test("sanitizeConfigToml adds model_reasoning_summary auto when missing", async () => {
+  const codexHome = await mkdtemp(path.join(tmpdir(), "codex-config-"));
+  await writeFile(
+    path.join(codexHome, "config.toml"),
+    [
+      'approval_policy = "never"',
+      'model = "gpt-5.4"',
+      'model_reasoning_effort = "xhigh"',
+      "",
+      "[features]",
+      "unified_exec = true",
+      "",
+    ].join("\n"),
+    "utf8"
+  );
+
+  const manager = createManager();
+  await (
+    manager as unknown as {
+      sanitizeConfigToml: (target: string) => Promise<void>;
+    }
+  ).sanitizeConfigToml(codexHome);
+
+  const next = await readFile(path.join(codexHome, "config.toml"), "utf8");
+  assert.match(next, MODEL_REASONING_SUMMARY_AUTO_REGEX);
+});
+
+test("sanitizeConfigToml replaces legacy default_reasoning_summary key", async () => {
+  const codexHome = await mkdtemp(path.join(tmpdir(), "codex-config-"));
+  await writeFile(
+    path.join(codexHome, "config.toml"),
+    [
+      'approval_policy = "never"',
+      'model = "gpt-5.4"',
+      'model_reasoning_effort = "xhigh"',
+      'default_reasoning_summary = "auto"',
+      "",
+      "[features]",
+      "unified_exec = true",
+      "",
+    ].join("\n"),
+    "utf8"
+  );
+
+  const manager = createManager();
+  await (
+    manager as unknown as {
+      sanitizeConfigToml: (target: string) => Promise<void>;
+    }
+  ).sanitizeConfigToml(codexHome);
+
+  const next = await readFile(path.join(codexHome, "config.toml"), "utf8");
+  assert.match(next, MODEL_REASONING_SUMMARY_AUTO_REGEX);
+  assert.doesNotMatch(next, LEGACY_REASONING_SUMMARY_REGEX);
+});
+
 const createActiveSession = (
   workspacePath: string,
   sessionId: string
@@ -96,3 +158,42 @@ const createActiveSession = (
   codexThreadId: sessionId,
   internalTurn: false,
 });
+
+const createManager = (): CodexSDKManager =>
+  new CodexSDKManager({
+    installer: {
+      ensureInstalled: async () => {
+        // noop
+      },
+      loadModule: async () => ({}) as never,
+    },
+    authManager: {
+      ensureAuthenticated: async () => {
+        // noop
+      },
+    },
+    sessions: {
+      createSession: (workspacePath: string) => ({
+        tempId: "temp-created",
+        session: createActiveSession(workspacePath, "temp-created"),
+      }),
+      createResumedSession: (workspacePath: string, threadId: string) =>
+        createActiveSession(workspacePath, threadId),
+      getSession: () => undefined,
+      closeSession: async () => {
+        // noop
+      },
+    },
+    processor: {
+      initializeSession: () => {
+        // noop
+      },
+    },
+    workspace: {
+      workspacePath: "/tmp/workspace-default",
+      defaultModel: "gpt-5.4",
+      defaultReasoningEffort: "medium",
+      defaultSandboxMode: "workspace-write",
+      skipGitRepoCheck: true,
+    },
+  } as never);

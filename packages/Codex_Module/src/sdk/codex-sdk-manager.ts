@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Codex as CodexCtor, Thread } from "@openai/codex-sdk";
+import { materializeCodexProviderConfigToml } from "../auth/codex-provider-config-materializer";
 import type { CodexAuthManager } from "../auth/sdk-auth-manager";
 import type { CodexInstaller } from "../installer/codex-installer";
 import { CodexSessionLogger } from "../logging/session-logger";
@@ -22,9 +23,6 @@ const CODEX_MODELS_CACHE_FILE = "models_cache.json";
 const CODEX_CONFIG_FILE = "config.toml";
 const CODEX_MIGRATION_FROM = "gpt-5.4";
 const CODEX_MIGRATION_TO = "gpt-5.3-codex";
-const NEWLINE_SPLIT_REGEX = /\r?\n/u;
-const MIGRATION_LINE_REGEX =
-  /^\s*(["']?)gpt-5\.4\1\s*=\s*(["']?)gpt-5\.3-codex\2\s*(#.*)?$/u;
 
 interface CodexManagerDependencies {
   readonly authManager: CodexAuthManager;
@@ -37,37 +35,6 @@ interface CodexManagerDependencies {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
-
-const removeModelMigrationFromConfigToml = (
-  raw: string
-): {
-  readonly changed: boolean;
-  readonly next: string;
-} => {
-  const lines = raw.split(NEWLINE_SPLIT_REGEX);
-  const nextLines: string[] = [];
-  let inModelMigrationsSection = false;
-  let changed = false;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
-      inModelMigrationsSection = trimmed === "[notice.model_migrations]";
-      nextLines.push(line);
-      continue;
-    }
-
-    if (inModelMigrationsSection && MIGRATION_LINE_REGEX.test(line)) {
-      changed = true;
-      continue;
-    }
-
-    nextLines.push(line);
-  }
-
-  return { changed, next: nextLines.join("\n") };
-};
-
 const sanitizeModelsCacheRecord = (
   value: unknown
 ): value is Record<string, unknown> =>
@@ -157,13 +124,15 @@ export class CodexSDKManager {
     const filePath = path.join(codexHome, CODEX_CONFIG_FILE);
     try {
       const raw = await fs.readFile(filePath, "utf8");
-      const { changed, next } = removeModelMigrationFromConfigToml(raw);
+      const { changed, next } = materializeCodexProviderConfigToml(raw, {
+        modelReasoningSummary: "auto",
+      });
       if (!changed) {
         return;
       }
       await fs.writeFile(filePath, `${next.trimEnd()}\n`, "utf8");
       this.deps.reporter?.info?.(
-        `Sanitized Codex config migration ${CODEX_MIGRATION_FROM} -> ${CODEX_MIGRATION_TO}`
+        "Sanitized Codex provider config to provider-owned defaults"
       );
     } catch (error) {
       const candidate = error as NodeJS.ErrnoException;
