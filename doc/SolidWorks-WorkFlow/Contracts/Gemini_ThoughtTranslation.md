@@ -16,7 +16,7 @@
 - UI рендерит это сообщение как обычный видимый assistant bubble с label `Gemini · Thinking`.
 - Реализация намеренно маленькая: без cache, без batching, без retry queue, без user-locale negotiation и без generic translation module в Core.
 
-Этот документ является implemented SSOT для текущего поведения. Он заменяет старые planning-материалы, которые сначала описывали эту же feature через `Flash-Lite`, затем через Google Translate migration plan, а затем как спекулятивный глобальный localization layer. Shared runtime translation module теперь является отдельным reusable boundary, а Gemini держит только provider-local adapter и session wiring.
+Этот документ является implemented SSOT для текущего поведения. Он заменяет старые planning-материалы, которые сначала описывали эту же feature через `Flash-Lite`, затем через Google Translate migration plan, а затем как спекулятивный глобальный localization layer. Shared runtime translation module теперь живёт в `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` как отдельный reusable boundary, а Gemini держит только provider-local adapter и session wiring.
 
 ---
 

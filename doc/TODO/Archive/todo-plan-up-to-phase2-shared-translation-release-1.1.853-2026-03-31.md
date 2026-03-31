@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules)
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Source of truth для этой волны: `doc/SolidWorks-WorkFlow/Plans/Shared_RuntimeTranslation_Module_Architecture.md`
+- Source of truth для этой волны: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
 - Scope этой волны ограничен двумя фазами: (1) shared runtime translation module, (2) Gemini adapter parity поверх нового shared facade.
 - Codex adapter, document/ad-hoc translation adapters и startup locale wiring в этот active plan не входят.
 - Каждая подзадача должна затрагивать не более 3 файлов.
@@ -24,7 +24,7 @@
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
-5. `doc/SolidWorks-WorkFlow/Plans/Shared_RuntimeTranslation_Module_Architecture.md`
+5. `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---

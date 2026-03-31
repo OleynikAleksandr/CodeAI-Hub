@@ -41,6 +41,7 @@
 - Installed Gemini bundles must be runnable after deployment without relying on the repo workspace `node_modules`; any shared runtime dependency required by the provider must be copied into the bundle root by the build script.
 
 ## Связанные контракты
+- Shared runtime translation: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Session continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
