@@ -41,6 +41,8 @@ interface GeminiDefaultModelCardProps {
     modelId: GeminiModelId,
     level: GeminiThinkingLevel
   ) => void;
+  readonly onThinkingDisplaySyncChange: (enabled: boolean) => void;
+  readonly thinkingDisplaySyncEnabled: boolean;
   readonly thinkingLevelByModel: GeminiThinkingByModel;
 }
 
@@ -55,11 +57,39 @@ const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
   </div>
 );
 
+const displaySyncToggleStyles: CSSProperties = {
+  display: "flex",
+  gap: "12px",
+  alignItems: "flex-start",
+  margin: "12px 0 18px",
+};
+
+const displaySyncCheckboxStyles: CSSProperties = {
+  marginTop: "2px",
+  width: "16px",
+  height: "16px",
+  cursor: "pointer",
+};
+
+const displaySyncTitleStyles: CSSProperties = {
+  fontSize: "13px",
+  fontWeight: 600,
+  marginBottom: "4px",
+};
+
+const displaySyncDescriptionStyles: CSSProperties = {
+  fontSize: "12px",
+  color: "#999999",
+  lineHeight: 1.4,
+};
+
 const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
   defaultModel,
   thinkingLevelByModel,
+  thinkingDisplaySyncEnabled,
   onDefaultModelChange,
   onThinkingChange,
+  onThinkingDisplaySyncChange,
 }) => {
   const [activeModelId, setActiveModelId] = useState<GeminiModelId | null>(
     null
@@ -109,6 +139,24 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
           its own thinking level. More details in the knowledge base:
           doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md
         </p>
+        <label style={displaySyncToggleStyles}>
+          <input
+            checked={thinkingDisplaySyncEnabled}
+            onChange={(event) =>
+              onThinkingDisplaySyncChange(event.target.checked)
+            }
+            style={displaySyncCheckboxStyles}
+            type="checkbox"
+          />
+          <div>
+            <div style={displaySyncTitleStyles}>Thinking display sync</div>
+            <div style={displaySyncDescriptionStyles}>
+              When enabled, translated Gemini reasoning appears on the standard
+              assistant bubble path. Disabling it keeps reasoning translation
+              internal while hiding the visible bubble.
+            </div>
+          </div>
+        </label>
         <div style={listStyles}>
           {GEMINI_RECOMMENDED_MODELS.map((model) => {
             const isSelected = defaultModel === model.id;

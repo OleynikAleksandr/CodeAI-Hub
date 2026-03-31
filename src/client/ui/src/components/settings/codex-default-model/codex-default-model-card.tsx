@@ -43,7 +43,9 @@ interface CodexDefaultModelCardProps {
     modelId: CodexModelId,
     reasoning: CodexReasoningLevel
   ) => void;
+  readonly onThinkingDisplaySyncChange: (enabled: boolean) => void;
   readonly reasoningByModel: CodexReasoningByModel;
+  readonly thinkingDisplaySyncEnabled: boolean;
 }
 
 const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
@@ -57,11 +59,39 @@ const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
   </div>
 );
 
+const displaySyncToggleStyles: CSSProperties = {
+  display: "flex",
+  gap: "12px",
+  alignItems: "flex-start",
+  margin: "12px 0 18px",
+};
+
+const displaySyncCheckboxStyles: CSSProperties = {
+  marginTop: "2px",
+  width: "16px",
+  height: "16px",
+  cursor: "pointer",
+};
+
+const displaySyncTitleStyles: CSSProperties = {
+  fontSize: "13px",
+  fontWeight: 600,
+  marginBottom: "4px",
+};
+
+const displaySyncDescriptionStyles: CSSProperties = {
+  fontSize: "12px",
+  color: "#999999",
+  lineHeight: 1.4,
+};
+
 const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   defaultModel,
   reasoningByModel,
+  thinkingDisplaySyncEnabled,
   onDefaultModelChange,
   onReasoningChange,
+  onThinkingDisplaySyncChange,
 }) => {
   const [activeModelId, setActiveModelId] = useState<CodexModelId | null>(null);
   const [hoveredRowId, setHoveredRowId] = useState<CodexModelId | null>(null);
@@ -120,6 +150,24 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
           Select which Codex model to use when starting new sessions. Each model
           can store its own reasoning effort level.
         </p>
+        <label style={displaySyncToggleStyles}>
+          <input
+            checked={thinkingDisplaySyncEnabled}
+            onChange={(event) =>
+              onThinkingDisplaySyncChange(event.target.checked)
+            }
+            style={displaySyncCheckboxStyles}
+            type="checkbox"
+          />
+          <div>
+            <div style={displaySyncTitleStyles}>Thinking display sync</div>
+            <div style={displaySyncDescriptionStyles}>
+              When enabled, translated Codex reasoning appears on the standard
+              assistant bubble path. Disabling it keeps reasoning translation
+              internal while hiding the visible bubble.
+            </div>
+          </div>
+        </label>
         {hasUnsupportedModel ? (
           <div style={warningStyles}>
             The saved default model is no longer available. Falling back to

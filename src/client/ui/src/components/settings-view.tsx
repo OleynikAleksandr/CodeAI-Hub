@@ -113,6 +113,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
     handleGeminiThinkingChange,
+    handleCodexThinkingDisplaySyncChange,
+    handleGeminiThinkingDisplaySyncChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleResponsePolicyModeChange,
@@ -204,7 +206,13 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                   defaultModel={settings.providers.codex.defaultModel}
                   onDefaultModelChange={handleCodexDefaultModelChange}
                   onReasoningChange={handleCodexReasoningChange}
+                  onThinkingDisplaySyncChange={
+                    handleCodexThinkingDisplaySyncChange
+                  }
                   reasoningByModel={settings.providers.codex.reasoningByModel}
+                  thinkingDisplaySyncEnabled={
+                    settings.providers.codex.thinkingDisplaySyncEnabled
+                  }
                 />
                 <ProviderVersions
                   autoUpdateEnabled={
@@ -234,6 +242,12 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                 defaultModel={settings.providers.gemini.defaultModel}
                 onDefaultModelChange={handleGeminiDefaultModelChange}
                 onThinkingChange={handleGeminiThinkingChange}
+                onThinkingDisplaySyncChange={
+                  handleGeminiThinkingDisplaySyncChange
+                }
+                thinkingDisplaySyncEnabled={
+                  settings.providers.gemini.thinkingDisplaySyncEnabled
+                }
                 thinkingLevelByModel={
                   settings.providers.gemini.thinkingLevelByModel
                 }
