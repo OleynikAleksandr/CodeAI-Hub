@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.856] - 2026-03-31
+### Fixed
+- **Codex provider bundle dependency**: the build pipeline now vendors `@codeai-hub/translation` into the installed Codex provider root, so Core can load Codex startup-time reasoning translation support without workspace `node_modules`.
+- **Release validation parity**: build/release smoke checks now require both the installed Codex and Gemini bundles to load successfully with their bundled shared translation package before packaging.
+
 ## [1.1.855] - 2026-03-31
 ### Added
 - **Thinking display sync controls**: provider settings now expose per-provider toggles for Codex and Gemini visible thinking sync, while the translation and reasoning pipelines stay active even when the visible bubble is disabled.
