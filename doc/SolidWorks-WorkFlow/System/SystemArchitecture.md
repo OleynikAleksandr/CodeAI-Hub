@@ -114,6 +114,7 @@
 - Codex messaging cluster: `packages/Codex_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn orchestration surface
   - `codex-applied-turn-config.ts` = applies Core-owned next-turn effective model identity onto the active thread runtime and strips internal transport metadata before SDK execution
+  - `codex-thought-translation-adapter.ts` = Codex-local adapter over shared translation facade for reasoning deltas
   - `packages/Codex_Module/src/logging/session-logger.ts` + `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` = отвечают за SDK diagnostics и reasoning config patching; подтверждать реально применённые model/reasoning значения нужно по raw provider rollout JSONL, а не по отдельному normalized feedback contract в `sdk-codex-*.jsonl`
   - `codex-event-stream-consumer.ts` = startup-lock / idle-pulse event stream consumer
   - `codex-stream-event-router.ts` = thread/item/assistant/structured-output routing
