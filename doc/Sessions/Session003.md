@@ -1,6 +1,6 @@
-# Session 003 — Plans Cleanup and SSOT Promotion
+# Session 003 — Plans Cleanup, Session Archive Reset and SSOT Promotion
 
-**Date:** 2026-03-31 17:41 CEST
+**Date:** 2026-03-31 17:49 CEST
 **Branch:** main
 **Version:** 1.1.854
 
@@ -11,14 +11,15 @@
 ## Work summary
 - Проанализировал `doc/SolidWorks-WorkFlow/Plans/` и выделил документы, которые уже были поглощены рабочими SSOT.
 - Создал и зафиксировал рабочий contract SSOT для effective model identity и next-turn settings: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`.
-- Заменил устаревшие root planning-docs в `Plans/` на короткие compat/redirect notes, чтобы старые ссылки из session reports и archived TODO не сломались.
-- Синхронизировал навигацию: обновил `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/README.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`.
-- Проверил, что в актуальных документах больше нет ссылок на старые planning-filenames вне `Archive/` и `Sessions/`.
+- Перенёс все session reports в `doc/Sessions/Archive/`, а в root оставил только `Session001.md`, `Session002.md`, `Session003.md`.
+- Перенёс retired planning-docs из root `doc/SolidWorks-WorkFlow/Plans/` в `Plans/Archive/`, чтобы root папка осталась только с активными планами и рабочими SSOT.
+- Синхронизировал ссылки и навигацию: обновил `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/README.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md` и архивные TODO/session ссылки под новый layout.
 - Сборки и тесты не запускал: изменение только документационное.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `3a3dff57 docs(architecture): consolidate retired plans into SSOT docs`
+- `bef4630e docs(archive): reset session reports and move retired plans`
 
 ---
 
@@ -34,5 +35,5 @@
 > Далее: в зависимости от задачи открыть нужные документы из `doc/SolidWorks-WorkFlow/Clusters/`, `doc/SolidWorks-WorkFlow/Modules/`, `doc/SolidWorks-WorkFlow/Contracts/`.
 
 ## Plans for next session
-- Если продолжать cleanup, пройтись по оставшимся root compat notes в `doc/SolidWorks-WorkFlow/Plans/` и решить, что ещё можно окончательно архивировать или удалить.
+- Если продолжать cleanup, отдельно проверить archive-ссылки и убрать только реальные хвосты, если они ещё всплывут.
 - Если начинать новый scope, сначала создать/обновить planning-doc в `doc/SolidWorks-WorkFlow/Plans/`, затем нарезать его в `doc/TODO/todo-plan.md`.
