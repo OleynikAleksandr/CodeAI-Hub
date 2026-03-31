@@ -68,7 +68,7 @@
 13. **Release package truthfulness**: VSIX/package surface не должен тащить repo-only workflow files и hook helpers (`.husky/**`, `.gitignore`, `GEMINI.md`, `AGENTS.md`, `doc/`, `scripts/`), если runtime не использует их напрямую.
    - Канон: `.vscodeignore`, `README.md`, `CHANGELOG.md`.
 14. **Effective model identity SSOT**: `modelId` в transport/runtime/UI контракте означает полную effective model identity, а не только base model; reasoning/thinking являются частью identity, и единственным source of truth для next-turn model identity является `~/.codeai-hub/settings/settings.json`.
-   - Канон: `doc/SolidWorks-WorkFlow/Plans/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`, `packages/core/src/config/provider-turn-config-resolver.ts`.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `packages/core/src/config/provider-turn-config-resolver.ts`.
 15. **Provider-applied model/reasoning proof stays provider-native**: active baseline не поддерживает cross-provider normalizing contract для exact model/thinking/reasoning feedback в `sdk-*` логах; для аудита реально применённого provider state нужно опираться на provider-native runtime artifacts (`Claude` provider-home JSONL, `Codex` raw rollout `turn_context`, `Gemini` raw stream/session traces), а не на локальный outbound intent.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`.
 

@@ -39,6 +39,7 @@
 - `sdk-codex-*.jsonl` остаётся диагностическим SDK логом; exact provider-applied model/reasoning при аудите нужно подтверждать по raw provider rollout JSONL (`turn_context`) в `CODEX_HOME`, а не по отдельным normalized `provider_feedback` записям.
 
 ## Связанные контракты
+- Effective model identity/settings: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`

@@ -39,9 +39,12 @@
 - `sdk-gemini-*.jsonl` остаётся диагностическим/raw session логом; exact provider-applied model/thinking при аудите нужно подтверждать по Gemini raw session/stream traces, а не по отдельным normalized `provider_feedback` записям.
 - `formatGeminiStreamErrorMessage()` остаётся единым formatter-ом для nested Gemini stream payload errors, чтобы router и тесты не расходились по тексту ошибок.
 - Installed Gemini bundles must be runnable after deployment without relying on the repo workspace `node_modules`; any shared runtime dependency required by the provider must be copied into the bundle root by the build script.
+- Gemini post-tool leg contract: output from a leg that already produced `tool_call_request` is progress/status output, not terminal completion proof; terminal completion may be confirmed only by the terminal leg without new tool requests.
+- Gemini stalled-turn contract: if the stream stalls after `model_info`, partial text, or other intermediate progress output and never reaches a terminal event, the watchdog must end the turn with a recoverable failure instead of a silent infinite working state; nested `post_tool` legs use a longer Gemini-specific watchdog window than the initial leg.
 
 ## Связанные контракты
 - Shared runtime translation: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
+- Effective model identity/settings: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Session continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`

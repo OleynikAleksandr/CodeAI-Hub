@@ -6,7 +6,7 @@
 2. `WorkflowSteps_Overview.md`
 3. `Clusters/Project_Manager.md`
 4. `Clusters/CoreOrchestrator.md`
-5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
+5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 6. `Contracts/` (только по ссылкам из документов выше)
 7. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 8. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
@@ -27,6 +27,7 @@
 - `Modules/Claude.md` — SSOT Claude provider module.
 - `Modules/Codex.md` — SSOT Codex provider module.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
+- `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
 - `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager).
 
@@ -41,6 +42,7 @@
 - `Contracts/SessionUI_Behavior.md` — Session UI laws (happy path) + lock/unlock rules.
 - `Contracts/SessionInputLock_SSOT_StateMachine.md` — SSOT/state machine для input lock/unlock.
 - `Contracts/Codex_ResponseMode_Settings_Architecture.md` — response modes (`Strict` / `Hybrid` / `Debug/Raw`) + raw provider diagnostics contract для Codex.
+- `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` — canonical effective model identity and next-turn settings SSOT.
 - `Contracts/Gemini_ThoughtTranslation.md` — реализованный контракт перевода Gemini `Thought` событий в видимые tagged assistant messages.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
