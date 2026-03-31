@@ -1,4 +1,5 @@
 import { type Webview, window } from "vscode";
+import { syncCodexProviderReasoningSummaryConfig } from "../settings/codex-provider-config-sync";
 import { ProviderVersionService } from "../settings/provider-version-service";
 import {
   applyDefaultModelsEnv,
@@ -13,6 +14,7 @@ import {
 
 export type SettingsMessage =
   | { type: "settings:load" }
+  | { type: "settings:codex-reasoning-summary-preview"; enabled?: unknown }
   | { type: "settings:save"; settings?: unknown }
   | { type: "settings:reset" }
   | {
@@ -41,6 +43,7 @@ export class SettingsMessageHandler {
 
     return (
       candidate.type === "settings:load" ||
+      candidate.type === "settings:codex-reasoning-summary-preview" ||
       candidate.type === "settings:save" ||
       candidate.type === "settings:reset" ||
       candidate.type === "settings:update-provider" ||
@@ -70,8 +73,21 @@ export class SettingsMessageHandler {
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */
         });
+        syncCodexProviderReasoningSummaryConfig(
+          this.settingsState.providers.codex.reasoningSummaryEnabled
+        ).catch(() => {
+          /* ignore sync errors */
+        });
         this.postSavedNotification(webview);
         window.showInformationMessage("Settings saved (stub implementation).");
+        break;
+      }
+      case "settings:codex-reasoning-summary-preview": {
+        syncCodexProviderReasoningSummaryConfig(
+          message.enabled !== false
+        ).catch(() => {
+          /* ignore sync errors */
+        });
         break;
       }
       case "settings:reset": {
@@ -79,6 +95,11 @@ export class SettingsMessageHandler {
         applyDefaultModelsEnv(this.settingsState);
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */
+        });
+        syncCodexProviderReasoningSummaryConfig(
+          this.settingsState.providers.codex.reasoningSummaryEnabled
+        ).catch(() => {
+          /* ignore sync errors */
         });
         this.postSettings(webview);
         window.showInformationMessage("Settings reset to defaults.");

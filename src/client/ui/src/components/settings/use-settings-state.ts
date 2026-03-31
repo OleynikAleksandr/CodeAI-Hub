@@ -232,6 +232,10 @@ export const useSettingsState = (): UseSettingsStateResult => {
       updateSettings(
         updateThinkingDisplaySyncEnabled(settings, "codex", enabled)
       );
+      vscode.postMessage({
+        type: "settings:codex-reasoning-summary-preview",
+        enabled,
+      });
     },
     [settings, updateSettings]
   );
