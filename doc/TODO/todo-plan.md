@@ -62,8 +62,8 @@ Goal: rewire Gemini thought translation onto the new shared facade with zero vis
 12. [DONE] Git Commit: `refactor(gemini): wire shared translation facade` (hash: `b03133c8`)
 
 ### Stream: Gemini Parity Verification
-13. [TODO] Verification: прогнать targeted Gemini parity checks для translated thinking ordering/fallback и package builds для `translation` + `gemini-module`, затем синхронизировать execution status. Scope: `packages/translation`, `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): verify shared translation parity`
-14. [TODO] Git Commit: `test(gemini): verify shared translation parity` (hash: TBD)
+13. [DONE] Verification: прогнать targeted Gemini parity checks для translated thinking ordering/fallback и package builds для `translation` + `gemini-module`, затем синхронизировать execution status. Scope: `packages/translation`, `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): verify shared translation parity`
+14. [DONE] Git Commit: `test(gemini): verify shared translation parity` (hash: TBD)
 
 ### Stream: Architecture Docs Sync
 15. [TODO] Docs: синхронизировать SSOT по shared translation baseline, Gemini ownership boundary и system/module contract до release-facing docs. Scope: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `docs(architecture): sync shared translation module`
