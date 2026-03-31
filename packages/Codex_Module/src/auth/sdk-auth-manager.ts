@@ -10,6 +10,7 @@ import {
 import { homedir } from "node:os";
 import path from "node:path";
 import { CodexProviderConfigMaterializer } from "./codex-provider-config-materializer";
+import { resolveCodexReasoningSummaryMode } from "./codex-reasoning-summary-settings";
 
 const CODEX_LOGIN_HINT =
   "Codex authentication required. Run `codex login` in a terminal session.";
@@ -32,7 +33,9 @@ export class CodexAuthManager {
     this.codexHome = process.env.CODEX_HOME ?? CODEAI_CODEX_HOME;
     this.configMaterializer = new CodexProviderConfigMaterializer({
       legacyCodexHome: LEGACY_CODEX_HOME,
-      overrides: { modelReasoningSummary: "auto" },
+      overrides: {
+        modelReasoningSummary: resolveCodexReasoningSummaryMode(),
+      },
       providerCodexHome: this.codexHome,
     });
   }

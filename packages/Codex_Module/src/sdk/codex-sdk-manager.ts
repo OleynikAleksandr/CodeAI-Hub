@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Codex as CodexCtor, Thread } from "@openai/codex-sdk";
 import { materializeCodexProviderConfigToml } from "../auth/codex-provider-config-materializer";
+import { resolveCodexReasoningSummaryMode } from "../auth/codex-reasoning-summary-settings";
 import type { CodexAuthManager } from "../auth/sdk-auth-manager";
 import type { CodexInstaller } from "../installer/codex-installer";
 import { CodexSessionLogger } from "../logging/session-logger";
@@ -125,7 +126,7 @@ export class CodexSDKManager {
     try {
       const raw = await fs.readFile(filePath, "utf8");
       const { changed, next } = materializeCodexProviderConfigToml(raw, {
-        modelReasoningSummary: "auto",
+        modelReasoningSummary: resolveCodexReasoningSummaryMode(),
       });
       if (!changed) {
         return;
