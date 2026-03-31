@@ -70,8 +70,8 @@ Goal: rewire Gemini thought translation onto the new shared facade with zero vis
 16. [DONE] Git Commit: `docs(architecture): sync shared translation module` (hash: `eafd9e0c`)
 
 ### Stream: Release Docs
-17. [TODO] Docs: подготовить release-facing notes под новый shared-translation release и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): prepare shared translation release notes`
-18. [TODO] Git Commit: `docs(release): prepare shared translation release notes` (hash: TBD)
+17. [DONE] Docs: подготовить release-facing notes под новый shared-translation release и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): prepare shared translation release notes`
+18. [DONE] Git Commit: `docs(release): prepare shared translation release notes` (hash: `fa714d2f`)
 
 ### Stream: Release Build
 19. [TODO] Release: после зелёной structural verification и doc sync выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, сохранить свежие артефакты и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `build(release): assemble shared translation release`
