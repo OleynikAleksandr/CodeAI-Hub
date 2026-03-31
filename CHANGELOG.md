@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.852] - 2026-03-31
+### Changed
+- **Workspace runtime test split**: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts` now keeps snapshot/select/flush coverage, while continuity and resume scenarios moved into `packages/core/src/workspace-runtime/workspace-runtime-facade-continuity.test.ts`.
+- **Session request handler test-support split**: `packages/core/src/remote-bridge/handlers/session-request-handler.test-helpers.ts` is now a smaller harness-focused root, with event counters in `session-request-handler.test-event-helpers.ts` and continuity/bootstrap utilities in `session-request-handler.test-continuity-helpers.ts`.
+- **Gemini post-tool regression split**: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts` now keeps baseline/recoverable and translated-thinking coverage, while nested post-tool watchdog scenarios moved into `packages/Gemini_Module/src/session/gemini-session-manager.post-tool.test.ts`.
+
+### Fixed
+- **Architecture warning-zone debt**: the remaining test/support files from the `400-500` warning band are now below the threshold, so the architecture gate reports zero warning-zone files again.
+- **Release verification surface**: cleanup was verified with focused source-level tests for all newly split files plus package builds for `@codeai-hub/core` and `@codeai-hub/gemini-module` before release packaging.
+
 ## [1.1.851] - 2026-03-30
 ### Changed
 - **Claude auth façade decomposition**: `packages/Claude_Module/src/auth/sdk-auth-manager.ts` is now a thin coordinator over dedicated helpers instead of a mixed provider-home/runtime auth root.

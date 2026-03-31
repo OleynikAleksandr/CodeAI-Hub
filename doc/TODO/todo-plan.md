@@ -51,10 +51,10 @@ Goal: behavior-preserving decomposition of the remaining test/support warning-zo
 
 ### Stream: Test Support Verification
 9. [DONE] Verification: прогнать targeted source-level tests и package builds для Core/Gemini test-support cleanup wave, затем синхронизировать execution status. Scope: `packages/core`, `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(repo): verify test support warning-zone cleanup`
-10. [TODO] Git Commit: `test(repo): verify test support warning-zone cleanup` (hash: TBD)
+10. [DONE] Git Commit: `test(repo): verify test support warning-zone cleanup` (hash: `a23f24c7`)
 
 ### Stream: Release Docs
-11. [TODO] Docs: подготовить release-facing notes под новый test release после cleanup wave и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): prepare test support cleanup release notes`
+11. [DONE] Docs: подготовить release-facing notes под новый test release после cleanup wave и синхронизировать execution status. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(release): prepare test support cleanup release notes`
 12. [TODO] Git Commit: `docs(release): prepare test support cleanup release notes` (hash: TBD)
 
 ### Stream: Release Build
