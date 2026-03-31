@@ -19,8 +19,8 @@
 ### Stream: Codex Thinking Adapter
 1. [DONE] Добавить Codex-local adapter поверх shared translation facade и перевести reasoning stream deltas в русское visible output без зависимости от provider-only helper. Scope: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(codex): add translated reasoning adapter`
 2. [DONE] Git Commit: `refactor(codex): add translated reasoning adapter` (hash: `85e3c36e`)
-3. [TODO] Переключить Codex dialog emission на `role: "assistant"` + `tag: "thinking"` и убрать user-facing placeholder `role: "thinking"` с turn-start path. Scope: `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `packages/Codex_Module/src/messaging/codex-message-finish-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`. Expected commit: `refactor(codex): emit assistant thinking messages`
-4. [TODO] Git Commit: `refactor(codex): emit assistant thinking messages` (hash: TBD)
+3. [DONE] Переключить Codex dialog emission на `role: "assistant"` + `tag: "thinking"` и убрать user-facing placeholder `role: "thinking"` с turn-start path. Scope: `packages/Codex_Module/src/messaging/`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`. Expected commit: `refactor(codex): emit assistant thinking messages`
+4. [DONE] Git Commit: `refactor(codex): emit assistant thinking messages` (hash: `b59fbbd2`)
 
 ### Stream: UI and SSOT Parity
 1. [TODO] Держать `assistant + tag: "thinking"` на стандартной visible bubble path и оставить collapsible thinking card только как legacy compatibility fallback для archived raw role-thinking history. Scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`. Expected commit: `fix(ui): render tagged thinking as assistant bubble`
