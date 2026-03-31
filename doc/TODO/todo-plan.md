@@ -12,6 +12,7 @@
 ## Current state
 - Active scope: Codex reasoning translation to Russian через shared translation module
 - Secondary scope: future thinking display sync toggle for Codex and Gemini
+- Phase 1 completed; Phase 2 is next.
 - Release stream включён в конец плана
 
 ## Phase 1 — Codex Reasoning Translation Parity (owner: Oleksandr + Codex, updated: 2026-03-31)
@@ -23,10 +24,10 @@
 4. [DONE] Git Commit: `refactor(codex): emit assistant thinking messages` (hash: `b59fbbd2`)
 
 ### Stream: UI and SSOT Parity
-1. [TODO] Держать `assistant + tag: "thinking"` на стандартной visible bubble path и оставить collapsible thinking card только как legacy compatibility fallback для archived raw role-thinking history. Scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/virtual-conversation.tsx`. Expected commit: `fix(ui): render tagged thinking as assistant bubble`
-2. [TODO] Git Commit: `fix(ui): render tagged thinking as assistant bubble` (hash: TBD)
-3. [TODO] Синхронизировать SSOT-документы под новый Codex thinking contract и shared translation boundary. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`. Expected commit: `docs(architecture): sync codex thinking translation`
-4. [TODO] Git Commit: `docs(architecture): sync codex thinking translation` (hash: TBD)
+1. [DONE] Держать `assistant + tag: "thinking"` на стандартной visible bubble path и оставить collapsible thinking card только как legacy compatibility fallback для archived raw role-thinking history. Scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `fix(ui): render tagged thinking as assistant bubble`
+2. [DONE] Git Commit: `fix(ui): render tagged thinking as assistant bubble` (hash: `e3ba5153`)
+3. [DONE] Синхронизировать SSOT-документы под новый Codex thinking contract и shared translation boundary. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`. Expected commit: `docs(architecture): sync codex thinking translation`
+4. [DONE] Git Commit: `docs(architecture): sync codex thinking translation` (hash: `e94594fd`)
 
 ## Phase 2 — Thinking Display Sync Control (owner: Oleksandr + Codex, updated: 2026-03-31)
 
