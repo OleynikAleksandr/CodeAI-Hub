@@ -17,8 +17,8 @@
 ## Phase 1 — Codex Reasoning Translation Parity (owner: Oleksandr + Codex, updated: 2026-03-31)
 
 ### Stream: Codex Thinking Adapter
-1. [TODO] Добавить Codex-local adapter поверх shared translation facade и перевести reasoning stream deltas в русское visible output без зависимости от provider-only helper. Scope: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/codex-reasoning-streams.ts`. Expected commit: `refactor(codex): add translated reasoning adapter`
-2. [TODO] Git Commit: `refactor(codex): add translated reasoning adapter` (hash: TBD)
+1. [DONE] Добавить Codex-local adapter поверх shared translation facade и перевести reasoning stream deltas в русское visible output без зависимости от provider-only helper. Scope: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `refactor(codex): add translated reasoning adapter`
+2. [DONE] Git Commit: `refactor(codex): add translated reasoning adapter` (hash: `85e3c36e`)
 3. [TODO] Переключить Codex dialog emission на `role: "assistant"` + `tag: "thinking"` и убрать user-facing placeholder `role: "thinking"` с turn-start path. Scope: `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `packages/Codex_Module/src/messaging/codex-message-finish-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`. Expected commit: `refactor(codex): emit assistant thinking messages`
 4. [TODO] Git Commit: `refactor(codex): emit assistant thinking messages` (hash: TBD)
 
