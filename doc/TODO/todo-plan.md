@@ -17,6 +17,7 @@
 - Phase 2 now has the first settings-state microtask implemented in code.
 - Core applied-config now carries presentation-only thinking display sync flags for Codex/Gemini.
 - Provider-side thinking display sync gate is now implemented for Codex and Gemini.
+- Provider settings UI now exposes the thinking display sync toggle for Codex and Gemini.
 
 ## Phase 1 — Codex Reasoning Translation Parity (owner: Oleksandr + Codex, updated: 2026-03-31)
 
@@ -43,8 +44,8 @@
 ### Stream: Provider Gating and UI Surface
 1. [DONE] Заблокировать visible thinking emit в Codex и Gemini по display-sync flag, сохранив reasoning processing и translation internals. Scope: `packages/Codex_Module/src/session/types.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Gemini_Module/src/session/types.ts`, `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `feat(provider): gate thinking display sync`
 2. [DONE] Git Commit: `feat(provider): gate thinking display sync` (hash: `40e45885`)
-3. [TODO] Показать toggle для Codex и Gemini в provider settings UI. Scope: `src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx`, `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, `src/client/ui/src/components/settings-view.tsx`. Expected commit: `feat(ui): expose thinking display sync toggle`
-4. [TODO] Git Commit: `feat(ui): expose thinking display sync toggle` (hash: TBD)
+3. [DONE] Показать toggle для Codex и Gemini в provider settings UI. Scope: `src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx`, `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, `src/client/ui/src/components/settings-view.tsx`. Expected commit: `feat(ui): expose thinking display sync toggle`
+4. [DONE] Git Commit: `feat(ui): expose thinking display sync toggle` (hash: `1d76a169`)
 
 ## Phase 3 — Release Stream (owner: Oleksandr + Codex, updated: 2026-03-31)
 
