@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 export interface CodexSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: unknown;
-  readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
 export interface ClaudeProviderSettingsSnapshot {
@@ -75,7 +74,6 @@ export const loadCodexSettingsSnapshot = (
   return {
     defaultModel: codex.defaultModel,
     reasoningByModel: codex.reasoningByModel,
-    thinkingDisplaySyncEnabled: codex.thinkingDisplaySyncEnabled,
   };
 };
 

@@ -30,7 +30,6 @@ export interface ResolvedCodexTurnConfig {
   readonly defaultReasoningEffort: CodexReasoningEffort;
   readonly effectiveModelId: string;
   readonly reasoningByModel: Record<string, CodexReasoningEffort>;
-  readonly thinkingDisplaySyncEnabled: boolean;
 }
 
 export interface ResolvedGeminiTurnConfig {
@@ -145,8 +144,6 @@ const resolveCodexTurnConfig = (
   const reasoningByModel = resolveCodexReasoningFromSettings(
     snapshot?.reasoningByModel
   );
-  const thinkingDisplaySyncEnabled =
-    snapshot?.thinkingDisplaySyncEnabled !== false;
   const defaultModel = resolvePreferredCodexDefaultModel({
     settingsDefaultModel,
     envDefaultModel: options.env.CODEX_DEFAULT_MODEL,
@@ -166,7 +163,6 @@ const resolveCodexTurnConfig = (
       defaultReasoningEffort
     ),
     reasoningByModel,
-    thinkingDisplaySyncEnabled,
   };
 };
 
@@ -246,7 +242,6 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     defaultReasoningEffort: resolved.codex.defaultReasoningEffort,
     effectiveModelId: resolved.codex.effectiveModelId,
     reasoningByModel: resolved.codex.reasoningByModel,
-    thinkingDisplaySyncEnabled: resolved.codex.thinkingDisplaySyncEnabled,
   },
   geminiCli: {
     providerId: "geminiCli",
