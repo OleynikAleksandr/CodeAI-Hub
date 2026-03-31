@@ -80,6 +80,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       reasoningEffort,
       source: targetModelId ? "switch_request" : "settings_snapshot",
       thinkingLevel,
+      thinkingDisplaySyncEnabled: resolved.thinkingDisplaySyncEnabled,
     };
   }
 

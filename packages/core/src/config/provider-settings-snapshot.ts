@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 export interface CodexSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
 export interface ClaudeProviderSettingsSnapshot {
@@ -29,6 +30,7 @@ export interface ClaudeSettingsSnapshot {
 
 export interface GeminiSettingsSnapshot {
   readonly defaultModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
   readonly thinkingLevelByModel?: unknown;
 }
 
@@ -73,6 +75,7 @@ export const loadCodexSettingsSnapshot = (
   return {
     defaultModel: codex.defaultModel,
     reasoningByModel: codex.reasoningByModel,
+    thinkingDisplaySyncEnabled: codex.thinkingDisplaySyncEnabled,
   };
 };
 
@@ -87,6 +90,7 @@ export const loadGeminiSettingsSnapshot = (
   return {
     defaultModel: gemini.defaultModel,
     thinkingLevelByModel: gemini.thinkingLevelByModel,
+    thinkingDisplaySyncEnabled: gemini.thinkingDisplaySyncEnabled,
   };
 };
 

@@ -44,6 +44,7 @@ export interface AppliedProviderTurnConfig {
   readonly providerId: string;
   readonly reasoningEffort?: string;
   readonly source: "settings_snapshot" | "switch_request";
+  readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingLevel?: string;
 }
 
@@ -74,6 +75,11 @@ export const readAppliedProviderTurnConfig = (
     return null;
   }
 
+  const thinkingDisplaySyncEnabled =
+    typeof candidate.thinkingDisplaySyncEnabled === "boolean"
+      ? candidate.thinkingDisplaySyncEnabled
+      : undefined;
+
   return {
     providerId: candidate.providerId,
     source:
@@ -98,6 +104,9 @@ export const readAppliedProviderTurnConfig = (
       typeof candidate.thinkingLevel === "string"
         ? candidate.thinkingLevel
         : undefined,
+    ...(thinkingDisplaySyncEnabled === undefined
+      ? {}
+      : { thinkingDisplaySyncEnabled }),
   };
 };
 
