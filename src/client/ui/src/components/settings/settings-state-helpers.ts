@@ -103,6 +103,7 @@ export const updateThinkingDisplaySyncEnabled = (
     [provider]: {
       ...settings.providers[provider],
       thinkingDisplaySyncEnabled: enabled,
+      ...(provider === "codex" ? { reasoningSummaryEnabled: enabled } : {}),
     },
   },
 });

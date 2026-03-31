@@ -51,6 +51,9 @@ interface ThinkingSettings {
 interface ThinkingDisplaySyncSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
+interface CodexReasoningSummarySettings {
+  readonly reasoningSummaryEnabled: boolean;
+}
 interface AutoUpdateSettings {
   readonly enabled: boolean;
 }
@@ -77,6 +80,7 @@ interface CodexSettings extends ThinkingDisplaySyncSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
+  readonly reasoningSummaryEnabled: boolean;
   readonly sessionContinuity: ContinuitySettings;
 }
 interface GeminiSettingsWithDisplaySync
@@ -128,6 +132,17 @@ const mapThinkingSettings = (
 
 const mapThinkingDisplaySyncEnabled = (value: unknown): boolean =>
   typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
+
+const mapCodexReasoningSummaryEnabled = (
+  value: unknown,
+  legacyValue: unknown
+): boolean => {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  return mapThinkingDisplaySyncEnabled(legacyValue);
+};
 
 const mapAutoUpdateSettings = (
   value: RawAutoUpdateSettings | undefined
@@ -224,6 +239,10 @@ const mapCodexSettings = (
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
   defaultModel: resolveCodexModelId(value?.defaultModel),
   reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
+  reasoningSummaryEnabled: mapCodexReasoningSummaryEnabled(
+    value?.reasoningSummaryEnabled,
+    value?.thinkingDisplaySyncEnabled
+  ),
   sessionContinuity: mapContinuity(value?.sessionContinuity),
   thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
     value?.thinkingDisplaySyncEnabled
@@ -261,6 +280,11 @@ const areThinkingDisplaySyncSettingsEqual = (
 ): boolean =>
   left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled;
 
+const areCodexReasoningSummarySettingsEqual = (
+  left: CodexReasoningSummarySettings,
+  right: CodexReasoningSummarySettings
+): boolean => left.reasoningSummaryEnabled === right.reasoningSummaryEnabled;
+
 const areReasoningByModelEqual = (
   left: CodexReasoningByModel,
   right: CodexReasoningByModel
@@ -297,7 +321,7 @@ const areCodexSettingsEqual = (
   right: CodexSettings
 ): boolean =>
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
-  areThinkingDisplaySyncSettingsEqual(left, right) &&
+  areCodexReasoningSummarySettingsEqual(left, right) &&
   left.defaultModel === right.defaultModel &&
   areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) &&
   left.sessionContinuity.remainingPercentThreshold ===

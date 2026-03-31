@@ -25,6 +25,7 @@ export interface RawCodexSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: Record<string, unknown>;
+  readonly reasoningSummaryEnabled?: unknown;
   readonly sessionContinuity?: RawCodexSessionContinuitySettings;
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
