@@ -29,12 +29,14 @@ export class CodexSessionEventEmitter {
     if (!content || content.trim().length === 0) {
       return;
     }
+    const isThinking = role === "thinking";
     session.eventEmitter.emit("message", {
       type: "dialog_message",
-      role,
+      role: isThinking ? "assistant" : role,
       content,
       uuid: id ?? crypto.randomUUID(),
       timestamp: new Date().toISOString(),
+      ...(isThinking ? { tag: "thinking" } : {}),
     });
   }
 }

@@ -15,6 +15,7 @@
 - `packages/Codex_Module/src/messaging/codex-event-stream-consumer.ts` — startup lock, idle-pulse waiting, terminal event cancellation of SDK generators.
 - `packages/Codex_Module/src/messaging/codex-stream-event-router.ts` — `thread.started`, reasoning items, assistant chunks, structured-output and stream-error normalization.
 - `packages/Codex_Module/src/messaging/codex-message-finish-handler.ts` — user-turn lifecycle signals плюс cleanup structured-output/reasoning state.
+- `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts` — Codex-local adapter поверх shared translation facade для reasoning deltas.
 - `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts` — focused façade над structured-output prompt/schema preparation и finalize path.
 - `packages/Codex_Module/src/messaging/structured-output-parser.ts`, `structured-output-state.ts` — JSON/parsing rules, passthrough delta/output hash, extractor/session state storage.
 - `packages/Codex_Module/src/messaging/codex-usage-sync.ts`, `codex-token-usage-sync.ts` — usage-limits/token usage refresh; runtime `token_count` signals мержатся в shared usage-limits stream payload.
@@ -30,6 +31,7 @@
 - Для Codex `modelId` в Core/bridge/UI contract означает полную effective model identity; `gpt-5.3-codex reasoning:xhigh` и `gpt-5.3-codex reasoning:high` считаются разными runtime identities.
 - `reasoning` не является вторичным локальным decoration-полем внутри Codex runtime: следующий turn обязан получать effective identity из Core-applied turn config, выведенного из `~/.codeai-hub/settings/settings.json`.
 - Codex provider path не имеет права держать второй независимый source of truth для next-turn identity поверх shared settings snapshot и Core resolver.
+- Codex reasoning translation now flows through the shared runtime translation module and is emitted as visible assistant content with `tag: "thinking"`; the old collapsible thinking bootstrap remains only as legacy compatibility for archived raw history.
 - `Settings -> General -> Response Mode` управляет turn shaping policy:
   - `hybrid` — baseline default для workflow;
   - `strict` — включает editable schema/instruction contract;

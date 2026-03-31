@@ -4,7 +4,6 @@ import type { ActiveSession } from "../session/types";
 import type { CodexUsageLimits } from "../types";
 import {
   PROVIDER,
-  THINKING_PLACEHOLDER,
   type TurnLifecycleState,
 } from "./codex-message-processor-shared";
 import type { CodexReasoningStreams } from "./codex-reasoning-streams";
@@ -60,7 +59,6 @@ export class CodexMessageFinishHandler {
       return;
     }
     session.structuredOutputUuids = new Set();
-    this.emitter.emitDialogMessage(session, "thinking", THINKING_PLACEHOLDER);
     this.structuredOutput.startTurn(session.sessionId);
   }
 

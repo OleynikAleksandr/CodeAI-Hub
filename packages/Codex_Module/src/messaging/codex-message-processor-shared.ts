@@ -14,7 +14,6 @@ import type { StructuredOutputStreamController } from "./structured-output-strea
 
 export const PROVIDER = "codex";
 export const THREAD_ID_SHORT_LENGTH = 8;
-export const THINKING_PLACEHOLDER = "<!-- -->";
 export const STARTUP_LOCK_ACQUIRE_TIMEOUT_MS = 30_000;
 export const STARTUP_LOCK_THREAD_STARTED_TIMEOUT_MS = 30_000;
 export const TURN_IDLE_TIMEOUT_MS = 180_000;
