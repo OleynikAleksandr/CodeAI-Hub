@@ -7898,11 +7898,35 @@
       children: checked ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
+  var displaySyncToggleStyles = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    margin: "12px 0 18px"
+  };
+  var displaySyncCheckboxStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var displaySyncTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    marginBottom: "4px"
+  };
+  var displaySyncDescriptionStyles = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: 1.4
+  };
   var CodexDefaultModelCard = ({
     defaultModel,
     reasoningByModel,
+    thinkingDisplaySyncEnabled,
     onDefaultModelChange,
-    onReasoningChange
+    onReasoningChange,
+    onThinkingDisplaySyncChange
   }) => {
     const [activeModelId, setActiveModelId] = (0, import_react3.useState)(null);
     const [hoveredRowId, setHoveredRowId] = (0, import_react3.useState)(null);
@@ -7939,6 +7963,21 @@
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(settings_card_default, { title: "Codex Default model", children: [
         /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: displaySyncToggleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+            "input",
+            {
+              checked: thinkingDisplaySyncEnabled,
+              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+              style: displaySyncCheckboxStyles,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncTitleStyles, children: "Thinking display sync" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncDescriptionStyles, children: "When enabled, translated Codex reasoning appears on the standard assistant bubble path. Disabling it keeps reasoning translation internal while hiding the visible bubble." })
+          ] })
+        ] }),
         hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: warningStyles, children: [
           "The saved default model is no longer available. Falling back to",
           ` ${fallbackModelDisplayName}.`
@@ -8144,11 +8183,35 @@
       children: checked ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: radioCircleInnerStyles }) : null
     }
   );
+  var displaySyncToggleStyles2 = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    margin: "12px 0 18px"
+  };
+  var displaySyncCheckboxStyles2 = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var displaySyncTitleStyles2 = {
+    fontSize: "13px",
+    fontWeight: 600,
+    marginBottom: "4px"
+  };
+  var displaySyncDescriptionStyles2 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: 1.4
+  };
   var GeminiDefaultModelCard = ({
     defaultModel,
     thinkingLevelByModel,
+    thinkingDisplaySyncEnabled,
     onDefaultModelChange,
-    onThinkingChange
+    onThinkingChange,
+    onThinkingDisplaySyncChange
   }) => {
     const [activeModelId, setActiveModelId] = (0, import_react5.useState)(
       null
@@ -8180,6 +8243,21 @@
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { style: displaySyncToggleStyles2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+            "input",
+            {
+              checked: thinkingDisplaySyncEnabled,
+              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+              style: displaySyncCheckboxStyles2,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncTitleStyles2, children: "Thinking display sync" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncDescriptionStyles2, children: "When enabled, translated Gemini reasoning appears on the standard assistant bubble path. Disabling it keeps reasoning translation internal while hiding the visible bubble." })
+          ] })
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
           const isSelected = defaultModel === model.id;
           const isRowHovered = hoveredRowId === model.id;
@@ -10303,6 +10381,16 @@
       }
     }
   });
+  var updateThinkingDisplaySyncEnabled = (settings, provider, enabled) => ({
+    ...settings,
+    providers: {
+      ...settings.providers,
+      [provider]: {
+        ...settings.providers[provider],
+        thinkingDisplaySyncEnabled: enabled
+      }
+    }
+  });
   var updateCodexContinuityRemainingPercentThreshold = (settings, remainingPercentThreshold) => ({
     ...settings,
     providers: {
@@ -10551,6 +10639,7 @@
 
   // src/client/ui/src/components/settings/settings-state-model.ts
   var DEFAULT_THINKING_MAX_TOKENS = 4e3;
+  var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
   var DEFAULT_CORE_RESTART_ENABLED = true;
   var DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
@@ -10574,6 +10663,7 @@
       maxTokens: Number.isFinite(numericValue) ? numericValue : DEFAULT_THINKING_MAX_TOKENS
     };
   };
+  var mapThinkingDisplaySyncEnabled = (value) => typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
   var mapAutoUpdateSettings = (value) => ({
     enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
   });
@@ -10602,6 +10692,12 @@
     defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
     sessionContinuity: mapContinuity(value?.sessionContinuity)
   });
+  var mapGeminiSettingsWithDisplaySync = (value) => ({
+    ...mapGeminiSettings(value, mapAutoUpdateSettings),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
   var resolveCodexModelId = (value) => typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : DEFAULT_CODEX_MODEL_ID;
   var resolveClaudeDefaultModel = (value) => {
     if (typeof value !== "string") {
@@ -10626,19 +10722,23 @@
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
     defaultModel: resolveCodexModelId(value?.defaultModel),
     reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
-    sessionContinuity: mapContinuity(value?.sessionContinuity)
+    sessionContinuity: mapContinuity(value?.sessionContinuity),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+      value?.thinkingDisplaySyncEnabled
+    )
   });
   var mapSettingsSnapshot = (value) => ({
     general: mapGeneralSettings(value?.general),
     providers: {
       claude: mapClaudeSettings(value?.providers?.claude),
       codex: mapCodexSettings(value?.providers?.codex),
-      gemini: mapGeminiSettings(value?.providers?.gemini, mapAutoUpdateSettings)
+      gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini)
     }
   });
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
   var areAutoUpdateSettingsEqual = (left, right) => left.enabled === right.enabled;
   var areThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.maxTokens === right.maxTokens;
+  var areThinkingDisplaySyncSettingsEqual = (left, right) => left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled;
   var areReasoningByModelEqual = (left, right) => {
     const leftEntries = Object.entries(left);
     if (leftEntries.length !== Object.keys(right).length) {
@@ -10650,8 +10750,8 @@
   };
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
   var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
+  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areThinkingDisplaySyncSettingsEqual(left, right) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areThinkingDisplaySyncSettingsEqual(left, right) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
   ) && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
@@ -10831,6 +10931,22 @@
       },
       [settings, updateSettings]
     );
+    const handleCodexThinkingDisplaySyncChange = (0, import_react13.useCallback)(
+      (enabled) => {
+        updateSettings(
+          updateThinkingDisplaySyncEnabled(settings, "codex", enabled)
+        );
+      },
+      [settings, updateSettings]
+    );
+    const handleGeminiThinkingDisplaySyncChange = (0, import_react13.useCallback)(
+      (enabled) => {
+        updateSettings(
+          updateThinkingDisplaySyncEnabled(settings, "gemini", enabled)
+        );
+      },
+      [settings, updateSettings]
+    );
     const handleSave = (0, import_react13.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
@@ -10877,6 +10993,8 @@
       handleGeminiDefaultModelChange,
       handleGeminiThinkingChange,
       handleCodexReasoningChange,
+      handleCodexThinkingDisplaySyncChange,
+      handleGeminiThinkingDisplaySyncChange,
       handleProviderAutoUpdateChange,
       handleResponsePolicyModeChange,
       handleStrictSchemaTextChange,
@@ -10967,6 +11085,8 @@
       handleClaudeDefaultModelChange,
       handleGeminiDefaultModelChange,
       handleGeminiThinkingChange,
+      handleCodexThinkingDisplaySyncChange,
+      handleGeminiThinkingDisplaySyncChange,
       handleCodexReasoningChange,
       handleProviderAutoUpdateChange,
       handleResponsePolicyModeChange,
@@ -11052,7 +11172,9 @@
                 defaultModel: settings.providers.codex.defaultModel,
                 onDefaultModelChange: handleCodexDefaultModelChange,
                 onReasoningChange: handleCodexReasoningChange,
-                reasoningByModel: settings.providers.codex.reasoningByModel
+                onThinkingDisplaySyncChange: handleCodexThinkingDisplaySyncChange,
+                reasoningByModel: settings.providers.codex.reasoningByModel,
+                thinkingDisplaySyncEnabled: settings.providers.codex.thinkingDisplaySyncEnabled
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
@@ -11082,6 +11204,8 @@
               defaultModel: settings.providers.gemini.defaultModel,
               onDefaultModelChange: handleGeminiDefaultModelChange,
               onThinkingChange: handleGeminiThinkingChange,
+              onThinkingDisplaySyncChange: handleGeminiThinkingDisplaySyncChange,
+              thinkingDisplaySyncEnabled: settings.providers.gemini.thinkingDisplaySyncEnabled,
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
