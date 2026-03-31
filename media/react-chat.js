@@ -7598,6 +7598,14 @@
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
+    },
+    {
+      id: "gpt-5.4-mini",
+      displayName: "GPT-5.4 Mini",
+      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "mini"
     }
   ];
   var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
@@ -7923,10 +7931,10 @@
   var CodexDefaultModelCard = ({
     defaultModel,
     reasoningByModel,
-    thinkingDisplaySyncEnabled,
+    reasoningSummaryEnabled,
     onDefaultModelChange,
     onReasoningChange,
-    onThinkingDisplaySyncChange
+    onReasoningSummaryEnabledChange
   }) => {
     const [activeModelId, setActiveModelId] = (0, import_react3.useState)(null);
     const [hoveredRowId, setHoveredRowId] = (0, import_react3.useState)(null);
@@ -7967,15 +7975,15 @@
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
             "input",
             {
-              checked: thinkingDisplaySyncEnabled,
-              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+              checked: reasoningSummaryEnabled,
+              onChange: (event) => onReasoningSummaryEnabledChange(event.target.checked),
               style: displaySyncCheckboxStyles,
               type: "checkbox"
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncTitleStyles, children: "Thinking display sync" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncDescriptionStyles, children: "When enabled, translated Codex reasoning appears on the standard assistant bubble path. Disabling it keeps reasoning translation internal while hiding the visible bubble." })
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncTitleStyles, children: "Reasoning in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncDescriptionStyles, children: "When enabled, Codex can send reasoning summaries. CodeAI Hub translates them and shows them in the dialog." })
           ] })
         ] }),
         hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: warningStyles, children: [
@@ -10387,7 +10395,8 @@
       ...settings.providers,
       [provider]: {
         ...settings.providers[provider],
-        thinkingDisplaySyncEnabled: enabled
+        thinkingDisplaySyncEnabled: enabled,
+        ...provider === "codex" ? { reasoningSummaryEnabled: enabled } : {}
       }
     }
   });
@@ -10664,6 +10673,12 @@
     };
   };
   var mapThinkingDisplaySyncEnabled = (value) => typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
+  var mapCodexReasoningSummaryEnabled = (value, legacyValue) => {
+    if (typeof value === "boolean") {
+      return value;
+    }
+    return mapThinkingDisplaySyncEnabled(legacyValue);
+  };
   var mapAutoUpdateSettings = (value) => ({
     enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
   });
@@ -10722,6 +10737,10 @@
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
     defaultModel: resolveCodexModelId(value?.defaultModel),
     reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
+    reasoningSummaryEnabled: mapCodexReasoningSummaryEnabled(
+      value?.reasoningSummaryEnabled,
+      value?.thinkingDisplaySyncEnabled
+    ),
     sessionContinuity: mapContinuity(value?.sessionContinuity),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
       value?.thinkingDisplaySyncEnabled
@@ -10739,6 +10758,7 @@
   var areAutoUpdateSettingsEqual = (left, right) => left.enabled === right.enabled;
   var areThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.maxTokens === right.maxTokens;
   var areThinkingDisplaySyncSettingsEqual = (left, right) => left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled;
+  var areCodexReasoningSummarySettingsEqual = (left, right) => left.reasoningSummaryEnabled === right.reasoningSummaryEnabled;
   var areReasoningByModelEqual = (left, right) => {
     const leftEntries = Object.entries(left);
     if (leftEntries.length !== Object.keys(right).length) {
@@ -10750,7 +10770,7 @@
   };
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
   var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areThinkingDisplaySyncSettingsEqual(left, right) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areCodexReasoningSummarySettingsEqual(left, right) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areThinkingDisplaySyncSettingsEqual(left, right) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
@@ -10936,6 +10956,10 @@
         updateSettings(
           updateThinkingDisplaySyncEnabled(settings, "codex", enabled)
         );
+        vscode_default.postMessage({
+          type: "settings:codex-reasoning-summary-preview",
+          enabled
+        });
       },
       [settings, updateSettings]
     );
@@ -11172,9 +11196,9 @@
                 defaultModel: settings.providers.codex.defaultModel,
                 onDefaultModelChange: handleCodexDefaultModelChange,
                 onReasoningChange: handleCodexReasoningChange,
-                onThinkingDisplaySyncChange: handleCodexThinkingDisplaySyncChange,
+                onReasoningSummaryEnabledChange: handleCodexThinkingDisplaySyncChange,
                 reasoningByModel: settings.providers.codex.reasoningByModel,
-                thinkingDisplaySyncEnabled: settings.providers.codex.thinkingDisplaySyncEnabled
+                reasoningSummaryEnabled: settings.providers.codex.reasoningSummaryEnabled
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(

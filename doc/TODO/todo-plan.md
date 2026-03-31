@@ -52,7 +52,7 @@
 3. [DONE] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/codex-module`, `@codeai-hub/core`, `webview`.
 
 ### Stream: Release
-4. [TODO] Update release-facing docs, run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`. Scope: release scripts and generated version files. Target commit: `build(release): assemble codex reasoning summary settings release`
+4. [DONE] Update release-facing docs, run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`. Scope: release scripts and generated version files. Target commit: `build(release): assemble codex reasoning summary settings release`
 5. [TODO] Git Commit: `build(release): assemble codex reasoning summary settings release` (hash: TBD)
 6. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session008.md`. Target commit: `docs(session): record codex reasoning summary settings release`
 7. [TODO] Git Commit: `docs(session): record codex reasoning summary settings release` (hash: TBD)
