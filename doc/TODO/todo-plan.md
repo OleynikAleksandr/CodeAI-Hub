@@ -18,6 +18,7 @@
 - Core applied-config now carries presentation-only thinking display sync flags for Codex/Gemini.
 - Provider-side thinking display sync gate is now implemented for Codex and Gemini.
 - Provider settings UI now exposes the thinking display sync toggle for Codex and Gemini.
+- Релизные документы подготовлены к следующему patch bump с новыми release notes про thinking display sync.
 
 ## Phase 1 — Codex Reasoning Translation Parity (owner: Oleksandr + Codex, updated: 2026-03-31)
 
@@ -50,7 +51,7 @@
 ## Phase 3 — Release Stream (owner: Oleksandr + Codex, updated: 2026-03-31)
 
 ### Stream: Docs and Release Prep
-1. [TODO] Синхронизировать release-facing docs и changelog перед version bump. Scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `docs(release): prep codex thinking release`
-2. [TODO] Git Commit: `docs(release): prep codex thinking release` (hash: TBD)
+1. [DONE] Синхронизировать release-facing docs и changelog перед version bump. Scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Expected commit: `docs(release): prep codex thinking release`
+2. [DONE] Git Commit: `docs(release): prep codex thinking release` (hash: `5054ad78`)
 3. [TODO] Выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, перенести свежие tarball-ы в `doc/tmp/releases/` и зафиксировать результат в session report. Scope: `./scripts/build-all.sh`, `./scripts/build-release.sh`, `doc/tmp/releases/`, `doc/Sessions/Session004.md`. Expected commit: `build(release): assemble codex thinking release`
 4. [TODO] Git Commit: `build(release): assemble codex thinking release` (hash: TBD)
