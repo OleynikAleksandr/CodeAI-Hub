@@ -146,12 +146,13 @@
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 - Codex thought translation and visible thinking: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `src/client/ui/src/session/dialog-panel-message-utils.ts`
   - reasoning deltas are translated through the shared runtime translation module;
-  - visible output uses `role: "assistant"` with `tag: "thinking"` and the standard assistant bubble path;
+  - visible output uses `role: "assistant"` with `tag: "thinking"` and the standard assistant bubble path when `thinkingDisplaySyncEnabled` is on;
+  - when display sync is off, the reasoning translation pipeline still runs but user-visible thinking bubbles are suppressed at the provider router boundary;
   - legacy hidden collapsible thinking UI remains only for archived `role: "thinking"` history.
 - Gemini Thought Translator: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
   - Adapts Gemini agent thoughts into shared `@codeai-hub/translation` facade calls; current engine path is Google GTX / `translate.googleapis.com`
   - Buffered in `GeminiMessageProcessor.handleThoughtEvent()`: pending translations are awaited before real response emit, and the no-pending-translations path emits the final assistant segment synchronously
-  - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" (visible, not collapsed)
+  - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" when `thinkingDisplaySyncEnabled` is on; the translation pipeline still runs even when the display flag is off, but the visible bubble is skipped by the session normalizer
   - `thought-translator-service.ts` remains a compatibility re-export for historical imports
   - Graceful degradation: on failure, English original is emitted as fallback
   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`, `packages/translation/src/translation-facade.ts`

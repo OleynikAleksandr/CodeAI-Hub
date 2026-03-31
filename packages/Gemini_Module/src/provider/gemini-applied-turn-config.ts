@@ -5,11 +5,13 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 export interface AppliedGeminiTurnConfig {
   readonly modelId?: string;
+  readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingLevel?: string;
 }
 
 interface GeminiRuntimeOverrideOwner {
   pendingModelOverride?: string;
+  pendingThinkingDisplaySyncOverride?: boolean;
   pendingThinkingLevelOverride?: string;
 }
 
@@ -27,6 +29,10 @@ const readAppliedGeminiTurnConfig = (
   }
   return {
     modelId: readOptionalTrimmedString(candidate.modelId),
+    thinkingDisplaySyncEnabled:
+      typeof candidate.thinkingDisplaySyncEnabled === "boolean"
+        ? candidate.thinkingDisplaySyncEnabled
+        : true,
     thinkingLevel: readOptionalTrimmedString(candidate.thinkingLevel),
   };
 };
@@ -44,13 +50,20 @@ export const applyGeminiTurnRuntimeConfig = (options: {
   if (appliedConfig.modelId) {
     options.owner.pendingModelOverride = appliedConfig.modelId;
   }
+  options.owner.pendingThinkingDisplaySyncOverride =
+    appliedConfig.thinkingDisplaySyncEnabled;
   if (appliedConfig.thinkingLevel) {
     options.owner.pendingThinkingLevelOverride = appliedConfig.thinkingLevel;
   }
 
-  if (appliedConfig.modelId || appliedConfig.thinkingLevel) {
+  if (
+    appliedConfig.modelId ||
+    appliedConfig.thinkingLevel ||
+    appliedConfig.thinkingDisplaySyncEnabled !== undefined
+  ) {
     options.reporter?.info?.("Gemini runtime override set", {
       modelId: appliedConfig.modelId,
+      thinkingDisplaySyncEnabled: appliedConfig.thinkingDisplaySyncEnabled,
       thinkingLevel: appliedConfig.thinkingLevel,
     });
   }

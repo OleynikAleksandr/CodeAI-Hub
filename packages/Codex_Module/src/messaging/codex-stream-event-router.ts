@@ -163,6 +163,9 @@ export class CodexStreamEventRouter {
     delta: string
   ): Promise<void> {
     const translated = await this.thoughtTranslator.translateReasoning(delta);
+    if (session.thinkingDisplaySyncEnabled === false) {
+      return;
+    }
     this.emitter.emitDialogMessage(
       session,
       "thinking",

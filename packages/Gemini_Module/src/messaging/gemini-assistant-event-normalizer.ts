@@ -82,11 +82,17 @@ export class GeminiAssistantEventNormalizer {
       value.subject && value.subject.trim().length > 0
         ? `${value.subject.trim()}: ${value.description}`
         : value.description;
+    const shouldDisplayThinking =
+      session.runtimeTurnConfig.thinkingDisplaySyncEnabled !== false;
 
     if (this.thoughtTranslator) {
       const pending = this.thoughtTranslator
         .translateThought(value)
         .then((translated: string | null) => {
+          if (!shouldDisplayThinking) {
+            return;
+          }
+
           this.emitDialogMessage(
             session,
             "assistant",
@@ -98,13 +104,17 @@ export class GeminiAssistantEventNormalizer {
           );
         })
         .catch(() => {
+          if (!shouldDisplayThinking) {
+            return;
+          }
+
           this.emitDialogMessage(session, "assistant", formatted, {
             seed: accumulator.promptId,
             tag: "thinking",
           });
         });
       accumulator.pendingTranslations.push(pending);
-    } else {
+    } else if (shouldDisplayThinking) {
       this.emitDialogMessage(session, "assistant", formatted, {
         seed: accumulator.promptId,
         tag: "thinking",
