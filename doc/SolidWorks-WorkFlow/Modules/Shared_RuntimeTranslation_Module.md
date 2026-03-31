@@ -15,12 +15,13 @@ It translates short runtime text fragments through an engine-neutral facade and 
 Current production use:
 
 - Gemini thoughts are translated from English to Russian through the free Google Translate endpoint.
+- Codex reasoning deltas are translated from English to Russian through the same shared facade and are emitted as visible assistant-thinking bubbles by the provider-local adapter.
 - Translation failure is non-blocking and falls back to the original text.
 - Gemini emits translated output as `role: "assistant"` with `tag: "thinking"`.
+- Codex emits translated reasoning output as `role: "assistant"` with `tag: "thinking"` as well.
 
 Planned reuse boundary:
 
-- Codex reasoning translation.
 - Document and artifact translation adapters.
 - Startup locale bootstrap translation.
 
