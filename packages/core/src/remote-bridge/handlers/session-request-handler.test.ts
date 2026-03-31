@@ -5,13 +5,23 @@ import path from "node:path";
 import test from "node:test";
 import { readAppliedProviderTurnConfig } from "../types";
 import {
-  collectTurnStateSequence,
   createDescriptionSession,
+  stubDescriptionDialogSync,
+} from "./session-request-handler.test-continuity-helpers";
+import {
+  collectTurnStateSequence,
   createHarness,
   noop,
-  stubDescriptionDialogSync,
 } from "./session-request-handler.test-helpers";
 
+export {
+  createDescriptionSession,
+  emitProviderEvent,
+  registerBootstrapLock,
+  setLifecycle,
+  stubDescriptionDialogSync,
+  useProductionFlowNodeHandler,
+} from "./session-request-handler.test-continuity-helpers";
 export {
   type BindingUpdate,
   collectTurnStateSequence,
@@ -19,10 +29,8 @@ export {
   countContinuityUnlocks,
   countIdleTurnStateEvents,
   countNoRolloverUnlockEvents,
-  createDescriptionSession,
   createHarness,
   EXPECTED_HANDLER_SOURCE_INVARIANT_CHECKS,
-  emitProviderEvent,
   flushAsyncWork,
   getHandlerSourceInvariantChecks,
   type HandlerHarness,
@@ -30,11 +38,7 @@ export {
   internals,
   noop,
   type RuntimeLockUpdate,
-  registerBootstrapLock,
   SOURCE_PATH,
-  setLifecycle,
-  stubDescriptionDialogSync,
-  useProductionFlowNodeHandler,
 } from "./session-request-handler.test-helpers";
 
 test("SessionRequestHandler stop invalidates provider binding without deleting logical session", async () => {
