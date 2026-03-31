@@ -27,9 +27,11 @@
 - `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts` строит provider-neutral request к `@codeai-hub/translation`; translation failure non-blocking и не должен ломать turn.
 - Новый user-facing contract для Codex reasoning: `role: "assistant"` + `tag: "thinking"`. Это повторно использует стандартную assistant bubble path и выравнивает UX Codex с Gemini.
 - Legacy `role: "thinking"` сохраняется только как compatibility fallback для старых transcript-ов и archived raw history; это больше не основной visible path.
-- `thinkingDisplaySyncEnabled` для Codex является presentation-only provider setting. При `false` reasoning buffering/translation pipeline и прочая внутренняя обработка продолжаются, но visible thinking bubble не эмитится.
+- User-facing Codex settings expose `Reasoning in dialog` as a provider-level toggle backed by `reasoningSummaryEnabled` in `settings.json`.
 - Codex reasoning-summary policy must be controlled via `model_reasoning_summary` in `CODEX_HOME/config.toml`. Legacy `default_reasoning_summary` is not a stable config key and may be dropped by upstream Codex config persistence.
 - Provider-owned `CODEX_HOME/config.toml` inherits the user Codex config as a base and then applies CodeAI overrides; current override scope is `model_reasoning_summary`.
+- `reasoningSummaryEnabled=true` maps to `model_reasoning_summary = "auto"`, while `false` maps to `"none"`.
+- When Codex does not send reasoning summaries, CodeAI Hub does not have any reasoning payload to translate or render.
 - Установленный Codex provider bundle обязан вендорить `@codeai-hub/translation` в собственный `node_modules/@codeai-hub/translation`; Core startup не должен зависеть от workspace-level `node_modules`.
 
 ## Инварианты
@@ -44,7 +46,8 @@
 - `reasoning` не является вторичным локальным decoration-полем внутри Codex runtime: следующий turn обязан получать effective identity из Core-applied turn config, выведенного из `~/.codeai-hub/settings/settings.json`.
 - Codex provider path не имеет права держать второй независимый source of truth для next-turn identity поверх shared settings snapshot и Core resolver.
 - Codex reasoning translation now flows through the shared runtime translation module and is emitted as visible assistant content with `tag: "thinking"`; the old collapsible thinking bootstrap remains only as legacy compatibility for archived raw history.
-- `thinkingDisplaySyncEnabled` remains presentation-only: disabling visible thought sync must not mutate effective model identity, reasoning depth, or translation backend selection.
+- Codex no longer keeps a second display-only gate for reasoning bubbles; upstream `model_reasoning_summary` is the only truth for whether reasoning can reach the client.
+- Settings UI must sync the provider-owned `config.toml` immediately on toggle change and again on save/reset so provider-home stays consistent with persisted settings.
 - `models_cache.json` is an upstream remote-model catalog cache, not the stable source of truth for reasoning summaries; it may be refreshed independently of CodeAI Hub releases.
 - Released Codex runtimes must stay self-contained: if `@codeai-hub/translation` is absent from the installed provider bundle, Core health is considered broken.
 - `Settings -> General -> Response Mode` управляет turn shaping policy:

@@ -25,7 +25,7 @@
 
 ### Modules
 - `Modules/Claude.md` — SSOT Claude provider module.
-- `Modules/Codex.md` — SSOT Codex provider module.
+- `Modules/Codex.md` — SSOT Codex provider module, including reasoning summary settings and provider-home config policy.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
