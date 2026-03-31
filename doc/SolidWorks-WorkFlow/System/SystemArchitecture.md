@@ -104,6 +104,8 @@
   - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini effective model identity from persisted `~/.codeai-hub/settings/settings.json`; it derives `baseModelId`, effective identity descriptor, provider-specific reasoning/thinking payload, and presentation-only thinking display sync gate from one settings snapshot, while remote-bridge queries one provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
+- Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
+  - provider cards now surface `thinkingDisplaySyncEnabled` toggles for Codex and Gemini as presentation-only controls; the shared applied-config contract still carries the flag, but it never affects effective identity resolution or provider runtime reasoning state
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`

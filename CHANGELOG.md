@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.855] - 2026-03-31
+### Added
+- **Thinking display sync controls**: provider settings now expose per-provider toggles for Codex and Gemini visible thinking sync, while the translation and reasoning pipelines stay active even when the visible bubble is disabled.
+
+### Changed
+- **Codex reasoning display parity**: Codex reasoning now uses the shared runtime translation path and the same visible assistant-thinking bubble contract as Gemini, with provider-level display sync gating handled through the applied turn config.
+- **Release preparation docs**: README current-release notes and architecture SSOT now reflect the thinking display sync controls before version bump.
+
 ## [1.1.854] - 2026-03-31
 ### Fixed
 - **Gemini provider bundle dependency**: the build pipeline now vendors `@codeai-hub/translation` into the installed Gemini provider root, so the bundled provider can resolve the shared translation facade without workspace `node_modules`.
