@@ -11,7 +11,7 @@
 ## Work summary
 - Проанализировал текущую Codex reasoning цепочку: `codex-stream-event-router.ts`, `codex-reasoning-streams.ts`, `codex-message-finish-handler.ts`, `codex-session-event-emitter.ts` и Core/UI path, который превращает `role: "thinking"` в отдельную collapsible плашку.
 - Сверил Gemini reference path: `gemini-assistant-event-normalizer.ts` уже эмитит `role: "assistant"` с `tag: "thinking"`, а UI рендерит это как обычную видимую assistant bubble с label `Thinking`.
-- Подготовил новый planning SSOT для Codex reasoning translation и future thinking display sync control: [Codex_Reasoning_Translation_And_Thinking_Display_Sync_Architecture.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Translation_And_Thinking_Display_Sync_Architecture.md).
+- Подготовил новый planning SSOT для Codex reasoning translation и future thinking display sync control; после завершения реализации этот scope перенесён в рабочий SSOT [Codex.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Modules/Codex.md).
 - Нарезал новый `todo-plan.md` на Phase 1, Phase 2 и release stream с микрозадачами и обязательными `Git Commit` пунктами.
 - Закрепил architecture+plan wave коммитом `a41d130b`.
 - Сборки и тесты не запускал: это был planning/doc scope, без runtime-кода.
