@@ -63,4 +63,4 @@ Goal: behavior-preserving decomposition of the remaining test/support warning-zo
 
 ### Stream: Phase Closeout
 15. [DONE] Docs: архивировать завершённый active plan, выпустить placeholder `todo-plan.md` и записать session handoff по итогам волны. Scope: `doc/TODO/Archive/`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Expected commit: `docs(plan): archive test support cleanup wave`
-16. [DONE] Git Commit: `docs(plan): archive test support cleanup wave` (hash: `TBD`)
+16. [DONE] Git Commit: `docs(plan): archive test support cleanup wave` (hash: `ee25633a`)

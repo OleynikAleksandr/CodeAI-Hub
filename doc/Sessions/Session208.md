@@ -26,6 +26,7 @@
 - `a23f24c7 test(repo): verify test support warning-zone cleanup`
 - `69cc7b9d docs(release): prepare test support cleanup release notes`
 - `837cc96d build(release): assemble test support cleanup release`
+- `ee25633a docs(plan): archive test support cleanup wave`
 
 ---
 
