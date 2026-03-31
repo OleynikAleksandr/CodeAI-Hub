@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.853] - 2026-03-31
+### Added
+- **Shared runtime translation module**: `packages/translation` now provides the reusable translation facade and Google GTX engine for runtime translation use cases.
+
+### Changed
+- **Gemini thought translation adapter**: Gemini thoughts now flow through `GeminiThoughtTranslationAdapter` backed by the shared facade, and `thought-translator-service.ts` remains a compatibility re-export.
+- **Gemini session wiring**: `GeminiSessionManager` and `GeminiTurnRunner` now own the adapter directly, keeping translated thinking visible as tagged assistant output without changing the UI contract.
+
+### Fixed
+- **Gemini flush semantics**: when no thought translations are pending, finished turns now emit the final assistant segment synchronously; deferred flush still handles pending translations.
+- **Verification surface**: `@codeai-hub/translation` and `@codeai-hub/gemini-module` builds plus focused `message-processor` / `gemini-session-manager` tests passed before release packaging.
+
 ## [1.1.852] - 2026-03-31
 ### Changed
 - **Workspace runtime test split**: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts` now keeps snapshot/select/flush coverage, while continuity and resume scenarios moved into `packages/core/src/workspace-runtime/workspace-runtime-facade-continuity.test.ts`.
