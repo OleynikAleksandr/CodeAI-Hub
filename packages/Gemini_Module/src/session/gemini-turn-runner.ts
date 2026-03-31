@@ -3,8 +3,8 @@ import type {
   ToolCallRequestInfo,
 } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { Part, UsageMetadata } from "@google/genai";
+import type { GeminiThoughtTranslationAdapter } from "../messaging/gemini-thought-translation-adapter";
 import { GeminiMessageProcessor } from "../messaging/message-processor";
-import type { ThoughtTranslatorService } from "../messaging/thought-translator-service";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { GeminiSessionEvent, ModuleReporter } from "../types";
 import { GeminiSessionLifecycle } from "./gemini-session-lifecycle";
@@ -49,7 +49,7 @@ interface GeminiTurnRunnerOptions {
   ) => void;
   readonly modules: GeminiCliModules;
   readonly reporter?: ModuleReporter;
-  readonly thoughtTranslator: ThoughtTranslatorService;
+  readonly thoughtTranslator: GeminiThoughtTranslationAdapter;
   readonly toolCallOrchestrator: GeminiToolCallOrchestrator;
 }
 
@@ -58,7 +58,7 @@ export class GeminiTurnRunner {
   private readonly modules: GeminiCliModules;
   private readonly reporter?: ModuleReporter;
   private readonly sessionLifecycle = new GeminiSessionLifecycle();
-  private readonly thoughtTranslator: ThoughtTranslatorService;
+  private readonly thoughtTranslator: GeminiThoughtTranslationAdapter;
   private readonly toolCallOrchestrator: GeminiToolCallOrchestrator;
 
   constructor(options: GeminiTurnRunnerOptions) {
