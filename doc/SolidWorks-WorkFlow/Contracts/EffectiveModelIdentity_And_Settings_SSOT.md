@@ -64,6 +64,8 @@ Provider-neutral payload, вычисленный Core-ом из settings snapsho
 Persisted user-facing settings state, из которого Core вычисляет next-turn identity.  
 Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth.
 
+Presentation-only flags, such as `thinkingDisplaySyncEnabled`, live in the same persisted settings snapshot but are intentionally excluded from effective identity resolution. Они управляют тем, показывать ли visible thinking sync, and must not mutate `modelId` or applied turn config identity.
+
 ---
 
 ## 4. Runtime Contract
@@ -119,6 +121,7 @@ Project Manager и shared UI должны отображать applied config, �
 5. Core owns effective turn config resolution; providers only consume applied config.
 6. UI must display Core-confirmed applied identity, not a locally guessed future state.
 7. Provider-native runtime traces remain the proof of what was actually applied.
+8. Presentation-only settings flags do not participate in effective identity resolution.
 
 ---
 
