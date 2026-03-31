@@ -8,6 +8,7 @@ import type { ActiveSession } from "../session/types";
 import { CodexSDKManager } from "./codex-sdk-manager";
 
 const MODEL_REASONING_SUMMARY_AUTO_REGEX = /model_reasoning_summary = "auto"/u;
+const MODEL_REASONING_SUMMARY_NONE_REGEX = /model_reasoning_summary = "none"/u;
 const LEGACY_REASONING_SUMMARY_REGEX = /default_reasoning_summary/u;
 
 test("resumeSession keeps existing thread id for gpt-5.4 instead of starting a fresh thread", async () => {
@@ -140,6 +141,50 @@ test("sanitizeConfigToml replaces legacy default_reasoning_summary key", async (
   const next = await readFile(path.join(codexHome, "config.toml"), "utf8");
   assert.match(next, MODEL_REASONING_SUMMARY_AUTO_REGEX);
   assert.doesNotMatch(next, LEGACY_REASONING_SUMMARY_REGEX);
+});
+
+test("sanitizeConfigToml writes none when saved settings disable reasoning summaries", async () => {
+  const codexHome = await mkdtemp(path.join(tmpdir(), "codex-config-"));
+  const settingsRoot = await mkdtemp(path.join(tmpdir(), "codex-settings-"));
+  const settingsPath = path.join(settingsRoot, "settings.json");
+  const previousSettingsPath = process.env.CLAUDE_SETTINGS_PATH;
+
+  await writeFile(
+    settingsPath,
+    JSON.stringify({
+      providers: {
+        codex: {
+          reasoningSummaryEnabled: false,
+        },
+      },
+    }),
+    "utf8"
+  );
+  process.env.CLAUDE_SETTINGS_PATH = settingsPath;
+
+  await writeFile(
+    path.join(codexHome, "config.toml"),
+    ['approval_policy = "never"', 'model = "gpt-5.4"', ""].join("\n"),
+    "utf8"
+  );
+
+  try {
+    const manager = createManager();
+    await (
+      manager as unknown as {
+        sanitizeConfigToml: (target: string) => Promise<void>;
+      }
+    ).sanitizeConfigToml(codexHome);
+  } finally {
+    if (previousSettingsPath) {
+      process.env.CLAUDE_SETTINGS_PATH = previousSettingsPath;
+    } else {
+      process.env.CLAUDE_SETTINGS_PATH = undefined;
+    }
+  }
+
+  const next = await readFile(path.join(codexHome, "config.toml"), "utf8");
+  assert.match(next, MODEL_REASONING_SUMMARY_NONE_REGEX);
 });
 
 const createActiveSession = (

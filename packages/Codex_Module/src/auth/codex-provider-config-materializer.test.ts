@@ -16,6 +16,7 @@ import {
 } from "./codex-provider-config-materializer";
 
 const MODEL_REASONING_SUMMARY_AUTO_REGEX = /model_reasoning_summary = "auto"/u;
+const MODEL_REASONING_SUMMARY_NONE_REGEX = /model_reasoning_summary = "none"/u;
 const LEGACY_REASONING_SUMMARY_REGEX = /default_reasoning_summary/u;
 
 test("materializeCodexProviderConfigToml adds provider reasoning summary override", () => {
@@ -40,6 +41,15 @@ test("materializeCodexProviderConfigToml replaces legacy reasoning summary key",
 
   assert.match(next, MODEL_REASONING_SUMMARY_AUTO_REGEX);
   assert.doesNotMatch(next, LEGACY_REASONING_SUMMARY_REGEX);
+});
+
+test("materializeCodexProviderConfigToml writes none override when disabled", () => {
+  const { next } = materializeCodexProviderConfigToml(
+    ['model = "gpt-5.4"', 'model_reasoning_effort = "xhigh"', ""].join("\n"),
+    { modelReasoningSummary: "none" }
+  );
+
+  assert.match(next, MODEL_REASONING_SUMMARY_NONE_REGEX);
 });
 
 test("config materializer keeps source config untouched and replaces provider symlink", async () => {
