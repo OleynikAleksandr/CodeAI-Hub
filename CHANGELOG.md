@@ -4,6 +4,19 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.857] - 2026-03-31
+### Added
+- **Codex `gpt-5.4-mini` settings exposure**: the Codex settings baseline now includes `gpt-5.4-mini` with the same reasoning effort choices as `gpt-5.4`.
+
+### Changed
+- **Codex reasoning summary setting**: Codex settings now expose `Reasoning in dialog` as the canonical toggle for provider reasoning summaries. `On` maps to `model_reasoning_summary = "auto"` and `Off` maps to `"none"`.
+- **Provider-home config ownership**: `~/.codeai-hub/providers/codex/home/config.toml` is now a provider-owned materialized file derived from `~/.codex/config.toml` plus CodeAI overrides, instead of a direct symlink to the user config.
+- **Immediate Codex settings sync**: toggling the Codex reasoning setting in the UI rewrites the provider-owned `config.toml` immediately, while saved settings remain the restart-proof source of truth for future provider bootstrap.
+
+### Fixed
+- **Duplicate Codex truth paths removed**: Codex no longer keeps a second display-only runtime gate for translated reasoning bubbles; visible reasoning now depends only on whether upstream Codex actually sends reasoning summaries.
+- **Saved settings bootstrap parity**: Codex auth/bootstrap and SDK config sanitization now resolve reasoning summary mode from the shared persisted settings snapshot instead of hardcoding `"auto"`.
+
 ## [1.1.856] - 2026-03-31
 ### Fixed
 - **Codex provider bundle dependency**: the build pipeline now vendors `@codeai-hub/translation` into the installed Codex provider root, so Core can load Codex startup-time reasoning translation support without workspace `node_modules`.

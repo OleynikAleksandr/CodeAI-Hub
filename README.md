@@ -7,10 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.856
+## Current Release — v1.1.857
 - **Shared runtime translation module**: `@codeai-hub/translation` now owns the provider-neutral translation facade and Google GTX engine for runtime translation use cases.
 - **Gemini adapter parity**: Gemini thought translation now routes through `GeminiThoughtTranslationAdapter` backed by the shared facade, with `thought-translator-service.ts` preserved as a compatibility re-export and session wiring moved onto the adapter directly.
-- **Thinking display sync controls**: provider settings now expose per-provider `thinkingDisplaySyncEnabled` toggles for Codex and Gemini, so visible thinking bubbles can be turned off without disabling translation or reasoning processing.
+- **Codex reasoning in dialog**: Codex settings now expose a provider-level `Reasoning in dialog` toggle. `On` lets Codex send reasoning summaries for translation/display, while `Off` sets `model_reasoning_summary = "none"` so reasoning summaries never reach the client.
+- **Immediate Codex provider-home sync**: switching the Codex reasoning toggle rewrites the provider-owned `~/.codeai-hub/providers/codex/home/config.toml` immediately, and saved settings drive the same `auto|none` mode again on the next bootstrap.
+- **Codex provider-home materialization**: the Codex provider now keeps its own `config.toml` derived from the user `~/.codex/config.toml` plus CodeAI overrides, instead of symlinking the whole config file.
+- **Codex model list update**: `gpt-5.4-mini` is now available in Codex settings with the same reasoning effort options as `gpt-5.4`.
 - **Bundled Codex runtime**: the Codex provider release bundle now vendors `@codeai-hub/translation` into its installed runtime root, so Core can load Codex startup-time reasoning translation support without relying on workspace `node_modules`.
 - **Bundled Gemini runtime**: the Gemini provider release bundle now vendors `@codeai-hub/translation` into its installed runtime root, so the installed provider can resolve the shared translation package without depending on workspace `node_modules`.
 - **Parity verification**: release smoke checks now validate both Codex and Gemini installed bundles against the bundled shared translation package before VSIX packaging.
