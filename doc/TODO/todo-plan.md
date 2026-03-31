@@ -54,12 +54,12 @@ Goal: extract provider-neutral EN -> target-language translation capability into
 Goal: rewire Gemini thought translation onto the new shared facade with zero visible regression, then sync docs and assemble a new release.
 
 ### Stream: Gemini Translation Adapter
-9. [TODO] Gemini_Module: добавить provider-local adapter поверх shared translation facade и превратить legacy thought translator entrypoint в compatibility re-export, сохранив `assistant + tag: thinking` contract. Scope: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/thought-translator-service.ts`, `package-lock.json`. Expected commit: `refactor(gemini): add shared translation adapter`
-10. [TODO] Git Commit: `refactor(gemini): add shared translation adapter` (hash: TBD)
+9. [DONE] Gemini_Module: добавить provider-local adapter поверх shared translation facade и превратить legacy thought translator entrypoint в compatibility re-export, сохранив `assistant + tag: thinking` contract. Scope: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/thought-translator-service.ts`, `package-lock.json`. Expected commit: `refactor(gemini): add shared translation adapter`
+10. [DONE] Git Commit: `refactor(gemini): add shared translation adapter` (hash: `b9e92f17`)
 
 ### Stream: Gemini Session Wiring
-11. [TODO] Gemini_Module: перевести session-layer wiring со старого provider-local translator на shared translation facade и убрать direct Gemini-owned translator instance из session orchestration. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/messaging/thought-translator-service.ts`. Expected commit: `refactor(gemini): wire shared translation facade`
-12. [TODO] Git Commit: `refactor(gemini): wire shared translation facade` (hash: TBD)
+11. [DONE] Gemini_Module: перевести session-layer wiring со старого provider-local translator на shared translation facade и убрать direct Gemini-owned translator instance из session orchestration. Scope: `packages/Gemini_Module/src/session/gemini-turn-runner.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.ts`, `packages/Gemini_Module/src/messaging/thought-translator-service.ts`. Expected commit: `refactor(gemini): wire shared translation facade`
+12. [DONE] Git Commit: `refactor(gemini): wire shared translation facade` (hash: `b03133c8`)
 
 ### Stream: Gemini Parity Verification
 13. [TODO] Verification: прогнать targeted Gemini parity checks для translated thinking ordering/fallback и package builds для `translation` + `gemini-module`, затем синхронизировать execution status. Scope: `packages/translation`, `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): verify shared translation parity`
