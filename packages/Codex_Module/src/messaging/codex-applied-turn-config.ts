@@ -24,7 +24,6 @@ interface ResolvedAppliedCodexTurnConfig {
   readonly modelId?: string;
   readonly reasoningEffort?: CodexReasoningEffort;
   readonly runtimeModelId?: string;
-  readonly thinkingDisplaySyncEnabled?: boolean;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -48,10 +47,6 @@ const readAppliedCodexTurnConfig = (
     typeof candidate.effectiveModelId === "string"
       ? candidate.effectiveModelId
       : modelId;
-  const thinkingDisplaySyncEnabled =
-    typeof candidate.thinkingDisplaySyncEnabled === "boolean"
-      ? candidate.thinkingDisplaySyncEnabled
-      : true;
 
   return {
     effectiveModelId,
@@ -64,7 +59,6 @@ const readAppliedCodexTurnConfig = (
         ? (candidate.reasoningEffort as CodexReasoningEffort)
         : undefined,
     runtimeModelId: baseModelId ?? modelId,
-    thinkingDisplaySyncEnabled,
   };
 };
 
@@ -73,10 +67,6 @@ export const applyCodexTurnRuntimeConfig = (
   turnOptions?: CodexTurnOptions
 ): CodexTurnOptions | undefined => {
   const appliedConfig = readAppliedCodexTurnConfig(turnOptions);
-  if (appliedConfig) {
-    session.thinkingDisplaySyncEnabled =
-      appliedConfig.thinkingDisplaySyncEnabled;
-  }
   if (appliedConfig && session.thread) {
     const thread = session.thread as unknown as ThreadRuntimeState;
     thread._threadOptions = {

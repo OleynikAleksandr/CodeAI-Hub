@@ -27,7 +27,6 @@ export interface ActiveSession {
   responsePolicy?: CodexResponsePolicy;
   sessionId: string;
   structuredOutputUuids?: Set<string>;
-  thinkingDisplaySyncEnabled?: boolean;
   thread?: Thread;
   readonly workspacePath: string;
 }
