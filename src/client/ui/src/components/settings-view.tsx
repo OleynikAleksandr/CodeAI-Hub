@@ -206,12 +206,12 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                   defaultModel={settings.providers.codex.defaultModel}
                   onDefaultModelChange={handleCodexDefaultModelChange}
                   onReasoningChange={handleCodexReasoningChange}
-                  onThinkingDisplaySyncChange={
+                  onReasoningSummaryEnabledChange={
                     handleCodexThinkingDisplaySyncChange
                   }
                   reasoningByModel={settings.providers.codex.reasoningByModel}
-                  thinkingDisplaySyncEnabled={
-                    settings.providers.codex.thinkingDisplaySyncEnabled
+                  reasoningSummaryEnabled={
+                    settings.providers.codex.reasoningSummaryEnabled
                   }
                 />
                 <ProviderVersions
