@@ -263,6 +263,15 @@ for artefact in "${REQUIRED_FILES[@]}"; do
   fi
 done
 
+GEMINI_INSTALL_ROOT="$HOME/.codeai-hub/providers/gemini/$VERSION"
+if [[ ! -f "$GEMINI_INSTALL_ROOT/node_modules/@codeai-hub/translation/package.json" ]]; then
+  echo "❌ Missing bundled @codeai-hub/translation package in $GEMINI_INSTALL_ROOT" >&2
+  exit 1
+fi
+
+node -e "require('$GEMINI_INSTALL_ROOT/dist/index.js')"
+echo "✅ Gemini provider bundle loads with bundled shared translation package"
+
 if ! VERSION="$VERSION" \
 CORE_KEY="$CORE_PLATFORM_KEY" \
 LAUNCHER_KEY="$LAUNCHER_MANIFEST_KEY" \

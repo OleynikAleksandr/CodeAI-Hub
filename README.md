@@ -7,12 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.853
+## Current Release — v1.1.854
 - **Shared runtime translation module**: `@codeai-hub/translation` now owns the provider-neutral translation facade and Google GTX engine for runtime translation use cases.
 - **Gemini adapter parity**: Gemini thought translation now routes through `GeminiThoughtTranslationAdapter` backed by the shared facade, with `thought-translator-service.ts` preserved as a compatibility re-export and session wiring moved onto the adapter directly.
+- **Bundled Gemini runtime**: the Gemini provider release bundle now vendors `@codeai-hub/translation` into its installed runtime root, so the installed provider can resolve the shared translation package without depending on workspace `node_modules`.
 - **Parity verification**: targeted Gemini message-processor/session-manager tests and package builds passed before release packaging.
 
-Previous releases (summary): `1.1.800–1.1.852` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
+Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

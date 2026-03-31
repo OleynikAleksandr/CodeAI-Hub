@@ -29,6 +29,7 @@
 - **CEF Launcher**: локальный клиент для Project Manager.
 - **Providers**: Claude/Codex/Gemini модули (CLI/SDK контуры).
 - **Shared runtime translation module**: `packages/translation/` (engine-neutral facade used by Gemini today and future localization adapters tomorrow).
+- **Gemini bundled runtime dependency**: installed Gemini provider bundles vendor `@codeai-hub/translation` into their own runtime root so the provider can resolve the shared translation package outside the workspace `node_modules` tree.
 
 ## 2) SSOT уровни (иерархия документов)
 

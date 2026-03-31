@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.854] - 2026-03-31
+### Fixed
+- **Gemini provider bundle dependency**: the build pipeline now vendors `@codeai-hub/translation` into the installed Gemini provider root, so the bundled provider can resolve the shared translation facade without workspace `node_modules`.
+- **Release validation**: build/release smoke checks now require the installed Gemini bundle to load successfully before packaging, which catches missing bundled translation dependencies early.
+
 ## [1.1.853] - 2026-03-31
 ### Added
 - **Shared runtime translation module**: `packages/translation` now provides the reusable translation facade and Google GTX engine for runtime translation use cases.

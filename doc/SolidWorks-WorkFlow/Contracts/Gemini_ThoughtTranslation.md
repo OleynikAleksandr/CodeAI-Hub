@@ -3,7 +3,7 @@
 **Статус:** Implemented on `main`  
 **Обновлено:** 2026-03-31  
 **Owner:** Oleksandr + Codex  
-**Validated on:** `main` (`v1.1.852`)
+**Validated on:** `main` (`v1.1.854`)
 
 ---
 
@@ -60,6 +60,7 @@ Code owners:
 - Shared facade normalizes request, resolves engine, and delegates to `GoogleTranslateClient`.
 - `GoogleTranslateClient` вызывает free Google Translate endpoint `translate.googleapis.com`.
 - Если shared translation возвращает non-translated/fallback/skipped result, adapter возвращает `null`, а caller falls back to original formatted thought text.
+- Installed Gemini provider bundles vendor the shared `@codeai-hub/translation` package into their own runtime root during build, so the adapter remains resolvable after deployment without depending on the workspace `node_modules` tree.
 
 ### 3.2. Обработка Gemini messages
 

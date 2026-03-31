@@ -18,6 +18,7 @@
 - `packages/Gemini_Module/src/runtime/cli-bridge.ts` — runtime bridge loader and compatibility entrypoint; root/core resolution now delegates to `cli-bridge-root-resolver.ts`.
 - `packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts` — module loading and compatibility validation helper shared by `cli-bridge.ts` and `gemini-installer.ts`.
 - `packages/Gemini_Module/src/runtime/cli-bridge-root-resolver.ts` — CLI/Core package root candidate scanning and version resolution helper.
+- Installed Gemini provider bundles are self-contained at runtime: `scripts/build-gemini-module.sh` vendors `@codeai-hub/translation` into the provider install root so `dist/index.js` can resolve the shared package outside the workspace tree.
 
 ## Installer cluster
 - `packages/Gemini_Module/src/installer/gemini-installer.ts` — bridge/install orchestrator facade for package preparation and recovery.
@@ -37,6 +38,7 @@
 - Если Gemini stream завис после `model_info`, partial text или другого промежуточного progress event и больше не отдаёт terminal event, stalled-turn watchdog обязан завершить turn контролируемой recoverable ошибкой вместо вечного `working`; для nested `post_tool` legs используется более длинное Gemini-specific окно, чем для initial leg, но отсутствие terminal-leg answer всё равно остаётся failure.
 - `sdk-gemini-*.jsonl` остаётся диагностическим/raw session логом; exact provider-applied model/thinking при аудите нужно подтверждать по Gemini raw session/stream traces, а не по отдельным normalized `provider_feedback` записям.
 - `formatGeminiStreamErrorMessage()` остаётся единым formatter-ом для nested Gemini stream payload errors, чтобы router и тесты не расходились по тексту ошибок.
+- Installed Gemini bundles must be runnable after deployment without relying on the repo workspace `node_modules`; any shared runtime dependency required by the provider must be copied into the bundle root by the build script.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

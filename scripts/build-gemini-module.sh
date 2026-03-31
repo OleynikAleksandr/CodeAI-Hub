@@ -55,6 +55,12 @@ fi
 
 echo "📦 Building Gemini module v$MODULE_VERSION"
 
+cd "$REPO_ROOT"
+echo "📦 Building shared translation package..."
+npm run build --workspace=@codeai-hub/translation >/dev/null
+
+cd "$MODULE_DIR"
+
 echo "🧹 Resetting build output..."
 rm -rf dist
 
@@ -71,6 +77,10 @@ trap 'rm -rf "$STAGE_DIR"' EXIT
 
 cp -R dist "$STAGE_DIR/dist"
 cp package.json "$STAGE_DIR/package.json"
+
+mkdir -p "$STAGE_DIR/node_modules/@codeai-hub/translation"
+cp -R "$REPO_ROOT/packages/translation/dist" "$STAGE_DIR/node_modules/@codeai-hub/translation/"
+cp "$REPO_ROOT/packages/translation/package.json" "$STAGE_DIR/node_modules/@codeai-hub/translation/package.json"
 if [[ -f package-lock.json ]]; then
   cp package-lock.json "$STAGE_DIR/package-lock.json"
 fi
