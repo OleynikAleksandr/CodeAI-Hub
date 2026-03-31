@@ -46,8 +46,8 @@ Goal: extract provider-neutral EN -> target-language translation capability into
 6. [DONE] Git Commit: `feat(translation): add google gtx engine` (hash: `217de5b1`)
 
 ### Stream: Translation Package Verification
-7. [TODO] Verification: прогнать targeted build/diagnostics для нового translation package и синхронизировать execution status. Scope: `packages/translation`, `doc/TODO/todo-plan.md`. Expected commit: `test(translation): verify shared translation package`
-8. [TODO] Git Commit: `test(translation): verify shared translation package` (hash: TBD)
+7. [DONE] Verification: прогнать targeted build/diagnostics для нового translation package и синхронизировать execution status. Scope: `packages/translation`, `doc/TODO/todo-plan.md`. Expected commit: `test(translation): verify shared translation package`
+8. [DONE] Git Commit: `test(translation): verify shared translation package` (hash: TBD)
 
 ## Phase 2 — Gemini Adapter Parity And Release (owner: Oleksandr, updated: 2026-03-31)
 
