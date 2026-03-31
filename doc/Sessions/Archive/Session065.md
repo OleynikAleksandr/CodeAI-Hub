@@ -61,8 +61,8 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 6. `doc/BugRegistry.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session064.md`
-9. `doc/Sessions/Session065.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session064.md`
+9. `doc/Sessions/Archive/Session065.md` (THIS REPORT)
 
 ## Plans for next session
 - Немедленных hotfix-задач по baseline-релизу `1.1.722` не осталось: пользователь подтвердил рабочий `Debug/Raw` и рабочий `Hybrid`.

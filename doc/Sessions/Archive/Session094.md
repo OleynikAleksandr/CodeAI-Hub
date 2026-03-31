@@ -46,7 +46,7 @@
 4. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
 5. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session094.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session094.md` (THIS REPORT)
 
 > Далее: открыть PM в реальном UI и проверить `v1.1.741` именно по user-surface contract, а не только по технической корректности артефактов.
 

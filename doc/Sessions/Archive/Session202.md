@@ -11,9 +11,9 @@
 ## Work summary
 - Восстановлен контекст по `Session200` и `Session201`, затем сверена фактическая git-история релиза `1.1.850`; подтверждено, что финальный release commit `2160ba28` существовал в репозитории, но не был синхронизирован в `Session200` и active `todo-plan`.
 - Planning trail Gemini синхронизирован с фактическим состоянием проекта:
-  - в `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md` добавлен closure-note про upstream pause после `1.1.850`;
-  - в `doc/Sessions/Session200.md` добавлен недостающий `chore(release): finalize 1.1.850 vsix`;
-  - `doc/Sessions/Session201.md` заведён в git как канонический отчёт про upstream instability и решение поставить Gemini на паузу.
+  - в `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md` добавлен closure-note про upstream pause после `1.1.850`;
+  - в `doc/Sessions/Archive/Session200.md` добавлен недостающий `chore(release): finalize 1.1.850 vsix`;
+  - `doc/Sessions/Archive/Session201.md` заведён в git как канонический отчёт про upstream instability и решение поставить Gemini на паузу.
 - Завершённый Gemini-focused execution plan архивирован в `doc/TODO/Archive/todo-plan-up-to-phase3-gemini-upstream-pause-2026-03-30.md`.
 - Активный `doc/TODO/todo-plan.md` заменён на placeholder без открытого execution scope; теперь следующий этап работ должен начинаться только с нового approved planning-дока.
 - Runtime-код, release artifacts и версии пакетов в этой сессии не менялись. Husky gates на docs-коммитах прошли зелёно: architecture check, `npm run lint`, `npm run check:knip`, staged formatting.
@@ -29,8 +29,8 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session201.md`
-3. `doc/Sessions/Session202.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session201.md`
+3. `doc/Sessions/Archive/Session202.md` (THIS REPORT)
 4. `doc/TODO/todo-plan.md`
 5. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 6. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

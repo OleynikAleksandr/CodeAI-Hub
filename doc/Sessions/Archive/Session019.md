@@ -38,7 +38,7 @@ VSIX sha256: `cb2208508c1f730322a085fb3188093f1e567f67e623b5dd18cf23eb03bec85c`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session019.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session019.md` (THIS REPORT)
 
 ## Plans for next session
 - Smoke test (Standalone PM / CEF): one-shot `Description` → ↻ (arm) → ↻ (confirm) → новая попытка стартует, приложение не падает.

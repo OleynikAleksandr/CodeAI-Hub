@@ -35,7 +35,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session034.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session034.md` (THIS REPORT)
 
 ## Key files to review before implementation
 1. `packages/core/src/workspace-runtime/task-timer-storage.ts` — рефакторинг хранилища (Stream 0)

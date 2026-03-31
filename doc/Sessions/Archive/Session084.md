@@ -56,7 +56,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session084.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session084.md` (THIS REPORT)
 7. `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md`
 
 ## Plans for next session

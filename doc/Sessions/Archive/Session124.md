@@ -18,7 +18,7 @@
 ## Current active artifacts for next work
 - Planning doc: [PostRelease_Regression_Feedback_Architecture.md](../../doc/SolidWorks-WorkFlow/Plans/Archive/PostRelease_Regression_Feedback_Architecture.md)
 - Active execution plan: [todo-plan.md](../../doc/TODO/todo-plan.md)
-- Previous release/session baseline: [Session123.md](../../doc/Sessions/Session123.md)
+- Previous release/session baseline: [Session123.md](../../doc/Sessions/Archive/Session123.md)
 - Archived completed plan: [todo-plan-up-to-phase26-2026-03-22.md](../../doc/TODO/Archive/todo-plan-up-to-phase26-2026-03-22.md)
 
 ## Working assumptions at this point
@@ -42,14 +42,14 @@
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Archive/PostRelease_Regression_Feedback_Architecture.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session123.md`
-10. `doc/Sessions/Session124.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session123.md`
+10. `doc/Sessions/Archive/Session124.md` (THIS REPORT)
 
 ## Git context recovery before coding
 - Обязательно просмотреть через `git show --stat <hash>` и `git show <hash>` как минимум:
   - `8d47800b docs(session): record 1.1.762 idea legacy cleanup release`
   - `17e23bee docs(plan): start post-release regression feedback scope`
-- Если нужно восстановить полный cleanup-context до текущего baseline, дополнительно просмотреть ключевые Phase 26 commits из [Session123.md](../../doc/Sessions/Session123.md).
+- Если нужно восстановить полный cleanup-context до текущего baseline, дополнительно просмотреть ключевые Phase 26 commits из [Session123.md](../../doc/Sessions/Archive/Session123.md).
 
 ## Plans for next session
 - Продолжать live regression на `1.1.762` по реальным сообщениям агентов и артефактам.

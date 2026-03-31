@@ -59,8 +59,8 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 6. `doc/BugRegistry.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session063.md`
-9. `doc/Sessions/Session064.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session063.md`
+9. `doc/Sessions/Archive/Session064.md` (THIS REPORT)
 
 ## Plans for next session
 - Начать с `Phase 294 / Stream 0` из `todo-plan.md`: минимально починить перенос response-mode config и in-flight structured-output state при `temp session id -> real thread id`.

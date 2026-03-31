@@ -51,8 +51,8 @@
 7. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`
 9. `doc/TODO/todo-plan.md`
-10. `doc/Sessions/Session138.md`
-11. `doc/Sessions/Session139.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session138.md`
+11. `doc/Sessions/Archive/Session139.md` (THIS REPORT)
 
 ## First sanity check
 - Выполнить `git status --short --branch` и убедиться, что дерево чистое после handoff commit-а.

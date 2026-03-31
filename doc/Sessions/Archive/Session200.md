@@ -10,7 +10,7 @@
 
 ## Work summary
 - Зафиксирован новый post-release defect после `1.1.849`: Gemini доходил до реального terminal answer, но dialog history дублировала финальный ответ из-за гонки между deferred flush translated thoughts и fallback aggregate assistant emit.
-- Обновлён planning-док `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md` и расширен активный `doc/TODO/todo-plan.md` отдельной фазой под dedup remediation и новый release cycle.
+- Обновлён planning-док `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md` и расширен активный `doc/TODO/todo-plan.md` отдельной фазой под dedup remediation и новый release cycle.
 - В messaging layer добавлен явный deferred dialog flush contract:
   - `gemini-assistant-event-normalizer.ts` сериализует final assistant segment после pending translated thoughts;
   - `message-processor.ts` теперь умеет явно `drain()` pending Gemini dialog emits;
@@ -58,12 +58,12 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session200.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session200.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
-7. `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md`
 
 ## Plans for next session
 - Прогнать ручной Gemini `Description` flow на релизе `1.1.850` и проверить, что terminal answer больше не дублируется в dialog history.

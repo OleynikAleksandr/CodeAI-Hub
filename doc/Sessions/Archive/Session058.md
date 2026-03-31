@@ -37,7 +37,7 @@
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session058.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session058.md` (THIS REPORT)
 
 ## High-signal code files for the fix
 - `src/client/project-manager/components/layout/main-area.tsx`

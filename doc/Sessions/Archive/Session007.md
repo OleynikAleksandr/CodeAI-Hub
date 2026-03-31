@@ -38,7 +38,7 @@ VSIX sha256: `85855518266116f61ed679e3376eea00788a87ba529d4d8475afcfc0f3a0720a`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session007.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session007.md` (THIS REPORT)
 
 ## Plans for next session
 - Визуально подтвердить во всех провайдерах (Claude/Codex/Gemini): обе locked-надписи в input (`working`/`resuming`) имеют правильный provider-цвет и читаемость при opacity 80%.

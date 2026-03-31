@@ -198,11 +198,11 @@
 ### I. Исторический след, который полезно сохранить, но не вычищать
 
 - Архивные session reports:
-  - `doc/Sessions/Session017.md`
-  - `doc/Sessions/Session019.md`
-  - `doc/Sessions/Session021.md`
-  - `doc/Sessions/Session023.md`
-  - `doc/Sessions/Session024.md`
+  - `doc/Sessions/Archive/Session017.md`
+  - `doc/Sessions/Archive/Session019.md`
+  - `doc/Sessions/Archive/Session021.md`
+  - `doc/Sessions/Archive/Session023.md`
+  - `doc/Sessions/Archive/Session024.md`
 - Архивный план:
   - `doc/TODO/Archive/todo-plan-phase238-description-restart-attempt-2026-02-24.md`
 - Исторические записи в `doc/BugRegistry.md`.
@@ -278,12 +278,12 @@
 4. `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 5. `doc/BugRegistry.md`
 6. `doc/TODO/Archive/todo-plan-phase238-description-restart-attempt-2026-02-24.md`
-7. `doc/Sessions/Session017.md`
-8. `doc/Sessions/Session019.md`
-9. `doc/Sessions/Session021.md`
-10. `doc/Sessions/Session023.md`
-11. `doc/Sessions/Session024.md`
-12. `doc/Sessions/Session068.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session017.md`
+8. `doc/Sessions/Archive/Session019.md`
+9. `doc/Sessions/Archive/Session021.md`
+10. `doc/Sessions/Archive/Session023.md`
+11. `doc/Sessions/Archive/Session024.md`
+12. `doc/Sessions/Archive/Session068.md` (THIS REPORT)
 
 ## Plans for next session
 - Зафиксировать границу cleanup:

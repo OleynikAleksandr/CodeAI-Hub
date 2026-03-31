@@ -96,7 +96,7 @@
 ## Required documents to review before work
 
 1. `AGENTS.md`
-2. `doc/Sessions/Session165.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session165.md` (THIS REPORT)
 3. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md`

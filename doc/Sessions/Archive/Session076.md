@@ -43,8 +43,8 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/Gemini_DialogSegmentation_Architecture.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session075.md`
-8. `doc/Sessions/Session076.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session075.md`
+8. `doc/Sessions/Archive/Session076.md` (THIS REPORT)
 
 > Текущий status: hotfix-релиз `v1.1.728` собран локально. План с usage-limits scope полностью закрыт до `Phase 9` и заархивирован. Следующий утверждённый scope уже подготовлен: Gemini dialog segmentation fix по planning-доку `Gemini_DialogSegmentation_Architecture.md`.
 

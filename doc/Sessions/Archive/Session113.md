@@ -12,8 +12,8 @@
 
 - Восстановлен release context после `Session112` и подготовлен pre-release cleanup commit для локального релиза `1.1.755`.
 - Докоммичены пропущенные handoff-документы:
-  - `doc/Sessions/Session110.md`
-  - `doc/Sessions/Session111.md`
+  - `doc/Sessions/Archive/Session110.md`
+  - `doc/Sessions/Archive/Session111.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md`
 - Удалены больше не нужные prompt/help draft-файлы из `doc/`, потому что их содержимое уже перенесено в runtime assets и user-facing help surface.
 - Синхронно обновлены release-facing и SSOT документы:
@@ -39,7 +39,7 @@
   - `Verifying SDK exclusions` прошёл успешно
   - `Removing dev dependencies before packaging` выполнен
   - `Package created` выдал итоговый VSIX
-- `build-release.sh` показал advisory по broken markdown links в старом `doc/Sessions/Session106.md`, но это не стало hard blocker для packaging.
+- `build-release.sh` показал advisory по broken markdown links в старом `doc/Sessions/Archive/Session106.md`, но это не стало hard blocker для packaging.
 - После всех коммитов и сборки рабочее дерево снова чистое.
 
 ## Git commits
@@ -55,8 +55,8 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session112.md`
-6. `doc/Sessions/Session113.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session112.md`
+6. `doc/Sessions/Archive/Session113.md` (THIS REPORT)
 
 > Далее: открыть нужные planning/SSOT документы из `doc/SolidWorks-WorkFlow/Plans/`, `System/`, `Clusters/`, `Modules/`, `Contracts/` в зависимости от результата greenfield regression.
 

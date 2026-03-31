@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Восстановлен контекст по `doc/Sessions/Session027.md` (обязательный просмотр всех коммитов из отчёта).
+- Восстановлен контекст по `doc/Sessions/Archive/Session027.md` (обязательный просмотр всех коммитов из отчёта).
 - Исправлен build-blocker в Core: типизация validation gate (`WorkflowGateState`) для Virtual Simulation валидации (ломала `npm run build --workspace=@codeai-hub/core`).
 - Phase 252 (release build):
   - `./scripts/build-all.sh` → unified artefacts `1.1.670` (providers/core/ui/launcher) + копия в `doc/tmp/releases/`.
@@ -41,7 +41,7 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session028.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session028.md` (THIS REPORT)
 
 ## Plans for next session
 - Smoke: установить `doc/tmp/releases/codeai-hub-1.1.670.vsix` и проверить Workflow: manual start `Virtual Simulation` + `OUTDATED/BLOCKED` статусы + validation/CTA.

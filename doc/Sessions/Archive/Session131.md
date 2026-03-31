@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Продолжен release stream после промежуточного handoff из [Session130.md](../../doc/Sessions/Session130.md): успешно завершён `./scripts/build-all.sh`, который поднял локальный baseline до `1.1.766` и пересобрал provider/core/UI/launcher артефакты.
+- Продолжен release stream после промежуточного handoff из [Session130.md](../../doc/Sessions/Archive/Session130.md): успешно завершён `./scripts/build-all.sh`, который поднял локальный baseline до `1.1.766` и пересобрал provider/core/UI/launcher артефакты.
 - Зафиксирован релизный prep-commit `037bf15c chore(release): prepare diagram modules review layout release`: обновлены package versions, package manifests и release metadata для нового baseline.
 - Первый проход `./scripts/build-release.sh --use-current-version` выявил release-gate drift: в [flow-sidecar-types.test.ts](../../src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts) оставались старые `Diagram Modules` node fixtures без обязательного `purpose` у `Product Part / Cluster`.
 - Drift устранён отдельной микро-задачей и коммитом `4e71af19 test(diagram-layout): sync flow sidecar purpose contract`; затем целевой test + `npm run typecheck:webview` подтверждены локально перед повторным релизным прогоном.
@@ -53,8 +53,8 @@
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session130.md`
-10. `doc/Sessions/Session131.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session130.md`
+10. `doc/Sessions/Archive/Session131.md` (THIS REPORT)
 
 ## First sanity check
 - Сразу выполнить `git status --short`.

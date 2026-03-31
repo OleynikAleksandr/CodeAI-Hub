@@ -21,13 +21,13 @@
   - `doc/TODO/todo-plan.md`
   - `doc/TODO/Archive/todo-plan-up-to-phase28-2026-03-22.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
-  - `doc/Sessions/Session127.md`
+  - `doc/Sessions/Archive/Session127.md`
 
 ## Git commits
 - `2f4171a6 docs(plan): start diagram prompt consistency and autolayout scope`
 - Current expected dirty tree before the next commit:
   - `doc/TODO/todo-plan.md`
-  - `doc/Sessions/Session128.md`
+  - `doc/Sessions/Archive/Session128.md`
 
 ---
 
@@ -43,8 +43,8 @@
 7. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_UserFacing_Layout_And_Format_Architecture.md`
 9. `doc/TODO/todo-plan.md`
-10. `doc/Sessions/Session127.md`
-11. `doc/Sessions/Session128.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session127.md`
+11. `doc/Sessions/Archive/Session128.md` (THIS REPORT)
 
 ## Git context recovery before coding
 - Обязательно просмотреть через `git show --stat <hash>` и `git show <hash>`:
@@ -60,7 +60,7 @@
 - Сразу после старта проверить `git status --short`.
 - Ожидаемое состояние, если текущая сессия не была дополнительно закоммичена:
   - `doc/TODO/todo-plan.md`
-  - `doc/Sessions/Session128.md`
+  - `doc/Sessions/Archive/Session128.md`
 
 ## Current working assumptions
 - Always-full prompt pack для diagram stages сохраняется.

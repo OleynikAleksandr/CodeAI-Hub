@@ -36,7 +36,7 @@ VSIX sha256: `d6137c70c3879b6ce86d771e815960aed126413b576c9316a538f928c47f388b`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session009.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session009.md` (THIS REPORT)
 
 ## Plans for next session
 - Визуально подтвердить (Claude/Codex/Gemini): locked working/resuming текст в input реально пульсирует (5% → 80%, 500ms), не меняет цвет/контраст у самого поля и не дублируется с placeholder’ом.

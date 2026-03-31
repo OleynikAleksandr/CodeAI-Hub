@@ -78,7 +78,7 @@
 
 Created:
 
-- `doc/Sessions/Session109.md`
+- `doc/Sessions/Archive/Session109.md`
 - `doc/SolidWorks-WorkFlow/Plans/Greenfield_Architecture_Polygon.md`
 
 Updated:
@@ -120,8 +120,8 @@ Updated:
 ## Required documents to review before work
 
 1. `AGENTS.md`
-2. `doc/Sessions/Session108.md`
-3. `doc/Sessions/Session109.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session108.md`
+3. `doc/Sessions/Archive/Session109.md` (THIS REPORT)
 4. `doc/SolidWorks-WorkFlow/README.md`
 5. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 6. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

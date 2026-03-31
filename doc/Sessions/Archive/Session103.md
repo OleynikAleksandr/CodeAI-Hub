@@ -106,7 +106,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session103.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session103.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и продолжить `Phase 14` с `module-inventory.md`.
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`, `doc/TODO/todo-plan.md` и этот отчёт, затем решить, архивируем ли закрытый `Phase 15` и открываем ли новый planning doc под следующий diagram follow-up.

@@ -43,7 +43,7 @@
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/BugRegistry.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session025.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session025.md` (THIS REPORT)
 
 ## Plans for next session
 - Запушить изменения в `origin/main`.

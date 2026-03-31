@@ -48,7 +48,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session144.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session144.md` (THIS REPORT)
 
 > Далее: в зависимости от результата live retest открыть `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_OutlineFormat_Blockers_After_1_1_773_Architecture.md` и связанные workflow docs по `Diagram Modules`.
 

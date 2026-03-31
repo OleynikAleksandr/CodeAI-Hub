@@ -13,7 +13,7 @@
 - Повторно пройдены таргетные проверки для diagram/webview surface: ownership-aware React Flow tests, `npm run typecheck:webview`, `npm run build:webview`.
 - Собран новый локальный релиз `1.1.756`: выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, получены свежие tarball'ы в `doc/tmp/releases/` и VSIX `codeai-hub-1.1.756.vsix`.
 - Синхронизированы release docs под новый baseline: `README.md`, `CHANGELOG.md`, `SystemArchitecture.md` теперь отражают empty-workspace prompt guardrails, help SSOT и first-open `Diagram Modules` Product Part auto-layout stabilization.
-- Финальный `build-release.sh` прошёл успешно; единственное неблокирующее замечание осталось advisory по broken markdown links в `doc/Sessions/Session106.md`.
+- Финальный `build-release.sh` прошёл успешно; единственное неблокирующее замечание осталось advisory по broken markdown links в `doc/Sessions/Archive/Session106.md`.
 
 ## Git commits
 - `40f26cd5 docs(session): checkpoint phase22-phase23 rollout`
@@ -28,7 +28,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session116.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session116.md` (THIS REPORT)
 
 > Далее: открыть артефакты greenfield regression в mirrored workspace и прогнать следующий workflow-step на свежем релизе `1.1.756`.
 

@@ -54,8 +54,8 @@
 7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
 9. `doc/TODO/todo-plan.md`
-10. `doc/Sessions/Session134.md`
-11. `doc/Sessions/Session135.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session134.md`
+11. `doc/Sessions/Archive/Session135.md` (THIS REPORT)
 
 ## First sanity check
 - Подтвердить, что baseline остаётся `1.1.768` и рабочее дерево чистое.

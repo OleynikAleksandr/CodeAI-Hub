@@ -50,8 +50,8 @@
 
 ### Текущие session/plan
 5. `doc/TODO/todo-plan.md` — **Phase 54** (streams 1-8, включая 4/4b/4c)
-6. `doc/Sessions/Session149.md` (THIS REPORT)
-7. `doc/Sessions/Session148.md` — предыдущая сессия (canonical template contract)
+6. `doc/Sessions/Archive/Session149.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session148.md` — предыдущая сессия (canonical template contract)
 
 ### Ключевые файлы — Stream 1 (remove auto-continuation)
 8. `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts` — **orchestration hook**: auto-continuation на строке 237 (`api.sendSessionMessage` с `visibility: "hidden"`), `buildDiagramModulesContinuationPrompt` (строки 46-74), `cachedPartTemplateRef` (строка 83), sequence lock, aggregate compose

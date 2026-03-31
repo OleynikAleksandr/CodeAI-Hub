@@ -13,7 +13,7 @@
 - Исправлен runtime prompt duplication для `Diagram Modules` и `Diagram Facades`: appendix-блоки `Field Reference` и `Merge Rules` больше не дублируются, даже если одновременно доступны synced templates и bundled fallback assets.
 - Исправлен `Source` pending-state drift для diagram stages: до появления canonical artifact `Diagram Modules` и `Diagram Facades` теперь показывают workflow-aware ожидание upstream artifact вместо generic `file not found`.
 - Синхронизированы release docs для `1.1.763`, выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, собран новый локальный regression baseline `codeai-hub-1.1.763.vsix`.
-- Релизный build прошёл успешно; известный advisory не изменился: `build-release` по-прежнему сообщает о broken markdown links в [Session106.md](../../doc/Sessions/Session106.md) и теперь в [Session124.md](../../doc/Sessions/Session124.md), но релиз это не блокирует.
+- Релизный build прошёл успешно; известный advisory не изменился: `build-release` по-прежнему сообщает о broken markdown links в [Session106.md](../../doc/Sessions/Archive/Session106.md) и теперь в [Session124.md](../../doc/Sessions/Archive/Session124.md), но релиз это не блокирует.
 
 ## Verification
 - `npx tsx --test src/client/project-manager/components/description/description-step-help.test.ts packages/core/src/templates/template-sync-service.test.ts packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`
@@ -50,8 +50,8 @@
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 7. `doc/SolidWorks-WorkFlow/Plans/PostRelease_Regression_Feedback_Architecture.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session124.md`
-10. `doc/Sessions/Session125.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session124.md`
+10. `doc/Sessions/Archive/Session125.md` (THIS REPORT)
 
 ## Git context recovery before coding
 - Обязательно просмотреть через `git show --stat <hash>` и `git show <hash>` как минимум:
@@ -64,7 +64,7 @@
   - `78fa5259 docs(plan): classify diagram source pending-state drift`
   - `f8332a5c fix(diagram-ui): align source pending-state copy with workflow`
   - `705808b2 chore(release): prepare next regression feedback release`
-- Если нужен полный planning context этого post-release scope, дополнительно открыть [Session124.md](../../doc/Sessions/Session124.md) и сравнить его с текущим [todo-plan.md](../../doc/TODO/todo-plan.md).
+- Если нужен полный planning context этого post-release scope, дополнительно открыть [Session124.md](../../doc/Sessions/Archive/Session124.md) и сравнить его с текущим [todo-plan.md](../../doc/TODO/todo-plan.md).
 
 ## Plans for next session
 - Продолжать live regression уже на релизе `1.1.763` и принимать только подтверждённые user-observed findings.

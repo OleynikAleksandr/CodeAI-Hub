@@ -29,7 +29,7 @@
 - Tarballs: `doc/tmp/releases/`
 
 ## Advisory notes
-- `build-release.sh` по-прежнему выводит advisory про broken markdown links в `doc/Sessions/Session106.md`, но релиз не блокируется.
+- `build-release.sh` по-прежнему выводит advisory про broken markdown links в `doc/Sessions/Archive/Session106.md`, но релиз не блокируется.
 
 ## Git commits
 - `713152ff docs(prompt): remove hard scenario cap from description surfaces`
@@ -48,8 +48,8 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session118.md`
-6. `doc/Sessions/Session119.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session118.md`
+6. `doc/Sessions/Archive/Session119.md` (THIS REPORT)
 
 > Далее: запустить regression локального релиза `1.1.758` с той же анкетой, начиная заново с `Description`, затем проверить `Virtual Simulation` на отсутствие навязанного лимита сценариев.
 

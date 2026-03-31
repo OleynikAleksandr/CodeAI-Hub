@@ -10,7 +10,7 @@
 
 ## Work summary
 
-- После закрытия `Phase 78` и сборки релиза `1.1.822` создан новый planning-док для remaining audit debt: `doc/SolidWorks-WorkFlow/Plans/Remaining_Audit_Debt_Closure_Architecture.md`.
+- После закрытия `Phase 78` и сборки релиза `1.1.822` создан новый planning-док для remaining audit debt: `doc/SolidWorks-WorkFlow/Plans/Archive/Remaining_Audit_Debt_Closure_Architecture.md`.
 - Placeholder `doc/TODO/todo-plan.md` переведён обратно в активный execution plan.
 - Добавлена `Phase 79 — Remaining Audit Truthfulness and Core Hotspot Closure`.
 - В новый phase scope вошли три stream-а:
@@ -41,9 +41,9 @@
 
 ## Required documents to review before work
 
-1. `doc/Sessions/Session173.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session173.md` (THIS REPORT)
 2. `doc/TODO/todo-plan.md`
-3. `doc/SolidWorks-WorkFlow/Plans/Remaining_Audit_Debt_Closure_Architecture.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/Remaining_Audit_Debt_Closure_Architecture.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `README.md`
 6. `package.json`

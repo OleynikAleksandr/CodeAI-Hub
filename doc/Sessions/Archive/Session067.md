@@ -52,8 +52,8 @@
 5. `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session066.md`
-9. `doc/Sessions/Session067.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session066.md`
+9. `doc/Sessions/Archive/Session067.md` (THIS REPORT)
 
 ## Plans for next session
 - Продолжать уже в обычном режиме из основного `main`; baseline line теперь является фактической главной веткой.

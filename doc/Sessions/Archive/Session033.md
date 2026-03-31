@@ -36,7 +36,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session033.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session033.md` (THIS REPORT)
 
 ## Plans for next session
 - Установить `doc/tmp/releases/codeai-hub-1.1.675.vsix` и перепроверить UX просмотра артефактов без кнопки `Back`.

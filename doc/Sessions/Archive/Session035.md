@@ -42,7 +42,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session035.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session035.md` (THIS REPORT)
 
 ## Plans for next session
 - Install `doc/tmp/releases/codeai-hub-1.1.676.vsix` and verify that clearing

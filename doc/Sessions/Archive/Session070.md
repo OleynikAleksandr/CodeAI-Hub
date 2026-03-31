@@ -36,7 +36,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session070.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session070.md` (THIS REPORT)
 
 > Далее: после выбора новой темы открыть соответствующий новый архитектурный SSOT из `doc/SolidWorks-WorkFlow/Contracts/`, и только затем разворачивать детальный execution plan.
 

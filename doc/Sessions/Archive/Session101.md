@@ -40,7 +40,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session101.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session101.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и перейти к формированию эталонного `module-map.md` / golden reference для `Diagram Modules`.
 

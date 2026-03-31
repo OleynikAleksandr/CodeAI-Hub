@@ -62,7 +62,7 @@
   - `doc/TODO/todo-plan.md`
   - `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`
   - `doc/TODO/Archive/todo-plan-up-to-phase27-2026-03-22.md`
-  - `doc/Sessions/Session126.md` (THIS REPORT)
+  - `doc/Sessions/Archive/Session126.md` (THIS REPORT)
 - Никаких code changes в этой сессии не вносилось.
 
 ## Git commits
@@ -89,8 +89,8 @@
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 7. `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session125.md`
-10. `doc/Sessions/Session126.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session125.md`
+10. `doc/Sessions/Archive/Session126.md` (THIS REPORT)
 
 ## Git context recovery before coding
 - Обязательно просмотреть через `git show --stat <hash>` и `git show <hash>`:
@@ -108,7 +108,7 @@
   - `M doc/TODO/todo-plan.md`
   - `?? doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`
   - `?? doc/TODO/Archive/todo-plan-up-to-phase27-2026-03-22.md`
-  - `?? doc/Sessions/Session126.md`
+  - `?? doc/Sessions/Archive/Session126.md`
 - Если дерево отличается, сначала понять причину, потом продолжать.
 
 ## Exact next step

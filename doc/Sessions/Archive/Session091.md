@@ -53,7 +53,7 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session091.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session091.md` (THIS REPORT)
 
 ## Plans for next session
 - Начать с ручной проверки `1.1.738` в реальном PM/UI, в первую очередь toolbar click `Diagram Modules` из workspace с существующим `virtual-simulation.md`.

@@ -71,9 +71,9 @@
 
 ## Required documents to review before work
 
-1. `doc/Sessions/Session169.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session169.md` (THIS REPORT)
 2. `doc/TODO/todo-plan.md`
-3. `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`
 4. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 

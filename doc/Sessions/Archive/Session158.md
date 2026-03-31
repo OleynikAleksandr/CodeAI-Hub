@@ -83,7 +83,7 @@
 2. `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md` — **КЛЮЧЕВОЙ ДОКУМЕНТ**: обсуждение и уточнение сценариев multi-provider orchestration
 3. `doc/BugRegistry.md` — BUG-2026-03-25-01 (CRITICAL, OPEN)
 4. `doc/TODO/todo-plan.md` — Phase 64+65+66 completed
-5. `doc/Sessions/Session158.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session158.md` (THIS REPORT)
 
 ## Plans for next session
 

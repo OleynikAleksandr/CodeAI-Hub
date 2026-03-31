@@ -57,7 +57,7 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
 6. `doc/TODO/Archive/todo-plan-phase5-interactive-diagram-workflow-stabilization-2026-03-16.md`
-7. `doc/Sessions/Session090.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session090.md` (THIS REPORT)
 
 ## Plans for next session
 - Start from a new planning document in `doc/SolidWorks-WorkFlow/Plans/` before creating the next `doc/TODO/todo-plan.md`.

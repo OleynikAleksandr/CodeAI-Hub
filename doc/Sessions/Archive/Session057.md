@@ -36,7 +36,7 @@
 1. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/BugRegistry.md`
-4. `doc/Sessions/Session057.md` (THIS REPORT)
+4. `doc/Sessions/Archive/Session057.md` (THIS REPORT)
 
 ## Notes / risks
 - Любой continuity replay event, который должен обновлять Session UI в dialog-mode, обязан содержать идентификатор провайдера (`providerSessionId` и/или `threadId`) для fallback-маршрутизации в Project Manager.

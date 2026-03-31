@@ -46,7 +46,7 @@
 4. `doc/SolidWorks-WorkFlow/Plans/RepositoryDuplicationDebt_Reduction_Architecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session095.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session095.md` (THIS REPORT)
 
 > Далее: если продолжаем diagram UX/readability scope, открыть также `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`.
 

@@ -30,7 +30,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session092.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session092.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md` и связанные PM/Core файлы start-path (`use-workflow-tool-select.ts`, `workflow-step-start-service.ts`, `idea-collector-submit-service.ts`, `session-binding-waiter.ts`, `session-request-handler.ts`).
 

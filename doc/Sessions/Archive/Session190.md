@@ -37,7 +37,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session190.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session190.md` (THIS REPORT)
 6. `doc/TODO/Archive/todo-plan-up-to-phase90-release-1.1.835-2026-03-29.md`
 
 > Далее: в зависимости от нового scope открыть нужные документы из `doc/SolidWorks-WorkFlow/Plans/`, `Contracts/`, `Modules/`, `Clusters/`.

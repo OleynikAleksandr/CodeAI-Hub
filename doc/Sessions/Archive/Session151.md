@@ -40,7 +40,7 @@
 
 ### Текущие session/plan
 5. `doc/TODO/todo-plan.md` — Phase 55 completed
-6. `doc/Sessions/Session151.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session151.md` (THIS REPORT)
 
 ## Plans for next session
 - Phase 55 fully completed; no open streams

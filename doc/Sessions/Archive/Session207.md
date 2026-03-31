@@ -34,7 +34,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session207.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session207.md` (THIS REPORT)
 
 ## Plans for next session
 - Открыть новый planning-док под следующий scope, потому что активный `todo-plan.md` снова placeholder.

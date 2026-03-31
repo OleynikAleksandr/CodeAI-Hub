@@ -41,9 +41,9 @@
 1. `doc/SolidWorks-WorkFlow/README.md`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-4. `doc/SolidWorks-WorkFlow/Plans/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`
+4. `doc/SolidWorks-WorkFlow/Plans/Archive/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session183.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session183.md` (THIS REPORT)
 
 > Then open the relevant Core/provider contracts from `doc/SolidWorks-WorkFlow/System/`, `Modules/`, and `Contracts/` for whichever track becomes active after the `1.1.830` verification results.
 

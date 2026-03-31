@@ -39,7 +39,7 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session029.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session029.md` (THIS REPORT)
 
 ## Plans for next session
 - Smoke: установить `doc/tmp/releases/codeai-hub-1.1.671.vsix` и проверить: клик `VIRTUAL SIMULATION` после появления `Final_Description.md` → справа hint-панель, слева открывается диалог агента; затем проверить валидацию `virtual-simulation.md` + CTA «Исправить с агентом».

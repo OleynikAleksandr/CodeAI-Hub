@@ -75,7 +75,7 @@
 
 ### Текущие session/plan
 6. `doc/TODO/todo-plan.md` — Phase 53 (все streams DONE)
-7. `doc/Sessions/Session148.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session148.md` (THIS REPORT)
 
 ### Ключевые файлы Diagram Modules (для обсуждения нюансов)
 8. `packages/agents/diagram-modules-agent/assets/module-inventory-prompt.md` — основной prompt агента (269 строк инструкций)

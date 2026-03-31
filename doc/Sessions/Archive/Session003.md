@@ -43,7 +43,7 @@
 1. `README.md`
 2. `CHANGELOG.md`
 3. `doc/TODO/todo-plan.md`
-4. `doc/Sessions/Session003.md` (THIS REPORT)
+4. `doc/Sessions/Archive/Session003.md` (THIS REPORT)
 
 ## Plans for next session
 - Установить/протестировать VSIX `codeai-hub-1.1.648.vsix` (проверить таймер и отсутствие регрессий по lock/resume).

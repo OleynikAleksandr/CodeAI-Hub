@@ -58,7 +58,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session147.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session147.md` (THIS REPORT)
 6. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Canonical_ProductPart_Template_And_Prompt_Delivery_Architecture.md`
 
 ## Plans for next session

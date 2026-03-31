@@ -36,7 +36,7 @@
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 6. `doc/TODO/todo-plan.md` (THIS PLAN)
-7. `doc/Sessions/Session017.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session017.md` (THIS REPORT)
 
 ## Plans for next session
 - Smoke test: завис/падение Description mid-turn → ↻ Restart attempt → новый draft принимается, старые late artifacts игнорируются, reviewer стартует один раз.

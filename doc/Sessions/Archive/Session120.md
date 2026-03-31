@@ -29,7 +29,7 @@
 - Tarballs: `doc/tmp/releases/`
 
 ## Advisory notes
-- `build-release.sh` по-прежнему выводит advisory про broken markdown links в `doc/Sessions/Session106.md`, но релиз не блокируется.
+- `build-release.sh` по-прежнему выводит advisory про broken markdown links в `doc/Sessions/Archive/Session106.md`, но релиз не блокируется.
 
 ## Git commits
 - `214ff36e docs(prompt): require explicit description scenarios`
@@ -45,8 +45,8 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session119.md`
-6. `doc/Sessions/Session120.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session119.md`
+6. `doc/Sessions/Archive/Session120.md` (THIS REPORT)
 
 > Далее: установить/запустить локальный релиз `1.1.759`, снова пройти `Description` на той же анкете и проверить, появился ли в `Final_Description.md` отдельный явный сценарный блок без нового drift.
 

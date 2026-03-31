@@ -59,8 +59,8 @@
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session131.md`
-10. `doc/Sessions/Session132.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session131.md`
+10. `doc/Sessions/Archive/Session132.md` (THIS REPORT)
 
 ## First sanity check
 - Сразу выполнить `git status --short`.

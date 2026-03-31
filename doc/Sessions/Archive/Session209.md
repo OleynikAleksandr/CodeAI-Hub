@@ -40,7 +40,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session209.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session209.md` (THIS REPORT)
 
 ## Plans for next session
 - `doc/TODO/todo-plan.md` сейчас placeholder, поэтому перед новым scope сначала нужно создать новый planning-док в `doc/SolidWorks-WorkFlow/Plans/`.

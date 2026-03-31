@@ -29,7 +29,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/BugRegistry.md`
-6. `doc/Sessions/Session054.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session054.md` (THIS REPORT)
 
 > Далее: при новых изменениях шага `Description`/`Virtual Simulation` открыть профильные документы из `doc/SolidWorks-WorkFlow/Contracts/` и `doc/SolidWorks-WorkFlow/Clusters/`.
 

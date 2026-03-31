@@ -38,7 +38,7 @@ VSIX sha256: `d6b168f62233dde6a57317effb1c3c8c1222aebcd1442a8c191459dfaae15786`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session021.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session021.md` (THIS REPORT)
 
 ## Plans for next session
 - Smoke test (Standalone PM / CEF): one-shot `Description` → ↻ → появляется Apply/Cancel → Apply запускает новую попытку, Cancel закрывает; приложение не падает.

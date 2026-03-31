@@ -14,7 +14,7 @@
 - Полностью пересобран `Diagram Facades` runtime surface: вместо минимального generic prompt теперь есть полноценный artifact-first prompt с project-local source boundary, опорой на `module-inventory.md` и user-readable правилами для facade map; видимый `Diagram Facades Help` приведён к той же логике.
 - Выполнены таргетные проверки до релиза: `npx tsx --test packages/core/src/templates/template-sync-service.test.ts` и `npm run build:webview` прошли зелёно.
 - Собран новый локальный релиз `1.1.757`: выполнены `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, получены свежие tarball'ы в `doc/tmp/releases/` и VSIX `codeai-hub-1.1.757.vsix`.
-- Release-facing docs синхронизированы под новый baseline: `README.md` и `CHANGELOG.md` теперь отражают universal questionnaire/help rollout и downstream prompt sync. Финальный `build-release.sh` прошёл успешно; неблокирующее замечание осталось прежним — advisory по broken markdown links в `doc/Sessions/Session106.md`.
+- Release-facing docs синхронизированы под новый baseline: `README.md` и `CHANGELOG.md` теперь отражают universal questionnaire/help rollout и downstream prompt sync. Финальный `build-release.sh` прошёл успешно; неблокирующее замечание осталось прежним — advisory по broken markdown links в `doc/Sessions/Archive/Session106.md`.
 
 ## Git commits
 - `694dd2d1 docs(template): draft universal description questionnaire`
@@ -37,7 +37,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session117.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session117.md` (THIS REPORT)
 
 > Далее: открыть mirrored greenfield workspace и прогнать полный workflow на свежем релизе `1.1.757`, начиная заново с `Description`.
 

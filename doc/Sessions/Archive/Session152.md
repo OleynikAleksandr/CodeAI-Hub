@@ -89,7 +89,7 @@ Read all artifacts end-to-end for workspace "CodeAI-Hub codex 5.4":
 
 ### Текущие session/plan
 5. `doc/TODO/todo-plan.md` — Phase 57 planned
-6. `doc/Sessions/Session152.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session152.md` (THIS REPORT)
 
 ### Key architecture decisions
 7. Memory: `workflow-tree-evolution.md` — trunk ends at Diagram Modules, no Diagram Facades step

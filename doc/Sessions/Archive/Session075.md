@@ -125,7 +125,7 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/UniversalProviderUsageLimits_Module_Architecture.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session075.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session075.md` (THIS REPORT)
 
 > Далее: `Phase 1`–`Phase 7` закрыты. Дополнительно закрыт `Phase 8` post-release hotfix: websocket replay path для `usage_limits` теперь симметричен `token_usage`, что закрывает подтверждённую проблему `Codex` limits в PM/session UI для релиза `v1.1.727`.
 > Следующий рабочий шаг — новый scope после архивирования завершённого `todo-plan.md`; отдельным follow-up остаётся только `Claude`-специфичный симптом, где context/token usage materialize после reopen workspace, а не сразу live-потоком.

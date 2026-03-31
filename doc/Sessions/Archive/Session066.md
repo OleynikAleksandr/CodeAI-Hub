@@ -39,8 +39,8 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 6. `doc/BugRegistry.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session065.md`
-9. `doc/Sessions/Session066.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session065.md`
+9. `doc/Sessions/Archive/Session066.md` (THIS REPORT)
 
 ## Plans for next session
 - Не выполнять новых hotfix-изменений в baseline `v1.1.722`, пока не появится новый воспроизводимый regression-case.

@@ -37,7 +37,7 @@ VSIX sha256: `2546796aa7237e33a4b8ebfa6240fad0437fae86cae37cc85b3a7c1f0b4df01e`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/BugRegistry.md`
-6. `doc/Sessions/Session026.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session026.md` (THIS REPORT)
 
 ## Plans for next session
 - Проверить, что Phase 246 закрыта в `doc/TODO/todo-plan.md` (Stream 0/1/2: DONE + hash/sha256).

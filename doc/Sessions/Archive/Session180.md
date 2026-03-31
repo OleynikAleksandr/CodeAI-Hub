@@ -33,7 +33,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session180.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session180.md` (THIS REPORT)
 
 > Then open the relevant docs from `doc/SolidWorks-WorkFlow/Clusters/`, `Modules/`, and `Contracts/` for the next active scope.
 

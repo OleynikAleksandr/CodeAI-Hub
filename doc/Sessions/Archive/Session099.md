@@ -42,7 +42,7 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
-8. `doc/Sessions/Session099.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session099.md` (THIS REPORT)
 
 > Далее: если manual verification подтвердит, что profile switch теперь реально перестраивает `Diagram Modules` и переживает reopen/restart, можно переходить от bootstrap/persistence к качеству самих ELK profile outputs.
 

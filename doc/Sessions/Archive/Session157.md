@@ -63,7 +63,7 @@
 13. `~/.npm-global/lib/node_modules/@google/gemini-cli/node_modules/@google/gemini-cli-core/dist/src/config/config.d.ts` — Config class (lines 815-840: deprecated getters for toolRegistry, messageBus, geminiClient, sandboxManager)
 
 ### Previous session context
-14. `doc/Sessions/Session156.md` — предыдущая сессия (Phase 63 UX work)
+14. `doc/Sessions/Archive/Session156.md` — предыдущая сессия (Phase 63 UX work)
 
 ## Plans for next session
 

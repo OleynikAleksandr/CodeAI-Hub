@@ -65,7 +65,7 @@ Three-layer fix required (root cause found iteratively through live testing):
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session163.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session163.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 
 ## Key files changed in this session (for context recovery via git show)

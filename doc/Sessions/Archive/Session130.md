@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Восстановлен zero-context по правилам проекта: прочитан [Session129.md](../../doc/Sessions/Session129.md), поднят required SSOT-контекст и просмотрен commit-chain baseline `1.1.764` / release `1.1.765`.
+- Восстановлен zero-context по правилам проекта: прочитан [Session129.md](../../doc/Sessions/Archive/Session129.md), поднят required SSOT-контекст и просмотрен commit-chain baseline `1.1.764` / release `1.1.765`.
 - Дополнительно найден и просмотрен финальный docs/session commit текущего baseline, который уже лежит в `HEAD`: `02426929 docs(session): record 1.1.765 diagram prompt consistency release`.
 - Подтверждён стартовый sanity check: перед созданием этого отчёта дерево было чистым, локальный baseline оставался `1.1.765`.
 - По пользовательскому тестированию шага `Diagram Modules` разобраны вопросы агента про `Architecture Branching for Specifications`, owner boundary auto-start `Local Core Runtime`, а также про недостающие слои templates/instructions и workflow files.
@@ -37,8 +37,8 @@
   - [doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md](../../doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md)
   - [doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md](../../doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md)
   - [doc/TODO/todo-plan.md](../../doc/TODO/todo-plan.md)
-  - [doc/Sessions/Session128.md](../../doc/Sessions/Session128.md)
-  - [doc/Sessions/Session129.md](../../doc/Sessions/Session129.md)
+  - [doc/Sessions/Archive/Session128.md](../../doc/Sessions/Archive/Session128.md)
+  - [doc/Sessions/Archive/Session129.md](../../doc/Sessions/Archive/Session129.md)
   - Mirrored workspace artifacts under review:
     - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
     - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
@@ -85,8 +85,8 @@
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session129.md`
-10. `doc/Sessions/Session130.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session129.md`
+10. `doc/Sessions/Archive/Session130.md` (THIS REPORT)
 
 ## First sanity check
 - Сразу выполнить `git status --short`.

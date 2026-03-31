@@ -203,7 +203,7 @@ This branch was introduced as a workaround for an older Codex model-selection pr
 Relevant history:
 
 - `doc/BugRegistry.md`
-- `doc/Sessions/Session073.md`
+- `doc/Sessions/Archive/Session073.md`
 
 The workaround is too broad:
 
@@ -278,7 +278,7 @@ Created:
 - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT54_Resume_Recovery_Architecture.md`
 - `doc/TODO/Archive/todo-plan-up-to-phase16-inventory-only-diagram-cleanup-2026-03-20.md` (archived by move from active todo plan path)
 - `doc/TODO/todo-plan.md`
-- `doc/Sessions/Session106.md`
+- `doc/Sessions/Archive/Session106.md`
 
 ## Git commits
 
@@ -306,8 +306,8 @@ Release verification state at the end of this session:
 2. `doc/SolidWorks-WorkFlow/README.md`
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-5. `doc/Sessions/Session106.md`
-6. `doc/Sessions/Session107.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session106.md`
+6. `doc/Sessions/Archive/Session107.md` (THIS REPORT)
 7. `doc/SolidWorks-WorkFlow/Plans/Codex_GPT54_Resume_Recovery_Architecture.md`
 8. `doc/TODO/todo-plan.md`
 
@@ -344,7 +344,7 @@ Release verification state at the end of this session:
 4. `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`
 5. `doc/BugRegistry.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session107.md`
+7. `doc/Sessions/Archive/Session107.md`
 
 ## Current repository state after release build
 

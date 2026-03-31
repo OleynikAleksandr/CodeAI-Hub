@@ -49,7 +49,7 @@
 
 ## Required documents to review before work
 
-1. `doc/Sessions/Session172.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session172.md` (THIS REPORT)
 2. `doc/TODO/todo-plan.md`
 3. `doc/TODO/Archive/todo-plan-up-to-phase78-2026-03-28.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

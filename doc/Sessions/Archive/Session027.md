@@ -60,8 +60,8 @@
 6. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 7. `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session027.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session027.md` (THIS REPORT)
 
 ## Plans for next session
 - Phase 252 (release build): выполнить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать результаты и артефакты в `doc/tmp/releases/`.
-- Создать `doc/Sessions/Session028.md` по факту релизной сборки.
+- Создать `doc/Sessions/Archive/Session028.md` по факту релизной сборки.

@@ -34,7 +34,7 @@ VSIX sha256: `1c41e86838155d0fd965eaddd9b3cc5fe044e19fe1a31cefa5c57a0c6724f03d`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session011.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session011.md` (THIS REPORT)
 
 ## Plans for next session
 - Визуально подтвердить (Claude/Codex/Gemini): locked working/resuming текст пульсирует мягко (20% → 40%, 1000ms) и не мешает читаемости.

@@ -50,7 +50,7 @@
 ## Required documents to review before work
 
 1. `AGENTS.md`
-2. `doc/Sessions/Session164.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session164.md` (THIS REPORT)
 3. `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md` — **прочитать полностью**, это основа для следующего шага
 
 ## Plans for next session

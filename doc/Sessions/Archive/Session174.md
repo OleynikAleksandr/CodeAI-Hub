@@ -131,7 +131,7 @@
 
 ## Files and logs most important for next session
 
-1. `doc/Sessions/Session174.md`
+1. `doc/Sessions/Archive/Session174.md`
 2. `/Users/oleksandroliinyk/.codeai-hub/logs/core/core.log`
 3. `/Users/oleksandroliinyk/.codeai-hub/logs/launcher/launcher.log`
 4. `/Users/oleksandroliinyk/.codeai-hub/logs/extension/extension.log`
@@ -152,8 +152,8 @@
 
 ## Required documents to review before work
 
-1. `doc/Sessions/Session174.md` (THIS REPORT)
-2. `doc/Sessions/Session173.md`
+1. `doc/Sessions/Archive/Session174.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session173.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
 5. `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`

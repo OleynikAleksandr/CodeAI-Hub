@@ -70,7 +70,7 @@
 6. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 7. `doc/TODO/todo-plan.md` (Phase 281)
 8. `doc/BugRegistry.md` (`BUG-2026-03-01-01`)
-9. `doc/Sessions/Session053.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session053.md` (THIS REPORT)
 
 ## Plans for next session
 - Проверить `Phase 281` в пользовательском smoke-тесте и получить финальный `approve`.

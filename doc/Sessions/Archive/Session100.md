@@ -38,7 +38,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session100.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session100.md` (THIS REPORT)
 
 > Далее: если manual verification подтвердит, что `v1.1.747` действительно делает profile switch видимым на canvas, следующий stream должен уже заниматься качеством самих layout profiles для `Diagram Modules`, а не bootstrap/persistence/render wiring.
 

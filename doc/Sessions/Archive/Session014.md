@@ -41,7 +41,7 @@ VSIX sha256: `ee832b8cd19c8a02be60cf2bf1913f934b3614883ff1590f19d9a2801e6978da`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session014.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session014.md` (THIS REPORT)
 
 ## Plans for next session
 - Ручная проверка UX: длинный ответ → ■ должен гасить stream немедленно (turn прерывается), UI показывает, что Core остановлен, и Enter/▶ после stop запускает Core и отправляет новое сообщение без “Agent is working…” залипания.

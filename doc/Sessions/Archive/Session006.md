@@ -37,7 +37,7 @@ VSIX sha256: `d9134b2f25923df388c03d7a73b49564d2d9e77436d5998a9ae2285c9a1dc393`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session006.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session006.md` (THIS REPORT)
 
 ## Plans for next session
 - Визуально подтвердить в Project Manager: one-shot Description сессия (resumeMode `no_resume`) показывает динамический turn timer во время выполнения, но не добавляет время в total.

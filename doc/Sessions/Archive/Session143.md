@@ -38,7 +38,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session143.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session143.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_LiveFormat_Parser_Blockers_After_1_1_772_Architecture.md`. Если live retest `1.1.773` покажет новый хвост, сначала проверить staged `Product Part` path end-to-end (progressive expansion, aggregate write, final unlock), а уже потом возвращаться к prompt/template contract.
 

@@ -45,7 +45,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session037.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session037.md` (THIS REPORT)
 
 ## Plans for next session
 - **Phase 259 завершена полностью** (все streams 0-9 DONE, bugfix v1.1.685 протестирован)

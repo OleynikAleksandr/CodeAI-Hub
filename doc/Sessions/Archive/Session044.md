@@ -33,7 +33,7 @@
 2. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 3. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session044.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session044.md` (THIS REPORT)
 
 ## Plans for next session
 - Ретест: после перезагрузки открыть Virtual Simulation dialog → input должен стать `idle`, `total` подтягивается из `.codeai-hub/state/task-timers.json`.

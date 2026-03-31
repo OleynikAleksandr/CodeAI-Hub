@@ -53,7 +53,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session146.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session146.md` (THIS REPORT)
 
 > Далее: если новый ретест снова найдёт blocker в `Diagram Modules`, открыть `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_ProductPart_IdentityTable_Blockers_After_1_1_775_Architecture.md` и фактический live artifact из test workspace.
 

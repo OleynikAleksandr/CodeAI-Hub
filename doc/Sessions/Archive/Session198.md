@@ -65,7 +65,7 @@
 ## Required documents to review before work
 1. `AGENTS.md` — master process and architecture rules
 2. `doc/TODO/todo-plan.md` — currently empty (no active phases)
-3. `doc/Sessions/Session198.md` (THIS REPORT)
+3. `doc/Sessions/Archive/Session198.md` (THIS REPORT)
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 
 ## Plans for next session

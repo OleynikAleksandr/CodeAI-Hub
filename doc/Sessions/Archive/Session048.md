@@ -53,7 +53,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session048.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session048.md` (THIS REPORT)
 
 ## Plans for next session
 - Проверить результаты ревью: утвердить (или доработать) `Final_Description.md` в обоих workspace.

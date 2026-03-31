@@ -34,8 +34,8 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session081.md`
-7. `doc/Sessions/Session082.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session081.md`
+7. `doc/Sessions/Archive/Session082.md` (THIS REPORT)
 
 > Текущий status: GitHub release `v1.1.730` удалён по запросу пользователя; development line снова не имеет публичной GitHub-публикации.
 

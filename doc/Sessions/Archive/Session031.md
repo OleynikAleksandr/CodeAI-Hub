@@ -41,7 +41,7 @@
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session031.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session031.md` (THIS REPORT)
 
 ## Plans for next session
 - Установить `doc/tmp/releases/codeai-hub-1.1.673.vsix` и проверить happy-path:

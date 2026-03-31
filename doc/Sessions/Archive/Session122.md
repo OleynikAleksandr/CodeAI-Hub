@@ -26,7 +26,7 @@
 - Tarballs: `doc/tmp/releases/`
 
 ## Advisory notes
-- `build-release.sh` по-прежнему выводит advisory про broken markdown links в `doc/Sessions/Session106.md`, но релиз `1.1.761` это не блокирует.
+- `build-release.sh` по-прежнему выводит advisory про broken markdown links в `doc/Sessions/Archive/Session106.md`, но релиз `1.1.761` это не блокирует.
 
 ## Git commits
 - `6fc1538b fix(pm): render description help locally`
@@ -43,8 +43,8 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session121.md`
-6. `doc/Sessions/Session122.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session121.md`
+6. `doc/Sessions/Archive/Session122.md` (THIS REPORT)
 
 > Далее: установить/запустить локальный релиз `1.1.761`, снова открыть `Description`, проверить `Help` на fresh install / fresh restart и затем продолжить regression pass по той же анкете до `Virtual Simulation`.
 

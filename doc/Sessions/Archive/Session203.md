@@ -28,7 +28,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session203.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session203.md` (THIS REPORT)
 
 ## Plans for next session
 - Продолжить Phase 1 в `doc/TODO/todo-plan.md`: сначала закрыть verification task для `session-request-handler.ts`, затем перейти к следующему stream.

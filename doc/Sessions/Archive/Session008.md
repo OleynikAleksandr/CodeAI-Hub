@@ -34,7 +34,7 @@ VSIX sha256: `31b6db9ab96e6354b49c964ca734f9cb56a668591444c8bfb28596e6bab42327`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session008.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session008.md` (THIS REPORT)
 
 ## Plans for next session
 - Визуально подтвердить во всех провайдерах (Claude/Codex/Gemini): working/resuming placeholder в input пульсирует с правильным диапазоном opacity и не влияет на читаемость.

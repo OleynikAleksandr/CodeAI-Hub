@@ -121,9 +121,9 @@ Updated:
 ## Required documents to open first
 
 1. `AGENTS.md`
-2. `doc/Sessions/Session106.md`
-3. `doc/Sessions/Session107.md`
-4. `doc/Sessions/Session108.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session106.md`
+3. `doc/Sessions/Archive/Session107.md`
+4. `doc/Sessions/Archive/Session108.md` (THIS REPORT)
 5. `doc/SolidWorks-WorkFlow/README.md`
 6. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 7. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

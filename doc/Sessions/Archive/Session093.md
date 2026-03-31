@@ -28,7 +28,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session093.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session093.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`, затем проверить живой PM run для `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub claude` и `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` именно на предмет parseable первого `module-map.md` после свежего запуска `Diagram Modules`.
 

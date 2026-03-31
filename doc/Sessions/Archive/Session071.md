@@ -39,7 +39,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session071.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session071.md` (THIS REPORT)
 
 > Далее: если начинается новый scope, сначала создать planning-док в `doc/SolidWorks-WorkFlow/Plans/`, утвердить его, и только потом разворачивать phase/stream execution plan.
 

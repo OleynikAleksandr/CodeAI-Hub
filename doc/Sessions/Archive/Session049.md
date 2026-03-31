@@ -36,8 +36,8 @@
 6. `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md` (LEGACY — подлежит обновлению под новую модель)
 7. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 8. `doc/TODO/todo-plan.md` (актуальный план фаз 266–270)
-9. `doc/Sessions/Session048.md`
-10. `doc/Sessions/Session049.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session048.md`
+10. `doc/Sessions/Archive/Session049.md` (THIS REPORT)
 
 ## Context hot spots in code (high-signal files)
 Эти файлы зашивают текущую автоматизацию `questionnaire → description.md → auto-reviewer → Final_Description.md` и должны быть изменены при миграции:
@@ -70,6 +70,6 @@
 
 ## Addendum (2026-02-28 20:14 CET)
 
-- Фазы 266–269 реализованы и закрыты в `doc/Sessions/Session050.md`.
+- Фазы 266–269 реализованы и закрыты в `doc/Sessions/Archive/Session050.md`.
 - Базовый workflow закреплён как single-agent Description (`Final_Description.md` как SSOT).
 - Standalone Reviewer остаётся в `Backlog Module R1 (DEFERRED)` и не входит в обязательный поток шага 1.

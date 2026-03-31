@@ -43,7 +43,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session004.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session004.md` (THIS REPORT)
 
 ## Plans for next session
 - Протестировать `codeai-hub-1.1.649.vsix` в реальном UX (особенно total persistence при rollover) и подтвердить, что total всегда виден в футере, а turn сбрасывается на каждом новом turn.

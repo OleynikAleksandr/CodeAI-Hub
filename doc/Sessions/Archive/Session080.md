@@ -36,8 +36,8 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session079.md`
-7. `doc/Sessions/Session080.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session079.md`
+7. `doc/Sessions/Archive/Session080.md` (THIS REPORT)
 
 > Текущий status: публичные GitHub-facing markdown-файлы вне `doc/` нормализованы на английский язык; `main` готов к повторному push после фикса session-report commit.
 

@@ -41,7 +41,7 @@
 4. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session030.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session030.md` (THIS REPORT)
 
 ## Plans for next session
 - Установить `doc/tmp/releases/codeai-hub-1.1.672.vsix` и перепроверить happy-path: клик `VIRTUAL SIMULATION` после появления `Final_Description.md` → справа hint-панель, слева pending-copy → затем UI сессии; Virtual Simulation узел в дереве становится раскрываемым и показывает сессию.

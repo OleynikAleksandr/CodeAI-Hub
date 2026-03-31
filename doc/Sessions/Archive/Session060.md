@@ -53,7 +53,7 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 6. `doc/BugRegistry.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session060.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session060.md` (THIS REPORT)
 
 ## Plans for next session
 - Провести пользовательский smoke по `v1.1.711` на многократном open/close workspace для подтверждения устранения интермиттирующего `No messages yet`.

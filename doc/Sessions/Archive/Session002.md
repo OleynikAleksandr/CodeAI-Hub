@@ -30,7 +30,7 @@
 ## Required documents to review before work
 1. `README.md`
 2. `CHANGELOG.md`
-3. `doc/Sessions/Session002.md` (THIS REPORT)
+3. `doc/Sessions/Archive/Session002.md` (THIS REPORT)
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 
 ## Plans for next session

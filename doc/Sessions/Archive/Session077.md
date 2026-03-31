@@ -47,8 +47,8 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/Gemini_DialogSegmentation_Architecture.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session076.md`
-8. `doc/Sessions/Session077.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session076.md`
+8. `doc/Sessions/Archive/Session077.md` (THIS REPORT)
 
 > Текущий status: локальный релиз `v1.1.729` собран. Gemini dialog segmentation fix зафиксирован в коде, SSOT и release-facing docs; следующий шаг — живой post-release smoke в Project Manager / Gemini runtime.
 

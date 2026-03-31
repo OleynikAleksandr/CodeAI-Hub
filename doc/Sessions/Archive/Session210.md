@@ -28,7 +28,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session210.md` (THIS REPORT)
+5. `doc/Sessions/Session001.md` (THIS REPORT)
 
 ## Plans for next session
 - Активного execution plan сейчас нет: `doc/TODO/todo-plan.md` остаётся placeholder-ом.

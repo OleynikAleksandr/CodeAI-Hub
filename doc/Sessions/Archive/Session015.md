@@ -41,7 +41,7 @@ VSIX sha256: `071d225f09480e0739432657fea542b9c504edbc82ef742a10a9062a2ffb2ba9`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session015.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session015.md` (THIS REPORT)
 
 ## Plans for next session
 - Ручной UX чек: ■ останавливает Core, а Enter/▶ в CEF реально запускают Core (без внешних скриптов) и новый запрос уходит.

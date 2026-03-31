@@ -21,7 +21,7 @@
 - `git status --short --branch`
 - `git log --oneline -n 8`
 - `sed -n '1,260p' doc/TODO/todo-plan.md`
-- `sed -n '1,260p' doc/Sessions/Session132.md`
+- `sed -n '1,260p' doc/Sessions/Archive/Session132.md`
 - `sed -n '1,260p' doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
 - `sed -n '1,220p' doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 - `sed -n '1,220p' doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
@@ -52,8 +52,8 @@
 7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 9. `doc/TODO/todo-plan.md`
-10. `doc/Sessions/Session132.md`
-11. `doc/Sessions/Session133.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session132.md`
+11. `doc/Sessions/Archive/Session133.md` (THIS REPORT)
 
 ## First sanity check
 - Сразу выполнить `git status --short`.

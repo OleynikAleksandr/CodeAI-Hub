@@ -51,8 +51,8 @@
 6. `doc/TODO/todo-plan.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_770_Architecture.md`
-9. `doc/Sessions/Session139.md`
-10. `doc/Sessions/Session140.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session139.md`
+10. `doc/Sessions/Archive/Session140.md` (THIS REPORT)
 
 ## First sanity check
 - Подтвердить, что дерево чистое после handoff commit-а и версия репозитория остаётся `1.1.770`.

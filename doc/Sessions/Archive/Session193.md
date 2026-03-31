@@ -28,13 +28,13 @@
 2. `CHANGELOG.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session193.md` (THIS REPORT)
-6. `doc/SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`
+5. `doc/Sessions/Archive/Session193.md` (THIS REPORT)
+6. `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_CentralPanels_ExecutionPlanning_Source.md`
 
 > Далее: перед началом реализации открыть связанные PM-файлы из `src/client/project-manager/components/layout/` и workflow handlers из `packages/core/src/remote-bridge/handlers/`, которые перечислены в merged planning-документе.
 
 ## Plans for next session
-- Использовать `doc/SolidWorks-WorkFlow/Plans/ProjectManager_CentralPanels_ExecutionPlanning_Source.md` как единственный planning-source и текущий `doc/TODO/todo-plan.md` как execution-source для реализации.
+- Использовать `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_CentralPanels_ExecutionPlanning_Source.md` как единственный planning-source и текущий `doc/TODO/todo-plan.md` как execution-source для реализации.
 - Начинать следующую сессию с `Phase 101`, сначала user-facing `P0-A` fix для stabilizing post-submit `Description`, затем `P0-B` availability/readability scope.
 - Не пропустить отдельную investigation-задачу из `todo-plan.md` по точной причине race, при котором после `session:created` polling иногда возвращает snapshot без `primarySession`.
 - Завершать scope только после финального release stream из `Phase 105`: docs sync, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, новый session report и release artifacts.

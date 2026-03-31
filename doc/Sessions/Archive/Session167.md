@@ -13,7 +13,7 @@
 - Восстановлен контекст по `Session166`, `todo-plan`, planning-doc и всей commit-series `Phase 76`, включая release block `1.1.819`.
 - Подтверждено текущее рабочее состояние: релиз `1.1.819` уже вручную протестирован пользователем и считается рабочим baseline для следующей фазы.
 - Текущий `doc/TODO/todo-plan.md` заархивирован в `doc/TODO/Archive/todo-plan-phase76-2026-03-27.md`.
-- Создан новый planning-doc `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md` под post-audit cleanup scope.
+- Создан новый planning-doc `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md` под post-audit cleanup scope.
 - Подготовлен новый `doc/TODO/todo-plan.md` с двумя фазами:
   - `Phase 77` — cleanup packaging surface / `.husky/_` helper files;
   - `Phase 78` — `Wave 2` oversized debt reduction.
@@ -35,9 +35,9 @@
 
 - Неподтверждённые изменения после planning-сессии:
   - `doc/TODO/todo-plan.md`
-  - `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`
   - `doc/TODO/Archive/todo-plan-phase76-2026-03-27.md`
-- Также в дереве уже присутствует изменённый `doc/Sessions/Session166.md`; эта правка не трогалась в рамках текущей planning-сессии.
+- Также в дереве уже присутствует изменённый `doc/Sessions/Archive/Session166.md`; эта правка не трогалась в рамках текущей planning-сессии.
 - Реализационные изменения к runtime/code ещё не начинались.
 
 ---
@@ -50,8 +50,8 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session167.md` (THIS REPORT)
-6. `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`
+5. `doc/Sessions/Archive/Session167.md` (THIS REPORT)
+6. `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 
 > Если до старта следующей сессии будет добавлен audit-файл, его нужно прочитать перед началом реализации и синхронно отразить findings в planning-doc и `todo-plan.md`.

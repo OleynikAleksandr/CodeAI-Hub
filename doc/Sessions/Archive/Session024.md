@@ -35,7 +35,7 @@ VSIX sha256: `bbcdec4215221cea8ebf4510b2c1ce32999beeaee5c05bced0f9d75cda15f2fb`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/BugRegistry.md`
-6. `doc/Sessions/Session024.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session024.md` (THIS REPORT)
 
 ## Plans for next session
 - Закрыть Phase 244 в `doc/TODO/todo-plan.md` (Stream 1/2: session report + todo bookkeeping).

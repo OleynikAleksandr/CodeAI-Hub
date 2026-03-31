@@ -59,7 +59,7 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/DiagramSteps_InteractiveDSL_Architecture.md` (ARCHITECTURE DOC)
 6. `doc/TODO/todo-plan.md` (EXECUTION PLAN)
-7. `doc/Sessions/Session083.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session083.md` (THIS REPORT)
 
 ## Plans for next session
 - Начать реализацию **Phase 1** из `todo-plan.md`:

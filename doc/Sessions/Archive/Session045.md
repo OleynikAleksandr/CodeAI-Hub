@@ -32,7 +32,7 @@
 
 ## Required documents to review before work
 1. `doc/TODO/todo-plan.md`
-2. `doc/Sessions/Session045.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session045.md` (THIS REPORT)
 
 ## Plans for next session
 - Ретест: переключение между workspace должно подсвечивать корректный активный шаг (например, workspace без workflow → `Description`; workspace с VS continuity → `Virtual Simulation`).

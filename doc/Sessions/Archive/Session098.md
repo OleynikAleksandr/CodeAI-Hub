@@ -40,7 +40,7 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/SolidWorks-WorkFlow/Plans/DiagramWorkflow_Audit_TODO_Plan.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
-8. `doc/Sessions/Session098.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session098.md` (THIS REPORT)
 
 > Далее: если manual verification подтвердит, что launcher-safe button-group больше не валит Project Manager, можно вернуться к качеству самих layout-профилей и затем переносить lessons learned на `Diagram Facades`.
 

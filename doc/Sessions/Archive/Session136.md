@@ -50,8 +50,8 @@
 7. `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
 9. `doc/TODO/todo-plan.md`
-10. `doc/Sessions/Session135.md`
-11. `doc/Sessions/Session136.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session135.md`
+11. `doc/Sessions/Archive/Session136.md` (THIS REPORT)
 
 ## First sanity check
 - Подтвердить, что `todo-plan.md` уже содержит hash-ы `e08672f1`, `dd0cec36`, `2000d02f`, `ad266617`, `fc6a66ce`.

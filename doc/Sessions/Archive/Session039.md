@@ -40,7 +40,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session039.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session039.md` (THIS REPORT)
 
 ## Plans for next session
 - Завершить bookkeeping: закрыть финальный пункт `Git Commit` в `doc/TODO/todo-plan.md` хешем текущего session-коммита.

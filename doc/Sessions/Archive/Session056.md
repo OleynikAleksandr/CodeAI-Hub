@@ -74,7 +74,7 @@
 6. `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 7. `doc/TODO/todo-plan.md`
 8. `doc/Virtual_Simulation_Prompt.draft-v1.md`
-9. `doc/Sessions/Session056.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session056.md` (THIS REPORT)
 
 ## High-signal code files (already changed in this session)
 - `packages/core/src/templates/source/virtual-simulation-prompt.md`

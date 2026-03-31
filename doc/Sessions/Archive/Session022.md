@@ -34,7 +34,7 @@ VSIX sha256: `8a93b1c68c7e3eb922e999986ef5d07c9381e2b0d94329761ca0b0864f85c406`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session022.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session022.md` (THIS REPORT)
 
 ## Plans for next session
 - (Опционально) smoke test: Standalone PM (CEF) → one-shot `Description` → ↻ → Apply/Cancel.

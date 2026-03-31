@@ -74,8 +74,8 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session158.md`
-3. `doc/Sessions/Session159.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session158.md`
+3. `doc/Sessions/Archive/Session159.md` (THIS REPORT)
 4. `doc/BugRegistry.md` — focus on `BUG-2026-03-25-01`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`

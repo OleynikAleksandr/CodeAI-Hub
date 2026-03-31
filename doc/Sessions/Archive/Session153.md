@@ -102,7 +102,7 @@ No workflow step after Diagram Modules exists yet. Per-cluster/per-module branch
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md` — Phase 57 completed
-6. `doc/Sessions/Session153.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session153.md` (THIS REPORT)
 7. Memory: `workflow-tree-evolution.md` — trunk ends at Diagram Modules
 
 > Далее: в зависимости от задачи открыть нужные документы из `doc/SolidWorks-WorkFlow/Clusters/`, `Modules/`, `Contracts/`.

@@ -24,7 +24,7 @@ WIP изменения (не закоммичены):
 - `doc/TODO/todo-plan.md -> doc/TODO/Archive/todo-plan-up-to-phase278-2026-02-28.md` (архивирование)
 - `doc/TODO/Phase272-StandaloneReviewer.md` (parked Phase 272)
 - `doc/TODO/todo-plan.md` (новый план: Phase 279)
-- `doc/Sessions/Session051.md` (этот отчёт)
+- `doc/Sessions/Archive/Session051.md` (этот отчёт)
 
 ---
 
@@ -45,8 +45,8 @@ WIP изменения (не закоммичены):
 12. `doc/TODO/todo-plan.md` (Phase 279)
 13. `doc/TODO/Phase272-StandaloneReviewer.md` (parked Phase 272)
 14. `doc/TODO/Archive/todo-plan-up-to-phase278-2026-02-28.md` (история)
-15. `doc/Sessions/Session050.md`
-16. `doc/Sessions/Session051.md` (THIS REPORT)
+15. `doc/Sessions/Archive/Session050.md`
+16. `doc/Sessions/Archive/Session051.md` (THIS REPORT)
 
 ## Plans for next session
 - Начать `Phase 279 / Stream 0`: зафиксировать user-facing контракт help/UX в `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`.

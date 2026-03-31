@@ -69,7 +69,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session156.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session156.md` (THIS REPORT)
 
 > Далее: в зависимости от задачи открыть нужные документы из `doc/SolidWorks-WorkFlow/Clusters/`, `Modules/`, `Contracts/`.
 

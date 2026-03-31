@@ -27,7 +27,7 @@
 4. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 5. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session206.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session206.md` (THIS REPORT)
 
 ## Plans for next session
 - Начать реализацию `Stream: Claude Auth Home Bridge Split` из активного `todo-plan.md`.

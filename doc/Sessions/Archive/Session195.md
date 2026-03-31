@@ -36,7 +36,7 @@ Effect ordering race: when `selectedWorkspaceId` changed, `handleStateUpdate` ca
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session195.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session195.md` (THIS REPORT)
 
 > Далее: в зависимости от задачи открыть нужные документы из `doc/SolidWorks-WorkFlow/Clusters/`, `doc/SolidWorks-WorkFlow/Modules/`, `doc/SolidWorks-WorkFlow/Contracts/`.
 

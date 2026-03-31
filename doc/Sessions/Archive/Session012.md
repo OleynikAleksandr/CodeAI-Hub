@@ -36,7 +36,7 @@ VSIX sha256: `d838b16285194b782b0d70d2aa1a20f30ab8fe83f860d1304f51ab80330b2dc3`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session012.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session012.md` (THIS REPORT)
 
 ## Plans for next session
 - Визуально подтвердить, что ▶/■ кнопка работает одинаково во всех типах сессий: ▶ отправляет как Enter, ■ прерывает текущий turn через restart Core и input становится доступен для нового запроса.

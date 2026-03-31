@@ -39,7 +39,7 @@
 - Archived the completed previous implementation plan:
   - `doc/TODO/todo-plan.md` -> `doc/TODO/Archive/todo-plan-up-to-phase81-release-1.1.833-2026-03-29.md`
 - Created a dedicated planning doc for the new scope:
-  - `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/SessionTurnStop_And_Core_Independence_Architecture.md`
 - Created a new active execution plan:
   - `doc/TODO/todo-plan.md`
   - phases prepared:
@@ -50,7 +50,7 @@
 - Left the worktree intentionally dirty with documentation/planning-only changes and no code changes:
   - `doc/BugRegistry.md`
   - `doc/TODO/todo-plan.md`
-  - `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/SessionTurnStop_And_Core_Independence_Architecture.md`
   - `doc/TODO/Archive/todo-plan-up-to-phase81-release-1.1.833-2026-03-29.md`
   - this session report file
 
@@ -73,11 +73,11 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/BugRegistry.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
-6. `doc/SolidWorks-WorkFlow/Plans/SessionTurnStop_And_Core_Independence_Architecture.md`
+6. `doc/SolidWorks-WorkFlow/Plans/Archive/SessionTurnStop_And_Core_Independence_Architecture.md`
 7. `doc/TODO/todo-plan.md`
 8. `doc/TODO/Archive/todo-plan-up-to-phase81-release-1.1.833-2026-03-29.md`
-9. `doc/Sessions/Session186.md`
-10. `doc/Sessions/Session187.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session186.md`
+10. `doc/Sessions/Archive/Session187.md` (THIS REPORT)
 
 > After that, inspect the carry-forward baseline commits listed above with `git show --stat <hash>` and `git show <hash>`.
 

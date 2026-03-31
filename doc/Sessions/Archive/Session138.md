@@ -48,8 +48,8 @@
 8. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_StagedPrompt_And_Continuation_Repair_Architecture.md`
 9. `doc/SolidWorks-WorkFlow/Plans/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`
 10. `doc/TODO/todo-plan.md`
-11. `doc/Sessions/Session137.md`
-12. `doc/Sessions/Session138.md` (THIS REPORT)
+11. `doc/Sessions/Archive/Session137.md`
+12. `doc/Sessions/Archive/Session138.md` (THIS REPORT)
 
 ## First sanity check
 - Подтвердить, что baseline релиза всё ещё `1.1.769`, дерево чистое и новый Phase 45 уже появился в `todo-plan.md`.

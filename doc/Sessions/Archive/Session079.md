@@ -53,8 +53,8 @@
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session078.md`
-8. `doc/Sessions/Session079.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session078.md`
+8. `doc/Sessions/Archive/Session079.md` (THIS REPORT)
 
 > Текущий status: локальный релиз `v1.1.730` верифицирован вручную, архитектурные и release-facing документы синхронизированы, pre-push duplication blocker устранён; ветка `main` готова к повторной публикации на GitHub и дальнейшей работе от подтверждённого continuity baseline.
 

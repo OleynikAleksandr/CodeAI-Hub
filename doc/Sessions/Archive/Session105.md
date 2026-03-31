@@ -36,7 +36,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session105.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session105.md` (THIS REPORT)
 
 ## Plans for next session
 - Отдельно обсудить организационный follow-up по diagram workflow.

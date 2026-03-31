@@ -53,8 +53,8 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session113.md`
-6. `doc/Sessions/Session114.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session113.md`
+6. `doc/Sessions/Archive/Session114.md` (THIS REPORT)
 
 > Дополнительно открыть accepted greenfield baseline:
 > - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`

@@ -314,8 +314,8 @@
 3. `doc/SolidWorks-WorkFlow/Contracts/Description_LegacyCleanup_Architecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session068.md`
-7. `doc/Sessions/Session069.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session068.md`
+7. `doc/Sessions/Archive/Session069.md` (THIS REPORT)
 
 ## Plans for next session
 - Заархивировать полностью выполненный `doc/TODO/todo-plan.md`, если следующая сессия открывает уже новый scope работ.

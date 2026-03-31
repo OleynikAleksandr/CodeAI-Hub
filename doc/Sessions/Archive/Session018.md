@@ -34,7 +34,7 @@ VSIX sha256: `8734cf248ec706bbd3623916149921533ecefb8e55d6707d4d9649f8357ac4e9`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session018.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session018.md` (THIS REPORT)
 
 ## Plans for next session
 - Отметить DONE в `doc/TODO/todo-plan.md`: проставить hash коммита упаковки VSIX v1.1.664.

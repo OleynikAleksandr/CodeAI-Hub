@@ -47,8 +47,8 @@
 6. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 7. `doc/SolidWorks-WorkFlow/Plans/WorkflowGlossary_TestingFeedback_Architecture.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session126.md`
-10. `doc/Sessions/Session127.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session126.md`
+10. `doc/Sessions/Archive/Session127.md` (THIS REPORT)
 
 ## Git context recovery before coding
 - Обязательно просмотреть через `git show --stat <hash>` и `git show <hash>`:

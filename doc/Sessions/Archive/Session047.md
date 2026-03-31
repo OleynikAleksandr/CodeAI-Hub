@@ -66,7 +66,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session047.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session047.md` (THIS REPORT)
 
 ## Plans for next session
 - Проверить работу нового шаблона анкеты в UI (открыть Project Manager → Description → заполнить анкету).

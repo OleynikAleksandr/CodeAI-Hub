@@ -10,7 +10,7 @@
 
 ## Work summary
 
-- Восстановлен контекст после `Session169`: прочитаны `doc/Sessions/Session169.md`, `doc/TODO/todo-plan.md`, planning-docs текущей cleanup wave, SSOT и commit-цепочка предыдущей сессии через `git show`.
+- Восстановлен контекст после `Session169`: прочитаны `doc/Sessions/Archive/Session169.md`, `doc/TODO/todo-plan.md`, planning-docs текущей cleanup wave, SSOT и commit-цепочка предыдущей сессии через `git show`.
 - Закрыт следующий hotspot `packages/Claude_Module/src/messaging/message-processor.ts`: root-файл сведен к thin queue/processResponses façade, assistant/result/thinking/structured-output routing вынесен в `claude-stream-event-router.ts`, lifecycle completion — в `claude-message-finish-handler.ts`.
 - Для соблюдения line-limit contract safe cut дополнительно вынес usage synchronization: `claude-usage-sync.ts` отвечает за usage-limits sync, `claude-token-usage-sync.ts` — за `/context` token usage refresh; все новые handwritten файлы остались `<=300` строк.
 - `packages/Claude_Module/src/messaging/message-processor.ts` удалён из explicit oversized allowlist.
@@ -40,9 +40,9 @@
 
 ## Required documents to review before work
 
-1. `doc/Sessions/Session170.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session170.md` (THIS REPORT)
 2. `doc/TODO/todo-plan.md`
-3. `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`
 4. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/SolidWorks-WorkFlow/Modules/Codex.md`

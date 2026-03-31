@@ -62,7 +62,7 @@
 7. `doc/BugRegistry.md`
 8. `README.md`
 9. `CHANGELOG.md`
-10. `doc/Sessions/Session001.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session001.md` (THIS REPORT)
 
 ## Plans for next session
 - Если всё ок по release-notes и документации, стартовать новый Phase в `doc/TODO/todo-plan.md` под следующую функциональность/рефакторинг.

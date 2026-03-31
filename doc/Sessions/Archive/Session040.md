@@ -27,7 +27,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_VirtualSimulation_ColdStartRecovery.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session040.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session040.md` (THIS REPORT)
 
 ## Plans for next session
 - Выполнить Stream 0: подтвердить контракт и зафиксировать commit.

@@ -64,7 +64,7 @@
 ## Required documents to review before work
 1. `AGENTS.md` — master process and architecture rules
 2. `doc/TODO/todo-plan.md` — active plan with 4 phases of test fixes
-3. `doc/Sessions/Session197.md` (THIS REPORT) — especially the diagnostic details below
+3. `doc/Sessions/Archive/Session197.md` (THIS REPORT) — especially the diagnostic details below
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 
 ## Diagnostic: 12 failing tests (all pre-existing)

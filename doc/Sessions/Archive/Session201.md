@@ -36,8 +36,8 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session200.md`
-3. `doc/Sessions/Session201.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session200.md`
+3. `doc/Sessions/Archive/Session201.md` (THIS REPORT)
 4. `doc/TODO/todo-plan.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 

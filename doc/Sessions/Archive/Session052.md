@@ -43,7 +43,7 @@
 6. `doc/TODO/todo-plan.md` (Phase 280)
 7. `doc/Description_Agent_Instructions_Template.draft-v2.md`
 8. `doc/Description_Step_Help_Template.draft-v1.md`
-9. `doc/Sessions/Session052.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session052.md` (THIS REPORT)
 
 ## Plans for next session
 - Провести ревью draft-шаблонов в `doc/` вместе с пользователем и собрать правки.

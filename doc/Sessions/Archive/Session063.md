@@ -50,7 +50,7 @@
 4. `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 6. `doc/TODO/todo-plan.md`
-7. `doc/Sessions/Session063.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session063.md` (THIS REPORT)
 
 ## Plans for next session
 - Сначала выполнить smoke на `v1.1.721` в реальной инсталляции и проверить persistence/round-trip трёх режимов в `Settings -> General`.

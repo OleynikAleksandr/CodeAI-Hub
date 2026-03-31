@@ -22,7 +22,7 @@
   - в `1.1.834` переключение самой модели работает корректно и применяется на следующем turn;
   - переключение reasoning/thinking не проходит по системе как изменение identity и не даёт того же гарантированного эффекта;
   - проблема подтверждена как минимум на Codex и трактуется как архитектурная, а не как локальный UI-only defect.
-- Создан новый planning-док `doc/SolidWorks-WorkFlow/Plans/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`.
+- Создан новый planning-док `doc/SolidWorks-WorkFlow/Plans/Archive/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`.
 - Активный `doc/TODO/todo-plan.md` заменён с intake-stub на новый phase/stream backlog под реализацию effective model identity contract.
 - Код в этой сессии не менялся; это planning-only handoff перед следующим implementation block.
 - Состояние дерева зафиксировано для следующей сессии:
@@ -35,7 +35,7 @@
 - Актуальный baseline для следующей реализации:
   - `163270f3 docs(session): archive phase85 release plan`
   - `6f5a8eab chore: release stop recovery contract`
-- Для полного восстановления контекста реализации также использовать список коммитов из `doc/Sessions/Session188.md`.
+- Для полного восстановления контекста реализации также использовать список коммитов из `doc/Sessions/Archive/Session188.md`.
 - Важно: `Session189` описывает planning-only handoff без собственных commit hashes; восстановление контекста нужно начинать от baseline-коммитов выше и от новых документов этой сессии, а не искать несуществующий implementation commit.
 
 ---
@@ -46,10 +46,10 @@
 1. `doc/SolidWorks-WorkFlow/README.md`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-4. `doc/SolidWorks-WorkFlow/Plans/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`
+4. `doc/SolidWorks-WorkFlow/Plans/Archive/EffectiveModelIdentity_And_SettingsSSOT_Architecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session188.md`
-7. `doc/Sessions/Session189.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session188.md`
+7. `doc/Sessions/Archive/Session189.md` (THIS REPORT)
 
 > Далее: по ходу stream-ов открыть затронутые документы из `doc/SolidWorks-WorkFlow/Modules/`, `Contracts/` и связанные файлы resolver/bridge/UI.
 

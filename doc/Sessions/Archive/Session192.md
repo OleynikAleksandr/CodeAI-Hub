@@ -32,7 +32,7 @@
 2. `CHANGELOG.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session192.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session192.md` (THIS REPORT)
 
 > Далее: в зависимости от нового scope открыть нужные документы из `doc/SolidWorks-WorkFlow/Plans/`, `Modules/`, `Contracts/`, `Clusters/`.
 

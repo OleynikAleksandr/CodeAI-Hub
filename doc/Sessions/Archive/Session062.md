@@ -128,8 +128,8 @@
 # 2. Instructions for Next Session
 
 ## Required documents to review before work
-1. `doc/Sessions/Session061.md`
-2. `doc/Sessions/Session062.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session061.md`
+2. `doc/Sessions/Archive/Session062.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 4. `doc/SolidWorks-WorkFlow/README.md`
 5. `doc/SolidWorks-WorkFlow/Docs_Index.md`

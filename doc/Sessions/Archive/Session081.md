@@ -45,8 +45,8 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session080.md`
-7. `doc/Sessions/Session081.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session080.md`
+7. `doc/Sessions/Archive/Session081.md` (THIS REPORT)
 
 > Текущий status: GitHub release `v1.1.730` опубликован, VSIX asset загружен, tag и release metadata указывают на commit `ebcb0a3245c4289026a3a15553dbba1d6b098180`.
 

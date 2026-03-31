@@ -38,7 +38,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session102.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session102.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md` и продолжить проектирование manual alignment tools для `module-map.md` / `facade-map.md`.
 

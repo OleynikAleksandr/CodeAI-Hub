@@ -43,7 +43,7 @@
 2. `CHANGELOG.md`
 3. `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session061.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session061.md` (THIS REPORT)
 
 ## Plans for next session
 - Установить и прогнать пользовательский smoke для `codeai-hub-1.1.720.vsix` на очищенной инсталляции.

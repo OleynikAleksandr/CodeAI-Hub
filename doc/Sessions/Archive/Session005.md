@@ -43,7 +43,7 @@ VSIX path (local): `codeai-hub-1.1.652.vsix`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionTaskTimer_UI.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session005.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session005.md` (THIS REPORT)
 
 ## Plans for next session
 - Визуально подтвердить в Project Manager: таймеры total/turn не сбрасываются при смене workspace, multi-tab, и при перезагрузке Project Manager; верхний/нижний таймеры выровнены по одному right anchor.

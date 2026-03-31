@@ -11,7 +11,7 @@
 ## Work summary
 
 - Прочитан audit `CODEAI_HUB_HONEST_AUDIT_20260327.md` и принят как baseline для текущей post-audit фазы.
-- Planning-doc `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md` и `doc/TODO/todo-plan.md` синхронизированы под реальные findings audit-а без расширения scope за пределы packaging cleanup + oversized debt reduction.
+- Planning-doc `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md` и `doc/TODO/todo-plan.md` синхронизированы под реальные findings audit-а без расширения scope за пределы packaging cleanup + oversized debt reduction.
 - Закрыт первый packaging tail cleanup: `.husky/_` helper files и repository hook scripts исключены из VSIX через `.vscodeignore`; release-facing note добавлен в `README.md`, верхний `Unreleased` блок добавлен в `CHANGELOG.md`.
 - Закрыт первый `Phase 78` runtime-cut: `packages/core/src/remote-bridge/handlers/http-api-router.ts` превращён в thin façade, route/session/system/artifact upsert logic вынесены в отдельные helper-модули, а сам root router удалён из explicit oversized allowlist.
 - Закрыт следующий `Phase 78` runtime-cut: `packages/core/src/remote-bridge/index.ts` сведён к thin façade; bootstrap/lifecycle wiring вынесены в `remote-bridge-bootstrap.ts` и `remote-bridge-server-lifecycle.ts`, websocket command orchestration выделена в `remote-bridge-message-router.ts`, а dialog/workspace command branches разложены по `remote-bridge-dialog-command-router.ts` и `remote-bridge-workspace-command-router.ts`. После cut root `index.ts` удалён из explicit oversized allowlist.
@@ -20,7 +20,7 @@
   - до cleanup `.husky/**` реально попадал в package surface;
   - после cleanup `.husky/**` из package surface исчез.
 - Активный план этой сессии: `doc/TODO/todo-plan.md`
-- Канонический planning-doc для этой волны: `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`
+- Канонический planning-doc для этой волны: `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`
 
 ## Verification status
 
@@ -58,9 +58,9 @@
 
 ## Required documents to review before work
 
-1. `doc/Sessions/Session168.md` (THIS REPORT)
+1. `doc/Sessions/Archive/Session168.md` (THIS REPORT)
 2. `doc/TODO/todo-plan.md`
-3. `doc/SolidWorks-WorkFlow/Plans/PostAudit_TailCleanup_Architecture.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`
 4. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 

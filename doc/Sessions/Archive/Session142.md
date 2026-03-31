@@ -35,7 +35,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session142.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session142.md` (THIS REPORT)
 
 > Далее: открыть `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_771_Architecture.md` и, если ретест `1.1.772` снова найдёт расхождение, проверить user-facing adapters вокруг `Diagram Modules` surface (`Source`, `Artifacts`, staged progress copy, React Flow loader) на очередной legacy drift.
 

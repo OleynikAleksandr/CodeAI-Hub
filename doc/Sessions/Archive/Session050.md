@@ -158,7 +158,7 @@
 7. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 8. `doc/SolidWorks-WorkFlow/Contracts/StandaloneReviewer_Module.md`
 9. `doc/TODO/todo-plan.md`
-10. `doc/Sessions/Session050.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session050.md` (THIS REPORT)
 
 ## Plans for next session
 - Зафиксировать и верифицировать установку релиза `1.1.702` (включая отсутствие reviewer templates в `~/.codeai-hub/templates/description/`).

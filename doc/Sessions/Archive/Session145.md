@@ -49,7 +49,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session145.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session145.md` (THIS REPORT)
 
 > Далее: если новый ретест снова найдёт blocker в `Diagram Modules`, открыть `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_CanonicalOrder_Heading_Blockers_After_1_1_774_Architecture.md` и фактический live artifact из test workspace.
 

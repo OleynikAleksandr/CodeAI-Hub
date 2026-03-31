@@ -53,8 +53,8 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session114.md`
-6. `doc/Sessions/Session115.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session114.md`
+6. `doc/Sessions/Archive/Session115.md` (THIS REPORT)
 
 > Дополнительно открыть regression artifacts текущего mirrored workspace:
 > - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`

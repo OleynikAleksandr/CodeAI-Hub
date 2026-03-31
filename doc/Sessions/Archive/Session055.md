@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Восстановлен сессионный контекст по `doc/Sessions/Session054.md` и детально проверены указанные в отчёте коммиты через `git show --stat` и `git show`.
+- Восстановлен сессионный контекст по `doc/Sessions/Archive/Session054.md` и детально проверены указанные в отчёте коммиты через `git show --stat` и `git show`.
 - Подтверждена готовность релизных артефактов `1.1.705` (VSIX и tarball-пакеты).
 - Выполнена ревизия пользовательского `Final_Description.md` и подготовлен расширенный блок уточняющих вопросов для нагрузочного диалога (цель: довести usage до порога continuity trigger 80%).
 - Для параллельной проверки в другом workspace сформулированы точные ответы по 3 открытым вопросам (Settings path, OUTDATED propagation, хранение dialog history) на основе текущих SSOT/кода.
@@ -31,7 +31,7 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session055.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session055.md` (THIS REPORT)
 
 > Далее: открыть профильные документы `Contracts/` и `Clusters/` по шагу `Virtual Simulation` перед началом реализации/изменений.
 

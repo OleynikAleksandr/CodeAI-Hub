@@ -88,7 +88,7 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session161.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session161.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 4. `doc/BugRegistry.md` — especially BUG-2026-03-26-01/02/03 entries
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

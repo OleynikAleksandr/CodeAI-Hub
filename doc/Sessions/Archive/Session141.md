@@ -57,8 +57,8 @@
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/TODO/todo-plan.md`
 7. `doc/SolidWorks-WorkFlow/Plans/Diagram_Modules_Retest_Blockers_After_1_1_770_Architecture.md`
-8. `doc/Sessions/Session140.md`
-9. `doc/Sessions/Session141.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session140.md`
+9. `doc/Sessions/Archive/Session141.md` (THIS REPORT)
 
 ## First sanity check
 - Подтвердить, что установлен или протестирован именно baseline `1.1.771`.

@@ -66,8 +66,8 @@
 5. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 6. `doc/SolidWorks-WorkFlow/Plans/FlowNodeContinuity_OneShotBoundary_Architecture.md`
 7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session077.md`
-9. `doc/Sessions/Session078.md` (THIS REPORT)
+8. `doc/Sessions/Archive/Session077.md`
+9. `doc/Sessions/Archive/Session078.md` (THIS REPORT)
 
 > Текущий status: локальный релиз `v1.1.730` собран. Continuity boundary fix зафиксирован в коде, SSOT и release-facing docs; открытым остаётся живой smoke document node на реальном Gemini runtime.
 

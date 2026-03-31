@@ -32,8 +32,8 @@
 
 ## Required documents to review before work
 
-1. `doc/Sessions/Session175.md` (THIS REPORT)
-2. `doc/Sessions/Session174.md`
+1. `doc/Sessions/Archive/Session175.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session174.md`
 3. `packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts`
 4. `packages/Gemini_Module/src/session/gemini-session-bootstrapper.test.ts`
 5. `packages/Gemini_Module/src/session/gemini-session-manager.ts`

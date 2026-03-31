@@ -52,7 +52,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session036.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session036.md` (THIS REPORT)
 
 ## Plans for next session
 - Установить `doc/tmp/releases/codeai-hub-1.1.676.vsix` и провести полноценное тестирование:

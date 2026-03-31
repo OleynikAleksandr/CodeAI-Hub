@@ -40,7 +40,7 @@ VSIX sha256: `b448d20b8774b141318c80534835da35de612da69db7223bc1d6b1322611cf60`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session013.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session013.md` (THIS REPORT)
 
 ## Plans for next session
 - Проверить на длинном ответе, что ■ действительно останавливает Core (turn прерывается) и что Enter/▶ после остановки запускает Core и отправляет сообщение без залипания input.

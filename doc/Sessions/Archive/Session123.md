@@ -42,13 +42,13 @@
 - Эти остатки больше не являются source of truth для текущего workflow, но могут стать следующей cleanup-phase, если нужно дожать naming дальше внутрь runtime/provider слоя.
 
 ## Advisory / known non-blocking issue
-- `build-release.sh` успешно завершился, но снова выдал advisory по broken markdown links в `doc/Sessions/Session106.md`.
+- `build-release.sh` успешно завершился, но снова выдал advisory по broken markdown links в `doc/Sessions/Archive/Session106.md`.
 - Это не блокирует локальный релиз `1.1.762`, но остаётся техдолгом, если нужна полностью чистая `check:links` / release-console картина без старых absolute-path drift warnings.
 
 ## Working tree status at session end
 - После `build-release.sh` дерево было чистым.
 - Closing commit этой сессии: `docs(session): record 1.1.762 idea legacy cleanup release`.
-- После этого commit дерево должно быть чистым; если нет, сначала проверить только `doc/Sessions/Session123.md` и `doc/TODO/todo-plan.md`.
+- После этого commit дерево должно быть чистым; если нет, сначала проверить только `doc/Sessions/Archive/Session123.md` и `doc/TODO/todo-plan.md`.
 
 ## Git commits
 - `65373d56 docs(plan): start idea collector legacy cleanup scope`
@@ -90,7 +90,7 @@
 7. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 8. `doc/SolidWorks-WorkFlow/Plans/IdeaCollector_LegacyCleanup_Architecture.md`
 9. `doc/TODO/todo-plan.md`
-10. `doc/Sessions/Session123.md` (THIS REPORT)
+10. `doc/Sessions/Archive/Session123.md` (THIS REPORT)
 
 ## Git context recovery before coding
 - Обязательно просмотреть через `git show --stat <hash>` и `git show <hash>` все commit-ы этой сессии из списка выше.
@@ -134,4 +134,4 @@
 - disabled old app-host flow remnants в `src/client/ui/src/app-host/`
 
 ## Optional hygiene task
-- Если нужен полностью чистый release-console без advisory, отдельно разобрать broken markdown links в `doc/Sessions/Session106.md`.
+- Если нужен полностью чистый release-console без advisory, отдельно разобрать broken markdown links в `doc/Sessions/Archive/Session106.md`.

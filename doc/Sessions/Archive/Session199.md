@@ -29,7 +29,7 @@
 
 ### Phase 3: Architecture and execution planning
 - Created a dedicated planning document for this bug and design intake:
-  - `doc/SolidWorks-WorkFlow/Plans/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_StalledTurn_And_TerminalAnswer_Architecture.md`
 - Archived the completed empty post-Session198 plan:
   - `doc/TODO/Archive/todo-plan-up-to-phase198-test-debt-release-1.1.847-2026-03-30.md`
 - Created a new active `doc/TODO/todo-plan.md` for Gemini stalled turn work.
@@ -203,12 +203,12 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session199.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session199.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`
-7. `doc/SolidWorks-WorkFlow/Plans/Gemini_PostTool_TerminalLeg_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_PostTool_TerminalLeg_Architecture.md`
 
 ## Confirmed technical findings
 - Raw Gemini `finished` is not equal to full turn completion; upstream stream can continue after it.

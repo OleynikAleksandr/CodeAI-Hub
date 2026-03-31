@@ -44,10 +44,10 @@
 
 ### Session reports reviewed
 
-- [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md)
-- [`doc/Sessions/Session104.md`](../../doc/Sessions/Session104.md)
-- [`doc/Sessions/Session103.md`](../../doc/Sessions/Session103.md)
-- [`doc/Sessions/Session102.md`](../../doc/Sessions/Session102.md)
+- [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md)
+- [`doc/Sessions/Archive/Session104.md`](../../doc/Sessions/Archive/Session104.md)
+- [`doc/Sessions/Archive/Session103.md`](../../doc/Sessions/Archive/Session103.md)
+- [`doc/Sessions/Archive/Session102.md`](../../doc/Sessions/Archive/Session102.md)
 
 ### Commits from the last session report reviewed via `git show`
 
@@ -215,7 +215,7 @@
 
 ### In the main repository
 
-- [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md)
+- [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md)
 - [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
 - [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
 - [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
@@ -267,8 +267,8 @@
 Если следующая сессия стартует с нулевым контекстом, нужно восстановиться именно в таком порядке:
 
 1. Открыть [`AGENTS.md`](../../AGENTS.md) и напомнить себе, что эта сессия велась в основном как artifact-review, а не как обычная execution-фаза.
-2. Открыть предыдущий релизный отчет [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md), чтобы вспомнить состояние `main` до этой artifact-сессии.
-3. Открыть этот отчет [`doc/Sessions/Session106.md`](../../doc/Sessions/Session106.md) и прочитать его целиком, а не только конец.
+2. Открыть предыдущий релизный отчет [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md), чтобы вспомнить состояние `main` до этой artifact-сессии.
+3. Открыть этот отчет [`doc/Sessions/Archive/Session106.md`](../../doc/Sessions/Archive/Session106.md) и прочитать его целиком, а не только конец.
 4. Проверить `git status` и убедиться, что основной репозиторий по-прежнему чист и что работа идет от `main`.
 5. Переоткрыть базовые SSOT-доки:
    - [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
@@ -284,8 +284,8 @@
 ## Required documents to review before work
 
 1. [`AGENTS.md`](../../AGENTS.md)
-2. [`doc/Sessions/Session105.md`](../../doc/Sessions/Session105.md)
-3. [`doc/Sessions/Session106.md`](../../doc/Sessions/Session106.md) (THIS REPORT)
+2. [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md)
+3. [`doc/Sessions/Archive/Session106.md`](../../doc/Sessions/Archive/Session106.md) (THIS REPORT)
 4. [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
 5. [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
 6. [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)

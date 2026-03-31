@@ -37,7 +37,7 @@ VSIX sha256: `f7f53315120be15869d2ae352eeaaa21b8046ae699202c58a5c88a2f0baddc63`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session016.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session016.md` (THIS REPORT)
 
 ## Plans for next session
 - Быстрый smoke-test UX: Stop ■ размер ок на разных темах/провайдерах; проверить VS Code webview + Standalone Project Manager (CEF).

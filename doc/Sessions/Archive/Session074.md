@@ -36,7 +36,7 @@
 3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/UniversalProviderUsageLimits_Module_Architecture.md`
-6. `doc/Sessions/Session074.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session074.md` (THIS REPORT)
 
 > Далее: если пользователь утверждает scope universal usage limits module, сначала развернуть execution-план в `doc/TODO/todo-plan.md`, а затем внедрять модуль микро-шагами с `<= 3` файлов на задачу.
 

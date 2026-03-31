@@ -48,7 +48,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session186.md` (THIS REPORT)
+5. `doc/Sessions/Archive/Session186.md` (THIS REPORT)
 
 > Then open the relevant Core contracts from `doc/SolidWorks-WorkFlow/System/`, `Contracts/`, and `Modules/` depending on whether the next session starts from post-release regression testing or from the next oversized-debt follow-up.
 

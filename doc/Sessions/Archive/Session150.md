@@ -62,7 +62,7 @@
 
 ### Текущие session/plan
 6. `doc/TODO/todo-plan.md` — **Phase 55** (streams 1-3)
-7. `doc/Sessions/Session150.md` (THIS REPORT)
+7. `doc/Sessions/Archive/Session150.md` (THIS REPORT)
 
 ### Ключевые файлы — Stream 1 (product part header height)
 8. `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts` — **layout computation**: CSS-faithful height calculation (lines 8-50), `getProductPartHeaderHeight` (строки 50-54), все CSS constants (LH11..LH15, MC_*, CL_*, PP_*)

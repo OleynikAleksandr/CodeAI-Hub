@@ -75,7 +75,7 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session160.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session160.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 5. `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`

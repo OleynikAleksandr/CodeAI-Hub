@@ -34,7 +34,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/BugRegistry.md`
-6. `doc/Sessions/Session023.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session023.md` (THIS REPORT)
 
 ## Plans for next session
 - Smoke test (Standalone PM / CEF): Description one-shot → сымитировать Core stop/start mid-turn → ↻ Restart attempt → новая сессия открывается автоматически (без кликов по дереву).

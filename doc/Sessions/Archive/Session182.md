@@ -14,7 +14,7 @@
 - Traced the current Codex runtime path and confirmed the main architectural problem: model/reasoning are currently derived in multiple places (`settings` UI snapshot, Core events, provider-local settings reads, cached provider defaults), which creates a split-brain between UI labels and actual runtime application.
 - Confirmed that `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` still owns a provider-local `workspaceDefaults` cache and creates thread runtime options from it, while `packages/Codex_Module/src/messaging/message-processor.ts` keeps using the thread object captured for the session lifecycle.
 - Reframed the architecture according to the user requirement: persisted Settings must be the single source of truth for `model` / `reasoning` for the next new turn, with Core owning effective config resolution and providers consuming explicit applied config rather than independently reading settings.
-- Created a new planning document for this scope: `doc/SolidWorks-WorkFlow/Plans/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`.
+- Created a new planning document for this scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`.
 - Rewrote `doc/TODO/todo-plan.md` so the work is now split into two ordered phases:
   - `Phase 80` — `Settings SSOT And Next-Turn Model Switching`
   - `Phase 81` — `SessionRequestHandler Carry-Over Tail`
@@ -46,9 +46,9 @@
 1. `doc/SolidWorks-WorkFlow/README.md`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-4. `doc/SolidWorks-WorkFlow/Plans/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`
+4. `doc/SolidWorks-WorkFlow/Plans/Archive/Settings_SSOT_And_NextTurn_ModelSwitch_Architecture.md`
 5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session182.md` (THIS REPORT)
+6. `doc/Sessions/Archive/Session182.md` (THIS REPORT)
 
 > Then open the relevant Core/provider contracts from `doc/SolidWorks-WorkFlow/System/`, `Modules/`, and `Contracts/` for the active `Phase 80` stream.
 

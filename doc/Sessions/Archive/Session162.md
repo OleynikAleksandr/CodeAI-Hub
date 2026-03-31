@@ -79,7 +79,7 @@
 
 ## Required documents to review before work
 1. `AGENTS.md`
-2. `doc/Sessions/Session162.md` (THIS REPORT)
+2. `doc/Sessions/Archive/Session162.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 4. `doc/SolidWorks-WorkFlow/Plans/ThoughtTranslation_GoogleTranslate_Migration.md`
 

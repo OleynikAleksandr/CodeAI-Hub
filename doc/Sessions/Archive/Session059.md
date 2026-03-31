@@ -52,7 +52,7 @@
 6. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 7. `doc/BugRegistry.md`
 8. `doc/TODO/todo-plan.md`
-9. `doc/Sessions/Session059.md` (THIS REPORT)
+9. `doc/Sessions/Archive/Session059.md` (THIS REPORT)
 
 ## Plans for next session
 - Выполнить smoke-проверку PM UX на `v1.1.709` в живом сценарии (Toolbar ↔ Tree ↔ Artifacts/Help).
