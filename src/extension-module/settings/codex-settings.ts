@@ -25,11 +25,13 @@ export interface CodexSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
+  readonly reasoningSummaryEnabled: boolean;
   readonly sessionContinuity: CodexSessionContinuitySettings;
 }
 
 const MIN_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CODEX_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+const DEFAULT_CODEX_REASONING_SUMMARY_ENABLED = true;
 
 const CODEX_MODEL_IDS = new Set<string>(
   CODEX_SETTINGS_MODELS.map((model) => model.id)
@@ -58,6 +60,7 @@ export const DEFAULT_CODEX_SETTINGS: CodexSettings = {
   autoUpdate: DEFAULT_AUTO_UPDATE_SETTINGS,
   defaultModel: DEFAULT_CODEX_MODEL_ID,
   reasoningByModel: DEFAULT_CODEX_REASONING_BY_MODEL,
+  reasoningSummaryEnabled: DEFAULT_CODEX_REASONING_SUMMARY_ENABLED,
   sessionContinuity: DEFAULT_CODEX_SESSION_CONTINUITY_SETTINGS,
 };
 
@@ -113,6 +116,21 @@ const normalizeCodexSessionContinuitySettings = (
   return { remainingPercentThreshold };
 };
 
+const normalizeCodexReasoningSummaryEnabled = (
+  value: unknown,
+  legacyValue: unknown
+): boolean => {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof legacyValue === "boolean") {
+    return legacyValue;
+  }
+
+  return DEFAULT_CODEX_REASONING_SUMMARY_ENABLED;
+};
+
 export const normalizeCodexSettings = (value: unknown): CodexSettings => {
   if (!isRecord(value)) {
     return DEFAULT_CODEX_SETTINGS;
@@ -122,6 +140,10 @@ export const normalizeCodexSettings = (value: unknown): CodexSettings => {
     autoUpdate: normalizeAutoUpdateSettings(value.autoUpdate),
     defaultModel: normalizeCodexDefaultModel(value.defaultModel),
     reasoningByModel: normalizeCodexReasoningByModel(value.reasoningByModel),
+    reasoningSummaryEnabled: normalizeCodexReasoningSummaryEnabled(
+      value.reasoningSummaryEnabled,
+      value.thinkingDisplaySyncEnabled
+    ),
     sessionContinuity: normalizeCodexSessionContinuitySettings(
       value.sessionContinuity
     ),
