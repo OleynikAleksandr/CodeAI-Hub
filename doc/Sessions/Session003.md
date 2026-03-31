@@ -1,6 +1,6 @@
 # Session 003 — Plans Cleanup, Session Archive Reset and SSOT Promotion
 
-**Date:** 2026-03-31 17:49 CEST
+**Date:** 2026-03-31 17:50 CEST
 **Branch:** main
 **Version:** 1.1.854
 
@@ -13,13 +13,14 @@
 - Создал и зафиксировал рабочий contract SSOT для effective model identity и next-turn settings: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`.
 - Перенёс все session reports в `doc/Sessions/Archive/`, а в root оставил только `Session001.md`, `Session002.md`, `Session003.md`.
 - Перенёс retired planning-docs из root `doc/SolidWorks-WorkFlow/Plans/` в `Plans/Archive/`, чтобы root папка осталась только с активными планами и рабочими SSOT.
-- Синхронизировал ссылки и навигацию: обновил `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/README.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md` и архивные TODO/session ссылки под новый layout.
+- Синхронизировал ссылки и навигацию: обновил `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/README.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md` и затем отдельно добил archive session/plan ссылки под новый layout.
 - Сборки и тесты не запускал: изменение только документационное.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
 - `3a3dff57 docs(architecture): consolidate retired plans into SSOT docs`
 - `bef4630e docs(archive): reset session reports and move retired plans`
+- `42b37e94 docs(archive): fix archive session and plan links`
 
 ---
 
