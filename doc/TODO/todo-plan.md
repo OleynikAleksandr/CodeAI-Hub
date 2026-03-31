@@ -36,21 +36,21 @@
 Goal: behavior-preserving decomposition of the remaining test/support warning-zone roots, followed by a test release build.
 
 ### Stream: Workspace Runtime Test Split
-1. [IN_PROGRESS] Core: вынести continuity/resume-oriented сценарии из `workspace-runtime-facade.test.ts` в sibling test file, сохранив базовый snapshot/select/flush coverage в root. Scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`, новый sibling test file в `packages/core/src/workspace-runtime/`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): split workspace runtime facade continuity scenarios`
-2. [TODO] Git Commit: `test(core): split workspace runtime facade continuity scenarios` (hash: TBD)
+1. [DONE] Core: вынести continuity/resume-oriented сценарии из `workspace-runtime-facade.test.ts` в sibling test file, сохранив базовый snapshot/select/flush coverage в root. Scope: `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts`, новый sibling test file в `packages/core/src/workspace-runtime/`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): split workspace runtime facade continuity scenarios`
+2. [DONE] Git Commit: `test(core): split workspace runtime facade continuity scenarios` (hash: `3ddc4f81`)
 
 ### Stream: Session Request Handler Test Helper Split
-3. [TODO] Core: вынести event-counter helpers из `session-request-handler.test-helpers.ts` в focused sibling helper, оставив root helper на harness/bootstrap-oriented surface. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test-helpers.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): extract session request handler event helpers`
-4. [TODO] Git Commit: `test(core): extract session request handler event helpers` (hash: TBD)
-5. [TODO] Core: вынести continuity/bootstrap utility helpers из `session-request-handler.test-helpers.ts` в focused sibling helper и синхронизировать imports. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test-helpers.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`. Expected commit: `test(core): split session request handler continuity helpers`
-6. [TODO] Git Commit: `test(core): split session request handler continuity helpers` (hash: TBD)
+3. [DONE] Core: вынести event-counter helpers из `session-request-handler.test-helpers.ts` в focused sibling helper, оставив root helper на harness/bootstrap-oriented surface. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test-helpers.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `doc/TODO/todo-plan.md`. Expected commit: `test(core): extract session request handler event helpers`
+4. [DONE] Git Commit: `test(core): extract session request handler event helpers` (hash: `da3573a1`)
+5. [DONE] Core: вынести continuity/bootstrap utility helpers из `session-request-handler.test-helpers.ts` в focused sibling helper и синхронизировать imports. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test-helpers.ts`, новый helper в `packages/core/src/remote-bridge/handlers/`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`. Expected commit: `test(core): split session request handler continuity helpers`
+6. [DONE] Git Commit: `test(core): split session request handler continuity helpers` (hash: `81f1ac7d`)
 
 ### Stream: Gemini Session Manager Test Split
-7. [TODO] Gemini_Module: вынести post-tool nested watchdog и delayed-final-answer сценарии из `gemini-session-manager.test.ts` в sibling test file, сохранив baseline/recoverable coverage в root. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, новый sibling test file в `packages/Gemini_Module/src/session/`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): split post-tool session manager scenarios`
-8. [TODO] Git Commit: `test(gemini): split post-tool session manager scenarios` (hash: TBD)
+7. [DONE] Gemini_Module: вынести post-tool nested watchdog и delayed-final-answer сценарии из `gemini-session-manager.test.ts` в sibling test file, сохранив baseline/recoverable coverage в root. Scope: `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, новый sibling test file в `packages/Gemini_Module/src/session/`, `doc/TODO/todo-plan.md`. Expected commit: `test(gemini): split post-tool session manager scenarios`
+8. [DONE] Git Commit: `test(gemini): split post-tool session manager scenarios` (hash: `a4329d08`)
 
 ### Stream: Test Support Verification
-9. [TODO] Verification: прогнать targeted source-level tests и package builds для Core/Gemini test-support cleanup wave, затем синхронизировать execution status. Scope: `packages/core`, `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(repo): verify test support warning-zone cleanup`
+9. [DONE] Verification: прогнать targeted source-level tests и package builds для Core/Gemini test-support cleanup wave, затем синхронизировать execution status. Scope: `packages/core`, `packages/Gemini_Module`, `doc/TODO/todo-plan.md`. Expected commit: `test(repo): verify test support warning-zone cleanup`
 10. [TODO] Git Commit: `test(repo): verify test support warning-zone cleanup` (hash: TBD)
 
 ### Stream: Release Docs
