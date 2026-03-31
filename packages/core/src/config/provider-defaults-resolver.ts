@@ -14,7 +14,7 @@ export type CodexApprovalMode =
 export const DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
 export const DEFAULT_CODEX_REASONING_EFFORT: CodexReasoningEffort = "medium";
 
-const CODEX_MODEL_IDS = new Set(["gpt-5.3-codex", "gpt-5.4"]);
+const CODEX_MODEL_IDS = new Set(["gpt-5.3-codex", "gpt-5.4", "gpt-5.4-mini"]);
 const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "low",
   "medium",
