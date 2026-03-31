@@ -24,6 +24,7 @@ import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
   RawCodexSettings,
+  RawGeminiSettings,
   RawGeneralSettings,
   RawSettingsSnapshot,
   RawThinkingSettings,
@@ -47,6 +48,9 @@ interface ThinkingSettings {
   readonly enabled: boolean;
   readonly maxTokens: number;
 }
+interface ThinkingDisplaySyncSettings {
+  readonly thinkingDisplaySyncEnabled: boolean;
+}
 interface AutoUpdateSettings {
   readonly enabled: boolean;
 }
@@ -69,22 +73,26 @@ interface ClaudeSettings {
 export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
 >;
-interface CodexSettings {
+interface CodexSettings extends ThinkingDisplaySyncSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
   readonly sessionContinuity: ContinuitySettings;
 }
+interface GeminiSettingsWithDisplaySync
+  extends GeminiSettings,
+    ThinkingDisplaySyncSettings {}
 export interface Settings {
   readonly general: GeneralSettings;
   readonly providers: {
     readonly claude: ClaudeSettings;
     readonly codex: CodexSettings;
-    readonly gemini: GeminiSettings;
+    readonly gemini: GeminiSettingsWithDisplaySync;
   };
 }
 
 const DEFAULT_THINKING_MAX_TOKENS = 4000;
+const DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;
 const DEFAULT_CORE_RESTART_ENABLED = true;
 const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
@@ -117,6 +125,9 @@ const mapThinkingSettings = (
       : DEFAULT_THINKING_MAX_TOKENS,
   };
 };
+
+const mapThinkingDisplaySyncEnabled = (value: unknown): boolean =>
+  typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
 
 const mapAutoUpdateSettings = (
   value: RawAutoUpdateSettings | undefined
@@ -164,6 +175,15 @@ const mapClaudeSettings = (
   sessionContinuity: mapContinuity(value?.sessionContinuity),
 });
 
+const mapGeminiSettingsWithDisplaySync = (
+  value: RawGeminiSettings | undefined
+): GeminiSettingsWithDisplaySync => ({
+  ...mapGeminiSettings(value, mapAutoUpdateSettings),
+  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+    value?.thinkingDisplaySyncEnabled
+  ),
+});
+
 const resolveCodexModelId = (value: unknown): CodexModelId =>
   typeof value === "string" && CODEX_MODEL_IDS.has(value)
     ? (value as CodexModelId)
@@ -205,6 +225,9 @@ const mapCodexSettings = (
   defaultModel: resolveCodexModelId(value?.defaultModel),
   reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
   sessionContinuity: mapContinuity(value?.sessionContinuity),
+  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+    value?.thinkingDisplaySyncEnabled
+  ),
 });
 
 export const mapSettingsSnapshot = (
@@ -214,7 +237,7 @@ export const mapSettingsSnapshot = (
   providers: {
     claude: mapClaudeSettings(value?.providers?.claude),
     codex: mapCodexSettings(value?.providers?.codex),
-    gemini: mapGeminiSettings(value?.providers?.gemini, mapAutoUpdateSettings),
+    gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini),
   },
 });
 
@@ -231,6 +254,12 @@ const areThinkingSettingsEqual = (
   right: ThinkingSettings
 ): boolean =>
   left.enabled === right.enabled && left.maxTokens === right.maxTokens;
+
+const areThinkingDisplaySyncSettingsEqual = (
+  left: ThinkingDisplaySyncSettings,
+  right: ThinkingDisplaySyncSettings
+): boolean =>
+  left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled;
 
 const areReasoningByModelEqual = (
   left: CodexReasoningByModel,
@@ -268,16 +297,18 @@ const areCodexSettingsEqual = (
   right: CodexSettings
 ): boolean =>
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
+  areThinkingDisplaySyncSettingsEqual(left, right) &&
   left.defaultModel === right.defaultModel &&
   areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) &&
   left.sessionContinuity.remainingPercentThreshold ===
     right.sessionContinuity.remainingPercentThreshold;
 
 const areGeminiSettingsEqual = (
-  left: GeminiSettings,
-  right: GeminiSettings
+  left: GeminiSettingsWithDisplaySync,
+  right: GeminiSettingsWithDisplaySync
 ): boolean =>
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
+  areThinkingDisplaySyncSettingsEqual(left, right) &&
   left.defaultModel === right.defaultModel &&
   areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,

@@ -92,6 +92,21 @@ export const updateCodexReasoning = (
   },
 });
 
+export const updateThinkingDisplaySyncEnabled = (
+  settings: Settings,
+  provider: "codex" | "gemini",
+  enabled: boolean
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    [provider]: {
+      ...settings.providers[provider],
+      thinkingDisplaySyncEnabled: enabled,
+    },
+  },
+});
+
 export const updateCodexContinuityRemainingPercentThreshold = (
   settings: Settings,
   remainingPercentThreshold: number

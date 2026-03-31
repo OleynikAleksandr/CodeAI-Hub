@@ -26,11 +26,13 @@ export interface RawCodexSettings {
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: Record<string, unknown>;
   readonly sessionContinuity?: RawCodexSessionContinuitySettings;
+  readonly thinkingDisplaySyncEnabled?: unknown;
 }
 export interface RawGeminiSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
   readonly sessionContinuity?: RawGeminiSessionContinuitySettings;
+  readonly thinkingDisplaySyncEnabled?: unknown;
   readonly thinkingLevelByModel?: Record<string, unknown>;
 }
 export interface RawCoreControlsSettings {

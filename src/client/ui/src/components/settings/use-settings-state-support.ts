@@ -71,6 +71,7 @@ export interface UseSettingsStateResult {
     modelId: CodexModelId,
     reasoning: CodexReasoningLevel
   ) => void;
+  readonly handleCodexThinkingDisplaySyncChange: (enabled: boolean) => void;
   readonly handleGeminiContextWindowTokenLimitChange: (
     contextWindowTokenLimit: number
   ) => void;
@@ -82,6 +83,7 @@ export interface UseSettingsStateResult {
     modelId: GeminiModelId,
     level: GeminiThinkingLevel
   ) => void;
+  readonly handleGeminiThinkingDisplaySyncChange: (enabled: boolean) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,
     enabled: boolean

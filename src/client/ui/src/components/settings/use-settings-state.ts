@@ -19,6 +19,7 @@ import {
   updateResponsePolicyMode,
   updateStrictInstructionText,
   updateStrictSchemaText,
+  updateThinkingDisplaySyncEnabled,
   updateThinkingSettings,
 } from "./settings-state-helpers";
 import {
@@ -226,6 +227,24 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleCodexThinkingDisplaySyncChange = useCallback(
+    (enabled: boolean) => {
+      updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "codex", enabled)
+      );
+    },
+    [settings, updateSettings]
+  );
+
+  const handleGeminiThinkingDisplaySyncChange = useCallback(
+    (enabled: boolean) => {
+      updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "gemini", enabled)
+      );
+    },
+    [settings, updateSettings]
+  );
+
   const handleSave = useCallback(() => {
     setSaving(true);
     vscode.postMessage({
@@ -275,6 +294,8 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleGeminiDefaultModelChange,
     handleGeminiThinkingChange,
     handleCodexReasoningChange,
+    handleCodexThinkingDisplaySyncChange,
+    handleGeminiThinkingDisplaySyncChange,
     handleProviderAutoUpdateChange,
     handleResponsePolicyModeChange,
     handleStrictSchemaTextChange,
