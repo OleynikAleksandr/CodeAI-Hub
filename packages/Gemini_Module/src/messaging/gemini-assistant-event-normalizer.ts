@@ -136,6 +136,14 @@ export class GeminiAssistantEventNormalizer {
     accumulator.currentAssistantChunks.length = 0;
     const pendingTranslations = [...accumulator.pendingTranslations];
     accumulator.pendingTranslations.length = 0;
+    if (pendingTranslations.length === 0) {
+      this.emitDialogMessage(session, "assistant", assistantSegment, {
+        seed: accumulator.promptId,
+      });
+      accumulator.pendingDialogMessageFlush = Promise.resolve();
+      return [];
+    }
+
     accumulator.pendingDialogMessageFlush =
       accumulator.pendingDialogMessageFlush.then(async () => {
         if (pendingTranslations.length > 0) {
