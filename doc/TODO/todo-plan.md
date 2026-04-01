@@ -26,10 +26,10 @@
 1. [DONE] Normalize canonical Settings copy to English and extract the first reusable source-copy owner for General controls/header/footer surfaces. Scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`. Target commit: `refactor(copy): normalize settings source copy to english`
 2. [DONE] Git Commit: `refactor(copy): normalize settings source copy to english` (hash: `ebb2dc54`)
 3. [DONE] Normalize Session UI product copy to English for dialog/status/empty-state surfaces without touching provider outputs. Scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`. Target commit: `refactor(copy): normalize session source copy to english`
-4. [TODO] Git Commit: `refactor(copy): normalize session source copy to english` (hash: TBD)
+4. [DONE] Git Commit: `refactor(copy): normalize session source copy to english` (hash: `b5732d54`)
 
 ### Stream: Workflow Help And Templates
-5. [TODO] Normalize workflow step help surfaces to canonical English. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`. Target commit: `refactor(copy): normalize workflow help to english`
+5. [DONE] Normalize workflow step help surfaces to canonical English. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`. Target commit: `refactor(copy): normalize workflow help to english`
 6. [TODO] Git Commit: `refactor(copy): normalize workflow help to english` (hash: TBD)
 7. [TODO] Normalize the bundled questionnaire and questionnaire-side source templates to canonical English. Scope: `.codeai-hub/codeai-hub/description/questionnaire.md`, `src/client/ui/src/services/description-questionnaire-template.ts`, `src/client/ui/src/services/idea-questionnaire-template.ts`. Target commit: `refactor(copy): normalize questionnaire source to english`
 8. [TODO] Git Commit: `refactor(copy): normalize questionnaire source to english` (hash: TBD)

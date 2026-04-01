@@ -7,63 +7,63 @@ export const VirtualSimulationHelp: React.FC = () => (
     </div>
     <div style={{ display: "grid", gap: 10 }}>
       <div>
-        На шаге Virtual Simulation агент превращает{" "}
-        <code>Final_Description.md</code> в сценарный baseline системы.
-        Итоговый документ должен быть одновременно понятен пользователю и
-        служить основой для следующего шага.
+        In the Virtual Simulation step, the agent turns{" "}
+        <code>Final_Description.md</code> into the scenario baseline for the
+        system. The resulting document must stay understandable for the user
+        while also serving as the foundation for the next step.
       </div>
       <div>
-        Сценарии из анкеты и <code>Final_Description.md</code> являются только
-        стартовой базой. Агент должен собрать достаточное количество ключевых
-        сценариев, чтобы покрыть систему целиком, а не просто пересказать
-        исходные user flows.
+        The scenarios from the questionnaire and{" "}
+        <code>Final_Description.md</code> are only the starting point. The
+        agent must gather enough key scenarios to cover the whole system,
+        rather than merely retelling the original user flows.
       </div>
       <div>
-        Что полезнее всего уточнять в диалоге:
+        What is most useful to clarify in the dialog:
         <ul style={{ marginTop: 6 }}>
-          <li>кто запускает каждый важный сценарий;</li>
-          <li>какие части продукта в нём участвуют;</li>
-          <li>что живёт отдельно и где уже видны границы между частями;</li>
-          <li>какая реакция системы считается успешной.</li>
+          <li>who starts each important scenario;</li>
+          <li>which parts of the product take part in it;</li>
+          <li>what lives separately and where boundaries are already visible;</li>
+          <li>which system reaction counts as successful.</li>
         </ul>
       </div>
       <div>
-        Короткий словарь:
+        Short glossary:
         <ul style={{ marginTop: 6 }}>
           <li>
-            <code>Shell</code> — оболочка продукта, через которую пользователь
-            запускает или открывает систему.
+            <code>Shell</code> is the product shell through which the user
+            launches or opens the system.
           </li>
           <li>
-            <code>Product Part</code> — верхнеуровневая часть продукта,
-            которая может жить, запускаться или поставляться отдельно.
+            <code>Product Part</code> is a high-level part of the product that
+            can live, run, or be delivered separately.
           </li>
           <li>
-            <code>Cluster</code> — крупный блок из нескольких модулей с одним
-            внешним входом через facade.
+            <code>Cluster</code> is a large block made of several modules with
+            one external entry point through a facade.
           </li>
           <li>
-            <code>Module</code> — отдельный рабочий блок с одной понятной
-            ролью и своим facade.
+            <code>Module</code> is a separate working block with one clear role
+            and its own facade.
           </li>
           <li>
-            <code>Boundary</code> — граница между частями системы.
+            <code>Boundary</code> is a border between parts of the system.
           </li>
         </ul>
       </div>
       <div>
-        В <code>virtual-simulation.md</code> должно быть столько сценариев,
-        сколько нужно для покрытия продукта без белых пятен. Связанные
-        проявления системы можно объединять ради ясности, но не ради
-        искусственного числового лимита.
+        <code>virtual-simulation.md</code> should contain as many scenarios as
+        needed to cover the product without blind spots. Related system
+        behaviors can be grouped for clarity, but not to satisfy an artificial
+        numeric limit.
       </div>
       <div>
-        Агент должен задавать только недостающие вопросы и остановить
-        уточнения, когда сочтёт документ достаточно сильной основой для
-        следующего шага. Решение о переходе всё равно остаётся за вами.
+        The agent should ask only the missing questions and stop refining once
+        it considers the document a strong enough foundation for the next step.
+        The decision to move on still stays with you.
       </div>
       <div>
-        Итог шага:{" "}
+        Step output:{" "}
         <code>
           .codeai-hub/&lt;workspace&gt;/virtual_simulation/virtual-simulation.md
         </code>

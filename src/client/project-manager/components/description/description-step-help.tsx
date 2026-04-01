@@ -6,79 +6,79 @@ export const DescriptionStepHelp: React.FC = () => (
     </div>
     <div style={{ display: "grid", gap: 10 }}>
       <div>
-        На шаге Description вы описываете будущий программный продукт простыми
-        словами, а агент переводит это в понятное описание продукта и его
-        начальную архитектурную картину.
+        In the Description step, you explain the future software product in
+        plain language, and the agent turns that into a clear product
+        description and an initial architectural picture.
       </div>
       <div>
-        Что полезнее всего заполнить в анкете:
+        What is most useful to fill in the questionnaire:
         <ul style={{ marginTop: 6 }}>
-          <li>какой это тип продукта или платформы;</li>
-          <li>о чём продукт и какую задачу он решает;</li>
-          <li>кто будет им пользоваться;</li>
-          <li>ключевые сценарии использования без жёсткого лимита;</li>
-          <li>что продукт обязательно должен уметь;</li>
-          <li>какие крупные части и границы уже видны;</li>
-          <li>ограничения, out of scope и примечания.</li>
+          <li>what kind of product or platform it is;</li>
+          <li>what the product is about and which problem it solves;</li>
+          <li>who will use it;</li>
+          <li>the key usage scenarios without an artificial limit;</li>
+          <li>what the product absolutely must be able to do;</li>
+          <li>which large parts and boundaries are already visible;</li>
+          <li>constraints, out-of-scope items, and notes.</li>
         </ul>
       </div>
       <div>
-        Мы рекомендуем описывать продукт в логике кластерно-модульной
-        архитектуры.
+        We recommend describing the product in a cluster-module architecture
+        mindset.
       </div>
       <div>
-        Это не значит, что пользователь обязан знать архитектурные термины
-        заранее. Достаточно описать продукт как набор понятных частей, крупных
-        блоков и границ между ними. Такой способ помогает AI точнее понять
-        систему и аккуратнее вести её к следующим шагам.
+        That does not mean the user must already know architectural terms. It
+        is enough to describe the product as a set of understandable parts,
+        large blocks, and boundaries between them. This helps the AI understand
+        the system more accurately and move it more carefully into the next
+        steps.
       </div>
       <div>
-        Почему это полезно:
+        Why this helps:
         <ul style={{ marginTop: 6 }}>
-          <li>продукт не схлопывается в один большой неясный блок;</li>
-          <li>крупные части системы становятся видны раньше;</li>
-          <li>границы между блоками проще обсуждать и проверять;</li>
-          <li>следующим шагам легче строить сценарии и диаграммы.</li>
+          <li>the product does not collapse into one vague giant block;</li>
+          <li>the major parts of the system become visible earlier;</li>
+          <li>the boundaries between blocks are easier to discuss and verify;</li>
+          <li>the next steps can build scenarios and diagrams more reliably.</li>
         </ul>
       </div>
       <div>
-        Короткий словарь:
+        Short glossary:
         <ul style={{ marginTop: 6 }}>
           <li>
-            <code>Shell</code> — то, через что пользователь запускает или
-            открывает продукт.
+            <code>Shell</code> is the surface through which the user launches or
+            opens the product.
           </li>
           <li>
-            <code>Product Part</code> — верхнеуровневая часть продукта,
-            которая может жить, запускаться или поставляться отдельно.
+            <code>Product Part</code> is a high-level part of the product that
+            can live, run, or be delivered separately.
           </li>
           <li>
-            <code>Cluster</code> — крупный блок из нескольких модулей.
+            <code>Cluster</code> is a large block made of several modules.
           </li>
           <li>
-            <code>Module</code> — отдельный рабочий блок с одной понятной
-            ролью.
+            <code>Module</code> is a separate working block with one clear role.
           </li>
           <li>
-            <code>Boundary</code> — граница между блоками системы.
+            <code>Boundary</code> is a border between system blocks.
           </li>
         </ul>
       </div>
       <div>
-        Когда анкета готова, нажмите <code>Submit questionnaire</code>. После
-        этого откроется выбор AI-провайдера. В текущем MVP провайдер
-        выбирается один раз для всего workflow workspace, а не отдельно на
-        каждом шаге. Затем продолжайте диалог и уточняйте документ, пока вы не
-        посчитаете его достаточно сильной основой для следующего шага.
+        When the questionnaire is ready, click{" "}
+        <code>Submit questionnaire</code>. After that, the AI provider picker
+        will open. In the current MVP, the provider is chosen once for the
+        whole workflow workspace, not separately for each step. Then continue
+        the dialog and refine the document until you consider it a strong
+        enough foundation for the next step.
       </div>
       <div>
-        Проверьте, что в итоговом <code>Final_Description.md</code> есть
-        отдельный блок ключевых пользовательских сценариев. Сценариев там
-        должно быть столько, сколько нужно для покрытия продукта без белых
-        пятен.
+        Make sure the final <code>Final_Description.md</code> includes a
+        dedicated section with key user scenarios. There should be as many
+        scenarios as needed to cover the product without blind spots.
       </div>
       <div>
-        Итог шага:{" "}
+        Step output:{" "}
         <code>.codeai-hub/&lt;workspace&gt;/description/Final_Description.md</code>.
       </div>
     </div>

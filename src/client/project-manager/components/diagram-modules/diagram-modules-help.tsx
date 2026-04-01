@@ -7,75 +7,76 @@ export const DiagramModulesHelp: React.FC = () => (
     </div>
     <div style={{ display: "grid", gap: 10 }}>
       <div>
-        На шаге Diagram Modules агент превращает{" "}
-        <code>Final_Description.md</code> и <code>virtual-simulation.md</code>{" "}
-        в канонический состав системы. Теперь шаг начинается не с одного giant
-        inventory-файла, а с <code>product-parts.index.md</code> и затем
-        последовательно materialize-ит отдельные{" "}
+        In the Diagram Modules step, the agent turns{" "}
+        <code>Final_Description.md</code> and <code>virtual-simulation.md</code>{" "}
+        into the canonical system composition. The step no longer starts from a
+        single giant inventory file. It starts with{" "}
+        <code>product-parts.index.md</code> and then progressively materializes{" "}
         <code>product-parts/&lt;part-id&gt;.md</code>.
       </div>
       <div>
-        Главное правило шага: сначала согласуется смысловая карта системы, а
-        уже потом runtime progressively строит из неё диаграмму. Пользователь
-        должен видеть, как Product Parts появляются по очереди, не дожидаясь
-        полного завершения всего шага.
+        The main rule of the step is that the semantic map of the system is
+        agreed first, and only then does the runtime progressively build the
+        diagram from it. The user should see Product Parts appear one by one
+        without waiting for the whole step to finish.
       </div>
       <div>
-        Базовый semantic source of truth теперь двухслойный:{" "}
-        <code>product-parts.index.md</code> задаёт порядок и общий контур, а
-        part-файлы уточняют реальное содержание каждого Product Part.{" "}
-        Part-файлы — финальный артефакт этого шага.
+        The base semantic source of truth is now two-layered:{" "}
+        <code>product-parts.index.md</code> defines the order and the global
+        outline, while the part files define the real content of each Product
+        Part. The part files are the final artifact of this step.
       </div>
       <div>
-        В visual hierarchy этого шага ownership читается как{" "}
+        In the visual hierarchy of this step, ownership reads as{" "}
         <code>Product Part -&gt; Cluster -&gt; Module</code>.
       </div>
       <div>
-        Что полезнее всего уточнять в диалоге:
+        What is most useful to clarify in the dialog:
         <ul style={{ marginTop: 6 }}>
-          <li>какие части продукта действительно существуют;</li>
-          <li>какие блоки образуют один cluster, а какие должны жить отдельно;</li>
-          <li>какие простые связи между блоками реально важны для понимания;</li>
-          <li>какие границы нельзя смешивать даже если DSL пока ещё плоский.</li>
+          <li>which parts of the product really exist;</li>
+          <li>which blocks belong to one cluster and which should stay apart;</li>
+          <li>which simple relations between blocks matter for understanding;</li>
+          <li>which boundaries must not be merged even if the DSL is still flat.</li>
         </ul>
       </div>
       <div>
-        Короткий словарь:
+        Short glossary:
         <ul style={{ marginTop: 6 }}>
           <li>
-            <code>Product Part</code> — верхнеуровневая часть продукта,
-            которая может жить, запускаться или поставляться отдельно.
+            <code>Product Part</code> is a high-level part of the product that
+            can live, run, or be delivered separately.
           </li>
           <li>
-            <code>Cluster</code> — крупный блок из нескольких модулей с одним
-            внешним входом через facade.
+            <code>Cluster</code> is a large block made of several modules with
+            one external entry point through a facade.
           </li>
           <li>
-            <code>Module</code> — отдельный рабочий блок с одной понятной
-            ролью и своим facade.
+            <code>Module</code> is a separate working block with one clear role
+            and its own facade.
           </li>
           <li>
-            <code>Boundary</code> — граница между частями системы.
+            <code>Boundary</code> is a border between parts of the system.
           </li>
         </ul>
       </div>
       <div>
-        Runtime templates этого шага лежат в{" "}
-        <code>.codeai-hub/templates/diagram_modules/</code>: основной каркас
-        задаёт staged contract для index и part-файлов, смысл полей уточняет{" "}
-        <code>diagram-modules-field-reference.md</code>, а правила merge и
-        compatibility aggregate описаны в{" "}
+        The runtime templates for this step live in{" "}
+        <code>.codeai-hub/templates/diagram_modules/</code>: the main frame
+        defines the staged contract for the index and part files,{" "}
+        <code>diagram-modules-field-reference.md</code> explains the field
+        meanings, and the merge and compatibility aggregate rules are described
+        in{" "}
         <code>diagram-modules-merge-rules.md</code>.
       </div>
       <div>
-        <code>module-map.flow.json</code> не описывает архитектуру. Этот файл
-        хранит только layout и может обновляться по мере progressive
-        regeneration графа или после ручного перетаскивания карточек.
+        <code>module-map.flow.json</code> does not describe the architecture.
+        This file stores layout only and may update during progressive graph
+        regeneration or after manual card dragging.
       </div>
       <div>
-        Агент должен задавать только недостающие вопросы и остановить
-        уточнения, когда сочтёт inventory достаточно сильной основой для
-        продолжения. Решение о переходе всё равно остаётся за вами.
+        The agent should ask only the missing questions and stop refining once
+        it considers the inventory a strong enough foundation to continue. The
+        decision to move forward still stays with you.
       </div>
     </div>
   </div>
