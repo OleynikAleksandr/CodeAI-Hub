@@ -43,10 +43,10 @@
 13. [DONE] Map localization state through the webview raw/model/helper layers. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/settings-state-helpers.ts`. Target commit: `refactor(settings): map localization state`
 14. [DONE] Git Commit: `refactor(settings): map localization state` (hash: `b915ce7c`)
 15. [DONE] Wire localization load/save/reset through settings message handling and settings state hooks. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`. Target commit: `refactor(settings): wire localization settings flow`
-16. [TODO] Git Commit: `refactor(settings): wire localization settings flow` (hash: TBD)
+16. [DONE] Git Commit: `refactor(settings): wire localization settings flow` (hash: `78b9dde0`)
 
 ### Stream: Localization Settings UI
-17. [TODO] Add the category-based localization controls to the General settings surface. Scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/settings-view.tsx`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization category controls`
+17. [DONE] Add the category-based localization controls to the General settings surface. Scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/settings-view.tsx`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization category controls`
 18. [TODO] Git Commit: `feat(ui): add localization category controls` (hash: TBD)
 19. [TODO] Add a first-wave glossary management entry surface for user-authored English do-not-translate terms. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`. Target commit: `feat(ui): add glossary override editor`
 20. [TODO] Git Commit: `feat(ui): add glossary override editor` (hash: TBD)

@@ -117,6 +117,11 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
+    handleLocalizationCategoryLanguageChange,
+    handleLocalizationDefaultLanguageChange,
+    handleLocalizationEngineIdChange,
+    handleLocalizationGlossaryEnabledChange,
+    handleLocalizationWorkflowTermsPolicyChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleRestartCore,
@@ -199,6 +204,22 @@ const SettingsView: React.FC<SettingsViewProps> = ({
               <div style={stackStyles}>
                 <GeneralSettings
                   coreControl={coreControl}
+                  localization={settings.general.localization}
+                  onLocalizationCategoryLanguageChange={
+                    handleLocalizationCategoryLanguageChange
+                  }
+                  onLocalizationDefaultLanguageChange={
+                    handleLocalizationDefaultLanguageChange
+                  }
+                  onLocalizationEngineIdChange={
+                    handleLocalizationEngineIdChange
+                  }
+                  onLocalizationGlossaryEnabledChange={
+                    handleLocalizationGlossaryEnabledChange
+                  }
+                  onLocalizationWorkflowTermsPolicyChange={
+                    handleLocalizationWorkflowTermsPolicyChange
+                  }
                   onResponsePolicyModeChange={handleResponsePolicyModeChange}
                   onRestartCore={handleRestartCore}
                   onStrictInstructionTextChange={

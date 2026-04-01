@@ -3,14 +3,20 @@ import { memo, useMemo, useState } from "react";
 import GeneralResponseModeFacade from "./general-response-mode/general-response-mode-facade";
 import type { GeneralResponseMode } from "./general-response-mode/response-mode-copy";
 import type { GeneralResponsePolicySettings } from "./general-response-mode/response-mode-state";
+import LocalizationSettingsCard from "./localization-settings-card";
 import SettingsCard from "./settings-card";
 import { settingsSurfaceCopy } from "./settings-header";
+import type { Settings } from "./settings-state-model";
 import {
   settingsColorTokens,
   settingsRadiusTokens,
   settingsTypographyTokens,
 } from "./style-tokens";
-import type { CoreControlState } from "./use-settings-state-support";
+import type {
+  CoreControlState,
+  LocalizationCategoryKey,
+  LocalizationWorkflowTermsPolicy,
+} from "./use-settings-state-support";
 
 const wrapperStyles: CSSProperties = {
   display: "flex",
@@ -64,6 +70,19 @@ const statusStyles: CSSProperties = {
 
 interface GeneralSettingsProps {
   readonly coreControl: CoreControlState;
+  readonly localization: Settings["general"]["localization"];
+  readonly onLocalizationCategoryLanguageChange: (
+    category: LocalizationCategoryKey,
+    language: string
+  ) => void;
+  readonly onLocalizationDefaultLanguageChange: (
+    defaultLanguage: string
+  ) => void;
+  readonly onLocalizationEngineIdChange: (engineId: string) => void;
+  readonly onLocalizationGlossaryEnabledChange: (enabled: boolean) => void;
+  readonly onLocalizationWorkflowTermsPolicyChange: (
+    workflowTermsPolicy: LocalizationWorkflowTermsPolicy
+  ) => void;
   readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
   readonly onRestartCore: () => void;
   readonly onStrictInstructionTextChange: (value: string) => void;
@@ -157,6 +176,16 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
         onStrictInstructionTextChange={props.onStrictInstructionTextChange}
         onStrictSchemaTextChange={props.onStrictSchemaTextChange}
         responsePolicy={props.responsePolicy}
+      />
+      <LocalizationSettingsCard
+        localization={props.localization}
+        onCategoryLanguageChange={props.onLocalizationCategoryLanguageChange}
+        onDefaultLanguageChange={props.onLocalizationDefaultLanguageChange}
+        onEngineIdChange={props.onLocalizationEngineIdChange}
+        onGlossaryEnabledChange={props.onLocalizationGlossaryEnabledChange}
+        onWorkflowTermsPolicyChange={
+          props.onLocalizationWorkflowTermsPolicyChange
+        }
       />
       <SettingsCard title={settingsSurfaceCopy.coreControls.title}>
         <p style={descriptionStyles}>
