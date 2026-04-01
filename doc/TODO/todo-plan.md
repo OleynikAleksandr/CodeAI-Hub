@@ -33,8 +33,8 @@
 
 ## Phase 3 — Runtime Contract And Claude Bubble Path (owner: Providers, updated: 2026-04-01)
 ### Stream: Core Applied-Turn Config
-13. [TODO] Resolve Claude/Gemini thinking display from persisted settings snapshots and attach it through the existing applied turn config. Scope: `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`. Target commit: `refactor(core): resolve thinking display for claude gemini`
-14. [TODO] Git Commit: `refactor(core): resolve thinking display for claude gemini` (hash: TBD)
+13. [DONE] Resolve Claude/Gemini thinking display from persisted settings snapshots and attach it through the existing applied turn config. Scope: `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`. Target commit: `refactor(core): resolve thinking display for claude gemini`
+14. [DONE] Git Commit: `refactor(core): resolve thinking display for claude gemini` (hash: `23367419`)
 
 ### Stream: Claude Provider Display Contract
 15. [TODO] Add Claude applied-turn-config/runtime plumbing for display-only thinking gating without changing upstream thinking-mode selection. Scope: `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Claude_Module/src/session/types.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`. Target commit: `feat(claude): apply thinking display config`
