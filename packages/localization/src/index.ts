@@ -1,3 +1,4 @@
+export { GlossaryBundleLoader } from "./glossary-bundle-loader";
 export type {
   GlossaryBundle,
   GlossaryPreferredTranslationRule,

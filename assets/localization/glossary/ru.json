@@ -1,0 +1,32 @@
+{
+  "rules": [
+    {
+      "kind": "preferred_translation",
+      "sourceTerm": "Description",
+      "targetLanguage": "ru",
+      "translatedTerm": "Описание",
+      "categories": ["workflow_terms"]
+    },
+    {
+      "kind": "preferred_translation",
+      "sourceTerm": "Virtual Simulation",
+      "targetLanguage": "ru",
+      "translatedTerm": "Виртуальная симуляция",
+      "categories": ["workflow_terms"]
+    },
+    {
+      "kind": "preferred_translation",
+      "sourceTerm": "Diagram Modules",
+      "targetLanguage": "ru",
+      "translatedTerm": "Модули диаграммы",
+      "categories": ["workflow_terms"]
+    },
+    {
+      "kind": "preferred_translation",
+      "sourceTerm": "Diagram Facades",
+      "targetLanguage": "ru",
+      "translatedTerm": "Фасады диаграммы",
+      "categories": ["workflow_terms"]
+    }
+  ]
+}

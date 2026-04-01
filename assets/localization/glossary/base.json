@@ -1,0 +1,46 @@
+{
+  "rules": [
+    { "kind": "preserve", "sourceTerm": "Claude" },
+    { "kind": "preserve", "sourceTerm": "Codex" },
+    { "kind": "preserve", "sourceTerm": "Gemini" },
+    { "kind": "preserve", "sourceTerm": "CodeAI Hub" },
+    { "kind": "preserve", "sourceTerm": "Project Manager" },
+    { "kind": "preserve", "sourceTerm": "Core" },
+    { "kind": "preserve", "sourceTerm": "React Flow" },
+    { "kind": "preserve", "sourceTerm": "VS Code" },
+    { "kind": "preserve", "sourceTerm": "CLI" },
+    { "kind": "preserve", "sourceTerm": "SDK" },
+    { "kind": "preserve", "sourceTerm": "JSON" },
+    { "kind": "preserve", "sourceTerm": "TypeScript" },
+    { "kind": "preserve", "sourceTerm": "Markdown" },
+    { "kind": "preserve", "sourceTerm": "CODEX_HOME" },
+    { "kind": "preserve", "sourceTerm": "GEMINI_HOME" },
+    { "kind": "preserve", "sourceTerm": "settings.json" },
+    { "kind": "preserve", "sourceTerm": "config.toml" },
+    { "kind": "preserve", "sourceTerm": "auth.json" },
+    { "kind": "preserve", "sourceTerm": "module-map.md" },
+    { "kind": "preserve", "sourceTerm": "facade-map.md" },
+    { "kind": "preserve", "sourceTerm": "Final_Description.md" },
+    { "kind": "preserve", "sourceTerm": "questionnaire.md" },
+    {
+      "kind": "preserve",
+      "sourceTerm": "Description",
+      "categories": ["workflow_terms"]
+    },
+    {
+      "kind": "preserve",
+      "sourceTerm": "Virtual Simulation",
+      "categories": ["workflow_terms"]
+    },
+    {
+      "kind": "preserve",
+      "sourceTerm": "Diagram Modules",
+      "categories": ["workflow_terms"]
+    },
+    {
+      "kind": "preserve",
+      "sourceTerm": "Diagram Facades",
+      "categories": ["workflow_terms"]
+    }
+  ]
+}
