@@ -35,6 +35,9 @@ export class SDKSessionManager {
       eventEmitter,
       messageController: controller,
       logger: logger ?? new SDKSessionLoggerFacade(),
+      runtimeTurnConfig: {
+        thinkingDisplaySyncEnabled: true,
+      },
       turnQueue: this.lifecycle.createTurnQueueState(),
     };
     session.messageGenerator =
@@ -59,6 +62,9 @@ export class SDKSessionManager {
       messageController: controller,
       logger: logger ?? new SDKSessionLoggerFacade(),
       resumeSessionId: sessionId,
+      runtimeTurnConfig: {
+        thinkingDisplaySyncEnabled: true,
+      },
       turnQueue: this.lifecycle.createTurnQueueState(),
     };
     session.messageGenerator =

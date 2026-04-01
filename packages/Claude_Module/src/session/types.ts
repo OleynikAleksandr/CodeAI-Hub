@@ -19,6 +19,10 @@ export interface ClaudeTurnLifecycleState {
   started: boolean;
 }
 
+export interface ClaudeRuntimeTurnConfig {
+  readonly thinkingDisplaySyncEnabled?: boolean;
+}
+
 export interface ClaudeQueuedTurn {
   readonly content: string;
   readonly enqueuedAt: number;
@@ -46,6 +50,7 @@ export interface ActiveSession {
     interrupt?: () => Promise<void>;
   };
   readonly resumeSessionId?: string;
+  readonly runtimeTurnConfig: ClaudeRuntimeTurnConfig;
   sessionId: string;
   structuredOutputSchema?: Record<string, unknown> | null;
   structuredOutputUuids?: Set<string>;

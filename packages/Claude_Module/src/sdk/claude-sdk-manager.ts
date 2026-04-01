@@ -4,6 +4,7 @@ import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
 import { SDKSessionLoggerFacade } from "../logging/sdk-session-logger";
 import type { SDKMessageProcessor } from "../messaging/message-processor";
+import { applyClaudeTurnRuntimeConfig } from "../provider/claude-applied-turn-config";
 import type { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
@@ -141,6 +142,10 @@ export class ClaudeSDKManager {
     if (!session) {
       throw new Error(`Session ${sessionId} not found`);
     }
+    applyClaudeTurnRuntimeConfig({
+      owner: session,
+      turnOptions,
+    });
     this.deps.processor.enqueueTurn(
       session.sessionId,
       {
