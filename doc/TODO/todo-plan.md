@@ -19,13 +19,13 @@
 ## Phase 2 — Shared Settings Contract (owner: UI, updated: 2026-04-01)
 ### Stream: Extension Settings Snapshot
 3. [TODO] Extend extension-side Claude/Gemini settings contracts so both providers own persisted `thinkingDisplaySyncEnabled`, while Claude keeps `thinking.enabled/maxTokens` as a separate upstream-thinking control. Scope: `src/extension-module/settings/claude-settings.ts`, `src/extension-module/settings/gemini-settings.ts`, `src/extension-module/settings/types.ts`. Target commit: `feat(settings): add claude gemini thinking display setting`
-4. [TODO] Git Commit: `feat(settings): add claude gemini thinking display setting` (hash: TBD)
+4. [DONE] Git Commit: `feat(settings): add claude gemini thinking display setting` (hash: `2bd2ba79`)
 5. [TODO] Persist/load the new thinking-display state through extension storage and keep the core-loaded default settings payload aligned. Scope: `src/extension-module/settings/settings-storage.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`. Target commit: `refactor(settings): persist thinking display snapshots`
 6. [TODO] Git Commit: `refactor(settings): persist thinking display snapshots` (hash: TBD)
 
 ### Stream: Webview Settings Model And UX
 7. [TODO] Map Claude/Gemini thinking display through the webview raw/model/helper settings layers. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/settings-state-helpers.ts`. Target commit: `refactor(settings): map claude gemini thinking display state`
-8. [TODO] Git Commit: `refactor(settings): map claude gemini thinking display state` (hash: TBD)
+8. [DONE] Git Commit: `refactor(settings): map claude gemini thinking display state` (hash: `112dddc2`)
 9. [TODO] Add the Claude `Thinking in dialog` toggle to the Claude settings card and align the Gemini toggle wording to the same short product copy. Scope: `src/client/ui/src/components/settings/thinking-settings.tsx`, `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, `src/client/ui/src/components/settings/settings-view.tsx`. Target commit: `feat(ui): expose thinking in dialog toggles`
 10. [TODO] Git Commit: `feat(ui): expose thinking in dialog toggles` (hash: TBD)
 
