@@ -24,12 +24,20 @@ const descriptionStyles: CSSProperties = {
   margin: 0,
 };
 
+const coreControlHeight = "38px";
+
 const buttonStyles: CSSProperties = {
   alignSelf: "flex-start",
-  padding: "8px 16px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  boxSizing: "border-box",
+  height: coreControlHeight,
+  padding: "0 16px",
   borderRadius: settingsRadiusTokens.control,
   fontSize: settingsTypographyTokens.bodyFontSize,
   fontWeight: 600,
+  lineHeight: 1,
   transition:
     "background-color 120ms ease, border-color 120ms ease, transform 120ms ease, opacity 120ms ease",
 };
@@ -44,12 +52,13 @@ const controlsRowStyles: CSSProperties = {
 const statusStyles: CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
-  minHeight: "34px",
+  boxSizing: "border-box",
+  height: coreControlHeight,
   padding: "0 12px",
   borderRadius: settingsRadiusTokens.panel,
   border: `1px solid ${settingsColorTokens.borderSubtle}`,
   fontSize: settingsTypographyTokens.bodyFontSize,
-  lineHeight: 1.4,
+  lineHeight: 1,
 };
 
 interface GeneralSettingsProps {

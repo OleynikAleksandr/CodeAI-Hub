@@ -8518,12 +8518,19 @@
     lineHeight: 1.4,
     margin: 0
   };
+  var coreControlHeight = "38px";
   var buttonStyles = {
     alignSelf: "flex-start",
-    padding: "8px 16px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxSizing: "border-box",
+    height: coreControlHeight,
+    padding: "0 16px",
     borderRadius: settingsRadiusTokens.control,
     fontSize: settingsTypographyTokens.bodyFontSize,
     fontWeight: 600,
+    lineHeight: 1,
     transition: "background-color 120ms ease, border-color 120ms ease, transform 120ms ease, opacity 120ms ease"
   };
   var controlsRowStyles = {
@@ -8535,12 +8542,13 @@
   var statusStyles = {
     display: "inline-flex",
     alignItems: "center",
-    minHeight: "34px",
+    boxSizing: "border-box",
+    height: coreControlHeight,
     padding: "0 12px",
     borderRadius: settingsRadiusTokens.panel,
     border: `1px solid ${settingsColorTokens.borderSubtle}`,
     fontSize: settingsTypographyTokens.bodyFontSize,
-    lineHeight: 1.4
+    lineHeight: 1
   };
   var GeneralSettings = (props) => {
     const [isHovered, setIsHovered] = (0, import_react8.useState)(false);

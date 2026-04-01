@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.862] - 2026-04-01
+### Fixed
+- **Core Controls visual alignment**: the `Restart Core` button and restart-status pill now share the same height and sit on the same vertical axis instead of looking offset from each other.
+- **Balanced control-row spacing**: the restart action and its status feedback now render as a visually matched pair, which makes the Core Controls row read cleanly across hover, pressed, and busy states.
+
 ## [1.1.861] - 2026-04-01
 ### Fixed
 - **Core restart now follows an explicit staged flow**: `Settings -> General -> Core Controls` performs `stop -> wait -> start` instead of a fire-and-forget restart request, matching the operational contract used by the standalone core control script.

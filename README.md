@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.861
-- **Staged Core restart flow**: `Settings -> General -> Core Controls` now performs an explicit `stop -> wait -> start` restart sequence instead of a blind supervisor restart request.
-- **Visible restart feedback**: the Settings UI now shows per-phase Core restart status beside the button, including stop, wait, start, success, and error states.
-- **Interactive button states**: `Restart Core` now has clear hover, pressed, and busy visual states, so it is obvious when the action is in progress.
+## Current Release — v1.1.862
+- **Staged Core restart flow**: `Settings -> General -> Core Controls` performs an explicit `stop -> wait -> start` restart sequence instead of a blind supervisor restart request.
+- **Visible restart feedback**: the Settings UI shows per-phase Core restart status beside the button, including stop, wait, start, success, and error states.
+- **Aligned Core Controls layout**: the `Restart Core` button and status pill now use the same control height and vertical centering, so the row reads as a single balanced control group.
 
 Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
