@@ -50,7 +50,7 @@
 - Documented findings: Claude highest quality with least guidance, GPT 5.4 strong narrative, Gemini Flash fast but shallow
 
 ### MultiProvider Orchestration planning
-- Created `doc/SolidWorks-WorkFlow/Plans/Archive/MultiProvider_Orchestration_Scenarios.md`
+- Created `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`
 - 6 scenarios: Parallel Best-of-N, Pipeline, Parallel+Synthesis, Adaptive Routing, Consensus Review, Q&A Broadcast
 - Phased implementation strategy: F+A → E → B+D
 
@@ -80,7 +80,7 @@
 
 ## Required documents to review before work
 1. `AGENTS.md` — master process & architecture principles
-2. `doc/SolidWorks-WorkFlow/Plans/Archive/MultiProvider_Orchestration_Scenarios.md` — **КЛЮЧЕВОЙ ДОКУМЕНТ**: обсуждение и уточнение сценариев multi-provider orchestration
+2. `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md` — **КЛЮЧЕВОЙ ДОКУМЕНТ**: обсуждение и уточнение сценариев multi-provider orchestration
 3. `doc/BugRegistry.md` — BUG-2026-03-25-01 (CRITICAL, OPEN)
 4. `doc/TODO/todo-plan.md` — Phase 64+65+66 completed
 5. `doc/Sessions/Archive/Session158.md` (THIS REPORT)
