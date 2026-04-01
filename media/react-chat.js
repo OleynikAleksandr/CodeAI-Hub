@@ -8262,8 +8262,8 @@
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncTitleStyles2, children: "Thinking display sync" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncDescriptionStyles2, children: "When enabled, translated Gemini reasoning appears on the standard assistant bubble path. Disabling it keeps reasoning translation internal while hiding the visible bubble." })
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncTitleStyles2, children: "Thinking in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncDescriptionStyles2, children: "Show translated Gemini reasoning as a normal assistant bubble in the dialog." })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
@@ -10304,9 +10304,34 @@
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
+  var displaySyncToggleStyles3 = {
+    display: "flex",
+    alignItems: "flex-start",
+    cursor: "pointer",
+    gap: "12px",
+    marginBottom: "20px"
+  };
+  var displaySyncCheckboxStyles3 = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var displaySyncTitleStyles3 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var displaySyncDescriptionStyles3 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
   var ThinkingSettings = ({
     enabled,
     maxTokens,
+    thinkingDisplaySyncEnabled,
+    onThinkingDisplaySyncChange,
     onChange
   }) => {
     const handleToggle = (nextEnabled) => {
@@ -10319,6 +10344,21 @@
       /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("style", { children: hideSpinnerStyle }),
       /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { style: displaySyncToggleStyles3, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            "input",
+            {
+              checked: thinkingDisplaySyncEnabled,
+              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+              style: displaySyncCheckboxStyles3,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
+          ] })
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_pro_tip_default, {})
       ] })
@@ -10705,7 +10745,10 @@
     thinking: mapThinkingSettings(value?.thinking),
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
     defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
-    sessionContinuity: mapContinuity(value?.sessionContinuity)
+    sessionContinuity: mapContinuity(value?.sessionContinuity),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+      value?.thinkingDisplaySyncEnabled
+    )
   });
   var mapGeminiSettingsWithDisplaySync = (value) => ({
     ...mapGeminiSettings(value, mapAutoUpdateSettings),
@@ -10769,7 +10812,7 @@
     );
   };
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
-  var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areCodexReasoningSummarySettingsEqual(left, right) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areThinkingDisplaySyncSettingsEqual(left, right) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
@@ -10951,6 +10994,14 @@
       },
       [settings, updateSettings]
     );
+    const handleClaudeThinkingDisplaySyncChange = (0, import_react13.useCallback)(
+      (enabled) => {
+        updateSettings(
+          updateThinkingDisplaySyncEnabled(settings, "claude", enabled)
+        );
+      },
+      [settings, updateSettings]
+    );
     const handleCodexThinkingDisplaySyncChange = (0, import_react13.useCallback)(
       (enabled) => {
         updateSettings(
@@ -11016,6 +11067,7 @@
       handleCodexDefaultModelChange,
       handleGeminiDefaultModelChange,
       handleGeminiThinkingChange,
+      handleClaudeThinkingDisplaySyncChange,
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
@@ -11109,6 +11161,7 @@
       handleClaudeDefaultModelChange,
       handleGeminiDefaultModelChange,
       handleGeminiThinkingChange,
+      handleClaudeThinkingDisplaySyncChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
       handleCodexReasoningChange,
@@ -11164,7 +11217,9 @@
               {
                 enabled: settings.providers.claude.thinking.enabled,
                 maxTokens: settings.providers.claude.thinking.maxTokens,
-                onChange: handleThinkingSettingsChange
+                onChange: handleThinkingSettingsChange,
+                onThinkingDisplaySyncChange: handleClaudeThinkingDisplaySyncChange,
+                thinkingDisplaySyncEnabled: settings.providers.claude.thinkingDisplaySyncEnabled
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
