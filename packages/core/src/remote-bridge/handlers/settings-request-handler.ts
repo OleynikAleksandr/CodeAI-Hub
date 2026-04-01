@@ -141,37 +141,92 @@ const buildDefaultSettingsSnapshot = (
   };
 };
 
-const migrateLegacyClaudeDefaultModel = (
-  settings: Record<string, unknown>
+const normalizeLoadedSettingsSnapshotWithDefaults = (
+  settings: Record<string, unknown>,
+  config: CoreConfig
 ): {
-  readonly migrated: boolean;
+  readonly changed: boolean;
   readonly settings: Record<string, unknown>;
 } => {
-  const providers = settings.providers;
-  if (!isRecord(providers)) {
-    return { migrated: false, settings };
+  const defaults = buildDefaultSettingsSnapshot(config) as {
+    readonly general: Record<string, unknown>;
+    readonly providers: {
+      readonly claude: Record<string, unknown>;
+      readonly codex: Record<string, unknown>;
+      readonly gemini: Record<string, unknown>;
+    };
+  };
+  const rawGeneral = isRecord(settings.general) ? settings.general : {};
+  const rawProviders = isRecord(settings.providers) ? settings.providers : {};
+  const rawClaude = isRecord(rawProviders.claude) ? rawProviders.claude : {};
+  const rawCodex = isRecord(rawProviders.codex) ? rawProviders.codex : {};
+  const rawGemini = isRecord(rawProviders.gemini) ? rawProviders.gemini : {};
+
+  const claude = {
+    ...defaults.providers.claude,
+    ...rawClaude,
+  };
+  const codex = {
+    ...defaults.providers.codex,
+    ...rawCodex,
+  };
+  const gemini = {
+    ...defaults.providers.gemini,
+    ...rawGemini,
+  };
+  const general = {
+    ...defaults.general,
+    ...rawGeneral,
+  };
+
+  const hasGeneral = isRecord(settings.general);
+  const hasProviders = isRecord(settings.providers);
+  const hasClaude = isRecord(rawProviders.claude);
+  const hasCodex = isRecord(rawProviders.codex);
+  const hasGemini = isRecord(rawProviders.gemini);
+
+  let changed = false;
+  if (!hasGeneral) {
+    changed = true;
+  }
+  if (!hasProviders) {
+    changed = true;
+  }
+  if (!hasClaude) {
+    changed = true;
+  }
+  if (!hasCodex) {
+    changed = true;
+  }
+  if (!hasGemini) {
+    changed = true;
   }
 
-  const claude = providers.claude;
-  if (!isRecord(claude)) {
-    return { migrated: false, settings };
+  if (claude.defaultModel === "default") {
+    claude.defaultModel = "sonnet";
+    changed = true;
   }
 
-  // We no longer persist "default". Migrate legacy configs to "sonnet".
-  if (claude.defaultModel !== "default") {
-    return { migrated: false, settings };
+  if (typeof claude.thinkingDisplaySyncEnabled !== "boolean") {
+    claude.thinkingDisplaySyncEnabled = true;
+    changed = true;
+  }
+
+  if (typeof gemini.thinkingDisplaySyncEnabled !== "boolean") {
+    gemini.thinkingDisplaySyncEnabled = true;
+    changed = true;
   }
 
   return {
-    migrated: true,
+    changed,
     settings: {
       ...settings,
+      general,
       providers: {
-        ...providers,
-        claude: {
-          ...claude,
-          defaultModel: "sonnet",
-        },
+        ...rawProviders,
+        claude,
+        codex,
+        gemini,
       },
     },
   };
@@ -212,10 +267,12 @@ export class SettingsRequestHandler {
       const baseSettings = isRecord(parsed)
         ? parsed
         : buildDefaultSettingsSnapshot(this.config);
-      const { migrated, settings } =
-        migrateLegacyClaudeDefaultModel(baseSettings);
+      const { changed, settings } = normalizeLoadedSettingsSnapshotWithDefaults(
+        baseSettings as Record<string, unknown>,
+        this.config
+      );
 
-      if (migrated) {
+      if (changed) {
         try {
           await persistDefaultSettingsSnapshot(settingsPath, settings);
         } catch (persistError) {

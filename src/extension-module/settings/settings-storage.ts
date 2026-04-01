@@ -41,6 +41,21 @@ const normalizeSnapshotForStorage = (
   };
 };
 
+const needsThinkingDisplayBackfill = (value: unknown): boolean => {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  const providers = isRecord(value.providers) ? value.providers : {};
+  const claude = isRecord(providers.claude) ? providers.claude : {};
+  const gemini = isRecord(providers.gemini) ? providers.gemini : {};
+
+  return (
+    typeof claude.thinkingDisplaySyncEnabled !== "boolean" ||
+    typeof gemini.thinkingDisplaySyncEnabled !== "boolean"
+  );
+};
+
 const extractLegacyClaudeThinking = (): ClaudeThinkingSettings | null => {
   try {
     const raw = readFileSync(LEGACY_CLAUDE_SETTINGS_FILE, "utf8");
@@ -83,6 +98,11 @@ export const loadSettingsSnapshot = (): SettingsSnapshot => {
     const parsed = JSON.parse(raw) as unknown;
     const normalized = normalizeSnapshotForStorage(parsed);
     if (normalized) {
+      if (hadSettingsFile && needsThinkingDisplayBackfill(parsed)) {
+        persistSettingsSnapshot(normalized).catch(() => {
+          /* ignore persistence errors */
+        });
+      }
       return normalized;
     }
   } catch {

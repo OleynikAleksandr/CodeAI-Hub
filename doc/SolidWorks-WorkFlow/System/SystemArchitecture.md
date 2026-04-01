@@ -99,13 +99,13 @@
   - `workspace-runtime-lock-sync.ts` = lock/runtime projection and task-timer persistence
 - Config cluster: `packages/core/src/config/`
   - `index.ts` = thin config façade / environment assembly entrypoint
-  - `provider-settings-snapshot.ts` = persisted provider settings readers; Gemini keeps a presentation-only thinking display sync flag, while Codex reasoning-summary visibility is now resolved through provider-home config materialization
+  - `provider-settings-snapshot.ts` = persisted provider settings readers; Claude/Gemini thinking-display flags are backfilled on settings load so the on-disk snapshot stays aligned with the UI toggle, while Codex reasoning-summary visibility is now resolved through provider-home config materialization
   - `provider-defaults-resolver.ts` = provider default model/reasoning normalization
   - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini effective model identity from persisted `~/.codeai-hub/settings/settings.json`; it derives `baseModelId`, effective identity descriptor, provider-specific reasoning/thinking payload, and presentation-only thinking display sync gate from one settings snapshot, while remote-bridge queries one provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
-  - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled` and provider-home `model_reasoning_summary = auto|none`; the Gemini card keeps `thinkingDisplaySyncEnabled` as a presentation-only control
+  - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled` and provider-home `model_reasoning_summary = auto|none`; the Claude card surfaces `Thinking in dialog` as a visible assistant-bubble gate (`assistant + tag:"thinking"` when enabled), and the Gemini card keeps the same short `Thinking in dialog` copy as a presentation-only control
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
