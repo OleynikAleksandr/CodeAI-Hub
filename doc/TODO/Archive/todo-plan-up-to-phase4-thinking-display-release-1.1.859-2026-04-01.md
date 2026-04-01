@@ -58,4 +58,4 @@
 26. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude gemini thinking display release`
 27. [DONE] Git Commit: `build(release): assemble claude gemini thinking display release` (hash: `dac75e58`)
 28. [DONE] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session012.md`. Target commit: `docs(session): record claude gemini thinking display release`
-29. [DONE] Git Commit: `docs(session): record claude gemini thinking display release` (hash: TBD)
+29. [DONE] Git Commit: `docs(session): record claude gemini thinking display release` (hash: `489b0060`)
