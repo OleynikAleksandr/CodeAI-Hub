@@ -24,7 +24,7 @@
 ## Phase 2 — Release (owner: UI, updated: 2026-04-01)
 ### Stream: Release Notes And Packaging
 1. [DONE] Update release-facing docs for `1.1.858` and sync plan progress before packaging. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare 1.1.858 notes`
-2. [TODO] Git Commit: `docs(release): prepare 1.1.858 notes` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare 1.1.858 notes` (hash: `2e62ac3c`)
 3. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble dialog link styling release`
 4. [TODO] Git Commit: `build(release): assemble dialog link styling release` (hash: TBD)
 5. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session009.md`. Target commit: `docs(session): record dialog link styling release`
