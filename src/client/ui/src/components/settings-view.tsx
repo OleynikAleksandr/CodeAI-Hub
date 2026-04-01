@@ -113,6 +113,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
     handleGeminiThinkingChange,
+    handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
     handleCodexReasoningChange,
@@ -171,6 +172,12 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                   enabled={settings.providers.claude.thinking.enabled}
                   maxTokens={settings.providers.claude.thinking.maxTokens}
                   onChange={handleThinkingSettingsChange}
+                  onThinkingDisplaySyncChange={
+                    handleClaudeThinkingDisplaySyncChange
+                  }
+                  thinkingDisplaySyncEnabled={
+                    settings.providers.claude.thinkingDisplaySyncEnabled
+                  }
                 />
                 <SessionContinuityCard
                   onRemainingPercentThresholdChange={

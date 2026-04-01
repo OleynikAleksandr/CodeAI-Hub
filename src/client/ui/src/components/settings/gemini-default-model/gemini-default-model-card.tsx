@@ -149,11 +149,10 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
             type="checkbox"
           />
           <div>
-            <div style={displaySyncTitleStyles}>Thinking display sync</div>
+            <div style={displaySyncTitleStyles}>Thinking in dialog</div>
             <div style={displaySyncDescriptionStyles}>
-              When enabled, translated Gemini reasoning appears on the standard
-              assistant bubble path. Disabling it keeps reasoning translation
-              internal while hiding the visible bubble.
+              Show translated Gemini reasoning as a normal assistant bubble in
+              the dialog.
             </div>
           </div>
         </label>
