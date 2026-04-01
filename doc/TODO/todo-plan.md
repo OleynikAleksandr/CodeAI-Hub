@@ -13,13 +13,13 @@
 
 ## Phase 1 — Session Dialog Link Styling (owner: UI, updated: 2026-04-01)
 ### Stream: Scope Bootstrap
-1. [TODO] Create the approved planning doc and replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/SessionDialog_LinkStyling_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define session dialog link styling scope`
-2. [TODO] Git Commit: `docs(plan): define session dialog link styling scope` (hash: TBD)
+1. [DONE] Create the approved planning doc and replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/SessionDialog_LinkStyling_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define session dialog link styling scope`
+2. [DONE] Git Commit: `docs(plan): define session dialog link styling scope` (hash: `9a01a08e`)
 
 ### Stream: Dialog Link Presentation
-3. [TODO] Apply the new readable dialog-link styling contract inside the shared session dialog CSS so all providers and bubble variants inherit the same anchor appearance. Scope: `media/session-view.css`. Target commit: `fix(ui): improve session dialog link contrast`
+3. [DONE] Apply the new readable dialog-link styling contract inside the shared session dialog CSS so all providers and bubble variants inherit the same anchor appearance. Scope: `media/session-view.css`. Target commit: `fix(ui): improve session dialog link contrast`
 4. [TODO] Git Commit: `fix(ui): improve session dialog link contrast` (hash: TBD)
-5. [TODO] Run targeted verification for the dialog surface. Scope: `webview`.
+5. [DONE] Run targeted verification for the dialog surface. Scope: `webview`.
 
 ## Phase 2 — Release (owner: UI, updated: 2026-04-01)
 ### Stream: Release Notes And Packaging

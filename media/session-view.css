@@ -276,6 +276,7 @@
 }
 
 .session-dialog {
+  --session-dialog-link-color: rgba(148, 193, 251, 1);
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -665,6 +666,26 @@
 }
 .session-dialog__content strong {
   font-weight: 600;
+}
+
+.session-dialog__content a,
+.session-dialog__content a:visited {
+  font-weight: 500;
+  color: var(--session-dialog-link-color);
+  text-decoration: none;
+}
+
+.session-dialog__content a:hover {
+  color: var(--session-dialog-link-color);
+  text-decoration: none;
+}
+
+.session-dialog__content a:focus-visible {
+  color: var(--session-dialog-link-color);
+  text-decoration: none;
+  outline: none;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(148, 193, 251, 0.6);
 }
 
 .session-dialog__content pre {
