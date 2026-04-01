@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
+import { useLocalization } from "../app-host/use-localization";
 import {
   buildMessageClassNames,
   extractSegmentBoundaryLabel,
@@ -11,29 +12,6 @@ import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
 
 const AUTO_SCROLL_EPSILON = 32;
-
-export const sessionSurfaceCopy = {
-  dialog: {
-    emptyLabel: "No messages yet.",
-    hideReasoningLabel: "Hide reasoning",
-    showReasoningLabel: "Show reasoning",
-  },
-  status: {
-    supervisorLabel: "Core Supervisor",
-    modelsLabel: "Models",
-    tokensLabel: "Tokens",
-    readyConnectionLabel: "Core online",
-    unavailableConnectionLabel: "Core unavailable",
-    startingConnectionLabel: "Starting core…",
-  },
-  emptyState: {
-    pendingTitle: "Creating session…",
-    pendingDescription: "This can take 5–10 seconds. Please wait.",
-    idleTitle: "Start with the Description questionnaire",
-    idleDescription:
-      'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.',
-  },
-} as const;
 
 interface DialogPanelProps {
   readonly messages: readonly SessionMessage[];
@@ -60,6 +38,7 @@ const DialogPanel = ({
   providerTheme = null,
   providerLabel = null,
 }: DialogPanelProps) => {
+  const { t } = useLocalization();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const displayMessages = useMemo(
     () => mergeThinkingMessages(messages),
@@ -128,7 +107,11 @@ const DialogPanel = ({
     return (
       <div className="session-dialog session-panel">
         <p className="session-dialog__empty">
-          {sessionSurfaceCopy.dialog.emptyLabel}
+          {t(
+            "system_feedback",
+            "session.dialog.empty_label",
+            "No messages yet."
+          )}
         </p>
       </div>
     );
@@ -202,39 +185,49 @@ const ThinkingMessage = ({
   onToggle,
   label,
   className,
-}: ThinkingMessageProps) => (
-  <article className={className}>
-    <header className="session-dialog__message-header session-dialog__message-header--thinking">
-      <button
-        aria-controls={`thinking-${message.id}`}
-        aria-expanded={expanded}
-        className={
-          expanded
-            ? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded"
-            : "session-dialog__thinking-toggle"
-        }
-        onClick={() => onToggle(message.id)}
-        title={
-          expanded
-            ? sessionSurfaceCopy.dialog.hideReasoningLabel
-            : sessionSurfaceCopy.dialog.showReasoningLabel
-        }
-        type="button"
-      >
-        {expanded ? "▾" : "▸"}
-      </button>
-      <span className="session-dialog__role">{label}</span>
-    </header>
-    {expanded ? (
-      <MarkdownContent
-        allowEmphasis={false}
-        className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
-        content={message.content}
-        id={`thinking-${message.id}`}
-      />
-    ) : null}
-  </article>
-);
+}: ThinkingMessageProps) => {
+  const { t } = useLocalization();
+  const hideReasoningLabel = t(
+    "ui_interface",
+    "session.dialog.hide_reasoning_label",
+    "Hide reasoning"
+  );
+  const showReasoningLabel = t(
+    "ui_interface",
+    "session.dialog.show_reasoning_label",
+    "Show reasoning"
+  );
+
+  return (
+    <article className={className}>
+      <header className="session-dialog__message-header session-dialog__message-header--thinking">
+        <button
+          aria-controls={`thinking-${message.id}`}
+          aria-expanded={expanded}
+          className={
+            expanded
+              ? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded"
+              : "session-dialog__thinking-toggle"
+          }
+          onClick={() => onToggle(message.id)}
+          title={expanded ? hideReasoningLabel : showReasoningLabel}
+          type="button"
+        >
+          {expanded ? "▾" : "▸"}
+        </button>
+        <span className="session-dialog__role">{label}</span>
+      </header>
+      {expanded ? (
+        <MarkdownContent
+          allowEmphasis={false}
+          className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
+          content={message.content}
+          id={`thinking-${message.id}`}
+        />
+      ) : null}
+    </article>
+  );
+};
 
 const StandardMessage = ({
   message,

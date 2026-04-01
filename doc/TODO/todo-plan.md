@@ -88,8 +88,8 @@
 43. [DONE] Add webview-side localization loading/lookup plumbing for settings-host surfaces. Scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/client/ui/src/app-host/use-localization.ts`, `src/client/ui/src/components/settings/settings-view.tsx`. Target commit: `feat(ui): load localized bundles into settings host`
 44. [DONE] Git Commit: `feat(ui): load localized bundles into settings host` (hash: `1cef28ba`)
 45. [DONE] Switch Settings UI surfaces to dictionary-driven lookup. Scope: `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`. Target commit: `refactor(ui): localize settings surfaces`
-46. [TODO] Git Commit: `refactor(ui): localize settings surfaces` (hash: TBD)
-47. [TODO] Switch Session system surfaces to dictionary-driven lookup. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(ui): localize session system surfaces`
+46. [DONE] Git Commit: `refactor(ui): localize settings surfaces` (hash: `83a19782`)
+47. [DONE] Switch Session system surfaces to dictionary-driven lookup. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(ui): localize session system surfaces`
 48. [TODO] Git Commit: `refactor(ui): localize session system surfaces` (hash: TBD)
 49. [TODO] Switch workflow help and questionnaire surfaces to dictionary-driven lookup. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Target commit: `refactor(pm): localize workflow help surfaces`
 50. [TODO] Git Commit: `refactor(pm): localize workflow help surfaces` (hash: TBD)

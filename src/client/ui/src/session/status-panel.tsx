@@ -1,5 +1,5 @@
 import type { ModelInfo, SessionStatusInfo } from "../../../../types/session";
-import { sessionSurfaceCopy } from "./dialog-panel";
+import { useLocalization } from "../app-host/use-localization";
 
 const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
@@ -29,15 +29,32 @@ const StatusPanel = ({
   connectionDetail,
   tokenDebugSummary,
 }: StatusPanelProps) => {
+  const { t } = useLocalization();
+  const supervisorLabel = t(
+    "system_feedback",
+    "session.status.supervisor_label",
+    "Core Supervisor"
+  );
+  const modelsLabel = t(
+    "system_feedback",
+    "session.status.models_label",
+    "Models"
+  );
+  const tokensLabel = t(
+    "system_feedback",
+    "session.status.tokens_label",
+    "Tokens"
+  );
+
   if (!status || connectionStatus !== "ready") {
     return (
       <section className="session-status session-panel">
         <div className="session-status__row">
           <span className="session-input__hint session-status__label">
-            {sessionSurfaceCopy.status.supervisorLabel}
+            {supervisorLabel}
           </span>
           <span className="session-input__hint session-status__value">
-            {describeConnectionStatus(connectionStatus)}
+            {describeConnectionStatus(connectionStatus, t)}
           </span>
         </div>
         <div className="session-status__row session-status__row--reserved">
@@ -79,7 +96,7 @@ const StatusPanel = ({
     <section className="session-status session-status--single-line session-panel">
       <div className="session-status__row session-status__row--single-line">
         <span className="session-input__hint session-status__value session-status__value--primary">
-          {`${sessionSurfaceCopy.status.modelsLabel}: ${modelsSummary}${STATUS_SEPARATOR}${sessionSurfaceCopy.status.tokensLabel}: ${tokensSummary}`}
+          {`${modelsLabel}: ${modelsSummary}${STATUS_SEPARATOR}${tokensLabel}: ${tokensSummary}`}
         </span>
         <span
           className={`session-input__hint session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`}
@@ -93,13 +110,30 @@ const StatusPanel = ({
 
 export default StatusPanel;
 
-const describeConnectionStatus = (status: CoreConnectionStatus): string => {
+type TranslationResolver = ReturnType<typeof useLocalization>["t"];
+
+const describeConnectionStatus = (
+  status: CoreConnectionStatus,
+  t: TranslationResolver
+): string => {
   switch (status) {
     case "ready":
-      return sessionSurfaceCopy.status.readyConnectionLabel;
+      return t(
+        "system_feedback",
+        "session.status.ready_connection_label",
+        "Core online"
+      );
     case "error":
-      return sessionSurfaceCopy.status.unavailableConnectionLabel;
+      return t(
+        "system_feedback",
+        "session.status.unavailable_connection_label",
+        "Core unavailable"
+      );
     default:
-      return sessionSurfaceCopy.status.startingConnectionLabel;
+      return t(
+        "system_feedback",
+        "session.status.starting_connection_label",
+        "Starting core…"
+      );
   }
 };
