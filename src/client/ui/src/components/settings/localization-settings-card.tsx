@@ -1,5 +1,6 @@
 import type { CSSProperties, FC } from "react";
 import { memo } from "react";
+import LocalizationGlossaryEditor from "./localization-glossary-editor";
 import SettingsCard from "./settings-card";
 import type { Settings } from "./settings-state-model";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
@@ -225,6 +226,10 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
           </p>
         </div>
       </label>
+
+      <LocalizationGlossaryEditor
+        glossaryEnabled={localization.glossaryEnabled}
+      />
 
       {categoryFields.map((category) => (
         <div key={category.id} style={controlRowStyles}>

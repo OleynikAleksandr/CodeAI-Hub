@@ -47,8 +47,8 @@
 
 ### Stream: Localization Settings UI
 17. [DONE] Add the category-based localization controls to the General settings surface. Scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/settings-view.tsx`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization category controls`
-18. [TODO] Git Commit: `feat(ui): add localization category controls` (hash: TBD)
-19. [TODO] Add a first-wave glossary management entry surface for user-authored English do-not-translate terms. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`. Target commit: `feat(ui): add glossary override editor`
+18. [DONE] Git Commit: `feat(ui): add localization category controls` (hash: `1d8e5f0b`)
+19. [DONE] Add a first-wave glossary management entry surface for user-authored English do-not-translate terms. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`. Target commit: `feat(ui): add glossary override editor`
 20. [TODO] Git Commit: `feat(ui): add glossary override editor` (hash: TBD)
 
 ## Phase 3 — Localization Package Scaffold (owner: Localization, updated: 2026-04-01)

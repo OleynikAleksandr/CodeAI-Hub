@@ -46,6 +46,8 @@ import {
 const RESET_DELAY_MS = 100;
 const DEFAULT_LOCALIZATION_LANGUAGE = "source";
 const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+export const LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY =
+  "codeaihub:settings:localization:user-glossary-draft";
 
 const normalizeLocalizationSelection = (value: string): string => {
   const trimmed = value.trim();
