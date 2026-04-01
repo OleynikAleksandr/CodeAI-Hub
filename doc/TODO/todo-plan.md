@@ -48,8 +48,8 @@
 
 ## Phase 4 — SSOT And Release (owner: UI, updated: 2026-04-01)
 ### Stream: Documentation And Verification
-21. [TODO] Sync final SSOT docs for Claude/Gemini thinking display behavior and the new Claude visible-bubble contract. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Target commit: `docs(architecture): sync thinking display ssot`
-22. [TODO] Git Commit: `docs(architecture): sync thinking display ssot` (hash: TBD)
+21. [DONE] Sync final SSOT docs for Claude/Gemini thinking display behavior and the new Claude visible-bubble contract. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Target commit: `docs(architecture): sync claude gemini thinking display ssot`
+22. [DONE] Git Commit: `docs(architecture): sync claude gemini thinking display ssot` (hash: `47da73aa`)
 23. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/claude-module`, `@codeai-hub/core`, `webview`.
 
 ### Stream: Release
