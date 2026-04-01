@@ -19,6 +19,11 @@ export {
 } from "./localization-contract";
 export { LocalizationFacade } from "./localization-facade";
 export {
+  type LocalizationMaterializationRequest,
+  type LocalizationMaterializationResult,
+  LocalizationMaterializer,
+} from "./localization-materializer";
+export {
   type LocalizationBundleMetadataRecord,
   type LocalizationMetadataRecord,
   LocalizationMetadataStore,

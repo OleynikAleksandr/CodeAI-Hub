@@ -62,8 +62,8 @@
 
 ### Stream: Language Catalog And Materialization
 27. [DONE] Add a localization language-catalog surface for the active translation engine capabilities. Scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/language-catalog-service.ts`, `packages/localization/src/localization-contract.ts`. Target commit: `feat(localization): add language catalog`
-28. [TODO] Git Commit: `feat(localization): add language catalog` (hash: TBD)
-29. [TODO] Add the first materializer pipeline that translates source dictionaries through `@codeai-hub/translation` and persists localized bundles. Scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/localization-bundle-store.ts`. Target commit: `feat(localization): materialize localized bundles`
+28. [DONE] Git Commit: `feat(localization): add language catalog` (hash: `9f8b2258`)
+29. [DONE] Add the first materializer pipeline that translates source dictionaries through `@codeai-hub/translation` and persists localized bundles. Scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/localization-bundle-store.ts`. Target commit: `feat(localization): materialize localized bundles`
 30. [TODO] Git Commit: `feat(localization): materialize localized bundles` (hash: TBD)
 
 ## Phase 4 — Local Glossary And User Overrides (owner: Localization, updated: 2026-04-01)

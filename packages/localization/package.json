@@ -12,6 +12,9 @@
   "engines": {
     "node": ">=20.0.0"
   },
+  "dependencies": {
+    "@codeai-hub/translation": "file:../translation"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.4.7",
     "@types/node": "^20.11.0",

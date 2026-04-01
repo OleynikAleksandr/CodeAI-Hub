@@ -54,6 +54,13 @@ const parseBundleRecord = (
 };
 
 export class LocalizationBundleStore {
+  async has(
+    category: LocalizationCategoryId,
+    language: string
+  ): Promise<boolean> {
+    return (await this.load(category, language)) !== null;
+  }
+
   async load(
     category: LocalizationCategoryId,
     language: string
