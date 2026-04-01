@@ -73,8 +73,8 @@
 33. [DONE] Seed bundled base glossary and the first language-specific glossary baseline. Scope: `assets/localization/glossary/base.json`, `assets/localization/glossary/ru.json`, `packages/localization/src/glossary-bundle-loader.ts`. Target commit: `feat(localization): seed bundled glossary baseline`
 34. [DONE] Git Commit: `feat(localization): seed bundled glossary baseline` (hash: `bf08d15b`)
 35. [DONE] Add user override storage and validation for English do-not-translate terms. Scope: `packages/localization/src/user-glossary-store.ts`, `packages/localization/src/glossary-validator.ts`, `packages/localization/src/glossary-merge-service.ts`. Target commit: `feat(localization): add user glossary overrides`
-36. [TODO] Git Commit: `feat(localization): add user glossary overrides` (hash: TBD)
-37. [TODO] Wire glossary protection and glossary-driven invalidation into the materialization pipeline. Scope: `packages/localization/src/glossary-protector.ts`, `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-metadata-store.ts`. Target commit: `refactor(localization): apply glossary protection during materialization`
+36. [DONE] Git Commit: `feat(localization): add user glossary overrides` (hash: `753b6f1d`)
+37. [DONE] Wire glossary protection and glossary-driven invalidation into the materialization pipeline. Scope: `packages/localization/src/glossary-protector.ts`, `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-metadata-store.ts`. Target commit: `refactor(localization): apply glossary protection during materialization`
 38. [TODO] Git Commit: `refactor(localization): apply glossary protection during materialization` (hash: TBD)
 
 ## Phase 5 — Bundled Catalogs And UI Consumption (owner: UI/PM, updated: 2026-04-01)

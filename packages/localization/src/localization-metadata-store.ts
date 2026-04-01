@@ -101,6 +101,14 @@ const parseMetadataRecord = (value: unknown): LocalizationMetadataRecord => {
 };
 
 export class LocalizationMetadataStore {
+  async getBundle(
+    category: LocalizationCategoryId,
+    language: string
+  ): Promise<LocalizationBundleMetadataRecord | null> {
+    const metadata = await this.load();
+    return metadata.bundles[createBundleKey(category, language)] ?? null;
+  }
+
   async load(): Promise<LocalizationMetadataRecord> {
     try {
       const raw = await fs.readFile(

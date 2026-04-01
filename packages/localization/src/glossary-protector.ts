@@ -38,6 +38,18 @@ const getRestoredValue = (
     : token.rule.sourceTerm;
 
 export class GlossaryProtector {
+  hasApplicableRules(
+    category: LocalizationCategoryId,
+    targetLanguage: string,
+    glossary: ResolvedGlossary
+  ): boolean {
+    return glossary.rules.some(
+      (rule) =>
+        matchesCategory(rule, category) &&
+        matchesTargetLanguage(rule, targetLanguage)
+    );
+  }
+
   protect(
     text: string,
     category: LocalizationCategoryId,
