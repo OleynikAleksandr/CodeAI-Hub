@@ -82,6 +82,7 @@ export const resolveVirtualConversationMessages = (options: {
   readonly activeSessionId: string | null;
   readonly activeSession: SessionSnapshot | null;
   readonly continuationChain: readonly SessionRecord[];
+  readonly showThinkingMessages?: boolean;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
 }): readonly SessionMessage[] => {
   const base =
@@ -91,12 +92,11 @@ export const resolveVirtualConversationMessages = (options: {
       ? buildVirtualConversationMessages({
           chain: options.continuationChain,
           snapshots: options.snapshots,
+          showThinkingMessages: options.showThinkingMessages !== false,
         })
       : (options.activeSession?.messages ?? []);
-  const shouldSuppressRolloverThinking =
-    options.activeSession?.status.connectionState === "blocked";
   const filtered =
-    shouldSuppressRolloverThinking && base.length > 0
+    options.showThinkingMessages === false && base.length > 0
       ? base.filter((message) => !isThinkingDisplayMessage(message))
       : base;
   return filterContinuityInternalMessages(filtered);

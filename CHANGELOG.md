@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.860] - 2026-04-01
+### Fixed
+- **Thinking visibility is now presentation-only**: Claude and Gemini `Thinking in dialog` toggles no longer suppress provider-side history emission; they only filter whether thinking bubbles are rendered in the Session dialog.
+- **Restored-dialog parity**: the same thinking visibility toggle now applies to reopened/reloaded dialog history, including continuation chains, instead of affecting only newly emitted runtime messages.
+
 ## [1.1.859] - 2026-04-01
 ### Fixed
 - **Thinking display snapshot backfill**: older settings snapshots now backfill Claude and Gemini `thinkingDisplaySyncEnabled` on load, so the UI toggle and Core payload stay aligned after restart.

@@ -239,10 +239,6 @@ export class ClaudeStreamEventRouter {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): void {
-    if (session.runtimeTurnConfig.thinkingDisplaySyncEnabled === false) {
-      return;
-    }
-
     const content = message.message?.content;
     if (!Array.isArray(content)) {
       return;

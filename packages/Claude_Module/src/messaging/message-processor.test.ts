@@ -349,7 +349,7 @@ test("SDKMessageProcessor emits tagged assistant thinking bubbles when display s
   );
 });
 
-test("SDKMessageProcessor hides Claude thinking bubbles when display sync is disabled", async () => {
+test("SDKMessageProcessor still emits Claude thinking bubbles when display sync is disabled", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
     "/tmp/claude-test-thinking-disabled",
@@ -385,8 +385,14 @@ test("SDKMessageProcessor hides Claude thinking bubbles when display sync is dis
   await waitForQueueDrain(session);
 
   assert.equal(
-    events.some((event) => event.type === "dialog_message"),
-    false
+    events.some(
+      (event) =>
+        event.type === "dialog_message" &&
+        event.role === "assistant" &&
+        event.tag === "thinking" &&
+        event.content === "hidden reasoning"
+    ),
+    true
   );
   assert.equal(
     events.filter((event) => event.type === "turn_completed").length,

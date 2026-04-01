@@ -10,8 +10,16 @@ const ProjectManagerDialogSessionView = (props: {
   readonly onExit: () => void;
   readonly emptyStatePending?: boolean;
 }) => {
-  const { connection, providerLabels, session, snapshots, setSnapshots, tokenDebugSummaryOverride, sendMessage } =
-    useProjectManagerDialogSessionController(props.intent);
+  const {
+    connection,
+    providerLabels,
+    session,
+    showThinkingMessages,
+    snapshots,
+    setSnapshots,
+    tokenDebugSummaryOverride,
+    sendMessage,
+  } = useProjectManagerDialogSessionController(props.intent);
   const { switchOffer, dismissSwitchOffer, acceptRetryInPlace, acceptSwitchTarget } =
     useDialogSwitchOffer(session?.id ?? null);
   useRuntimeModelSync(session?.id ?? null, setSnapshots);
@@ -30,6 +38,7 @@ const ProjectManagerDialogSessionView = (props: {
         emptyStatePending={shouldShowPending}
         providerLabels={new Map()}
         sessions={[]}
+        showThinkingMessages={showThinkingMessages}
         showEmptyState={true}
         snapshots={{}}
         tokenDebugSummaryOverride={undefined}
@@ -47,6 +56,7 @@ const ProjectManagerDialogSessionView = (props: {
       onSendMessage={(_sessionId, content) => sendMessage(content)}
       providerLabels={providerLabels}
       sessions={[session]}
+      showThinkingMessages={showThinkingMessages}
       showEmptyState={true}
       snapshots={snapshots}
       switchOffer={switchOffer}

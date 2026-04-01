@@ -11,7 +11,7 @@
 - `src/messaging/claude-stream-event-router.ts` — routing assistant/result events, thinking chunks и structured output emission.
 - `src/messaging/claude-message-finish-handler.ts` — lifecycle completion façade (`turn_started` / `turn_completed` / `turn_failed`).
 - `src/messaging/claude-usage-sync.ts`, `src/messaging/claude-token-usage-sync.ts` — usage limits + `/context` token usage synchronization.
-- `src/messaging/claude-stream-event-router.ts` now emits live thinking as a normal assistant bubble with `tag: "thinking"` when `thinkingDisplaySyncEnabled` is on; the old hidden collapsible thinking panel survives only for archived `role: "thinking"` history, while `thinking.enabled/maxTokens` remains the separate upstream-thinking control.
+- `src/messaging/claude-stream-event-router.ts` emits Claude thinking into session history as tagged thinking messages; `thinkingDisplaySyncEnabled` only decides whether the shared Session UI renders them as visible Thinking bubbles or filters them out. `thinking.enabled/maxTokens` remains the separate upstream-thinking control.
 
 ## Usage-limits cluster
 - `src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts` — facade for header/runtime usage-limit normalization and stream payload shaping.
@@ -36,7 +36,7 @@
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Rate-limit и `/context` token usage остаются post-message synchronization concern и не должны смешиваться с assistant/result routing в одном giant file.
 - `sdk-claude-*.jsonl` остаётся диагностическим SDK логом; exact provider-applied model/thinking при аудите нужно подтверждать по provider-home Claude JSONL, а не по отдельным normalized `provider_feedback` записям.
-- Claude thinking display is a presentation-only toggle: when enabled, live reasoning is shown in the dialog as a standard assistant bubble with `Thinking`; when disabled, the upstream thinking channel may still exist but the visible bubble path is suppressed.
+- Claude thinking display is a presentation-only toggle: when enabled, reasoning is rendered in the dialog as a standard assistant bubble with `Thinking`; when disabled, the stored thinking history remains intact but the Session UI filters it out.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

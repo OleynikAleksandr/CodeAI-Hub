@@ -257,6 +257,26 @@ export const mapProviderTheme = (
   }
 };
 
+export const resolveSessionThinkingDisplayEnabled = (options: {
+  readonly providerId: ProviderStackId | null;
+  readonly settings: Settings | null;
+}): boolean => {
+  if (!options.settings) {
+    return true;
+  }
+
+  switch (options.providerId) {
+    case "claudeCodeCli":
+      return options.settings.providers.claude.thinkingDisplaySyncEnabled;
+    case "codexCli":
+      return options.settings.providers.codex.reasoningSummaryEnabled;
+    case "geminiCli":
+      return options.settings.providers.gemini.thinkingDisplaySyncEnabled;
+    default:
+      return true;
+  }
+};
+
 export const resolveProviderWaitColor = (
   providerTheme: ProviderTheme | null,
   alpha = 0.7

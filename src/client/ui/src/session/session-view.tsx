@@ -66,6 +66,7 @@ interface SessionViewProps {
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly sessions: readonly SessionRecord[];
   readonly showEmptyState: boolean;
+  readonly showThinkingMessages?: boolean;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
   readonly switchOffer?: SwitchOfferProp | null;
   readonly tokenDebugSummaryOverride?: string;
@@ -139,6 +140,7 @@ const SessionViewBody = ({
   onSelectSession,
   onCloseSession,
   onSendMessage,
+  showThinkingMessages,
   switchOffer,
   onDismissSwitchOffer,
   onRetryInPlace,
@@ -204,6 +206,7 @@ const SessionViewBody = ({
     activeSessionId,
     activeSession,
     continuationChain,
+    showThinkingMessages,
     snapshots,
   });
 

@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.859
-- **Thinking display snapshot backfill**: older settings snapshots now backfill Claude and Gemini `Thinking in dialog` state on load, so the UI toggle, on-disk settings, and Core payload stay aligned after restart.
-- **Claude visible thinking contract**: Claude reasoning continues to render as a standard assistant bubble with a `Thinking` label when display sync is on, matching the Gemini-style presentation-only toggle.
-- **SSOT sync**: the Claude and Gemini module docs now describe the same visible-thinking contract that the UI and runtime already use.
+## Current Release — v1.1.860
+- **Thinking visibility filter**: Claude and Gemini `Thinking in dialog` now behave as pure Session UI visibility toggles. Reasoning stays in stored history, but the bubbles are shown or hidden in the dialog according to the current setting.
+- **Reload/reopen parity**: the same toggle now re-filters already restored dialog history and continuation chains after reload, instead of affecting only new live stream messages.
+- **SSOT sync**: the Claude and Gemini module docs plus the system architecture doc now describe thinking visibility as a presentation-only filter over persisted history.
 
 Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 

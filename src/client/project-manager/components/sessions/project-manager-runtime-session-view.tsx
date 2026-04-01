@@ -4,7 +4,7 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
-import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, resolveSessionThinkingDisplayEnabled, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
@@ -277,6 +277,11 @@ const ProjectManagerRuntimeSessionView = ({
     workspacePath,
     reload
   );
+  const activeRecord = sessions.find((session) => session.id === scopedActiveSessionId) ?? null;
+  const showThinkingMessages = resolveSessionThinkingDisplayEnabled({
+    providerId: activeRecord?.providerIds[0] ?? null,
+    settings,
+  });
   return (
     <SessionView
       activeSessionId={scopedActiveSessionId}
@@ -289,6 +294,7 @@ const ProjectManagerRuntimeSessionView = ({
       emptyStatePending={emptyStatePending}
       providerLabels={providerLabels}
       sessions={visibleSessions}
+      showThinkingMessages={showThinkingMessages}
       showEmptyState={Boolean(workspacePath)}
       snapshots={snapshots}
     />

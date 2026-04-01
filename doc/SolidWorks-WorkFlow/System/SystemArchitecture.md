@@ -101,11 +101,11 @@
   - `index.ts` = thin config façade / environment assembly entrypoint
   - `provider-settings-snapshot.ts` = persisted provider settings readers; Claude/Gemini thinking-display flags are backfilled on settings load so the on-disk snapshot stays aligned with the UI toggle, while Codex reasoning-summary visibility is now resolved through provider-home config materialization
   - `provider-defaults-resolver.ts` = provider default model/reasoning normalization
-  - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini effective model identity from persisted `~/.codeai-hub/settings/settings.json`; it derives `baseModelId`, effective identity descriptor, provider-specific reasoning/thinking payload, and presentation-only thinking display sync gate from one settings snapshot, while remote-bridge queries one provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches
+  - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini effective model identity from persisted `~/.codeai-hub/settings/settings.json`; it derives `baseModelId`, effective identity descriptor, provider-specific reasoning/thinking payload, and presentation-only thinking display sync gate from one settings snapshot, while remote-bridge queries one provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches; the Session UI now uses that gate only to decide whether to render thinking bubbles, not to stop JSONL/history persistence
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
 - Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
-  - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled` and provider-home `model_reasoning_summary = auto|none`; the Claude card surfaces `Thinking in dialog` as a visible assistant-bubble gate (`assistant + tag:"thinking"` when enabled), and the Gemini card keeps the same short `Thinking in dialog` copy as a presentation-only control
+  - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled` and provider-home `model_reasoning_summary = auto|none`; the Claude card surfaces `Thinking in dialog` as a visible assistant-bubble gate, and the Gemini card keeps the same short `Thinking in dialog` copy as a presentation-only control; for Claude and Gemini the runtime still persists thinking history, while the Session UI decides whether to render it
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
@@ -155,7 +155,7 @@
 - Gemini Thought Translator: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
   - Adapts Gemini agent thoughts into shared `@codeai-hub/translation` facade calls; current engine path is Google GTX / `translate.googleapis.com`
   - Buffered in `GeminiMessageProcessor.handleThoughtEvent()`: pending translations are awaited before real response emit, and the no-pending-translations path emits the final assistant segment synchronously
-  - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" when `thinkingDisplaySyncEnabled` is on; the translation pipeline still runs even when the display flag is off, but the visible bubble is skipped by the session normalizer
+  - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" when `thinkingDisplaySyncEnabled` is on; when the display flag is off, the Session UI filters the bubble while the runtime history/logging path remains intact
   - `thought-translator-service.ts` remains a compatibility re-export for historical imports
   - Graceful degradation: on failure, English original is emitted as fallback
   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`, `packages/translation/src/translation-facade.ts`

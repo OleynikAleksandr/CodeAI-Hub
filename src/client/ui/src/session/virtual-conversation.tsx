@@ -184,6 +184,7 @@ export const resolveContinuationChain = (params: {
 export const buildVirtualConversationMessages = (params: {
   readonly chain: readonly SessionRecord[];
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
+  readonly showThinkingMessages: boolean;
 }): readonly SessionMessage[] => {
   const collected: MessageWithSegmentIndex[] = [];
   const lastSegmentIndex = Math.max(0, params.chain.length - 1);
@@ -196,6 +197,7 @@ export const buildVirtualConversationMessages = (params: {
       snapshot,
       segmentIndex,
       lastSegmentIndex,
+      showThinkingMessages: params.showThinkingMessages,
     });
     for (const message of messages) {
       collected.push({ message, segmentIndex });

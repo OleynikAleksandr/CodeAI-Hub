@@ -69,6 +69,7 @@ export const collectChainSegmentMessages = (options: {
   readonly snapshot: SessionSnapshot;
   readonly segmentIndex: number;
   readonly lastSegmentIndex: number;
+  readonly showThinkingMessages: boolean;
 }): readonly SessionMessage[] => {
   const startIndex =
     resolveChainSegmentStartIndex({
@@ -80,6 +81,7 @@ export const collectChainSegmentMessages = (options: {
   }
 
   const shouldSuppressThinking =
+    !options.showThinkingMessages &&
     options.segmentIndex < options.lastSegmentIndex;
   const sliced = options.snapshot.messages.slice(startIndex);
   if (!shouldSuppressThinking) {

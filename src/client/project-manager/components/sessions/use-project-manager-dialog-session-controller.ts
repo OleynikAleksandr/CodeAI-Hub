@@ -3,7 +3,7 @@ import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
-import { createInitialSnapshot, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { createInitialSnapshot, resolveSessionThinkingDisplayEnabled, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import {
   buildProviderLabels,
@@ -22,6 +22,7 @@ export type ProjectManagerDialogSessionController = {
   readonly connection: ReturnType<typeof useProjectManagerCoreStatusHydrator>;
   readonly providerLabels: ReturnType<typeof buildProviderLabels>;
   readonly session: SessionRecord | null;
+  readonly showThinkingMessages: boolean;
   readonly snapshots: SessionSnapshots;
   readonly setSnapshots: React.Dispatch<React.SetStateAction<SessionSnapshots>>;
   readonly tokenDebugSummaryOverride: string | undefined;
@@ -261,6 +262,11 @@ export const useProjectManagerDialogSessionController = (
 
   useSettingsModelsSync(session ? [session] : [], settings, setSnapshots);
 
+  const showThinkingMessages = resolveSessionThinkingDisplayEnabled({
+    providerId: session?.providerIds[0] ?? null,
+    settings,
+  });
+
   useProjectManagerDialogCoreEvents({
     requestDialogList,
     requestDialogHistory,
@@ -292,5 +298,14 @@ export const useProjectManagerDialogSessionController = (
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
 
-  return { connection, providerLabels, session, snapshots, setSnapshots, tokenDebugSummaryOverride, sendMessage };
+  return {
+    connection,
+    providerLabels,
+    session,
+    showThinkingMessages,
+    snapshots,
+    setSnapshots,
+    tokenDebugSummaryOverride,
+    sendMessage,
+  };
 };

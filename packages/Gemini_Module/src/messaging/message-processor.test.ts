@@ -38,6 +38,7 @@ const createSession = (): ActiveSession =>
     client: {},
     workspacePath: "/tmp/gemini-test-workspace",
     contextWindowTokenLimit: 300_000,
+    runtimeTurnConfig: {},
     status: "idle",
     abortController: null,
     logger: {
@@ -161,5 +162,43 @@ test("GeminiMessageProcessor keeps partial assistant chunks buffered until finis
   assert.equal(
     processor.finalize(accumulator).responseText,
     "Partial response"
+  );
+});
+
+test("GeminiMessageProcessor still emits thinking bubbles when display sync is disabled", () => {
+  const processor = new GeminiMessageProcessor({
+    modules: createModules(),
+  });
+  const session = createSession();
+  session.runtimeTurnConfig.thinkingDisplaySyncEnabled = false;
+  const accumulator = processor.createAccumulator("prompt-thinking-disabled");
+  const messages: unknown[] = [];
+
+  session.eventEmitter.on("message", (payload) => {
+    messages.push(payload);
+  });
+
+  processor.handleEvent(
+    session,
+    {
+      type: "thought",
+      value: {
+        subject: "Planning",
+        description: "Need to think before answering",
+      },
+    } as never,
+    accumulator
+  );
+
+  assert.equal(
+    messages.some(
+      (payload) =>
+        (payload as { type?: string }).type === "dialog_message" &&
+        (payload as { role?: string }).role === "assistant" &&
+        (payload as { tag?: string }).tag === "thinking" &&
+        (payload as { content?: string }).content ===
+          "Planning: Need to think before answering"
+    ),
+    true
   );
 });
