@@ -24,6 +24,7 @@ export interface ClaudeSettings {
   readonly defaultModel: ClaudeModelAliasId;
   readonly sessionContinuity: ClaudeSessionContinuitySettings;
   readonly thinking: ClaudeThinkingSettings;
+  readonly thinkingDisplaySyncEnabled: boolean;
 }
 
 const MIN_THINKING_TOKENS = 2000;
@@ -46,6 +47,7 @@ export const DEFAULT_CLAUDE_SETTINGS: ClaudeSettings = {
   autoUpdate: DEFAULT_AUTO_UPDATE_SETTINGS,
   defaultModel: DEFAULT_CLAUDE_MODEL_ALIAS,
   sessionContinuity: DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS,
+  thinkingDisplaySyncEnabled: true,
 };
 
 const clampThinkingTokens = (value: number): number =>
@@ -115,5 +117,9 @@ export const normalizeClaudeSettings = (value: unknown): ClaudeSettings => {
     sessionContinuity: normalizeClaudeSessionContinuitySettings(
       value.sessionContinuity
     ),
+    thinkingDisplaySyncEnabled:
+      typeof value.thinkingDisplaySyncEnabled === "boolean"
+        ? value.thinkingDisplaySyncEnabled
+        : DEFAULT_CLAUDE_SETTINGS.thinkingDisplaySyncEnabled,
   };
 };

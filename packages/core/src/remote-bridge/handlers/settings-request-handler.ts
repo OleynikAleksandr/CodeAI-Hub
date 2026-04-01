@@ -47,6 +47,7 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
         enabled: false,
         maxTokens: 4000,
       },
+      thinkingDisplaySyncEnabled: true,
       autoUpdate: { enabled: true },
       defaultModel: "sonnet",
       sessionContinuity: { remainingPercentThreshold: 30 },
@@ -64,6 +65,7 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
     gemini: {
       autoUpdate: { enabled: true },
       defaultModel: "gemini-3-pro-preview",
+      thinkingDisplaySyncEnabled: true,
       thinkingLevelByModel: {},
       sessionContinuity: {
         remainingPercentThreshold: 30,

@@ -20,6 +20,7 @@ export interface GeminiSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: GeminiModelId;
   readonly sessionContinuity: GeminiSessionContinuitySettings;
+  readonly thinkingDisplaySyncEnabled: boolean;
   readonly thinkingLevelByModel: Record<string, GeminiThinkingLevel>;
 }
 
@@ -31,6 +32,7 @@ const MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1_000_000;
 export const DEFAULT_GEMINI_SETTINGS: GeminiSettings = {
   autoUpdate: DEFAULT_AUTO_UPDATE_SETTINGS,
   defaultModel: DEFAULT_GEMINI_MODEL_ID,
+  thinkingDisplaySyncEnabled: true,
   thinkingLevelByModel: {},
   sessionContinuity: {
     contextWindowTokenLimit: 300_000,
@@ -103,6 +105,10 @@ export const normalizeGeminiSettings = (value: unknown): GeminiSettings => {
   return {
     autoUpdate: normalizeAutoUpdateSettings(value.autoUpdate),
     defaultModel: resolveGeminiDefaultModel(value.defaultModel),
+    thinkingDisplaySyncEnabled:
+      typeof value.thinkingDisplaySyncEnabled === "boolean"
+        ? value.thinkingDisplaySyncEnabled
+        : DEFAULT_GEMINI_SETTINGS.thinkingDisplaySyncEnabled,
     thinkingLevelByModel: resolveGeminiThinkingLevelByModel(
       value.thinkingLevelByModel
     ),
