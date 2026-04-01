@@ -82,10 +82,10 @@
 39. [DONE] Seed bundled English source catalogs for interface, system feedback, and user guidance categories. Scope: `assets/localization/source/en/ui_interface.json`, `assets/localization/source/en/system_feedback.json`, `assets/localization/source/en/user_guidance.json`. Target commit: `feat(localization): seed english ui catalogs`
 40. [DONE] Git Commit: `feat(localization): seed english ui catalogs` (hash: `1be03c7c`)
 41. [DONE] Seed bundled English source catalogs for workflow terms and interactive templates. Scope: `assets/localization/source/en/workflow_terms.json`, `assets/localization/source/en/interactive_templates.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): seed english workflow catalogs`
-42. [TODO] Git Commit: `feat(localization): seed english workflow catalogs` (hash: TBD)
+42. [DONE] Git Commit: `feat(localization): seed english workflow catalogs` (hash: `9fabdff9`)
 
 ### Stream: Runtime Lookup Wiring
-43. [TODO] Add webview-side localization loading/lookup plumbing for settings-host surfaces. Scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/client/ui/src/app-host/use-localization.ts`, `src/client/ui/src/components/settings/settings-view.tsx`. Target commit: `feat(ui): load localized bundles into settings host`
+43. [DONE] Add webview-side localization loading/lookup plumbing for settings-host surfaces. Scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `src/client/ui/src/app-host/use-localization.ts`, `src/client/ui/src/components/settings/settings-view.tsx`. Target commit: `feat(ui): load localized bundles into settings host`
 44. [TODO] Git Commit: `feat(ui): load localized bundles into settings host` (hash: TBD)
 45. [TODO] Switch Settings UI surfaces to dictionary-driven lookup. Scope: `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`. Target commit: `refactor(ui): localize settings surfaces`
 46. [TODO] Git Commit: `refactor(ui): localize settings surfaces` (hash: TBD)

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocalization } from "../app-host/use-localization";
 import ClaudeDefaultModelCard from "./settings/claude-default-model/claude-default-model-card";
 import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-model-card";
 import GeminiDefaultModelCard from "./settings/gemini-default-model/gemini-default-model-card";
@@ -13,12 +14,13 @@ import {
   settingsTypographyTokens,
 } from "./settings/style-tokens";
 import ThinkingSettings from "./settings/thinking-settings";
-import { useSettingsState } from "./settings/use-settings-state";
+import type { UseSettingsStateResult } from "./settings/use-settings-state";
 
 type SettingsMode = "settings-only" | "full";
 interface SettingsViewProps {
   readonly mode?: SettingsMode;
   readonly onClose: () => void;
+  readonly state: UseSettingsStateResult;
 }
 
 type SettingsTab = "claude" | "codex" | "gemini" | "general";
@@ -65,24 +67,6 @@ const stackStyles: React.CSSProperties = {
   gap: settingsSpacingTokens.containerGap,
 };
 
-const modeNoticeStyles: React.CSSProperties = {
-  margin: `16px ${settingsSpacingTokens.pagePadding} 0`,
-  padding: "12px 14px",
-  borderRadius: "10px",
-  background: settingsColorTokens.surfaceElevated,
-  border: `1px solid ${settingsColorTokens.borderSubtle}`,
-  color: settingsColorTokens.textSecondary,
-  fontSize: settingsTypographyTokens.bodyFontSize,
-  lineHeight: 1.5,
-};
-
-const modeNoticeTitleStyles: React.CSSProperties = {
-  color: settingsColorTokens.textPrimary,
-  fontSize: settingsTypographyTokens.titleFontSize,
-  fontWeight: 600,
-  marginBottom: "4px",
-};
-
 const settingsTabs: ReadonlyArray<{
   readonly id: SettingsTab;
   readonly label: string;
@@ -93,10 +77,8 @@ const settingsTabs: ReadonlyArray<{
   { id: "general", label: "General" },
 ];
 
-const SettingsView: React.FC<SettingsViewProps> = ({
-  onClose,
-  mode = "full",
-}) => {
+const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
+  const { ready } = useLocalization();
   const [activeTab, setActiveTab] = useState<SettingsTab>("claude");
   const {
     coreControl,
@@ -131,17 +113,11 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleSave,
     handleReset,
     handleUpdateProvider,
-  } = useSettingsState();
+  } = state;
 
   return (
-    <div style={containerStyles}>
+    <div aria-busy={!ready} style={containerStyles}>
       <SettingsHeader onClose={onClose} />
-      {mode === "settings-only" ? (
-        <div style={modeNoticeStyles}>
-          <div style={modeNoticeTitleStyles}>Settings only mode</div>
-          <div>Sessions and chats are available in Project Manager.</div>
-        </div>
-      ) : null}
       <div style={tabBarStyles}>
         {settingsTabs.map((tab) => (
           <button

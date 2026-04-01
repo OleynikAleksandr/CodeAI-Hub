@@ -5,9 +5,14 @@ import {
   settingsSpacingTokens,
   settingsTypographyTokens,
 } from "../components/settings/style-tokens";
+import { useSettingsState } from "../components/settings/use-settings-state";
 import SettingsView from "../components/settings-view";
 import { activateRoot } from "../root-dom";
 import { useSettingsVisibility } from "./settings-visibility";
+import {
+  LocalizationProvider,
+  useResolvedLocalization,
+} from "./use-localization";
 import {
   useWebviewMessageHandler,
   type WebviewMessageHandlers,
@@ -79,6 +84,8 @@ const noopVoidHandler: WebviewMessageHandlers["onSessionClearAll"] = () => {
 };
 
 export const SettingsOnlyHost = () => {
+  const settingsState = useSettingsState();
+  const localization = useResolvedLocalization(settingsState.settings);
   const { settingsVisible, openSettings, closeSettings } =
     useSettingsVisibility();
   const handleShowSettings = useCallback(() => {
@@ -99,32 +106,38 @@ export const SettingsOnlyHost = () => {
   });
 
   return (
-    <div className="app-shell">
-      <main aria-label="Settings only mode" style={settingsOnlyLayoutStyles}>
-        <section style={settingsOnlyCardStyles}>
-          <h1 style={settingsOnlyTitleStyles}>Settings only</h1>
-          <p style={settingsOnlyBodyStyles}>
-            Sessions and chats are available in Project Manager.
-          </p>
-          <p style={settingsOnlyHintStyles}>
-            Use this panel to configure providers and defaults.
-          </p>
-          <button
-            onClick={handleShowSettings}
-            style={settingsOnlyButtonStyles}
-            type="button"
-          >
-            Open settings
-          </button>
-        </section>
-      </main>
-      {settingsVisible ? (
-        <div className="settings-overlay">
-          <div className="settings-overlay__panel">
-            <SettingsView mode="settings-only" onClose={closeSettings} />
+    <LocalizationProvider value={localization}>
+      <div className="app-shell">
+        <main aria-label="Settings only mode" style={settingsOnlyLayoutStyles}>
+          <section style={settingsOnlyCardStyles}>
+            <h1 style={settingsOnlyTitleStyles}>Settings only</h1>
+            <p style={settingsOnlyBodyStyles}>
+              Sessions and chats are available in Project Manager.
+            </p>
+            <p style={settingsOnlyHintStyles}>
+              Use this panel to configure providers and defaults.
+            </p>
+            <button
+              onClick={handleShowSettings}
+              style={settingsOnlyButtonStyles}
+              type="button"
+            >
+              Open settings
+            </button>
+          </section>
+        </main>
+        {settingsVisible ? (
+          <div className="settings-overlay">
+            <div className="settings-overlay__panel">
+              <SettingsView
+                mode="settings-only"
+                onClose={closeSettings}
+                state={settingsState}
+              />
+            </div>
           </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </LocalizationProvider>
   );
 };
