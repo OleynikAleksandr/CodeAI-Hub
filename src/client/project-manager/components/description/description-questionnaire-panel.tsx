@@ -1,12 +1,14 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DescriptionQuestionnaireView } from "../../../ui/src/components/description-questionnaire/description-questionnaire-view";
+import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
 import { DescriptionQuestionnaireService } from "../../services/description-questionnaire-service";
 import { DescriptionSubmitService } from "../../services/description-submit-service";
 import type { ProviderStackDescriptor, ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import { DescriptionProviderPicker } from "./description-provider-picker";
+import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 
 const SAVE_DEBOUNCE_MS = 400;
 
@@ -50,6 +52,8 @@ export const DescriptionQuestionnairePanel: React.FC<
   onDescriptionSessionCreated,
   onDescriptionSessionCreatePendingChange,
 }) => {
+  const { settings } = useProjectManagerSettings();
+  const { t } = useResolvedLocalization(settings);
   const serviceRef = useRef(new DescriptionQuestionnaireService());
   const descriptionSubmitRef = useRef(new DescriptionSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
@@ -132,7 +136,16 @@ export const DescriptionQuestionnairePanel: React.FC<
     workspacePath,
   ]);
 
-  const title = useMemo(() => `Анкета описания — ${resolvedWorkspaceName}`, [resolvedWorkspaceName]);
+  const title = useMemo(
+    () =>
+      t(
+        "interactive_templates",
+        "pm.description.questionnaire.title_template",
+        "Description questionnaire — {workspace}",
+        { workspace: resolvedWorkspaceName }
+      ),
+    [resolvedWorkspaceName, t]
+  );
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((current) => ({ ...current, [questionId]: value }));
@@ -229,7 +242,11 @@ export const DescriptionQuestionnairePanel: React.FC<
       setSubmitError(
         error instanceof Error
           ? error.message
-          : "Не удалось отправить анкету."
+          : t(
+              "interactive_templates",
+              "pm.description.questionnaire.submit_error_default",
+              "Failed to submit the questionnaire."
+            )
       );
       onDescriptionSessionCreatePendingChange?.(null);
     } finally {
@@ -255,15 +272,35 @@ export const DescriptionQuestionnairePanel: React.FC<
   const handleCancel = () => onClose?.();
 
   if (!canLoad) {
-    return <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>;
+    return (
+      <div className="pm-placeholder">
+        {t(
+          "interactive_templates",
+          "pm.description.questionnaire.workspace_required",
+          "Select a workspace to start."
+        )}
+      </div>
+    );
   }
   if (panelState.status === "loading") {
-    return <div className="pm-placeholder">Загружаем анкету описания...</div>;
+    return (
+      <div className="pm-placeholder">
+        {t(
+          "interactive_templates",
+          "pm.description.questionnaire.loading",
+          "Loading description questionnaire..."
+        )}
+      </div>
+    );
   }
   if (panelState.status === "error") {
     return (
       <div className="pm-placeholder">
-        Не удалось загрузить анкету описания.
+        {t(
+          "interactive_templates",
+          "pm.description.questionnaire.load_error",
+          "Failed to load the description questionnaire."
+        )}
       </div>
     );
   }
@@ -277,13 +314,25 @@ export const DescriptionQuestionnairePanel: React.FC<
       ) : null}
       <DescriptionQuestionnaireView
         answers={answers}
-        cancelLabel="Close"
-        description="Анкета сохраняется автоматически. Нажмите «Submit questionnaire», выберите провайдера и дождитесь запуска Description. Диалог можно продолжать в той же сессии до финальной версии. Итоговый документ сохраняется в .codeai-hub/<workspace>/description/Final_Description.md."
+        cancelLabel={t(
+          "interactive_templates",
+          "pm.description.questionnaire.cancel_label",
+          "Close"
+        )}
+        description={t(
+          "interactive_templates",
+          "pm.description.questionnaire.description",
+          'The questionnaire is saved automatically. Click "Submit questionnaire", choose a provider, and wait for Description to start. You can continue the dialog in the same session until the final version is ready. The resulting document is saved to `.codeai-hub/<workspace>/description/Final_Description.md`.'
+        )}
         onAnswerChange={handleAnswerChange}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         questions={panelState.questions}
-        submitLabel="Submit questionnaire"
+        submitLabel={t(
+          "interactive_templates",
+          "pm.description.questionnaire.submit_label",
+          "Submit questionnaire"
+        )}
         title={title}
       />
       <DescriptionProviderPicker
