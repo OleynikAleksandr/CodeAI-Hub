@@ -43,8 +43,8 @@
 18. [DONE] Git Commit: `refactor(claude): emit assistant thinking bubbles` (hash: `219aa7f2`)
 
 ### Stream: Session UI Compatibility
-19. [TODO] Update session/continuity helper filters so tagged assistant thinking is treated the same as legacy `role:"thinking"` where suppression and dedupe rules depend on it. Scope: `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/ui/src/session/virtual-conversation-message-utils.ts`, `src/client/ui/src/session/virtual-conversation.tsx`. Target commit: `refactor(ui): treat tagged assistant thinking as thinking display`
-20. [TODO] Git Commit: `refactor(ui): treat tagged assistant thinking as thinking display` (hash: TBD)
+19. [DONE] Update session/continuity helper filters so tagged assistant thinking is treated the same as legacy `role:"thinking"` where suppression and dedupe rules depend on it. Scope: `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/ui/src/session/virtual-conversation-message-utils.ts`, `src/client/ui/src/session/virtual-conversation.tsx`. Target commit: `refactor(ui): treat tagged assistant thinking as thinking display`
+20. [DONE] Git Commit: `refactor(ui): treat tagged assistant thinking as thinking display` (hash: `2097804b`)
 
 ## Phase 4 — SSOT And Release (owner: UI, updated: 2026-04-01)
 ### Stream: Documentation And Verification
