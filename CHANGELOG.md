@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.865] - 2026-04-01
+### Added
+- **Persistent localization module**: `@codeai-hub/localization` now owns bundled English source catalogs, language catalog metadata, glossary protection, user override storage, and localized bundle persistence under `~/.codeai-hub/localization/`.
+- **Localization SSOT**: the architecture index and system/module SSOT now include a dedicated live `Localization` module document.
+
+### Changed
+- **Dictionary-driven UI copy**: Settings, Session system feedback, Project Manager help/questionnaire, and Project Manager shell/navigation surfaces now resolve product copy through stable message ids instead of inline component-owned strings.
+- **Shared browser localization runtime**: the settings host now provides one browser lookup helper for webview settings surfaces, while Project Manager localization consumers resolve the same persisted policy through shared settings snapshots.
+
+### Notes
+- **Current browser delivery boundary**: non-`source` language selections, glossary policy, and localized bundle materialization are implemented and persisted, but browser lookup still falls back to bundled English source catalogs until a host-side translated-bundle delivery bridge is added.
+
 ## [1.1.864] - 2026-04-01
 ### Fixed
 - **GitHub Actions compile dependency order**: the root `compile` script now builds `@codeai-hub/core-supervisor` before `tsc -p .`, so CI no longer fails on missing `@codeai-hub/core-supervisor` declarations after `npm ci`.

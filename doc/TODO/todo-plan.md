@@ -99,11 +99,11 @@
 ## Phase 6 — SSOT, Verification, And Release (owner: Docs/Release, updated: 2026-04-01)
 ### Stream: Documentation And Verification
 53. [DONE] Promote the implemented localization architecture into live SSOT docs and sync system navigation. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`. Target commit: `docs(architecture): sync localization ssot`
-54. [TODO] Git Commit: `docs(architecture): sync localization ssot` (hash: TBD)
-55. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`.
+54. [DONE] Git Commit: `docs(architecture): sync localization ssot` (hash: `6434adbf`)
+55. [DONE] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`.
 
 ### Stream: Release
-56. [TODO] Update release-facing docs for the localization rollout from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare ui localization release notes`
+56. [DONE] Update release-facing docs for the localization rollout from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare ui localization release notes`
 57. [TODO] Git Commit: `docs(release): prepare ui localization release notes` (hash: TBD)
 58. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble ui localization release`
 59. [TODO] Git Commit: `build(release): assemble ui localization release` (hash: TBD)

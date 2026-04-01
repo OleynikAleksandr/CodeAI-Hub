@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.864
-- **GitHub Actions bootstrap restored**: the repository ships a root `.nvmrc`, so `actions/setup-node` can resolve the intended Node version instead of failing before `npm ci`.
-- **CI compile dependency order fixed**: the root `compile` pipeline now builds `@codeai-hub/core-supervisor` before running the extension TypeScript compile, so GitHub Actions no longer fails on missing supervisor declarations.
-- **Public CI reaches real gates end-to-end**: `Repository CI` now has the required Node version file and compile prerequisites to execute the actual install, lint, knip, and compile stages.
+## Current Release — v1.1.865
+- **Persistent UI localization foundation**: CodeAI Hub now ships `@codeai-hub/localization` with bundled English source catalogs, engine language-catalog metadata, glossary protection, user override storage, and materialized bundle persistence under `~/.codeai-hub/localization/`.
+- **Dictionary-driven product copy**: Settings, Session system feedback, Project Manager help/questionnaire, and Project Manager shell/navigation surfaces now resolve copy through stable message ids instead of inline component-owned strings.
+- **Localization settings and glossary policy**: the product now persists per-category language policy, workflow terms policy, engine selection, and user-authored English do-not-translate terms; current browser lookup still falls back to bundled English source catalogs until persisted translated-bundle delivery is bridged into the browser runtime.
 
 Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
