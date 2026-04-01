@@ -1,9 +1,9 @@
 import type { ModelInfo, SessionStatusInfo } from "../../../../types/session";
+import { sessionSurfaceCopy } from "./dialog-panel";
 
 const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
 const PERCENT_SCALE = 100;
-const SUPERVISOR_LABEL = "Core Supervisor";
 const STATUS_SEPARATOR = "\u00A0\u00A0|\u00A0\u00A0";
 
 const formatModelSummary = (models: readonly ModelInfo[]): string =>
@@ -34,7 +34,7 @@ const StatusPanel = ({
       <section className="session-status session-panel">
         <div className="session-status__row">
           <span className="session-input__hint session-status__label">
-            {SUPERVISOR_LABEL}
+            {sessionSurfaceCopy.status.supervisorLabel}
           </span>
           <span className="session-input__hint session-status__value">
             {describeConnectionStatus(connectionStatus)}
@@ -79,7 +79,7 @@ const StatusPanel = ({
     <section className="session-status session-status--single-line session-panel">
       <div className="session-status__row session-status__row--single-line">
         <span className="session-input__hint session-status__value session-status__value--primary">
-          {`Models: ${modelsSummary}${STATUS_SEPARATOR}Tokens: ${tokensSummary}`}
+          {`${sessionSurfaceCopy.status.modelsLabel}: ${modelsSummary}${STATUS_SEPARATOR}${sessionSurfaceCopy.status.tokensLabel}: ${tokensSummary}`}
         </span>
         <span
           className={`session-input__hint session-status__value session-status__value--debug ${tokenDebugSummary ? "" : "session-status__value--debug-hidden"}`}
@@ -96,10 +96,10 @@ export default StatusPanel;
 const describeConnectionStatus = (status: CoreConnectionStatus): string => {
   switch (status) {
     case "ready":
-      return "Core online";
+      return sessionSurfaceCopy.status.readyConnectionLabel;
     case "error":
-      return "Core unavailable";
+      return sessionSurfaceCopy.status.unavailableConnectionLabel;
     default:
-      return "Starting core…";
+      return sessionSurfaceCopy.status.startingConnectionLabel;
   }
 };

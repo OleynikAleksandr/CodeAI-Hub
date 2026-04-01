@@ -12,6 +12,29 @@ import MarkdownContent from "./markdown-content";
 
 const AUTO_SCROLL_EPSILON = 32;
 
+export const sessionSurfaceCopy = {
+  dialog: {
+    emptyLabel: "No messages yet.",
+    hideReasoningLabel: "Hide reasoning",
+    showReasoningLabel: "Show reasoning",
+  },
+  status: {
+    supervisorLabel: "Core Supervisor",
+    modelsLabel: "Models",
+    tokensLabel: "Tokens",
+    readyConnectionLabel: "Core online",
+    unavailableConnectionLabel: "Core unavailable",
+    startingConnectionLabel: "Starting core…",
+  },
+  emptyState: {
+    pendingTitle: "Creating session…",
+    pendingDescription: "This can take 5–10 seconds. Please wait.",
+    idleTitle: "Start with the Description questionnaire",
+    idleDescription:
+      'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.',
+  },
+} as const;
+
 interface DialogPanelProps {
   readonly messages: readonly SessionMessage[];
   readonly providerLabel?: string | null;
@@ -104,7 +127,9 @@ const DialogPanel = ({
   if (displayMessages.length === 0) {
     return (
       <div className="session-dialog session-panel">
-        <p className="session-dialog__empty">No messages yet.</p>
+        <p className="session-dialog__empty">
+          {sessionSurfaceCopy.dialog.emptyLabel}
+        </p>
       </div>
     );
   }
@@ -189,7 +214,11 @@ const ThinkingMessage = ({
             : "session-dialog__thinking-toggle"
         }
         onClick={() => onToggle(message.id)}
-        title={expanded ? "Hide reasoning" : "Show reasoning"}
+        title={
+          expanded
+            ? sessionSurfaceCopy.dialog.hideReasoningLabel
+            : sessionSurfaceCopy.dialog.showReasoningLabel
+        }
         type="button"
       >
         {expanded ? "▾" : "▸"}
