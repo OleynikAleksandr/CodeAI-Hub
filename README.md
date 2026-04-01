@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.863
-- **GitHub Actions Node bootstrap restored**: the repository now ships a root `.nvmrc`, so `actions/setup-node` can resolve the intended Node version instead of failing before `npm ci`.
-- **Public CI runs real quality gates again**: `Repository CI` no longer dies in `Setup Node.js`, so GitHub Actions can actually reach install, lint, knip, and compile steps on each push.
-- **Core Controls alignment retained**: the `Restart Core` button and status pill keep the shared control height and vertical centering introduced in the previous release.
+## Current Release — v1.1.864
+- **GitHub Actions bootstrap restored**: the repository ships a root `.nvmrc`, so `actions/setup-node` can resolve the intended Node version instead of failing before `npm ci`.
+- **CI compile dependency order fixed**: the root `compile` pipeline now builds `@codeai-hub/core-supervisor` before running the extension TypeScript compile, so GitHub Actions no longer fails on missing supervisor declarations.
+- **Public CI reaches real gates end-to-end**: `Repository CI` now has the required Node version file and compile prerequisites to execute the actual install, lint, knip, and compile stages.
 
 Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 

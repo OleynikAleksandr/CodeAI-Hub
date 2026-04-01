@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.864] - 2026-04-01
+### Fixed
+- **GitHub Actions compile dependency order**: the root `compile` script now builds `@codeai-hub/core-supervisor` before `tsc -p .`, so CI no longer fails on missing `@codeai-hub/core-supervisor` declarations after `npm ci`.
+- **End-to-end public CI bootstrap**: together with the new `.nvmrc`, the repository now provides both the Node version hint and the compile-time supervisor build step required for `Repository CI` to run the real quality gates.
+
 ## [1.1.863] - 2026-04-01
 ### Fixed
 - **GitHub Actions bootstrap failure**: the repository now includes a root `.nvmrc`, so `actions/setup-node@v4` can resolve the intended Node version instead of failing before dependency installation.
