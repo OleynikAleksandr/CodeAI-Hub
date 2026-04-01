@@ -19,7 +19,7 @@
 ## Phase 0 — Scope Bootstrap (owner: Docs, updated: 2026-04-01)
 ### Stream: Planning Intake
 1. [DONE] Create the approved planning docs for UI localization and local glossary, then replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define ui localization scope`
-2. [TODO] Git Commit: `docs(plan): define ui localization scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): define ui localization scope` (hash: `a4d542ca`)
 
 ## Phase 1 — English Source Baseline (owner: UI, updated: 2026-04-01)
 ### Stream: Settings And Session Source Copy
