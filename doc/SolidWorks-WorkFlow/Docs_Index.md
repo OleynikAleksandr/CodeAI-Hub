@@ -44,6 +44,7 @@
 - `Contracts/Codex_ResponseMode_Settings_Architecture.md` — response modes (`Strict` / `Hybrid` / `Debug/Raw`) + raw provider diagnostics contract для Codex.
 - `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` — canonical effective model identity and next-turn settings SSOT.
 - `Contracts/Gemini_ThoughtTranslation.md` — реализованный контракт перевода Gemini `Thought` событий в видимые tagged assistant messages.
+- `Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md` — deferred SSOT для provider failure classification, recovery и provider-neutral switch transfer.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Contracts (compat / legacy filenames)
@@ -52,9 +53,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/IdeaCollector_LegacyCleanup_Architecture.md` — active cleanup map для остаточного `Idea` / `Idea Collector` legacy слоя; использовать только как migration/compat guide, не как описание текущего product workflow.
-- `Plans/DiagramWorkflow_UserSurface_Architecture.md` — active follow-up план для diagram user surface, inventory-first module flow и visible templates policy.
-- `Plans/StandaloneReviewer_Module.md` — draft deferred-модуля standalone reviewer (manual-only, вне базового chain 1→6).
+- `Plans/Runtime_GodModules_Decomposition_Architecture.md` — active structural decomposition wave для runtime hotspots и warning-zone governance.
 - `Plans/Archive/` — завершённые или снятые planning-доки, сохраняемые только как история.
 
 ## 2) Runtime templates (Description)

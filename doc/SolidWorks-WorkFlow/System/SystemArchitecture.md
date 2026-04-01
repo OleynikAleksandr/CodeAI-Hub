@@ -60,9 +60,9 @@
 9. **Provider-order-safe continuity arbitration**: Core обязан одинаково корректно обрабатывать оба event order-а (`token_usage -> turn_completed` и `turn_completed -> token_usage`); trailing usage может завершать уже начатую post-turn arbitration, а cached usage обязан быть turn-scoped и очищаться после решения.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`.
 10. **Provider failure classification before teardown**: Core обязан классифицировать provider error через `ProviderFailureClassifier` до удаления binding. Transient errors (`transient_turn_failure`) не должны удалять binding, деградировать whole provider или молча дропать user message. Retry budget ограничен (1 transient + 1 auto-resume), pending user intent имеет TTL=60s.
-   - Канон: `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`.
 11. **Provider-neutral switch transfer**: cross-provider takeover обязан использовать `unified-dialog.prompt.md` (plain `User:/Assistant:` transcript) и `provider-switch-handoff.md`, а не provider-native JSONL/rollout/SDK logs. `dialog:switch:*` protocol является единственным bridge contract для recovery и manual switch.
-   - Канон: `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`.
 12. **Quality-gate contract is workflow-critical**: локальный `pre-commit` обязан прогонять architecture gate, repo-wide `npm run lint`, `npm run check:tsprune` и staged-only formatting. Хук не имеет права форматировать весь репозиторий поверх незастейдженных изменений.
    - Канон: `.husky/pre-commit`, `doc/TODO/todo-plan.md`.
 13. **Release package truthfulness**: VSIX/package surface не должен тащить repo-only workflow files и hook helpers (`.husky/**`, `.gitignore`, `GEMINI.md`, `AGENTS.md`, `doc/`, `scripts/`), если runtime не использует их напрямую.

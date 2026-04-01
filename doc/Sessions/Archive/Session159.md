@@ -11,7 +11,7 @@
 ## Work summary
 
 ### Architecture planning for BUG-2026-03-25-01 and generic provider switch
-- Created a new architecture document: `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`
+- Created a new architecture document: `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`
 - The document now covers:
   - provider failure classification
   - turn lifecycle invariants
@@ -25,7 +25,7 @@
   - compatibility requirements with `MultiProvider_Orchestration_Scenarios.md`
 
 ### Alignment with multi-provider planning
-- Re-read and aligned the new provider-switch architecture with `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`
+- Re-read and aligned the new provider-switch architecture with `doc/SolidWorks-WorkFlow/Plans/Archive/MultiProvider_Orchestration_Scenarios.md`
 - Fixed the document so that `dialog:switch:*` and provider-neutral continuity transfer act as low-level primitives for future multi-provider orchestration
 - Explicitly prohibited coupling to Gemini/Claude/Codex-specific storage formats
 
@@ -79,8 +79,8 @@
 4. `doc/BugRegistry.md` — focus on `BUG-2026-03-25-01`
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 6. `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-7. `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`
-8. `doc/SolidWorks-WorkFlow/Plans/MultiProvider_Orchestration_Scenarios.md`
+7. `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`
+8. `doc/SolidWorks-WorkFlow/Plans/Archive/MultiProvider_Orchestration_Scenarios.md`
 9. `doc/TODO/todo-plan.md`
 
 ## Optional audit context

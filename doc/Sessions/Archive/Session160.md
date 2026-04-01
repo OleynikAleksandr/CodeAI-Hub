@@ -78,7 +78,7 @@
 2. `doc/Sessions/Archive/Session160.md` (THIS REPORT)
 3. `doc/TODO/todo-plan.md`
 4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-5. `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`
+5. `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`
 
 ## Plans for next session
 

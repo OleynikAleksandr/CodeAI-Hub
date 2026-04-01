@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Created and approved the planning scope for Codex provider-owned `config.toml` materialization and settings-driven reasoning summary control in `doc/SolidWorks-WorkFlow/Plans/Codex_ReasoningSummary_Settings_Architecture.md`.
+- Created and approved the planning scope for Codex provider-owned `config.toml` materialization and settings-driven reasoning summary control in `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_ReasoningSummary_Settings_Architecture.md`.
 - Replaced the Codex `config.toml` symlink model with provider-owned materialization sourced from the user's native `~/.codex/config.toml` plus CodeAI Hub overrides.
 - Added the persisted Codex setting `reasoningSummaryEnabled`, wired the settings UI to the new field, and kept legacy fallback from `thinkingDisplaySyncEnabled` for migration safety.
 - Implemented immediate provider-home `config.toml` sync from the Codex settings toggle so `model_reasoning_summary` flips between `"auto"` and `"none"` without waiting for a restart.

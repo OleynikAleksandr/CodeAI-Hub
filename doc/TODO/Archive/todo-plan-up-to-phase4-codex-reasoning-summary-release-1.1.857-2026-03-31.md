@@ -10,7 +10,7 @@
 
 ## Phase 1 — Codex Provider-Home Foundation (owner: Codex, updated: 2026-03-31)
 ### Stream: Scope Bootstrap
-1. [DONE] Create the approved planning doc and replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Codex_ReasoningSummary_Settings_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define codex reasoning summary settings scope`
+1. [DONE] Create the approved planning doc and replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_ReasoningSummary_Settings_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define codex reasoning summary settings scope`
 2. [DONE] Git Commit: `docs(plan): define codex reasoning summary settings scope` (hash: `8e25454a`)
 3. [DONE] Introduce provider-owned Codex config materializer and use it during auth bootstrap instead of linking `config.toml`. Scope: `packages/Codex_Module/src/auth/codex-provider-config-materializer.ts`, `packages/Codex_Module/src/auth/codex-provider-config-materializer.test.ts`, `packages/Codex_Module/src/auth/sdk-auth-manager.ts`. Target commit: `feat(codex): materialize provider config home`
 4. [DONE] Git Commit: `feat(codex): materialize provider config home` (hash: `e4094b19`)

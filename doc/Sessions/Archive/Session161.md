@@ -92,7 +92,7 @@
 3. `doc/TODO/todo-plan.md`
 4. `doc/BugRegistry.md` — especially BUG-2026-03-26-01/02/03 entries
 5. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-6. `doc/SolidWorks-WorkFlow/Plans/ProviderFailure_Recovery_And_CoreDriven_ProviderSwitch_Architecture.md`
+6. `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`
 
 ## Key files changed in this session (for context recovery via git show)
 - `packages/core/src/recovery/failure-recovery-bridge.ts` — new file, switch offer builder

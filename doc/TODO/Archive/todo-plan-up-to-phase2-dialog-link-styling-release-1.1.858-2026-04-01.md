@@ -13,7 +13,7 @@
 
 ## Phase 1 — Session Dialog Link Styling (owner: UI, updated: 2026-04-01)
 ### Stream: Scope Bootstrap
-1. [DONE] Create the approved planning doc and replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/SessionDialog_LinkStyling_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define session dialog link styling scope`
+1. [DONE] Create the approved planning doc and replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/SessionDialog_LinkStyling_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define session dialog link styling scope`
 2. [DONE] Git Commit: `docs(plan): define session dialog link styling scope` (hash: `9a01a08e`)
 
 ### Stream: Dialog Link Presentation

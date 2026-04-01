@@ -10,7 +10,7 @@
 
 ## Work summary
 - Restored context from `Session008`, reviewed the referenced release commits, and verified the current SSOT/release state before starting a new scope.
-- Created the approved planning scope in `doc/SolidWorks-WorkFlow/Plans/SessionDialog_LinkStyling_Architecture.md` and replaced the placeholder `todo-plan.md` with a focused execution plan.
+- Created the approved planning scope in `doc/SolidWorks-WorkFlow/Plans/Archive/SessionDialog_LinkStyling_Architecture.md` and replaced the placeholder `todo-plan.md` with a focused execution plan.
 - Updated the shared session dialog CSS so markdown links now use a readable light-blue `rgba(148, 193, 251, 1)` color, medium weight, and no underline across user, assistant, and thinking bubbles for every provider.
 - Verified the dialog surface with `npm run build:webview`.
 - Updated `README.md` and `CHANGELOG.md` for release `1.1.858`.

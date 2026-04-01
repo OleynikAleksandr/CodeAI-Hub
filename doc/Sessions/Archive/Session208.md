@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Открыл новый planning scope в `doc/SolidWorks-WorkFlow/Plans/TestSupport_WarningZone_Cleanup_Architecture.md` и разрезал его в новый active `doc/TODO/todo-plan.md` с обязательным release stream в конце.
+- Открыл новый planning scope в `doc/SolidWorks-WorkFlow/Plans/Archive/TestSupport_WarningZone_Cleanup_Architecture.md` и разрезал его в новый active `doc/TODO/todo-plan.md` с обязательным release stream в конце.
 - Разрезал `packages/core/src/workspace-runtime/workspace-runtime-facade.test.ts` на базовый snapshot/select/flush root и новый `packages/core/src/workspace-runtime/workspace-runtime-facade-continuity.test.ts`; оба source-level прогона зелёные.
 - Разрезал `packages/core/src/remote-bridge/handlers/session-request-handler.test-helpers.ts` на harness root + `session-request-handler.test-event-helpers.ts` + `session-request-handler.test-continuity-helpers.ts`, сохранив рабочий import/re-export surface для `session-request-handler` test cluster; полный `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler*.test.ts` зелёный.
 - Разрезал `packages/Gemini_Module/src/session/gemini-session-manager.test.ts`, вынеся nested post-tool watchdog coverage в `packages/Gemini_Module/src/session/gemini-session-manager.post-tool.test.ts`; оба source-level прогона зелёные.

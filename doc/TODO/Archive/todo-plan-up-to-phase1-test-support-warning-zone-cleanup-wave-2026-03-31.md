@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules)
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Source of truth для этой фазы: `doc/SolidWorks-WorkFlow/Plans/TestSupport_WarningZone_Cleanup_Architecture.md`
+- Source of truth для этой фазы: `doc/SolidWorks-WorkFlow/Plans/Archive/TestSupport_WarningZone_Cleanup_Architecture.md`
 - Scope этой волны ограничен тремя test/support warning-zone файлами: `workspace-runtime-facade.test.ts`, `session-request-handler.test-helpers.ts`, `gemini-session-manager.test.ts`
 - Production runtime, новые product fixes и расширение architecture allowlist в эту фазу не входят.
 - Каждая подзадача должна затрагивать не более 3 файлов.
@@ -26,7 +26,7 @@
 1. `doc/Sessions/Archive/Session207.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
-4. `doc/SolidWorks-WorkFlow/Plans/TestSupport_WarningZone_Cleanup_Architecture.md`
+4. `doc/SolidWorks-WorkFlow/Plans/Archive/TestSupport_WarningZone_Cleanup_Architecture.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
