@@ -9,7 +9,7 @@
 # 1. Work Done in This Session
 
 ## Work summary
-- Восстановлен zero-context по правилам проекта: прочитан [Session129.md](../../doc/Sessions/Archive/Session129.md), поднят required SSOT-контекст и просмотрен commit-chain baseline `1.1.764` / release `1.1.765`.
+- Восстановлен zero-context по правилам проекта: прочитан [Session129.md](../../Sessions/Archive/Session129.md), поднят required SSOT-контекст и просмотрен commit-chain baseline `1.1.764` / release `1.1.765`.
 - Дополнительно найден и просмотрен финальный docs/session commit текущего baseline, который уже лежит в `HEAD`: `02426929 docs(session): record 1.1.765 diagram prompt consistency release`.
 - Подтверждён стартовый sanity check: перед созданием этого отчёта дерево было чистым, локальный baseline оставался `1.1.765`.
 - По пользовательскому тестированию шага `Diagram Modules` разобраны вопросы агента про `Architecture Branching for Specifications`, owner boundary auto-start `Local Core Runtime`, а также про недостающие слои templates/instructions и workflow files.
@@ -17,7 +17,7 @@
 - Отдельно зафиксирован пользовательский вывод, что `Diagram Modules` выглядит как наиболее критичный этап для feedback loop: здесь требуется длинное обсуждение, ревью структуры будущего проекта и, вероятно, отдельный reviewer/follow-up contract в будущем design scope.
 - Прочитан и отревьюен текущий черновик `module-inventory.md` из mirrored workspace; зафиксированы remaining findings для обсуждения с пользователем, но без кодовых изменений.
 - Пользователь подготовил следующий фокус обсуждения не на семантику “реального продукта”, а на visual/readability defects диаграммы: дан путь к screenshot и перечислены текущие претензии к autolayout и card content.
-- После обсуждения visual defects заархивирован предыдущий active plan, открыт новый planning scope для `Diagram Modules` как главного user-review step и создан planning-doc [Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md](../../doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md).
+- После обсуждения visual defects заархивирован предыдущий active plan, открыт новый planning scope для `Diagram Modules` как главного user-review step и создан planning-doc [Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md](../../SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md).
 - Реализован purpose surface для `Product Part` / `Cluster` в projection и renderer `Diagram Modules`, а также синхронизированы workflow/system docs с новым review-step contract.
 - Реализован content-based layout budget для `Cluster`: module stack больше не опирается только на фиксированный `y-step`, а считает vertical spacing с учётом длинного текста и header reservation.
 - Реализована compaction logic для standalone modules: они теперь докуются под более короткую колонку внутри `Product Part`, а не обязаны падать в общий пустой нижний band.
@@ -30,15 +30,15 @@
 - `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.test.ts`
 - Ручная проверка:
   - [README.md](../../README.md)
-  - [doc/SolidWorks-WorkFlow/README.md](../../doc/SolidWorks-WorkFlow/README.md)
-  - [doc/SolidWorks-WorkFlow/Docs_Index.md](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
-  - [doc/SolidWorks-WorkFlow/System/SystemArchitecture.md](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-  - [doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md](../../doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md)
-  - [doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md](../../doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md)
-  - [doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md](../../doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md)
-  - [doc/TODO/todo-plan.md](../../doc/TODO/todo-plan.md)
-  - [doc/Sessions/Archive/Session128.md](../../doc/Sessions/Archive/Session128.md)
-  - [doc/Sessions/Archive/Session129.md](../../doc/Sessions/Archive/Session129.md)
+  - [doc/SolidWorks-WorkFlow/README.md](../../SolidWorks-WorkFlow/README.md)
+  - [doc/SolidWorks-WorkFlow/Docs_Index.md](../../SolidWorks-WorkFlow/Docs_Index.md)
+  - [doc/SolidWorks-WorkFlow/System/SystemArchitecture.md](../../SolidWorks-WorkFlow/System/SystemArchitecture.md)
+  - [doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md](../../SolidWorks-WorkFlow/WorkflowSteps_Overview.md)
+  - [doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md](../../SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md)
+  - [doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md](../../SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md)
+  - [doc/TODO/todo-plan.md](../../TODO/todo-plan.md)
+  - [doc/Sessions/Archive/Session128.md](../../Sessions/Archive/Session128.md)
+  - [doc/Sessions/Archive/Session129.md](../../Sessions/Archive/Session129.md)
   - Mirrored workspace artifacts under review:
     - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
     - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`

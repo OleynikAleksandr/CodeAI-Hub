@@ -5,6 +5,6 @@
 
 The live stalled-turn and terminal-answer invariants now live in:
 
-- [Modules/Gemini.md](../Modules/Gemini.md)
+- [Modules/Gemini.md](../../Modules/Gemini.md)
 
 Use the module doc above as the canonical source for Gemini stalled-turn recovery and terminal answer behavior.

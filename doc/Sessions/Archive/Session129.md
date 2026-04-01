@@ -13,11 +13,11 @@
 - Исправлены два подтверждённых user-facing autolayout defect-а `Diagram Modules`: vertical overlap модулей внутри cluster lane и чрезмерный horizontal gap между standalone modules.
 - Локализованы и дедуплицированы source template packs для `diagram_modules` и `diagram_facades`: explanatory text переведён на русский, DSL terms оставлены английскими.
 - Пересобран `packages/core/src/templates/bundled-templates.ts`, расширен regression coverage `TemplateSyncService`, затем выполнен runtime sync в `~/.codeai-hub/templates/diagram_modules/` и `~/.codeai-hub/templates/diagram_facades/`.
-- Зафиксирован planning handoff [Session128.md](../../doc/Sessions/Archive/Session128.md) и синхронизирован новый planning scope в [DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md](../../doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md) и [todo-plan.md](../../doc/TODO/todo-plan.md).
+- Зафиксирован planning handoff [Session128.md](../../Sessions/Archive/Session128.md) и синхронизирован новый planning scope в [DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md](../../SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_PromptConsistency_And_Autolayout_Architecture.md) и [todo-plan.md](../../TODO/todo-plan.md).
 - Выполнен release cycle до локального релиза `1.1.765`: `build-all.sh`, затем `build-release.sh --use-current-version`.
 - Собраны артефакты:
   - VSIX: `codeai-hub-1.1.765.vsix`
-  - tarballs: [doc/tmp/releases](../../doc/tmp/releases)
+  - tarballs: [doc/tmp/releases](../../tmp/releases)
 
 ## Verification
 - `npx tsx --test packages/core/src/templates/template-sync-service.test.ts`
@@ -30,7 +30,7 @@
 
 ## Release notes / advisories
 - `build-release.sh` завершился успешно и собрал `codeai-hub-1.1.765.vsix`.
-- Неблокирующий advisory сохранился: markdown-link checker продолжает сообщать старые broken absolute links в [Session106.md](../../doc/Sessions/Archive/Session106.md), [Session124.md](../../doc/Sessions/Archive/Session124.md), [Session125.md](../../doc/Sessions/Archive/Session125.md). Релиз это не блокирует.
+- Неблокирующий advisory сохранился: markdown-link checker продолжает сообщать старые broken absolute links в [Session106.md](../../Sessions/Archive/Session106.md), [Session124.md](../../Sessions/Archive/Session124.md), [Session125.md](../../Sessions/Archive/Session125.md). Релиз это не блокирует.
 
 ## Git commits
 - `2f4171a6 docs(plan): start diagram prompt consistency and autolayout scope`
@@ -85,7 +85,7 @@
 - Runtime-synced user-facing template packs должны существовать и быть читаемыми:
   - `/Users/oleksandroliinyk/.codeai-hub/templates/diagram_modules/`
   - `/Users/oleksandroliinyk/.codeai-hub/templates/diagram_facades/`
-- Основной план следующей волны изменений по-прежнему в [todo-plan.md](../../doc/TODO/todo-plan.md)
+- Основной план следующей волны изменений по-прежнему в [todo-plan.md](../../TODO/todo-plan.md)
 
 ## Plans for next session
 - Провести фактический contradiction audit по runtime payload `Diagram Modules`, не сокращая prompt pack ради краткости.

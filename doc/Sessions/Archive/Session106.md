@@ -44,10 +44,10 @@
 
 ### Session reports reviewed
 
-- [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md)
-- [`doc/Sessions/Archive/Session104.md`](../../doc/Sessions/Archive/Session104.md)
-- [`doc/Sessions/Archive/Session103.md`](../../doc/Sessions/Archive/Session103.md)
-- [`doc/Sessions/Archive/Session102.md`](../../doc/Sessions/Archive/Session102.md)
+- [`doc/Sessions/Archive/Session105.md`](../../Sessions/Archive/Session105.md)
+- [`doc/Sessions/Archive/Session104.md`](../../Sessions/Archive/Session104.md)
+- [`doc/Sessions/Archive/Session103.md`](../../Sessions/Archive/Session103.md)
+- [`doc/Sessions/Archive/Session102.md`](../../Sessions/Archive/Session102.md)
 
 ### Commits from the last session report reviewed via `git show`
 
@@ -59,26 +59,26 @@
 
 ### SSOT and architecture docs re-opened
 
-- [`AGENTS.md`](../../AGENTS.md)
-- [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
-- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
-- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](../../doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
-- [`doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`](../../doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md)
-- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](../../doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
-- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](../../doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md)
+- [`AGENTS.md`](../../../AGENTS.md)
+- [`doc/SolidWorks-WorkFlow/README.md`](../../SolidWorks-WorkFlow/README.md)
+- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../SolidWorks-WorkFlow/Docs_Index.md)
+- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../SolidWorks-WorkFlow/System/SystemArchitecture.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](../../SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
+- [`doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`](../../SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md)
+- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](../../SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
+- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](../../SolidWorks-WorkFlow/Modules/UI_Bundles.md)
 
 ### Runtime/UI code re-opened to verify actual behavior
 
-- [`src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`](../../src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx)
-- [`src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`](../../src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts)
-- [`src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`](../../src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts)
-- [`packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`](../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts)
-- [`src/client/ui/src/app-host/settings-only-host.tsx`](../../src/client/ui/src/app-host/settings-only-host.tsx)
-- [`src/extension-module/home-view-provider.ts`](../../src/extension-module/home-view-provider.ts)
-- [`src/client/ui/src/core-bridge/supervisor-requests.ts`](../../src/client/ui/src/core-bridge/supervisor-requests.ts)
-- [`src/client/project-manager/api.ts`](../../src/client/project-manager/api.ts)
+- [`src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`](../../../src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx)
+- [`src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`](../../../src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts)
+- [`src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts`](../../../src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts)
+- [`packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts`](../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types.ts)
+- [`src/client/ui/src/app-host/settings-only-host.tsx`](../../../src/client/ui/src/app-host/settings-only-host.tsx)
+- [`src/extension-module/home-view-provider.ts`](../../../src/extension-module/home-view-provider.ts)
+- [`src/client/ui/src/core-bridge/supervisor-requests.ts`](../../../src/client/ui/src/core-bridge/supervisor-requests.ts)
+- [`src/client/project-manager/api.ts`](../../../src/client/project-manager/api.ts)
 
 ## Baseline conclusions restored before artifact work
 
@@ -215,15 +215,15 @@
 
 ### In the main repository
 
-- [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md)
-- [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
-- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
-- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
-- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](../../doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
-- [`doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`](../../doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md)
-- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](../../doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
-- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](../../doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md)
+- [`doc/Sessions/Archive/Session105.md`](../../Sessions/Archive/Session105.md)
+- [`doc/SolidWorks-WorkFlow/README.md`](../../SolidWorks-WorkFlow/README.md)
+- [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../SolidWorks-WorkFlow/Docs_Index.md)
+- [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../SolidWorks-WorkFlow/System/SystemArchitecture.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+- [`doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`](../../SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md)
+- [`doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`](../../SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md)
+- [`doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`](../../SolidWorks-WorkFlow/Modules/Launcher_CEF.md)
+- [`doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`](../../SolidWorks-WorkFlow/Modules/UI_Bundles.md)
 
 ### In the mirrored workspace
 
@@ -266,15 +266,15 @@
 
 Если следующая сессия стартует с нулевым контекстом, нужно восстановиться именно в таком порядке:
 
-1. Открыть [`AGENTS.md`](../../AGENTS.md) и напомнить себе, что эта сессия велась в основном как artifact-review, а не как обычная execution-фаза.
-2. Открыть предыдущий релизный отчет [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md), чтобы вспомнить состояние `main` до этой artifact-сессии.
-3. Открыть этот отчет [`doc/Sessions/Archive/Session106.md`](../../doc/Sessions/Archive/Session106.md) и прочитать его целиком, а не только конец.
+1. Открыть [`AGENTS.md`](../../../AGENTS.md) и напомнить себе, что эта сессия велась в основном как artifact-review, а не как обычная execution-фаза.
+2. Открыть предыдущий релизный отчет [`doc/Sessions/Archive/Session105.md`](../../Sessions/Archive/Session105.md), чтобы вспомнить состояние `main` до этой artifact-сессии.
+3. Открыть этот отчет [`doc/Sessions/Archive/Session106.md`](../../Sessions/Archive/Session106.md) и прочитать его целиком, а не только конец.
 4. Проверить `git status` и убедиться, что основной репозиторий по-прежнему чист и что работа идет от `main`.
 5. Переоткрыть базовые SSOT-доки:
-   - [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
-   - [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
-   - [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-   - [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+   - [`doc/SolidWorks-WorkFlow/README.md`](../../SolidWorks-WorkFlow/README.md)
+   - [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../SolidWorks-WorkFlow/Docs_Index.md)
+   - [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../SolidWorks-WorkFlow/System/SystemArchitecture.md)
+   - [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
 6. После этого открыть утвержденные артефакты уже в mirrored workspace:
    - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
    - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
@@ -283,15 +283,15 @@
 
 ## Required documents to review before work
 
-1. [`AGENTS.md`](../../AGENTS.md)
-2. [`doc/Sessions/Archive/Session105.md`](../../doc/Sessions/Archive/Session105.md)
-3. [`doc/Sessions/Archive/Session106.md`](../../doc/Sessions/Archive/Session106.md) (THIS REPORT)
-4. [`doc/SolidWorks-WorkFlow/README.md`](../../doc/SolidWorks-WorkFlow/README.md)
-5. [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../doc/SolidWorks-WorkFlow/Docs_Index.md)
-6. [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../doc/SolidWorks-WorkFlow/System/SystemArchitecture.md)
-7. [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
-8. [`doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`](../../doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md)
-9. [`doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`](../../doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md)
+1. [`AGENTS.md`](../../../AGENTS.md)
+2. [`doc/Sessions/Archive/Session105.md`](../../Sessions/Archive/Session105.md)
+3. [`doc/Sessions/Archive/Session106.md`](../../Sessions/Archive/Session106.md) (THIS REPORT)
+4. [`doc/SolidWorks-WorkFlow/README.md`](../../SolidWorks-WorkFlow/README.md)
+5. [`doc/SolidWorks-WorkFlow/Docs_Index.md`](../../SolidWorks-WorkFlow/Docs_Index.md)
+6. [`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`](../../SolidWorks-WorkFlow/System/SystemArchitecture.md)
+7. [`doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`](../../SolidWorks-WorkFlow/Contracts/Workflow_CLI.md)
+8. [`doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`](../../SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md)
+9. [`doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`](../../SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md)
 10. Approved mirrored-workspace artifacts:
     - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/questionnaire.md`
     - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md`
