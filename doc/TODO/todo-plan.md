@@ -14,7 +14,7 @@
 ## Phase 1 — Thinking Display Scope Bootstrap (owner: UI, updated: 2026-04-01)
 ### Stream: Scope Bootstrap
 1. [DONE] Create the approved planning doc and replace the placeholder TODO plan with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Gemini_Thinking_Display_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define claude gemini thinking display scope`
-2. [TODO] Git Commit: `docs(plan): define claude gemini thinking display scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): define claude gemini thinking display scope` (hash: `6ad99a57`)
 
 ## Phase 2 — Shared Settings Contract (owner: UI, updated: 2026-04-01)
 ### Stream: Extension Settings Snapshot
