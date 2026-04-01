@@ -49,11 +49,11 @@
 17. [DONE] Add the category-based localization controls to the General settings surface. Scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/settings-view.tsx`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization category controls`
 18. [DONE] Git Commit: `feat(ui): add localization category controls` (hash: `1d8e5f0b`)
 19. [DONE] Add a first-wave glossary management entry surface for user-authored English do-not-translate terms. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`. Target commit: `feat(ui): add glossary override editor`
-20. [TODO] Git Commit: `feat(ui): add glossary override editor` (hash: TBD)
+20. [DONE] Git Commit: `feat(ui): add glossary override editor` (hash: `cc8a2bf6`)
 
 ## Phase 3 — Localization Package Scaffold (owner: Localization, updated: 2026-04-01)
 ### Stream: Package Bootstrap
-21. [TODO] Scaffold the new `@codeai-hub/localization` package manifest, TS config, and public entrypoint. Scope: `packages/localization/package.json`, `packages/localization/tsconfig.json`, `packages/localization/src/index.ts`. Target commit: `feat(localization): scaffold package`
+21. [DONE] Scaffold the new `@codeai-hub/localization` package manifest, TS config, and public entrypoint. Scope: `packages/localization/package.json`, `packages/localization/tsconfig.json`, `packages/localization/src/index.ts`. Target commit: `feat(localization): scaffold package`
 22. [TODO] Git Commit: `feat(localization): scaffold package` (hash: TBD)
 23. [TODO] Add the core localization contract, facade, and source-dictionary registry. Scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add facade and contract`
 24. [TODO] Git Commit: `feat(localization): add facade and contract` (hash: TBD)
