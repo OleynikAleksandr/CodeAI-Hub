@@ -22,7 +22,13 @@ export interface SettingsSnapshot {
 }
 
 export const DEFAULT_SETTINGS_SNAPSHOT: SettingsSnapshot = {
-  general: DEFAULT_GENERAL_SETTINGS,
+  general: {
+    ...DEFAULT_GENERAL_SETTINGS,
+    localization: {
+      ...DEFAULT_GENERAL_SETTINGS.localization,
+      categories: { ...DEFAULT_GENERAL_SETTINGS.localization.categories },
+    },
+  },
   providers: {
     claude: DEFAULT_CLAUDE_SETTINGS,
     codex: DEFAULT_CODEX_SETTINGS,

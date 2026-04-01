@@ -34,11 +34,11 @@
 7. [DONE] Normalize the bundled questionnaire and questionnaire-side source templates to canonical English. Scope: `packages/agents/description-agent/assets/questionnaire-template.md`, `src/client/ui/src/services/description-questionnaire-template.ts`, `src/client/ui/src/services/idea-questionnaire-template.ts`. Target commit: `refactor(copy): normalize questionnaire source to english`
 8. [DONE] Git Commit: `refactor(copy): normalize questionnaire source to english` (hash: `04cdbc40`)
 9. [DONE] Normalize flow-continuity built-in templates to canonical English source copy. Scope: `assets/flow/continuity/resume.md`, `assets/flow/continuity/create-report-doc.md`, `assets/flow/continuity/create-report-code.md`. Target commit: `refactor(copy): normalize continuity templates to english`
-10. [TODO] Git Commit: `refactor(copy): normalize continuity templates to english` (hash: TBD)
+10. [DONE] Git Commit: `refactor(copy): normalize continuity templates to english` (hash: `00392b09`)
 
 ## Phase 2 — Localization Settings Contract (owner: Extension/UI, updated: 2026-04-01)
 ### Stream: Extension Settings Snapshot
-11. [TODO] Extend extension-side settings contracts with `general.localization` defaults and normalization for category languages, `workflowTermsPolicy`, `engineId`, and `glossaryEnabled`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`. Target commit: `feat(settings): add localization settings snapshot`
+11. [DONE] Extend extension-side settings contracts with `general.localization` defaults and normalization for category languages, `workflowTermsPolicy`, `engineId`, and `glossaryEnabled`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`. Target commit: `feat(settings): add localization settings snapshot`
 12. [TODO] Git Commit: `feat(settings): add localization settings snapshot` (hash: TBD)
 13. [TODO] Map localization state through the webview raw/model/helper layers. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/settings-state-helpers.ts`. Target commit: `refactor(settings): map localization state`
 14. [TODO] Git Commit: `refactor(settings): map localization state` (hash: TBD)

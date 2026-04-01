@@ -56,6 +56,33 @@ const needsThinkingDisplayBackfill = (value: unknown): boolean => {
   );
 };
 
+const needsLocalizationBackfill = (value: unknown): boolean => {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  const general = isRecord(value.general) ? value.general : {};
+  const localization = isRecord(general.localization)
+    ? general.localization
+    : {};
+  const categories = isRecord(localization.categories)
+    ? localization.categories
+    : {};
+
+  return (
+    !isRecord(general.localization) ||
+    typeof localization.defaultLanguage !== "string" ||
+    typeof localization.engineId !== "string" ||
+    typeof localization.workflowTermsPolicy !== "string" ||
+    typeof localization.glossaryEnabled !== "boolean" ||
+    typeof categories.userGuidance !== "string" ||
+    typeof categories.uiInterface !== "string" ||
+    typeof categories.workflowTerms !== "string" ||
+    typeof categories.systemFeedback !== "string" ||
+    typeof categories.interactiveTemplates !== "string"
+  );
+};
+
 const extractLegacyClaudeThinking = (): ClaudeThinkingSettings | null => {
   try {
     const raw = readFileSync(LEGACY_CLAUDE_SETTINGS_FILE, "utf8");
@@ -98,7 +125,11 @@ export const loadSettingsSnapshot = (): SettingsSnapshot => {
     const parsed = JSON.parse(raw) as unknown;
     const normalized = normalizeSnapshotForStorage(parsed);
     if (normalized) {
-      if (hadSettingsFile && needsThinkingDisplayBackfill(parsed)) {
+      if (
+        hadSettingsFile &&
+        (needsThinkingDisplayBackfill(parsed) ||
+          needsLocalizationBackfill(parsed))
+      ) {
         persistSettingsSnapshot(normalized).catch(() => {
           /* ignore persistence errors */
         });
