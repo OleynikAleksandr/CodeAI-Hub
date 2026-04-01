@@ -3,7 +3,7 @@
 Create a short continuity report for node `{{nodeId}}` (`{{role}}`) and save it to:
 - `{{reportPath}}`
 
-Hard rules:
+Hard rules (MUST):
 - Do NOT include chat history.
 - Do NOT paste code/diffs/logs.
 - Write ONLY the report file (atomic write: tmp -> rename).

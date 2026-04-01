@@ -1,6 +1,6 @@
 # Flow Node Continuity — Resume
 
-Read the latest continuity report:
+Read the latest continuity report before doing anything else:
 - `{{reportPath}}`
 
 Continue work in node `{{nodeId}}` as role `{{role}}`.
