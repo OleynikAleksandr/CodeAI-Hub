@@ -7,7 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.857
+## Current Release — v1.1.858
+- **Session dialog link readability**: clickable markdown links in dialog bubbles now use a shared readable light-blue color instead of the browser default blue, so they stay legible on all provider backgrounds.
+- **Dialog link presentation consistency**: links rendered inside user, assistant, and thinking bubbles now use medium weight and no underline across Claude, Codex, Gemini, and user message surfaces.
 - **Shared runtime translation module**: `@codeai-hub/translation` now owns the provider-neutral translation facade and Google GTX engine for runtime translation use cases.
 - **Gemini adapter parity**: Gemini thought translation now routes through `GeminiThoughtTranslationAdapter` backed by the shared facade, with `thought-translator-service.ts` preserved as a compatibility re-export and session wiring moved onto the adapter directly.
 - **Codex reasoning in dialog**: Codex settings now expose a provider-level `Reasoning in dialog` toggle. `On` lets Codex send reasoning summaries for translation/display, while `Off` sets `model_reasoning_summary = "none"` so reasoning summaries never reach the client.

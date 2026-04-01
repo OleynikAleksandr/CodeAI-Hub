@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.858] - 2026-04-01
+### Fixed
+- **Session dialog link readability**: clickable markdown links in user, assistant, and thinking bubbles now use a shared high-contrast light-blue color instead of the browser default blue.
+- **Dialog link presentation consistency**: session-dialog links now render with medium weight and no underline across Claude, Codex, Gemini, and user message surfaces.
+
 ## [1.1.857] - 2026-03-31
 ### Added
 - **Codex `gpt-5.4-mini` settings exposure**: the Codex settings baseline now includes `gpt-5.4-mini` with the same reasoning effort choices as `gpt-5.4`.

@@ -18,12 +18,14 @@
 
 ### Stream: Dialog Link Presentation
 3. [DONE] Apply the new readable dialog-link styling contract inside the shared session dialog CSS so all providers and bubble variants inherit the same anchor appearance. Scope: `media/session-view.css`. Target commit: `fix(ui): improve session dialog link contrast`
-4. [TODO] Git Commit: `fix(ui): improve session dialog link contrast` (hash: TBD)
+4. [DONE] Git Commit: `fix(ui): improve session dialog link contrast` (hash: `aa9d879f`)
 5. [DONE] Run targeted verification for the dialog surface. Scope: `webview`.
 
 ## Phase 2 — Release (owner: UI, updated: 2026-04-01)
 ### Stream: Release Notes And Packaging
-1. [TODO] Update release-facing docs, run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`. Scope: `README.md`, `CHANGELOG.md`, release-generated version files. Target commit: `build(release): assemble dialog link styling release`
-2. [TODO] Git Commit: `build(release): assemble dialog link styling release` (hash: TBD)
-3. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session009.md`. Target commit: `docs(session): record dialog link styling release`
-4. [TODO] Git Commit: `docs(session): record dialog link styling release` (hash: TBD)
+1. [DONE] Update release-facing docs for `1.1.858` and sync plan progress before packaging. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare 1.1.858 notes`
+2. [TODO] Git Commit: `docs(release): prepare 1.1.858 notes` (hash: TBD)
+3. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble dialog link styling release`
+4. [TODO] Git Commit: `build(release): assemble dialog link styling release` (hash: TBD)
+5. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session009.md`. Target commit: `docs(session): record dialog link styling release`
+6. [TODO] Git Commit: `docs(session): record dialog link styling release` (hash: TBD)
