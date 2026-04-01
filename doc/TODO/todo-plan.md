@@ -75,11 +75,11 @@
 35. [DONE] Add user override storage and validation for English do-not-translate terms. Scope: `packages/localization/src/user-glossary-store.ts`, `packages/localization/src/glossary-validator.ts`, `packages/localization/src/glossary-merge-service.ts`. Target commit: `feat(localization): add user glossary overrides`
 36. [DONE] Git Commit: `feat(localization): add user glossary overrides` (hash: `753b6f1d`)
 37. [DONE] Wire glossary protection and glossary-driven invalidation into the materialization pipeline. Scope: `packages/localization/src/glossary-protector.ts`, `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-metadata-store.ts`. Target commit: `refactor(localization): apply glossary protection during materialization`
-38. [TODO] Git Commit: `refactor(localization): apply glossary protection during materialization` (hash: TBD)
+38. [DONE] Git Commit: `refactor(localization): apply glossary protection during materialization` (hash: `5ea158e8`)
 
 ## Phase 5 — Bundled Catalogs And UI Consumption (owner: UI/PM, updated: 2026-04-01)
 ### Stream: Bundled English Source Catalogs
-39. [TODO] Seed bundled English source catalogs for interface, system feedback, and user guidance categories. Scope: `assets/localization/source/en/ui_interface.json`, `assets/localization/source/en/system_feedback.json`, `assets/localization/source/en/user_guidance.json`. Target commit: `feat(localization): seed english ui catalogs`
+39. [DONE] Seed bundled English source catalogs for interface, system feedback, and user guidance categories. Scope: `assets/localization/source/en/ui_interface.json`, `assets/localization/source/en/system_feedback.json`, `assets/localization/source/en/user_guidance.json`. Target commit: `feat(localization): seed english ui catalogs`
 40. [TODO] Git Commit: `feat(localization): seed english ui catalogs` (hash: TBD)
 41. [TODO] Seed bundled English source catalogs for workflow terms and interactive templates. Scope: `assets/localization/source/en/workflow_terms.json`, `assets/localization/source/en/interactive_templates.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): seed english workflow catalogs`
 42. [TODO] Git Commit: `feat(localization): seed english workflow catalogs` (hash: TBD)
