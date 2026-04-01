@@ -55,7 +55,7 @@
 ### Stream: Release
 24. [DONE] Update release-facing docs for the next release from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare thinking display snapshot backfill notes`
 25. [DONE] Git Commit: `docs(release): prepare thinking display snapshot backfill notes` (hash: `1cce9de5`)
-26. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude gemini thinking display release`
-27. [TODO] Git Commit: `build(release): assemble claude gemini thinking display release` (hash: TBD)
+26. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude gemini thinking display release`
+27. [DONE] Git Commit: `build(release): assemble claude gemini thinking display release` (hash: `dac75e58`)
 28. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session011.md`. Target commit: `docs(session): record claude gemini thinking display release`
 29. [TODO] Git Commit: `docs(session): record claude gemini thinking display release` (hash: TBD)
