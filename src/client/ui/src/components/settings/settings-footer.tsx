@@ -4,6 +4,7 @@ import type {
   FocusEvent as ReactFocusEvent,
   MouseEvent as ReactMouseEvent,
 } from "react";
+import { settingsSurfaceCopy } from "./settings-header";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
 
 interface SettingsFooterProps {
@@ -168,10 +169,12 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
           cursor: resetting ? "default" : "pointer",
           opacity: resetting ? DISABLED_OPACITY : 1,
         }}
-        title="Reset all settings to defaults"
+        title={settingsSurfaceCopy.footer.resetButtonTitle}
         type="button"
       >
-        {resetting ? "Resetting..." : "Reset to Defaults"}
+        {resetting
+          ? settingsSurfaceCopy.footer.resetPendingLabel
+          : settingsSurfaceCopy.footer.resetIdleLabel}
       </button>
 
       <div style={buttonGroupStyles}>
@@ -184,7 +187,7 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
           style={closeButtonStyles}
           type="button"
         >
-          Close
+          {settingsSurfaceCopy.footer.closeButtonLabel}
         </button>
         <button
           disabled={!hasChanges || saving}
@@ -207,7 +210,9 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
           }}
           type="button"
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {saving
+            ? settingsSurfaceCopy.footer.savePendingLabel
+            : settingsSurfaceCopy.footer.saveIdleLabel}
         </button>
       </div>
     </div>

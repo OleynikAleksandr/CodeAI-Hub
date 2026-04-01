@@ -4,6 +4,7 @@ import GeneralResponseModeFacade from "./general-response-mode/general-response-
 import type { GeneralResponseMode } from "./general-response-mode/response-mode-copy";
 import type { GeneralResponsePolicySettings } from "./general-response-mode/response-mode-state";
 import SettingsCard from "./settings-card";
+import { settingsSurfaceCopy } from "./settings-header";
 import {
   settingsColorTokens,
   settingsRadiusTokens,
@@ -157,10 +158,9 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
         onStrictSchemaTextChange={props.onStrictSchemaTextChange}
         responsePolicy={props.responsePolicy}
       />
-      <SettingsCard title="Core Controls">
+      <SettingsCard title={settingsSurfaceCopy.coreControls.title}>
         <p style={descriptionStyles}>
-          Restart the CodeAI Hub core to trigger a fresh CLI detection cycle.
-          Use this option after resolving CLI authentication or quota issues.
+          {settingsSurfaceCopy.coreControls.description}
         </p>
         <div style={controlsRowStyles}>
           <button
@@ -178,11 +178,13 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
             style={resolvedButtonStyles}
             type="button"
           >
-            {props.coreControl.busy ? "Restarting..." : "Restart Core"}
+            {props.coreControl.busy
+              ? settingsSurfaceCopy.coreControls.restartPendingLabel
+              : settingsSurfaceCopy.coreControls.restartIdleLabel}
           </button>
           <div style={resolvedStatusStyles}>
             {props.coreControl.message ??
-              "Core restart status will appear here."}
+              settingsSurfaceCopy.coreControls.idleStatusLabel}
           </div>
         </div>
       </SettingsCard>

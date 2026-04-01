@@ -4,6 +4,29 @@ interface SettingsHeaderProps {
   readonly onClose: () => void;
 }
 
+export const settingsSurfaceCopy = {
+  header: {
+    title: "Settings",
+    closeButtonLabel: "Close settings",
+  },
+  footer: {
+    resetButtonTitle: "Reset all settings to defaults",
+    resetIdleLabel: "Reset to Defaults",
+    resetPendingLabel: "Resetting...",
+    closeButtonLabel: "Close",
+    saveIdleLabel: "Save Changes",
+    savePendingLabel: "Saving...",
+  },
+  coreControls: {
+    title: "Core Controls",
+    description:
+      "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues.",
+    restartIdleLabel: "Restart Core",
+    restartPendingLabel: "Restarting...",
+    idleStatusLabel: "Core restart status will appear here.",
+  },
+} as const;
+
 const headerStyles: CSSProperties = {
   display: "flex",
   alignItems: "center",
@@ -35,12 +58,12 @@ const closeButtonStyles: CSSProperties = {
 
 const SettingsHeader: FC<SettingsHeaderProps> = ({ onClose }) => (
   <div style={headerStyles}>
-    <div style={titleStyles}>Settings</div>
+    <div style={titleStyles}>{settingsSurfaceCopy.header.title}</div>
     <button
-      aria-label="Close settings"
+      aria-label={settingsSurfaceCopy.header.closeButtonLabel}
       onClick={onClose}
       style={closeButtonStyles}
-      title="Close settings"
+      title={settingsSurfaceCopy.header.closeButtonLabel}
       type="button"
     >
       ×

@@ -23,7 +23,7 @@
 
 ## Phase 1 — English Source Baseline (owner: UI, updated: 2026-04-01)
 ### Stream: Settings And Session Source Copy
-1. [TODO] Normalize canonical Settings copy to English and extract the first reusable source-copy owner for General controls/header/footer surfaces. Scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`. Target commit: `refactor(copy): normalize settings source copy to english`
+1. [DONE] Normalize canonical Settings copy to English and extract the first reusable source-copy owner for General controls/header/footer surfaces. Scope: `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`. Target commit: `refactor(copy): normalize settings source copy to english`
 2. [TODO] Git Commit: `refactor(copy): normalize settings source copy to english` (hash: TBD)
 3. [TODO] Normalize Session UI product copy to English for dialog/status/empty-state surfaces without touching provider outputs. Scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`. Target commit: `refactor(copy): normalize session source copy to english`
 4. [TODO] Git Commit: `refactor(copy): normalize session source copy to english` (hash: TBD)
