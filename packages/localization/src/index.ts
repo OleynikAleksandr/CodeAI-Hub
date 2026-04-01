@@ -1,3 +1,15 @@
+export type {
+  GlossaryBundle,
+  GlossaryPreferredTranslationRule,
+  GlossaryPreserveRule,
+  GlossaryRule,
+  GlossaryRuleKind,
+  ProtectedGlossaryText,
+  ProtectedGlossaryToken,
+  ResolvedGlossary,
+} from "./glossary-contract";
+export { GlossaryMergeService } from "./glossary-merge-service";
+export { GlossaryProtector } from "./glossary-protector";
 export { DEFAULT_ENGINE_LANGUAGE_CATALOGS } from "./language-catalog";
 export { LanguageCatalogService } from "./language-catalog-service";
 export {

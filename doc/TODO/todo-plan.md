@@ -64,11 +64,11 @@
 27. [DONE] Add a localization language-catalog surface for the active translation engine capabilities. Scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/language-catalog-service.ts`, `packages/localization/src/localization-contract.ts`. Target commit: `feat(localization): add language catalog`
 28. [DONE] Git Commit: `feat(localization): add language catalog` (hash: `9f8b2258`)
 29. [DONE] Add the first materializer pipeline that translates source dictionaries through `@codeai-hub/translation` and persists localized bundles. Scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/localization-bundle-store.ts`. Target commit: `feat(localization): materialize localized bundles`
-30. [TODO] Git Commit: `feat(localization): materialize localized bundles` (hash: TBD)
+30. [DONE] Git Commit: `feat(localization): materialize localized bundles` (hash: `c4e713c0`)
 
 ## Phase 4 — Local Glossary And User Overrides (owner: Localization, updated: 2026-04-01)
 ### Stream: Glossary Core
-31. [TODO] Add glossary contract, merge service, and protector primitives for protected-term handling. Scope: `packages/localization/src/glossary-contract.ts`, `packages/localization/src/glossary-merge-service.ts`, `packages/localization/src/glossary-protector.ts`. Target commit: `feat(localization): add glossary core`
+31. [DONE] Add glossary contract, merge service, and protector primitives for protected-term handling. Scope: `packages/localization/src/glossary-contract.ts`, `packages/localization/src/glossary-merge-service.ts`, `packages/localization/src/glossary-protector.ts`. Target commit: `feat(localization): add glossary core`
 32. [TODO] Git Commit: `feat(localization): add glossary core` (hash: TBD)
 33. [TODO] Seed bundled base glossary and the first language-specific glossary baseline. Scope: `assets/localization/glossary/base.json`, `assets/localization/glossary/ru.json`, `packages/localization/src/glossary-bundle-loader.ts`. Target commit: `feat(localization): seed bundled glossary baseline`
 34. [TODO] Git Commit: `feat(localization): seed bundled glossary baseline` (hash: TBD)
