@@ -11,6 +11,12 @@ export type {
 } from "./glossary-contract";
 export { GlossaryMergeService } from "./glossary-merge-service";
 export { GlossaryProtector } from "./glossary-protector";
+export {
+  type GlossaryValidationIssue,
+  type GlossaryValidationIssueCode,
+  type GlossaryValidationResult,
+  GlossaryValidator,
+} from "./glossary-validator";
 export { DEFAULT_ENGINE_LANGUAGE_CATALOGS } from "./language-catalog";
 export { LanguageCatalogService } from "./language-catalog-service";
 export {
@@ -49,3 +55,7 @@ export {
   resolveLocalizationRootDirectory,
 } from "./localization-paths";
 export { SourceDictionaryRegistry } from "./source-dictionary-registry";
+export {
+  type UserGlossaryOverrides,
+  UserGlossaryStore,
+} from "./user-glossary-store";

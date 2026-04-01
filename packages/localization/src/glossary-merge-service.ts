@@ -5,7 +5,9 @@ import type {
   GlossaryRule,
   ResolvedGlossary,
 } from "./glossary-contract";
+import { GlossaryValidator } from "./glossary-validator";
 import type { LocalizationCategoryId } from "./localization-contract";
+import type { UserGlossaryOverrides } from "./user-glossary-store";
 
 const normalizeCategories = (
   categories: readonly LocalizationCategoryId[] | undefined
@@ -79,18 +81,24 @@ const createRuleKey = (rule: GlossaryRule): string => {
 };
 
 export class GlossaryMergeService {
+  private readonly glossaryValidator = new GlossaryValidator();
+
   createUserPreserveBundle(preserveTerms: readonly string[]): GlossaryBundle {
+    const validation =
+      this.glossaryValidator.validatePreserveTerms(preserveTerms);
+
     return {
-      rules: preserveTerms
-        .map((sourceTerm) => sourceTerm.trim())
-        .filter(Boolean)
-        .map(
-          (sourceTerm): GlossaryPreserveRule => ({
-            kind: "user_preserve",
-            sourceTerm,
-          })
-        ),
+      rules: validation.preserve.map(
+        (sourceTerm): GlossaryPreserveRule => ({
+          kind: "user_preserve",
+          sourceTerm,
+        })
+      ),
     };
+  }
+
+  createUserOverrideBundle(overrides: UserGlossaryOverrides): GlossaryBundle {
+    return this.createUserPreserveBundle(overrides.preserve);
   }
 
   mergeBundles(bundles: readonly GlossaryBundle[]): ResolvedGlossary {
