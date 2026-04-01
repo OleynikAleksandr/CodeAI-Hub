@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.863] - 2026-04-01
+### Fixed
+- **GitHub Actions bootstrap failure**: the repository now includes a root `.nvmrc`, so `actions/setup-node@v4` can resolve the intended Node version instead of failing before dependency installation.
+- **Push-triggered CI false negatives**: `Repository CI` now gets past `Setup Node.js` and can execute the actual quality gates, which stops the repeated failure emails caused by the missing Node version file.
+
 ## [1.1.862] - 2026-04-01
 ### Fixed
 - **Core Controls visual alignment**: the `Restart Core` button and restart-status pill now share the same height and sit on the same vertical axis instead of looking offset from each other.

@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.862
-- **Staged Core restart flow**: `Settings -> General -> Core Controls` performs an explicit `stop -> wait -> start` restart sequence instead of a blind supervisor restart request.
-- **Visible restart feedback**: the Settings UI shows per-phase Core restart status beside the button, including stop, wait, start, success, and error states.
-- **Aligned Core Controls layout**: the `Restart Core` button and status pill now use the same control height and vertical centering, so the row reads as a single balanced control group.
+## Current Release — v1.1.863
+- **GitHub Actions Node bootstrap restored**: the repository now ships a root `.nvmrc`, so `actions/setup-node` can resolve the intended Node version instead of failing before `npm ci`.
+- **Public CI runs real quality gates again**: `Repository CI` no longer dies in `Setup Node.js`, so GitHub Actions can actually reach install, lint, knip, and compile steps on each push.
+- **Core Controls alignment retained**: the `Restart Core` button and status pill keep the shared control height and vertical centering introduced in the previous release.
 
 Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
@@ -25,6 +25,7 @@ Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure
 ```bash
 git clone https://github.com/OleynikAleksandr/CodeAI-Hub.git
 cd CodeAI-Hub
+nvm use
 npm install
 ```
 
