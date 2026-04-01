@@ -7276,11 +7276,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_react17 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/style-tokens.ts
   var settingsColorTokens = {
@@ -7313,2403 +7313,8 @@
     hostBodyFontSize: "14px"
   };
 
-  // src/client/ui/src/components/settings-view.tsx
-  var import_react14 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_react = __toESM(require_react());
-
-  // src/types/claude-model-registry.ts
-  var CLAUDE_MODEL_ALIASES = [
-    {
-      alias: "sonnet",
-      displayName: "Sonnet 4.5",
-      description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
-      status: "active"
-    },
-    {
-      alias: "opus",
-      displayName: "Opus 4.5",
-      description: "Most capable for complex, agentic workloads.",
-      status: "active"
-    },
-    {
-      alias: "haiku",
-      displayName: "Haiku 4.5",
-      description: "Fastest alias for quick answers and prototyping.",
-      status: "active"
-    }
-  ];
-  var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
-    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
-  ]);
-  var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
-
-  // src/client/ui/src/components/settings/settings-card.tsx
-  var import_jsx_runtime = __toESM(require_jsx_runtime());
-  var cardStyles = {
-    background: settingsColorTokens.surfaceElevated,
-    borderRadius: settingsRadiusTokens.control,
-    padding: "16px",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var headerStyles = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "12px"
-  };
-  var titleStyles = {
-    fontSize: "14px",
-    fontWeight: 600,
-    margin: 0,
-    color: settingsColorTokens.textPrimary
-  };
-  var SettingsCard = ({
-    title,
-    action,
-    children
-  }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: cardStyles, children: [
-    title ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: headerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: titleStyles, children: title }),
-      action
-    ] }) : null,
-    children
-  ] });
-  var settings_card_default = SettingsCard;
-
-  // src/client/ui/src/components/settings/shared-model-card-styles.ts
-  var descriptionStyles = {
-    margin: 0,
-    color: settingsColorTokens.textSecondary,
-    fontSize: "12px",
-    lineHeight: 1.5
-  };
-  var noteStyles = {
-    margin: 0,
-    fontSize: "11px",
-    color: "#8f8f8f"
-  };
-  var listStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var rowBaseStyles = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: "#2f2f2f",
-    borderRadius: "6px",
-    padding: "12px",
-    background: settingsColorTokens.surfaceElevated,
-    cursor: "pointer",
-    transition: "border-color 0.15s, background 0.15s",
-    outline: "none",
-    boxShadow: "none"
-  };
-  var rowSelectedStyles = {
-    borderColor: settingsColorTokens.actionPrimary,
-    background: "#1f2a33"
-  };
-  var rowHoverStyles = {
-    borderColor: "#4a4a4a"
-  };
-  var rowButtonResetStyles = {
-    appearance: "none",
-    outline: "none",
-    textAlign: "left"
-  };
-  var modelInfoStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px"
-  };
-  var modelTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: settingsColorTokens.textPrimary
-  };
-  var aliasStyles = {
-    fontSize: "11px",
-    color: "#9b9b9b"
-  };
-  var modelDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    color: "#a7a7a7",
-    lineHeight: 1.4
-  };
-  var modelBodyStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    flex: 1
-  };
-  var modelIdStyles = {
-    fontSize: "11px",
-    color: "#8c8c8c"
-  };
-  var modelControlRowStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    paddingLeft: "28px"
-  };
-  var modelControlLabelStyles = {
-    fontSize: "11px",
-    color: "#8f8f8f"
-  };
-  var modelControlButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    padding: "4px 10px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "11px"
-  };
-  var modelControlButtonHoverStyles = {
-    borderColor: "#5a5a5a",
-    background: "#2b2f33",
-    color: "#ffffff"
-  };
-  var modelControlButtonActiveStyles = {
-    borderColor: "#0e639c",
-    background: "#0e639c",
-    color: "#ffffff"
-  };
-  var radioCircleStyles = {
-    width: "16px",
-    height: "16px",
-    minWidth: "16px",
-    borderRadius: "50%",
-    borderWidth: "2px",
-    borderStyle: "solid",
-    borderColor: "#5a5a5a",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: "3px",
-    transition: "border-color 0.15s",
-    outline: "none",
-    boxShadow: "none"
-  };
-  var radioCircleSelectedStyles = {
-    borderColor: settingsColorTokens.actionPrimary
-  };
-  var radioCircleInnerStyles = {
-    width: "8px",
-    height: "8px",
-    borderRadius: "50%",
-    background: settingsColorTokens.actionPrimary
-  };
-
-  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
-  var ClaudeDefaultModelCard = ({
-    defaultModel,
-    onDefaultModelChange
-  }) => {
-    const [hoveredAlias, setHoveredAlias] = (0, import_react.useState)(
-      null
-    );
-    const handleRowClick = (model) => {
-      onDefaultModelChange(model);
-    };
-    const handleRowKeyDown = (event, model) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onDefaultModelChange(model);
-      }
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(settings_card_default, { title: "Claude Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md" }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
-        const isSelected = defaultModel === model.alias;
-        const rowStyle = {
-          ...rowBaseStyles,
-          ...rowButtonResetStyles,
-          ...isSelected ? rowSelectedStyles : {},
-          ...!isSelected && hoveredAlias === model.alias ? rowHoverStyles : {}
-        };
-        return (
-          // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-            "div",
-            {
-              "aria-checked": isSelected,
-              onClick: () => handleRowClick(model.alias),
-              onKeyDown: (event) => handleRowKeyDown(event, model.alias),
-              onMouseEnter: () => setHoveredAlias(model.alias),
-              onMouseLeave: () => setHoveredAlias(null),
-              role: "radio",
-              style: rowStyle,
-              tabIndex: -1,
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                  "div",
-                  {
-                    style: {
-                      ...radioCircleStyles,
-                      ...isSelected ? radioCircleSelectedStyles : {}
-                    },
-                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: radioCircleInnerStyles }) : null
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: modelInfoStyles, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: aliasStyles, children: model.alias }),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: modelDescriptionStyles, children: model.description })
-                ] })
-              ]
-            },
-            model.alias
-          )
-        );
-      }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
-    ] });
-  };
-  var claude_default_model_card_default = (0, import_react.memo)(ClaudeDefaultModelCard);
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_react3 = __toESM(require_react());
-
-  // src/types/codex-model-registry.ts
-  var CODEX_SETTINGS_MODELS = [
-    {
-      id: "gpt-5.3-codex",
-      displayName: "GPT-5.3-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "flagship"
-    },
-    {
-      id: "gpt-5.4",
-      displayName: "GPT-5.4",
-      description: "Best general agentic model for tasks across industries",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "general"
-    },
-    {
-      id: "gpt-5.4-mini",
-      displayName: "GPT-5.4 Mini",
-      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "mini"
-    }
-  ];
-  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
-  var CODEX_REASONING_LEVELS = [
-    {
-      name: "low",
-      description: "Fast responses with lighter reasoning",
-      useCase: "Quick tasks, simple queries",
-      default: false
-    },
-    {
-      name: "medium",
-      description: "Balances speed and reasoning depth for everyday tasks",
-      useCase: "Most development tasks",
-      default: true
-    },
-    {
-      name: "high",
-      description: "Greater reasoning depth for complex problems",
-      useCase: "Complex refactoring, architecture decisions",
-      default: false
-    },
-    {
-      name: "xhigh",
-      description: "Extra high reasoning depth for complex problems",
-      useCase: "Very complex problems requiring deep analysis",
-      default: false
-    }
-  ];
-  var DEFAULT_CODEX_REASONING_LEVEL = "medium";
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts
-  var warningStyles = {
-    background: "#3a2a1f",
-    border: "1px solid #9b6b3d",
-    color: "#ffd7a3",
-    borderRadius: "4px",
-    padding: "8px 10px",
-    fontSize: "12px",
-    lineHeight: 1.5
-  };
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_react2 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/shared/provider-option-dialog.tsx
-  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
-  var overlayStyles = {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0, 0, 0, 0.6)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1e3
-  };
-  var dialogStyles = {
-    width: "560px",
-    maxWidth: "90vw",
-    maxHeight: "85vh",
-    overflowY: "auto",
-    background: "#1e1e1e",
-    borderRadius: "8px",
-    border: "1px solid #3c3c3c",
-    padding: "20px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px"
-  };
-  var headerStyles2 = {
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: "12px"
-  };
-  var titleStyles2 = {
-    fontSize: "16px",
-    margin: 0,
-    color: "#ffffff"
-  };
-  var subtitleStyles = {
-    fontSize: "12px",
-    color: "#a0a0a0",
-    margin: 0
-  };
-  var closeButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    borderRadius: "4px",
-    padding: "4px 10px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var optionListStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var optionRowStyles = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    border: "1px solid #2f2f2f",
-    borderRadius: "6px",
-    padding: "12px",
-    background: "#252526",
-    cursor: "pointer"
-  };
-  var optionSelectedStyles = {
-    borderColor: "#0e639c",
-    background: "#1f2a33"
-  };
-  var radioStyles = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var optionTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#e5e5e5",
-    marginBottom: "4px",
-    textTransform: "uppercase"
-  };
-  var defaultBadgeStyles = {
-    fontSize: "10px",
-    color: "#0e639c",
-    background: "rgba(14, 99, 156, 0.2)",
-    borderRadius: "4px",
-    padding: "2px 6px",
-    marginLeft: "8px",
-    textTransform: "none"
-  };
-  var optionDescriptionStyles = {
-    fontSize: "12px",
-    color: "#b6b6b6",
-    margin: 0,
-    lineHeight: 1.4
-  };
-  var optionUseCaseStyles = {
-    fontSize: "12px",
-    color: "#8f8f8f",
-    margin: "6px 0 0"
-  };
-  var footerStyles = {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "10px"
-  };
-  var cancelButtonStyles = {
-    border: "1px solid #3a3d41",
-    background: "transparent",
-    color: "#d7d7d7",
-    padding: "8px 14px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var saveButtonStyles = {
-    border: "1px solid #0e639c",
-    background: "#0e639c",
-    color: "#ffffff",
-    padding: "8px 14px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var ProviderOptionDialog = ({
-    ariaLabel,
-    closeLabel = "Close",
-    footer,
-    name,
-    onCancel,
-    onChange,
-    options,
-    selectedValue,
-    subtitle,
-    title
-  }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-    "div",
-    {
-      "aria-label": ariaLabel,
-      "aria-modal": "true",
-      role: "dialog",
-      style: dialogStyles,
-      children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: headerStyles2, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { style: titleStyles2, children: title }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: subtitleStyles, children: subtitle })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: closeLabel })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: optionListStyles, children: options.map((option) => {
-          const isSelected = option.value === selectedValue;
-          return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-            "label",
-            {
-              style: {
-                ...optionRowStyles,
-                ...isSelected ? optionSelectedStyles : null
-              },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                  "input",
-                  {
-                    checked: isSelected,
-                    name,
-                    onChange: () => onChange(option.value),
-                    style: radioStyles,
-                    type: "radio"
-                  }
-                ),
-                /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: optionTitleStyles, children: [
-                    option.label,
-                    option.isDefault ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: optionDescriptionStyles, children: option.description }),
-                  /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { style: optionUseCaseStyles, children: [
-                    "Use case: ",
-                    option.useCase
-                  ] })
-                ] })
-              ]
-            },
-            option.value
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: footerStyles, children: footer ?? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { style: saveButtonStyles, type: "button", children: "Save" })
-        ] }) })
-      ]
-    }
-  ) });
-  var providerOptionDialogButtonStyles = {
-    cancelButtonStyles,
-    saveButtonStyles
-  };
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
-  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
-  var CodexReasoningDialog = ({
-    model,
-    initialReasoning,
-    onSave,
-    onCancel
-  }) => {
-    const [selectedReasoning, setSelectedReasoning] = (0, import_react2.useState)(initialReasoning);
-    const options = CODEX_REASONING_LEVELS.map((level) => ({
-      value: level.name,
-      label: level.name,
-      description: level.description,
-      useCase: level.useCase,
-      isDefault: level.default
-    }));
-    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-      ProviderOptionDialog,
-      {
-        ariaLabel: `Reasoning effort for ${model.displayName}`,
-        footer: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-            "button",
-            {
-              onClick: () => onSave(selectedReasoning),
-              style: saveButtonStyles2,
-              type: "button",
-              children: "Save"
-            }
-          )
-        ] }),
-        name: "codex-reasoning",
-        onCancel,
-        onChange: setSelectedReasoning,
-        options,
-        selectedValue: selectedReasoning,
-        subtitle: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session.",
-        title: `${model.displayName} reasoning`
-      }
-    );
-  };
-  var { cancelButtonStyles: cancelButtonStyles2, saveButtonStyles: saveButtonStyles2 } = providerOptionDialogButtonStyles;
-  var codex_reasoning_dialog_default = CodexReasoningDialog;
-
-  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
-  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
-  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-    "div",
-    {
-      style: {
-        ...radioCircleStyles,
-        ...checked ? radioCircleSelectedStyles : {}
-      },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: radioCircleInnerStyles }) : null
-    }
-  );
-  var displaySyncToggleStyles = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    margin: "12px 0 18px"
-  };
-  var displaySyncCheckboxStyles = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var displaySyncTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 600,
-    marginBottom: "4px"
-  };
-  var displaySyncDescriptionStyles = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: 1.4
-  };
-  var CodexDefaultModelCard = ({
-    defaultModel,
-    reasoningByModel,
-    reasoningSummaryEnabled,
-    onDefaultModelChange,
-    onReasoningChange,
-    onReasoningSummaryEnabledChange
-  }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react3.useState)(null);
-    const [hoveredRowId, setHoveredRowId] = (0, import_react3.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react3.useState)(
-      null
-    );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react3.useState)(
-      null
-    );
-    const recommendedModelIds = (0, import_react3.useMemo)(
-      () => new Set(CODEX_SETTINGS_MODELS.map((model) => model.id)),
-      []
-    );
-    const fallbackModelDisplayName = CODEX_SETTINGS_MODELS.find((model) => model.id === DEFAULT_CODEX_MODEL_ID)?.displayName ?? DEFAULT_CODEX_MODEL_ID;
-    const selectedModelId = recommendedModelIds.has(defaultModel) ? defaultModel : DEFAULT_CODEX_MODEL_ID;
-    const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
-    const activeModel = CODEX_SETTINGS_MODELS.find(
-      (model) => model.id === activeModelId
-    );
-    const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
-    const handleRowClick = (modelId) => {
-      onDefaultModelChange(modelId);
-    };
-    const handleRowKeyDown = (event, modelId) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onDefaultModelChange(modelId);
-      }
-    };
-    const handleReasoningButtonClick = (event, modelId) => {
-      event.stopPropagation();
-      setActiveModelId(modelId);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(settings_card_default, { title: "Codex Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: displaySyncToggleStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-            "input",
-            {
-              checked: reasoningSummaryEnabled,
-              onChange: (event) => onReasoningSummaryEnabledChange(event.target.checked),
-              style: displaySyncCheckboxStyles,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncTitleStyles, children: "Reasoning in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncDescriptionStyles, children: "When enabled, Codex can send reasoning summaries. CodeAI Hub translates them and shows them in the dialog." })
-          ] })
-        ] }),
-        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: warningStyles, children: [
-          "The saved default model is no longer available. Falling back to",
-          ` ${fallbackModelDisplayName}.`
-        ] }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: listStyles, children: CODEX_SETTINGS_MODELS.map((model) => {
-          const isSelected = selectedModelId === model.id;
-          const isRowHovered = hoveredRowId === model.id;
-          const reasoningLevel = resolveReasoning(model.id);
-          const isButtonHovered = hoveredButtonId === model.id;
-          const isButtonPressed = pressedButtonId === model.id;
-          let reasoningStateStyles = {};
-          if (isButtonPressed) {
-            reasoningStateStyles = modelControlButtonActiveStyles;
-          } else if (isButtonHovered) {
-            reasoningStateStyles = modelControlButtonHoverStyles;
-          }
-          const rowStyle = {
-            ...rowBaseStyles,
-            ...rowButtonResetStyles,
-            ...isSelected ? rowSelectedStyles : {},
-            ...!isSelected && isRowHovered ? rowHoverStyles : {}
-          };
-          return (
-            // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
-              "div",
-              {
-                "aria-checked": isSelected,
-                onClick: () => handleRowClick(model.id),
-                onKeyDown: (e) => handleRowKeyDown(e, model.id),
-                onMouseEnter: () => setHoveredRowId(model.id),
-                onMouseLeave: () => setHoveredRowId(null),
-                role: "radio",
-                style: rowStyle,
-                tabIndex: -1,
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RadioCircle, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelControlRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: modelControlLabelStyles, children: "Configure reasoning:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-                        "button",
-                        {
-                          onClick: (e) => handleReasoningButtonClick(e, model.id),
-                          onMouseDown: () => setPressedButtonId(model.id),
-                          onMouseEnter: () => setHoveredButtonId(model.id),
-                          onMouseLeave: () => {
-                            setHoveredButtonId(null);
-                            setPressedButtonId(null);
-                          },
-                          onMouseUp: () => setPressedButtonId(null),
-                          style: {
-                            ...modelControlButtonStyles,
-                            ...reasoningStateStyles
-                          },
-                          type: "button",
-                          children: reasoningLevel
-                        }
-                      )
-                    ] })
-                  ] })
-                ]
-              },
-              model.id
-            )
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
-      ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
-        codex_reasoning_dialog_default,
-        {
-          initialReasoning: resolveReasoning(activeModel.id),
-          model: activeModel,
-          onCancel: () => setActiveModelId(null),
-          onSave: (reasoning) => {
-            onReasoningChange(activeModel.id, reasoning);
-            setActiveModelId(null);
-          }
-        }
-      ) : null
-    ] });
-  };
-  var codex_default_model_card_default = (0, import_react3.memo)(CodexDefaultModelCard);
-
-  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_react5 = __toESM(require_react());
-
-  // src/types/gemini-model-registry.ts
-  var GEMINI_RECOMMENDED_MODELS = [
-    {
-      id: "gemini-3.1-pro-preview",
-      displayName: "Gemini 3.1 Pro",
-      description: "Most advanced reasoning Gemini model (1M context).",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-3-flash-preview",
-      displayName: "Gemini 3 Flash",
-      description: "Pro-grade reasoning with Flash-level latency and cost.",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["minimal", "low", "medium", "high"]
-    }
-  ];
-  var GEMINI_MODEL_ID_SET = new Set(
-    GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
-  );
-  var DEFAULT_GEMINI_MODEL_ID = "gemini-3.1-pro-preview";
-  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
-  var GEMINI_THINKING_LEVELS = [
-    {
-      name: "off",
-      description: "Disable model's internal thinking process.",
-      useCase: "Basic tasks, fastest response."
-    },
-    {
-      name: "minimal",
-      description: "Absolute minimum reasoning tokens.",
-      useCase: "Low-complexity tasks, very low latency."
-    },
-    {
-      name: "low",
-      description: "Balanced reasoning for simpler tasks.",
-      useCase: "General coding and quick queries."
-    },
-    {
-      name: "medium",
-      description: "Advanced reasoning for moderate complexity.",
-      useCase: "Standard development and problem solving."
-    },
-    {
-      name: "high",
-      description: "Maximum reasoning depth.",
-      useCase: "Complex refactoring and PhD-level research."
-    }
-  ];
-
-  // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
-  var import_react4 = __toESM(require_react());
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
-  var GeminiThinkingDialog = ({
-    model,
-    initialLevel,
-    onSave,
-    onCancel
-  }) => {
-    const [selectedLevel, setSelectedLevel] = (0, import_react4.useState)(initialLevel);
-    const options = GEMINI_THINKING_LEVELS.filter(
-      (level) => model.supportedThinkingLevels.includes(level.name)
-    ).map((level) => ({
-      value: level.name,
-      label: level.name,
-      description: level.description,
-      useCase: level.useCase,
-      isDefault: level.name === DEFAULT_GEMINI_THINKING_LEVEL
-    }));
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-      ProviderOptionDialog,
-      {
-        ariaLabel: `Thinking level for ${model.displayName}`,
-        footer: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: onCancel, style: cancelButtonStyles3, type: "button", children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-            "button",
-            {
-              onClick: () => onSave(selectedLevel),
-              style: saveButtonStyles3,
-              type: "button",
-              children: "Save"
-            }
-          )
-        ] }),
-        name: "gemini-thinking",
-        onCancel,
-        onChange: setSelectedLevel,
-        options,
-        selectedValue: selectedLevel,
-        subtitle: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session.",
-        title: `${model.displayName} thinking`
-      }
-    );
-  };
-  var { cancelButtonStyles: cancelButtonStyles3, saveButtonStyles: saveButtonStyles3 } = providerOptionDialogButtonStyles;
-  var gemini_thinking_dialog_default = GeminiThinkingDialog;
-
-  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
-  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-    "div",
-    {
-      style: {
-        ...radioCircleStyles,
-        ...checked ? radioCircleSelectedStyles : {}
-      },
-      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: radioCircleInnerStyles }) : null
-    }
-  );
-  var displaySyncToggleStyles2 = {
-    display: "flex",
-    gap: "12px",
-    alignItems: "flex-start",
-    margin: "12px 0 18px"
-  };
-  var displaySyncCheckboxStyles2 = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var displaySyncTitleStyles2 = {
-    fontSize: "13px",
-    fontWeight: 600,
-    marginBottom: "4px"
-  };
-  var displaySyncDescriptionStyles2 = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: 1.4
-  };
-  var GeminiDefaultModelCard = ({
-    defaultModel,
-    thinkingLevelByModel,
-    thinkingDisplaySyncEnabled,
-    onDefaultModelChange,
-    onThinkingChange,
-    onThinkingDisplaySyncChange
-  }) => {
-    const [activeModelId, setActiveModelId] = (0, import_react5.useState)(
-      null
-    );
-    const [hoveredRowId, setHoveredRowId] = (0, import_react5.useState)(null);
-    const [hoveredButtonId, setHoveredButtonId] = (0, import_react5.useState)(
-      null
-    );
-    const [pressedButtonId, setPressedButtonId] = (0, import_react5.useState)(
-      null
-    );
-    const activeModel = GEMINI_RECOMMENDED_MODELS.find(
-      (model) => model.id === activeModelId
-    );
-    const resolveThinkingLevel = (modelId) => thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
-    const handleRowClick = (model) => {
-      onDefaultModelChange(model);
-    };
-    const handleRowKeyDown = (event, model) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onDefaultModelChange(model);
-      }
-    };
-    const handleThinkingButtonClick = (event, modelId) => {
-      event.stopPropagation();
-      setActiveModelId(modelId);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { style: displaySyncToggleStyles2, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-            "input",
-            {
-              checked: thinkingDisplaySyncEnabled,
-              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
-              style: displaySyncCheckboxStyles2,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncTitleStyles2, children: "Thinking in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncDescriptionStyles2, children: "Show translated Gemini reasoning as a normal assistant bubble in the dialog." })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
-          const isSelected = defaultModel === model.id;
-          const isRowHovered = hoveredRowId === model.id;
-          const thinkingLevel = resolveThinkingLevel(model.id);
-          const isButtonHovered = hoveredButtonId === model.id;
-          const isButtonPressed = pressedButtonId === model.id;
-          let thinkingStateStyles = {};
-          if (isButtonPressed) {
-            thinkingStateStyles = modelControlButtonActiveStyles;
-          } else if (isButtonHovered) {
-            thinkingStateStyles = modelControlButtonHoverStyles;
-          }
-          const rowStyle = {
-            ...rowBaseStyles,
-            ...rowButtonResetStyles,
-            ...isSelected ? rowSelectedStyles : {},
-            ...!isSelected && isRowHovered ? rowHoverStyles : {}
-          };
-          return (
-            // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
-              "div",
-              {
-                "aria-checked": isSelected,
-                onClick: () => handleRowClick(model.id),
-                onKeyDown: (event) => handleRowKeyDown(event, model.id),
-                onMouseEnter: () => setHoveredRowId(model.id),
-                onMouseLeave: () => setHoveredRowId(null),
-                role: "radio",
-                style: rowStyle,
-                tabIndex: -1,
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(RadioCircle2, { checked: isSelected }),
-                  /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelBodyStyles, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
-                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: modelDescriptionStyles, children: model.description })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelControlRowStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: modelControlLabelStyles, children: "Configure thinking:" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-                        "button",
-                        {
-                          onClick: (e) => handleThinkingButtonClick(e, model.id),
-                          onMouseDown: () => setPressedButtonId(model.id),
-                          onMouseEnter: () => setHoveredButtonId(model.id),
-                          onMouseLeave: () => {
-                            setHoveredButtonId(null);
-                            setPressedButtonId(null);
-                          },
-                          onMouseUp: () => setPressedButtonId(null),
-                          style: {
-                            ...modelControlButtonStyles,
-                            ...thinkingStateStyles
-                          },
-                          type: "button",
-                          children: thinkingLevel
-                        }
-                      )
-                    ] })
-                  ] })
-                ]
-              },
-              model.id
-            )
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
-      ] }),
-      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
-        gemini_thinking_dialog_default,
-        {
-          initialLevel: resolveThinkingLevel(activeModel.id),
-          model: activeModel,
-          onCancel: () => setActiveModelId(null),
-          onSave: (level) => {
-            onThinkingChange(activeModel.id, level);
-            setActiveModelId(null);
-          }
-        }
-      ) : null
-    ] });
-  };
-  var gemini_default_model_card_default = (0, import_react5.memo)(GeminiDefaultModelCard);
-
-  // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react8 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
-  var import_react7 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
-  var import_react6 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
-  var RESPONSE_MODE_OPTIONS = [
-    {
-      id: "strict",
-      label: "Strict",
-      description: "Force a JSON-shaped final answer using the editable strict schema."
-    },
-    {
-      id: "hybrid",
-      label: "Hybrid",
-      description: "Allow free commentary during the turn and keep structure only for terminal output."
-    },
-    {
-      id: "debug_raw",
-      label: "Debug/Raw",
-      description: "Diagnostic mode for new models: avoid hard schema pressure on live turns."
-    }
-  ];
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
-  var copyStyles = {
-    margin: 0,
-    fontSize: "13px",
-    color: "#bbbbbb",
-    lineHeight: 1.45
-  };
-  var optionListStyles2 = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var optionButtonStyles = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    gap: "4px",
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: "10px",
-    border: "1px solid #3a3d41",
-    background: "#1e1e1e",
-    color: "#f5f5f5",
-    cursor: "pointer",
-    textAlign: "left"
-  };
-  var activeOptionStyles = {
-    borderColor: "#0e639c",
-    background: "#132938"
-  };
-  var optionTitleStyles2 = {
-    fontSize: "13px",
-    fontWeight: 600
-  };
-  var optionDescriptionStyles2 = {
-    fontSize: "12px",
-    color: "#bbbbbb",
-    lineHeight: 1.4
-  };
-  var labelStyles = {
-    fontSize: "12px",
-    fontWeight: 600,
-    color: "#f5f5f5"
-  };
-  var inputStyles = {
-    width: "100%",
-    minHeight: "132px",
-    padding: "10px 12px",
-    borderRadius: "8px",
-    border: "1px solid #3a3d41",
-    background: "#111111",
-    color: "#f5f5f5",
-    fontSize: "12px",
-    fontFamily: "Menlo, Monaco, Consolas, monospace",
-    lineHeight: 1.45,
-    resize: "vertical",
-    boxSizing: "border-box"
-  };
-  var inputGroupStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px"
-  };
-  var strictBlockStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    marginTop: "16px"
-  };
-  var ResponseModeCard = ({
-    responsePolicy,
-    onModeChange,
-    onStrictInstructionTextChange,
-    onStrictSchemaTextChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Response Mode", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: copyStyles, children: "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior." }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
-      "button",
-      {
-        onClick: () => onModeChange(option.id),
-        style: {
-          ...optionButtonStyles,
-          ...responsePolicy.mode === option.id ? activeOptionStyles : null
-        },
-        type: "button",
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionTitleStyles2, children: option.label }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionDescriptionStyles2, children: option.description })
-        ]
-      },
-      option.id
-    )) }),
-    responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: strictBlockStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-          "textarea",
-          {
-            onChange: (event) => onStrictSchemaTextChange(event.target.value),
-            style: inputStyles,
-            value: responsePolicy.strictOutput.schemaText
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-          "textarea",
-          {
-            onChange: (event) => onStrictInstructionTextChange(event.target.value),
-            style: { ...inputStyles, minHeight: "108px" },
-            value: responsePolicy.strictOutput.instructionText
-          }
-        )
-      ] })
-    ] }) : null
-  ] });
-  var response_mode_card_default = (0, import_react6.memo)(ResponseModeCard);
-
-  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var GeneralResponseModeFacade = (props) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(response_mode_card_default, { ...props });
-  var general_response_mode_facade_default = (0, import_react7.memo)(GeneralResponseModeFacade);
-
-  // src/client/ui/src/components/settings/general-settings.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var wrapperStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "24px"
-  };
-  var descriptionStyles2 = {
-    fontSize: "13px",
-    color: "#bbbbbb",
-    lineHeight: 1.4,
-    margin: 0
-  };
-  var coreControlHeight = "38px";
-  var buttonStyles = {
-    alignSelf: "flex-start",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxSizing: "border-box",
-    height: coreControlHeight,
-    padding: "0 16px",
-    borderRadius: settingsRadiusTokens.control,
-    fontSize: settingsTypographyTokens.bodyFontSize,
-    fontWeight: 600,
-    lineHeight: 1,
-    transition: "background-color 120ms ease, border-color 120ms ease, transform 120ms ease, opacity 120ms ease"
-  };
-  var controlsRowStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    flexWrap: "wrap"
-  };
-  var statusStyles = {
-    display: "inline-flex",
-    alignItems: "center",
-    boxSizing: "border-box",
-    height: coreControlHeight,
-    padding: "0 12px",
-    borderRadius: settingsRadiusTokens.panel,
-    border: `1px solid ${settingsColorTokens.borderSubtle}`,
-    fontSize: settingsTypographyTokens.bodyFontSize,
-    lineHeight: 1
-  };
-  var GeneralSettings = (props) => {
-    const [isHovered, setIsHovered] = (0, import_react8.useState)(false);
-    const [isPressed, setIsPressed] = (0, import_react8.useState)(false);
-    const resolvedButtonStyles = (0, import_react8.useMemo)(() => {
-      if (props.coreControl.busy) {
-        return {
-          ...buttonStyles,
-          border: `1px solid ${settingsColorTokens.borderStrong}`,
-          background: settingsColorTokens.borderStrong,
-          color: settingsColorTokens.textMuted,
-          cursor: "progress",
-          opacity: 0.85
-        };
-      }
-      if (isPressed) {
-        return {
-          ...buttonStyles,
-          border: "1px solid #0a4c78",
-          background: "#0a4c78",
-          color: settingsColorTokens.actionPrimaryText,
-          cursor: "pointer",
-          transform: "translateY(1px)"
-        };
-      }
-      if (isHovered) {
-        return {
-          ...buttonStyles,
-          border: "1px solid #1f7bb8",
-          background: "#1177bb",
-          color: settingsColorTokens.actionPrimaryText,
-          cursor: "pointer"
-        };
-      }
-      return {
-        ...buttonStyles,
-        border: `1px solid ${settingsColorTokens.actionPrimary}`,
-        background: settingsColorTokens.actionPrimary,
-        color: settingsColorTokens.actionPrimaryText,
-        cursor: "pointer"
-      };
-    }, [isHovered, isPressed, props.coreControl.busy]);
-    const resolvedStatusStyles = (0, import_react8.useMemo)(() => {
-      switch (props.coreControl.phase) {
-        case "ready":
-          return {
-            ...statusStyles,
-            border: "1px solid rgba(80, 160, 95, 0.55)",
-            background: "rgba(80, 160, 95, 0.16)",
-            color: "#a8ddb2"
-          };
-        case "error":
-          return {
-            ...statusStyles,
-            border: "1px solid rgba(215, 101, 95, 0.55)",
-            background: "rgba(215, 101, 95, 0.16)",
-            color: "#f2b8b5"
-          };
-        case "stopping":
-        case "waiting":
-        case "starting":
-          return {
-            ...statusStyles,
-            border: "1px solid rgba(190, 145, 75, 0.55)",
-            background: "rgba(190, 145, 75, 0.16)",
-            color: "#f1d39b"
-          };
-        default:
-          return {
-            ...statusStyles,
-            color: settingsColorTokens.textMuted
-          };
-      }
-    }, [props.coreControl.phase]);
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: wrapperStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        general_response_mode_facade_default,
-        {
-          onModeChange: props.onResponsePolicyModeChange,
-          onStrictInstructionTextChange: props.onStrictInstructionTextChange,
-          onStrictSchemaTextChange: props.onStrictSchemaTextChange,
-          responsePolicy: props.responsePolicy
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(settings_card_default, { title: "Core Controls", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: controlsRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            "button",
-            {
-              "aria-busy": props.coreControl.busy,
-              disabled: props.coreControl.busy,
-              onBlur: () => setIsPressed(false),
-              onClick: props.onRestartCore,
-              onMouseDown: () => setIsPressed(true),
-              onMouseEnter: () => setIsHovered(true),
-              onMouseLeave: () => {
-                setIsHovered(false);
-                setIsPressed(false);
-              },
-              onMouseUp: () => setIsPressed(false),
-              style: resolvedButtonStyles,
-              type: "button",
-              children: props.coreControl.busy ? "Restarting..." : "Restart Core"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: resolvedStatusStyles, children: props.coreControl.message ?? "Core restart status will appear here." })
-        ] })
-      ] })
-    ] });
-  };
-  var general_settings_default = (0, import_react8.memo)(GeneralSettings);
-
-  // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react10 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react9 = __toESM(require_react());
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-  var rowStyles = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "12px",
-    padding: "10px",
-    borderRadius: "4px",
-    background: "#1f1f1f",
-    border: "1px solid #2e2e2e"
-  };
-  var labelStyles2 = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px"
-  };
-  var nameStyles = {
-    fontSize: "13px",
-    color: "#e0e0e0",
-    margin: 0
-  };
-  var versionTextStyles = {
-    fontSize: "12px",
-    color: "#b7b7b7",
-    margin: 0
-  };
-  var chipStyles = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    background: "#2a2a2a",
-    color: "#d0d0d0",
-    padding: "4px 8px",
-    borderRadius: "999px",
-    fontSize: "11px",
-    border: "1px solid #3c3c3c"
-  };
-  var buttonStyles2 = {
-    minWidth: "160px",
-    border: "1px solid #3a3d41",
-    background: "#0e639c",
-    color: "#ffffff",
-    padding: "8px 12px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var buttonDisabledStyles = {
-    ...buttonStyles2,
-    background: "#2d2d30",
-    color: "#9f9f9f",
-    cursor: "not-allowed",
-    borderColor: "#3c3c3c"
-  };
-  var pendingButtonStyles = {
-    ...buttonStyles2,
-    background: "#c18400",
-    borderColor: "#f0c674",
-    color: "#1b1b1b"
-  };
-  var VersionRowItemComponent = ({
-    row,
-    disabled,
-    onClick,
-    isUpdating,
-    pendingConfirmation
-  }) => {
-    const hasUpdate = !disabled && row.latestVersion !== null && row.latestVersion !== void 0 && row.latestVersion !== row.currentVersion;
-    const buttonLabel = (() => {
-      if (isUpdating) {
-        return `Updating to ${row.latestVersion ?? "latest"}\u2026`;
-      }
-      if (!hasUpdate) {
-        if (row.latestVersion) {
-          return `Up to date (${row.latestVersion})`;
-        }
-        return "Up to date";
-      }
-      if (pendingConfirmation) {
-        return "Click again to confirm";
-      }
-      return `Update to ${row.latestVersion ?? "latest"}`;
-    })();
-    const currentLabel = row.currentVersion ?? "Not detected";
-    const latestLabel = row.latestVersion ?? "Latest: unknown";
-    let resolvedButtonStyle = buttonDisabledStyles;
-    if (pendingConfirmation) {
-      resolvedButtonStyle = pendingButtonStyles;
-    } else if (hasUpdate && !disabled) {
-      resolvedButtonStyle = buttonStyles2;
-    }
-    const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: labelStyles2, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { style: versionTextStyles, children: [
-          "Current: ",
-          currentLabel,
-          " ",
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
-        ] })
-      ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        "button",
-        {
-          disabled: disabled || !hasUpdate,
-          onClick,
-          style: resolvedButtonStyle,
-          type: "button",
-          children: buttonLabel
-        }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
-    ] });
-  };
-  var VersionRowItem = (0, import_react9.memo)(VersionRowItemComponent);
-
-  // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var warningStyles2 = {
-    background: "#3a2a1f",
-    border: "1px solid #9b6b3d",
-    color: "#ffd7a3",
-    borderRadius: "4px",
-    padding: "8px 10px",
-    fontSize: "12px",
-    lineHeight: 1.5
-  };
-  var toggleContainerStyles = {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "12px",
-    padding: "10px 12px",
-    borderRadius: "6px",
-    border: "1px solid #2f2f2f",
-    background: "#252526"
-  };
-  var toggleCheckboxStyles = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var toggleTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var toggleDescriptionStyles = {
-    fontSize: "12px",
-    color: "#9f9f9f",
-    lineHeight: 1.4,
-    margin: 0
-  };
-  var providerBannerStyles = (provider) => {
-    if (provider === "claude") {
-      return {
-        background: "#312d2a",
-        border: "1px solid #ff9105",
-        color: "#ffb76f"
-      };
-    }
-    if (provider === "codex") {
-      return {
-        background: "#293230",
-        border: "1px solid #01f0d8",
-        color: "#9cf8ef"
-      };
-    }
-    return {
-      background: "#2c2a2d",
-      border: "1px solid #ab34cb",
-      color: "#e7b3f5"
-    };
-  };
-  var resolveProviderLabel = (provider) => {
-    if (provider === "claude") {
-      return "Claude";
-    }
-    if (provider === "codex") {
-      return "Codex";
-    }
-    return "Gemini";
-  };
-  var resolveTargetLabel = (provider, target) => {
-    if (provider === "gemini" && target === "core") {
-      return "CLI Core";
-    }
-    if (target === "cli") {
-      return "CLI";
-    }
-    return "SDK";
-  };
-  var formatCheckedAt = (value) => {
-    if (!value) {
-      return null;
-    }
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-      return null;
-    }
-    const year = parsed.getFullYear();
-    const month = String(parsed.getMonth() + 1).padStart(2, "0");
-    const day = String(parsed.getDate()).padStart(2, "0");
-    const hours = String(parsed.getHours()).padStart(2, "0");
-    const minutes = String(parsed.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-  };
-  var WarningBanner = ({
-    provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
-  var AutoUpdateToggle = ({
-    provider,
-    enabled,
-    disabled,
-    onToggle
-  }) => {
-    const providerLabel = resolveProviderLabel(provider);
-    const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-      "label",
-      {
-        style: {
-          ...toggleContainerStyles,
-          opacity: disabled ? 0.6 : 1,
-          cursor: disabled ? "not-allowed" : "pointer"
-        },
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            "input",
-            {
-              checked: enabled,
-              disabled,
-              onChange: (event) => onToggle(event.target.checked),
-              style: toggleCheckboxStyles,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: toggleTitleStyles, children: [
-              "Auto-update ",
-              providerLabel
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { style: toggleDescriptionStyles, children: [
-              "Automatically check and update the ",
-              packageLabel,
-              " on core start. Manual updates remain available below."
-            ] })
-          ] })
-        ]
-      }
-    );
-  };
-
-  // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  var rowsContainerStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var statusStyles2 = {
-    fontSize: "12px",
-    color: "#ffb86c",
-    marginTop: "6px"
-  };
-  var errorStyles = {
-    fontSize: "12px",
-    color: "#ff8a8a",
-    marginTop: "6px"
-  };
-  var metadataTextStyles = {
-    fontSize: "12px",
-    color: "#b7b7b7"
-  };
-  var ProviderVersions = ({
-    provider,
-    versions,
-    autoUpdateEnabled,
-    onAutoUpdateChange,
-    onUpdate
-  }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react10.useState)(null);
-    const snapshot = versions.data;
-    const rows = (0, import_react10.useMemo)(() => {
-      if (!snapshot) {
-        return [];
-      }
-      if (provider === "gemini") {
-        const geminiSnapshot = snapshot.gemini;
-        if (!geminiSnapshot) {
-          return [];
-        }
-        return [
-          {
-            label: "Gemini CLI",
-            packageName: geminiSnapshot.cli.packageName,
-            currentVersion: geminiSnapshot.cli.currentVersion,
-            latestVersion: geminiSnapshot.cli.latestVersion,
-            target: void 0,
-            showUpdateButton: false
-          },
-          {
-            label: "Gemini CLI Core",
-            packageName: geminiSnapshot.core.packageName,
-            currentVersion: geminiSnapshot.core.currentVersion,
-            latestVersion: geminiSnapshot.core.latestVersion,
-            target: "core",
-            showUpdateButton: true
-          }
-        ];
-      }
-      const providerSnapshot = provider === "claude" ? snapshot.claude : snapshot.codex;
-      if (!providerSnapshot) {
-        return [];
-      }
-      const prefix = provider === "claude" ? "Claude" : "Codex";
-      return [
-        {
-          label: `${prefix} CLI`,
-          packageName: providerSnapshot.cli.packageName,
-          currentVersion: providerSnapshot.cli.currentVersion,
-          latestVersion: providerSnapshot.cli.latestVersion,
-          target: "cli"
-        },
-        {
-          label: `${prefix} SDK`,
-          packageName: providerSnapshot.sdk.packageName,
-          currentVersion: providerSnapshot.sdk.currentVersion,
-          latestVersion: providerSnapshot.sdk.latestVersion,
-          target: "sdk"
-        }
-      ];
-    }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react10.useMemo)(() => {
-      if (!snapshot) {
-        return false;
-      }
-      if (provider === "gemini") {
-        return Boolean(snapshot.gemini);
-      }
-      return provider === "claude" ? Boolean(snapshot.claude) : Boolean(snapshot.codex);
-    }, [provider, snapshot]);
-    const isBusy = versions.loading || versions.updatingTargets.length > 0;
-    const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
-    const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react10.useMemo)(() => {
-      const prefix = `${provider}:`;
-      return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
-    }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react10.useMemo)(() => {
-      if (providerUpdateTargets.length === 0) {
-        return null;
-      }
-      const labels = providerUpdateTargets.map(
-        (target) => resolveTargetLabel(provider, target)
-      );
-      return `Manual update in progress: ${labels.join(", ")}`;
-    }, [provider, providerUpdateTargets]);
-    (0, import_react10.useEffect)(() => {
-      if (versions.updatingTargets.length === 0) {
-        setPendingTarget(null);
-      }
-    }, [versions.updatingTargets]);
-    const handleUpdate = (target) => {
-      const key = `${provider}:${target}`;
-      if (pendingTarget !== key) {
-        setPendingTarget(key);
-        return;
-      }
-      setPendingTarget(null);
-      onUpdate(provider, target);
-    };
-    let title = "Gemini Versions";
-    if (provider === "claude") {
-      title = "Claude Versions";
-    } else if (provider === "codex") {
-      title = "Codex Versions";
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-      settings_card_default,
-      {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: metadataTextStyles, children: [
-          "Checked: ",
-          formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
-        ] }) : null,
-        title,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-            AutoUpdateToggle,
-            {
-              disabled: versions.loading,
-              enabled: autoUpdateEnabled,
-              onToggle: (enabled) => onAutoUpdateChange(provider, enabled),
-              provider
-            }
-          ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles2, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles2, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles2, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-            VersionRowItem,
-            {
-              disabled: isBusy,
-              isUpdating: row.target ? isUpdating(row.target) : false,
-              onClick: row.target ? () => handleUpdate(row.target) : void 0,
-              pendingConfirmation: row.target ? isPending(row.target) : false,
-              row
-            },
-            row.packageName
-          )) })
-        ]
-      }
-    );
-  };
-  var provider_versions_default = (0, import_react10.memo)(ProviderVersions);
-
-  // src/client/ui/src/components/settings/session-continuity-card.tsx
-  var import_react11 = __toESM(require_react());
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
-  var settingsLabelStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    fontSize: "12px",
-    color: "#cccccc"
-  };
-  var settingsDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    lineHeight: 1.5,
-    color: "#aaaaaa"
-  };
-  var settingsInputStyles = {
-    width: "220px",
-    background: "#1e1e1e",
-    border: "1px solid #3c3c3c",
-    borderRadius: "6px",
-    padding: "8px 10px",
-    color: "#cccccc"
-  };
-  var UNSIGNED_INTEGER_RE = /^\d+$/;
-  var isUnsignedIntegerText = (value) => UNSIGNED_INTEGER_RE.test(value);
-  var clampInteger = (value, min, max) => Math.min(max, Math.max(min, value));
-  var ManualIntegerInput = ({
-    id,
-    value,
-    min,
-    max,
-    onCommit
-  }) => {
-    const [draft, setDraft] = import_react11.default.useState(() => String(value));
-    import_react11.default.useEffect(() => {
-      setDraft(String(value));
-    }, [value]);
-    const commitDraft = import_react11.default.useCallback(() => {
-      const trimmed = draft.trim();
-      if (trimmed.length === 0) {
-        setDraft(String(value));
-        return;
-      }
-      if (!isUnsignedIntegerText(trimmed)) {
-        setDraft(String(value));
-        return;
-      }
-      const parsed = Number(trimmed);
-      if (!Number.isFinite(parsed)) {
-        setDraft(String(value));
-        return;
-      }
-      const clamped = clampInteger(parsed, min, max);
-      onCommit(clamped);
-      setDraft(String(clamped));
-    }, [draft, max, min, onCommit, value]);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-      "input",
-      {
-        autoComplete: "off",
-        id,
-        inputMode: "numeric",
-        onBlur: commitDraft,
-        onChange: (event) => setDraft(event.target.value),
-        onKeyDown: (event) => {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            event.currentTarget.blur();
-          }
-          if (event.key === "Escape") {
-            event.preventDefault();
-            setDraft(String(value));
-            event.currentTarget.blur();
-          }
-        },
-        pattern: "[0-9]*",
-        style: settingsInputStyles,
-        type: "text",
-        value: draft
-      }
-    );
-  };
-  var SessionContinuityCard = ({
-    title,
-    remainingPercentThreshold,
-    onRemainingPercentThresholdChange,
-    contextWindowTokenLimit,
-    onContextWindowTokenLimitChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(settings_card_default, { title, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
-    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
-      "label",
-      {
-        htmlFor: `${title}-context-window-token-limit`,
-        style: settingsLabelStyles,
-        children: [
-          "Context window limit (tokens)",
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            ManualIntegerInput,
-            {
-              id: `${title}-context-window-token-limit`,
-              max: 1e6,
-              min: 1e4,
-              onCommit: onContextWindowTokenLimitChange,
-              value: contextWindowTokenLimit
-            }
-          )
-        ]
-      }
-    ) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
-      "label",
-      {
-        htmlFor: `${title}-remaining-percent-threshold`,
-        style: settingsLabelStyles,
-        children: [
-          "Remaining context threshold (%)",
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            ManualIntegerInput,
-            {
-              id: `${title}-remaining-percent-threshold`,
-              max: 80,
-              min: 5,
-              onCommit: onRemainingPercentThresholdChange,
-              value: remainingPercentThreshold
-            }
-          )
-        ]
-      }
-    )
-  ] });
-  var session_continuity_card_default = import_react11.default.memo(SessionContinuityCard);
-
-  // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
-  var containerStyles = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "12px 20px",
-    borderTop: `1px solid ${settingsColorTokens.borderSubtle}`,
-    flexShrink: 0
-  };
-  var resetButtonStyles = {
-    padding: "6px 12px",
-    background: "transparent",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    borderRadius: "4px",
-    color: settingsColorTokens.textSecondary,
-    cursor: "pointer",
-    fontSize: settingsTypographyTokens.tabFontSize,
-    transition: "all 0.2s ease"
-  };
-  var closeButtonStyles2 = {
-    padding: "6px 16px",
-    background: "transparent",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    borderRadius: "4px",
-    color: settingsColorTokens.textSecondary,
-    cursor: "pointer",
-    fontSize: settingsTypographyTokens.tabFontSize,
-    transition: "all 0.2s ease"
-  };
-  var saveButtonStyles4 = {
-    padding: "6px 16px",
-    background: settingsColorTokens.borderStrong,
-    border: "none",
-    borderRadius: "4px",
-    color: "#808080",
-    cursor: "default",
-    fontSize: settingsTypographyTokens.tabFontSize,
-    transition: "all 0.2s ease"
-  };
-  var buttonGroupStyles = {
-    display: "flex",
-    gap: "8px"
-  };
-  var DISABLED_OPACITY = 0.6;
-  var HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
-  var HOVER_BORDER_COLOR = "#4c4c4c";
-  var SAVE_HOVER_COLOR = "#1177bb";
-  var SettingsFooter = ({
-    hasChanges,
-    saving,
-    resetting,
-    onClose,
-    onSave,
-    onReset
-  }) => {
-    const handleResetMouseEnter = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-      }
-    };
-    const handleResetMouseLeave = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = "transparent";
-        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-      }
-    };
-    const handleResetFocus = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-      }
-    };
-    const handleResetBlur = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = "transparent";
-        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-      }
-    };
-    const handleCloseMouseEnter = (event) => {
-      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-    };
-    const handleCloseMouseLeave = (event) => {
-      event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-    };
-    const handleCloseFocus = (event) => {
-      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-    };
-    const handleCloseBlur = (event) => {
-      event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-    };
-    const handleSaveMouseEnter = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = SAVE_HOVER_COLOR;
-      }
-    };
-    const handleSaveMouseLeave = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
-      }
-    };
-    const handleSaveFocus = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = SAVE_HOVER_COLOR;
-      }
-    };
-    const handleSaveBlur = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
-      }
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-        "button",
-        {
-          disabled: resetting,
-          onBlur: handleResetBlur,
-          onClick: onReset,
-          onFocus: handleResetFocus,
-          onMouseEnter: handleResetMouseEnter,
-          onMouseLeave: handleResetMouseLeave,
-          style: {
-            ...resetButtonStyles,
-            background: resetting ? settingsColorTokens.borderStrong : "transparent",
-            color: resetting ? "#808080" : settingsColorTokens.textSecondary,
-            cursor: resetting ? "default" : "pointer",
-            opacity: resetting ? DISABLED_OPACITY : 1
-          },
-          title: "Reset all settings to defaults",
-          type: "button",
-          children: resetting ? "Resetting..." : "Reset to Defaults"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-          "button",
-          {
-            onBlur: handleCloseBlur,
-            onClick: onClose,
-            onFocus: handleCloseFocus,
-            onMouseEnter: handleCloseMouseEnter,
-            onMouseLeave: handleCloseMouseLeave,
-            style: closeButtonStyles2,
-            type: "button",
-            children: "Close"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-          "button",
-          {
-            disabled: !hasChanges || saving,
-            onBlur: handleSaveBlur,
-            onClick: onSave,
-            onFocus: handleSaveFocus,
-            onMouseEnter: handleSaveMouseEnter,
-            onMouseLeave: handleSaveMouseLeave,
-            style: {
-              ...saveButtonStyles4,
-              background: hasChanges && !saving ? settingsColorTokens.actionPrimary : saveButtonStyles4.background,
-              color: hasChanges ? settingsColorTokens.actionPrimaryText : saveButtonStyles4.color,
-              cursor: hasChanges && !saving ? "pointer" : "default",
-              opacity: saving ? DISABLED_OPACITY : 1
-            },
-            type: "button",
-            children: saving ? "Saving..." : "Save Changes"
-          }
-        )
-      ] })
-    ] });
-  };
-  var settings_footer_default = SettingsFooter;
-
-  // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
-  var headerStyles3 = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "12px 16px",
-    borderBottom: "1px solid #2d2d30",
-    flexShrink: 0
-  };
-  var titleStyles3 = {
-    fontSize: "16px",
-    fontWeight: 600
-  };
-  var closeButtonStyles3 = {
-    background: "transparent",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    cursor: "pointer",
-    padding: "4px 8px",
-    fontSize: "18px",
-    width: "32px",
-    height: "32px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: headerStyles3, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: titleStyles3, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-      "button",
-      {
-        "aria-label": "Close settings",
-        onClick: onClose,
-        style: closeButtonStyles3,
-        title: "Close settings",
-        type: "button",
-        children: "\xD7"
-      }
-    )
-  ] });
-  var settings_header_default = SettingsHeader;
-
-  // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react12 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/thinking/constants.ts
-  var MIN_THINKING_TOKENS = 2e3;
-  var MAX_THINKING_TOKENS = 32e3;
-  var THINKING_TOKEN_STEP = 1e3;
-  var hideSpinnerStyle = `
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`;
-
-  // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
-  var containerStyles2 = {
-    marginTop: "20px",
-    padding: "12px",
-    background: "#1a1a1a",
-    borderRadius: "4px",
-    border: "1px solid #2d2d30"
-  };
-  var titleStyles4 = {
-    fontSize: "12px",
-    color: "#7ca9d3",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var descriptionStyles3 = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: "1.4"
-  };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: titleStyles4, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
-  ] });
-  var thinking_pro_tip_default = ThinkingProTip;
-
-  // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
-  var toggleContainerStyles2 = {
-    display: "flex",
-    alignItems: "flex-start",
-    cursor: "pointer",
-    gap: "12px",
-    marginBottom: "20px"
-  };
-  var checkboxStyles = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var titleStyles5 = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var descriptionStyles4 = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: "1.4"
-  };
-  var noteStyles2 = {
-    color: "#d4a36a"
-  };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-      "input",
-      {
-        checked: enabled,
-        onChange: (event) => onToggle(event.target.checked),
-        style: checkboxStyles,
-        type: "checkbox"
-      }
-    ),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: titleStyles5, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: descriptionStyles4, children: [
-        "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { style: noteStyles2, children: "Note:" }),
-        " Changes take effect when creating a new session."
-      ] })
-    ] })
-  ] });
-  var thinking_toggle_default = ThinkingToggle;
-
-  // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
-  var containerStyles3 = {
-    paddingLeft: "28px",
-    borderTop: "1px solid #3c3c3c",
-    paddingTop: "15px"
-  };
-  var titleStyles6 = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "8px"
-  };
-  var controlsStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
-  };
-  var buttonStyles3 = {
-    width: "28px",
-    height: "28px",
-    background: "#2d2d30",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    cursor: "pointer",
-    fontSize: "16px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  };
-  var inputStyles2 = {
-    width: "100px",
-    padding: "6px 8px",
-    background: "#1e1e1e",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    fontSize: "13px",
-    textAlign: "center",
-    MozAppearance: "textfield",
-    appearance: "textfield"
-  };
-  var helperStyles = {
-    fontSize: "12px",
-    color: "#999999",
-    marginTop: "8px",
-    lineHeight: "1.4"
-  };
-  var ThinkingTokenInput = ({
-    value,
-    onChange
-  }) => {
-    const updateValue = (next) => {
-      const constrained = Math.min(
-        MAX_THINKING_TOKENS,
-        Math.max(MIN_THINKING_TOKENS, next)
-      );
-      onChange(constrained);
-    };
-    const handleInputChange = (event) => {
-      const parsed = Number.parseInt(event.target.value, 10);
-      updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles6, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-          "button",
-          {
-            onClick: () => updateValue(value - THINKING_TOKEN_STEP),
-            style: buttonStyles3,
-            title: "Decrease by 1000",
-            type: "button",
-            children: "\u2212"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-          "input",
-          {
-            max: MAX_THINKING_TOKENS,
-            min: MIN_THINKING_TOKENS,
-            onChange: handleInputChange,
-            step: THINKING_TOKEN_STEP,
-            style: inputStyles2,
-            type: "number",
-            value
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-          "button",
-          {
-            onClick: () => updateValue(value + THINKING_TOKEN_STEP),
-            style: buttonStyles3,
-            title: "Increase by 1000",
-            type: "button",
-            children: "+"
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: helperStyles, children: [
-        "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
-        "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
-        "\u2022 Ultra (32000): Maximum reasoning capacity"
-      ] })
-    ] }) });
-  };
-  var thinking_token_input_default = ThinkingTokenInput;
-
-  // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
-  var wrapperStyles2 = {
-    marginBottom: "30px"
-  };
-  var displaySyncToggleStyles3 = {
-    display: "flex",
-    alignItems: "flex-start",
-    cursor: "pointer",
-    gap: "12px",
-    marginBottom: "20px"
-  };
-  var displaySyncCheckboxStyles3 = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var displaySyncTitleStyles3 = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var displaySyncDescriptionStyles3 = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: "1.4"
-  };
-  var ThinkingSettings = ({
-    enabled,
-    maxTokens,
-    thinkingDisplaySyncEnabled,
-    onThinkingDisplaySyncChange,
-    onChange
-  }) => {
-    const handleToggle = (nextEnabled) => {
-      onChange(nextEnabled, maxTokens);
-    };
-    const handleTokenChange = (nextValue) => {
-      onChange(enabled, nextValue);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { style: displaySyncToggleStyles3, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            "input",
-            {
-              checked: thinkingDisplaySyncEnabled,
-              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
-              style: displaySyncCheckboxStyles3,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_pro_tip_default, {})
-      ] })
-    ] });
-  };
-  var thinking_settings_default = (0, import_react12.memo)(ThinkingSettings);
-
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react13 = __toESM(require_react());
+  var import_react = __toESM(require_react());
 
   // src/types/provider.ts
   var PROVIDER_TITLE_MAP = {
@@ -10663,6 +8268,140 @@
     }
   });
 
+  // src/types/claude-model-registry.ts
+  var CLAUDE_MODEL_ALIASES = [
+    {
+      alias: "sonnet",
+      displayName: "Sonnet 4.5",
+      description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
+      status: "active"
+    },
+    {
+      alias: "opus",
+      displayName: "Opus 4.5",
+      description: "Most capable for complex, agentic workloads.",
+      status: "active"
+    },
+    {
+      alias: "haiku",
+      displayName: "Haiku 4.5",
+      description: "Fastest alias for quick answers and prototyping.",
+      status: "active"
+    }
+  ];
+  var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
+    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
+  ]);
+  var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
+
+  // src/types/codex-model-registry.ts
+  var CODEX_SETTINGS_MODELS = [
+    {
+      id: "gpt-5.3-codex",
+      displayName: "GPT-5.3-Codex",
+      description: "Most advanced agentic coding model for real-world engineering",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "flagship"
+    },
+    {
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    },
+    {
+      id: "gpt-5.4-mini",
+      displayName: "GPT-5.4 Mini",
+      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "mini"
+    }
+  ];
+  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
+  var CODEX_REASONING_LEVELS = [
+    {
+      name: "low",
+      description: "Fast responses with lighter reasoning",
+      useCase: "Quick tasks, simple queries",
+      default: false
+    },
+    {
+      name: "medium",
+      description: "Balances speed and reasoning depth for everyday tasks",
+      useCase: "Most development tasks",
+      default: true
+    },
+    {
+      name: "high",
+      description: "Greater reasoning depth for complex problems",
+      useCase: "Complex refactoring, architecture decisions",
+      default: false
+    },
+    {
+      name: "xhigh",
+      description: "Extra high reasoning depth for complex problems",
+      useCase: "Very complex problems requiring deep analysis",
+      default: false
+    }
+  ];
+  var DEFAULT_CODEX_REASONING_LEVEL = "medium";
+
+  // src/types/gemini-model-registry.ts
+  var GEMINI_RECOMMENDED_MODELS = [
+    {
+      id: "gemini-3.1-pro-preview",
+      displayName: "Gemini 3.1 Pro",
+      description: "Most advanced reasoning Gemini model (1M context).",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["low", "high"]
+    },
+    {
+      id: "gemini-3-flash-preview",
+      displayName: "Gemini 3 Flash",
+      description: "Pro-grade reasoning with Flash-level latency and cost.",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["minimal", "low", "medium", "high"]
+    }
+  ];
+  var GEMINI_MODEL_ID_SET = new Set(
+    GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
+  );
+  var DEFAULT_GEMINI_MODEL_ID = "gemini-3.1-pro-preview";
+  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
+  var GEMINI_THINKING_LEVELS = [
+    {
+      name: "off",
+      description: "Disable model's internal thinking process.",
+      useCase: "Basic tasks, fastest response."
+    },
+    {
+      name: "minimal",
+      description: "Absolute minimum reasoning tokens.",
+      useCase: "Low-complexity tasks, very low latency."
+    },
+    {
+      name: "low",
+      description: "Balanced reasoning for simpler tasks.",
+      useCase: "General coding and quick queries."
+    },
+    {
+      name: "medium",
+      description: "Advanced reasoning for moderate complexity.",
+      useCase: "Standard development and problem solving."
+    },
+    {
+      name: "high",
+      description: "Maximum reasoning depth.",
+      useCase: "Complex refactoring and PhD-level research."
+    }
+  ];
+
   // src/client/ui/src/components/settings/gemini-mapping.ts
   var GEMINI_THINKING_LEVEL_SET = new Set(
     GEMINI_THINKING_LEVELS.map((level) => level.name)
@@ -10731,6 +8470,25 @@
     }
     return leftEntries.every(([modelId, level]) => right[modelId] === level);
   };
+
+  // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
+  var RESPONSE_MODE_OPTIONS = [
+    {
+      id: "strict",
+      label: "Strict",
+      description: "Force a JSON-shaped final answer using the editable strict schema."
+    },
+    {
+      id: "hybrid",
+      label: "Hybrid",
+      description: "Allow free commentary during the turn and keep structure only for terminal output."
+    },
+    {
+      id: "debug_raw",
+      label: "Debug/Raw",
+      description: "Diagnostic mode for new models: avoid hard schema pressure on live turns."
+    }
+  ];
 
   // src/client/ui/src/components/settings/general-response-mode/response-mode-state.ts
   var DEFAULT_STRICT_OUTPUT_SCHEMA = {
@@ -10803,6 +8561,8 @@
   var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
   var DEFAULT_CORE_RESTART_ENABLED = true;
+  var DEFAULT_LOCALIZATION_LANGUAGE = "source";
+  var DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
   var DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
   var MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
   var MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
@@ -10817,6 +8577,7 @@
     return accumulator;
   }, {});
   var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var mapLocalizationString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -10834,10 +8595,40 @@
   var mapAutoUpdateSettings = (value) => ({
     enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
   });
+  var mapLocalizationCategories = (value, defaultLanguage) => ({
+    userGuidance: mapLocalizationString(value?.userGuidance, defaultLanguage),
+    uiInterface: mapLocalizationString(value?.uiInterface, defaultLanguage),
+    workflowTerms: mapLocalizationString(value?.workflowTerms, defaultLanguage),
+    systemFeedback: mapLocalizationString(value?.systemFeedback, defaultLanguage),
+    interactiveTemplates: mapLocalizationString(
+      value?.interactiveTemplates,
+      defaultLanguage
+    )
+  });
+  var mapLocalizationWorkflowTermsPolicy = (value) => value === "translate" ? "translate" : "keep_english";
+  var mapLocalizationSettings = (value) => {
+    const defaultLanguage = mapLocalizationString(
+      value?.defaultLanguage,
+      DEFAULT_LOCALIZATION_LANGUAGE
+    );
+    return {
+      defaultLanguage,
+      categories: mapLocalizationCategories(value?.categories, defaultLanguage),
+      workflowTermsPolicy: mapLocalizationWorkflowTermsPolicy(
+        value?.workflowTermsPolicy
+      ),
+      engineId: mapLocalizationString(
+        value?.engineId,
+        DEFAULT_LOCALIZATION_ENGINE_ID
+      ),
+      glossaryEnabled: typeof value?.glossaryEnabled === "boolean" ? value.glossaryEnabled : true
+    };
+  };
   var mapGeneralSettings = (value) => ({
     coreControls: {
       allowRestart: typeof value?.coreControls?.allowRestart === "boolean" ? value.coreControls.allowRestart : DEFAULT_CORE_RESTART_ENABLED
     },
+    localization: mapLocalizationSettings(value?.localization),
     responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy)
   });
   var mapContinuity = (value) => {
@@ -10923,7 +8714,9 @@
       ([modelId, reasoning]) => right[modelId] === reasoning
     );
   };
-  var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
+  var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
+  var areLocalizationCategoriesEqual = (left, right) => left.userGuidance === right.userGuidance && left.uiInterface === right.uiInterface && left.workflowTerms === right.workflowTerms && left.systemFeedback === right.systemFeedback && left.interactiveTemplates === right.interactiveTemplates;
+  var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.glossaryEnabled === right.glossaryEnabled;
   var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areCodexReasoningSummarySettingsEqual(left, right) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areThinkingDisplaySyncSettingsEqual(left, right) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
@@ -10945,24 +8738,35 @@
 
   // src/client/ui/src/components/settings/use-settings-state.ts
   var RESET_DELAY_MS = 100;
+  var DEFAULT_LOCALIZATION_LANGUAGE2 = "source";
+  var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
+  var LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY = "codeaihub:settings:localization:user-glossary-draft";
+  var normalizeLocalizationSelection = (value) => {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_LANGUAGE2;
+  };
+  var normalizeLocalizationEngineId = (value) => {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
+  };
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react13.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react13.useState)(createDefaultSettings);
-    const [hasChanges, setHasChanges] = (0, import_react13.useState)(false);
-    const [saving, setSaving] = (0, import_react13.useState)(false);
-    const [resetting, setResetting] = (0, import_react13.useState)(false);
-    const [coreControl, setCoreControl] = (0, import_react13.useState)({
+    const initialSettingsRef = (0, import_react.useRef)(createDefaultSettings());
+    const [settings, setSettings] = (0, import_react.useState)(createDefaultSettings);
+    const [hasChanges, setHasChanges] = (0, import_react.useState)(false);
+    const [saving, setSaving] = (0, import_react.useState)(false);
+    const [resetting, setResetting] = (0, import_react.useState)(false);
+    const [coreControl, setCoreControl] = (0, import_react.useState)({
       busy: false,
       message: null,
       phase: "idle"
     });
-    const [versions, setVersions] = (0, import_react13.useState)(() => ({
+    const [versions, setVersions] = (0, import_react.useState)(() => ({
       data: null,
       loading: true,
       error: null,
       updatingTargets: []
     }));
-    (0, import_react13.useEffect)(() => {
+    (0, import_react.useEffect)(() => {
       vscode_default.postMessage({
         type: "settings:load"
       });
@@ -11006,23 +8810,23 @@
         window.removeEventListener("message", handleMessage);
       };
     }, []);
-    const updateSettings = (0, import_react13.useCallback)((nextSettings) => {
+    const updateSettings = (0, import_react.useCallback)((nextSettings) => {
       setSettings(nextSettings);
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
-    const handleThinkingSettingsChange = (0, import_react13.useCallback)(
+    const handleThinkingSettingsChange = (0, import_react.useCallback)(
       (enabled, maxTokens) => {
         updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
       },
       [settings, updateSettings]
     );
-    const handleClaudeDefaultModelChange = (0, import_react13.useCallback)(
+    const handleClaudeDefaultModelChange = (0, import_react.useCallback)(
       (modelId) => {
         updateSettings(updateClaudeDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleClaudeContinuityRemainingPercentThresholdChange = (0, import_react13.useCallback)(
+    const handleClaudeContinuityRemainingPercentThresholdChange = (0, import_react.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -11034,7 +8838,7 @@
       },
       [settings, updateSettings]
     );
-    const handleCodexContinuityRemainingPercentThresholdChange = (0, import_react13.useCallback)(
+    const handleCodexContinuityRemainingPercentThresholdChange = (0, import_react.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -11046,7 +8850,7 @@
       },
       [settings, updateSettings]
     );
-    const handleGeminiContinuityRemainingPercentThresholdChange = (0, import_react13.useCallback)(
+    const handleGeminiContinuityRemainingPercentThresholdChange = (0, import_react.useCallback)(
       (remainingPercentThreshold) => {
         if (!Number.isFinite(remainingPercentThreshold)) {
           return;
@@ -11058,7 +8862,7 @@
       },
       [settings, updateSettings]
     );
-    const handleGeminiContextWindowTokenLimitChange = (0, import_react13.useCallback)(
+    const handleGeminiContextWindowTokenLimitChange = (0, import_react.useCallback)(
       (contextWindowTokenLimit) => {
         if (!Number.isFinite(contextWindowTokenLimit)) {
           return;
@@ -11070,55 +8874,136 @@
       },
       [settings, updateSettings]
     );
-    const handleCodexDefaultModelChange = (0, import_react13.useCallback)(
+    const handleCodexDefaultModelChange = (0, import_react.useCallback)(
       (modelId) => {
         updateSettings(updateCodexDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleCodexReasoningChange = (0, import_react13.useCallback)(
+    const handleCodexReasoningChange = (0, import_react.useCallback)(
       (modelId, reasoning) => {
         updateSettings(updateCodexReasoning(settings, modelId, reasoning));
       },
       [settings, updateSettings]
     );
-    const handleProviderAutoUpdateChange = (0, import_react13.useCallback)(
+    const handleProviderAutoUpdateChange = (0, import_react.useCallback)(
       (provider, enabled) => {
         updateSettings(updateProviderAutoUpdate(settings, provider, enabled));
       },
       [settings, updateSettings]
     );
-    const handleResponsePolicyModeChange = (0, import_react13.useCallback)(
+    const handleLocalizationDefaultLanguageChange = (0, import_react.useCallback)(
+      (defaultLanguage) => {
+        const normalizedDefaultLanguage = normalizeLocalizationSelection(defaultLanguage);
+        updateSettings({
+          ...settings,
+          general: {
+            ...settings.general,
+            localization: {
+              ...settings.general.localization,
+              defaultLanguage: normalizedDefaultLanguage
+            }
+          }
+        });
+      },
+      [settings, updateSettings]
+    );
+    const handleLocalizationCategoryLanguageChange = (0, import_react.useCallback)(
+      (category, language) => {
+        const normalizedLanguage = normalizeLocalizationSelection(language);
+        updateSettings({
+          ...settings,
+          general: {
+            ...settings.general,
+            localization: {
+              ...settings.general.localization,
+              categories: {
+                ...settings.general.localization.categories,
+                [category]: normalizedLanguage
+              }
+            }
+          }
+        });
+      },
+      [settings, updateSettings]
+    );
+    const handleLocalizationWorkflowTermsPolicyChange = (0, import_react.useCallback)(
+      (workflowTermsPolicy) => {
+        updateSettings({
+          ...settings,
+          general: {
+            ...settings.general,
+            localization: {
+              ...settings.general.localization,
+              workflowTermsPolicy
+            }
+          }
+        });
+      },
+      [settings, updateSettings]
+    );
+    const handleLocalizationEngineIdChange = (0, import_react.useCallback)(
+      (engineId) => {
+        const normalizedEngineId = normalizeLocalizationEngineId(engineId);
+        updateSettings({
+          ...settings,
+          general: {
+            ...settings.general,
+            localization: {
+              ...settings.general.localization,
+              engineId: normalizedEngineId
+            }
+          }
+        });
+      },
+      [settings, updateSettings]
+    );
+    const handleLocalizationGlossaryEnabledChange = (0, import_react.useCallback)(
+      (enabled) => {
+        updateSettings({
+          ...settings,
+          general: {
+            ...settings.general,
+            localization: {
+              ...settings.general.localization,
+              glossaryEnabled: enabled
+            }
+          }
+        });
+      },
+      [settings, updateSettings]
+    );
+    const handleResponsePolicyModeChange = (0, import_react.useCallback)(
       (mode) => {
         updateSettings(updateResponsePolicyMode(settings, mode));
       },
       [settings, updateSettings]
     );
-    const handleStrictSchemaTextChange = (0, import_react13.useCallback)(
+    const handleStrictSchemaTextChange = (0, import_react.useCallback)(
       (value) => {
         updateSettings(updateStrictSchemaText(settings, value));
       },
       [settings, updateSettings]
     );
-    const handleStrictInstructionTextChange = (0, import_react13.useCallback)(
+    const handleStrictInstructionTextChange = (0, import_react.useCallback)(
       (value) => {
         updateSettings(updateStrictInstructionText(settings, value));
       },
       [settings, updateSettings]
     );
-    const handleGeminiDefaultModelChange = (0, import_react13.useCallback)(
+    const handleGeminiDefaultModelChange = (0, import_react.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingChange = (0, import_react13.useCallback)(
+    const handleGeminiThinkingChange = (0, import_react.useCallback)(
       (modelId, level) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-    const handleClaudeThinkingDisplaySyncChange = (0, import_react13.useCallback)(
+    const handleClaudeThinkingDisplaySyncChange = (0, import_react.useCallback)(
       (enabled) => {
         updateSettings(
           updateThinkingDisplaySyncEnabled(settings, "claude", enabled)
@@ -11126,7 +9011,7 @@
       },
       [settings, updateSettings]
     );
-    const handleCodexThinkingDisplaySyncChange = (0, import_react13.useCallback)(
+    const handleCodexThinkingDisplaySyncChange = (0, import_react.useCallback)(
       (enabled) => {
         updateSettings(
           updateThinkingDisplaySyncEnabled(settings, "codex", enabled)
@@ -11138,7 +9023,7 @@
       },
       [settings, updateSettings]
     );
-    const handleGeminiThinkingDisplaySyncChange = (0, import_react13.useCallback)(
+    const handleGeminiThinkingDisplaySyncChange = (0, import_react.useCallback)(
       (enabled) => {
         updateSettings(
           updateThinkingDisplaySyncEnabled(settings, "gemini", enabled)
@@ -11146,14 +9031,14 @@
       },
       [settings, updateSettings]
     );
-    const handleSave = (0, import_react13.useCallback)(() => {
+    const handleSave = (0, import_react.useCallback)(() => {
       setSaving(true);
       vscode_default.postMessage({
         type: "settings:save",
         settings
       });
     }, [settings]);
-    const handleReset = (0, import_react13.useCallback)(() => {
+    const handleReset = (0, import_react.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
         vscode_default.postMessage({
@@ -11161,7 +9046,7 @@
         });
       }, RESET_DELAY_MS);
     }, []);
-    const handleUpdateProvider = (0, import_react13.useCallback)(
+    const handleUpdateProvider = (0, import_react.useCallback)(
       (provider, target) => {
         const targetKey = `${provider}:${target}`;
         setVersions((prev) => ({
@@ -11176,7 +9061,7 @@
       },
       []
     );
-    const handleRestartCore = (0, import_react13.useCallback)(() => {
+    const handleRestartCore = (0, import_react.useCallback)(() => {
       setCoreControl({
         busy: true,
         message: "Restart requested. Preparing shutdown...",
@@ -11206,6 +9091,11 @@
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
+      handleLocalizationCategoryLanguageChange,
+      handleLocalizationDefaultLanguageChange,
+      handleLocalizationEngineIdChange,
+      handleLocalizationGlossaryEnabledChange,
+      handleLocalizationWorkflowTermsPolicyChange,
       handleProviderAutoUpdateChange,
       handleRestartCore,
       handleResponsePolicyModeChange,
@@ -11218,7 +9108,3143 @@
   };
 
   // src/client/ui/src/components/settings-view.tsx
+  var import_react17 = __toESM(require_react());
+
+  // src/client/ui/src/app-host/use-localization.ts
+  var import_react2 = __toESM(require_react());
+
+  // assets/localization/source/en/interactive_templates.json
+  var interactive_templates_default = {
+    "pm.description.questionnaire.title_template": "Description questionnaire \u2014 {workspace}",
+    "pm.description.questionnaire.workspace_required": "Select a workspace to start.",
+    "pm.description.questionnaire.loading": "Loading description questionnaire...",
+    "pm.description.questionnaire.load_error": "Failed to load the description questionnaire.",
+    "pm.description.questionnaire.description": 'The questionnaire is saved automatically. Click "Submit questionnaire", choose a provider, and wait for Description to start. You can continue the dialog in the same session until the final version is ready. The resulting document is saved to `.codeai-hub/<workspace>/description/Final_Description.md`.',
+    "pm.description.questionnaire.submit_label": "Submit questionnaire",
+    "pm.description.questionnaire.cancel_label": "Close",
+    "pm.description.questionnaire.aria_label": "Idea questionnaire",
+    "pm.description.questionnaire.submit_error_default": "Failed to submit the questionnaire."
+  };
+
+  // assets/localization/source/en/system_feedback.json
+  var system_feedback_default = {
+    "session.dialog.empty_label": "No messages yet.",
+    "session.status.supervisor_label": "Core Supervisor",
+    "session.status.models_label": "Models",
+    "session.status.tokens_label": "Tokens",
+    "session.status.ready_connection_label": "Core online",
+    "session.status.unavailable_connection_label": "Core unavailable",
+    "session.status.starting_connection_label": "Starting core\u2026",
+    "session.empty_state.pending_title": "Creating session\u2026",
+    "session.empty_state.pending_description": "This can take 5\u201310 seconds. Please wait.",
+    "session.empty_state.idle_title": "Start with the Description questionnaire",
+    "session.empty_state.idle_description": 'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.',
+    "settings.core_controls.idle_status_label": "Core restart status will appear here.",
+    "pm.workspace_tree.empty_label": "Select a workspace to start.",
+    "pm.sidebar.workspace.menu_empty_label": "No workspaces yet."
+  };
+
+  // assets/localization/source/en/ui_interface.json
+  var ui_interface_default = {
+    "settings.header.title": "Settings",
+    "settings.header.close_button_label": "Close settings",
+    "settings.footer.reset_button_title": "Reset all settings to defaults",
+    "settings.footer.reset_idle_label": "Reset to Defaults",
+    "settings.footer.reset_pending_label": "Resetting...",
+    "settings.footer.close_button_label": "Close",
+    "settings.footer.save_idle_label": "Save Changes",
+    "settings.footer.save_pending_label": "Saving...",
+    "settings.core_controls.title": "Core Controls",
+    "settings.core_controls.restart_idle_label": "Restart Core",
+    "settings.core_controls.restart_pending_label": "Restarting...",
+    "settings.localization.title": "Localization",
+    "settings.localization.default_language.label": "Default language",
+    "settings.localization.translation_engine.label": "Translation engine",
+    "settings.localization.glossary_protection.label": "Glossary protection",
+    "settings.localization.do_not_translate_terms.title": "Do-not-translate terms",
+    "settings.localization.do_not_translate_terms.english_term_label": "English term",
+    "settings.localization.do_not_translate_terms.add_term_label": "Add term",
+    "settings.localization.do_not_translate_terms.save_term_label": "Save term",
+    "settings.localization.do_not_translate_terms.cancel_edit_label": "Cancel edit",
+    "settings.localization.do_not_translate_terms.edit_term_label": "Edit",
+    "settings.localization.do_not_translate_terms.remove_term_label": "Remove",
+    "settings.localization.category.ui_interface.label": "UI Interface",
+    "settings.localization.category.user_guidance.label": "User Guidance",
+    "settings.localization.category.workflow_terms.label": "Workflow Terms",
+    "settings.localization.category.system_feedback.label": "System Feedback",
+    "settings.localization.category.interactive_templates.label": "Interactive Templates",
+    "settings.localization.workflow_terms_policy.label": "Workflow terms policy",
+    "settings.localization.workflow_terms_policy.keep_english_label": "Keep English",
+    "settings.localization.workflow_terms_policy.translate_label": "Translate",
+    "pm.sidebar.workspace.label": "Workspace",
+    "pm.sidebar.workspace.empty_label": "No workspaces yet",
+    "pm.sidebar.workspace.select_label": "Select workspace",
+    "pm.sidebar.workspace.menu_aria_label": "Workspace menu",
+    "pm.sidebar.workspace.add_action": "Add workspace",
+    "pm.sidebar.workspace.fork_action": "Fork workspace",
+    "pm.sidebar.workspace.new_action": "New workspace"
+  };
+
+  // assets/localization/source/en/user_guidance.json
+  var user_guidance_default = {
+    "settings.core_controls.description": "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues.",
+    "settings.localization.intro": "Configure how each product copy category should be shown. Use `source` to keep the canonical English source copy.",
+    "settings.localization.language_catalog_helper": "Language codes are free-form in this first wave. The engine-backed language catalog arrives in a later implementation phase.",
+    "settings.localization.default_language.description": "Fallback language for categories that do not have their own override.",
+    "settings.localization.translation_engine.description": "Current engine id used for bundle materialization.",
+    "settings.localization.glossary_protection.description": "Keep protected terms, provider names, and product vocabulary stable during localization.",
+    "settings.localization.do_not_translate_terms.description": "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands.",
+    "settings.localization.do_not_translate_terms.enabled_status": "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in.",
+    "settings.localization.do_not_translate_terms.disabled_status": "Glossary protection is off. Terms stay in the local draft until you enable glossary protection.",
+    "settings.localization.do_not_translate_terms.empty_state": "No protected terms yet. Typical examples: `Project Manager`, `Artifact Viewer`, `CODEX_HOME`.",
+    "settings.localization.category.ui_interface.description": "Buttons, labels, menus, tabs, and settings surfaces.",
+    "settings.localization.category.user_guidance.description": "Help text, hints, onboarding copy, and explanatory guidance.",
+    "settings.localization.category.workflow_terms.description": "Step names, taxonomy labels, and product workflow language.",
+    "settings.localization.category.system_feedback.description": "Status messages, warnings, errors, and empty states.",
+    "settings.localization.category.interactive_templates.description": "Questionnaires, editable product-authored forms, and templates.",
+    "settings.localization.workflow_terms_policy.description": "Choose whether workflow taxonomy should stay in English or participate in localization.",
+    "settings.localization.workflow_terms_policy.keep_english_description": "Preserve workflow taxonomy terms such as Description and Virtual Simulation.",
+    "settings.localization.workflow_terms_policy.translate_description": "Allow workflow taxonomy terms to be localized like other product copy.",
+    "pm.description.help.title": "Description Help",
+    "pm.description.help.intro": "In the Description step, you explain the future software product in plain language, and the agent turns that into a clear product description and an initial architectural picture.",
+    "pm.description.help.questionnaire_intro": "What is most useful to fill in the questionnaire:",
+    "pm.description.help.questionnaire_item_1": "what kind of product or platform it is;",
+    "pm.description.help.questionnaire_item_2": "what the product is about and which problem it solves;",
+    "pm.description.help.questionnaire_item_3": "who will use it;",
+    "pm.description.help.questionnaire_item_4": "the key usage scenarios without an artificial limit;",
+    "pm.description.help.questionnaire_item_5": "what the product absolutely must be able to do;",
+    "pm.description.help.questionnaire_item_6": "which large parts and boundaries are already visible;",
+    "pm.description.help.questionnaire_item_7": "constraints, out-of-scope items, and notes.",
+    "pm.description.help.cluster_module_note": "We recommend describing the product in a cluster-module architecture mindset.",
+    "pm.description.help.cluster_module_explanation": "That does not mean the user must already know architectural terms. It is enough to describe the product as a set of understandable parts, large blocks, and boundaries between them. This helps the AI understand the system more accurately and move it more carefully into the next steps.",
+    "pm.description.help.why_it_helps_intro": "Why this helps:",
+    "pm.description.help.why_it_helps_item_1": "the product does not collapse into one vague giant block;",
+    "pm.description.help.why_it_helps_item_2": "the major parts of the system become visible earlier;",
+    "pm.description.help.why_it_helps_item_3": "the boundaries between blocks are easier to discuss and verify;",
+    "pm.description.help.why_it_helps_item_4": "the next steps can build scenarios and diagrams more reliably.",
+    "pm.description.help.glossary_intro": "Short glossary:",
+    "pm.description.help.glossary.shell": "`Shell` is the surface through which the user launches or opens the product.",
+    "pm.description.help.glossary.product_part": "`Product Part` is a high-level part of the product that can live, run, or be delivered separately.",
+    "pm.description.help.glossary.cluster": "`Cluster` is a large block made of several modules.",
+    "pm.description.help.glossary.module": "`Module` is a separate working block with one clear role.",
+    "pm.description.help.glossary.boundary": "`Boundary` is a border between system blocks.",
+    "pm.description.help.submit_guidance": "When the questionnaire is ready, click `Submit questionnaire`. After that, the AI provider picker will open. In the current MVP, the provider is chosen once for the whole workflow workspace, not separately for each step. Then continue the dialog and refine the document until you consider it a strong enough foundation for the next step.",
+    "pm.description.help.final_description_guidance": "Make sure the final `Final_Description.md` includes a dedicated section with key user scenarios. There should be as many scenarios as needed to cover the product without blind spots.",
+    "pm.description.help.output": "Step output: `.codeai-hub/<workspace>/description/Final_Description.md`.",
+    "pm.virtual_simulation.help.title": "Virtual Simulation Help",
+    "pm.virtual_simulation.help.intro": "In the Virtual Simulation step, the agent turns `Final_Description.md` into the scenario baseline for the system. The resulting document must stay understandable for the user while also serving as the foundation for the next step.",
+    "pm.virtual_simulation.help.scenario_scope": "The scenarios from the questionnaire and `Final_Description.md` are only the starting point. The agent must gather enough key scenarios to cover the whole system, rather than merely retelling the original user flows.",
+    "pm.virtual_simulation.help.dialog_intro": "What is most useful to clarify in the dialog:",
+    "pm.virtual_simulation.help.dialog_item_1": "who starts each important scenario;",
+    "pm.virtual_simulation.help.dialog_item_2": "which parts of the product take part in it;",
+    "pm.virtual_simulation.help.dialog_item_3": "what lives separately and where boundaries are already visible;",
+    "pm.virtual_simulation.help.dialog_item_4": "which system reaction counts as successful.",
+    "pm.virtual_simulation.help.glossary_intro": "Short glossary:",
+    "pm.virtual_simulation.help.glossary.shell": "`Shell` is the product shell through which the user launches or opens the system.",
+    "pm.virtual_simulation.help.glossary.product_part": "`Product Part` is a high-level part of the product that can live, run, or be delivered separately.",
+    "pm.virtual_simulation.help.glossary.cluster": "`Cluster` is a large block made of several modules with one external entry point through a facade.",
+    "pm.virtual_simulation.help.glossary.module": "`Module` is a separate working block with one clear role and its own facade.",
+    "pm.virtual_simulation.help.glossary.boundary": "`Boundary` is a border between parts of the system.",
+    "pm.virtual_simulation.help.coverage_guidance": "`virtual-simulation.md` should contain as many scenarios as needed to cover the product without blind spots. Related system behaviors can be grouped for clarity, but not to satisfy an artificial numeric limit.",
+    "pm.virtual_simulation.help.refinement_guidance": "The agent should ask only the missing questions and stop refining once it considers the document a strong enough foundation for the next step. The decision to move on still stays with you.",
+    "pm.virtual_simulation.help.output": "Step output: `.codeai-hub/<workspace>/virtual_simulation/virtual-simulation.md`."
+  };
+
+  // assets/localization/source/en/workflow_terms.json
+  var workflow_terms_default = {
+    "pm.workflow.stage.description.label": "Description",
+    "pm.workflow.stage.virtual_simulation.label": "Virtual Simulation",
+    "pm.workflow.stage.diagram_modules.label": "Diagram Modules",
+    "pm.workflow.stage.outdated_title": "OUTDATED: upstream input changed; resync recommended.",
+    "pm.workflow.stage.description.ready_title": "READY",
+    "pm.workflow.stage.virtual_simulation.blocked_title": "BLOCKED: requires Final_Description.md",
+    "pm.workflow.stage.diagram_modules.blocked_title": "BLOCKED: requires virtual-simulation.md (DONE)"
+  };
+
+  // packages/localization/src/localization-contract.ts
+  var DEFAULT_LOCALIZATION_SOURCE_LANGUAGE = "en";
+
+  // packages/localization/src/source-dictionary-registry.ts
+  var createBundledSourceDictionary = (category, entries) => ({
+    category,
+    entries,
+    language: DEFAULT_LOCALIZATION_SOURCE_LANGUAGE
+  });
+  var BUNDLED_SOURCE_DICTIONARIES = [
+    createBundledSourceDictionary(
+      "interactive_templates",
+      interactive_templates_default
+    ),
+    createBundledSourceDictionary("system_feedback", system_feedback_default),
+    createBundledSourceDictionary("ui_interface", ui_interface_default),
+    createBundledSourceDictionary("user_guidance", user_guidance_default),
+    createBundledSourceDictionary("workflow_terms", workflow_terms_default)
+  ];
+
+  // src/client/ui/src/app-host/use-localization.ts
+  var SOURCE_SELECTION = "source";
+  var EMPTY_SOURCE_ENTRIES = {};
+  var LOCALIZATION_CATEGORY_BINDINGS = [
+    {
+      categoryId: "interactive_templates",
+      settingsKey: "interactiveTemplates"
+    },
+    {
+      categoryId: "system_feedback",
+      settingsKey: "systemFeedback"
+    },
+    {
+      categoryId: "ui_interface",
+      settingsKey: "uiInterface"
+    },
+    {
+      categoryId: "user_guidance",
+      settingsKey: "userGuidance"
+    },
+    {
+      categoryId: "workflow_terms",
+      settingsKey: "workflowTerms"
+    }
+  ];
+  var BUNDLED_SOURCE_DICTIONARY_ENTRIES = new Map(
+    BUNDLED_SOURCE_DICTIONARIES.map((dictionary) => [
+      dictionary.category,
+      dictionary.entries
+    ])
+  );
+  var normalizeConfiguredLanguage = (value) => {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.toLowerCase() === SOURCE_SELECTION) {
+      return SOURCE_SELECTION;
+    }
+    return trimmed;
+  };
+  var formatTemplate = (template, variables) => {
+    if (!variables) {
+      return template;
+    }
+    return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (match, key) => {
+      const value = variables[key];
+      return value === void 0 ? match : String(value);
+    });
+  };
+  var resolveConfiguredLanguageByCategory = (settings) => {
+    const configuredLanguageByCategory = {
+      interactive_templates: SOURCE_SELECTION,
+      system_feedback: SOURCE_SELECTION,
+      ui_interface: SOURCE_SELECTION,
+      user_guidance: SOURCE_SELECTION,
+      workflow_terms: SOURCE_SELECTION
+    };
+    for (const binding of LOCALIZATION_CATEGORY_BINDINGS) {
+      configuredLanguageByCategory[binding.categoryId] = normalizeConfiguredLanguage(
+        settings.general.localization.categories[binding.settingsKey]
+      );
+    }
+    return configuredLanguageByCategory;
+  };
+  var createLocalizationRuntime = (settings) => {
+    const configuredLanguageByCategory = resolveConfiguredLanguageByCategory(settings);
+    return {
+      configuredLanguageByCategory,
+      ready: true,
+      t: (category, messageId, fallback, variables) => {
+        const entries = BUNDLED_SOURCE_DICTIONARY_ENTRIES.get(category) ?? EMPTY_SOURCE_ENTRIES;
+        const resolvedMessage = entries[messageId] ?? fallback;
+        return formatTemplate(resolvedMessage, variables);
+      }
+    };
+  };
+  var DEFAULT_LOCALIZATION_RUNTIME = {
+    configuredLanguageByCategory: {
+      interactive_templates: SOURCE_SELECTION,
+      system_feedback: SOURCE_SELECTION,
+      ui_interface: SOURCE_SELECTION,
+      user_guidance: SOURCE_SELECTION,
+      workflow_terms: SOURCE_SELECTION
+    },
+    ready: false,
+    t: (_category, _messageId, fallback, variables) => formatTemplate(fallback, variables)
+  };
+  var LocalizationContext = (0, import_react2.createContext)(
+    DEFAULT_LOCALIZATION_RUNTIME
+  );
+  var useResolvedLocalization = (settings) => (0, import_react2.useMemo)(() => createLocalizationRuntime(settings), [settings]);
+  var LocalizationProvider = ({
+    children,
+    value
+  }) => (0, import_react2.createElement)(LocalizationContext.Provider, { value }, children);
+  var useLocalization = () => (0, import_react2.useContext)(LocalizationContext);
+
+  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
+  var import_react3 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/settings-card.tsx
+  var import_jsx_runtime = __toESM(require_jsx_runtime());
+  var cardStyles = {
+    background: settingsColorTokens.surfaceElevated,
+    borderRadius: settingsRadiusTokens.control,
+    padding: "16px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var headerStyles = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "12px"
+  };
+  var titleStyles = {
+    fontSize: "14px",
+    fontWeight: 600,
+    margin: 0,
+    color: settingsColorTokens.textPrimary
+  };
+  var SettingsCard = ({
+    title,
+    action,
+    children
+  }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: cardStyles, children: [
+    title ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: headerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { style: titleStyles, children: title }),
+      action
+    ] }) : null,
+    children
+  ] });
+  var settings_card_default = SettingsCard;
+
+  // src/client/ui/src/components/settings/shared-model-card-styles.ts
+  var descriptionStyles = {
+    margin: 0,
+    color: settingsColorTokens.textSecondary,
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+  var noteStyles = {
+    margin: 0,
+    fontSize: "11px",
+    color: "#8f8f8f"
+  };
+  var listStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var rowBaseStyles = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: "#2f2f2f",
+    borderRadius: "6px",
+    padding: "12px",
+    background: settingsColorTokens.surfaceElevated,
+    cursor: "pointer",
+    transition: "border-color 0.15s, background 0.15s",
+    outline: "none",
+    boxShadow: "none"
+  };
+  var rowSelectedStyles = {
+    borderColor: settingsColorTokens.actionPrimary,
+    background: "#1f2a33"
+  };
+  var rowHoverStyles = {
+    borderColor: "#4a4a4a"
+  };
+  var rowButtonResetStyles = {
+    appearance: "none",
+    outline: "none",
+    textAlign: "left"
+  };
+  var modelInfoStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px"
+  };
+  var modelTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: settingsColorTokens.textPrimary
+  };
+  var aliasStyles = {
+    fontSize: "11px",
+    color: "#9b9b9b"
+  };
+  var modelDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    color: "#a7a7a7",
+    lineHeight: 1.4
+  };
+  var modelBodyStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    flex: 1
+  };
+  var modelIdStyles = {
+    fontSize: "11px",
+    color: "#8c8c8c"
+  };
+  var modelControlRowStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    paddingLeft: "28px"
+  };
+  var modelControlLabelStyles = {
+    fontSize: "11px",
+    color: "#8f8f8f"
+  };
+  var modelControlButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "4px 10px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "11px"
+  };
+  var modelControlButtonHoverStyles = {
+    borderColor: "#5a5a5a",
+    background: "#2b2f33",
+    color: "#ffffff"
+  };
+  var modelControlButtonActiveStyles = {
+    borderColor: "#0e639c",
+    background: "#0e639c",
+    color: "#ffffff"
+  };
+  var radioCircleStyles = {
+    width: "16px",
+    height: "16px",
+    minWidth: "16px",
+    borderRadius: "50%",
+    borderWidth: "2px",
+    borderStyle: "solid",
+    borderColor: "#5a5a5a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "3px",
+    transition: "border-color 0.15s",
+    outline: "none",
+    boxShadow: "none"
+  };
+  var radioCircleSelectedStyles = {
+    borderColor: settingsColorTokens.actionPrimary
+  };
+  var radioCircleInnerStyles = {
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    background: settingsColorTokens.actionPrimary
+  };
+
+  // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var ClaudeDefaultModelCard = ({
+    defaultModel,
+    onDefaultModelChange
+  }) => {
+    const [hoveredAlias, setHoveredAlias] = (0, import_react3.useState)(
+      null
+    );
+    const handleRowClick = (model) => {
+      onDefaultModelChange(model);
+    };
+    const handleRowKeyDown = (event, model) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(model);
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(settings_card_default, { title: "Claude Default model", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
+        const isSelected = defaultModel === model.alias;
+        const rowStyle = {
+          ...rowBaseStyles,
+          ...rowButtonResetStyles,
+          ...isSelected ? rowSelectedStyles : {},
+          ...!isSelected && hoveredAlias === model.alias ? rowHoverStyles : {}
+        };
+        return (
+          // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+            "div",
+            {
+              "aria-checked": isSelected,
+              onClick: () => handleRowClick(model.alias),
+              onKeyDown: (event) => handleRowKeyDown(event, model.alias),
+              onMouseEnter: () => setHoveredAlias(model.alias),
+              onMouseLeave: () => setHoveredAlias(null),
+              role: "radio",
+              style: rowStyle,
+              tabIndex: -1,
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                  "div",
+                  {
+                    style: {
+                      ...radioCircleStyles,
+                      ...isSelected ? radioCircleSelectedStyles : {}
+                    },
+                    children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: radioCircleInnerStyles }) : null
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: modelInfoStyles, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: aliasStyles, children: model.alias }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                ] })
+              ]
+            },
+            model.alias
+          )
+        );
+      }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
+    ] });
+  };
+  var claude_default_model_card_default = (0, import_react3.memo)(ClaudeDefaultModelCard);
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
+  var import_react5 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-model-card-styles.ts
+  var warningStyles = {
+    background: "#3a2a1f",
+    border: "1px solid #9b6b3d",
+    color: "#ffd7a3",
+    borderRadius: "4px",
+    padding: "8px 10px",
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
+  var import_react4 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/shared/provider-option-dialog.tsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  var overlayStyles = {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0, 0, 0, 0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1e3
+  };
+  var dialogStyles = {
+    width: "560px",
+    maxWidth: "90vw",
+    maxHeight: "85vh",
+    overflowY: "auto",
+    background: "#1e1e1e",
+    borderRadius: "8px",
+    border: "1px solid #3c3c3c",
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px"
+  };
+  var headerStyles2 = {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: "12px"
+  };
+  var titleStyles2 = {
+    fontSize: "16px",
+    margin: 0,
+    color: "#ffffff"
+  };
+  var subtitleStyles = {
+    fontSize: "12px",
+    color: "#a0a0a0",
+    margin: 0
+  };
+  var closeButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    borderRadius: "4px",
+    padding: "4px 10px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var optionListStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var optionRowStyles = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    border: "1px solid #2f2f2f",
+    borderRadius: "6px",
+    padding: "12px",
+    background: "#252526",
+    cursor: "pointer"
+  };
+  var optionSelectedStyles = {
+    borderColor: "#0e639c",
+    background: "#1f2a33"
+  };
+  var radioStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var optionTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: "#e5e5e5",
+    marginBottom: "4px",
+    textTransform: "uppercase"
+  };
+  var defaultBadgeStyles = {
+    fontSize: "10px",
+    color: "#0e639c",
+    background: "rgba(14, 99, 156, 0.2)",
+    borderRadius: "4px",
+    padding: "2px 6px",
+    marginLeft: "8px",
+    textTransform: "none"
+  };
+  var optionDescriptionStyles = {
+    fontSize: "12px",
+    color: "#b6b6b6",
+    margin: 0,
+    lineHeight: 1.4
+  };
+  var optionUseCaseStyles = {
+    fontSize: "12px",
+    color: "#8f8f8f",
+    margin: "6px 0 0"
+  };
+  var footerStyles = {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "10px"
+  };
+  var cancelButtonStyles = {
+    border: "1px solid #3a3d41",
+    background: "transparent",
+    color: "#d7d7d7",
+    padding: "8px 14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var saveButtonStyles = {
+    border: "1px solid #0e639c",
+    background: "#0e639c",
+    color: "#ffffff",
+    padding: "8px 14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var ProviderOptionDialog = ({
+    ariaLabel,
+    closeLabel = "Close",
+    footer,
+    name,
+    onCancel,
+    onChange,
+    options,
+    selectedValue,
+    subtitle,
+    title
+  }) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: overlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+    "div",
+    {
+      "aria-label": ariaLabel,
+      "aria-modal": "true",
+      role: "dialog",
+      style: dialogStyles,
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: headerStyles2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { style: titleStyles2, children: title }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: subtitleStyles, children: subtitle })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: onCancel, style: closeButtonStyles, type: "button", children: closeLabel })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: optionListStyles, children: options.map((option) => {
+          const isSelected = option.value === selectedValue;
+          return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+            "label",
+            {
+              style: {
+                ...optionRowStyles,
+                ...isSelected ? optionSelectedStyles : null
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                  "input",
+                  {
+                    checked: isSelected,
+                    name,
+                    onChange: () => onChange(option.value),
+                    style: radioStyles,
+                    type: "radio"
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: optionTitleStyles, children: [
+                    option.label,
+                    option.isDefault ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { style: defaultBadgeStyles, children: "Default" }) : null
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: optionDescriptionStyles, children: option.description }),
+                  /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { style: optionUseCaseStyles, children: [
+                    "Use case: ",
+                    option.useCase
+                  ] })
+                ] })
+              ]
+            },
+            option.value
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: footerStyles, children: footer ?? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: onCancel, style: cancelButtonStyles, type: "button", children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { style: saveButtonStyles, type: "button", children: "Save" })
+        ] }) })
+      ]
+    }
+  ) });
+  var providerOptionDialogButtonStyles = {
+    cancelButtonStyles,
+    saveButtonStyles
+  };
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var CodexReasoningDialog = ({
+    model,
+    initialReasoning,
+    onSave,
+    onCancel
+  }) => {
+    const [selectedReasoning, setSelectedReasoning] = (0, import_react4.useState)(initialReasoning);
+    const options = CODEX_REASONING_LEVELS.map((level) => ({
+      value: level.name,
+      label: level.name,
+      description: level.description,
+      useCase: level.useCase,
+      isDefault: level.default
+    }));
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      ProviderOptionDialog,
+      {
+        ariaLabel: `Reasoning effort for ${model.displayName}`,
+        footer: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)(import_jsx_runtime4.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: onCancel, style: cancelButtonStyles2, type: "button", children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+            "button",
+            {
+              onClick: () => onSave(selectedReasoning),
+              style: saveButtonStyles2,
+              type: "button",
+              children: "Save"
+            }
+          )
+        ] }),
+        name: "codex-reasoning",
+        onCancel,
+        onChange: setSelectedReasoning,
+        options,
+        selectedValue: selectedReasoning,
+        subtitle: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session.",
+        title: `${model.displayName} reasoning`
+      }
+    );
+  };
+  var { cancelButtonStyles: cancelButtonStyles2, saveButtonStyles: saveButtonStyles2 } = providerOptionDialogButtonStyles;
+  var codex_reasoning_dialog_default = CodexReasoningDialog;
+
+  // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    "div",
+    {
+      style: {
+        ...radioCircleStyles,
+        ...checked ? radioCircleSelectedStyles : {}
+      },
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: radioCircleInnerStyles }) : null
+    }
+  );
+  var displaySyncToggleStyles = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    margin: "12px 0 18px"
+  };
+  var displaySyncCheckboxStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var displaySyncTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    marginBottom: "4px"
+  };
+  var displaySyncDescriptionStyles = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: 1.4
+  };
+  var CodexDefaultModelCard = ({
+    defaultModel,
+    reasoningByModel,
+    reasoningSummaryEnabled,
+    onDefaultModelChange,
+    onReasoningChange,
+    onReasoningSummaryEnabledChange
+  }) => {
+    const [activeModelId, setActiveModelId] = (0, import_react5.useState)(null);
+    const [hoveredRowId, setHoveredRowId] = (0, import_react5.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react5.useState)(
+      null
+    );
+    const [pressedButtonId, setPressedButtonId] = (0, import_react5.useState)(
+      null
+    );
+    const recommendedModelIds = (0, import_react5.useMemo)(
+      () => new Set(CODEX_SETTINGS_MODELS.map((model) => model.id)),
+      []
+    );
+    const fallbackModelDisplayName = CODEX_SETTINGS_MODELS.find((model) => model.id === DEFAULT_CODEX_MODEL_ID)?.displayName ?? DEFAULT_CODEX_MODEL_ID;
+    const selectedModelId = recommendedModelIds.has(defaultModel) ? defaultModel : DEFAULT_CODEX_MODEL_ID;
+    const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
+    const activeModel = CODEX_SETTINGS_MODELS.find(
+      (model) => model.id === activeModelId
+    );
+    const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
+    const handleRowClick = (modelId) => {
+      onDefaultModelChange(modelId);
+    };
+    const handleRowKeyDown = (event, modelId) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(modelId);
+      }
+    };
+    const handleReasoningButtonClick = (event, modelId) => {
+      event.stopPropagation();
+      setActiveModelId(modelId);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(settings_card_default, { title: "Codex Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: displaySyncToggleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+            "input",
+            {
+              checked: reasoningSummaryEnabled,
+              onChange: (event) => onReasoningSummaryEnabledChange(event.target.checked),
+              style: displaySyncCheckboxStyles,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncTitleStyles, children: "Reasoning in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncDescriptionStyles, children: "When enabled, Codex can send reasoning summaries. CodeAI Hub translates them and shows them in the dialog." })
+          ] })
+        ] }),
+        hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: warningStyles, children: [
+          "The saved default model is no longer available. Falling back to",
+          ` ${fallbackModelDisplayName}.`
+        ] }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: listStyles, children: CODEX_SETTINGS_MODELS.map((model) => {
+          const isSelected = selectedModelId === model.id;
+          const isRowHovered = hoveredRowId === model.id;
+          const reasoningLevel = resolveReasoning(model.id);
+          const isButtonHovered = hoveredButtonId === model.id;
+          const isButtonPressed = pressedButtonId === model.id;
+          let reasoningStateStyles = {};
+          if (isButtonPressed) {
+            reasoningStateStyles = modelControlButtonActiveStyles;
+          } else if (isButtonHovered) {
+            reasoningStateStyles = modelControlButtonHoverStyles;
+          }
+          const rowStyle = {
+            ...rowBaseStyles,
+            ...rowButtonResetStyles,
+            ...isSelected ? rowSelectedStyles : {},
+            ...!isSelected && isRowHovered ? rowHoverStyles : {}
+          };
+          return (
+            // biome-ignore lint/a11y/useSemanticElements: Custom radio to avoid browser focus styles on native input
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+              "div",
+              {
+                "aria-checked": isSelected,
+                onClick: () => handleRowClick(model.id),
+                onKeyDown: (e) => handleRowKeyDown(e, model.id),
+                onMouseEnter: () => setHoveredRowId(model.id),
+                onMouseLeave: () => setHoveredRowId(null),
+                role: "radio",
+                style: rowStyle,
+                tabIndex: -1,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(RadioCircle, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelControlRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: modelControlLabelStyles, children: "Configure reasoning:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+                        "button",
+                        {
+                          onClick: (e) => handleReasoningButtonClick(e, model.id),
+                          onMouseDown: () => setPressedButtonId(model.id),
+                          onMouseEnter: () => setHoveredButtonId(model.id),
+                          onMouseLeave: () => {
+                            setHoveredButtonId(null);
+                            setPressedButtonId(null);
+                          },
+                          onMouseUp: () => setPressedButtonId(null),
+                          style: {
+                            ...modelControlButtonStyles,
+                            ...reasoningStateStyles
+                          },
+                          type: "button",
+                          children: reasoningLevel
+                        }
+                      )
+                    ] })
+                  ] })
+                ]
+              },
+              model.id
+            )
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
+      ] }),
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+        codex_reasoning_dialog_default,
+        {
+          initialReasoning: resolveReasoning(activeModel.id),
+          model: activeModel,
+          onCancel: () => setActiveModelId(null),
+          onSave: (reasoning) => {
+            onReasoningChange(activeModel.id, reasoning);
+            setActiveModelId(null);
+          }
+        }
+      ) : null
+    ] });
+  };
+  var codex_default_model_card_default = (0, import_react5.memo)(CodexDefaultModelCard);
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
+  var import_react7 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
+  var import_react6 = __toESM(require_react());
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var GeminiThinkingDialog = ({
+    model,
+    initialLevel,
+    onSave,
+    onCancel
+  }) => {
+    const [selectedLevel, setSelectedLevel] = (0, import_react6.useState)(initialLevel);
+    const options = GEMINI_THINKING_LEVELS.filter(
+      (level) => model.supportedThinkingLevels.includes(level.name)
+    ).map((level) => ({
+      value: level.name,
+      label: level.name,
+      description: level.description,
+      useCase: level.useCase,
+      isDefault: level.name === DEFAULT_GEMINI_THINKING_LEVEL
+    }));
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+      ProviderOptionDialog,
+      {
+        ariaLabel: `Thinking level for ${model.displayName}`,
+        footer: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(import_jsx_runtime6.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: onCancel, style: cancelButtonStyles3, type: "button", children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+            "button",
+            {
+              onClick: () => onSave(selectedLevel),
+              style: saveButtonStyles3,
+              type: "button",
+              children: "Save"
+            }
+          )
+        ] }),
+        name: "gemini-thinking",
+        onCancel,
+        onChange: setSelectedLevel,
+        options,
+        selectedValue: selectedLevel,
+        subtitle: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session.",
+        title: `${model.displayName} thinking`
+      }
+    );
+  };
+  var { cancelButtonStyles: cancelButtonStyles3, saveButtonStyles: saveButtonStyles3 } = providerOptionDialogButtonStyles;
+  var gemini_thinking_dialog_default = GeminiThinkingDialog;
+
+  // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+    "div",
+    {
+      style: {
+        ...radioCircleStyles,
+        ...checked ? radioCircleSelectedStyles : {}
+      },
+      children: checked ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: radioCircleInnerStyles }) : null
+    }
+  );
+  var displaySyncToggleStyles2 = {
+    display: "flex",
+    gap: "12px",
+    alignItems: "flex-start",
+    margin: "12px 0 18px"
+  };
+  var displaySyncCheckboxStyles2 = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var displaySyncTitleStyles2 = {
+    fontSize: "13px",
+    fontWeight: 600,
+    marginBottom: "4px"
+  };
+  var displaySyncDescriptionStyles2 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: 1.4
+  };
+  var GeminiDefaultModelCard = ({
+    defaultModel,
+    thinkingLevelByModel,
+    thinkingDisplaySyncEnabled,
+    onDefaultModelChange,
+    onThinkingChange,
+    onThinkingDisplaySyncChange
+  }) => {
+    const [activeModelId, setActiveModelId] = (0, import_react7.useState)(
+      null
+    );
+    const [hoveredRowId, setHoveredRowId] = (0, import_react7.useState)(null);
+    const [hoveredButtonId, setHoveredButtonId] = (0, import_react7.useState)(
+      null
+    );
+    const [pressedButtonId, setPressedButtonId] = (0, import_react7.useState)(
+      null
+    );
+    const activeModel = GEMINI_RECOMMENDED_MODELS.find(
+      (model) => model.id === activeModelId
+    );
+    const resolveThinkingLevel = (modelId) => thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
+    const handleRowClick = (model) => {
+      onDefaultModelChange(model);
+    };
+    const handleRowKeyDown = (event, model) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onDefaultModelChange(model);
+      }
+    };
+    const handleThinkingButtonClick = (event, modelId) => {
+      event.stopPropagation();
+      setActiveModelId(modelId);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { style: displaySyncToggleStyles2, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+            "input",
+            {
+              checked: thinkingDisplaySyncEnabled,
+              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+              style: displaySyncCheckboxStyles2,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncTitleStyles2, children: "Thinking in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncDescriptionStyles2, children: "Show translated Gemini reasoning as a normal assistant bubble in the dialog." })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
+          const isSelected = defaultModel === model.id;
+          const isRowHovered = hoveredRowId === model.id;
+          const thinkingLevel = resolveThinkingLevel(model.id);
+          const isButtonHovered = hoveredButtonId === model.id;
+          const isButtonPressed = pressedButtonId === model.id;
+          let thinkingStateStyles = {};
+          if (isButtonPressed) {
+            thinkingStateStyles = modelControlButtonActiveStyles;
+          } else if (isButtonHovered) {
+            thinkingStateStyles = modelControlButtonHoverStyles;
+          }
+          const rowStyle = {
+            ...rowBaseStyles,
+            ...rowButtonResetStyles,
+            ...isSelected ? rowSelectedStyles : {},
+            ...!isSelected && isRowHovered ? rowHoverStyles : {}
+          };
+          return (
+            // biome-ignore lint/a11y/useSemanticElements: custom radio rows mimic Codex behavior to avoid browser focus rings
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+              "div",
+              {
+                "aria-checked": isSelected,
+                onClick: () => handleRowClick(model.id),
+                onKeyDown: (event) => handleRowKeyDown(event, model.id),
+                onMouseEnter: () => setHoveredRowId(model.id),
+                onMouseLeave: () => setHoveredRowId(null),
+                role: "radio",
+                style: rowStyle,
+                tabIndex: -1,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(RadioCircle2, { checked: isSelected }),
+                  /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelBodyStyles, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelIdStyles, children: model.id }),
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelControlRowStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: modelControlLabelStyles, children: "Configure thinking:" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+                        "button",
+                        {
+                          onClick: (e) => handleThinkingButtonClick(e, model.id),
+                          onMouseDown: () => setPressedButtonId(model.id),
+                          onMouseEnter: () => setHoveredButtonId(model.id),
+                          onMouseLeave: () => {
+                            setHoveredButtonId(null);
+                            setPressedButtonId(null);
+                          },
+                          onMouseUp: () => setPressedButtonId(null),
+                          style: {
+                            ...modelControlButtonStyles,
+                            ...thinkingStateStyles
+                          },
+                          type: "button",
+                          children: thinkingLevel
+                        }
+                      )
+                    ] })
+                  ] })
+                ]
+              },
+              model.id
+            )
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+      ] }),
+      activeModel ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+        gemini_thinking_dialog_default,
+        {
+          initialLevel: resolveThinkingLevel(activeModel.id),
+          model: activeModel,
+          onCancel: () => setActiveModelId(null),
+          onSave: (level) => {
+            onThinkingChange(activeModel.id, level);
+            setActiveModelId(null);
+          }
+        }
+      ) : null
+    ] });
+  };
+  var gemini_default_model_card_default = (0, import_react7.memo)(GeminiDefaultModelCard);
+
+  // src/client/ui/src/components/settings/general-settings.tsx
+  var import_react12 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
+  var import_react9 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
+  var import_react8 = __toESM(require_react());
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var copyStyles = {
+    margin: 0,
+    fontSize: "13px",
+    color: "#bbbbbb",
+    lineHeight: 1.45
+  };
+  var optionListStyles2 = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var optionButtonStyles = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "4px",
+    width: "100%",
+    padding: "12px 14px",
+    borderRadius: "10px",
+    border: "1px solid #3a3d41",
+    background: "#1e1e1e",
+    color: "#f5f5f5",
+    cursor: "pointer",
+    textAlign: "left"
+  };
+  var activeOptionStyles = {
+    borderColor: "#0e639c",
+    background: "#132938"
+  };
+  var optionTitleStyles2 = {
+    fontSize: "13px",
+    fontWeight: 600
+  };
+  var optionDescriptionStyles2 = {
+    fontSize: "12px",
+    color: "#bbbbbb",
+    lineHeight: 1.4
+  };
+  var labelStyles = {
+    fontSize: "12px",
+    fontWeight: 600,
+    color: "#f5f5f5"
+  };
+  var inputStyles = {
+    width: "100%",
+    minHeight: "132px",
+    padding: "10px 12px",
+    borderRadius: "8px",
+    border: "1px solid #3a3d41",
+    background: "#111111",
+    color: "#f5f5f5",
+    fontSize: "12px",
+    fontFamily: "Menlo, Monaco, Consolas, monospace",
+    lineHeight: 1.45,
+    resize: "vertical",
+    boxSizing: "border-box"
+  };
+  var inputGroupStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px"
+  };
+  var strictBlockStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+    marginTop: "16px"
+  };
+  var ResponseModeCard = ({
+    responsePolicy,
+    onModeChange,
+    onStrictInstructionTextChange,
+    onStrictSchemaTextChange
+  }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Response Mode", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: copyStyles, children: "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior." }),
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+      "button",
+      {
+        onClick: () => onModeChange(option.id),
+        style: {
+          ...optionButtonStyles,
+          ...responsePolicy.mode === option.id ? activeOptionStyles : null
+        },
+        type: "button",
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionTitleStyles2, children: option.label }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionDescriptionStyles2, children: option.description })
+        ]
+      },
+      option.id
+    )) }),
+    responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: strictBlockStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          "textarea",
+          {
+            onChange: (event) => onStrictSchemaTextChange(event.target.value),
+            style: inputStyles,
+            value: responsePolicy.strictOutput.schemaText
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          "textarea",
+          {
+            onChange: (event) => onStrictInstructionTextChange(event.target.value),
+            style: { ...inputStyles, minHeight: "108px" },
+            value: responsePolicy.strictOutput.instructionText
+          }
+        )
+      ] })
+    ] }) : null
+  ] });
+  var response_mode_card_default = (0, import_react8.memo)(ResponseModeCard);
+
+  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var GeneralResponseModeFacade = (props) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(response_mode_card_default, { ...props });
+  var general_response_mode_facade_default = (0, import_react9.memo)(GeneralResponseModeFacade);
+
+  // src/client/ui/src/components/settings/localization-settings-card.tsx
+  var import_react11 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/localization-glossary-editor.tsx
+  var import_react10 = __toESM(require_react());
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var MAX_GLOSSARY_TERM_LENGTH = 120;
+  var LATIN_LETTER_PATTERN = /[A-Za-z]/;
+  var RESERVED_SEQUENCE_PATTERN = /(?:\[\[|\]\]|\{\{|\}\})/;
+  var panelStyles = {
+    display: "grid",
+    gap: "12px",
+    padding: "12px",
+    borderRadius: "8px",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    background: "rgba(255, 255, 255, 0.02)"
+  };
+  var titleStyles3 = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: settingsColorTokens.textPrimary,
+    margin: 0
+  };
+  var bodyStyles = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textMuted,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var formStyles = {
+    display: "grid",
+    gap: "10px"
+  };
+  var inputStyles2 = {
+    width: "100%",
+    boxSizing: "border-box",
+    minHeight: "36px",
+    padding: "8px 10px",
+    borderRadius: "6px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.surface,
+    color: settingsColorTokens.textPrimary,
+    fontSize: settingsTypographyTokens.bodyFontSize
+  };
+  var actionRowStyles = {
+    display: "flex",
+    gap: "8px",
+    flexWrap: "wrap"
+  };
+  var primaryButtonStyles = {
+    minHeight: "34px",
+    padding: "0 12px",
+    borderRadius: "999px",
+    border: `1px solid ${settingsColorTokens.actionPrimary}`,
+    background: settingsColorTokens.actionPrimary,
+    color: settingsColorTokens.actionPrimaryText,
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    fontWeight: 600
+  };
+  var secondaryButtonStyles = {
+    minHeight: "34px",
+    padding: "0 12px",
+    borderRadius: "999px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.surface,
+    color: settingsColorTokens.textSecondary,
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.bodyFontSize
+  };
+  var statusStyles = {
+    padding: "8px 10px",
+    borderRadius: "6px",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    background: "rgba(255, 255, 255, 0.03)",
+    color: settingsColorTokens.textSecondary,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    lineHeight: 1.5
+  };
+  var errorStyles = {
+    color: "#f2b8b5",
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var termListStyles = {
+    display: "grid",
+    gap: "8px"
+  };
+  var termRowStyles = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "10px",
+    padding: "10px 12px",
+    borderRadius: "6px",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    background: settingsColorTokens.surface
+  };
+  var termTextStyles = {
+    margin: 0,
+    color: settingsColorTokens.textPrimary,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    lineHeight: 1.5,
+    wordBreak: "break-word"
+  };
+  var getLocalStorage = () => {
+    try {
+      return "localStorage" in globalThis ? globalThis.localStorage : null;
+    } catch {
+      return null;
+    }
+  };
+  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var normalizeTerm = (value) => value.trim();
+  var dedupeTerms = (terms) => {
+    const uniqueTerms = [];
+    const seen = /* @__PURE__ */ new Set();
+    for (const candidate of terms) {
+      const normalized = normalizeTerm(candidate);
+      const dedupeKey = normalized.toLowerCase();
+      if (!normalized || seen.has(dedupeKey)) {
+        continue;
+      }
+      seen.add(dedupeKey);
+      uniqueTerms.push(normalized);
+    }
+    return uniqueTerms;
+  };
+  var parseStoredGlossaryDraft = (raw) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return [];
+    }
+    if (!(isRecord5(parsed) && Array.isArray(parsed.preserve))) {
+      return [];
+    }
+    return dedupeTerms(
+      parsed.preserve.filter(
+        (value) => typeof value === "string"
+      )
+    );
+  };
+  var validateTerm = (value, existingTerms, editingIndex) => {
+    const normalized = normalizeTerm(value);
+    if (!normalized) {
+      return "Enter an English term to preserve.";
+    }
+    if (!LATIN_LETTER_PATTERN.test(normalized)) {
+      return "Use a term that contains at least one Latin letter.";
+    }
+    if (normalized.length > MAX_GLOSSARY_TERM_LENGTH) {
+      return `Keep glossary terms under ${MAX_GLOSSARY_TERM_LENGTH} characters.`;
+    }
+    if (RESERVED_SEQUENCE_PATTERN.test(normalized)) {
+      return "Reserved marker-like sequences are not allowed in glossary terms.";
+    }
+    const dedupeKey = normalized.toLowerCase();
+    const duplicateIndex = existingTerms.findIndex(
+      (term) => normalizeTerm(term).toLowerCase() === dedupeKey
+    );
+    if (duplicateIndex !== -1 && duplicateIndex !== editingIndex) {
+      return "That term is already in the local glossary draft.";
+    }
+    return null;
+  };
+  var LocalizationGlossaryEditor = ({
+    glossaryEnabled
+  }) => {
+    const [draft, setDraft] = (0, import_react10.useState)("");
+    const [editingIndex, setEditingIndex] = (0, import_react10.useState)(null);
+    const [error, setError] = (0, import_react10.useState)(null);
+    const [terms, setTerms] = (0, import_react10.useState)([]);
+    (0, import_react10.useEffect)(() => {
+      const storage = getLocalStorage();
+      if (!storage) {
+        return;
+      }
+      const raw = storage.getItem(LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY);
+      if (!raw) {
+        return;
+      }
+      setTerms(parseStoredGlossaryDraft(raw));
+    }, []);
+    (0, import_react10.useEffect)(() => {
+      const storage = getLocalStorage();
+      if (!storage) {
+        return;
+      }
+      const payload = { preserve: terms };
+      try {
+        storage.setItem(
+          LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY,
+          JSON.stringify(payload)
+        );
+      } catch {
+      }
+    }, [terms]);
+    const statusText = (0, import_react10.useMemo)(
+      () => glossaryEnabled ? "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in." : "Glossary protection is off. Terms stay in the local draft until you enable glossary protection.",
+      [glossaryEnabled]
+    );
+    const submitLabel = editingIndex === null ? "Add term" : "Save term";
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const validationError = validateTerm(draft, terms, editingIndex);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
+      const normalized = normalizeTerm(draft);
+      setTerms((previousTerms) => {
+        if (editingIndex === null) {
+          return [...previousTerms, normalized];
+        }
+        return previousTerms.map(
+          (term, index) => index === editingIndex ? normalized : term
+        );
+      });
+      setDraft("");
+      setEditingIndex(null);
+      setError(null);
+    };
+    const handleEdit = (index) => {
+      setDraft(terms[index] ?? "");
+      setEditingIndex(index);
+      setError(null);
+    };
+    const handleRemove = (index) => {
+      setTerms(
+        (previousTerms) => previousTerms.filter((_, termIndex) => termIndex !== index)
+      );
+      if (editingIndex === index) {
+        setDraft("");
+        setEditingIndex(null);
+        setError(null);
+        return;
+      }
+      if (editingIndex !== null && editingIndex > index) {
+        setEditingIndex(editingIndex - 1);
+      }
+    };
+    const handleCancel = () => {
+      setDraft("");
+      setEditingIndex(null);
+      setError(null);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: panelStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: titleStyles3, children: "Do-not-translate terms" }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: bodyStyles, children: "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { "aria-live": "polite", style: statusStyles, children: statusText }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("form", { onSubmit: handleSubmit, style: formStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: bodyStyles, children: "English term" }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "input",
+            {
+              "aria-label": "English glossary term",
+              onChange: (event) => {
+                setDraft(event.target.value);
+                if (error) {
+                  setError(null);
+                }
+              },
+              placeholder: "Project Manager",
+              style: inputStyles2,
+              type: "text",
+              value: draft
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: actionRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { style: primaryButtonStyles, type: "submit", children: submitLabel }),
+          editingIndex === null ? null : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "button",
+            {
+              onClick: handleCancel,
+              style: secondaryButtonStyles,
+              type: "button",
+              children: "Cancel edit"
+            }
+          )
+        ] })
+      ] }),
+      error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: errorStyles, children: error }) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: termListStyles, children: terms.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: bodyStyles, children: [
+        "No protected terms yet. Typical examples:",
+        " ",
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Project Manager" }),
+        ", ",
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Artifact Viewer" }),
+        ",",
+        " ",
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "CODEX_HOME" }),
+        "."
+      ] }) : terms.map((term, index) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: termRowStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: termTextStyles, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: term }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: actionRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "button",
+            {
+              "aria-label": `Edit glossary term ${term}`,
+              onClick: () => handleEdit(index),
+              style: secondaryButtonStyles,
+              type: "button",
+              children: "Edit"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "button",
+            {
+              "aria-label": `Remove glossary term ${term}`,
+              onClick: () => handleRemove(index),
+              style: secondaryButtonStyles,
+              type: "button",
+              children: "Remove"
+            }
+          )
+        ] })
+      ] }, term)) })
+    ] });
+  };
+  var localization_glossary_editor_default = (0, import_react10.memo)(LocalizationGlossaryEditor);
+
+  // src/client/ui/src/components/settings/localization-settings-card.tsx
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var introStyles = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textSecondary,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var helperStyles = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textMuted,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var controlGridStyles = {
+    display: "grid",
+    gap: "12px"
+  };
+  var controlRowStyles = {
+    display: "grid",
+    gap: "8px",
+    padding: "12px",
+    borderRadius: "8px",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    background: "rgba(255, 255, 255, 0.02)"
+  };
+  var labelTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: settingsColorTokens.textPrimary,
+    margin: 0
+  };
+  var labelDescriptionStyles = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textMuted,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var inputStyles3 = {
+    width: "100%",
+    boxSizing: "border-box",
+    minHeight: "36px",
+    padding: "8px 10px",
+    borderRadius: "6px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.surface,
+    color: settingsColorTokens.textPrimary,
+    fontSize: settingsTypographyTokens.bodyFontSize
+  };
+  var toggleRowStyles = {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "12px",
+    padding: "12px",
+    borderRadius: "8px",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    background: "rgba(255, 255, 255, 0.02)"
+  };
+  var checkboxStyles = {
+    width: "16px",
+    height: "16px",
+    marginTop: "2px"
+  };
+  var policyGroupStyles = {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "8px"
+  };
+  var policyButtonBaseStyles = {
+    minHeight: "34px",
+    padding: "0 12px",
+    borderRadius: "999px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.surface,
+    color: settingsColorTokens.textSecondary,
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.bodyFontSize
+  };
+  var categoryFields = [
+    {
+      id: "uiInterface",
+      label: "UI Interface",
+      description: "Buttons, labels, menus, tabs, and settings surfaces."
+    },
+    {
+      id: "userGuidance",
+      label: "User Guidance",
+      description: "Help text, hints, onboarding copy, and explanatory guidance."
+    },
+    {
+      id: "workflowTerms",
+      label: "Workflow Terms",
+      description: "Step names, taxonomy labels, and product workflow language."
+    },
+    {
+      id: "systemFeedback",
+      label: "System Feedback",
+      description: "Status messages, warnings, errors, and empty states."
+    },
+    {
+      id: "interactiveTemplates",
+      label: "Interactive Templates",
+      description: "Questionnaires, editable product-authored forms, and templates."
+    }
+  ];
+  var policyOptions = [
+    {
+      id: "keep_english",
+      label: "Keep English",
+      description: "Preserve workflow taxonomy terms such as Description and Virtual Simulation."
+    },
+    {
+      id: "translate",
+      label: "Translate",
+      description: "Allow workflow taxonomy terms to be localized like other product copy."
+    }
+  ];
+  var LocalizationSettingsCard = ({
+    localization,
+    onCategoryLanguageChange,
+    onDefaultLanguageChange,
+    onEngineIdChange,
+    onGlossaryEnabledChange,
+    onWorkflowTermsPolicyChange
+  }) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(settings_card_default, { title: "Localization", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { style: introStyles, children: [
+      "Configure how each product copy category should be shown. Use",
+      " ",
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("code", { children: "source" }),
+      " to keep the canonical English source copy."
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: helperStyles, children: "Language codes are free-form in this first wave. The engine-backed language catalog arrives in a later implementation phase." }),
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlGridStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Default language" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Fallback language for categories that do not have their own override." }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "input",
+          {
+            onChange: (event) => onDefaultLanguageChange(event.target.value),
+            placeholder: "source",
+            style: inputStyles3,
+            type: "text",
+            value: localization.defaultLanguage
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Translation engine" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Current engine id used for bundle materialization." }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "input",
+          {
+            onChange: (event) => onEngineIdChange(event.target.value),
+            placeholder: "google-gtx",
+            style: inputStyles3,
+            type: "text",
+            value: localization.engineId
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { style: toggleRowStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "input",
+          {
+            checked: localization.glossaryEnabled,
+            onChange: (event) => onGlossaryEnabledChange(event.target.checked),
+            style: checkboxStyles,
+            type: "checkbox"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { flex: 1 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Glossary protection" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Keep protected terms, provider names, and product vocabulary stable during localization." })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        localization_glossary_editor_default,
+        {
+          glossaryEnabled: localization.glossaryEnabled
+        }
+      ),
+      categoryFields.map((category) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: category.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: category.description }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "input",
+          {
+            onChange: (event) => onCategoryLanguageChange(category.id, event.target.value),
+            placeholder: localization.defaultLanguage,
+            style: inputStyles3,
+            type: "text",
+            value: localization.categories[category.id]
+          }
+        )
+      ] }, category.id)),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Workflow terms policy" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Choose whether workflow taxonomy should stay in English or participate in localization." }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: policyGroupStyles, children: policyOptions.map((option) => {
+          const selected = localization.workflowTermsPolicy === option.id;
+          return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+            "button",
+            {
+              onClick: () => onWorkflowTermsPolicyChange(option.id),
+              style: {
+                ...policyButtonBaseStyles,
+                background: selected ? settingsColorTokens.actionPrimary : policyButtonBaseStyles.background,
+                borderColor: selected ? settingsColorTokens.actionPrimary : settingsColorTokens.borderStrong,
+                color: selected ? settingsColorTokens.actionPrimaryText : settingsColorTokens.textSecondary
+              },
+              type: "button",
+              children: option.label
+            },
+            option.id
+          );
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: helperStyles, children: policyOptions.find(
+          (option) => option.id === localization.workflowTermsPolicy
+        )?.description })
+      ] })
+    ] })
+  ] });
+  var localization_settings_card_default = (0, import_react11.memo)(LocalizationSettingsCard);
+
+  // src/client/ui/src/components/settings/general-settings.tsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var wrapperStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px"
+  };
+  var descriptionStyles2 = {
+    fontSize: "13px",
+    color: "#bbbbbb",
+    lineHeight: 1.4,
+    margin: 0
+  };
+  var coreControlHeight = "38px";
+  var buttonStyles = {
+    alignSelf: "flex-start",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxSizing: "border-box",
+    height: coreControlHeight,
+    padding: "0 16px",
+    borderRadius: settingsRadiusTokens.control,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    fontWeight: 600,
+    lineHeight: 1,
+    transition: "background-color 120ms ease, border-color 120ms ease, transform 120ms ease, opacity 120ms ease"
+  };
+  var controlsRowStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    flexWrap: "wrap"
+  };
+  var statusStyles2 = {
+    display: "inline-flex",
+    alignItems: "center",
+    boxSizing: "border-box",
+    height: coreControlHeight,
+    padding: "0 12px",
+    borderRadius: settingsRadiusTokens.panel,
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    lineHeight: 1
+  };
+  var GeneralSettings = (props) => {
+    const { t } = useLocalization();
+    const [isHovered, setIsHovered] = (0, import_react12.useState)(false);
+    const [isPressed, setIsPressed] = (0, import_react12.useState)(false);
+    const coreControlsTitle = t(
+      "ui_interface",
+      "settings.core_controls.title",
+      "Core Controls"
+    );
+    const coreControlsDescription = t(
+      "user_guidance",
+      "settings.core_controls.description",
+      "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues."
+    );
+    const restartIdleLabel = t(
+      "ui_interface",
+      "settings.core_controls.restart_idle_label",
+      "Restart Core"
+    );
+    const restartPendingLabel = t(
+      "ui_interface",
+      "settings.core_controls.restart_pending_label",
+      "Restarting..."
+    );
+    const idleStatusLabel = t(
+      "system_feedback",
+      "settings.core_controls.idle_status_label",
+      "Core restart status will appear here."
+    );
+    const resolvedButtonStyles = (0, import_react12.useMemo)(() => {
+      if (props.coreControl.busy) {
+        return {
+          ...buttonStyles,
+          border: `1px solid ${settingsColorTokens.borderStrong}`,
+          background: settingsColorTokens.borderStrong,
+          color: settingsColorTokens.textMuted,
+          cursor: "progress",
+          opacity: 0.85
+        };
+      }
+      if (isPressed) {
+        return {
+          ...buttonStyles,
+          border: "1px solid #0a4c78",
+          background: "#0a4c78",
+          color: settingsColorTokens.actionPrimaryText,
+          cursor: "pointer",
+          transform: "translateY(1px)"
+        };
+      }
+      if (isHovered) {
+        return {
+          ...buttonStyles,
+          border: "1px solid #1f7bb8",
+          background: "#1177bb",
+          color: settingsColorTokens.actionPrimaryText,
+          cursor: "pointer"
+        };
+      }
+      return {
+        ...buttonStyles,
+        border: `1px solid ${settingsColorTokens.actionPrimary}`,
+        background: settingsColorTokens.actionPrimary,
+        color: settingsColorTokens.actionPrimaryText,
+        cursor: "pointer"
+      };
+    }, [isHovered, isPressed, props.coreControl.busy]);
+    const resolvedStatusStyles = (0, import_react12.useMemo)(() => {
+      switch (props.coreControl.phase) {
+        case "ready":
+          return {
+            ...statusStyles2,
+            border: "1px solid rgba(80, 160, 95, 0.55)",
+            background: "rgba(80, 160, 95, 0.16)",
+            color: "#a8ddb2"
+          };
+        case "error":
+          return {
+            ...statusStyles2,
+            border: "1px solid rgba(215, 101, 95, 0.55)",
+            background: "rgba(215, 101, 95, 0.16)",
+            color: "#f2b8b5"
+          };
+        case "stopping":
+        case "waiting":
+        case "starting":
+          return {
+            ...statusStyles2,
+            border: "1px solid rgba(190, 145, 75, 0.55)",
+            background: "rgba(190, 145, 75, 0.16)",
+            color: "#f1d39b"
+          };
+        default:
+          return {
+            ...statusStyles2,
+            color: settingsColorTokens.textMuted
+          };
+      }
+    }, [props.coreControl.phase]);
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        general_response_mode_facade_default,
+        {
+          onModeChange: props.onResponsePolicyModeChange,
+          onStrictInstructionTextChange: props.onStrictInstructionTextChange,
+          onStrictSchemaTextChange: props.onStrictSchemaTextChange,
+          responsePolicy: props.responsePolicy
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+        localization_settings_card_default,
+        {
+          localization: props.localization,
+          onCategoryLanguageChange: props.onLocalizationCategoryLanguageChange,
+          onDefaultLanguageChange: props.onLocalizationDefaultLanguageChange,
+          onEngineIdChange: props.onLocalizationEngineIdChange,
+          onGlossaryEnabledChange: props.onLocalizationGlossaryEnabledChange,
+          onWorkflowTermsPolicyChange: props.onLocalizationWorkflowTermsPolicyChange
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(settings_card_default, { title: coreControlsTitle, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: descriptionStyles2, children: coreControlsDescription }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlsRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            "button",
+            {
+              "aria-busy": props.coreControl.busy,
+              disabled: props.coreControl.busy,
+              onBlur: () => setIsPressed(false),
+              onClick: props.onRestartCore,
+              onMouseDown: () => setIsPressed(true),
+              onMouseEnter: () => setIsHovered(true),
+              onMouseLeave: () => {
+                setIsHovered(false);
+                setIsPressed(false);
+              },
+              onMouseUp: () => setIsPressed(false),
+              style: resolvedButtonStyles,
+              type: "button",
+              children: props.coreControl.busy ? restartPendingLabel : restartIdleLabel
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: resolvedStatusStyles, children: props.coreControl.message ?? idleStatusLabel })
+        ] })
+      ] })
+    ] });
+  };
+  var general_settings_default = (0, import_react12.memo)(GeneralSettings);
+
+  // src/client/ui/src/components/settings/provider-versions.tsx
+  var import_react14 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/provider-version-row.tsx
+  var import_react13 = __toESM(require_react());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var rowStyles = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "12px",
+    padding: "10px",
+    borderRadius: "4px",
+    background: "#1f1f1f",
+    border: "1px solid #2e2e2e"
+  };
+  var labelStyles2 = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px"
+  };
+  var nameStyles = {
+    fontSize: "13px",
+    color: "#e0e0e0",
+    margin: 0
+  };
+  var versionTextStyles = {
+    fontSize: "12px",
+    color: "#b7b7b7",
+    margin: 0
+  };
+  var chipStyles = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    background: "#2a2a2a",
+    color: "#d0d0d0",
+    padding: "4px 8px",
+    borderRadius: "999px",
+    fontSize: "11px",
+    border: "1px solid #3c3c3c"
+  };
+  var buttonStyles2 = {
+    minWidth: "160px",
+    border: "1px solid #3a3d41",
+    background: "#0e639c",
+    color: "#ffffff",
+    padding: "8px 12px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var buttonDisabledStyles = {
+    ...buttonStyles2,
+    background: "#2d2d30",
+    color: "#9f9f9f",
+    cursor: "not-allowed",
+    borderColor: "#3c3c3c"
+  };
+  var pendingButtonStyles = {
+    ...buttonStyles2,
+    background: "#c18400",
+    borderColor: "#f0c674",
+    color: "#1b1b1b"
+  };
+  var VersionRowItemComponent = ({
+    row,
+    disabled,
+    onClick,
+    isUpdating,
+    pendingConfirmation
+  }) => {
+    const hasUpdate = !disabled && row.latestVersion !== null && row.latestVersion !== void 0 && row.latestVersion !== row.currentVersion;
+    const buttonLabel = (() => {
+      if (isUpdating) {
+        return `Updating to ${row.latestVersion ?? "latest"}\u2026`;
+      }
+      if (!hasUpdate) {
+        if (row.latestVersion) {
+          return `Up to date (${row.latestVersion})`;
+        }
+        return "Up to date";
+      }
+      if (pendingConfirmation) {
+        return "Click again to confirm";
+      }
+      return `Update to ${row.latestVersion ?? "latest"}`;
+    })();
+    const currentLabel = row.currentVersion ?? "Not detected";
+    const latestLabel = row.latestVersion ?? "Latest: unknown";
+    let resolvedButtonStyle = buttonDisabledStyles;
+    if (pendingConfirmation) {
+      resolvedButtonStyle = pendingButtonStyles;
+    } else if (hasUpdate && !disabled) {
+      resolvedButtonStyle = buttonStyles2;
+    }
+    const shouldShowButton = row.showUpdateButton ?? true;
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: labelStyles2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { style: versionTextStyles, children: [
+          "Current: ",
+          currentLabel,
+          " ",
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: chipStyles, children: latestLabel })
+        ] })
+      ] }),
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+        "button",
+        {
+          disabled: disabled || !hasUpdate,
+          onClick,
+          style: resolvedButtonStyle,
+          type: "button",
+          children: buttonLabel
+        }
+      ) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: chipStyles, children: latestLabel })
+    ] });
+  };
+  var VersionRowItem = (0, import_react13.memo)(VersionRowItemComponent);
+
+  // src/client/ui/src/components/settings/provider-versions-ui.tsx
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var warningStyles2 = {
+    background: "#3a2a1f",
+    border: "1px solid #9b6b3d",
+    color: "#ffd7a3",
+    borderRadius: "4px",
+    padding: "8px 10px",
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+  var toggleContainerStyles = {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "12px",
+    padding: "10px 12px",
+    borderRadius: "6px",
+    border: "1px solid #2f2f2f",
+    background: "#252526"
+  };
+  var toggleCheckboxStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var toggleTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var toggleDescriptionStyles = {
+    fontSize: "12px",
+    color: "#9f9f9f",
+    lineHeight: 1.4,
+    margin: 0
+  };
+  var providerBannerStyles = (provider) => {
+    if (provider === "claude") {
+      return {
+        background: "#312d2a",
+        border: "1px solid #ff9105",
+        color: "#ffb76f"
+      };
+    }
+    if (provider === "codex") {
+      return {
+        background: "#293230",
+        border: "1px solid #01f0d8",
+        color: "#9cf8ef"
+      };
+    }
+    return {
+      background: "#2c2a2d",
+      border: "1px solid #ab34cb",
+      color: "#e7b3f5"
+    };
+  };
+  var resolveProviderLabel = (provider) => {
+    if (provider === "claude") {
+      return "Claude";
+    }
+    if (provider === "codex") {
+      return "Codex";
+    }
+    return "Gemini";
+  };
+  var resolveTargetLabel = (provider, target) => {
+    if (provider === "gemini" && target === "core") {
+      return "CLI Core";
+    }
+    if (target === "cli") {
+      return "CLI";
+    }
+    return "SDK";
+  };
+  var formatCheckedAt = (value) => {
+    if (!value) {
+      return null;
+    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+    const year = parsed.getFullYear();
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
+  var WarningBanner = ({
+    provider
+  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  var AutoUpdateToggle = ({
+    provider,
+    enabled,
+    disabled,
+    onToggle
+  }) => {
+    const providerLabel = resolveProviderLabel(provider);
+    const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+      "label",
+      {
+        style: {
+          ...toggleContainerStyles,
+          opacity: disabled ? 0.6 : 1,
+          cursor: disabled ? "not-allowed" : "pointer"
+        },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            "input",
+            {
+              checked: enabled,
+              disabled,
+              onChange: (event) => onToggle(event.target.checked),
+              style: toggleCheckboxStyles,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: toggleTitleStyles, children: [
+              "Auto-update ",
+              providerLabel
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { style: toggleDescriptionStyles, children: [
+              "Automatically check and update the ",
+              packageLabel,
+              " on core start. Manual updates remain available below."
+            ] })
+          ] })
+        ]
+      }
+    );
+  };
+
+  // src/client/ui/src/components/settings/provider-versions.tsx
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var rowsContainerStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var statusStyles3 = {
+    fontSize: "12px",
+    color: "#ffb86c",
+    marginTop: "6px"
+  };
+  var errorStyles2 = {
+    fontSize: "12px",
+    color: "#ff8a8a",
+    marginTop: "6px"
+  };
+  var metadataTextStyles = {
+    fontSize: "12px",
+    color: "#b7b7b7"
+  };
+  var ProviderVersions = ({
+    provider,
+    versions,
+    autoUpdateEnabled,
+    onAutoUpdateChange,
+    onUpdate
+  }) => {
+    const [pendingTarget, setPendingTarget] = (0, import_react14.useState)(null);
+    const snapshot = versions.data;
+    const rows = (0, import_react14.useMemo)(() => {
+      if (!snapshot) {
+        return [];
+      }
+      if (provider === "gemini") {
+        const geminiSnapshot = snapshot.gemini;
+        if (!geminiSnapshot) {
+          return [];
+        }
+        return [
+          {
+            label: "Gemini CLI",
+            packageName: geminiSnapshot.cli.packageName,
+            currentVersion: geminiSnapshot.cli.currentVersion,
+            latestVersion: geminiSnapshot.cli.latestVersion,
+            target: void 0,
+            showUpdateButton: false
+          },
+          {
+            label: "Gemini CLI Core",
+            packageName: geminiSnapshot.core.packageName,
+            currentVersion: geminiSnapshot.core.currentVersion,
+            latestVersion: geminiSnapshot.core.latestVersion,
+            target: "core",
+            showUpdateButton: true
+          }
+        ];
+      }
+      const providerSnapshot = provider === "claude" ? snapshot.claude : snapshot.codex;
+      if (!providerSnapshot) {
+        return [];
+      }
+      const prefix = provider === "claude" ? "Claude" : "Codex";
+      return [
+        {
+          label: `${prefix} CLI`,
+          packageName: providerSnapshot.cli.packageName,
+          currentVersion: providerSnapshot.cli.currentVersion,
+          latestVersion: providerSnapshot.cli.latestVersion,
+          target: "cli"
+        },
+        {
+          label: `${prefix} SDK`,
+          packageName: providerSnapshot.sdk.packageName,
+          currentVersion: providerSnapshot.sdk.currentVersion,
+          latestVersion: providerSnapshot.sdk.latestVersion,
+          target: "sdk"
+        }
+      ];
+    }, [provider, snapshot]);
+    const hasProviderVersions = (0, import_react14.useMemo)(() => {
+      if (!snapshot) {
+        return false;
+      }
+      if (provider === "gemini") {
+        return Boolean(snapshot.gemini);
+      }
+      return provider === "claude" ? Boolean(snapshot.claude) : Boolean(snapshot.codex);
+    }, [provider, snapshot]);
+    const isBusy = versions.loading || versions.updatingTargets.length > 0;
+    const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
+    const isPending = (target) => pendingTarget === `${provider}:${target}`;
+    const providerUpdateTargets = (0, import_react14.useMemo)(() => {
+      const prefix = `${provider}:`;
+      return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
+    }, [provider, versions.updatingTargets]);
+    const manualUpdateStatus = (0, import_react14.useMemo)(() => {
+      if (providerUpdateTargets.length === 0) {
+        return null;
+      }
+      const labels = providerUpdateTargets.map(
+        (target) => resolveTargetLabel(provider, target)
+      );
+      return `Manual update in progress: ${labels.join(", ")}`;
+    }, [provider, providerUpdateTargets]);
+    (0, import_react14.useEffect)(() => {
+      if (versions.updatingTargets.length === 0) {
+        setPendingTarget(null);
+      }
+    }, [versions.updatingTargets]);
+    const handleUpdate = (target) => {
+      const key = `${provider}:${target}`;
+      if (pendingTarget !== key) {
+        setPendingTarget(key);
+        return;
+      }
+      setPendingTarget(null);
+      onUpdate(provider, target);
+    };
+    let title = "Gemini Versions";
+    if (provider === "claude") {
+      title = "Claude Versions";
+    } else if (provider === "codex") {
+      title = "Codex Versions";
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+      settings_card_default,
+      {
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { style: metadataTextStyles, children: [
+          "Checked: ",
+          formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
+        ] }) : null,
+        title,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            AutoUpdateToggle,
+            {
+              disabled: versions.loading,
+              enabled: autoUpdateEnabled,
+              onToggle: (enabled) => onAutoUpdateChange(provider, enabled),
+              provider
+            }
+          ),
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: errorStyles2, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: statusStyles3, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: statusStyles3, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: statusStyles3, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            VersionRowItem,
+            {
+              disabled: isBusy,
+              isUpdating: row.target ? isUpdating(row.target) : false,
+              onClick: row.target ? () => handleUpdate(row.target) : void 0,
+              pendingConfirmation: row.target ? isPending(row.target) : false,
+              row
+            },
+            row.packageName
+          )) })
+        ]
+      }
+    );
+  };
+  var provider_versions_default = (0, import_react14.memo)(ProviderVersions);
+
+  // src/client/ui/src/components/settings/session-continuity-card.tsx
+  var import_react15 = __toESM(require_react());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var settingsLabelStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    fontSize: "12px",
+    color: "#cccccc"
+  };
+  var settingsDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    lineHeight: 1.5,
+    color: "#aaaaaa"
+  };
+  var settingsInputStyles = {
+    width: "220px",
+    background: "#1e1e1e",
+    border: "1px solid #3c3c3c",
+    borderRadius: "6px",
+    padding: "8px 10px",
+    color: "#cccccc"
+  };
+  var UNSIGNED_INTEGER_RE = /^\d+$/;
+  var isUnsignedIntegerText = (value) => UNSIGNED_INTEGER_RE.test(value);
+  var clampInteger = (value, min, max) => Math.min(max, Math.max(min, value));
+  var ManualIntegerInput = ({
+    id,
+    value,
+    min,
+    max,
+    onCommit
+  }) => {
+    const [draft, setDraft] = import_react15.default.useState(() => String(value));
+    import_react15.default.useEffect(() => {
+      setDraft(String(value));
+    }, [value]);
+    const commitDraft = import_react15.default.useCallback(() => {
+      const trimmed = draft.trim();
+      if (trimmed.length === 0) {
+        setDraft(String(value));
+        return;
+      }
+      if (!isUnsignedIntegerText(trimmed)) {
+        setDraft(String(value));
+        return;
+      }
+      const parsed = Number(trimmed);
+      if (!Number.isFinite(parsed)) {
+        setDraft(String(value));
+        return;
+      }
+      const clamped = clampInteger(parsed, min, max);
+      onCommit(clamped);
+      setDraft(String(clamped));
+    }, [draft, max, min, onCommit, value]);
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      "input",
+      {
+        autoComplete: "off",
+        id,
+        inputMode: "numeric",
+        onBlur: commitDraft,
+        onChange: (event) => setDraft(event.target.value),
+        onKeyDown: (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            event.currentTarget.blur();
+          }
+          if (event.key === "Escape") {
+            event.preventDefault();
+            setDraft(String(value));
+            event.currentTarget.blur();
+          }
+        },
+        pattern: "[0-9]*",
+        style: settingsInputStyles,
+        type: "text",
+        value: draft
+      }
+    );
+  };
+  var SessionContinuityCard = ({
+    title,
+    remainingPercentThreshold,
+    onRemainingPercentThresholdChange,
+    contextWindowTokenLimit,
+    onContextWindowTokenLimitChange
+  }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(settings_card_default, { title, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
+    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+      "label",
+      {
+        htmlFor: `${title}-context-window-token-limit`,
+        style: settingsLabelStyles,
+        children: [
+          "Context window limit (tokens)",
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            ManualIntegerInput,
+            {
+              id: `${title}-context-window-token-limit`,
+              max: 1e6,
+              min: 1e4,
+              onCommit: onContextWindowTokenLimitChange,
+              value: contextWindowTokenLimit
+            }
+          )
+        ]
+      }
+    ) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+      "label",
+      {
+        htmlFor: `${title}-remaining-percent-threshold`,
+        style: settingsLabelStyles,
+        children: [
+          "Remaining context threshold (%)",
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+            ManualIntegerInput,
+            {
+              id: `${title}-remaining-percent-threshold`,
+              max: 80,
+              min: 5,
+              onCommit: onRemainingPercentThresholdChange,
+              value: remainingPercentThreshold
+            }
+          )
+        ]
+      }
+    )
+  ] });
+  var session_continuity_card_default = import_react15.default.memo(SessionContinuityCard);
+
+  // src/client/ui/src/components/settings/settings-footer.tsx
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var containerStyles = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "12px 20px",
+    borderTop: `1px solid ${settingsColorTokens.borderSubtle}`,
+    flexShrink: 0
+  };
+  var resetButtonStyles = {
+    padding: "6px 12px",
+    background: "transparent",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    borderRadius: "4px",
+    color: settingsColorTokens.textSecondary,
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.tabFontSize,
+    transition: "all 0.2s ease"
+  };
+  var closeButtonStyles2 = {
+    padding: "6px 16px",
+    background: "transparent",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    borderRadius: "4px",
+    color: settingsColorTokens.textSecondary,
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.tabFontSize,
+    transition: "all 0.2s ease"
+  };
+  var saveButtonStyles4 = {
+    padding: "6px 16px",
+    background: settingsColorTokens.borderStrong,
+    border: "none",
+    borderRadius: "4px",
+    color: "#808080",
+    cursor: "default",
+    fontSize: settingsTypographyTokens.tabFontSize,
+    transition: "all 0.2s ease"
+  };
+  var buttonGroupStyles = {
+    display: "flex",
+    gap: "8px"
+  };
+  var DISABLED_OPACITY = 0.6;
+  var HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
+  var HOVER_BORDER_COLOR = "#4c4c4c";
+  var SAVE_HOVER_COLOR = "#1177bb";
+  var SettingsFooter = ({
+    hasChanges,
+    saving,
+    resetting,
+    onClose,
+    onSave,
+    onReset
+  }) => {
+    const { t } = useLocalization();
+    const resetButtonTitle = t(
+      "ui_interface",
+      "settings.footer.reset_button_title",
+      "Reset all settings to defaults"
+    );
+    const resetIdleLabel = t(
+      "ui_interface",
+      "settings.footer.reset_idle_label",
+      "Reset to Defaults"
+    );
+    const resetPendingLabel = t(
+      "ui_interface",
+      "settings.footer.reset_pending_label",
+      "Resetting..."
+    );
+    const closeButtonLabel = t(
+      "ui_interface",
+      "settings.footer.close_button_label",
+      "Close"
+    );
+    const saveIdleLabel = t(
+      "ui_interface",
+      "settings.footer.save_idle_label",
+      "Save Changes"
+    );
+    const savePendingLabel = t(
+      "ui_interface",
+      "settings.footer.save_pending_label",
+      "Saving..."
+    );
+    const handleResetMouseEnter = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+      }
+    };
+    const handleResetMouseLeave = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "transparent";
+        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+      }
+    };
+    const handleResetFocus = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+      }
+    };
+    const handleResetBlur = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "transparent";
+        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+      }
+    };
+    const handleCloseMouseEnter = (event) => {
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+    };
+    const handleCloseMouseLeave = (event) => {
+      event.currentTarget.style.background = "transparent";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+    };
+    const handleCloseFocus = (event) => {
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+    };
+    const handleCloseBlur = (event) => {
+      event.currentTarget.style.background = "transparent";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+    };
+    const handleSaveMouseEnter = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = SAVE_HOVER_COLOR;
+      }
+    };
+    const handleSaveMouseLeave = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
+      }
+    };
+    const handleSaveFocus = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = SAVE_HOVER_COLOR;
+      }
+    };
+    const handleSaveBlur = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        "button",
+        {
+          disabled: resetting,
+          onBlur: handleResetBlur,
+          onClick: onReset,
+          onFocus: handleResetFocus,
+          onMouseEnter: handleResetMouseEnter,
+          onMouseLeave: handleResetMouseLeave,
+          style: {
+            ...resetButtonStyles,
+            background: resetting ? settingsColorTokens.borderStrong : "transparent",
+            color: resetting ? "#808080" : settingsColorTokens.textSecondary,
+            cursor: resetting ? "default" : "pointer",
+            opacity: resetting ? DISABLED_OPACITY : 1
+          },
+          title: resetButtonTitle,
+          type: "button",
+          children: resetting ? resetPendingLabel : resetIdleLabel
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          "button",
+          {
+            onBlur: handleCloseBlur,
+            onClick: onClose,
+            onFocus: handleCloseFocus,
+            onMouseEnter: handleCloseMouseEnter,
+            onMouseLeave: handleCloseMouseLeave,
+            style: closeButtonStyles2,
+            type: "button",
+            children: closeButtonLabel
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+          "button",
+          {
+            disabled: !hasChanges || saving,
+            onBlur: handleSaveBlur,
+            onClick: onSave,
+            onFocus: handleSaveFocus,
+            onMouseEnter: handleSaveMouseEnter,
+            onMouseLeave: handleSaveMouseLeave,
+            style: {
+              ...saveButtonStyles4,
+              background: hasChanges && !saving ? settingsColorTokens.actionPrimary : saveButtonStyles4.background,
+              color: hasChanges ? settingsColorTokens.actionPrimaryText : saveButtonStyles4.color,
+              cursor: hasChanges && !saving ? "pointer" : "default",
+              opacity: saving ? DISABLED_OPACITY : 1
+            },
+            type: "button",
+            children: saving ? savePendingLabel : saveIdleLabel
+          }
+        )
+      ] })
+    ] });
+  };
+  var settings_footer_default = SettingsFooter;
+
+  // src/client/ui/src/components/settings/settings-header.tsx
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var headerStyles3 = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "12px 16px",
+    borderBottom: "1px solid #2d2d30",
+    flexShrink: 0
+  };
+  var titleStyles4 = {
+    fontSize: "16px",
+    fontWeight: 600
+  };
+  var closeButtonStyles3 = {
+    background: "transparent",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    padding: "4px 8px",
+    fontSize: "18px",
+    width: "32px",
+    height: "32px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+  var SettingsHeader = ({ onClose }) => {
+    const { t } = useLocalization();
+    const title = t("ui_interface", "settings.header.title", "Settings");
+    const closeButtonLabel = t(
+      "ui_interface",
+      "settings.header.close_button_label",
+      "Close settings"
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: headerStyles3, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: titleStyles4, children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        "button",
+        {
+          "aria-label": closeButtonLabel,
+          onClick: onClose,
+          style: closeButtonStyles3,
+          title: closeButtonLabel,
+          type: "button",
+          children: "\xD7"
+        }
+      )
+    ] });
+  };
+  var settings_header_default = SettingsHeader;
+
+  // src/client/ui/src/components/settings/thinking-settings.tsx
+  var import_react16 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/thinking/constants.ts
+  var MIN_THINKING_TOKENS = 2e3;
+  var MAX_THINKING_TOKENS = 32e3;
+  var THINKING_TOKEN_STEP = 1e3;
+  var hideSpinnerStyle = `
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
+
+  // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var containerStyles2 = {
+    marginTop: "20px",
+    padding: "12px",
+    background: "#1a1a1a",
+    borderRadius: "4px",
+    border: "1px solid #2d2d30"
+  };
+  var titleStyles5 = {
+    fontSize: "12px",
+    color: "#7ca9d3",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var descriptionStyles3 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  ] });
+  var thinking_pro_tip_default = ThinkingProTip;
+
+  // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var toggleContainerStyles2 = {
+    display: "flex",
+    alignItems: "flex-start",
+    cursor: "pointer",
+    gap: "12px",
+    marginBottom: "20px"
+  };
+  var checkboxStyles2 = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var titleStyles6 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var descriptionStyles4 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var noteStyles2 = {
+    color: "#d4a36a"
+  };
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+      "input",
+      {
+        checked: enabled,
+        onChange: (event) => onToggle(event.target.checked),
+        style: checkboxStyles2,
+        type: "checkbox"
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: descriptionStyles4, children: [
+        "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        " Changes take effect when creating a new session."
+      ] })
+    ] })
+  ] });
+  var thinking_toggle_default = ThinkingToggle;
+
+  // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
   var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var containerStyles3 = {
+    paddingLeft: "28px",
+    borderTop: "1px solid #3c3c3c",
+    paddingTop: "15px"
+  };
+  var titleStyles7 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "8px"
+  };
+  var controlsStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px"
+  };
+  var buttonStyles3 = {
+    width: "28px",
+    height: "28px",
+    background: "#2d2d30",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    fontSize: "16px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+  var inputStyles4 = {
+    width: "100px",
+    padding: "6px 8px",
+    background: "#1e1e1e",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    fontSize: "13px",
+    textAlign: "center",
+    MozAppearance: "textfield",
+    appearance: "textfield"
+  };
+  var helperStyles2 = {
+    fontSize: "12px",
+    color: "#999999",
+    marginTop: "8px",
+    lineHeight: "1.4"
+  };
+  var ThinkingTokenInput = ({
+    value,
+    onChange
+  }) => {
+    const updateValue = (next) => {
+      const constrained = Math.min(
+        MAX_THINKING_TOKENS,
+        Math.max(MIN_THINKING_TOKENS, next)
+      );
+      onChange(constrained);
+    };
+    const handleInputChange = (event) => {
+      const parsed = Number.parseInt(event.target.value, 10);
+      updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          "button",
+          {
+            onClick: () => updateValue(value - THINKING_TOKEN_STEP),
+            style: buttonStyles3,
+            title: "Decrease by 1000",
+            type: "button",
+            children: "\u2212"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          "input",
+          {
+            max: MAX_THINKING_TOKENS,
+            min: MIN_THINKING_TOKENS,
+            onChange: handleInputChange,
+            step: THINKING_TOKEN_STEP,
+            style: inputStyles4,
+            type: "number",
+            value
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          "button",
+          {
+            onClick: () => updateValue(value + THINKING_TOKEN_STEP),
+            style: buttonStyles3,
+            title: "Increase by 1000",
+            type: "button",
+            children: "+"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: helperStyles2, children: [
+        "\u2022 Normal (4000): Standard reasoning depth",
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
+        "\u2022 Hard (10000): Extended analysis for complex tasks",
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
+        "\u2022 Ultra (32000): Maximum reasoning capacity"
+      ] })
+    ] }) });
+  };
+  var thinking_token_input_default = ThinkingTokenInput;
+
+  // src/client/ui/src/components/settings/thinking-settings.tsx
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var wrapperStyles2 = {
+    marginBottom: "30px"
+  };
+  var displaySyncToggleStyles3 = {
+    display: "flex",
+    alignItems: "flex-start",
+    cursor: "pointer",
+    gap: "12px",
+    marginBottom: "20px"
+  };
+  var displaySyncCheckboxStyles3 = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var displaySyncTitleStyles3 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var displaySyncDescriptionStyles3 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var ThinkingSettings = ({
+    enabled,
+    maxTokens,
+    thinkingDisplaySyncEnabled,
+    onThinkingDisplaySyncChange,
+    onChange
+  }) => {
+    const handleToggle = (nextEnabled) => {
+      onChange(nextEnabled, maxTokens);
+    };
+    const handleTokenChange = (nextValue) => {
+      onChange(enabled, nextValue);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { style: displaySyncToggleStyles3, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+            "input",
+            {
+              checked: thinkingDisplaySyncEnabled,
+              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+              style: displaySyncCheckboxStyles3,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(thinking_pro_tip_default, {})
+      ] })
+    ] });
+  };
+  var thinking_settings_default = (0, import_react16.memo)(ThinkingSettings);
+
+  // src/client/ui/src/components/settings-view.tsx
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
     display: "flex",
@@ -11255,33 +12281,15 @@
     flexDirection: "column",
     gap: settingsSpacingTokens.containerGap
   };
-  var modeNoticeStyles = {
-    margin: `16px ${settingsSpacingTokens.pagePadding} 0`,
-    padding: "12px 14px",
-    borderRadius: "10px",
-    background: settingsColorTokens.surfaceElevated,
-    border: `1px solid ${settingsColorTokens.borderSubtle}`,
-    color: settingsColorTokens.textSecondary,
-    fontSize: settingsTypographyTokens.bodyFontSize,
-    lineHeight: 1.5
-  };
-  var modeNoticeTitleStyles = {
-    color: settingsColorTokens.textPrimary,
-    fontSize: settingsTypographyTokens.titleFontSize,
-    fontWeight: 600,
-    marginBottom: "4px"
-  };
   var settingsTabs = [
     { id: "claude", label: "Claude" },
     { id: "codex", label: "Codex" },
     { id: "gemini", label: "Gemini" },
     { id: "general", label: "General" }
   ];
-  var SettingsView = ({
-    onClose,
-    mode = "full"
-  }) => {
-    const [activeTab, setActiveTab] = (0, import_react14.useState)("claude");
+  var SettingsView = ({ onClose, state }) => {
+    const { ready } = useLocalization();
+    const [activeTab, setActiveTab] = (0, import_react17.useState)("claude");
     const {
       coreControl,
       settings,
@@ -11301,6 +12309,11 @@
       handleClaudeThinkingDisplaySyncChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
+      handleLocalizationCategoryLanguageChange,
+      handleLocalizationDefaultLanguageChange,
+      handleLocalizationEngineIdChange,
+      handleLocalizationGlossaryEnabledChange,
+      handleLocalizationWorkflowTermsPolicyChange,
       handleCodexReasoningChange,
       handleProviderAutoUpdateChange,
       handleRestartCore,
@@ -11310,14 +12323,10 @@
       handleSave,
       handleReset,
       handleUpdateProvider
-    } = useSettingsState();
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: containerStyles4, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(settings_header_default, { onClose }),
-      mode === "settings-only" ? /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: modeNoticeStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: modeNoticeTitleStyles, children: "Settings only mode" }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { children: "Sessions and chats are available in Project Manager." })
-      ] }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    } = state;
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "aria-busy": !ready, style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab.id),
@@ -11330,17 +12339,17 @@
         },
         tab.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -11350,7 +12359,7 @@
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               thinking_settings_default,
               {
                 enabled: settings.providers.claude.thinking.enabled,
@@ -11360,7 +12369,7 @@
                 thinkingDisplaySyncEnabled: settings.providers.claude.thinkingDisplaySyncEnabled
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleClaudeContinuityRemainingPercentThresholdChange,
@@ -11371,10 +12380,16 @@
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
             general_settings_default,
             {
               coreControl,
+              localization: settings.general.localization,
+              onLocalizationCategoryLanguageChange: handleLocalizationCategoryLanguageChange,
+              onLocalizationDefaultLanguageChange: handleLocalizationDefaultLanguageChange,
+              onLocalizationEngineIdChange: handleLocalizationEngineIdChange,
+              onLocalizationGlossaryEnabledChange: handleLocalizationGlossaryEnabledChange,
+              onLocalizationWorkflowTermsPolicyChange: handleLocalizationWorkflowTermsPolicyChange,
               onResponsePolicyModeChange: handleResponsePolicyModeChange,
               onRestartCore: handleRestartCore,
               onStrictInstructionTextChange: handleStrictInstructionTextChange,
@@ -11384,8 +12399,8 @@
           ) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -11396,7 +12411,7 @@
                 reasoningSummaryEnabled: settings.providers.codex.reasoningSummaryEnabled
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -11406,7 +12421,7 @@
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleCodexContinuityRemainingPercentThresholdChange,
@@ -11416,8 +12431,8 @@
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
@@ -11428,7 +12443,7 @@
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -11438,7 +12453,7 @@
               versions
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
             session_continuity_card_default,
             {
               contextWindowTokenLimit: settings.providers.gemini.sessionContinuity.contextWindowTokenLimit,
@@ -11450,7 +12465,7 @@
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -11463,7 +12478,7 @@
       )
     ] });
   };
-  var settings_view_default = import_react14.default.memo(SettingsView);
+  var settings_view_default = import_react17.default.memo(SettingsView);
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -11474,13 +12489,13 @@
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react15 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react15.useState)(false);
-    const openSettings = (0, import_react15.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react18.useState)(false);
+    const openSettings = (0, import_react18.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react15.useCallback)(() => {
+    const closeSettings = (0, import_react18.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -11492,7 +12507,7 @@
   };
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react16 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -11732,7 +12747,7 @@
     onSessionHistory,
     onUseProjectManager
   }) => {
-    (0, import_react16.useEffect)(() => {
+    (0, import_react19.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         if (isUseProjectManagerMessage(event.data)) {
           onUseProjectManager?.();
@@ -11775,7 +12790,7 @@
   };
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   var settingsOnlyLayoutStyles = {
     minHeight: "100vh",
     display: "flex",
@@ -11831,12 +12846,14 @@
   var noopVoidHandler = () => {
   };
   var SettingsOnlyHost = () => {
+    const settingsState = useSettingsState();
+    const localization = useResolvedLocalization(settingsState.settings);
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleShowSettings = (0, import_react17.useCallback)(() => {
+    const handleShowSettings = (0, import_react20.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react20.useEffect)(() => {
       activateRoot();
     }, []);
     useWebviewMessageHandler({
@@ -11846,12 +12863,12 @@
       onSessionFocusLast: noopVoidHandler,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("section", { style: settingsOnlyCardStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("section", { style: settingsOnlyCardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
           "button",
           {
             onClick: handleShowSettings,
@@ -11861,17 +12878,24 @@
           }
         )
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(settings_view_default, { mode: "settings-only", onClose: closeSettings }) }) }) : null
-    ] });
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        settings_view_default,
+        {
+          mode: "settings-only",
+          onClose: closeSettings,
+          state: settingsState
+        }
+      ) }) }) : null
+    ] }) });
   };
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
-  var AppHost = () => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(SettingsOnlyHost, {});
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  var AppHost = () => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(SettingsOnlyHost, {});
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -11881,7 +12905,7 @@
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(import_react18.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(import_react21.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(app_host_default, {}) })
     );
   };
   mount();
