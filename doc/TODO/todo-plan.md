@@ -56,8 +56,8 @@
 21. [DONE] Scaffold the new `@codeai-hub/localization` package manifest, TS config, and public entrypoint. Scope: `packages/localization/package.json`, `packages/localization/tsconfig.json`, `packages/localization/src/index.ts`. Target commit: `feat(localization): scaffold package`
 22. [DONE] Git Commit: `feat(localization): scaffold package` (hash: `23dea825`)
 23. [DONE] Add the core localization contract, facade, and source-dictionary registry. Scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add facade and contract`
-24. [TODO] Git Commit: `feat(localization): add facade and contract` (hash: TBD)
-25. [TODO] Add bundle-path, bundle-store, and metadata-store primitives backed by `~/.codeai-hub/localization`. Scope: `packages/localization/src/localization-paths.ts`, `packages/localization/src/localization-bundle-store.ts`, `packages/localization/src/localization-metadata-store.ts`. Target commit: `feat(localization): add bundle persistence primitives`
+24. [DONE] Git Commit: `feat(localization): add facade and contract` (hash: `3443f910`)
+25. [DONE] Add bundle-path, bundle-store, and metadata-store primitives backed by `~/.codeai-hub/localization`. Scope: `packages/localization/src/localization-paths.ts`, `packages/localization/src/localization-bundle-store.ts`, `packages/localization/src/localization-metadata-store.ts`. Target commit: `feat(localization): add bundle persistence primitives`
 26. [TODO] Git Commit: `feat(localization): add bundle persistence primitives` (hash: TBD)
 
 ### Stream: Language Catalog And Materialization
