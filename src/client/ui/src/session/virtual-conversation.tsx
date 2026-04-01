@@ -17,6 +17,10 @@ import {
 
 export { buildTokenDebugSummary } from "./token-debug-summary";
 
+const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
+  message.role === "thinking" ||
+  (message.role === "assistant" && message.tag === "thinking");
+
 const filterContinuityInternalSegmentMessages = (
   segment: readonly SessionMessage[]
 ): readonly SessionMessage[] => {
@@ -40,14 +44,16 @@ const filterContinuityInternalSegmentMessages = (
   );
   if (firstUserIndex < 0) {
     return withoutInternalAck.filter(
-      (message) => message.role !== "assistant" && message.role !== "thinking"
+      (message) =>
+        message.role !== "assistant" && !isThinkingDisplayMessage(message)
     );
   }
 
   const prefix = withoutInternalAck
     .slice(0, firstUserIndex)
     .filter(
-      (message) => message.role !== "assistant" && message.role !== "thinking"
+      (message) =>
+        message.role !== "assistant" && !isThinkingDisplayMessage(message)
     );
   if (prefix.length === 0) {
     return withoutInternalAck;

@@ -12,6 +12,10 @@ import {
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 
+const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
+  message.role === "thinking" ||
+  (message.role === "assistant" && message.tag === "thinking");
+
 export const useQueuedSend = (options: {
   readonly activeSessionId: string | null;
   readonly connectionState: ConnectionState;
@@ -93,7 +97,7 @@ export const resolveVirtualConversationMessages = (options: {
     options.activeSession?.status.connectionState === "blocked";
   const filtered =
     shouldSuppressRolloverThinking && base.length > 0
-      ? base.filter((message) => message.role !== "thinking")
+      ? base.filter((message) => !isThinkingDisplayMessage(message))
       : base;
   return filterContinuityInternalMessages(filtered);
 };

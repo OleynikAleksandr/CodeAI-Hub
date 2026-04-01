@@ -5,6 +5,10 @@ import type {
 
 const SYSTEM_PROMPT_PREFIXES = ["# System Prompt", "System Prompt —"];
 
+const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
+  message.role === "thinking" ||
+  (message.role === "assistant" && message.tag === "thinking");
+
 const isSystemPromptBootstrapMessage = (message: SessionMessage): boolean => {
   if (message.role !== "user") {
     return false;
@@ -81,5 +85,5 @@ export const collectChainSegmentMessages = (options: {
   if (!shouldSuppressThinking) {
     return sliced;
   }
-  return sliced.filter((message) => message.role !== "thinking");
+  return sliced.filter((message) => !isThinkingDisplayMessage(message));
 };
