@@ -4,7 +4,7 @@ import type {
   FocusEvent as ReactFocusEvent,
   MouseEvent as ReactMouseEvent,
 } from "react";
-import { settingsSurfaceCopy } from "./settings-header";
+import { useLocalization } from "../../app-host/use-localization";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
 
 interface SettingsFooterProps {
@@ -79,6 +79,38 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
   onSave,
   onReset,
 }) => {
+  const { t } = useLocalization();
+  const resetButtonTitle = t(
+    "ui_interface",
+    "settings.footer.reset_button_title",
+    "Reset all settings to defaults"
+  );
+  const resetIdleLabel = t(
+    "ui_interface",
+    "settings.footer.reset_idle_label",
+    "Reset to Defaults"
+  );
+  const resetPendingLabel = t(
+    "ui_interface",
+    "settings.footer.reset_pending_label",
+    "Resetting..."
+  );
+  const closeButtonLabel = t(
+    "ui_interface",
+    "settings.footer.close_button_label",
+    "Close"
+  );
+  const saveIdleLabel = t(
+    "ui_interface",
+    "settings.footer.save_idle_label",
+    "Save Changes"
+  );
+  const savePendingLabel = t(
+    "ui_interface",
+    "settings.footer.save_pending_label",
+    "Saving..."
+  );
+
   const handleResetMouseEnter = (event: ButtonMouseEvent) => {
     if (!resetting) {
       event.currentTarget.style.background = HOVER_SURFACE_COLOR;
@@ -169,12 +201,10 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
           cursor: resetting ? "default" : "pointer",
           opacity: resetting ? DISABLED_OPACITY : 1,
         }}
-        title={settingsSurfaceCopy.footer.resetButtonTitle}
+        title={resetButtonTitle}
         type="button"
       >
-        {resetting
-          ? settingsSurfaceCopy.footer.resetPendingLabel
-          : settingsSurfaceCopy.footer.resetIdleLabel}
+        {resetting ? resetPendingLabel : resetIdleLabel}
       </button>
 
       <div style={buttonGroupStyles}>
@@ -187,7 +217,7 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
           style={closeButtonStyles}
           type="button"
         >
-          {settingsSurfaceCopy.footer.closeButtonLabel}
+          {closeButtonLabel}
         </button>
         <button
           disabled={!hasChanges || saving}
@@ -210,9 +240,7 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
           }}
           type="button"
         >
-          {saving
-            ? settingsSurfaceCopy.footer.savePendingLabel
-            : settingsSurfaceCopy.footer.saveIdleLabel}
+          {saving ? savePendingLabel : saveIdleLabel}
         </button>
       </div>
     </div>

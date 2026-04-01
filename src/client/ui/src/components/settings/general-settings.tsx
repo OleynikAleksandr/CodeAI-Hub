@@ -1,11 +1,11 @@
 import type { CSSProperties } from "react";
 import { memo, useMemo, useState } from "react";
+import { useLocalization } from "../../app-host/use-localization";
 import GeneralResponseModeFacade from "./general-response-mode/general-response-mode-facade";
 import type { GeneralResponseMode } from "./general-response-mode/response-mode-copy";
 import type { GeneralResponsePolicySettings } from "./general-response-mode/response-mode-state";
 import LocalizationSettingsCard from "./localization-settings-card";
 import SettingsCard from "./settings-card";
-import { settingsSurfaceCopy } from "./settings-header";
 import type { Settings } from "./settings-state-model";
 import {
   settingsColorTokens,
@@ -91,8 +91,34 @@ interface GeneralSettingsProps {
 }
 
 const GeneralSettings = (props: GeneralSettingsProps) => {
+  const { t } = useLocalization();
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const coreControlsTitle = t(
+    "ui_interface",
+    "settings.core_controls.title",
+    "Core Controls"
+  );
+  const coreControlsDescription = t(
+    "user_guidance",
+    "settings.core_controls.description",
+    "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues."
+  );
+  const restartIdleLabel = t(
+    "ui_interface",
+    "settings.core_controls.restart_idle_label",
+    "Restart Core"
+  );
+  const restartPendingLabel = t(
+    "ui_interface",
+    "settings.core_controls.restart_pending_label",
+    "Restarting..."
+  );
+  const idleStatusLabel = t(
+    "system_feedback",
+    "settings.core_controls.idle_status_label",
+    "Core restart status will appear here."
+  );
 
   const resolvedButtonStyles = useMemo((): CSSProperties => {
     if (props.coreControl.busy) {
@@ -187,10 +213,8 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
           props.onLocalizationWorkflowTermsPolicyChange
         }
       />
-      <SettingsCard title={settingsSurfaceCopy.coreControls.title}>
-        <p style={descriptionStyles}>
-          {settingsSurfaceCopy.coreControls.description}
-        </p>
+      <SettingsCard title={coreControlsTitle}>
+        <p style={descriptionStyles}>{coreControlsDescription}</p>
         <div style={controlsRowStyles}>
           <button
             aria-busy={props.coreControl.busy}
@@ -207,13 +231,10 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
             style={resolvedButtonStyles}
             type="button"
           >
-            {props.coreControl.busy
-              ? settingsSurfaceCopy.coreControls.restartPendingLabel
-              : settingsSurfaceCopy.coreControls.restartIdleLabel}
+            {props.coreControl.busy ? restartPendingLabel : restartIdleLabel}
           </button>
           <div style={resolvedStatusStyles}>
-            {props.coreControl.message ??
-              settingsSurfaceCopy.coreControls.idleStatusLabel}
+            {props.coreControl.message ?? idleStatusLabel}
           </div>
         </div>
       </SettingsCard>

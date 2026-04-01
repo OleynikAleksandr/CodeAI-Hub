@@ -1,31 +1,9 @@
 import type { CSSProperties, FC } from "react";
+import { useLocalization } from "../../app-host/use-localization";
 
 interface SettingsHeaderProps {
   readonly onClose: () => void;
 }
-
-export const settingsSurfaceCopy = {
-  header: {
-    title: "Settings",
-    closeButtonLabel: "Close settings",
-  },
-  footer: {
-    resetButtonTitle: "Reset all settings to defaults",
-    resetIdleLabel: "Reset to Defaults",
-    resetPendingLabel: "Resetting...",
-    closeButtonLabel: "Close",
-    saveIdleLabel: "Save Changes",
-    savePendingLabel: "Saving...",
-  },
-  coreControls: {
-    title: "Core Controls",
-    description:
-      "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues.",
-    restartIdleLabel: "Restart Core",
-    restartPendingLabel: "Restarting...",
-    idleStatusLabel: "Core restart status will appear here.",
-  },
-} as const;
 
 const headerStyles: CSSProperties = {
   display: "flex",
@@ -56,19 +34,29 @@ const closeButtonStyles: CSSProperties = {
   justifyContent: "center",
 };
 
-const SettingsHeader: FC<SettingsHeaderProps> = ({ onClose }) => (
-  <div style={headerStyles}>
-    <div style={titleStyles}>{settingsSurfaceCopy.header.title}</div>
-    <button
-      aria-label={settingsSurfaceCopy.header.closeButtonLabel}
-      onClick={onClose}
-      style={closeButtonStyles}
-      title={settingsSurfaceCopy.header.closeButtonLabel}
-      type="button"
-    >
-      ×
-    </button>
-  </div>
-);
+const SettingsHeader: FC<SettingsHeaderProps> = ({ onClose }) => {
+  const { t } = useLocalization();
+  const title = t("ui_interface", "settings.header.title", "Settings");
+  const closeButtonLabel = t(
+    "ui_interface",
+    "settings.header.close_button_label",
+    "Close settings"
+  );
+
+  return (
+    <div style={headerStyles}>
+      <div style={titleStyles}>{title}</div>
+      <button
+        aria-label={closeButtonLabel}
+        onClick={onClose}
+        style={closeButtonStyles}
+        title={closeButtonLabel}
+        type="button"
+      >
+        ×
+      </button>
+    </div>
+  );
+};
 
 export default SettingsHeader;
