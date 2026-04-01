@@ -58,10 +58,10 @@
 23. [DONE] Add the core localization contract, facade, and source-dictionary registry. Scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add facade and contract`
 24. [DONE] Git Commit: `feat(localization): add facade and contract` (hash: `3443f910`)
 25. [DONE] Add bundle-path, bundle-store, and metadata-store primitives backed by `~/.codeai-hub/localization`. Scope: `packages/localization/src/localization-paths.ts`, `packages/localization/src/localization-bundle-store.ts`, `packages/localization/src/localization-metadata-store.ts`. Target commit: `feat(localization): add bundle persistence primitives`
-26. [TODO] Git Commit: `feat(localization): add bundle persistence primitives` (hash: TBD)
+26. [DONE] Git Commit: `feat(localization): add bundle persistence primitives` (hash: `6f729247`)
 
 ### Stream: Language Catalog And Materialization
-27. [TODO] Add a localization language-catalog surface for the active translation engine capabilities. Scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/language-catalog-service.ts`, `packages/localization/src/localization-contract.ts`. Target commit: `feat(localization): add language catalog`
+27. [DONE] Add a localization language-catalog surface for the active translation engine capabilities. Scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/language-catalog-service.ts`, `packages/localization/src/localization-contract.ts`. Target commit: `feat(localization): add language catalog`
 28. [TODO] Git Commit: `feat(localization): add language catalog` (hash: TBD)
 29. [TODO] Add the first materializer pipeline that translates source dictionaries through `@codeai-hub/translation` and persists localized bundles. Scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/localization-bundle-store.ts`. Target commit: `feat(localization): materialize localized bundles`
 30. [TODO] Git Commit: `feat(localization): materialize localized bundles` (hash: TBD)

@@ -1,12 +1,18 @@
+export { DEFAULT_ENGINE_LANGUAGE_CATALOGS } from "./language-catalog";
+export { LanguageCatalogService } from "./language-catalog-service";
 export {
   type LocalizationBundleRecord,
   LocalizationBundleStore,
 } from "./localization-bundle-store";
 export {
+  DEFAULT_LOCALIZATION_ENGINE_ID,
   DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
   LOCALIZATION_CATEGORY_IDS,
   type LocalizationCategoryId,
+  type LocalizationEngineLanguageCatalog,
   type LocalizationFacadeOptions,
+  type LocalizationLanguageCatalogEntry,
+  type LocalizationLanguageCatalogServiceOptions,
   type LocalizationSourceDictionary,
   type LocalizationSourceDictionaryEntries,
   type LocalizationSourceLookupRequest,

@@ -1,4 +1,5 @@
 export const DEFAULT_LOCALIZATION_SOURCE_LANGUAGE = "en";
+export const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
 
 export const LOCALIZATION_CATEGORY_IDS = [
   "interactive_templates",
@@ -26,7 +27,22 @@ export interface LocalizationSourceLookupRequest {
   readonly messageId: string;
 }
 
+export interface LocalizationLanguageCatalogEntry {
+  readonly code: string;
+  readonly label: string;
+}
+
+export interface LocalizationEngineLanguageCatalog {
+  readonly engineId: string;
+  readonly languages: readonly LocalizationLanguageCatalogEntry[];
+}
+
 export interface LocalizationFacadeOptions {
   readonly defaultSourceLanguage?: string;
   readonly sourceDictionaries?: readonly LocalizationSourceDictionary[];
+}
+
+export interface LocalizationLanguageCatalogServiceOptions {
+  readonly defaultEngineId?: string;
+  readonly engineCatalogs?: readonly LocalizationEngineLanguageCatalog[];
 }
