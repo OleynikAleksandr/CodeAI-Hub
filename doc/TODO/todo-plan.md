@@ -28,8 +28,8 @@
 8. [DONE] Git Commit: `refactor(settings): map claude gemini thinking display state` (hash: `112dddc2`)
 9. [TODO] Wire the Claude thinking display toggle handler through the settings hook support layer and state hook so the view-model can mutate provider display sync uniformly. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`. Target commit: `refactor(settings): add claude thinking display handler`
 10. [DONE] Git Commit: `refactor(settings): add claude thinking display handler` (hash: `222fd0a4`)
-11. [TODO] Add the Claude `Thinking in dialog` toggle to the Claude settings card and align the Gemini toggle wording to the same short product copy. Scope: `src/client/ui/src/components/settings/thinking-settings.tsx`, `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, `src/client/ui/src/components/settings/settings-view.tsx`. Target commit: `feat(ui): expose thinking in dialog toggles`
-12. [TODO] Git Commit: `feat(ui): expose thinking in dialog toggles` (hash: TBD)
+11. [DONE] Add the Claude `Thinking in dialog` toggle to the Claude settings card and align the Gemini toggle wording to the same short product copy. Scope: `src/client/ui/src/components/settings/thinking-settings.tsx`, `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, `src/client/ui/src/components/settings/settings-view.tsx`. Target commit: `feat(ui): expose thinking in dialog toggles`
+12. [DONE] Git Commit: `feat(ui): expose thinking in dialog toggles` (hash: `b8792e19`)
 
 ## Phase 3 — Runtime Contract And Claude Bubble Path (owner: Providers, updated: 2026-04-01)
 ### Stream: Core Applied-Turn Config
