@@ -20,6 +20,7 @@ const HEADING_LINE_RE = /^#+\s+.*$/gm;
 const SINGLE_HINT_TOKEN_RE = /^<[^>\n]{1,80}>$/;
 const TITLE_HINT_HTML_LINE_RE =
   /^<small>\s*<i>(?<hint>[\s\S]+?)<\/i>\s*<\/small>$/i;
+const EXAMPLE_HINT_PREFIXES = ["Example:", "Пример:"] as const;
 
 const normalizeDescription = (value: string): string | undefined => {
   const lines = value
@@ -86,7 +87,7 @@ const isHintLikeAnswer = (value: string): boolean => {
     return true;
   }
 
-  if (trimmed.startsWith("Пример:") || trimmed.startsWith("Example:")) {
+  if (EXAMPLE_HINT_PREFIXES.some((prefix) => trimmed.startsWith(prefix))) {
     return true;
   }
 

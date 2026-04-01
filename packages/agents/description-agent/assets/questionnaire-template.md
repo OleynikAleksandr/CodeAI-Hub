@@ -1,27 +1,27 @@
-# Анкета описания проекта
+# Project Description Questionnaire
 
-> Это первый шаг: расскажите о вашей идее своими словами.
-> Не нужно знать технические детали — пишите так, как объясняли бы другу.
-> На основе ваших ответов будет создано описание проекта,
-> а затем вы сможете обсудить и доработать его вместе с агентом.
-> Эти ответы дальше помогут построить понятную диаграмму модулей и границ системы.
+> This is the first step: describe your idea in your own words.
+> You do not need to know technical details. Write as if you were explaining it to a friend.
+> Your answers will be used to create the project description,
+> and then you will be able to discuss and refine it together with the agent.
+> These answers will also help build a clear diagram of the system modules and boundaries.
 >
-> Мы рекомендуем описывать будущий продукт в логике кластерно-модульной архитектуры.
-> Это не значит, что нужно знать специальные термины заранее.
-> Достаточно описать продукт простыми словами: из каких понятных частей он состоит,
-> какие у него есть крупные блоки и где проходят важные границы.
-> Такой способ помогает AI точнее понять продукт и дальше аккуратнее строить архитектуру.
+> We recommend describing the future product in a cluster-module architecture mindset.
+> That does not mean you need to know special terms in advance.
+> It is enough to describe the product in simple language: which understandable parts it has,
+> which large blocks exist, and where the important boundaries are.
+> This approach helps the AI understand the product more accurately and build the architecture more carefully.
 >
-> Правила:
-> - Пишите простым языком.
-> - Не нужно знать технические термины.
-> - Если на какой-то вопрос нет ответа — оставьте пустым.
-> - Если не знаете, в какое поле что писать, заполните ближайшее по смыслу или оставьте пустым: агент увидит пропуски и задаст точечные вопросы позже.
+> Rules:
+> - Write in simple language.
+> - You do not need to know technical terms.
+> - If you do not have an answer for a question, leave it empty.
+> - If you are unsure which field to use, fill in the closest one or leave it empty. The agent will see the gaps and ask focused follow-up questions later.
 
 ---
 
-## 0. Документы для чтения (если есть)
-<small><i>Если у вас уже есть наброски, заметки, ТЗ или ссылки на похожие приложения — укажите их здесь (пути к файлам или ссылки с коротким пояснением). Если проект начинается с нуля — оставьте пустым.</i></small>
+## 0. Reference Documents (if any)
+<small><i>If you already have drafts, notes, specs, or links to similar applications, list them here with file paths or links and a short explanation. If the project starts from scratch, leave this empty.</i></small>
 
 <!-- field:pre_read_documents -->
 
@@ -29,8 +29,8 @@
 
 ---
 
-## 1. Название проекта
-<small><i>Как называется ваш проект? Короткое, понятное название.</i></small>
+## 1. Project Name
+<small><i>What is the name of your project? Use a short, clear title.</i></small>
 
 <!-- field:meta.title -->
 
@@ -38,8 +38,8 @@
 
 ---
 
-## 2. Какой это тип продукта / платформа
-<small><i>Что это за тип продукта? Пример: «Веб-приложение», «Desktop app», «Мобильное приложение», «Расширение для VS Code», «CLI tool», «Backend service», «Пока не знаю». Это простой вопрос, но он сильно влияет на дальнейшую архитектуру.</i></small>
+## 2. Product Type / Platform
+<small><i>What kind of product is this? Example: "Web application", "Desktop app", "Mobile application", "VS Code extension", "CLI tool", "Backend service", "I do not know yet". This is a simple question, but it strongly affects the architecture that follows.</i></small>
 
 <!-- field:project.stack -->
 
@@ -47,8 +47,8 @@
 
 ---
 
-## 3. О чём проект
-<small><i>1–3 предложения: что это за продукт и зачем он нужен. Пример: «Приложение для учёта личных финансов. Помогает видеть, куда уходят деньги, и планировать бюджет.»</i></small>
+## 3. What the Project Is About
+<small><i>Use 1-3 sentences to explain what the product is and why it is needed. Example: "An application for tracking personal finances. It helps users see where their money goes and plan a budget."</i></small>
 
 <!-- field:short_description -->
 
@@ -56,8 +56,8 @@
 
 ---
 
-## 4. Задача и цель
-<small><i>Какую задачу вы хотите решить с помощью этого продукта? Чего хотите добиться? Пример задачи: «Сейчас я веду расходы в Excel, это неудобно, данные теряются, нет наглядной картины.» Пример цели: «Хочу видеть все расходы по категориям за любой период и получать предупреждение, когда бюджет на категорию превышен.»</i></small>
+## 4. Problem and Goal
+<small><i>Which problem do you want to solve with this product? What do you want to achieve? Example problem: "I currently track expenses in Excel, which is inconvenient, data gets lost, and there is no clear overview." Example goal: "I want to see all expenses by category for any period and receive a warning when a category budget is exceeded."</i></small>
 
 <!-- field:problem_and_goals -->
 
@@ -65,8 +65,8 @@
 
 ---
 
-## 5. Кто будет пользоваться продуктом
-<small><i>Кто основные пользователи? Пример: «Только я сам», «Команда из 5 человек», «Любой пользователь интернета», «Бухгалтеры малого бизнеса».</i></small>
+## 5. Who Will Use the Product
+<small><i>Who are the main users? Example: "Only me", "A team of 5 people", "Any internet user", "Small business accountants".</i></small>
 
 <!-- field:users -->
 
@@ -74,8 +74,8 @@
 
 ---
 
-## 6. Как будет работать продукт
-<small><i>Опишите основные ситуации использования: что вы (или пользователь) делаете в продукте и что ожидаете увидеть в ответ. Сценариев должно быть столько, сколько нужно, чтобы стало понятно поведение продукта. Пишите простым языком, как рассказываете другу. Пример: «Открываю приложение — вижу сводку расходов за месяц. Нажимаю "Добавить расход" — выбираю категорию, ввожу сумму. Если бюджет на еду превышен — вижу красное предупреждение.»</i></small>
+## 6. How the Product Should Work
+<small><i>Describe the main usage situations: what you or the user does in the product and what result should happen in response. Include as many scenarios as needed to make the product behavior clear. Write in simple language, as if you were explaining it to a friend. Example: "I open the application and see a monthly expense summary. I click 'Add expense', choose a category, and enter an amount. If the food budget is exceeded, I see a red warning."</i></small>
 
 <!-- field:user_scenarios -->
 
@@ -83,8 +83,8 @@
 
 ---
 
-## 7. Что продукт обязательно должен уметь
-<small><i>Перечислите основные возможности — то, без чего продукт не имеет смысла. Не нужно описывать всё — только самое важное. Остальное появится на следующих этапах. Пример: «добавлять и редактировать расходы; показывать статистику по категориям; предупреждать о превышении бюджета; экспортировать данные в PDF.»</i></small>
+## 7. What the Product Must Be Able to Do
+<small><i>List the core capabilities, the things without which the product does not make sense. You do not need to describe everything, only the most important parts. The rest can appear in later stages. Example: "add and edit expenses; show statistics by category; warn about budget overruns; export data to PDF."</i></small>
 
 <!-- field:key_functions -->
 
@@ -92,8 +92,8 @@
 
 ---
 
-## 8. Из каких крупных частей может состоять продукт (необязательно)
-<small><i>Если вы уже представляете, из каких больших частей будет состоять система — перечислите их с коротким пояснением. Здесь не нужны классы и низкоуровневая техника. Нужны именно крупные понятные блоки, из которых потом можно будет собрать архитектуру и диаграмму. Можно писать так: «То, через что пользователь входит в систему», «Отдельный runtime», «Отдельный сервис», «Интеграция с внешним API», «Фоновый обработчик». Если не знаете — оставьте пустым, агент поможет определить структуру позже.</i></small>
+## 8. Which Large Parts the Product May Have (optional)
+<small><i>If you already have an idea of the major parts of the system, list them with a short explanation. You do not need classes or low-level technical details here. What matters are the large understandable blocks from which the architecture and diagram can later be built. You can write things like "The surface through which the user enters the system", "A separate runtime", "A separate service", "Integration with an external API", "A background worker". If you do not know yet, leave it empty and the agent will help define the structure later.</i></small>
 
 <!-- field:modules_draft -->
 
@@ -101,8 +101,8 @@
 
 ---
 
-## 9. Какие границы или самостоятельные части уже точно видны (необязательно)
-<small><i>Есть ли части системы, которые вы уже сейчас считаете отдельными и самостоятельными? Например: «Отдельный клиент и отдельный сервер», «Отдельный плагин и отдельный сервис синхронизации», «Отдельная оболочка и отдельный core runtime», «Отдельная админка». Это поможет дальше не смешивать всё в одну неясную структуру. Если пока рано — оставьте пустым.</i></small>
+## 9. Which Boundaries or Independent Parts Are Already Clear (optional)
+<small><i>Are there any parts of the system that you already consider separate and independent? Example: "A separate client and a separate server", "A separate plugin and a separate synchronization service", "A separate shell and a separate core runtime", "A separate admin panel". This helps avoid mixing everything into one unclear structure later. If it is too early, leave it empty.</i></small>
 
 <!-- field:boundaries_draft -->
 
@@ -110,8 +110,8 @@
 
 ---
 
-## 10. Что важно учесть
-<small><i>Есть ли ограничения или особые условия? Пример: «Должно работать без интернета», «Бюджет ограничен, без платных сервисов», «Данные не должны уходить в облако», «Нужна поддержка русского и английского языков». Если ничего особенного — оставьте пустым.</i></small>
+## 10. Important Constraints
+<small><i>Are there any constraints or special conditions to keep in mind? Example: "Must work without internet access", "Budget is limited, so no paid services", "Data must not leave the local machine", "Support for Russian and English is required". If there is nothing special, leave it empty.</i></small>
 
 <!-- field:constraints -->
 
@@ -119,8 +119,8 @@
 
 ---
 
-## 11. Что точно НЕ делаем
-<small><i>Что не входит в этот проект? Это помогает сфокусироваться и не расползаться. Пример: «Не делаем мобильную версию», «Не интегрируемся с банками», «Не делаем многопользовательский режим».</i></small>
+## 11. What We Definitely Do Not Build
+<small><i>What is outside this project? This helps keep the scope focused and prevents it from spreading. Example: "We do not build a mobile version", "We do not integrate with banks", "We do not add multi-user mode".</i></small>
 
 <!-- field:out_of_scope -->
 
@@ -128,8 +128,8 @@
 
 ---
 
-## 12. Примечания
-<small><i>Любые дополнительные пояснения, которые помогут понять будущий продукт.</i></small>
+## 12. Notes
+<small><i>Any additional details that will help explain the future product.</i></small>
 
 <!-- field:notes -->
 

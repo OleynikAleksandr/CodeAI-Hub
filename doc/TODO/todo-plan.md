@@ -30,8 +30,8 @@
 
 ### Stream: Workflow Help And Templates
 5. [DONE] Normalize workflow step help surfaces to canonical English. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`. Target commit: `refactor(copy): normalize workflow help to english`
-6. [TODO] Git Commit: `refactor(copy): normalize workflow help to english` (hash: TBD)
-7. [TODO] Normalize the bundled questionnaire and questionnaire-side source templates to canonical English. Scope: `.codeai-hub/codeai-hub/description/questionnaire.md`, `src/client/ui/src/services/description-questionnaire-template.ts`, `src/client/ui/src/services/idea-questionnaire-template.ts`. Target commit: `refactor(copy): normalize questionnaire source to english`
+6. [DONE] Git Commit: `refactor(copy): normalize workflow help to english` (hash: `7a1e4ec4`)
+7. [DONE] Normalize the bundled questionnaire and questionnaire-side source templates to canonical English. Scope: `packages/agents/description-agent/assets/questionnaire-template.md`, `src/client/ui/src/services/description-questionnaire-template.ts`, `src/client/ui/src/services/idea-questionnaire-template.ts`. Target commit: `refactor(copy): normalize questionnaire source to english`
 8. [TODO] Git Commit: `refactor(copy): normalize questionnaire source to english` (hash: TBD)
 9. [TODO] Normalize flow-continuity built-in templates to canonical English source copy. Scope: `assets/flow/continuity/resume.md`, `assets/flow/continuity/create-report-doc.md`, `assets/flow/continuity/create-report-code.md`. Target commit: `refactor(copy): normalize continuity templates to english`
 10. [TODO] Git Commit: `refactor(copy): normalize continuity templates to english` (hash: TBD)
