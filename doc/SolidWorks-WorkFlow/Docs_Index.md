@@ -6,7 +6,7 @@
 2. `WorkflowSteps_Overview.md`
 3. `Clusters/Project_Manager.md`
 4. `Clusters/CoreOrchestrator.md`
-5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
+5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 6. `Contracts/` (только по ссылкам из документов выше)
 7. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 8. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
@@ -28,6 +28,7 @@
 - `Modules/Codex.md` — SSOT Codex provider module, including reasoning summary settings and provider-home config policy.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
+- `Modules/Localization.md` — SSOT persistent UI localization module.
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
 - `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager).
 

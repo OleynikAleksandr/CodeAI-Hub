@@ -94,11 +94,11 @@
 49. [DONE] Switch workflow help and questionnaire surfaces to dictionary-driven lookup. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Target commit: `refactor(pm): localize workflow help surfaces`
 50. [DONE] Git Commit: `refactor(pm): localize workflow help surfaces` (hash: `d9aaf7f5`)
 51. [DONE] Switch Project Manager shell/navigation labels to dictionary-driven lookup. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(pm): localize shell navigation surfaces`
-52. [TODO] Git Commit: `refactor(pm): localize shell navigation surfaces` (hash: TBD)
+52. [DONE] Git Commit: `refactor(pm): localize shell navigation surfaces` (hash: `e33c6255`)
 
 ## Phase 6 — SSOT, Verification, And Release (owner: Docs/Release, updated: 2026-04-01)
 ### Stream: Documentation And Verification
-53. [TODO] Promote the implemented localization architecture into live SSOT docs and sync system navigation. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`. Target commit: `docs(architecture): sync localization ssot`
+53. [DONE] Promote the implemented localization architecture into live SSOT docs and sync system navigation. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`. Target commit: `docs(architecture): sync localization ssot`
 54. [TODO] Git Commit: `docs(architecture): sync localization ssot` (hash: TBD)
 55. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`.
 

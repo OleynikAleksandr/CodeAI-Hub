@@ -18,7 +18,8 @@
 12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 13. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 14. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
-15. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
+15. `doc/SolidWorks-WorkFlow/Modules/Localization.md`
+16. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -29,6 +30,7 @@
 - **CEF Launcher**: локальный клиент для Project Manager.
 - **Providers**: Claude/Codex/Gemini модули (CLI/SDK контуры).
 - **Shared runtime translation module**: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (package: `packages/translation/`; engine-neutral facade used by Gemini today and future localization adapters tomorrow).
+- **Localization module**: `doc/SolidWorks-WorkFlow/Modules/Localization.md` (package: `packages/localization/`; owns bundled English source catalogs, glossary protection, localized bundle persistence, and UI lookup primitives).
 - **Gemini bundled runtime dependency**: installed Gemini provider bundles vendor `@codeai-hub/translation` into their own runtime root so the provider can resolve the shared translation package outside the workspace `node_modules` tree.
 
 ## 2) SSOT уровни (иерархия документов)
@@ -71,6 +73,8 @@
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `packages/core/src/config/provider-turn-config-resolver.ts`.
 15. **Provider-applied model/reasoning proof stays provider-native**: active baseline не поддерживает cross-provider normalizing contract для exact model/thinking/reasoning feedback в `sdk-*` логах; для аудита реально применённого provider state нужно опираться на provider-native runtime artifacts (`Claude` provider-home JSONL, `Codex` raw rollout `turn_context`, `Gemini` raw stream/session traces), а не на локальный outbound intent.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`.
+16. **Localization source-copy and storage invariant**: product-owned localizable copy must be authored in bundled English source dictionaries, while mutable bundles/glossary live only under `~/.codeai-hub/localization/`; browser lookup may fall back to bundled source catalogs, but React components are not allowed to become the source of truth for localizable product copy.
+   - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
@@ -104,6 +108,12 @@
   - `provider-turn-config-resolver.ts` = Core-owned registry/resolver for next-turn Claude/Codex/Gemini effective model identity from persisted `~/.codeai-hub/settings/settings.json`; it derives `baseModelId`, effective identity descriptor, provider-specific reasoning/thinking payload, and presentation-only thinking display sync gate from one settings snapshot, while remote-bridge queries one provider-neutral `byProviderId` registry instead of growing new `if (providerId === ...)` branches; the Session UI now uses that gate only to decide whether to render thinking bubbles, not to stop JSONL/history persistence
 - Project Manager UI: `src/client/project-manager/`
 - Shared Session UI: `src/client/ui/src/`
+- Localization package: `packages/localization/`
+  - `src/localization-facade.ts` = thin public package façade
+  - `src/localization-materializer.ts`, `src/source-dictionary-registry.ts`, `src/glossary-*.ts`, `src/localization-*-store.ts` = source dictionaries, glossary protection, bundle persistence, metadata reuse
+- Browser localization lookup: `src/client/ui/src/app-host/use-localization.ts`
+  - shared browser-side dictionary lookup helper used by settings host and current localized PM/session surfaces
+  - current live browser runtime ships bundled English source catalogs and falls back to those source catalogs until persisted user-data bundle delivery is bridged into the browser
 - Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
   - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled` and provider-home `model_reasoning_summary = auto|none`; the Claude card surfaces `Thinking in dialog` as a visible assistant-bubble gate, and the Gemini card keeps the same short `Thinking in dialog` copy as a presentation-only control; for Claude and Gemini the runtime still persists thinking history, while the Session UI decides whether to render it
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
