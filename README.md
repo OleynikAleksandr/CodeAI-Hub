@@ -7,18 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.858
-- **Session dialog link readability**: clickable markdown links in dialog bubbles now use a shared readable light-blue color instead of the browser default blue, so they stay legible on all provider backgrounds.
-- **Dialog link presentation consistency**: links rendered inside user, assistant, and thinking bubbles now use medium weight and no underline across Claude, Codex, Gemini, and user message surfaces.
-- **Shared runtime translation module**: `@codeai-hub/translation` now owns the provider-neutral translation facade and Google GTX engine for runtime translation use cases.
-- **Gemini adapter parity**: Gemini thought translation now routes through `GeminiThoughtTranslationAdapter` backed by the shared facade, with `thought-translator-service.ts` preserved as a compatibility re-export and session wiring moved onto the adapter directly.
-- **Codex reasoning in dialog**: Codex settings now expose a provider-level `Reasoning in dialog` toggle. `On` lets Codex send reasoning summaries for translation/display, while `Off` sets `model_reasoning_summary = "none"` so reasoning summaries never reach the client.
-- **Immediate Codex provider-home sync**: switching the Codex reasoning toggle rewrites the provider-owned `~/.codeai-hub/providers/codex/home/config.toml` immediately, and saved settings drive the same `auto|none` mode again on the next bootstrap.
-- **Codex provider-home materialization**: the Codex provider now keeps its own `config.toml` derived from the user `~/.codex/config.toml` plus CodeAI overrides, instead of symlinking the whole config file.
-- **Codex model list update**: `gpt-5.4-mini` is now available in Codex settings with the same reasoning effort options as `gpt-5.4`.
-- **Bundled Codex runtime**: the Codex provider release bundle now vendors `@codeai-hub/translation` into its installed runtime root, so Core can load Codex startup-time reasoning translation support without relying on workspace `node_modules`.
-- **Bundled Gemini runtime**: the Gemini provider release bundle now vendors `@codeai-hub/translation` into its installed runtime root, so the installed provider can resolve the shared translation package without depending on workspace `node_modules`.
-- **Parity verification**: release smoke checks now validate both Codex and Gemini installed bundles against the bundled shared translation package before VSIX packaging.
+## Current Release — v1.1.859
+- **Thinking display snapshot backfill**: older settings snapshots now backfill Claude and Gemini `Thinking in dialog` state on load, so the UI toggle, on-disk settings, and Core payload stay aligned after restart.
+- **Claude visible thinking contract**: Claude reasoning continues to render as a standard assistant bubble with a `Thinking` label when display sync is on, matching the Gemini-style presentation-only toggle.
+- **SSOT sync**: the Claude and Gemini module docs now describe the same visible-thinking contract that the UI and runtime already use.
 
 Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 

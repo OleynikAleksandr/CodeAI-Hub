@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.859] - 2026-04-01
+### Fixed
+- **Thinking display snapshot backfill**: older settings snapshots now backfill Claude and Gemini `thinkingDisplaySyncEnabled` on load, so the UI toggle and Core payload stay aligned after restart.
+- **Claude visible thinking contract**: Claude reasoning now renders as a standard assistant bubble with a `Thinking` label when display sync is on.
+
 ## [1.1.858] - 2026-04-01
 ### Fixed
 - **Session dialog link readability**: clickable markdown links in user, assistant, and thinking bubbles now use a shared high-contrast light-blue color instead of the browser default blue.
