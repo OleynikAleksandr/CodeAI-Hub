@@ -44,6 +44,7 @@ export interface ResolvedClaudeTurnConfig {
   readonly baseModelId: string;
   readonly defaultModel: string;
   readonly effectiveModelId: string;
+  readonly thinkingDisplaySyncEnabled: boolean;
   readonly thinkingEnabled: boolean;
 }
 
@@ -100,6 +101,10 @@ const resolveClaudeThinkingEnabled = (
 
   return snapshot.thinking.enabled === true;
 };
+
+const resolveClaudeThinkingDisplaySyncEnabled = (
+  snapshot: ClaudeProviderSettingsSnapshot | null
+): boolean => snapshot?.thinkingDisplaySyncEnabled !== false;
 
 export const buildProviderEffectiveModelId = (options: {
   readonly baseModelId?: string;
@@ -211,6 +216,8 @@ const resolveClaudeTurnConfig = (
     normalizeOptionalString(options.env.CLAUDE_DEFAULT_MODEL) ??
     options.fallbackClaudeModel;
   const thinkingEnabled = resolveClaudeThinkingEnabled(snapshot);
+  const thinkingDisplaySyncEnabled =
+    resolveClaudeThinkingDisplaySyncEnabled(snapshot);
 
   return {
     baseModelId: defaultModel,
@@ -219,6 +226,7 @@ const resolveClaudeTurnConfig = (
       defaultModel,
       thinkingEnabled
     ),
+    thinkingDisplaySyncEnabled,
     thinkingEnabled,
   };
 };
@@ -233,6 +241,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     baseModelId: resolved.claude.baseModelId,
     defaultModel: resolved.claude.defaultModel,
     effectiveModelId: resolved.claude.effectiveModelId,
+    thinkingDisplaySyncEnabled: resolved.claude.thinkingDisplaySyncEnabled,
     thinkingEnabled: resolved.claude.thinkingEnabled,
   },
   codexCli: {

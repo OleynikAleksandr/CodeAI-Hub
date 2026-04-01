@@ -11,6 +11,7 @@ export interface ClaudeProviderSettingsSnapshot {
     readonly remainingPercentThreshold?: unknown;
   };
   readonly thinking?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
 export interface ClaudeSettingsSnapshot {
@@ -21,6 +22,7 @@ export interface ClaudeSettingsSnapshot {
       readonly sessionContinuity?: {
         readonly remainingPercentThreshold?: unknown;
       };
+      readonly thinkingDisplaySyncEnabled?: unknown;
       readonly thinking?: unknown;
     };
   };
