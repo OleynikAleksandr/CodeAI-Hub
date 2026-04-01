@@ -63,6 +63,7 @@ export interface UseSettingsStateResult {
   readonly handleClaudeDefaultModelChange: (
     modelId: ClaudeModelAliasId
   ) => void;
+  readonly handleClaudeThinkingDisplaySyncChange: (enabled: boolean) => void;
   readonly handleCodexContinuityRemainingPercentThresholdChange: (
     remainingPercentThreshold: number
   ) => void;

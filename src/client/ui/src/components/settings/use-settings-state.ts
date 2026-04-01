@@ -227,6 +227,15 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleClaudeThinkingDisplaySyncChange = useCallback(
+    (enabled: boolean) => {
+      updateSettings(
+        updateThinkingDisplaySyncEnabled(settings, "claude", enabled)
+      );
+    },
+    [settings, updateSettings]
+  );
+
   const handleCodexThinkingDisplaySyncChange = useCallback(
     (enabled: boolean) => {
       updateSettings(
@@ -297,6 +306,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleCodexDefaultModelChange,
     handleGeminiDefaultModelChange,
     handleGeminiThinkingChange,
+    handleClaudeThinkingDisplaySyncChange,
     handleCodexReasoningChange,
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
