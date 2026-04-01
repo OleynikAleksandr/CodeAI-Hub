@@ -50,11 +50,11 @@
 ### Stream: Documentation And Verification
 21. [DONE] Sync final SSOT docs for Claude/Gemini thinking display behavior and the new Claude visible-bubble contract. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Target commit: `docs(architecture): sync claude gemini thinking display ssot`
 22. [DONE] Git Commit: `docs(architecture): sync claude gemini thinking display ssot` (hash: `47da73aa`)
-23. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/claude-module`, `@codeai-hub/core`, `webview`.
+23. [DONE] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/claude-module`, `@codeai-hub/core`, `webview`.
 
 ### Stream: Release
-24. [TODO] Update release-facing docs for the next release from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare claude gemini thinking display notes`
-25. [TODO] Git Commit: `docs(release): prepare claude gemini thinking display notes` (hash: TBD)
+24. [DONE] Update release-facing docs for the next release from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare thinking display snapshot backfill notes`
+25. [DONE] Git Commit: `docs(release): prepare thinking display snapshot backfill notes` (hash: `1cce9de5`)
 26. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude gemini thinking display release`
 27. [TODO] Git Commit: `build(release): assemble claude gemini thinking display release` (hash: TBD)
 28. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session011.md`. Target commit: `docs(session): record claude gemini thinking display release`
