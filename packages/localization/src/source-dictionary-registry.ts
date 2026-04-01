@@ -1,3 +1,8 @@
+import interactiveTemplatesSource from "../../../assets/localization/source/en/interactive_templates.json";
+import systemFeedbackSource from "../../../assets/localization/source/en/system_feedback.json";
+import uiInterfaceSource from "../../../assets/localization/source/en/ui_interface.json";
+import userGuidanceSource from "../../../assets/localization/source/en/user_guidance.json";
+import workflowTermsSource from "../../../assets/localization/source/en/workflow_terms.json";
 import {
   DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
   type LocalizationCategoryId,
@@ -43,6 +48,27 @@ const createRegistryKey = (
 ): string =>
   `${category}::${normalizeIdentifier(language, DEFAULT_LOCALIZATION_SOURCE_LANGUAGE)}`;
 
+const createBundledSourceDictionary = (
+  category: LocalizationCategoryId,
+  entries: LocalizationSourceDictionaryEntries
+): LocalizationSourceDictionary => ({
+  category,
+  entries,
+  language: DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
+});
+
+export const BUNDLED_SOURCE_DICTIONARIES: readonly LocalizationSourceDictionary[] =
+  [
+    createBundledSourceDictionary(
+      "interactive_templates",
+      interactiveTemplatesSource
+    ),
+    createBundledSourceDictionary("system_feedback", systemFeedbackSource),
+    createBundledSourceDictionary("ui_interface", uiInterfaceSource),
+    createBundledSourceDictionary("user_guidance", userGuidanceSource),
+    createBundledSourceDictionary("workflow_terms", workflowTermsSource),
+  ];
+
 export class SourceDictionaryRegistry {
   private readonly dictionaries = new Map<
     string,
@@ -50,7 +76,7 @@ export class SourceDictionaryRegistry {
   >();
 
   constructor(
-    sourceDictionaries: readonly LocalizationSourceDictionary[] = []
+    sourceDictionaries: readonly LocalizationSourceDictionary[] = BUNDLED_SOURCE_DICTIONARIES
   ) {
     for (const dictionary of sourceDictionaries) {
       this.register(dictionary);

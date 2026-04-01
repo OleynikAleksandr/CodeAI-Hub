@@ -80,8 +80,8 @@
 ## Phase 5 — Bundled Catalogs And UI Consumption (owner: UI/PM, updated: 2026-04-01)
 ### Stream: Bundled English Source Catalogs
 39. [DONE] Seed bundled English source catalogs for interface, system feedback, and user guidance categories. Scope: `assets/localization/source/en/ui_interface.json`, `assets/localization/source/en/system_feedback.json`, `assets/localization/source/en/user_guidance.json`. Target commit: `feat(localization): seed english ui catalogs`
-40. [TODO] Git Commit: `feat(localization): seed english ui catalogs` (hash: TBD)
-41. [TODO] Seed bundled English source catalogs for workflow terms and interactive templates. Scope: `assets/localization/source/en/workflow_terms.json`, `assets/localization/source/en/interactive_templates.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): seed english workflow catalogs`
+40. [DONE] Git Commit: `feat(localization): seed english ui catalogs` (hash: `1be03c7c`)
+41. [DONE] Seed bundled English source catalogs for workflow terms and interactive templates. Scope: `assets/localization/source/en/workflow_terms.json`, `assets/localization/source/en/interactive_templates.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): seed english workflow catalogs`
 42. [TODO] Git Commit: `feat(localization): seed english workflow catalogs` (hash: TBD)
 
 ### Stream: Runtime Lookup Wiring

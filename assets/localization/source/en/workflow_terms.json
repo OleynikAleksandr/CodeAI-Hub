@@ -1,0 +1,9 @@
+{
+  "pm.workflow.stage.description.label": "Description",
+  "pm.workflow.stage.virtual_simulation.label": "Virtual Simulation",
+  "pm.workflow.stage.diagram_modules.label": "Diagram Modules",
+  "pm.workflow.stage.outdated_title": "OUTDATED: upstream input changed; resync recommended.",
+  "pm.workflow.stage.description.ready_title": "READY",
+  "pm.workflow.stage.virtual_simulation.blocked_title": "BLOCKED: requires Final_Description.md",
+  "pm.workflow.stage.diagram_modules.blocked_title": "BLOCKED: requires virtual-simulation.md (DONE)"
+}

@@ -54,7 +54,10 @@ export {
   resolveLocalizationPaths,
   resolveLocalizationRootDirectory,
 } from "./localization-paths";
-export { SourceDictionaryRegistry } from "./source-dictionary-registry";
+export {
+  BUNDLED_SOURCE_DICTIONARIES,
+  SourceDictionaryRegistry,
+} from "./source-dictionary-registry";
 export {
   type UserGlossaryOverrides,
   UserGlossaryStore,
