@@ -239,6 +239,10 @@ export class ClaudeStreamEventRouter {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): void {
+    if (session.runtimeTurnConfig.thinkingDisplaySyncEnabled === false) {
+      return;
+    }
+
     const content = message.message?.content;
     if (!Array.isArray(content)) {
       return;
@@ -253,7 +257,8 @@ export class ClaudeStreamEventRouter {
       ) {
         session.eventEmitter.emit("message", {
           type: "dialog_message",
-          role: "thinking",
+          role: "assistant",
+          tag: "thinking",
           content: (block as { readonly thinking: string }).thinking,
           uuid: `${message.uuid ?? crypto.randomUUID()}::thinking`,
           timestamp: new Date().toISOString(),

@@ -20,7 +20,7 @@ export interface ClaudeTurnLifecycleState {
 }
 
 export interface ClaudeRuntimeTurnConfig {
-  readonly thinkingDisplaySyncEnabled?: boolean;
+  thinkingDisplaySyncEnabled?: boolean;
 }
 
 export interface ClaudeQueuedTurn {

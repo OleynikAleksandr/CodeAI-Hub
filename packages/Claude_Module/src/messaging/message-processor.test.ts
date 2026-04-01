@@ -296,3 +296,100 @@ test("SDKMessageProcessor does not derive tokenUsage from modelUsage fallback", 
   assert.equal(Boolean(completed), true);
   assert.equal(Boolean(completed && "tokenUsage" in completed), false);
 });
+
+test("SDKMessageProcessor emits tagged assistant thinking bubbles when display sync is enabled", async () => {
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-thinking-enabled",
+    NOOP_LOGGER
+  );
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-thinking-enabled",
+  });
+  const events = collectMessageEvents(session);
+
+  processor.enqueueTurn(
+    tempId,
+    { content: "thinking", internal: false, enqueuedAt: Date.now() },
+    {
+      createIterator: () =>
+        createIterator([
+          {
+            type: "assistant",
+            session_id: "real-session-thinking-enabled",
+            message: {
+              content: [{ type: "thinking", thinking: "internal reasoning" }],
+            },
+          },
+          { type: "result", session_id: "real-session-thinking-enabled" },
+        ]),
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  const thinkingEvent = events.find(
+    (event) =>
+      event.type === "dialog_message" &&
+      event.role === "assistant" &&
+      event.tag === "thinking"
+  );
+  assert.equal(Boolean(thinkingEvent), true);
+  assert.equal(thinkingEvent?.content, "internal reasoning");
+  assert.equal(
+    events.filter((event) => event.type === "dialog_message").length,
+    1
+  );
+  assert.equal(
+    events.filter((event) => event.type === "turn_completed").length,
+    1
+  );
+});
+
+test("SDKMessageProcessor hides Claude thinking bubbles when display sync is disabled", async () => {
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-thinking-disabled",
+    NOOP_LOGGER
+  );
+  session.runtimeTurnConfig.thinkingDisplaySyncEnabled = false;
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-thinking-disabled",
+  });
+  const events = collectMessageEvents(session);
+
+  processor.enqueueTurn(
+    tempId,
+    { content: "thinking", internal: false, enqueuedAt: Date.now() },
+    {
+      createIterator: () =>
+        createIterator([
+          {
+            type: "assistant",
+            session_id: "real-session-thinking-disabled",
+            message: {
+              content: [{ type: "thinking", thinking: "hidden reasoning" }],
+            },
+          },
+          { type: "result", session_id: "real-session-thinking-disabled" },
+        ]),
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  assert.equal(
+    events.some((event) => event.type === "dialog_message"),
+    false
+  );
+  assert.equal(
+    events.filter((event) => event.type === "turn_completed").length,
+    1
+  );
+});
