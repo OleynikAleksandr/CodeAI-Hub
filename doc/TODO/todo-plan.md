@@ -39,8 +39,8 @@
 ### Stream: Claude Provider Display Contract
 15. [DONE] Add Claude applied-turn-config/runtime plumbing for display-only thinking gating without changing upstream thinking-mode selection. Scope: `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Claude_Module/src/session/types.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`. Target commit: `feat(claude): apply thinking display config`
 16. [DONE] Git Commit: `feat(claude): apply thinking display config` (hash: `e3a424df`)
-17. [TODO] Emit Claude visible thinking as `assistant + tag:"thinking"` when enabled, and keep it hidden when disabled. Scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`. Target commit: `refactor(claude): emit assistant thinking bubbles`
-18. [TODO] Git Commit: `refactor(claude): emit assistant thinking bubbles` (hash: TBD)
+17. [DONE] Emit Claude visible thinking as `assistant + tag:"thinking"` when enabled, and keep it hidden when disabled. Scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`. Target commit: `refactor(claude): emit assistant thinking bubbles`
+18. [DONE] Git Commit: `refactor(claude): emit assistant thinking bubbles` (hash: `219aa7f2`)
 
 ### Stream: Session UI Compatibility
 19. [TODO] Update session/continuity helper filters so tagged assistant thinking is treated the same as legacy `role:"thinking"` where suppression and dedupe rules depend on it. Scope: `src/client/ui/src/session/session-view-helpers.tsx`, `src/client/ui/src/session/virtual-conversation-message-utils.ts`, `src/client/ui/src/session/virtual-conversation.tsx`. Target commit: `refactor(ui): treat tagged assistant thinking as thinking display`
