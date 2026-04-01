@@ -37,11 +37,25 @@ import {
   clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
   isIncomingMessage,
+  type LocalizationCategoryKey,
+  type LocalizationWorkflowTermsPolicy,
   type UseSettingsStateResult,
   type VersionsState,
 } from "./use-settings-state-support";
 
 const RESET_DELAY_MS = 100;
+const DEFAULT_LOCALIZATION_LANGUAGE = "source";
+const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+
+const normalizeLocalizationSelection = (value: string): string => {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_LANGUAGE;
+};
+
+const normalizeLocalizationEngineId = (value: string): string => {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID;
+};
 
 export type { UseSettingsStateResult } from "./use-settings-state-support";
 
@@ -206,6 +220,93 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleLocalizationDefaultLanguageChange = useCallback(
+    (defaultLanguage: string) => {
+      const normalizedDefaultLanguage =
+        normalizeLocalizationSelection(defaultLanguage);
+      updateSettings({
+        ...settings,
+        general: {
+          ...settings.general,
+          localization: {
+            ...settings.general.localization,
+            defaultLanguage: normalizedDefaultLanguage,
+          },
+        },
+      });
+    },
+    [settings, updateSettings]
+  );
+
+  const handleLocalizationCategoryLanguageChange = useCallback(
+    (category: LocalizationCategoryKey, language: string) => {
+      const normalizedLanguage = normalizeLocalizationSelection(language);
+      updateSettings({
+        ...settings,
+        general: {
+          ...settings.general,
+          localization: {
+            ...settings.general.localization,
+            categories: {
+              ...settings.general.localization.categories,
+              [category]: normalizedLanguage,
+            },
+          },
+        },
+      });
+    },
+    [settings, updateSettings]
+  );
+
+  const handleLocalizationWorkflowTermsPolicyChange = useCallback(
+    (workflowTermsPolicy: LocalizationWorkflowTermsPolicy) => {
+      updateSettings({
+        ...settings,
+        general: {
+          ...settings.general,
+          localization: {
+            ...settings.general.localization,
+            workflowTermsPolicy,
+          },
+        },
+      });
+    },
+    [settings, updateSettings]
+  );
+
+  const handleLocalizationEngineIdChange = useCallback(
+    (engineId: string) => {
+      const normalizedEngineId = normalizeLocalizationEngineId(engineId);
+      updateSettings({
+        ...settings,
+        general: {
+          ...settings.general,
+          localization: {
+            ...settings.general.localization,
+            engineId: normalizedEngineId,
+          },
+        },
+      });
+    },
+    [settings, updateSettings]
+  );
+
+  const handleLocalizationGlossaryEnabledChange = useCallback(
+    (enabled: boolean) => {
+      updateSettings({
+        ...settings,
+        general: {
+          ...settings.general,
+          localization: {
+            ...settings.general.localization,
+            glossaryEnabled: enabled,
+          },
+        },
+      });
+    },
+    [settings, updateSettings]
+  );
+
   const handleResponsePolicyModeChange = useCallback(
     (mode: GeneralResponseMode) => {
       updateSettings(updateResponsePolicyMode(settings, mode));
@@ -336,6 +437,11 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleCodexReasoningChange,
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
+    handleLocalizationCategoryLanguageChange,
+    handleLocalizationDefaultLanguageChange,
+    handleLocalizationEngineIdChange,
+    handleLocalizationGlossaryEnabledChange,
+    handleLocalizationWorkflowTermsPolicyChange,
     handleProviderAutoUpdateChange,
     handleRestartCore,
     handleResponsePolicyModeChange,

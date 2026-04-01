@@ -91,7 +91,7 @@ export class SettingsMessageHandler {
         break;
       }
       case "settings:reset": {
-        this.settingsState = DEFAULT_SETTINGS_SNAPSHOT;
+        this.settingsState = structuredClone(DEFAULT_SETTINGS_SNAPSHOT);
         applyDefaultModelsEnv(this.settingsState);
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */

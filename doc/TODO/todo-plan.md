@@ -41,8 +41,8 @@
 11. [DONE] Extend extension-side settings contracts with `general.localization` defaults and normalization for category languages, `workflowTermsPolicy`, `engineId`, and `glossaryEnabled`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/types.ts`, `src/extension-module/settings/settings-storage.ts`. Target commit: `feat(settings): add localization settings snapshot`
 12. [DONE] Git Commit: `feat(settings): add localization settings snapshot` (hash: `decea16c`)
 13. [DONE] Map localization state through the webview raw/model/helper layers. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/settings-state-helpers.ts`. Target commit: `refactor(settings): map localization state`
-14. [TODO] Git Commit: `refactor(settings): map localization state` (hash: TBD)
-15. [TODO] Wire localization load/save/reset through settings message handling and settings state hooks. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`. Target commit: `refactor(settings): wire localization settings flow`
+14. [DONE] Git Commit: `refactor(settings): map localization state` (hash: `b915ce7c`)
+15. [DONE] Wire localization load/save/reset through settings message handling and settings state hooks. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`. Target commit: `refactor(settings): wire localization settings flow`
 16. [TODO] Git Commit: `refactor(settings): wire localization settings flow` (hash: TBD)
 
 ### Stream: Localization Settings UI

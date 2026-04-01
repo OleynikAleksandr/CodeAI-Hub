@@ -32,6 +32,14 @@ export interface CoreControlState {
     | "error";
 }
 
+export type LocalizationCategoryKey =
+  | "interactiveTemplates"
+  | "systemFeedback"
+  | "uiInterface"
+  | "userGuidance"
+  | "workflowTerms";
+export type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
+
 type IncomingMessage =
   | {
       readonly type: "settings:loaded";
@@ -105,6 +113,18 @@ export interface UseSettingsStateResult {
     level: GeminiThinkingLevel
   ) => void;
   readonly handleGeminiThinkingDisplaySyncChange: (enabled: boolean) => void;
+  readonly handleLocalizationCategoryLanguageChange: (
+    category: LocalizationCategoryKey,
+    language: string
+  ) => void;
+  readonly handleLocalizationDefaultLanguageChange: (
+    defaultLanguage: string
+  ) => void;
+  readonly handleLocalizationEngineIdChange: (engineId: string) => void;
+  readonly handleLocalizationGlossaryEnabledChange: (enabled: boolean) => void;
+  readonly handleLocalizationWorkflowTermsPolicyChange: (
+    workflowTermsPolicy: LocalizationWorkflowTermsPolicy
+  ) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,
     enabled: boolean
