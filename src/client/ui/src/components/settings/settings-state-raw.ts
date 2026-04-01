@@ -20,6 +20,7 @@ export interface RawClaudeSettings {
   readonly defaultModel?: unknown;
   readonly sessionContinuity?: RawClaudeSessionContinuitySettings;
   readonly thinking?: RawThinkingSettings;
+  readonly thinkingDisplaySyncEnabled?: unknown;
 }
 export interface RawCodexSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;

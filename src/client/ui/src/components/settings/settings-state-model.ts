@@ -72,6 +72,7 @@ interface ClaudeSettings {
   readonly defaultModel: ClaudeModelAliasId;
   readonly sessionContinuity: ContinuitySettings;
   readonly thinking: ThinkingSettings;
+  readonly thinkingDisplaySyncEnabled: boolean;
 }
 export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
@@ -188,6 +189,9 @@ const mapClaudeSettings = (
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
   defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
   sessionContinuity: mapContinuity(value?.sessionContinuity),
+  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+    value?.thinkingDisplaySyncEnabled
+  ),
 });
 
 const mapGeminiSettingsWithDisplaySync = (
@@ -313,6 +317,7 @@ const areClaudeSettingsEqual = (
   areThinkingSettingsEqual(left.thinking, right.thinking) &&
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
   left.defaultModel === right.defaultModel &&
+  left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled &&
   left.sessionContinuity.remainingPercentThreshold ===
     right.sessionContinuity.remainingPercentThreshold;
 
