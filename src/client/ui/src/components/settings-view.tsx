@@ -99,6 +99,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<SettingsTab>("claude");
   const {
+    coreControl,
     settings,
     hasChanges,
     saving,
@@ -118,6 +119,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleGeminiThinkingDisplaySyncChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
+    handleRestartCore,
     handleResponsePolicyModeChange,
     handleStrictSchemaTextChange,
     handleStrictInstructionTextChange,
@@ -196,7 +198,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({
             return (
               <div style={stackStyles}>
                 <GeneralSettings
+                  coreControl={coreControl}
                   onResponsePolicyModeChange={handleResponsePolicyModeChange}
+                  onRestartCore={handleRestartCore}
                   onStrictInstructionTextChange={
                     handleStrictInstructionTextChange
                   }

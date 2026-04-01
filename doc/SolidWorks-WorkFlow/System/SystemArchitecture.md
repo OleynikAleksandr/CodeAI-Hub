@@ -107,6 +107,7 @@
 - Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
   - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled` and provider-home `model_reasoning_summary = auto|none`; the Claude card surfaces `Thinking in dialog` as a visible assistant-bubble gate, and the Gemini card keeps the same short `Thinking in dialog` copy as a presentation-only control; for Claude and Gemini the runtime still persists thinking history, while the Session UI decides whether to render it
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
+- `Settings -> General -> Core Controls` now uses a staged restart flow owned by `HomeViewMessageRouter` + `CoreProcessManager`: explicit `stop -> wait -> start`, progress/status messages posted back into the webview, and a button-local visible status surface instead of a blind fire-and-forget restart action
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
   - `message-processor.ts` = thin façade / queue orchestration surface
@@ -363,6 +364,7 @@
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
 - `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.
+- `Core Controls` остаётся отдельной operational card: restart feedback не влияет на persisted `general.responsePolicy` и не смешивается с provider/model settings.
 - Baseline default для workflow-сценариев: `hybrid`.
 - `strict` оставляет editable schema/instruction contract для узких machine-readable turn-ов.
 - `debug_raw` нужен для исследования новых моделей без baseline default schema pressure на обычные turn-ы.

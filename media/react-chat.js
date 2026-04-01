@@ -8355,6 +8355,1354 @@
   // src/client/ui/src/components/settings/general-settings.tsx
   var import_react8 = __toESM(require_react());
 
+  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
+  var import_react7 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
+  var import_react6 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
+  var RESPONSE_MODE_OPTIONS = [
+    {
+      id: "strict",
+      label: "Strict",
+      description: "Force a JSON-shaped final answer using the editable strict schema."
+    },
+    {
+      id: "hybrid",
+      label: "Hybrid",
+      description: "Allow free commentary during the turn and keep structure only for terminal output."
+    },
+    {
+      id: "debug_raw",
+      label: "Debug/Raw",
+      description: "Diagnostic mode for new models: avoid hard schema pressure on live turns."
+    }
+  ];
+
+  // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+  var copyStyles = {
+    margin: 0,
+    fontSize: "13px",
+    color: "#bbbbbb",
+    lineHeight: 1.45
+  };
+  var optionListStyles2 = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var optionButtonStyles = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "4px",
+    width: "100%",
+    padding: "12px 14px",
+    borderRadius: "10px",
+    border: "1px solid #3a3d41",
+    background: "#1e1e1e",
+    color: "#f5f5f5",
+    cursor: "pointer",
+    textAlign: "left"
+  };
+  var activeOptionStyles = {
+    borderColor: "#0e639c",
+    background: "#132938"
+  };
+  var optionTitleStyles2 = {
+    fontSize: "13px",
+    fontWeight: 600
+  };
+  var optionDescriptionStyles2 = {
+    fontSize: "12px",
+    color: "#bbbbbb",
+    lineHeight: 1.4
+  };
+  var labelStyles = {
+    fontSize: "12px",
+    fontWeight: 600,
+    color: "#f5f5f5"
+  };
+  var inputStyles = {
+    width: "100%",
+    minHeight: "132px",
+    padding: "10px 12px",
+    borderRadius: "8px",
+    border: "1px solid #3a3d41",
+    background: "#111111",
+    color: "#f5f5f5",
+    fontSize: "12px",
+    fontFamily: "Menlo, Monaco, Consolas, monospace",
+    lineHeight: 1.45,
+    resize: "vertical",
+    boxSizing: "border-box"
+  };
+  var inputGroupStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px"
+  };
+  var strictBlockStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+    marginTop: "16px"
+  };
+  var ResponseModeCard = ({
+    responsePolicy,
+    onModeChange,
+    onStrictInstructionTextChange,
+    onStrictSchemaTextChange
+  }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Response Mode", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: copyStyles, children: "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior." }),
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+      "button",
+      {
+        onClick: () => onModeChange(option.id),
+        style: {
+          ...optionButtonStyles,
+          ...responsePolicy.mode === option.id ? activeOptionStyles : null
+        },
+        type: "button",
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionTitleStyles2, children: option.label }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionDescriptionStyles2, children: option.description })
+        ]
+      },
+      option.id
+    )) }),
+    responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: strictBlockStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          "textarea",
+          {
+            onChange: (event) => onStrictSchemaTextChange(event.target.value),
+            style: inputStyles,
+            value: responsePolicy.strictOutput.schemaText
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          "textarea",
+          {
+            onChange: (event) => onStrictInstructionTextChange(event.target.value),
+            style: { ...inputStyles, minHeight: "108px" },
+            value: responsePolicy.strictOutput.instructionText
+          }
+        )
+      ] })
+    ] }) : null
+  ] });
+  var response_mode_card_default = (0, import_react6.memo)(ResponseModeCard);
+
+  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+  var GeneralResponseModeFacade = (props) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(response_mode_card_default, { ...props });
+  var general_response_mode_facade_default = (0, import_react7.memo)(GeneralResponseModeFacade);
+
+  // src/client/ui/src/components/settings/general-settings.tsx
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+  var wrapperStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px"
+  };
+  var descriptionStyles2 = {
+    fontSize: "13px",
+    color: "#bbbbbb",
+    lineHeight: 1.4,
+    margin: 0
+  };
+  var buttonStyles = {
+    alignSelf: "flex-start",
+    padding: "8px 16px",
+    borderRadius: settingsRadiusTokens.control,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    fontWeight: 600,
+    transition: "background-color 120ms ease, border-color 120ms ease, transform 120ms ease, opacity 120ms ease"
+  };
+  var controlsRowStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    flexWrap: "wrap"
+  };
+  var statusStyles = {
+    display: "inline-flex",
+    alignItems: "center",
+    minHeight: "34px",
+    padding: "0 12px",
+    borderRadius: settingsRadiusTokens.panel,
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    lineHeight: 1.4
+  };
+  var GeneralSettings = (props) => {
+    const [isHovered, setIsHovered] = (0, import_react8.useState)(false);
+    const [isPressed, setIsPressed] = (0, import_react8.useState)(false);
+    const resolvedButtonStyles = (0, import_react8.useMemo)(() => {
+      if (props.coreControl.busy) {
+        return {
+          ...buttonStyles,
+          border: `1px solid ${settingsColorTokens.borderStrong}`,
+          background: settingsColorTokens.borderStrong,
+          color: settingsColorTokens.textMuted,
+          cursor: "progress",
+          opacity: 0.85
+        };
+      }
+      if (isPressed) {
+        return {
+          ...buttonStyles,
+          border: "1px solid #0a4c78",
+          background: "#0a4c78",
+          color: settingsColorTokens.actionPrimaryText,
+          cursor: "pointer",
+          transform: "translateY(1px)"
+        };
+      }
+      if (isHovered) {
+        return {
+          ...buttonStyles,
+          border: "1px solid #1f7bb8",
+          background: "#1177bb",
+          color: settingsColorTokens.actionPrimaryText,
+          cursor: "pointer"
+        };
+      }
+      return {
+        ...buttonStyles,
+        border: `1px solid ${settingsColorTokens.actionPrimary}`,
+        background: settingsColorTokens.actionPrimary,
+        color: settingsColorTokens.actionPrimaryText,
+        cursor: "pointer"
+      };
+    }, [isHovered, isPressed, props.coreControl.busy]);
+    const resolvedStatusStyles = (0, import_react8.useMemo)(() => {
+      switch (props.coreControl.phase) {
+        case "ready":
+          return {
+            ...statusStyles,
+            border: "1px solid rgba(80, 160, 95, 0.55)",
+            background: "rgba(80, 160, 95, 0.16)",
+            color: "#a8ddb2"
+          };
+        case "error":
+          return {
+            ...statusStyles,
+            border: "1px solid rgba(215, 101, 95, 0.55)",
+            background: "rgba(215, 101, 95, 0.16)",
+            color: "#f2b8b5"
+          };
+        case "stopping":
+        case "waiting":
+        case "starting":
+          return {
+            ...statusStyles,
+            border: "1px solid rgba(190, 145, 75, 0.55)",
+            background: "rgba(190, 145, 75, 0.16)",
+            color: "#f1d39b"
+          };
+        default:
+          return {
+            ...statusStyles,
+            color: settingsColorTokens.textMuted
+          };
+      }
+    }, [props.coreControl.phase]);
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        general_response_mode_facade_default,
+        {
+          onModeChange: props.onResponsePolicyModeChange,
+          onStrictInstructionTextChange: props.onStrictInstructionTextChange,
+          onStrictSchemaTextChange: props.onStrictSchemaTextChange,
+          responsePolicy: props.responsePolicy
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(settings_card_default, { title: "Core Controls", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: controlsRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "button",
+            {
+              "aria-busy": props.coreControl.busy,
+              disabled: props.coreControl.busy,
+              onBlur: () => setIsPressed(false),
+              onClick: props.onRestartCore,
+              onMouseDown: () => setIsPressed(true),
+              onMouseEnter: () => setIsHovered(true),
+              onMouseLeave: () => {
+                setIsHovered(false);
+                setIsPressed(false);
+              },
+              onMouseUp: () => setIsPressed(false),
+              style: resolvedButtonStyles,
+              type: "button",
+              children: props.coreControl.busy ? "Restarting..." : "Restart Core"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: resolvedStatusStyles, children: props.coreControl.message ?? "Core restart status will appear here." })
+        ] })
+      ] })
+    ] });
+  };
+  var general_settings_default = (0, import_react8.memo)(GeneralSettings);
+
+  // src/client/ui/src/components/settings/provider-versions.tsx
+  var import_react10 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/provider-version-row.tsx
+  var import_react9 = __toESM(require_react());
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var rowStyles = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "12px",
+    padding: "10px",
+    borderRadius: "4px",
+    background: "#1f1f1f",
+    border: "1px solid #2e2e2e"
+  };
+  var labelStyles2 = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px"
+  };
+  var nameStyles = {
+    fontSize: "13px",
+    color: "#e0e0e0",
+    margin: 0
+  };
+  var versionTextStyles = {
+    fontSize: "12px",
+    color: "#b7b7b7",
+    margin: 0
+  };
+  var chipStyles = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    background: "#2a2a2a",
+    color: "#d0d0d0",
+    padding: "4px 8px",
+    borderRadius: "999px",
+    fontSize: "11px",
+    border: "1px solid #3c3c3c"
+  };
+  var buttonStyles2 = {
+    minWidth: "160px",
+    border: "1px solid #3a3d41",
+    background: "#0e639c",
+    color: "#ffffff",
+    padding: "8px 12px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "12px"
+  };
+  var buttonDisabledStyles = {
+    ...buttonStyles2,
+    background: "#2d2d30",
+    color: "#9f9f9f",
+    cursor: "not-allowed",
+    borderColor: "#3c3c3c"
+  };
+  var pendingButtonStyles = {
+    ...buttonStyles2,
+    background: "#c18400",
+    borderColor: "#f0c674",
+    color: "#1b1b1b"
+  };
+  var VersionRowItemComponent = ({
+    row,
+    disabled,
+    onClick,
+    isUpdating,
+    pendingConfirmation
+  }) => {
+    const hasUpdate = !disabled && row.latestVersion !== null && row.latestVersion !== void 0 && row.latestVersion !== row.currentVersion;
+    const buttonLabel = (() => {
+      if (isUpdating) {
+        return `Updating to ${row.latestVersion ?? "latest"}\u2026`;
+      }
+      if (!hasUpdate) {
+        if (row.latestVersion) {
+          return `Up to date (${row.latestVersion})`;
+        }
+        return "Up to date";
+      }
+      if (pendingConfirmation) {
+        return "Click again to confirm";
+      }
+      return `Update to ${row.latestVersion ?? "latest"}`;
+    })();
+    const currentLabel = row.currentVersion ?? "Not detected";
+    const latestLabel = row.latestVersion ?? "Latest: unknown";
+    let resolvedButtonStyle = buttonDisabledStyles;
+    if (pendingConfirmation) {
+      resolvedButtonStyle = pendingButtonStyles;
+    } else if (hasUpdate && !disabled) {
+      resolvedButtonStyle = buttonStyles2;
+    }
+    const shouldShowButton = row.showUpdateButton ?? true;
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: labelStyles2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { style: versionTextStyles, children: [
+          "Current: ",
+          currentLabel,
+          " ",
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
+        ] })
+      ] }),
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+        "button",
+        {
+          disabled: disabled || !hasUpdate,
+          onClick,
+          style: resolvedButtonStyle,
+          type: "button",
+          children: buttonLabel
+        }
+      ) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
+    ] });
+  };
+  var VersionRowItem = (0, import_react9.memo)(VersionRowItemComponent);
+
+  // src/client/ui/src/components/settings/provider-versions-ui.tsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var warningStyles2 = {
+    background: "#3a2a1f",
+    border: "1px solid #9b6b3d",
+    color: "#ffd7a3",
+    borderRadius: "4px",
+    padding: "8px 10px",
+    fontSize: "12px",
+    lineHeight: 1.5
+  };
+  var toggleContainerStyles = {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "12px",
+    padding: "10px 12px",
+    borderRadius: "6px",
+    border: "1px solid #2f2f2f",
+    background: "#252526"
+  };
+  var toggleCheckboxStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var toggleTitleStyles = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var toggleDescriptionStyles = {
+    fontSize: "12px",
+    color: "#9f9f9f",
+    lineHeight: 1.4,
+    margin: 0
+  };
+  var providerBannerStyles = (provider) => {
+    if (provider === "claude") {
+      return {
+        background: "#312d2a",
+        border: "1px solid #ff9105",
+        color: "#ffb76f"
+      };
+    }
+    if (provider === "codex") {
+      return {
+        background: "#293230",
+        border: "1px solid #01f0d8",
+        color: "#9cf8ef"
+      };
+    }
+    return {
+      background: "#2c2a2d",
+      border: "1px solid #ab34cb",
+      color: "#e7b3f5"
+    };
+  };
+  var resolveProviderLabel = (provider) => {
+    if (provider === "claude") {
+      return "Claude";
+    }
+    if (provider === "codex") {
+      return "Codex";
+    }
+    return "Gemini";
+  };
+  var resolveTargetLabel = (provider, target) => {
+    if (provider === "gemini" && target === "core") {
+      return "CLI Core";
+    }
+    if (target === "cli") {
+      return "CLI";
+    }
+    return "SDK";
+  };
+  var formatCheckedAt = (value) => {
+    if (!value) {
+      return null;
+    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+    const year = parsed.getFullYear();
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
+  var WarningBanner = ({
+    provider
+  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  var AutoUpdateToggle = ({
+    provider,
+    enabled,
+    disabled,
+    onToggle
+  }) => {
+    const providerLabel = resolveProviderLabel(provider);
+    const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+      "label",
+      {
+        style: {
+          ...toggleContainerStyles,
+          opacity: disabled ? 0.6 : 1,
+          cursor: disabled ? "not-allowed" : "pointer"
+        },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            "input",
+            {
+              checked: enabled,
+              disabled,
+              onChange: (event) => onToggle(event.target.checked),
+              style: toggleCheckboxStyles,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: toggleTitleStyles, children: [
+              "Auto-update ",
+              providerLabel
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { style: toggleDescriptionStyles, children: [
+              "Automatically check and update the ",
+              packageLabel,
+              " on core start. Manual updates remain available below."
+            ] })
+          ] })
+        ]
+      }
+    );
+  };
+
+  // src/client/ui/src/components/settings/provider-versions.tsx
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var rowsContainerStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px"
+  };
+  var statusStyles2 = {
+    fontSize: "12px",
+    color: "#ffb86c",
+    marginTop: "6px"
+  };
+  var errorStyles = {
+    fontSize: "12px",
+    color: "#ff8a8a",
+    marginTop: "6px"
+  };
+  var metadataTextStyles = {
+    fontSize: "12px",
+    color: "#b7b7b7"
+  };
+  var ProviderVersions = ({
+    provider,
+    versions,
+    autoUpdateEnabled,
+    onAutoUpdateChange,
+    onUpdate
+  }) => {
+    const [pendingTarget, setPendingTarget] = (0, import_react10.useState)(null);
+    const snapshot = versions.data;
+    const rows = (0, import_react10.useMemo)(() => {
+      if (!snapshot) {
+        return [];
+      }
+      if (provider === "gemini") {
+        const geminiSnapshot = snapshot.gemini;
+        if (!geminiSnapshot) {
+          return [];
+        }
+        return [
+          {
+            label: "Gemini CLI",
+            packageName: geminiSnapshot.cli.packageName,
+            currentVersion: geminiSnapshot.cli.currentVersion,
+            latestVersion: geminiSnapshot.cli.latestVersion,
+            target: void 0,
+            showUpdateButton: false
+          },
+          {
+            label: "Gemini CLI Core",
+            packageName: geminiSnapshot.core.packageName,
+            currentVersion: geminiSnapshot.core.currentVersion,
+            latestVersion: geminiSnapshot.core.latestVersion,
+            target: "core",
+            showUpdateButton: true
+          }
+        ];
+      }
+      const providerSnapshot = provider === "claude" ? snapshot.claude : snapshot.codex;
+      if (!providerSnapshot) {
+        return [];
+      }
+      const prefix = provider === "claude" ? "Claude" : "Codex";
+      return [
+        {
+          label: `${prefix} CLI`,
+          packageName: providerSnapshot.cli.packageName,
+          currentVersion: providerSnapshot.cli.currentVersion,
+          latestVersion: providerSnapshot.cli.latestVersion,
+          target: "cli"
+        },
+        {
+          label: `${prefix} SDK`,
+          packageName: providerSnapshot.sdk.packageName,
+          currentVersion: providerSnapshot.sdk.currentVersion,
+          latestVersion: providerSnapshot.sdk.latestVersion,
+          target: "sdk"
+        }
+      ];
+    }, [provider, snapshot]);
+    const hasProviderVersions = (0, import_react10.useMemo)(() => {
+      if (!snapshot) {
+        return false;
+      }
+      if (provider === "gemini") {
+        return Boolean(snapshot.gemini);
+      }
+      return provider === "claude" ? Boolean(snapshot.claude) : Boolean(snapshot.codex);
+    }, [provider, snapshot]);
+    const isBusy = versions.loading || versions.updatingTargets.length > 0;
+    const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
+    const isPending = (target) => pendingTarget === `${provider}:${target}`;
+    const providerUpdateTargets = (0, import_react10.useMemo)(() => {
+      const prefix = `${provider}:`;
+      return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
+    }, [provider, versions.updatingTargets]);
+    const manualUpdateStatus = (0, import_react10.useMemo)(() => {
+      if (providerUpdateTargets.length === 0) {
+        return null;
+      }
+      const labels = providerUpdateTargets.map(
+        (target) => resolveTargetLabel(provider, target)
+      );
+      return `Manual update in progress: ${labels.join(", ")}`;
+    }, [provider, providerUpdateTargets]);
+    (0, import_react10.useEffect)(() => {
+      if (versions.updatingTargets.length === 0) {
+        setPendingTarget(null);
+      }
+    }, [versions.updatingTargets]);
+    const handleUpdate = (target) => {
+      const key = `${provider}:${target}`;
+      if (pendingTarget !== key) {
+        setPendingTarget(key);
+        return;
+      }
+      setPendingTarget(null);
+      onUpdate(provider, target);
+    };
+    let title = "Gemini Versions";
+    if (provider === "claude") {
+      title = "Claude Versions";
+    } else if (provider === "codex") {
+      title = "Codex Versions";
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+      settings_card_default,
+      {
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: metadataTextStyles, children: [
+          "Checked: ",
+          formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
+        ] }) : null,
+        title,
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            AutoUpdateToggle,
+            {
+              disabled: versions.loading,
+              enabled: autoUpdateEnabled,
+              onToggle: (enabled) => onAutoUpdateChange(provider, enabled),
+              provider
+            }
+          ),
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: errorStyles, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles2, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles2, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles2, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            VersionRowItem,
+            {
+              disabled: isBusy,
+              isUpdating: row.target ? isUpdating(row.target) : false,
+              onClick: row.target ? () => handleUpdate(row.target) : void 0,
+              pendingConfirmation: row.target ? isPending(row.target) : false,
+              row
+            },
+            row.packageName
+          )) })
+        ]
+      }
+    );
+  };
+  var provider_versions_default = (0, import_react10.memo)(ProviderVersions);
+
+  // src/client/ui/src/components/settings/session-continuity-card.tsx
+  var import_react11 = __toESM(require_react());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var settingsLabelStyles = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    fontSize: "12px",
+    color: "#cccccc"
+  };
+  var settingsDescriptionStyles = {
+    margin: 0,
+    fontSize: "12px",
+    lineHeight: 1.5,
+    color: "#aaaaaa"
+  };
+  var settingsInputStyles = {
+    width: "220px",
+    background: "#1e1e1e",
+    border: "1px solid #3c3c3c",
+    borderRadius: "6px",
+    padding: "8px 10px",
+    color: "#cccccc"
+  };
+  var UNSIGNED_INTEGER_RE = /^\d+$/;
+  var isUnsignedIntegerText = (value) => UNSIGNED_INTEGER_RE.test(value);
+  var clampInteger = (value, min, max) => Math.min(max, Math.max(min, value));
+  var ManualIntegerInput = ({
+    id,
+    value,
+    min,
+    max,
+    onCommit
+  }) => {
+    const [draft, setDraft] = import_react11.default.useState(() => String(value));
+    import_react11.default.useEffect(() => {
+      setDraft(String(value));
+    }, [value]);
+    const commitDraft = import_react11.default.useCallback(() => {
+      const trimmed = draft.trim();
+      if (trimmed.length === 0) {
+        setDraft(String(value));
+        return;
+      }
+      if (!isUnsignedIntegerText(trimmed)) {
+        setDraft(String(value));
+        return;
+      }
+      const parsed = Number(trimmed);
+      if (!Number.isFinite(parsed)) {
+        setDraft(String(value));
+        return;
+      }
+      const clamped = clampInteger(parsed, min, max);
+      onCommit(clamped);
+      setDraft(String(clamped));
+    }, [draft, max, min, onCommit, value]);
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      "input",
+      {
+        autoComplete: "off",
+        id,
+        inputMode: "numeric",
+        onBlur: commitDraft,
+        onChange: (event) => setDraft(event.target.value),
+        onKeyDown: (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            event.currentTarget.blur();
+          }
+          if (event.key === "Escape") {
+            event.preventDefault();
+            setDraft(String(value));
+            event.currentTarget.blur();
+          }
+        },
+        pattern: "[0-9]*",
+        style: settingsInputStyles,
+        type: "text",
+        value: draft
+      }
+    );
+  };
+  var SessionContinuityCard = ({
+    title,
+    remainingPercentThreshold,
+    onRemainingPercentThresholdChange,
+    contextWindowTokenLimit,
+    onContextWindowTokenLimitChange
+  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(settings_card_default, { title, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
+    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+      "label",
+      {
+        htmlFor: `${title}-context-window-token-limit`,
+        style: settingsLabelStyles,
+        children: [
+          "Context window limit (tokens)",
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            ManualIntegerInput,
+            {
+              id: `${title}-context-window-token-limit`,
+              max: 1e6,
+              min: 1e4,
+              onCommit: onContextWindowTokenLimitChange,
+              value: contextWindowTokenLimit
+            }
+          )
+        ]
+      }
+    ) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+      "label",
+      {
+        htmlFor: `${title}-remaining-percent-threshold`,
+        style: settingsLabelStyles,
+        children: [
+          "Remaining context threshold (%)",
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+            ManualIntegerInput,
+            {
+              id: `${title}-remaining-percent-threshold`,
+              max: 80,
+              min: 5,
+              onCommit: onRemainingPercentThresholdChange,
+              value: remainingPercentThreshold
+            }
+          )
+        ]
+      }
+    )
+  ] });
+  var session_continuity_card_default = import_react11.default.memo(SessionContinuityCard);
+
+  // src/client/ui/src/components/settings/settings-footer.tsx
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var containerStyles = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "12px 20px",
+    borderTop: `1px solid ${settingsColorTokens.borderSubtle}`,
+    flexShrink: 0
+  };
+  var resetButtonStyles = {
+    padding: "6px 12px",
+    background: "transparent",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    borderRadius: "4px",
+    color: settingsColorTokens.textSecondary,
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.tabFontSize,
+    transition: "all 0.2s ease"
+  };
+  var closeButtonStyles2 = {
+    padding: "6px 16px",
+    background: "transparent",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    borderRadius: "4px",
+    color: settingsColorTokens.textSecondary,
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.tabFontSize,
+    transition: "all 0.2s ease"
+  };
+  var saveButtonStyles4 = {
+    padding: "6px 16px",
+    background: settingsColorTokens.borderStrong,
+    border: "none",
+    borderRadius: "4px",
+    color: "#808080",
+    cursor: "default",
+    fontSize: settingsTypographyTokens.tabFontSize,
+    transition: "all 0.2s ease"
+  };
+  var buttonGroupStyles = {
+    display: "flex",
+    gap: "8px"
+  };
+  var DISABLED_OPACITY = 0.6;
+  var HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
+  var HOVER_BORDER_COLOR = "#4c4c4c";
+  var SAVE_HOVER_COLOR = "#1177bb";
+  var SettingsFooter = ({
+    hasChanges,
+    saving,
+    resetting,
+    onClose,
+    onSave,
+    onReset
+  }) => {
+    const handleResetMouseEnter = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+      }
+    };
+    const handleResetMouseLeave = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "transparent";
+        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+      }
+    };
+    const handleResetFocus = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+      }
+    };
+    const handleResetBlur = (event) => {
+      if (!resetting) {
+        event.currentTarget.style.background = "transparent";
+        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+      }
+    };
+    const handleCloseMouseEnter = (event) => {
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+    };
+    const handleCloseMouseLeave = (event) => {
+      event.currentTarget.style.background = "transparent";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+    };
+    const handleCloseFocus = (event) => {
+      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
+      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
+    };
+    const handleCloseBlur = (event) => {
+      event.currentTarget.style.background = "transparent";
+      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
+    };
+    const handleSaveMouseEnter = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = SAVE_HOVER_COLOR;
+      }
+    };
+    const handleSaveMouseLeave = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
+      }
+    };
+    const handleSaveFocus = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = SAVE_HOVER_COLOR;
+      }
+    };
+    const handleSaveBlur = (event) => {
+      if (hasChanges && !saving) {
+        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+        "button",
+        {
+          disabled: resetting,
+          onBlur: handleResetBlur,
+          onClick: onReset,
+          onFocus: handleResetFocus,
+          onMouseEnter: handleResetMouseEnter,
+          onMouseLeave: handleResetMouseLeave,
+          style: {
+            ...resetButtonStyles,
+            background: resetting ? settingsColorTokens.borderStrong : "transparent",
+            color: resetting ? "#808080" : settingsColorTokens.textSecondary,
+            cursor: resetting ? "default" : "pointer",
+            opacity: resetting ? DISABLED_OPACITY : 1
+          },
+          title: "Reset all settings to defaults",
+          type: "button",
+          children: resetting ? "Resetting..." : "Reset to Defaults"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          "button",
+          {
+            onBlur: handleCloseBlur,
+            onClick: onClose,
+            onFocus: handleCloseFocus,
+            onMouseEnter: handleCloseMouseEnter,
+            onMouseLeave: handleCloseMouseLeave,
+            style: closeButtonStyles2,
+            type: "button",
+            children: "Close"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          "button",
+          {
+            disabled: !hasChanges || saving,
+            onBlur: handleSaveBlur,
+            onClick: onSave,
+            onFocus: handleSaveFocus,
+            onMouseEnter: handleSaveMouseEnter,
+            onMouseLeave: handleSaveMouseLeave,
+            style: {
+              ...saveButtonStyles4,
+              background: hasChanges && !saving ? settingsColorTokens.actionPrimary : saveButtonStyles4.background,
+              color: hasChanges ? settingsColorTokens.actionPrimaryText : saveButtonStyles4.color,
+              cursor: hasChanges && !saving ? "pointer" : "default",
+              opacity: saving ? DISABLED_OPACITY : 1
+            },
+            type: "button",
+            children: saving ? "Saving..." : "Save Changes"
+          }
+        )
+      ] })
+    ] });
+  };
+  var settings_footer_default = SettingsFooter;
+
+  // src/client/ui/src/components/settings/settings-header.tsx
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var headerStyles3 = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "12px 16px",
+    borderBottom: "1px solid #2d2d30",
+    flexShrink: 0
+  };
+  var titleStyles3 = {
+    fontSize: "16px",
+    fontWeight: 600
+  };
+  var closeButtonStyles3 = {
+    background: "transparent",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    padding: "4px 8px",
+    fontSize: "18px",
+    width: "32px",
+    height: "32px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: headerStyles3, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: titleStyles3, children: "Settings" }),
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      "button",
+      {
+        "aria-label": "Close settings",
+        onClick: onClose,
+        style: closeButtonStyles3,
+        title: "Close settings",
+        type: "button",
+        children: "\xD7"
+      }
+    )
+  ] });
+  var settings_header_default = SettingsHeader;
+
+  // src/client/ui/src/components/settings/thinking-settings.tsx
+  var import_react12 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/thinking/constants.ts
+  var MIN_THINKING_TOKENS = 2e3;
+  var MAX_THINKING_TOKENS = 32e3;
+  var THINKING_TOKEN_STEP = 1e3;
+  var hideSpinnerStyle = `
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
+
+  // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var containerStyles2 = {
+    marginTop: "20px",
+    padding: "12px",
+    background: "#1a1a1a",
+    borderRadius: "4px",
+    border: "1px solid #2d2d30"
+  };
+  var titleStyles4 = {
+    fontSize: "12px",
+    color: "#7ca9d3",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var descriptionStyles3 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: titleStyles4, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  ] });
+  var thinking_pro_tip_default = ThinkingProTip;
+
+  // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var toggleContainerStyles2 = {
+    display: "flex",
+    alignItems: "flex-start",
+    cursor: "pointer",
+    gap: "12px",
+    marginBottom: "20px"
+  };
+  var checkboxStyles = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var titleStyles5 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var descriptionStyles4 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var noteStyles2 = {
+    color: "#d4a36a"
+  };
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      "input",
+      {
+        checked: enabled,
+        onChange: (event) => onToggle(event.target.checked),
+        style: checkboxStyles,
+        type: "checkbox"
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: titleStyles5, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: descriptionStyles4, children: [
+        "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        " Changes take effect when creating a new session."
+      ] })
+    ] })
+  ] });
+  var thinking_toggle_default = ThinkingToggle;
+
+  // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var containerStyles3 = {
+    paddingLeft: "28px",
+    borderTop: "1px solid #3c3c3c",
+    paddingTop: "15px"
+  };
+  var titleStyles6 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "8px"
+  };
+  var controlsStyles = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px"
+  };
+  var buttonStyles3 = {
+    width: "28px",
+    height: "28px",
+    background: "#2d2d30",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    cursor: "pointer",
+    fontSize: "16px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  };
+  var inputStyles2 = {
+    width: "100px",
+    padding: "6px 8px",
+    background: "#1e1e1e",
+    border: "1px solid #3c3c3c",
+    borderRadius: "4px",
+    color: "#cccccc",
+    fontSize: "13px",
+    textAlign: "center",
+    MozAppearance: "textfield",
+    appearance: "textfield"
+  };
+  var helperStyles = {
+    fontSize: "12px",
+    color: "#999999",
+    marginTop: "8px",
+    lineHeight: "1.4"
+  };
+  var ThinkingTokenInput = ({
+    value,
+    onChange
+  }) => {
+    const updateValue = (next) => {
+      const constrained = Math.min(
+        MAX_THINKING_TOKENS,
+        Math.max(MIN_THINKING_TOKENS, next)
+      );
+      onChange(constrained);
+    };
+    const handleInputChange = (event) => {
+      const parsed = Number.parseInt(event.target.value, 10);
+      updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles6, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+          "button",
+          {
+            onClick: () => updateValue(value - THINKING_TOKEN_STEP),
+            style: buttonStyles3,
+            title: "Decrease by 1000",
+            type: "button",
+            children: "\u2212"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+          "input",
+          {
+            max: MAX_THINKING_TOKENS,
+            min: MIN_THINKING_TOKENS,
+            onChange: handleInputChange,
+            step: THINKING_TOKEN_STEP,
+            style: inputStyles2,
+            type: "number",
+            value
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+          "button",
+          {
+            onClick: () => updateValue(value + THINKING_TOKEN_STEP),
+            style: buttonStyles3,
+            title: "Increase by 1000",
+            type: "button",
+            children: "+"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: helperStyles, children: [
+        "\u2022 Normal (4000): Standard reasoning depth",
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
+        "\u2022 Hard (10000): Extended analysis for complex tasks",
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
+        "\u2022 Ultra (32000): Maximum reasoning capacity"
+      ] })
+    ] }) });
+  };
+  var thinking_token_input_default = ThinkingTokenInput;
+
+  // src/client/ui/src/components/settings/thinking-settings.tsx
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var wrapperStyles2 = {
+    marginBottom: "30px"
+  };
+  var displaySyncToggleStyles3 = {
+    display: "flex",
+    alignItems: "flex-start",
+    cursor: "pointer",
+    gap: "12px",
+    marginBottom: "20px"
+  };
+  var displaySyncCheckboxStyles3 = {
+    marginTop: "2px",
+    width: "16px",
+    height: "16px",
+    cursor: "pointer"
+  };
+  var displaySyncTitleStyles3 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "4px"
+  };
+  var displaySyncDescriptionStyles3 = {
+    fontSize: "12px",
+    color: "#999999",
+    lineHeight: "1.4"
+  };
+  var ThinkingSettings = ({
+    enabled,
+    maxTokens,
+    thinkingDisplaySyncEnabled,
+    onThinkingDisplaySyncChange,
+    onChange
+  }) => {
+    const handleToggle = (nextEnabled) => {
+      onChange(nextEnabled, maxTokens);
+    };
+    const handleTokenChange = (nextValue) => {
+      onChange(enabled, nextValue);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { style: displaySyncToggleStyles3, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            "input",
+            {
+              checked: thinkingDisplaySyncEnabled,
+              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+              style: displaySyncCheckboxStyles3,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_pro_tip_default, {})
+      ] })
+    ] });
+  };
+  var thinking_settings_default = (0, import_react12.memo)(ThinkingSettings);
+
+  // src/client/ui/src/components/settings/use-settings-state.ts
+  var import_react13 = __toESM(require_react());
+
   // src/types/provider.ts
   var PROVIDER_TITLE_MAP = {
     claudeCodeCli: "Claude",
@@ -9125,1250 +10473,6 @@
   var vscode = vscodeInstance ?? fallbackApi;
   var vscode_default = vscode;
 
-  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
-  var import_react7 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
-  var import_react6 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
-  var RESPONSE_MODE_OPTIONS = [
-    {
-      id: "strict",
-      label: "Strict",
-      description: "Force a JSON-shaped final answer using the editable strict schema."
-    },
-    {
-      id: "hybrid",
-      label: "Hybrid",
-      description: "Allow free commentary during the turn and keep structure only for terminal output."
-    },
-    {
-      id: "debug_raw",
-      label: "Debug/Raw",
-      description: "Diagnostic mode for new models: avoid hard schema pressure on live turns."
-    }
-  ];
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime());
-  var copyStyles = {
-    margin: 0,
-    fontSize: "13px",
-    color: "#bbbbbb",
-    lineHeight: 1.45
-  };
-  var optionListStyles2 = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var optionButtonStyles = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    gap: "4px",
-    width: "100%",
-    padding: "12px 14px",
-    borderRadius: "10px",
-    border: "1px solid #3a3d41",
-    background: "#1e1e1e",
-    color: "#f5f5f5",
-    cursor: "pointer",
-    textAlign: "left"
-  };
-  var activeOptionStyles = {
-    borderColor: "#0e639c",
-    background: "#132938"
-  };
-  var optionTitleStyles2 = {
-    fontSize: "13px",
-    fontWeight: 600
-  };
-  var optionDescriptionStyles2 = {
-    fontSize: "12px",
-    color: "#bbbbbb",
-    lineHeight: 1.4
-  };
-  var labelStyles = {
-    fontSize: "12px",
-    fontWeight: 600,
-    color: "#f5f5f5"
-  };
-  var inputStyles = {
-    width: "100%",
-    minHeight: "132px",
-    padding: "10px 12px",
-    borderRadius: "8px",
-    border: "1px solid #3a3d41",
-    background: "#111111",
-    color: "#f5f5f5",
-    fontSize: "12px",
-    fontFamily: "Menlo, Monaco, Consolas, monospace",
-    lineHeight: 1.45,
-    resize: "vertical",
-    boxSizing: "border-box"
-  };
-  var inputGroupStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px"
-  };
-  var strictBlockStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-    marginTop: "16px"
-  };
-  var ResponseModeCard = ({
-    responsePolicy,
-    onModeChange,
-    onStrictInstructionTextChange,
-    onStrictSchemaTextChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Response Mode", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: copyStyles, children: "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior." }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
-      "button",
-      {
-        onClick: () => onModeChange(option.id),
-        style: {
-          ...optionButtonStyles,
-          ...responsePolicy.mode === option.id ? activeOptionStyles : null
-        },
-        type: "button",
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionTitleStyles2, children: option.label }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionDescriptionStyles2, children: option.description })
-        ]
-      },
-      option.id
-    )) }),
-    responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: strictBlockStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-          "textarea",
-          {
-            onChange: (event) => onStrictSchemaTextChange(event.target.value),
-            style: inputStyles,
-            value: responsePolicy.strictOutput.schemaText
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-          "textarea",
-          {
-            onChange: (event) => onStrictInstructionTextChange(event.target.value),
-            style: { ...inputStyles, minHeight: "108px" },
-            value: responsePolicy.strictOutput.instructionText
-          }
-        )
-      ] })
-    ] }) : null
-  ] });
-  var response_mode_card_default = (0, import_react6.memo)(ResponseModeCard);
-
-  // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime());
-  var GeneralResponseModeFacade = (props) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(response_mode_card_default, { ...props });
-  var general_response_mode_facade_default = (0, import_react7.memo)(GeneralResponseModeFacade);
-
-  // src/client/ui/src/components/settings/general-settings.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var wrapperStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "24px"
-  };
-  var descriptionStyles2 = {
-    fontSize: "13px",
-    color: "#bbbbbb",
-    lineHeight: 1.4,
-    margin: 0
-  };
-  var buttonStyles = {
-    alignSelf: "flex-start",
-    border: "1px solid #3a3d41",
-    background: "#0e639c",
-    color: "#ffffff",
-    padding: "8px 16px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var GeneralSettings = (props) => {
-    const handleRestartCore = () => {
-      postVsCodeMessage({ type: "core:restart-request" });
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: wrapperStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-        general_response_mode_facade_default,
-        {
-          onModeChange: props.onResponsePolicyModeChange,
-          onStrictInstructionTextChange: props.onStrictInstructionTextChange,
-          onStrictSchemaTextChange: props.onStrictSchemaTextChange,
-          responsePolicy: props.responsePolicy
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(settings_card_default, { title: "Core Controls", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: descriptionStyles2, children: "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues." }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: handleRestartCore, style: buttonStyles, type: "button", children: "Restart Core" })
-      ] })
-    ] });
-  };
-  var general_settings_default = (0, import_react8.memo)(GeneralSettings);
-
-  // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react10 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react9 = __toESM(require_react());
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime());
-  var rowStyles = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "12px",
-    padding: "10px",
-    borderRadius: "4px",
-    background: "#1f1f1f",
-    border: "1px solid #2e2e2e"
-  };
-  var labelStyles2 = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px"
-  };
-  var nameStyles = {
-    fontSize: "13px",
-    color: "#e0e0e0",
-    margin: 0
-  };
-  var versionTextStyles = {
-    fontSize: "12px",
-    color: "#b7b7b7",
-    margin: 0
-  };
-  var chipStyles = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    background: "#2a2a2a",
-    color: "#d0d0d0",
-    padding: "4px 8px",
-    borderRadius: "999px",
-    fontSize: "11px",
-    border: "1px solid #3c3c3c"
-  };
-  var buttonStyles2 = {
-    minWidth: "160px",
-    border: "1px solid #3a3d41",
-    background: "#0e639c",
-    color: "#ffffff",
-    padding: "8px 12px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "12px"
-  };
-  var buttonDisabledStyles = {
-    ...buttonStyles2,
-    background: "#2d2d30",
-    color: "#9f9f9f",
-    cursor: "not-allowed",
-    borderColor: "#3c3c3c"
-  };
-  var pendingButtonStyles = {
-    ...buttonStyles2,
-    background: "#c18400",
-    borderColor: "#f0c674",
-    color: "#1b1b1b"
-  };
-  var VersionRowItemComponent = ({
-    row,
-    disabled,
-    onClick,
-    isUpdating,
-    pendingConfirmation
-  }) => {
-    const hasUpdate = !disabled && row.latestVersion !== null && row.latestVersion !== void 0 && row.latestVersion !== row.currentVersion;
-    const buttonLabel = (() => {
-      if (isUpdating) {
-        return `Updating to ${row.latestVersion ?? "latest"}\u2026`;
-      }
-      if (!hasUpdate) {
-        if (row.latestVersion) {
-          return `Up to date (${row.latestVersion})`;
-        }
-        return "Up to date";
-      }
-      if (pendingConfirmation) {
-        return "Click again to confirm";
-      }
-      return `Update to ${row.latestVersion ?? "latest"}`;
-    })();
-    const currentLabel = row.currentVersion ?? "Not detected";
-    const latestLabel = row.latestVersion ?? "Latest: unknown";
-    let resolvedButtonStyle = buttonDisabledStyles;
-    if (pendingConfirmation) {
-      resolvedButtonStyle = pendingButtonStyles;
-    } else if (hasUpdate && !disabled) {
-      resolvedButtonStyle = buttonStyles2;
-    }
-    const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: labelStyles2, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { style: versionTextStyles, children: [
-          "Current: ",
-          currentLabel,
-          " ",
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
-        ] })
-      ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        "button",
-        {
-          disabled: disabled || !hasUpdate,
-          onClick,
-          style: resolvedButtonStyle,
-          type: "button",
-          children: buttonLabel
-        }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: chipStyles, children: latestLabel })
-    ] });
-  };
-  var VersionRowItem = (0, import_react9.memo)(VersionRowItemComponent);
-
-  // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var warningStyles2 = {
-    background: "#3a2a1f",
-    border: "1px solid #9b6b3d",
-    color: "#ffd7a3",
-    borderRadius: "4px",
-    padding: "8px 10px",
-    fontSize: "12px",
-    lineHeight: 1.5
-  };
-  var toggleContainerStyles = {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "12px",
-    padding: "10px 12px",
-    borderRadius: "6px",
-    border: "1px solid #2f2f2f",
-    background: "#252526"
-  };
-  var toggleCheckboxStyles = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var toggleTitleStyles = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var toggleDescriptionStyles = {
-    fontSize: "12px",
-    color: "#9f9f9f",
-    lineHeight: 1.4,
-    margin: 0
-  };
-  var providerBannerStyles = (provider) => {
-    if (provider === "claude") {
-      return {
-        background: "#312d2a",
-        border: "1px solid #ff9105",
-        color: "#ffb76f"
-      };
-    }
-    if (provider === "codex") {
-      return {
-        background: "#293230",
-        border: "1px solid #01f0d8",
-        color: "#9cf8ef"
-      };
-    }
-    return {
-      background: "#2c2a2d",
-      border: "1px solid #ab34cb",
-      color: "#e7b3f5"
-    };
-  };
-  var resolveProviderLabel = (provider) => {
-    if (provider === "claude") {
-      return "Claude";
-    }
-    if (provider === "codex") {
-      return "Codex";
-    }
-    return "Gemini";
-  };
-  var resolveTargetLabel = (provider, target) => {
-    if (provider === "gemini" && target === "core") {
-      return "CLI Core";
-    }
-    if (target === "cli") {
-      return "CLI";
-    }
-    return "SDK";
-  };
-  var formatCheckedAt = (value) => {
-    if (!value) {
-      return null;
-    }
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-      return null;
-    }
-    const year = parsed.getFullYear();
-    const month = String(parsed.getMonth() + 1).padStart(2, "0");
-    const day = String(parsed.getDate()).padStart(2, "0");
-    const hours = String(parsed.getHours()).padStart(2, "0");
-    const minutes = String(parsed.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-  };
-  var WarningBanner = ({
-    provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
-  var AutoUpdateToggle = ({
-    provider,
-    enabled,
-    disabled,
-    onToggle
-  }) => {
-    const providerLabel = resolveProviderLabel(provider);
-    const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-      "label",
-      {
-        style: {
-          ...toggleContainerStyles,
-          opacity: disabled ? 0.6 : 1,
-          cursor: disabled ? "not-allowed" : "pointer"
-        },
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            "input",
-            {
-              checked: enabled,
-              disabled,
-              onChange: (event) => onToggle(event.target.checked),
-              style: toggleCheckboxStyles,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: toggleTitleStyles, children: [
-              "Auto-update ",
-              providerLabel
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { style: toggleDescriptionStyles, children: [
-              "Automatically check and update the ",
-              packageLabel,
-              " on core start. Manual updates remain available below."
-            ] })
-          ] })
-        ]
-      }
-    );
-  };
-
-  // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
-  var rowsContainerStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px"
-  };
-  var statusStyles = {
-    fontSize: "12px",
-    color: "#ffb86c",
-    marginTop: "6px"
-  };
-  var errorStyles = {
-    fontSize: "12px",
-    color: "#ff8a8a",
-    marginTop: "6px"
-  };
-  var metadataTextStyles = {
-    fontSize: "12px",
-    color: "#b7b7b7"
-  };
-  var ProviderVersions = ({
-    provider,
-    versions,
-    autoUpdateEnabled,
-    onAutoUpdateChange,
-    onUpdate
-  }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react10.useState)(null);
-    const snapshot = versions.data;
-    const rows = (0, import_react10.useMemo)(() => {
-      if (!snapshot) {
-        return [];
-      }
-      if (provider === "gemini") {
-        const geminiSnapshot = snapshot.gemini;
-        if (!geminiSnapshot) {
-          return [];
-        }
-        return [
-          {
-            label: "Gemini CLI",
-            packageName: geminiSnapshot.cli.packageName,
-            currentVersion: geminiSnapshot.cli.currentVersion,
-            latestVersion: geminiSnapshot.cli.latestVersion,
-            target: void 0,
-            showUpdateButton: false
-          },
-          {
-            label: "Gemini CLI Core",
-            packageName: geminiSnapshot.core.packageName,
-            currentVersion: geminiSnapshot.core.currentVersion,
-            latestVersion: geminiSnapshot.core.latestVersion,
-            target: "core",
-            showUpdateButton: true
-          }
-        ];
-      }
-      const providerSnapshot = provider === "claude" ? snapshot.claude : snapshot.codex;
-      if (!providerSnapshot) {
-        return [];
-      }
-      const prefix = provider === "claude" ? "Claude" : "Codex";
-      return [
-        {
-          label: `${prefix} CLI`,
-          packageName: providerSnapshot.cli.packageName,
-          currentVersion: providerSnapshot.cli.currentVersion,
-          latestVersion: providerSnapshot.cli.latestVersion,
-          target: "cli"
-        },
-        {
-          label: `${prefix} SDK`,
-          packageName: providerSnapshot.sdk.packageName,
-          currentVersion: providerSnapshot.sdk.currentVersion,
-          latestVersion: providerSnapshot.sdk.latestVersion,
-          target: "sdk"
-        }
-      ];
-    }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react10.useMemo)(() => {
-      if (!snapshot) {
-        return false;
-      }
-      if (provider === "gemini") {
-        return Boolean(snapshot.gemini);
-      }
-      return provider === "claude" ? Boolean(snapshot.claude) : Boolean(snapshot.codex);
-    }, [provider, snapshot]);
-    const isBusy = versions.loading || versions.updatingTargets.length > 0;
-    const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
-    const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react10.useMemo)(() => {
-      const prefix = `${provider}:`;
-      return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
-    }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react10.useMemo)(() => {
-      if (providerUpdateTargets.length === 0) {
-        return null;
-      }
-      const labels = providerUpdateTargets.map(
-        (target) => resolveTargetLabel(provider, target)
-      );
-      return `Manual update in progress: ${labels.join(", ")}`;
-    }, [provider, providerUpdateTargets]);
-    (0, import_react10.useEffect)(() => {
-      if (versions.updatingTargets.length === 0) {
-        setPendingTarget(null);
-      }
-    }, [versions.updatingTargets]);
-    const handleUpdate = (target) => {
-      const key = `${provider}:${target}`;
-      if (pendingTarget !== key) {
-        setPendingTarget(key);
-        return;
-      }
-      setPendingTarget(null);
-      onUpdate(provider, target);
-    };
-    let title = "Gemini Versions";
-    if (provider === "claude") {
-      title = "Claude Versions";
-    } else if (provider === "codex") {
-      title = "Codex Versions";
-    }
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
-      settings_card_default,
-      {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: metadataTextStyles, children: [
-          "Checked: ",
-          formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
-        ] }) : null,
-        title,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-            AutoUpdateToggle,
-            {
-              disabled: versions.loading,
-              enabled: autoUpdateEnabled,
-              onToggle: (enabled) => onAutoUpdateChange(provider, enabled),
-              provider
-            }
-          ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: statusStyles, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
-            VersionRowItem,
-            {
-              disabled: isBusy,
-              isUpdating: row.target ? isUpdating(row.target) : false,
-              onClick: row.target ? () => handleUpdate(row.target) : void 0,
-              pendingConfirmation: row.target ? isPending(row.target) : false,
-              row
-            },
-            row.packageName
-          )) })
-        ]
-      }
-    );
-  };
-  var provider_versions_default = (0, import_react10.memo)(ProviderVersions);
-
-  // src/client/ui/src/components/settings/session-continuity-card.tsx
-  var import_react11 = __toESM(require_react());
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
-  var settingsLabelStyles = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    fontSize: "12px",
-    color: "#cccccc"
-  };
-  var settingsDescriptionStyles = {
-    margin: 0,
-    fontSize: "12px",
-    lineHeight: 1.5,
-    color: "#aaaaaa"
-  };
-  var settingsInputStyles = {
-    width: "220px",
-    background: "#1e1e1e",
-    border: "1px solid #3c3c3c",
-    borderRadius: "6px",
-    padding: "8px 10px",
-    color: "#cccccc"
-  };
-  var UNSIGNED_INTEGER_RE = /^\d+$/;
-  var isUnsignedIntegerText = (value) => UNSIGNED_INTEGER_RE.test(value);
-  var clampInteger = (value, min, max) => Math.min(max, Math.max(min, value));
-  var ManualIntegerInput = ({
-    id,
-    value,
-    min,
-    max,
-    onCommit
-  }) => {
-    const [draft, setDraft] = import_react11.default.useState(() => String(value));
-    import_react11.default.useEffect(() => {
-      setDraft(String(value));
-    }, [value]);
-    const commitDraft = import_react11.default.useCallback(() => {
-      const trimmed = draft.trim();
-      if (trimmed.length === 0) {
-        setDraft(String(value));
-        return;
-      }
-      if (!isUnsignedIntegerText(trimmed)) {
-        setDraft(String(value));
-        return;
-      }
-      const parsed = Number(trimmed);
-      if (!Number.isFinite(parsed)) {
-        setDraft(String(value));
-        return;
-      }
-      const clamped = clampInteger(parsed, min, max);
-      onCommit(clamped);
-      setDraft(String(clamped));
-    }, [draft, max, min, onCommit, value]);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-      "input",
-      {
-        autoComplete: "off",
-        id,
-        inputMode: "numeric",
-        onBlur: commitDraft,
-        onChange: (event) => setDraft(event.target.value),
-        onKeyDown: (event) => {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            event.currentTarget.blur();
-          }
-          if (event.key === "Escape") {
-            event.preventDefault();
-            setDraft(String(value));
-            event.currentTarget.blur();
-          }
-        },
-        pattern: "[0-9]*",
-        style: settingsInputStyles,
-        type: "text",
-        value: draft
-      }
-    );
-  };
-  var SessionContinuityCard = ({
-    title,
-    remainingPercentThreshold,
-    onRemainingPercentThresholdChange,
-    contextWindowTokenLimit,
-    onContextWindowTokenLimitChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(settings_card_default, { title, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
-    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
-      "label",
-      {
-        htmlFor: `${title}-context-window-token-limit`,
-        style: settingsLabelStyles,
-        children: [
-          "Context window limit (tokens)",
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            ManualIntegerInput,
-            {
-              id: `${title}-context-window-token-limit`,
-              max: 1e6,
-              min: 1e4,
-              onCommit: onContextWindowTokenLimitChange,
-              value: contextWindowTokenLimit
-            }
-          )
-        ]
-      }
-    ) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
-      "label",
-      {
-        htmlFor: `${title}-remaining-percent-threshold`,
-        style: settingsLabelStyles,
-        children: [
-          "Remaining context threshold (%)",
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
-            ManualIntegerInput,
-            {
-              id: `${title}-remaining-percent-threshold`,
-              max: 80,
-              min: 5,
-              onCommit: onRemainingPercentThresholdChange,
-              value: remainingPercentThreshold
-            }
-          )
-        ]
-      }
-    )
-  ] });
-  var session_continuity_card_default = import_react11.default.memo(SessionContinuityCard);
-
-  // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
-  var containerStyles = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "12px 20px",
-    borderTop: `1px solid ${settingsColorTokens.borderSubtle}`,
-    flexShrink: 0
-  };
-  var resetButtonStyles = {
-    padding: "6px 12px",
-    background: "transparent",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    borderRadius: "4px",
-    color: settingsColorTokens.textSecondary,
-    cursor: "pointer",
-    fontSize: settingsTypographyTokens.tabFontSize,
-    transition: "all 0.2s ease"
-  };
-  var closeButtonStyles2 = {
-    padding: "6px 16px",
-    background: "transparent",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    borderRadius: "4px",
-    color: settingsColorTokens.textSecondary,
-    cursor: "pointer",
-    fontSize: settingsTypographyTokens.tabFontSize,
-    transition: "all 0.2s ease"
-  };
-  var saveButtonStyles4 = {
-    padding: "6px 16px",
-    background: settingsColorTokens.borderStrong,
-    border: "none",
-    borderRadius: "4px",
-    color: "#808080",
-    cursor: "default",
-    fontSize: settingsTypographyTokens.tabFontSize,
-    transition: "all 0.2s ease"
-  };
-  var buttonGroupStyles = {
-    display: "flex",
-    gap: "8px"
-  };
-  var DISABLED_OPACITY = 0.6;
-  var HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
-  var HOVER_BORDER_COLOR = "#4c4c4c";
-  var SAVE_HOVER_COLOR = "#1177bb";
-  var SettingsFooter = ({
-    hasChanges,
-    saving,
-    resetting,
-    onClose,
-    onSave,
-    onReset
-  }) => {
-    const handleResetMouseEnter = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-      }
-    };
-    const handleResetMouseLeave = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = "transparent";
-        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-      }
-    };
-    const handleResetFocus = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-        event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-      }
-    };
-    const handleResetBlur = (event) => {
-      if (!resetting) {
-        event.currentTarget.style.background = "transparent";
-        event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-      }
-    };
-    const handleCloseMouseEnter = (event) => {
-      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-    };
-    const handleCloseMouseLeave = (event) => {
-      event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-    };
-    const handleCloseFocus = (event) => {
-      event.currentTarget.style.background = HOVER_SURFACE_COLOR;
-      event.currentTarget.style.borderColor = HOVER_BORDER_COLOR;
-    };
-    const handleCloseBlur = (event) => {
-      event.currentTarget.style.background = "transparent";
-      event.currentTarget.style.borderColor = settingsColorTokens.borderStrong;
-    };
-    const handleSaveMouseEnter = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = SAVE_HOVER_COLOR;
-      }
-    };
-    const handleSaveMouseLeave = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
-      }
-    };
-    const handleSaveFocus = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = SAVE_HOVER_COLOR;
-      }
-    };
-    const handleSaveBlur = (event) => {
-      if (hasChanges && !saving) {
-        event.currentTarget.style.background = settingsColorTokens.actionPrimary;
-      }
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-        "button",
-        {
-          disabled: resetting,
-          onBlur: handleResetBlur,
-          onClick: onReset,
-          onFocus: handleResetFocus,
-          onMouseEnter: handleResetMouseEnter,
-          onMouseLeave: handleResetMouseLeave,
-          style: {
-            ...resetButtonStyles,
-            background: resetting ? settingsColorTokens.borderStrong : "transparent",
-            color: resetting ? "#808080" : settingsColorTokens.textSecondary,
-            cursor: resetting ? "default" : "pointer",
-            opacity: resetting ? DISABLED_OPACITY : 1
-          },
-          title: "Reset all settings to defaults",
-          type: "button",
-          children: resetting ? "Resetting..." : "Reset to Defaults"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-          "button",
-          {
-            onBlur: handleCloseBlur,
-            onClick: onClose,
-            onFocus: handleCloseFocus,
-            onMouseEnter: handleCloseMouseEnter,
-            onMouseLeave: handleCloseMouseLeave,
-            style: closeButtonStyles2,
-            type: "button",
-            children: "Close"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
-          "button",
-          {
-            disabled: !hasChanges || saving,
-            onBlur: handleSaveBlur,
-            onClick: onSave,
-            onFocus: handleSaveFocus,
-            onMouseEnter: handleSaveMouseEnter,
-            onMouseLeave: handleSaveMouseLeave,
-            style: {
-              ...saveButtonStyles4,
-              background: hasChanges && !saving ? settingsColorTokens.actionPrimary : saveButtonStyles4.background,
-              color: hasChanges ? settingsColorTokens.actionPrimaryText : saveButtonStyles4.color,
-              cursor: hasChanges && !saving ? "pointer" : "default",
-              opacity: saving ? DISABLED_OPACITY : 1
-            },
-            type: "button",
-            children: saving ? "Saving..." : "Save Changes"
-          }
-        )
-      ] })
-    ] });
-  };
-  var settings_footer_default = SettingsFooter;
-
-  // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
-  var headerStyles3 = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "12px 16px",
-    borderBottom: "1px solid #2d2d30",
-    flexShrink: 0
-  };
-  var titleStyles3 = {
-    fontSize: "16px",
-    fontWeight: 600
-  };
-  var closeButtonStyles3 = {
-    background: "transparent",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    cursor: "pointer",
-    padding: "4px 8px",
-    fontSize: "18px",
-    width: "32px",
-    height: "32px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  };
-  var SettingsHeader = ({ onClose }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: headerStyles3, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: titleStyles3, children: "Settings" }),
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
-      "button",
-      {
-        "aria-label": "Close settings",
-        onClick: onClose,
-        style: closeButtonStyles3,
-        title: "Close settings",
-        type: "button",
-        children: "\xD7"
-      }
-    )
-  ] });
-  var settings_header_default = SettingsHeader;
-
-  // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react12 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/thinking/constants.ts
-  var MIN_THINKING_TOKENS = 2e3;
-  var MAX_THINKING_TOKENS = 32e3;
-  var THINKING_TOKEN_STEP = 1e3;
-  var hideSpinnerStyle = `
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`;
-
-  // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
-  var containerStyles2 = {
-    marginTop: "20px",
-    padding: "12px",
-    background: "#1a1a1a",
-    borderRadius: "4px",
-    border: "1px solid #2d2d30"
-  };
-  var titleStyles4 = {
-    fontSize: "12px",
-    color: "#7ca9d3",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var descriptionStyles3 = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: "1.4"
-  };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: titleStyles4, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
-  ] });
-  var thinking_pro_tip_default = ThinkingProTip;
-
-  // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
-  var toggleContainerStyles2 = {
-    display: "flex",
-    alignItems: "flex-start",
-    cursor: "pointer",
-    gap: "12px",
-    marginBottom: "20px"
-  };
-  var checkboxStyles = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var titleStyles5 = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var descriptionStyles4 = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: "1.4"
-  };
-  var noteStyles2 = {
-    color: "#d4a36a"
-  };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
-      "input",
-      {
-        checked: enabled,
-        onChange: (event) => onToggle(event.target.checked),
-        style: checkboxStyles,
-        type: "checkbox"
-      }
-    ),
-    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: titleStyles5, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: descriptionStyles4, children: [
-        "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { style: noteStyles2, children: "Note:" }),
-        " Changes take effect when creating a new session."
-      ] })
-    ] })
-  ] });
-  var thinking_toggle_default = ThinkingToggle;
-
-  // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
-  var containerStyles3 = {
-    paddingLeft: "28px",
-    borderTop: "1px solid #3c3c3c",
-    paddingTop: "15px"
-  };
-  var titleStyles6 = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "8px"
-  };
-  var controlsStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
-  };
-  var buttonStyles3 = {
-    width: "28px",
-    height: "28px",
-    background: "#2d2d30",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    cursor: "pointer",
-    fontSize: "16px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  };
-  var inputStyles2 = {
-    width: "100px",
-    padding: "6px 8px",
-    background: "#1e1e1e",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    fontSize: "13px",
-    textAlign: "center",
-    MozAppearance: "textfield",
-    appearance: "textfield"
-  };
-  var helperStyles = {
-    fontSize: "12px",
-    color: "#999999",
-    marginTop: "8px",
-    lineHeight: "1.4"
-  };
-  var ThinkingTokenInput = ({
-    value,
-    onChange
-  }) => {
-    const updateValue = (next) => {
-      const constrained = Math.min(
-        MAX_THINKING_TOKENS,
-        Math.max(MIN_THINKING_TOKENS, next)
-      );
-      onChange(constrained);
-    };
-    const handleInputChange = (event) => {
-      const parsed = Number.parseInt(event.target.value, 10);
-      updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles6, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-          "button",
-          {
-            onClick: () => updateValue(value - THINKING_TOKEN_STEP),
-            style: buttonStyles3,
-            title: "Decrease by 1000",
-            type: "button",
-            children: "\u2212"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-          "input",
-          {
-            max: MAX_THINKING_TOKENS,
-            min: MIN_THINKING_TOKENS,
-            onChange: handleInputChange,
-            step: THINKING_TOKEN_STEP,
-            style: inputStyles2,
-            type: "number",
-            value
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
-          "button",
-          {
-            onClick: () => updateValue(value + THINKING_TOKEN_STEP),
-            style: buttonStyles3,
-            title: "Increase by 1000",
-            type: "button",
-            children: "+"
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: helperStyles, children: [
-        "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
-        "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
-        "\u2022 Ultra (32000): Maximum reasoning capacity"
-      ] })
-    ] }) });
-  };
-  var thinking_token_input_default = ThinkingTokenInput;
-
-  // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
-  var wrapperStyles2 = {
-    marginBottom: "30px"
-  };
-  var displaySyncToggleStyles3 = {
-    display: "flex",
-    alignItems: "flex-start",
-    cursor: "pointer",
-    gap: "12px",
-    marginBottom: "20px"
-  };
-  var displaySyncCheckboxStyles3 = {
-    marginTop: "2px",
-    width: "16px",
-    height: "16px",
-    cursor: "pointer"
-  };
-  var displaySyncTitleStyles3 = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "4px"
-  };
-  var displaySyncDescriptionStyles3 = {
-    fontSize: "12px",
-    color: "#999999",
-    lineHeight: "1.4"
-  };
-  var ThinkingSettings = ({
-    enabled,
-    maxTokens,
-    thinkingDisplaySyncEnabled,
-    onThinkingDisplaySyncChange,
-    onChange
-  }) => {
-    const handleToggle = (nextEnabled) => {
-      onChange(nextEnabled, maxTokens);
-    };
-    const handleTokenChange = (nextValue) => {
-      onChange(enabled, nextValue);
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { style: displaySyncToggleStyles3, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
-            "input",
-            {
-              checked: thinkingDisplaySyncEnabled,
-              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
-              style: displaySyncCheckboxStyles3,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(thinking_pro_tip_default, {})
-      ] })
-    ] });
-  };
-  var thinking_settings_default = (0, import_react12.memo)(ThinkingSettings);
-
-  // src/client/ui/src/components/settings/use-settings-state.ts
-  var import_react13 = __toESM(require_react());
-
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, maxTokens) => ({
     ...settings,
@@ -10826,7 +10930,7 @@
       return false;
     }
     const candidate = message;
-    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions";
+    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status";
   };
   var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
   var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
@@ -10839,6 +10943,11 @@
     const [hasChanges, setHasChanges] = (0, import_react13.useState)(false);
     const [saving, setSaving] = (0, import_react13.useState)(false);
     const [resetting, setResetting] = (0, import_react13.useState)(false);
+    const [coreControl, setCoreControl] = (0, import_react13.useState)({
+      busy: false,
+      message: null,
+      phase: "idle"
+    });
     const [versions, setVersions] = (0, import_react13.useState)(() => ({
       data: null,
       loading: true,
@@ -10874,6 +10983,13 @@
             loading: false,
             error: event.data.error ?? null,
             updatingTargets: []
+          });
+        }
+        if (event.data.type === "settings:core-control-status") {
+          setCoreControl({
+            busy: event.data.busy,
+            message: event.data.message ?? null,
+            phase: event.data.phase
           });
         }
       };
@@ -11052,7 +11168,18 @@
       },
       []
     );
+    const handleRestartCore = (0, import_react13.useCallback)(() => {
+      setCoreControl({
+        busy: true,
+        message: "Restart requested. Preparing shutdown...",
+        phase: "stopping"
+      });
+      vscode_default.postMessage({
+        type: "core:restart-request"
+      });
+    }, []);
     return {
+      coreControl,
       settings,
       hasChanges,
       saving,
@@ -11072,6 +11199,7 @@
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
       handleProviderAutoUpdateChange,
+      handleRestartCore,
       handleResponsePolicyModeChange,
       handleStrictSchemaTextChange,
       handleStrictInstructionTextChange,
@@ -11147,6 +11275,7 @@
   }) => {
     const [activeTab, setActiveTab] = (0, import_react14.useState)("claude");
     const {
+      coreControl,
       settings,
       hasChanges,
       saving,
@@ -11166,6 +11295,7 @@
       handleGeminiThinkingDisplaySyncChange,
       handleCodexReasoningChange,
       handleProviderAutoUpdateChange,
+      handleRestartCore,
       handleResponsePolicyModeChange,
       handleStrictSchemaTextChange,
       handleStrictInstructionTextChange,
@@ -11236,7 +11366,9 @@
           return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
             general_settings_default,
             {
+              coreControl,
               onResponsePolicyModeChange: handleResponsePolicyModeChange,
+              onRestartCore: handleRestartCore,
               onStrictInstructionTextChange: handleStrictInstructionTextChange,
               onStrictSchemaTextChange: handleStrictSchemaTextChange,
               responsePolicy: settings.general.responsePolicy

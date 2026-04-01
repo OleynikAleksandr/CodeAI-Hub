@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.861] - 2026-04-01
+### Fixed
+- **Core restart now follows an explicit staged flow**: `Settings -> General -> Core Controls` performs `stop -> wait -> start` instead of a fire-and-forget restart request, matching the operational contract used by the standalone core control script.
+- **Core Controls feedback is now visible in-place**: the Settings card reports stop, waiting, start, success, and failure states beside the button, instead of leaving restart progress invisible to the user.
+- **Restart button interaction states**: `Restart Core` now exposes clear hover, pressed, and busy states so the action no longer looks inert when clicked.
+
 ## [1.1.860] - 2026-04-01
 ### Fixed
 - **Thinking visibility is now presentation-only**: Claude and Gemini `Thinking in dialog` toggles no longer suppress provider-side history emission; they only filter whether thinking bubbles are rendered in the Session dialog.

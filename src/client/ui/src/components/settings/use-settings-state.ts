@@ -33,6 +33,7 @@ import {
   type Settings,
 } from "./settings-state-model";
 import {
+  type CoreControlState,
   clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
   isIncomingMessage,
@@ -50,6 +51,11 @@ export const useSettingsState = (): UseSettingsStateResult => {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [coreControl, setCoreControl] = useState<CoreControlState>({
+    busy: false,
+    message: null,
+    phase: "idle",
+  });
   const [versions, setVersions] = useState<VersionsState>(() => ({
     data: null,
     loading: true,
@@ -90,6 +96,14 @@ export const useSettingsState = (): UseSettingsStateResult => {
           loading: false,
           error: event.data.error ?? null,
           updatingTargets: [],
+        });
+      }
+
+      if (event.data.type === "settings:core-control-status") {
+        setCoreControl({
+          busy: event.data.busy,
+          message: event.data.message ?? null,
+          phase: event.data.phase,
         });
       }
     };
@@ -291,7 +305,19 @@ export const useSettingsState = (): UseSettingsStateResult => {
     []
   );
 
+  const handleRestartCore = useCallback(() => {
+    setCoreControl({
+      busy: true,
+      message: "Restart requested. Preparing shutdown...",
+      phase: "stopping",
+    });
+    vscode.postMessage({
+      type: "core:restart-request",
+    });
+  }, []);
+
   return {
+    coreControl,
     settings,
     hasChanges,
     saving,
@@ -311,6 +337,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
     handleProviderAutoUpdateChange,
+    handleRestartCore,
     handleResponsePolicyModeChange,
     handleStrictSchemaTextChange,
     handleStrictInstructionTextChange,

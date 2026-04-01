@@ -20,6 +20,18 @@ export interface VersionsState {
   readonly updatingTargets: readonly string[];
 }
 
+export interface CoreControlState {
+  readonly busy: boolean;
+  readonly message: string | null;
+  readonly phase:
+    | "idle"
+    | "stopping"
+    | "waiting"
+    | "starting"
+    | "ready"
+    | "error";
+}
+
 type IncomingMessage =
   | {
       readonly type: "settings:loaded";
@@ -33,6 +45,12 @@ type IncomingMessage =
       readonly type: "settings:versions";
       readonly versions?: ProviderVersions;
       readonly error?: string;
+    }
+  | {
+      readonly busy: boolean;
+      readonly message?: string;
+      readonly phase: "stopping" | "waiting" | "starting" | "ready" | "error";
+      readonly type: "settings:core-control-status";
     };
 
 export const isIncomingMessage = (
@@ -46,7 +64,8 @@ export const isIncomingMessage = (
   return (
     candidate.type === "settings:loaded" ||
     candidate.type === "settings:saved" ||
-    candidate.type === "settings:versions"
+    candidate.type === "settings:versions" ||
+    candidate.type === "settings:core-control-status"
   );
 };
 
@@ -57,6 +76,7 @@ export const clampGeminiContextWindowTokenLimit = (value: number): number =>
   Math.min(1_000_000, Math.max(10_000, Math.round(value)));
 
 export interface UseSettingsStateResult {
+  readonly coreControl: CoreControlState;
   readonly handleClaudeContinuityRemainingPercentThresholdChange: (
     remainingPercentThreshold: number
   ) => void;
@@ -91,6 +111,7 @@ export interface UseSettingsStateResult {
   ) => void;
   readonly handleReset: () => void;
   readonly handleResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
+  readonly handleRestartCore: () => void;
   readonly handleSave: () => void;
   readonly handleStrictInstructionTextChange: (value: string) => void;
   readonly handleStrictSchemaTextChange: (value: string) => void;

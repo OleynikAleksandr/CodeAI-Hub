@@ -22,6 +22,20 @@ interface EnsureStartedOptions {
   readonly forceRestart?: boolean;
   readonly targetVersion?: string;
 }
+
+interface RestartCoreOptions {
+  readonly onProgress?: (payload: RestartProgressPayload) => void;
+  readonly stopStartDelayMs?: number;
+  readonly targetVersion?: string;
+}
+
+export interface RestartProgressPayload {
+  readonly busy: boolean;
+  readonly message: string;
+  readonly phase: "stopping" | "waiting" | "starting" | "ready";
+}
+
+const DEFAULT_RESTART_DELAY_MS = 3000;
 export class CoreProcessManager {
   private declaredVersion?: string;
   private readonly channel = window.createOutputChannel("CodeAI Hub Core");
@@ -108,6 +122,78 @@ export class CoreProcessManager {
 
     this.updateConnectionInfo(running.port);
     await this.stopViaSupervisor(running.port);
+  }
+
+  async restartWithFeedback(options?: RestartCoreOptions): Promise<void> {
+    const declaredVersionCandidate =
+      options?.targetVersion ?? this.declaredVersion;
+    if (declaredVersionCandidate) {
+      this.declaredVersion = declaredVersionCandidate;
+    }
+
+    const targetVersion = this.declaredVersion;
+    const running = await this.portManager.detectRunning(
+      undefined,
+      this.currentPort
+    );
+
+    if (running) {
+      this.updateConnectionInfo(running.port);
+      options?.onProgress?.({
+        phase: "stopping",
+        message: "Stopping core...",
+        busy: true,
+      });
+      await this.stopViaSupervisor(running.port);
+      options?.onProgress?.({
+        phase: "waiting",
+        message: this.buildRestartWaitMessage(
+          options?.stopStartDelayMs ?? DEFAULT_RESTART_DELAY_MS
+        ),
+        busy: true,
+      });
+    } else {
+      options?.onProgress?.({
+        phase: "waiting",
+        message: this.buildFreshStartWaitMessage(
+          options?.stopStartDelayMs ?? DEFAULT_RESTART_DELAY_MS
+        ),
+        busy: true,
+      });
+    }
+
+    await this.wait(options?.stopStartDelayMs ?? DEFAULT_RESTART_DELAY_MS);
+
+    const decision = await this.portManager.resolve(
+      targetVersion,
+      this.currentPort
+    );
+    this.updateConnectionInfo(decision.port);
+
+    options?.onProgress?.({
+      phase: "starting",
+      message: "Starting core...",
+      busy: true,
+    });
+
+    if (decision.kind !== "running") {
+      await this.startViaSupervisor(decision.port, targetVersion);
+    }
+
+    const attached = await this.tryAttachToRunningCore(targetVersion);
+    if (!attached) {
+      throw new Error(
+        "Core restart sequence finished, but the health endpoint is still unavailable."
+      );
+    }
+
+    options?.onProgress?.({
+      phase: "ready",
+      message: running
+        ? "Core was stopped and started again successfully."
+        : "Core started successfully.",
+      busy: false,
+    });
   }
 
   setDeclaredVersion(version: string): void {
@@ -252,6 +338,22 @@ export class CoreProcessManager {
   ): Promise<void> {
     await this.stopViaSupervisor(port);
     await this.startViaSupervisor(port, targetVersion);
+  }
+
+  private wait(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  private buildRestartWaitMessage(delayMs: number): string {
+    const seconds = Math.max(1, Math.round(delayMs / 1000));
+    return `Core stopped. Waiting ${seconds}s before restart...`;
+  }
+
+  private buildFreshStartWaitMessage(delayMs: number): string {
+    const seconds = Math.max(1, Math.round(delayMs / 1000));
+    return `Core is not running. Starting in ${seconds}s...`;
   }
 
   private logSupervisorEvent(

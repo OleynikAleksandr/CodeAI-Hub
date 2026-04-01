@@ -61,7 +61,7 @@ export class HomeViewMessageRouter {
       "type" in message &&
       message.type === "core:restart-request"
     ) {
-      this.handleCoreRestartRequest();
+      this.handleCoreRestartRequestForWebview(webview);
       return;
     }
 
@@ -135,19 +135,6 @@ export class HomeViewMessageRouter {
     }
   }
 
-  private handleCoreRestartRequest(): void {
-    if (!this.coreProcessManager) {
-      return;
-    }
-
-    this.coreProcessManager
-      .ensureStarted(undefined, { forceRestart: true })
-      .catch((error) => {
-        const reason = error instanceof Error ? error.message : String(error);
-        window.showErrorMessage(`Failed to restart core: ${reason}`);
-      });
-  }
-
   private handleCoreEnsureStartedRequest(): void {
     if (!this.coreProcessManager) {
       return;
@@ -175,6 +162,53 @@ export class HomeViewMessageRouter {
     message: Record<string, unknown>
   ): void {
     webview.postMessage(message);
+  }
+
+  private postCoreControlStatus(
+    webview: Webview,
+    payload: {
+      readonly busy: boolean;
+      readonly message: string;
+      readonly phase: "stopping" | "waiting" | "starting" | "ready" | "error";
+    }
+  ): void {
+    this.notifyWebview(webview, {
+      type: "settings:core-control-status",
+      ...payload,
+    });
+  }
+
+  private handleCoreRestartRequestForWebview(webview: Webview): void {
+    if (!this.coreProcessManager) {
+      this.postCoreControlStatus(webview, {
+        phase: "error",
+        message: "Core process manager is unavailable.",
+        busy: false,
+      });
+      return;
+    }
+
+    this.postCoreControlStatus(webview, {
+      phase: "stopping",
+      message: "Restart requested. Preparing shutdown...",
+      busy: true,
+    });
+
+    this.coreProcessManager
+      .restartWithFeedback({
+        onProgress: (payload) => {
+          this.postCoreControlStatus(webview, payload);
+        },
+      })
+      .catch((error) => {
+        const reason = error instanceof Error ? error.message : String(error);
+        this.postCoreControlStatus(webview, {
+          phase: "error",
+          message: `Core restart failed: ${reason}`,
+          busy: false,
+        });
+        window.showErrorMessage(`Failed to restart core: ${reason}`);
+      });
   }
 
   private canHandleSettingsMessage(
