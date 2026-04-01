@@ -48,8 +48,23 @@ export interface RawGeneralResponsePolicySettings {
   readonly mode?: unknown;
   readonly strictOutput?: RawGeneralStrictOutputSettings;
 }
+export interface RawLocalizationCategorySettings {
+  readonly interactiveTemplates?: unknown;
+  readonly systemFeedback?: unknown;
+  readonly uiInterface?: unknown;
+  readonly userGuidance?: unknown;
+  readonly workflowTerms?: unknown;
+}
+export interface RawGeneralLocalizationSettings {
+  readonly categories?: RawLocalizationCategorySettings;
+  readonly defaultLanguage?: unknown;
+  readonly engineId?: unknown;
+  readonly glossaryEnabled?: unknown;
+  readonly workflowTermsPolicy?: unknown;
+}
 export interface RawGeneralSettings {
   readonly coreControls?: RawCoreControlsSettings;
+  readonly localization?: RawGeneralLocalizationSettings;
   readonly responsePolicy?: RawGeneralResponsePolicySettings;
 }
 export interface RawSettingsSnapshot {

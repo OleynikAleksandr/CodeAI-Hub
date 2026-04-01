@@ -25,7 +25,9 @@ import type {
   RawClaudeSettings,
   RawCodexSettings,
   RawGeminiSettings,
+  RawGeneralLocalizationSettings,
   RawGeneralSettings,
+  RawLocalizationCategorySettings,
   RawSettingsSnapshot,
   RawThinkingSettings,
 } from "./settings-state-raw";
@@ -60,8 +62,24 @@ interface AutoUpdateSettings {
 interface CoreControlsSettings {
   readonly allowRestart: boolean;
 }
+type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
+interface LocalizationCategorySettings {
+  readonly interactiveTemplates: string;
+  readonly systemFeedback: string;
+  readonly uiInterface: string;
+  readonly userGuidance: string;
+  readonly workflowTerms: string;
+}
+interface LocalizationSettings {
+  readonly categories: LocalizationCategorySettings;
+  readonly defaultLanguage: string;
+  readonly engineId: string;
+  readonly glossaryEnabled: boolean;
+  readonly workflowTermsPolicy: LocalizationWorkflowTermsPolicy;
+}
 interface GeneralSettings {
   readonly coreControls: CoreControlsSettings;
+  readonly localization: LocalizationSettings;
   readonly responsePolicy: import("./general-response-mode/response-mode-state").GeneralResponsePolicySettings;
 }
 interface ContinuitySettings {
@@ -100,6 +118,8 @@ const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;
 const DEFAULT_CORE_RESTART_ENABLED = true;
+const DEFAULT_LOCALIZATION_LANGUAGE = "source";
+const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
 const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
@@ -118,6 +138,11 @@ const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce<
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+const mapLocalizationString = (value: unknown, fallback: string): string =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : fallback;
 
 const mapThinkingSettings = (
   value: RawThinkingSettings | undefined
@@ -154,6 +179,50 @@ const mapAutoUpdateSettings = (
       : DEFAULT_AUTO_UPDATE_ENABLED,
 });
 
+const mapLocalizationCategories = (
+  value: RawLocalizationCategorySettings | undefined,
+  defaultLanguage: string
+): LocalizationCategorySettings => ({
+  userGuidance: mapLocalizationString(value?.userGuidance, defaultLanguage),
+  uiInterface: mapLocalizationString(value?.uiInterface, defaultLanguage),
+  workflowTerms: mapLocalizationString(value?.workflowTerms, defaultLanguage),
+  systemFeedback: mapLocalizationString(value?.systemFeedback, defaultLanguage),
+  interactiveTemplates: mapLocalizationString(
+    value?.interactiveTemplates,
+    defaultLanguage
+  ),
+});
+
+const mapLocalizationWorkflowTermsPolicy = (
+  value: unknown
+): LocalizationWorkflowTermsPolicy =>
+  value === "translate" ? "translate" : "keep_english";
+
+const mapLocalizationSettings = (
+  value: RawGeneralLocalizationSettings | undefined
+): LocalizationSettings => {
+  const defaultLanguage = mapLocalizationString(
+    value?.defaultLanguage,
+    DEFAULT_LOCALIZATION_LANGUAGE
+  );
+
+  return {
+    defaultLanguage,
+    categories: mapLocalizationCategories(value?.categories, defaultLanguage),
+    workflowTermsPolicy: mapLocalizationWorkflowTermsPolicy(
+      value?.workflowTermsPolicy
+    ),
+    engineId: mapLocalizationString(
+      value?.engineId,
+      DEFAULT_LOCALIZATION_ENGINE_ID
+    ),
+    glossaryEnabled:
+      typeof value?.glossaryEnabled === "boolean"
+        ? value.glossaryEnabled
+        : true,
+  };
+};
+
 const mapGeneralSettings = (
   value: RawGeneralSettings | undefined
 ): GeneralSettings => ({
@@ -163,6 +232,7 @@ const mapGeneralSettings = (
         ? value.coreControls.allowRestart
         : DEFAULT_CORE_RESTART_ENABLED,
   },
+  localization: mapLocalizationSettings(value?.localization),
   responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy),
 });
 
@@ -308,7 +378,28 @@ const areGeneralSettingsEqual = (
   right: GeneralSettings
 ): boolean =>
   left.coreControls.allowRestart === right.coreControls.allowRestart &&
+  areLocalizationSettingsEqual(left.localization, right.localization) &&
   areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
+
+const areLocalizationCategoriesEqual = (
+  left: LocalizationCategorySettings,
+  right: LocalizationCategorySettings
+): boolean =>
+  left.userGuidance === right.userGuidance &&
+  left.uiInterface === right.uiInterface &&
+  left.workflowTerms === right.workflowTerms &&
+  left.systemFeedback === right.systemFeedback &&
+  left.interactiveTemplates === right.interactiveTemplates;
+
+const areLocalizationSettingsEqual = (
+  left: LocalizationSettings,
+  right: LocalizationSettings
+): boolean =>
+  left.defaultLanguage === right.defaultLanguage &&
+  areLocalizationCategoriesEqual(left.categories, right.categories) &&
+  left.workflowTermsPolicy === right.workflowTermsPolicy &&
+  left.engineId === right.engineId &&
+  left.glossaryEnabled === right.glossaryEnabled;
 
 const areClaudeSettingsEqual = (
   left: ClaudeSettings,
