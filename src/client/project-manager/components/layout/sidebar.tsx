@@ -1,6 +1,8 @@
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
 import type { WorkspaceProject } from "../../types";
+import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { WorkspaceTree } from "./workspace-tree";
 
 interface SidebarProps {
@@ -24,8 +26,52 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onForkWorkspace,
   onNewWorkspace,
 }) => {
-  const activeWorkspace = workspaces.find((workspace) => workspace.id === selectedWorkspaceId);
+  const { settings } = useProjectManagerSettings();
+  const { t } = useResolvedLocalization(settings);
+  const activeWorkspace = workspaces.find(
+    (workspace) => workspace.id === selectedWorkspaceId
+  );
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
+  const workspaceLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.label",
+    "Workspace"
+  );
+  const emptyWorkspaceLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.empty_label",
+    "No workspaces yet"
+  );
+  const selectWorkspaceLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.select_label",
+    "Select workspace"
+  );
+  const workspaceMenuAriaLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.menu_aria_label",
+    "Workspace menu"
+  );
+  const addWorkspaceLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.add_action",
+    "Add workspace"
+  );
+  const forkWorkspaceLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.fork_action",
+    "Fork workspace"
+  );
+  const newWorkspaceLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.new_action",
+    "New workspace"
+  );
+  const workspaceMenuEmptyLabel = t(
+    "system_feedback",
+    "pm.sidebar.workspace.menu_empty_label",
+    "No workspaces yet."
+  );
 
   useEffect(() => {
     if (!isWorkspaceMenuOpen) {
@@ -84,7 +130,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="pm-sidebar__context">
         <div className="pm-context-block">
           <div className="pm-context-row">
-            <span className="pm-context-label">Workspace</span>
+            <span className="pm-context-label">{workspaceLabel}</span>
           </div>
           <div className="pm-context-select">
             <button
@@ -96,7 +142,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <span className="pm-context-select__label">
                 {activeWorkspace?.name ??
-                  (workspaces.length === 0 ? "No workspaces yet" : "Select workspace")}
+                  (workspaces.length === 0
+                    ? emptyWorkspaceLabel
+                    : selectWorkspaceLabel)}
               </span>
               <span className="pm-context-select__chevron" aria-hidden="true">
                 ▾
@@ -107,7 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
       {isWorkspaceMenuOpen ? (
         <div
-          aria-label="Workspace menu"
+          aria-label={workspaceMenuAriaLabel}
           className="pm-workspace-overlay"
           onClick={handleWorkspaceMenuClose}
           role="dialog"
@@ -122,7 +170,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={handleAddWorkspaceClick}
                 type="button"
               >
-                Add workspace
+                {addWorkspaceLabel}
               </button>
               <button
                 className="pm-workspace-menu__action"
@@ -130,7 +178,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={handleForkWorkspaceClick}
                 type="button"
               >
-                Fork workspace
+                {forkWorkspaceLabel}
               </button>
               <button
                 className="pm-workspace-menu__action"
@@ -138,13 +186,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={handleNewWorkspaceClick}
                 type="button"
               >
-                New workspace
+                {newWorkspaceLabel}
               </button>
             </div>
             <div className="pm-workspace-menu__spacer" />
             <div className="pm-workspace-menu__list" role="listbox">
               {workspaces.length === 0 ? (
-                <div className="pm-workspace-menu__empty">No workspaces yet.</div>
+                <div className="pm-workspace-menu__empty">
+                  {workspaceMenuEmptyLabel}
+                </div>
               ) : (
                 workspaces.map((workspace) => (
                   <button

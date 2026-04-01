@@ -1,18 +1,25 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
+import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
 import {
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
+  type WorkflowStageId,
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
 import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
+import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { resolveStageChildren } from "./workspace-tree-stage-children";
 import { useStagePanelSync } from "./use-stage-panel-sync";
 import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
-import { WORKFLOW_LABELS, WORKFLOW_STAGE_BLOCKED_TITLES, WORKFLOW_STAGE_OUTDATED_TITLE, resolveTreeStatus, type TreeNode } from "./workspace-tree-model";
+import {
+  WORKFLOW_LABELS,
+  resolveTreeStatus,
+  type TreeNode,
+} from "./workspace-tree-model";
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
@@ -22,17 +29,34 @@ interface WorkspaceTreeProps {
   readonly workspacePath?: string;
   readonly workspaceSlug?: string;
 }
+
+type TranslationResolver = ReturnType<typeof useResolvedLocalization>["t"];
+
 export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   selectedWorkspaceId,
   workspaceName,
   workspacePath,
   workspaceSlug: resolvedWorkspaceSlug,
 }) => {
-  const [expandedNodes, setExpandedNodes] = useState<Readonly<Record<string, boolean>>>({});
+  const { settings } = useProjectManagerSettings();
+  const { t } = useResolvedLocalization(settings);
+  const [expandedNodes, setExpandedNodes] = useState<
+    Readonly<Record<string, boolean>>
+  >({});
   const storeState = useWorkflowStateSnapshot();
   const workflowState: WorkflowStateSnapshot | null = storeState.snapshot;
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
+  const workspaceLabel = t(
+    "ui_interface",
+    "pm.sidebar.workspace.label",
+    "Workspace"
+  );
+  const emptyWorkspaceLabel = t(
+    "system_feedback",
+    "pm.workspace_tree.empty_label",
+    "Select a workspace to start."
+  );
   const workspaceSlug =
     resolvedWorkspaceSlug ??
     (workspaceName && workspaceName.trim().length > 0
@@ -133,7 +157,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     }
     markWorkspaceChanged();
     setExpandedNodes({ workspace: true });
-  }, [markWorkspaceChanged, resetPendingSelection, selectedWorkspaceId, workspacePath, workspaceSlug]);
+  }, [
+    markWorkspaceChanged,
+    resetPendingSelection,
+    selectedWorkspaceId,
+    workspacePath,
+    workspaceSlug,
+  ]);
 
   // Forward shared store snapshot to auto-select logic.
   // Guard: only forward when the store has loaded data for the CURRENT
@@ -152,7 +182,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (!workflowState) {
       return WORKFLOW_STAGE_ORDER.map((stage) => ({
         id: `workflow:${stage}`,
-        label: WORKFLOW_LABELS[stage],
+        label: resolveStageLabel(stage, t),
         status: "todo",
         visualDepth: 1,
       }));
@@ -176,8 +206,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       const children = resolveStageChildren(stage, stageCtx);
       return {
         id: `workflow:${stage}`,
-        label: WORKFLOW_LABELS[stage],
-        title: status === "outdated" ? WORKFLOW_STAGE_OUTDATED_TITLE : blocked ? WORKFLOW_STAGE_BLOCKED_TITLES[stage] : undefined,
+        label: resolveStageLabel(stage, t),
+        title: resolveStageTitle(stage, status, blocked, t),
         status: resolveTreeStatus(status, blocked),
         visualDepth: 1,
         isCollapsible: children.length > 0,
@@ -190,7 +220,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const rootNode: TreeNode | null = selectedWorkspaceId
     ? {
         id: "workspace",
-        label: workspaceName ?? "Workspace",
+        label: workspaceName ?? workspaceLabel,
         status: "active",
         visualDepth: 0,
         isCollapsible: true,
@@ -223,7 +253,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   return (
     <div className="pm-sidebar__tree">
       {treeNodes.length === 0 ? (
-        <div className="pm-tree__empty">Select a workspace to start.</div>
+        <div className="pm-tree__empty">{emptyWorkspaceLabel}</div>
       ) : (
         <ul className="pm-tree__list">
           {treeNodes.map((node) => (
@@ -267,4 +297,70 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       )}
     </div>
   );
+};
+
+const resolveStageLabel = (
+  stage: WorkflowStageId,
+  t: TranslationResolver
+): string => {
+  switch (stage) {
+    case "description":
+      return t(
+        "workflow_terms",
+        "pm.workflow.stage.description.label",
+        WORKFLOW_LABELS.description
+      );
+    case "virtual_simulation":
+      return t(
+        "workflow_terms",
+        "pm.workflow.stage.virtual_simulation.label",
+        WORKFLOW_LABELS.virtual_simulation
+      );
+    case "diagram_modules":
+      return t(
+        "workflow_terms",
+        "pm.workflow.stage.diagram_modules.label",
+        WORKFLOW_LABELS.diagram_modules
+      );
+  }
+};
+
+const resolveStageTitle = (
+  stage: WorkflowStageId,
+  status: string,
+  blocked: boolean,
+  t: TranslationResolver
+): string | undefined => {
+  if (status === "outdated") {
+    return t(
+      "workflow_terms",
+      "pm.workflow.stage.outdated_title",
+      "OUTDATED: upstream input changed; resync recommended."
+    );
+  }
+
+  if (!blocked) {
+    return undefined;
+  }
+
+  switch (stage) {
+    case "description":
+      return t(
+        "workflow_terms",
+        "pm.workflow.stage.description.ready_title",
+        "READY"
+      );
+    case "virtual_simulation":
+      return t(
+        "workflow_terms",
+        "pm.workflow.stage.virtual_simulation.blocked_title",
+        "BLOCKED: requires Final_Description.md"
+      );
+    case "diagram_modules":
+      return t(
+        "workflow_terms",
+        "pm.workflow.stage.diagram_modules.blocked_title",
+        "BLOCKED: requires virtual-simulation.md (DONE)"
+      );
+  }
 };

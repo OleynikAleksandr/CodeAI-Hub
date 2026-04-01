@@ -92,8 +92,8 @@
 47. [DONE] Switch Session system surfaces to dictionary-driven lookup. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(ui): localize session system surfaces`
 48. [DONE] Git Commit: `refactor(ui): localize session system surfaces` (hash: `4fcb9cbc`)
 49. [DONE] Switch workflow help and questionnaire surfaces to dictionary-driven lookup. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`. Target commit: `refactor(pm): localize workflow help surfaces`
-50. [TODO] Git Commit: `refactor(pm): localize workflow help surfaces` (hash: TBD)
-51. [TODO] Switch Project Manager shell/navigation labels to dictionary-driven lookup. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(pm): localize shell navigation surfaces`
+50. [DONE] Git Commit: `refactor(pm): localize workflow help surfaces` (hash: `d9aaf7f5`)
+51. [DONE] Switch Project Manager shell/navigation labels to dictionary-driven lookup. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(pm): localize shell navigation surfaces`
 52. [TODO] Git Commit: `refactor(pm): localize shell navigation surfaces` (hash: TBD)
 
 ## Phase 6 — SSOT, Verification, And Release (owner: Docs/Release, updated: 2026-04-01)
