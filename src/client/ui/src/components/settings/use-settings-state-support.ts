@@ -3,6 +3,7 @@ import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
+import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
 import type {
   CodexModelId,
   CodexReasoningLevel,
@@ -43,10 +44,12 @@ export type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
 type IncomingMessage =
   | {
       readonly type: "settings:loaded";
+      readonly localizationRuntime?: BrowserLocalizationRuntimePayload;
       readonly settings: RawSettingsSnapshot;
     }
   | {
       readonly type: "settings:saved";
+      readonly localizationRuntime?: BrowserLocalizationRuntimePayload;
       readonly settings?: RawSettingsSnapshot;
     }
   | {

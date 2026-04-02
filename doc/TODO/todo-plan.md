@@ -26,11 +26,11 @@
 5. [DONE] Add an extension-side localization runtime service that materializes and resolves active bundles for settings webview load/save. Scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/settings/types.ts`. Target commit: `feat(settings): materialize localization runtime payload`
 6. [DONE] Git Commit: `feat(settings): materialize localization runtime payload` (hash: `759675a4`)
 7. [DONE] Add remote-bridge settings payload support for Project Manager localization runtime hydration, including the explicit `@codeai-hub/localization` core package dependency for release packaging. Scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`, `packages/core/package.json`. Target commit: `feat(pm): bridge localization runtime payload`
-8. [TODO] Git Commit: `feat(pm): bridge localization runtime payload` (hash: TBD)
+8. [DONE] Git Commit: `feat(pm): bridge localization runtime payload` (hash: `17055ca7`)
 
 ## Phase 2 — Shared Browser Runtime Hydration (owner: UI/PM, updated: 2026-04-02)
 ### Stream: Shared Browser Runtime
-9. [TODO] Replace bundled-source-only lookup with a shared browser runtime contract that consumes hydrated bundles and language catalogs. Scope: `src/client/ui/src/app-host/use-localization.ts`, `src/client/ui/src/app-host/localization-runtime-contract.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`. Target commit: `refactor(ui): hydrate browser localization runtime`
+9. [DONE] Replace bundled-source-only lookup with a shared browser runtime contract that consumes hydrated bundles and language catalogs. Scope: `src/client/ui/src/app-host/use-localization.ts`, `src/client/ui/src/app-host/localization-runtime-contract.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`. Target commit: `refactor(ui): hydrate browser localization runtime`
 10. [TODO] Git Commit: `refactor(ui): hydrate browser localization runtime` (hash: TBD)
 11. [TODO] Capture localization runtime snapshots in settings webview state and provide them through the settings host. Scope: `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/app-host/settings-only-host.tsx`, `src/client/ui/src/components/settings-view.tsx`. Target commit: `refactor(ui): wire settings localization runtime`
 12. [TODO] Git Commit: `refactor(ui): wire settings localization runtime` (hash: TBD)
