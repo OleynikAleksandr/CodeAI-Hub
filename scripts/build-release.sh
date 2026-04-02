@@ -215,11 +215,13 @@ case "$UNAME_S" in
         CORE_PLATFORM_KEY="darwin-arm64"
         LAUNCHER_FILE_PLATFORM="macos-arm64"
         LAUNCHER_MANIFEST_KEY="darwin-arm64"
+        CORE_NODE_RELATIVE_PATH="node/bin/node"
         ;;
       x86_64)
         CORE_PLATFORM_KEY="darwin-x64"
         LAUNCHER_FILE_PLATFORM="macos-x64"
         LAUNCHER_MANIFEST_KEY="darwin-x64"
+        CORE_NODE_RELATIVE_PATH="node/bin/node"
         ;;
       *)
         echo "❌ Unsupported macOS architecture: $UNAME_M" >&2
@@ -235,11 +237,13 @@ case "$UNAME_S" in
     CORE_PLATFORM_KEY="linux-x64"
     LAUNCHER_FILE_PLATFORM="linux-x64"
     LAUNCHER_MANIFEST_KEY="linux-x64"
+    CORE_NODE_RELATIVE_PATH="node/bin/node"
     ;;
   MINGW*|MSYS*|CYGWIN*)
     CORE_PLATFORM_KEY="win32-x64"
     LAUNCHER_FILE_PLATFORM="win-x64"
     LAUNCHER_MANIFEST_KEY="win32-x64"
+    CORE_NODE_RELATIVE_PATH="node/node.exe"
     ;;
   *)
     echo "❌ Unsupported platform: $UNAME_S" >&2
@@ -280,6 +284,30 @@ fi
 
 node -e "require('$GEMINI_INSTALL_ROOT/dist/index.js')"
 echo "✅ Gemini provider bundle loads with bundled shared translation package"
+
+CORE_INSTALL_ROOT="$HOME/.codeai-hub/core/$CORE_PLATFORM_KEY/$VERSION"
+CORE_NODE_PATH="$CORE_INSTALL_ROOT/$CORE_NODE_RELATIVE_PATH"
+CORE_HANDLER_PATH="$CORE_INSTALL_ROOT/app/dist/remote-bridge/handlers/settings-request-handler.js"
+CORE_SOURCE_DICTIONARY_PATH="$CORE_INSTALL_ROOT/app/assets/localization/source/en/interactive_templates.json"
+if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/localization/package.json" ]]; then
+  echo "❌ Missing bundled @codeai-hub/localization package in $CORE_INSTALL_ROOT" >&2
+  exit 1
+fi
+if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/translation/package.json" ]]; then
+  echo "❌ Missing bundled @codeai-hub/translation package in $CORE_INSTALL_ROOT" >&2
+  exit 1
+fi
+if [[ ! -f "$CORE_SOURCE_DICTIONARY_PATH" ]]; then
+  echo "❌ Missing bundled localization source dictionaries in $CORE_INSTALL_ROOT/app/assets" >&2
+  exit 1
+fi
+if [[ ! -x "$CORE_NODE_PATH" ]]; then
+  echo "❌ Missing core runtime node binary at $CORE_NODE_PATH" >&2
+  exit 1
+fi
+
+CORE_HANDLER_PATH="$CORE_HANDLER_PATH" "$CORE_NODE_PATH" -e "require(process.env.CORE_HANDLER_PATH)"
+echo "✅ Core runtime bundle loads the localization-backed settings bridge"
 
 if ! VERSION="$VERSION" \
 CORE_KEY="$CORE_PLATFORM_KEY" \

@@ -33,8 +33,8 @@
 ## Phase 3 — Core Runtime Packaging Closure (owner: Release/Docs, updated: 2026-04-02)
 ### Stream: Installed Core Bundle
 14. [DONE] Reopen the hotfix after installed `1.1.868` validation: include the localization runtime dependency chain in the staged core install, override the transitive `@codeai-hub/translation` tarball during staged `npm install`, and copy bundled source dictionaries into `app/assets/localization/source/en` so the installed core bundle can load the localization-backed settings bridge. Scope: `scripts/build-core.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(core-release): bundle localization runtime dependencies`
-15. [TODO] Git Commit: `fix(core-release): bundle localization runtime dependencies` (hash: TBD)
-16. [TODO] Extend release artefact validation so the staged installed core runtime must successfully require the localization-backed settings handler before the release passes. Scope: `scripts/build-release.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): validate packaged core localization bridge`
+15. [DONE] Git Commit: `fix(core-release): bundle localization runtime dependencies` (hash: `e403ecda`)
+16. [IN_PROGRESS] Extend release artefact validation so the staged installed core runtime must successfully require the localization-backed settings handler before the release passes. Scope: `scripts/build-release.sh`, `doc/SolidWorks-WorkFlow/Plans/Localization_Runtime_Source_Dictionary_Hotfix_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): validate packaged core localization bridge`
 17. [TODO] Git Commit: `fix(release): validate packaged core localization bridge` (hash: TBD)
 18. [TODO] Update release-facing docs for the reopened core-runtime packaging hotfix from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): update core localization packaging hotfix notes`
 19. [TODO] Git Commit: `docs(release): update core localization packaging hotfix notes` (hash: TBD)
