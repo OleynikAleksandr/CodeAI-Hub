@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.868] - 2026-04-02
+### Fixed
+- **Release `1.1.867` startup regression**: the packaged localization runtime now resolves bundled source dictionaries from both supported deployment topologies, so extension activation no longer fails on missing `interactive_templates.json` after VSIX install.
+
+### Changed
+- **VSIX runtime smoke coverage**: `build-release.sh` now extracts the packaged extension and requires `@codeai-hub/localization/dist/source-dictionary-registry.js` from the installed extension layout, which catches packaged path regressions before release.
+
 ## [1.1.867] - 2026-04-02
 ### Fixed
 - **Release `1.1.866` startup regression**: the VSIX now ships `@codeai-hub/localization`, so extension activation no longer fails on `Cannot find module '@codeai-hub/localization'`.

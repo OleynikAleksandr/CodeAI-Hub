@@ -18,12 +18,12 @@
 3. [DONE] Replace brittle compile-time source dictionary imports with runtime candidate-root resolution that works in both workspace and installed-extension package topologies. Scope: `packages/localization/src/source-dictionary-registry.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(localization): resolve bundled source dictionaries across package topologies`
 4. [DONE] Git Commit: `fix(localization): resolve bundled source dictionaries across package topologies` (hash: `b9896390`)
 5. [DONE] Add a release smoke test that extracts the VSIX and requires the packaged localization source registry from the installed extension layout. Scope: `scripts/build-release.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): smoke test packaged localization source registry`
-6. [TODO] Git Commit: `fix(release): smoke test packaged localization source registry` (hash: TBD)
+6. [DONE] Git Commit: `fix(release): smoke test packaged localization source registry` (hash: `c8074a8b`)
 
 ## Phase 2 — Verification And Hotfix Release (owner: Release/Docs, updated: 2026-04-02)
 ### Stream: Rebuild
-7. [TODO] Run targeted verification for localization plus root compile before the hotfix rebuild. Scope: `@codeai-hub/localization`, root compile, `doc/TODO/todo-plan.md`.
-8. [TODO] Update release-facing docs for the source-dictionary packaging hotfix from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization source dictionary hotfix notes`
+7. [DONE] Run targeted verification for localization plus root compile before the hotfix rebuild. Scope: `@codeai-hub/localization`, root compile, `doc/TODO/todo-plan.md`.
+8. [DONE] Update release-facing docs for the source-dictionary packaging hotfix from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization source dictionary hotfix notes`
 9. [TODO] Git Commit: `docs(release): prepare localization source dictionary hotfix notes` (hash: TBD)
 10. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` for the hotfix release artefacts. Scope: release-generated version files and manifests. Target commit: `build(release): assemble localization source dictionary hotfix release`
 11. [TODO] Git Commit: `build(release): assemble localization source dictionary hotfix release` (hash: TBD)
