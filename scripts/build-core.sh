@@ -119,6 +119,8 @@ npm run build --workspace=@codeai-hub/claude-module >/dev/null
 npm run build --workspace=@codeai-hub/codex-module >/dev/null
 npm run build --workspace=@codeai-hub/gemini-module >/dev/null || true
 npm run build --workspace=@codeai-hub/initiatives >/dev/null
+npm run build --workspace=@codeai-hub/localization >/dev/null
+npm run build --workspace=@codeai-hub/translation >/dev/null
 npm run build --workspace=@codeai-hub/unified-session >/dev/null
 npm run build --workspace=@codeai-hub/core-supervisor >/dev/null
 npm run build --workspace=@codeai-hub/core >/dev/null
@@ -128,6 +130,8 @@ CLAUDE_TARBALL=$(npm pack --workspace=@codeai-hub/claude-module --pack-destinati
 CODEX_TARBALL=$(npm pack --workspace=@codeai-hub/codex-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 GEMINI_TARBALL=$(npm pack --workspace=@codeai-hub/gemini-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 INITIATIVES_TARBALL=$(npm pack --workspace=@codeai-hub/initiatives --pack-destination "$TARBALL_STAGE" | tail -n1)
+LOCALIZATION_TARBALL=$(npm pack --workspace=@codeai-hub/localization --pack-destination "$TARBALL_STAGE" | tail -n1)
+TRANSLATION_TARBALL=$(npm pack --workspace=@codeai-hub/translation --pack-destination "$TARBALL_STAGE" | tail -n1)
 UNIFIED_SESSION_TARBALL=$(npm pack --workspace=@codeai-hub/unified-session --pack-destination "$TARBALL_STAGE" | tail -n1)
 
 cp "$CORE_PROJECT_DIR/package.json" "$APP_STAGE/package.json"
@@ -135,6 +139,8 @@ if [[ -f "$CORE_PROJECT_DIR/package-lock.json" ]]; then
   cp "$CORE_PROJECT_DIR/package-lock.json" "$APP_STAGE/package-lock.json"
 fi
 rsync -a "$CORE_PROJECT_DIR/dist" "$APP_STAGE/"
+mkdir -p "$APP_STAGE/assets/localization/source"
+rsync -a "$REPO_ROOT/assets/localization/source/en" "$APP_STAGE/assets/localization/source/"
 
 # NOTE: agent packages that are still consumed via local workspace references must be
 # copied into the staged runtime tree so npm's symlinked resolution keeps working.
@@ -161,6 +167,8 @@ cp "$TARBALL_STAGE/$CLAUDE_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$CODEX_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$GEMINI_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$INITIATIVES_TARBALL" "$APP_STAGE/tarballs/"
+cp "$TARBALL_STAGE/$LOCALIZATION_TARBALL" "$APP_STAGE/tarballs/"
+cp "$TARBALL_STAGE/$TRANSLATION_TARBALL" "$APP_STAGE/tarballs/"
 cp "$TARBALL_STAGE/$UNIFIED_SESSION_TARBALL" "$APP_STAGE/tarballs/"
 
 APP_STAGE_DIR="$APP_STAGE" node <<'NODE'
@@ -175,6 +183,7 @@ const rewrite = new Map([
   ["@codeai-hub/codex-module", "codeai-hub-codex-module"],
   ["@codeai-hub/gemini-module", "codeai-hub-gemini-module"],
   ["@codeai-hub/initiatives", "codeai-hub-initiatives"],
+  ["@codeai-hub/localization", "codeai-hub-localization"],
   ["@codeai-hub/unified-session", "codeai-hub-unified-session"],
 ]);
 for (const [dep, base] of rewrite) {
@@ -184,6 +193,15 @@ for (const [dep, base] of rewrite) {
       pkg.dependencies[dep] = `file:./tarballs/${file}`;
     }
   }
+}
+const translationTarball = fs
+  .readdirSync(tarDir)
+  .find((entry) => entry.startsWith("codeai-hub-translation"));
+if (translationTarball) {
+  pkg.overrides = {
+    ...(pkg.overrides ?? {}),
+    "@codeai-hub/translation": `file:./tarballs/${translationTarball}`,
+  };
 }
 fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, "utf8");
 NODE
