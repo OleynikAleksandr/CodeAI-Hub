@@ -29,6 +29,7 @@
     "@codeai-hub/claude-module": "file:../Claude_Module",
     "@codeai-hub/codex-module": "file:../Codex_Module",
     "@codeai-hub/initiatives": "file:../initiatives",
+    "@codeai-hub/localization": "file:../localization",
     "@codeai-hub/unified-session": "file:../unified-session",
     "cors": "^2.8.5",
     "express": "^4.18.2",

@@ -1,3 +1,4 @@
+import type { LocalizationRuntimePayload } from "@codeai-hub/localization";
 import type { ProviderRegistry } from "../provider-registry";
 import type { WorkspaceProject } from "../services/project-registry/types";
 import type { RuntimeStatusEvent } from "../status/runtime-status-reporter";
@@ -132,6 +133,7 @@ type CoreBridgeEvent =
   | {
       readonly type: "settings:loaded";
       readonly payload: {
+        readonly localizationRuntime: LocalizationRuntimePayload | null;
         readonly settings: Record<string, unknown> | null;
         readonly error: string | null;
       };

@@ -1,5 +1,11 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  LOCALIZATION_SOURCE_SELECTION,
+  type LocalizationCategoryId,
+  LocalizationFacade,
+  type LocalizationRuntimeSettingsSnapshot,
+} from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import type { BridgeEvent } from "../types";
@@ -7,11 +13,52 @@ import type { BridgeEvent } from "../types";
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const DEFAULT_LOCALIZATION_SETTINGS = {
+  defaultLanguage: LOCALIZATION_SOURCE_SELECTION,
+  categories: {
+    userGuidance: LOCALIZATION_SOURCE_SELECTION,
+    uiInterface: LOCALIZATION_SOURCE_SELECTION,
+    workflowTerms: LOCALIZATION_SOURCE_SELECTION,
+    systemFeedback: LOCALIZATION_SOURCE_SELECTION,
+    interactiveTemplates: LOCALIZATION_SOURCE_SELECTION,
+  },
+  workflowTermsPolicy: "keep_english",
+  engineId: "google-gtx",
+  glossaryEnabled: true,
+} as const;
+
+const LOCALIZATION_CATEGORY_BINDINGS = [
+  {
+    categoryId: "interactive_templates",
+    settingsKey: "interactiveTemplates",
+  },
+  {
+    categoryId: "system_feedback",
+    settingsKey: "systemFeedback",
+  },
+  {
+    categoryId: "ui_interface",
+    settingsKey: "uiInterface",
+  },
+  {
+    categoryId: "user_guidance",
+    settingsKey: "userGuidance",
+  },
+  {
+    categoryId: "workflow_terms",
+    settingsKey: "workflowTerms",
+  },
+] as const satisfies readonly {
+  readonly categoryId: LocalizationCategoryId;
+  readonly settingsKey: keyof typeof DEFAULT_LOCALIZATION_SETTINGS.categories;
+}[];
+
 const DEFAULT_SETTINGS_SNAPSHOT = {
   general: {
     coreControls: {
       allowRestart: true,
     },
+    localization: DEFAULT_LOCALIZATION_SETTINGS,
     responsePolicy: {
       mode: "hybrid",
       strictOutput: {
@@ -90,6 +137,48 @@ const resolveErrorCode = (error: unknown): string | null => {
   return typeof code === "string" ? code : null;
 };
 
+const normalizeSettingsString = (value: unknown, fallback: string): string =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : fallback;
+
+const resolveLocalizationRuntimeSettings = (
+  settings: Record<string, unknown>
+): LocalizationRuntimeSettingsSnapshot => {
+  const general = isRecord(settings.general) ? settings.general : {};
+  const localization = isRecord(general.localization)
+    ? general.localization
+    : {};
+  const categories = isRecord(localization.categories)
+    ? localization.categories
+    : {};
+  const defaultLanguage = normalizeSettingsString(
+    localization.defaultLanguage,
+    DEFAULT_LOCALIZATION_SETTINGS.defaultLanguage
+  );
+
+  return {
+    categories: Object.fromEntries(
+      LOCALIZATION_CATEGORY_BINDINGS.map((binding) => [
+        binding.categoryId,
+        normalizeSettingsString(
+          categories[binding.settingsKey],
+          defaultLanguage
+        ),
+      ])
+    ) as LocalizationRuntimeSettingsSnapshot["categories"],
+    defaultLanguage,
+    engineId: normalizeSettingsString(
+      localization.engineId,
+      DEFAULT_LOCALIZATION_SETTINGS.engineId
+    ),
+    workflowTermsPolicy:
+      localization.workflowTermsPolicy === "translate"
+        ? "translate"
+        : DEFAULT_LOCALIZATION_SETTINGS.workflowTermsPolicy,
+  };
+};
+
 const buildDefaultSettingsSnapshot = (
   config: CoreConfig
 ): Record<string, unknown> => {
@@ -157,6 +246,12 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
     };
   };
   const rawGeneral = isRecord(settings.general) ? settings.general : {};
+  const rawLocalization = isRecord(rawGeneral.localization)
+    ? rawGeneral.localization
+    : {};
+  const rawLocalizationCategories = isRecord(rawLocalization.categories)
+    ? rawLocalization.categories
+    : {};
   const rawProviders = isRecord(settings.providers) ? settings.providers : {};
   const rawClaude = isRecord(rawProviders.claude) ? rawProviders.claude : {};
   const rawCodex = isRecord(rawProviders.codex) ? rawProviders.codex : {};
@@ -177,9 +272,23 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
   const general = {
     ...defaults.general,
     ...rawGeneral,
+    localization: {
+      ...(defaults.general.localization as Record<string, unknown>),
+      ...rawLocalization,
+      categories: {
+        ...(
+          defaults.general.localization as {
+            readonly categories: Record<string, unknown>;
+          }
+        ).categories,
+        ...rawLocalizationCategories,
+      },
+    },
   };
 
   const hasGeneral = isRecord(settings.general);
+  const hasLocalization = isRecord(rawGeneral.localization);
+  const hasLocalizationCategories = isRecord(rawLocalization.categories);
   const hasProviders = isRecord(settings.providers);
   const hasClaude = isRecord(rawProviders.claude);
   const hasCodex = isRecord(rawProviders.codex);
@@ -187,6 +296,12 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
 
   let changed = false;
   if (!hasGeneral) {
+    changed = true;
+  }
+  if (!hasLocalization) {
+    changed = true;
+  }
+  if (!hasLocalizationCategories) {
     changed = true;
   }
   if (!hasProviders) {
@@ -246,6 +361,7 @@ const persistDefaultSettingsSnapshot = async (
 
 export class SettingsRequestHandler {
   private readonly config: CoreConfig;
+  private readonly localizationFacade: LocalizationFacade;
   private readonly logger: Logger;
   private readonly broadcaster: (event: BridgeEvent) => void;
 
@@ -255,6 +371,7 @@ export class SettingsRequestHandler {
     readonly broadcaster: (event: BridgeEvent) => void;
   }) {
     this.config = options.config;
+    this.localizationFacade = new LocalizationFacade();
     this.logger = options.logger;
     this.broadcaster = options.broadcaster;
   }
@@ -286,6 +403,10 @@ export class SettingsRequestHandler {
       this.broadcaster({
         type: "settings:loaded",
         payload: {
+          localizationRuntime:
+            await this.localizationFacade.resolveRuntimePayload(
+              resolveLocalizationRuntimeSettings(settings)
+            ),
           settings,
           error: null,
         },
@@ -315,6 +436,10 @@ export class SettingsRequestHandler {
       this.broadcaster({
         type: "settings:loaded",
         payload: {
+          localizationRuntime:
+            await this.localizationFacade.resolveRuntimePayload(
+              resolveLocalizationRuntimeSettings(snapshot)
+            ),
           settings: snapshot,
           error: null,
         },

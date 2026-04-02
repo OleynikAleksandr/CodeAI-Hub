@@ -1,3 +1,4 @@
+import type { LocalizationRuntimePayload } from "@codeai-hub/localization";
 import type { WorkspaceProject } from "./types";
 
 export type WorkspaceScopeSyncReason =
@@ -284,6 +285,12 @@ export type CoreStatePayload = {
 
 export type ProjectUpdatePayload = {
   readonly projects: readonly WorkspaceProject[];
+};
+
+export type SettingsLoadedPayload = {
+  readonly error?: string | null;
+  readonly localizationRuntime?: LocalizationRuntimePayload | null;
+  readonly settings?: unknown;
 };
 
 export type {
