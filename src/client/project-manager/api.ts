@@ -14,6 +14,7 @@ import type {
   IncomingMessage,
   OutgoingMessage,
   ProjectUpdatePayload,
+  SettingsLoadedPayload,
   WorkspaceSelectPayload,
   WorkspaceSnapshotRequestPayload,
 } from "./core-stream-message-types";
@@ -34,6 +35,7 @@ class ProjectManagerApi {
   private socket: WebSocket | null = null;
   private readonly listeners = new Set<ProjectListener>();
   private readonly coreListeners = new Set<CoreEventListener>();
+  private lastSettingsPayload: SettingsLoadedPayload | null = null;
   private providerSnapshot: ProviderSnapshot[] = [];
   private readonly outgoingQueue = new OutgoingMessageQueue();
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -127,6 +129,10 @@ class ProjectManagerApi {
 
   loadSettings(): void {
     this.send({ type: "settings:load" });
+  }
+
+  getLastSettingsPayload(): SettingsLoadedPayload | null {
+    return this.lastSettingsPayload;
   }
 
   addProject(path: string, name?: string): void {
@@ -240,6 +246,9 @@ class ProjectManagerApi {
       if (payload?.projects) {
         this.notifyListeners(payload.projects);
       }
+    }
+    if (message.type === "settings:loaded") {
+      this.lastSettingsPayload = message.payload as SettingsLoadedPayload;
     }
     if (message.type === "core:state") {
       const payload = message.payload as CoreStatePayload;

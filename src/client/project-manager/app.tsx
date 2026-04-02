@@ -1,5 +1,10 @@
 import type React from "react";
+import {
+  LocalizationProvider,
+  useResolvedLocalization,
+} from "../ui/src/app-host/use-localization";
 import { MainLayout } from "./components/layout/main-layout";
+import { useProjectManagerSettings } from "./components/settings/use-project-manager-settings";
 import { DetachedDiagramView } from "./components/diagram-editor/detached-diagram-view";
 import { usePreventFileDropNavigation } from "./hooks/use-prevent-file-drop-navigation";
 
@@ -19,20 +24,22 @@ const resolveDetachedParams = (): {
  */
 export const App: React.FC = () => {
   usePreventFileDropNavigation();
+  const { settings, localizationRuntime } = useProjectManagerSettings();
+  const localization = useResolvedLocalization(settings, localizationRuntime);
 
   const detached = resolveDetachedParams();
-  if (detached) {
-    return (
-      <DetachedDiagramView
-        workspacePath={detached.workspacePath}
-        workspaceSlug={detached.workspaceSlug}
-      />
-    );
-  }
-
   return (
-    <div className="pm-workbench">
-      <MainLayout />
-    </div>
+    <LocalizationProvider value={localization}>
+      {detached ? (
+        <DetachedDiagramView
+          workspacePath={detached.workspacePath}
+          workspaceSlug={detached.workspaceSlug}
+        />
+      ) : (
+        <div className="pm-workbench">
+          <MainLayout />
+        </div>
+      )}
+    </LocalizationProvider>
   );
 };

@@ -1,20 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api";
+import type { BrowserLocalizationRuntimePayload } from "../../../ui/src/app-host/localization-runtime-contract";
 import {
   createDefaultSettings,
   mapSettingsSnapshot,
   type RawSettingsSnapshot,
   type Settings,
 } from "../../../ui/src/components/settings/settings-state-model";
+import type { SettingsLoadedPayload } from "../../core-stream-message-types";
 
 type IncomingMessage = {
   readonly type: string;
   readonly payload?: unknown;
-};
-
-type SettingsLoadedPayload = {
-  readonly settings?: unknown;
-  readonly error?: unknown;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -23,8 +20,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 export const useProjectManagerSettings = (): {
   readonly settings: Settings;
   readonly error: string | null;
+  readonly localizationRuntime: BrowserLocalizationRuntimePayload;
   readonly reload: () => void;
 } => {
+  const [localizationRuntime, setLocalizationRuntime] =
+    useState<BrowserLocalizationRuntimePayload>(null);
   const [settings, setSettings] = useState<Settings>(createDefaultSettings);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,25 +48,32 @@ export const useProjectManagerSettings = (): {
       const rawSettings = payload.settings;
 
       if (!isRecord(rawSettings)) {
+        setLocalizationRuntime(null);
         setSettings(createDefaultSettings());
         setError(typeof payload.error === "string" ? payload.error : null);
         return;
       }
 
+      setLocalizationRuntime(payload.localizationRuntime ?? null);
       setSettings(mapSettingsSnapshot(rawSettings as RawSettingsSnapshot));
       setError(null);
     });
 
-    // `api.connect()` triggers a settings load on WS open, but this hook can be
-    // mounted later (e.g. when opening a Session view) and miss the earlier
-    // `settings:loaded` response. Request settings on mount to guarantee we
-    // have the latest snapshot for model display and reasoning labels.
-    reload();
+    const cachedPayload = api.getLastSettingsPayload();
+    if (cachedPayload && isRecord(cachedPayload.settings)) {
+      setLocalizationRuntime(cachedPayload.localizationRuntime ?? null);
+      setSettings(mapSettingsSnapshot(cachedPayload.settings as RawSettingsSnapshot));
+      setError(
+        typeof cachedPayload.error === "string" ? cachedPayload.error : null
+      );
+    } else {
+      reload();
+    }
 
     return () => {
       unsubscribe();
     };
   }, [reload]);
 
-  return { settings, error, reload };
+  return { settings, error, localizationRuntime, reload };
 };
