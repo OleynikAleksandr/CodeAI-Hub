@@ -58,8 +58,8 @@
 
 ### Stream: Release
 28. [DONE] Update release-facing docs for the localization picker/hydration rollout from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization hydration release notes`
-29. [TODO] Git Commit: `docs(release): prepare localization hydration release notes` (hash: TBD)
-30. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble localization hydration release`
+29. [DONE] Git Commit: `docs(release): prepare localization hydration release notes` (hash: `fca35f53`)
+30. [DONE] Run `./scripts/build-all.sh` from the clean tree, then capture the resulting version/manifest updates for the `1.1.866` release snapshot. Scope: `package.json`, `package-lock.json`, package manifests, runtime manifests. Target commit: `build(release): assemble localization hydration release`
 31. [TODO] Git Commit: `build(release): assemble localization hydration release` (hash: TBD)
-32. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Target commit: `docs(session): record localization hydration release`
+32. [TODO] Run `./scripts/build-release.sh --use-current-version`, archive this completed TODO plan, and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Target commit: `docs(session): record localization hydration release`
 33. [TODO] Git Commit: `docs(session): record localization hydration release` (hash: TBD)
