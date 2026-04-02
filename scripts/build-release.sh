@@ -348,6 +348,40 @@ if [ ! -f "$VSIX_FILE" ]; then
   exit 1
 fi
 
+echo ""
+echo "🧪 Step 9.5: Verifying VSIX runtime package surface..."
+if ! VSIX_FILE="$VSIX_FILE" node <<'NODE'
+const { execFileSync } = require("node:child_process");
+
+const archivePath = process.env.VSIX_FILE;
+const listing = execFileSync("unzip", ["-l", archivePath], { encoding: "utf8" });
+const requiredEntries = [
+  "extension/node_modules/@codeai-hub/localization/package.json",
+  "extension/node_modules/@codeai-hub/translation/package.json",
+];
+const forbiddenEntries = [
+  "extension/.github/",
+  "extension/.nvmrc",
+];
+
+const missing = requiredEntries.filter((entry) => !listing.includes(entry));
+const leaked = forbiddenEntries.filter((entry) => listing.includes(entry));
+
+if (missing.length > 0 || leaked.length > 0) {
+  if (missing.length > 0) {
+    console.error(`Missing VSIX runtime entries:\n${missing.join("\n")}`);
+  }
+  if (leaked.length > 0) {
+    console.error(`Unexpected repo-only VSIX entries:\n${leaked.join("\n")}`);
+  }
+  process.exit(1);
+}
+NODE
+then
+  exit 1
+fi
+echo "✅ VSIX runtime package surface verified"
+
 clean_release_dir "$DIST_ROOT"
 
 echo ""

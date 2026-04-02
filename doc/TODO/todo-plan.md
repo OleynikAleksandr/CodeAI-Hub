@@ -19,7 +19,7 @@
 4. [TODO] Git Commit: `fix(release): declare localization runtime dependency` (hash: TBD)
 5. [DONE] Include `packages/localization` in the unified version bump flow so release versions stay aligned across shipped workspace packages. Scope: `scripts/build-all.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): version localization in build-all`
 6. [TODO] Git Commit: `fix(release): version localization in build-all` (hash: TBD)
-7. [TODO] Allow `@codeai-hub/localization` and `@codeai-hub/translation` in the VSIX and fail packaging if they are missing from the final archive. Scope: `.vscodeignore`, `scripts/build-release.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): verify packaged localization runtime`
+7. [DONE] Allow `@codeai-hub/localization` and `@codeai-hub/translation` in the VSIX and fail packaging if they are missing from the final archive. Scope: `.vscodeignore`, `scripts/build-release.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): verify packaged localization runtime`
 8. [TODO] Git Commit: `fix(release): verify packaged localization runtime` (hash: TBD)
 
 ## Phase 2 — Verification And Hotfix Release (owner: Release/Docs, updated: 2026-04-02)

@@ -9,6 +9,8 @@ node_modules/@opentelemetry/**
 node_modules/@codeai-hub/**
 !node_modules/@codeai-hub/core-supervisor/**
 !node_modules/@codeai-hub/core/**
+!node_modules/@codeai-hub/localization/**
+!node_modules/@codeai-hub/translation/**
 !node_modules/@codeai-hub/idea-collector/assets/**
 !node_modules/@codeai-hub/agent-shared/**
 node_modules/googleapis/**
