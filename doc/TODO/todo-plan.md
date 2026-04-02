@@ -26,8 +26,8 @@
 ### Stream: Rebuild
 9. [DONE] Run targeted verification for localization/core/webview before the hotfix rebuild. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`.
 10. [DONE] Update release-facing docs for the startup packaging hotfix from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization packaging hotfix notes`
-11. [TODO] Git Commit: `docs(release): prepare localization packaging hotfix notes` (hash: TBD)
-12. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` for the hotfix release artefacts. Scope: release-generated version files and manifests. Target commit: `build(release): assemble localization packaging hotfix release`
+11. [DONE] Git Commit: `docs(release): prepare localization packaging hotfix notes` (hash: `fe52ff24`)
+12. [IN_PROGRESS] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` for the hotfix release artefacts. Scope: release-generated version files and manifests. Target commit: `build(release): assemble localization packaging hotfix release`
 13. [TODO] Git Commit: `build(release): assemble localization packaging hotfix release` (hash: TBD)
 14. [TODO] Archive this hotfix TODO plan and record the follow-up session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session023.md`. Target commit: `docs(session): record localization packaging hotfix release`
 15. [TODO] Git Commit: `docs(session): record localization packaging hotfix release` (hash: TBD)
