@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.866] - 2026-04-02
+### Added
+- **Searchable localization picker UX**: localization settings now provide searchable language comboboxes plus a catalog-backed engine selector, replacing the earlier free-form language/engine entry flow.
+
+### Changed
+- **Hydrated browser localization runtime**: extension settings load/save and Project Manager settings load now materialize `LocalizationRuntimePayload` through `@codeai-hub/localization`, then deliver resolved bundles and engine catalogs into a shared browser-side provider.
+- **Shared PM localization provider**: Project Manager help/questionnaire/navigation surfaces now consume one root localization provider instead of reloading settings and resolving bundles independently in each localized leaf.
+
+### Fixed
+- **Browser delivery boundary closed**: localized browser surfaces now resolve translated and source bundle entries from host-materialized runtime payloads instead of falling back to bundled English source catalogs after settings load.
+- **Localization selector semantics**: the visible `English` source option now maps cleanly to canonical persisted `source`, avoiding duplicate `en`/`source` semantics in the settings UI and browser runtime.
+
 ## [1.1.865] - 2026-04-01
 ### Added
 - **Persistent localization module**: `@codeai-hub/localization` now owns bundled English source catalogs, language catalog metadata, glossary protection, user override storage, and localized bundle persistence under `~/.codeai-hub/localization/`.

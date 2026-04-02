@@ -53,11 +53,11 @@
 23. [DONE] Sync live localization SSOT with the picker/hydration runtime boundary and browser-provider contract. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(localization): sync picker hydration ssot`
 24. [DONE] Git Commit: `docs(localization): sync picker hydration ssot` (hash: `e54cb41a`)
 25. [DONE] Refresh the tracked shipped webview bundle so `media/react-chat.js` matches the hydrated browser runtime and selector UI. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization settings bundle`
-26. [TODO] Git Commit: `build(webview): refresh localization settings bundle` (hash: TBD)
-27. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`, `project-manager`.
+26. [DONE] Git Commit: `build(webview): refresh localization settings bundle` (hash: `a7e15ddc`)
+27. [DONE] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`, `project-manager`.
 
 ### Stream: Release
-28. [TODO] Update release-facing docs for the localization picker/hydration rollout from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization hydration release notes`
+28. [DONE] Update release-facing docs for the localization picker/hydration rollout from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization hydration release notes`
 29. [TODO] Git Commit: `docs(release): prepare localization hydration release notes` (hash: TBD)
 30. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble localization hydration release`
 31. [TODO] Git Commit: `build(release): assemble localization hydration release` (hash: TBD)

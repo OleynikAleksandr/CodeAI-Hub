@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.865
-- **Persistent UI localization foundation**: CodeAI Hub now ships `@codeai-hub/localization` with bundled English source catalogs, engine language-catalog metadata, glossary protection, user override storage, and materialized bundle persistence under `~/.codeai-hub/localization/`.
-- **Dictionary-driven product copy**: Settings, Session system feedback, Project Manager help/questionnaire, and Project Manager shell/navigation surfaces now resolve copy through stable message ids instead of inline component-owned strings.
-- **Localization settings and glossary policy**: the product now persists per-category language policy, workflow terms policy, engine selection, and user-authored English do-not-translate terms; current browser lookup still falls back to bundled English source catalogs until persisted translated-bundle delivery is bridged into the browser runtime.
+## Current Release — v1.1.866
+- **Host-hydrated browser localization runtime**: the settings host and Project Manager bridge now materialize `LocalizationRuntimePayload` from persisted settings and deliver resolved bundles, engine catalogs, and per-category language policy into one shared browser localization provider.
+- **Searchable localization controls**: localization settings now expose a catalog-backed engine selector, searchable language comboboxes for default/category policy, and visible `English` source labeling instead of raw `source` / free-form engine semantics.
+- **Shared Project Manager localization consumption**: localized help, questionnaire, and navigation surfaces now consume the same root provider as the settings webview, so browser copy resolves from hydrated bundles instead of bundled English source catalogs.
 
-Previous releases (summary): `1.1.800–1.1.853` — Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, thinking-only terminal-answer fix, history-visible recoverable failure, test-debt elimination, architecture gate 500 lines, provider-feedback observability rollback, session-scoped Stop, provider rebind after Stop, Gemini stalled-turn recovery, provider-neutral applied turn config, Codex/Gemini/Claude next-turn parity, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
+Previous releases (summary): `1.1.800–1.1.865` — persistent localization foundation, dictionary-driven product copy, thinking display sync, public CI bootstrap, staged core restart UX, Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, history-visible recoverable failure, architecture gate 500 lines, session-scoped Stop, provider rebind after Stop, provider-neutral applied turn config, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
