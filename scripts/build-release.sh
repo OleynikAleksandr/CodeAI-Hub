@@ -352,6 +352,9 @@ echo ""
 echo "🧪 Step 9.5: Verifying VSIX runtime package surface..."
 if ! VSIX_FILE="$VSIX_FILE" node <<'NODE'
 const { execFileSync } = require("node:child_process");
+const { mkdtempSync, rmSync } = require("node:fs");
+const { tmpdir } = require("node:os");
+const { join } = require("node:path");
 
 const archivePath = process.env.VSIX_FILE;
 const listing = execFileSync("unzip", ["-l", archivePath], { encoding: "utf8" });
@@ -375,6 +378,25 @@ if (missing.length > 0 || leaked.length > 0) {
     console.error(`Unexpected repo-only VSIX entries:\n${leaked.join("\n")}`);
   }
   process.exit(1);
+}
+
+const extractionRoot = mkdtempSync(join(tmpdir(), "codeai-hub-vsix-"));
+try {
+  execFileSync("unzip", ["-q", archivePath, "-d", extractionRoot], {
+    stdio: "pipe",
+  });
+  const packagedRegistry = require(join(
+    extractionRoot,
+    "extension/node_modules/@codeai-hub/localization/dist/source-dictionary-registry.js"
+  ));
+  const bundledDictionaries = packagedRegistry.BUNDLED_SOURCE_DICTIONARIES;
+  if (!Array.isArray(bundledDictionaries) || bundledDictionaries.length === 0) {
+    throw new Error(
+      "Packaged localization source registry did not expose bundled dictionaries."
+    );
+  }
+} finally {
+  rmSync(extractionRoot, { force: true, recursive: true });
 }
 NODE
 then

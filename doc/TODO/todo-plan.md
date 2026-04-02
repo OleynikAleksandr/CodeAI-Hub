@@ -16,8 +16,8 @@
 ## Phase 1 — Runtime Resolution Fix (owner: Localization/Release, updated: 2026-04-02)
 ### Stream: Localization Package
 3. [DONE] Replace brittle compile-time source dictionary imports with runtime candidate-root resolution that works in both workspace and installed-extension package topologies. Scope: `packages/localization/src/source-dictionary-registry.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(localization): resolve bundled source dictionaries across package topologies`
-4. [TODO] Git Commit: `fix(localization): resolve bundled source dictionaries across package topologies` (hash: TBD)
-5. [TODO] Add a release smoke test that extracts the VSIX and requires the packaged localization source registry from the installed extension layout. Scope: `scripts/build-release.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): smoke test packaged localization source registry`
+4. [DONE] Git Commit: `fix(localization): resolve bundled source dictionaries across package topologies` (hash: `b9896390`)
+5. [DONE] Add a release smoke test that extracts the VSIX and requires the packaged localization source registry from the installed extension layout. Scope: `scripts/build-release.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): smoke test packaged localization source registry`
 6. [TODO] Git Commit: `fix(release): smoke test packaged localization source registry` (hash: TBD)
 
 ## Phase 2 — Verification And Hotfix Release (owner: Release/Docs, updated: 2026-04-02)
