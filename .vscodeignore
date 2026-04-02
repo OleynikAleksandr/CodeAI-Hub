@@ -23,9 +23,11 @@ node_modules/@codeai-hub/gemini-module/**
 codeai-hub-*/**
 dist/**
 .vsix/**
+.github/**
 .claude/**
 .vscode/**
 .gemini/**
+.nvmrc
 .gitignore
 .husky/**
 .codeai-hub/**
