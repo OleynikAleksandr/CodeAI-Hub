@@ -31,8 +31,8 @@
 ## Phase 2 — Shared Browser Runtime Hydration (owner: UI/PM, updated: 2026-04-02)
 ### Stream: Shared Browser Runtime
 9. [DONE] Replace bundled-source-only lookup with a shared browser runtime contract that consumes hydrated bundles and language catalogs. Scope: `src/client/ui/src/app-host/use-localization.ts`, `src/client/ui/src/app-host/localization-runtime-contract.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`. Target commit: `refactor(ui): hydrate browser localization runtime`
-10. [TODO] Git Commit: `refactor(ui): hydrate browser localization runtime` (hash: TBD)
-11. [TODO] Capture localization runtime snapshots in settings webview state and provide them through the settings host. Scope: `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/app-host/settings-only-host.tsx`, `src/client/ui/src/components/settings-view.tsx`. Target commit: `refactor(ui): wire settings localization runtime`
+10. [DONE] Git Commit: `refactor(ui): hydrate browser localization runtime` (hash: `1c578e0d`)
+11. [DONE] Capture localization runtime snapshots in settings webview state and provide them through the settings host. Scope: `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/app-host/settings-only-host.tsx`. Target commit: `refactor(ui): wire settings localization runtime`
 12. [TODO] Git Commit: `refactor(ui): wire settings localization runtime` (hash: TBD)
 13. [TODO] Add one Project Manager localization provider at the app/root boundary and stop per-component settings reloads for localized surfaces. Scope: `src/client/project-manager/app.tsx`, `src/client/project-manager/api.ts`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`. Target commit: `refactor(pm): provide shared localization runtime`
 14. [TODO] Git Commit: `refactor(pm): provide shared localization runtime` (hash: TBD)

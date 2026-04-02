@@ -147,6 +147,7 @@ export interface UseSettingsStateResult {
     target: "cli" | "sdk" | "core"
   ) => void;
   readonly hasChanges: boolean;
+  readonly localizationRuntime: BrowserLocalizationRuntimePayload;
   readonly resetting: boolean;
   readonly saving: boolean;
   readonly settings: Settings;

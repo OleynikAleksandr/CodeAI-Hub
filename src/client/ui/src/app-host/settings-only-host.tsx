@@ -85,7 +85,10 @@ const noopVoidHandler: WebviewMessageHandlers["onSessionClearAll"] = () => {
 
 export const SettingsOnlyHost = () => {
   const settingsState = useSettingsState();
-  const localization = useResolvedLocalization(settingsState.settings);
+  const localization = useResolvedLocalization(
+    settingsState.settings,
+    settingsState.localizationRuntime
+  );
   const { settingsVisible, openSettings, closeSettings } =
     useSettingsVisibility();
   const handleShowSettings = useCallback(() => {

@@ -4,6 +4,7 @@ import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
+import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
 import vscode from "../../vscode";
 import {
   updateClaudeContinuityRemainingPercentThreshold,
@@ -65,6 +66,8 @@ export const useSettingsState = (): UseSettingsStateResult => {
   const initialSettingsRef = useRef<Settings>(createDefaultSettings());
   const [settings, setSettings] = useState<Settings>(createDefaultSettings);
   const [hasChanges, setHasChanges] = useState(false);
+  const [localizationRuntime, setLocalizationRuntime] =
+    useState<BrowserLocalizationRuntimePayload>(null);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [coreControl, setCoreControl] = useState<CoreControlState>({
@@ -92,6 +95,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
       if (event.data.type === "settings:loaded") {
         const nextSettings = mapSettingsSnapshot(event.data.settings);
         initialSettingsRef.current = nextSettings;
+        setLocalizationRuntime(event.data.localizationRuntime ?? null);
         setSettings(nextSettings);
         setResetting(false);
         setHasChanges(false);
@@ -100,6 +104,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
       if (event.data.type === "settings:saved") {
         const nextSettings = mapSettingsSnapshot(event.data.settings);
         initialSettingsRef.current = nextSettings;
+        setLocalizationRuntime(event.data.localizationRuntime ?? null);
         setSettings(nextSettings);
         setSaving(false);
         setHasChanges(false);
@@ -423,6 +428,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     coreControl,
     settings,
     hasChanges,
+    localizationRuntime,
     saving,
     resetting,
     versions,
