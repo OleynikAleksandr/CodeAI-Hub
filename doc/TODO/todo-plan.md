@@ -46,18 +46,20 @@
 19. [DONE] Add a reusable searchable localization language combobox with keyboard filtering and normalized persisted values. Scope: `src/client/ui/src/components/settings/localization-language-combobox.tsx`, `src/client/ui/src/components/settings/localization-language-filter.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization language combobox`
 20. [DONE] Git Commit: `feat(ui): add localization language combobox` (hash: `b7eab063`)
 21. [DONE] Replace raw `source` and free-form engine semantics in the settings card with catalog-driven selectors and visible English source labeling. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/app-host/use-localization.ts`. Target commit: `refactor(ui): clarify localization selector semantics`
-22. [TODO] Git Commit: `refactor(ui): clarify localization selector semantics` (hash: TBD)
+22. [DONE] Git Commit: `refactor(ui): clarify localization selector semantics` (hash: `2676222f`)
 
 ## Phase 4 — SSOT, Verification, And Release (owner: Docs/Release, updated: 2026-04-02)
 ### Stream: Documentation And Verification
-23. [TODO] Sync live localization SSOT with the picker/hydration runtime boundary and browser-provider contract. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(localization): sync picker hydration ssot`
+23. [DONE] Sync live localization SSOT with the picker/hydration runtime boundary and browser-provider contract. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(localization): sync picker hydration ssot`
 24. [TODO] Git Commit: `docs(localization): sync picker hydration ssot` (hash: TBD)
-25. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`, `project-manager`.
+25. [TODO] Refresh the tracked shipped webview bundle so `media/react-chat.js` matches the hydrated browser runtime and selector UI. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization settings bundle`
+26. [TODO] Git Commit: `build(webview): refresh localization settings bundle` (hash: TBD)
+27. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`, `project-manager`.
 
 ### Stream: Release
-26. [TODO] Update release-facing docs for the localization picker/hydration rollout from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization hydration release notes`
-27. [TODO] Git Commit: `docs(release): prepare localization hydration release notes` (hash: TBD)
-28. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble localization hydration release`
-29. [TODO] Git Commit: `build(release): assemble localization hydration release` (hash: TBD)
-30. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Target commit: `docs(session): record localization hydration release`
-31. [TODO] Git Commit: `docs(session): record localization hydration release` (hash: TBD)
+28. [TODO] Update release-facing docs for the localization picker/hydration rollout from a clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare localization hydration release notes`
+29. [TODO] Git Commit: `docs(release): prepare localization hydration release notes` (hash: TBD)
+30. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version` from the clean tree. Scope: release-generated version files and manifests. Target commit: `build(release): assemble localization hydration release`
+31. [TODO] Git Commit: `build(release): assemble localization hydration release` (hash: TBD)
+32. [TODO] Archive this completed TODO plan and record the session report. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`. Target commit: `docs(session): record localization hydration release`
+33. [TODO] Git Commit: `docs(session): record localization hydration release` (hash: TBD)

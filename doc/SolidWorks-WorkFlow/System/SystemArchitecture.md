@@ -30,7 +30,7 @@
 - **CEF Launcher**: локальный клиент для Project Manager.
 - **Providers**: Claude/Codex/Gemini модули (CLI/SDK контуры).
 - **Shared runtime translation module**: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (package: `packages/translation/`; engine-neutral facade used by Gemini today and future localization adapters tomorrow).
-- **Localization module**: `doc/SolidWorks-WorkFlow/Modules/Localization.md` (package: `packages/localization/`; owns bundled English source catalogs, glossary protection, localized bundle persistence, and UI lookup primitives).
+- **Localization module**: `doc/SolidWorks-WorkFlow/Modules/Localization.md` (package: `packages/localization/`; owns bundled English source catalogs, glossary protection, localized bundle persistence, runtime payload contracts, and UI lookup primitives).
 - **Gemini bundled runtime dependency**: installed Gemini provider bundles vendor `@codeai-hub/translation` into their own runtime root so the provider can resolve the shared translation package outside the workspace `node_modules` tree.
 
 ## 2) SSOT уровни (иерархия документов)
@@ -73,7 +73,7 @@
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `packages/core/src/config/provider-turn-config-resolver.ts`.
 15. **Provider-applied model/reasoning proof stays provider-native**: active baseline не поддерживает cross-provider normalizing contract для exact model/thinking/reasoning feedback в `sdk-*` логах; для аудита реально применённого provider state нужно опираться на provider-native runtime artifacts (`Claude` provider-home JSONL, `Codex` raw rollout `turn_context`, `Gemini` raw stream/session traces), а не на локальный outbound intent.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`.
-16. **Localization source-copy and storage invariant**: product-owned localizable copy must be authored in bundled English source dictionaries, while mutable bundles/glossary live only under `~/.codeai-hub/localization/`; browser lookup may fall back to bundled source catalogs, but React components are not allowed to become the source of truth for localizable product copy.
+16. **Localization source-copy and hydration invariant**: product-owned localizable copy must be authored in bundled English source dictionaries, mutable bundles/glossary live only under `~/.codeai-hub/localization/`, and browser lookup must consume host-materialized runtime payloads instead of reading mutable localization files directly; fallback strings are bootstrap-only, and React components are not allowed to become the source of truth for localizable product copy.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
 
 ## 4) Где искать правду в коде (high-signal)
@@ -110,11 +110,15 @@
 - Shared Session UI: `src/client/ui/src/`
 - Localization package: `packages/localization/`
   - `src/localization-facade.ts` = thin public package façade
+  - `src/localization-contract.ts`, `src/localization-facade.ts` = runtime payload contract plus materialized bundle resolution
   - `src/localization-materializer.ts`, `src/source-dictionary-registry.ts`, `src/glossary-*.ts`, `src/localization-*-store.ts` = source dictionaries, glossary protection, bundle persistence, metadata reuse
 - Browser localization lookup: `src/client/ui/src/app-host/use-localization.ts`
-  - shared browser-side dictionary lookup helper used by settings host and current localized PM/session surfaces
-  - current live browser runtime ships bundled English source catalogs and falls back to those source catalogs until persisted user-data bundle delivery is bridged into the browser
+  - shared browser-side localization runtime consumed by settings host and localized PM surfaces
+  - `src/extension-module/message-handlers/settings-message-handler.ts` and `packages/core/src/remote-bridge/handlers/settings-request-handler.ts` now hydrate `localizationRuntime` payloads from persisted settings before sending them into the browser
+  - `src/client/ui/src/app-host/settings-only-host.tsx` and `src/client/project-manager/app.tsx` provide one shared `LocalizationProvider` at the app boundary; localized PM leaves consume that provider instead of loading settings locally
+  - bundled English source catalogs are no longer embedded as live browser data; component fallback strings remain only as a bootstrap safety path until the payload arrives
 - Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
+  - the localization card now exposes engine selection through a catalog-backed selector and language selection through a searchable combobox; visible `English` maps to canonical persisted `source`
   - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled` and provider-home `model_reasoning_summary = auto|none`; the Claude card surfaces `Thinking in dialog` as a visible assistant-bubble gate, and the Gemini card keeps the same short `Thinking in dialog` copy as a presentation-only control; for Claude and Gemini the runtime still persists thinking history, while the Session UI decides whether to render it
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - `Settings -> General -> Core Controls` now uses a staged restart flow owned by `HomeViewMessageRouter` + `CoreProcessManager`: explicit `stop -> wait -> start`, progress/status messages posted back into the webview, and a button-local visible status surface instead of a blind fire-and-forget restart action

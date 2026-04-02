@@ -1,9 +1,9 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-01
+**Updated:** 2026-04-02
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (`v1.1.864`)
+**Validated on:** `main` (`v1.1.865`)
 
 ---
 
@@ -20,7 +20,7 @@ Current responsibilities:
 - glossary / protected-terms handling;
 - localized bundle materialization and persistence;
 - metadata/hash tracking for incremental regeneration;
-- browser-facing dictionary lookup primitives.
+- browser-runtime payload contracts and resolved bundle snapshots for UI lookup.
 
 This module depends on `@codeai-hub/translation`, but it is a separate boundary.
 
@@ -35,13 +35,13 @@ This module depends on `@codeai-hub/translation`, but it is a separate boundary.
 - glossary baselines and user override storage;
 - bundle persistence under `~/.codeai-hub/localization/`;
 - bundle reuse / invalidation via metadata hash;
-- UI lookup helpers that resolve message ids to product copy.
+- resolved runtime payload snapshots keyed by category/language/engine policy.
 
 `Localization` does not own:
 
 - translation transport details (`@codeai-hub/translation` owns that);
 - provider outputs, reasoning text, or user-authored content;
-- browser-to-runtime delivery of user-data bundles beyond the current lookup helper;
+- extension/core/browser transport that delivers runtime payloads to specific UI surfaces;
 - workflow/business semantics outside localized copy itself.
 
 ---
@@ -54,7 +54,7 @@ Package root:
 
 Current high-signal files:
 
-- `src/localization-contract.ts` — category ids, source dictionary types, engine catalog types.
+- `src/localization-contract.ts` — category ids, source dictionary types, engine catalog types, runtime payload contracts.
 - `src/source-dictionary-registry.ts` — bundled source catalog registration and lookup.
 - `src/language-catalog.ts`, `src/language-catalog-service.ts` — engine language catalog exposure.
 - `src/glossary-contract.ts`, `src/glossary-merge-service.ts`, `src/glossary-protector.ts`, `src/glossary-validator.ts` — glossary and protected-term pipeline.
@@ -63,7 +63,7 @@ Current high-signal files:
 - `src/localization-bundle-store.ts` — persisted bundle read/write.
 - `src/localization-metadata-store.ts` — source-hash metadata and regeneration reuse contract.
 - `src/localization-materializer.ts` — materialization pipeline over `TranslationFacade`.
-- `src/localization-facade.ts` — public package entrypoint.
+- `src/localization-facade.ts` — public package entrypoint plus runtime payload resolution.
 
 Bundled assets:
 
@@ -109,6 +109,12 @@ Current settings contract stores:
 - translation engine id;
 - glossary enabled flag.
 
+Current runtime payload contract stores:
+
+- active engine id and available engine catalogs;
+- configured language per localization category;
+- resolved bundle entries per category, including source fallback metadata when a persisted bundle is unavailable.
+
 ---
 
 ## 5. Materialization Pipeline
@@ -143,6 +149,12 @@ Current browser-side lookup runtime:
 
 - `src/client/ui/src/app-host/use-localization.ts`
 
+Current host/bridge hydration surfaces:
+
+- `src/extension-module/settings/localization-runtime-service.ts`
+- `src/extension-module/message-handlers/settings-message-handler.ts`
+- `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`
+
 Current consumers:
 
 - settings-only host and shared settings UI in `src/client/ui/src/`
@@ -151,11 +163,11 @@ Current consumers:
 Current live browser behavior:
 
 - browser surfaces resolve copy by message id through the shared lookup helper;
-- the helper currently ships bundled English source catalogs into the browser bundle;
-- persisted user-data bundles from `~/.codeai-hub/localization/catalogs/` are not yet bridged into the browser runtime;
-- therefore non-`source` language selections are already persisted in settings and supported by the package materializer, but current browser lookup still falls back to bundled English source catalogs until a host-side bundle delivery bridge is added.
-
-This means the implemented module boundary is real and persistent, while the browser delivery path is intentionally still conservative in the current release.
+- extension settings load/save and Project Manager settings load now materialize a `LocalizationRuntimePayload` through `LocalizationFacade.resolveRuntimePayload(...)`;
+- settings webview and Project Manager app root feed that payload into the shared `LocalizationProvider`, so localized surfaces do not resolve bundles independently;
+- Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
+- the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from host-resolved payloads, while component-level fallback strings are only a bootstrap safety path when no payload is available yet;
+- the settings card exposes engine catalogs through a constrained selector and language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
 
 ---
 
@@ -166,6 +178,7 @@ This means the implemented module boundary is real and persistent, while the bro
 3. `@codeai-hub/translation` remains translation-only and must not absorb persistence/glossary/UI lookup concerns.
 4. Glossary protection must be able to preserve branded names, technical terms, env vars, and workflow vocabulary.
 5. Lookup keys must remain stable when the semantics stay the same.
+6. Browser/UI surfaces must consume host-materialized localization runtime payloads instead of reading mutable localization files directly.
 
 ---
 
@@ -174,8 +187,10 @@ This means the implemented module boundary is real and persistent, while the bro
 Current validation surface:
 
 - `npm run build --workspace @codeai-hub/localization`
+- `npm run build --workspace @codeai-hub/core`
 - `npm run build:webview`
 - `npm run typecheck:webview`
+- `npm run build:project-manager`
 
 Release verification additionally relies on:
 
