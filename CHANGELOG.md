@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.867] - 2026-04-02
+### Fixed
+- **Release `1.1.866` startup regression**: the VSIX now ships `@codeai-hub/localization`, so extension activation no longer fails on `Cannot find module '@codeai-hub/localization'`.
+- **Localization runtime transitive packaging**: the final VSIX now keeps `@codeai-hub/translation` alongside the shipped localization package, preserving the runtime dependency chain used by the host hydration path.
+
+### Changed
+- **Release packaging guards**: `build-release.sh` now validates the final VSIX surface and fails if required localization runtime packages are missing or if repo-only entries such as `.github/**` and `.nvmrc` leak into the archive.
+- **Unified version bump coverage**: `build-all.sh` now includes `packages/localization` in the shared release-version update flow.
+
 ## [1.1.866] - 2026-04-02
 ### Added
 - **Searchable localization picker UX**: localization settings now provide searchable language comboboxes plus a catalog-backed engine selector, replacing the earlier free-form language/engine entry flow.
