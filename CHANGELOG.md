@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.869] - 2026-04-02
+### Fixed
+- **Release `1.1.868` Core bootstrap regression**: the staged standalone Core runtime now carries the localization runtime dependency chain plus bundled source dictionaries under `app/assets/localization/source/en`, so startup no longer stalls before `/api/v1/health` on installed builds.
+
+### Changed
+- **Installed-Core release validation**: `build-release.sh` now verifies the staged Core bundle itself by checking for bundled `@codeai-hub/localization`, bundled `@codeai-hub/translation`, packaged source dictionaries, and a successful `settings-request-handler.js` require through the installed runtime node binary before packaging succeeds.
+
 ## [1.1.868] - 2026-04-02
 ### Fixed
 - **Release `1.1.867` startup regression**: the packaged localization runtime now resolves bundled source dictionaries from both supported deployment topologies, so extension activation no longer fails on missing `interactive_templates.json` after VSIX install.
