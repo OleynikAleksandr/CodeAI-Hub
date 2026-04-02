@@ -17,11 +17,11 @@
 ## Phase 0 — Scope Bootstrap (owner: Docs, updated: 2026-04-02)
 ### Stream: Planning Intake
 1. [DONE] Approve the language-picker/browser-hydration planning document and replace the placeholder TODO with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define localization hydration scope`
-2. [TODO] Git Commit: `docs(plan): define localization hydration scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): define localization hydration scope` (hash: `e7862110`)
 
 ## Phase 1 — Runtime Contract And Host Materialization (owner: Localization/Host, updated: 2026-04-02)
 ### Stream: Localization Runtime Contract
-3. [TODO] Add browser-runtime snapshot types and facade helpers for engine catalogs plus resolved active bundles. Scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`. Target commit: `feat(localization): add runtime snapshot contract`
+3. [DONE] Add browser-runtime snapshot types and facade helpers for engine catalogs plus resolved active bundles. Scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`. Target commit: `feat(localization): add runtime snapshot contract`
 4. [TODO] Git Commit: `feat(localization): add runtime snapshot contract` (hash: TBD)
 5. [TODO] Add an extension-side localization runtime service that materializes and resolves active bundles for settings webview load/save. Scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/settings/types.ts`. Target commit: `feat(settings): materialize localization runtime payload`
 6. [TODO] Git Commit: `feat(settings): materialize localization runtime payload` (hash: TBD)

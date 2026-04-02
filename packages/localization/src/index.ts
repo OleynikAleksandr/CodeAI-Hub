@@ -27,14 +27,20 @@ export {
   DEFAULT_LOCALIZATION_ENGINE_ID,
   DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
   LOCALIZATION_CATEGORY_IDS,
+  LOCALIZATION_SOURCE_SELECTION,
   type LocalizationCategoryId,
+  type LocalizationCategoryLanguageSelectionMap,
   type LocalizationEngineLanguageCatalog,
   type LocalizationFacadeOptions,
   type LocalizationLanguageCatalogEntry,
   type LocalizationLanguageCatalogServiceOptions,
+  type LocalizationResolvedRuntimeBundle,
+  type LocalizationRuntimePayload,
+  type LocalizationRuntimeSettingsSnapshot,
   type LocalizationSourceDictionary,
   type LocalizationSourceDictionaryEntries,
   type LocalizationSourceLookupRequest,
+  type LocalizationWorkflowTermsPolicy,
 } from "./localization-contract";
 export { LocalizationFacade } from "./localization-facade";
 export {
