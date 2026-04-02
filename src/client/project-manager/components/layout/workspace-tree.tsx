@@ -1,6 +1,6 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import {
   WORKFLOW_STAGE_ORDER,
   toWorkflowWorkspaceSlug,
@@ -8,7 +8,6 @@ import {
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
 import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
-import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { resolveStageChildren } from "./workspace-tree-stage-children";
 import { useStagePanelSync } from "./use-stage-panel-sync";
 import {
@@ -38,8 +37,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   workspacePath,
   workspaceSlug: resolvedWorkspaceSlug,
 }) => {
-  const { settings } = useProjectManagerSettings();
-  const { t } = useResolvedLocalization(settings);
+  const { t } = useLocalization();
   const [expandedNodes, setExpandedNodes] = useState<
     Readonly<Record<string, boolean>>
   >({});

@@ -1,6 +1,5 @@
 import type React from "react";
-import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
-import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { WORKFLOW_LABELS } from "./workspace-tree-model";
 
 interface ToolbarProps {
@@ -18,8 +17,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   activeTool,
   onToolSelect,
 }) => {
-  const { settings } = useProjectManagerSettings();
-  const { t } = useResolvedLocalization(settings);
+  const { t } = useLocalization();
 
   const resolveToolLabel = (tool: string): string => {
     switch (tool) {

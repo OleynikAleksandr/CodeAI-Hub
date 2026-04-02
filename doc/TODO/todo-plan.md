@@ -37,8 +37,8 @@
 13. [DONE] Add one Project Manager localization provider at the app/root boundary and stop per-component settings reloads for localized surfaces. Scope: `src/client/project-manager/app.tsx`, `src/client/project-manager/api.ts`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`. Target commit: `refactor(pm): provide shared localization runtime`
 14. [DONE] Git Commit: `refactor(pm): provide shared localization runtime` (hash: `ceedb9ee`)
 15. [DONE] Switch currently localized Project Manager help surfaces to consume the shared provider instead of local settings resolution. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`. Target commit: `refactor(pm): use shared localization provider for help surfaces`
-16. [TODO] Git Commit: `refactor(pm): use shared localization provider for help surfaces` (hash: TBD)
-17. [TODO] Switch Project Manager navigation surfaces to the shared provider and keep workflow labels/title badges hydrated from resolved bundles. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(pm): use shared localization provider for navigation`
+16. [DONE] Git Commit: `refactor(pm): use shared localization provider for help surfaces` (hash: `125de9c0`)
+17. [DONE] Switch Project Manager navigation surfaces to the shared provider and keep workflow labels/title badges hydrated from resolved bundles. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(pm): use shared localization provider for navigation`
 18. [TODO] Git Commit: `refactor(pm): use shared localization provider for navigation` (hash: TBD)
 
 ## Phase 3 — Searchable Picker UX (owner: UI, updated: 2026-04-02)

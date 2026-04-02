@@ -1,8 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import type { WorkspaceProject } from "../../types";
-import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { WorkspaceTree } from "./workspace-tree";
 
 interface SidebarProps {
@@ -26,8 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onForkWorkspace,
   onNewWorkspace,
 }) => {
-  const { settings } = useProjectManagerSettings();
-  const { t } = useResolvedLocalization(settings);
+  const { t } = useLocalization();
   const activeWorkspace = workspaces.find(
     (workspace) => workspace.id === selectedWorkspaceId
   );
