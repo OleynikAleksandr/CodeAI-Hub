@@ -29,7 +29,7 @@ interface WorkspaceTreeProps {
   readonly workspaceSlug?: string;
 }
 
-type TranslationResolver = ReturnType<typeof useResolvedLocalization>["t"];
+type TranslationResolver = ReturnType<typeof useLocalization>["t"];
 
 export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   selectedWorkspaceId,

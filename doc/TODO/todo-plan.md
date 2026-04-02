@@ -39,11 +39,11 @@
 15. [DONE] Switch currently localized Project Manager help surfaces to consume the shared provider instead of local settings resolution. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`. Target commit: `refactor(pm): use shared localization provider for help surfaces`
 16. [DONE] Git Commit: `refactor(pm): use shared localization provider for help surfaces` (hash: `125de9c0`)
 17. [DONE] Switch Project Manager navigation surfaces to the shared provider and keep workflow labels/title badges hydrated from resolved bundles. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(pm): use shared localization provider for navigation`
-18. [TODO] Git Commit: `refactor(pm): use shared localization provider for navigation` (hash: TBD)
+18. [DONE] Git Commit: `refactor(pm): use shared localization provider for navigation` (hash: `0f774ee7`)
 
 ## Phase 3 — Searchable Picker UX (owner: UI, updated: 2026-04-02)
 ### Stream: Localization Settings Controls
-19. [TODO] Add a reusable searchable localization language combobox with keyboard filtering and normalized persisted values. Scope: `src/client/ui/src/components/settings/localization-language-combobox.tsx`, `src/client/ui/src/components/settings/localization-language-filter.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization language combobox`
+19. [DONE] Add a reusable searchable localization language combobox with keyboard filtering and normalized persisted values. Scope: `src/client/ui/src/components/settings/localization-language-combobox.tsx`, `src/client/ui/src/components/settings/localization-language-filter.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization language combobox`
 20. [TODO] Git Commit: `feat(ui): add localization language combobox` (hash: TBD)
 21. [TODO] Replace raw `source` and free-form engine semantics in the settings card with catalog-driven selectors and visible English source labeling. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/app-host/use-localization.ts`. Target commit: `refactor(ui): clarify localization selector semantics`
 22. [TODO] Git Commit: `refactor(ui): clarify localization selector semantics` (hash: TBD)

@@ -1,6 +1,9 @@
 import type { CSSProperties, FC } from "react";
 import { memo } from "react";
+import { useLocalization } from "../../app-host/use-localization";
 import LocalizationGlossaryEditor from "./localization-glossary-editor";
+import { LocalizationLanguageCombobox } from "./localization-language-combobox";
+import type { LocalizationLanguageOption } from "./localization-language-filter";
 import SettingsCard from "./settings-card";
 import type { Settings } from "./settings-state-model";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
@@ -77,6 +80,11 @@ const inputStyles: CSSProperties = {
   background: settingsColorTokens.surface,
   color: settingsColorTokens.textPrimary,
   fontSize: settingsTypographyTokens.bodyFontSize,
+};
+
+const sourceLanguageOption: LocalizationLanguageOption = {
+  code: "source",
+  label: "source",
 };
 
 const toggleRowStyles: CSSProperties = {
@@ -171,124 +179,135 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   onEngineIdChange,
   onGlossaryEnabledChange,
   onWorkflowTermsPolicyChange,
-}) => (
-  <SettingsCard title="Localization">
-    <p style={introStyles}>
-      Configure how each product copy category should be shown. Use{" "}
-      <code>source</code> to keep the canonical English source copy.
-    </p>
-    <p style={helperStyles}>
-      Language codes are free-form in this first wave. The engine-backed
-      language catalog arrives in a later implementation phase.
-    </p>
+}) => {
+  const { availableEngines } = useLocalization();
+  const activeEngine = availableEngines.find(
+    (engine) => engine.engineId === localization.engineId
+  );
+  const languageOptions: readonly LocalizationLanguageOption[] = [
+    sourceLanguageOption,
+    ...(activeEngine?.languages ?? []).map((language) => ({
+      code: language.code,
+      label: `${language.label} (${language.code})`,
+    })),
+  ];
 
-    <div style={controlGridStyles}>
-      <div style={controlRowStyles}>
-        <p style={labelTitleStyles}>Default language</p>
-        <p style={labelDescriptionStyles}>
-          Fallback language for categories that do not have their own override.
-        </p>
-        <input
-          onChange={(event) => onDefaultLanguageChange(event.target.value)}
-          placeholder="source"
-          style={inputStyles}
-          type="text"
-          value={localization.defaultLanguage}
-        />
-      </div>
+  return (
+    <SettingsCard title="Localization">
+      <p style={introStyles}>
+        Configure how each product copy category should be shown. Use{" "}
+        <code>source</code> to keep the canonical English source copy.
+      </p>
+      <p style={helperStyles}>
+        Language search is now catalog-backed for the active engine. Engine
+        selector semantics are finalized in the next refinement step.
+      </p>
 
-      <div style={controlRowStyles}>
-        <p style={labelTitleStyles}>Translation engine</p>
-        <p style={labelDescriptionStyles}>
-          Current engine id used for bundle materialization.
-        </p>
-        <input
-          onChange={(event) => onEngineIdChange(event.target.value)}
-          placeholder="google-gtx"
-          style={inputStyles}
-          type="text"
-          value={localization.engineId}
-        />
-      </div>
-
-      <label style={toggleRowStyles}>
-        <input
-          checked={localization.glossaryEnabled}
-          onChange={(event) => onGlossaryEnabledChange(event.target.checked)}
-          style={checkboxStyles}
-          type="checkbox"
-        />
-        <div style={{ flex: 1 }}>
-          <p style={labelTitleStyles}>Glossary protection</p>
+      <div style={controlGridStyles}>
+        <div style={controlRowStyles}>
+          <p style={labelTitleStyles}>Default language</p>
           <p style={labelDescriptionStyles}>
-            Keep protected terms, provider names, and product vocabulary stable
-            during localization.
+            Fallback language for categories that do not have their own
+            override.
           </p>
-        </div>
-      </label>
-
-      <LocalizationGlossaryEditor
-        glossaryEnabled={localization.glossaryEnabled}
-      />
-
-      {categoryFields.map((category) => (
-        <div key={category.id} style={controlRowStyles}>
-          <p style={labelTitleStyles}>{category.label}</p>
-          <p style={labelDescriptionStyles}>{category.description}</p>
-          <input
-            onChange={(event) =>
-              onCategoryLanguageChange(category.id, event.target.value)
-            }
-            placeholder={localization.defaultLanguage}
-            style={inputStyles}
-            type="text"
-            value={localization.categories[category.id]}
+          <LocalizationLanguageCombobox
+            onChange={onDefaultLanguageChange}
+            options={languageOptions}
+            placeholder="source"
+            value={localization.defaultLanguage}
           />
         </div>
-      ))}
 
-      <div style={controlRowStyles}>
-        <p style={labelTitleStyles}>Workflow terms policy</p>
-        <p style={labelDescriptionStyles}>
-          Choose whether workflow taxonomy should stay in English or participate
-          in localization.
-        </p>
-        <div style={policyGroupStyles}>
-          {policyOptions.map((option) => {
-            const selected = localization.workflowTermsPolicy === option.id;
-            return (
-              <button
-                key={option.id}
-                onClick={() => onWorkflowTermsPolicyChange(option.id)}
-                style={{
-                  ...policyButtonBaseStyles,
-                  background: selected
-                    ? settingsColorTokens.actionPrimary
-                    : policyButtonBaseStyles.background,
-                  borderColor: selected
-                    ? settingsColorTokens.actionPrimary
-                    : settingsColorTokens.borderStrong,
-                  color: selected
-                    ? settingsColorTokens.actionPrimaryText
-                    : settingsColorTokens.textSecondary,
-                }}
-                type="button"
-              >
-                {option.label}
-              </button>
-            );
-          })}
+        <div style={controlRowStyles}>
+          <p style={labelTitleStyles}>Translation engine</p>
+          <p style={labelDescriptionStyles}>
+            Current engine id used for bundle materialization.
+          </p>
+          <input
+            onChange={(event) => onEngineIdChange(event.target.value)}
+            placeholder="google-gtx"
+            style={inputStyles}
+            type="text"
+            value={localization.engineId}
+          />
         </div>
-        <p style={helperStyles}>
-          {
-            policyOptions.find(
-              (option) => option.id === localization.workflowTermsPolicy
-            )?.description
-          }
-        </p>
+
+        <label style={toggleRowStyles}>
+          <input
+            checked={localization.glossaryEnabled}
+            onChange={(event) => onGlossaryEnabledChange(event.target.checked)}
+            style={checkboxStyles}
+            type="checkbox"
+          />
+          <div style={{ flex: 1 }}>
+            <p style={labelTitleStyles}>Glossary protection</p>
+            <p style={labelDescriptionStyles}>
+              Keep protected terms, provider names, and product vocabulary
+              stable during localization.
+            </p>
+          </div>
+        </label>
+
+        <LocalizationGlossaryEditor
+          glossaryEnabled={localization.glossaryEnabled}
+        />
+
+        {categoryFields.map((category) => (
+          <div key={category.id} style={controlRowStyles}>
+            <p style={labelTitleStyles}>{category.label}</p>
+            <p style={labelDescriptionStyles}>{category.description}</p>
+            <LocalizationLanguageCombobox
+              onChange={(value) => onCategoryLanguageChange(category.id, value)}
+              options={languageOptions}
+              placeholder={localization.defaultLanguage}
+              value={localization.categories[category.id]}
+            />
+          </div>
+        ))}
+
+        <div style={controlRowStyles}>
+          <p style={labelTitleStyles}>Workflow terms policy</p>
+          <p style={labelDescriptionStyles}>
+            Choose whether workflow taxonomy should stay in English or
+            participate in localization.
+          </p>
+          <div style={policyGroupStyles}>
+            {policyOptions.map((option) => {
+              const selected = localization.workflowTermsPolicy === option.id;
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => onWorkflowTermsPolicyChange(option.id)}
+                  style={{
+                    ...policyButtonBaseStyles,
+                    background: selected
+                      ? settingsColorTokens.actionPrimary
+                      : policyButtonBaseStyles.background,
+                    borderColor: selected
+                      ? settingsColorTokens.actionPrimary
+                      : settingsColorTokens.borderStrong,
+                    color: selected
+                      ? settingsColorTokens.actionPrimaryText
+                      : settingsColorTokens.textSecondary,
+                  }}
+                  type="button"
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+          <p style={helperStyles}>
+            {
+              policyOptions.find(
+                (option) => option.id === localization.workflowTermsPolicy
+              )?.description
+            }
+          </p>
+        </div>
       </div>
-    </div>
-  </SettingsCard>
-);
+    </SettingsCard>
+  );
+};
 
 export default memo(LocalizationSettingsCard);
