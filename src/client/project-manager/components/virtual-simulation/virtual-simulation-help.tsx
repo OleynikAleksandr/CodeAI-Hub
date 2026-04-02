@@ -1,10 +1,8 @@
 import type React from "react";
-import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
-import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 
 export const VirtualSimulationHelp: React.FC = () => {
-  const { settings } = useProjectManagerSettings();
-  const { t } = useResolvedLocalization(settings);
+  const { t } = useLocalization();
 
   return (
     <div className="pm-details">

@@ -1,14 +1,13 @@
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DescriptionQuestionnaireView } from "../../../ui/src/components/description-questionnaire/description-questionnaire-view";
-import { useResolvedLocalization } from "../../../ui/src/app-host/use-localization";
 import { DescriptionQuestionnaireService } from "../../services/description-questionnaire-service";
 import { DescriptionSubmitService } from "../../services/description-submit-service";
 import type { ProviderStackDescriptor, ProviderStackId } from "../../../../types/provider";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
+import { DescriptionQuestionnaireView } from "../../../ui/src/components/description-questionnaire/description-questionnaire-view";
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import { DescriptionProviderPicker } from "./description-provider-picker";
-import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 
 const SAVE_DEBOUNCE_MS = 400;
 
@@ -52,8 +51,7 @@ export const DescriptionQuestionnairePanel: React.FC<
   onDescriptionSessionCreated,
   onDescriptionSessionCreatePendingChange,
 }) => {
-  const { settings } = useProjectManagerSettings();
-  const { t } = useResolvedLocalization(settings);
+  const { t } = useLocalization();
   const serviceRef = useRef(new DescriptionQuestionnaireService());
   const descriptionSubmitRef = useRef(new DescriptionSubmitService());
   const [panelState, setPanelState] = useState<PanelState>({ status: "idle" });
