@@ -109,6 +109,7 @@
     "zod-to-json-schema": "^3.24.6"
   },
   "dependencies": {
+    "@codeai-hub/localization": "file:packages/localization",
     "@codeai-hub/core-supervisor": "file:packages/core-supervisor",
     "@xyflow/react": "^12.10.1",
     "react-markdown": "^10.1.0",
