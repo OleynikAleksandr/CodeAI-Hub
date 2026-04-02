@@ -86,6 +86,57 @@ export const clampRemainingPercentThreshold = (value: number): number =>
 export const clampGeminiContextWindowTokenLimit = (value: number): number =>
   Math.min(1_000_000, Math.max(10_000, Math.round(value)));
 
+const CANONICAL_SOURCE_LANGUAGE = "en";
+const DEFAULT_LOCALIZATION_LANGUAGE = "source";
+const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+
+export const normalizeLocalizationSelection = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return DEFAULT_LOCALIZATION_LANGUAGE;
+  }
+  return trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE
+    ? DEFAULT_LOCALIZATION_LANGUAGE
+    : trimmed;
+};
+
+export const normalizeLocalizationEngineId = (value: string): string => {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID;
+};
+
+export const normalizeLoadedLocalizationSettings = (
+  settings: Settings
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    localization: {
+      ...settings.general.localization,
+      defaultLanguage: normalizeLocalizationSelection(
+        settings.general.localization.defaultLanguage
+      ),
+      categories: {
+        interactiveTemplates: normalizeLocalizationSelection(
+          settings.general.localization.categories.interactiveTemplates
+        ),
+        systemFeedback: normalizeLocalizationSelection(
+          settings.general.localization.categories.systemFeedback
+        ),
+        uiInterface: normalizeLocalizationSelection(
+          settings.general.localization.categories.uiInterface
+        ),
+        userGuidance: normalizeLocalizationSelection(
+          settings.general.localization.categories.userGuidance
+        ),
+        workflowTerms: normalizeLocalizationSelection(
+          settings.general.localization.categories.workflowTerms
+        ),
+      },
+    },
+  },
+});
+
 export interface UseSettingsStateResult {
   readonly coreControl: CoreControlState;
   readonly handleClaudeContinuityRemainingPercentThresholdChange: (

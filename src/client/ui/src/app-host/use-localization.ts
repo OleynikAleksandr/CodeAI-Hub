@@ -21,6 +21,7 @@ interface LocalizationProviderProps extends PropsWithChildren {
 }
 
 const SOURCE_SELECTION = "source";
+const CANONICAL_SOURCE_LANGUAGE = "en";
 
 const LOCALIZATION_CATEGORY_BINDINGS = [
   {
@@ -50,7 +51,11 @@ const LOCALIZATION_CATEGORY_BINDINGS = [
 
 const normalizeConfiguredLanguage = (value: string): string => {
   const trimmed = value.trim();
-  if (!trimmed || trimmed.toLowerCase() === SOURCE_SELECTION) {
+  if (
+    !trimmed ||
+    trimmed.toLowerCase() === SOURCE_SELECTION ||
+    trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE
+  ) {
     return SOURCE_SELECTION;
   }
   return trimmed;

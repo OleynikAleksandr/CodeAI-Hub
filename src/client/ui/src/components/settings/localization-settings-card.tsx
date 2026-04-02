@@ -84,7 +84,7 @@ const inputStyles: CSSProperties = {
 
 const sourceLanguageOption: LocalizationLanguageOption = {
   code: "source",
-  label: "source",
+  label: "English",
 };
 
 const toggleRowStyles: CSSProperties = {
@@ -181,26 +181,52 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   onWorkflowTermsPolicyChange,
 }) => {
   const { availableEngines } = useLocalization();
-  const activeEngine = availableEngines.find(
-    (engine) => engine.engineId === localization.engineId
-  );
+  const engineOptions =
+    availableEngines.length > 0
+      ? availableEngines
+      : [
+          {
+            engineId: localization.engineId,
+            languages: [],
+          },
+        ];
+  const activeEngine =
+    availableEngines.find(
+      (engine) => engine.engineId === localization.engineId
+    ) ?? engineOptions[0];
   const languageOptions: readonly LocalizationLanguageOption[] = [
     sourceLanguageOption,
     ...(activeEngine?.languages ?? []).map((language) => ({
       code: language.code,
       label: `${language.label} (${language.code})`,
     })),
-  ];
+  ].filter(
+    (option) => option.code.toLowerCase() !== "en" || option.code === "source"
+  );
+  const normalizedDefaultLanguage =
+    localization.defaultLanguage.toLowerCase() === "en"
+      ? "source"
+      : localization.defaultLanguage;
+
+  const resolveCategoryValue = (value: string): string =>
+    value.toLowerCase() === "en" ? "source" : value;
+
+  const activeEngineId = activeEngine?.engineId ?? localization.engineId;
+
+  const engineSelectStyles: CSSProperties = {
+    ...inputStyles,
+    appearance: "none",
+  };
 
   return (
     <SettingsCard title="Localization">
       <p style={introStyles}>
         Configure how each product copy category should be shown. Use{" "}
-        <code>source</code> to keep the canonical English source copy.
+        <code>English</code> to keep the canonical source copy.
       </p>
       <p style={helperStyles}>
-        Language search is now catalog-backed for the active engine. Engine
-        selector semantics are finalized in the next refinement step.
+        Language search is now catalog-backed for the active engine, and
+        canonical English is no longer exposed as the raw internal sentinel.
       </p>
 
       <div style={controlGridStyles}>
@@ -213,23 +239,27 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
           <LocalizationLanguageCombobox
             onChange={onDefaultLanguageChange}
             options={languageOptions}
-            placeholder="source"
-            value={localization.defaultLanguage}
+            placeholder="English"
+            value={normalizedDefaultLanguage}
           />
         </div>
 
         <div style={controlRowStyles}>
           <p style={labelTitleStyles}>Translation engine</p>
           <p style={labelDescriptionStyles}>
-            Current engine id used for bundle materialization.
+            Engine used for bundle materialization and language-catalog lookup.
           </p>
-          <input
+          <select
             onChange={(event) => onEngineIdChange(event.target.value)}
-            placeholder="google-gtx"
-            style={inputStyles}
-            type="text"
-            value={localization.engineId}
-          />
+            style={engineSelectStyles}
+            value={activeEngineId}
+          >
+            {engineOptions.map((engine) => (
+              <option key={engine.engineId} value={engine.engineId}>
+                {engine.engineId}
+              </option>
+            ))}
+          </select>
         </div>
 
         <label style={toggleRowStyles}>
@@ -259,8 +289,8 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             <LocalizationLanguageCombobox
               onChange={(value) => onCategoryLanguageChange(category.id, value)}
               options={languageOptions}
-              placeholder={localization.defaultLanguage}
-              value={localization.categories[category.id]}
+              placeholder={normalizedDefaultLanguage}
+              value={resolveCategoryValue(localization.categories[category.id])}
             />
           </div>
         ))}

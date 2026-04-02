@@ -40,25 +40,16 @@ import {
   isIncomingMessage,
   type LocalizationCategoryKey,
   type LocalizationWorkflowTermsPolicy,
+  normalizeLoadedLocalizationSettings,
+  normalizeLocalizationEngineId,
+  normalizeLocalizationSelection,
   type UseSettingsStateResult,
   type VersionsState,
 } from "./use-settings-state-support";
 
 const RESET_DELAY_MS = 100;
-const DEFAULT_LOCALIZATION_LANGUAGE = "source";
-const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
 export const LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY =
   "codeaihub:settings:localization:user-glossary-draft";
-
-const normalizeLocalizationSelection = (value: string): string => {
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_LANGUAGE;
-};
-
-const normalizeLocalizationEngineId = (value: string): string => {
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID;
-};
 
 export type { UseSettingsStateResult } from "./use-settings-state-support";
 
@@ -93,7 +84,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
       }
 
       if (event.data.type === "settings:loaded") {
-        const nextSettings = mapSettingsSnapshot(event.data.settings);
+        const nextSettings = normalizeLoadedLocalizationSettings(
+          mapSettingsSnapshot(event.data.settings)
+        );
         initialSettingsRef.current = nextSettings;
         setLocalizationRuntime(event.data.localizationRuntime ?? null);
         setSettings(nextSettings);
@@ -102,7 +95,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
       }
 
       if (event.data.type === "settings:saved") {
-        const nextSettings = mapSettingsSnapshot(event.data.settings);
+        const nextSettings = normalizeLoadedLocalizationSettings(
+          mapSettingsSnapshot(event.data.settings)
+        );
         initialSettingsRef.current = nextSettings;
         setLocalizationRuntime(event.data.localizationRuntime ?? null);
         setSettings(nextSettings);

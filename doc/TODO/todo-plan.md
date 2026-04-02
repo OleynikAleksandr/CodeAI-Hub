@@ -44,8 +44,8 @@
 ## Phase 3 — Searchable Picker UX (owner: UI, updated: 2026-04-02)
 ### Stream: Localization Settings Controls
 19. [DONE] Add a reusable searchable localization language combobox with keyboard filtering and normalized persisted values. Scope: `src/client/ui/src/components/settings/localization-language-combobox.tsx`, `src/client/ui/src/components/settings/localization-language-filter.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`. Target commit: `feat(ui): add localization language combobox`
-20. [TODO] Git Commit: `feat(ui): add localization language combobox` (hash: TBD)
-21. [TODO] Replace raw `source` and free-form engine semantics in the settings card with catalog-driven selectors and visible English source labeling. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/app-host/use-localization.ts`. Target commit: `refactor(ui): clarify localization selector semantics`
+20. [DONE] Git Commit: `feat(ui): add localization language combobox` (hash: `b7eab063`)
+21. [DONE] Replace raw `source` and free-form engine semantics in the settings card with catalog-driven selectors and visible English source labeling. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/app-host/use-localization.ts`. Target commit: `refactor(ui): clarify localization selector semantics`
 22. [TODO] Git Commit: `refactor(ui): clarify localization selector semantics` (hash: TBD)
 
 ## Phase 4 — SSOT, Verification, And Release (owner: Docs/Release, updated: 2026-04-02)
