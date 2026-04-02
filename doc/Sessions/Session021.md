@@ -11,13 +11,13 @@
 ## Work summary
 - Restored the full release context from [Session020](../Sessions/Session020.md) and re-read the complete localization rollout through its listed commit chain plus the closing planning/session commit `5b740050 docs(session): record ui localization release`.
 - Confirmed the current product gap: `General -> Localization` still uses free-form text inputs, shows the raw internal sentinel `source`, does not expose the language catalog as a picker, and browser/runtime surfaces still resolve bundled English source catalogs only.
-- Created a new approved planning document for the next scope: [Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md).
+- Created a new approved planning document for the next scope: [Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md).
 - Replaced the placeholder execution plan with a new implementation/release plan in [doc/TODO/todo-plan.md](../TODO/todo-plan.md).
 - Did not start implementation yet. This session is planning-only.
 
 ## Current worktree state
 - Local uncommitted planning changes exist:
-  - [doc/SolidWorks-WorkFlow/Plans/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md) — new file
+  - [doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md) — archived planning file
   - [doc/TODO/todo-plan.md](../TODO/todo-plan.md) — updated file
   - [doc/Sessions/Session021.md](../Sessions/Session021.md) — this report
 
@@ -45,7 +45,7 @@
 ## New approved scope
 - Scope name: `Localization Language Picker + Browser Runtime Hydration`
 - Canonical planning document:
-  - [Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md)
+  - [Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md)
 - Core approved decisions from that plan:
   - keep `source` as an internal persisted sentinel only
   - show `English` instead of raw `source`
@@ -104,7 +104,7 @@
 8. [doc/SolidWorks-WorkFlow/Modules/Localization.md](../SolidWorks-WorkFlow/Modules/Localization.md)
 9. [doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md](../SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md)
 10. [doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md](../SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md)
-11. [doc/SolidWorks-WorkFlow/Plans/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md)
+11. [doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md)
 12. [doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md](../SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md)
 
 ---

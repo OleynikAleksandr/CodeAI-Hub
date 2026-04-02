@@ -48,6 +48,7 @@
 - `fca35f53 docs(release): prepare localization hydration release notes`
 - `9cf48ab1 build(release): assemble localization hydration release`
 - `dfa694e1 fix(release): exclude repo workflow files from vsix`
+- `e4dadbd9 docs(session): record localization hydration release`
 
 ---
 
