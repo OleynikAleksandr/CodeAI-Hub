@@ -10,12 +10,12 @@
 
 ## Phase 0 — Scope Bootstrap (owner: Docs, updated: 2026-04-02)
 ### Stream: Planning Intake
-1. [TODO] Approve the source-dictionary runtime hotfix plan and replace the placeholder TODO with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Runtime_Source_Dictionary_Hotfix_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define localization source dictionary hotfix scope`
-2. [TODO] Git Commit: `docs(plan): define localization source dictionary hotfix scope` (hash: TBD)
+1. [DONE] Approve the source-dictionary runtime hotfix plan and replace the placeholder TODO with this execution plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Runtime_Source_Dictionary_Hotfix_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define localization source dictionary hotfix scope`
+2. [DONE] Git Commit: `docs(plan): define localization source dictionary hotfix scope` (hash: `7d987c78`)
 
 ## Phase 1 — Runtime Resolution Fix (owner: Localization/Release, updated: 2026-04-02)
 ### Stream: Localization Package
-3. [TODO] Replace brittle compile-time source dictionary imports with runtime candidate-root resolution that works in both workspace and installed-extension package topologies. Scope: `packages/localization/src/source-dictionary-registry.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(localization): resolve bundled source dictionaries across package topologies`
+3. [DONE] Replace brittle compile-time source dictionary imports with runtime candidate-root resolution that works in both workspace and installed-extension package topologies. Scope: `packages/localization/src/source-dictionary-registry.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(localization): resolve bundled source dictionaries across package topologies`
 4. [TODO] Git Commit: `fix(localization): resolve bundled source dictionaries across package topologies` (hash: TBD)
 5. [TODO] Add a release smoke test that extracts the VSIX and requires the packaged localization source registry from the installed extension layout. Scope: `scripts/build-release.sh`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): smoke test packaged localization source registry`
 6. [TODO] Git Commit: `fix(release): smoke test packaged localization source registry` (hash: TBD)

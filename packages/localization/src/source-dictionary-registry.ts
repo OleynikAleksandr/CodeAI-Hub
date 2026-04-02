@@ -1,14 +1,54 @@
-import interactiveTemplatesSource from "../../../assets/localization/source/en/interactive_templates.json";
-import systemFeedbackSource from "../../../assets/localization/source/en/system_feedback.json";
-import uiInterfaceSource from "../../../assets/localization/source/en/ui_interface.json";
-import userGuidanceSource from "../../../assets/localization/source/en/user_guidance.json";
-import workflowTermsSource from "../../../assets/localization/source/en/workflow_terms.json";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import {
   DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
   type LocalizationCategoryId,
   type LocalizationSourceDictionary,
   type LocalizationSourceDictionaryEntries,
 } from "./localization-contract";
+
+const LOCALIZATION_PACKAGE_DIST_DIRECTORY = dirname(
+  require.resolve("@codeai-hub/localization")
+);
+
+const BUNDLED_SOURCE_DIRECTORY_CANDIDATES = [
+  resolve(
+    LOCALIZATION_PACKAGE_DIST_DIRECTORY,
+    "../../../assets/localization/source/en"
+  ),
+  resolve(
+    LOCALIZATION_PACKAGE_DIST_DIRECTORY,
+    "../../../../assets/localization/source/en"
+  ),
+] as const;
+
+const loadBundledSourceDictionaryEntries = (
+  fileName: string
+): LocalizationSourceDictionaryEntries => {
+  const attemptedPaths: string[] = [];
+
+  for (const directory of BUNDLED_SOURCE_DIRECTORY_CANDIDATES) {
+    const candidatePath = resolve(directory, fileName);
+    attemptedPaths.push(candidatePath);
+
+    try {
+      return JSON.parse(
+        readFileSync(candidatePath, "utf8")
+      ) as LocalizationSourceDictionaryEntries;
+    } catch (error) {
+      const missingFile =
+        error instanceof Error && "code" in error && error.code === "ENOENT";
+      if (missingFile) {
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  throw new Error(
+    `Unable to load bundled localization source dictionary "${fileName}" from any supported runtime root: ${attemptedPaths.join(", ")}`
+  );
+};
 
 const normalizeIdentifier = (value: string, fallback: string): string => {
   const trimmed = value.trim().toLowerCase();
@@ -61,12 +101,24 @@ export const BUNDLED_SOURCE_DICTIONARIES: readonly LocalizationSourceDictionary[
   [
     createBundledSourceDictionary(
       "interactive_templates",
-      interactiveTemplatesSource
+      loadBundledSourceDictionaryEntries("interactive_templates.json")
     ),
-    createBundledSourceDictionary("system_feedback", systemFeedbackSource),
-    createBundledSourceDictionary("ui_interface", uiInterfaceSource),
-    createBundledSourceDictionary("user_guidance", userGuidanceSource),
-    createBundledSourceDictionary("workflow_terms", workflowTermsSource),
+    createBundledSourceDictionary(
+      "system_feedback",
+      loadBundledSourceDictionaryEntries("system_feedback.json")
+    ),
+    createBundledSourceDictionary(
+      "ui_interface",
+      loadBundledSourceDictionaryEntries("ui_interface.json")
+    ),
+    createBundledSourceDictionary(
+      "user_guidance",
+      loadBundledSourceDictionaryEntries("user_guidance.json")
+    ),
+    createBundledSourceDictionary(
+      "workflow_terms",
+      loadBundledSourceDictionaryEntries("workflow_terms.json")
+    ),
   ];
 
 export class SourceDictionaryRegistry {
