@@ -1,5 +1,6 @@
 import { type Webview, window } from "vscode";
 import { syncCodexProviderReasoningSummaryConfig } from "../settings/codex-provider-config-sync";
+import { LocalizationRuntimeService } from "../settings/localization-runtime-service";
 import { ProviderVersionService } from "../settings/provider-version-service";
 import {
   applyDefaultModelsEnv,
@@ -9,6 +10,7 @@ import {
 } from "../settings/settings-storage";
 import {
   DEFAULT_SETTINGS_SNAPSHOT,
+  type SettingsEnvelopePayload,
   type SettingsSnapshot,
 } from "../settings/types";
 
@@ -27,9 +29,11 @@ export type SettingsMessage =
 const STATUS_MESSAGE_TIMEOUT = 2000;
 export class SettingsMessageHandler {
   private settingsState: SettingsSnapshot = loadSettingsSnapshot();
+  private readonly localizationRuntimeService: LocalizationRuntimeService;
   private readonly versionService: ProviderVersionService;
 
   constructor(_extensionPath: string) {
+    this.localizationRuntimeService = new LocalizationRuntimeService();
     this.versionService = new ProviderVersionService();
     applyDefaultModelsEnv(this.settingsState);
   }
@@ -54,7 +58,9 @@ export class SettingsMessageHandler {
   handle(message: SettingsMessage, webview: Webview): void {
     switch (message.type) {
       case "settings:load": {
-        this.postSettings(webview);
+        this.postSettings(webview).catch(() => {
+          /* noop */
+        });
         this.postProviderVersions(webview).catch(() => {
           /* noop */
         });
@@ -78,7 +84,9 @@ export class SettingsMessageHandler {
         ).catch(() => {
           /* ignore sync errors */
         });
-        this.postSavedNotification(webview);
+        this.postSavedNotification(webview).catch(() => {
+          /* noop */
+        });
         window.showInformationMessage("Settings saved (stub implementation).");
         break;
       }
@@ -101,7 +109,9 @@ export class SettingsMessageHandler {
         ).catch(() => {
           /* ignore sync errors */
         });
-        this.postSettings(webview);
+        this.postSettings(webview).catch(() => {
+          /* noop */
+        });
         window.showInformationMessage("Settings reset to defaults.");
         break;
       }
@@ -124,14 +134,10 @@ export class SettingsMessageHandler {
     }
   }
 
-  private postSettings(webview: Webview): void {
-    Promise.resolve(
-      webview.postMessage({
-        type: "settings:loaded",
-        settings: this.settingsState,
-      })
-    ).catch(() => {
-      /* noop */
+  private async postSettings(webview: Webview): Promise<void> {
+    await webview.postMessage({
+      type: "settings:loaded",
+      ...(await this.resolveEnvelopePayload()),
     });
   }
 
@@ -180,15 +186,21 @@ export class SettingsMessageHandler {
     }
   }
 
-  private postSavedNotification(webview: Webview): void {
-    Promise.resolve(
-      webview.postMessage({
-        type: "settings:saved",
-        settings: this.settingsState,
-      })
-    ).catch(() => {
-      /* noop */
+  private async postSavedNotification(webview: Webview): Promise<void> {
+    await webview.postMessage({
+      type: "settings:saved",
+      ...(await this.resolveEnvelopePayload()),
     });
+  }
+
+  private async resolveEnvelopePayload(): Promise<SettingsEnvelopePayload> {
+    return {
+      localizationRuntime:
+        await this.localizationRuntimeService.resolveRuntimePayload(
+          this.settingsState
+        ),
+      settings: this.settingsState,
+    };
   }
 
   private describeError(error: unknown): string {

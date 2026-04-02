@@ -22,8 +22,8 @@
 ## Phase 1 — Runtime Contract And Host Materialization (owner: Localization/Host, updated: 2026-04-02)
 ### Stream: Localization Runtime Contract
 3. [DONE] Add browser-runtime snapshot types and facade helpers for engine catalogs plus resolved active bundles. Scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`. Target commit: `feat(localization): add runtime snapshot contract`
-4. [TODO] Git Commit: `feat(localization): add runtime snapshot contract` (hash: TBD)
-5. [TODO] Add an extension-side localization runtime service that materializes and resolves active bundles for settings webview load/save. Scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/settings/types.ts`. Target commit: `feat(settings): materialize localization runtime payload`
+4. [DONE] Git Commit: `feat(localization): add runtime snapshot contract` (hash: `579011f6`)
+5. [DONE] Add an extension-side localization runtime service that materializes and resolves active bundles for settings webview load/save. Scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/settings/types.ts`. Target commit: `feat(settings): materialize localization runtime payload`
 6. [TODO] Git Commit: `feat(settings): materialize localization runtime payload` (hash: TBD)
 7. [TODO] Add remote-bridge settings payload support for Project Manager localization runtime hydration. Scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/types.ts`, `src/client/project-manager/core-stream-message-types.ts`. Target commit: `feat(pm): bridge localization runtime payload`
 8. [TODO] Git Commit: `feat(pm): bridge localization runtime payload` (hash: TBD)

@@ -1,3 +1,4 @@
+import type { LocalizationRuntimePayload } from "@codeai-hub/localization";
 import {
   type ClaudeSettings,
   DEFAULT_CLAUDE_SETTINGS,
@@ -19,6 +20,11 @@ export interface SettingsSnapshot {
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettings;
   };
+}
+
+export interface SettingsEnvelopePayload {
+  readonly localizationRuntime: LocalizationRuntimePayload;
+  readonly settings: SettingsSnapshot;
 }
 
 export const DEFAULT_SETTINGS_SNAPSHOT: SettingsSnapshot = {
