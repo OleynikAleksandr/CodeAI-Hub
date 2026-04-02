@@ -7276,11 +7276,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_react20 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/style-tokens.ts
   var settingsColorTokens = {
@@ -8735,24 +8735,58 @@
   };
   var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
   var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
-
-  // src/client/ui/src/components/settings/use-settings-state.ts
-  var RESET_DELAY_MS = 100;
+  var CANONICAL_SOURCE_LANGUAGE = "en";
   var DEFAULT_LOCALIZATION_LANGUAGE2 = "source";
   var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
-  var LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY = "codeaihub:settings:localization:user-glossary-draft";
   var normalizeLocalizationSelection = (value) => {
     const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_LANGUAGE2;
+    if (!trimmed) {
+      return DEFAULT_LOCALIZATION_LANGUAGE2;
+    }
+    return trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE ? DEFAULT_LOCALIZATION_LANGUAGE2 : trimmed;
   };
   var normalizeLocalizationEngineId = (value) => {
     const trimmed = value.trim();
     return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
   };
+  var normalizeLoadedLocalizationSettings = (settings) => ({
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: {
+        ...settings.general.localization,
+        defaultLanguage: normalizeLocalizationSelection(
+          settings.general.localization.defaultLanguage
+        ),
+        categories: {
+          interactiveTemplates: normalizeLocalizationSelection(
+            settings.general.localization.categories.interactiveTemplates
+          ),
+          systemFeedback: normalizeLocalizationSelection(
+            settings.general.localization.categories.systemFeedback
+          ),
+          uiInterface: normalizeLocalizationSelection(
+            settings.general.localization.categories.uiInterface
+          ),
+          userGuidance: normalizeLocalizationSelection(
+            settings.general.localization.categories.userGuidance
+          ),
+          workflowTerms: normalizeLocalizationSelection(
+            settings.general.localization.categories.workflowTerms
+          )
+        }
+      }
+    }
+  });
+
+  // src/client/ui/src/components/settings/use-settings-state.ts
+  var RESET_DELAY_MS = 100;
+  var LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY = "codeaihub:settings:localization:user-glossary-draft";
   var useSettingsState = () => {
     const initialSettingsRef = (0, import_react.useRef)(createDefaultSettings());
     const [settings, setSettings] = (0, import_react.useState)(createDefaultSettings);
     const [hasChanges, setHasChanges] = (0, import_react.useState)(false);
+    const [localizationRuntime, setLocalizationRuntime] = (0, import_react.useState)(null);
     const [saving, setSaving] = (0, import_react.useState)(false);
     const [resetting, setResetting] = (0, import_react.useState)(false);
     const [coreControl, setCoreControl] = (0, import_react.useState)({
@@ -8775,15 +8809,21 @@
           return;
         }
         if (event.data.type === "settings:loaded") {
-          const nextSettings = mapSettingsSnapshot(event.data.settings);
+          const nextSettings = normalizeLoadedLocalizationSettings(
+            mapSettingsSnapshot(event.data.settings)
+          );
           initialSettingsRef.current = nextSettings;
+          setLocalizationRuntime(event.data.localizationRuntime ?? null);
           setSettings(nextSettings);
           setResetting(false);
           setHasChanges(false);
         }
         if (event.data.type === "settings:saved") {
-          const nextSettings = mapSettingsSnapshot(event.data.settings);
+          const nextSettings = normalizeLoadedLocalizationSettings(
+            mapSettingsSnapshot(event.data.settings)
+          );
           initialSettingsRef.current = nextSettings;
+          setLocalizationRuntime(event.data.localizationRuntime ?? null);
           setSettings(nextSettings);
           setSaving(false);
           setHasChanges(false);
@@ -9075,6 +9115,7 @@
       coreControl,
       settings,
       hasChanges,
+      localizationRuntime,
       saving,
       resetting,
       versions,
@@ -9108,182 +9149,12 @@
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react17 = __toESM(require_react());
+  var import_react18 = __toESM(require_react());
 
   // src/client/ui/src/app-host/use-localization.ts
   var import_react2 = __toESM(require_react());
-
-  // assets/localization/source/en/interactive_templates.json
-  var interactive_templates_default = {
-    "pm.description.questionnaire.title_template": "Description questionnaire \u2014 {workspace}",
-    "pm.description.questionnaire.workspace_required": "Select a workspace to start.",
-    "pm.description.questionnaire.loading": "Loading description questionnaire...",
-    "pm.description.questionnaire.load_error": "Failed to load the description questionnaire.",
-    "pm.description.questionnaire.description": 'The questionnaire is saved automatically. Click "Submit questionnaire", choose a provider, and wait for Description to start. You can continue the dialog in the same session until the final version is ready. The resulting document is saved to `.codeai-hub/<workspace>/description/Final_Description.md`.',
-    "pm.description.questionnaire.submit_label": "Submit questionnaire",
-    "pm.description.questionnaire.cancel_label": "Close",
-    "pm.description.questionnaire.aria_label": "Idea questionnaire",
-    "pm.description.questionnaire.submit_error_default": "Failed to submit the questionnaire."
-  };
-
-  // assets/localization/source/en/system_feedback.json
-  var system_feedback_default = {
-    "session.dialog.empty_label": "No messages yet.",
-    "session.status.supervisor_label": "Core Supervisor",
-    "session.status.models_label": "Models",
-    "session.status.tokens_label": "Tokens",
-    "session.status.ready_connection_label": "Core online",
-    "session.status.unavailable_connection_label": "Core unavailable",
-    "session.status.starting_connection_label": "Starting core\u2026",
-    "session.empty_state.pending_title": "Creating session\u2026",
-    "session.empty_state.pending_description": "This can take 5\u201310 seconds. Please wait.",
-    "session.empty_state.idle_title": "Start with the Description questionnaire",
-    "session.empty_state.idle_description": 'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.',
-    "settings.core_controls.idle_status_label": "Core restart status will appear here.",
-    "pm.workspace_tree.empty_label": "Select a workspace to start.",
-    "pm.sidebar.workspace.menu_empty_label": "No workspaces yet."
-  };
-
-  // assets/localization/source/en/ui_interface.json
-  var ui_interface_default = {
-    "settings.header.title": "Settings",
-    "settings.header.close_button_label": "Close settings",
-    "settings.footer.reset_button_title": "Reset all settings to defaults",
-    "settings.footer.reset_idle_label": "Reset to Defaults",
-    "settings.footer.reset_pending_label": "Resetting...",
-    "settings.footer.close_button_label": "Close",
-    "settings.footer.save_idle_label": "Save Changes",
-    "settings.footer.save_pending_label": "Saving...",
-    "settings.core_controls.title": "Core Controls",
-    "settings.core_controls.restart_idle_label": "Restart Core",
-    "settings.core_controls.restart_pending_label": "Restarting...",
-    "settings.localization.title": "Localization",
-    "settings.localization.default_language.label": "Default language",
-    "settings.localization.translation_engine.label": "Translation engine",
-    "settings.localization.glossary_protection.label": "Glossary protection",
-    "settings.localization.do_not_translate_terms.title": "Do-not-translate terms",
-    "settings.localization.do_not_translate_terms.english_term_label": "English term",
-    "settings.localization.do_not_translate_terms.add_term_label": "Add term",
-    "settings.localization.do_not_translate_terms.save_term_label": "Save term",
-    "settings.localization.do_not_translate_terms.cancel_edit_label": "Cancel edit",
-    "settings.localization.do_not_translate_terms.edit_term_label": "Edit",
-    "settings.localization.do_not_translate_terms.remove_term_label": "Remove",
-    "settings.localization.category.ui_interface.label": "UI Interface",
-    "settings.localization.category.user_guidance.label": "User Guidance",
-    "settings.localization.category.workflow_terms.label": "Workflow Terms",
-    "settings.localization.category.system_feedback.label": "System Feedback",
-    "settings.localization.category.interactive_templates.label": "Interactive Templates",
-    "settings.localization.workflow_terms_policy.label": "Workflow terms policy",
-    "settings.localization.workflow_terms_policy.keep_english_label": "Keep English",
-    "settings.localization.workflow_terms_policy.translate_label": "Translate",
-    "pm.sidebar.workspace.label": "Workspace",
-    "pm.sidebar.workspace.empty_label": "No workspaces yet",
-    "pm.sidebar.workspace.select_label": "Select workspace",
-    "pm.sidebar.workspace.menu_aria_label": "Workspace menu",
-    "pm.sidebar.workspace.add_action": "Add workspace",
-    "pm.sidebar.workspace.fork_action": "Fork workspace",
-    "pm.sidebar.workspace.new_action": "New workspace"
-  };
-
-  // assets/localization/source/en/user_guidance.json
-  var user_guidance_default = {
-    "settings.core_controls.description": "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues.",
-    "settings.localization.intro": "Configure how each product copy category should be shown. Use `source` to keep the canonical English source copy.",
-    "settings.localization.language_catalog_helper": "Language codes are free-form in this first wave. The engine-backed language catalog arrives in a later implementation phase.",
-    "settings.localization.default_language.description": "Fallback language for categories that do not have their own override.",
-    "settings.localization.translation_engine.description": "Current engine id used for bundle materialization.",
-    "settings.localization.glossary_protection.description": "Keep protected terms, provider names, and product vocabulary stable during localization.",
-    "settings.localization.do_not_translate_terms.description": "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands.",
-    "settings.localization.do_not_translate_terms.enabled_status": "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in.",
-    "settings.localization.do_not_translate_terms.disabled_status": "Glossary protection is off. Terms stay in the local draft until you enable glossary protection.",
-    "settings.localization.do_not_translate_terms.empty_state": "No protected terms yet. Typical examples: `Project Manager`, `Artifact Viewer`, `CODEX_HOME`.",
-    "settings.localization.category.ui_interface.description": "Buttons, labels, menus, tabs, and settings surfaces.",
-    "settings.localization.category.user_guidance.description": "Help text, hints, onboarding copy, and explanatory guidance.",
-    "settings.localization.category.workflow_terms.description": "Step names, taxonomy labels, and product workflow language.",
-    "settings.localization.category.system_feedback.description": "Status messages, warnings, errors, and empty states.",
-    "settings.localization.category.interactive_templates.description": "Questionnaires, editable product-authored forms, and templates.",
-    "settings.localization.workflow_terms_policy.description": "Choose whether workflow taxonomy should stay in English or participate in localization.",
-    "settings.localization.workflow_terms_policy.keep_english_description": "Preserve workflow taxonomy terms such as Description and Virtual Simulation.",
-    "settings.localization.workflow_terms_policy.translate_description": "Allow workflow taxonomy terms to be localized like other product copy.",
-    "pm.description.help.title": "Description Help",
-    "pm.description.help.intro": "In the Description step, you explain the future software product in plain language, and the agent turns that into a clear product description and an initial architectural picture.",
-    "pm.description.help.questionnaire_intro": "What is most useful to fill in the questionnaire:",
-    "pm.description.help.questionnaire_item_1": "what kind of product or platform it is;",
-    "pm.description.help.questionnaire_item_2": "what the product is about and which problem it solves;",
-    "pm.description.help.questionnaire_item_3": "who will use it;",
-    "pm.description.help.questionnaire_item_4": "the key usage scenarios without an artificial limit;",
-    "pm.description.help.questionnaire_item_5": "what the product absolutely must be able to do;",
-    "pm.description.help.questionnaire_item_6": "which large parts and boundaries are already visible;",
-    "pm.description.help.questionnaire_item_7": "constraints, out-of-scope items, and notes.",
-    "pm.description.help.cluster_module_note": "We recommend describing the product in a cluster-module architecture mindset.",
-    "pm.description.help.cluster_module_explanation": "That does not mean the user must already know architectural terms. It is enough to describe the product as a set of understandable parts, large blocks, and boundaries between them. This helps the AI understand the system more accurately and move it more carefully into the next steps.",
-    "pm.description.help.why_it_helps_intro": "Why this helps:",
-    "pm.description.help.why_it_helps_item_1": "the product does not collapse into one vague giant block;",
-    "pm.description.help.why_it_helps_item_2": "the major parts of the system become visible earlier;",
-    "pm.description.help.why_it_helps_item_3": "the boundaries between blocks are easier to discuss and verify;",
-    "pm.description.help.why_it_helps_item_4": "the next steps can build scenarios and diagrams more reliably.",
-    "pm.description.help.glossary_intro": "Short glossary:",
-    "pm.description.help.glossary.shell": "`Shell` is the surface through which the user launches or opens the product.",
-    "pm.description.help.glossary.product_part": "`Product Part` is a high-level part of the product that can live, run, or be delivered separately.",
-    "pm.description.help.glossary.cluster": "`Cluster` is a large block made of several modules.",
-    "pm.description.help.glossary.module": "`Module` is a separate working block with one clear role.",
-    "pm.description.help.glossary.boundary": "`Boundary` is a border between system blocks.",
-    "pm.description.help.submit_guidance": "When the questionnaire is ready, click `Submit questionnaire`. After that, the AI provider picker will open. In the current MVP, the provider is chosen once for the whole workflow workspace, not separately for each step. Then continue the dialog and refine the document until you consider it a strong enough foundation for the next step.",
-    "pm.description.help.final_description_guidance": "Make sure the final `Final_Description.md` includes a dedicated section with key user scenarios. There should be as many scenarios as needed to cover the product without blind spots.",
-    "pm.description.help.output": "Step output: `.codeai-hub/<workspace>/description/Final_Description.md`.",
-    "pm.virtual_simulation.help.title": "Virtual Simulation Help",
-    "pm.virtual_simulation.help.intro": "In the Virtual Simulation step, the agent turns `Final_Description.md` into the scenario baseline for the system. The resulting document must stay understandable for the user while also serving as the foundation for the next step.",
-    "pm.virtual_simulation.help.scenario_scope": "The scenarios from the questionnaire and `Final_Description.md` are only the starting point. The agent must gather enough key scenarios to cover the whole system, rather than merely retelling the original user flows.",
-    "pm.virtual_simulation.help.dialog_intro": "What is most useful to clarify in the dialog:",
-    "pm.virtual_simulation.help.dialog_item_1": "who starts each important scenario;",
-    "pm.virtual_simulation.help.dialog_item_2": "which parts of the product take part in it;",
-    "pm.virtual_simulation.help.dialog_item_3": "what lives separately and where boundaries are already visible;",
-    "pm.virtual_simulation.help.dialog_item_4": "which system reaction counts as successful.",
-    "pm.virtual_simulation.help.glossary_intro": "Short glossary:",
-    "pm.virtual_simulation.help.glossary.shell": "`Shell` is the product shell through which the user launches or opens the system.",
-    "pm.virtual_simulation.help.glossary.product_part": "`Product Part` is a high-level part of the product that can live, run, or be delivered separately.",
-    "pm.virtual_simulation.help.glossary.cluster": "`Cluster` is a large block made of several modules with one external entry point through a facade.",
-    "pm.virtual_simulation.help.glossary.module": "`Module` is a separate working block with one clear role and its own facade.",
-    "pm.virtual_simulation.help.glossary.boundary": "`Boundary` is a border between parts of the system.",
-    "pm.virtual_simulation.help.coverage_guidance": "`virtual-simulation.md` should contain as many scenarios as needed to cover the product without blind spots. Related system behaviors can be grouped for clarity, but not to satisfy an artificial numeric limit.",
-    "pm.virtual_simulation.help.refinement_guidance": "The agent should ask only the missing questions and stop refining once it considers the document a strong enough foundation for the next step. The decision to move on still stays with you.",
-    "pm.virtual_simulation.help.output": "Step output: `.codeai-hub/<workspace>/virtual_simulation/virtual-simulation.md`."
-  };
-
-  // assets/localization/source/en/workflow_terms.json
-  var workflow_terms_default = {
-    "pm.workflow.stage.description.label": "Description",
-    "pm.workflow.stage.virtual_simulation.label": "Virtual Simulation",
-    "pm.workflow.stage.diagram_modules.label": "Diagram Modules",
-    "pm.workflow.stage.outdated_title": "OUTDATED: upstream input changed; resync recommended.",
-    "pm.workflow.stage.description.ready_title": "READY",
-    "pm.workflow.stage.virtual_simulation.blocked_title": "BLOCKED: requires Final_Description.md",
-    "pm.workflow.stage.diagram_modules.blocked_title": "BLOCKED: requires virtual-simulation.md (DONE)"
-  };
-
-  // packages/localization/src/localization-contract.ts
-  var DEFAULT_LOCALIZATION_SOURCE_LANGUAGE = "en";
-
-  // packages/localization/src/source-dictionary-registry.ts
-  var createBundledSourceDictionary = (category, entries) => ({
-    category,
-    entries,
-    language: DEFAULT_LOCALIZATION_SOURCE_LANGUAGE
-  });
-  var BUNDLED_SOURCE_DICTIONARIES = [
-    createBundledSourceDictionary(
-      "interactive_templates",
-      interactive_templates_default
-    ),
-    createBundledSourceDictionary("system_feedback", system_feedback_default),
-    createBundledSourceDictionary("ui_interface", ui_interface_default),
-    createBundledSourceDictionary("user_guidance", user_guidance_default),
-    createBundledSourceDictionary("workflow_terms", workflow_terms_default)
-  ];
-
-  // src/client/ui/src/app-host/use-localization.ts
   var SOURCE_SELECTION = "source";
-  var EMPTY_SOURCE_ENTRIES = {};
+  var CANONICAL_SOURCE_LANGUAGE2 = "en";
   var LOCALIZATION_CATEGORY_BINDINGS = [
     {
       categoryId: "interactive_templates",
@@ -9306,15 +9177,9 @@
       settingsKey: "workflowTerms"
     }
   ];
-  var BUNDLED_SOURCE_DICTIONARY_ENTRIES = new Map(
-    BUNDLED_SOURCE_DICTIONARIES.map((dictionary) => [
-      dictionary.category,
-      dictionary.entries
-    ])
-  );
   var normalizeConfiguredLanguage = (value) => {
     const trimmed = value.trim();
-    if (!trimmed || trimmed.toLowerCase() === SOURCE_SELECTION) {
+    if (!trimmed || trimmed.toLowerCase() === SOURCE_SELECTION || trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE2) {
       return SOURCE_SELECTION;
     }
     return trimmed;
@@ -9343,19 +9208,23 @@
     }
     return configuredLanguageByCategory;
   };
-  var createLocalizationRuntime = (settings) => {
+  var createLocalizationRuntime = (settings, payload) => {
     const configuredLanguageByCategory = resolveConfiguredLanguageByCategory(settings);
     return {
+      activeEngineId: payload?.activeEngineId ?? null,
+      availableEngines: payload?.availableEngines ?? [],
       configuredLanguageByCategory,
-      ready: true,
+      ready: payload !== null,
       t: (category, messageId, fallback, variables) => {
-        const entries = BUNDLED_SOURCE_DICTIONARY_ENTRIES.get(category) ?? EMPTY_SOURCE_ENTRIES;
+        const entries = payload?.resolvedBundlesByCategory[category]?.entries ?? {};
         const resolvedMessage = entries[messageId] ?? fallback;
         return formatTemplate(resolvedMessage, variables);
       }
     };
   };
   var DEFAULT_LOCALIZATION_RUNTIME = {
+    activeEngineId: null,
+    availableEngines: [],
     configuredLanguageByCategory: {
       interactive_templates: SOURCE_SELECTION,
       system_feedback: SOURCE_SELECTION,
@@ -9369,7 +9238,10 @@
   var LocalizationContext = (0, import_react2.createContext)(
     DEFAULT_LOCALIZATION_RUNTIME
   );
-  var useResolvedLocalization = (settings) => (0, import_react2.useMemo)(() => createLocalizationRuntime(settings), [settings]);
+  var useResolvedLocalization = (settings, payload = null) => (0, import_react2.useMemo)(
+    () => createLocalizationRuntime(settings, payload),
+    [payload, settings]
+  );
   var LocalizationProvider = ({
     children,
     value
@@ -10279,7 +10151,7 @@
   var gemini_default_model_card_default = (0, import_react7.memo)(GeminiDefaultModelCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_react12 = __toESM(require_react());
+  var import_react13 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
   var import_react9 = __toESM(require_react());
@@ -10411,7 +10283,7 @@
   var general_response_mode_facade_default = (0, import_react9.memo)(GeneralResponseModeFacade);
 
   // src/client/ui/src/components/settings/localization-settings-card.tsx
-  var import_react11 = __toESM(require_react());
+  var import_react12 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/localization-glossary-editor.tsx
   var import_react10 = __toESM(require_react());
@@ -10738,8 +10610,178 @@
   };
   var localization_glossary_editor_default = (0, import_react10.memo)(LocalizationGlossaryEditor);
 
-  // src/client/ui/src/components/settings/localization-settings-card.tsx
+  // src/client/ui/src/components/settings/localization-language-combobox.tsx
+  var import_react11 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/localization-language-filter.ts
+  var normalizeSearchValue = (value) => value.trim().toLowerCase();
+  var filterLocalizationLanguageOptions = (options, query) => {
+    const normalizedQuery = normalizeSearchValue(query);
+    if (!normalizedQuery) {
+      return options;
+    }
+    return options.filter((option) => {
+      const normalizedCode = normalizeSearchValue(option.code);
+      const normalizedLabel = normalizeSearchValue(option.label);
+      return normalizedCode.includes(normalizedQuery) || normalizedLabel.includes(normalizedQuery);
+    });
+  };
+
+  // src/client/ui/src/components/settings/localization-language-combobox.tsx
   var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+  var rootStyles = {
+    position: "relative"
+  };
+  var inputStyles3 = {
+    width: "100%",
+    boxSizing: "border-box",
+    minHeight: "36px",
+    padding: "8px 10px",
+    borderRadius: "6px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.surface,
+    color: settingsColorTokens.textPrimary,
+    fontSize: settingsTypographyTokens.bodyFontSize
+  };
+  var dropdownStyles = {
+    position: "absolute",
+    top: "calc(100% + 6px)",
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    maxHeight: "220px",
+    overflowY: "auto",
+    borderRadius: "8px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.surface,
+    boxShadow: "0 12px 24px rgba(0, 0, 0, 0.22)",
+    display: "grid",
+    gap: "4px",
+    padding: "6px"
+  };
+  var optionStyles = {
+    textAlign: "left",
+    border: "none",
+    borderRadius: "6px",
+    background: "transparent",
+    color: settingsColorTokens.textPrimary,
+    padding: "8px 10px",
+    cursor: "pointer",
+    fontSize: settingsTypographyTokens.bodyFontSize
+  };
+  var emptyStyles = {
+    color: settingsColorTokens.textMuted,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    padding: "8px 10px"
+  };
+  var resolveSelectedOption = (options, value) => options.find((option) => option.code === value) ?? null;
+  var LocalizationLanguageCombobox = (0, import_react11.memo)(
+    ({
+      disabled = false,
+      emptyMessage = "No languages found.",
+      onChange,
+      options,
+      placeholder,
+      value
+    }) => {
+      const listboxId = (0, import_react11.useId)();
+      const selectedOption = resolveSelectedOption(options, value);
+      const [isOpen, setIsOpen] = (0, import_react11.useState)(false);
+      const [highlightedIndex, setHighlightedIndex] = (0, import_react11.useState)(0);
+      const [query, setQuery] = (0, import_react11.useState)(selectedOption?.label ?? value);
+      const filteredOptions = filterLocalizationLanguageOptions(options, query);
+      (0, import_react11.useEffect)(() => {
+        if (!isOpen) {
+          setQuery(selectedOption?.label ?? value);
+        }
+      }, [isOpen, selectedOption, value]);
+      const commitSelection = (nextValue) => {
+        onChange(nextValue);
+        setIsOpen(false);
+      };
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: rootStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "input",
+          {
+            "aria-autocomplete": "list",
+            "aria-controls": listboxId,
+            "aria-expanded": isOpen,
+            disabled,
+            onBlur: () => {
+              window.setTimeout(() => {
+                setIsOpen(false);
+              }, 0);
+            },
+            onChange: (event) => {
+              setIsOpen(true);
+              setHighlightedIndex(0);
+              setQuery(event.target.value);
+            },
+            onFocus: () => {
+              setIsOpen(true);
+            },
+            onKeyDown: (event) => {
+              if (event.key === "ArrowDown") {
+                event.preventDefault();
+                setIsOpen(true);
+                setHighlightedIndex(
+                  (current) => Math.min(current + 1, Math.max(filteredOptions.length - 1, 0))
+                );
+                return;
+              }
+              if (event.key === "ArrowUp") {
+                event.preventDefault();
+                setIsOpen(true);
+                setHighlightedIndex((current) => Math.max(current - 1, 0));
+                return;
+              }
+              if (event.key === "Enter") {
+                if (!isOpen) {
+                  return;
+                }
+                event.preventDefault();
+                const highlightedOption = filteredOptions[highlightedIndex];
+                if (highlightedOption) {
+                  commitSelection(highlightedOption.code);
+                }
+                return;
+              }
+              if (event.key === "Escape") {
+                setIsOpen(false);
+                setQuery(selectedOption?.label ?? value);
+              }
+            },
+            placeholder,
+            role: "combobox",
+            style: inputStyles3,
+            value: isOpen ? query : selectedOption?.label ?? value
+          }
+        ),
+        isOpen ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { id: listboxId, role: "listbox", style: dropdownStyles, children: filteredOptions.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: emptyStyles, children: emptyMessage }) : filteredOptions.map((option, index) => /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          "button",
+          {
+            onMouseDown: (event) => {
+              event.preventDefault();
+              commitSelection(option.code);
+            },
+            role: "option",
+            style: {
+              ...optionStyles,
+              background: index === highlightedIndex ? settingsColorTokens.actionPrimary : optionStyles.background,
+              color: index === highlightedIndex ? settingsColorTokens.actionPrimaryText : settingsColorTokens.textPrimary
+            },
+            type: "button",
+            children: option.label
+          },
+          option.code
+        )) }) : null
+      ] });
+    }
+  );
+  LocalizationLanguageCombobox.displayName = "LocalizationLanguageCombobox";
+
+  // src/client/ui/src/components/settings/localization-settings-card.tsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
   var introStyles = {
     fontSize: settingsTypographyTokens.bodyFontSize,
     color: settingsColorTokens.textSecondary,
@@ -10776,7 +10818,7 @@
     lineHeight: 1.5,
     margin: 0
   };
-  var inputStyles3 = {
+  var inputStyles4 = {
     width: "100%",
     boxSizing: "border-box",
     minHeight: "36px",
@@ -10786,6 +10828,10 @@
     background: settingsColorTokens.surface,
     color: settingsColorTokens.textPrimary,
     fontSize: settingsTypographyTokens.bodyFontSize
+  };
+  var sourceLanguageOption = {
+    code: "source",
+    label: "English"
   };
   var toggleRowStyles = {
     display: "flex",
@@ -10862,109 +10908,134 @@
     onEngineIdChange,
     onGlossaryEnabledChange,
     onWorkflowTermsPolicyChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(settings_card_default, { title: "Localization", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("p", { style: introStyles, children: [
-      "Configure how each product copy category should be shown. Use",
-      " ",
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("code", { children: "source" }),
-      " to keep the canonical English source copy."
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: helperStyles, children: "Language codes are free-form in this first wave. The engine-backed language catalog arrives in a later implementation phase." }),
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlGridStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Default language" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Fallback language for categories that do not have their own override." }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          "input",
-          {
-            onChange: (event) => onDefaultLanguageChange(event.target.value),
-            placeholder: "source",
-            style: inputStyles3,
-            type: "text",
-            value: localization.defaultLanguage
-          }
-        )
+  }) => {
+    const { availableEngines } = useLocalization();
+    const engineOptions = availableEngines.length > 0 ? availableEngines : [
+      {
+        engineId: localization.engineId,
+        languages: []
+      }
+    ];
+    const activeEngine = availableEngines.find(
+      (engine) => engine.engineId === localization.engineId
+    ) ?? engineOptions[0];
+    const languageOptions = [
+      sourceLanguageOption,
+      ...(activeEngine?.languages ?? []).map((language) => ({
+        code: language.code,
+        label: `${language.label} (${language.code})`
+      }))
+    ].filter(
+      (option) => option.code.toLowerCase() !== "en" || option.code === "source"
+    );
+    const normalizedDefaultLanguage = localization.defaultLanguage.toLowerCase() === "en" ? "source" : localization.defaultLanguage;
+    const resolveCategoryValue = (value) => value.toLowerCase() === "en" ? "source" : value;
+    const activeEngineId = activeEngine?.engineId ?? localization.engineId;
+    const engineSelectStyles = {
+      ...inputStyles4,
+      appearance: "none"
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(settings_card_default, { title: "Localization", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { style: introStyles, children: [
+        "Configure how each product copy category should be shown. Use",
+        " ",
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("code", { children: "English" }),
+        " to keep the canonical source copy."
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Translation engine" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Current engine id used for bundle materialization." }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          "input",
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: "Language search is now catalog-backed for the active engine, and canonical English is no longer exposed as the raw internal sentinel." }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlGridStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Default language" }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Fallback language for categories that do not have their own override." }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            LocalizationLanguageCombobox,
+            {
+              onChange: onDefaultLanguageChange,
+              options: languageOptions,
+              placeholder: "English",
+              value: normalizedDefaultLanguage
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Translation engine" }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Engine used for bundle materialization and language-catalog lookup." }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            "select",
+            {
+              onChange: (event) => onEngineIdChange(event.target.value),
+              style: engineSelectStyles,
+              value: activeEngineId,
+              children: engineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: engine.engineId }, engine.engineId))
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { style: toggleRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            "input",
+            {
+              checked: localization.glossaryEnabled,
+              onChange: (event) => onGlossaryEnabledChange(event.target.checked),
+              style: checkboxStyles,
+              type: "checkbox"
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Glossary protection" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Keep protected terms, provider names, and product vocabulary stable during localization." })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          localization_glossary_editor_default,
           {
-            onChange: (event) => onEngineIdChange(event.target.value),
-            placeholder: "google-gtx",
-            style: inputStyles3,
-            type: "text",
-            value: localization.engineId
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { style: toggleRowStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          "input",
-          {
-            checked: localization.glossaryEnabled,
-            onChange: (event) => onGlossaryEnabledChange(event.target.checked),
-            style: checkboxStyles,
-            type: "checkbox"
+            glossaryEnabled: localization.glossaryEnabled
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: { flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Glossary protection" }),
-          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Keep protected terms, provider names, and product vocabulary stable during localization." })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-        localization_glossary_editor_default,
-        {
-          glossaryEnabled: localization.glossaryEnabled
-        }
-      ),
-      categoryFields.map((category) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: category.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: category.description }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-          "input",
-          {
-            onChange: (event) => onCategoryLanguageChange(category.id, event.target.value),
-            placeholder: localization.defaultLanguage,
-            style: inputStyles3,
-            type: "text",
-            value: localization.categories[category.id]
-          }
-        )
-      ] }, category.id)),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { style: controlRowStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelTitleStyles, children: "Workflow terms policy" }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: labelDescriptionStyles, children: "Choose whether workflow taxonomy should stay in English or participate in localization." }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: policyGroupStyles, children: policyOptions.map((option) => {
-          const selected = localization.workflowTermsPolicy === option.id;
-          return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
-            "button",
+        categoryFields.map((category) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: category.label }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: category.description }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            LocalizationLanguageCombobox,
             {
-              onClick: () => onWorkflowTermsPolicyChange(option.id),
-              style: {
-                ...policyButtonBaseStyles,
-                background: selected ? settingsColorTokens.actionPrimary : policyButtonBaseStyles.background,
-                borderColor: selected ? settingsColorTokens.actionPrimary : settingsColorTokens.borderStrong,
-                color: selected ? settingsColorTokens.actionPrimaryText : settingsColorTokens.textSecondary
+              onChange: (value) => onCategoryLanguageChange(category.id, value),
+              options: languageOptions,
+              placeholder: normalizedDefaultLanguage,
+              value: resolveCategoryValue(localization.categories[category.id])
+            }
+          )
+        ] }, category.id)),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Workflow terms policy" }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Choose whether workflow taxonomy should stay in English or participate in localization." }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: policyGroupStyles, children: policyOptions.map((option) => {
+            const selected = localization.workflowTermsPolicy === option.id;
+            return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              "button",
+              {
+                onClick: () => onWorkflowTermsPolicyChange(option.id),
+                style: {
+                  ...policyButtonBaseStyles,
+                  background: selected ? settingsColorTokens.actionPrimary : policyButtonBaseStyles.background,
+                  borderColor: selected ? settingsColorTokens.actionPrimary : settingsColorTokens.borderStrong,
+                  color: selected ? settingsColorTokens.actionPrimaryText : settingsColorTokens.textSecondary
+                },
+                type: "button",
+                children: option.label
               },
-              type: "button",
-              children: option.label
-            },
-            option.id
-          );
-        }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { style: helperStyles, children: policyOptions.find(
-          (option) => option.id === localization.workflowTermsPolicy
-        )?.description })
+              option.id
+            );
+          }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: policyOptions.find(
+            (option) => option.id === localization.workflowTermsPolicy
+          )?.description })
+        ] })
       ] })
-    ] })
-  ] });
-  var localization_settings_card_default = (0, import_react11.memo)(LocalizationSettingsCard);
+    ] });
+  };
+  var localization_settings_card_default = (0, import_react12.memo)(LocalizationSettingsCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     display: "flex",
     flexDirection: "column",
@@ -11010,8 +11081,8 @@
   };
   var GeneralSettings = (props) => {
     const { t } = useLocalization();
-    const [isHovered, setIsHovered] = (0, import_react12.useState)(false);
-    const [isPressed, setIsPressed] = (0, import_react12.useState)(false);
+    const [isHovered, setIsHovered] = (0, import_react13.useState)(false);
+    const [isPressed, setIsPressed] = (0, import_react13.useState)(false);
     const coreControlsTitle = t(
       "ui_interface",
       "settings.core_controls.title",
@@ -11037,7 +11108,7 @@
       "settings.core_controls.idle_status_label",
       "Core restart status will appear here."
     );
-    const resolvedButtonStyles = (0, import_react12.useMemo)(() => {
+    const resolvedButtonStyles = (0, import_react13.useMemo)(() => {
       if (props.coreControl.busy) {
         return {
           ...buttonStyles,
@@ -11075,7 +11146,7 @@
         cursor: "pointer"
       };
     }, [isHovered, isPressed, props.coreControl.busy]);
-    const resolvedStatusStyles = (0, import_react12.useMemo)(() => {
+    const resolvedStatusStyles = (0, import_react13.useMemo)(() => {
       switch (props.coreControl.phase) {
         case "ready":
           return {
@@ -11107,8 +11178,8 @@
           };
       }
     }, [props.coreControl.phase]);
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: wrapperStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
         general_response_mode_facade_default,
         {
           onModeChange: props.onResponsePolicyModeChange,
@@ -11117,7 +11188,7 @@
           responsePolicy: props.responsePolicy
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
         localization_settings_card_default,
         {
           localization: props.localization,
@@ -11128,10 +11199,10 @@
           onWorkflowTermsPolicyChange: props.onLocalizationWorkflowTermsPolicyChange
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(settings_card_default, { title: coreControlsTitle, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: descriptionStyles2, children: coreControlsDescription }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlsRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(settings_card_default, { title: coreControlsTitle, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: descriptionStyles2, children: coreControlsDescription }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: controlsRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
             "button",
             {
               "aria-busy": props.coreControl.busy,
@@ -11150,19 +11221,19 @@
               children: props.coreControl.busy ? restartPendingLabel : restartIdleLabel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: resolvedStatusStyles, children: props.coreControl.message ?? idleStatusLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: resolvedStatusStyles, children: props.coreControl.message ?? idleStatusLabel })
         ] })
       ] })
     ] });
   };
-  var general_settings_default = (0, import_react12.memo)(GeneralSettings);
+  var general_settings_default = (0, import_react13.memo)(GeneralSettings);
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_react14 = __toESM(require_react());
+  var import_react15 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
-  var import_react13 = __toESM(require_react());
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_react14 = __toESM(require_react());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -11254,17 +11325,17 @@
       resolvedButtonStyle = buttonStyles2;
     }
     const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: labelStyles2, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { style: versionTextStyles, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: labelStyles2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { style: versionTextStyles, children: [
           "Current: ",
           currentLabel,
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: chipStyles, children: latestLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -11273,13 +11344,13 @@
           type: "button",
           children: buttonLabel
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: chipStyles, children: latestLabel })
+      ) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
-  var VersionRowItem = (0, import_react13.memo)(VersionRowItemComponent);
+  var VersionRowItem = (0, import_react14.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -11371,7 +11442,7 @@
   };
   var WarningBanner = ({
     provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
   var AutoUpdateToggle = ({
     provider,
     enabled,
@@ -11380,7 +11451,7 @@
   }) => {
     const providerLabel = resolveProviderLabel(provider);
     const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
       "label",
       {
         style: {
@@ -11389,7 +11460,7 @@
           cursor: disabled ? "not-allowed" : "pointer"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
             "input",
             {
               checked: enabled,
@@ -11399,12 +11470,12 @@
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: toggleTitleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: toggleTitleStyles, children: [
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { style: toggleDescriptionStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { style: toggleDescriptionStyles, children: [
               "Automatically check and update the ",
               packageLabel,
               " on core start. Manual updates remain available below."
@@ -11416,7 +11487,7 @@
   };
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var rowsContainerStyles = {
     display: "flex",
     flexDirection: "column",
@@ -11443,9 +11514,9 @@
     onAutoUpdateChange,
     onUpdate
   }) => {
-    const [pendingTarget, setPendingTarget] = (0, import_react14.useState)(null);
+    const [pendingTarget, setPendingTarget] = (0, import_react15.useState)(null);
     const snapshot = versions.data;
-    const rows = (0, import_react14.useMemo)(() => {
+    const rows = (0, import_react15.useMemo)(() => {
       if (!snapshot) {
         return [];
       }
@@ -11495,7 +11566,7 @@
         }
       ];
     }, [provider, snapshot]);
-    const hasProviderVersions = (0, import_react14.useMemo)(() => {
+    const hasProviderVersions = (0, import_react15.useMemo)(() => {
       if (!snapshot) {
         return false;
       }
@@ -11507,11 +11578,11 @@
     const isBusy = versions.loading || versions.updatingTargets.length > 0;
     const isUpdating = (target) => versions.updatingTargets.includes(`${provider}:${target}`);
     const isPending = (target) => pendingTarget === `${provider}:${target}`;
-    const providerUpdateTargets = (0, import_react14.useMemo)(() => {
+    const providerUpdateTargets = (0, import_react15.useMemo)(() => {
       const prefix = `${provider}:`;
       return versions.updatingTargets.filter((target) => target.startsWith(prefix)).map((target) => target.slice(prefix.length));
     }, [provider, versions.updatingTargets]);
-    const manualUpdateStatus = (0, import_react14.useMemo)(() => {
+    const manualUpdateStatus = (0, import_react15.useMemo)(() => {
       if (providerUpdateTargets.length === 0) {
         return null;
       }
@@ -11520,7 +11591,7 @@
       );
       return `Manual update in progress: ${labels.join(", ")}`;
     }, [provider, providerUpdateTargets]);
-    (0, import_react14.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       if (versions.updatingTargets.length === 0) {
         setPendingTarget(null);
       }
@@ -11540,17 +11611,17 @@
     } else if (provider === "codex") {
       title = "Codex Versions";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       settings_card_default,
       {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { style: metadataTextStyles, children: [
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
           formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             AutoUpdateToggle,
             {
               disabled: versions.loading,
@@ -11559,11 +11630,11 @@
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: errorStyles2, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: statusStyles3, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: statusStyles3, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: statusStyles3, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: errorStyles2, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             VersionRowItem,
             {
               disabled: isBusy,
@@ -11578,11 +11649,11 @@
       }
     );
   };
-  var provider_versions_default = (0, import_react14.memo)(ProviderVersions);
+  var provider_versions_default = (0, import_react15.memo)(ProviderVersions);
 
   // src/client/ui/src/components/settings/session-continuity-card.tsx
-  var import_react15 = __toESM(require_react());
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_react16 = __toESM(require_react());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var settingsLabelStyles = {
     display: "flex",
     flexDirection: "column",
@@ -11614,11 +11685,11 @@
     max,
     onCommit
   }) => {
-    const [draft, setDraft] = import_react15.default.useState(() => String(value));
-    import_react15.default.useEffect(() => {
+    const [draft, setDraft] = import_react16.default.useState(() => String(value));
+    import_react16.default.useEffect(() => {
       setDraft(String(value));
     }, [value]);
-    const commitDraft = import_react15.default.useCallback(() => {
+    const commitDraft = import_react16.default.useCallback(() => {
       const trimmed = draft.trim();
       if (trimmed.length === 0) {
         setDraft(String(value));
@@ -11637,7 +11708,7 @@
       onCommit(clamped);
       setDraft(String(clamped));
     }, [draft, max, min, onCommit, value]);
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
       "input",
       {
         autoComplete: "off",
@@ -11669,16 +11740,16 @@
     onRemainingPercentThresholdChange,
     contextWindowTokenLimit,
     onContextWindowTokenLimitChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(settings_card_default, { title, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
-    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+  }) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(settings_card_default, { title, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
+    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
       "label",
       {
         htmlFor: `${title}-context-window-token-limit`,
         style: settingsLabelStyles,
         children: [
           "Context window limit (tokens)",
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             ManualIntegerInput,
             {
               id: `${title}-context-window-token-limit`,
@@ -11691,14 +11762,14 @@
         ]
       }
     ) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+    /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
       "label",
       {
         htmlFor: `${title}-remaining-percent-threshold`,
         style: settingsLabelStyles,
         children: [
           "Remaining context threshold (%)",
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             ManualIntegerInput,
             {
               id: `${title}-remaining-percent-threshold`,
@@ -11712,10 +11783,10 @@
       }
     )
   ] });
-  var session_continuity_card_default = import_react15.default.memo(SessionContinuityCard);
+  var session_continuity_card_default = import_react16.default.memo(SessionContinuityCard);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -11861,8 +11932,8 @@
         event.currentTarget.style.background = settingsColorTokens.actionPrimary;
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
         "button",
         {
           disabled: resetting,
@@ -11883,8 +11954,8 @@
           children: resetting ? resetPendingLabel : resetIdleLabel
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -11897,7 +11968,7 @@
             children: closeButtonLabel
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -11923,7 +11994,7 @@
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var headerStyles3 = {
     display: "flex",
     alignItems: "center",
@@ -11958,9 +12029,9 @@
       "settings.header.close_button_label",
       "Close settings"
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: headerStyles3, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { style: titleStyles4, children: title }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: headerStyles3, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles4, children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         "button",
         {
           "aria-label": closeButtonLabel,
@@ -11976,7 +12047,7 @@
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_react16 = __toESM(require_react());
+  var import_react17 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/thinking/constants.ts
   var MIN_THINKING_TOKENS = 2e3;
@@ -11991,7 +12062,7 @@
 `;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   var containerStyles2 = {
     marginTop: "20px",
     padding: "12px",
@@ -12010,14 +12081,14 @@
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
+  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: containerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
+    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
   ] });
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -12044,8 +12115,8 @@
   var noteStyles2 = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { style: toggleContainerStyles2, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
       "input",
       {
         checked: enabled,
@@ -12054,12 +12125,12 @@
         type: "checkbox"
       }
     ),
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: descriptionStyles4, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: { flex: 1 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: descriptionStyles4, children: [
         "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("strong", { style: noteStyles2, children: "Note:" }),
         " Changes take effect when creating a new session."
       ] })
     ] })
@@ -12067,7 +12138,7 @@
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var containerStyles3 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
@@ -12096,7 +12167,7 @@
     alignItems: "center",
     justifyContent: "center"
   };
-  var inputStyles4 = {
+  var inputStyles5 = {
     width: "100px",
     padding: "6px 8px",
     background: "#1e1e1e",
@@ -12129,10 +12200,10 @@
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { style: { display: "block" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: controlsStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "button",
           {
             onClick: () => updateValue(value - THINKING_TOKEN_STEP),
@@ -12142,19 +12213,19 @@
             children: "\u2212"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "input",
           {
             max: MAX_THINKING_TOKENS,
             min: MIN_THINKING_TOKENS,
             onChange: handleInputChange,
             step: THINKING_TOKEN_STEP,
-            style: inputStyles4,
+            style: inputStyles5,
             type: "number",
             value
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
           "button",
           {
             onClick: () => updateValue(value + THINKING_TOKEN_STEP),
@@ -12165,11 +12236,11 @@
           }
         )
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: helperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: helperStyles2, children: [
         "\u2022 Normal (4000): Standard reasoning depth",
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
         "\u2022 Hard (10000): Extended analysis for complex tasks",
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
         "\u2022 Ultra (32000): Maximum reasoning capacity"
       ] })
     ] }) });
@@ -12177,7 +12248,7 @@
   var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
@@ -12217,12 +12288,12 @@
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { style: displaySyncToggleStyles3, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: wrapperStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("style", { children: hideSpinnerStyle }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { style: displaySyncToggleStyles3, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
             "input",
             {
               checked: thinkingDisplaySyncEnabled,
@@ -12231,20 +12302,20 @@
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(thinking_pro_tip_default, {})
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_pro_tip_default, {})
       ] })
     ] });
   };
-  var thinking_settings_default = (0, import_react16.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react17.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
     display: "flex",
@@ -12289,7 +12360,7 @@
   ];
   var SettingsView = ({ onClose, state }) => {
     const { ready } = useLocalization();
-    const [activeTab, setActiveTab] = (0, import_react17.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react18.useState)("claude");
     const {
       coreControl,
       settings,
@@ -12324,9 +12395,9 @@
       handleReset,
       handleUpdateProvider
     } = state;
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "aria-busy": !ready, style: containerStyles4, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { "aria-busy": !ready, style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab.id),
@@ -12339,17 +12410,17 @@
         },
         tab.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -12359,7 +12430,7 @@
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               thinking_settings_default,
               {
                 enabled: settings.providers.claude.thinking.enabled,
@@ -12369,7 +12440,7 @@
                 thinkingDisplaySyncEnabled: settings.providers.claude.thinkingDisplaySyncEnabled
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleClaudeContinuityRemainingPercentThresholdChange,
@@ -12380,7 +12451,7 @@
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             general_settings_default,
             {
               coreControl,
@@ -12399,8 +12470,8 @@
           ) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -12411,7 +12482,7 @@
                 reasoningSummaryEnabled: settings.providers.codex.reasoningSummaryEnabled
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -12421,7 +12492,7 @@
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleCodexContinuityRemainingPercentThresholdChange,
@@ -12431,8 +12502,8 @@
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
@@ -12443,7 +12514,7 @@
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -12453,7 +12524,7 @@
               versions
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
             session_continuity_card_default,
             {
               contextWindowTokenLimit: settings.providers.gemini.sessionContinuity.contextWindowTokenLimit,
@@ -12465,7 +12536,7 @@
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -12478,7 +12549,7 @@
       )
     ] });
   };
-  var settings_view_default = import_react17.default.memo(SettingsView);
+  var settings_view_default = import_react18.default.memo(SettingsView);
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -12489,13 +12560,13 @@
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react18.useState)(false);
-    const openSettings = (0, import_react18.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react19.useState)(false);
+    const openSettings = (0, import_react19.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react18.useCallback)(() => {
+    const closeSettings = (0, import_react19.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -12507,7 +12578,7 @@
   };
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react19 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -12747,7 +12818,7 @@
     onSessionHistory,
     onUseProjectManager
   }) => {
-    (0, import_react19.useEffect)(() => {
+    (0, import_react20.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         if (isUseProjectManagerMessage(event.data)) {
           onUseProjectManager?.();
@@ -12790,7 +12861,7 @@
   };
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   var settingsOnlyLayoutStyles = {
     minHeight: "100vh",
     display: "flex",
@@ -12847,13 +12918,16 @@
   };
   var SettingsOnlyHost = () => {
     const settingsState = useSettingsState();
-    const localization = useResolvedLocalization(settingsState.settings);
+    const localization = useResolvedLocalization(
+      settingsState.settings,
+      settingsState.localizationRuntime
+    );
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleShowSettings = (0, import_react20.useCallback)(() => {
+    const handleShowSettings = (0, import_react21.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    (0, import_react20.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       activateRoot();
     }, []);
     useWebviewMessageHandler({
@@ -12863,12 +12937,12 @@
       onSessionFocusLast: noopVoidHandler,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("section", { style: settingsOnlyCardStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("section", { style: settingsOnlyCardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
           "button",
           {
             onClick: handleShowSettings,
@@ -12878,7 +12952,7 @@
           }
         )
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
         settings_view_default,
         {
           mode: "settings-only",
@@ -12890,12 +12964,12 @@
   };
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
-  var AppHost = () => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(SettingsOnlyHost, {});
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
+  var AppHost = () => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SettingsOnlyHost, {});
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   var mount = () => {
     const rootElement = document.getElementById("root");
@@ -12905,7 +12979,7 @@
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(import_react21.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(import_react22.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(app_host_default, {}) })
     );
   };
   mount();

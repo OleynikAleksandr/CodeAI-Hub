@@ -51,8 +51,8 @@
 ## Phase 4 — SSOT, Verification, And Release (owner: Docs/Release, updated: 2026-04-02)
 ### Stream: Documentation And Verification
 23. [DONE] Sync live localization SSOT with the picker/hydration runtime boundary and browser-provider contract. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(localization): sync picker hydration ssot`
-24. [TODO] Git Commit: `docs(localization): sync picker hydration ssot` (hash: TBD)
-25. [TODO] Refresh the tracked shipped webview bundle so `media/react-chat.js` matches the hydrated browser runtime and selector UI. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization settings bundle`
+24. [DONE] Git Commit: `docs(localization): sync picker hydration ssot` (hash: `e54cb41a`)
+25. [DONE] Refresh the tracked shipped webview bundle so `media/react-chat.js` matches the hydrated browser runtime and selector UI. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization settings bundle`
 26. [TODO] Git Commit: `build(webview): refresh localization settings bundle` (hash: TBD)
 27. [TODO] Run targeted verification for touched packages and clients. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, `webview`, `project-manager`.
 
