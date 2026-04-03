@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { memo } from "react";
+import { useLocalization } from "../../../app-host/use-localization";
 import SettingsCard from "../settings-card";
 import {
   type GeneralResponseMode,
@@ -92,57 +93,85 @@ const strictBlockStyles: CSSProperties = {
   marginTop: "16px",
 };
 
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+
 const ResponseModeCard = ({
   responsePolicy,
   onModeChange,
   onStrictInstructionTextChange,
   onStrictSchemaTextChange,
-}: ResponseModeCardProps) => (
-  <SettingsCard title="Response Mode">
-    <p style={copyStyles}>
-      Control how Codex turns are shaped before they reach the provider. Use
-      `Hybrid` as the safe default for workflow sessions and switch to
-      `Debug/Raw` when investigating new model behavior.
-    </p>
-    <div style={optionListStyles}>
-      {RESPONSE_MODE_OPTIONS.map((option) => (
-        <button
-          key={option.id}
-          onClick={() => onModeChange(option.id)}
-          style={{
-            ...optionButtonStyles,
-            ...(responsePolicy.mode === option.id ? activeOptionStyles : null),
-          }}
-          type="button"
-        >
-          <span style={optionTitleStyles}>{option.label}</span>
-          <span style={optionDescriptionStyles}>{option.description}</span>
-        </button>
-      ))}
-    </div>
-    {responsePolicy.mode === "strict" ? (
-      <div style={strictBlockStyles}>
-        <div style={inputGroupStyles}>
-          <span style={labelStyles}>Strict Schema JSON</span>
-          <textarea
-            onChange={(event) => onStrictSchemaTextChange(event.target.value)}
-            style={inputStyles}
-            value={responsePolicy.strictOutput.schemaText}
-          />
-        </div>
-        <div style={inputGroupStyles}>
-          <span style={labelStyles}>Strict Instruction Text</span>
-          <textarea
-            onChange={(event) =>
-              onStrictInstructionTextChange(event.target.value)
-            }
-            style={{ ...inputStyles, minHeight: "108px" }}
-            value={responsePolicy.strictOutput.instructionText}
-          />
-        </div>
+}: ResponseModeCardProps) => {
+  const { t } = useLocalization();
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.response_mode.description",
+    "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior."
+  );
+  const optionDescriptions = {
+    strict: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.response_mode.option.strict.description",
+      "Force a JSON-shaped final answer using the editable strict schema."
+    ),
+    hybrid: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.response_mode.option.hybrid.description",
+      "Allow free commentary during the turn and keep structure only for terminal output."
+    ),
+    debug_raw: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.response_mode.option.debug_raw.description",
+      "Diagnostic mode for new models: avoid hard schema pressure on live turns."
+    ),
+  } as const satisfies Readonly<Record<GeneralResponseMode, string>>;
+
+  return (
+    <SettingsCard title="Response Mode">
+      <p style={copyStyles}>{description}</p>
+      <div style={optionListStyles}>
+        {RESPONSE_MODE_OPTIONS.map((option) => (
+          <button
+            key={option.id}
+            onClick={() => onModeChange(option.id)}
+            style={{
+              ...optionButtonStyles,
+              ...(responsePolicy.mode === option.id
+                ? activeOptionStyles
+                : null),
+            }}
+            type="button"
+          >
+            <span style={optionTitleStyles}>{option.label}</span>
+            <span style={optionDescriptionStyles}>
+              {optionDescriptions[option.id]}
+            </span>
+          </button>
+        ))}
       </div>
-    ) : null}
-  </SettingsCard>
-);
+      {responsePolicy.mode === "strict" ? (
+        <div style={strictBlockStyles}>
+          <div style={inputGroupStyles}>
+            <span style={labelStyles}>Strict Schema JSON</span>
+            <textarea
+              onChange={(event) => onStrictSchemaTextChange(event.target.value)}
+              style={inputStyles}
+              value={responsePolicy.strictOutput.schemaText}
+            />
+          </div>
+          <div style={inputGroupStyles}>
+            <span style={labelStyles}>Strict Instruction Text</span>
+            <textarea
+              onChange={(event) =>
+                onStrictInstructionTextChange(event.target.value)
+              }
+              style={{ ...inputStyles, minHeight: "108px" }}
+              value={responsePolicy.strictOutput.instructionText}
+            />
+          </div>
+        </div>
+      ) : null}
+    </SettingsCard>
+  );
+};
 
 export default memo(ResponseModeCard);
