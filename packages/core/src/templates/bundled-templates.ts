@@ -1,4 +1,9 @@
+export type BundledTemplateAudience =
+  | "artifacts_for_the_user"
+  | "internal_agent_instructions";
+
 export interface BundledTemplateSource {
+  readonly audience: BundledTemplateAudience;
   readonly base64: string;
   readonly destinationRelativePath: string;
   readonly id: string;
@@ -7,6 +12,7 @@ export interface BundledTemplateSource {
 export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   {
     id: "description-collector-prompt",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/description/description-collector-prompt.md",
     base64:
@@ -14,6 +20,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "description-template",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/description/description-template.md",
     base64:
@@ -21,6 +28,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "description-questionnaire-template",
+    audience: "artifacts_for_the_user",
     destinationRelativePath:
       ".codeai-hub/templates/description/questionnaire-template.md",
     base64:
@@ -28,6 +36,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "virtual-simulation-prompt",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/virtual_simulation/virtual-simulation-prompt.md",
     base64:
@@ -35,6 +44,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "diagram-modules-prompt",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/diagram_modules/diagram-modules-prompt.md",
     base64:
@@ -42,6 +52,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "product-parts-index-template",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/diagram_modules/product-parts-index-template.md",
     base64:
@@ -49,6 +60,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "product-part-template",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/diagram_modules/product-part-template.md",
     base64:
@@ -56,6 +68,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "diagram-modules-field-reference",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/diagram_modules/diagram-modules-field-reference.md",
     base64:
@@ -63,6 +76,7 @@ export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   },
   {
     id: "diagram-modules-merge-rules",
+    audience: "internal_agent_instructions",
     destinationRelativePath:
       ".codeai-hub/templates/diagram_modules/diagram-modules-merge-rules.md",
     base64:

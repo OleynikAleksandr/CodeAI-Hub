@@ -66,11 +66,11 @@
 35. [DONE] Backfill `ui_labels` source entries for Project Manager shell toggles and header labels that now resolve through `UI Labels`. Scope: `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager label dictionary`
 36. [DONE] Git Commit: `refactor(localization): backfill project manager label dictionary` (hash: `d7472f5c`)
 37. [DONE] Mark questionnaire shell and form-copy entrypoints with explicit `Artifacts for the User` categories. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark questionnaire user artifacts`
-38. [TODO] Git Commit: `refactor(localization): mark questionnaire user artifacts` (hash: TBD)
+38. [DONE] Git Commit: `refactor(localization): mark questionnaire user artifacts` (hash: `416c0bc9`)
 
 ## Phase 4 — Internal Agent Instructions And Artifact Language Pipeline (owner: Workflow/Core, updated: 2026-04-03)
 ### Stream: Internal Agent Instruction Classification
-39. [TODO] Classify workflow contract templates and bundled prompt assets as `Internal Agent Instructions` and document their English-only boundary. Scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): classify internal agent templates`
+39. [DONE] Classify workflow contract templates and bundled prompt assets as `Internal Agent Instructions` and document their English-only boundary. Scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): classify internal agent templates`
 40. [TODO] Git Commit: `refactor(localization): classify internal agent templates` (hash: TBD)
 41. [TODO] Parameterize Description and Virtual Simulation prompt entrypoints so user-facing artifact language is injected while internal instructions remain English. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/source/virtual-simulation-prompt.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into core prompts`
 42. [TODO] Git Commit: `feat(workflow): inject artifact language into core prompts` (hash: TBD)

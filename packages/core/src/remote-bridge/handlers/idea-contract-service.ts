@@ -8,7 +8,10 @@ import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
-import { BUNDLED_TEMPLATE_SOURCES } from "../../templates/bundled-templates";
+import {
+  BUNDLED_TEMPLATE_SOURCES,
+  type BundledTemplateAudience,
+} from "../../templates/bundled-templates";
 import {
   appendDiagramPromptAppendix,
   DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
@@ -22,12 +25,16 @@ interface WorkflowContractPayload {
     readonly questionnaire?: string;
   };
   readonly prompt: string;
+  readonly promptAppendixAudience?: BundledTemplateAudience;
   readonly promptAppendixEntries?: readonly string[];
+  readonly promptAudience: BundledTemplateAudience;
   readonly questionnaire?: {
+    readonly audience: BundledTemplateAudience;
     readonly templateMarkdown: string;
   };
   readonly schema: Record<string, unknown>;
   readonly template: string;
+  readonly templateAudience?: BundledTemplateAudience;
   readonly version: string;
 }
 
@@ -50,6 +57,10 @@ interface ResolvedWorkflowContractPaths {
 }
 
 const TEMPLATE_ROOT_SEGMENTS = [".codeai-hub", "templates"];
+const INTERNAL_AGENT_INSTRUCTIONS_AUDIENCE =
+  "internal_agent_instructions" as const satisfies BundledTemplateAudience;
+const ARTIFACTS_FOR_THE_USER_AUDIENCE =
+  "artifacts_for_the_user" as const satisfies BundledTemplateAudience;
 
 const DESCRIPTION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "description/description-collector-prompt.md",
@@ -318,20 +329,35 @@ const buildWorkflowContract = async (
   const version = createHash("sha256").update(versionSeed).digest("hex");
 
   return {
+    // Prompts, appendices, and workflow templates instruct agents and stay
+    // English-only. The questionnaire template is the only contract artifact
+    // that is directly shown to the user and may follow artifact language.
     prompt: resolvedPrompt,
+    promptAudience: INTERNAL_AGENT_INSTRUCTIONS_AUDIENCE,
     schema: resolvedSchema,
     template: resolvedTemplate,
+    templateAudience:
+      resolved.template.length > 0
+        ? INTERNAL_AGENT_INSTRUCTIONS_AUDIENCE
+        : undefined,
     paths: {
       prompt: promptPath ?? "",
       template: templatePath ?? undefined,
       questionnaire: questionnairePath ?? undefined,
     },
     questionnaire: paths.questionnaire
-      ? { templateMarkdown: questionnaireMarkdown }
+      ? {
+          audience: ARTIFACTS_FOR_THE_USER_AUDIENCE,
+          templateMarkdown: questionnaireMarkdown,
+        }
       : undefined,
     version,
     promptAppendixEntries:
       promptAppendix.length > 0 ? promptAppendix : undefined,
+    promptAppendixAudience:
+      promptAppendix.length > 0
+        ? INTERNAL_AGENT_INSTRUCTIONS_AUDIENCE
+        : undefined,
   };
 };
 
