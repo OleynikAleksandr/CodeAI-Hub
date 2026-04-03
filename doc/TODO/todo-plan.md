@@ -28,7 +28,7 @@
 9. [DONE] Mark glossary editor validation and status copy so remaining Localization helper surfaces resolve through explicit dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize glossary editor copy`
 10. [DONE] Git Commit: `fix(settings-localization): localize glossary editor copy` (hash: `4b3959c4`)
 11. [DONE] Mark response-mode option copy so remaining settings explanatory text no longer stays hardcoded. Scope: `src/client/ui/src/components/settings/general-response-mode/response-mode-card.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize response mode copy`
-12. [TODO] Git Commit: `fix(settings-localization): localize response mode copy` (hash: TBD)
+12. [DONE] Git Commit: `fix(settings-localization): localize response mode copy` (hash: `20fa5ccf`)
 
 ## Phase 2 — Project Manager Shell And Workflow Entry Surfaces (owner: PM, updated: 2026-04-03)
 ### Stream: Description Provider Picker
@@ -63,4 +63,9 @@
 32. [DONE] Record the completed fixes, the new release target, and the remaining manual packaged-test checklist in the active session report. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record post-release localization fix release`
 33. [DONE] Git Commit: `docs(session): record post-release localization fix release` (hash: `7871891c`)
 34. [DONE] Localize Description questionnaire field titles and inline helper hints so `Artifacts for the User` affects the full questionnaire body instead of only the shell. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `assets/localization/source/en/artifacts_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description questionnaire fields`
-35. [TODO] Git Commit: `fix(pm-localization): localize description questionnaire fields` (hash: TBD)
+35. [DONE] Git Commit: `fix(pm-localization): localize description questionnaire fields` (hash: `92161466`)
+
+## Phase 4 — Localization Authoring Guardrail (owner: Docs/Architecture, updated: 2026-04-03)
+### Stream: Text Ownership SSOT
+36. [DONE] Add a permanent SSOT contract that requires explicit localization ownership for every new product-authored text surface and link it from the system-level architecture entrypoints. Scope: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(localization): codify text ownership boundary`
+37. [TODO] Git Commit: `docs(localization): codify text ownership boundary` (hash: TBD)

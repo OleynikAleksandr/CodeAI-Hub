@@ -20,6 +20,7 @@
 14. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 15. `doc/SolidWorks-WorkFlow/Modules/Localization.md`
 16. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
+17. `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -74,7 +75,9 @@
 15. **Provider-applied model/reasoning proof stays provider-native**: active baseline не поддерживает cross-provider normalizing contract для exact model/thinking/reasoning feedback в `sdk-*` логах; для аудита реально применённого provider state нужно опираться на provider-native runtime artifacts (`Claude` provider-home JSONL, `Codex` raw rollout `turn_context`, `Gemini` raw stream/session traces), а не на локальный outbound intent.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`.
 16. **Localization source-copy and hydration invariant**: product-owned localizable copy must be authored in bundled English source dictionaries, mutable bundles/glossary live only under `~/.codeai-hub/localization/`, and browser lookup must consume host-materialized runtime payloads instead of reading mutable localization files directly; fallback strings are bootstrap-only, and React components are not allowed to become the source of truth for localizable product copy.
-   - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
+   - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
+17. **Explicit text-ownership invariant**: every new product-authored text surface must be classified up front as `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, or `Internal Agent Instructions`. Category guessing and deferred cleanup are not acceptable.
+   - Канон: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
