@@ -24,8 +24,8 @@
 
 ### Stream: Persisted Settings And Core Hydration
 7. [DONE] Simplify persisted general localization settings so user-visible controls are independent category selectors with English default instead of `Default language` / `Workflow Terms Policy`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/settings-storage.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): simplify persisted localization controls`
-8. [TODO] Git Commit: `feat(settings): simplify persisted localization controls` (hash: TBD)
-9. [TODO] Update Core and extension settings hydration to emit and consume the four-category snapshot while keeping legacy saved data readable. Scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(core): hydrate four-category localization settings`
+8. [DONE] Git Commit: `feat(settings): simplify persisted localization controls` (hash: `3400cd51`)
+9. [DONE] Update Core and extension settings hydration to emit and consume the four-category snapshot while keeping legacy saved data readable. Scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(core): hydrate four-category localization settings`
 10. [TODO] Git Commit: `feat(core): hydrate four-category localization settings` (hash: TBD)
 
 ### Stream: Browser Settings State

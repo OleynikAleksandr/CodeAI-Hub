@@ -1,39 +1,9 @@
 import {
-  type LocalizationCategoryId,
   LocalizationFacade,
   type LocalizationRuntimePayload,
   type LocalizationRuntimeSettingsSnapshot,
 } from "@codeai-hub/localization";
 import type { SettingsSnapshot } from "./types";
-
-type SettingsLocalizationCategoryKey =
-  keyof SettingsSnapshot["general"]["localization"]["categories"];
-
-const LOCALIZATION_CATEGORY_BINDINGS = [
-  {
-    categoryId: "interactive_templates",
-    settingsKey: "interactiveTemplates",
-  },
-  {
-    categoryId: "system_feedback",
-    settingsKey: "systemFeedback",
-  },
-  {
-    categoryId: "ui_interface",
-    settingsKey: "uiInterface",
-  },
-  {
-    categoryId: "user_guidance",
-    settingsKey: "userGuidance",
-  },
-  {
-    categoryId: "workflow_terms",
-    settingsKey: "workflowTerms",
-  },
-] as const satisfies readonly {
-  readonly categoryId: LocalizationCategoryId;
-  readonly settingsKey: SettingsLocalizationCategoryKey;
-}[];
 
 export class LocalizationRuntimeService {
   private readonly localizationFacade: LocalizationFacade;
@@ -56,12 +26,17 @@ export class LocalizationRuntimeService {
     const { localization } = settings.general;
 
     return {
-      categories: Object.fromEntries(
-        LOCALIZATION_CATEGORY_BINDINGS.map((binding) => [
-          binding.categoryId,
-          localization.categories[binding.settingsKey],
-        ])
-      ) as LocalizationRuntimeSettingsSnapshot["categories"],
+      categories: {
+        artifacts_for_the_user: localization.categories.artifactsForTheUser,
+        interactive_templates: localization.categories.artifactsForTheUser,
+        messages_for_the_user: localization.categories.messagesForTheUser,
+        system_feedback: localization.categories.messagesForTheUser,
+        ui_helper_text: localization.categories.uiHelperText,
+        ui_interface: localization.categories.uiLabels,
+        ui_labels: localization.categories.uiLabels,
+        user_guidance: localization.categories.uiHelperText,
+        workflow_terms: localization.categories.uiLabels,
+      } as LocalizationRuntimeSettingsSnapshot["categories"],
       defaultLanguage: localization.defaultLanguage,
       engineId: localization.engineId,
       workflowTermsPolicy: localization.workflowTermsPolicy,

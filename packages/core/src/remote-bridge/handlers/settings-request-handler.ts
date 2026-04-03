@@ -2,7 +2,6 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   LOCALIZATION_SOURCE_SELECTION,
-  type LocalizationCategoryId,
   LocalizationFacade,
   type LocalizationRuntimeSettingsSnapshot,
 } from "@codeai-hub/localization";
@@ -13,45 +12,25 @@ import type { BridgeEvent } from "../types";
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const DEFAULT_LOCALIZATION_LANGUAGE = "en";
+
 const DEFAULT_LOCALIZATION_SETTINGS = {
-  defaultLanguage: LOCALIZATION_SOURCE_SELECTION,
+  defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
   categories: {
-    userGuidance: LOCALIZATION_SOURCE_SELECTION,
-    uiInterface: LOCALIZATION_SOURCE_SELECTION,
-    workflowTerms: LOCALIZATION_SOURCE_SELECTION,
-    systemFeedback: LOCALIZATION_SOURCE_SELECTION,
-    interactiveTemplates: LOCALIZATION_SOURCE_SELECTION,
+    artifactsForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+    interactiveTemplates: DEFAULT_LOCALIZATION_LANGUAGE,
+    messagesForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+    systemFeedback: DEFAULT_LOCALIZATION_LANGUAGE,
+    uiHelperText: DEFAULT_LOCALIZATION_LANGUAGE,
+    uiInterface: DEFAULT_LOCALIZATION_LANGUAGE,
+    uiLabels: DEFAULT_LOCALIZATION_LANGUAGE,
+    userGuidance: DEFAULT_LOCALIZATION_LANGUAGE,
+    workflowTerms: DEFAULT_LOCALIZATION_LANGUAGE,
   },
   workflowTermsPolicy: "keep_english",
   engineId: "google-gtx",
   glossaryEnabled: true,
 } as const;
-
-const LOCALIZATION_CATEGORY_BINDINGS = [
-  {
-    categoryId: "interactive_templates",
-    settingsKey: "interactiveTemplates",
-  },
-  {
-    categoryId: "system_feedback",
-    settingsKey: "systemFeedback",
-  },
-  {
-    categoryId: "ui_interface",
-    settingsKey: "uiInterface",
-  },
-  {
-    categoryId: "user_guidance",
-    settingsKey: "userGuidance",
-  },
-  {
-    categoryId: "workflow_terms",
-    settingsKey: "workflowTerms",
-  },
-] as const satisfies readonly {
-  readonly categoryId: LocalizationCategoryId;
-  readonly settingsKey: keyof typeof DEFAULT_LOCALIZATION_SETTINGS.categories;
-}[];
 
 const DEFAULT_SETTINGS_SNAPSHOT = {
   general: {
@@ -142,6 +121,32 @@ const normalizeSettingsString = (value: unknown, fallback: string): string =>
     ? value.trim()
     : fallback;
 
+const normalizeLocalizationLanguage = (
+  value: unknown,
+  fallback: string
+): string => {
+  const normalized = normalizeSettingsString(value, fallback);
+  return normalized.toLowerCase() === LOCALIZATION_SOURCE_SELECTION
+    ? DEFAULT_LOCALIZATION_LANGUAGE
+    : normalized;
+};
+
+const resolveLocalizationCategory = (
+  categories: Record<string, unknown>,
+  candidateKeys: readonly string[],
+  fallback: string
+): string => {
+  for (const key of candidateKeys) {
+    const value = categories[key];
+    if (typeof value !== "string" || value.trim().length === 0) {
+      continue;
+    }
+    return normalizeLocalizationLanguage(value, fallback);
+  }
+
+  return fallback;
+};
+
 const resolveLocalizationRuntimeSettings = (
   settings: Record<string, unknown>
 ): LocalizationRuntimeSettingsSnapshot => {
@@ -152,30 +157,52 @@ const resolveLocalizationRuntimeSettings = (
   const categories = isRecord(localization.categories)
     ? localization.categories
     : {};
-  const defaultLanguage = normalizeSettingsString(
+  const defaultLanguage = normalizeLocalizationLanguage(
     localization.defaultLanguage,
     DEFAULT_LOCALIZATION_SETTINGS.defaultLanguage
   );
+  const uiLabels = resolveLocalizationCategory(
+    categories,
+    ["uiLabels", "uiInterface", "workflowTerms"],
+    defaultLanguage
+  );
+  const uiHelperText = resolveLocalizationCategory(
+    categories,
+    ["uiHelperText", "userGuidance"],
+    defaultLanguage
+  );
+  const messagesForTheUser = resolveLocalizationCategory(
+    categories,
+    ["messagesForTheUser", "systemFeedback"],
+    defaultLanguage
+  );
+  const artifactsForTheUser = resolveLocalizationCategory(
+    categories,
+    ["artifactsForTheUser", "interactiveTemplates"],
+    defaultLanguage
+  );
 
   return {
-    categories: Object.fromEntries(
-      LOCALIZATION_CATEGORY_BINDINGS.map((binding) => [
-        binding.categoryId,
-        normalizeSettingsString(
-          categories[binding.settingsKey],
-          defaultLanguage
-        ),
-      ])
-    ) as LocalizationRuntimeSettingsSnapshot["categories"],
-    defaultLanguage,
+    categories: {
+      artifacts_for_the_user: artifactsForTheUser,
+      interactive_templates: artifactsForTheUser,
+      messages_for_the_user: messagesForTheUser,
+      system_feedback: messagesForTheUser,
+      ui_helper_text: uiHelperText,
+      ui_interface: uiLabels,
+      ui_labels: uiLabels,
+      user_guidance: uiHelperText,
+      workflow_terms: uiLabels,
+    } as LocalizationRuntimeSettingsSnapshot["categories"],
+    defaultLanguage: DEFAULT_LOCALIZATION_SETTINGS.defaultLanguage,
     engineId: normalizeSettingsString(
       localization.engineId,
       DEFAULT_LOCALIZATION_SETTINGS.engineId
     ),
     workflowTermsPolicy:
-      localization.workflowTermsPolicy === "translate"
-        ? "translate"
-        : DEFAULT_LOCALIZATION_SETTINGS.workflowTermsPolicy,
+      uiLabels.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE
+        ? "keep_english"
+        : "translate",
   };
 };
 
