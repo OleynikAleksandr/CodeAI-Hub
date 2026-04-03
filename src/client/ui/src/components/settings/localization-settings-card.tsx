@@ -82,11 +82,6 @@ const inputStyles: CSSProperties = {
   fontSize: settingsTypographyTokens.bodyFontSize,
 };
 
-const sourceLanguageOption: LocalizationLanguageOption = {
-  code: "source",
-  label: "Default Language (English)",
-};
-
 const toggleRowStyles: CSSProperties = {
   display: "flex",
   alignItems: "flex-start",
@@ -103,44 +98,68 @@ const checkboxStyles: CSSProperties = {
   marginTop: "2px",
 };
 
-const categoryFields: ReadonlyArray<{
-  readonly description: string;
-  readonly id: LocalizationCategoryKey;
-  readonly label: string;
-}> = [
-  {
-    id: "uiInterface",
-    label: "UI Labels",
-    description:
-      "Buttons, tabs, section names, step names, and short interface terms.",
-  },
-  {
-    id: "userGuidance",
-    label: "UI Helper Text",
-    description:
-      "Short interface explanations and helper copy that clarifies labels and settings.",
-  },
-  {
-    id: "systemFeedback",
-    label: "Messages for the User",
-    description:
-      "Warnings, errors, hints, status updates, and other messages addressed to the user.",
-  },
-  {
-    id: "interactiveTemplates",
-    label: "Artifacts for the User",
-    description:
-      "Forms and final user-facing artifacts. Agent instructions and templates stay in English.",
-  },
-];
-
 const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   localization,
   onCategoryLanguageChange,
   onEngineIdChange,
   onGlossaryEnabledChange,
 }) => {
-  const { availableEngines } = useLocalization();
+  const { availableEngines, t } = useLocalization();
+  const defaultLanguageLabel = t(
+    "ui_interface",
+    "settings.localization.default_language.reset_label",
+    "Default Language (English)"
+  );
+  const categoryFields: ReadonlyArray<{
+    readonly description: string;
+    readonly id: LocalizationCategoryKey;
+    readonly label: string;
+  }> = [
+    {
+      id: "uiInterface",
+      label: t(
+        "ui_interface",
+        "settings.localization.category.ui_labels.label",
+        "UI Labels"
+      ),
+      description:
+        "Buttons, tabs, section names, step names, and short interface terms.",
+    },
+    {
+      id: "userGuidance",
+      label: t(
+        "ui_interface",
+        "settings.localization.category.ui_helper_text.label",
+        "UI Helper Text"
+      ),
+      description:
+        "Short interface explanations and helper copy that clarifies labels and settings.",
+    },
+    {
+      id: "systemFeedback",
+      label: t(
+        "ui_interface",
+        "settings.localization.category.messages_for_the_user.label",
+        "Messages for the User"
+      ),
+      description:
+        "Warnings, errors, hints, status updates, and other messages addressed to the user.",
+    },
+    {
+      id: "interactiveTemplates",
+      label: t(
+        "ui_interface",
+        "settings.localization.category.artifacts_for_the_user.label",
+        "Artifacts for the User"
+      ),
+      description:
+        "Forms and final user-facing artifacts. Agent instructions and templates stay in English.",
+    },
+  ];
+  const sourceLanguageOption: LocalizationLanguageOption = {
+    code: "source",
+    label: defaultLanguageLabel,
+  };
   const engineOptions =
     availableEngines.length > 0
       ? availableEngines
@@ -174,7 +193,9 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   };
 
   return (
-    <SettingsCard title="Localization">
+    <SettingsCard
+      title={t("ui_interface", "settings.localization.title", "Localization")}
+    >
       <p style={introStyles}>
         Configure which user-facing text should stay in English and which should
         be localized for the user.
@@ -186,7 +207,13 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
 
       <div style={controlGridStyles}>
         <div style={controlRowStyles}>
-          <p style={labelTitleStyles}>Translation engine</p>
+          <p style={labelTitleStyles}>
+            {t(
+              "ui_interface",
+              "settings.localization.translation_engine.label",
+              "Translation engine"
+            )}
+          </p>
           <p style={labelDescriptionStyles}>
             Engine used for bundle materialization and language-catalog lookup.
           </p>
@@ -211,7 +238,13 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             type="checkbox"
           />
           <div style={{ flex: 1 }}>
-            <p style={labelTitleStyles}>Glossary protection</p>
+            <p style={labelTitleStyles}>
+              {t(
+                "ui_interface",
+                "settings.localization.glossary_protection.label",
+                "Glossary protection"
+              )}
+            </p>
             <p style={labelDescriptionStyles}>
               Keep protected terms, provider names, and product vocabulary
               stable during localization.
@@ -230,7 +263,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             <LocalizationLanguageCombobox
               onChange={(value) => onCategoryLanguageChange(category.id, value)}
               options={languageOptions}
-              placeholder="Default Language (English)"
+              placeholder={defaultLanguageLabel}
               value={resolveCategoryValue(localization.categories[category.id])}
             />
           </div>
