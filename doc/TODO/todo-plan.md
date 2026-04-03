@@ -54,8 +54,8 @@
 
 ### Stream: Project Manager Navigation And Help
 27. [DONE] Mark Project Manager navigation, toolbar, and workspace tree terms with explicit `UI Labels` categories. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(localization): mark project manager labels`
-28. [TODO] Git Commit: `refactor(localization): mark project manager labels` (hash: TBD)
-29. [TODO] Mark Description and Virtual Simulation explanatory surfaces with explicit `Messages for the User` categories. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark workflow help text`
+28. [DONE] Git Commit: `refactor(localization): mark project manager labels` (hash: `53aaf34b`)
+29. [DONE] Mark Description and Virtual Simulation explanatory surfaces with explicit `Messages for the User` categories. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark workflow help text`
 30. [TODO] Git Commit: `refactor(localization): mark workflow help text` (hash: TBD)
 31. [TODO] Mark remaining diagram/help raw strings and artifact-header shell labels with explicit categories. Scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark remaining project manager strings`
 32. [TODO] Git Commit: `refactor(localization): mark remaining project manager strings` (hash: TBD)
