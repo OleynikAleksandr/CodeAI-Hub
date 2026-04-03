@@ -36,6 +36,7 @@
   "settings.codex_default_model.description": "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level.",
   "settings.codex_default_model.reasoning_in_dialog.description": "When enabled, Codex can send reasoning summaries. CodeAI Hub translates them and shows them in the dialog.",
   "settings.codex_default_model.note": "Changes apply when creating a new Codex session.",
+  "settings.codex_reasoning_dialog.subtitle": "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session.",
   "settings.claude_thinking_settings.thinking_in_dialog.description": "Show Claude reasoning as a normal assistant bubble with a Thinking label.",
   "settings.claude_thinking_settings.enable_thinking.description": "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
   "settings.claude_thinking_settings.enable_thinking.note": "Changes take effect when creating a new session.",

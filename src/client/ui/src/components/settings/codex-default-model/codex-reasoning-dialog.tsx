@@ -5,6 +5,7 @@ import {
   type CodexReasoningLevel,
   type CodexRecommendedModelDescriptor,
 } from "../../../../../../types/codex-model-registry";
+import { useLocalization } from "../../../app-host/use-localization";
 import {
   ProviderOptionDialog,
   providerOptionDialogButtonStyles,
@@ -17,14 +18,22 @@ interface CodexReasoningDialogProps {
   readonly onSave: (reasoning: CodexReasoningLevel) => void;
 }
 
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+
 const CodexReasoningDialog: FC<CodexReasoningDialogProps> = ({
   model,
   initialReasoning,
   onSave,
   onCancel,
 }) => {
+  const { t } = useLocalization();
   const [selectedReasoning, setSelectedReasoning] =
     useState<CodexReasoningLevel>(initialReasoning);
+  const subtitle = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.codex_reasoning_dialog.subtitle",
+    "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session."
+  );
   const options = CODEX_REASONING_LEVELS.map((level) => ({
     value: level.name,
     label: level.name,
@@ -55,7 +64,7 @@ const CodexReasoningDialog: FC<CodexReasoningDialogProps> = ({
       onChange={setSelectedReasoning}
       options={options}
       selectedValue={selectedReasoning}
-      subtitle="Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session."
+      subtitle={subtitle}
       title={`${model.displayName} reasoning`}
     />
   );
