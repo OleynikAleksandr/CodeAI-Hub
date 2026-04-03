@@ -53,7 +53,7 @@
 ### Stream: Targeted Verification
 25. [DONE] Run targeted builds for touched localization/settings/PM surfaces and verify the packaged-fix candidates from the workspace before release packaging. Scope: `@codeai-hub/localization`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
 26. [DONE] Refresh the tracked webview bundle after targeted verification so release packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization follow-up bundle`
-27. [TODO] Git Commit: `build(webview): refresh localization follow-up bundle` (hash: TBD)
+27. [DONE] Git Commit: `build(webview): refresh localization follow-up bundle` (hash: `0a79b9df`)
 28. [DONE] Update release-facing docs for the post-release localization follow-up. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare post-release localization fix notes`
 29. [TODO] Git Commit: `docs(release): prepare post-release localization fix notes` (hash: TBD)
 

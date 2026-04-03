@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.871] - 2026-04-03
+### Fixed
+- **Packaged post-release localization gaps**: `Settings -> Localization` glossary-editor copy now resolves through explicit localization categories instead of inline hardcoded strings, so the installed release responds more visibly when `UI Helper Text` changes.
+- **Description provider picker ownership**: the picker title, buttons, availability labels, description, and status line now resolve through `UI Labels` and `Messages for the User` instead of Russian literals embedded directly in the Project Manager component.
+- **Project Manager shell placeholders**: the default `Sessions` / `Artifacts` panel headers and empty placeholders now participate in localization lookup instead of staying English-only in the installed shell.
+
 ## [1.1.870] - 2026-04-03
 ### Added
 - **Approved four-category localization settings**: the user-facing settings model now exposes `UI Labels`, `UI Helper Text`, `Messages for the User`, and `Artifacts for the User`, with `Default Language (English)` as the reset state when a category override is cleared.
