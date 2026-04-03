@@ -50,6 +50,52 @@ const normalizeLanguageSelection = (value: string | undefined): string => {
     : normalizedValue;
 };
 
+type NormalizableCategorySelections = Readonly<
+  Record<string, string | undefined>
+>;
+
+type ApprovedUserFacingCategoryId =
+  | "ui_labels"
+  | "ui_helper_text"
+  | "messages_for_the_user"
+  | "artifacts_for_the_user";
+
+const APPROVED_CATEGORY_SELECTION_PRIORITY = {
+  ui_labels: ["ui_labels", "ui_interface", "workflow_terms"],
+  ui_helper_text: ["ui_helper_text", "user_guidance"],
+  messages_for_the_user: ["messages_for_the_user", "system_feedback"],
+  artifacts_for_the_user: ["artifacts_for_the_user", "interactive_templates"],
+} as const satisfies Readonly<
+  Record<ApprovedUserFacingCategoryId, readonly string[]>
+>;
+
+const LEGACY_CATEGORY_SELECTION_PRIORITY = {
+  interactive_templates:
+    APPROVED_CATEGORY_SELECTION_PRIORITY.artifacts_for_the_user,
+  system_feedback: APPROVED_CATEGORY_SELECTION_PRIORITY.messages_for_the_user,
+  ui_interface: APPROVED_CATEGORY_SELECTION_PRIORITY.ui_labels,
+  user_guidance: APPROVED_CATEGORY_SELECTION_PRIORITY.ui_helper_text,
+  workflow_terms: APPROVED_CATEGORY_SELECTION_PRIORITY.ui_labels,
+} as const satisfies Readonly<
+  Record<LocalizationCategoryId, readonly string[]>
+>;
+
+const resolveCategorySelection = (
+  categories: NormalizableCategorySelections,
+  fallbackLanguage: string,
+  candidateKeys: readonly string[]
+): string => {
+  for (const key of candidateKeys) {
+    const value = categories[key];
+    if (typeof value !== "string" || value.trim().length === 0) {
+      continue;
+    }
+    return normalizeLanguageSelection(value);
+  }
+
+  return fallbackLanguage;
+};
+
 const createSourceFallbackBundle = (
   language: string,
   sourceDictionary: LocalizationSourceDictionary | null,
@@ -172,11 +218,14 @@ export class LocalizationFacade {
     const defaultLanguage = normalizeLanguageSelection(
       settings.defaultLanguage
     );
+    const rawCategories = settings.categories as NormalizableCategorySelections;
     const categories = Object.fromEntries(
       LOCALIZATION_CATEGORY_IDS.map((category) => [
         category,
-        normalizeLanguageSelection(
-          settings.categories[category] ?? defaultLanguage
+        resolveCategorySelection(
+          rawCategories,
+          defaultLanguage,
+          LEGACY_CATEGORY_SELECTION_PRIORITY[category]
         ),
       ])
     ) as Record<LocalizationCategoryId, string>;

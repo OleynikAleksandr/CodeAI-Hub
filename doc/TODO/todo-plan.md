@@ -18,8 +18,8 @@
 ## Phase 1 — Settings Model And Runtime Contract (owner: Localization/Settings, updated: 2026-04-03)
 ### Stream: Package Contract
 3. [DONE] Define the four user-facing category ids plus the English-only `Internal Agent Instructions` marker in the package contract and module SSOT. Scope: `packages/localization/src/localization-contract.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): define four-category text taxonomy`
-4. [TODO] Git Commit: `feat(localization): define four-category text taxonomy` (hash: TBD)
-5. [TODO] Rewire source registry and facade normalization around the four user-facing categories while keeping a temporary bridge for legacy saved snapshots. Scope: `packages/localization/src/source-dictionary-registry.ts`, `packages/localization/src/localization-facade.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): bridge four-category runtime mapping`
+4. [DONE] Git Commit: `feat(localization): define four-category text taxonomy` (hash: `b97ccc9c`)
+5. [DONE] Rewire source registry and facade normalization around the four user-facing categories while keeping a temporary bridge for legacy saved snapshots. Scope: `packages/localization/src/source-dictionary-registry.ts`, `packages/localization/src/localization-facade.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): bridge four-category runtime mapping`
 6. [TODO] Git Commit: `feat(localization): bridge four-category runtime mapping` (hash: TBD)
 
 ### Stream: Persisted Settings And Core Hydration
