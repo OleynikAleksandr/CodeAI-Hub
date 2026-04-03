@@ -84,4 +84,6 @@
 50. [DONE] Mark the `Enable thinking mode` explanatory copy so the main Claude thinking helper block resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/thinking/thinking-toggle.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude thinking toggle copy`
 51. [DONE] Git Commit: `fix(settings-localization): localize claude thinking toggle copy` (hash: `8ed50baf`)
 52. [DONE] Mark the Claude thinking token helper legend so that depth guidance resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/thinking/thinking-token-input.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude thinking token helper copy`
-53. [TODO] Git Commit: `fix(settings-localization): localize claude thinking token helper copy` (hash: TBD)
+53. [DONE] Git Commit: `fix(settings-localization): localize claude thinking token helper copy` (hash: `3da4f2ef`)
+54. [DONE] Mark the Claude thinking pro-tip body so that the remaining tip helper copy resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude thinking pro tip`
+55. [TODO] Git Commit: `fix(settings-localization): localize claude thinking pro tip` (hash: TBD)

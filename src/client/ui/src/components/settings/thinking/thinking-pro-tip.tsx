@@ -1,4 +1,7 @@
 import type { CSSProperties, FC } from "react";
+import { useLocalization } from "../../../app-host/use-localization";
+
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const containerStyles: CSSProperties = {
   marginTop: "20px",
@@ -21,15 +24,20 @@ const descriptionStyles: CSSProperties = {
   lineHeight: "1.4",
 };
 
-const ThinkingProTip: FC = () => (
-  <div style={containerStyles}>
-    <div style={titleStyles}>💡 Pro Tip</div>
-    <div style={descriptionStyles}>
-      Use "Ultrathink" anywhere in your message to enable maximum thinking
-      (32000 tokens) for that specific query, regardless of your current
-      settings.
+const ThinkingProTip: FC = () => {
+  const { t } = useLocalization();
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.claude_thinking_settings.pro_tip.description",
+    'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.'
+  );
+
+  return (
+    <div style={containerStyles}>
+      <div style={titleStyles}>💡 Pro Tip</div>
+      <div style={descriptionStyles}>{description}</div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ThinkingProTip;
