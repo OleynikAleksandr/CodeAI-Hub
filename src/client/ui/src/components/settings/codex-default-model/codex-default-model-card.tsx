@@ -136,6 +136,14 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
     "settings.codex_default_model.note",
     "Changes apply when creating a new Codex session."
   );
+  const resolveModelDescription = (
+    model: (typeof CODEX_SETTINGS_MODELS)[number]
+  ) =>
+    t(
+      UI_HELPER_TEXT_CATEGORY,
+      `settings.codex_default_model.option.${model.id}.description`,
+      model.description
+    );
 
   const resolveReasoning = (modelId: CodexModelId): CodexReasoningLevel =>
     reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
@@ -228,7 +236,9 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
                   <div style={modelInfoStyles}>
                     <div style={modelTitleStyles}>{model.displayName}</div>
                     <div style={modelIdStyles}>{model.id}</div>
-                    <p style={modelDescriptionStyles}>{model.description}</p>
+                    <p style={modelDescriptionStyles}>
+                      {resolveModelDescription(model)}
+                    </p>
                   </div>
                   <div style={reasoningRowStyles}>
                     <span style={reasoningLabelStyles}>
