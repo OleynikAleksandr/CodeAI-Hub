@@ -102,3 +102,5 @@
 65. [TODO] Git Commit: `build(release): assemble provider helper localization release` (hash: TBD)
 66. [TODO] Update the active session report with the helper-surface fix chain, the new SSOT guardrail, and the packaged follow-up release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider helper localization release`
 67. [TODO] Git Commit: `docs(session): record provider helper localization release` (hash: TBD)
+68. [DONE] Tighten the Description questionnaire translation lookup typing so release `typecheck:webview` no longer fails on dynamic field-id access. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): tighten questionnaire translation lookup typing`
+69. [TODO] Git Commit: `fix(pm-localization): tighten questionnaire translation lookup typing` (hash: TBD)

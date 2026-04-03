@@ -96,12 +96,24 @@ const QUESTIONNAIRE_FIELD_TRANSLATIONS = {
   ),
 } as const satisfies Readonly<Record<string, QuestionnaireFieldTranslation>>;
 
+const resolveQuestionnaireFieldTranslation = (
+  fieldId: string
+): QuestionnaireFieldTranslation | undefined =>
+  Object.prototype.hasOwnProperty.call(
+    QUESTIONNAIRE_FIELD_TRANSLATIONS,
+    fieldId
+  )
+    ? QUESTIONNAIRE_FIELD_TRANSLATIONS[
+        fieldId as keyof typeof QUESTIONNAIRE_FIELD_TRANSLATIONS
+      ]
+    : undefined;
+
 const localizeQuestionnaireQuestions = (
   questions: readonly QuestionnaireQuestionPresentation[],
   t: ReturnType<typeof useLocalization>["t"]
 ): readonly QuestionnaireQuestionPresentation[] =>
   questions.map((question) => {
-    const translation = QUESTIONNAIRE_FIELD_TRANSLATIONS[question.id];
+    const translation = resolveQuestionnaireFieldTranslation(question.id);
     if (!translation) return question;
     const localizedTitleHint = t(USER_ARTIFACTS_CATEGORY, translation.titleHintKey, translation.titleHintFallback);
     return { ...question, title: t(USER_ARTIFACTS_CATEGORY, translation.titleKey, translation.titleFallback), titleHint: localizedTitleHint.trim().length > 0 ? localizedTitleHint : undefined };
