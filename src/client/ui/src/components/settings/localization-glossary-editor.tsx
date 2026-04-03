@@ -1,5 +1,6 @@
 import type { CSSProperties, FC, FormEvent } from "react";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useState } from "react";
+import { useLocalization } from "../../app-host/use-localization";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
 import { LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY } from "./use-settings-state";
 
@@ -14,6 +15,8 @@ interface StoredGlossaryDraft {
 const MAX_GLOSSARY_TERM_LENGTH = 120;
 const LATIN_LETTER_PATTERN = /[A-Za-z]/;
 const RESERVED_SEQUENCE_PATTERN = /(?:\[\[|\]\]|\{\{|\}\})/;
+const UI_LABELS_CATEGORY = "ui_interface";
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const panelStyles: CSSProperties = {
   display: "grid",
@@ -177,20 +180,27 @@ const parseStoredGlossaryDraft = (raw: string): readonly string[] => {
 const validateTerm = (
   value: string,
   existingTerms: readonly string[],
-  editingIndex: number | null
+  editingIndex: number | null,
+  messages: {
+    readonly duplicate: string;
+    readonly empty: string;
+    readonly latinLetter: string;
+    readonly reservedSequence: string;
+    readonly tooLong: string;
+  }
 ): string | null => {
   const normalized = normalizeTerm(value);
   if (!normalized) {
-    return "Enter an English term to preserve.";
+    return messages.empty;
   }
   if (!LATIN_LETTER_PATTERN.test(normalized)) {
-    return "Use a term that contains at least one Latin letter.";
+    return messages.latinLetter;
   }
   if (normalized.length > MAX_GLOSSARY_TERM_LENGTH) {
-    return `Keep glossary terms under ${MAX_GLOSSARY_TERM_LENGTH} characters.`;
+    return messages.tooLong;
   }
   if (RESERVED_SEQUENCE_PATTERN.test(normalized)) {
-    return "Reserved marker-like sequences are not allowed in glossary terms.";
+    return messages.reservedSequence;
   }
 
   const dedupeKey = normalized.toLowerCase();
@@ -198,7 +208,7 @@ const validateTerm = (
     (term) => normalizeTerm(term).toLowerCase() === dedupeKey
   );
   if (duplicateIndex !== -1 && duplicateIndex !== editingIndex) {
-    return "That term is already in the local glossary draft.";
+    return messages.duplicate;
   }
 
   return null;
@@ -207,6 +217,7 @@ const validateTerm = (
 const LocalizationGlossaryEditor: FC<LocalizationGlossaryEditorProps> = ({
   glossaryEnabled,
 }) => {
+  const { t } = useLocalization();
   const [draft, setDraft] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -240,20 +251,107 @@ const LocalizationGlossaryEditor: FC<LocalizationGlossaryEditorProps> = ({
     }
   }, [terms]);
 
-  const statusText = useMemo(
-    () =>
-      glossaryEnabled
-        ? "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in."
-        : "Glossary protection is off. Terms stay in the local draft until you enable glossary protection.",
-    [glossaryEnabled]
+  const title = t(
+    UI_LABELS_CATEGORY,
+    "settings.localization.do_not_translate_terms.title",
+    "Do-not-translate terms"
   );
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.localization.do_not_translate_terms.description",
+    "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands."
+  );
+  const inputLabel = t(
+    UI_LABELS_CATEGORY,
+    "settings.localization.do_not_translate_terms.english_term_label",
+    "English term"
+  );
+  const addTermLabel = t(
+    UI_LABELS_CATEGORY,
+    "settings.localization.do_not_translate_terms.add_term_label",
+    "Add term"
+  );
+  const saveTermLabel = t(
+    UI_LABELS_CATEGORY,
+    "settings.localization.do_not_translate_terms.save_term_label",
+    "Save term"
+  );
+  const cancelEditLabel = t(
+    UI_LABELS_CATEGORY,
+    "settings.localization.do_not_translate_terms.cancel_edit_label",
+    "Cancel edit"
+  );
+  const editTermLabel = t(
+    UI_LABELS_CATEGORY,
+    "settings.localization.do_not_translate_terms.edit_term_label",
+    "Edit"
+  );
+  const removeTermLabel = t(
+    UI_LABELS_CATEGORY,
+    "settings.localization.do_not_translate_terms.remove_term_label",
+    "Remove"
+  );
+  const inputPlaceholder = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.localization.do_not_translate_terms.placeholder",
+    "Project Manager"
+  );
+  const statusText = glossaryEnabled
+    ? t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.localization.do_not_translate_terms.enabled_status",
+        "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in."
+      )
+    : t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.localization.do_not_translate_terms.disabled_status",
+        "Glossary protection is off. Terms stay in the local draft until you enable glossary protection."
+      );
+  const emptyStateIntro = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.localization.do_not_translate_terms.empty_state_intro",
+    "No protected terms yet. Typical examples:"
+  );
+  const validationMessages = {
+    duplicate: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.validation.duplicate",
+      "That term is already in the local glossary draft."
+    ),
+    empty: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.validation.empty",
+      "Enter an English term to preserve."
+    ),
+    latinLetter: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.validation.latin_letter",
+      "Use a term that contains at least one Latin letter."
+    ),
+    reservedSequence: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.validation.reserved_sequence",
+      "Reserved marker-like sequences are not allowed in glossary terms."
+    ),
+    tooLong: t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.validation.too_long",
+      `Keep glossary terms under ${MAX_GLOSSARY_TERM_LENGTH} characters.`,
+      { maxLength: MAX_GLOSSARY_TERM_LENGTH }
+    ),
+  } as const;
 
-  const submitLabel = editingIndex === null ? "Add term" : "Save term";
+  const submitLabel = editingIndex === null ? addTermLabel : saveTermLabel;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const validationError = validateTerm(draft, terms, editingIndex);
+    const validationError = validateTerm(
+      draft,
+      terms,
+      editingIndex,
+      validationMessages
+    );
     if (validationError) {
       setError(validationError);
       return;
@@ -303,12 +401,8 @@ const LocalizationGlossaryEditor: FC<LocalizationGlossaryEditorProps> = ({
   return (
     <div style={panelStyles}>
       <div>
-        <p style={titleStyles}>Do-not-translate terms</p>
-        <p style={bodyStyles}>
-          Add English product terms that must stay untouched during
-          localization. This first-wave editor keeps a local draft on this
-          machine until the dedicated glossary storage stream lands.
-        </p>
+        <p style={titleStyles}>{title}</p>
+        <p style={bodyStyles}>{description}</p>
       </div>
 
       <p aria-live="polite" style={statusStyles}>
@@ -317,16 +411,16 @@ const LocalizationGlossaryEditor: FC<LocalizationGlossaryEditorProps> = ({
 
       <form onSubmit={handleSubmit} style={formStyles}>
         <label>
-          <span style={bodyStyles}>English term</span>
+          <span style={bodyStyles}>{inputLabel}</span>
           <input
-            aria-label="English glossary term"
+            aria-label={inputLabel}
             onChange={(event) => {
               setDraft(event.target.value);
               if (error) {
                 setError(null);
               }
             }}
-            placeholder="Project Manager"
+            placeholder={inputPlaceholder}
             style={inputStyles}
             type="text"
             value={draft}
@@ -342,7 +436,7 @@ const LocalizationGlossaryEditor: FC<LocalizationGlossaryEditorProps> = ({
               style={secondaryButtonStyles}
               type="button"
             >
-              Cancel edit
+              {cancelEditLabel}
             </button>
           )}
         </div>
@@ -353,9 +447,8 @@ const LocalizationGlossaryEditor: FC<LocalizationGlossaryEditorProps> = ({
       <div style={termListStyles}>
         {terms.length === 0 ? (
           <p style={bodyStyles}>
-            No protected terms yet. Typical examples:{" "}
-            <code>Project Manager</code>, <code>Artifact Viewer</code>,{" "}
-            <code>CODEX_HOME</code>.
+            {emptyStateIntro} <code>Project Manager</code>,{" "}
+            <code>Artifact Viewer</code>, <code>CODEX_HOME</code>.
           </p>
         ) : (
           terms.map((term, index) => (
@@ -365,20 +458,20 @@ const LocalizationGlossaryEditor: FC<LocalizationGlossaryEditorProps> = ({
               </p>
               <div style={actionRowStyles}>
                 <button
-                  aria-label={`Edit glossary term ${term}`}
+                  aria-label={`${editTermLabel}: ${term}`}
                   onClick={() => handleEdit(index)}
                   style={secondaryButtonStyles}
                   type="button"
                 >
-                  Edit
+                  {editTermLabel}
                 </button>
                 <button
-                  aria-label={`Remove glossary term ${term}`}
+                  aria-label={`${removeTermLabel}: ${term}`}
                   onClick={() => handleRemove(index)}
                   style={secondaryButtonStyles}
                   type="button"
                 >
-                  Remove
+                  {removeTermLabel}
                 </button>
               </div>
             </div>

@@ -13,19 +13,19 @@
 ## Phase 0 — Post-Release Scope Bootstrap (owner: Docs, updated: 2026-04-03)
 ### Stream: Planning Intake
 1. [DONE] Archive the completed `1.1.870` release TODO and create an execution-ready planning doc for packaged post-release localization fixes. Scope: `doc/TODO/Archive/todo-plan-up-to-phase6-four-category-localization-release-1.1.870-2026-04-03.md`, `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define post-release localization fix scope`
-2. [TODO] Git Commit: `docs(plan): define post-release localization fix scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): define post-release localization fix scope` (hash: `811d8a80`)
 3. [DONE] Create the new active session report early and record the packaged-release symptom plus the new fix stream so context survives session compaction. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): bootstrap post-release localization fix report`
-4. [TODO] Git Commit: `docs(session): bootstrap post-release localization fix report` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): bootstrap post-release localization fix report` (hash: `6484106d`)
 
 ## Phase 1 — Settings Surfaces Missing Localization Ownership (owner: Settings/Localization, updated: 2026-04-03)
 ### Stream: Localization Settings Card
 5. [DONE] Mark the remaining Localization settings labels so card title/row labels/reset placeholder resolve through `UI Labels`. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize localization card labels`
-6. [TODO] Git Commit: `fix(settings-localization): localize localization card labels` (hash: TBD)
+6. [DONE] Git Commit: `fix(settings-localization): localize localization card labels` (hash: `4f320934`)
 7. [DONE] Mark the remaining Localization settings explanatory copy so intro/helper/engine/glossary descriptions resolve through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize localization card helper text`
-8. [TODO] Git Commit: `fix(settings-localization): localize localization card helper text` (hash: TBD)
+8. [DONE] Git Commit: `fix(settings-localization): localize localization card helper text` (hash: `9d6edca9`)
 
 ### Stream: Glossary And Response-Mode Copy
-9. [TODO] Mark glossary editor validation and status copy so remaining Localization helper surfaces resolve through explicit dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize glossary editor copy`
+9. [DONE] Mark glossary editor validation and status copy so remaining Localization helper surfaces resolve through explicit dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize glossary editor copy`
 10. [TODO] Git Commit: `fix(settings-localization): localize glossary editor copy` (hash: TBD)
 11. [TODO] Mark response-mode option copy so remaining settings explanatory text no longer stays hardcoded. Scope: `src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize response mode copy`
 12. [TODO] Git Commit: `fix(settings-localization): localize response mode copy` (hash: TBD)
