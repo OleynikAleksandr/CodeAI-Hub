@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.876] - 2026-04-03
+### Fixed
+- **Claude full SDK isolation**: provider-driven Claude sessions now use empty `settingSources`, which puts CodeAI Hub-managed turns into SDK isolation mode and disables filesystem `CLAUDE.md` / settings auto-discovery entirely.
+- **Parent-directory `CLAUDE.md` leak closed**: Claude no longer walks up from the active workspace and treats `/Users/oleksandroliinyk/.claude/CLAUDE.md` as a `Project` memory file, so assistant chat replies stop inheriting personal Russian-only memory while thinking and artifacts remain English.
+
 ## [1.1.875] - 2026-04-03
 ### Fixed
 - **Claude provider-home memory isolation**: Claude query options no longer pass the real user `homedir()` as an extra `CLAUDE.md` discovery root, so provider-home sessions stop importing global `~/.claude/CLAUDE.md` as project memory.

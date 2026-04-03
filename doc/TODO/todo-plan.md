@@ -175,7 +175,7 @@
 119. [TODO] Git Commit: `docs(claude): record sdk isolation mode` (hash: TBD)
 
 ### Stream: Release Notes And Packaging
-120. [TODO] Prepare release-facing docs for the Claude SDK isolation-mode follow-up before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare claude sdk isolation release notes`
+120. [DONE] Prepare release-facing docs for the Claude SDK isolation-mode follow-up before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare claude sdk isolation release notes`
 121. [TODO] Git Commit: `docs(release): prepare claude sdk isolation release notes` (hash: TBD)
 122. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release keeps Claude provider sessions out of filesystem `CLAUDE.md` discovery entirely. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude sdk isolation release`
 123. [TODO] Git Commit: `build(release): assemble claude sdk isolation release` (hash: TBD)

@@ -7,9 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.875
-- **Claude provider-home sessions no longer import global `~/.claude/CLAUDE.md` by accident**: Claude query options now keep `additionalDirectories` inside the active workspace and no longer expose the real user home as an extra `CLAUDE.md` discovery root.
-- **Claude filesystem settings are now workspace-scoped in provider sessions**: provider-driven Claude runs load only `project` / `local` Claude setting sources, which keeps global user memory/settings outside CodeAI Hub’s isolated provider-home runtime.
+## Current Release — v1.1.876
+- **Claude provider sessions now run in full SDK isolation mode**: CodeAI Hub-managed Claude turns no longer auto-load filesystem settings or any `CLAUDE.md` memory files, so parent-directory discovery from the workspace cannot pull in `~/.claude/CLAUDE.md`.
+- **Claude chat replies now follow the runtime language contract instead of personal Claude memory**: the remaining mismatch where thinking/artifacts stayed English but assistant chat text still came back Russian was traced to project-scope `CLAUDE.md` auto-discovery and closed by disabling filesystem discovery entirely.
 - **Earlier internal-prompt and thinking fixes remain in force**: packaged workflow prompts still stay English-only for `Internal Agent Instructions`, while Codex and Gemini no longer force Russian thinking translation.
 
 Previous releases (summary): `1.1.800–1.1.870` — four-category localization release, localization packaging hotfixes, host-hydrated browser localization runtime, searchable localization controls, shared Project Manager localization consumption, persistent localization foundation, thinking display sync, public CI bootstrap, staged core restart UX, Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, history-visible recoverable failure, architecture gate 500 lines, session-scoped Stop, provider rebind after Stop, provider-neutral applied turn config, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
