@@ -1,9 +1,12 @@
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import type {
   ProviderStackDescriptor,
   ProviderStackId,
 } from "../../../../types/provider";
+
+const UI_LABELS_CATEGORY = "ui_interface";
 
 type DescriptionProviderPickerProps = {
   readonly visible: boolean;
@@ -18,6 +21,7 @@ export const DescriptionProviderPicker = ({
   onConfirm,
   onCancel,
 }: DescriptionProviderPickerProps) => {
+  const { t } = useLocalization();
   const [selected, setSelected] = useState<ProviderStackId | null>(null);
   const firstOptionRef = useRef<HTMLInputElement | null>(null);
 
@@ -50,6 +54,32 @@ export const DescriptionProviderPicker = ({
     return null;
   }
 
+  const title = t(
+    UI_LABELS_CATEGORY,
+    "pm.description.provider_picker.title",
+    "Select provider"
+  );
+  const availableLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.description.provider_picker.available_label",
+    "Available"
+  );
+  const unavailableLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.description.provider_picker.unavailable_label",
+    "Unavailable"
+  );
+  const cancelLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.description.provider_picker.cancel_label",
+    "Cancel"
+  );
+  const startLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.description.provider_picker.start_label",
+    "Start"
+  );
+
   const statusMessage =
     providers.length === 0
       ? "Провайдеры не найдены. Проверьте запуск ядра."
@@ -67,7 +97,7 @@ export const DescriptionProviderPicker = ({
       >
         <header className="pm-provider-picker__header">
           <h2 className="pm-provider-picker__title" id="pm-provider-picker-title">
-            Выберите провайдера
+            {title}
           </h2>
           <p className="pm-provider-picker__description">
             Шаг Description поддерживает Claude, Codex и Gemini. Провайдер должен
@@ -120,7 +150,7 @@ export const DescriptionProviderPicker = ({
                           : "pm-provider-picker__status pm-provider-picker__status--disconnected"
                       }
                     >
-                      {provider.connected ? "Доступен" : "Недоступен"}
+                      {provider.connected ? availableLabel : unavailableLabel}
                     </span>
                     {provider.statusMessage ? (
                       <span className="pm-provider-picker__warning">
@@ -142,14 +172,14 @@ export const DescriptionProviderPicker = ({
                 onClick={onCancel}
                 type="button"
               >
-                Отмена
+                {cancelLabel}
               </button>
               <button
                 className="pm-provider-picker__button pm-provider-picker__button--primary"
                 disabled={!selected}
                 type="submit"
               >
-                Запустить
+                {startLabel}
               </button>
             </div>
           </div>

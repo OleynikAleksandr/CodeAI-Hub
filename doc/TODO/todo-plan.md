@@ -26,13 +26,13 @@
 
 ### Stream: Glossary And Response-Mode Copy
 9. [DONE] Mark glossary editor validation and status copy so remaining Localization helper surfaces resolve through explicit dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize glossary editor copy`
-10. [TODO] Git Commit: `fix(settings-localization): localize glossary editor copy` (hash: TBD)
+10. [DONE] Git Commit: `fix(settings-localization): localize glossary editor copy` (hash: `4b3959c4`)
 11. [TODO] Mark response-mode option copy so remaining settings explanatory text no longer stays hardcoded. Scope: `src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize response mode copy`
 12. [TODO] Git Commit: `fix(settings-localization): localize response mode copy` (hash: TBD)
 
 ## Phase 2 — Project Manager Shell And Workflow Entry Surfaces (owner: PM, updated: 2026-04-03)
 ### Stream: Description Provider Picker
-13. [TODO] Mark Description provider picker shell labels and picker title through explicit localization categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker labels`
+13. [DONE] Mark Description provider picker shell labels and picker title through explicit localization categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker labels`
 14. [TODO] Git Commit: `fix(pm-localization): localize description provider picker labels` (hash: TBD)
 15. [TODO] Mark Description provider picker guidance/status copy through explicit user-facing categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker messages`
 16. [TODO] Git Commit: `fix(pm-localization): localize description provider picker messages` (hash: TBD)

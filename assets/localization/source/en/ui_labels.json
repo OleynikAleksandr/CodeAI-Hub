@@ -48,6 +48,11 @@
   "pm.workflow.stage.description.ready_title": "READY",
   "pm.workflow.stage.virtual_simulation.blocked_title": "BLOCKED: requires Final_Description.md",
   "pm.workflow.stage.diagram_modules.blocked_title": "BLOCKED: requires virtual-simulation.md (DONE)",
+  "pm.description.provider_picker.title": "Select provider",
+  "pm.description.provider_picker.available_label": "Available",
+  "pm.description.provider_picker.unavailable_label": "Unavailable",
+  "pm.description.provider_picker.cancel_label": "Cancel",
+  "pm.description.provider_picker.start_label": "Start",
   "pm.stage_artifact_header.mode.artifacts": "Artifacts",
   "pm.stage_artifact_header.mode.help": "Help",
   "pm.stage_artifact_header.mode.source": "Source"
