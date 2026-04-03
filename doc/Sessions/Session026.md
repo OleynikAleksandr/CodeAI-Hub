@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-03 15:39 CEST
 **Branch:** main
-**Version:** 1.1.873
+**Version:** 1.1.874
 
 ---
 
@@ -38,8 +38,28 @@
 - Ran a second full release pass after the new provider-settings fixes:
   - `./scripts/build-all.sh` bumped the unified workspace version from `1.1.872` to `1.1.873`;
   - `./scripts/build-release.sh --use-current-version` passed cleanly with the expected markers (`Step 7`, dev-dependency pruning, `✅ Package created`, and VSIX runtime verification).
-- Final packaged artifact for the current follow-up is `codeai-hub-1.1.873.vsix` in the repo root.
-- Remaining post-release backlog now shifts from provider-settings helper copy to whatever residual labels/messages or artifact-generation surfaces still remain after packaged testing of `1.1.873` (for example provider-tab labels, version/status strings, add-workspace modal copy, status-bar copy, artifact repair copy, or workflow-created user-facing artifacts).
+- A later packaged test of `1.1.873` exposed a second-class localization boundary regression:
+  - workflow runtime prompt scaffolding and bundled agent prompt/template assets were still partly authored in Russian, so default-English sessions could show Russian internal instructions;
+  - Codex/Gemini thought translation adapters still hardcoded `ru` as the target language, so visible reasoning/thinking was forced into Russian regardless of settings.
+- Converted the remaining internal workflow instruction sources to English and refreshed the generated template bundle:
+  - runtime prompt-pack scaffolding and file-first fallback copy;
+  - bundled `Description` prompt/template assets;
+  - bundled `Virtual Simulation` prompt asset;
+  - bundled `Diagram Modules` prompt/reference/merge-rule assets;
+  - generated `packages/core/src/templates/bundled-templates.ts`.
+- Refreshed the contract verification layer so bundled template sync and idea-contract tests now assert English internal templates instead of stale Russian snippets.
+- Removed the hardcoded Russian thought-translation target from Codex and Gemini, so provider reasoning/thinking now falls back to the original provider language by default.
+- Ran targeted validation for the internal-prompt/thinking follow-up:
+  - `npm run build --workspace @codeai-hub/core`;
+  - `npm run build --workspace @codeai-hub/codex-module`;
+  - `npm run build --workspace @codeai-hub/gemini-module`;
+  - `npm exec --yes tsx --test packages/core/src/templates/template-sync-service.test.ts`;
+  - `npm exec --yes tsx --test packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`.
+- Ran another full release pass for the internal-prompt/thinking fix:
+  - `./scripts/build-all.sh` bumped the unified workspace version from `1.1.873` to `1.1.874`;
+  - `./scripts/build-release.sh --use-current-version` passed cleanly with the expected markers (`Step 7`, dev-dependency pruning, `✅ Package created`, and VSIX runtime verification).
+- Final packaged artifact for the current follow-up is `codeai-hub-1.1.874.vsix` in the repo root.
+- Remaining post-release backlog now shifts from internal prompt/thinking boundary repair back to whatever residual user-facing labels/messages or workflow-created artifact surfaces still remain after packaged testing of `1.1.874` (for example add-workspace modal copy, status-bar copy, artifact repair copy, provider/version labels, or workflow-created user-facing artifacts).
 
 ## Git commits
 - `811d8a80 docs(plan): define post-release localization fix scope`
@@ -80,6 +100,15 @@
 - `5f18f8fe docs(release): prepare provider settings tail release notes`
 - `1e4294d0 build(webview): refresh provider settings tail bundle`
 - `e5ac4645 build(release): assemble provider settings tail release`
+- `95e801e6 fix(workflow-prompts): enforce english runtime scaffolding`
+- `4b095d83 fix(description-agent): enforce english internal templates`
+- `41d29ba6 fix(diagram-agent): enforce english prompt assets`
+- `d8291f19 fix(diagram-agent): enforce english staged guidance`
+- `53c3e3e4 fix(provider-thinking): stop forcing russian thought translation`
+- `f72c9186 fix(virtual-simulation): enforce english internal prompt`
+- `55999af4 test(workflow-contracts): expect english internal templates`
+- `b01c1326 docs(release): prepare internal prompt english follow-up notes`
+- `940fb78a build(release): assemble internal prompt english release`
 
 ---
 
@@ -97,6 +126,8 @@
 9. `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
 
 ## Plans for next session
-- Install and test packaged `codeai-hub-1.1.873.vsix`, not just the workspace checkout.
-- Focus first on any residual provider-settings misses still visible after the `Settings only` intro, provider warning banner, and per-model description fixes. Likely remaining candidates are labels/titles and other raw provider/version strings rather than the already-fixed helper blocks.
-- After provider-settings smoke is clean, continue the active TODO items that are still intentionally open (`add-workspace` modal, status-bar shell, artifact repair, provider/version labels, and user-facing workflow artifacts) instead of reopening the approved category-model discussion.
+- Install and test packaged `codeai-hub-1.1.874.vsix`, not just the workspace checkout.
+- Focus first on the previously reported regression surfaces under default-English settings:
+  - internal workflow prompt packs in `Description`, `Virtual Simulation`, and `Diagram Modules` should now stay English;
+  - Codex/Gemini visible reasoning/thinking should no longer be forced into Russian.
+- After that smoke is clean, continue the still-open user-facing backlog items (`add-workspace` modal, status-bar shell, artifact repair, provider/version labels, and workflow-created user-facing artifacts) instead of reopening the already-approved localization category model.

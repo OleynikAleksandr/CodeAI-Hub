@@ -148,8 +148,8 @@
 ## Phase 8 — Internal Prompt English Release Follow-Up (owner: QA/Release/Docs, updated: 2026-04-03)
 ### Stream: Release Notes And Packaging
 102. [TODO] Prepare release-facing docs for the internal-prompt English boundary and thinking-language follow-up so the next packaged patch release is documented before version bump. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare internal prompt english follow-up notes`
-103. [TODO] Git Commit: `docs(release): prepare internal prompt english follow-up notes` (hash: TBD)
-104. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes English internal workflow prompts and no longer forces Russian thinking translation. Scope: release-generated version files and manifests. Target commit: `build(release): assemble internal prompt english release`
-105. [TODO] Git Commit: `build(release): assemble internal prompt english release` (hash: TBD)
-106. [TODO] Update the active session report with the internal-prompt/t thinking fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record internal prompt english release`
+103. [DONE] Git Commit: `docs(release): prepare internal prompt english follow-up notes` (hash: `b01c1326`)
+104. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes English internal workflow prompts and no longer forces Russian thinking translation. Scope: release-generated version files and manifests. Target commit: `build(release): assemble internal prompt english release`
+105. [DONE] Git Commit: `build(release): assemble internal prompt english release` (hash: `940fb78a`)
+106. [DONE] Update the active session report with the internal-prompt/t thinking fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record internal prompt english release`
 107. [TODO] Git Commit: `docs(session): record internal prompt english release` (hash: TBD)
