@@ -56,42 +56,46 @@
 27. [DONE] Mark Project Manager navigation, toolbar, and workspace tree terms with explicit `UI Labels` categories. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(localization): mark project manager labels`
 28. [DONE] Git Commit: `refactor(localization): mark project manager labels` (hash: `53aaf34b`)
 29. [DONE] Mark Description and Virtual Simulation explanatory surfaces with explicit `Messages for the User` categories. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark workflow help text`
-30. [TODO] Git Commit: `refactor(localization): mark workflow help text` (hash: TBD)
-31. [TODO] Mark remaining diagram/help raw strings and artifact-header shell labels with explicit categories. Scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark remaining project manager strings`
+30. [DONE] Git Commit: `refactor(localization): mark workflow help text` (hash: `bba1f974`)
+31. [DONE] Mark remaining diagram/help raw strings and artifact-header shell labels with explicit categories. Scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark remaining project manager strings`
 32. [TODO] Git Commit: `refactor(localization): mark remaining project manager strings` (hash: TBD)
 
 ### Stream: Forms And Existing User-Facing Artifacts
-33. [TODO] Mark questionnaire shell and form-copy entrypoints with explicit `Artifacts for the User` categories. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark questionnaire user artifacts`
-34. [TODO] Git Commit: `refactor(localization): mark questionnaire user artifacts` (hash: TBD)
+33. [TODO] Backfill `messages_for_the_user` source entries for the migrated Description, Virtual Simulation, and Diagram Modules help surfaces. Scope: `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager user messages dictionary`
+34. [TODO] Git Commit: `refactor(localization): backfill project manager user messages dictionary` (hash: TBD)
+35. [TODO] Backfill `ui_labels` source entries for Project Manager shell toggles and header labels that now resolve through `UI Labels`. Scope: `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager label dictionary`
+36. [TODO] Git Commit: `refactor(localization): backfill project manager label dictionary` (hash: TBD)
+37. [TODO] Mark questionnaire shell and form-copy entrypoints with explicit `Artifacts for the User` categories. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark questionnaire user artifacts`
+38. [TODO] Git Commit: `refactor(localization): mark questionnaire user artifacts` (hash: TBD)
 
 ## Phase 4 — Internal Agent Instructions And Artifact Language Pipeline (owner: Workflow/Core, updated: 2026-04-03)
 ### Stream: Internal Agent Instruction Classification
-35. [TODO] Classify workflow contract templates and bundled prompt assets as `Internal Agent Instructions` and document their English-only boundary. Scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): classify internal agent templates`
-36. [TODO] Git Commit: `refactor(localization): classify internal agent templates` (hash: TBD)
-37. [TODO] Parameterize Description and Virtual Simulation prompt entrypoints so user-facing artifact language is injected while internal instructions remain English. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/source/virtual-simulation-prompt.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into core prompts`
-38. [TODO] Git Commit: `feat(workflow): inject artifact language into core prompts` (hash: TBD)
-39. [TODO] Parameterize Diagram Modules prompt assets so final user-facing outputs follow `Artifacts for the User` while internal prompt text stays English. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into diagram prompts`
-40. [TODO] Git Commit: `feat(workflow): inject artifact language into diagram prompts` (hash: TBD)
+39. [TODO] Classify workflow contract templates and bundled prompt assets as `Internal Agent Instructions` and document their English-only boundary. Scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): classify internal agent templates`
+40. [TODO] Git Commit: `refactor(localization): classify internal agent templates` (hash: TBD)
+41. [TODO] Parameterize Description and Virtual Simulation prompt entrypoints so user-facing artifact language is injected while internal instructions remain English. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/source/virtual-simulation-prompt.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into core prompts`
+42. [TODO] Git Commit: `feat(workflow): inject artifact language into core prompts` (hash: TBD)
+43. [TODO] Parameterize Diagram Modules prompt assets so final user-facing outputs follow `Artifacts for the User` while internal prompt text stays English. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into diagram prompts`
+44. [TODO] Git Commit: `feat(workflow): inject artifact language into diagram prompts` (hash: TBD)
 
 ### Stream: Session Start / Prompt Pack
-41. [TODO] Thread `Artifacts for the User` language from Settings into Project Manager session start / submit flows and prompt-pack assembly. Scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`. Target commit: `feat(workflow): pass artifact language through prompt pack`
-42. [TODO] Git Commit: `feat(workflow): pass artifact language through prompt pack` (hash: TBD)
+45. [TODO] Thread `Artifacts for the User` language from Settings into Project Manager session start / submit flows and prompt-pack assembly. Scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`. Target commit: `feat(workflow): pass artifact language through prompt pack`
+46. [TODO] Git Commit: `feat(workflow): pass artifact language through prompt pack` (hash: TBD)
 
 ## Phase 5 — Verification And Russian Localization Acceptance (owner: QA/Release, updated: 2026-04-03)
 ### Stream: Focused Tests
-43. [TODO] Add or refresh focused tests for artifact-language threading in prompt pack and workflow start services. Scope: `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow): verify artifact language threading`
-44. [TODO] Git Commit: `test(workflow): verify artifact language threading` (hash: TBD)
-45. [TODO] Add or refresh focused tests for internal-instruction classification at the Core contract layer. Scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(core): verify internal instruction classification`
-46. [TODO] Git Commit: `test(core): verify internal instruction classification` (hash: TBD)
+47. [TODO] Add or refresh focused tests for artifact-language threading in prompt pack and workflow start services. Scope: `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow): verify artifact language threading`
+48. [TODO] Git Commit: `test(workflow): verify artifact language threading` (hash: TBD)
+49. [TODO] Add or refresh focused tests for internal-instruction classification at the Core contract layer. Scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(core): verify internal instruction classification`
+50. [TODO] Git Commit: `test(core): verify internal instruction classification` (hash: TBD)
 
 ### Stream: Targeted Verification
-47. [TODO] Run targeted builds and manual Russian-surface verification for localization, Core, webview, and Project Manager before release packaging. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
-48. [TODO] Update release-facing docs for the four-category localization release from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare four-category localization release notes`
-49. [TODO] Git Commit: `docs(release): prepare four-category localization release notes` (hash: TBD)
+51. [TODO] Run targeted builds and manual Russian-surface verification for localization, Core, webview, and Project Manager before release packaging. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
+52. [TODO] Update release-facing docs for the four-category localization release from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare four-category localization release notes`
+53. [TODO] Git Commit: `docs(release): prepare four-category localization release notes` (hash: TBD)
 
 ## Phase 6 — Release Build And Closure (owner: Release/Docs, updated: 2026-04-03)
 ### Stream: Build And Ship
-50. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
-51. [TODO] Git Commit: `build(release): assemble four-category localization release` (hash: TBD)
-52. [TODO] Archive this TODO plan, update the active session report, and record post-release validation notes. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/`. Target commit: `docs(session): record four-category localization release`
-53. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)
+54. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
+55. [TODO] Git Commit: `build(release): assemble four-category localization release` (hash: TBD)
+56. [TODO] Archive this TODO plan, update the active session report, and record post-release validation notes. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/`. Target commit: `docs(session): record four-category localization release`
+57. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)
