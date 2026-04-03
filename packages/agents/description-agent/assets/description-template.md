@@ -1,38 +1,38 @@
 # Description Help
 
-На шаге Description вы описываете будущий программный продукт простыми словами, а агент переводит это в понятное описание продукта и его начальную архитектурную картину.
+At the Description step, you explain the future software product in plain language, and the agent turns that into a clear product description and an initial architectural picture.
 
-## Что полезнее всего заполнить в анкете
+## What is most useful to fill in the questionnaire
 
-- какой это тип продукта или платформы;
-- о чём продукт и какую задачу он решает;
-- кто будет им пользоваться;
-- ключевые сценарии использования без жёсткого лимита;
-- что продукт обязательно должен уметь;
-- какие крупные части и границы уже видны;
-- ограничения, out of scope и примечания.
+- what kind of product or platform it is;
+- what the product is about and which problem it solves;
+- who will use it;
+- the key usage scenarios without an artificial limit;
+- what the product absolutely must be able to do;
+- which large parts and boundaries are already visible;
+- constraints, out-of-scope items, and notes.
 
-Мы рекомендуем описывать продукт в логике кластерно-модульной архитектуры.
+We recommend describing the product in a cluster-module architecture mindset.
 
-Это не значит, что пользователь обязан знать архитектурные термины заранее. Достаточно описать продукт как набор понятных частей, крупных блоков и границ между ними. Такой способ помогает AI точнее понять систему и аккуратнее вести её к следующим шагам.
+That does not mean the user must already know architectural terms. It is enough to describe the product as a set of understandable parts, large blocks, and boundaries between them. This helps the AI understand the system more accurately and move it more carefully into the next steps.
 
-## Почему это полезно
+## Why this helps
 
-- продукт не схлопывается в один большой неясный блок;
-- крупные части системы становятся видны раньше;
-- границы между блоками проще обсуждать и проверять;
-- следующим шагам легче строить сценарии и диаграммы.
+- the product does not collapse into one vague giant block;
+- the major parts of the system become visible earlier;
+- the boundaries between blocks are easier to discuss and verify;
+- the next steps can build scenarios and diagrams more reliably.
 
-## Короткий словарь
+## Short glossary
 
-- `Shell` — то, через что пользователь запускает или открывает продукт.
-- `Product Part` — верхнеуровневая часть продукта, которая может жить, запускаться или поставляться отдельно.
-- `Cluster` — крупный блок из нескольких модулей.
-- `Module` — отдельный рабочий блок с одной понятной ролью.
-- `Boundary` — граница между блоками системы.
+- `Shell` is the surface through which the user launches or opens the product.
+- `Product Part` is a high-level part of the product that can live, run, or be delivered separately.
+- `Cluster` is a large block made of several modules.
+- `Module` is a separate working block with one clear role.
+- `Boundary` is a border between system blocks.
 
-Когда анкета готова, нажмите `Submit questionnaire`. После этого откроется выбор AI-провайдера. В текущем MVP провайдер выбирается один раз для всего workflow workspace, а не отдельно на каждом шаге. Затем продолжайте диалог и уточняйте документ, пока вы не посчитаете его достаточно сильной основой для следующего шага.
+When the questionnaire is ready, click `Submit questionnaire`. After that, the AI provider picker will open. In the current MVP, the provider is chosen once for the whole workflow workspace, not separately for each step. Then continue the dialogue and refine the document until you consider it a strong enough foundation for the next step.
 
-Проверьте, что в итоговом `Final_Description.md` есть отдельный блок ключевых пользовательских сценариев. Сценариев там должно быть столько, сколько нужно для покрытия продукта без белых пятен.
+Make sure the final `Final_Description.md` includes a dedicated block of key user scenarios. There should be as many scenarios as needed to cover the product without blind spots.
 
-Итог шага: `.codeai-hub/<workspace>/description/Final_Description.md`. Этот документ должен быть одновременно понятен пользователю и служить базой для следующего шага.
+Step output: `.codeai-hub/<workspace>/description/Final_Description.md`. This document should be understandable to the user while also serving as the baseline for the next step.
