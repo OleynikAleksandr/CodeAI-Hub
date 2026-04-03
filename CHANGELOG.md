@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.875] - 2026-04-03
+### Fixed
+- **Claude provider-home memory isolation**: Claude query options no longer pass the real user `homedir()` as an extra `CLAUDE.md` discovery root, so provider-home sessions stop importing global `~/.claude/CLAUDE.md` as project memory.
+- **Workspace-scoped Claude setting sources**: provider-driven Claude sessions now load only `project` / `local` Claude filesystem settings, which keeps global user settings outside CodeAI Hub’s isolated provider-home runtime contract.
+
 ## [1.1.874] - 2026-04-03
 ### Fixed
 - **English-only internal workflow prompt boundary**: packaged runtime prompt scaffolding plus bundled `Description`, `Virtual Simulation`, and `Diagram Modules` internal templates now stay English-only, so installed workflow sessions no longer surface Russian agent instructions when user-facing language remains English.

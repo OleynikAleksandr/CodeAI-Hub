@@ -157,7 +157,7 @@
 ## Phase 9 — Claude Provider-Home Memory Isolation Follow-Up (owner: Claude/Release/Docs, updated: 2026-04-03)
 ### Stream: Runtime Isolation Fix
 108. [DONE] Stop Claude query options from exposing the real user home as an additional `CLAUDE.md` discovery root and lock provider sessions to workspace-scoped `project/local` Claude setting sources. Scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, Claude module tests, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Target commit: `fix(claude): isolate provider-home memory discovery`
-109. [TODO] Git Commit: `fix(claude): isolate provider-home memory discovery` (hash: TBD)
+109. [DONE] Git Commit: `fix(claude): isolate provider-home memory discovery` (hash: `2701887a`)
 
 ### Stream: Release Notes And Packaging
 110. [DONE] Prepare release-facing docs for the Claude provider-home memory-isolation follow-up before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare claude memory isolation release notes`
