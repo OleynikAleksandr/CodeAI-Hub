@@ -1,8 +1,8 @@
 # Session 026 — Post-Release Localization Fix Stream After `1.1.870`
 
-**Date:** 2026-04-03 14:47 CEST
+**Date:** 2026-04-03 15:39 CEST
 **Branch:** main
-**Version:** 1.1.872
+**Version:** 1.1.873
 
 ---
 
@@ -25,14 +25,21 @@
   - `Claude`, `Codex`, and `Gemini` default-model helper copy;
   - `Claude Thinking Settings` helper sections;
   - Codex/Gemini reasoning-thinking modal guidance.
+- Closed the next packaged provider-settings tails reported after testing `1.1.872`:
+  - the standalone `Settings only` explanatory intro now resolves through `UI Helper Text`;
+  - the provider update risk banner now resolves through `Messages for the User`;
+  - the explanatory sentences under each `Claude`, `Codex`, and `Gemini` model option now resolve through `UI Helper Text`.
 - Ran targeted validation during the follow-up:
   - repeated `npm run build:webview`;
   - `npm run typecheck:webview`;
   - `npm run build:project-manager`.
 - Ran `./scripts/build-all.sh`, which bumped the unified workspace version from `1.1.871` to `1.1.872` and rebuilt providers, core, UI bundles, and the CEF launcher.
 - First `./scripts/build-release.sh --use-current-version` attempt exposed a real release blocker: `description-questionnaire-panel.tsx` used a dynamic field-id lookup that passed `build:project-manager` but failed `typecheck:webview`. Fixed that with a typed lookup helper and reran the release packaging successfully.
-- Final release packaging completed with the expected markers (`Step 7`, dev-dependency pruning, `✅ Package created`, and VSIX runtime verification) and produced `codeai-hub-1.1.872.vsix` in the repo root.
-- Remaining post-release backlog now shifts from the packaged helper-text complaint to any residual labels/messages the user still finds in the installed `1.1.872` build (for example provider-tab labels, version/status strings, add-workspace modal copy, status-bar copy, and artifact repair copy).
+- Ran a second full release pass after the new provider-settings fixes:
+  - `./scripts/build-all.sh` bumped the unified workspace version from `1.1.872` to `1.1.873`;
+  - `./scripts/build-release.sh --use-current-version` passed cleanly with the expected markers (`Step 7`, dev-dependency pruning, `✅ Package created`, and VSIX runtime verification).
+- Final packaged artifact for the current follow-up is `codeai-hub-1.1.873.vsix` in the repo root.
+- Remaining post-release backlog now shifts from provider-settings helper copy to whatever residual labels/messages or artifact-generation surfaces still remain after packaged testing of `1.1.873` (for example provider-tab labels, version/status strings, add-workspace modal copy, status-bar copy, artifact repair copy, or workflow-created user-facing artifacts).
 
 ## Git commits
 - `811d8a80 docs(plan): define post-release localization fix scope`
@@ -65,6 +72,14 @@
 - `57564a96 build(webview): refresh provider helper localization bundle`
 - `3e670f83 build(release): assemble provider helper localization release`
 - `02aab669 fix(pm-localization): tighten questionnaire translation lookup typing`
+- `224b5c49 fix(settings-localization): localize settings-only shell copy`
+- `d3f89a56 fix(settings-localization): localize provider warning banner`
+- `7169378c fix(settings-localization): localize claude model option descriptions`
+- `1fc26c74 fix(settings-localization): localize codex model option descriptions`
+- `a948f346 fix(settings-localization): localize gemini model option descriptions`
+- `5f18f8fe docs(release): prepare provider settings tail release notes`
+- `1e4294d0 build(webview): refresh provider settings tail bundle`
+- `e5ac4645 build(release): assemble provider settings tail release`
 
 ---
 
@@ -82,6 +97,6 @@
 9. `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
 
 ## Plans for next session
-- Install and test packaged `codeai-hub-1.1.872.vsix`, not just the workspace checkout.
-- Focus first on the exact surfaces the user reported under `UI Helper Text`: `General -> Response Mode`, `Claude`, `Codex`, and `Gemini` tabs, including the thinking/reasoning dialogs.
-- If residual misses remain, continue the active TODO items that are still intentionally open (`add-workspace` modal, status-bar shell, artifact repair, provider/version labels and other non-helper user-facing copy) instead of reopening the approved category-model discussion.
+- Install and test packaged `codeai-hub-1.1.873.vsix`, not just the workspace checkout.
+- Focus first on any residual provider-settings misses still visible after the `Settings only` intro, provider warning banner, and per-model description fixes. Likely remaining candidates are labels/titles and other raw provider/version strings rather than the already-fixed helper blocks.
+- After provider-settings smoke is clean, continue the active TODO items that are still intentionally open (`add-workspace` modal, status-bar shell, artifact repair, provider/version labels, and user-facing workflow artifacts) instead of reopening the approved category-model discussion.

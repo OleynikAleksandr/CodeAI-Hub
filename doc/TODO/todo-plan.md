@@ -121,7 +121,7 @@
 81. [DONE] Git Commit: `docs(release): prepare provider settings tail release notes` (hash: `5f18f8fe`)
 82. [DONE] Refresh the tracked `media/react-chat.js` bundle after the provider-settings tail sweep so release packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh provider settings tail bundle`
 83. [DONE] Git Commit: `build(webview): refresh provider settings tail bundle` (hash: `1e4294d0`)
-84. [IN_PROGRESS] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes the provider warning/model-description/settings-only fixes. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider settings tail release`
-85. [TODO] Git Commit: `build(release): assemble provider settings tail release` (hash: TBD)
-86. [TODO] Update the active session report with the provider-settings tail fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider settings tail release`
+84. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes the provider warning/model-description/settings-only fixes. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider settings tail release`
+85. [DONE] Git Commit: `build(release): assemble provider settings tail release` (hash: `e5ac4645`)
+86. [DONE] Update the active session report with the provider-settings tail fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider settings tail release`
 87. [TODO] Git Commit: `docs(session): record provider settings tail release` (hash: TBD)
