@@ -1,6 +1,10 @@
 import type { ProviderStackId } from "../../../types/provider";
 import { api } from "../api";
-import { DescriptionSubmitService } from "./description-submit-service";
+import {
+  DescriptionSubmitService,
+  resolveArtifactsForTheUserLanguage,
+} from "./description-submit-service";
+import type { SettingsLoadedPayload } from "../core-stream-message-types";
 
 type StartWorkflowStepParams = {
   readonly workspaceName?: string;
@@ -16,6 +20,8 @@ type WorkflowStateGetter = (
   workspaceSlug: string,
   workspacePath?: string
 ) => ReturnType<typeof api.getWorkflowState>;
+
+type SettingsPayloadGetter = () => SettingsLoadedPayload | null;
 
 type SubmitQuestionnaireService = Pick<
   DescriptionSubmitService,
@@ -58,14 +64,18 @@ const resolveMostRecentContinuitySessionId = (options: {
 
 export class WorkflowStepStartService {
   private readonly getWorkflowState: WorkflowStateGetter;
+  private readonly getSettingsPayload: SettingsPayloadGetter;
   private readonly submitService: SubmitQuestionnaireService;
 
   constructor(options?: {
     readonly getWorkflowState?: WorkflowStateGetter;
+    readonly getSettingsPayload?: SettingsPayloadGetter;
     readonly submitService?: SubmitQuestionnaireService;
   }) {
     this.getWorkflowState =
       options?.getWorkflowState ?? api.getWorkflowState.bind(api);
+    this.getSettingsPayload =
+      options?.getSettingsPayload ?? api.getLastSettingsPayload.bind(api);
     this.submitService =
       options?.submitService ?? new DescriptionSubmitService();
   }
@@ -88,7 +98,11 @@ export class WorkflowStepStartService {
     if (!finalDescriptionPath) {
       throw new Error("Missing Final_Description.md. Complete Description step first.");
     }
+    const artifactLanguage = resolveArtifactsForTheUserLanguage(
+      this.getSettingsPayload()
+    );
     return this.submitService.submitQuestionnaire({
+      artifactLanguage,
       workspaceName: params.workspaceName,
       workspaceSlug: params.workspaceSlug,
       workspacePath: params.workspacePath,
@@ -119,11 +133,15 @@ export class WorkflowStepStartService {
       throw new Error("Missing virtual-simulation.md. Complete Virtual Simulation step first.");
     }
     const progressSubstep = readDiagramModulesSubstep(state);
+    const artifactLanguage = resolveArtifactsForTheUserLanguage(
+      this.getSettingsPayload()
+    );
     const questionnairePath =
       progressSubstep === null
         ? vsArtifactPath
         : `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
     return this.submitService.submitQuestionnaire({
+      artifactLanguage,
       workspaceName: params.workspaceName,
       workspaceSlug: params.workspaceSlug,
       workspacePath: params.workspacePath,

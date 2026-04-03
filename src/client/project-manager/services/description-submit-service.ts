@@ -1,5 +1,6 @@
 import type { ProviderStackId } from "../../../types/provider";
 import { api } from "../api";
+import type { SettingsLoadedPayload } from "../core-stream-message-types";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "../../ui/src/services/idea-collector-fallback-schema";
 import { normalizeIdeaCollectorSchema } from "../../ui/src/services/idea-collector-schema-utils";
 import { postSystemNotice } from "../../ui/src/services/idea-collector-support";
@@ -15,6 +16,8 @@ import { buildWorkflowPromptPack } from "./prompt-pack-builder";
 import { waitForSessionProviderBinding } from "./session-binding-waiter";
 
 const SESSION_CREATE_TIMEOUT_MS = 15000;
+const DEFAULT_ARTIFACT_LANGUAGE = "en";
+const LEGACY_SOURCE_LANGUAGE = "source";
 const WORKFLOW_CONTRACT_ENDPOINTS = {
   description: "/api/v1/orchestrator/description-contract",
   virtual_simulation: "/api/v1/orchestrator/virtual-simulation-contract",
@@ -24,6 +27,43 @@ const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
   "Собери артефакт на основе анкеты и шаблона. " +
   "Запиши результат файлом по целевому пути.";
 export type WorkflowStageId = keyof typeof WORKFLOW_CONTRACT_ENDPOINTS;
+
+const isRecordValue = (
+  value: unknown
+): value is Readonly<Record<string, unknown>> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+const normalizeArtifactLanguage = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) {
+    return null;
+  }
+  return normalized === LEGACY_SOURCE_LANGUAGE
+    ? DEFAULT_ARTIFACT_LANGUAGE
+    : normalized;
+};
+
+export const resolveArtifactsForTheUserLanguage = (
+  payload: SettingsLoadedPayload | null | undefined
+): string => {
+  const settings = isRecordValue(payload?.settings) ? payload.settings : null;
+  const general = settings && isRecordValue(settings.general) ? settings.general : null;
+  const localization =
+    general && isRecordValue(general.localization) ? general.localization : null;
+  const categories =
+    localization && isRecordValue(localization.categories)
+      ? localization.categories
+      : null;
+
+  return (
+    normalizeArtifactLanguage(categories?.artifactsForTheUser) ??
+    normalizeArtifactLanguage(categories?.interactiveTemplates) ??
+    DEFAULT_ARTIFACT_LANGUAGE
+  );
+};
 
 type WorkflowContractSnapshot = {
   readonly prompt: string;
@@ -247,6 +287,7 @@ export class DescriptionSubmitService {
     readonly workspacePath: string;
     readonly questionnairePath: string;
     readonly stage?: WorkflowStageId;
+    readonly artifactLanguage?: string;
     readonly providerId?: ProviderStackId;
     readonly onSessionCreated?: (sessionId: string) => void;
   }): Promise<string> {
@@ -269,6 +310,9 @@ export class DescriptionSubmitService {
     });
     params.onSessionCreated?.(session.id);
     const resolvedInitiativeSlug = session.initiativeSlug ?? initiativeSlug;
+    const artifactLanguage =
+      normalizeArtifactLanguage(params.artifactLanguage) ??
+      resolveArtifactsForTheUserLanguage(api.getLastSettingsPayload());
     if (!resolvedInitiativeSlug) {
       notifyMissingDescriptionContext(session.id);
       return session.id;
@@ -277,6 +321,7 @@ export class DescriptionSubmitService {
     try {
       const contract = await contractPromise;
       const promptPack = buildWorkflowPromptPack({
+        artifactLanguage,
         stage,
         workspacePath: params.workspacePath,
         workspaceSlug: resolvedInitiativeSlug,

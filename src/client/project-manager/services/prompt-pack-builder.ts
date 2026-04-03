@@ -4,6 +4,7 @@ export type WorkflowStageId =
   | "diagram_modules";
 
 type WorkflowPromptPackInput = {
+  readonly artifactLanguage?: string;
   readonly stage: WorkflowStageId;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -36,6 +37,8 @@ const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
 };
+const DEFAULT_ARTIFACT_LANGUAGE = "en";
+const LEGACY_SOURCE_LANGUAGE = "source";
 
 const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
   description: "Собери артефакт на основе анкеты и шаблона.",
@@ -53,6 +56,16 @@ const RUN_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const NON_ALPHANUMERIC_RE = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_RE = /-+/g;
 const TRAILING_DASH_RE = /-$/;
+
+const normalizeArtifactLanguage = (value: string): string => {
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) {
+    return DEFAULT_ARTIFACT_LANGUAGE;
+  }
+  return normalized === LEGACY_SOURCE_LANGUAGE
+    ? DEFAULT_ARTIFACT_LANGUAGE
+    : normalized;
+};
 
 const normalizeRelativePath = (value: string): string => {
   const normalized = value.replace(/\\/g, "/").trim();
@@ -211,6 +224,24 @@ const buildChangeSummaryBlock = (stage: WorkflowStageId): string | null => {
   ].join("\n");
 };
 
+const buildArtifactLanguageBlock = (
+  stage: WorkflowStageId,
+  artifactLanguage: string | undefined
+): string => {
+  const normalizedArtifactLanguage =
+    normalizeArtifactLanguage(artifactLanguage ?? DEFAULT_ARTIFACT_LANGUAGE);
+  const lines = [
+    "Artifacts for the User language (runtime directive):",
+    `- Target language code: \`${normalizedArtifactLanguage}\`.`,
+    `- Write the final user-facing artifact and brief user-facing chat updates in \`${normalizedArtifactLanguage}\`.`,
+    "- Do not rewrite internal instructions to match this language.",
+    stage === "diagram_modules"
+      ? "- Keep contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical form."
+      : null,
+  ];
+  return lines.filter((entry): entry is string => Boolean(entry)).join("\n");
+};
+
 export const buildWorkflowPromptPack = (
   params: WorkflowPromptPackInput
 ): WorkflowPromptPack => {
@@ -257,6 +288,7 @@ export const buildWorkflowPromptPack = (
   return {
     content: [
       prompt,
+      buildArtifactLanguageBlock(params.stage, params.artifactLanguage),
       buildChangeSummaryBlock(params.stage),
       instructions,
       `Имя выходного файла: \`${fileName}\``,

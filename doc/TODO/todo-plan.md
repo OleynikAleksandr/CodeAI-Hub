@@ -75,10 +75,10 @@
 41. [DONE] Parameterize Description and Virtual Simulation prompt entrypoints so user-facing artifact language is injected while internal instructions remain English. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/source/virtual-simulation-prompt.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into core prompts`
 42. [DONE] Git Commit: `feat(workflow): inject artifact language into core prompts` (hash: `8847a47e`)
 43. [DONE] Parameterize Diagram Modules prompt assets so final user-facing outputs follow `Artifacts for the User` while internal prompt text stays English. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into diagram prompts`
-44. [TODO] Git Commit: `feat(workflow): inject artifact language into diagram prompts` (hash: TBD)
+44. [DONE] Git Commit: `feat(workflow): inject artifact language into diagram prompts` (hash: `4b97130c`)
 
 ### Stream: Session Start / Prompt Pack
-45. [TODO] Thread `Artifacts for the User` language from Settings into Project Manager session start / submit flows and prompt-pack assembly. Scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`. Target commit: `feat(workflow): pass artifact language through prompt pack`
+45. [DONE] Thread `Artifacts for the User` language from Settings into Project Manager session start / submit flows and prompt-pack assembly. Scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`. Target commit: `feat(workflow): pass artifact language through prompt pack`
 46. [TODO] Git Commit: `feat(workflow): pass artifact language through prompt pack` (hash: TBD)
 
 ## Phase 5 — Verification And Russian Localization Acceptance (owner: QA/Release, updated: 2026-04-03)
