@@ -7,6 +7,7 @@ import type {
 } from "../../../../types/provider";
 
 const UI_LABELS_CATEGORY = "ui_interface";
+const USER_MESSAGES_CATEGORY = "system_feedback";
 
 type DescriptionProviderPickerProps = {
   readonly visible: boolean;
@@ -79,13 +80,33 @@ export const DescriptionProviderPicker = ({
     "pm.description.provider_picker.start_label",
     "Start"
   );
+  const description = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.description.provider_picker.description",
+    "Description supports Claude, Codex, and Gemini. The provider must be installed and authenticated."
+  );
+  const noProvidersStatus = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.description.provider_picker.status.no_providers",
+    "No providers found. Check that the core is running."
+  );
+  const chooseProviderStatus = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.description.provider_picker.status.choose_provider",
+    "Choose a provider to start the Description step."
+  );
 
   const statusMessage =
     providers.length === 0
-      ? "Провайдеры не найдены. Проверьте запуск ядра."
+      ? noProvidersStatus
       : selectedProvider
-        ? `${selectedProvider.title} выбран.`
-        : "Выберите провайдера для запуска шага Description.";
+        ? t(
+            USER_MESSAGES_CATEGORY,
+            "pm.description.provider_picker.status.selected_provider",
+            "{providerTitle} selected.",
+            { providerTitle: selectedProvider.title }
+          )
+        : chooseProviderStatus;
 
   return (
     <div className="pm-provider-picker-overlay">
@@ -99,10 +120,7 @@ export const DescriptionProviderPicker = ({
           <h2 className="pm-provider-picker__title" id="pm-provider-picker-title">
             {title}
           </h2>
-          <p className="pm-provider-picker__description">
-            Шаг Description поддерживает Claude, Codex и Gemini. Провайдер должен
-            быть установлен и авторизован.
-          </p>
+          <p className="pm-provider-picker__description">{description}</p>
         </header>
         <form className="pm-provider-picker__form" onSubmit={handleSubmit}>
           <div className="pm-provider-picker__options">

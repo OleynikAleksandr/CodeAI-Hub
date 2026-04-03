@@ -33,8 +33,8 @@
 ## Phase 2 — Project Manager Shell And Workflow Entry Surfaces (owner: PM, updated: 2026-04-03)
 ### Stream: Description Provider Picker
 13. [DONE] Mark Description provider picker shell labels and picker title through explicit localization categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker labels`
-14. [TODO] Git Commit: `fix(pm-localization): localize description provider picker labels` (hash: TBD)
-15. [TODO] Mark Description provider picker guidance/status copy through explicit user-facing categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker messages`
+14. [DONE] Git Commit: `fix(pm-localization): localize description provider picker labels` (hash: `8c3466f0`)
+15. [DONE] Mark Description provider picker guidance/status copy through explicit user-facing categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker messages`
 16. [TODO] Git Commit: `fix(pm-localization): localize description provider picker messages` (hash: TBD)
 
 ### Stream: PM Shell Placeholders And Modals
