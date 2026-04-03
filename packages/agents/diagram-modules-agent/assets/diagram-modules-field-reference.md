@@ -1,49 +1,49 @@
 # Diagram Modules Field Reference
 
-Staged artifacts этого шага состоят из:
-- `product-parts.index.md` — ordered список Product Parts с Id, Title, Purpose и Status.
-- `product-parts/<part-id>.md` — один ownership subtree per Product Part: Identity, Purpose, Owned Clusters, Standalone Modules, Simple Relations, Assumptions / Open Questions.
+The staged artifacts for this step consist of:
+- `product-parts.index.md` — an ordered list of Product Parts with Id, Title, Purpose, and Status.
+- `product-parts/<part-id>.md` — one ownership subtree per Product Part: Identity, Purpose, Owned Clusters, Standalone Modules, Simple Relations, Assumptions / Open Questions.
 
-Runtime строит visual Module Graph из этих staged artifacts отдельно. Layout sidecar не является semantic artifact.
+The runtime builds the visual Module Graph from these staged artifacts separately. The layout sidecar is not a semantic artifact.
 
-Общие правила:
-- Staged artifacts должны отражать полный и непротиворечивый состав системы на уровне текущей модели.
-- Если верхний ownership contour уже понятен, materialize-ьте его как `Product Part`, а не прячьте в `Notes` или декоративный `Cluster`.
-- Не подменяйте архитектуру списком папок, пакетов или class names.
+General rules:
+- the staged artifacts must reflect the full and coherent composition of the system at the current model level;
+- if a top-level ownership contour is already clear, materialize it as a `Product Part` instead of hiding it in `Notes` or in a decorative `Cluster`;
+- do not replace the architecture with a list of folders, packages, or class names.
 
 ## Product Part
 
-Поля в `product-parts.index.md`:
-- `Id`: стабильный kebab-case identifier. Должен совпадать с заголовком `### Product Part: <part-id>`.
-- `Title`: user-readable имя верхнего блока продукта.
-- `Purpose`: одна короткая строка о том, зачем существует этот верхний блок.
+Fields in `product-parts.index.md`:
+- `Id`: a stable kebab-case identifier. It must match the heading `### Product Part: <part-id>`.
+- `Title`: a user-readable name of the top-level product block.
+- `Purpose`: one short line explaining why this top-level block exists.
 - `Status`: staged flow status: `planned`, `in_progress`, `generated`, `reviewed`.
 
-`Product Part` — это верхний уровень продукта в этом DSL. Он отвечает на вопрос: "это отдельная крупная часть системы?" а не "какой label роли ей дать?".
+`Product Part` is the top level of the product in this DSL. It answers the question "is this a separate major part of the system?" rather than "which role label should we assign to it?".
 
-## Cluster (inside product-part file)
+## Cluster (inside the product-part file)
 
-Формат внутри `product-parts/<part-id>.md`:
+Format inside `product-parts/<part-id>.md`:
 
 ```markdown
 ### `cluster-id`
 
-**Purpose:** одна короткая строка о роли этой subsystem.
+**Purpose:** one short line describing the role of this subsystem.
 
 | `module-id` | `kind` | Responsibility |
 | --- | --- | --- |
 | `example-module` | `service` | One-line responsibility |
 ```
 
-Правила:
-- `Cluster` — formal subsystem container, а не loose topic label или folder grouping.
-- Используйте `Cluster` только там, где есть реальная подсистема из нескольких модулей.
-- Не создавайте декоративные cluster-ы, которые только повторяют label без реальных модулей.
-- Не используйте loose analytical labels вроде `core`, `shared`, `utils`, `services`, `stores`, `adapters`, если они не оправданы upstream product context.
+Rules:
+- `Cluster` is a formal subsystem container, not a loose topic label or folder grouping;
+- use `Cluster` only where there is a real subsystem made of several modules;
+- do not create decorative clusters that only repeat a label without real modules;
+- do not use loose analytical labels such as `core`, `shared`, `utils`, `services`, `stores`, or `adapters` unless they are justified by the upstream product context.
 
-## Module (inside product-part file)
+## Module (inside the product-part file)
 
-Модули описываются в таблицах внутри Owned Clusters или Standalone Modules секции:
+Modules are described in tables inside Owned Clusters or Standalone Modules sections:
 
 ```markdown
 | `module-id` | `kind` | Responsibility |
@@ -51,20 +51,20 @@ Runtime строит visual Module Graph из этих staged artifacts отде
 | `example-module` | `service` | One-line responsibility |
 ```
 
-Поля:
-- `module-id`: стабильный kebab-case identifier.
-- `kind`: обязательный DSL classifier; один из `service`, `library`, `adapter`, `gateway`, `store`, `external`. Вторичная classification — не выводите архитектуру из kind.
-- `Responsibility`: одна короткая строка о главной ответственности module.
+Fields:
+- `module-id`: a stable kebab-case identifier;
+- `kind`: a required DSL classifier; one of `service`, `library`, `adapter`, `gateway`, `store`, `external`. It is a secondary classification, so do not derive the architecture from `kind`;
+- `Responsibility`: one short line describing the main responsibility of the module.
 
-Правила:
-- `Module` — самая маленькая самостоятельная functional boundary, которая всё ещё имеет смысл для пользователя.
-- Standalone module должен оставаться вне cluster-ов, пока нет реальной subsystem reason его туда группировать.
-- Предпочитайте один standalone module вместо fake cluster-а, если настоящая subsystem boundary ещё не проявилась.
-- Если несколько peer integrations делят общий contract, но ещё не образуют настоящую subsystem boundary, моделируйте их как peer modules, а не как искусственный cluster.
+Rules:
+- `Module` is the smallest standalone functional boundary that still makes sense to the user;
+- a standalone module should stay outside clusters until there is a real subsystem reason to group it there;
+- prefer one standalone module over a fake cluster if a real subsystem boundary has not appeared yet;
+- if several peer integrations share one contract but still do not form a real subsystem boundary, model them as peer modules rather than as an artificial cluster.
 
-## Simple Relations (inside product-part file)
+## Simple Relations (inside the product-part file)
 
-Формат:
+Format:
 
 ```markdown
 | From | To | Type | Label |
@@ -72,12 +72,12 @@ Runtime строит visual Module Graph из этих staged artifacts отде
 | `module-a` | `module-b` | sync-call | edge-label |
 ```
 
-Поля:
-- `From` / `To`: module IDs.
-- `Type`: один из `sync-call`, `async-event`, `shared-data`, `config-ref`.
-- `Label`: необязательный edge label.
+Fields:
+- `From` / `To`: module IDs;
+- `Type`: one of `sync-call`, `async-event`, `shared-data`, `config-ref`;
+- `Label`: an optional edge label.
 
-Правила:
-- Держите relations простыми и sparse.
-- Если взаимодействуют два cluster-а, фиксируйте конкретную module-to-module relation.
-- Не превращайте staged artifacts в полный dependency graph.
+Rules:
+- keep relations simple and sparse;
+- if two clusters interact, capture that through a concrete module-to-module relation;
+- do not turn staged artifacts into a full dependency graph.
