@@ -24,11 +24,11 @@
 - `Clusters/CoreOrchestrator.md` — SSOT подсистемы Core Orchestrator.
 
 ### Modules
-- `Modules/Claude.md` — SSOT Claude provider module.
+- `Modules/Claude.md` — SSOT Claude provider module, including provider-home runtime isolation and SDK isolation-mode rules for CodeAI Hub-managed turns.
 - `Modules/Codex.md` — SSOT Codex provider module, including reasoning summary settings and provider-home config policy.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
-- `Modules/Localization.md` — SSOT persistent UI localization module.
+- `Modules/Localization.md` — SSOT persistent UI localization module, including the four user-facing categories and the English-only internal-instructions boundary.
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
 - `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager).
 
@@ -46,6 +46,7 @@
 - `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` — canonical effective model identity and next-turn settings SSOT.
 - `Contracts/Gemini_ThoughtTranslation.md` — реализованный контракт перевода Gemini `Thought` событий в видимые tagged assistant messages.
 - `Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md` — deferred SSOT для provider failure classification, recovery и provider-neutral switch transfer.
+- `Contracts/UserFacing_Text_Localization_Boundary.md` — SSOT text-ownership contract for `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, and English-only `Internal Agent Instructions`.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Contracts (compat / legacy filenames)

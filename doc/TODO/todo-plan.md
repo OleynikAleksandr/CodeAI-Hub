@@ -180,4 +180,11 @@
 122. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release keeps Claude provider sessions out of filesystem `CLAUDE.md` discovery entirely. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude sdk isolation release`
 123. [DONE] Git Commit: `build(release): assemble claude sdk isolation release` (hash: `6b3361a2`)
 124. [DONE] Update the active session report with the Claude SDK isolation-mode fix chain, the packaged validation target, and the new release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude sdk isolation release`
-125. [TODO] Git Commit: `docs(session): record claude sdk isolation release` (hash: TBD)
+125. [DONE] Git Commit: `docs(session): record claude sdk isolation release` (hash: `1a8119c3`)
+
+## Phase 11 — Release 1.1.876 Architecture Sync And Publish (owner: Docs/Release, updated: 2026-04-03)
+### Stream: Architecture SSOT Sweep
+126. [DONE] Sync the live architecture SSOT and localization contract so release `1.1.876` documents Claude full SDK isolation mode and the finalized `Artifacts for the User` vs `Internal Agent Instructions` boundary. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`. Target commit: `docs(architecture): sync localization and claude isolation ssot`
+127. [DONE] Git Commit: `docs(architecture): sync localization and claude isolation ssot` (hash: `eea77470`)
+128. [DONE] Refresh docs navigation and session closure records so the next context restore starts from the finalized release `1.1.876` architecture baseline. Scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record architecture sync and release publish`
+129. [TODO] Git Commit: `docs(session): record architecture sync and release publish` (hash: TBD)
