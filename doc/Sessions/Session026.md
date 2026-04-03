@@ -1,8 +1,8 @@
 # Session 026 — Post-Release Localization Fix Stream After `1.1.870`
 
-**Date:** 2026-04-03 15:39 CEST
+**Date:** 2026-04-03 17:16 CEST
 **Branch:** main
-**Version:** 1.1.874
+**Version:** 1.1.875
 
 ---
 
@@ -59,7 +59,25 @@
   - `./scripts/build-all.sh` bumped the unified workspace version from `1.1.873` to `1.1.874`;
   - `./scripts/build-release.sh --use-current-version` passed cleanly with the expected markers (`Step 7`, dev-dependency pruning, `✅ Package created`, and VSIX runtime verification).
 - Final packaged artifact for the current follow-up is `codeai-hub-1.1.874.vsix` in the repo root.
+- Packaged validation of `1.1.874` exposed a Claude-specific provider-home isolation regression: despite English internal workflow prompts, Claude still answered and thought in Russian because provider-native context usage showed `Project | /Users/oleksandroliinyk/.claude/CLAUDE.md`, meaning the provider session was still importing global Claude memory from the real user home.
+- Root-caused the leak to Claude query options rather than to the workflow prompt pack:
+  - provider auth/runtime env still sandboxes `HOME` under `~/.codeai-hub/providers/claude/home`;
+  - but `ClaudeSDKManager` passed the real `homedir()` through `additionalDirectories`, which the upstream Claude CLI treats as an extra `CLAUDE.md` discovery root;
+  - and `settingSources` still included `user`, which unnecessarily widened provider-driven filesystem settings beyond the workspace scope.
+- Fixed Claude provider-home memory isolation:
+  - removed the real user home from Claude `additionalDirectories`;
+  - limited provider-driven Claude `settingSources` to workspace `project` / `local`;
+  - documented the new invariant in `doc/SolidWorks-WorkFlow/Modules/Claude.md`;
+  - added a Claude module regression test that asserts the query options stay inside workspace scope and do not reintroduce global-home discovery.
+- Ran focused Claude validation for the isolation fix:
+  - `npm run build --workspace @codeai-hub/claude-module`;
+  - `npm test --workspace @codeai-hub/claude-module`.
+- Ran a full release pass for the Claude provider-home memory-isolation follow-up:
+  - `./scripts/build-all.sh` bumped the unified workspace version from `1.1.874` to `1.1.875`;
+  - `./scripts/build-release.sh --use-current-version` passed cleanly with the expected markers (`Step 7`, dev-dependency pruning, `✅ Package created`, VSIX runtime verification, and restored dev dependencies).
+- Final packaged artifact for the current follow-up is `codeai-hub-1.1.875.vsix` in the repo root.
 - Remaining post-release backlog now shifts from internal prompt/thinking boundary repair back to whatever residual user-facing labels/messages or workflow-created artifact surfaces still remain after packaged testing of `1.1.874` (for example add-workspace modal copy, status-bar copy, artifact repair copy, provider/version labels, or workflow-created user-facing artifacts).
+- After validating Claude isolation in the packaged `1.1.875` build, the remaining backlog returns to residual user-facing localization tails (`add-workspace` modal, status-bar shell, artifact repair, provider/version labels, and workflow-created user-facing artifacts).
 
 ## Git commits
 - `811d8a80 docs(plan): define post-release localization fix scope`
@@ -109,6 +127,9 @@
 - `55999af4 test(workflow-contracts): expect english internal templates`
 - `b01c1326 docs(release): prepare internal prompt english follow-up notes`
 - `940fb78a build(release): assemble internal prompt english release`
+- `2701887a fix(claude): isolate provider-home memory discovery`
+- `7397bba5 docs(release): prepare claude memory isolation release notes`
+- `9007cb25 build(release): assemble claude memory isolation release`
 
 ---
 
@@ -124,10 +145,11 @@
 7. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 8. `doc/SolidWorks-WorkFlow/Modules/Localization.md`
 9. `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
+10. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 
 ## Plans for next session
-- Install and test packaged `codeai-hub-1.1.874.vsix`, not just the workspace checkout.
-- Focus first on the previously reported regression surfaces under default-English settings:
-  - internal workflow prompt packs in `Description`, `Virtual Simulation`, and `Diagram Modules` should now stay English;
-  - Codex/Gemini visible reasoning/thinking should no longer be forced into Russian.
-- After that smoke is clean, continue the still-open user-facing backlog items (`add-workspace` modal, status-bar shell, artifact repair, provider/version labels, and workflow-created user-facing artifacts) instead of reopening the already-approved localization category model.
+- Install and test packaged `codeai-hub-1.1.875.vsix`, not just the workspace checkout.
+- Focus first on the Claude provider-home isolation regression surface under default-English settings:
+  - provider-native Claude context usage must no longer show `/Users/oleksandroliinyk/.claude/CLAUDE.md` as a loaded memory file inside CodeAI Hub-managed Claude sessions;
+  - Claude answers and thinking should now follow the packaged workflow/runtime language contract instead of the global personal Claude memory file.
+- After Claude packaged smoke is clean, continue the still-open user-facing localization backlog items (`add-workspace` modal, status-bar shell, artifact repair, provider/version labels, and workflow-created user-facing artifacts) instead of reopening the already-approved localization category model.

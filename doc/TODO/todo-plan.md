@@ -161,8 +161,8 @@
 
 ### Stream: Release Notes And Packaging
 110. [DONE] Prepare release-facing docs for the Claude provider-home memory-isolation follow-up before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare claude memory isolation release notes`
-111. [TODO] Git Commit: `docs(release): prepare claude memory isolation release notes` (hash: TBD)
-112. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release no longer lets Claude import global `~/.claude/CLAUDE.md` into provider-home sessions. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude memory isolation release`
-113. [TODO] Git Commit: `build(release): assemble claude memory isolation release` (hash: TBD)
-114. [TODO] Update the active session report with the Claude provider-home memory-isolation fix chain, the packaged validation target, and the new release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude memory isolation release`
+111. [DONE] Git Commit: `docs(release): prepare claude memory isolation release notes` (hash: `7397bba5`)
+112. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release no longer lets Claude import global `~/.claude/CLAUDE.md` into provider-home sessions. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude memory isolation release`
+113. [DONE] Git Commit: `build(release): assemble claude memory isolation release` (hash: `9007cb25`)
+114. [DONE] Update the active session report with the Claude provider-home memory-isolation fix chain, the packaged validation target, and the new release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude memory isolation release`
 115. [TODO] Git Commit: `docs(session): record claude memory isolation release` (hash: TBD)
