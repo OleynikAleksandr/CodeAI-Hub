@@ -1,7 +1,7 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-02
+**Updated:** 2026-04-03
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.865`)
 
@@ -83,7 +83,18 @@ Canonical source language:
 
 - `en`
 
-Current localization categories:
+Approved user-facing text categories for the next execution phase:
+
+- `ui_labels`
+- `ui_helper_text`
+- `messages_for_the_user`
+- `artifacts_for_the_user`
+
+Approved non-user-facing text marker:
+
+- `internal_agent_instructions` (English-only; not part of user language settings)
+
+Current legacy runtime categories kept during the bridge migration:
 
 - `ui_interface`
 - `user_guidance`
@@ -108,6 +119,17 @@ Current settings contract stores:
 - workflow terms policy (`keep_english` / `translate`);
 - translation engine id;
 - glossary enabled flag.
+
+Approved target settings contract for the next release:
+
+- independent language selection for:
+  - `UI Labels`
+  - `UI Helper Text`
+  - `Messages for the User`
+  - `Artifacts for the User`
+- English default/reset semantics rendered in UI as `Default Language (English)`
+- no user-facing `Default language` control
+- no user-facing `Workflow Terms Policy` control
 
 Current runtime payload contract stores:
 
@@ -179,6 +201,8 @@ Current live browser behavior:
 4. Glossary protection must be able to preserve branded names, technical terms, env vars, and workflow vocabulary.
 5. Lookup keys must remain stable when the semantics stay the same.
 6. Browser/UI surfaces must consume host-materialized localization runtime payloads instead of reading mutable localization files directly.
+7. Every text created or shown by the product must carry an explicit text category marker; automatic category guessing is not allowed.
+8. `Internal Agent Instructions` must stay outside user-facing localization settings and remain English-only unless a separate technical contract explicitly says otherwise.
 
 ---
 

@@ -2,6 +2,24 @@ export const DEFAULT_LOCALIZATION_SOURCE_LANGUAGE = "en";
 export const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
 export const LOCALIZATION_SOURCE_SELECTION = "source";
 
+const APPROVED_USER_FACING_TEXT_CATEGORY_IDS = [
+  "ui_labels",
+  "ui_helper_text",
+  "messages_for_the_user",
+  "artifacts_for_the_user",
+] as const;
+
+const INTERNAL_AGENT_INSTRUCTIONS_MARKER =
+  "internal_agent_instructions" as const;
+
+const _APPROVED_TEXT_CATEGORY_IDS = [
+  ...APPROVED_USER_FACING_TEXT_CATEGORY_IDS,
+  INTERNAL_AGENT_INSTRUCTIONS_MARKER,
+] as const;
+
+// The runtime bridge still uses the legacy bundle taxonomy. The approved
+// target-state taxonomy above is recorded here first and will be exported and
+// adopted incrementally by the next stream.
 export const LOCALIZATION_CATEGORY_IDS = [
   "interactive_templates",
   "system_feedback",

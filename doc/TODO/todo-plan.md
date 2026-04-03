@@ -13,11 +13,11 @@
 ## Phase 0 — Scope Bootstrap (owner: Docs, updated: 2026-04-03)
 ### Stream: Planning Intake
 1. [DONE] Freeze the approved four-category localization architecture, mark the planning document as execution-ready, and replace the placeholder TODO with this phase-based plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session025.md`. Target commit: `docs(plan): define four-category localization release scope`
-2. [TODO] Git Commit: `docs(plan): define four-category localization release scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): define four-category localization release scope` (hash: `67defc55`)
 
 ## Phase 1 — Settings Model And Runtime Contract (owner: Localization/Settings, updated: 2026-04-03)
 ### Stream: Package Contract
-3. [TODO] Define the four user-facing category ids plus the English-only `Internal Agent Instructions` marker in the package contract and module SSOT. Scope: `packages/localization/src/localization-contract.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): define four-category text taxonomy`
+3. [DONE] Define the four user-facing category ids plus the English-only `Internal Agent Instructions` marker in the package contract and module SSOT. Scope: `packages/localization/src/localization-contract.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): define four-category text taxonomy`
 4. [TODO] Git Commit: `feat(localization): define four-category text taxonomy` (hash: TBD)
 5. [TODO] Rewire source registry and facade normalization around the four user-facing categories while keeping a temporary bridge for legacy saved snapshots. Scope: `packages/localization/src/source-dictionary-registry.ts`, `packages/localization/src/localization-facade.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): bridge four-category runtime mapping`
 6. [TODO] Git Commit: `feat(localization): bridge four-category runtime mapping` (hash: TBD)
