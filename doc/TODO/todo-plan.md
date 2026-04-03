@@ -58,10 +58,10 @@
 29. [DONE] Mark Description and Virtual Simulation explanatory surfaces with explicit `Messages for the User` categories. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark workflow help text`
 30. [DONE] Git Commit: `refactor(localization): mark workflow help text` (hash: `bba1f974`)
 31. [DONE] Mark remaining diagram/help raw strings and artifact-header shell labels with explicit categories. Scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark remaining project manager strings`
-32. [TODO] Git Commit: `refactor(localization): mark remaining project manager strings` (hash: TBD)
+32. [DONE] Git Commit: `refactor(localization): mark remaining project manager strings` (hash: `c3f9f36a`)
 
 ### Stream: Forms And Existing User-Facing Artifacts
-33. [TODO] Backfill `messages_for_the_user` source entries for the migrated Description, Virtual Simulation, and Diagram Modules help surfaces. Scope: `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager user messages dictionary`
+33. [DONE] Backfill `messages_for_the_user` source entries for the migrated Description, Virtual Simulation, and Diagram Modules help surfaces. Scope: `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager user messages dictionary`
 34. [TODO] Git Commit: `refactor(localization): backfill project manager user messages dictionary` (hash: TBD)
 35. [TODO] Backfill `ui_labels` source entries for Project Manager shell toggles and header labels that now resolve through `UI Labels`. Scope: `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager label dictionary`
 36. [TODO] Git Commit: `refactor(localization): backfill project manager label dictionary` (hash: TBD)
