@@ -1,6 +1,9 @@
 import type { CSSProperties } from "react";
+import { useLocalization } from "../../app-host/use-localization";
 
 export type Provider = "claude" | "codex" | "gemini";
+
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const warningStyles: CSSProperties = {
   background: "#3a2a1f",
@@ -125,9 +128,16 @@ export const AutoUpdateToggle = ({
   readonly disabled: boolean;
   readonly onToggle: (enabled: boolean) => void;
 }) => {
+  const { t } = useLocalization();
   const providerLabel = resolveProviderLabel(provider);
   const packageLabel =
     provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.provider_versions.auto_update.description",
+    "Automatically check and update the {packageLabel} on core start. Manual updates remain available below.",
+    { packageLabel }
+  );
   return (
     <label
       style={{
@@ -145,10 +155,7 @@ export const AutoUpdateToggle = ({
       />
       <div style={{ flex: 1 }}>
         <div style={toggleTitleStyles}>Auto-update {providerLabel}</div>
-        <p style={toggleDescriptionStyles}>
-          Automatically check and update the {packageLabel} on core start.
-          Manual updates remain available below.
-        </p>
+        <p style={toggleDescriptionStyles}>{description}</p>
       </div>
     </label>
   );
