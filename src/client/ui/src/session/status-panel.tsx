@@ -5,6 +5,7 @@ const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
 const PERCENT_SCALE = 100;
 const STATUS_SEPARATOR = "\u00A0\u00A0|\u00A0\u00A0";
+const USER_MESSAGES_CATEGORY = "system_feedback";
 
 const formatModelSummary = (models: readonly ModelInfo[]): string =>
   models
@@ -31,17 +32,17 @@ const StatusPanel = ({
 }: StatusPanelProps) => {
   const { t } = useLocalization();
   const supervisorLabel = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "session.status.supervisor_label",
     "Core Supervisor"
   );
   const modelsLabel = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "session.status.models_label",
     "Models"
   );
   const tokensLabel = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "session.status.tokens_label",
     "Tokens"
   );
@@ -119,19 +120,19 @@ const describeConnectionStatus = (
   switch (status) {
     case "ready":
       return t(
-        "system_feedback",
+        USER_MESSAGES_CATEGORY,
         "session.status.ready_connection_label",
         "Core online"
       );
     case "error":
       return t(
-        "system_feedback",
+        USER_MESSAGES_CATEGORY,
         "session.status.unavailable_connection_label",
         "Core unavailable"
       );
     default:
       return t(
-        "system_feedback",
+        USER_MESSAGES_CATEGORY,
         "session.status.starting_connection_label",
         "Starting core…"
       );

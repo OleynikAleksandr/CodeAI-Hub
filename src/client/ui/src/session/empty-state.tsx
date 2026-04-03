@@ -1,24 +1,26 @@
 import { useLocalization } from "../app-host/use-localization";
 
+const USER_MESSAGES_CATEGORY = "system_feedback";
+
 const EmptyState = (props: { readonly pending: boolean }) => {
   const { t } = useLocalization();
   const pendingTitle = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "session.empty_state.pending_title",
     "Creating session…"
   );
   const pendingDescription = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "session.empty_state.pending_description",
     "This can take 5–10 seconds. Please wait."
   );
   const idleTitle = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "session.empty_state.idle_title",
     "Start with the Description questionnaire"
   );
   const idleDescription = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "session.empty_state.idle_description",
     'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.'
   );

@@ -12,6 +12,7 @@ import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
 
 const AUTO_SCROLL_EPSILON = 32;
+const USER_MESSAGES_CATEGORY = "system_feedback";
 
 interface DialogPanelProps {
   readonly messages: readonly SessionMessage[];
@@ -108,7 +109,7 @@ const DialogPanel = ({
       <div className="session-dialog session-panel">
         <p className="session-dialog__empty">
           {t(
-            "system_feedback",
+            USER_MESSAGES_CATEGORY,
             "session.dialog.empty_label",
             "No messages yet."
           )}

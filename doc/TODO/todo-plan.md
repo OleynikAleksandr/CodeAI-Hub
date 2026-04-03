@@ -48,8 +48,8 @@
 ## Phase 3 — Mandatory Migration Of Existing Text (owner: UI/PM/Core, updated: 2026-04-03)
 ### Stream: Shared Settings And Session Surfaces
 23. [DONE] Mark shared Settings shell text with explicit `UI Labels` / `UI Helper Text` categories. Scope: `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`. Target commit: `refactor(localization): mark settings shell text`
-24. [TODO] Git Commit: `refactor(localization): mark settings shell text` (hash: TBD)
-25. [TODO] Mark session shell/status text with explicit `Messages for the User` categories. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(localization): mark session user messages`
+24. [DONE] Git Commit: `refactor(localization): mark settings shell text` (hash: `62e1f2a9`)
+25. [DONE] Mark session shell/status text with explicit `Messages for the User` categories. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(localization): mark session user messages`
 26. [TODO] Git Commit: `refactor(localization): mark session user messages` (hash: TBD)
 
 ### Stream: Project Manager Navigation And Help
