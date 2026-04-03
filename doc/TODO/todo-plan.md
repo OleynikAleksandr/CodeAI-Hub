@@ -107,4 +107,6 @@
 70. [DONE] Mark the `Settings only` explanatory copy so that the standalone settings shell body/hint no longer stay English-only. Scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize settings-only shell copy`
 71. [DONE] Git Commit: `fix(settings-localization): localize settings-only shell copy` (hash: `224b5c49`)
 72. [DONE] Mark the provider update warning banner so that the per-provider risk notice resolves through `Messages for the User` instead of staying English-only. Scope: `src/client/ui/src/components/settings/provider-versions-ui.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize provider warning banner`
-73. [TODO] Git Commit: `fix(settings-localization): localize provider warning banner` (hash: TBD)
+73. [DONE] Git Commit: `fix(settings-localization): localize provider warning banner` (hash: `d3f89a56`)
+74. [DONE] Mark the Claude per-model descriptions so the explanatory sentences under each Claude alias resolve through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude model option descriptions`
+75. [TODO] Git Commit: `fix(settings-localization): localize claude model option descriptions` (hash: TBD)

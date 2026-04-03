@@ -48,6 +48,14 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
     "settings.claude_default_model.note",
     "Applies only to newly created Claude sessions."
   );
+  const resolveModelDescription = (
+    model: (typeof CLAUDE_MODEL_ALIASES)[number]
+  ) =>
+    t(
+      UI_HELPER_TEXT_CATEGORY,
+      `settings.claude_default_model.option.${model.alias}.description`,
+      model.description
+    );
 
   const handleRowClick = (model: ClaudeModelAliasId) => {
     onDefaultModelChange(model);
@@ -101,7 +109,9 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
               <div style={modelInfoStyles}>
                 <div style={modelTitleStyles}>{model.displayName}</div>
                 <div style={aliasStyles}>{model.alias}</div>
-                <p style={modelDescriptionStyles}>{model.description}</p>
+                <p style={modelDescriptionStyles}>
+                  {resolveModelDescription(model)}
+                </p>
               </div>
             </div>
           );
