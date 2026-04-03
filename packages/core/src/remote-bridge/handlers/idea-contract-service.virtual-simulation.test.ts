@@ -95,16 +95,16 @@ test("virtual simulation contract is prompt-only (no artifact template path)", a
     );
     assert.equal(
       contract?.prompt.includes(
-        "Сценарии из анкеты и `Final_Description.md` — это только начальная база"
+        "The scenarios from the questionnaire and `Final_Description.md` are only the starting baseline"
       ),
       true
     );
     assert.equal(
-      contract?.prompt.includes("достаточное количество ключевых сценариев"),
+      contract?.prompt.includes("there must be as many scenarios as needed"),
       true
     );
     assert.equal(
-      contract?.prompt.includes("не ради искусственного числового лимита"),
+      contract?.prompt.includes("not to satisfy an artificial numeric limit"),
       true
     );
   } finally {
@@ -165,25 +165,23 @@ test("description contract restores missing template from bundled assets", async
     );
     assert.equal(
       contract?.template.includes(
-        "ключевые сценарии использования без жёсткого лимита"
+        "the key usage scenarios without an artificial limit"
       ),
       true
     );
     assert.equal(
-      contract?.template.includes(
-        "отдельный блок ключевых пользовательских сценариев"
-      ),
+      contract?.template.includes("a dedicated block of key user scenarios"),
       true
     );
     await assert.doesNotReject(access(restoredTemplatePath));
     const restoredTemplate = await readFile(restoredTemplatePath, "utf8");
     assert.equal(
-      restoredTemplate.includes("После этого откроется выбор AI-провайдера"),
+      restoredTemplate.includes("After that, the AI provider picker will open"),
       true
     );
     assert.equal(
       restoredTemplate.includes(
-        "провайдер выбирается один раз для всего workflow workspace"
+        "the provider is chosen once for the whole workflow workspace"
       ),
       true
     );

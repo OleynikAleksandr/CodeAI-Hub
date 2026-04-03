@@ -33,26 +33,26 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     relativePath:
       ".codeai-hub/templates/description/description-collector-prompt.md",
     snippets: [
-      "Все продукты в CodeAI Hub по умолчанию трактуются как кластерно-модульные",
-      "Твоя задача на этом шаге — на основе анкеты",
-      "отдельный раздел уровня `## Ключевые пользовательские сценарии`",
+      "All products in CodeAI Hub are interpreted as cluster-module systems by default",
+      "Your task in this step is to build and iteratively refine `Final_Description.md`",
+      "the document must contain a separate section on the level of `## Key User Scenarios`",
     ],
   },
   {
     relativePath: ".codeai-hub/templates/description/questionnaire-template.md",
     snippets: [
-      "Мы рекомендуем описывать будущий продукт в логике кластерно-модульной архитектуры",
-      "Какой это тип продукта / платформа",
-      "## 12. Примечания",
+      "We recommend describing the future product in a cluster-module architecture mindset.",
+      "## 2. Product Type / Platform",
+      "## 12. Notes",
     ],
   },
   {
     relativePath: ".codeai-hub/templates/description/description-template.md",
     snippets: [
-      "ключевые сценарии использования без жёсткого лимита",
-      "После этого откроется выбор AI-провайдера",
-      "провайдер выбирается один раз для всего workflow workspace",
-      "отдельный блок ключевых пользовательских сценариев",
+      "the key usage scenarios without an artificial limit",
+      "After that, the AI provider picker will open",
+      "the provider is chosen once for the whole workflow workspace",
+      "a dedicated block of key user scenarios",
     ],
   },
   {
@@ -61,7 +61,7 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     snippets: [
       "Archetype / shell constraints",
       "Candidate clusters and standalone modules",
-      "достаточное количество ключевых сценариев",
+      "The scenarios from the questionnaire and `Final_Description.md` are only the starting baseline",
     ],
   },
   {
@@ -91,17 +91,17 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     relativePath:
       ".codeai-hub/templates/diagram_modules/diagram-modules-field-reference.md",
     snippets: [
-      "Staged artifacts этого шага состоят из:",
-      "`Product Part` — это верхний уровень продукта в этом DSL",
-      "## Simple Relations (inside product-part file)",
+      "The staged artifacts for this step consist of:",
+      "`Product Part` is the top level of the product in this DSL",
+      "## Simple Relations (inside the product-part file)",
     ],
   },
   {
     relativePath:
       ".codeai-hub/templates/diagram_modules/diagram-modules-merge-rules.md",
     snippets: [
-      "Когда runtime передаёт change summary:",
-      "Не переводите молча standalone modules в cluster members",
+      "When the runtime provides a change summary:",
+      "do not silently convert standalone modules into cluster members",
     ],
   },
 ] as const;
