@@ -143,4 +143,13 @@
 98. [DONE] Convert the bundled `virtual-simulation` internal prompt source to English and refresh the generated bundled snapshot so runtime no longer ships stale Russian base64 prompt content. Scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(virtual-simulation): enforce english internal prompt`
 99. [DONE] Git Commit: `fix(virtual-simulation): enforce english internal prompt` (hash: `f72c9186`)
 100. [DONE] Refresh template-sync and bundled-contract tests so internal-template expectations no longer assume Russian source text for Description and Virtual Simulation assets. Scope: `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow-contracts): expect english internal templates`
-101. [TODO] Git Commit: `test(workflow-contracts): expect english internal templates` (hash: TBD)
+101. [DONE] Git Commit: `test(workflow-contracts): expect english internal templates` (hash: `55999af4`)
+
+## Phase 8 — Internal Prompt English Release Follow-Up (owner: QA/Release/Docs, updated: 2026-04-03)
+### Stream: Release Notes And Packaging
+102. [TODO] Prepare release-facing docs for the internal-prompt English boundary and thinking-language follow-up so the next packaged patch release is documented before version bump. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare internal prompt english follow-up notes`
+103. [TODO] Git Commit: `docs(release): prepare internal prompt english follow-up notes` (hash: TBD)
+104. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes English internal workflow prompts and no longer forces Russian thinking translation. Scope: release-generated version files and manifests. Target commit: `build(release): assemble internal prompt english release`
+105. [TODO] Git Commit: `build(release): assemble internal prompt english release` (hash: TBD)
+106. [TODO] Update the active session report with the internal-prompt/t thinking fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record internal prompt english release`
+107. [TODO] Git Commit: `docs(session): record internal prompt english release` (hash: TBD)

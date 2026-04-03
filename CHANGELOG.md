@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.874] - 2026-04-03
+### Fixed
+- **English-only internal workflow prompt boundary**: packaged runtime prompt scaffolding plus bundled `Description`, `Virtual Simulation`, and `Diagram Modules` internal templates now stay English-only, so installed workflow sessions no longer surface Russian agent instructions when user-facing language remains English.
+- **Bundled template snapshot parity**: `bundled-templates.ts`, template sync verification, and idea-contract tests now track the translated English internal sources instead of shipping or asserting stale Russian base64/template snippets.
+- **Thinking language no longer forced to Russian**: Codex and Gemini runtime thought translation adapters no longer hardcode `ru` as the target language, so visible reasoning/thinking now falls back to the provider’s original language by default.
+
 ## [1.1.873] - 2026-04-03
 ### Fixed
 - **Standalone settings-shell intro**: the `Settings only` explanatory body and hint now resolve through `UI Helper Text`, so the installed standalone shell no longer keeps that intro block in English when helper language changes.
