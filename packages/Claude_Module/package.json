@@ -7,7 +7,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "node --test dist/messaging/message-processor.test.js dist/logging/sdk-session-logger.test.js dist/sdk/claude-usage-limits-snapshot.test.js"
+    "test": "node --test dist/messaging/message-processor.test.js dist/logging/sdk-session-logger.test.js dist/sdk/claude-usage-limits-snapshot.test.js dist/sdk/claude-sdk-manager.test.js"
   },
   "engines": {
     "node": ">=20.0.0"

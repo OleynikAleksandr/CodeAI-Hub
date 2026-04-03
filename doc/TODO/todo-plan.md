@@ -153,3 +153,16 @@
 105. [DONE] Git Commit: `build(release): assemble internal prompt english release` (hash: `940fb78a`)
 106. [DONE] Update the active session report with the internal-prompt/t thinking fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record internal prompt english release`
 107. [TODO] Git Commit: `docs(session): record internal prompt english release` (hash: TBD)
+
+## Phase 9 — Claude Provider-Home Memory Isolation Follow-Up (owner: Claude/Release/Docs, updated: 2026-04-03)
+### Stream: Runtime Isolation Fix
+108. [DONE] Stop Claude query options from exposing the real user home as an additional `CLAUDE.md` discovery root and lock provider sessions to workspace-scoped `project/local` Claude setting sources. Scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, Claude module tests, `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Target commit: `fix(claude): isolate provider-home memory discovery`
+109. [TODO] Git Commit: `fix(claude): isolate provider-home memory discovery` (hash: TBD)
+
+### Stream: Release Notes And Packaging
+110. [DONE] Prepare release-facing docs for the Claude provider-home memory-isolation follow-up before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare claude memory isolation release notes`
+111. [TODO] Git Commit: `docs(release): prepare claude memory isolation release notes` (hash: TBD)
+112. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release no longer lets Claude import global `~/.claude/CLAUDE.md` into provider-home sessions. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude memory isolation release`
+113. [TODO] Git Commit: `build(release): assemble claude memory isolation release` (hash: TBD)
+114. [TODO] Update the active session report with the Claude provider-home memory-isolation fix chain, the packaged validation target, and the new release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude memory isolation release`
+115. [TODO] Git Commit: `docs(session): record claude memory isolation release` (hash: TBD)

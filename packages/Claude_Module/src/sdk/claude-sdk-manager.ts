@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
 import { SDKSessionLoggerFacade } from "../logging/sdk-session-logger";
@@ -248,10 +247,10 @@ export class ClaudeSDKManager {
       cwd: session.workspacePath,
       permissionMode: "bypassPermissions",
       allowDangerouslySkipPermissions: true,
-      additionalDirectories: [session.workspacePath, homedir()],
+      additionalDirectories: [session.workspacePath],
       includePartialMessages: true,
       projectPath: this.resolveProjectPath(),
-      settingSources: ["user", "project", "local"],
+      settingSources: ["project", "local"],
       env: this.resolveAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
     };
