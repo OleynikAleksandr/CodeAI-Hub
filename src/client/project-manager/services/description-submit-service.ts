@@ -24,8 +24,8 @@ const WORKFLOW_CONTRACT_ENDPOINTS = {
   diagram_modules: "/api/v1/orchestrator/diagram-modules-contract",
 } as const;
 const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
-  "Собери артефакт на основе анкеты и шаблона. " +
-  "Запиши результат файлом по целевому пути.";
+  "Build the artifact from the questionnaire and template. " +
+  "Write the result to the target file path.";
 export type WorkflowStageId = keyof typeof WORKFLOW_CONTRACT_ENDPOINTS;
 
 const isRecordValue = (

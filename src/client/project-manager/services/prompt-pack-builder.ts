@@ -41,14 +41,14 @@ const DEFAULT_ARTIFACT_LANGUAGE = "en";
 const LEGACY_SOURCE_LANGUAGE = "source";
 
 const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
-  description: "Собери артефакт на основе анкеты и шаблона.",
-  virtual_simulation: "Собери артефакт на основе `Final_Description.md`.",
+  description: "Build the artifact from the questionnaire and template.",
+  virtual_simulation: "Build the artifact from `Final_Description.md`.",
   diagram_modules:
-    "Собери staged артефакт на основе `Final_Description.md` и `virtual-simulation.md`.",
+    "Build the staged artifact from `Final_Description.md` and `virtual-simulation.md`.",
 };
 
 const DIAGRAM_STAGE_INPUT_LABELS: Partial<Record<WorkflowStageId, string>> = {
-  diagram_modules: "Исходный артефакт",
+  diagram_modules: "Source artifact",
 };
 
 const RUN_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -188,7 +188,7 @@ const buildStageInputLines = (params: {
     params.workspacePath,
     questionnaireRelativePath
   );
-  const label = DIAGRAM_STAGE_INPUT_LABELS[params.stage] ?? "Анкета";
+  const label = DIAGRAM_STAGE_INPUT_LABELS[params.stage] ?? "Questionnaire";
   return [
     `${label} (relative): \`${questionnaireRelativePath}\``,
     `${label} (absolute): \`${questionnaireAbsolutePath}\``,
@@ -201,12 +201,12 @@ const buildStagePhaseLines = (
 ): readonly string[] => {
   if (stage === "diagram_modules") {
     return [
-      "Фазы работы:",
-      `- Phase 1: прочитай \`Final_Description.md\` и \`virtual-simulation.md\`, затем создай или обнови \`${targetFileName}\` как canonical index списка \`Product Part\`, их порядка и purpose.`,
-      "- Phase 2: если runtime запускает continuation subturn (hidden by default), работай только с одним целевым `Product Part`, materialize-ь один `product-parts/<part-id>.md` за итерацию, не жди user-visible `Продолжай` и не пытайся молча генерировать весь giant inventory разом.",
-      "- Phase 3: relation lines и cross-part wiring не являются обязательной частью первого полезного результата; сначала стабилизируй ownership structure `Product Part -> Cluster -> Module`.",
-      "- Phase 4: visual graph и `module-map.flow.json` поддерживаются runtime отдельно.",
-      "- Phase 5: не трать текущий turn на поиск staged examples, continuity files, helper artifacts или generic template files, если они явно не перечислены выше как входы этого turn-а.",
+      "Work phases:",
+      `- Phase 1: read \`Final_Description.md\` and \`virtual-simulation.md\`, then create or update \`${targetFileName}\` as the canonical index of \`Product Part\` entries, their order, and purpose.`,
+      "- Phase 2: if the runtime launches a continuation subturn (hidden by default), work on only one target `Product Part`, materialize one `product-parts/<part-id>.md` per iteration, do not wait for a user-visible `Continue`, and do not silently generate the whole giant inventory in one go.",
+      "- Phase 3: relation lines and cross-part wiring are not required for the first useful result; stabilize the ownership structure `Product Part -> Cluster -> Module` first.",
+      "- Phase 4: the visual graph and `module-map.flow.json` are maintained separately by the runtime.",
+      "- Phase 5: do not spend the current turn searching for staged examples, continuity files, helper artifacts, or generic template files unless they are explicitly listed above as inputs for this turn.",
     ];
   }
   return [];
@@ -254,7 +254,7 @@ export const buildWorkflowPromptPack = (
   const additionalArtifacts: readonly string[] =
     params.stage === "diagram_modules"
       ? [
-          "Дополнительные staged артефакты этого шага разрешены и ожидаемы runtime:",
+          "Additional staged artifacts for this step are allowed and expected by the runtime:",
           `- Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
           `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,
         ]
@@ -269,14 +269,14 @@ export const buildWorkflowPromptPack = (
     questionnairePath: params.questionnairePath,
   });
   const instructionLines = [
-    `Этап: ${WORKFLOW_STAGE_LABELS[params.stage]}.`,
-    `Целевой путь (relative): \`${relativePath}\``,
-    `Целевой путь (absolute): \`${absolutePath}\``,
+    `Stage: ${WORKFLOW_STAGE_LABELS[params.stage]}.`,
+    `Target path (relative): \`${relativePath}\``,
+    `Target path (absolute): \`${absolutePath}\``,
     ...primaryInputLines,
     params.stage !== "virtual_simulation" &&
     params.stage !== "diagram_modules" &&
     params.templatePath
-      ? `Шаблон (absolute): \`${params.templatePath}\``
+      ? `Template (absolute): \`${params.templatePath}\``
       : null,
     ...buildStagePhaseLines(params.stage, fileName),
     ...additionalArtifacts,
@@ -291,7 +291,7 @@ export const buildWorkflowPromptPack = (
       buildArtifactLanguageBlock(params.stage, params.artifactLanguage),
       buildChangeSummaryBlock(params.stage),
       instructions,
-      `Имя выходного файла: \`${fileName}\``,
+      `Output file name: \`${fileName}\``,
     ]
       .filter((entry): entry is string => Boolean(entry))
       .join("\n\n"),

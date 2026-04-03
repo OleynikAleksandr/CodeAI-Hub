@@ -124,4 +124,19 @@
 84. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes the provider warning/model-description/settings-only fixes. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider settings tail release`
 85. [DONE] Git Commit: `build(release): assemble provider settings tail release` (hash: `e5ac4645`)
 86. [DONE] Update the active session report with the provider-settings tail fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider settings tail release`
-87. [TODO] Git Commit: `docs(session): record provider settings tail release` (hash: TBD)
+87. [DONE] Git Commit: `docs(session): record provider settings tail release` (hash: `4f68fb2f`)
+
+## Phase 7 — Internal Prompt English Boundary And Thinking Language Fix (owner: PM/Providers/Docs, updated: 2026-04-03)
+### Stream: Runtime Prompt Scaffolding
+88. [DONE] Convert workflow runtime prompt scaffolding and file-first fallback copy to English so prompt-pack metadata stays inside the `Internal Agent Instructions` English-only boundary. Scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(workflow-prompts): enforce english runtime scaffolding`
+89. [TODO] Git Commit: `fix(workflow-prompts): enforce english runtime scaffolding` (hash: TBD)
+90. [TODO] Convert Description agent prompt/template assets to English source so bundled internal instructions no longer ship Russian text into runtime prompt packs. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(description-agent): enforce english internal templates`
+91. [TODO] Git Commit: `fix(description-agent): enforce english internal templates` (hash: TBD)
+92. [TODO] Convert Diagram Modules prompt/reference assets to English source so bundled staged-contract instructions stay English-only. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/diagram-modules-field-reference.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(diagram-agent): enforce english prompt assets`
+93. [TODO] Git Commit: `fix(diagram-agent): enforce english prompt assets` (hash: TBD)
+94. [TODO] Convert Diagram Modules merge rules and any remaining staged internal guidance assets to English source, then refresh affected prompt-pack tests if expectations changed. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-merge-rules.md`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(diagram-agent): enforce english staged guidance`
+95. [TODO] Git Commit: `fix(diagram-agent): enforce english staged guidance` (hash: TBD)
+
+### Stream: Thinking Language Contract
+96. [TODO] Remove the hardcoded Russian thinking/reasoning translation target so Codex and Gemini fall back to original provider-language thoughts instead of forcing Russian regardless of settings. Scope: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(provider-thinking): stop forcing russian thought translation`
+97. [TODO] Git Commit: `fix(provider-thinking): stop forcing russian thought translation` (hash: TBD)
