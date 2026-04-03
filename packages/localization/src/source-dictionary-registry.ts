@@ -40,6 +40,9 @@ const LEGACY_CATEGORY_TO_APPROVED_CATEGORY = {
 >;
 
 const APPROVED_CATEGORY_FILE_CANDIDATES = {
+  // `ui_labels` replaces the former split between `ui_interface` and
+  // `workflow_terms`, so both legacy runtime buckets can converge on one
+  // approved source dictionary as soon as the new file exists.
   ui_labels: ["ui_labels.json"],
   ui_helper_text: ["ui_helper_text.json"],
   messages_for_the_user: ["messages_for_the_user.json"],

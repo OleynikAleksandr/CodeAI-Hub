@@ -34,11 +34,11 @@
 13. [DONE] Update settings state support and selector behavior so clearing a category restores `Default Language (English)` and the old default/policy controls disappear. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): normalize category reset to english default`
 14. [DONE] Git Commit: `feat(settings-ui): normalize category reset to english default` (hash: `0701dd80`)
 15. [DONE] Replace the localization settings card with the four approved categories and align the browser lookup bindings with the new category model. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/app-host/use-localization.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): expose four-category localization controls`
-16. [TODO] Git Commit: `feat(settings-ui): expose four-category localization controls` (hash: TBD)
+16. [DONE] Git Commit: `feat(settings-ui): expose four-category localization controls` (hash: `d5e2af1c`)
 
 ## Phase 2 — English Source Dictionaries And Lookup Runtime (owner: Localization, updated: 2026-04-03)
 ### Stream: Bundled Dictionaries
-17. [TODO] Introduce English source dictionaries for `UI Labels` and `UI Helper Text` and wire them into runtime lookup. Scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add ui label and helper dictionaries`
+17. [DONE] Introduce English source dictionaries for `UI Labels` and `UI Helper Text` and wire them into runtime lookup. Scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add ui label and helper dictionaries`
 18. [TODO] Git Commit: `feat(localization): add ui label and helper dictionaries` (hash: TBD)
 19. [TODO] Introduce English source dictionaries for `Messages for the User` and `Artifacts for the User` and wire them into runtime lookup. Scope: `assets/localization/source/en/messages_for_the_user.json`, `assets/localization/source/en/artifacts_for_the_user.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add user message and artifact dictionaries`
 20. [TODO] Git Commit: `feat(localization): add user message and artifact dictionaries` (hash: TBD)
