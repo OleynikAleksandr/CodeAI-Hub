@@ -41,8 +41,8 @@
 17. [DONE] Introduce English source dictionaries for `UI Labels` and `UI Helper Text` and wire them into runtime lookup. Scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add ui label and helper dictionaries`
 18. [DONE] Git Commit: `feat(localization): add ui label and helper dictionaries` (hash: `7a65eb66`)
 19. [DONE] Introduce English source dictionaries for `Messages for the User` and `Artifacts for the User` and wire them into runtime lookup. Scope: `assets/localization/source/en/messages_for_the_user.json`, `assets/localization/source/en/artifacts_for_the_user.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add user message and artifact dictionaries`
-20. [TODO] Git Commit: `feat(localization): add user message and artifact dictionaries` (hash: TBD)
-21. [TODO] Update materializer/runtime payload behavior so four-category bundles resolve correctly and `Internal Agent Instructions` stay outside user-facing materialization. Scope: `packages/localization/src/localization-materializer.ts`, `src/client/ui/src/app-host/localization-runtime-contract.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): exclude internal instructions from user bundles`
+20. [DONE] Git Commit: `feat(localization): add user message and artifact dictionaries` (hash: `6b51e2ab`)
+21. [DONE] Update materializer/runtime payload behavior so four-category bundles resolve correctly and `Internal Agent Instructions` stay outside user-facing materialization. Scope: `packages/localization/src/localization-materializer.ts`, `src/client/ui/src/app-host/localization-runtime-contract.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): exclude internal instructions from user bundles`
 22. [TODO] Git Commit: `feat(localization): exclude internal instructions from user bundles` (hash: TBD)
 
 ## Phase 3 — Mandatory Migration Of Existing Text (owner: UI/PM/Core, updated: 2026-04-03)

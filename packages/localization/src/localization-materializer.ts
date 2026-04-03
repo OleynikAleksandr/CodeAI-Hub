@@ -64,6 +64,11 @@ const shouldSkipTranslation = (
   targetLanguage === "source" ||
   targetLanguage.toLowerCase() === sourceLanguage.toLowerCase();
 
+const resolveEffectiveGlossaryCategory = (
+  category: LocalizationCategoryId
+): LocalizationCategoryId =>
+  category === "ui_interface" ? "workflow_terms" : category;
+
 const createCompositeSourceHash = (
   sourceDictionary: LocalizationSourceDictionary,
   glossary: ResolvedGlossary,
@@ -148,10 +153,13 @@ export class LocalizationMaterializer {
       return null;
     }
 
+    const effectiveGlossaryCategory = resolveEffectiveGlossaryCategory(
+      request.category
+    );
     const workflowTermsPolicy = request.workflowTermsPolicy ?? "keep_english";
     const engineId = request.engineId ?? this.defaultEngineId;
     const glossary = await this.resolveGlossary(
-      request.category,
+      effectiveGlossaryCategory,
       targetLanguage,
       workflowTermsPolicy
     );
@@ -188,7 +196,7 @@ export class LocalizationMaterializer {
     const bundle = skipTranslation
       ? this.createSourceBundle(sourceDictionary, targetLanguage)
       : await this.translateSourceDictionary(
-          request.category,
+          effectiveGlossaryCategory,
           glossary,
           sourceDictionary,
           sourceLanguage,
@@ -304,7 +312,7 @@ export class LocalizationMaterializer {
               tokens: [],
             };
         const translationResult = await this.translationFacade.translate({
-          category: sourceDictionary.category,
+          category,
           engineId,
           sourceLanguage,
           targetLanguage,
