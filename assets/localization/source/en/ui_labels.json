@@ -53,6 +53,10 @@
   "pm.description.provider_picker.unavailable_label": "Unavailable",
   "pm.description.provider_picker.cancel_label": "Cancel",
   "pm.description.provider_picker.start_label": "Start",
+  "pm.panel_container.sessions_header": "Sessions",
+  "pm.panel_container.artifacts_header": "Artifacts",
+  "pm.panel_container.sessions_placeholder": "Session windows will appear here.",
+  "pm.panel_container.artifacts_placeholder": "Artifacts will appear here.",
   "pm.stage_artifact_header.mode.artifacts": "Artifacts",
   "pm.stage_artifact_header.mode.help": "Help",
   "pm.stage_artifact_header.mode.source": "Source"

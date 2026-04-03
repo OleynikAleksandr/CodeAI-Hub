@@ -1,6 +1,9 @@
 import type React from "react";
 import { useCallback, useRef } from "react";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { VerticalResizer } from "../resizer/vertical-resizer";
+
+const UI_LABELS_CATEGORY = "ui_interface";
 
 interface PanelContainerProps {
   sizes: [number, number];
@@ -23,6 +26,7 @@ export const PanelContainer: React.FC<PanelContainerProps> = ({
   sessionHeaderContent,
   artifactHeaderContent,
 }) => {
+  const { t } = useLocalization();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleResize = useCallback(
@@ -33,13 +37,36 @@ export const PanelContainer: React.FC<PanelContainerProps> = ({
     [onSizeChange]
   );
 
+  const sessionsHeaderLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.panel_container.sessions_header",
+    "Sessions"
+  );
+  const artifactsHeaderLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.panel_container.artifacts_header",
+    "Artifacts"
+  );
+  const sessionsPlaceholderLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.panel_container.sessions_placeholder",
+    "Session windows will appear here."
+  );
+  const artifactsPlaceholderLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.panel_container.artifacts_placeholder",
+    "Artifacts will appear here."
+  );
+
   return (
     <div className="pm-panel-container" ref={containerRef}>
       <section className="pm-panel pm-panel--sessions" style={{ width: `${sizes[0]}%` }}>
-        <div className="pm-panel__header">{sessionHeaderContent ?? "Sessions"}</div>
+        <div className="pm-panel__header">
+          {sessionHeaderContent ?? sessionsHeaderLabel}
+        </div>
         <div className="pm-panel__content">
           {sessionContent ?? (
-            <div className="pm-placeholder">Session windows will appear here.</div>
+            <div className="pm-placeholder">{sessionsPlaceholderLabel}</div>
           )}
         </div>
       </section>
@@ -47,10 +74,12 @@ export const PanelContainer: React.FC<PanelContainerProps> = ({
       <VerticalResizer index={0} onResize={handleResize} />
 
       <section className="pm-panel pm-panel--artifacts" style={{ width: `${sizes[1]}%` }}>
-        <div className="pm-panel__header">{artifactHeaderContent ?? "Artifacts"}</div>
+        <div className="pm-panel__header">
+          {artifactHeaderContent ?? artifactsHeaderLabel}
+        </div>
         <div className="pm-panel__content">
           {artifactContent ?? (
-            <div className="pm-placeholder">Artifacts will appear here.</div>
+            <div className="pm-placeholder">{artifactsPlaceholderLabel}</div>
           )}
         </div>
       </section>

@@ -35,10 +35,10 @@
 13. [DONE] Mark Description provider picker shell labels and picker title through explicit localization categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker labels`
 14. [DONE] Git Commit: `fix(pm-localization): localize description provider picker labels` (hash: `8c3466f0`)
 15. [DONE] Mark Description provider picker guidance/status copy through explicit user-facing categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker messages`
-16. [TODO] Git Commit: `fix(pm-localization): localize description provider picker messages` (hash: TBD)
+16. [DONE] Git Commit: `fix(pm-localization): localize description provider picker messages` (hash: `bfb33e98`)
 
 ### Stream: PM Shell Placeholders And Modals
-17. [TODO] Mark panel container headers and empty placeholders so generic PM shell copy no longer stays hardcoded. Scope: `src/client/project-manager/components/layout/panel-container.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize panel container shell`
+17. [DONE] Mark panel container headers and empty placeholders so generic PM shell copy no longer stays hardcoded. Scope: `src/client/project-manager/components/layout/panel-container.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize panel container shell`
 18. [TODO] Git Commit: `fix(pm-localization): localize panel container shell` (hash: TBD)
 19. [TODO] Mark add-workspace modal labels, placeholders, and validation copy with explicit categories. Scope: `src/client/project-manager/components/layout/main-layout.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize add workspace modal`
 20. [TODO] Git Commit: `fix(pm-localization): localize add workspace modal` (hash: TBD)
