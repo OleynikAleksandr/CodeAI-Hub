@@ -134,7 +134,7 @@
 91. [TODO] Git Commit: `fix(description-agent): enforce english internal templates` (hash: TBD)
 92. [DONE] Convert Diagram Modules prompt/reference assets to English source so bundled staged-contract instructions stay English-only. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/diagram-modules-field-reference.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(diagram-agent): enforce english prompt assets`
 93. [TODO] Git Commit: `fix(diagram-agent): enforce english prompt assets` (hash: TBD)
-94. [TODO] Convert Diagram Modules merge rules and any remaining staged internal guidance assets to English source, then refresh affected prompt-pack tests if expectations changed. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-merge-rules.md`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(diagram-agent): enforce english staged guidance`
+94. [DONE] Convert Diagram Modules merge rules and any remaining staged internal guidance assets to English source, then refresh affected prompt-pack tests if expectations changed. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-merge-rules.md`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(diagram-agent): enforce english staged guidance`
 95. [TODO] Git Commit: `fix(diagram-agent): enforce english staged guidance` (hash: TBD)
 
 ### Stream: Thinking Language Contract

@@ -14,7 +14,7 @@ test("virtual simulation prompt pack omits template hint", () => {
   });
 
   assert.equal(
-    pack.content.includes("Собери артефакт на основе `Final_Description.md`."),
+    pack.content.includes("Build the artifact from `Final_Description.md`."),
     true
   );
   assert.equal(
@@ -28,7 +28,7 @@ test("virtual simulation prompt pack omits template hint", () => {
     ),
     true
   );
-  assert.equal(pack.content.includes("Шаблон (absolute)"), false);
+  assert.equal(pack.content.includes("Template (absolute)"), false);
 });
 
 test("description prompt pack keeps template hint", () => {
@@ -43,7 +43,7 @@ test("description prompt pack keeps template hint", () => {
   });
 
   assert.equal(
-    pack.content.includes("Шаблон (absolute): `/tmp/description-template.md`"),
+    pack.content.includes("Template (absolute): `/tmp/description-template.md`"),
     true
   );
   assert.equal(pack.content.includes("Target language code: `uk`."), true);
@@ -63,23 +63,23 @@ test("diagram modules prompt pack targets product part index and omits generic t
 
   assert.equal(
     pack.content.includes(
-      "Собери staged артефакт на основе `Final_Description.md` и `virtual-simulation.md`."
+      "Build the staged artifact from `Final_Description.md` and `virtual-simulation.md`."
     ),
     true
   );
   assert.equal(
-    pack.content.includes("Собери артефакт на основе анкеты и шаблона."),
+    pack.content.includes("Build the artifact from the questionnaire and template."),
     false
   );
   assert.equal(
     pack.content.includes(
-      "Целевой путь (relative): `codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
+      "Target path (relative): `codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
     ),
     false
   );
   assert.equal(
     pack.content.includes(
-      "Целевой путь (relative): `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
+      "Target path (relative): `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
     ),
     true
   );
@@ -102,23 +102,23 @@ test("diagram modules prompt pack targets product part index and omits generic t
     ),
     true
   );
-  assert.equal(pack.content.includes("Фазы работы:"), true);
+  assert.equal(pack.content.includes("Work phases:"), true);
   assert.equal(
     pack.content.includes(
-      "Phase 2: если runtime запускает continuation subturn"
+      "Phase 2: if the runtime launches a continuation subturn"
     ),
     true
   );
-  assert.equal(pack.content.includes("Шаблон (absolute)"), false);
+  assert.equal(pack.content.includes("Template (absolute)"), false);
   assert.equal(
     pack.content.includes(
-      "не трать текущий turn на поиск staged examples"
+      "do not spend the current turn searching for staged examples"
     ),
     true
   );
   assert.equal(pack.content.includes("module-map.md"), false);
   assert.equal(
-    pack.content.includes("Имя выходного файла: `product-parts.index.md`"),
+    pack.content.includes("Output file name: `product-parts.index.md`"),
     true
   );
 });
