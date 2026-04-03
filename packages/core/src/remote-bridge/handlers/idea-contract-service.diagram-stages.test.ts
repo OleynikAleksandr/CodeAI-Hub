@@ -58,6 +58,31 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
     assert.notEqual(contract, null);
     assert.equal(contract?.paths.prompt, promptPath);
     assert.equal(contract?.paths.template, undefined);
+    assert.equal(contract?.promptAudience, "internal_agent_instructions");
+    assert.equal(
+      contract?.promptAppendixAudience,
+      "internal_agent_instructions"
+    );
+    assert.equal(contract?.templateAudience, undefined);
+    assert.equal(contract?.questionnaire, undefined);
+    assert.equal(
+      BUNDLED_TEMPLATE_SOURCES.find(
+        (entry) => entry.id === "diagram-modules-prompt"
+      )?.audience,
+      "internal_agent_instructions"
+    );
+    assert.equal(
+      BUNDLED_TEMPLATE_SOURCES.find(
+        (entry) => entry.id === "product-parts-index-template"
+      )?.audience,
+      "internal_agent_instructions"
+    );
+    assert.equal(
+      BUNDLED_TEMPLATE_SOURCES.find(
+        (entry) => entry.id === "diagram-modules-field-reference"
+      )?.audience,
+      "internal_agent_instructions"
+    );
     assert.equal(contract?.prompt.includes("formal subsystem container"), true);
     assert.equal(contract?.prompt.includes("secondary classification"), true);
     assert.equal(contract?.prompt.includes("module-map.flow.json"), true);

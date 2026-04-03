@@ -71,6 +71,16 @@ test("virtual simulation contract is prompt-only (no artifact template path)", a
     assert.equal(contract?.paths.prompt, promptPath);
     assert.equal(contract?.paths.template, undefined);
     assert.equal(contract?.template, "");
+    assert.equal(contract?.promptAudience, "internal_agent_instructions");
+    assert.equal(contract?.templateAudience, undefined);
+    assert.equal(contract?.promptAppendixAudience, undefined);
+    assert.equal(contract?.questionnaire, undefined);
+    assert.equal(
+      BUNDLED_TEMPLATE_SOURCES.find(
+        (entry) => entry.id === "virtual-simulation-prompt"
+      )?.audience,
+      "internal_agent_instructions"
+    );
     assert.equal(
       contract?.prompt.includes("Archetype / shell constraints"),
       true
@@ -137,6 +147,22 @@ test("description contract restores missing template from bundled assets", async
     assert.equal(contract?.paths.prompt, promptPath);
     assert.equal(contract?.paths.template, restoredTemplatePath);
     assert.equal(contract?.paths.questionnaire, questionnairePath);
+    assert.equal(contract?.promptAudience, "internal_agent_instructions");
+    assert.equal(contract?.templateAudience, "internal_agent_instructions");
+    assert.equal(contract?.promptAppendixAudience, undefined);
+    assert.equal(contract?.questionnaire?.audience, "artifacts_for_the_user");
+    assert.equal(
+      BUNDLED_TEMPLATE_SOURCES.find(
+        (entry) => entry.id === "description-collector-prompt"
+      )?.audience,
+      "internal_agent_instructions"
+    );
+    assert.equal(
+      BUNDLED_TEMPLATE_SOURCES.find(
+        (entry) => entry.id === "description-questionnaire-template"
+      )?.audience,
+      "artifacts_for_the_user"
+    );
     assert.equal(
       contract?.template.includes(
         "ключевые сценарии использования без жёсткого лимита"
