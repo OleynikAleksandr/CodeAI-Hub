@@ -26,10 +26,10 @@
 7. [DONE] Simplify persisted general localization settings so user-visible controls are independent category selectors with English default instead of `Default language` / `Workflow Terms Policy`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/settings-storage.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): simplify persisted localization controls`
 8. [DONE] Git Commit: `feat(settings): simplify persisted localization controls` (hash: `3400cd51`)
 9. [DONE] Update Core and extension settings hydration to emit and consume the four-category snapshot while keeping legacy saved data readable. Scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(core): hydrate four-category localization settings`
-10. [TODO] Git Commit: `feat(core): hydrate four-category localization settings` (hash: TBD)
+10. [DONE] Git Commit: `feat(core): hydrate four-category localization settings` (hash: `3364bb2c`)
 
 ### Stream: Browser Settings State
-11. [TODO] Rework browser raw/model settings types for the four categories and explicit `Default Language (English)` reset semantics. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): define four-category browser localization model`
+11. [DONE] Rework browser raw/model settings types for the four categories and explicit `Default Language (English)` reset semantics. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): define four-category browser localization model`
 12. [TODO] Git Commit: `feat(settings-ui): define four-category browser localization model` (hash: TBD)
 13. [TODO] Update settings state support and selector behavior so clearing a category restores `Default Language (English)` and the old default/policy controls disappear. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): normalize category reset to english default`
 14. [TODO] Git Commit: `feat(settings-ui): normalize category reset to english default` (hash: TBD)

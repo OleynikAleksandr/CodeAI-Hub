@@ -50,12 +50,6 @@ interface ThinkingSettings {
   readonly enabled: boolean;
   readonly maxTokens: number;
 }
-interface ThinkingDisplaySyncSettings {
-  readonly thinkingDisplaySyncEnabled: boolean;
-}
-interface CodexReasoningSummarySettings {
-  readonly reasoningSummaryEnabled: boolean;
-}
 interface AutoUpdateSettings {
   readonly enabled: boolean;
 }
@@ -63,10 +57,20 @@ interface CoreControlsSettings {
   readonly allowRestart: boolean;
 }
 type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
+interface ApprovedLocalizationCategorySettings {
+  readonly artifactsForTheUser: string;
+  readonly messagesForTheUser: string;
+  readonly uiHelperText: string;
+  readonly uiLabels: string;
+}
 interface LocalizationCategorySettings {
+  readonly artifactsForTheUser?: string;
   readonly interactiveTemplates: string;
+  readonly messagesForTheUser?: string;
   readonly systemFeedback: string;
+  readonly uiHelperText?: string;
   readonly uiInterface: string;
+  readonly uiLabels?: string;
   readonly userGuidance: string;
   readonly workflowTerms: string;
 }
@@ -95,16 +99,17 @@ interface ClaudeSettings {
 export type CodexReasoningByModel = Readonly<
   Record<string, CodexReasoningLevel>
 >;
-interface CodexSettings extends ThinkingDisplaySyncSettings {
+interface CodexSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: CodexModelId;
   readonly reasoningByModel: CodexReasoningByModel;
   readonly reasoningSummaryEnabled: boolean;
   readonly sessionContinuity: ContinuitySettings;
+  readonly thinkingDisplaySyncEnabled: boolean;
 }
-interface GeminiSettingsWithDisplaySync
-  extends GeminiSettings,
-    ThinkingDisplaySyncSettings {}
+interface GeminiSettingsWithDisplaySync extends GeminiSettings {
+  readonly thinkingDisplaySyncEnabled: boolean;
+}
 export interface Settings {
   readonly general: GeneralSettings;
   readonly providers: {
@@ -118,8 +123,9 @@ const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;
 const DEFAULT_CORE_RESTART_ENABLED = true;
-const DEFAULT_LOCALIZATION_LANGUAGE = "source";
+const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+const LEGACY_SOURCE_LANGUAGE = "source";
 const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
@@ -139,10 +145,49 @@ const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce<
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
-const mapLocalizationString = (value: unknown, fallback: string): string =>
-  typeof value === "string" && value.trim().length > 0
-    ? value.trim()
-    : fallback;
+const mapLocalizationString = (value: unknown, fallback: string): string => {
+  const normalized = typeof value === "string" ? value.trim() : "";
+  if (normalized.length === 0) {
+    return fallback;
+  }
+
+  return normalized.toLowerCase() === LEGACY_SOURCE_LANGUAGE
+    ? DEFAULT_LOCALIZATION_LANGUAGE
+    : normalized;
+};
+
+const createLocalizationCategorySettings = (
+  approved: ApprovedLocalizationCategorySettings
+): LocalizationCategorySettings => ({
+  ...approved,
+  interactiveTemplates: approved.artifactsForTheUser,
+  systemFeedback: approved.messagesForTheUser,
+  uiInterface: approved.uiLabels,
+  userGuidance: approved.uiHelperText,
+  workflowTerms: approved.uiLabels,
+});
+
+const resolveLocalizationCategory = (
+  value: RawLocalizationCategorySettings | undefined,
+  candidateKeys: readonly (keyof RawLocalizationCategorySettings)[],
+  fallback: string
+): string => {
+  for (const key of candidateKeys) {
+    const resolved = mapLocalizationString(value?.[key], "");
+    if (resolved.length > 0) {
+      return resolved;
+    }
+  }
+
+  return fallback;
+};
+
+const deriveWorkflowTermsPolicy = (
+  uiLabelsLanguage: string
+): LocalizationWorkflowTermsPolicy =>
+  uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE
+    ? "keep_english"
+    : "translate";
 
 const mapThinkingSettings = (
   value: RawThinkingSettings | undefined
@@ -182,35 +227,47 @@ const mapAutoUpdateSettings = (
 const mapLocalizationCategories = (
   value: RawLocalizationCategorySettings | undefined,
   defaultLanguage: string
-): LocalizationCategorySettings => ({
-  userGuidance: mapLocalizationString(value?.userGuidance, defaultLanguage),
-  uiInterface: mapLocalizationString(value?.uiInterface, defaultLanguage),
-  workflowTerms: mapLocalizationString(value?.workflowTerms, defaultLanguage),
-  systemFeedback: mapLocalizationString(value?.systemFeedback, defaultLanguage),
-  interactiveTemplates: mapLocalizationString(
-    value?.interactiveTemplates,
-    defaultLanguage
-  ),
-});
-
-const mapLocalizationWorkflowTermsPolicy = (
-  value: unknown
-): LocalizationWorkflowTermsPolicy =>
-  value === "translate" ? "translate" : "keep_english";
+): LocalizationCategorySettings =>
+  createLocalizationCategorySettings({
+    artifactsForTheUser: resolveLocalizationCategory(
+      value,
+      ["artifactsForTheUser", "interactiveTemplates"],
+      defaultLanguage
+    ),
+    messagesForTheUser: resolveLocalizationCategory(
+      value,
+      ["messagesForTheUser", "systemFeedback"],
+      defaultLanguage
+    ),
+    uiHelperText: resolveLocalizationCategory(
+      value,
+      ["uiHelperText", "userGuidance"],
+      defaultLanguage
+    ),
+    uiLabels: resolveLocalizationCategory(
+      value,
+      ["uiLabels", "uiInterface", "workflowTerms"],
+      defaultLanguage
+    ),
+  });
 
 const mapLocalizationSettings = (
   value: RawGeneralLocalizationSettings | undefined
 ): LocalizationSettings => {
-  const defaultLanguage = mapLocalizationString(
+  const legacyDefaultLanguage = mapLocalizationString(
     value?.defaultLanguage,
     DEFAULT_LOCALIZATION_LANGUAGE
   );
+  const categories = mapLocalizationCategories(
+    value?.categories,
+    legacyDefaultLanguage
+  );
 
   return {
-    defaultLanguage,
-    categories: mapLocalizationCategories(value?.categories, defaultLanguage),
-    workflowTermsPolicy: mapLocalizationWorkflowTermsPolicy(
-      value?.workflowTermsPolicy
+    defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
+    categories,
+    workflowTermsPolicy: deriveWorkflowTermsPolicy(
+      categories.uiLabels ?? categories.uiInterface
     ),
     engineId: mapLocalizationString(
       value?.engineId,
@@ -348,17 +405,6 @@ const areThinkingSettingsEqual = (
 ): boolean =>
   left.enabled === right.enabled && left.maxTokens === right.maxTokens;
 
-const areThinkingDisplaySyncSettingsEqual = (
-  left: ThinkingDisplaySyncSettings,
-  right: ThinkingDisplaySyncSettings
-): boolean =>
-  left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled;
-
-const areCodexReasoningSummarySettingsEqual = (
-  left: CodexReasoningSummarySettings,
-  right: CodexReasoningSummarySettings
-): boolean => left.reasoningSummaryEnabled === right.reasoningSummaryEnabled;
-
 const areReasoningByModelEqual = (
   left: CodexReasoningByModel,
   right: CodexReasoningByModel
@@ -385,11 +431,10 @@ const areLocalizationCategoriesEqual = (
   left: LocalizationCategorySettings,
   right: LocalizationCategorySettings
 ): boolean =>
-  left.userGuidance === right.userGuidance &&
-  left.uiInterface === right.uiInterface &&
-  left.workflowTerms === right.workflowTerms &&
-  left.systemFeedback === right.systemFeedback &&
-  left.interactiveTemplates === right.interactiveTemplates;
+  left.artifactsForTheUser === right.artifactsForTheUser &&
+  left.messagesForTheUser === right.messagesForTheUser &&
+  left.uiHelperText === right.uiHelperText &&
+  left.uiLabels === right.uiLabels;
 
 const areLocalizationSettingsEqual = (
   left: LocalizationSettings,
@@ -417,9 +462,10 @@ const areCodexSettingsEqual = (
   right: CodexSettings
 ): boolean =>
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
-  areCodexReasoningSummarySettingsEqual(left, right) &&
   left.defaultModel === right.defaultModel &&
   areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) &&
+  left.reasoningSummaryEnabled === right.reasoningSummaryEnabled &&
+  left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled &&
   left.sessionContinuity.remainingPercentThreshold ===
     right.sessionContinuity.remainingPercentThreshold;
 
@@ -428,12 +474,12 @@ const areGeminiSettingsEqual = (
   right: GeminiSettingsWithDisplaySync
 ): boolean =>
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
-  areThinkingDisplaySyncSettingsEqual(left, right) &&
   left.defaultModel === right.defaultModel &&
   areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
   ) &&
+  left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled &&
   left.sessionContinuity.contextWindowTokenLimit ===
     right.sessionContinuity.contextWindowTokenLimit &&
   left.sessionContinuity.remainingPercentThreshold ===

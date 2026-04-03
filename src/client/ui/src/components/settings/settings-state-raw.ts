@@ -49,9 +49,13 @@ export interface RawGeneralResponsePolicySettings {
   readonly strictOutput?: RawGeneralStrictOutputSettings;
 }
 export interface RawLocalizationCategorySettings {
+  readonly artifactsForTheUser?: unknown;
   readonly interactiveTemplates?: unknown;
+  readonly messagesForTheUser?: unknown;
   readonly systemFeedback?: unknown;
+  readonly uiHelperText?: unknown;
   readonly uiInterface?: unknown;
+  readonly uiLabels?: unknown;
   readonly userGuidance?: unknown;
   readonly workflowTerms?: unknown;
 }
