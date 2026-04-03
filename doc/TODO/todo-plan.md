@@ -171,7 +171,7 @@
 ### Stream: Runtime Isolation Fix
 116. [DONE] Switch CodeAI Hub-managed Claude sessions to SDK isolation mode so provider turns stop auto-loading filesystem settings and `CLAUDE.md` memory from parent directories above the active workspace. Scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(claude): disable filesystem claude discovery`
 117. [TODO] Git Commit: `fix(claude): disable filesystem claude discovery` (hash: TBD)
-118. [TODO] Update the Claude module SSOT to record that provider-driven Claude turns run in SDK isolation mode with no filesystem `CLAUDE.md` / settings discovery. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(claude): record sdk isolation mode`
+118. [DONE] Update the Claude module SSOT to record that provider-driven Claude turns run in SDK isolation mode with no filesystem `CLAUDE.md` / settings discovery. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(claude): record sdk isolation mode`
 119. [TODO] Git Commit: `docs(claude): record sdk isolation mode` (hash: TBD)
 
 ### Stream: Release Notes And Packaging

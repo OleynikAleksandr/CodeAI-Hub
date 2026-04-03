@@ -21,8 +21,8 @@
 - `HOME=~/.codeai-hub/providers/claude/home`
 - Claude sessions (provider-home): `~/.codeai-hub/providers/claude/home/.claude/projects/<workspaceSlug>/<sessionId>.jsonl`
 - Auth state: `~/.codeai-hub/providers/claude/home/.claude.json` (на macOS/Linux — symlink на `~/.claude.json`; Windows — best-effort copy)
-- Query-time memory discovery must stay inside the active workspace scope: Claude query options may expose the project workspace as an additional directory, but must not pass the real user `homedir()` as an extra `CLAUDE.md` discovery root.
-- Filesystem setting sources for provider-driven Claude sessions are limited to workspace-scoped `project` / `local`; global user settings and global `~/.claude/CLAUDE.md` must not leak into provider-home sessions.
+- Provider-driven Claude turns run in SDK isolation mode: filesystem setting sources stay empty, so Claude does not auto-load user/project/local settings or any `CLAUDE.md` memory files from the active workspace, its parent directories, or the real user home.
+- Tool/file access may still point at the active workspace through `cwd` and `additionalDirectories`, but that must not re-enable filesystem `CLAUDE.md` discovery; global user settings and global `~/.claude/CLAUDE.md` must never leak into provider-home sessions.
 
 ## Auth cluster
 - `src/auth/sdk-auth-manager.ts` — façade/coordinator for Claude auth bootstrap, provider-home preflight и auth runtime checks.
