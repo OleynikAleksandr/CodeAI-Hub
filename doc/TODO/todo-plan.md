@@ -55,10 +55,10 @@
 26. [DONE] Refresh the tracked webview bundle after targeted verification so release packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization follow-up bundle`
 27. [DONE] Git Commit: `build(webview): refresh localization follow-up bundle` (hash: `0a79b9df`)
 28. [DONE] Update release-facing docs for the post-release localization follow-up. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare post-release localization fix notes`
-29. [TODO] Git Commit: `docs(release): prepare post-release localization fix notes` (hash: TBD)
+29. [DONE] Git Commit: `docs(release): prepare post-release localization fix notes` (hash: `fb6d2e38`)
 
 ### Stream: Build And Session Closure
-30. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release shows the newly marked surfaces under the correct categories. Scope: release-generated version files and manifests. Target commit: `build(release): assemble post-release localization fix release`
-31. [TODO] Git Commit: `build(release): assemble post-release localization fix release` (hash: TBD)
-32. [TODO] Record the completed fixes, the new release target, and the remaining manual packaged-test checklist in the active session report. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record post-release localization fix release`
+30. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release shows the newly marked surfaces under the correct categories. Scope: release-generated version files and manifests. Target commit: `build(release): assemble post-release localization fix release`
+31. [DONE] Git Commit: `build(release): assemble post-release localization fix release` (hash: `34e3ef6e`)
+32. [DONE] Record the completed fixes, the new release target, and the remaining manual packaged-test checklist in the active session report. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record post-release localization fix release`
 33. [TODO] Git Commit: `docs(session): record post-release localization fix release` (hash: TBD)
