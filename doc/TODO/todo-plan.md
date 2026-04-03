@@ -95,9 +95,11 @@
 
 ## Phase 6 — Release Build And Closure (owner: Release/Docs, updated: 2026-04-03)
 ### Stream: Build And Ship
-54. [IN_PROGRESS] Refresh the tracked webview bundle so `media/react-chat.js` matches the approved four-category localization UI/state model before release build. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization webview bundle`
-55. [TODO] Git Commit: `build(webview): refresh localization webview bundle` (hash: TBD)
-56. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
-57. [TODO] Git Commit: `build(release): assemble four-category localization release` (hash: TBD)
-58. [TODO] Archive this TODO plan, update the active session report, and record post-release validation notes. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/`. Target commit: `docs(session): record four-category localization release`
-59. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)
+54. [DONE] Refresh the tracked webview bundle so `media/react-chat.js` matches the approved four-category localization UI/state model before release build. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization webview bundle`
+55. [DONE] Git Commit: `build(webview): refresh localization webview bundle` (hash: `107ad4e6`)
+56. [IN_PROGRESS] Preserve bundled template `audience` metadata during release-time regeneration so `build-all.sh` does not drop the internal/user-facing contract boundary. Scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): preserve bundled template audience metadata`
+57. [TODO] Git Commit: `fix(release): preserve bundled template audience metadata` (hash: TBD)
+58. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
+59. [TODO] Git Commit: `build(release): assemble four-category localization release` (hash: TBD)
+60. [TODO] Archive this TODO plan, update the active session report, and record post-release validation notes. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/`. Target commit: `docs(session): record four-category localization release`
+61. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)
