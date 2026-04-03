@@ -7,6 +7,7 @@ import {
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../../types/codex-model-registry";
+import { useLocalization } from "../../../app-host/use-localization";
 import SettingsCard from "../settings-card";
 import type { CodexReasoningByModel } from "../settings-state-model";
 import {
@@ -47,6 +48,8 @@ interface CodexDefaultModelCardProps {
   readonly reasoningByModel: CodexReasoningByModel;
   readonly reasoningSummaryEnabled: boolean;
 }
+
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
   <div
@@ -93,6 +96,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   onReasoningChange,
   onReasoningSummaryEnabledChange,
 }) => {
+  const { t } = useLocalization();
   const [activeModelId, setActiveModelId] = useState<CodexModelId | null>(null);
   const [hoveredRowId, setHoveredRowId] = useState<CodexModelId | null>(null);
   const [hoveredButtonId, setHoveredButtonId] = useState<CodexModelId | null>(
@@ -116,6 +120,21 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   const hasUnsupportedModel = !recommendedModelIds.has(defaultModel);
   const activeModel = CODEX_SETTINGS_MODELS.find(
     (model) => model.id === activeModelId
+  );
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.codex_default_model.description",
+    "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level."
+  );
+  const reasoningInDialogDescription = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.codex_default_model.reasoning_in_dialog.description",
+    "When enabled, Codex can send reasoning summaries. CodeAI Hub translates them and shows them in the dialog."
+  );
+  const note = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.codex_default_model.note",
+    "Changes apply when creating a new Codex session."
   );
 
   const resolveReasoning = (modelId: CodexModelId): CodexReasoningLevel =>
@@ -146,10 +165,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
   return (
     <>
       <SettingsCard title="Codex Default model">
-        <p style={descriptionStyles}>
-          Select which Codex model to use when starting new sessions. Each model
-          can store its own reasoning effort level.
-        </p>
+        <p style={descriptionStyles}>{description}</p>
         <label style={displaySyncToggleStyles}>
           <input
             checked={reasoningSummaryEnabled}
@@ -162,8 +178,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
           <div>
             <div style={displaySyncTitleStyles}>Reasoning in dialog</div>
             <div style={displaySyncDescriptionStyles}>
-              When enabled, Codex can send reasoning summaries. CodeAI Hub
-              translates them and shows them in the dialog.
+              {reasoningInDialogDescription}
             </div>
           </div>
         </label>
@@ -242,9 +257,7 @@ const CodexDefaultModelCard: FC<CodexDefaultModelCardProps> = ({
             );
           })}
         </div>
-        <p style={noteStyles}>
-          Changes apply when creating a new Codex session.
-        </p>
+        <p style={noteStyles}>{note}</p>
       </SettingsCard>
       {activeModel ? (
         <CodexReasoningDialog
