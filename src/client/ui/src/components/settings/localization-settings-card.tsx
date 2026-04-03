@@ -122,8 +122,11 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
         "settings.localization.category.ui_labels.label",
         "UI Labels"
       ),
-      description:
-        "Buttons, tabs, section names, step names, and short interface terms.",
+      description: t(
+        "user_guidance",
+        "settings.localization.category.ui_labels.description",
+        "Buttons, tabs, section names, step names, and short interface terms."
+      ),
     },
     {
       id: "userGuidance",
@@ -132,8 +135,11 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
         "settings.localization.category.ui_helper_text.label",
         "UI Helper Text"
       ),
-      description:
-        "Short interface explanations and helper copy that clarifies labels and settings.",
+      description: t(
+        "user_guidance",
+        "settings.localization.category.ui_helper_text.description",
+        "Short interface explanations and helper copy that clarifies labels and settings."
+      ),
     },
     {
       id: "systemFeedback",
@@ -142,8 +148,11 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
         "settings.localization.category.messages_for_the_user.label",
         "Messages for the User"
       ),
-      description:
-        "Warnings, errors, hints, status updates, and other messages addressed to the user.",
+      description: t(
+        "user_guidance",
+        "settings.localization.category.messages_for_the_user.description",
+        "Warnings, errors, hints, status updates, and other messages addressed to the user."
+      ),
     },
     {
       id: "interactiveTemplates",
@@ -152,8 +161,11 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
         "settings.localization.category.artifacts_for_the_user.label",
         "Artifacts for the User"
       ),
-      description:
-        "Forms and final user-facing artifacts. Agent instructions and templates stay in English.",
+      description: t(
+        "user_guidance",
+        "settings.localization.category.artifacts_for_the_user.description",
+        "Forms and final user-facing artifacts. Agent instructions and templates stay in English."
+      ),
     },
   ];
   const sourceLanguageOption: LocalizationLanguageOption = {
@@ -197,12 +209,18 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
       title={t("ui_interface", "settings.localization.title", "Localization")}
     >
       <p style={introStyles}>
-        Configure which user-facing text should stay in English and which should
-        be localized for the user.
+        {t(
+          "user_guidance",
+          "settings.localization.intro",
+          "Configure which user-facing text should stay in English and which should be localized for the user."
+        )}
       </p>
       <p style={helperStyles}>
-        `Workflow Terms` now follow `UI Labels`, and `Default Language
-        (English)` is the reset state for every category.
+        {t(
+          "user_guidance",
+          "settings.localization.category_bridge_helper",
+          "`Workflow Terms` now follow `UI Labels`, and `Default Language (English)` is the reset state for every category."
+        )}
       </p>
 
       <div style={controlGridStyles}>
@@ -215,7 +233,11 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             )}
           </p>
           <p style={labelDescriptionStyles}>
-            Engine used for bundle materialization and language-catalog lookup.
+            {t(
+              "user_guidance",
+              "settings.localization.translation_engine.description",
+              "Engine used for bundle materialization and language-catalog lookup."
+            )}
           </p>
           <select
             onChange={(event) => onEngineIdChange(event.target.value)}
@@ -246,8 +268,11 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
               )}
             </p>
             <p style={labelDescriptionStyles}>
-              Keep protected terms, provider names, and product vocabulary
-              stable during localization.
+              {t(
+                "user_guidance",
+                "settings.localization.glossary_protection.description",
+                "Keep protected terms, provider names, and product vocabulary stable during localization."
+              )}
             </p>
           </div>
         </label>
