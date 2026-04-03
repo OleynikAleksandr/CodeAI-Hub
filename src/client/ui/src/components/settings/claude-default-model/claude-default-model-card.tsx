@@ -4,6 +4,7 @@ import {
   CLAUDE_MODEL_ALIASES,
   type ClaudeModelAliasId,
 } from "../../../../../../types/claude-model-registry";
+import { useLocalization } from "../../../app-host/use-localization";
 import SettingsCard from "../settings-card";
 import {
   aliasStyles,
@@ -27,12 +28,25 @@ interface ClaudeDefaultModelCardProps {
   readonly onDefaultModelChange: (model: ClaudeModelAliasId) => void;
 }
 
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+
 const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
   defaultModel,
   onDefaultModelChange,
 }) => {
+  const { t } = useLocalization();
   const [hoveredAlias, setHoveredAlias] = useState<ClaudeModelAliasId | null>(
     null
+  );
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.claude_default_model.description",
+    "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md"
+  );
+  const note = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.claude_default_model.note",
+    "Applies only to newly created Claude sessions."
   );
 
   const handleRowClick = (model: ClaudeModelAliasId) => {
@@ -51,11 +65,7 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
 
   return (
     <SettingsCard title="Claude Default model">
-      <p style={descriptionStyles}>
-        Choose the Claude alias that will be applied when new sessions start.
-        More details in the knowledge base:
-        doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md
-      </p>
+      <p style={descriptionStyles}>{description}</p>
       <div style={listStyles}>
         {CLAUDE_MODEL_ALIASES.map((model) => {
           const isSelected = defaultModel === model.alias;
@@ -97,7 +107,7 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
           );
         })}
       </div>
-      <p style={noteStyles}>Applies only to newly created Claude sessions.</p>
+      <p style={noteStyles}>{note}</p>
     </SettingsCard>
   );
 };
