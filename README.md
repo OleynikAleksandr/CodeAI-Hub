@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.872
-- **Provider-settings helper coverage expanded**: `UI Helper Text` now reaches `General -> Response Mode`, shared provider/session-continuity helper blocks, `Claude Thinking Settings`, and the visible helper copy in `Claude`, `Codex`, and `Gemini` provider cards instead of leaving those tabs mostly English in the installed release.
-- **Dialog helper ownership tightened**: Codex reasoning and Gemini thinking modal guidance now resolve through explicit localization dictionaries rather than staying embedded in settings components.
-- **Permanent localization authoring guardrail**: the SSOT now includes an explicit text-ownership contract that requires every new product-authored text surface to be classified as `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, or `Internal Agent Instructions` before implementation is considered complete.
+## Current Release — v1.1.873
+- **Provider settings now react more visibly in packaged builds**: the standalone `Settings only` host intro, the per-provider update warning banner, and the explanatory sentences under `Claude`, `Codex`, and `Gemini` model choices now route through explicit localization ownership instead of staying embedded English copy.
+- **Reported packaged tails from `1.1.872` closed**: the exact strings the user still saw in English after installing `1.1.872` were moved under `UI Helper Text` or `Messages for the User`, so switching those categories now affects the provider settings surface more consistently.
+- **Permanent localization authoring guardrail remains in force**: the SSOT continues to require every new product-authored text surface to be classified as `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, or `Internal Agent Instructions` before implementation is considered complete.
 
 Previous releases (summary): `1.1.800–1.1.870` — four-category localization release, localization packaging hotfixes, host-hydrated browser localization runtime, searchable localization controls, shared Project Manager localization consumption, persistent localization foundation, thinking display sync, public CI bootstrap, staged core restart UX, Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, history-visible recoverable failure, architecture gate 500 lines, session-scoped Stop, provider rebind after Stop, provider-neutral applied turn config, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 

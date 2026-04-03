@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.873] - 2026-04-03
+### Fixed
+- **Standalone settings-shell intro**: the `Settings only` explanatory body and hint now resolve through `UI Helper Text`, so the installed standalone shell no longer keeps that intro block in English when helper language changes.
+- **Provider update risk banner**: the warning shown in `Claude`, `Codex`, and `Gemini` version-management sections now participates in `Messages for the User` lookup instead of staying hardcoded English.
+- **Per-model explanatory sentences**: the descriptions under each `Claude`, `Codex`, and `Gemini` model option now resolve through `UI Helper Text`, so packaged provider settings show visible Russian helper changes beyond the top card descriptions.
+
 ## [1.1.872] - 2026-04-03
 ### Added
 - **Localization ownership guardrail**: the architecture SSOT now includes an explicit user-facing text boundary contract, so new product-authored copy must be classified up front instead of relying on later localization cleanup.

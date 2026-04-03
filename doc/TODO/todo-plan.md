@@ -113,4 +113,15 @@
 76. [DONE] Mark the Codex per-model descriptions so the explanatory sentences under each recommended Codex model resolve through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize codex model option descriptions`
 77. [DONE] Git Commit: `fix(settings-localization): localize codex model option descriptions` (hash: `1fc26c74`)
 78. [DONE] Mark the Gemini per-model descriptions so the explanatory sentences under each recommended Gemini model resolve through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize gemini model option descriptions`
-79. [TODO] Git Commit: `fix(settings-localization): localize gemini model option descriptions` (hash: TBD)
+79. [DONE] Git Commit: `fix(settings-localization): localize gemini model option descriptions` (hash: `a948f346`)
+
+## Phase 6 — Provider Settings Tail Release (owner: QA/Release/Docs, updated: 2026-04-03)
+### Stream: Release Notes And Packaging
+80. [DONE] Prepare release-facing docs for the packaged provider-settings tail fixes and record the next patch release target in the active TODO. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare provider settings tail release notes`
+81. [TODO] Git Commit: `docs(release): prepare provider settings tail release notes` (hash: TBD)
+82. [TODO] Refresh the tracked `media/react-chat.js` bundle after the provider-settings tail sweep so release packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh provider settings tail bundle`
+83. [TODO] Git Commit: `build(webview): refresh provider settings tail bundle` (hash: TBD)
+84. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes the provider warning/model-description/settings-only fixes. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider settings tail release`
+85. [TODO] Git Commit: `build(release): assemble provider settings tail release` (hash: TBD)
+86. [TODO] Update the active session report with the provider-settings tail fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider settings tail release`
+87. [TODO] Git Commit: `docs(session): record provider settings tail release` (hash: TBD)
