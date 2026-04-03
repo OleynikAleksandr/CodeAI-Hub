@@ -22,6 +22,10 @@ import {
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
+
+const UI_LABELS_CATEGORY = "ui_interface";
+const USER_MESSAGES_CATEGORY = "system_feedback";
+
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -46,12 +50,12 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
   const workspaceLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.label",
     "Workspace"
   );
   const emptyWorkspaceLabel = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "pm.workspace_tree.empty_label",
     "Select a workspace to start."
   );
@@ -304,19 +308,19 @@ const resolveStageLabel = (
   switch (stage) {
     case "description":
       return t(
-        "workflow_terms",
+        UI_LABELS_CATEGORY,
         "pm.workflow.stage.description.label",
         WORKFLOW_LABELS.description
       );
     case "virtual_simulation":
       return t(
-        "workflow_terms",
+        UI_LABELS_CATEGORY,
         "pm.workflow.stage.virtual_simulation.label",
         WORKFLOW_LABELS.virtual_simulation
       );
     case "diagram_modules":
       return t(
-        "workflow_terms",
+        UI_LABELS_CATEGORY,
         "pm.workflow.stage.diagram_modules.label",
         WORKFLOW_LABELS.diagram_modules
       );
@@ -331,7 +335,7 @@ const resolveStageTitle = (
 ): string | undefined => {
   if (status === "outdated") {
     return t(
-      "workflow_terms",
+      UI_LABELS_CATEGORY,
       "pm.workflow.stage.outdated_title",
       "OUTDATED: upstream input changed; resync recommended."
     );
@@ -344,19 +348,19 @@ const resolveStageTitle = (
   switch (stage) {
     case "description":
       return t(
-        "workflow_terms",
+        UI_LABELS_CATEGORY,
         "pm.workflow.stage.description.ready_title",
         "READY"
       );
     case "virtual_simulation":
       return t(
-        "workflow_terms",
+        UI_LABELS_CATEGORY,
         "pm.workflow.stage.virtual_simulation.blocked_title",
         "BLOCKED: requires Final_Description.md"
       );
     case "diagram_modules":
       return t(
-        "workflow_terms",
+        UI_LABELS_CATEGORY,
         "pm.workflow.stage.diagram_modules.blocked_title",
         "BLOCKED: requires virtual-simulation.md (DONE)"
       );

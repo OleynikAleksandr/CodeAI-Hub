@@ -4,6 +4,9 @@ import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import type { WorkspaceProject } from "../../types";
 import { WorkspaceTree } from "./workspace-tree";
 
+const UI_LABELS_CATEGORY = "ui_interface";
+const USER_MESSAGES_CATEGORY = "system_feedback";
+
 interface SidebarProps {
   workspaces?: WorkspaceProject[];
   selectedWorkspaceId?: string;
@@ -31,42 +34,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
   );
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
   const workspaceLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.label",
     "Workspace"
   );
   const emptyWorkspaceLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.empty_label",
     "No workspaces yet"
   );
   const selectWorkspaceLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.select_label",
     "Select workspace"
   );
   const workspaceMenuAriaLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.menu_aria_label",
     "Workspace menu"
   );
   const addWorkspaceLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.add_action",
     "Add workspace"
   );
   const forkWorkspaceLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.fork_action",
     "Fork workspace"
   );
   const newWorkspaceLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "pm.sidebar.workspace.new_action",
     "New workspace"
   );
   const workspaceMenuEmptyLabel = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "pm.sidebar.workspace.menu_empty_label",
     "No workspaces yet."
   );

@@ -50,10 +50,10 @@
 23. [DONE] Mark shared Settings shell text with explicit `UI Labels` / `UI Helper Text` categories. Scope: `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`. Target commit: `refactor(localization): mark settings shell text`
 24. [DONE] Git Commit: `refactor(localization): mark settings shell text` (hash: `62e1f2a9`)
 25. [DONE] Mark session shell/status text with explicit `Messages for the User` categories. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(localization): mark session user messages`
-26. [TODO] Git Commit: `refactor(localization): mark session user messages` (hash: TBD)
+26. [DONE] Git Commit: `refactor(localization): mark session user messages` (hash: `5d977f00`)
 
 ### Stream: Project Manager Navigation And Help
-27. [TODO] Mark Project Manager navigation, toolbar, and workspace tree terms with explicit `UI Labels` categories. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(localization): mark project manager labels`
+27. [DONE] Mark Project Manager navigation, toolbar, and workspace tree terms with explicit `UI Labels` categories. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(localization): mark project manager labels`
 28. [TODO] Git Commit: `refactor(localization): mark project manager labels` (hash: TBD)
 29. [TODO] Mark Description and Virtual Simulation explanatory surfaces with explicit `Messages for the User` categories. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark workflow help text`
 30. [TODO] Git Commit: `refactor(localization): mark workflow help text` (hash: TBD)

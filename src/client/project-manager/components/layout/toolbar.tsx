@@ -2,6 +2,8 @@ import type React from "react";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { WORKFLOW_LABELS } from "./workspace-tree-model";
 
+const UI_LABELS_CATEGORY = "ui_interface";
+
 interface ToolbarProps {
   tools: readonly string[];
   activeTool?: string;
@@ -23,19 +25,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     switch (tool) {
       case WORKFLOW_LABELS.description:
         return t(
-          "workflow_terms",
+          UI_LABELS_CATEGORY,
           "pm.workflow.stage.description.label",
           WORKFLOW_LABELS.description
         );
       case WORKFLOW_LABELS.virtual_simulation:
         return t(
-          "workflow_terms",
+          UI_LABELS_CATEGORY,
           "pm.workflow.stage.virtual_simulation.label",
           WORKFLOW_LABELS.virtual_simulation
         );
       case WORKFLOW_LABELS.diagram_modules:
         return t(
-          "workflow_terms",
+          UI_LABELS_CATEGORY,
           "pm.workflow.stage.diagram_modules.label",
           WORKFLOW_LABELS.diagram_modules
         );
