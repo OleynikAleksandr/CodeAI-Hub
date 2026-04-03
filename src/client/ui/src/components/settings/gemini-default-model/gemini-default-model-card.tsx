@@ -124,6 +124,14 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
     "settings.gemini_default_model.note",
     "Applies only to newly created Gemini sessions."
   );
+  const resolveModelDescription = (
+    model: (typeof GEMINI_RECOMMENDED_MODELS)[number]
+  ) =>
+    t(
+      UI_HELPER_TEXT_CATEGORY,
+      `settings.gemini_default_model.option.${model.id}.description`,
+      model.description
+    );
 
   const resolveThinkingLevel = (modelId: GeminiModelId): GeminiThinkingLevel =>
     thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
@@ -210,7 +218,9 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
                   <div style={modelInfoStyles}>
                     <div style={modelTitleStyles}>{model.displayName}</div>
                     <div style={modelIdStyles}>{model.id}</div>
-                    <p style={modelDescriptionStyles}>{model.description}</p>
+                    <p style={modelDescriptionStyles}>
+                      {resolveModelDescription(model)}
+                    </p>
                   </div>
                   <div style={reasoningRowStyles}>
                     <span style={reasoningLabelStyles}>
