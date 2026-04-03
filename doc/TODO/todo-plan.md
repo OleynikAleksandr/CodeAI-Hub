@@ -61,4 +61,6 @@
 30. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release shows the newly marked surfaces under the correct categories. Scope: release-generated version files and manifests. Target commit: `build(release): assemble post-release localization fix release`
 31. [DONE] Git Commit: `build(release): assemble post-release localization fix release` (hash: `34e3ef6e`)
 32. [DONE] Record the completed fixes, the new release target, and the remaining manual packaged-test checklist in the active session report. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record post-release localization fix release`
-33. [TODO] Git Commit: `docs(session): record post-release localization fix release` (hash: TBD)
+33. [DONE] Git Commit: `docs(session): record post-release localization fix release` (hash: `7871891c`)
+34. [DONE] Localize Description questionnaire field titles and inline helper hints so `Artifacts for the User` affects the full questionnaire body instead of only the shell. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `assets/localization/source/en/artifacts_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description questionnaire fields`
+35. [TODO] Git Commit: `fix(pm-localization): localize description questionnaire fields` (hash: TBD)
