@@ -129,14 +129,18 @@
 ## Phase 7 — Internal Prompt English Boundary And Thinking Language Fix (owner: PM/Providers/Docs, updated: 2026-04-03)
 ### Stream: Runtime Prompt Scaffolding
 88. [DONE] Convert workflow runtime prompt scaffolding and file-first fallback copy to English so prompt-pack metadata stays inside the `Internal Agent Instructions` English-only boundary. Scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(workflow-prompts): enforce english runtime scaffolding`
-89. [TODO] Git Commit: `fix(workflow-prompts): enforce english runtime scaffolding` (hash: TBD)
+89. [DONE] Git Commit: `fix(workflow-prompts): enforce english runtime scaffolding` (hash: `95e801e6`)
 90. [DONE] Convert Description agent prompt/template assets to English source so bundled internal instructions no longer ship Russian text into runtime prompt packs. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/agents/description-agent/assets/description-template.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(description-agent): enforce english internal templates`
-91. [TODO] Git Commit: `fix(description-agent): enforce english internal templates` (hash: TBD)
+91. [DONE] Git Commit: `fix(description-agent): enforce english internal templates` (hash: `4b095d83`)
 92. [DONE] Convert Diagram Modules prompt/reference assets to English source so bundled staged-contract instructions stay English-only. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/diagram-modules-field-reference.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(diagram-agent): enforce english prompt assets`
-93. [TODO] Git Commit: `fix(diagram-agent): enforce english prompt assets` (hash: TBD)
+93. [DONE] Git Commit: `fix(diagram-agent): enforce english prompt assets` (hash: `41d29ba6`)
 94. [DONE] Convert Diagram Modules merge rules and any remaining staged internal guidance assets to English source, then refresh affected prompt-pack tests if expectations changed. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-merge-rules.md`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(diagram-agent): enforce english staged guidance`
-95. [TODO] Git Commit: `fix(diagram-agent): enforce english staged guidance` (hash: TBD)
+95. [DONE] Git Commit: `fix(diagram-agent): enforce english staged guidance` (hash: `d8291f19`)
 
 ### Stream: Thinking Language Contract
 96. [DONE] Remove the hardcoded Russian thinking/reasoning translation target so Codex and Gemini fall back to original provider-language thoughts instead of forcing Russian regardless of settings. Scope: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(provider-thinking): stop forcing russian thought translation`
-97. [TODO] Git Commit: `fix(provider-thinking): stop forcing russian thought translation` (hash: TBD)
+97. [DONE] Git Commit: `fix(provider-thinking): stop forcing russian thought translation` (hash: `53c3e3e4`)
+98. [DONE] Convert the bundled `virtual-simulation` internal prompt source to English and refresh the generated bundled snapshot so runtime no longer ships stale Russian base64 prompt content. Scope: `packages/core/src/templates/source/virtual-simulation-prompt.md`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(virtual-simulation): enforce english internal prompt`
+99. [TODO] Git Commit: `fix(virtual-simulation): enforce english internal prompt` (hash: TBD)
+100. [TODO] Refresh template-sync and bundled-contract tests so internal-template expectations no longer assume Russian source text for Description and Virtual Simulation assets. Scope: `packages/core/src/templates/template-sync-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow-contracts): expect english internal templates`
+101. [TODO] Git Commit: `test(workflow-contracts): expect english internal templates` (hash: TBD)
