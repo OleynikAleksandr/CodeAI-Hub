@@ -73,8 +73,8 @@
 39. [DONE] Classify workflow contract templates and bundled prompt assets as `Internal Agent Instructions` and document their English-only boundary. Scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): classify internal agent templates`
 40. [DONE] Git Commit: `refactor(localization): classify internal agent templates` (hash: `c6a77ee7`)
 41. [DONE] Parameterize Description and Virtual Simulation prompt entrypoints so user-facing artifact language is injected while internal instructions remain English. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/source/virtual-simulation-prompt.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into core prompts`
-42. [TODO] Git Commit: `feat(workflow): inject artifact language into core prompts` (hash: TBD)
-43. [TODO] Parameterize Diagram Modules prompt assets so final user-facing outputs follow `Artifacts for the User` while internal prompt text stays English. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into diagram prompts`
+42. [DONE] Git Commit: `feat(workflow): inject artifact language into core prompts` (hash: `8847a47e`)
+43. [DONE] Parameterize Diagram Modules prompt assets so final user-facing outputs follow `Artifacts for the User` while internal prompt text stays English. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into diagram prompts`
 44. [TODO] Git Commit: `feat(workflow): inject artifact language into diagram prompts` (hash: TBD)
 
 ### Stream: Session Start / Prompt Pack

@@ -22,6 +22,11 @@
 - Order should match the intended generation/review sequence.
 
 <!--
+Language rule:
+- Runtime may require user-facing values in this artifact to follow the configured `Artifacts for the User` language.
+- Keep DSL headers, field names, ids, and staged status tokens exactly as defined by the staged contract.
+- Translate only free-text user-facing values such as titles, purposes, notes, and other descriptive content where the contract allows free prose.
+
 Canonical authoring rules:
 - Title line must be exactly `# Product Parts Index`
 - Every entry uses `### Product Part: <part-id>` header
