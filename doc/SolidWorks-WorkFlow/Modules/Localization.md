@@ -3,7 +3,7 @@
 **Status:** Implemented on `main`
 **Updated:** 2026-04-03
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (`v1.1.865`)
+**Validated on:** `main` (`v1.1.876`)
 
 ---
 
@@ -20,7 +20,8 @@ Current responsibilities:
 - glossary / protected-terms handling;
 - localized bundle materialization and persistence;
 - metadata/hash tracking for incremental regeneration;
-- browser-runtime payload contracts and resolved bundle snapshots for UI lookup.
+- browser-runtime payload contracts and resolved bundle snapshots for UI lookup;
+- category ownership between `UI Labels`, `UI Helper Text`, `Messages for the User`, and `Artifacts for the User`, while `Internal Agent Instructions` stay outside user-facing materialization.
 
 This module depends on `@codeai-hub/translation`, but it is a separate boundary.
 
@@ -67,11 +68,17 @@ Current high-signal files:
 
 Bundled assets:
 
-- `assets/localization/source/en/ui_interface.json`
-- `assets/localization/source/en/system_feedback.json`
-- `assets/localization/source/en/user_guidance.json`
-- `assets/localization/source/en/workflow_terms.json`
-- `assets/localization/source/en/interactive_templates.json`
+- approved live user-facing dictionaries:
+  - `assets/localization/source/en/ui_labels.json`
+  - `assets/localization/source/en/ui_helper_text.json`
+  - `assets/localization/source/en/messages_for_the_user.json`
+  - `assets/localization/source/en/artifacts_for_the_user.json`
+- bridge/compat source dictionaries still shipped during the migration layer:
+  - `assets/localization/source/en/ui_interface.json`
+  - `assets/localization/source/en/system_feedback.json`
+  - `assets/localization/source/en/user_guidance.json`
+  - `assets/localization/source/en/workflow_terms.json`
+  - `assets/localization/source/en/interactive_templates.json`
 - `assets/localization/glossary/base.json`
 - `assets/localization/glossary/ru.json`
 
@@ -83,7 +90,7 @@ Canonical source language:
 
 - `en`
 
-Approved user-facing text categories for the next execution phase:
+Approved live user-facing text categories:
 
 - `ui_labels`
 - `ui_helper_text`
@@ -94,7 +101,7 @@ Approved non-user-facing text marker:
 
 - `internal_agent_instructions` (English-only; not part of user language settings)
 
-Current legacy runtime categories kept during the bridge migration:
+Legacy runtime categories kept only as compatibility aliases during the bridge migration:
 
 - `ui_interface`
 - `user_guidance`
@@ -120,7 +127,7 @@ Current settings contract stores:
 - translation engine id;
 - glossary enabled flag.
 
-Approved target settings contract for the next release:
+Current user-facing settings contract:
 
 - independent language selection for:
   - `UI Labels`
@@ -135,7 +142,8 @@ Current runtime payload contract stores:
 
 - active engine id and available engine catalogs;
 - configured language per localization category;
-- resolved bundle entries per category, including source fallback metadata when a persisted bundle is unavailable.
+- resolved bundle entries per category, including source fallback metadata when a persisted bundle is unavailable;
+- bridge aliases so legacy runtime buckets still resolve to the approved four-category selections while the codebase finishes migration.
 
 ---
 
@@ -162,6 +170,7 @@ Important live behaviors:
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
 - current default engine id is `google-gtx`.
+- workflow-created user-facing artifact shell text and brief user-facing workflow chat updates may follow the configured `Artifacts for the User` language, but internal prompt assets remain outside Localization materialization and stay English-only.
 
 ---
 
@@ -203,6 +212,7 @@ Current live browser behavior:
 6. Browser/UI surfaces must consume host-materialized localization runtime payloads instead of reading mutable localization files directly.
 7. Every text created or shown by the product must carry an explicit text category marker; automatic category guessing is not allowed.
 8. `Internal Agent Instructions` must stay outside user-facing localization settings and remain English-only unless a separate technical contract explicitly says otherwise.
+9. `Artifacts for the User` may influence workflow-created artifact shell text and brief user-facing chat updates, but it must not be used to translate internal prompt bodies or hidden provider instructions.
 
 ---
 

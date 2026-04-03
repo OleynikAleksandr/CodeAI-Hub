@@ -52,7 +52,7 @@
    - Threshold-driven continuity для flow/document nodes разрешён только на post-turn boundary: `token_usage` не является сигналом завершения turn-а и не может немедленно прерывать активный one-shot turn.
 4. **Workflow navigation SSOT**: любой route в workflow stage (Toolbar/Tree/auto-select/dialog-intent) обязан синхронизировать `activeStage`; подсветка Toolbar, открытая session и header правой панели не могут расходиться.
    - Канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
-5. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME.
+5. **Provider-home isolation**: provider state изолирован под `~/.codeai-hub/providers/<id>/home` (где применимо), без смешения с терминальным HOME. Для Claude этого уже недостаточно как общей формулы: CodeAI Hub-managed turns также обязаны идти в full SDK isolation mode без filesystem `CLAUDE.md` / settings discovery, иначе parent-chain от `cwd` может затащить personal memory из real home.
    - Канон: provider docs в `doc/SolidWorks-WorkFlow/Modules/*`.
 6. **Response-mode diagnostics split**: shaping live Codex turn-ов (`strict` / `hybrid` / `debug_raw`) не может быть единственным местом, где существует provider output; raw provider logs остаются диагностическим SSOT до любых UI/history фильтров.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`.
@@ -78,6 +78,8 @@
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
 17. **Explicit text-ownership invariant**: every new product-authored text surface must be classified up front as `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, or `Internal Agent Instructions`. Category guessing and deferred cleanup are not acceptable.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
+18. **Workflow artifact-language boundary**: `Artifacts for the User` may drive questionnaire/staged-artifact shell text and brief user-facing workflow chat updates, but internal workflow/provider prompt bodies remain `Internal Agent Instructions` and stay English-only.
+   - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
@@ -157,6 +159,7 @@
   - `gemini-provider-adapter.ts` = consumes the shared Core-applied runtime envelope on outbound send; `gemini-session-settings-resolver.ts` now treats Core-provided model/thinking as authoritative over local snapshot values, leaving `settings.json` only as fallback for continuity/runtime defaults that are not part of the applied turn contract; stalled-turn watchdog failures are surfaced as provider `turn_failed` events and kept on the recoverable session path instead of escalating through generic provider-runtime failure recovery, while non-thinking assistant text from a leg that still emitted tool calls is no longer accepted as whole-turn completion proof
 - Claude SDK send path: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
   - `claude-sdk-manager.ts` derives the active turn model from Core-applied turn config on send path; `handlers/session-request-handler-applied-turn-config.ts` resolves Claude `defaultModel` from the shared persisted settings snapshot before outbound send, so Claude no longer falls back to a stale process-start env alias when Settings change during a live Core session
+  - CodeAI Hub-managed Claude turns now keep filesystem `settingSources` empty, which places the provider in full SDK isolation mode and blocks parent-directory `CLAUDE.md` / settings discovery from the active workspace path
 - CEF Launcher native boundary: `packages/cef-launcher/src/launcher_handler.cc`
   - `launcher_handler_bridge_helpers.h` owns URL classification, bridge injection, data-URI creation, and browser payload serialization; `launcher_handler.cc` stays on lifecycle/orchestration, while platform-specific title/show/persist behavior remains in `platform/*/launcher_handler_*`.
 - Project Manager applied-config sync:

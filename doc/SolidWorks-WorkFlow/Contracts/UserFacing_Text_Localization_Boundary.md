@@ -77,7 +77,8 @@ Use for product-authored content that the user edits, reviews, or exports, such 
 - questionnaires;
 - structured forms authored by the product;
 - staged workflow artifact shell text;
-- final user-facing generated artifact scaffolding owned by the product.
+- final user-facing generated artifact scaffolding owned by the product;
+- brief user-facing workflow chat updates when the runtime explicitly threads artifact language into agent-facing instructions.
 
 ### 3.5. `Internal Agent Instructions`
 
@@ -86,7 +87,8 @@ Use for:
 - agent prompts;
 - system instructions;
 - hidden technical templates;
-- internal routing/authoring text that is not shown to the user.
+- internal routing/authoring text that is not shown to the user;
+- workflow/provider prompt bodies even when those prompts additionally instruct the agent which language to use for user-facing artifacts or brief user-facing chat updates.
 
 This boundary stays English-only unless a separate explicit contract changes it.
 
@@ -101,6 +103,7 @@ When adding or changing user-facing product copy:
 3. Keep fallback strings only as bootstrap safety, not as the primary authoring location.
 4. Do not place user-facing copy inside provider/internal prompt assets unless that surface is intentionally an internal English-only boundary.
 5. If one surface contains multiple text kinds, split them by category instead of forcing one category onto the whole file.
+6. If a workflow prompt contains both internal instructions and an explicit language directive for user-facing artifacts/chat updates, only the resulting user-facing output belongs to `Artifacts for the User`; the prompt body itself remains `Internal Agent Instructions`.
 
 ---
 
@@ -132,4 +135,3 @@ If any answer is unclear, the task is not complete.
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
 - `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`
-
