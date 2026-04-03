@@ -32,8 +32,8 @@
 11. [DONE] Rework browser raw/model settings types for the four categories and explicit `Default Language (English)` reset semantics. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): define four-category browser localization model`
 12. [DONE] Git Commit: `feat(settings-ui): define four-category browser localization model` (hash: `61be1b35`)
 13. [DONE] Update settings state support and selector behavior so clearing a category restores `Default Language (English)` and the old default/policy controls disappear. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): normalize category reset to english default`
-14. [TODO] Git Commit: `feat(settings-ui): normalize category reset to english default` (hash: TBD)
-15. [TODO] Replace the localization settings card with the four approved categories and align the browser lookup bindings with the new category model. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/app-host/use-localization.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): expose four-category localization controls`
+14. [DONE] Git Commit: `feat(settings-ui): normalize category reset to english default` (hash: `0701dd80`)
+15. [DONE] Replace the localization settings card with the four approved categories and align the browser lookup bindings with the new category model. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/app-host/use-localization.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): expose four-category localization controls`
 16. [TODO] Git Commit: `feat(settings-ui): expose four-category localization controls` (hash: TBD)
 
 ## Phase 2 — English Source Dictionaries And Lookup Runtime (owner: Localization, updated: 2026-04-03)

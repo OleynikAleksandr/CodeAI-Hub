@@ -84,7 +84,7 @@ const inputStyles: CSSProperties = {
 
 const sourceLanguageOption: LocalizationLanguageOption = {
   code: "source",
-  label: "English",
+  label: "Default Language (English)",
 };
 
 const toggleRowStyles: CSSProperties = {
@@ -103,23 +103,6 @@ const checkboxStyles: CSSProperties = {
   marginTop: "2px",
 };
 
-const policyGroupStyles: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "8px",
-};
-
-const policyButtonBaseStyles: CSSProperties = {
-  minHeight: "34px",
-  padding: "0 12px",
-  borderRadius: "999px",
-  border: `1px solid ${settingsColorTokens.borderStrong}`,
-  background: settingsColorTokens.surface,
-  color: settingsColorTokens.textSecondary,
-  cursor: "pointer",
-  fontSize: settingsTypographyTokens.bodyFontSize,
-};
-
 const categoryFields: ReadonlyArray<{
   readonly description: string;
   readonly id: LocalizationCategoryKey;
@@ -127,58 +110,35 @@ const categoryFields: ReadonlyArray<{
 }> = [
   {
     id: "uiInterface",
-    label: "UI Interface",
-    description: "Buttons, labels, menus, tabs, and settings surfaces.",
+    label: "UI Labels",
+    description:
+      "Buttons, tabs, section names, step names, and short interface terms.",
   },
   {
     id: "userGuidance",
-    label: "User Guidance",
-    description: "Help text, hints, onboarding copy, and explanatory guidance.",
-  },
-  {
-    id: "workflowTerms",
-    label: "Workflow Terms",
-    description: "Step names, taxonomy labels, and product workflow language.",
+    label: "UI Helper Text",
+    description:
+      "Short interface explanations and helper copy that clarifies labels and settings.",
   },
   {
     id: "systemFeedback",
-    label: "System Feedback",
-    description: "Status messages, warnings, errors, and empty states.",
+    label: "Messages for the User",
+    description:
+      "Warnings, errors, hints, status updates, and other messages addressed to the user.",
   },
   {
     id: "interactiveTemplates",
-    label: "Interactive Templates",
+    label: "Artifacts for the User",
     description:
-      "Questionnaires, editable product-authored forms, and templates.",
-  },
-];
-
-const policyOptions: ReadonlyArray<{
-  readonly description: string;
-  readonly id: LocalizationWorkflowTermsPolicy;
-  readonly label: string;
-}> = [
-  {
-    id: "keep_english",
-    label: "Keep English",
-    description:
-      "Preserve workflow taxonomy terms such as Description and Virtual Simulation.",
-  },
-  {
-    id: "translate",
-    label: "Translate",
-    description:
-      "Allow workflow taxonomy terms to be localized like other product copy.",
+      "Forms and final user-facing artifacts. Agent instructions and templates stay in English.",
   },
 ];
 
 const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   localization,
   onCategoryLanguageChange,
-  onDefaultLanguageChange,
   onEngineIdChange,
   onGlossaryEnabledChange,
-  onWorkflowTermsPolicyChange,
 }) => {
   const { availableEngines } = useLocalization();
   const engineOptions =
@@ -203,11 +163,6 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   ].filter(
     (option) => option.code.toLowerCase() !== "en" || option.code === "source"
   );
-  const normalizedDefaultLanguage =
-    localization.defaultLanguage.toLowerCase() === "en"
-      ? "source"
-      : localization.defaultLanguage;
-
   const resolveCategoryValue = (value: string): string =>
     value.toLowerCase() === "en" ? "source" : value;
 
@@ -221,29 +176,15 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   return (
     <SettingsCard title="Localization">
       <p style={introStyles}>
-        Configure how each product copy category should be shown. Use{" "}
-        <code>English</code> to keep the canonical source copy.
+        Configure which user-facing text should stay in English and which should
+        be localized for the user.
       </p>
       <p style={helperStyles}>
-        Language search is now catalog-backed for the active engine, and
-        canonical English is no longer exposed as the raw internal sentinel.
+        `Workflow Terms` now follow `UI Labels`, and `Default Language
+        (English)` is the reset state for every category.
       </p>
 
       <div style={controlGridStyles}>
-        <div style={controlRowStyles}>
-          <p style={labelTitleStyles}>Default language</p>
-          <p style={labelDescriptionStyles}>
-            Fallback language for categories that do not have their own
-            override.
-          </p>
-          <LocalizationLanguageCombobox
-            onChange={onDefaultLanguageChange}
-            options={languageOptions}
-            placeholder="English"
-            value={normalizedDefaultLanguage}
-          />
-        </div>
-
         <div style={controlRowStyles}>
           <p style={labelTitleStyles}>Translation engine</p>
           <p style={labelDescriptionStyles}>
@@ -289,52 +230,11 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             <LocalizationLanguageCombobox
               onChange={(value) => onCategoryLanguageChange(category.id, value)}
               options={languageOptions}
-              placeholder={normalizedDefaultLanguage}
+              placeholder="Default Language (English)"
               value={resolveCategoryValue(localization.categories[category.id])}
             />
           </div>
         ))}
-
-        <div style={controlRowStyles}>
-          <p style={labelTitleStyles}>Workflow terms policy</p>
-          <p style={labelDescriptionStyles}>
-            Choose whether workflow taxonomy should stay in English or
-            participate in localization.
-          </p>
-          <div style={policyGroupStyles}>
-            {policyOptions.map((option) => {
-              const selected = localization.workflowTermsPolicy === option.id;
-              return (
-                <button
-                  key={option.id}
-                  onClick={() => onWorkflowTermsPolicyChange(option.id)}
-                  style={{
-                    ...policyButtonBaseStyles,
-                    background: selected
-                      ? settingsColorTokens.actionPrimary
-                      : policyButtonBaseStyles.background,
-                    borderColor: selected
-                      ? settingsColorTokens.actionPrimary
-                      : settingsColorTokens.borderStrong,
-                    color: selected
-                      ? settingsColorTokens.actionPrimaryText
-                      : settingsColorTokens.textSecondary,
-                  }}
-                  type="button"
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-          <p style={helperStyles}>
-            {
-              policyOptions.find(
-                (option) => option.id === localization.workflowTermsPolicy
-              )?.description
-            }
-          </p>
-        </div>
       </div>
     </SettingsCard>
   );

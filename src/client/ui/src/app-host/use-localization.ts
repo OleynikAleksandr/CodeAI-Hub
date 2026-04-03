@@ -13,41 +13,12 @@ import type {
   LocalizationVariables,
 } from "./localization-runtime-contract";
 
-type SettingsLocalizationCategoryKey =
-  keyof Settings["general"]["localization"]["categories"];
-
 interface LocalizationProviderProps extends PropsWithChildren {
   readonly value: BrowserLocalizationRuntime;
 }
 
 const SOURCE_SELECTION = "source";
 const CANONICAL_SOURCE_LANGUAGE = "en";
-
-const LOCALIZATION_CATEGORY_BINDINGS = [
-  {
-    categoryId: "interactive_templates",
-    settingsKey: "interactiveTemplates",
-  },
-  {
-    categoryId: "system_feedback",
-    settingsKey: "systemFeedback",
-  },
-  {
-    categoryId: "ui_interface",
-    settingsKey: "uiInterface",
-  },
-  {
-    categoryId: "user_guidance",
-    settingsKey: "userGuidance",
-  },
-  {
-    categoryId: "workflow_terms",
-    settingsKey: "workflowTerms",
-  },
-] as const satisfies readonly {
-  readonly categoryId: LocalizationCategoryId;
-  readonly settingsKey: SettingsLocalizationCategoryKey;
-}[];
 
 const normalizeConfiguredLanguage = (value: string): string => {
   const trimmed = value.trim();
@@ -78,22 +49,25 @@ const formatTemplate = (
 const resolveConfiguredLanguageByCategory = (
   settings: Settings
 ): Record<LocalizationCategoryId, string> => {
-  const configuredLanguageByCategory = {
-    interactive_templates: SOURCE_SELECTION,
-    system_feedback: SOURCE_SELECTION,
-    ui_interface: SOURCE_SELECTION,
-    user_guidance: SOURCE_SELECTION,
-    workflow_terms: SOURCE_SELECTION,
+  const { categories } = settings.general.localization;
+
+  return {
+    interactive_templates: normalizeConfiguredLanguage(
+      categories.artifactsForTheUser ?? categories.interactiveTemplates
+    ),
+    system_feedback: normalizeConfiguredLanguage(
+      categories.messagesForTheUser ?? categories.systemFeedback
+    ),
+    ui_interface: normalizeConfiguredLanguage(
+      categories.uiLabels ?? categories.uiInterface
+    ),
+    user_guidance: normalizeConfiguredLanguage(
+      categories.uiHelperText ?? categories.userGuidance
+    ),
+    workflow_terms: normalizeConfiguredLanguage(
+      categories.uiLabels ?? categories.workflowTerms ?? categories.uiInterface
+    ),
   };
-
-  for (const binding of LOCALIZATION_CATEGORY_BINDINGS) {
-    configuredLanguageByCategory[binding.categoryId] =
-      normalizeConfiguredLanguage(
-        settings.general.localization.categories[binding.settingsKey]
-      );
-  }
-
-  return configuredLanguageByCategory;
 };
 
 const createLocalizationRuntime = (
