@@ -4,6 +4,7 @@ import { useLocalization } from "../../app-host/use-localization";
 export type Provider = "claude" | "codex" | "gemini";
 
 const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+const USER_MESSAGES_CATEGORY = "system_feedback";
 
 const warningStyles: CSSProperties = {
   background: "#3a2a1f",
@@ -110,12 +111,20 @@ export const WarningBanner = ({
   provider,
 }: {
   readonly provider: Provider;
-}) => (
-  <div style={{ ...warningStyles, ...providerBannerStyles(provider) }}>
-    Warning: Updating is at your own risk. New versions may be incompatible.
-    Updating will close active sessions.
-  </div>
-);
+}) => {
+  const { t } = useLocalization();
+  const warningText = t(
+    USER_MESSAGES_CATEGORY,
+    "settings.provider_versions.update.warning",
+    "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions."
+  );
+
+  return (
+    <div style={{ ...warningStyles, ...providerBannerStyles(provider) }}>
+      {warningText}
+    </div>
+  );
+};
 
 export const AutoUpdateToggle = ({
   provider,

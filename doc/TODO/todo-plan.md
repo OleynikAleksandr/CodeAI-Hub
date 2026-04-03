@@ -105,4 +105,6 @@
 68. [DONE] Tighten the Description questionnaire translation lookup typing so release `typecheck:webview` no longer fails on dynamic field-id access. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): tighten questionnaire translation lookup typing`
 69. [DONE] Git Commit: `fix(pm-localization): tighten questionnaire translation lookup typing` (hash: `02aab669`)
 70. [DONE] Mark the `Settings only` explanatory copy so that the standalone settings shell body/hint no longer stay English-only. Scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize settings-only shell copy`
-71. [TODO] Git Commit: `fix(settings-localization): localize settings-only shell copy` (hash: TBD)
+71. [DONE] Git Commit: `fix(settings-localization): localize settings-only shell copy` (hash: `224b5c49`)
+72. [DONE] Mark the provider update warning banner so that the per-provider risk notice resolves through `Messages for the User` instead of staying English-only. Scope: `src/client/ui/src/components/settings/provider-versions-ui.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize provider warning banner`
+73. [TODO] Git Commit: `fix(settings-localization): localize provider warning banner` (hash: TBD)

@@ -11,6 +11,7 @@
   "session.empty_state.idle_title": "Start with the Description questionnaire",
   "session.empty_state.idle_description": "In Artifacts on the right, complete the questionnaire and click \"Submit questionnaire\". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.",
   "settings.core_controls.idle_status_label": "Core restart status will appear here.",
+  "settings.provider_versions.update.warning": "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions.",
   "pm.workspace_tree.empty_label": "Select a workspace to start.",
   "pm.sidebar.workspace.menu_empty_label": "No workspaces yet.",
   "pm.description.provider_picker.description": "Description supports Claude, Codex, and Gemini. The provider must be installed and authenticated.",
