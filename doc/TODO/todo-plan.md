@@ -101,6 +101,8 @@
 64. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes the expanded provider/helper localization coverage. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider helper localization release`
 65. [DONE] Git Commit: `build(release): assemble provider helper localization release` (hash: `3e670f83`)
 66. [DONE] Update the active session report with the helper-surface fix chain, the new SSOT guardrail, and the packaged follow-up release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider helper localization release`
-67. [TODO] Git Commit: `docs(session): record provider helper localization release` (hash: TBD)
+67. [DONE] Git Commit: `docs(session): record provider helper localization release` (hash: `3881ea42`)
 68. [DONE] Tighten the Description questionnaire translation lookup typing so release `typecheck:webview` no longer fails on dynamic field-id access. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): tighten questionnaire translation lookup typing`
 69. [DONE] Git Commit: `fix(pm-localization): tighten questionnaire translation lookup typing` (hash: `02aab669`)
+70. [DONE] Mark the `Settings only` explanatory copy so that the standalone settings shell body/hint no longer stay English-only. Scope: `src/client/ui/src/app-host/settings-only-host.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize settings-only shell copy`
+71. [TODO] Git Commit: `fix(settings-localization): localize settings-only shell copy` (hash: TBD)

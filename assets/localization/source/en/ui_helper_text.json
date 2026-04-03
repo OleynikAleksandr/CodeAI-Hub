@@ -31,6 +31,8 @@
   "settings.response_mode.option.debug_raw.description": "Diagnostic mode for new models: avoid hard schema pressure on live turns.",
   "settings.session_continuity.description": "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%.",
   "settings.provider_versions.auto_update.description": "Automatically check and update the {packageLabel} on core start. Manual updates remain available below.",
+  "settings.only.body": "Sessions and chats are available in Project Manager.",
+  "settings.only.hint": "Use this panel to configure providers and defaults.",
   "settings.claude_default_model.description": "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md",
   "settings.claude_default_model.note": "Applies only to newly created Claude sessions.",
   "settings.codex_default_model.description": "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level.",

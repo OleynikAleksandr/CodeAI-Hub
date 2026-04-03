@@ -83,11 +83,23 @@ const noopVoidHandler: WebviewMessageHandlers["onSessionClearAll"] = () => {
   // no-op
 };
 
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+
 export const SettingsOnlyHost = () => {
   const settingsState = useSettingsState();
   const localization = useResolvedLocalization(
     settingsState.settings,
     settingsState.localizationRuntime
+  );
+  const settingsOnlyBody = localization.t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.only.body",
+    "Sessions and chats are available in Project Manager."
+  );
+  const settingsOnlyHint = localization.t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.only.hint",
+    "Use this panel to configure providers and defaults."
   );
   const { settingsVisible, openSettings, closeSettings } =
     useSettingsVisibility();
@@ -114,12 +126,8 @@ export const SettingsOnlyHost = () => {
         <main aria-label="Settings only mode" style={settingsOnlyLayoutStyles}>
           <section style={settingsOnlyCardStyles}>
             <h1 style={settingsOnlyTitleStyles}>Settings only</h1>
-            <p style={settingsOnlyBodyStyles}>
-              Sessions and chats are available in Project Manager.
-            </p>
-            <p style={settingsOnlyHintStyles}>
-              Use this panel to configure providers and defaults.
-            </p>
+            <p style={settingsOnlyBodyStyles}>{settingsOnlyBody}</p>
+            <p style={settingsOnlyHintStyles}>{settingsOnlyHint}</p>
             <button
               onClick={handleShowSettings}
               style={settingsOnlyButtonStyles}
