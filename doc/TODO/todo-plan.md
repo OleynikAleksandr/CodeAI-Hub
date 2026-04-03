@@ -39,7 +39,7 @@
 
 ### Stream: PM Shell Placeholders And Modals
 17. [DONE] Mark panel container headers and empty placeholders so generic PM shell copy no longer stays hardcoded. Scope: `src/client/project-manager/components/layout/panel-container.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize panel container shell`
-18. [TODO] Git Commit: `fix(pm-localization): localize panel container shell` (hash: TBD)
+18. [DONE] Git Commit: `fix(pm-localization): localize panel container shell` (hash: `11c7d4c0`)
 19. [TODO] Mark add-workspace modal labels, placeholders, and validation copy with explicit categories. Scope: `src/client/project-manager/components/layout/main-layout.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize add workspace modal`
 20. [TODO] Git Commit: `fix(pm-localization): localize add workspace modal` (hash: TBD)
 21. [TODO] Mark status-bar shell copy with explicit categories. Scope: `src/client/project-manager/components/layout/status-bar.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize status bar shell`
@@ -51,12 +51,14 @@
 
 ## Phase 3 — Verification, Release, And Handoff (owner: QA/Release/Docs, updated: 2026-04-03)
 ### Stream: Targeted Verification
-25. [TODO] Run targeted builds for touched localization/settings/PM surfaces and verify the packaged-fix candidates from the workspace before release packaging. Scope: `@codeai-hub/localization`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
-26. [TODO] Update release-facing docs for the post-release localization follow-up. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare post-release localization fix notes`
-27. [TODO] Git Commit: `docs(release): prepare post-release localization fix notes` (hash: TBD)
+25. [DONE] Run targeted builds for touched localization/settings/PM surfaces and verify the packaged-fix candidates from the workspace before release packaging. Scope: `@codeai-hub/localization`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
+26. [DONE] Refresh the tracked webview bundle after targeted verification so release packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization follow-up bundle`
+27. [TODO] Git Commit: `build(webview): refresh localization follow-up bundle` (hash: TBD)
+28. [DONE] Update release-facing docs for the post-release localization follow-up. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare post-release localization fix notes`
+29. [TODO] Git Commit: `docs(release): prepare post-release localization fix notes` (hash: TBD)
 
 ### Stream: Build And Session Closure
-28. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release shows the newly marked surfaces under the correct categories. Scope: release-generated version files and manifests. Target commit: `build(release): assemble post-release localization fix release`
-29. [TODO] Git Commit: `build(release): assemble post-release localization fix release` (hash: TBD)
-30. [TODO] Record the completed fixes, the new release target, and the remaining manual packaged-test checklist in the active session report. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record post-release localization fix release`
-31. [TODO] Git Commit: `docs(session): record post-release localization fix release` (hash: TBD)
+30. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release shows the newly marked surfaces under the correct categories. Scope: release-generated version files and manifests. Target commit: `build(release): assemble post-release localization fix release`
+31. [TODO] Git Commit: `build(release): assemble post-release localization fix release` (hash: TBD)
+32. [TODO] Record the completed fixes, the new release target, and the remaining manual packaged-test checklist in the active session report. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record post-release localization fix release`
+33. [TODO] Git Commit: `docs(session): record post-release localization fix release` (hash: TBD)

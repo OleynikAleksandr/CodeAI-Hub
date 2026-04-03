@@ -10367,6 +10367,8 @@
   var MAX_GLOSSARY_TERM_LENGTH = 120;
   var LATIN_LETTER_PATTERN = /[A-Za-z]/;
   var RESERVED_SEQUENCE_PATTERN = /(?:\[\[|\]\]|\{\{|\}\})/;
+  var UI_LABELS_CATEGORY = "ui_interface";
+  var UI_HELPER_TEXT_CATEGORY = "user_guidance";
   var panelStyles = {
     display: "grid",
     gap: "12px",
@@ -10503,32 +10505,33 @@
       )
     );
   };
-  var validateTerm = (value, existingTerms, editingIndex) => {
+  var validateTerm = (value, existingTerms, editingIndex, messages) => {
     const normalized = normalizeTerm(value);
     if (!normalized) {
-      return "Enter an English term to preserve.";
+      return messages.empty;
     }
     if (!LATIN_LETTER_PATTERN.test(normalized)) {
-      return "Use a term that contains at least one Latin letter.";
+      return messages.latinLetter;
     }
     if (normalized.length > MAX_GLOSSARY_TERM_LENGTH) {
-      return `Keep glossary terms under ${MAX_GLOSSARY_TERM_LENGTH} characters.`;
+      return messages.tooLong;
     }
     if (RESERVED_SEQUENCE_PATTERN.test(normalized)) {
-      return "Reserved marker-like sequences are not allowed in glossary terms.";
+      return messages.reservedSequence;
     }
     const dedupeKey = normalized.toLowerCase();
     const duplicateIndex = existingTerms.findIndex(
       (term) => normalizeTerm(term).toLowerCase() === dedupeKey
     );
     if (duplicateIndex !== -1 && duplicateIndex !== editingIndex) {
-      return "That term is already in the local glossary draft.";
+      return messages.duplicate;
     }
     return null;
   };
   var LocalizationGlossaryEditor = ({
     glossaryEnabled
   }) => {
+    const { t } = useLocalization();
     const [draft, setDraft] = (0, import_react10.useState)("");
     const [editingIndex, setEditingIndex] = (0, import_react10.useState)(null);
     const [error, setError] = (0, import_react10.useState)(null);
@@ -10558,14 +10561,102 @@
       } catch {
       }
     }, [terms]);
-    const statusText = (0, import_react10.useMemo)(
-      () => glossaryEnabled ? "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in." : "Glossary protection is off. Terms stay in the local draft until you enable glossary protection.",
-      [glossaryEnabled]
+    const title = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.title",
+      "Do-not-translate terms"
     );
-    const submitLabel = editingIndex === null ? "Add term" : "Save term";
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.description",
+      "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands."
+    );
+    const inputLabel = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.english_term_label",
+      "English term"
+    );
+    const addTermLabel = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.add_term_label",
+      "Add term"
+    );
+    const saveTermLabel = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.save_term_label",
+      "Save term"
+    );
+    const cancelEditLabel = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.cancel_edit_label",
+      "Cancel edit"
+    );
+    const editTermLabel = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.edit_term_label",
+      "Edit"
+    );
+    const removeTermLabel = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.remove_term_label",
+      "Remove"
+    );
+    const inputPlaceholder = t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.placeholder",
+      "Project Manager"
+    );
+    const statusText = glossaryEnabled ? t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.enabled_status",
+      "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in."
+    ) : t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.disabled_status",
+      "Glossary protection is off. Terms stay in the local draft until you enable glossary protection."
+    );
+    const emptyStateIntro = t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.localization.do_not_translate_terms.empty_state_intro",
+      "No protected terms yet. Typical examples:"
+    );
+    const validationMessages = {
+      duplicate: t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.localization.do_not_translate_terms.validation.duplicate",
+        "That term is already in the local glossary draft."
+      ),
+      empty: t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.localization.do_not_translate_terms.validation.empty",
+        "Enter an English term to preserve."
+      ),
+      latinLetter: t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.localization.do_not_translate_terms.validation.latin_letter",
+        "Use a term that contains at least one Latin letter."
+      ),
+      reservedSequence: t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.localization.do_not_translate_terms.validation.reserved_sequence",
+        "Reserved marker-like sequences are not allowed in glossary terms."
+      ),
+      tooLong: t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.localization.do_not_translate_terms.validation.too_long",
+        `Keep glossary terms under ${MAX_GLOSSARY_TERM_LENGTH} characters.`,
+        { maxLength: MAX_GLOSSARY_TERM_LENGTH }
+      )
+    };
+    const submitLabel = editingIndex === null ? addTermLabel : saveTermLabel;
     const handleSubmit = (event) => {
       event.preventDefault();
-      const validationError = validateTerm(draft, terms, editingIndex);
+      const validationError = validateTerm(
+        draft,
+        terms,
+        editingIndex,
+        validationMessages
+      );
       if (validationError) {
         setError(validationError);
         return;
@@ -10609,24 +10700,24 @@
     };
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: panelStyles, children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: titleStyles3, children: "Do-not-translate terms" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: bodyStyles, children: "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands." })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: titleStyles3, children: title }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: bodyStyles, children: description })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { "aria-live": "polite", style: statusStyles, children: statusText }),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("form", { onSubmit: handleSubmit, style: formStyles, children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: bodyStyles, children: "English term" }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: bodyStyles, children: inputLabel }),
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
-              "aria-label": "English glossary term",
+              "aria-label": inputLabel,
               onChange: (event) => {
                 setDraft(event.target.value);
                 if (error) {
                   setError(null);
                 }
               },
-              placeholder: "Project Manager",
+              placeholder: inputPlaceholder,
               style: inputStyles2,
               type: "text",
               value: draft
@@ -10641,20 +10732,20 @@
               onClick: handleCancel,
               style: secondaryButtonStyles,
               type: "button",
-              children: "Cancel edit"
+              children: cancelEditLabel
             }
           )
         ] })
       ] }),
       error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: errorStyles, children: error }) : null,
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: termListStyles, children: terms.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: bodyStyles, children: [
-        "No protected terms yet. Typical examples:",
+        emptyStateIntro,
         " ",
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Project Manager" }),
-        ", ",
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Artifact Viewer" }),
         ",",
         " ",
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Artifact Viewer" }),
+        ", ",
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "CODEX_HOME" }),
         "."
       ] }) : terms.map((term, index) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: termRowStyles, children: [
@@ -10663,21 +10754,21 @@
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "button",
             {
-              "aria-label": `Edit glossary term ${term}`,
+              "aria-label": `${editTermLabel}: ${term}`,
               onClick: () => handleEdit(index),
               style: secondaryButtonStyles,
               type: "button",
-              children: "Edit"
+              children: editTermLabel
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "button",
             {
-              "aria-label": `Remove glossary term ${term}`,
+              "aria-label": `${removeTermLabel}: ${term}`,
               onClick: () => handleRemove(index),
               style: secondaryButtonStyles,
               type: "button",
-              children: "Remove"
+              children: removeTermLabel
             }
           )
         ] })
@@ -10905,10 +10996,6 @@
     color: settingsColorTokens.textPrimary,
     fontSize: settingsTypographyTokens.bodyFontSize
   };
-  var sourceLanguageOption = {
-    code: "source",
-    label: "Default Language (English)"
-  };
   var toggleRowStyles = {
     display: "flex",
     alignItems: "flex-start",
@@ -10923,35 +11010,76 @@
     height: "16px",
     marginTop: "2px"
   };
-  var categoryFields = [
-    {
-      id: "uiInterface",
-      label: "UI Labels",
-      description: "Buttons, tabs, section names, step names, and short interface terms."
-    },
-    {
-      id: "userGuidance",
-      label: "UI Helper Text",
-      description: "Short interface explanations and helper copy that clarifies labels and settings."
-    },
-    {
-      id: "systemFeedback",
-      label: "Messages for the User",
-      description: "Warnings, errors, hints, status updates, and other messages addressed to the user."
-    },
-    {
-      id: "interactiveTemplates",
-      label: "Artifacts for the User",
-      description: "Forms and final user-facing artifacts. Agent instructions and templates stay in English."
-    }
-  ];
   var LocalizationSettingsCard = ({
     localization,
     onCategoryLanguageChange,
     onEngineIdChange,
     onGlossaryEnabledChange
   }) => {
-    const { availableEngines } = useLocalization();
+    const { availableEngines, t } = useLocalization();
+    const defaultLanguageLabel = t(
+      "ui_interface",
+      "settings.localization.default_language.reset_label",
+      "Default Language (English)"
+    );
+    const categoryFields = [
+      {
+        id: "uiInterface",
+        label: t(
+          "ui_interface",
+          "settings.localization.category.ui_labels.label",
+          "UI Labels"
+        ),
+        description: t(
+          "user_guidance",
+          "settings.localization.category.ui_labels.description",
+          "Buttons, tabs, section names, step names, and short interface terms."
+        )
+      },
+      {
+        id: "userGuidance",
+        label: t(
+          "ui_interface",
+          "settings.localization.category.ui_helper_text.label",
+          "UI Helper Text"
+        ),
+        description: t(
+          "user_guidance",
+          "settings.localization.category.ui_helper_text.description",
+          "Short interface explanations and helper copy that clarifies labels and settings."
+        )
+      },
+      {
+        id: "systemFeedback",
+        label: t(
+          "ui_interface",
+          "settings.localization.category.messages_for_the_user.label",
+          "Messages for the User"
+        ),
+        description: t(
+          "user_guidance",
+          "settings.localization.category.messages_for_the_user.description",
+          "Warnings, errors, hints, status updates, and other messages addressed to the user."
+        )
+      },
+      {
+        id: "interactiveTemplates",
+        label: t(
+          "ui_interface",
+          "settings.localization.category.artifacts_for_the_user.label",
+          "Artifacts for the User"
+        ),
+        description: t(
+          "user_guidance",
+          "settings.localization.category.artifacts_for_the_user.description",
+          "Forms and final user-facing artifacts. Agent instructions and templates stay in English."
+        )
+      }
+    ];
+    const sourceLanguageOption = {
+      code: "source",
+      label: defaultLanguageLabel
+    };
     const engineOptions = availableEngines.length > 0 ? availableEngines : [
       {
         engineId: localization.engineId,
@@ -10976,59 +11104,89 @@
       ...inputStyles4,
       appearance: "none"
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(settings_card_default, { title: "Localization", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: introStyles, children: "Configure which user-facing text should stay in English and which should be localized for the user." }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: "`Workflow Terms` now follow `UI Labels`, and `Default Language (English)` is the reset state for every category." }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlGridStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Translation engine" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Engine used for bundle materialization and language-catalog lookup." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            "select",
-            {
-              onChange: (event) => onEngineIdChange(event.target.value),
-              style: engineSelectStyles,
-              value: activeEngineId,
-              children: engineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: engine.engineId }, engine.engineId))
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { style: toggleRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            "input",
-            {
-              checked: localization.glossaryEnabled,
-              onChange: (event) => onGlossaryEnabledChange(event.target.checked),
-              style: checkboxStyles,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Glossary protection" }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Keep protected terms, provider names, and product vocabulary stable during localization." })
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+      settings_card_default,
+      {
+        title: t("ui_interface", "settings.localization.title", "Localization"),
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: introStyles, children: t(
+            "user_guidance",
+            "settings.localization.intro",
+            "Configure which user-facing text should stay in English and which should be localized for the user."
+          ) }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: t(
+            "user_guidance",
+            "settings.localization.category_bridge_helper",
+            "`Workflow Terms` now follow `UI Labels`, and `Default Language (English)` is the reset state for every category."
+          ) }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlGridStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: t(
+                "ui_interface",
+                "settings.localization.translation_engine.label",
+                "Translation engine"
+              ) }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: t(
+                "user_guidance",
+                "settings.localization.translation_engine.description",
+                "Engine used for bundle materialization and language-catalog lookup."
+              ) }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                "select",
+                {
+                  onChange: (event) => onEngineIdChange(event.target.value),
+                  style: engineSelectStyles,
+                  value: activeEngineId,
+                  children: engineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: engine.engineId }, engine.engineId))
+                }
+              )
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { style: toggleRowStyles, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                "input",
+                {
+                  checked: localization.glossaryEnabled,
+                  onChange: (event) => onGlossaryEnabledChange(event.target.checked),
+                  style: checkboxStyles,
+                  type: "checkbox"
+                }
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: t(
+                  "ui_interface",
+                  "settings.localization.glossary_protection.label",
+                  "Glossary protection"
+                ) }),
+                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: t(
+                  "user_guidance",
+                  "settings.localization.glossary_protection.description",
+                  "Keep protected terms, provider names, and product vocabulary stable during localization."
+                ) })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+              localization_glossary_editor_default,
+              {
+                glossaryEnabled: localization.glossaryEnabled
+              }
+            ),
+            categoryFields.map((category) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: category.label }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: category.description }),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                LocalizationLanguageCombobox,
+                {
+                  onChange: (value) => onCategoryLanguageChange(category.id, value),
+                  options: languageOptions,
+                  placeholder: defaultLanguageLabel,
+                  value: resolveCategoryValue(localization.categories[category.id])
+                }
+              )
+            ] }, category.id))
           ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-          localization_glossary_editor_default,
-          {
-            glossaryEnabled: localization.glossaryEnabled
-          }
-        ),
-        categoryFields.map((category) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: category.label }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: category.description }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            LocalizationLanguageCombobox,
-            {
-              onChange: (value) => onCategoryLanguageChange(category.id, value),
-              options: languageOptions,
-              placeholder: "Default Language (English)",
-              value: resolveCategoryValue(localization.categories[category.id])
-            }
-          )
-        ] }, category.id))
-      ] })
-    ] });
+        ]
+      }
+    );
   };
   var localization_settings_card_default = (0, import_react12.memo)(LocalizationSettingsCard);
 
@@ -11077,30 +11235,30 @@
     fontSize: settingsTypographyTokens.bodyFontSize,
     lineHeight: 1
   };
-  var UI_LABELS_CATEGORY = "ui_interface";
-  var UI_HELPER_TEXT_CATEGORY = "user_guidance";
+  var UI_LABELS_CATEGORY2 = "ui_interface";
+  var UI_HELPER_TEXT_CATEGORY2 = "user_guidance";
   var USER_MESSAGES_CATEGORY = "system_feedback";
   var GeneralSettings = (props) => {
     const { t } = useLocalization();
     const [isHovered, setIsHovered] = (0, import_react13.useState)(false);
     const [isPressed, setIsPressed] = (0, import_react13.useState)(false);
     const coreControlsTitle = t(
-      UI_LABELS_CATEGORY,
+      UI_LABELS_CATEGORY2,
       "settings.core_controls.title",
       "Core Controls"
     );
     const coreControlsDescription = t(
-      UI_HELPER_TEXT_CATEGORY,
+      UI_HELPER_TEXT_CATEGORY2,
       "settings.core_controls.description",
       "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues."
     );
     const restartIdleLabel = t(
-      UI_LABELS_CATEGORY,
+      UI_LABELS_CATEGORY2,
       "settings.core_controls.restart_idle_label",
       "Restart Core"
     );
     const restartPendingLabel = t(
-      UI_LABELS_CATEGORY,
+      UI_LABELS_CATEGORY2,
       "settings.core_controls.restart_pending_label",
       "Restarting..."
     );
@@ -11834,7 +11992,7 @@
   var HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
   var HOVER_BORDER_COLOR = "#4c4c4c";
   var SAVE_HOVER_COLOR = "#1177bb";
-  var UI_LABELS_CATEGORY2 = "ui_interface";
+  var UI_LABELS_CATEGORY3 = "ui_interface";
   var SettingsFooter = ({
     hasChanges,
     saving,
@@ -11845,32 +12003,32 @@
   }) => {
     const { t } = useLocalization();
     const resetButtonTitle = t(
-      UI_LABELS_CATEGORY2,
+      UI_LABELS_CATEGORY3,
       "settings.footer.reset_button_title",
       "Reset all settings to defaults"
     );
     const resetIdleLabel = t(
-      UI_LABELS_CATEGORY2,
+      UI_LABELS_CATEGORY3,
       "settings.footer.reset_idle_label",
       "Reset to Defaults"
     );
     const resetPendingLabel = t(
-      UI_LABELS_CATEGORY2,
+      UI_LABELS_CATEGORY3,
       "settings.footer.reset_pending_label",
       "Resetting..."
     );
     const closeButtonLabel = t(
-      UI_LABELS_CATEGORY2,
+      UI_LABELS_CATEGORY3,
       "settings.footer.close_button_label",
       "Close"
     );
     const saveIdleLabel = t(
-      UI_LABELS_CATEGORY2,
+      UI_LABELS_CATEGORY3,
       "settings.footer.save_idle_label",
       "Save Changes"
     );
     const savePendingLabel = t(
-      UI_LABELS_CATEGORY2,
+      UI_LABELS_CATEGORY3,
       "settings.footer.save_pending_label",
       "Saving..."
     );
@@ -12023,12 +12181,12 @@
     alignItems: "center",
     justifyContent: "center"
   };
-  var UI_LABELS_CATEGORY3 = "ui_interface";
+  var UI_LABELS_CATEGORY4 = "ui_interface";
   var SettingsHeader = ({ onClose }) => {
     const { t } = useLocalization();
-    const title = t(UI_LABELS_CATEGORY3, "settings.header.title", "Settings");
+    const title = t(UI_LABELS_CATEGORY4, "settings.header.title", "Settings");
     const closeButtonLabel = t(
-      UI_LABELS_CATEGORY3,
+      UI_LABELS_CATEGORY4,
       "settings.header.close_button_label",
       "Close settings"
     );
