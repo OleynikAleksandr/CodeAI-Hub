@@ -99,7 +99,7 @@
 55. [DONE] Git Commit: `build(webview): refresh localization webview bundle` (hash: `107ad4e6`)
 56. [DONE] Preserve bundled template `audience` metadata during release-time regeneration so `build-all.sh` does not drop the internal/user-facing contract boundary. Scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): preserve bundled template audience metadata`
 57. [DONE] Git Commit: `fix(release): preserve bundled template audience metadata` (hash: `85287303`)
-58. [IN_PROGRESS] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
-59. [TODO] Git Commit: `build(release): assemble four-category localization release` (hash: TBD)
-60. [TODO] Archive this TODO plan, update the active session report, and record post-release validation notes. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/`. Target commit: `docs(session): record four-category localization release`
+58. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
+59. [DONE] Git Commit: `build(release): assemble four-category localization release` (hash: `6f7b65ed`)
+60. [DONE] Record the release handoff in the active session report and capture the exact post-release validation checklist for the next testing session. Scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session025.md`. Target commit: `docs(session): record four-category localization release`
 61. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)
