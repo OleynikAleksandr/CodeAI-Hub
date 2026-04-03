@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.872] - 2026-04-03
+### Added
+- **Localization ownership guardrail**: the architecture SSOT now includes an explicit user-facing text boundary contract, so new product-authored copy must be classified up front instead of relying on later localization cleanup.
+
+### Fixed
+- **General helper response**: `Settings -> General -> Response Mode` now resolves its explanatory copy through `UI Helper Text`, making the packaged settings surface react visibly to helper-language changes.
+- **Provider-tab helper coverage**: `Claude`, `Codex`, and `Gemini` settings now route the major visible helper blocks for default-model selection, auto-update guidance, session continuity, and Claude thinking through explicit localization dictionaries instead of leaving those areas hardcoded.
+- **Provider-dialog guidance**: Codex reasoning and Gemini thinking modal subtitles now participate in `UI Helper Text` lookup instead of staying English-only in installed builds.
+
 ## [1.1.871] - 2026-04-03
 ### Fixed
 - **Packaged post-release localization gaps**: `Settings -> Localization` glossary-editor copy now resolves through explicit localization categories instead of inline hardcoded strings, so the installed release responds more visibly when `UI Helper Text` changes.

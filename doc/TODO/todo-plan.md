@@ -90,4 +90,15 @@
 56. [DONE] Mark the Codex reasoning dialog guidance so the modal subtitle resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize codex reasoning dialog helper copy`
 57. [DONE] Git Commit: `fix(settings-localization): localize codex reasoning dialog helper copy` (hash: `11923358`)
 58. [DONE] Mark the Gemini thinking dialog guidance so the modal subtitle resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize gemini thinking dialog helper copy`
-59. [TODO] Git Commit: `fix(settings-localization): localize gemini thinking dialog helper copy` (hash: TBD)
+59. [DONE] Git Commit: `fix(settings-localization): localize gemini thinking dialog helper copy` (hash: `adb74198`)
+
+## Phase 5 — Provider Helper Follow-Up Release (owner: QA/Release/Docs, updated: 2026-04-03)
+### Stream: Release Notes And Packaging
+60. [DONE] Prepare release-facing docs for the provider-settings helper follow-up and record the new packaged target in the active TODO. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare provider helper localization follow-up notes`
+61. [TODO] Git Commit: `docs(release): prepare provider helper localization follow-up notes` (hash: TBD)
+62. [TODO] Refresh the tracked `media/react-chat.js` bundle after the helper-copy sweep so packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh provider helper localization bundle`
+63. [TODO] Git Commit: `build(webview): refresh provider helper localization bundle` (hash: TBD)
+64. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes the expanded provider/helper localization coverage. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider helper localization release`
+65. [TODO] Git Commit: `build(release): assemble provider helper localization release` (hash: TBD)
+66. [TODO] Update the active session report with the helper-surface fix chain, the new SSOT guardrail, and the packaged follow-up release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider helper localization release`
+67. [TODO] Git Commit: `docs(session): record provider helper localization release` (hash: TBD)

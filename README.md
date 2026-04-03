@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.871
-- **Packaged follow-up localization fixes**: the installed release now routes `Settings -> Localization` glossary-editor copy, the Description provider picker, and the default `Sessions / Artifacts` panel shell through explicit localization categories instead of inline hardcoded text.
-- **More visible category response in packaged UI**: `UI Labels`, `UI Helper Text`, and `Messages for the User` now affect additional real surfaces in the shipped Project Manager and Settings views, reducing the “almost nothing changed” symptom discovered during `1.1.870` packaged testing.
-- **Artifact-language workflow boundary**: runtime prompt packs still thread `Artifacts for the User` language into Description, Virtual Simulation, and Diagram Modules outputs, while bundled prompts, appendices, and other internal agent instructions remain English-only.
+## Current Release — v1.1.872
+- **Provider-settings helper coverage expanded**: `UI Helper Text` now reaches `General -> Response Mode`, shared provider/session-continuity helper blocks, `Claude Thinking Settings`, and the visible helper copy in `Claude`, `Codex`, and `Gemini` provider cards instead of leaving those tabs mostly English in the installed release.
+- **Dialog helper ownership tightened**: Codex reasoning and Gemini thinking modal guidance now resolve through explicit localization dictionaries rather than staying embedded in settings components.
+- **Permanent localization authoring guardrail**: the SSOT now includes an explicit text-ownership contract that requires every new product-authored text surface to be classified as `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, or `Internal Agent Instructions` before implementation is considered complete.
 
 Previous releases (summary): `1.1.800–1.1.870` — four-category localization release, localization packaging hotfixes, host-hydrated browser localization runtime, searchable localization controls, shared Project Manager localization consumption, persistent localization foundation, thinking display sync, public CI bootstrap, staged core restart UX, Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, history-visible recoverable failure, architecture gate 500 lines, session-scoped Stop, provider rebind after Stop, provider-neutral applied turn config, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 
