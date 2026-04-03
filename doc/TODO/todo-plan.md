@@ -82,4 +82,6 @@
 48. [DONE] Mark the `Claude Thinking Settings` dialog-sync helper copy so that explanatory text resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/thinking-settings.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude thinking sync helper copy`
 49. [DONE] Git Commit: `fix(settings-localization): localize claude thinking sync helper copy` (hash: `8c378a65`)
 50. [DONE] Mark the `Enable thinking mode` explanatory copy so the main Claude thinking helper block resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/thinking/thinking-toggle.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude thinking toggle copy`
-51. [TODO] Git Commit: `fix(settings-localization): localize claude thinking toggle copy` (hash: TBD)
+51. [DONE] Git Commit: `fix(settings-localization): localize claude thinking toggle copy` (hash: `8ed50baf`)
+52. [DONE] Mark the Claude thinking token helper legend so that depth guidance resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/thinking/thinking-token-input.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude thinking token helper copy`
+53. [TODO] Git Commit: `fix(settings-localization): localize claude thinking token helper copy` (hash: TBD)

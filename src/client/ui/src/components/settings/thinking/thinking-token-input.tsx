@@ -1,4 +1,5 @@
 import type { ChangeEvent, CSSProperties, FC } from "react";
+import { useLocalization } from "../../../app-host/use-localization";
 import {
   MAX_THINKING_TOKENS,
   MIN_THINKING_TOKENS,
@@ -9,6 +10,8 @@ interface ThinkingTokenInputProps {
   readonly onChange: (nextValue: number) => void;
   readonly value: number;
 }
+
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const containerStyles: CSSProperties = {
   paddingLeft: "28px",
@@ -66,6 +69,7 @@ const ThinkingTokenInput: FC<ThinkingTokenInputProps> = ({
   value,
   onChange,
 }) => {
+  const { t } = useLocalization();
   const updateValue = (next: number) => {
     const constrained = Math.min(
       MAX_THINKING_TOKENS,
@@ -78,6 +82,21 @@ const ThinkingTokenInput: FC<ThinkingTokenInputProps> = ({
     const parsed = Number.parseInt(event.target.value, 10);
     updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
   };
+  const normalLevelDescription = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.claude_thinking_settings.max_tokens.normal_description",
+    "Normal (4000): Standard reasoning depth"
+  );
+  const hardLevelDescription = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.claude_thinking_settings.max_tokens.hard_description",
+    "Hard (10000): Extended analysis for complex tasks"
+  );
+  const ultraLevelDescription = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.claude_thinking_settings.max_tokens.ultra_description",
+    "Ultra (32000): Maximum reasoning capacity"
+  );
 
   return (
     <div style={containerStyles}>
@@ -111,9 +130,9 @@ const ThinkingTokenInput: FC<ThinkingTokenInputProps> = ({
           </button>
         </div>
         <div style={helperStyles}>
-          • Normal (4000): Standard reasoning depth
-          <br />• Hard (10000): Extended analysis for complex tasks
-          <br />• Ultra (32000): Maximum reasoning capacity
+          • {normalLevelDescription}
+          <br />• {hardLevelDescription}
+          <br />• {ultraLevelDescription}
         </div>
       </label>
     </div>
