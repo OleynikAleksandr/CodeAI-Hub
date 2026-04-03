@@ -90,12 +90,14 @@
 
 ### Stream: Targeted Verification
 51. [DONE] Run targeted builds and manual Russian-surface verification for localization, Core, webview, and Project Manager before release packaging. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
-52. [IN_PROGRESS] Update release-facing docs for the four-category localization release from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare four-category localization release notes`
-53. [TODO] Git Commit: `docs(release): prepare four-category localization release notes` (hash: TBD)
+52. [DONE] Update release-facing docs for the four-category localization release from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare four-category localization release notes`
+53. [DONE] Git Commit: `docs(release): prepare four-category localization release notes` (hash: `b72463d5`)
 
 ## Phase 6 — Release Build And Closure (owner: Release/Docs, updated: 2026-04-03)
 ### Stream: Build And Ship
-54. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
-55. [TODO] Git Commit: `build(release): assemble four-category localization release` (hash: TBD)
-56. [TODO] Archive this TODO plan, update the active session report, and record post-release validation notes. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/`. Target commit: `docs(session): record four-category localization release`
-57. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)
+54. [IN_PROGRESS] Refresh the tracked webview bundle so `media/react-chat.js` matches the approved four-category localization UI/state model before release build. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization webview bundle`
+55. [TODO] Git Commit: `build(webview): refresh localization webview bundle` (hash: TBD)
+56. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
+57. [TODO] Git Commit: `build(release): assemble four-category localization release` (hash: TBD)
+58. [TODO] Archive this TODO plan, update the active session report, and record post-release validation notes. Scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/`. Target commit: `docs(session): record four-category localization release`
+59. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)

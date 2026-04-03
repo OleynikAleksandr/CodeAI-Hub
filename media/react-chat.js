@@ -8561,8 +8561,9 @@
   var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
   var DEFAULT_CORE_RESTART_ENABLED = true;
-  var DEFAULT_LOCALIZATION_LANGUAGE = "source";
+  var DEFAULT_LOCALIZATION_LANGUAGE = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+  var LEGACY_SOURCE_LANGUAGE = "source";
   var DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
   var MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
   var MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
@@ -8577,7 +8578,31 @@
     return accumulator;
   }, {});
   var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-  var mapLocalizationString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
+  var mapLocalizationString = (value, fallback) => {
+    const normalized = typeof value === "string" ? value.trim() : "";
+    if (normalized.length === 0) {
+      return fallback;
+    }
+    return normalized.toLowerCase() === LEGACY_SOURCE_LANGUAGE ? DEFAULT_LOCALIZATION_LANGUAGE : normalized;
+  };
+  var createLocalizationCategorySettings = (approved) => ({
+    ...approved,
+    interactiveTemplates: approved.artifactsForTheUser,
+    systemFeedback: approved.messagesForTheUser,
+    uiInterface: approved.uiLabels,
+    userGuidance: approved.uiHelperText,
+    workflowTerms: approved.uiLabels
+  });
+  var resolveLocalizationCategory = (value, candidateKeys, fallback) => {
+    for (const key of candidateKeys) {
+      const resolved = mapLocalizationString(value?.[key], "");
+      if (resolved.length > 0) {
+        return resolved;
+      }
+    }
+    return fallback;
+  };
+  var deriveWorkflowTermsPolicy = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE ? "keep_english" : "translate";
   var mapThinkingSettings = (value) => {
     const numericValue = Number(value?.maxTokens);
     return {
@@ -8595,27 +8620,42 @@
   var mapAutoUpdateSettings = (value) => ({
     enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
   });
-  var mapLocalizationCategories = (value, defaultLanguage) => ({
-    userGuidance: mapLocalizationString(value?.userGuidance, defaultLanguage),
-    uiInterface: mapLocalizationString(value?.uiInterface, defaultLanguage),
-    workflowTerms: mapLocalizationString(value?.workflowTerms, defaultLanguage),
-    systemFeedback: mapLocalizationString(value?.systemFeedback, defaultLanguage),
-    interactiveTemplates: mapLocalizationString(
-      value?.interactiveTemplates,
+  var mapLocalizationCategories = (value, defaultLanguage) => createLocalizationCategorySettings({
+    artifactsForTheUser: resolveLocalizationCategory(
+      value,
+      ["artifactsForTheUser", "interactiveTemplates"],
+      defaultLanguage
+    ),
+    messagesForTheUser: resolveLocalizationCategory(
+      value,
+      ["messagesForTheUser", "systemFeedback"],
+      defaultLanguage
+    ),
+    uiHelperText: resolveLocalizationCategory(
+      value,
+      ["uiHelperText", "userGuidance"],
+      defaultLanguage
+    ),
+    uiLabels: resolveLocalizationCategory(
+      value,
+      ["uiLabels", "uiInterface", "workflowTerms"],
       defaultLanguage
     )
   });
-  var mapLocalizationWorkflowTermsPolicy = (value) => value === "translate" ? "translate" : "keep_english";
   var mapLocalizationSettings = (value) => {
-    const defaultLanguage = mapLocalizationString(
+    const legacyDefaultLanguage = mapLocalizationString(
       value?.defaultLanguage,
       DEFAULT_LOCALIZATION_LANGUAGE
     );
+    const categories = mapLocalizationCategories(
+      value?.categories,
+      legacyDefaultLanguage
+    );
     return {
-      defaultLanguage,
-      categories: mapLocalizationCategories(value?.categories, defaultLanguage),
-      workflowTermsPolicy: mapLocalizationWorkflowTermsPolicy(
-        value?.workflowTermsPolicy
+      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
+      categories,
+      workflowTermsPolicy: deriveWorkflowTermsPolicy(
+        categories.uiLabels ?? categories.uiInterface
       ),
       engineId: mapLocalizationString(
         value?.engineId,
@@ -8703,8 +8743,6 @@
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
   var areAutoUpdateSettingsEqual = (left, right) => left.enabled === right.enabled;
   var areThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.maxTokens === right.maxTokens;
-  var areThinkingDisplaySyncSettingsEqual = (left, right) => left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled;
-  var areCodexReasoningSummarySettingsEqual = (left, right) => left.reasoningSummaryEnabled === right.reasoningSummaryEnabled;
   var areReasoningByModelEqual = (left, right) => {
     const leftEntries = Object.entries(left);
     if (leftEntries.length !== Object.keys(right).length) {
@@ -8715,14 +8753,14 @@
     );
   };
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
-  var areLocalizationCategoriesEqual = (left, right) => left.userGuidance === right.userGuidance && left.uiInterface === right.uiInterface && left.workflowTerms === right.workflowTerms && left.systemFeedback === right.systemFeedback && left.interactiveTemplates === right.interactiveTemplates;
+  var areLocalizationCategoriesEqual = (left, right) => left.artifactsForTheUser === right.artifactsForTheUser && left.messagesForTheUser === right.messagesForTheUser && left.uiHelperText === right.uiHelperText && left.uiLabels === right.uiLabels;
   var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.glossaryEnabled === right.glossaryEnabled;
   var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areCodexReasoningSummarySettingsEqual(left, right) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && areThinkingDisplaySyncSettingsEqual(left, right) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
+  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.reasoningSummaryEnabled === right.reasoningSummaryEnabled && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
-  ) && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
 
   // src/client/ui/src/components/settings/use-settings-state-support.ts
@@ -8735,49 +8773,132 @@
   };
   var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
   var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
-  var CANONICAL_SOURCE_LANGUAGE = "en";
-  var DEFAULT_LOCALIZATION_LANGUAGE2 = "source";
+  var LEGACY_SOURCE_LANGUAGE2 = "source";
+  var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
   var normalizeLocalizationSelection = (value) => {
     const trimmed = value.trim();
     if (!trimmed) {
       return DEFAULT_LOCALIZATION_LANGUAGE2;
     }
-    return trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE ? DEFAULT_LOCALIZATION_LANGUAGE2 : trimmed;
+    return trimmed.toLowerCase() === LEGACY_SOURCE_LANGUAGE2 ? DEFAULT_LOCALIZATION_LANGUAGE2 : trimmed;
   };
   var normalizeLocalizationEngineId = (value) => {
     const trimmed = value.trim();
     return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
   };
+  var deriveWorkflowTermsPolicy2 = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE2 ? "keep_english" : "translate";
+  var resolveLocalizationCategory2 = (categories, candidateKeys, fallback) => {
+    for (const key of candidateKeys) {
+      const resolved = normalizeLocalizationSelection(
+        categories[key] ?? ""
+      );
+      if (resolved.length > 0) {
+        return resolved;
+      }
+    }
+    return fallback;
+  };
+  var resolveApprovedLocalizationCategories = (categories) => {
+    const fallback = DEFAULT_LOCALIZATION_LANGUAGE2;
+    return {
+      artifactsForTheUser: resolveLocalizationCategory2(
+        categories,
+        ["artifactsForTheUser", "interactiveTemplates"],
+        fallback
+      ),
+      messagesForTheUser: resolveLocalizationCategory2(
+        categories,
+        ["messagesForTheUser", "systemFeedback"],
+        fallback
+      ),
+      uiHelperText: resolveLocalizationCategory2(
+        categories,
+        ["uiHelperText", "userGuidance"],
+        fallback
+      ),
+      uiLabels: resolveLocalizationCategory2(
+        categories,
+        ["uiLabels", "uiInterface", "workflowTerms"],
+        fallback
+      )
+    };
+  };
+  var createMirroredLocalizationCategories = (approved) => ({
+    artifactsForTheUser: approved.artifactsForTheUser,
+    interactiveTemplates: approved.artifactsForTheUser,
+    messagesForTheUser: approved.messagesForTheUser,
+    systemFeedback: approved.messagesForTheUser,
+    uiHelperText: approved.uiHelperText,
+    uiInterface: approved.uiLabels,
+    uiLabels: approved.uiLabels,
+    userGuidance: approved.uiHelperText,
+    workflowTerms: approved.uiLabels
+  });
+  var normalizeLocalizationState = (localization) => {
+    const approvedCategories = resolveApprovedLocalizationCategories(
+      localization.categories
+    );
+    return {
+      ...localization,
+      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE2,
+      categories: createMirroredLocalizationCategories(approvedCategories),
+      workflowTermsPolicy: deriveWorkflowTermsPolicy2(approvedCategories.uiLabels)
+    };
+  };
   var normalizeLoadedLocalizationSettings = (settings) => ({
     ...settings,
     general: {
       ...settings.general,
-      localization: {
-        ...settings.general.localization,
-        defaultLanguage: normalizeLocalizationSelection(
-          settings.general.localization.defaultLanguage
-        ),
-        categories: {
-          interactiveTemplates: normalizeLocalizationSelection(
-            settings.general.localization.categories.interactiveTemplates
-          ),
-          systemFeedback: normalizeLocalizationSelection(
-            settings.general.localization.categories.systemFeedback
-          ),
-          uiInterface: normalizeLocalizationSelection(
-            settings.general.localization.categories.uiInterface
-          ),
-          userGuidance: normalizeLocalizationSelection(
-            settings.general.localization.categories.userGuidance
-          ),
-          workflowTerms: normalizeLocalizationSelection(
-            settings.general.localization.categories.workflowTerms
-          )
-        }
-      }
+      localization: normalizeLocalizationState(settings.general.localization)
     }
   });
+  var updateLocalizationCategorySelection = (settings, category, language) => {
+    const approvedCategories = resolveApprovedLocalizationCategories(
+      settings.general.localization.categories
+    );
+    const normalizedLanguage = normalizeLocalizationSelection(language);
+    if (category === "interactiveTemplates") {
+      approvedCategories.artifactsForTheUser = normalizedLanguage;
+    }
+    if (category === "systemFeedback") {
+      approvedCategories.messagesForTheUser = normalizedLanguage;
+    }
+    if (category === "userGuidance") {
+      approvedCategories.uiHelperText = normalizedLanguage;
+    }
+    if (category === "uiInterface" || category === "workflowTerms") {
+      approvedCategories.uiLabels = normalizedLanguage;
+    }
+    return {
+      ...settings,
+      general: {
+        ...settings.general,
+        localization: normalizeLocalizationState({
+          ...settings.general.localization,
+          categories: createMirroredLocalizationCategories(approvedCategories)
+        })
+      }
+    };
+  };
+  var updateLocalizationDefaultLanguageSelection = (settings, language) => {
+    const normalizedLanguage = normalizeLocalizationSelection(language);
+    return {
+      ...settings,
+      general: {
+        ...settings.general,
+        localization: normalizeLocalizationState({
+          ...settings.general.localization,
+          categories: createMirroredLocalizationCategories({
+            artifactsForTheUser: normalizedLanguage,
+            messagesForTheUser: normalizedLanguage,
+            uiHelperText: normalizedLanguage,
+            uiLabels: normalizedLanguage
+          })
+        })
+      }
+    };
+  };
 
   // src/client/ui/src/components/settings/use-settings-state.ts
   var RESET_DELAY_MS = 100;
@@ -8934,51 +9055,23 @@
     );
     const handleLocalizationDefaultLanguageChange = (0, import_react.useCallback)(
       (defaultLanguage) => {
-        const normalizedDefaultLanguage = normalizeLocalizationSelection(defaultLanguage);
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              defaultLanguage: normalizedDefaultLanguage
-            }
-          }
-        });
+        updateSettings(
+          updateLocalizationDefaultLanguageSelection(settings, defaultLanguage)
+        );
       },
       [settings, updateSettings]
     );
     const handleLocalizationCategoryLanguageChange = (0, import_react.useCallback)(
       (category, language) => {
-        const normalizedLanguage = normalizeLocalizationSelection(language);
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              categories: {
-                ...settings.general.localization.categories,
-                [category]: normalizedLanguage
-              }
-            }
-          }
-        });
+        updateSettings(
+          updateLocalizationCategorySelection(settings, category, language)
+        );
       },
       [settings, updateSettings]
     );
     const handleLocalizationWorkflowTermsPolicyChange = (0, import_react.useCallback)(
-      (workflowTermsPolicy) => {
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              workflowTermsPolicy
-            }
-          }
-        });
+      (_workflowTermsPolicy) => {
+        updateSettings(normalizeLoadedLocalizationSettings(settings));
       },
       [settings, updateSettings]
     );
@@ -9154,32 +9247,10 @@
   // src/client/ui/src/app-host/use-localization.ts
   var import_react2 = __toESM(require_react());
   var SOURCE_SELECTION = "source";
-  var CANONICAL_SOURCE_LANGUAGE2 = "en";
-  var LOCALIZATION_CATEGORY_BINDINGS = [
-    {
-      categoryId: "interactive_templates",
-      settingsKey: "interactiveTemplates"
-    },
-    {
-      categoryId: "system_feedback",
-      settingsKey: "systemFeedback"
-    },
-    {
-      categoryId: "ui_interface",
-      settingsKey: "uiInterface"
-    },
-    {
-      categoryId: "user_guidance",
-      settingsKey: "userGuidance"
-    },
-    {
-      categoryId: "workflow_terms",
-      settingsKey: "workflowTerms"
-    }
-  ];
+  var CANONICAL_SOURCE_LANGUAGE = "en";
   var normalizeConfiguredLanguage = (value) => {
     const trimmed = value.trim();
-    if (!trimmed || trimmed.toLowerCase() === SOURCE_SELECTION || trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE2) {
+    if (!trimmed || trimmed.toLowerCase() === SOURCE_SELECTION || trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE) {
       return SOURCE_SELECTION;
     }
     return trimmed;
@@ -9194,19 +9265,24 @@
     });
   };
   var resolveConfiguredLanguageByCategory = (settings) => {
-    const configuredLanguageByCategory = {
-      interactive_templates: SOURCE_SELECTION,
-      system_feedback: SOURCE_SELECTION,
-      ui_interface: SOURCE_SELECTION,
-      user_guidance: SOURCE_SELECTION,
-      workflow_terms: SOURCE_SELECTION
+    const { categories } = settings.general.localization;
+    return {
+      interactive_templates: normalizeConfiguredLanguage(
+        categories.artifactsForTheUser ?? categories.interactiveTemplates
+      ),
+      system_feedback: normalizeConfiguredLanguage(
+        categories.messagesForTheUser ?? categories.systemFeedback
+      ),
+      ui_interface: normalizeConfiguredLanguage(
+        categories.uiLabels ?? categories.uiInterface
+      ),
+      user_guidance: normalizeConfiguredLanguage(
+        categories.uiHelperText ?? categories.userGuidance
+      ),
+      workflow_terms: normalizeConfiguredLanguage(
+        categories.uiLabels ?? categories.workflowTerms ?? categories.uiInterface
+      )
     };
-    for (const binding of LOCALIZATION_CATEGORY_BINDINGS) {
-      configuredLanguageByCategory[binding.categoryId] = normalizeConfiguredLanguage(
-        settings.general.localization.categories[binding.settingsKey]
-      );
-    }
-    return configuredLanguageByCategory;
   };
   var createLocalizationRuntime = (settings, payload) => {
     const configuredLanguageByCategory = resolveConfiguredLanguageByCategory(settings);
@@ -10831,7 +10907,7 @@
   };
   var sourceLanguageOption = {
     code: "source",
-    label: "English"
+    label: "Default Language (English)"
   };
   var toggleRowStyles = {
     display: "flex",
@@ -10847,67 +10923,33 @@
     height: "16px",
     marginTop: "2px"
   };
-  var policyGroupStyles = {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8px"
-  };
-  var policyButtonBaseStyles = {
-    minHeight: "34px",
-    padding: "0 12px",
-    borderRadius: "999px",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    background: settingsColorTokens.surface,
-    color: settingsColorTokens.textSecondary,
-    cursor: "pointer",
-    fontSize: settingsTypographyTokens.bodyFontSize
-  };
   var categoryFields = [
     {
       id: "uiInterface",
-      label: "UI Interface",
-      description: "Buttons, labels, menus, tabs, and settings surfaces."
+      label: "UI Labels",
+      description: "Buttons, tabs, section names, step names, and short interface terms."
     },
     {
       id: "userGuidance",
-      label: "User Guidance",
-      description: "Help text, hints, onboarding copy, and explanatory guidance."
-    },
-    {
-      id: "workflowTerms",
-      label: "Workflow Terms",
-      description: "Step names, taxonomy labels, and product workflow language."
+      label: "UI Helper Text",
+      description: "Short interface explanations and helper copy that clarifies labels and settings."
     },
     {
       id: "systemFeedback",
-      label: "System Feedback",
-      description: "Status messages, warnings, errors, and empty states."
+      label: "Messages for the User",
+      description: "Warnings, errors, hints, status updates, and other messages addressed to the user."
     },
     {
       id: "interactiveTemplates",
-      label: "Interactive Templates",
-      description: "Questionnaires, editable product-authored forms, and templates."
-    }
-  ];
-  var policyOptions = [
-    {
-      id: "keep_english",
-      label: "Keep English",
-      description: "Preserve workflow taxonomy terms such as Description and Virtual Simulation."
-    },
-    {
-      id: "translate",
-      label: "Translate",
-      description: "Allow workflow taxonomy terms to be localized like other product copy."
+      label: "Artifacts for the User",
+      description: "Forms and final user-facing artifacts. Agent instructions and templates stay in English."
     }
   ];
   var LocalizationSettingsCard = ({
     localization,
     onCategoryLanguageChange,
-    onDefaultLanguageChange,
     onEngineIdChange,
-    onGlossaryEnabledChange,
-    onWorkflowTermsPolicyChange
+    onGlossaryEnabledChange
   }) => {
     const { availableEngines } = useLocalization();
     const engineOptions = availableEngines.length > 0 ? availableEngines : [
@@ -10928,7 +10970,6 @@
     ].filter(
       (option) => option.code.toLowerCase() !== "en" || option.code === "source"
     );
-    const normalizedDefaultLanguage = localization.defaultLanguage.toLowerCase() === "en" ? "source" : localization.defaultLanguage;
     const resolveCategoryValue = (value) => value.toLowerCase() === "en" ? "source" : value;
     const activeEngineId = activeEngine?.engineId ?? localization.engineId;
     const engineSelectStyles = {
@@ -10936,27 +10977,9 @@
       appearance: "none"
     };
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(settings_card_default, { title: "Localization", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { style: introStyles, children: [
-        "Configure how each product copy category should be shown. Use",
-        " ",
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("code", { children: "English" }),
-        " to keep the canonical source copy."
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: "Language search is now catalog-backed for the active engine, and canonical English is no longer exposed as the raw internal sentinel." }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: introStyles, children: "Configure which user-facing text should stay in English and which should be localized for the user." }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: "`Workflow Terms` now follow `UI Labels`, and `Default Language (English)` is the reset state for every category." }),
       /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlGridStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Default language" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Fallback language for categories that do not have their own override." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-            LocalizationLanguageCombobox,
-            {
-              onChange: onDefaultLanguageChange,
-              options: languageOptions,
-              placeholder: "English",
-              value: normalizedDefaultLanguage
-            }
-          )
-        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Translation engine" }),
           /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Engine used for bundle materialization and language-catalog lookup." }),
@@ -10999,36 +11022,11 @@
             {
               onChange: (value) => onCategoryLanguageChange(category.id, value),
               options: languageOptions,
-              placeholder: normalizedDefaultLanguage,
+              placeholder: "Default Language (English)",
               value: resolveCategoryValue(localization.categories[category.id])
             }
           )
-        ] }, category.id)),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: "Workflow terms policy" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: "Choose whether workflow taxonomy should stay in English or participate in localization." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: policyGroupStyles, children: policyOptions.map((option) => {
-            const selected = localization.workflowTermsPolicy === option.id;
-            return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-              "button",
-              {
-                onClick: () => onWorkflowTermsPolicyChange(option.id),
-                style: {
-                  ...policyButtonBaseStyles,
-                  background: selected ? settingsColorTokens.actionPrimary : policyButtonBaseStyles.background,
-                  borderColor: selected ? settingsColorTokens.actionPrimary : settingsColorTokens.borderStrong,
-                  color: selected ? settingsColorTokens.actionPrimaryText : settingsColorTokens.textSecondary
-                },
-                type: "button",
-                children: option.label
-              },
-              option.id
-            );
-          }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: policyOptions.find(
-            (option) => option.id === localization.workflowTermsPolicy
-          )?.description })
-        ] })
+        ] }, category.id))
       ] })
     ] });
   };
@@ -11079,32 +11077,35 @@
     fontSize: settingsTypographyTokens.bodyFontSize,
     lineHeight: 1
   };
+  var UI_LABELS_CATEGORY = "ui_interface";
+  var UI_HELPER_TEXT_CATEGORY = "user_guidance";
+  var USER_MESSAGES_CATEGORY = "system_feedback";
   var GeneralSettings = (props) => {
     const { t } = useLocalization();
     const [isHovered, setIsHovered] = (0, import_react13.useState)(false);
     const [isPressed, setIsPressed] = (0, import_react13.useState)(false);
     const coreControlsTitle = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY,
       "settings.core_controls.title",
       "Core Controls"
     );
     const coreControlsDescription = t(
-      "user_guidance",
+      UI_HELPER_TEXT_CATEGORY,
       "settings.core_controls.description",
       "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues."
     );
     const restartIdleLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY,
       "settings.core_controls.restart_idle_label",
       "Restart Core"
     );
     const restartPendingLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY,
       "settings.core_controls.restart_pending_label",
       "Restarting..."
     );
     const idleStatusLabel = t(
-      "system_feedback",
+      USER_MESSAGES_CATEGORY,
       "settings.core_controls.idle_status_label",
       "Core restart status will appear here."
     );
@@ -11833,6 +11834,7 @@
   var HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
   var HOVER_BORDER_COLOR = "#4c4c4c";
   var SAVE_HOVER_COLOR = "#1177bb";
+  var UI_LABELS_CATEGORY2 = "ui_interface";
   var SettingsFooter = ({
     hasChanges,
     saving,
@@ -11843,32 +11845,32 @@
   }) => {
     const { t } = useLocalization();
     const resetButtonTitle = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY2,
       "settings.footer.reset_button_title",
       "Reset all settings to defaults"
     );
     const resetIdleLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY2,
       "settings.footer.reset_idle_label",
       "Reset to Defaults"
     );
     const resetPendingLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY2,
       "settings.footer.reset_pending_label",
       "Resetting..."
     );
     const closeButtonLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY2,
       "settings.footer.close_button_label",
       "Close"
     );
     const saveIdleLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY2,
       "settings.footer.save_idle_label",
       "Save Changes"
     );
     const savePendingLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY2,
       "settings.footer.save_pending_label",
       "Saving..."
     );
@@ -12021,11 +12023,12 @@
     alignItems: "center",
     justifyContent: "center"
   };
+  var UI_LABELS_CATEGORY3 = "ui_interface";
   var SettingsHeader = ({ onClose }) => {
     const { t } = useLocalization();
-    const title = t("ui_interface", "settings.header.title", "Settings");
+    const title = t(UI_LABELS_CATEGORY3, "settings.header.title", "Settings");
     const closeButtonLabel = t(
-      "ui_interface",
+      UI_LABELS_CATEGORY3,
       "settings.header.close_button_label",
       "Close settings"
     );
