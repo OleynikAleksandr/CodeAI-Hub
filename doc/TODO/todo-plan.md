@@ -2,104 +2,61 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `doc/SolidWorks-WorkFlow/Plans/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`, `doc/Sessions/Session024.md`, `doc/Sessions/Session025.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
-- Этот `TODO Plan` закрывает release scope: следующая сборка должна принести 4-category localization model (`UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`), полную маркировку существующего текста и гарантировать, что весь user-facing text, отмеченный для русского языка, реально отображается/генерируется на русском, а `Internal Agent Instructions` остаются English-only.
+- Перед началом каждого stream открыть: `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`, `doc/Sessions/Session025.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
+- Этот `TODO Plan` закрывает post-release scope после user testing release `1.1.870`: нужно добрать отсутствующие category markers / dictionary entries для оставшегося user-facing текста, пересобрать релиз и снова проверить packaged VSIX.
 - Каждая implementation-подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Каждая подзадача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново.
 - Любое изменение логики или архитектуры требует синхронного обновления `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md` и связанных active-docs в том же commit, если они затронуты данным изменением.
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
-- Таргетные проверки в ходе stream: `npm run build --workspace @codeai-hub/localization`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run build:project-manager`, `npm run compile` — запускать по затронутым поверхностям и обязательно перед релизной фазой.
+- Таргетные проверки в ходе stream: `npm run build --workspace @codeai-hub/localization`, `npm run build:webview`, `npm run build:project-manager`, `npm run compile` — запускать по затронутым поверхностям и обязательно перед новым release build.
 
-## Phase 0 — Scope Bootstrap (owner: Docs, updated: 2026-04-03)
+## Phase 0 — Post-Release Scope Bootstrap (owner: Docs, updated: 2026-04-03)
 ### Stream: Planning Intake
-1. [DONE] Freeze the approved four-category localization architecture, mark the planning document as execution-ready, and replace the placeholder TODO with this phase-based plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session025.md`. Target commit: `docs(plan): define four-category localization release scope`
-2. [DONE] Git Commit: `docs(plan): define four-category localization release scope` (hash: `67defc55`)
+1. [DONE] Archive the completed `1.1.870` release TODO and create an execution-ready planning doc for packaged post-release localization fixes. Scope: `doc/TODO/Archive/todo-plan-up-to-phase6-four-category-localization-release-1.1.870-2026-04-03.md`, `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define post-release localization fix scope`
+2. [TODO] Git Commit: `docs(plan): define post-release localization fix scope` (hash: TBD)
+3. [TODO] Create the new active session report early and record the packaged-release symptom plus the new fix stream so context survives session compaction. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): bootstrap post-release localization fix report`
+4. [TODO] Git Commit: `docs(session): bootstrap post-release localization fix report` (hash: TBD)
 
-## Phase 1 — Settings Model And Runtime Contract (owner: Localization/Settings, updated: 2026-04-03)
-### Stream: Package Contract
-3. [DONE] Define the four user-facing category ids plus the English-only `Internal Agent Instructions` marker in the package contract and module SSOT. Scope: `packages/localization/src/localization-contract.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): define four-category text taxonomy`
-4. [DONE] Git Commit: `feat(localization): define four-category text taxonomy` (hash: `b97ccc9c`)
-5. [DONE] Rewire source registry and facade normalization around the four user-facing categories while keeping a temporary bridge for legacy saved snapshots. Scope: `packages/localization/src/source-dictionary-registry.ts`, `packages/localization/src/localization-facade.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): bridge four-category runtime mapping`
-6. [DONE] Git Commit: `feat(localization): bridge four-category runtime mapping` (hash: `0e3ba5e5`)
+## Phase 1 — Settings Surfaces Missing Localization Ownership (owner: Settings/Localization, updated: 2026-04-03)
+### Stream: Localization Settings Card
+5. [TODO] Mark the remaining Localization settings labels so card title/row labels/reset placeholder resolve through `UI Labels`. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize localization card labels`
+6. [TODO] Git Commit: `fix(settings-localization): localize localization card labels` (hash: TBD)
+7. [TODO] Mark the remaining Localization settings explanatory copy so intro/helper/engine/glossary descriptions resolve through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize localization card helper text`
+8. [TODO] Git Commit: `fix(settings-localization): localize localization card helper text` (hash: TBD)
 
-### Stream: Persisted Settings And Core Hydration
-7. [DONE] Simplify persisted general localization settings so user-visible controls are independent category selectors with English default instead of `Default language` / `Workflow Terms Policy`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/settings-storage.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): simplify persisted localization controls`
-8. [DONE] Git Commit: `feat(settings): simplify persisted localization controls` (hash: `3400cd51`)
-9. [DONE] Update Core and extension settings hydration to emit and consume the four-category snapshot while keeping legacy saved data readable. Scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(core): hydrate four-category localization settings`
-10. [DONE] Git Commit: `feat(core): hydrate four-category localization settings` (hash: `3364bb2c`)
+### Stream: Glossary And Response-Mode Copy
+9. [TODO] Mark glossary editor validation and status copy so remaining Localization helper surfaces resolve through explicit dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize glossary editor copy`
+10. [TODO] Git Commit: `fix(settings-localization): localize glossary editor copy` (hash: TBD)
+11. [TODO] Mark response-mode option copy so remaining settings explanatory text no longer stays hardcoded. Scope: `src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize response mode copy`
+12. [TODO] Git Commit: `fix(settings-localization): localize response mode copy` (hash: TBD)
 
-### Stream: Browser Settings State
-11. [DONE] Rework browser raw/model settings types for the four categories and explicit `Default Language (English)` reset semantics. Scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): define four-category browser localization model`
-12. [DONE] Git Commit: `feat(settings-ui): define four-category browser localization model` (hash: `61be1b35`)
-13. [DONE] Update settings state support and selector behavior so clearing a category restores `Default Language (English)` and the old default/policy controls disappear. Scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): normalize category reset to english default`
-14. [DONE] Git Commit: `feat(settings-ui): normalize category reset to english default` (hash: `0701dd80`)
-15. [DONE] Replace the localization settings card with the four approved categories and align the browser lookup bindings with the new category model. Scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/app-host/use-localization.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings-ui): expose four-category localization controls`
-16. [DONE] Git Commit: `feat(settings-ui): expose four-category localization controls` (hash: `d5e2af1c`)
+## Phase 2 — Project Manager Shell And Workflow Entry Surfaces (owner: PM, updated: 2026-04-03)
+### Stream: Description Provider Picker
+13. [TODO] Mark Description provider picker shell labels and picker title through explicit localization categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker labels`
+14. [TODO] Git Commit: `fix(pm-localization): localize description provider picker labels` (hash: TBD)
+15. [TODO] Mark Description provider picker guidance/status copy through explicit user-facing categories. Scope: `src/client/project-manager/components/description/description-provider-picker.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize description provider picker messages`
+16. [TODO] Git Commit: `fix(pm-localization): localize description provider picker messages` (hash: TBD)
 
-## Phase 2 — English Source Dictionaries And Lookup Runtime (owner: Localization, updated: 2026-04-03)
-### Stream: Bundled Dictionaries
-17. [DONE] Introduce English source dictionaries for `UI Labels` and `UI Helper Text` and wire them into runtime lookup. Scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add ui label and helper dictionaries`
-18. [DONE] Git Commit: `feat(localization): add ui label and helper dictionaries` (hash: `7a65eb66`)
-19. [DONE] Introduce English source dictionaries for `Messages for the User` and `Artifacts for the User` and wire them into runtime lookup. Scope: `assets/localization/source/en/messages_for_the_user.json`, `assets/localization/source/en/artifacts_for_the_user.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add user message and artifact dictionaries`
-20. [DONE] Git Commit: `feat(localization): add user message and artifact dictionaries` (hash: `6b51e2ab`)
-21. [DONE] Update materializer/runtime payload behavior so four-category bundles resolve correctly and `Internal Agent Instructions` stay outside user-facing materialization. Scope: `packages/localization/src/localization-materializer.ts`, `src/client/ui/src/app-host/localization-runtime-contract.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): exclude internal instructions from user bundles`
-22. [DONE] Git Commit: `feat(localization): exclude internal instructions from user bundles` (hash: `c34ccc31`)
+### Stream: PM Shell Placeholders And Modals
+17. [TODO] Mark panel container headers and empty placeholders so generic PM shell copy no longer stays hardcoded. Scope: `src/client/project-manager/components/layout/panel-container.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize panel container shell`
+18. [TODO] Git Commit: `fix(pm-localization): localize panel container shell` (hash: TBD)
+19. [TODO] Mark add-workspace modal labels, placeholders, and validation copy with explicit categories. Scope: `src/client/project-manager/components/layout/main-layout.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize add workspace modal`
+20. [TODO] Git Commit: `fix(pm-localization): localize add workspace modal` (hash: TBD)
+21. [TODO] Mark status-bar shell copy with explicit categories. Scope: `src/client/project-manager/components/layout/status-bar.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize status bar shell`
+22. [TODO] Git Commit: `fix(pm-localization): localize status bar shell` (hash: TBD)
 
-## Phase 3 — Mandatory Migration Of Existing Text (owner: UI/PM/Core, updated: 2026-04-03)
-### Stream: Shared Settings And Session Surfaces
-23. [DONE] Mark shared Settings shell text with explicit `UI Labels` / `UI Helper Text` categories. Scope: `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`. Target commit: `refactor(localization): mark settings shell text`
-24. [DONE] Git Commit: `refactor(localization): mark settings shell text` (hash: `62e1f2a9`)
-25. [DONE] Mark session shell/status text with explicit `Messages for the User` categories. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(localization): mark session user messages`
-26. [DONE] Git Commit: `refactor(localization): mark session user messages` (hash: `5d977f00`)
+### Stream: Shared Artifact Helpers
+23. [TODO] Mark shared artifact repair CTA and error copy with explicit categories. Scope: `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize artifact repair copy`
+24. [TODO] Git Commit: `fix(pm-localization): localize artifact repair copy` (hash: TBD)
 
-### Stream: Project Manager Navigation And Help
-27. [DONE] Mark Project Manager navigation, toolbar, and workspace tree terms with explicit `UI Labels` categories. Scope: `src/client/project-manager/components/layout/sidebar.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`. Target commit: `refactor(localization): mark project manager labels`
-28. [DONE] Git Commit: `refactor(localization): mark project manager labels` (hash: `53aaf34b`)
-29. [DONE] Mark Description and Virtual Simulation explanatory surfaces with explicit `Messages for the User` categories. Scope: `src/client/project-manager/components/description/description-step-help.tsx`, `src/client/project-manager/components/virtual-simulation/virtual-simulation-help.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark workflow help text`
-30. [DONE] Git Commit: `refactor(localization): mark workflow help text` (hash: `bba1f974`)
-31. [DONE] Mark remaining diagram/help raw strings and artifact-header shell labels with explicit categories. Scope: `src/client/project-manager/components/diagram-modules/diagram-modules-help.tsx`, `src/client/project-manager/components/layout/stage-artifact-header-toggle.tsx`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark remaining project manager strings`
-32. [DONE] Git Commit: `refactor(localization): mark remaining project manager strings` (hash: `c3f9f36a`)
-
-### Stream: Forms And Existing User-Facing Artifacts
-33. [DONE] Backfill `messages_for_the_user` source entries for the migrated Description, Virtual Simulation, and Diagram Modules help surfaces. Scope: `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager user messages dictionary`
-34. [DONE] Git Commit: `refactor(localization): backfill project manager user messages dictionary` (hash: `5b61bc81`)
-35. [DONE] Backfill `ui_labels` source entries for Project Manager shell toggles and header labels that now resolve through `UI Labels`. Scope: `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager label dictionary`
-36. [DONE] Git Commit: `refactor(localization): backfill project manager label dictionary` (hash: `d7472f5c`)
-37. [DONE] Mark questionnaire shell and form-copy entrypoints with explicit `Artifacts for the User` categories. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark questionnaire user artifacts`
-38. [DONE] Git Commit: `refactor(localization): mark questionnaire user artifacts` (hash: `416c0bc9`)
-
-## Phase 4 — Internal Agent Instructions And Artifact Language Pipeline (owner: Workflow/Core, updated: 2026-04-03)
-### Stream: Internal Agent Instruction Classification
-39. [DONE] Classify workflow contract templates and bundled prompt assets as `Internal Agent Instructions` and document their English-only boundary. Scope: `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): classify internal agent templates`
-40. [DONE] Git Commit: `refactor(localization): classify internal agent templates` (hash: `c6a77ee7`)
-41. [DONE] Parameterize Description and Virtual Simulation prompt entrypoints so user-facing artifact language is injected while internal instructions remain English. Scope: `packages/agents/description-agent/assets/description-collector-prompt.md`, `packages/core/src/templates/source/virtual-simulation-prompt.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into core prompts`
-42. [DONE] Git Commit: `feat(workflow): inject artifact language into core prompts` (hash: `8847a47e`)
-43. [DONE] Parameterize Diagram Modules prompt assets so final user-facing outputs follow `Artifacts for the User` while internal prompt text stays English. Scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`, `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(workflow): inject artifact language into diagram prompts`
-44. [DONE] Git Commit: `feat(workflow): inject artifact language into diagram prompts` (hash: `4b97130c`)
-
-### Stream: Session Start / Prompt Pack
-45. [DONE] Thread `Artifacts for the User` language from Settings into Project Manager session start / submit flows and prompt-pack assembly. Scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`. Target commit: `feat(workflow): pass artifact language through prompt pack`
-46. [DONE] Git Commit: `feat(workflow): pass artifact language through prompt pack` (hash: `cf60397c`)
-
-## Phase 5 — Verification And Russian Localization Acceptance (owner: QA/Release, updated: 2026-04-03)
-### Stream: Focused Tests
-47. [DONE] Add or refresh focused tests for artifact-language threading in prompt pack and workflow start services. Scope: `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow): verify artifact language threading`
-48. [DONE] Git Commit: `test(workflow): verify artifact language threading` (hash: `8dc574de`)
-49. [DONE] Add or refresh focused tests for internal-instruction classification at the Core contract layer. Scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(core): verify internal instruction classification`
-50. [DONE] Git Commit: `test(core): verify internal instruction classification` (hash: `c04a72ff`)
-
+## Phase 3 — Verification, Release, And Handoff (owner: QA/Release/Docs, updated: 2026-04-03)
 ### Stream: Targeted Verification
-51. [DONE] Run targeted builds and manual Russian-surface verification for localization, Core, webview, and Project Manager before release packaging. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
-52. [DONE] Update release-facing docs for the four-category localization release from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare four-category localization release notes`
-53. [DONE] Git Commit: `docs(release): prepare four-category localization release notes` (hash: `b72463d5`)
+25. [TODO] Run targeted builds for touched localization/settings/PM surfaces and verify the packaged-fix candidates from the workspace before release packaging. Scope: `@codeai-hub/localization`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
+26. [TODO] Update release-facing docs for the post-release localization follow-up. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare post-release localization fix notes`
+27. [TODO] Git Commit: `docs(release): prepare post-release localization fix notes` (hash: TBD)
 
-## Phase 6 — Release Build And Closure (owner: Release/Docs, updated: 2026-04-03)
-### Stream: Build And Ship
-54. [DONE] Refresh the tracked webview bundle so `media/react-chat.js` matches the approved four-category localization UI/state model before release build. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh localization webview bundle`
-55. [DONE] Git Commit: `build(webview): refresh localization webview bundle` (hash: `107ad4e6`)
-56. [DONE] Preserve bundled template `audience` metadata during release-time regeneration so `build-all.sh` does not drop the internal/user-facing contract boundary. Scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): preserve bundled template audience metadata`
-57. [DONE] Git Commit: `fix(release): preserve bundled template audience metadata` (hash: `85287303`)
-58. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm that a Russian-localized profile loads translated marked text while `Internal Agent Instructions` remain English-only. Scope: release-generated version files and manifests. Target commit: `build(release): assemble four-category localization release`
-59. [DONE] Git Commit: `build(release): assemble four-category localization release` (hash: `6f7b65ed`)
-60. [DONE] Record the release handoff in the active session report and capture the exact post-release validation checklist for the next testing session. Scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session025.md`. Target commit: `docs(session): record four-category localization release`
-61. [TODO] Git Commit: `docs(session): record four-category localization release` (hash: TBD)
+### Stream: Build And Session Closure
+28. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release shows the newly marked surfaces under the correct categories. Scope: release-generated version files and manifests. Target commit: `build(release): assemble post-release localization fix release`
+29. [TODO] Git Commit: `build(release): assemble post-release localization fix release` (hash: TBD)
+30. [TODO] Record the completed fixes, the new release target, and the remaining manual packaged-test checklist in the active session report. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record post-release localization fix release`
+31. [TODO] Git Commit: `docs(session): record post-release localization fix release` (hash: TBD)
