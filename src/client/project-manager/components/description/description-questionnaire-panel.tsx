@@ -10,6 +10,7 @@ import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import { DescriptionProviderPicker } from "./description-provider-picker";
 
 const SAVE_DEBOUNCE_MS = 400;
+const USER_ARTIFACTS_CATEGORY = "interactive_templates";
 
 interface DescriptionQuestionnairePanelProps {
   readonly workspaceName?: string;
@@ -137,7 +138,7 @@ export const DescriptionQuestionnairePanel: React.FC<
   const title = useMemo(
     () =>
       t(
-        "interactive_templates",
+        USER_ARTIFACTS_CATEGORY,
         "pm.description.questionnaire.title_template",
         "Description questionnaire — {workspace}",
         { workspace: resolvedWorkspaceName }
@@ -241,7 +242,7 @@ export const DescriptionQuestionnairePanel: React.FC<
         error instanceof Error
           ? error.message
           : t(
-              "interactive_templates",
+              USER_ARTIFACTS_CATEGORY,
               "pm.description.questionnaire.submit_error_default",
               "Failed to submit the questionnaire."
             )
@@ -273,7 +274,7 @@ export const DescriptionQuestionnairePanel: React.FC<
     return (
       <div className="pm-placeholder">
         {t(
-          "interactive_templates",
+          USER_ARTIFACTS_CATEGORY,
           "pm.description.questionnaire.workspace_required",
           "Select a workspace to start."
         )}
@@ -284,7 +285,7 @@ export const DescriptionQuestionnairePanel: React.FC<
     return (
       <div className="pm-placeholder">
         {t(
-          "interactive_templates",
+          USER_ARTIFACTS_CATEGORY,
           "pm.description.questionnaire.loading",
           "Loading description questionnaire..."
         )}
@@ -295,7 +296,7 @@ export const DescriptionQuestionnairePanel: React.FC<
     return (
       <div className="pm-placeholder">
         {t(
-          "interactive_templates",
+          USER_ARTIFACTS_CATEGORY,
           "pm.description.questionnaire.load_error",
           "Failed to load the description questionnaire."
         )}
@@ -313,12 +314,12 @@ export const DescriptionQuestionnairePanel: React.FC<
       <DescriptionQuestionnaireView
         answers={answers}
         cancelLabel={t(
-          "interactive_templates",
+          USER_ARTIFACTS_CATEGORY,
           "pm.description.questionnaire.cancel_label",
           "Close"
         )}
         description={t(
-          "interactive_templates",
+          USER_ARTIFACTS_CATEGORY,
           "pm.description.questionnaire.description",
           'The questionnaire is saved automatically. Click "Submit questionnaire", choose a provider, and wait for Description to start. You can continue the dialog in the same session until the final version is ready. The resulting document is saved to `.codeai-hub/<workspace>/description/Final_Description.md`.'
         )}
@@ -327,7 +328,7 @@ export const DescriptionQuestionnairePanel: React.FC<
         onSubmit={handleSubmit}
         questions={panelState.questions}
         submitLabel={t(
-          "interactive_templates",
+          USER_ARTIFACTS_CATEGORY,
           "pm.description.questionnaire.submit_label",
           "Submit questionnaire"
         )}

@@ -64,8 +64,8 @@
 33. [DONE] Backfill `messages_for_the_user` source entries for the migrated Description, Virtual Simulation, and Diagram Modules help surfaces. Scope: `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager user messages dictionary`
 34. [DONE] Git Commit: `refactor(localization): backfill project manager user messages dictionary` (hash: `5b61bc81`)
 35. [DONE] Backfill `ui_labels` source entries for Project Manager shell toggles and header labels that now resolve through `UI Labels`. Scope: `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): backfill project manager label dictionary`
-36. [TODO] Git Commit: `refactor(localization): backfill project manager label dictionary` (hash: TBD)
-37. [TODO] Mark questionnaire shell and form-copy entrypoints with explicit `Artifacts for the User` categories. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark questionnaire user artifacts`
+36. [DONE] Git Commit: `refactor(localization): backfill project manager label dictionary` (hash: `d7472f5c`)
+37. [DONE] Mark questionnaire shell and form-copy entrypoints with explicit `Artifacts for the User` categories. Scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx`, `src/client/project-manager/services/description-questionnaire-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `refactor(localization): mark questionnaire user artifacts`
 38. [TODO] Git Commit: `refactor(localization): mark questionnaire user artifacts` (hash: TBD)
 
 ## Phase 4 — Internal Agent Instructions And Artifact Language Pipeline (owner: Workflow/Core, updated: 2026-04-03)
