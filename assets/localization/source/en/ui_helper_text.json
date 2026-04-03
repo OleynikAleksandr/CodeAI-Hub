@@ -29,6 +29,7 @@
   "settings.response_mode.option.strict.description": "Force a JSON-shaped final answer using the editable strict schema.",
   "settings.response_mode.option.hybrid.description": "Allow free commentary during the turn and keep structure only for terminal output.",
   "settings.response_mode.option.debug_raw.description": "Diagnostic mode for new models: avoid hard schema pressure on live turns.",
+  "settings.session_continuity.description": "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%.",
   "settings.localization.workflow_terms_policy.description": "Choose whether workflow taxonomy should stay in English or participate in localization.",
   "settings.localization.workflow_terms_policy.keep_english_description": "Preserve workflow taxonomy terms such as Description and Virtual Simulation.",
   "settings.localization.workflow_terms_policy.translate_description": "Allow workflow taxonomy terms to be localized like other product copy.",

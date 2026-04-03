@@ -68,4 +68,6 @@
 ## Phase 4 — Localization Authoring Guardrail (owner: Docs/Architecture, updated: 2026-04-03)
 ### Stream: Text Ownership SSOT
 36. [DONE] Add a permanent SSOT contract that requires explicit localization ownership for every new product-authored text surface and link it from the system-level architecture entrypoints. Scope: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(localization): codify text ownership boundary`
-37. [TODO] Git Commit: `docs(localization): codify text ownership boundary` (hash: TBD)
+37. [DONE] Git Commit: `docs(localization): codify text ownership boundary` (hash: `cea35e79`)
+38. [DONE] Mark shared session-continuity helper copy so Claude, Codex, and Gemini tabs resolve that explanatory paragraph through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/session-continuity-card.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize session continuity helper copy`
+39. [TODO] Git Commit: `fix(settings-localization): localize session continuity helper copy` (hash: TBD)

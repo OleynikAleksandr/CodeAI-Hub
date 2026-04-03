@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocalization } from "../../app-host/use-localization";
 import SettingsCard from "./settings-card";
 
 interface SessionContinuityCardProps {
@@ -48,6 +49,8 @@ const isUnsignedIntegerText = (value: string): boolean =>
 
 const clampInteger = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
+
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const ManualIntegerInput: React.FC<ManualIntegerInputProps> = ({
   id,
@@ -116,43 +119,48 @@ const SessionContinuityCard: React.FC<SessionContinuityCardProps> = ({
   onRemainingPercentThresholdChange,
   contextWindowTokenLimit,
   onContextWindowTokenLimitChange,
-}) => (
-  <SettingsCard title={title}>
-    <p style={settingsDescriptionStyles}>
-      When the remaining context window drops to or below this percentage,
-      CodeAI Hub can automatically wrap up the current session (with a report)
-      and start a new one. Default: 30%.
-    </p>
-    {typeof contextWindowTokenLimit === "number" &&
-    onContextWindowTokenLimitChange ? (
+}) => {
+  const { t } = useLocalization();
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.session_continuity.description",
+    "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%."
+  );
+
+  return (
+    <SettingsCard title={title}>
+      <p style={settingsDescriptionStyles}>{description}</p>
+      {typeof contextWindowTokenLimit === "number" &&
+      onContextWindowTokenLimitChange ? (
+        <label
+          htmlFor={`${title}-context-window-token-limit`}
+          style={settingsLabelStyles}
+        >
+          Context window limit (tokens)
+          <ManualIntegerInput
+            id={`${title}-context-window-token-limit`}
+            max={1_000_000}
+            min={10_000}
+            onCommit={onContextWindowTokenLimitChange}
+            value={contextWindowTokenLimit}
+          />
+        </label>
+      ) : null}
       <label
-        htmlFor={`${title}-context-window-token-limit`}
+        htmlFor={`${title}-remaining-percent-threshold`}
         style={settingsLabelStyles}
       >
-        Context window limit (tokens)
+        Remaining context threshold (%)
         <ManualIntegerInput
-          id={`${title}-context-window-token-limit`}
-          max={1_000_000}
-          min={10_000}
-          onCommit={onContextWindowTokenLimitChange}
-          value={contextWindowTokenLimit}
+          id={`${title}-remaining-percent-threshold`}
+          max={80}
+          min={5}
+          onCommit={onRemainingPercentThresholdChange}
+          value={remainingPercentThreshold}
         />
       </label>
-    ) : null}
-    <label
-      htmlFor={`${title}-remaining-percent-threshold`}
-      style={settingsLabelStyles}
-    >
-      Remaining context threshold (%)
-      <ManualIntegerInput
-        id={`${title}-remaining-percent-threshold`}
-        max={80}
-        min={5}
-        onCommit={onRemainingPercentThresholdChange}
-        value={remainingPercentThreshold}
-      />
-    </label>
-  </SettingsCard>
-);
+    </SettingsCard>
+  );
+};
 
 export default React.memo(SessionContinuityCard);
