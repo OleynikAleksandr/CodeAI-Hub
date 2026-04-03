@@ -14,7 +14,7 @@
 ### Stream: Planning Intake
 1. [DONE] Archive the completed `1.1.870` release TODO and create an execution-ready planning doc for packaged post-release localization fixes. Scope: `doc/TODO/Archive/todo-plan-up-to-phase6-four-category-localization-release-1.1.870-2026-04-03.md`, `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define post-release localization fix scope`
 2. [TODO] Git Commit: `docs(plan): define post-release localization fix scope` (hash: TBD)
-3. [TODO] Create the new active session report early and record the packaged-release symptom plus the new fix stream so context survives session compaction. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): bootstrap post-release localization fix report`
+3. [DONE] Create the new active session report early and record the packaged-release symptom plus the new fix stream so context survives session compaction. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): bootstrap post-release localization fix report`
 4. [TODO] Git Commit: `docs(session): bootstrap post-release localization fix report` (hash: TBD)
 
 ## Phase 1 — Settings Surfaces Missing Localization Ownership (owner: Settings/Localization, updated: 2026-04-03)
