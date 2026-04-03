@@ -6,6 +6,7 @@ import {
   type GeminiModelDescriptor,
   type GeminiThinkingLevel,
 } from "../../../../../../types/gemini-model-registry";
+import { useLocalization } from "../../../app-host/use-localization";
 import {
   ProviderOptionDialog,
   providerOptionDialogButtonStyles,
@@ -18,14 +19,22 @@ interface GeminiThinkingDialogProps {
   readonly onSave: (level: GeminiThinkingLevel) => void;
 }
 
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+
 const GeminiThinkingDialog: FC<GeminiThinkingDialogProps> = ({
   model,
   initialLevel,
   onSave,
   onCancel,
 }) => {
+  const { t } = useLocalization();
   const [selectedLevel, setSelectedLevel] =
     useState<GeminiThinkingLevel>(initialLevel);
+  const subtitle = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.gemini_thinking_dialog.subtitle",
+    "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session."
+  );
   const options = GEMINI_THINKING_LEVELS.filter((level) =>
     model.supportedThinkingLevels.includes(level.name)
   ).map((level) => ({
@@ -58,7 +67,7 @@ const GeminiThinkingDialog: FC<GeminiThinkingDialogProps> = ({
       onChange={setSelectedLevel}
       options={options}
       selectedValue={selectedLevel}
-      subtitle="Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session."
+      subtitle={subtitle}
       title={`${model.displayName} thinking`}
     />
   );

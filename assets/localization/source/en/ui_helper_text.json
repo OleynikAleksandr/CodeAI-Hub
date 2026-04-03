@@ -47,6 +47,7 @@
   "settings.gemini_default_model.description": "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md",
   "settings.gemini_default_model.thinking_in_dialog.description": "Show translated Gemini reasoning as a normal assistant bubble in the dialog.",
   "settings.gemini_default_model.note": "Applies only to newly created Gemini sessions.",
+  "settings.gemini_thinking_dialog.subtitle": "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session.",
   "settings.localization.workflow_terms_policy.description": "Choose whether workflow taxonomy should stay in English or participate in localization.",
   "settings.localization.workflow_terms_policy.keep_english_description": "Preserve workflow taxonomy terms such as Description and Virtual Simulation.",
   "settings.localization.workflow_terms_policy.translate_description": "Allow workflow taxonomy terms to be localized like other product copy.",

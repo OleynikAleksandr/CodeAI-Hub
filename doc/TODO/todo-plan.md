@@ -88,4 +88,6 @@
 54. [DONE] Mark the Claude thinking pro-tip body so that the remaining tip helper copy resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize claude thinking pro tip`
 55. [DONE] Git Commit: `fix(settings-localization): localize claude thinking pro tip` (hash: `8c7157ef`)
 56. [DONE] Mark the Codex reasoning dialog guidance so the modal subtitle resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize codex reasoning dialog helper copy`
-57. [TODO] Git Commit: `fix(settings-localization): localize codex reasoning dialog helper copy` (hash: TBD)
+57. [DONE] Git Commit: `fix(settings-localization): localize codex reasoning dialog helper copy` (hash: `11923358`)
+58. [DONE] Mark the Gemini thinking dialog guidance so the modal subtitle resolves through `UI Helper Text`. Scope: `src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx`, `assets/localization/source/en/ui_helper_text.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(settings-localization): localize gemini thinking dialog helper copy`
+59. [TODO] Git Commit: `fix(settings-localization): localize gemini thinking dialog helper copy` (hash: TBD)
