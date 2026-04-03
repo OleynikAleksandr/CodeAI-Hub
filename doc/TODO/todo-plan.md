@@ -170,14 +170,14 @@
 ## Phase 10 — Claude SDK Isolation Mode Follow-Up (owner: Claude/Release/Docs, updated: 2026-04-03)
 ### Stream: Runtime Isolation Fix
 116. [DONE] Switch CodeAI Hub-managed Claude sessions to SDK isolation mode so provider turns stop auto-loading filesystem settings and `CLAUDE.md` memory from parent directories above the active workspace. Scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(claude): disable filesystem claude discovery`
-117. [TODO] Git Commit: `fix(claude): disable filesystem claude discovery` (hash: TBD)
+117. [DONE] Git Commit: `fix(claude): disable filesystem claude discovery` (hash: `fd3b4261`)
 118. [DONE] Update the Claude module SSOT to record that provider-driven Claude turns run in SDK isolation mode with no filesystem `CLAUDE.md` / settings discovery. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(claude): record sdk isolation mode`
-119. [TODO] Git Commit: `docs(claude): record sdk isolation mode` (hash: TBD)
+119. [DONE] Git Commit: `docs(claude): record sdk isolation mode` (hash: `21618bd2`)
 
 ### Stream: Release Notes And Packaging
 120. [DONE] Prepare release-facing docs for the Claude SDK isolation-mode follow-up before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare claude sdk isolation release notes`
-121. [TODO] Git Commit: `docs(release): prepare claude sdk isolation release notes` (hash: TBD)
-122. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release keeps Claude provider sessions out of filesystem `CLAUDE.md` discovery entirely. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude sdk isolation release`
-123. [TODO] Git Commit: `build(release): assemble claude sdk isolation release` (hash: TBD)
-124. [TODO] Update the active session report with the Claude SDK isolation-mode fix chain, the packaged validation target, and the new release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude sdk isolation release`
+121. [DONE] Git Commit: `docs(release): prepare claude sdk isolation release notes` (hash: `03b79213`)
+122. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release keeps Claude provider sessions out of filesystem `CLAUDE.md` discovery entirely. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude sdk isolation release`
+123. [DONE] Git Commit: `build(release): assemble claude sdk isolation release` (hash: `6b3361a2`)
+124. [DONE] Update the active session report with the Claude SDK isolation-mode fix chain, the packaged validation target, and the new release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude sdk isolation release`
 125. [TODO] Git Commit: `docs(session): record claude sdk isolation release` (hash: TBD)
