@@ -41,6 +41,18 @@ export type LocalizationCategoryKey =
   | "workflowTerms";
 export type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
 
+type LocalizationSettingsState = Settings["general"]["localization"];
+type LocalizationCategorySettings = LocalizationSettingsState["categories"];
+type ApprovedLocalizationCategoryKey =
+  | "artifactsForTheUser"
+  | "messagesForTheUser"
+  | "uiHelperText"
+  | "uiLabels";
+type ApprovedLocalizationCategoryState = Record<
+  ApprovedLocalizationCategoryKey,
+  string
+>;
+
 type IncomingMessage =
   | {
       readonly type: "settings:loaded";
@@ -86,16 +98,16 @@ export const clampRemainingPercentThreshold = (value: number): number =>
 export const clampGeminiContextWindowTokenLimit = (value: number): number =>
   Math.min(1_000_000, Math.max(10_000, Math.round(value)));
 
-const CANONICAL_SOURCE_LANGUAGE = "en";
-const DEFAULT_LOCALIZATION_LANGUAGE = "source";
+const LEGACY_SOURCE_LANGUAGE = "source";
+const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
 
-export const normalizeLocalizationSelection = (value: string): string => {
+const normalizeLocalizationSelection = (value: string): string => {
   const trimmed = value.trim();
   if (!trimmed) {
     return DEFAULT_LOCALIZATION_LANGUAGE;
   }
-  return trimmed.toLowerCase() === CANONICAL_SOURCE_LANGUAGE
+  return trimmed.toLowerCase() === LEGACY_SOURCE_LANGUAGE
     ? DEFAULT_LOCALIZATION_LANGUAGE
     : trimmed;
 };
@@ -105,37 +117,158 @@ export const normalizeLocalizationEngineId = (value: string): string => {
   return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID;
 };
 
+const deriveWorkflowTermsPolicy = (
+  uiLabelsLanguage: string
+): LocalizationWorkflowTermsPolicy =>
+  uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE
+    ? "keep_english"
+    : "translate";
+
+const resolveLocalizationCategory = (
+  categories: LocalizationCategorySettings,
+  candidateKeys: readonly (
+    | LocalizationCategoryKey
+    | ApprovedLocalizationCategoryKey
+  )[],
+  fallback: string
+): string => {
+  for (const key of candidateKeys) {
+    const resolved = normalizeLocalizationSelection(
+      categories[key as keyof LocalizationCategorySettings] ?? ""
+    );
+    if (resolved.length > 0) {
+      return resolved;
+    }
+  }
+
+  return fallback;
+};
+
+const resolveApprovedLocalizationCategories = (
+  categories: LocalizationCategorySettings
+): ApprovedLocalizationCategoryState => {
+  const fallback = DEFAULT_LOCALIZATION_LANGUAGE;
+
+  return {
+    artifactsForTheUser: resolveLocalizationCategory(
+      categories,
+      ["artifactsForTheUser", "interactiveTemplates"],
+      fallback
+    ),
+    messagesForTheUser: resolveLocalizationCategory(
+      categories,
+      ["messagesForTheUser", "systemFeedback"],
+      fallback
+    ),
+    uiHelperText: resolveLocalizationCategory(
+      categories,
+      ["uiHelperText", "userGuidance"],
+      fallback
+    ),
+    uiLabels: resolveLocalizationCategory(
+      categories,
+      ["uiLabels", "uiInterface", "workflowTerms"],
+      fallback
+    ),
+  };
+};
+
+const createMirroredLocalizationCategories = (
+  approved: ApprovedLocalizationCategoryState
+): LocalizationCategorySettings => ({
+  artifactsForTheUser: approved.artifactsForTheUser,
+  interactiveTemplates: approved.artifactsForTheUser,
+  messagesForTheUser: approved.messagesForTheUser,
+  systemFeedback: approved.messagesForTheUser,
+  uiHelperText: approved.uiHelperText,
+  uiInterface: approved.uiLabels,
+  uiLabels: approved.uiLabels,
+  userGuidance: approved.uiHelperText,
+  workflowTerms: approved.uiLabels,
+});
+
+const normalizeLocalizationState = (
+  localization: LocalizationSettingsState
+): LocalizationSettingsState => {
+  const approvedCategories = resolveApprovedLocalizationCategories(
+    localization.categories
+  );
+
+  return {
+    ...localization,
+    defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
+    categories: createMirroredLocalizationCategories(approvedCategories),
+    workflowTermsPolicy: deriveWorkflowTermsPolicy(approvedCategories.uiLabels),
+  };
+};
+
 export const normalizeLoadedLocalizationSettings = (
   settings: Settings
 ): Settings => ({
   ...settings,
   general: {
     ...settings.general,
-    localization: {
-      ...settings.general.localization,
-      defaultLanguage: normalizeLocalizationSelection(
-        settings.general.localization.defaultLanguage
-      ),
-      categories: {
-        interactiveTemplates: normalizeLocalizationSelection(
-          settings.general.localization.categories.interactiveTemplates
-        ),
-        systemFeedback: normalizeLocalizationSelection(
-          settings.general.localization.categories.systemFeedback
-        ),
-        uiInterface: normalizeLocalizationSelection(
-          settings.general.localization.categories.uiInterface
-        ),
-        userGuidance: normalizeLocalizationSelection(
-          settings.general.localization.categories.userGuidance
-        ),
-        workflowTerms: normalizeLocalizationSelection(
-          settings.general.localization.categories.workflowTerms
-        ),
-      },
-    },
+    localization: normalizeLocalizationState(settings.general.localization),
   },
 });
+
+export const updateLocalizationCategorySelection = (
+  settings: Settings,
+  category: LocalizationCategoryKey,
+  language: string
+): Settings => {
+  const approvedCategories = resolveApprovedLocalizationCategories(
+    settings.general.localization.categories
+  );
+  const normalizedLanguage = normalizeLocalizationSelection(language);
+
+  if (category === "interactiveTemplates") {
+    approvedCategories.artifactsForTheUser = normalizedLanguage;
+  }
+  if (category === "systemFeedback") {
+    approvedCategories.messagesForTheUser = normalizedLanguage;
+  }
+  if (category === "userGuidance") {
+    approvedCategories.uiHelperText = normalizedLanguage;
+  }
+  if (category === "uiInterface" || category === "workflowTerms") {
+    approvedCategories.uiLabels = normalizedLanguage;
+  }
+
+  return {
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: normalizeLocalizationState({
+        ...settings.general.localization,
+        categories: createMirroredLocalizationCategories(approvedCategories),
+      }),
+    },
+  };
+};
+
+export const updateLocalizationDefaultLanguageSelection = (
+  settings: Settings,
+  language: string
+): Settings => {
+  const normalizedLanguage = normalizeLocalizationSelection(language);
+
+  return {
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: normalizeLocalizationState({
+        ...settings.general.localization,
+        categories: createMirroredLocalizationCategories({
+          artifactsForTheUser: normalizedLanguage,
+          messagesForTheUser: normalizedLanguage,
+          uiHelperText: normalizedLanguage,
+          uiLabels: normalizedLanguage,
+        }),
+      }),
+    },
+  };
+};
 
 export interface UseSettingsStateResult {
   readonly coreControl: CoreControlState;

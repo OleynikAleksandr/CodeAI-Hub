@@ -42,8 +42,9 @@ import {
   type LocalizationWorkflowTermsPolicy,
   normalizeLoadedLocalizationSettings,
   normalizeLocalizationEngineId,
-  normalizeLocalizationSelection,
   type UseSettingsStateResult,
+  updateLocalizationCategorySelection,
+  updateLocalizationDefaultLanguageSelection,
   type VersionsState,
 } from "./use-settings-state-support";
 
@@ -224,54 +225,25 @@ export const useSettingsState = (): UseSettingsStateResult => {
 
   const handleLocalizationDefaultLanguageChange = useCallback(
     (defaultLanguage: string) => {
-      const normalizedDefaultLanguage =
-        normalizeLocalizationSelection(defaultLanguage);
-      updateSettings({
-        ...settings,
-        general: {
-          ...settings.general,
-          localization: {
-            ...settings.general.localization,
-            defaultLanguage: normalizedDefaultLanguage,
-          },
-        },
-      });
+      updateSettings(
+        updateLocalizationDefaultLanguageSelection(settings, defaultLanguage)
+      );
     },
     [settings, updateSettings]
   );
 
   const handleLocalizationCategoryLanguageChange = useCallback(
     (category: LocalizationCategoryKey, language: string) => {
-      const normalizedLanguage = normalizeLocalizationSelection(language);
-      updateSettings({
-        ...settings,
-        general: {
-          ...settings.general,
-          localization: {
-            ...settings.general.localization,
-            categories: {
-              ...settings.general.localization.categories,
-              [category]: normalizedLanguage,
-            },
-          },
-        },
-      });
+      updateSettings(
+        updateLocalizationCategorySelection(settings, category, language)
+      );
     },
     [settings, updateSettings]
   );
 
   const handleLocalizationWorkflowTermsPolicyChange = useCallback(
-    (workflowTermsPolicy: LocalizationWorkflowTermsPolicy) => {
-      updateSettings({
-        ...settings,
-        general: {
-          ...settings.general,
-          localization: {
-            ...settings.general.localization,
-            workflowTermsPolicy,
-          },
-        },
-      });
+    (_workflowTermsPolicy: LocalizationWorkflowTermsPolicy) => {
+      updateSettings(normalizeLoadedLocalizationSettings(settings));
     },
     [settings, updateSettings]
   );
