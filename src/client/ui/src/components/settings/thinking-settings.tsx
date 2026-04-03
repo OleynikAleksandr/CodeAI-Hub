@@ -1,5 +1,6 @@
 import type { CSSProperties, FC } from "react";
 import { memo } from "react";
+import { useLocalization } from "../../app-host/use-localization";
 import SettingsCard from "./settings-card";
 import { hideSpinnerStyle } from "./thinking/constants";
 import ThinkingProTip from "./thinking/thinking-pro-tip";
@@ -13,6 +14,8 @@ interface ThinkingSettingsProps {
   readonly onThinkingDisplaySyncChange: (enabled: boolean) => void;
   readonly thinkingDisplaySyncEnabled: boolean;
 }
+
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const wrapperStyles: CSSProperties = {
   marginBottom: "30px",
@@ -52,6 +55,7 @@ const ThinkingSettings: FC<ThinkingSettingsProps> = ({
   onThinkingDisplaySyncChange,
   onChange,
 }) => {
+  const { t } = useLocalization();
   const handleToggle = (nextEnabled: boolean) => {
     onChange(nextEnabled, maxTokens);
   };
@@ -59,6 +63,11 @@ const ThinkingSettings: FC<ThinkingSettingsProps> = ({
   const handleTokenChange = (nextValue: number) => {
     onChange(enabled, nextValue);
   };
+  const thinkingInDialogDescription = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.claude_thinking_settings.thinking_in_dialog.description",
+    "Show Claude reasoning as a normal assistant bubble with a Thinking label."
+  );
 
   return (
     <div style={wrapperStyles}>
@@ -77,8 +86,7 @@ const ThinkingSettings: FC<ThinkingSettingsProps> = ({
           <div style={{ flex: 1 }}>
             <div style={displaySyncTitleStyles}>Thinking in dialog</div>
             <div style={displaySyncDescriptionStyles}>
-              Show Claude reasoning as a normal assistant bubble with a Thinking
-              label.
+              {thinkingInDialogDescription}
             </div>
           </div>
         </label>
