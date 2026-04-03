@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.870] - 2026-04-03
+### Added
+- **Approved four-category localization settings**: the user-facing settings model now exposes `UI Labels`, `UI Helper Text`, `Messages for the User`, and `Artifacts for the User`, with `Default Language (English)` as the reset state when a category override is cleared.
+
+### Changed
+- **Existing copy is now category-owned**: Settings shell text, Session status/empty-state feedback, Project Manager navigation/help, and Description questionnaire entrypoints now resolve through explicit localization categories instead of mixed legacy buckets.
+- **Artifact-language runtime threading**: prompt-pack assembly and workflow start/submit flows now pass `Artifacts for the User` language into Description, Virtual Simulation, and Diagram Modules so final user-facing artifacts and brief user-facing chat updates follow the selected language.
+
+### Fixed
+- **Internal prompt boundary is now enforced**: bundled workflow prompts, appendices, and agent-only templates are classified as `Internal Agent Instructions`, excluded from user-facing runtime bundles, and verified to stay English-only while Russian localization materializes only marked user-facing text.
+
 ## [1.1.869] - 2026-04-02
 ### Fixed
 - **Release `1.1.868` Core bootstrap regression**: the staged standalone Core runtime now carries the localization runtime dependency chain plus bundled source dictionaries under `app/assets/localization/source/en`, so startup no longer stalls before `/api/v1/health` on installed builds.

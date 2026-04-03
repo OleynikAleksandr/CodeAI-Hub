@@ -86,11 +86,11 @@
 47. [DONE] Add or refresh focused tests for artifact-language threading in prompt pack and workflow start services. Scope: `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow): verify artifact language threading`
 48. [DONE] Git Commit: `test(workflow): verify artifact language threading` (hash: `8dc574de`)
 49. [DONE] Add or refresh focused tests for internal-instruction classification at the Core contract layer. Scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(core): verify internal instruction classification`
-50. [TODO] Git Commit: `test(core): verify internal instruction classification` (hash: TBD)
+50. [DONE] Git Commit: `test(core): verify internal instruction classification` (hash: `c04a72ff`)
 
 ### Stream: Targeted Verification
-51. [TODO] Run targeted builds and manual Russian-surface verification for localization, Core, webview, and Project Manager before release packaging. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
-52. [TODO] Update release-facing docs for the four-category localization release from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare four-category localization release notes`
+51. [DONE] Run targeted builds and manual Russian-surface verification for localization, Core, webview, and Project Manager before release packaging. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/TODO/todo-plan.md`.
+52. [IN_PROGRESS] Update release-facing docs for the four-category localization release from the clean pre-build tree. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare four-category localization release notes`
 53. [TODO] Git Commit: `docs(release): prepare four-category localization release notes` (hash: TBD)
 
 ## Phase 6 — Release Build And Closure (owner: Release/Docs, updated: 2026-04-03)
