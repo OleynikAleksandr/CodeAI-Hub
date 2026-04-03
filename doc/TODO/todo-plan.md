@@ -95,8 +95,8 @@
 ## Phase 5 — Provider Helper Follow-Up Release (owner: QA/Release/Docs, updated: 2026-04-03)
 ### Stream: Release Notes And Packaging
 60. [DONE] Prepare release-facing docs for the provider-settings helper follow-up and record the new packaged target in the active TODO. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare provider helper localization follow-up notes`
-61. [TODO] Git Commit: `docs(release): prepare provider helper localization follow-up notes` (hash: TBD)
-62. [TODO] Refresh the tracked `media/react-chat.js` bundle after the helper-copy sweep so packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh provider helper localization bundle`
+61. [DONE] Git Commit: `docs(release): prepare provider helper localization follow-up notes` (hash: `ba0f45bd`)
+62. [DONE] Refresh the tracked `media/react-chat.js` bundle after the helper-copy sweep so packaging starts from a clean tree. Scope: `media/react-chat.js`, `doc/TODO/todo-plan.md`. Target commit: `build(webview): refresh provider helper localization bundle`
 63. [TODO] Git Commit: `build(webview): refresh provider helper localization bundle` (hash: TBD)
 64. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes the expanded provider/helper localization coverage. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider helper localization release`
 65. [TODO] Git Commit: `build(release): assemble provider helper localization release` (hash: TBD)

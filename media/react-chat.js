@@ -9494,12 +9494,24 @@
 
   // src/client/ui/src/components/settings/claude-default-model/claude-default-model-card.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY = "user_guidance";
   var ClaudeDefaultModelCard = ({
     defaultModel,
     onDefaultModelChange
   }) => {
+    const { t } = useLocalization();
     const [hoveredAlias, setHoveredAlias] = (0, import_react3.useState)(
       null
+    );
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.claude_default_model.description",
+      "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md"
+    );
+    const note = t(
+      UI_HELPER_TEXT_CATEGORY,
+      "settings.claude_default_model.note",
+      "Applies only to newly created Claude sessions."
     );
     const handleRowClick = (model) => {
       onDefaultModelChange(model);
@@ -9511,7 +9523,7 @@
       }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(settings_card_default, { title: "Claude Default model", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: descriptionStyles, children: "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: descriptionStyles, children: description }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: listStyles, children: CLAUDE_MODEL_ALIASES.map((model) => {
         const isSelected = defaultModel === model.alias;
         const rowStyle = {
@@ -9555,7 +9567,7 @@
           )
         );
       }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: noteStyles, children: "Applies only to newly created Claude sessions." })
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: noteStyles, children: note })
     ] });
   };
   var claude_default_model_card_default = (0, import_react3.memo)(ClaudeDefaultModelCard);
@@ -9777,13 +9789,20 @@
 
   // src/client/ui/src/components/settings/codex-default-model/codex-reasoning-dialog.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY2 = "user_guidance";
   var CodexReasoningDialog = ({
     model,
     initialReasoning,
     onSave,
     onCancel
   }) => {
+    const { t } = useLocalization();
     const [selectedReasoning, setSelectedReasoning] = (0, import_react4.useState)(initialReasoning);
+    const subtitle = t(
+      UI_HELPER_TEXT_CATEGORY2,
+      "settings.codex_reasoning_dialog.subtitle",
+      "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session."
+    );
     const options = CODEX_REASONING_LEVELS.map((level) => ({
       value: level.name,
       label: level.name,
@@ -9812,7 +9831,7 @@
         onChange: setSelectedReasoning,
         options,
         selectedValue: selectedReasoning,
-        subtitle: "Choose how much reasoning effort Codex should apply for this model. Changes take effect when starting a new session.",
+        subtitle,
         title: `${model.displayName} reasoning`
       }
     );
@@ -9822,6 +9841,7 @@
 
   // src/client/ui/src/components/settings/codex-default-model/codex-default-model-card.tsx
   var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY3 = "user_guidance";
   var RadioCircle = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
     "div",
     {
@@ -9862,6 +9882,7 @@
     onReasoningChange,
     onReasoningSummaryEnabledChange
   }) => {
+    const { t } = useLocalization();
     const [activeModelId, setActiveModelId] = (0, import_react5.useState)(null);
     const [hoveredRowId, setHoveredRowId] = (0, import_react5.useState)(null);
     const [hoveredButtonId, setHoveredButtonId] = (0, import_react5.useState)(
@@ -9880,6 +9901,21 @@
     const activeModel = CODEX_SETTINGS_MODELS.find(
       (model) => model.id === activeModelId
     );
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY3,
+      "settings.codex_default_model.description",
+      "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level."
+    );
+    const reasoningInDialogDescription = t(
+      UI_HELPER_TEXT_CATEGORY3,
+      "settings.codex_default_model.reasoning_in_dialog.description",
+      "When enabled, Codex can send reasoning summaries. CodeAI Hub translates them and shows them in the dialog."
+    );
+    const note = t(
+      UI_HELPER_TEXT_CATEGORY3,
+      "settings.codex_default_model.note",
+      "Changes apply when creating a new Codex session."
+    );
     const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
     const handleRowClick = (modelId) => {
       onDefaultModelChange(modelId);
@@ -9896,7 +9932,7 @@
     };
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(import_jsx_runtime5.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(settings_card_default, { title: "Codex Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: "Select which Codex model to use when starting new sessions. Each model can store its own reasoning effort level." }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: descriptionStyles, children: description }),
         /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: displaySyncToggleStyles, children: [
           /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
             "input",
@@ -9909,7 +9945,7 @@
           ),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncTitleStyles, children: "Reasoning in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncDescriptionStyles, children: "When enabled, Codex can send reasoning summaries. CodeAI Hub translates them and shows them in the dialog." })
+            /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: displaySyncDescriptionStyles, children: reasoningInDialogDescription })
           ] })
         ] }),
         hasUnsupportedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: warningStyles, children: [
@@ -9984,7 +10020,7 @@
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: noteStyles, children: "Changes apply when creating a new Codex session." })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: noteStyles, children: note })
       ] }),
       activeModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
         codex_reasoning_dialog_default,
@@ -10008,13 +10044,20 @@
   // src/client/ui/src/components/settings/gemini-default-model/gemini-thinking-dialog.tsx
   var import_react6 = __toESM(require_react());
   var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY4 = "user_guidance";
   var GeminiThinkingDialog = ({
     model,
     initialLevel,
     onSave,
     onCancel
   }) => {
+    const { t } = useLocalization();
     const [selectedLevel, setSelectedLevel] = (0, import_react6.useState)(initialLevel);
+    const subtitle = t(
+      UI_HELPER_TEXT_CATEGORY4,
+      "settings.gemini_thinking_dialog.subtitle",
+      "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session."
+    );
     const options = GEMINI_THINKING_LEVELS.filter(
       (level) => model.supportedThinkingLevels.includes(level.name)
     ).map((level) => ({
@@ -10045,7 +10088,7 @@
         onChange: setSelectedLevel,
         options,
         selectedValue: selectedLevel,
-        subtitle: "Choose how much reasoning depth Gemini should apply for this model. Changes take effect when starting a new session.",
+        subtitle,
         title: `${model.displayName} thinking`
       }
     );
@@ -10055,6 +10098,7 @@
 
   // src/client/ui/src/components/settings/gemini-default-model/gemini-default-model-card.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY5 = "user_guidance";
   var RadioCircle2 = ({ checked }) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
     "div",
     {
@@ -10095,6 +10139,7 @@
     onThinkingChange,
     onThinkingDisplaySyncChange
   }) => {
+    const { t } = useLocalization();
     const [activeModelId, setActiveModelId] = (0, import_react7.useState)(
       null
     );
@@ -10107,6 +10152,21 @@
     );
     const activeModel = GEMINI_RECOMMENDED_MODELS.find(
       (model) => model.id === activeModelId
+    );
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY5,
+      "settings.gemini_default_model.description",
+      "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md"
+    );
+    const thinkingInDialogDescription = t(
+      UI_HELPER_TEXT_CATEGORY5,
+      "settings.gemini_default_model.thinking_in_dialog.description",
+      "Show translated Gemini reasoning as a normal assistant bubble in the dialog."
+    );
+    const note = t(
+      UI_HELPER_TEXT_CATEGORY5,
+      "settings.gemini_default_model.note",
+      "Applies only to newly created Gemini sessions."
     );
     const resolveThinkingLevel = (modelId) => thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
     const handleRowClick = (model) => {
@@ -10124,7 +10184,7 @@
     };
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(settings_card_default, { title: "Gemini Default model", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles, children: "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: descriptionStyles, children: description }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("label", { style: displaySyncToggleStyles2, children: [
           /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
             "input",
@@ -10137,7 +10197,7 @@
           ),
           /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncTitleStyles2, children: "Thinking in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncDescriptionStyles2, children: "Show translated Gemini reasoning as a normal assistant bubble in the dialog." })
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: displaySyncDescriptionStyles2, children: thinkingInDialogDescription })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: listStyles, children: GEMINI_RECOMMENDED_MODELS.map((model) => {
@@ -10208,7 +10268,7 @@
             )
           );
         }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: noteStyles, children: "Applies only to newly created Gemini sessions." })
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: noteStyles, children: note })
       ] }),
       activeModel ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
         gemini_thinking_dialog_default,
@@ -10303,54 +10363,80 @@
     gap: "16px",
     marginTop: "16px"
   };
+  var UI_HELPER_TEXT_CATEGORY6 = "user_guidance";
   var ResponseModeCard = ({
     responsePolicy,
     onModeChange,
     onStrictInstructionTextChange,
     onStrictSchemaTextChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Response Mode", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: copyStyles, children: "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior." }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
-      "button",
-      {
-        onClick: () => onModeChange(option.id),
-        style: {
-          ...optionButtonStyles,
-          ...responsePolicy.mode === option.id ? activeOptionStyles : null
+  }) => {
+    const { t } = useLocalization();
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY6,
+      "settings.response_mode.description",
+      "Control how Codex turns are shaped before they reach the provider. Use `Hybrid` as the safe default for workflow sessions and switch to `Debug/Raw` when investigating new model behavior."
+    );
+    const optionDescriptions = {
+      strict: t(
+        UI_HELPER_TEXT_CATEGORY6,
+        "settings.response_mode.option.strict.description",
+        "Force a JSON-shaped final answer using the editable strict schema."
+      ),
+      hybrid: t(
+        UI_HELPER_TEXT_CATEGORY6,
+        "settings.response_mode.option.hybrid.description",
+        "Allow free commentary during the turn and keep structure only for terminal output."
+      ),
+      debug_raw: t(
+        UI_HELPER_TEXT_CATEGORY6,
+        "settings.response_mode.option.debug_raw.description",
+        "Diagnostic mode for new models: avoid hard schema pressure on live turns."
+      )
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(settings_card_default, { title: "Response Mode", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { style: copyStyles, children: description }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: optionListStyles2, children: RESPONSE_MODE_OPTIONS.map((option) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+        "button",
+        {
+          onClick: () => onModeChange(option.id),
+          style: {
+            ...optionButtonStyles,
+            ...responsePolicy.mode === option.id ? activeOptionStyles : null
+          },
+          type: "button",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionTitleStyles2, children: option.label }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionDescriptionStyles2, children: optionDescriptions[option.id] })
+          ]
         },
-        type: "button",
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionTitleStyles2, children: option.label }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: optionDescriptionStyles2, children: option.description })
-        ]
-      },
-      option.id
-    )) }),
-    responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: strictBlockStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-          "textarea",
-          {
-            onChange: (event) => onStrictSchemaTextChange(event.target.value),
-            style: inputStyles,
-            value: responsePolicy.strictOutput.schemaText
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-          "textarea",
-          {
-            onChange: (event) => onStrictInstructionTextChange(event.target.value),
-            style: { ...inputStyles, minHeight: "108px" },
-            value: responsePolicy.strictOutput.instructionText
-          }
-        )
-      ] })
-    ] }) : null
-  ] });
+        option.id
+      )) }),
+      responsePolicy.mode === "strict" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: strictBlockStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Schema JSON" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            "textarea",
+            {
+              onChange: (event) => onStrictSchemaTextChange(event.target.value),
+              style: inputStyles,
+              value: responsePolicy.strictOutput.schemaText
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: inputGroupStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: labelStyles, children: "Strict Instruction Text" }),
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            "textarea",
+            {
+              onChange: (event) => onStrictInstructionTextChange(event.target.value),
+              style: { ...inputStyles, minHeight: "108px" },
+              value: responsePolicy.strictOutput.instructionText
+            }
+          )
+        ] })
+      ] }) : null
+    ] });
+  };
   var response_mode_card_default = (0, import_react8.memo)(ResponseModeCard);
 
   // src/client/ui/src/components/settings/general-response-mode/general-response-mode-facade.tsx
@@ -10368,7 +10454,7 @@
   var LATIN_LETTER_PATTERN = /[A-Za-z]/;
   var RESERVED_SEQUENCE_PATTERN = /(?:\[\[|\]\]|\{\{|\}\})/;
   var UI_LABELS_CATEGORY = "ui_interface";
-  var UI_HELPER_TEXT_CATEGORY = "user_guidance";
+  var UI_HELPER_TEXT_CATEGORY7 = "user_guidance";
   var panelStyles = {
     display: "grid",
     gap: "12px",
@@ -10567,7 +10653,7 @@
       "Do-not-translate terms"
     );
     const description = t(
-      UI_HELPER_TEXT_CATEGORY,
+      UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.description",
       "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands."
     );
@@ -10602,47 +10688,47 @@
       "Remove"
     );
     const inputPlaceholder = t(
-      UI_HELPER_TEXT_CATEGORY,
+      UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.placeholder",
       "Project Manager"
     );
     const statusText = glossaryEnabled ? t(
-      UI_HELPER_TEXT_CATEGORY,
+      UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.enabled_status",
       "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in."
     ) : t(
-      UI_HELPER_TEXT_CATEGORY,
+      UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.disabled_status",
       "Glossary protection is off. Terms stay in the local draft until you enable glossary protection."
     );
     const emptyStateIntro = t(
-      UI_HELPER_TEXT_CATEGORY,
+      UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.empty_state_intro",
       "No protected terms yet. Typical examples:"
     );
     const validationMessages = {
       duplicate: t(
-        UI_HELPER_TEXT_CATEGORY,
+        UI_HELPER_TEXT_CATEGORY7,
         "settings.localization.do_not_translate_terms.validation.duplicate",
         "That term is already in the local glossary draft."
       ),
       empty: t(
-        UI_HELPER_TEXT_CATEGORY,
+        UI_HELPER_TEXT_CATEGORY7,
         "settings.localization.do_not_translate_terms.validation.empty",
         "Enter an English term to preserve."
       ),
       latinLetter: t(
-        UI_HELPER_TEXT_CATEGORY,
+        UI_HELPER_TEXT_CATEGORY7,
         "settings.localization.do_not_translate_terms.validation.latin_letter",
         "Use a term that contains at least one Latin letter."
       ),
       reservedSequence: t(
-        UI_HELPER_TEXT_CATEGORY,
+        UI_HELPER_TEXT_CATEGORY7,
         "settings.localization.do_not_translate_terms.validation.reserved_sequence",
         "Reserved marker-like sequences are not allowed in glossary terms."
       ),
       tooLong: t(
-        UI_HELPER_TEXT_CATEGORY,
+        UI_HELPER_TEXT_CATEGORY7,
         "settings.localization.do_not_translate_terms.validation.too_long",
         `Keep glossary terms under ${MAX_GLOSSARY_TERM_LENGTH} characters.`,
         { maxLength: MAX_GLOSSARY_TERM_LENGTH }
@@ -11236,7 +11322,7 @@
     lineHeight: 1
   };
   var UI_LABELS_CATEGORY2 = "ui_interface";
-  var UI_HELPER_TEXT_CATEGORY2 = "user_guidance";
+  var UI_HELPER_TEXT_CATEGORY8 = "user_guidance";
   var USER_MESSAGES_CATEGORY = "system_feedback";
   var GeneralSettings = (props) => {
     const { t } = useLocalization();
@@ -11248,7 +11334,7 @@
       "Core Controls"
     );
     const coreControlsDescription = t(
-      UI_HELPER_TEXT_CATEGORY2,
+      UI_HELPER_TEXT_CATEGORY8,
       "settings.core_controls.description",
       "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues."
     );
@@ -11510,6 +11596,7 @@
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY9 = "user_guidance";
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -11608,8 +11695,15 @@
     disabled,
     onToggle
   }) => {
+    const { t } = useLocalization();
     const providerLabel = resolveProviderLabel(provider);
     const packageLabel = provider === "gemini" ? "CLI and CLI Core" : "CLI and SDK";
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY9,
+      "settings.provider_versions.auto_update.description",
+      "Automatically check and update the {packageLabel} on core start. Manual updates remain available below.",
+      { packageLabel }
+    );
     return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
       "label",
       {
@@ -11634,11 +11728,7 @@
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { style: toggleDescriptionStyles, children: [
-              "Automatically check and update the ",
-              packageLabel,
-              " on core start. Manual updates remain available below."
-            ] })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: toggleDescriptionStyles, children: description })
           ] })
         ]
       }
@@ -11837,6 +11927,7 @@
   var UNSIGNED_INTEGER_RE = /^\d+$/;
   var isUnsignedIntegerText = (value) => UNSIGNED_INTEGER_RE.test(value);
   var clampInteger = (value, min, max) => Math.min(max, Math.max(min, value));
+  var UI_HELPER_TEXT_CATEGORY10 = "user_guidance";
   var ManualIntegerInput = ({
     id,
     value,
@@ -11899,49 +11990,57 @@
     onRemainingPercentThresholdChange,
     contextWindowTokenLimit,
     onContextWindowTokenLimitChange
-  }) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(settings_card_default, { title, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: settingsDescriptionStyles, children: "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%." }),
-    typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
-      "label",
-      {
-        htmlFor: `${title}-context-window-token-limit`,
-        style: settingsLabelStyles,
-        children: [
-          "Context window limit (tokens)",
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-            ManualIntegerInput,
-            {
-              id: `${title}-context-window-token-limit`,
-              max: 1e6,
-              min: 1e4,
-              onCommit: onContextWindowTokenLimitChange,
-              value: contextWindowTokenLimit
-            }
-          )
-        ]
-      }
-    ) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
-      "label",
-      {
-        htmlFor: `${title}-remaining-percent-threshold`,
-        style: settingsLabelStyles,
-        children: [
-          "Remaining context threshold (%)",
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
-            ManualIntegerInput,
-            {
-              id: `${title}-remaining-percent-threshold`,
-              max: 80,
-              min: 5,
-              onCommit: onRemainingPercentThresholdChange,
-              value: remainingPercentThreshold
-            }
-          )
-        ]
-      }
-    )
-  ] });
+  }) => {
+    const { t } = useLocalization();
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY10,
+      "settings.session_continuity.description",
+      "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%."
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(settings_card_default, { title, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: settingsDescriptionStyles, children: description }),
+      typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+        "label",
+        {
+          htmlFor: `${title}-context-window-token-limit`,
+          style: settingsLabelStyles,
+          children: [
+            "Context window limit (tokens)",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+              ManualIntegerInput,
+              {
+                id: `${title}-context-window-token-limit`,
+                max: 1e6,
+                min: 1e4,
+                onCommit: onContextWindowTokenLimitChange,
+                value: contextWindowTokenLimit
+              }
+            )
+          ]
+        }
+      ) : null,
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+        "label",
+        {
+          htmlFor: `${title}-remaining-percent-threshold`,
+          style: settingsLabelStyles,
+          children: [
+            "Remaining context threshold (%)",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+              ManualIntegerInput,
+              {
+                id: `${title}-remaining-percent-threshold`,
+                max: 80,
+                min: 5,
+                onCommit: onRemainingPercentThresholdChange,
+                value: remainingPercentThreshold
+              }
+            )
+          ]
+        }
+      )
+    ] });
+  };
   var session_continuity_card_default = import_react16.default.memo(SessionContinuityCard);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
@@ -12224,6 +12323,7 @@
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY11 = "user_guidance";
   var containerStyles2 = {
     marginTop: "20px",
     padding: "12px",
@@ -12242,14 +12342,23 @@
     color: "#999999",
     lineHeight: "1.4"
   };
-  var ThinkingProTip = () => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: containerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
-    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: descriptionStyles3, children: 'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.' })
-  ] });
+  var ThinkingProTip = () => {
+    const { t } = useLocalization();
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY11,
+      "settings.claude_thinking_settings.pro_tip.description",
+      'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.'
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: containerStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: descriptionStyles3, children: description })
+    ] });
+  };
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
   var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY12 = "user_guidance";
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -12276,30 +12385,45 @@
   var noteStyles2 = {
     color: "#d4a36a"
   };
-  var ThinkingToggle = ({ enabled, onToggle }) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { style: toggleContainerStyles2, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
-      "input",
-      {
-        checked: enabled,
-        onChange: (event) => onToggle(event.target.checked),
-        style: checkboxStyles2,
-        type: "checkbox"
-      }
-    ),
-    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: { flex: 1 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: descriptionStyles4, children: [
-        "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses.",
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("strong", { style: noteStyles2, children: "Note:" }),
-        " Changes take effect when creating a new session."
+  var ThinkingToggle = ({ enabled, onToggle }) => {
+    const { t } = useLocalization();
+    const description = t(
+      UI_HELPER_TEXT_CATEGORY12,
+      "settings.claude_thinking_settings.enable_thinking.description",
+      "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses."
+    );
+    const note = t(
+      UI_HELPER_TEXT_CATEGORY12,
+      "settings.claude_thinking_settings.enable_thinking.note",
+      "Changes take effect when creating a new session."
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { style: toggleContainerStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+        "input",
+        {
+          checked: enabled,
+          onChange: (event) => onToggle(event.target.checked),
+          style: checkboxStyles2,
+          type: "checkbox"
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: { flex: 1 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: descriptionStyles4, children: [
+          description,
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+          " ",
+          note
+        ] })
       ] })
-    ] })
-  ] });
+    ] });
+  };
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
   var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY13 = "user_guidance";
   var containerStyles3 = {
     paddingLeft: "28px",
     borderTop: "1px solid #3c3c3c",
@@ -12350,6 +12474,7 @@
     value,
     onChange
   }) => {
+    const { t } = useLocalization();
     const updateValue = (next) => {
       const constrained = Math.min(
         MAX_THINKING_TOKENS,
@@ -12361,6 +12486,21 @@
       const parsed = Number.parseInt(event.target.value, 10);
       updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
     };
+    const normalLevelDescription = t(
+      UI_HELPER_TEXT_CATEGORY13,
+      "settings.claude_thinking_settings.max_tokens.normal_description",
+      "Normal (4000): Standard reasoning depth"
+    );
+    const hardLevelDescription = t(
+      UI_HELPER_TEXT_CATEGORY13,
+      "settings.claude_thinking_settings.max_tokens.hard_description",
+      "Hard (10000): Extended analysis for complex tasks"
+    );
+    const ultraLevelDescription = t(
+      UI_HELPER_TEXT_CATEGORY13,
+      "settings.claude_thinking_settings.max_tokens.ultra_description",
+      "Ultra (32000): Maximum reasoning capacity"
+    );
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { style: { display: "block" }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: controlsStyles, children: [
@@ -12398,11 +12538,14 @@
         )
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: helperStyles2, children: [
-        "\u2022 Normal (4000): Standard reasoning depth",
+        "\u2022 ",
+        normalLevelDescription,
         /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
-        "\u2022 Hard (10000): Extended analysis for complex tasks",
+        "\u2022 ",
+        hardLevelDescription,
         /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
-        "\u2022 Ultra (32000): Maximum reasoning capacity"
+        "\u2022 ",
+        ultraLevelDescription
       ] })
     ] }) });
   };
@@ -12410,6 +12553,7 @@
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
   var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY14 = "user_guidance";
   var wrapperStyles2 = {
     marginBottom: "30px"
   };
@@ -12443,12 +12587,18 @@
     onThinkingDisplaySyncChange,
     onChange
   }) => {
+    const { t } = useLocalization();
     const handleToggle = (nextEnabled) => {
       onChange(nextEnabled, maxTokens);
     };
     const handleTokenChange = (nextValue) => {
       onChange(enabled, nextValue);
     };
+    const thinkingInDialogDescription = t(
+      UI_HELPER_TEXT_CATEGORY14,
+      "settings.claude_thinking_settings.thinking_in_dialog.description",
+      "Show Claude reasoning as a normal assistant bubble with a Thinking label."
+    );
     return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: wrapperStyles2, children: [
       /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("style", { children: hideSpinnerStyle }),
       /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
@@ -12465,7 +12615,7 @@
           ),
           /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { flex: 1 }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncDescriptionStyles3, children: "Show Claude reasoning as a normal assistant bubble with a Thinking label." })
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncDescriptionStyles3, children: thinkingInDialogDescription })
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
