@@ -79,11 +79,11 @@
 
 ### Stream: Session Start / Prompt Pack
 45. [DONE] Thread `Artifacts for the User` language from Settings into Project Manager session start / submit flows and prompt-pack assembly. Scope: `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`. Target commit: `feat(workflow): pass artifact language through prompt pack`
-46. [TODO] Git Commit: `feat(workflow): pass artifact language through prompt pack` (hash: TBD)
+46. [DONE] Git Commit: `feat(workflow): pass artifact language through prompt pack` (hash: `cf60397c`)
 
 ## Phase 5 — Verification And Russian Localization Acceptance (owner: QA/Release, updated: 2026-04-03)
 ### Stream: Focused Tests
-47. [TODO] Add or refresh focused tests for artifact-language threading in prompt pack and workflow start services. Scope: `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow): verify artifact language threading`
+47. [DONE] Add or refresh focused tests for artifact-language threading in prompt pack and workflow start services. Scope: `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(workflow): verify artifact language threading`
 48. [TODO] Git Commit: `test(workflow): verify artifact language threading` (hash: TBD)
 49. [TODO] Add or refresh focused tests for internal-instruction classification at the Core contract layer. Scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `test(core): verify internal instruction classification`
 50. [TODO] Git Commit: `test(core): verify internal instruction classification` (hash: TBD)

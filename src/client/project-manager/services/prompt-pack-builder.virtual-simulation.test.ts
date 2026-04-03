@@ -4,6 +4,7 @@ import { buildWorkflowPromptPack } from "./prompt-pack-builder";
 
 test("virtual simulation prompt pack omits template hint", () => {
   const pack = buildWorkflowPromptPack({
+    artifactLanguage: "ru",
     stage: "virtual_simulation",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
@@ -16,11 +17,23 @@ test("virtual simulation prompt pack omits template hint", () => {
     pack.content.includes("Собери артефакт на основе `Final_Description.md`."),
     true
   );
+  assert.equal(
+    pack.content.includes("Artifacts for the User language (runtime directive):"),
+    true
+  );
+  assert.equal(pack.content.includes("Target language code: `ru`."), true);
+  assert.equal(
+    pack.content.includes(
+      "Write the final user-facing artifact and brief user-facing chat updates in `ru`."
+    ),
+    true
+  );
   assert.equal(pack.content.includes("Шаблон (absolute)"), false);
 });
 
 test("description prompt pack keeps template hint", () => {
   const pack = buildWorkflowPromptPack({
+    artifactLanguage: "uk",
     stage: "description",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
@@ -29,11 +42,16 @@ test("description prompt pack keeps template hint", () => {
     templatePath: "/tmp/description-template.md",
   });
 
-  assert.equal(pack.content.includes("Шаблон (absolute): `/tmp/description-template.md`"), true);
+  assert.equal(
+    pack.content.includes("Шаблон (absolute): `/tmp/description-template.md`"),
+    true
+  );
+  assert.equal(pack.content.includes("Target language code: `uk`."), true);
 });
 
 test("diagram modules prompt pack targets product part index and omits generic template hint", () => {
   const pack = buildWorkflowPromptPack({
+    artifactLanguage: "de",
     stage: "diagram_modules",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
@@ -77,6 +95,13 @@ test("diagram modules prompt pack targets product part index and omits generic t
     ),
     true
   );
+  assert.equal(pack.content.includes("Target language code: `de`."), true);
+  assert.equal(
+    pack.content.includes(
+      "Keep contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical form."
+    ),
+    true
+  );
   assert.equal(pack.content.includes("Фазы работы:"), true);
   assert.equal(
     pack.content.includes(
@@ -92,6 +117,8 @@ test("diagram modules prompt pack targets product part index and omits generic t
     true
   );
   assert.equal(pack.content.includes("module-map.md"), false);
-  assert.equal(pack.content.includes("Имя выходного файла: `product-parts.index.md`"), true);
+  assert.equal(
+    pack.content.includes("Имя выходного файла: `product-parts.index.md`"),
+    true
+  );
 });
-

@@ -50,6 +50,7 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
 
   let captured:
     | {
+        readonly artifactLanguage?: string;
         readonly questionnairePath: string;
         readonly stage?: string;
       }
@@ -64,9 +65,22 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
           diagram_modules: "idle",
         },
       }),
+    getSettingsPayload: () =>
+      ({
+        settings: {
+          general: {
+            localization: {
+              categories: {
+                artifactsForTheUser: "ru",
+              },
+            },
+          },
+        },
+      }) as const,
     submitService: {
       submitQuestionnaire: async (params) => {
         captured = {
+          artifactLanguage: params.artifactLanguage,
           questionnairePath: params.questionnairePath,
           stage: params.stage,
         };
@@ -84,6 +98,7 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
 
   assert.equal(sessionId, "dm-session");
   assert.deepEqual(captured, {
+    artifactLanguage: "ru",
     questionnairePath:
       ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md",
     stage: "diagram_modules",
