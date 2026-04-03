@@ -9513,6 +9513,11 @@
       "settings.claude_default_model.note",
       "Applies only to newly created Claude sessions."
     );
+    const resolveModelDescription = (model) => t(
+      UI_HELPER_TEXT_CATEGORY,
+      `settings.claude_default_model.option.${model.alias}.description`,
+      model.description
+    );
     const handleRowClick = (model) => {
       onDefaultModelChange(model);
     };
@@ -9559,7 +9564,7 @@
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { style: modelInfoStyles, children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: aliasStyles, children: model.alias }),
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { style: modelDescriptionStyles, children: resolveModelDescription(model) })
                 ] })
               ]
             },
@@ -9916,6 +9921,11 @@
       "settings.codex_default_model.note",
       "Changes apply when creating a new Codex session."
     );
+    const resolveModelDescription = (model) => t(
+      UI_HELPER_TEXT_CATEGORY3,
+      `settings.codex_default_model.option.${model.id}.description`,
+      model.description
+    );
     const resolveReasoning = (modelId) => reasoningByModel[modelId] ?? DEFAULT_CODEX_REASONING_LEVEL;
     const handleRowClick = (modelId) => {
       onDefaultModelChange(modelId);
@@ -9989,7 +9999,7 @@
                     /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelInfoStyles, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: modelDescriptionStyles, children: resolveModelDescription(model) })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: modelControlRowStyles, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: modelControlLabelStyles, children: "Configure reasoning:" }),
@@ -10168,6 +10178,11 @@
       "settings.gemini_default_model.note",
       "Applies only to newly created Gemini sessions."
     );
+    const resolveModelDescription = (model) => t(
+      UI_HELPER_TEXT_CATEGORY5,
+      `settings.gemini_default_model.option.${model.id}.description`,
+      model.description
+    );
     const resolveThinkingLevel = (modelId) => thinkingLevelByModel[modelId] ?? DEFAULT_GEMINI_THINKING_LEVEL;
     const handleRowClick = (model) => {
       onDefaultModelChange(model);
@@ -10237,7 +10252,7 @@
                     /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelInfoStyles, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelTitleStyles, children: model.displayName }),
                       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: modelIdStyles, children: model.id }),
-                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: modelDescriptionStyles, children: model.description })
+                      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { style: modelDescriptionStyles, children: resolveModelDescription(model) })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: modelControlRowStyles, children: [
                       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: modelControlLabelStyles, children: "Configure thinking:" }),
@@ -11597,6 +11612,7 @@
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var UI_HELPER_TEXT_CATEGORY9 = "user_guidance";
+  var USER_MESSAGES_CATEGORY2 = "system_feedback";
   var warningStyles2 = {
     background: "#3a2a1f",
     border: "1px solid #9b6b3d",
@@ -11688,7 +11704,15 @@
   };
   var WarningBanner = ({
     provider
-  }) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions." });
+  }) => {
+    const { t } = useLocalization();
+    const warningText = t(
+      USER_MESSAGES_CATEGORY2,
+      "settings.provider_versions.update.warning",
+      "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions."
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: warningText });
+  };
   var AutoUpdateToggle = ({
     provider,
     enabled,
@@ -13227,11 +13251,22 @@
   };
   var noopVoidHandler = () => {
   };
+  var UI_HELPER_TEXT_CATEGORY15 = "user_guidance";
   var SettingsOnlyHost = () => {
     const settingsState = useSettingsState();
     const localization = useResolvedLocalization(
       settingsState.settings,
       settingsState.localizationRuntime
+    );
+    const settingsOnlyBody = localization.t(
+      UI_HELPER_TEXT_CATEGORY15,
+      "settings.only.body",
+      "Sessions and chats are available in Project Manager."
+    );
+    const settingsOnlyHint = localization.t(
+      UI_HELPER_TEXT_CATEGORY15,
+      "settings.only.hint",
+      "Use this panel to configure providers and defaults."
     );
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
     const handleShowSettings = (0, import_react21.useCallback)(() => {
@@ -13251,8 +13286,8 @@
     return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "app-shell", children: [
       /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("section", { style: settingsOnlyCardStyles, children: [
         /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyBodyStyles, children: "Sessions and chats are available in Project Manager." }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyHintStyles, children: "Use this panel to configure providers and defaults." }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyBodyStyles, children: settingsOnlyBody }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyHintStyles, children: settingsOnlyHint }),
         /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
           "button",
           {
