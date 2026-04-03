@@ -20,10 +20,10 @@
 3. [DONE] Define the four user-facing category ids plus the English-only `Internal Agent Instructions` marker in the package contract and module SSOT. Scope: `packages/localization/src/localization-contract.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): define four-category text taxonomy`
 4. [DONE] Git Commit: `feat(localization): define four-category text taxonomy` (hash: `b97ccc9c`)
 5. [DONE] Rewire source registry and facade normalization around the four user-facing categories while keeping a temporary bridge for legacy saved snapshots. Scope: `packages/localization/src/source-dictionary-registry.ts`, `packages/localization/src/localization-facade.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): bridge four-category runtime mapping`
-6. [TODO] Git Commit: `feat(localization): bridge four-category runtime mapping` (hash: TBD)
+6. [DONE] Git Commit: `feat(localization): bridge four-category runtime mapping` (hash: `0e3ba5e5`)
 
 ### Stream: Persisted Settings And Core Hydration
-7. [TODO] Simplify persisted general localization settings so user-visible controls are independent category selectors with English default instead of `Default language` / `Workflow Terms Policy`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/settings-storage.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): simplify persisted localization controls`
+7. [DONE] Simplify persisted general localization settings so user-visible controls are independent category selectors with English default instead of `Default language` / `Workflow Terms Policy`. Scope: `src/extension-module/settings/general-settings.ts`, `src/extension-module/settings/settings-storage.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): simplify persisted localization controls`
 8. [TODO] Git Commit: `feat(settings): simplify persisted localization controls` (hash: TBD)
 9. [TODO] Update Core and extension settings hydration to emit and consume the four-category snapshot while keeping legacy saved data readable. Scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(core): hydrate four-category localization settings`
 10. [TODO] Git Commit: `feat(core): hydrate four-category localization settings` (hash: TBD)

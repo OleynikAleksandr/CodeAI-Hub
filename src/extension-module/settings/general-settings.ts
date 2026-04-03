@@ -7,10 +7,21 @@ import { isRecord, resolveBoolean } from "./settings-utils";
 
 export type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
 
+interface ApprovedLocalizationCategorySettings {
+  readonly artifactsForTheUser: string;
+  readonly messagesForTheUser: string;
+  readonly uiHelperText: string;
+  readonly uiLabels: string;
+}
+
 export interface GeneralLocalizationCategorySettings {
+  readonly artifactsForTheUser: string;
   readonly interactiveTemplates: string;
+  readonly messagesForTheUser: string;
   readonly systemFeedback: string;
+  readonly uiHelperText: string;
   readonly uiInterface: string;
+  readonly uiLabels: string;
   readonly userGuidance: string;
   readonly workflowTerms: string;
 }
@@ -23,19 +34,76 @@ export interface GeneralLocalizationSettings {
   readonly workflowTermsPolicy: LocalizationWorkflowTermsPolicy;
 }
 
-const DEFAULT_LOCALIZATION_LANGUAGE = "source";
+const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+const LEGACY_SOURCE_LANGUAGE = "source";
+
+const normalizeLocalizationSelection = (
+  value: unknown,
+  fallback: string
+): string => {
+  const normalized = resolveStringSetting(value, fallback);
+  return normalized.toLowerCase() === LEGACY_SOURCE_LANGUAGE
+    ? DEFAULT_LOCALIZATION_LANGUAGE
+    : normalized;
+};
+
+const createLegacyCategoryMirror = (
+  approved: ApprovedLocalizationCategorySettings
+): Pick<
+  GeneralLocalizationCategorySettings,
+  | "interactiveTemplates"
+  | "systemFeedback"
+  | "uiInterface"
+  | "userGuidance"
+  | "workflowTerms"
+> => ({
+  interactiveTemplates: approved.artifactsForTheUser,
+  systemFeedback: approved.messagesForTheUser,
+  uiInterface: approved.uiLabels,
+  userGuidance: approved.uiHelperText,
+  workflowTerms: approved.uiLabels,
+});
+
+const createLocalizationCategorySettings = (
+  approved: ApprovedLocalizationCategorySettings
+): GeneralLocalizationCategorySettings => ({
+  ...approved,
+  ...createLegacyCategoryMirror(approved),
+});
+
+const resolveLocalizationCategory = (
+  categories: Record<string, unknown>,
+  candidateKeys: readonly string[],
+  fallback: string
+): string => {
+  for (const key of candidateKeys) {
+    const value = categories[key];
+    if (typeof value !== "string" || value.trim().length === 0) {
+      continue;
+    }
+    return normalizeLocalizationSelection(value, fallback);
+  }
+
+  return fallback;
+};
+
+const deriveWorkflowTermsPolicy = (
+  uiLabelsLanguage: string
+): LocalizationWorkflowTermsPolicy =>
+  uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE
+    ? "keep_english"
+    : "translate";
 
 const DEFAULT_GENERAL_LOCALIZATION_SETTINGS: GeneralLocalizationSettings = {
   defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
-  categories: {
-    userGuidance: DEFAULT_LOCALIZATION_LANGUAGE,
-    uiInterface: DEFAULT_LOCALIZATION_LANGUAGE,
-    workflowTerms: DEFAULT_LOCALIZATION_LANGUAGE,
-    systemFeedback: DEFAULT_LOCALIZATION_LANGUAGE,
-    interactiveTemplates: DEFAULT_LOCALIZATION_LANGUAGE,
-  },
-  workflowTermsPolicy: "keep_english",
+  categories: createLocalizationCategorySettings({
+    uiLabels: DEFAULT_LOCALIZATION_LANGUAGE,
+    uiHelperText: DEFAULT_LOCALIZATION_LANGUAGE,
+    messagesForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+    artifactsForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+  }),
+  workflowTermsPolicy: deriveWorkflowTermsPolicy(DEFAULT_LOCALIZATION_LANGUAGE),
   engineId: DEFAULT_LOCALIZATION_ENGINE_ID,
   glossaryEnabled: true,
 };
@@ -61,38 +129,34 @@ const resolveStringSetting = (value: unknown, fallback: string): string =>
     ? value.trim()
     : fallback;
 
-const normalizeWorkflowTermsPolicy = (
-  value: unknown
-): LocalizationWorkflowTermsPolicy =>
-  value === "translate"
-    ? "translate"
-    : DEFAULT_GENERAL_LOCALIZATION_SETTINGS.workflowTermsPolicy;
-
 const normalizeLocalizationCategorySettings = (
   value: unknown,
   defaultLanguage: string
 ): GeneralLocalizationCategorySettings => {
   const categories = isRecord(value) ? value : {};
 
-  return {
-    userGuidance: resolveStringSetting(
-      categories.userGuidance,
+  return createLocalizationCategorySettings({
+    uiLabels: resolveLocalizationCategory(
+      categories,
+      ["uiLabels", "uiInterface", "workflowTerms"],
       defaultLanguage
     ),
-    uiInterface: resolveStringSetting(categories.uiInterface, defaultLanguage),
-    workflowTerms: resolveStringSetting(
-      categories.workflowTerms,
+    uiHelperText: resolveLocalizationCategory(
+      categories,
+      ["uiHelperText", "userGuidance"],
       defaultLanguage
     ),
-    systemFeedback: resolveStringSetting(
-      categories.systemFeedback,
+    messagesForTheUser: resolveLocalizationCategory(
+      categories,
+      ["messagesForTheUser", "systemFeedback"],
       defaultLanguage
     ),
-    interactiveTemplates: resolveStringSetting(
-      categories.interactiveTemplates,
+    artifactsForTheUser: resolveLocalizationCategory(
+      categories,
+      ["artifactsForTheUser", "interactiveTemplates"],
       defaultLanguage
     ),
-  };
+  });
 };
 
 const normalizeGeneralLocalizationSettings = (
@@ -102,20 +166,19 @@ const normalizeGeneralLocalizationSettings = (
     return DEFAULT_GENERAL_LOCALIZATION_SETTINGS;
   }
 
-  const defaultLanguage = resolveStringSetting(
+  const legacyDefaultLanguage = normalizeLocalizationSelection(
     value.defaultLanguage,
     DEFAULT_GENERAL_LOCALIZATION_SETTINGS.defaultLanguage
   );
+  const categories = normalizeLocalizationCategorySettings(
+    value.categories,
+    legacyDefaultLanguage
+  );
 
   return {
-    defaultLanguage,
-    categories: normalizeLocalizationCategorySettings(
-      value.categories,
-      defaultLanguage
-    ),
-    workflowTermsPolicy: normalizeWorkflowTermsPolicy(
-      value.workflowTermsPolicy
-    ),
+    defaultLanguage: DEFAULT_GENERAL_LOCALIZATION_SETTINGS.defaultLanguage,
+    categories,
+    workflowTermsPolicy: deriveWorkflowTermsPolicy(categories.uiLabels),
     engineId: resolveStringSetting(
       value.engineId,
       DEFAULT_GENERAL_LOCALIZATION_SETTINGS.engineId

@@ -62,24 +62,13 @@ const needsLocalizationBackfill = (value: unknown): boolean => {
   }
 
   const general = isRecord(value.general) ? value.general : {};
-  const localization = isRecord(general.localization)
+  const rawLocalization = isRecord(general.localization)
     ? general.localization
-    : {};
-  const categories = isRecord(localization.categories)
-    ? localization.categories
-    : {};
+    : null;
+  const normalizedLocalization = normalizeGeneralSettings(general).localization;
 
   return (
-    !isRecord(general.localization) ||
-    typeof localization.defaultLanguage !== "string" ||
-    typeof localization.engineId !== "string" ||
-    typeof localization.workflowTermsPolicy !== "string" ||
-    typeof localization.glossaryEnabled !== "boolean" ||
-    typeof categories.userGuidance !== "string" ||
-    typeof categories.uiInterface !== "string" ||
-    typeof categories.workflowTerms !== "string" ||
-    typeof categories.systemFeedback !== "string" ||
-    typeof categories.interactiveTemplates !== "string"
+    JSON.stringify(rawLocalization) !== JSON.stringify(normalizedLocalization)
   );
 };
 
