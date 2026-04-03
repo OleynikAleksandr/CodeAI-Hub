@@ -43,7 +43,7 @@ const buildQueryOptions = (
     session,
   });
 
-test("ClaudeSDKManager keeps Claude memory discovery inside the workspace scope", () => {
+test("ClaudeSDKManager keeps provider sessions in SDK isolation mode", () => {
   const manager = createManager();
 
   const options = buildQueryOptions(manager, {
@@ -52,7 +52,7 @@ test("ClaudeSDKManager keeps Claude memory discovery inside the workspace scope"
   } as ActiveSession);
 
   assert.deepEqual(options.additionalDirectories, ["/tmp/codeai-workspace"]);
-  assert.deepEqual(options.settingSources, ["project", "local"]);
+  assert.deepEqual(options.settingSources, []);
   assert.deepEqual(options.env, {
     HOME: "/sandbox/provider-home",
   });

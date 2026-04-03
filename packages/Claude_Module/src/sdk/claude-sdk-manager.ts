@@ -250,7 +250,9 @@ export class ClaudeSDKManager {
       additionalDirectories: [session.workspacePath],
       includePartialMessages: true,
       projectPath: this.resolveProjectPath(),
-      settingSources: ["project", "local"],
+      // Keep CodeAI Hub-managed Claude turns in SDK isolation mode so
+      // CLAUDE.md/settings discovery cannot walk parent directories from cwd.
+      settingSources: [],
       env: this.resolveAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
     };
