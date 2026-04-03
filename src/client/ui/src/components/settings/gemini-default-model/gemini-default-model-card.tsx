@@ -6,6 +6,7 @@ import {
   type GeminiModelId,
   type GeminiThinkingLevel,
 } from "../../../../../../types/gemini-model-registry";
+import { useLocalization } from "../../../app-host/use-localization";
 import type { GeminiThinkingByModel } from "../gemini-mapping";
 import SettingsCard from "../settings-card";
 import {
@@ -45,6 +46,8 @@ interface GeminiDefaultModelCardProps {
   readonly thinkingDisplaySyncEnabled: boolean;
   readonly thinkingLevelByModel: GeminiThinkingByModel;
 }
+
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
   <div
@@ -91,6 +94,7 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
   onThinkingChange,
   onThinkingDisplaySyncChange,
 }) => {
+  const { t } = useLocalization();
   const [activeModelId, setActiveModelId] = useState<GeminiModelId | null>(
     null
   );
@@ -104,6 +108,21 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
 
   const activeModel = GEMINI_RECOMMENDED_MODELS.find(
     (model) => model.id === activeModelId
+  );
+  const description = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.gemini_default_model.description",
+    "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md"
+  );
+  const thinkingInDialogDescription = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.gemini_default_model.thinking_in_dialog.description",
+    "Show translated Gemini reasoning as a normal assistant bubble in the dialog."
+  );
+  const note = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.gemini_default_model.note",
+    "Applies only to newly created Gemini sessions."
   );
 
   const resolveThinkingLevel = (modelId: GeminiModelId): GeminiThinkingLevel =>
@@ -134,11 +153,7 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
   return (
     <>
       <SettingsCard title="Gemini Default model">
-        <p style={descriptionStyles}>
-          Select the Gemini model to use for new sessions. Each model can store
-          its own thinking level. More details in the knowledge base:
-          doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md
-        </p>
+        <p style={descriptionStyles}>{description}</p>
         <label style={displaySyncToggleStyles}>
           <input
             checked={thinkingDisplaySyncEnabled}
@@ -151,8 +166,7 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
           <div>
             <div style={displaySyncTitleStyles}>Thinking in dialog</div>
             <div style={displaySyncDescriptionStyles}>
-              Show translated Gemini reasoning as a normal assistant bubble in
-              the dialog.
+              {thinkingInDialogDescription}
             </div>
           </div>
         </label>
@@ -225,7 +239,7 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
             );
           })}
         </div>
-        <p style={noteStyles}>Applies only to newly created Gemini sessions.</p>
+        <p style={noteStyles}>{note}</p>
       </SettingsCard>
       {activeModel ? (
         <GeminiThinkingDialog
