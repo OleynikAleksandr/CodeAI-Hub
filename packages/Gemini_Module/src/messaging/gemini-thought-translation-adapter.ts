@@ -3,7 +3,7 @@ import { TranslationFacade } from "@codeai-hub/translation";
 import type { ModuleReporter } from "../types";
 
 const SOURCE_LANGUAGE = "en";
-const TARGET_LANGUAGE = "ru";
+const TARGET_LANGUAGE = SOURCE_LANGUAGE;
 const TRANSLATION_TIMEOUT_MS = 3000;
 const TRANSLATION_CATEGORY = "reasoning";
 const TRANSLATION_ENGINE_ID = "google-gtx";

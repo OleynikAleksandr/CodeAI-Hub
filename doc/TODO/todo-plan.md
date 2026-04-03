@@ -138,5 +138,5 @@
 95. [TODO] Git Commit: `fix(diagram-agent): enforce english staged guidance` (hash: TBD)
 
 ### Stream: Thinking Language Contract
-96. [TODO] Remove the hardcoded Russian thinking/reasoning translation target so Codex and Gemini fall back to original provider-language thoughts instead of forcing Russian regardless of settings. Scope: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(provider-thinking): stop forcing russian thought translation`
+96. [DONE] Remove the hardcoded Russian thinking/reasoning translation target so Codex and Gemini fall back to original provider-language thoughts instead of forcing Russian regardless of settings. Scope: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(provider-thinking): stop forcing russian thought translation`
 97. [TODO] Git Commit: `fix(provider-thinking): stop forcing russian thought translation` (hash: TBD)
