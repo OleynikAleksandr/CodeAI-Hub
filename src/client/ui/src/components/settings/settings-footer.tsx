@@ -67,6 +67,7 @@ const DISABLED_OPACITY = 0.6;
 const HOVER_SURFACE_COLOR = settingsColorTokens.borderSubtle;
 const HOVER_BORDER_COLOR = "#4c4c4c";
 const SAVE_HOVER_COLOR = "#1177bb";
+const UI_LABELS_CATEGORY = "ui_interface";
 
 type ButtonMouseEvent = ReactMouseEvent<HTMLButtonElement, MouseEvent>;
 type ButtonFocusEvent = ReactFocusEvent<HTMLButtonElement>;
@@ -81,32 +82,32 @@ const SettingsFooter: FC<SettingsFooterProps> = ({
 }) => {
   const { t } = useLocalization();
   const resetButtonTitle = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.footer.reset_button_title",
     "Reset all settings to defaults"
   );
   const resetIdleLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.footer.reset_idle_label",
     "Reset to Defaults"
   );
   const resetPendingLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.footer.reset_pending_label",
     "Resetting..."
   );
   const closeButtonLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.footer.close_button_label",
     "Close"
   );
   const saveIdleLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.footer.save_idle_label",
     "Save Changes"
   );
   const savePendingLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.footer.save_pending_label",
     "Saving..."
   );

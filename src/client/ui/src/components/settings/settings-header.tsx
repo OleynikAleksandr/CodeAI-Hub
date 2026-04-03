@@ -34,11 +34,13 @@ const closeButtonStyles: CSSProperties = {
   justifyContent: "center",
 };
 
+const UI_LABELS_CATEGORY = "ui_interface";
+
 const SettingsHeader: FC<SettingsHeaderProps> = ({ onClose }) => {
   const { t } = useLocalization();
-  const title = t("ui_interface", "settings.header.title", "Settings");
+  const title = t(UI_LABELS_CATEGORY, "settings.header.title", "Settings");
   const closeButtonLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.header.close_button_label",
     "Close settings"
   );

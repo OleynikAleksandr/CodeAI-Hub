@@ -43,11 +43,11 @@
 19. [DONE] Introduce English source dictionaries for `Messages for the User` and `Artifacts for the User` and wire them into runtime lookup. Scope: `assets/localization/source/en/messages_for_the_user.json`, `assets/localization/source/en/artifacts_for_the_user.json`, `packages/localization/src/source-dictionary-registry.ts`. Target commit: `feat(localization): add user message and artifact dictionaries`
 20. [DONE] Git Commit: `feat(localization): add user message and artifact dictionaries` (hash: `6b51e2ab`)
 21. [DONE] Update materializer/runtime payload behavior so four-category bundles resolve correctly and `Internal Agent Instructions` stay outside user-facing materialization. Scope: `packages/localization/src/localization-materializer.ts`, `src/client/ui/src/app-host/localization-runtime-contract.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): exclude internal instructions from user bundles`
-22. [TODO] Git Commit: `feat(localization): exclude internal instructions from user bundles` (hash: TBD)
+22. [DONE] Git Commit: `feat(localization): exclude internal instructions from user bundles` (hash: `c34ccc31`)
 
 ## Phase 3 — Mandatory Migration Of Existing Text (owner: UI/PM/Core, updated: 2026-04-03)
 ### Stream: Shared Settings And Session Surfaces
-23. [TODO] Mark shared Settings shell text with explicit `UI Labels` / `UI Helper Text` categories. Scope: `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`. Target commit: `refactor(localization): mark settings shell text`
+23. [DONE] Mark shared Settings shell text with explicit `UI Labels` / `UI Helper Text` categories. Scope: `src/client/ui/src/components/settings/settings-header.tsx`, `src/client/ui/src/components/settings/settings-footer.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`. Target commit: `refactor(localization): mark settings shell text`
 24. [TODO] Git Commit: `refactor(localization): mark settings shell text` (hash: TBD)
 25. [TODO] Mark session shell/status text with explicit `Messages for the User` categories. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/dialog-panel.tsx`. Target commit: `refactor(localization): mark session user messages`
 26. [TODO] Git Commit: `refactor(localization): mark session user messages` (hash: TBD)

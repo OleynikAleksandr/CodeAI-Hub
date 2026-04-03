@@ -68,6 +68,10 @@ const statusStyles: CSSProperties = {
   lineHeight: 1,
 };
 
+const UI_LABELS_CATEGORY = "ui_interface";
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+const USER_MESSAGES_CATEGORY = "system_feedback";
+
 interface GeneralSettingsProps {
   readonly coreControl: CoreControlState;
   readonly localization: Settings["general"]["localization"];
@@ -95,27 +99,27 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const coreControlsTitle = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.core_controls.title",
     "Core Controls"
   );
   const coreControlsDescription = t(
-    "user_guidance",
+    UI_HELPER_TEXT_CATEGORY,
     "settings.core_controls.description",
     "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues."
   );
   const restartIdleLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.core_controls.restart_idle_label",
     "Restart Core"
   );
   const restartPendingLabel = t(
-    "ui_interface",
+    UI_LABELS_CATEGORY,
     "settings.core_controls.restart_pending_label",
     "Restarting..."
   );
   const idleStatusLabel = t(
-    "system_feedback",
+    USER_MESSAGES_CATEGORY,
     "settings.core_controls.idle_status_label",
     "Core restart status will appear here."
   );
