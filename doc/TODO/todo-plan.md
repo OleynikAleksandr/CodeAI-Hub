@@ -36,16 +36,18 @@
 12. [DONE] Git Commit: `fix(localization-bootstrap): hydrate settings webview from startup payload` (hash: `a5e9ca06`)
 
 ### Stream: Project Manager First Paint
-13. [IN_PROGRESS] Load the PM localization bootstrap payload before `root.render(...)` and initialize PM settings/runtime state from it so Help/UI no longer flash English on cold start. Scope: `src/client/project-manager/index.tsx`, `src/client/project-manager/services/localization-bootstrap.ts`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`. Target commit: `fix(localization-bootstrap): hydrate project manager before mount`
-14. [TODO] Git Commit: `fix(localization-bootstrap): hydrate project manager before mount` (hash: TBD)
+13. [DONE] Load the PM localization bootstrap payload before `root.render(...)` and initialize PM settings/runtime state from it so Help/UI no longer flash English on cold start. Scope: `src/client/project-manager/index.tsx`, `src/client/project-manager/services/localization-bootstrap.ts`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`. Target commit: `fix(localization-bootstrap): hydrate project manager before mount`
+14. [DONE] Git Commit: `fix(localization-bootstrap): hydrate project manager before mount` (hash: `87021691`)
 
 ## Phase 4 — SSOT Sync And Verification (owner: Docs/QA, updated: 2026-04-04)
 ### Stream: Architecture Sync
-15. [TODO] Sync the live SSOT so Localization, UI bundles, and system architecture describe persistent startup snapshots, injected webview bootstrap, and PM pre-mount hydration. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Target commit: `docs(architecture): sync persistent localization bootstrap ssot`
-16. [TODO] Git Commit: `docs(architecture): sync persistent localization bootstrap ssot` (hash: TBD)
+15. [DONE] Sync the live SSOT so Localization, UI bundles, and system architecture describe persistent startup snapshots, injected webview bootstrap, and PM pre-mount hydration. Scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. Target commit: `docs(architecture): sync persistent localization bootstrap ssot`
+16. [DONE] Git Commit: `docs(architecture): sync persistent localization bootstrap ssot` (hash: `783e9f4e`)
 
 ### Stream: Verification And Release Handoff
-17. [TODO] Run targeted verification for localization/core/webview/project-manager and record the validated bootstrap behavior in the active session report before the next packaged release. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/Sessions/Session033.md`. Target commit: `docs(session): record persistent localization bootstrap verification`
-18. [TODO] Git Commit: `docs(session): record persistent localization bootstrap verification` (hash: TBD)
-19. [TODO] Prepare release docs and assemble the next patch build only after packaged verification confirms that non-English startup surfaces render without an English flash. Scope: `README.md`, `CHANGELOG.md`, release-generated version files/manifests. Target commit: `build(release): assemble persistent localization bootstrap release`
-20. [TODO] Git Commit: `build(release): assemble persistent localization bootstrap release` (hash: TBD)
+17. [TODO] Refresh the shipped Settings webview bundle so the packaged extension includes startup bootstrap hydration on first paint. Scope: `media/react-chat.js`. Target commit: `build(webview): refresh localization bootstrap bundle`
+18. [TODO] Git Commit: `build(webview): refresh localization bootstrap bundle` (hash: TBD)
+19. [TODO] Run targeted verification for localization/core/webview/project-manager and record the validated bootstrap behavior in the active session report before the next packaged release. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/Sessions/Session033.md`. Target commit: `docs(session): record persistent localization bootstrap verification`
+20. [TODO] Git Commit: `docs(session): record persistent localization bootstrap verification` (hash: TBD)
+21. [TODO] Prepare release docs and assemble the next patch build after targeted verification closes the persistent bootstrap refactor. Scope: `README.md`, `CHANGELOG.md`, release-generated version files/manifests. Target commit: `build(release): assemble persistent localization bootstrap release`
+22. [TODO] Git Commit: `build(release): assemble persistent localization bootstrap release` (hash: TBD)

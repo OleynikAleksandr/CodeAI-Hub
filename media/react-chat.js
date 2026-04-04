@@ -7316,6 +7316,9 @@
   // src/client/ui/src/components/settings/use-settings-state.ts
   var import_react = __toESM(require_react());
 
+  // src/client/ui/src/app-host/localization-runtime-contract.ts
+  var readBrowserLocalizationBootstrapSnapshot = () => window.__CODEAI_LOCALIZATION_BOOTSTRAP__ ?? null;
+
   // src/types/provider.ts
   var PROVIDER_TITLE_MAP = {
     claudeCodeCli: "Claude",
@@ -8949,10 +8952,47 @@
   var RESET_DELAY_MS = 100;
   var LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY = "codeaihub:settings:localization:user-glossary-draft";
   var useSettingsState = () => {
-    const initialSettingsRef = (0, import_react.useRef)(createDefaultSettings());
-    const [settings, setSettings] = (0, import_react.useState)(createDefaultSettings);
+    const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
+    const createBootstrapSettings = (snapshot) => {
+      const defaultSettings = createDefaultSettings();
+      if (!snapshot) {
+        return defaultSettings;
+      }
+      return normalizeLoadedLocalizationSettings({
+        ...defaultSettings,
+        general: {
+          ...defaultSettings.general,
+          localization: {
+            ...defaultSettings.general.localization,
+            categories: {
+              ...defaultSettings.general.localization.categories,
+              artifactsForTheUser: snapshot.settings.categories.interactive_templates,
+              interactiveTemplates: snapshot.settings.categories.interactive_templates,
+              messagesForTheUser: snapshot.settings.categories.system_feedback,
+              systemFeedback: snapshot.settings.categories.system_feedback,
+              uiHelperText: snapshot.settings.categories.user_guidance,
+              uiInterface: snapshot.settings.categories.ui_interface,
+              uiLabels: snapshot.settings.categories.ui_interface,
+              userGuidance: snapshot.settings.categories.user_guidance,
+              workflowTerms: snapshot.settings.categories.workflow_terms
+            },
+            defaultLanguage: snapshot.settings.defaultLanguage,
+            engineId: snapshot.settings.engineId,
+            workflowTermsPolicy: snapshot.settings.workflowTermsPolicy
+          }
+        }
+      });
+    };
+    const initialSettingsRef = (0, import_react.useRef)(
+      createBootstrapSettings(bootstrapSnapshot)
+    );
+    const [settings, setSettings] = (0, import_react.useState)(
+      () => createBootstrapSettings(bootstrapSnapshot)
+    );
     const [hasChanges, setHasChanges] = (0, import_react.useState)(false);
-    const [localizationRuntime, setLocalizationRuntime] = (0, import_react.useState)(null);
+    const [localizationRuntime, setLocalizationRuntime] = (0, import_react.useState)(
+      bootstrapSnapshot?.runtimePayload ?? null
+    );
     const [saving, setSaving] = (0, import_react.useState)(false);
     const [resetting, setResetting] = (0, import_react.useState)(false);
     const [coreControl, setCoreControl] = (0, import_react.useState)({
@@ -13051,6 +13091,7 @@
   // src/client/ui/src/index.tsx
   var import_jsx_runtime27 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
+  window.__CODEAI_LOCALIZATION_BOOTSTRAP__ = readBrowserLocalizationBootstrapSnapshot();
   var mount = () => {
     const rootElement = document.getElementById("root");
     if (!rootElement) {
