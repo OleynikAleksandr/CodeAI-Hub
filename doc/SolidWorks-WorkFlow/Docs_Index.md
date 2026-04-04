@@ -55,8 +55,6 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/Codex_Thinking_Visibility_And_Config_Sync.md` — active Codex scope for visible thinking restoration and provider-owned config synchronization.
-- `Plans/Settings_Save_Notification_Overlay_Fix.md` — active UX scope for removing the stale settings-save overlay notification that covers the Settings footer.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
 - `Plans/Runtime_GodModules_Decomposition_Architecture.md` — active structural decomposition wave для runtime hotspots и warning-zone governance.
 - `Plans/Archive/` — завершённые или снятые planning-доки, сохраняемые только как история.

@@ -50,7 +50,7 @@
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session037.md` (THIS REPORT)
 
-> If public CI needs another follow-up, also open `doc/SolidWorks-WorkFlow/Plans/GitHub_Actions_CI_Workspace_Build_Order_Fix.md`.
+> If public CI needs another follow-up, also open `doc/SolidWorks-WorkFlow/Plans/Archive/GitHub_Actions_CI_Workspace_Build_Order_Fix.md`.
 
 ## Plans for next session
 - Push the CI fix and confirm that the next `Repository CI` run triggered from `main` is green on GitHub.

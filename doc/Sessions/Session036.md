@@ -47,7 +47,7 @@
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session036.md` (THIS REPORT)
 
-> If follow-up feedback is specifically about dialog streaming behavior, also open `doc/SolidWorks-WorkFlow/Plans/Dialog_Autoscroll_And_PM_Help_Color_Patch.md`.
+> If follow-up feedback is specifically about dialog streaming behavior, also open `doc/SolidWorks-WorkFlow/Plans/Archive/Dialog_Autoscroll_And_PM_Help_Color_Patch.md`.
 
 ## Plans for next session
 - Validate release `1.1.885` in the field and confirm that growing provider `Thinking` bubbles stay visible without manual scrolling.

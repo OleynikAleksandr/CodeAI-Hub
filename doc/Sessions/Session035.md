@@ -47,7 +47,7 @@
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session035.md` (THIS REPORT)
 
-> If another Claude follow-up appears, also open `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Message_Classification_Fix.md` to keep the provider-native reasoning/message boundary explicit.
+> If another Claude follow-up appears, also open `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Thinking_Message_Classification_Fix.md` to keep the provider-native reasoning/message boundary explicit.
 
 ## Plans for next session
 - Test `1.1.884` in the field and confirm that Claude no longer breaks one provider-native pre-tool reasoning envelope into mixed `Thinking` plus plain assistant lines.
