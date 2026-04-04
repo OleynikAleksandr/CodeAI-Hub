@@ -7,7 +7,11 @@ import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
-import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
+import type {
+  BrowserLocalizationBootstrapSnapshot,
+  BrowserLocalizationRuntimePayload,
+} from "../../app-host/localization-runtime-contract";
+import { readBrowserLocalizationBootstrapSnapshot } from "../../app-host/localization-runtime-contract";
 import vscode from "../../vscode";
 import {
   updateClaudeContinuityRemainingPercentThreshold,
@@ -58,11 +62,53 @@ export const LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY =
 export type { UseSettingsStateResult } from "./use-settings-state-support";
 
 export const useSettingsState = (): UseSettingsStateResult => {
-  const initialSettingsRef = useRef<Settings>(createDefaultSettings());
-  const [settings, setSettings] = useState<Settings>(createDefaultSettings);
+  const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
+  const createBootstrapSettings = (
+    snapshot: BrowserLocalizationBootstrapSnapshot
+  ): Settings => {
+    const defaultSettings = createDefaultSettings();
+    if (!snapshot) {
+      return defaultSettings;
+    }
+
+    return normalizeLoadedLocalizationSettings({
+      ...defaultSettings,
+      general: {
+        ...defaultSettings.general,
+        localization: {
+          ...defaultSettings.general.localization,
+          categories: {
+            ...defaultSettings.general.localization.categories,
+            artifactsForTheUser:
+              snapshot.settings.categories.interactive_templates,
+            interactiveTemplates:
+              snapshot.settings.categories.interactive_templates,
+            messagesForTheUser: snapshot.settings.categories.system_feedback,
+            systemFeedback: snapshot.settings.categories.system_feedback,
+            uiHelperText: snapshot.settings.categories.user_guidance,
+            uiInterface: snapshot.settings.categories.ui_interface,
+            uiLabels: snapshot.settings.categories.ui_interface,
+            userGuidance: snapshot.settings.categories.user_guidance,
+            workflowTerms: snapshot.settings.categories.workflow_terms,
+          },
+          defaultLanguage: snapshot.settings.defaultLanguage,
+          engineId: snapshot.settings.engineId,
+          workflowTermsPolicy: snapshot.settings.workflowTermsPolicy,
+        },
+      },
+    });
+  };
+  const initialSettingsRef = useRef<Settings>(
+    createBootstrapSettings(bootstrapSnapshot)
+  );
+  const [settings, setSettings] = useState<Settings>(() =>
+    createBootstrapSettings(bootstrapSnapshot)
+  );
   const [hasChanges, setHasChanges] = useState(false);
   const [localizationRuntime, setLocalizationRuntime] =
-    useState<BrowserLocalizationRuntimePayload>(null);
+    useState<BrowserLocalizationRuntimePayload>(
+      bootstrapSnapshot?.runtimePayload ?? null
+    );
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [coreControl, setCoreControl] = useState<CoreControlState>({
