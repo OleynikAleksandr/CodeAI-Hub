@@ -55,6 +55,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Persistent_Localization_Bootstrap_Architecture.md` — active refactor scope for startup-ready browser localization snapshots and no-English-flash cold start hydration.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
 - `Plans/Runtime_GodModules_Decomposition_Architecture.md` — active structural decomposition wave для runtime hotspots и warning-zone governance.
 - `Plans/Archive/` — завершённые или снятые planning-доки, сохраняемые только как история.
