@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.887] - 2026-04-04
+### Fixed
+- **Codex provider-owned config now tracks the selected model**: `~/.codeai-hub/providers/codex/home/config.toml` now rewrites its `model = ...` line from shared settings instead of leaving stale `gpt-5.4` values behind while only updating `model_reasoning_summary`.
+- **Codex `Reasoning in dialog` now reaches runtime event routing**: Core applied turn config now carries the Codex display-sync flag just like Claude and Gemini, and the Codex provider stores that flag in session-local runtime state before routing streamed items.
+- **Visible Codex thinking is restored from provider-native `agent_message` progress**: intermediate completed `agent_message` items now become `Thinking` only when later tool/file/command events prove that work continued, while the last `agent_message` of the turn still remains the final assistant reply.
+- **Native `gpt-5.4` reasoning remains on the original path**: Codex messaging coverage now explicitly protects the native `item.type = "reasoning"` route, so the `gpt-5.3-codex` `agent_message` fallback does not regress visible `Thinking` for `gpt-5.4`.
+- **Settings saves no longer trigger the stale stub overlay**: the extension no longer shows `Settings saved (stub implementation).`, which keeps the Settings WebView footer visible and preserves the existing in-WebView `Saving...`/`settings:saved` feedback flow as the only save confirmation path.
+
 ## [1.1.886] - 2026-04-04
 ### Fixed
 - **Clean-runner workspace compile order**: the root `compile` script now builds `@codeai-hub/translation`, `@codeai-hub/localization`, and `@codeai-hub/core-supervisor` before browser/root type-check, so public GitHub runners no longer fail on missing `@codeai-hub/localization` declarations after a fresh `npm ci`.

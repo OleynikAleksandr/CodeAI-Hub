@@ -101,7 +101,7 @@
 
 ### Stream: Codex Native Reasoning Regression Guard
 47. [DONE] Add an explicit regression test that preserves native `gpt-5.4` `reasoning` visibility while keeping the `gpt-5.3-codex` `agent_message` fallback additive; scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(codex): guard native reasoning visibility`
-48. [TODO] Git Commit: `test(codex): guard native reasoning visibility` (hash: TBD)
+48. [DONE] Git Commit: `test(codex): guard native reasoning visibility` (hash: `f3610521`)
 
 ### Stream: Release Docs And Packaging
 49. [DONE] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
@@ -115,8 +115,8 @@
 
 ### Stream: Planning Intake
 55. [DONE] Record the stale Settings save overlay notification and approve the removal-first fix path; scope: `doc/SolidWorks-WorkFlow/Plans/Settings_Save_Notification_Overlay_Fix.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define settings save overlay fix`
-56. [TODO] Git Commit: `docs(plan): define settings save overlay fix` (hash: TBD)
+56. [DONE] Git Commit: `fix(settings): remove save overlay notification` (hash: `9a7b3749`)
 
 ### Stream: Settings Save UX
 57. [DONE] Remove the legacy global `Settings saved (stub implementation).` notification while preserving the existing WebView `settings:saved` flow; scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(settings): remove save overlay notification`
-58. [TODO] Git Commit: `fix(settings): remove save overlay notification` (hash: TBD)
+58. [DONE] Git Commit: `fix(settings): remove save overlay notification` (hash: `9a7b3749`)
