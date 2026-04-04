@@ -17,7 +17,7 @@
   "settings.localization.glossary_protection.label": "Glossary protection",
   "settings.localization.do_not_translate_terms.title": "Do-not-translate terms",
   "settings.localization.do_not_translate_terms.english_term_label": "English term",
-  "settings.localization.do_not_translate_terms.add_term_label": "Add term",
+  "settings.localization.do_not_translate_terms.add_term_label": "Open glossary file",
   "settings.localization.do_not_translate_terms.save_term_label": "Save term",
   "settings.localization.do_not_translate_terms.cancel_edit_label": "Cancel edit",
   "settings.localization.do_not_translate_terms.edit_term_label": "Edit",
