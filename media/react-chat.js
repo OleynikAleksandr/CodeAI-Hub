@@ -10510,9 +10510,6 @@
   // src/client/ui/src/components/settings/localization-glossary-editor.tsx
   var import_react10 = __toESM(require_react());
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
-  var MAX_GLOSSARY_TERM_LENGTH = 120;
-  var LATIN_LETTER_PATTERN = /[A-Za-z]/;
-  var RESERVED_SEQUENCE_PATTERN = /(?:\[\[|\]\]|\{\{|\}\})/;
   var UI_LABELS_CATEGORY = "ui_interface";
   var UI_HELPER_TEXT_CATEGORY7 = "user_guidance";
   var panelStyles = {
@@ -10535,21 +10532,6 @@
     lineHeight: 1.5,
     margin: 0
   };
-  var formStyles = {
-    display: "grid",
-    gap: "10px"
-  };
-  var inputStyles2 = {
-    width: "100%",
-    boxSizing: "border-box",
-    minHeight: "36px",
-    padding: "8px 10px",
-    borderRadius: "6px",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    background: settingsColorTokens.surface,
-    color: settingsColorTokens.textPrimary,
-    fontSize: settingsTypographyTokens.bodyFontSize
-  };
   var actionRowStyles = {
     display: "flex",
     gap: "8px",
@@ -10566,16 +10548,6 @@
     fontSize: settingsTypographyTokens.bodyFontSize,
     fontWeight: 600
   };
-  var secondaryButtonStyles = {
-    minHeight: "34px",
-    padding: "0 12px",
-    borderRadius: "999px",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    background: settingsColorTokens.surface,
-    color: settingsColorTokens.textSecondary,
-    cursor: "pointer",
-    fontSize: settingsTypographyTokens.bodyFontSize
-  };
   var statusStyles = {
     padding: "8px 10px",
     borderRadius: "6px",
@@ -10585,33 +10557,6 @@
     fontSize: settingsTypographyTokens.bodyFontSize,
     lineHeight: 1.5
   };
-  var errorStyles = {
-    color: "#f2b8b5",
-    fontSize: settingsTypographyTokens.bodyFontSize,
-    lineHeight: 1.5,
-    margin: 0
-  };
-  var termListStyles = {
-    display: "grid",
-    gap: "8px"
-  };
-  var termRowStyles = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "10px",
-    padding: "10px 12px",
-    borderRadius: "6px",
-    border: `1px solid ${settingsColorTokens.borderSubtle}`,
-    background: settingsColorTokens.surface
-  };
-  var termTextStyles = {
-    margin: 0,
-    color: settingsColorTokens.textPrimary,
-    fontSize: settingsTypographyTokens.bodyFontSize,
-    lineHeight: 1.5,
-    wordBreak: "break-word"
-  };
   var getLocalStorage = () => {
     try {
       return "localStorage" in globalThis ? globalThis.localStorage : null;
@@ -10619,230 +10564,51 @@
       return null;
     }
   };
-  var isRecord5 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
-  var normalizeTerm = (value) => value.trim();
-  var dedupeTerms = (terms) => {
-    const uniqueTerms = [];
-    const seen = /* @__PURE__ */ new Set();
-    for (const candidate of terms) {
-      const normalized = normalizeTerm(candidate);
-      const dedupeKey = normalized.toLowerCase();
-      if (!normalized || seen.has(dedupeKey)) {
-        continue;
-      }
-      seen.add(dedupeKey);
-      uniqueTerms.push(normalized);
-    }
-    return uniqueTerms;
-  };
-  var parseStoredGlossaryDraft = (raw) => {
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      return [];
-    }
-    if (!(isRecord5(parsed) && Array.isArray(parsed.preserve))) {
-      return [];
-    }
-    return dedupeTerms(
-      parsed.preserve.filter(
-        (value) => typeof value === "string"
-      )
-    );
-  };
-  var validateTerm = (value, existingTerms, editingIndex, messages) => {
-    const normalized = normalizeTerm(value);
-    if (!normalized) {
-      return messages.empty;
-    }
-    if (!LATIN_LETTER_PATTERN.test(normalized)) {
-      return messages.latinLetter;
-    }
-    if (normalized.length > MAX_GLOSSARY_TERM_LENGTH) {
-      return messages.tooLong;
-    }
-    if (RESERVED_SEQUENCE_PATTERN.test(normalized)) {
-      return messages.reservedSequence;
-    }
-    const dedupeKey = normalized.toLowerCase();
-    const duplicateIndex = existingTerms.findIndex(
-      (term) => normalizeTerm(term).toLowerCase() === dedupeKey
-    );
-    if (duplicateIndex !== -1 && duplicateIndex !== editingIndex) {
-      return messages.duplicate;
-    }
-    return null;
+  var clearLegacyDraft = () => {
+    const storage = getLocalStorage();
+    storage?.removeItem(LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY);
   };
   var LocalizationGlossaryEditor = ({
     glossaryEnabled
   }) => {
     const { t } = useLocalization();
-    const [draft, setDraft] = (0, import_react10.useState)("");
-    const [editingIndex, setEditingIndex] = (0, import_react10.useState)(null);
-    const [error, setError] = (0, import_react10.useState)(null);
-    const [terms, setTerms] = (0, import_react10.useState)([]);
     (0, import_react10.useEffect)(() => {
-      const storage = getLocalStorage();
-      if (!storage) {
-        return;
-      }
-      const raw = storage.getItem(LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY);
-      if (!raw) {
-        return;
-      }
-      setTerms(parseStoredGlossaryDraft(raw));
+      clearLegacyDraft();
     }, []);
-    (0, import_react10.useEffect)(() => {
-      const storage = getLocalStorage();
-      if (!storage) {
-        return;
-      }
-      const payload = { preserve: terms };
-      try {
-        storage.setItem(
-          LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY,
-          JSON.stringify(payload)
-        );
-      } catch {
-      }
-    }, [terms]);
     const title = t(
       UI_LABELS_CATEGORY,
       "settings.localization.do_not_translate_terms.title",
       "Do-not-translate terms"
     );
+    const openGlossaryLabel = t(
+      UI_LABELS_CATEGORY,
+      "settings.localization.do_not_translate_terms.add_term_label",
+      "Open glossary file"
+    );
     const description = t(
       UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.description",
-      "Add English product terms that must stay untouched during localization. This first-wave editor keeps a local draft on this machine until the dedicated glossary storage stream lands."
-    );
-    const inputLabel = t(
-      UI_LABELS_CATEGORY,
-      "settings.localization.do_not_translate_terms.english_term_label",
-      "English term"
-    );
-    const addTermLabel = t(
-      UI_LABELS_CATEGORY,
-      "settings.localization.do_not_translate_terms.add_term_label",
-      "Add term"
-    );
-    const saveTermLabel = t(
-      UI_LABELS_CATEGORY,
-      "settings.localization.do_not_translate_terms.save_term_label",
-      "Save term"
-    );
-    const cancelEditLabel = t(
-      UI_LABELS_CATEGORY,
-      "settings.localization.do_not_translate_terms.cancel_edit_label",
-      "Cancel edit"
-    );
-    const editTermLabel = t(
-      UI_LABELS_CATEGORY,
-      "settings.localization.do_not_translate_terms.edit_term_label",
-      "Edit"
-    );
-    const removeTermLabel = t(
-      UI_LABELS_CATEGORY,
-      "settings.localization.do_not_translate_terms.remove_term_label",
-      "Remove"
-    );
-    const inputPlaceholder = t(
-      UI_HELPER_TEXT_CATEGORY7,
-      "settings.localization.do_not_translate_terms.placeholder",
-      "Project Manager"
+      "Open the glossary file in VS Code and edit one English term per line. The file is created automatically on first open and starts with common product and workflow terms."
     );
     const statusText = glossaryEnabled ? t(
       UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.enabled_status",
-      "Glossary protection is enabled. Terms added here stay protected when localization materialization is wired in."
+      "Glossary protection is enabled. Terms from the glossary file stay protected during localization."
     ) : t(
       UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.disabled_status",
-      "Glossary protection is off. Terms stay in the local draft until you enable glossary protection."
+      "Glossary protection is off. You can still edit the glossary file now; the terms start applying after you enable glossary protection."
     );
-    const emptyStateIntro = t(
+    const seededExamplesIntro = t(
       UI_HELPER_TEXT_CATEGORY7,
       "settings.localization.do_not_translate_terms.empty_state_intro",
-      "No protected terms yet. Typical examples:"
+      "The file is prefilled with common terms such as:"
     );
-    const validationMessages = {
-      duplicate: t(
-        UI_HELPER_TEXT_CATEGORY7,
-        "settings.localization.do_not_translate_terms.validation.duplicate",
-        "That term is already in the local glossary draft."
-      ),
-      empty: t(
-        UI_HELPER_TEXT_CATEGORY7,
-        "settings.localization.do_not_translate_terms.validation.empty",
-        "Enter an English term to preserve."
-      ),
-      latinLetter: t(
-        UI_HELPER_TEXT_CATEGORY7,
-        "settings.localization.do_not_translate_terms.validation.latin_letter",
-        "Use a term that contains at least one Latin letter."
-      ),
-      reservedSequence: t(
-        UI_HELPER_TEXT_CATEGORY7,
-        "settings.localization.do_not_translate_terms.validation.reserved_sequence",
-        "Reserved marker-like sequences are not allowed in glossary terms."
-      ),
-      tooLong: t(
-        UI_HELPER_TEXT_CATEGORY7,
-        "settings.localization.do_not_translate_terms.validation.too_long",
-        `Keep glossary terms under ${MAX_GLOSSARY_TERM_LENGTH} characters.`,
-        { maxLength: MAX_GLOSSARY_TERM_LENGTH }
-      )
-    };
-    const submitLabel = editingIndex === null ? addTermLabel : saveTermLabel;
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      const validationError = validateTerm(
-        draft,
-        terms,
-        editingIndex,
-        validationMessages
-      );
-      if (validationError) {
-        setError(validationError);
-        return;
-      }
-      const normalized = normalizeTerm(draft);
-      setTerms((previousTerms) => {
-        if (editingIndex === null) {
-          return [...previousTerms, normalized];
-        }
-        return previousTerms.map(
-          (term, index) => index === editingIndex ? normalized : term
-        );
+    const handleOpenGlossaryFile = () => {
+      clearLegacyDraft();
+      vscode_default.postMessage({
+        type: "settings:open-user-glossary-file"
       });
-      setDraft("");
-      setEditingIndex(null);
-      setError(null);
-    };
-    const handleEdit = (index) => {
-      setDraft(terms[index] ?? "");
-      setEditingIndex(index);
-      setError(null);
-    };
-    const handleRemove = (index) => {
-      setTerms(
-        (previousTerms) => previousTerms.filter((_, termIndex) => termIndex !== index)
-      );
-      if (editingIndex === index) {
-        setDraft("");
-        setEditingIndex(null);
-        setError(null);
-        return;
-      }
-      if (editingIndex !== null && editingIndex > index) {
-        setEditingIndex(editingIndex - 1);
-      }
-    };
-    const handleCancel = () => {
-      setDraft("");
-      setEditingIndex(null);
-      setError(null);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: panelStyles, children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
@@ -10850,75 +10616,29 @@
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: bodyStyles, children: description })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { "aria-live": "polite", style: statusStyles, children: statusText }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("form", { onSubmit: handleSubmit, style: formStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: bodyStyles, children: inputLabel }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            "input",
-            {
-              "aria-label": inputLabel,
-              onChange: (event) => {
-                setDraft(event.target.value);
-                if (error) {
-                  setError(null);
-                }
-              },
-              placeholder: inputPlaceholder,
-              style: inputStyles2,
-              type: "text",
-              value: draft
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: actionRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { style: primaryButtonStyles, type: "submit", children: submitLabel }),
-          editingIndex === null ? null : /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            "button",
-            {
-              onClick: handleCancel,
-              style: secondaryButtonStyles,
-              type: "button",
-              children: cancelEditLabel
-            }
-          )
-        ] })
-      ] }),
-      error ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: errorStyles, children: error }) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: termListStyles, children: terms.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: bodyStyles, children: [
-        emptyStateIntro,
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: actionRowStyles, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        "button",
+        {
+          onClick: handleOpenGlossaryFile,
+          style: primaryButtonStyles,
+          type: "button",
+          children: openGlossaryLabel
+        }
+      ) }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: bodyStyles, children: [
+        seededExamplesIntro,
         " ",
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Project Manager" }),
         ",",
         " ",
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Artifact Viewer" }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "Description" }),
         ", ",
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "CODEX_HOME" }),
+        ",",
+        " ",
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: "questionnaire.md" }),
         "."
-      ] }) : terms.map((term, index) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: termRowStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: termTextStyles, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("code", { children: term }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: actionRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            "button",
-            {
-              "aria-label": `${editTermLabel}: ${term}`,
-              onClick: () => handleEdit(index),
-              style: secondaryButtonStyles,
-              type: "button",
-              children: editTermLabel
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-            "button",
-            {
-              "aria-label": `${removeTermLabel}: ${term}`,
-              onClick: () => handleRemove(index),
-              style: secondaryButtonStyles,
-              type: "button",
-              children: removeTermLabel
-            }
-          )
-        ] })
-      ] }, term)) })
+      ] })
     ] });
   };
   var localization_glossary_editor_default = (0, import_react10.memo)(LocalizationGlossaryEditor);
@@ -10945,7 +10665,7 @@
   var rootStyles = {
     position: "relative"
   };
-  var inputStyles3 = {
+  var inputStyles2 = {
     width: "100%",
     boxSizing: "border-box",
     minHeight: "36px",
@@ -11066,7 +10786,7 @@
             },
             placeholder,
             role: "combobox",
-            style: inputStyles3,
+            style: inputStyles2,
             value: isOpen ? query : selectedOption?.label ?? value
           }
         ),
@@ -11131,7 +10851,7 @@
     lineHeight: 1.5,
     margin: 0
   };
-  var inputStyles4 = {
+  var inputStyles3 = {
     width: "100%",
     boxSizing: "border-box",
     minHeight: "36px",
@@ -11247,7 +10967,7 @@
     const resolveCategoryValue = (value) => value.toLowerCase() === "en" ? "source" : value;
     const activeEngineId = activeEngine?.engineId ?? localization.engineId;
     const engineSelectStyles = {
-      ...inputStyles4,
+      ...inputStyles3,
       appearance: "none"
     };
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
@@ -11816,7 +11536,7 @@
     color: "#ffb86c",
     marginTop: "6px"
   };
-  var errorStyles2 = {
+  var errorStyles = {
     fontSize: "12px",
     color: "#ff8a8a",
     marginTop: "6px"
@@ -11948,7 +11668,7 @@
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: errorStyles2, children: versions.error }) : null,
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: errorStyles, children: versions.error }) : null,
           versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: "Loading version information\u2026" }) : null,
           pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
           manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: manualUpdateStatus }) : null,

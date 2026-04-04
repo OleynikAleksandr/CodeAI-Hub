@@ -59,7 +59,7 @@ Current high-signal files:
 - `src/source-dictionary-registry.ts` — bundled source catalog registration and lookup.
 - `src/language-catalog.ts`, `src/language-catalog-service.ts` — engine language catalog exposure.
 - `src/glossary-contract.ts`, `src/glossary-merge-service.ts`, `src/glossary-protector.ts`, `src/glossary-validator.ts` — glossary and protected-term pipeline.
-- `src/user-glossary-store.ts` — user-managed English preserve terms.
+- `src/user-glossary-store.ts` — user-managed seeded glossary text file for English preserve terms.
 - `src/localization-paths.ts` — canonical `~/.codeai-hub/localization/` layout.
 - `src/localization-bundle-store.ts` — persisted bundle read/write.
 - `src/localization-metadata-store.ts` — source-hash metadata and regeneration reuse contract.
@@ -113,7 +113,7 @@ User-owned mutable data lives under:
 
 - `~/.codeai-hub/localization/metadata.json`
 - `~/.codeai-hub/localization/catalogs/<category>/<language>.json`
-- `~/.codeai-hub/localization/glossary/user-overrides.json`
+- `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt`
 
 User settings policy lives separately in:
 
@@ -137,7 +137,7 @@ Current glossary contract stores:
   - `assets/localization/glossary/base.json`
   - `assets/localization/glossary/<language>.json`
 - user-owned glossary overrides:
-  - `~/.codeai-hub/localization/glossary/user-overrides.json`
+  - `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt`
 - baseline protected terms cover provider/product names, technical brands, environment/config tokens, and workflow artifact filenames; language-specific glossaries may additionally pin approved translated forms such as Russian workflow terminology.
 
 Current user-facing settings contract:
@@ -209,6 +209,7 @@ Current live browser behavior:
 - browser surfaces resolve copy by message id through the shared lookup helper;
 - extension settings load/save and Project Manager settings load now materialize a `LocalizationRuntimePayload` through `LocalizationFacade.resolveRuntimePayload(...)`;
 - settings webview and Project Manager app root feed that payload into the shared `LocalizationProvider`, so localized surfaces do not resolve bundles independently;
+- the Settings glossary card no longer keeps an inline browser draft; it opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
 - the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from host-resolved payloads, while component-level fallback strings are only a bootstrap safety path when no payload is available yet;
 - the settings card exposes engine catalogs through a constrained selector and language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.

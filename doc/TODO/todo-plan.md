@@ -65,9 +65,9 @@
 
 ### Stream: Settings Open-In-Editor Flow
 160. [DONE] Add a Settings message flow that ensures the glossary file exists and opens it in the current VS Code editor, and sync the active glossary-file architecture doc with the no-JSON decision. Scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/SolidWorks-WorkFlow/Plans/Localization_Glossary_File_Editor_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): open glossary file in vscode`
-161. [TODO] Git Commit: `feat(settings): open glossary file in vscode` (hash: TBD)
-162. [TODO] Replace the inline glossary draft UI with file-editor guidance and an open action in the Settings webview, and sync the glossary copy in the English dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`. Target commit: `feat(settings-localization): switch glossary editor to file workflow`
-163. [TODO] Git Commit: `feat(settings-localization): switch glossary editor to file workflow` (hash: TBD)
+161. [DONE] Git Commit: `feat(settings): open glossary file in vscode` (hash: `2a0e5d2d`)
+162. [DONE] Replace the inline glossary draft UI with file-editor guidance and an open action in the Settings webview, and sync the glossary copy in the English dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`. Target commit: `feat(settings-localization): switch glossary editor to file workflow`
+163. [DONE] Git Commit: `feat(settings-localization): switch glossary editor to file workflow` (hash: `07496772`)
 27. [DONE] Git Commit: `build(webview): refresh localization follow-up bundle` (hash: `0a79b9df`)
 28. [DONE] Update release-facing docs for the post-release localization follow-up. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare post-release localization fix notes`
 29. [DONE] Git Commit: `docs(release): prepare post-release localization fix notes` (hash: `fb6d2e38`)
