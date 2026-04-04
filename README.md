@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.880
-- **Claude thinking now uses explicit effort settings end-to-end**: the saved settings contract, Core-applied turn config, and Claude SDK bridge now use `thinking.enabled + effort`, which matches the modern Claude SDK instead of relying on deprecated `maxThinkingTokens` semantics.
-- **Session UI can now see Claude effort changes directly**: enabled Claude turns now sync runtime identities such as `sonnet reasoning:high` and `sonnet reasoning:max`, so effort switches are visible in the normal applied-model path.
-- **Claude visible-thinking language sync remains intact**: Russian `Messages for the User` still localize Claude thinking bubbles, while English remains the no-translation baseline for Claude, Codex, and Gemini reasoning output.
+## Current Release — v1.1.881
+- **Localization post-release cleanup is now fully closed**: the remaining `Add workspace` modal strings in Project Manager now resolve through explicit localization dictionaries, so the packaged UI no longer keeps that final modal surface hardcoded.
+- **Glossary editing now uses a real user-space text file**: `Settings -> Localization -> Do-not-translate terms` opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` directly in the current VS Code window and seeds it with common product, workflow, and technical terms.
+- **Localization planning docs are now archived**: the completed `1.1.870` post-release localization plans have moved out of the active `Plans/` set, and the finished localization closeout TODO has been archived as completed work.
 
 Previous releases (summary): `1.1.800–1.1.870` — four-category localization release, localization packaging hotfixes, host-hydrated browser localization runtime, searchable localization controls, shared Project Manager localization consumption, persistent localization foundation, thinking display sync, public CI bootstrap, staged core restart UX, Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, history-visible recoverable failure, architecture gate 500 lines, session-scoped Stop, provider rebind after Stop, provider-neutral applied turn config, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 

@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.881] - 2026-04-04
+### Fixed
+- **Project Manager `Add workspace` modal now fully localizes**: the dialog title, field labels, placeholders, buttons, and validation errors now resolve through explicit localization dictionaries instead of staying hardcoded in the modal component.
+- **Glossary editing now targets a user-owned file instead of a browser draft**: `Settings -> Localization -> Do-not-translate terms` now opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window, seeds it with known preserve terms on first open, and stops relying on a localStorage-only draft flow.
+
 ## [1.1.880] - 2026-04-04
 ### Fixed
 - **Claude thinking settings now use explicit effort levels**: the settings UI, persisted snapshot, Core applied turn config, and Claude SDK bridge now use `thinking.enabled + effort` instead of the deprecated `maxThinkingTokens` expectation, so Claude effort changes are again meaningful on modern SDK builds.
