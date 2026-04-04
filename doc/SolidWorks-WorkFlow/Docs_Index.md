@@ -55,7 +55,6 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/Localization_Release_1.1.870_PostRelease_Fixes.md` — active execution plan для оставшихся user-facing localization tails после packaged testing.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
 - `Plans/Runtime_GodModules_Decomposition_Architecture.md` — active structural decomposition wave для runtime hotspots и warning-zone governance.
 - `Plans/Archive/` — завершённые или снятые planning-доки, сохраняемые только как история.
