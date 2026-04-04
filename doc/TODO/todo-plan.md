@@ -99,20 +99,24 @@
 45. [DONE] Buffer completed Codex `agent_message` items and emit only intermediate progress as `Thinking` while preserving the final assistant reply; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): restore visible thinking from agent messages`
 46. [DONE] Git Commit: `fix(codex): restore visible thinking from agent messages` (hash: `6e948df5`)
 
+### Stream: Codex Native Reasoning Regression Guard
+47. [DONE] Add an explicit regression test that preserves native `gpt-5.4` `reasoning` visibility while keeping the `gpt-5.3-codex` `agent_message` fallback additive; scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(codex): guard native reasoning visibility`
+48. [TODO] Git Commit: `test(codex): guard native reasoning visibility` (hash: TBD)
+
 ### Stream: Release Docs And Packaging
-47. [DONE] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
-48. [TODO] Git Commit: `docs(release): prepare codex thinking visibility patch notes` (hash: TBD)
-49. [TODO] Build and package the release after the Codex streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble codex thinking visibility patch release`
-50. [TODO] Git Commit: `build(release): assemble codex thinking visibility patch release` (hash: TBD)
-51. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session038.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record codex thinking visibility patch`
-52. [TODO] Git Commit: `docs(session): record codex thinking visibility patch` (hash: TBD)
+49. [DONE] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
+50. [TODO] Git Commit: `docs(release): prepare codex thinking visibility patch notes` (hash: TBD)
+51. [TODO] Build and package the release after the Codex streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble codex thinking visibility patch release`
+52. [TODO] Git Commit: `build(release): assemble codex thinking visibility patch release` (hash: TBD)
+53. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session038.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record codex thinking visibility patch`
+54. [TODO] Git Commit: `docs(session): record codex thinking visibility patch` (hash: TBD)
 
 ## Phase 5 — Settings Save Notification Overlay Fix (owner: Codex, updated: 2026-04-04)
 
 ### Stream: Planning Intake
-53. [DONE] Record the stale Settings save overlay notification and approve the removal-first fix path; scope: `doc/SolidWorks-WorkFlow/Plans/Settings_Save_Notification_Overlay_Fix.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define settings save overlay fix`
-54. [TODO] Git Commit: `docs(plan): define settings save overlay fix` (hash: TBD)
+55. [DONE] Record the stale Settings save overlay notification and approve the removal-first fix path; scope: `doc/SolidWorks-WorkFlow/Plans/Settings_Save_Notification_Overlay_Fix.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define settings save overlay fix`
+56. [TODO] Git Commit: `docs(plan): define settings save overlay fix` (hash: TBD)
 
 ### Stream: Settings Save UX
-55. [DONE] Remove the legacy global `Settings saved (stub implementation).` notification while preserving the existing WebView `settings:saved` flow; scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(settings): remove save overlay notification`
-56. [TODO] Git Commit: `fix(settings): remove save overlay notification` (hash: TBD)
+57. [DONE] Remove the legacy global `Settings saved (stub implementation).` notification while preserving the existing WebView `settings:saved` flow; scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(settings): remove save overlay notification`
+58. [TODO] Git Commit: `fix(settings): remove save overlay notification` (hash: TBD)

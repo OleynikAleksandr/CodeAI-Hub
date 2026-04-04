@@ -207,6 +207,60 @@ test("codex intermediate completed agent_message becomes thinking when later ite
   );
 });
 
+test("codex gpt-5.4 native reasoning stays visible while agent_message fallback remains additive", async () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.4",
+    modelReasoningEffort: "medium",
+  });
+  const events: unknown[] = [];
+  session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+  const { router, structuredOutput } = createRouter();
+  preparePassthroughTurn(session, structuredOutput);
+
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "native-reasoning",
+      type: "reasoning",
+      text: "Native reasoning from gpt-5.4.",
+    },
+  } satisfies ThreadEvent);
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "agent-progress",
+      type: "agent_message",
+      text: "Checking workspace state before the next tool call.",
+    },
+  } satisfies ThreadEvent);
+  await router.dispatchEvent(session, {
+    type: "item.started",
+    item: {
+      id: "cmd-1",
+      type: "command_execution",
+      command: "pwd",
+      aggregated_output: "",
+      status: "in_progress",
+    },
+  } satisfies ThreadEvent);
+
+  const thinkingMessages = events.filter(
+    (event) =>
+      (event as { type?: string }).type === "dialog_message" &&
+      (event as { tag?: string }).tag === "thinking"
+  ) as Array<{ content?: string }>;
+
+  assert.deepEqual(
+    thinkingMessages.map((message) => message.content),
+    [
+      "Native reasoning from gpt-5.4.",
+      "Checking workspace state before the next tool call.",
+    ]
+  );
+});
+
 test("codex final completed agent_message stays assistant on turn completion", async () => {
   const session = createSessionWithThread({
     model: "gpt-5.3-codex",
