@@ -1,16 +1,20 @@
 # Development TODO Plan
 
 ## Execution Rules
-- Required reading before starting a new scope:
+- Required reading before each fix:
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- Start a new `todo-plan.md` only after an approved planning doc exists under `doc/SolidWorks-WorkFlow/Plans/`.
-- Keep each micro-task within `<= 3 files` and follow each implementation line with a separate `Git Commit:` line.
-- Sync SSOT docs in the same commit whenever architecture or runtime behavior changes.
-- Before the next release handoff, run targeted builds for touched packages/clients, then `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`.
+  - `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Message_Classification_Fix.md`
+- Keep each micro-task within `<= 3 files`.
+- Every implementation line must be followed by a separate `Git Commit:` line.
+- Update docs in real time when logic or architecture changes.
+- Before release handoff, run targeted builds/tests for touched packages, then `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`.
 
-## Active Status
-- No active phases.
-- The completed Claude thinking translation release plan is archived at `doc/TODO/Archive/todo-plan-up-to-phase1-claude-thinking-translation-release-1.1.883-2026-04-04.md`.
-- Start the next scope from a newly approved planning doc.
+## Phase 1 — Claude Thinking Message Classification (owner: Codex, updated: 2026-04-04)
+
+### Stream: Planning Intake
+1. [TODO] Record the provider-native classification bug where Claude `thinking -> text -> tool_use` is split into `Thinking -> Assistant`; scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Message_Classification_Fix.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define claude thinking classification scope`
+2. [TODO] Git Commit: `docs(plan): define claude thinking classification scope` (hash: TBD)
+
+### Stream: Claude Router Classification
+3. [TODO] Reclassify same-message Claude pre-tool text as `thinking` when the provider-native message already emitted `thinking`; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.translation.test.ts`; expected commit: `fix(claude): classify thinking continuations correctly`
+4. [TODO] Git Commit: `fix(claude): classify thinking continuations correctly` (hash: TBD)
