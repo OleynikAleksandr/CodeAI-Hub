@@ -23,9 +23,18 @@ import type {
   StructuredOutputStreamController,
 } from "./structured-output-stream-controller";
 
+interface PendingAgentMessage {
+  readonly itemId: string;
+  readonly result: StructuredOutputResult;
+}
+
 export class CodexStreamEventRouter {
   private readonly emitter: CodexSessionEventEmitter;
   private readonly finishHandler: CodexMessageFinishHandler;
+  private readonly pendingAgentMessages = new Map<
+    string,
+    PendingAgentMessage
+  >();
   readonly reasoningStreams: CodexReasoningStreams;
   private readonly reporter?: ModuleReporter;
   private readonly sessionManager: CodexSessionManager;
@@ -62,17 +71,21 @@ export class CodexStreamEventRouter {
         this.finishHandler.handleTurnStarted(session);
         return;
       case "turn.completed":
+        this.flushPendingAgentMessageAsAssistant(session);
         await this.finishHandler.handleTurnCompleted(session, event);
         return;
       case "turn.failed":
+        await this.flushPendingAgentMessageAsThinking(session);
         this.finishHandler.handleTurnFailed(session, event.error);
         return;
       case "item.started":
       case "item.updated":
       case "item.completed":
+        await this.flushPendingAgentMessageBeforeItemEvent(session, event);
         await this.handleThreadItem(session, event);
         return;
       case "error":
+        await this.flushPendingAgentMessageAsThinking(session);
         this.handleStreamError(session, event);
         return;
       default:
@@ -191,13 +204,51 @@ export class CodexStreamEventRouter {
     ) {
       return;
     }
+    if (session.runtimeTurnConfig?.thinkingDisplaySyncEnabled === false) {
+      if (event.type === "item.updated") {
+        this.handleAgentMessageUpdate(session, item.id, item.text);
+        return;
+      }
+      if (event.type === "item.completed") {
+        this.handleAgentMessageComplete(session, item.id, item.text);
+      }
+      return;
+    }
     if (event.type === "item.updated") {
-      this.handleAgentMessageUpdate(session, item.id, item.text);
+      this.bufferAgentMessageUpdate(session, item.id, item.text);
       return;
     }
     if (event.type === "item.completed") {
-      this.handleAgentMessageComplete(session, item.id, item.text);
+      this.bufferAgentMessageComplete(session, item.id, item.text);
     }
+  }
+
+  private bufferAgentMessageUpdate(
+    session: ActiveSession,
+    itemId: string,
+    text: unknown
+  ): void {
+    if (session.internalTurn || typeof text !== "string") {
+      return;
+    }
+    this.structuredOutput.appendChunk(session.sessionId, itemId, text);
+  }
+
+  private bufferAgentMessageComplete(
+    session: ActiveSession,
+    itemId: string,
+    text: unknown
+  ): void {
+    if (session.internalTurn) {
+      return;
+    }
+
+    const result = this.structuredOutput.complete(
+      session.sessionId,
+      itemId,
+      typeof text === "string" ? text : ""
+    );
+    this.pendingAgentMessages.set(session.sessionId, { itemId, result });
   }
 
   private handleAgentMessageUpdate(
@@ -262,6 +313,73 @@ export class CodexStreamEventRouter {
       data: { kind: "assistant_chunk", itemId, text },
       timestamp: new Date().toISOString(),
     });
+  }
+
+  private async flushPendingAgentMessageBeforeItemEvent(
+    session: ActiveSession,
+    event: ThreadItemEvent
+  ): Promise<void> {
+    const pending = this.pendingAgentMessages.get(session.sessionId);
+    if (!pending) {
+      return;
+    }
+
+    const item = event.item as ThreadItem;
+    if (item.type === "agent_message" && item.id === pending.itemId) {
+      return;
+    }
+
+    await this.flushPendingAgentMessageAsThinking(session);
+  }
+
+  private flushPendingAgentMessageAsAssistant(session: ActiveSession): void {
+    const pending = this.pendingAgentMessages.get(session.sessionId);
+    if (!pending) {
+      return;
+    }
+
+    this.pendingAgentMessages.delete(session.sessionId);
+    this.emitStructuredOutput(session, pending.itemId, pending.result);
+    if (!pending.result.assistantText) {
+      return;
+    }
+
+    this.emitter.emitMessage(session, {
+      type: "assistant",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      content: pending.result.assistantText,
+      uuid: pending.itemId,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private async flushPendingAgentMessageAsThinking(
+    session: ActiveSession
+  ): Promise<void> {
+    const pending = this.pendingAgentMessages.get(session.sessionId);
+    if (!pending) {
+      return;
+    }
+
+    this.pendingAgentMessages.delete(session.sessionId);
+    const content = pending.result.assistantText?.trim();
+    if (!content) {
+      return;
+    }
+
+    const translated = await this.thoughtTranslator.translateReasoning(
+      content,
+      session.runtimeTurnConfig?.messagesForTheUserLanguage ??
+        session.messagesForTheUserLanguage
+    );
+    this.emitter.emitDialogMessage(
+      session,
+      "thinking",
+      translated ?? content,
+      pending.itemId
+    );
   }
 
   private emitStructuredOutput(

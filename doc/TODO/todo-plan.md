@@ -93,13 +93,15 @@
 ### Stream: Codex Thinking Classification
 41. [TODO] Carry Codex thinking display sync into runtime turn config and classify intermediate `agent_message` progress as visible `Thinking` by provider-native event order; scope: `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`; expected commit: `fix(core): expose codex thinking display sync`
 42. [TODO] Git Commit: `fix(core): expose codex thinking display sync` (hash: TBD)
-43. [TODO] Buffer Codex `agent_message` progress until turn ordering proves whether it is intermediate thinking or the final assistant reply; scope: `packages/Codex_Module/src/session/types.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `fix(codex): restore visible thinking from agent messages`
-44. [TODO] Git Commit: `fix(codex): restore visible thinking from agent messages` (hash: TBD)
+43. [TODO] Add Codex provider-local runtime turn config so the applied `thinkingDisplaySyncEnabled` flag reaches the session before event routing; scope: `packages/Codex_Module/src/session/types.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `fix(codex): store runtime thinking visibility config`
+44. [TODO] Git Commit: `fix(codex): store runtime thinking visibility config` (hash: TBD)
+45. [IN_PROGRESS] Buffer completed Codex `agent_message` items and emit only intermediate progress as `Thinking` while preserving the final assistant reply; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): restore visible thinking from agent messages`
+46. [TODO] Git Commit: `fix(codex): restore visible thinking from agent messages` (hash: TBD)
 
 ### Stream: Release Docs And Packaging
-45. [TODO] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
-46. [TODO] Git Commit: `docs(release): prepare codex thinking visibility patch notes` (hash: TBD)
-47. [TODO] Build and package the release after the Codex streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble codex thinking visibility patch release`
-48. [TODO] Git Commit: `build(release): assemble codex thinking visibility patch release` (hash: TBD)
-49. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session038.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record codex thinking visibility patch`
-50. [TODO] Git Commit: `docs(session): record codex thinking visibility patch` (hash: TBD)
+47. [TODO] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
+48. [TODO] Git Commit: `docs(release): prepare codex thinking visibility patch notes` (hash: TBD)
+49. [TODO] Build and package the release after the Codex streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble codex thinking visibility patch release`
+50. [TODO] Git Commit: `build(release): assemble codex thinking visibility patch release` (hash: TBD)
+51. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session038.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record codex thinking visibility patch`
+52. [TODO] Git Commit: `docs(session): record codex thinking visibility patch` (hash: TBD)

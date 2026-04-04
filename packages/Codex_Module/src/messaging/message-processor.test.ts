@@ -1,9 +1,18 @@
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import test from "node:test";
+import type { ThreadEvent } from "@openai/codex-sdk";
+import { DEFAULT_CODEX_RESPONSE_POLICY } from "../response-policy/response-policy-defaults";
 import type { ActiveSession } from "../session/types";
 import { applyCodexTurnRuntimeConfig } from "./codex-applied-turn-config";
 import { waitForNextResultWithIdlePulses } from "./codex-async-helpers";
+import { CodexMessageFinishHandler } from "./codex-message-finish-handler";
+import { CodexReasoningStreams } from "./codex-reasoning-streams";
+import { CodexSessionEventEmitter } from "./codex-session-event-emitter";
+import { CodexStreamEventRouter } from "./codex-stream-event-router";
+import { CodexTokenUsageSync } from "./codex-token-usage-sync";
+import { CodexUsageSync } from "./codex-usage-sync";
+import { StructuredOutputStreamController } from "./structured-output-stream-controller";
 
 const STREAM_FAILED_RE = /stream failed/;
 
@@ -154,6 +163,179 @@ test("applyCodexTurnRuntimeConfig ignores non-codex payloads", () => {
   );
   assert.equal(turnOptions, undefined);
 });
+
+test("codex intermediate completed agent_message becomes thinking when later item proves work continues", async () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.3-codex",
+    modelReasoningEffort: "medium",
+  });
+  const events: unknown[] = [];
+  session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+  const { router, structuredOutput } = createRouter();
+  preparePassthroughTurn(session, structuredOutput);
+
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "agent-progress",
+      type: "agent_message",
+      text: "Checking workspace state before the next tool call.",
+    },
+  } satisfies ThreadEvent);
+  await router.dispatchEvent(session, {
+    type: "item.started",
+    item: {
+      id: "cmd-1",
+      type: "command_execution",
+      command: "pwd",
+      aggregated_output: "",
+      status: "in_progress",
+    },
+  } satisfies ThreadEvent);
+
+  const thinkingMessage = events.find(
+    (event) =>
+      (event as { type?: string }).type === "dialog_message" &&
+      (event as { tag?: string }).tag === "thinking"
+  ) as { content?: string } | undefined;
+
+  assert.equal(
+    thinkingMessage?.content,
+    "Checking workspace state before the next tool call."
+  );
+});
+
+test("codex final completed agent_message stays assistant on turn completion", async () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.3-codex",
+    modelReasoningEffort: "medium",
+  });
+  const events: unknown[] = [];
+  session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+  const { router, structuredOutput } = createRouter();
+  preparePassthroughTurn(session, structuredOutput);
+
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "agent-final",
+      type: "agent_message",
+      text: "Final answer from Codex.",
+    },
+  } satisfies ThreadEvent);
+  await router.dispatchEvent(session, {
+    type: "turn.completed",
+    usage: {
+      input_tokens: 1,
+      cached_input_tokens: 0,
+      output_tokens: 1,
+    },
+  } satisfies ThreadEvent);
+
+  const assistantMessage = events.find(
+    (event) => (event as { type?: string }).type === "assistant"
+  ) as { content?: string } | undefined;
+  const thinkingMessages = events.filter(
+    (event) =>
+      (event as { type?: string }).type === "dialog_message" &&
+      (event as { tag?: string }).tag === "thinking"
+  );
+
+  assert.equal(assistantMessage?.content, "Final answer from Codex.");
+  assert.equal(thinkingMessages.length, 0);
+});
+
+test("codex intermediate agent_message stays hidden when thinking display sync is disabled", async () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.3-codex",
+    modelReasoningEffort: "medium",
+  });
+  session.runtimeTurnConfig = {
+    thinkingDisplaySyncEnabled: false,
+  };
+  const events: unknown[] = [];
+  session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+  const { router, structuredOutput } = createRouter();
+  preparePassthroughTurn(session, structuredOutput);
+
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "agent-progress",
+      type: "agent_message",
+      text: "Checking workspace state before the next tool call.",
+    },
+  } satisfies ThreadEvent);
+  await router.dispatchEvent(session, {
+    type: "item.started",
+    item: {
+      id: "cmd-1",
+      type: "command_execution",
+      command: "pwd",
+      aggregated_output: "",
+      status: "in_progress",
+    },
+  } satisfies ThreadEvent);
+
+  const thinkingMessages = events.filter(
+    (event) =>
+      (event as { type?: string }).type === "dialog_message" &&
+      (event as { tag?: string }).tag === "thinking"
+  );
+
+  assert.equal(thinkingMessages.length, 0);
+});
+
+const createRouter = (): {
+  readonly router: CodexStreamEventRouter;
+  readonly structuredOutput: StructuredOutputStreamController;
+} => {
+  const structuredOutput = new StructuredOutputStreamController();
+  const reasoningStreams = new CodexReasoningStreams();
+  const emitter = new CodexSessionEventEmitter();
+  const finishHandler = new CodexMessageFinishHandler(
+    structuredOutput,
+    reasoningStreams,
+    emitter,
+    new CodexTokenUsageSync(),
+    new CodexUsageSync()
+  );
+
+  return {
+    router: new CodexStreamEventRouter(
+      {
+        getSession: () => undefined,
+        updateSessionId: () => {
+          // no-op
+        },
+      } as never,
+      structuredOutput,
+      reasoningStreams,
+      emitter,
+      finishHandler,
+      undefined
+    ),
+    structuredOutput,
+  };
+};
+
+const preparePassthroughTurn = (
+  session: ActiveSession,
+  structuredOutput: StructuredOutputStreamController
+): void => {
+  structuredOutput.prepareTurn(
+    session.sessionId,
+    {} as never,
+    DEFAULT_CODEX_RESPONSE_POLICY
+  );
+  structuredOutput.startTurn(session.sessionId);
+};
 
 const createSessionWithThread = (threadOptions: {
   readonly effectiveModelId?: string;
