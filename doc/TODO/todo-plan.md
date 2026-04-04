@@ -42,7 +42,7 @@
 18. [DONE] Git Commit: `fix(pm-localization): localize panel container shell` (hash: `11c7d4c0`)
 19. [TODO] Mark add-workspace modal labels, placeholders, and validation copy with explicit categories. Scope: `src/client/project-manager/components/layout/main-layout.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize add workspace modal`
 20. [TODO] Git Commit: `fix(pm-localization): localize add workspace modal` (hash: TBD)
-21. [TODO] Mark status-bar shell copy with explicit categories. Scope: `src/client/project-manager/components/layout/status-bar.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize status bar shell`
+21. [DONE] Mark status-bar shell copy with explicit categories. Scope: `src/client/project-manager/components/layout/status-bar.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize status bar shell`
 22. [TODO] Git Commit: `fix(pm-localization): localize status bar shell` (hash: TBD)
 
 ### Stream: Shared Artifact Helpers
