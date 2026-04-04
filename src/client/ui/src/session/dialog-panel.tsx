@@ -8,6 +8,7 @@ import {
   mergeThinkingMessages,
   resolveRoleLabel,
 } from "./dialog-panel-message-utils";
+import { buildDialogPanelScrollAnchor } from "./dialog-panel-scroll-anchor";
 import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
 
@@ -87,7 +88,10 @@ const DialogPanel = ({
     );
   };
 
-  const messageCount = displayMessages.length;
+  const scrollAnchor = useMemo(
+    () => buildDialogPanelScrollAnchor(displayMessages),
+    [displayMessages]
+  );
 
   useLayoutEffect(() => {
     if (!pinnedToBottom) {
@@ -97,12 +101,12 @@ const DialogPanel = ({
     if (!container) {
       return;
     }
-    if (messageCount === 0) {
+    if (scrollAnchor === "empty") {
       container.scrollTop = 0;
       return;
     }
     container.scrollTop = container.scrollHeight;
-  }, [messageCount, pinnedToBottom]);
+  }, [pinnedToBottom, scrollAnchor]);
 
   if (displayMessages.length === 0) {
     return (

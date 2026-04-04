@@ -36,10 +36,10 @@
 
 ### Stream: Planning Intake
 13. [DONE] Record the shared dialog auto-scroll regression for growing last bubbles and the PM help-color retune request; scope: `doc/SolidWorks-WorkFlow/Plans/Dialog_Autoscroll_And_PM_Help_Color_Patch.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define dialog autoscroll patch scope`
-14. [TODO] Git Commit: `docs(plan): define dialog autoscroll patch scope` (hash: TBD)
+14. [DONE] Git Commit: `docs(plan): define dialog autoscroll patch scope` (hash: `52cf2d21`)
 
 ### Stream: Shared Dialog Bottom Anchor
-15. [TODO] Make shared dialog auto-scroll react to last-bubble growth instead of message-count-only changes; scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-scroll-anchor.ts`, `src/client/ui/src/session/dialog-panel-scroll-anchor.test.ts`; expected commit: `fix(ui): keep dialog pinned on growing thinking messages`
+15. [DONE] Make shared dialog auto-scroll react to last-bubble growth instead of message-count-only changes; scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-scroll-anchor.ts`, `src/client/ui/src/session/dialog-panel-scroll-anchor.test.ts`; expected commit: `fix(ui): keep dialog pinned on growing thinking messages`
 16. [TODO] Git Commit: `fix(ui): keep dialog pinned on growing thinking messages` (hash: TBD)
 
 ### Stream: PM Help Color Retune
