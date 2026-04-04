@@ -43,10 +43,10 @@
 19. [TODO] Mark add-workspace modal labels, placeholders, and validation copy with explicit categories. Scope: `src/client/project-manager/components/layout/main-layout.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize add workspace modal`
 20. [TODO] Git Commit: `fix(pm-localization): localize add workspace modal` (hash: TBD)
 21. [DONE] Mark status-bar shell copy with explicit categories. Scope: `src/client/project-manager/components/layout/status-bar.tsx`, `assets/localization/source/en/ui_labels.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize status bar shell`
-22. [TODO] Git Commit: `fix(pm-localization): localize status bar shell` (hash: TBD)
+22. [DONE] Git Commit: `fix(pm-localization): localize status bar shell` (hash: `908b45da`)
 
 ### Stream: Shared Artifact Helpers
-23. [TODO] Mark shared artifact repair CTA and error copy with explicit categories. Scope: `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize artifact repair copy`
+23. [DONE] Mark shared artifact repair CTA and error copy with explicit categories. Scope: `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize artifact repair copy`
 24. [TODO] Git Commit: `fix(pm-localization): localize artifact repair copy` (hash: TBD)
 
 ## Phase 3 — Verification, Release, And Handoff (owner: QA/Release/Docs, updated: 2026-04-03)

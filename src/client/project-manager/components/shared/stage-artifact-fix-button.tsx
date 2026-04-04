@@ -1,11 +1,14 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { api } from "../../api";
 import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
 
 type RepairableStageId =
   | "virtual_simulation"
   | "diagram_modules";
+
+const USER_MESSAGES_CATEGORY = "system_feedback";
 
 const resolveMostRecentContinuitySessionId = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
@@ -94,6 +97,7 @@ export const StageArtifactFixButton: React.FC<{
     readonly providerId: string;
   }) => Promise<void>;
 }> = (props) => {
+  const { t } = useLocalization();
   const [fixInFlight, setFixInFlight] = useState(false);
   const [fixError, setFixError] = useState<string | null>(null);
   const mountedRef = useRef(true);
@@ -107,6 +111,26 @@ export const StageArtifactFixButton: React.FC<{
 
   const providers = api.getDescriptionProviders();
   const hasProviders = providers.length > 0;
+  const noProviderMessage = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.stage_artifact.repair.error.no_provider",
+    "No provider available for the agent."
+  );
+  const waitForSessionMessage = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.stage_artifact.repair.error.session_wait_failed",
+    "Could not wait for an active dialog session for repair."
+  );
+  const fixIdleLabel = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.stage_artifact.repair.idle_label",
+    "Fix with agent"
+  );
+  const fixPendingLabel = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.stage_artifact.repair.pending_label",
+    "Opening session…"
+  );
 
   return (
     <>
@@ -130,7 +154,7 @@ export const StageArtifactFixButton: React.FC<{
                 providers,
               }) ?? providers.at(0)?.id;
             if (!providerId) {
-              throw new Error("Нет доступного провайдера для агента.");
+              throw new Error(noProviderMessage);
             }
             openDialogSession({
               providerId,
@@ -151,7 +175,7 @@ export const StageArtifactFixButton: React.FC<{
                 workspaceSlug: props.workspaceSlug,
               });
               if (!sessionId) {
-                throw new Error("Не удалось дождаться активной dialog session для исправления.");
+                throw new Error(waitForSessionMessage);
               }
               api.sendSessionMessage(sessionId, repairPrompt);
             }
@@ -171,11 +195,11 @@ export const StageArtifactFixButton: React.FC<{
         }}
         type="button"
       >
-        {fixInFlight ? "Открываю сессию…" : "Исправить с агентом"}
+        {fixInFlight ? fixPendingLabel : fixIdleLabel}
       </button>
       {fixError ? <div style={{ marginTop: 10 }}>{fixError}</div> : null}
       {!hasProviders ? (
-        <div style={{ marginTop: 10 }}>Нет доступного провайдера для агента.</div>
+        <div style={{ marginTop: 10 }}>{noProviderMessage}</div>
       ) : null}
     </>
   );
