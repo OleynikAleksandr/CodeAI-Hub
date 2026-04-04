@@ -4,6 +4,8 @@ import { LOCALIZATION_SOURCE_SELECTION } from "@codeai-hub/localization";
 export interface CodexSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly reasoningByModel?: unknown;
+  readonly reasoningSummaryEnabled?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
 export interface ClaudeProviderSettingsSnapshot {
@@ -109,6 +111,8 @@ export const loadCodexSettingsSnapshot = (
   return {
     defaultModel: codex.defaultModel,
     reasoningByModel: codex.reasoningByModel,
+    reasoningSummaryEnabled: codex.reasoningSummaryEnabled,
+    thinkingDisplaySyncEnabled: codex.thinkingDisplaySyncEnabled,
   };
 };
 

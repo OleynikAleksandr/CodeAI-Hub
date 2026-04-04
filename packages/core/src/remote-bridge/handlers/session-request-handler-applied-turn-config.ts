@@ -67,8 +67,6 @@ export class SessionRequestHandlerAppliedTurnConfig {
         ? resolved.thinkingLevelByModel[baseModelId]
         : undefined;
 
-    const supportsThinkingDisplaySync = providerId !== "codexCli";
-
     return {
       providerId,
       baseModelId,
@@ -88,12 +86,11 @@ export class SessionRequestHandlerAppliedTurnConfig {
         ? {}
         : { thinkingEnabled: resolved.thinkingEnabled }),
       thinkingLevel,
-      ...(supportsThinkingDisplaySync &&
-      resolved.thinkingDisplaySyncEnabled !== undefined
-        ? {
+      ...(resolved.thinkingDisplaySyncEnabled === undefined
+        ? {}
+        : {
             thinkingDisplaySyncEnabled: resolved.thinkingDisplaySyncEnabled,
-          }
-        : {}),
+          }),
     };
   }
 
