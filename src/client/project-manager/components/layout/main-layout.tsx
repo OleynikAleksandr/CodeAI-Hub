@@ -1,5 +1,6 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { api } from "../../api";
 import { usePanelSizes } from "../../hooks/use-panel-sizes";
 import { ensureWorkflowWorktree } from "../../services/workspace-session-client";
@@ -7,6 +8,9 @@ import type { WorkspaceProject } from "../../types";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
 import { useWorkspaceScopeSync } from "./workspace-scope-sync";
+
+const UI_LABELS_CATEGORY = "ui_interface";
+const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 const isAbsolutePath = (value: string): boolean => {
   const trimmed = value.trim();
@@ -25,6 +29,7 @@ type AddWorkspaceRequestedDetail = {
  * Main layout component (Grid container for Section 1 + Section 2)
  */
 export const MainLayout: React.FC = () => {
+  const { t } = useLocalization();
   const { sizes, updateSize } = usePanelSizes();
   const [projects, setProjects] = useState<readonly WorkspaceProject[]>([]);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | undefined>();
@@ -102,6 +107,47 @@ export const MainLayout: React.FC = () => {
   const activeWorkspace = projects.find((p) => p.id === selectedWorkspaceId);
   useWorkspaceScopeSync(activeWorkspace);
 
+  const addWorkspaceDialogLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.workspace_modal.dialog_label",
+    "Add workspace"
+  );
+  const addWorkspaceTitle = t(
+    UI_LABELS_CATEGORY,
+    "pm.workspace_modal.title",
+    "Add workspace"
+  );
+  const workspacePathLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.workspace_modal.path_label",
+    "Workspace path"
+  );
+  const displayNameLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.workspace_modal.display_name_label",
+    "Display name (optional)"
+  );
+  const addWorkspaceConfirmLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.workspace_modal.confirm_label",
+    "Add"
+  );
+  const addWorkspaceCancelLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.workspace_modal.cancel_label",
+    "Cancel"
+  );
+  const workspacePathPlaceholder = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "pm.workspace_modal.path_placeholder",
+    "/absolute/path/to/workspace"
+  );
+  const displayNamePlaceholder = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "pm.workspace_modal.display_name_placeholder",
+    "My Workspace"
+  );
+
   useEffect(() => {
     if (!activeWorkspace) {
       return;
@@ -125,7 +171,7 @@ export const MainLayout: React.FC = () => {
     <div className="pm-layout">
       {isAddWorkspaceModalOpen ? (
         <div
-          aria-label="Add workspace"
+          aria-label={addWorkspaceDialogLabel}
           aria-modal="true"
           className="pm-workspace-overlay"
           onClick={() => setIsAddWorkspaceModalOpen(false)}
@@ -136,7 +182,7 @@ export const MainLayout: React.FC = () => {
             onClick={(event) => event.stopPropagation()}
           >
             <h2 className="pm-modal__title" id="pm-add-workspace-title">
-              Add workspace
+              {addWorkspaceTitle}
             </h2>
             <form
               aria-labelledby="pm-add-workspace-title"
@@ -162,7 +208,7 @@ export const MainLayout: React.FC = () => {
               }}
             >
               <label className="pm-modal__field">
-                <span className="pm-modal__label">Workspace path</span>
+                <span className="pm-modal__label">{workspacePathLabel}</span>
                 <input
                   autoFocus
                   className="pm-modal__input"
@@ -170,20 +216,20 @@ export const MainLayout: React.FC = () => {
                     setAddWorkspacePath(event.target.value);
                     setAddWorkspaceError(null);
                   }}
-                  placeholder="/absolute/path/to/workspace"
+                  placeholder={workspacePathPlaceholder}
                   type="text"
                   value={addWorkspacePath}
                 />
               </label>
               <label className="pm-modal__field">
-                <span className="pm-modal__label">Display name (optional)</span>
+                <span className="pm-modal__label">{displayNameLabel}</span>
                 <input
                   className="pm-modal__input"
                   onChange={(event) => {
                     setAddWorkspaceName(event.target.value);
                     setAddWorkspaceError(null);
                   }}
-                  placeholder="My Workspace"
+                  placeholder={displayNamePlaceholder}
                   type="text"
                   value={addWorkspaceName}
                 />
@@ -195,14 +241,14 @@ export const MainLayout: React.FC = () => {
               ) : null}
               <div className="pm-modal__actions">
                 <button className="pm-modal__button" type="submit">
-                  Add
+                  {addWorkspaceConfirmLabel}
                 </button>
                 <button
                   className="pm-modal__button pm-modal__button--secondary"
                   onClick={() => setIsAddWorkspaceModalOpen(false)}
                   type="button"
                 >
-                  Cancel
+                  {addWorkspaceCancelLabel}
                 </button>
               </div>
             </form>

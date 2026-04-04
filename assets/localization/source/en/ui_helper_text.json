@@ -16,6 +16,8 @@
   "settings.localization.do_not_translate_terms.validation.too_long": "Keep glossary terms under {maxLength} characters.",
   "settings.localization.do_not_translate_terms.validation.reserved_sequence": "Reserved marker-like sequences are not allowed in glossary terms.",
   "settings.localization.do_not_translate_terms.validation.duplicate": "That term is already in the glossary file.",
+  "pm.workspace_modal.path_placeholder": "/absolute/path/to/workspace",
+  "pm.workspace_modal.display_name_placeholder": "My Workspace",
   "settings.localization.category.ui_interface.description": "Buttons, labels, menus, tabs, and settings surfaces.",
   "settings.localization.category.ui_labels.description": "Buttons, tabs, section names, step names, and short interface terms.",
   "settings.localization.category.ui_helper_text.description": "Short interface explanations and helper copy that clarifies labels and settings.",
