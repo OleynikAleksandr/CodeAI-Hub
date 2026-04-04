@@ -47,7 +47,7 @@
 
 ### Stream: Shared Artifact Helpers
 23. [DONE] Mark shared artifact repair CTA and error copy with explicit categories. Scope: `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`, `assets/localization/source/en/messages_for_the_user.json`, `doc/TODO/todo-plan.md`. Target commit: `fix(pm-localization): localize artifact repair copy`
-24. [TODO] Git Commit: `fix(pm-localization): localize artifact repair copy` (hash: TBD)
+24. [DONE] Git Commit: `fix(pm-localization): localize artifact repair copy` (hash: `d1cad650`)
 
 ## Phase 3 — Verification, Release, And Handoff (owner: QA/Release/Docs, updated: 2026-04-03)
 ### Stream: Targeted Verification
@@ -232,4 +232,4 @@
 152. [DONE] Rebuild the affected `codeai-hub-core` `1.1.880` artefact after the compile-compatibility hotfix and refresh the tracked core manifest so packaging validates the correct runtime checksum. Scope: `assets/core/manifest.json`, `doc/TODO/todo-plan.md`. Target commit: `build(core): refresh 1.1.880 manifest after compatibility fix`
 153. [DONE] Git Commit: `build(core): refresh 1.1.880 manifest after compatibility fix` (hash: `c471e357`)
 154. [DONE] Rerun `./scripts/build-release.sh --use-current-version`, confirm the packaged patch release shows Claude effort-based thinking settings, preserves localized visible thinking, and keeps Claude runtime model sync aligned with the selected effort, then record the full hotfix chain in a new session report. Scope: `doc/Sessions/Session030.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude effort settings release`
-155. [TODO] Git Commit: `docs(session): record claude effort settings release` (hash: TBD)
+155. [DONE] Git Commit: `docs(session): record claude effort settings release` (hash: `101eb5d7`)
