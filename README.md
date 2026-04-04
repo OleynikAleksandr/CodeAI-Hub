@@ -47,7 +47,8 @@ Before starting, read `doc/SolidWorks-WorkFlow/Docs_Index.md` and follow the SSO
 
 ## Public CI
 - GitHub Actions now runs a minimal public CI baseline on every push to `main` and on every pull request.
-- The workflow enforces the same root quality gates used as the local baseline: `npm run check:architecture`, `npm run lint`, `npm run check:tsprune`, and `npm run compile`.
+- The workflow enforces the same root quality gates used as the local baseline: `npm run check:architecture`, `npm run lint`, `npm run check:knip`, and `npm run compile`.
+- The root `compile` gate now builds `@codeai-hub/translation`, `@codeai-hub/localization`, and `@codeai-hub/core-supervisor` before browser/root type-check, so clean GitHub runners do not depend on pre-existing workspace `dist/` folders.
 - Local Husky hooks remain the fastest feedback path; CI is the public verification surface, not a replacement for the local release ritual.
 
 ## Building a Release

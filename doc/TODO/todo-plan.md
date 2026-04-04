@@ -59,10 +59,10 @@
 
 ### Stream: Planning Intake
 25. [DONE] Record the clean-runner CI failure where `@codeai-hub/localization` cannot be resolved before workspace package builds; scope: `doc/SolidWorks-WorkFlow/Plans/GitHub_Actions_CI_Workspace_Build_Order_Fix.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define ci workspace build-order fix`
-26. [TODO] Git Commit: `docs(plan): define ci workspace build-order fix` (hash: TBD)
+26. [DONE] Git Commit: `docs(plan): define ci workspace build-order fix` (hash: `475dd45d`)
 
 ### Stream: Root Compile Contract
-27. [TODO] Build required workspace packages before browser/root compile so clean GitHub runners resolve localization types correctly; scope: `package.json`, `README.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(ci): build workspace deps before compile`
+27. [DONE] Build required workspace packages before browser/root compile so clean GitHub runners resolve localization types correctly; scope: `package.json`, `README.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(ci): build workspace deps before compile`
 28. [TODO] Git Commit: `fix(ci): build workspace deps before compile` (hash: TBD)
 
 ### Stream: CI Verification And Session Report
