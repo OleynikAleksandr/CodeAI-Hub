@@ -17,4 +17,4 @@
 
 ### Stream: Claude Router Classification
 3. [DONE] Reclassify same-message Claude pre-tool text as `thinking` when the provider-native message already emitted `thinking`; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-thinking-dialog-emitter.ts`, `packages/Claude_Module/src/messaging/message-processor.translation.test.ts`; expected commit: `fix(claude): classify thinking continuations correctly`
-4. [TODO] Git Commit: `fix(claude): classify thinking continuations correctly` (hash: TBD)
+4. [DONE] Git Commit: `fix(claude): classify thinking continuations correctly` (hash: `69c6e71f`)
