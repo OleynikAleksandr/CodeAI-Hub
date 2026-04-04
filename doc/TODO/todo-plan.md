@@ -7,6 +7,7 @@
   - `doc/SolidWorks-WorkFlow/Plans/Dialog_Autoscroll_And_PM_Help_Color_Patch.md`
   - `doc/SolidWorks-WorkFlow/Plans/GitHub_Actions_CI_Workspace_Build_Order_Fix.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_Thinking_Visibility_And_Config_Sync.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Settings_Save_Notification_Overlay_Fix.md`
 - Keep each micro-task within `<= 3 files`.
 - Every implementation line must be followed by a separate `Git Commit:` line.
 - Update docs in real time when logic or architecture changes.
@@ -84,24 +85,34 @@
 
 ### Stream: Planning Intake
 37. [DONE] Record the linked Codex defects where `Reasoning in dialog` produces no visible `Thinking` for `gpt-5.3-codex` and provider-owned `config.toml` still advertises `gpt-5.4`; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Thinking_Visibility_And_Config_Sync.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define codex thinking visibility scope`
-38. [TODO] Git Commit: `docs(plan): define codex thinking visibility scope` (hash: TBD)
+38. [DONE] Git Commit: `docs(plan): define codex thinking visibility scope` (hash: `b73035ca`)
 
 ### Stream: Codex Provider Config Sync
-39. [TODO] Sync provider-owned Codex `config.toml` model with shared settings while preserving reasoning-summary ownership; scope: `packages/Codex_Module/src/auth/codex-provider-config-materializer.ts`, `src/extension-module/settings/codex-provider-config-sync.ts`, `packages/Codex_Module/src/auth/codex-provider-config-materializer.test.ts`; expected commit: `fix(codex): sync provider config model with settings`
-40. [TODO] Git Commit: `fix(codex): sync provider config model with settings` (hash: TBD)
+39. [DONE] Sync provider-owned Codex `config.toml` model with shared settings while preserving reasoning-summary ownership; scope: `packages/Codex_Module/src/auth/codex-provider-config-materializer.ts`, `src/extension-module/settings/codex-provider-config-sync.ts`, `packages/Codex_Module/src/auth/codex-provider-config-materializer.test.ts`; expected commit: `fix(codex): sync provider config model with settings`
+40. [DONE] Git Commit: `fix(codex): sync provider config model with settings` (hash: `8a7b1544`)
 
 ### Stream: Codex Thinking Classification
-41. [TODO] Carry Codex thinking display sync into runtime turn config and classify intermediate `agent_message` progress as visible `Thinking` by provider-native event order; scope: `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`; expected commit: `fix(core): expose codex thinking display sync`
-42. [TODO] Git Commit: `fix(core): expose codex thinking display sync` (hash: TBD)
-43. [TODO] Add Codex provider-local runtime turn config so the applied `thinkingDisplaySyncEnabled` flag reaches the session before event routing; scope: `packages/Codex_Module/src/session/types.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `fix(codex): store runtime thinking visibility config`
-44. [TODO] Git Commit: `fix(codex): store runtime thinking visibility config` (hash: TBD)
-45. [IN_PROGRESS] Buffer completed Codex `agent_message` items and emit only intermediate progress as `Thinking` while preserving the final assistant reply; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): restore visible thinking from agent messages`
-46. [TODO] Git Commit: `fix(codex): restore visible thinking from agent messages` (hash: TBD)
+41. [DONE] Carry Codex thinking display sync into runtime turn config and classify intermediate `agent_message` progress as visible `Thinking` by provider-native event order; scope: `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`; expected commit: `fix(core): expose codex thinking display sync`
+42. [DONE] Git Commit: `fix(core): expose codex thinking display sync` (hash: `714ab240`)
+43. [DONE] Add Codex provider-local runtime turn config so the applied `thinkingDisplaySyncEnabled` flag reaches the session before event routing; scope: `packages/Codex_Module/src/session/types.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `fix(codex): store runtime thinking visibility config`
+44. [DONE] Git Commit: `fix(codex): store runtime thinking visibility config` (hash: `514de521`)
+45. [DONE] Buffer completed Codex `agent_message` items and emit only intermediate progress as `Thinking` while preserving the final assistant reply; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(codex): restore visible thinking from agent messages`
+46. [DONE] Git Commit: `fix(codex): restore visible thinking from agent messages` (hash: `6e948df5`)
 
 ### Stream: Release Docs And Packaging
-47. [TODO] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
+47. [DONE] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
 48. [TODO] Git Commit: `docs(release): prepare codex thinking visibility patch notes` (hash: TBD)
 49. [TODO] Build and package the release after the Codex streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble codex thinking visibility patch release`
 50. [TODO] Git Commit: `build(release): assemble codex thinking visibility patch release` (hash: TBD)
 51. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session038.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record codex thinking visibility patch`
 52. [TODO] Git Commit: `docs(session): record codex thinking visibility patch` (hash: TBD)
+
+## Phase 5 — Settings Save Notification Overlay Fix (owner: Codex, updated: 2026-04-04)
+
+### Stream: Planning Intake
+53. [DONE] Record the stale Settings save overlay notification and approve the removal-first fix path; scope: `doc/SolidWorks-WorkFlow/Plans/Settings_Save_Notification_Overlay_Fix.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define settings save overlay fix`
+54. [TODO] Git Commit: `docs(plan): define settings save overlay fix` (hash: TBD)
+
+### Stream: Settings Save UX
+55. [DONE] Remove the legacy global `Settings saved (stub implementation).` notification while preserving the existing WebView `settings:saved` flow; scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(settings): remove save overlay notification`
+56. [TODO] Git Commit: `fix(settings): remove save overlay notification` (hash: TBD)

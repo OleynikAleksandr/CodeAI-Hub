@@ -90,7 +90,6 @@ export class SettingsMessageHandler {
         this.postSavedNotification(webview).catch(() => {
           /* noop */
         });
-        window.showInformationMessage("Settings saved (stub implementation).");
         break;
       }
       case "settings:codex-reasoning-summary-preview": {
