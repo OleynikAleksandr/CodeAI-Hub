@@ -209,8 +209,8 @@
 
 ### Stream: Release Notes And Packaging
 140. [DONE] Prepare release-facing docs for the provider thinking-language sync hotfix before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare provider thinking language sync notes`
-141. [TODO] Git Commit: `docs(release): prepare provider thinking language sync notes` (hash: TBD)
-142. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release localizes Codex/Gemini visible thinking according to the selected `Messages for the User` language. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider thinking language sync release`
-143. [TODO] Git Commit: `build(release): assemble provider thinking language sync release` (hash: TBD)
-144. [TODO] Record the provider thinking-language sync hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session028.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider thinking language sync release`
+141. [DONE] Git Commit: `docs(release): prepare provider thinking language sync notes` (hash: `c849d4dc`)
+142. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release localizes Codex/Gemini visible thinking according to the selected `Messages for the User` language. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider thinking language sync release`
+143. [DONE] Git Commit: `build(release): assemble provider thinking language sync release` (hash: `b592559d`)
+144. [DONE] Record the provider thinking-language sync hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session028.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider thinking language sync release`
 145. [TODO] Git Commit: `docs(session): record provider thinking language sync release` (hash: TBD)
