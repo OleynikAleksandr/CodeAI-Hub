@@ -6,6 +6,7 @@ import {
 } from "./localization-contract";
 
 export interface LocalizationPaths {
+  readonly browserRuntimeBootstrapFilePath: string;
   readonly cacheDirectory: string;
   readonly catalogsDirectory: string;
   readonly glossaryDirectory: string;
@@ -31,6 +32,11 @@ export const resolveLocalizationPaths = (
     catalogsDirectory: path.join(rootDirectory, "catalogs"),
     glossaryDirectory: path.join(rootDirectory, "glossary"),
     cacheDirectory: path.join(rootDirectory, "cache"),
+    browserRuntimeBootstrapFilePath: path.join(
+      rootDirectory,
+      "cache",
+      "browser-runtime-bootstrap.json"
+    ),
     metadataFilePath: path.join(rootDirectory, "metadata.json"),
   };
 };
