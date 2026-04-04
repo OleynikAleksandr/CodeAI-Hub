@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `doc/SolidWorks-WorkFlow/Plans/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`, `doc/Sessions/Session024.md`, `doc/Sessions/Session025.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
+- Перед началом каждого stream открыть: `doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`, `doc/Sessions/Session024.md`, `doc/Sessions/Session025.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
 - Этот `TODO Plan` закрывает release scope: следующая сборка должна принести 4-category localization model (`UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`), полную маркировку существующего текста и гарантировать, что весь user-facing text, отмеченный для русского языка, реально отображается/генерируется на русском, а `Internal Agent Instructions` остаются English-only.
 - Каждая implementation-подзадача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`.
 - Каждая подзадача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново.
@@ -12,7 +12,7 @@
 
 ## Phase 0 — Scope Bootstrap (owner: Docs, updated: 2026-04-03)
 ### Stream: Planning Intake
-1. [DONE] Freeze the approved four-category localization architecture, mark the planning document as execution-ready, and replace the placeholder TODO with this phase-based plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session025.md`. Target commit: `docs(plan): define four-category localization release scope`
+1. [DONE] Freeze the approved four-category localization architecture, mark the planning document as execution-ready, and replace the placeholder TODO with this phase-based plan. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session025.md`. Target commit: `docs(plan): define four-category localization release scope`
 2. [DONE] Git Commit: `docs(plan): define four-category localization release scope` (hash: `67defc55`)
 
 ## Phase 1 — Settings Model And Runtime Contract (owner: Localization/Settings, updated: 2026-04-03)

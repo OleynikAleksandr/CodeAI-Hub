@@ -1,9 +1,9 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-03
+**Updated:** 2026-04-04
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (`v1.1.876`)
+**Validated on:** `main` (`v1.1.880`)
 
 ---
 
@@ -127,6 +127,19 @@ Current settings contract stores:
 - translation engine id;
 - glossary enabled flag.
 
+Current glossary contract stores:
+
+- rule kinds:
+  - `preserve`
+  - `preferred_translation`
+  - `user_preserve`
+- bundled glossary sources:
+  - `assets/localization/glossary/base.json`
+  - `assets/localization/glossary/<language>.json`
+- user-owned glossary overrides:
+  - `~/.codeai-hub/localization/glossary/user-overrides.json`
+- baseline protected terms cover provider/product names, technical brands, environment/config tokens, and workflow artifact filenames; language-specific glossaries may additionally pin approved translated forms such as Russian workflow terminology.
+
 Current user-facing settings contract:
 
 - independent language selection for:
@@ -236,7 +249,6 @@ Release verification additionally relies on:
 ## 9. Related Docs
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
 - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
 - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md`
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md`

@@ -41,7 +41,7 @@
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session030.md` (THIS REPORT)
 
-> Next: open `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, and `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Effort_Settings.md` before changing Claude settings/runtime behavior again.
+> Next: open `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, and `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Thinking_Effort_Settings.md` before changing Claude settings/runtime behavior again.
 
 ## Plans for next session
 - Manually validate release `1.1.880` in the packaged UI: switch Claude effort levels, confirm Session model sync reflects the selected effort, and verify visible thinking remains localized according to `Messages for the User`.

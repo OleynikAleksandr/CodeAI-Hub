@@ -30,8 +30,8 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session019.md` (THIS REPORT)
-6. `doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md`
-7. `doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md`
+6. `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_And_Local_Glossary_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_Glossary_Baseline.md`
 8. `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
 9. `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 

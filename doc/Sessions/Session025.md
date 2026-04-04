@@ -97,7 +97,7 @@
 ## Required documents to review before testing
 1. `README.md`
 2. `CHANGELOG.md`
-3. `doc/SolidWorks-WorkFlow/Plans/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Category_Current_Semantics_And_Authoring_Boundary.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session024.md`
 6. `doc/Sessions/Session025.md` (THIS REPORT)

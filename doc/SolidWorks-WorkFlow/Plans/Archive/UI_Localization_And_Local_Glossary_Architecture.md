@@ -358,7 +358,7 @@ Examples of terms that are expected to be `preserve` by default:
 
 The initial bundled glossary baseline is described in:
 
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_Glossary_Baseline.md`
 
 ### 11.2 Processing pipeline
 
@@ -518,4 +518,4 @@ Not allowed as the final architecture:
 - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_Glossary_Baseline.md`

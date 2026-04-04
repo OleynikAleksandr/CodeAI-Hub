@@ -221,7 +221,7 @@
 147. [DONE] Git Commit: `fix(claude-thinking): replace max tokens with effort settings` (hash: `f7a0bb2a`)
 
 ### Stream: SSOT And Release Notes
-148. [DONE] Sync the live architecture/docs set so Claude effort-based thinking settings, effective runtime identity, and migration behavior are recorded before the next patch release. Scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Effort_Settings.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(claude-thinking): replace max tokens with effort settings`
+148. [DONE] Sync the live architecture/docs set so Claude effort-based thinking settings, effective runtime identity, and migration behavior are recorded before the next patch release. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Thinking_Effort_Settings.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(claude-thinking): replace max tokens with effort settings`
 149. [DONE] Git Commit: `fix(claude-thinking): replace max tokens with effort settings` (hash: `f7a0bb2a`)
 
 ### Stream: Release Compile Compatibility

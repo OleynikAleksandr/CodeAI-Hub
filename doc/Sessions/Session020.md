@@ -57,8 +57,8 @@
 5. `doc/Sessions/Session020.md` (THIS REPORT)
 6. `doc/TODO/Archive/todo-plan-up-to-phase6-ui-localization-release-1.1.865-2026-04-01.md`
 7. `doc/SolidWorks-WorkFlow/Modules/Localization.md`
-8. `doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md`
-9. `doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md`
+8. `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_And_Local_Glossary_Architecture.md`
+9. `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_Glossary_Baseline.md`
 
 > There is no active implementation scope left after this release. Start the next session by approving a new planning document or by explicitly choosing the next deferred localization/runtime follow-up scope.
 

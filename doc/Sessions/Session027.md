@@ -47,7 +47,7 @@
 3. `doc/TODO/todo-plan.md`
 4. `doc/Sessions/Session026.md`
 5. `doc/Sessions/Session027.md` (THIS REPORT)
-6. `doc/SolidWorks-WorkFlow/Plans/Gemini_CLI_0.36_Runtime_Compatibility_Fix.md`
+6. `doc/SolidWorks-WorkFlow/Plans/Archive/Gemini_CLI_0.36_Runtime_Compatibility_Fix.md`
 7. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 8. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
 9. `doc/SolidWorks-WorkFlow/Modules/Localization.md`

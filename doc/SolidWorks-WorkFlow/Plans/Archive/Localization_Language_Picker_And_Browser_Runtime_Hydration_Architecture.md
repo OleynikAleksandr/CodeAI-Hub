@@ -255,8 +255,8 @@ Release target:
 
 ## 9. Related Docs
 
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md`
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_And_Local_Glossary_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_Glossary_Baseline.md`
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/Sessions/Session020.md`

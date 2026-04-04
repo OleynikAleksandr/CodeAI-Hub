@@ -11,7 +11,7 @@
 
 This document complements:
 
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_And_Local_Glossary_Architecture.md`
 
 It defines the baseline glossary shape needed before UI localization can be implemented safely on top of the current `google-gtx` translation path.
 
@@ -199,5 +199,5 @@ must invalidate affected localization bundles and trigger incremental regenerati
 
 ## 9. Related Docs
 
-- `doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_And_Local_Glossary_Architecture.md`
 - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`

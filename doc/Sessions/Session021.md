@@ -102,8 +102,8 @@
 6. [doc/TODO/todo-plan.md](../TODO/todo-plan.md)
 7. [doc/TODO/Archive/todo-plan-up-to-phase6-ui-localization-release-1.1.865-2026-04-01.md](../TODO/Archive/todo-plan-up-to-phase6-ui-localization-release-1.1.865-2026-04-01.md)
 8. [doc/SolidWorks-WorkFlow/Modules/Localization.md](../SolidWorks-WorkFlow/Modules/Localization.md)
-9. [doc/SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md](../SolidWorks-WorkFlow/Plans/UI_Localization_And_Local_Glossary_Architecture.md)
-10. [doc/SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md](../SolidWorks-WorkFlow/Plans/UI_Localization_Glossary_Baseline.md)
+9. [doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_And_Local_Glossary_Architecture.md](../SolidWorks-WorkFlow/Plans/Archive/UI_Localization_And_Local_Glossary_Architecture.md)
+10. [doc/SolidWorks-WorkFlow/Plans/Archive/UI_Localization_Glossary_Baseline.md](../SolidWorks-WorkFlow/Plans/Archive/UI_Localization_Glossary_Baseline.md)
 11. [doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md](../SolidWorks-WorkFlow/Plans/Archive/Localization_Language_Picker_And_Browser_Runtime_Hydration_Architecture.md)
 12. [doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md](../SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md)
 
