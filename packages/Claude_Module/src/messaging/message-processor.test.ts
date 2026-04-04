@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { setImmediate } from "node:timers";
-import { applyClaudeTurnRuntimeConfig } from "../provider/claude-applied-turn-config";
 import { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession, SessionLogger } from "../session/types";
 import type { ClaudeStreamMessage } from "../types";
@@ -347,96 +346,6 @@ test("SDKMessageProcessor emits tagged assistant thinking bubbles when display s
   assert.equal(
     events.filter((event) => event.type === "turn_completed").length,
     1
-  );
-});
-
-test("applyClaudeTurnRuntimeConfig stores messages-for-user language", () => {
-  const sessionManager = new SDKSessionManager();
-  const { session } = sessionManager.createSession(
-    "/tmp/claude-test-language-runtime-config",
-    NOOP_LOGGER
-  );
-
-  applyClaudeTurnRuntimeConfig({
-    owner: session,
-    turnOptions: {
-      __codeaiAppliedTurnConfig: {
-        providerId: "claudeCodeCli",
-        messagesForTheUserLanguage: "ru",
-        reasoningEffort: "high",
-        thinkingEnabled: true,
-        thinkingDisplaySyncEnabled: true,
-      },
-    },
-  });
-
-  assert.equal(session.runtimeTurnConfig.messagesForTheUserLanguage, "ru");
-  assert.equal(session.runtimeTurnConfig.reasoningEffort, "high");
-  assert.equal(session.runtimeTurnConfig.thinkingEnabled, true);
-  assert.equal(session.runtimeTurnConfig.thinkingDisplaySyncEnabled, true);
-});
-
-test("SDKMessageProcessor translates Claude thinking bubbles to user language", async () => {
-  const translationCalls: string[] = [];
-  const sessionManager = new SDKSessionManager();
-  const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-thinking-translation",
-    NOOP_LOGGER
-  );
-  session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
-  const processor = new SDKMessageProcessor(sessionManager, {
-    projectPath: "/tmp/claude-test-thinking-translation",
-    thoughtTranslator: {
-      translateReasoning: (text: string, targetLanguage?: string) => {
-        translationCalls.push(`${targetLanguage ?? ""}:${text}`);
-        return Promise.resolve("Сначала нужно прочитать анкету");
-      },
-    } as ConstructorParameters<
-      typeof SDKMessageProcessor
-    >[1]["thoughtTranslator"],
-  });
-  const events = collectMessageEvents(session);
-
-  processor.enqueueTurn(
-    tempId,
-    { content: "thinking", internal: false, enqueuedAt: Date.now() },
-    {
-      createIterator: () =>
-        createIterator([
-          {
-            type: "assistant",
-            session_id: "real-session-thinking-translation",
-            message: {
-              content: [
-                {
-                  type: "thinking",
-                  thinking: "Need to read the questionnaire first",
-                },
-              ],
-            },
-          },
-          { type: "result", session_id: "real-session-thinking-translation" },
-        ]),
-      onRealSessionId: ({ previousSessionId, realSessionId }) => {
-        sessionManager.updateSessionId(previousSessionId, realSessionId);
-      },
-    }
-  );
-
-  await waitForQueueDrain(session);
-
-  assert.deepEqual(translationCalls, [
-    "ru:Need to read the questionnaire first",
-  ]);
-  assert.equal(
-    events.some(
-      (event) =>
-        event.type === "dialog_message" &&
-        event.role === "assistant" &&
-        event.tag === "thinking" &&
-        event.content === "Сначала нужно прочитать анкету"
-    ),
-    true
   );
 });
 

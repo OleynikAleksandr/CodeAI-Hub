@@ -1,7 +1,11 @@
 import crypto from "node:crypto";
 import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage, ModuleReporter } from "../types";
-import { ClaudeThoughtTranslationAdapter } from "./claude-thought-translation-adapter";
+import { splitClaudeDialogChunks } from "./claude-readable-text-chunker";
+import {
+  type ClaudeTextTranslationAdapter,
+  ClaudeThoughtTranslationAdapter,
+} from "./claude-thought-translation-adapter";
 import { extractVariantBArtifacts } from "./structured-output-utils";
 import {
   parseWorkflowStructuredOutputFromResultMessage,
@@ -10,6 +14,7 @@ import {
 } from "./workflow-structured-output";
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
+const THINKING_DIALOG_MAX_CHARS = 900;
 
 type VariantBArtifact =
   ReturnType<typeof extractVariantBArtifacts> extends (infer Item)[] | null
@@ -21,8 +26,41 @@ interface VariantBPartition {
   readonly questions: string[];
 }
 
+interface PendingAssistantText {
+  readonly content: string;
+  readonly message: ClaudeStreamMessage;
+  readonly messageId: string | null;
+}
+
+type PendingAssistantTextResolution = "regular" | "tool_use_preamble";
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readMessageId = (message: ClaudeStreamMessage): string | null => {
+  const messageId = message.message?.id;
+  return typeof messageId === "string" && messageId.trim().length > 0
+    ? messageId
+    : null;
+};
+
+const readMessageDeltaStopReason = (
+  message: ClaudeStreamMessage
+): string | null => {
+  if (message.type !== "stream_event" || !isRecord(message.event)) {
+    return null;
+  }
+  if (message.event.type !== "message_delta") {
+    return null;
+  }
+  const delta = isRecord(message.event.delta) ? message.event.delta : null;
+  return typeof delta?.stop_reason === "string" ? delta.stop_reason : null;
+};
+
+const isMessageStopEvent = (message: ClaudeStreamMessage): boolean =>
+  message.type === "stream_event" &&
+  isRecord(message.event) &&
+  message.event.type === "message_stop";
 
 const partitionVariantBArtifacts = (
   artifacts: VariantBArtifact[] | null
@@ -81,11 +119,15 @@ export const shouldSkipClaudeSDKMessageLog = (
   message.event.type === "content_block_delta";
 
 export class ClaudeStreamEventRouter {
-  private readonly thoughtTranslator: ClaudeThoughtTranslationAdapter;
+  private readonly pendingAssistantTextBySession = new Map<
+    string,
+    PendingAssistantText
+  >();
+  private readonly thoughtTranslator: ClaudeTextTranslationAdapter;
 
   constructor(
     reporter?: ModuleReporter,
-    thoughtTranslator?: ClaudeThoughtTranslationAdapter
+    thoughtTranslator?: ClaudeTextTranslationAdapter
   ) {
     this.thoughtTranslator =
       thoughtTranslator ?? new ClaudeThoughtTranslationAdapter(reporter);
@@ -98,6 +140,13 @@ export class ClaudeStreamEventRouter {
     return this.handleAssistantMessageInternal(session, message);
   }
 
+  handleStreamEvent(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): Promise<void> {
+    return this.handleStreamEventInternal(session, message);
+  }
+
   private async handleAssistantMessageInternal(
     session: ActiveSession,
     message: ClaudeStreamMessage
@@ -108,20 +157,7 @@ export class ClaudeStreamEventRouter {
       return;
     }
 
-    const structured = parseWorkflowStructuredOutputFromText(assistantText);
-    if (!structured) {
-      this.emitAssistantText(session, message, assistantText);
-      return;
-    }
-    const suggestedResponse = this.emitStructuredOutput(
-      session,
-      message,
-      structured
-    );
-    const responseText = suggestedResponse ?? structured.suggestedResponse;
-    if (responseText) {
-      this.emitAssistantText(session, message, responseText);
-    }
+    await this.queueAssistantText(session, message, assistantText);
   }
 
   handleResultMessage(
@@ -135,6 +171,7 @@ export class ClaudeStreamEventRouter {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): Promise<void> {
+    await this.flushPendingAssistantText(session, "regular");
     await this.emitThinkingChunks(session, message);
     const normalizedMessage = this.normalizeStructuredOutputMessage(message);
     const structured =
@@ -150,6 +187,24 @@ export class ClaudeStreamEventRouter {
     const responseText = suggestedResponse ?? structured.suggestedResponse;
     if (responseText) {
       this.emitAssistantText(session, message, responseText);
+    }
+  }
+
+  private async handleStreamEventInternal(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): Promise<void> {
+    const stopReason = readMessageDeltaStopReason(message);
+    if (stopReason === "tool_use") {
+      await this.flushPendingAssistantText(session, "tool_use_preamble");
+      return;
+    }
+    if (stopReason) {
+      await this.flushPendingAssistantText(session, "regular");
+      return;
+    }
+    if (isMessageStopEvent(message)) {
+      await this.flushPendingAssistantText(session, "regular");
     }
   }
 
@@ -206,6 +261,92 @@ export class ClaudeStreamEventRouter {
         model: message.message?.model,
       },
     });
+  }
+
+  private async queueAssistantText(
+    session: ActiveSession,
+    message: ClaudeStreamMessage,
+    content: string
+  ): Promise<void> {
+    const sessionKey = session.sessionId;
+    const pending = this.pendingAssistantTextBySession.get(sessionKey);
+    const messageId = readMessageId(message);
+
+    if (pending?.messageId && messageId && pending.messageId === messageId) {
+      this.pendingAssistantTextBySession.set(sessionKey, {
+        content: `${pending.content}\n\n${content}`,
+        message,
+        messageId,
+      });
+      return;
+    }
+
+    if (pending) {
+      await this.flushPendingAssistantText(session, "regular");
+    }
+
+    this.pendingAssistantTextBySession.set(sessionKey, {
+      content,
+      message,
+      messageId,
+    });
+  }
+
+  private async flushPendingAssistantText(
+    session: ActiveSession,
+    resolution: PendingAssistantTextResolution
+  ): Promise<void> {
+    const sessionKey = session.sessionId;
+    const pending = this.pendingAssistantTextBySession.get(sessionKey);
+    if (!pending) {
+      return;
+    }
+    this.pendingAssistantTextBySession.delete(sessionKey);
+
+    const content = await this.resolvePendingAssistantText(
+      session,
+      pending.content,
+      resolution
+    );
+    if (!content) {
+      return;
+    }
+
+    if (resolution === "tool_use_preamble") {
+      this.emitAssistantText(session, pending.message, content);
+      return;
+    }
+
+    const structured = parseWorkflowStructuredOutputFromText(content);
+    if (!structured) {
+      this.emitAssistantText(session, pending.message, content);
+      return;
+    }
+    const suggestedResponse = this.emitStructuredOutput(
+      session,
+      pending.message,
+      structured
+    );
+    const responseText = suggestedResponse ?? structured.suggestedResponse;
+    if (responseText) {
+      this.emitAssistantText(session, pending.message, responseText);
+    }
+  }
+
+  private async resolvePendingAssistantText(
+    session: ActiveSession,
+    content: string,
+    resolution: PendingAssistantTextResolution
+  ): Promise<string | null> {
+    if (resolution !== "tool_use_preamble") {
+      return content;
+    }
+
+    const translated = await this.thoughtTranslator.translateUserFacingText(
+      content,
+      session.runtimeTurnConfig.messagesForTheUserLanguage
+    );
+    return translated ?? content;
   }
 
   private emitStructuredOutput(
@@ -281,14 +422,20 @@ export class ClaudeStreamEventRouter {
           thinking,
           session.runtimeTurnConfig.messagesForTheUserLanguage
         );
-        session.eventEmitter.emit("message", {
-          type: "dialog_message",
-          role: "assistant",
-          tag: "thinking",
-          content: translated ?? thinking,
-          uuid: `${message.uuid ?? crypto.randomUUID()}::thinking`,
-          timestamp: new Date().toISOString(),
-        });
+        const displayChunks = splitClaudeDialogChunks(
+          translated ?? thinking,
+          THINKING_DIALOG_MAX_CHARS
+        );
+        for (const [index, chunk] of displayChunks.entries()) {
+          session.eventEmitter.emit("message", {
+            type: "dialog_message",
+            role: "assistant",
+            tag: "thinking",
+            content: chunk,
+            uuid: `${message.uuid ?? crypto.randomUUID()}::thinking::${index}`,
+            timestamp: new Date().toISOString(),
+          });
+        }
       }
     }
   }

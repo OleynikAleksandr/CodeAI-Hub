@@ -18,7 +18,7 @@ import {
   ClaudeStreamEventRouter,
   shouldSkipClaudeSDKMessageLog,
 } from "./claude-stream-event-router";
-import type { ClaudeThoughtTranslationAdapter } from "./claude-thought-translation-adapter";
+import type { ClaudeTextTranslationAdapter } from "./claude-thought-translation-adapter";
 
 interface ProcessResponseOptions {
   readonly iterator: AsyncIterable<ClaudeStreamMessage>;
@@ -29,7 +29,7 @@ interface ProcessResponseOptions {
 interface MessageProcessorOptions {
   readonly projectPath: string;
   readonly reporter?: ModuleReporter;
-  readonly thoughtTranslator?: ClaudeThoughtTranslationAdapter;
+  readonly thoughtTranslator?: ClaudeTextTranslationAdapter;
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
 }
 
@@ -260,6 +260,10 @@ export class SDKMessageProcessor {
     switch (message.type) {
       case "assistant": {
         await this.streamEventRouter.handleAssistantMessage(session, message);
+        break;
+      }
+      case "stream_event": {
+        await this.streamEventRouter.handleStreamEvent(session, message);
         break;
       }
       case "rate_limit_event": {

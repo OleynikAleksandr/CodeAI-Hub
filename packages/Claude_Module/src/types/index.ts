@@ -75,6 +75,7 @@ export type ClaudeStreamMessage = {
   readonly model_usage?: unknown;
   readonly message?: {
     readonly content?: unknown;
+    readonly id?: string;
     readonly model?: string;
   };
   readonly content?: unknown;
