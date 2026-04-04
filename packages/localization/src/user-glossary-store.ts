@@ -7,41 +7,97 @@ export interface UserGlossaryOverrides {
   readonly preserve: readonly string[];
 }
 
-const USER_GLOSSARY_FILE_NAME = "user-overrides.json";
+interface UserGlossaryStoreOptions {
+  readonly glossaryDirectory?: string;
+  readonly glossaryValidator?: GlossaryValidator;
+}
+
+const USER_GLOSSARY_FILE_NAME = "do-not-translate-terms.txt";
+const USER_GLOSSARY_COMMENT_PREFIX = "#";
+const USER_GLOSSARY_LINE_SPLIT_PATTERN = /\r?\n/u;
+const USER_GLOSSARY_FILE_HEADER_LINES = [
+  "# CodeAI Hub do-not-translate glossary",
+  "# Add one English term per line. Blank lines and lines starting with # are ignored.",
+  "# Edit this file directly in VS Code to preserve product, workflow, and technical terms.",
+  "",
+] as const;
+const SEEDED_PRESERVE_TERMS = [
+  "CodeAI Hub",
+  "Project Manager",
+  "Claude",
+  "Codex",
+  "Gemini",
+  "Core",
+  "Description",
+  "Virtual Simulation",
+  "Diagram Modules",
+  "Diagram Facades",
+  "React Flow",
+  "VS Code",
+  "CLI",
+  "SDK",
+  "JSON",
+  "TypeScript",
+  "Markdown",
+  "CODEX_HOME",
+  "GEMINI_HOME",
+  "settings.json",
+  "config.toml",
+  "auth.json",
+  "module-map.md",
+  "facade-map.md",
+  "Final_Description.md",
+  "questionnaire.md",
+] as const;
 
 const EMPTY_USER_GLOSSARY_OVERRIDES: UserGlossaryOverrides = {
   preserve: [],
 };
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const parseUserGlossaryOverrides = (value: unknown): UserGlossaryOverrides => {
-  if (!(isRecord(value) && Array.isArray(value.preserve))) {
-    return EMPTY_USER_GLOSSARY_OVERRIDES;
-  }
-
+const parseUserGlossaryOverrides = (raw: string): UserGlossaryOverrides => {
   return {
-    preserve: value.preserve.filter(
-      (term): term is string => typeof term === "string"
-    ),
+    preserve: raw
+      .split(USER_GLOSSARY_LINE_SPLIT_PATTERN)
+      .map((line) => line.trim())
+      .filter(
+        (line) =>
+          line.length > 0 && !line.startsWith(USER_GLOSSARY_COMMENT_PREFIX)
+      ),
   };
 };
 
 export class UserGlossaryStore {
+  private readonly glossaryDirectory: string;
   private readonly glossaryValidator: GlossaryValidator;
 
-  constructor(glossaryValidator = new GlossaryValidator()) {
-    this.glossaryValidator = glossaryValidator;
+  constructor(options: UserGlossaryStoreOptions = {}) {
+    this.glossaryDirectory =
+      options.glossaryDirectory ?? resolveLocalizationPaths().glossaryDirectory;
+    this.glossaryValidator =
+      options.glossaryValidator ?? new GlossaryValidator();
   }
 
   async load(): Promise<UserGlossaryOverrides> {
     try {
       const raw = await fs.readFile(this.userGlossaryPath, "utf8");
-      const parsed = parseUserGlossaryOverrides(JSON.parse(raw) as unknown);
-      return this.normalize(parsed);
+      return this.normalize(parseUserGlossaryOverrides(raw));
     } catch {
       return EMPTY_USER_GLOSSARY_OVERRIDES;
+    }
+  }
+
+  async ensureEditableGlossaryFile(): Promise<string> {
+    await fs.mkdir(this.glossaryDirectory, { recursive: true });
+
+    try {
+      await fs.access(this.userGlossaryPath);
+      return this.userGlossaryPath;
+    } catch {
+      const seeded = this.normalize({
+        preserve: SEEDED_PRESERVE_TERMS,
+      });
+      await fs.writeFile(this.userGlossaryPath, this.serialize(seeded), "utf8");
+      return this.userGlossaryPath;
     }
   }
 
@@ -51,7 +107,7 @@ export class UserGlossaryStore {
     await fs.mkdir(path.dirname(this.userGlossaryPath), { recursive: true });
     await fs.writeFile(
       this.userGlossaryPath,
-      `${JSON.stringify(normalized, null, 2)}\n`,
+      this.serialize(normalized),
       "utf8"
     );
 
@@ -67,10 +123,11 @@ export class UserGlossaryStore {
     };
   }
 
+  private serialize(overrides: UserGlossaryOverrides): string {
+    return `${[...USER_GLOSSARY_FILE_HEADER_LINES, ...overrides.preserve].join("\n")}\n`;
+  }
+
   private get userGlossaryPath(): string {
-    return path.join(
-      resolveLocalizationPaths().glossaryDirectory,
-      USER_GLOSSARY_FILE_NAME
-    );
+    return path.join(this.glossaryDirectory, USER_GLOSSARY_FILE_NAME);
   }
 }

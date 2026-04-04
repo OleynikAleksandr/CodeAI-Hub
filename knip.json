@@ -22,6 +22,9 @@
     "packages/Gemini_Module": {
       "entry": ["src/**/*.test.ts"]
     },
+    "packages/localization": {
+      "entry": ["src/**/*.test.ts"]
+    },
     "packages/initiatives": {},
     "packages/unified-session": {},
     "packages/core-supervisor": {
