@@ -3,11 +3,19 @@ import { TranslationFacade } from "@codeai-hub/translation";
 import type { ModuleReporter } from "../types";
 
 const SOURCE_LANGUAGE = "en";
-const TARGET_LANGUAGE = SOURCE_LANGUAGE;
 const TRANSLATION_TIMEOUT_MS = 3000;
 const TRANSLATION_CATEGORY = "reasoning";
 const TRANSLATION_ENGINE_ID = "google-gtx";
 const TRANSLATION_PROVIDER_ID = "codex";
+
+const resolveTargetLanguage = (value?: string): string | null => {
+  const normalized = value?.trim().toLowerCase();
+  if (!(normalized && normalized.length > 0)) {
+    return null;
+  }
+
+  return normalized === SOURCE_LANGUAGE ? null : normalized;
+};
 
 export class CodexThoughtTranslationAdapter {
   private readonly facade: TranslationFacade;
@@ -18,9 +26,13 @@ export class CodexThoughtTranslationAdapter {
     this.facade = new TranslationFacade({ reporter });
   }
 
-  async translateReasoning(text: string): Promise<string | null> {
+  async translateReasoning(
+    text: string,
+    targetLanguage?: string
+  ): Promise<string | null> {
     const normalized = text.trim();
-    if (normalized.length === 0) {
+    const resolvedTargetLanguage = resolveTargetLanguage(targetLanguage);
+    if (!(normalized.length > 0 && resolvedTargetLanguage)) {
       return null;
     }
 
@@ -30,7 +42,7 @@ export class CodexThoughtTranslationAdapter {
         engineId: TRANSLATION_ENGINE_ID,
         providerId: TRANSLATION_PROVIDER_ID,
         sourceLanguage: SOURCE_LANGUAGE,
-        targetLanguage: TARGET_LANGUAGE,
+        targetLanguage: resolvedTargetLanguage,
         text: normalized,
         timeoutMs: TRANSLATION_TIMEOUT_MS,
       } satisfies TranslationRequest;

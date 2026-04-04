@@ -23,6 +23,7 @@ export interface ActiveSession {
   readonly logger: SessionLogger | null;
   readonly messageController: MessageController;
   messageGenerator?: AsyncGenerator<unknown>;
+  messagesForTheUserLanguage?: string;
   processingLoop?: Promise<void>;
   responsePolicy?: CodexResponsePolicy;
   sessionId: string;

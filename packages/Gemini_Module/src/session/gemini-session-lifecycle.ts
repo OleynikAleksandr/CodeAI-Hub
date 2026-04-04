@@ -27,12 +27,15 @@ export class GeminiSessionLifecycle {
     session: {
       config: { setModel: (model: string) => void };
       runtimeTurnConfig: {
+        messagesForTheUserLanguage?: string;
         modelId?: string;
         thinkingDisplaySyncEnabled?: boolean;
         thinkingLevel?: string;
       };
     }
   ): void {
+    const pendingMessagesForTheUserLanguage =
+      owner.pendingMessagesForTheUserLanguageOverride as string | undefined;
     const pendingModel = owner.pendingModelOverride as string | undefined;
     const pendingThinkingDisplaySyncOverride =
       owner.pendingThinkingDisplaySyncOverride as boolean | undefined;
@@ -41,15 +44,22 @@ export class GeminiSessionLifecycle {
       | undefined;
     if (
       !(
+        pendingMessagesForTheUserLanguage ||
         pendingModel ||
         pendingThinkingLevel ||
         pendingThinkingDisplaySyncOverride !== undefined
       )
     ) {
+      owner.pendingMessagesForTheUserLanguageOverride = undefined;
       owner.pendingModelOverride = undefined;
       owner.pendingThinkingDisplaySyncOverride = undefined;
       owner.pendingThinkingLevelOverride = undefined;
       return;
+    }
+
+    if (pendingMessagesForTheUserLanguage) {
+      session.runtimeTurnConfig.messagesForTheUserLanguage =
+        pendingMessagesForTheUserLanguage;
     }
 
     if (pendingModel) {
@@ -70,6 +80,7 @@ export class GeminiSessionLifecycle {
         pendingThinkingDisplaySyncOverride;
     }
 
+    owner.pendingMessagesForTheUserLanguageOverride = undefined;
     owner.pendingModelOverride = undefined;
     owner.pendingThinkingDisplaySyncOverride = undefined;
     owner.pendingThinkingLevelOverride = undefined;

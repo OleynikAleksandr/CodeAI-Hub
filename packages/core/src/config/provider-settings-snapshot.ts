@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { LOCALIZATION_SOURCE_SELECTION } from "@codeai-hub/localization";
 
 export interface CodexSettingsSnapshot {
   readonly defaultModel?: unknown;
@@ -37,6 +38,38 @@ export interface GeminiSettingsSnapshot {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
+
+const DEFAULT_LOCALIZATION_LANGUAGE = "en";
+
+const normalizeOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+
+const normalizeLocalizationLanguage = (
+  value: unknown,
+  fallback: string
+): string => {
+  const normalized = normalizeOptionalString(value) ?? fallback;
+  return normalized.toLowerCase() === LOCALIZATION_SOURCE_SELECTION
+    ? DEFAULT_LOCALIZATION_LANGUAGE
+    : normalized;
+};
+
+const resolveLocalizationCategory = (
+  categories: Record<string, unknown>,
+  candidateKeys: readonly string[],
+  fallback: string
+): string => {
+  for (const key of candidateKeys) {
+    const resolved = normalizeOptionalString(categories[key]);
+    if (resolved) {
+      return normalizeLocalizationLanguage(resolved, fallback);
+    }
+  }
+
+  return fallback;
+};
 
 const loadJsonSnapshot = (
   settingsPath: string
@@ -119,4 +152,31 @@ export const loadClaudeSettingsSnapshot = (
 ): ClaudeSettingsSnapshot | null => {
   const parsed = loadJsonSnapshot(settingsPath);
   return parsed ? (parsed as ClaudeSettingsSnapshot) : null;
+};
+
+export const loadMessagesForTheUserLanguage = (
+  settingsPath: string
+): string => {
+  const parsed = loadJsonSnapshot(settingsPath);
+  if (!parsed) {
+    return DEFAULT_LOCALIZATION_LANGUAGE;
+  }
+
+  const general = isRecord(parsed.general) ? parsed.general : {};
+  const localization = isRecord(general.localization)
+    ? general.localization
+    : {};
+  const categories = isRecord(localization.categories)
+    ? localization.categories
+    : {};
+  const defaultLanguage = normalizeLocalizationLanguage(
+    localization.defaultLanguage,
+    DEFAULT_LOCALIZATION_LANGUAGE
+  );
+
+  return resolveLocalizationCategory(
+    categories,
+    ["messagesForTheUser", "systemFeedback"],
+    defaultLanguage
+  );
 };

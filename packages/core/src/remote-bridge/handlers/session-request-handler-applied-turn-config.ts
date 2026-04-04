@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { CoreConfig } from "../../config";
+import { loadMessagesForTheUserLanguage } from "../../config/provider-settings-snapshot";
 import {
   buildProviderEffectiveModelId,
   resolveProviderTurnConfigEntry,
@@ -39,8 +40,9 @@ export class SessionRequestHandlerAppliedTurnConfig {
       return null;
     }
 
+    const settingsPath = this.resolveSharedSettingsPath();
     const resolved = resolveProviderTurnConfigEntry({
-      settingsPath: this.resolveSharedSettingsPath(),
+      settingsPath,
       env: process.env,
       providerId,
       fallbackClaudeModel: this.config.claudeDefaultModel,
@@ -78,6 +80,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
           thinkingEnabled: resolved.thinkingEnabled,
           thinkingLevel,
         }) ?? resolved.effectiveModelId,
+      messagesForTheUserLanguage: loadMessagesForTheUserLanguage(settingsPath),
       modelId: baseModelId,
       reasoningEffort,
       source: targetModelId ? "switch_request" : "settings_snapshot",

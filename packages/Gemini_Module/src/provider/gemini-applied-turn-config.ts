@@ -4,12 +4,14 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 export interface AppliedGeminiTurnConfig {
+  readonly messagesForTheUserLanguage?: string;
   readonly modelId?: string;
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingLevel?: string;
 }
 
 interface GeminiRuntimeOverrideOwner {
+  pendingMessagesForTheUserLanguageOverride?: string;
   pendingModelOverride?: string;
   pendingThinkingDisplaySyncOverride?: boolean;
   pendingThinkingLevelOverride?: string;
@@ -28,6 +30,9 @@ const readAppliedGeminiTurnConfig = (
     return null;
   }
   return {
+    messagesForTheUserLanguage: readOptionalTrimmedString(
+      candidate.messagesForTheUserLanguage
+    ),
     modelId: readOptionalTrimmedString(candidate.modelId),
     thinkingDisplaySyncEnabled:
       typeof candidate.thinkingDisplaySyncEnabled === "boolean"
@@ -50,6 +55,10 @@ export const applyGeminiTurnRuntimeConfig = (options: {
   if (appliedConfig.modelId) {
     options.owner.pendingModelOverride = appliedConfig.modelId;
   }
+  if (appliedConfig.messagesForTheUserLanguage) {
+    options.owner.pendingMessagesForTheUserLanguageOverride =
+      appliedConfig.messagesForTheUserLanguage;
+  }
   options.owner.pendingThinkingDisplaySyncOverride =
     appliedConfig.thinkingDisplaySyncEnabled;
   if (appliedConfig.thinkingLevel) {
@@ -57,11 +66,13 @@ export const applyGeminiTurnRuntimeConfig = (options: {
   }
 
   if (
+    appliedConfig.messagesForTheUserLanguage ||
     appliedConfig.modelId ||
     appliedConfig.thinkingLevel ||
     appliedConfig.thinkingDisplaySyncEnabled !== undefined
   ) {
     options.reporter?.info?.("Gemini runtime override set", {
+      messagesForTheUserLanguage: appliedConfig.messagesForTheUserLanguage,
       modelId: appliedConfig.modelId,
       thinkingDisplaySyncEnabled: appliedConfig.thinkingDisplaySyncEnabled,
       thinkingLevel: appliedConfig.thinkingLevel,

@@ -41,6 +41,7 @@ export type {
 export interface AppliedProviderTurnConfig {
   readonly baseModelId?: string;
   readonly effectiveModelId?: string;
+  readonly messagesForTheUserLanguage?: string;
   readonly modelId?: string;
   readonly providerId: string;
   readonly reasoningEffort?: string;
@@ -94,6 +95,10 @@ export const readAppliedProviderTurnConfig = (
     effectiveModelId:
       typeof candidate.effectiveModelId === "string"
         ? candidate.effectiveModelId
+        : undefined,
+    messagesForTheUserLanguage:
+      typeof candidate.messagesForTheUserLanguage === "string"
+        ? candidate.messagesForTheUserLanguage
         : undefined,
     modelId:
       typeof candidate.modelId === "string" ? candidate.modelId : undefined,

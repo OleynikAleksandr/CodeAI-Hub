@@ -200,4 +200,17 @@
 134. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release restores Gemini provider availability with global `@google/gemini-cli@0.36.x`. Scope: release-generated version files and manifests. Target commit: `build(release): assemble gemini cli compatibility release`
 135. [DONE] Git Commit: `build(release): assemble gemini cli compatibility release` (hash: `57eb642e`)
 136. [DONE] Record the Gemini CLI compatibility hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session027.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record gemini cli compatibility release`
-137. [TODO] Git Commit: `docs(session): record gemini cli compatibility release` (hash: TBD)
+137. [DONE] Git Commit: `docs(session): record gemini cli compatibility release` (hash: `75fd324c`)
+
+## Phase 13 — Provider Thinking Language Sync Hotfix (owner: Providers/Release/Docs, updated: 2026-04-04)
+### Stream: Runtime Language Threading
+138. [DONE] Thread the shared `Messages for the User` language through Core applied turn config and into Codex/Gemini thinking translation runtime so visible reasoning follows the selected user-facing language instead of staying English-only. Scope: `packages/core/src/config/provider-settings-snapshot.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/types.ts`, `packages/Codex_Module/src/messaging/*`, `packages/Codex_Module/src/session/types.ts`, `packages/Gemini_Module/src/messaging/*`, `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `packages/Gemini_Module/src/session/types.ts`, provider tests, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Target commit: `fix(provider-thinking): sync visible thought language with settings`
+139. [TODO] Git Commit: `fix(provider-thinking): sync visible thought language with settings` (hash: TBD)
+
+### Stream: Release Notes And Packaging
+140. [TODO] Prepare release-facing docs for the provider thinking-language sync hotfix before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare provider thinking language sync notes`
+141. [TODO] Git Commit: `docs(release): prepare provider thinking language sync notes` (hash: TBD)
+142. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release localizes Codex/Gemini visible thinking according to the selected `Messages for the User` language. Scope: release-generated version files and manifests. Target commit: `build(release): assemble provider thinking language sync release`
+143. [TODO] Git Commit: `build(release): assemble provider thinking language sync release` (hash: TBD)
+144. [TODO] Record the provider thinking-language sync hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session028.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record provider thinking language sync release`
+145. [TODO] Git Commit: `docs(session): record provider thinking language sync release` (hash: TBD)

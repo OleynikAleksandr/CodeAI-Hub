@@ -71,6 +71,7 @@ test("applyCodexTurnRuntimeConfig mutates active thread model and strips interna
   const turnOptions = applyCodexTurnRuntimeConfig(session, {
     outputSchema,
     __codeaiAppliedTurnConfig: {
+      messagesForTheUserLanguage: "ru",
       providerId: "codexCli",
       modelId: "gpt-5.4",
       reasoningEffort: "high",
@@ -92,6 +93,7 @@ test("applyCodexTurnRuntimeConfig mutates active thread model and strips interna
       ?.effectiveModelId,
     "gpt-5.4"
   );
+  assert.equal(session.messagesForTheUserLanguage, "ru");
   assert.deepEqual(turnOptions, { outputSchema });
 });
 

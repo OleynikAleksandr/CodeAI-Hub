@@ -162,7 +162,10 @@ export class CodexStreamEventRouter {
     itemId: string,
     delta: string
   ): Promise<void> {
-    const translated = await this.thoughtTranslator.translateReasoning(delta);
+    const translated = await this.thoughtTranslator.translateReasoning(
+      delta,
+      session.messagesForTheUserLanguage
+    );
     this.emitter.emitDialogMessage(
       session,
       "thinking",

@@ -116,6 +116,7 @@ test("GeminiProviderAdapter applies shared runtime overrides before send", async
 
   await adapter.sendMessage("runtime-session", "switch model", {
     __codeaiAppliedTurnConfig: {
+      messagesForTheUserLanguage: "ru",
       providerId: "geminiCli",
       modelId: "gemini-3-pro",
       thinkingLevel: "high",
@@ -129,6 +130,14 @@ test("GeminiProviderAdapter applies shared runtime overrides before send", async
       content: "switch model",
     },
   ]);
+  assert.equal(
+    (
+      manager as unknown as {
+        pendingMessagesForTheUserLanguageOverride?: string;
+      }
+    ).pendingMessagesForTheUserLanguageOverride,
+    "ru"
+  );
   assert.equal(
     (manager as unknown as { pendingModelOverride?: string })
       .pendingModelOverride,

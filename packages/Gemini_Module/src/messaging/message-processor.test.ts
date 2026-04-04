@@ -166,10 +166,23 @@ test("GeminiMessageProcessor keeps partial assistant chunks buffered until finis
 });
 
 test("GeminiMessageProcessor still emits thinking bubbles when display sync is disabled", () => {
+  const translationCalls: string[] = [];
   const processor = new GeminiMessageProcessor({
     modules: createModules(),
+    thoughtTranslator: {
+      translateThought: (
+        _thought: { readonly description: string; readonly subject: string },
+        targetLanguage?: string
+      ) => {
+        translationCalls.push(targetLanguage ?? "");
+        return Promise.resolve("Планирование: Нужно подумать перед ответом");
+      },
+    } as unknown as ConstructorParameters<
+      typeof GeminiMessageProcessor
+    >[0]["thoughtTranslator"],
   });
   const session = createSession();
+  session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
   session.runtimeTurnConfig.thinkingDisplaySyncEnabled = false;
   const accumulator = processor.createAccumulator("prompt-thinking-disabled");
   const messages: unknown[] = [];
@@ -190,15 +203,18 @@ test("GeminiMessageProcessor still emits thinking bubbles when display sync is d
     accumulator
   );
 
-  assert.equal(
-    messages.some(
-      (payload) =>
-        (payload as { type?: string }).type === "dialog_message" &&
-        (payload as { role?: string }).role === "assistant" &&
-        (payload as { tag?: string }).tag === "thinking" &&
-        (payload as { content?: string }).content ===
-          "Planning: Need to think before answering"
-    ),
-    true
-  );
+  return Promise.resolve().then(() => {
+    assert.deepEqual(translationCalls, ["ru"]);
+    assert.equal(
+      messages.some(
+        (payload) =>
+          (payload as { type?: string }).type === "dialog_message" &&
+          (payload as { role?: string }).role === "assistant" &&
+          (payload as { tag?: string }).tag === "thinking" &&
+          (payload as { content?: string }).content ===
+            "Планирование: Нужно подумать перед ответом"
+      ),
+      true
+    );
+  });
 });

@@ -251,10 +251,12 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
     assert.deepEqual(readAppliedProviderTurnConfig(sentTurnOptions[0]), {
       baseModelId: "sonnet",
       effectiveModelId: "sonnet thinking:off",
+      messagesForTheUserLanguage: "en",
       providerId: "claudeCodeCli",
       modelId: "sonnet",
       source: "settings_snapshot",
       reasoningEffort: undefined,
+      thinkingDisplaySyncEnabled: true,
       thinkingLevel: undefined,
     });
 
@@ -270,6 +272,75 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
         modelId: "sonnet thinking:off",
       },
     });
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("SessionRequestHandler applies localized user-message language from live settings snapshot", async () => {
+  const tempDir = await mkdtemp(
+    path.join(tmpdir(), "codeai-hub-gemini-language-sync-")
+  );
+  const sharedSettingsPath = path.join(tempDir, "settings.json");
+
+  try {
+    await writeFile(
+      sharedSettingsPath,
+      `${JSON.stringify(
+        {
+          general: {
+            localization: {
+              defaultLanguage: "en",
+              categories: {
+                messagesForTheUser: "ru",
+              },
+            },
+          },
+          providers: {
+            gemini: {
+              defaultModel: "gemini-3-pro-preview",
+            },
+          },
+        },
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+
+    const harness = createHarness({
+      claudeSettingsPath: path.join(tempDir, "claude.json"),
+      geminiDefaultModel: "gemini-3-pro-preview",
+    });
+    const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+    const session = harness.sessionManager.createSession(
+      "geminiCli",
+      "/tmp/gemini-runtime-language-update"
+    );
+
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        _content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sentTurnOptions.push(turnOptions);
+        return Promise.resolve();
+      },
+    });
+    harness.providerSessions.set(session.id, {
+      providerId: "geminiCli",
+      providerSessionId: "provider-session-gemini",
+      unsubscribe: noop,
+    });
+
+    await harness.handler.handleMessage(session.id, "проверь локализацию");
+
+    assert.equal(
+      readAppliedProviderTurnConfig(sentTurnOptions[0])
+        ?.messagesForTheUserLanguage,
+      "ru"
+    );
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }

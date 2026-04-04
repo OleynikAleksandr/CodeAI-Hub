@@ -20,6 +20,7 @@ export interface ActiveSession {
 }
 
 export interface GeminiRuntimeTurnConfig {
+  messagesForTheUserLanguage?: string;
   modelId?: string;
   thinkingDisplaySyncEnabled?: boolean;
   thinkingLevel?: string;

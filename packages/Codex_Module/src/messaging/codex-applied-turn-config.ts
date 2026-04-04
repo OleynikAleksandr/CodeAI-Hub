@@ -21,6 +21,7 @@ interface ThreadRuntimeState {
 
 interface ResolvedAppliedCodexTurnConfig {
   readonly effectiveModelId?: string;
+  readonly messagesForTheUserLanguage?: string;
   readonly modelId?: string;
   readonly reasoningEffort?: CodexReasoningEffort;
   readonly runtimeModelId?: string;
@@ -50,6 +51,10 @@ const readAppliedCodexTurnConfig = (
 
   return {
     effectiveModelId,
+    messagesForTheUserLanguage:
+      typeof candidate.messagesForTheUserLanguage === "string"
+        ? candidate.messagesForTheUserLanguage
+        : undefined,
     modelId,
     reasoningEffort:
       typeof candidate.reasoningEffort === "string" &&
@@ -67,6 +72,10 @@ export const applyCodexTurnRuntimeConfig = (
   turnOptions?: CodexTurnOptions
 ): CodexTurnOptions | undefined => {
   const appliedConfig = readAppliedCodexTurnConfig(turnOptions);
+  if (appliedConfig?.messagesForTheUserLanguage) {
+    session.messagesForTheUserLanguage =
+      appliedConfig.messagesForTheUserLanguage;
+  }
   if (appliedConfig && session.thread) {
     const thread = session.thread as unknown as ThreadRuntimeState;
     thread._threadOptions = {
