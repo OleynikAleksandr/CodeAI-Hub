@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.878] - 2026-04-04
+### Fixed
+- **Selected user-message language now reaches provider thinking bubbles**: Core applied turn config now carries `messagesForTheUserLanguage` from the shared settings snapshot, so Codex and Gemini runtime adapters can localize visible reasoning/thought output to the same language selected under `Messages for the User`.
+- **Gemini visible thoughts are no longer pinned to English**: Gemini thought translation now uses the runtime-selected target language and skips translation entirely when the selected language is `en`, preserving the original provider wording as the default fallback.
+- **Codex reasoning bubbles now use the same localization contract**: Codex runtime state now receives the live user-message language per turn, which keeps visible reasoning aligned with Gemini and prevents the same English-only regression from resurfacing on the Codex path.
+
 ## [1.1.877] - 2026-04-04
 ### Fixed
 - **Gemini CLI `0.36.x` runtime compatibility**: the Gemini provider bridge now supports global bundle-only `@google/gemini-cli` installs plus the relocated scheduler export from `@google/gemini-cli-core`, so provider selection no longer fails on missing legacy `dist/src/config/*` modules.
