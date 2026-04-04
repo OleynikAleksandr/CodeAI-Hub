@@ -18,6 +18,7 @@
 - `packages/Gemini_Module/src/runtime/cli-bridge.ts` — runtime bridge loader and compatibility entrypoint; root/core resolution now delegates to `cli-bridge-root-resolver.ts`.
 - `packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts` — module loading and compatibility validation helper shared by `cli-bridge.ts` and `gemini-installer.ts`.
 - `packages/Gemini_Module/src/runtime/cli-bridge-root-resolver.ts` — CLI/Core package root candidate scanning and version resolution helper.
+- Gemini runtime bridge must support both the legacy `dist/src/config/*` CLI layout and the modern bundle-only global `@google/gemini-cli@0.36.x` layout; safe compatibility settings loading reads `~/.gemini/settings.json` plus `<workspace>/.gemini/settings.json` directly instead of importing bundle chunks with runtime side effects.
 - Installed Gemini provider bundles are self-contained at runtime: `scripts/build-gemini-module.sh` vendors `@codeai-hub/translation` into the provider install root so `dist/index.js` can resolve the shared package outside the workspace tree.
 
 ## Installer cluster
@@ -39,6 +40,7 @@
 - `sdk-gemini-*.jsonl` остаётся диагностическим/raw session логом; exact provider-applied model/thinking при аудите нужно подтверждать по Gemini raw session/stream traces, а не по отдельным normalized `provider_feedback` записям.
 - `formatGeminiStreamErrorMessage()` остаётся единым formatter-ом для nested Gemini stream payload errors, чтобы router и тесты не расходились по тексту ошибок.
 - Installed Gemini bundles must be runnable after deployment without relying on the repo workspace `node_modules`; any shared runtime dependency required by the provider must be copied into the bundle root by the build script.
+- Gemini runtime compatibility must not depend on importing CLI bundle chunks into the Core process: bundle-side effects can register conflicting telemetry globals, so provider bootstrap may read Gemini settings from files but must keep module execution limited to the core runtime exports that are required for session startup.
 - Gemini post-tool leg contract: output from a leg that already produced `tool_call_request` is progress/status output, not terminal completion proof; terminal completion may be confirmed only by the terminal leg without new tool requests.
 - Gemini stalled-turn contract: if the stream stalls after `model_info`, partial text, or other intermediate progress output and never reaches a terminal event, the watchdog must end the turn with a recoverable failure instead of a silent infinite working state; nested `post_tool` legs use a longer Gemini-specific watchdog window than the initial leg.
 

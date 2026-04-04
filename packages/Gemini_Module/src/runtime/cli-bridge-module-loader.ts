@@ -1,6 +1,10 @@
+import { existsSync, readFileSync } from "node:fs";
 import nodeModule from "node:module";
+import { homedir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
+import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { GeminiCliModules } from "./cli-types";
 
 const { createRequire } = nodeModule;
@@ -22,17 +26,38 @@ const loadEsmModule = async <T>(
   return loaded as T;
 };
 
+const formatLoadErrors = (errors: readonly unknown[]): string =>
+  errors.map((error) => String(error)).join("\n");
+
+const tryFindAndLoadModule = async <T>(
+  root: string,
+  candidates: readonly (readonly string[])[]
+): Promise<{
+  readonly module: T | null;
+  readonly errors: readonly unknown[];
+}> => {
+  const errors: unknown[] = [];
+  for (const segments of candidates) {
+    try {
+      const module = await loadEsmModule<T>(root, ...segments);
+      return { module, errors };
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+  return {
+    module: null,
+    errors,
+  };
+};
+
 const findAndLoadModule = async <T>(
   root: string,
   candidates: readonly (readonly string[])[]
 ): Promise<T> => {
-  const errors: unknown[] = [];
-  for (const segments of candidates) {
-    try {
-      return await loadEsmModule<T>(root, ...segments);
-    } catch (error) {
-      errors.push(error);
-    }
+  const { module, errors } = await tryFindAndLoadModule<T>(root, candidates);
+  if (module) {
+    return module;
   }
   throw new Error(
     `Failed to load module from any candidate path:\n${errors
@@ -41,43 +66,315 @@ const findAndLoadModule = async <T>(
   );
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const asString = (value: unknown): string | undefined => {
+  if (typeof value !== "string") {
+    return;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+};
+
+const asBoolean = (value: unknown): boolean | undefined =>
+  typeof value === "boolean" ? value : undefined;
+
+const asStringArray = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.flatMap((entry) => {
+    const normalized = asString(entry);
+    return normalized ? [normalized] : [];
+  });
+};
+
+const resolveObjectPath = (
+  source: Record<string, unknown>,
+  ...keys: readonly string[]
+): Record<string, unknown> | undefined => {
+  let current: unknown = source;
+  for (const key of keys) {
+    if (!isRecord(current)) {
+      return;
+    }
+    current = current[key];
+  }
+  return isRecord(current) ? current : undefined;
+};
+
+const mergeObjects = (
+  base: Record<string, unknown>,
+  override: Record<string, unknown>
+): Record<string, unknown> => {
+  const merged: Record<string, unknown> = { ...base };
+  for (const [key, value] of Object.entries(override)) {
+    const existing = merged[key];
+    if (isRecord(existing) && isRecord(value)) {
+      merged[key] = mergeObjects(existing, value);
+      continue;
+    }
+    merged[key] = value;
+  }
+  return merged;
+};
+
+const normalizeCompatSettings = (
+  settings: Record<string, unknown>
+): Record<string, unknown> => {
+  const normalized = mergeObjects({}, settings);
+  const selectedAuthType = asString(normalized.selectedAuthType);
+  if (selectedAuthType) {
+    const security = isRecord(normalized.security) ? normalized.security : {};
+    const auth = isRecord(security.auth) ? security.auth : {};
+    normalized.security = {
+      ...security,
+      auth: {
+        ...auth,
+        selectedType: asString(auth.selectedType) ?? selectedAuthType,
+      },
+    };
+  }
+  return normalized;
+};
+
+const readCompatSettingsFile = (filePath: string): Record<string, unknown> => {
+  if (!existsSync(filePath)) {
+    return {};
+  }
+  try {
+    const raw = readFileSync(filePath, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    return isRecord(parsed) ? normalizeCompatSettings(parsed) : {};
+  } catch {
+    return {};
+  }
+};
+
+const createCompatConfigModule = async (
+  cliCoreRoot: string
+): Promise<typeof import("@google/gemini-cli/dist/src/config/config")> => {
+  const coreConfigModule = await findAndLoadModule<
+    typeof import("@google/gemini-cli-core/dist/src/config/config")
+  >(cliCoreRoot, [
+    ["dist", "src", "config", "config.js"],
+    ["dist", "config", "config.js"],
+  ]);
+
+  const compatModule = {
+    loadCliConfig: async (
+      settings: unknown,
+      sessionId: string,
+      argv: unknown,
+      cwd = process.cwd()
+    ) => {
+      const mergedSettings = isRecord(settings) ? settings : {};
+      const argvRecord = isRecord(argv) ? argv : {};
+      const contextSettings = resolveObjectPath(mergedSettings, "context");
+      const modelSettings = resolveObjectPath(mergedSettings, "model");
+      const privacySettings = resolveObjectPath(mergedSettings, "privacy");
+      const uiSettings = resolveObjectPath(mergedSettings, "ui");
+      const accessibilitySettings = resolveObjectPath(
+        mergedSettings,
+        "ui",
+        "accessibility"
+      );
+      const securitySettings = resolveObjectPath(mergedSettings, "security");
+      const includeDirectories = Array.from(
+        new Set(
+          [
+            ...asStringArray(contextSettings?.includeDirectories),
+            ...asStringArray(argvRecord.includeDirectories),
+          ].map((directory) => path.resolve(directory))
+        )
+      );
+
+      let approvalMode = (asString(argvRecord.approvalMode) ??
+        (argvRecord.yolo === true
+          ? "yolo"
+          : "default")) as ConstructorParameters<
+        typeof coreConfigModule.Config
+      >[0]["approvalMode"];
+      if (
+        asBoolean(securitySettings?.disableYoloMode) === true &&
+        approvalMode === "yolo"
+      ) {
+        approvalMode = "default" as ConstructorParameters<
+          typeof coreConfigModule.Config
+        >[0]["approvalMode"];
+      }
+
+      const resolvedModel =
+        asString(argvRecord.model) ??
+        asString(modelSettings?.name) ??
+        coreConfigModule.DEFAULT_GEMINI_FLASH_MODEL;
+      const question =
+        asString(argvRecord.promptInteractive) ??
+        asString(argvRecord.prompt) ??
+        "";
+
+      return await Promise.resolve(
+        new coreConfigModule.Config({
+          sessionId,
+          targetDir: cwd,
+          cwd,
+          approvalMode,
+          debugMode: argvRecord.debug === true,
+          includeDirectories,
+          interactive: false,
+          listExtensions: argvRecord.listExtensions === true,
+          listSessions: argvRecord.listSessions === true,
+          deleteSession: asString(argvRecord.deleteSession),
+          allowedTools: asStringArray(argvRecord.allowedTools),
+          allowedMcpServers: asStringArray(argvRecord.allowedMcpServerNames),
+          blockedMcpServers: [],
+          question,
+          model: resolvedModel,
+          showMemoryUsage: asBoolean(uiSettings?.showMemoryUsage) ?? false,
+          accessibility: accessibilitySettings,
+          usageStatisticsEnabled:
+            asBoolean(privacySettings?.usageStatisticsEnabled) ?? true,
+        })
+      );
+    },
+  };
+
+  return compatModule as typeof import("@google/gemini-cli/dist/src/config/config");
+};
+
+const createCompatSettingsModule = (
+  _cliRoot: string
+): typeof import("@google/gemini-cli/dist/src/config/settings") => {
+  return {
+    loadSettings: (workspaceDir = process.cwd()) => {
+      const userSettingsPath = path.join(homedir(), ".gemini", "settings.json");
+      const workspaceSettingsPath = path.join(
+        workspaceDir,
+        ".gemini",
+        "settings.json"
+      );
+      const userSettings = readCompatSettingsFile(userSettingsPath);
+      const workspaceSettings = readCompatSettingsFile(workspaceSettingsPath);
+      return {
+        merged: mergeObjects(userSettings, workspaceSettings),
+      };
+    },
+    migrateDeprecatedSettings: () => {
+      // Bundle-only Gemini CLI no longer exposes the old migrator API.
+    },
+  } as unknown as typeof import("@google/gemini-cli/dist/src/config/settings");
+};
+
+interface LegacySchedulerOptions {
+  readonly context: Record<string, unknown>;
+  readonly getPreferredEditor: () => undefined;
+  readonly onAllToolCallsComplete?: (
+    completedToolCalls: readonly CompletedToolCall[]
+  ) => void | Promise<void>;
+}
+
+interface ModernSchedulerInstanceLike {
+  schedule(
+    request: ToolCallRequestInfo | readonly ToolCallRequestInfo[],
+    signal: AbortSignal
+  ): Promise<readonly CompletedToolCall[]>;
+}
+
+interface ModernSchedulerConstructorLike {
+  new (options: {
+    readonly context: Record<string, unknown>;
+    readonly getPreferredEditor: () => undefined;
+    readonly messageBus?: unknown;
+  }): ModernSchedulerInstanceLike;
+}
+
+const createCompatToolSchedulerModule = async (
+  cliCoreRoot: string
+): Promise<
+  typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler")
+> => {
+  const legacyScheduler = await tryFindAndLoadModule<
+    typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler")
+  >(cliCoreRoot, [
+    ["dist", "src", "core", "coreToolScheduler.js"],
+    ["dist", "core", "coreToolScheduler.js"],
+  ]);
+  if (legacyScheduler.module) {
+    return legacyScheduler.module;
+  }
+
+  const modernScheduler = await tryFindAndLoadModule<{
+    readonly Scheduler?: ModernSchedulerConstructorLike;
+  }>(cliCoreRoot, [
+    ["dist", "src", "scheduler", "scheduler.js"],
+    ["dist", "scheduler", "scheduler.js"],
+  ]);
+  if (!modernScheduler.module?.Scheduler) {
+    throw new Error(
+      `Failed to load module from any candidate path:\n${formatLoadErrors([
+        ...legacyScheduler.errors,
+        ...modernScheduler.errors,
+      ])}`
+    );
+  }
+
+  const Scheduler = modernScheduler.module.Scheduler;
+  class CoreToolSchedulerCompat {
+    private readonly scheduler: ModernSchedulerInstanceLike;
+
+    private readonly onAllToolCallsComplete?:
+      | ((
+          completedToolCalls: readonly CompletedToolCall[]
+        ) => void | Promise<void>)
+      | undefined;
+
+    constructor(options: LegacySchedulerOptions) {
+      this.onAllToolCallsComplete = options.onAllToolCallsComplete;
+      this.scheduler = new Scheduler({
+        context: options.context,
+        getPreferredEditor: options.getPreferredEditor,
+        messageBus: options.context.messageBus,
+      });
+    }
+
+    async schedule(
+      request: ToolCallRequestInfo | readonly ToolCallRequestInfo[],
+      signal: AbortSignal
+    ): Promise<void> {
+      const completedToolCalls = await this.scheduler.schedule(request, signal);
+      await this.onAllToolCallsComplete?.(completedToolCalls);
+    }
+  }
+
+  return {
+    CoreToolScheduler: CoreToolSchedulerCompat,
+  } as unknown as typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler");
+};
+
 export const loadGeminiModules = async (
   cliRoot: string,
   cliCoreRoot: string
 ): Promise<GeminiCliModules> => {
   const [
-    config,
-    settings,
-    extension,
-    extensionEnablement,
+    legacyConfig,
+    legacySettings,
     contentGenerator,
     toolScheduler,
     turn,
     thoughtUtils,
   ] = await Promise.all([
-    findAndLoadModule<
+    tryFindAndLoadModule<
       typeof import("@google/gemini-cli/dist/src/config/config")
     >(cliRoot, [
       ["dist", "src", "config", "config.js"],
       ["dist", "config", "config.js"],
     ]),
-    findAndLoadModule<
+    tryFindAndLoadModule<
       typeof import("@google/gemini-cli/dist/src/config/settings")
     >(cliRoot, [
       ["dist", "src", "config", "settings.js"],
       ["dist", "config", "settings.js"],
-    ]),
-    findAndLoadModule<
-      typeof import("@google/gemini-cli/dist/src/config/extension")
-    >(cliRoot, [
-      ["dist", "src", "config", "extension.js"],
-      ["dist", "config", "extension.js"],
-    ]),
-    findAndLoadModule<
-      typeof import("@google/gemini-cli/dist/src/config/extensions/extensionEnablement")
-    >(cliRoot, [
-      ["dist", "src", "config", "extensions", "extensionEnablement.js"],
-      ["dist", "config", "extensions", "extensionEnablement.js"],
     ]),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/contentGenerator")
@@ -85,12 +382,7 @@ export const loadGeminiModules = async (
       ["dist", "src", "core", "contentGenerator.js"],
       ["dist", "core", "contentGenerator.js"],
     ]),
-    findAndLoadModule<
-      typeof import("@google/gemini-cli-core/dist/src/core/coreToolScheduler")
-    >(cliCoreRoot, [
-      ["dist", "src", "core", "coreToolScheduler.js"],
-      ["dist", "core", "coreToolScheduler.js"],
-    ]),
+    createCompatToolSchedulerModule(cliCoreRoot),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/turn")
     >(cliCoreRoot, [
@@ -105,11 +397,18 @@ export const loadGeminiModules = async (
     ]),
   ]);
 
+  const [config, settings] = await Promise.all([
+    legacyConfig.module ?? createCompatConfigModule(cliCoreRoot),
+    legacySettings.module ?? createCompatSettingsModule(cliRoot),
+  ]);
+
   return {
     config,
     settings,
-    extension,
-    extensionEnablement,
+    extension:
+      {} as typeof import("@google/gemini-cli/dist/src/config/extension"),
+    extensionEnablement:
+      {} as typeof import("@google/gemini-cli/dist/src/config/extensions/extensionEnablement"),
     contentGenerator,
     toolScheduler,
     turn,
