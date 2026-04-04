@@ -73,8 +73,8 @@
 31. [DONE] Sync release notes for the CI workspace build-order patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare ci workspace build-order patch notes`
 32. [DONE] Git Commit: `docs(release): prepare ci workspace build-order patch notes` (hash: `a14b61e2`)
 33. [DONE] Build and package the release after release notes are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble ci workspace build-order patch release`
-34. [TODO] Git Commit: `build(release): assemble ci workspace build-order patch release` (hash: TBD)
+34. [DONE] Git Commit: `build(release): assemble ci workspace build-order patch release` (hash: `afc964fc`)
 
 ### Stream: Session Report
-35. [TODO] Record the CI-fix and release session report after packaging; scope: `doc/Sessions/Session037.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record ci workspace build-order fix`
+35. [DONE] Record the CI-fix and release session report after packaging; scope: `doc/Sessions/Session037.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record ci workspace build-order fix`
 36. [TODO] Git Commit: `docs(session): record ci workspace build-order fix` (hash: TBD)
