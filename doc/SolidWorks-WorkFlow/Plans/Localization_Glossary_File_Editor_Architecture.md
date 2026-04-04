@@ -32,7 +32,7 @@ Accepted behavior:
 5. On first open, CodeAI Hub creates the file with:
    - short header comments describing the format;
    - a seeded list of already-known product/provider/workflow terms that are expected to stay in English.
-6. Runtime localization continues to read user overrides from the user-space glossary boundary; legacy JSON storage is only a migration fallback.
+6. Runtime localization reads preserve terms from that text file only; legacy JSON continuity is intentionally out of scope for this iteration.
 
 ---
 
@@ -40,7 +40,6 @@ Accepted behavior:
 
 1. `@codeai-hub/localization`
    - support plain-text glossary overrides as the primary editable surface;
-   - keep JSON fallback only for legacy migration/load compatibility;
    - expose an `ensure/open`-ready path for the editable glossary file.
 2. Extension settings bridge
    - add a settings message that ensures the glossary file exists and opens it in the active VS Code editor.
@@ -69,6 +68,7 @@ This seed is only the starting point; users may freely edit the file afterward.
 - No forced launch of a separate VS Code instance through `code`.
 - No redesign of the localization category model.
 - No automatic preservation of every workflow/product term without explicit glossary authoring.
+- No migration or fallback path for legacy glossary JSON files.
 
 ---
 

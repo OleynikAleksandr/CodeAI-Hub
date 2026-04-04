@@ -1,4 +1,5 @@
-import { type Webview, window } from "vscode";
+import { UserGlossaryStore } from "@codeai-hub/localization";
+import { type Webview, window, workspace } from "vscode";
 import { syncCodexProviderReasoningSummaryConfig } from "../settings/codex-provider-config-sync";
 import { LocalizationRuntimeService } from "../settings/localization-runtime-service";
 import { ProviderVersionService } from "../settings/provider-version-service";
@@ -17,6 +18,7 @@ import {
 export type SettingsMessage =
   | { type: "settings:load" }
   | { type: "settings:codex-reasoning-summary-preview"; enabled?: unknown }
+  | { type: "settings:open-user-glossary-file" }
   | { type: "settings:save"; settings?: unknown }
   | { type: "settings:reset" }
   | {
@@ -48,6 +50,7 @@ export class SettingsMessageHandler {
     return (
       candidate.type === "settings:load" ||
       candidate.type === "settings:codex-reasoning-summary-preview" ||
+      candidate.type === "settings:open-user-glossary-file" ||
       candidate.type === "settings:save" ||
       candidate.type === "settings:reset" ||
       candidate.type === "settings:update-provider" ||
@@ -95,6 +98,12 @@ export class SettingsMessageHandler {
           message.enabled !== false
         ).catch(() => {
           /* ignore sync errors */
+        });
+        break;
+      }
+      case "settings:open-user-glossary-file": {
+        this.handleOpenUserGlossaryFile().catch(() => {
+          /* errors handled inside handleOpenUserGlossaryFile */
         });
         break;
       }
@@ -191,6 +200,22 @@ export class SettingsMessageHandler {
       type: "settings:saved",
       ...(await this.resolveEnvelopePayload()),
     });
+  }
+
+  private async handleOpenUserGlossaryFile(): Promise<void> {
+    try {
+      const glossaryFilePath =
+        await new UserGlossaryStore().ensureEditableGlossaryFile();
+      const document = await workspace.openTextDocument(glossaryFilePath);
+      await window.showTextDocument(document, {
+        preview: false,
+        preserveFocus: false,
+      });
+    } catch (error) {
+      window.showErrorMessage(
+        `Failed to open the do-not-translate glossary file: ${this.describeError(error)}`
+      );
+    }
   }
 
   private async resolveEnvelopePayload(): Promise<SettingsEnvelopePayload> {

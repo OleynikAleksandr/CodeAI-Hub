@@ -56,15 +56,15 @@
 
 ## Phase 15 — Glossary File Editor UX (owner: Localization/Settings, updated: 2026-04-04)
 ### Stream: Planning Intake
-156. [TODO] Approve the glossary file-editor architecture so the Settings glossary surface moves from inline local draft editing to a user-space text file opened in VS Code. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Glossary_File_Editor_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define glossary file editor scope`
-157. [TODO] Git Commit: `docs(plan): define glossary file editor scope` (hash: TBD)
+156. [DONE] Approve the glossary file-editor architecture so the Settings glossary surface moves from inline local draft editing to a user-space text file opened in VS Code. Scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Glossary_File_Editor_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define glossary file editor scope`
+157. [DONE] Git Commit: `docs(plan): define glossary file editor scope` (hash: `e8638c20`)
 
 ### Stream: User-Space Glossary Storage
-158. [TODO] Make plain-text glossary overrides the primary editable user-space format, keep legacy JSON as migration fallback, and seed the initial file with known product/provider/workflow terms. Scope: `packages/localization/src/user-glossary-store.ts`, `packages/localization/src/user-glossary-store.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): add editable glossary text file`
-159. [TODO] Git Commit: `feat(localization): add editable glossary text file` (hash: TBD)
+158. [DONE] Make a plain-text glossary file the primary editable user-space format, seed the initial file with known product/provider/workflow terms, and stop depending on legacy JSON continuity. Scope: `packages/localization/src/user-glossary-store.ts`, `packages/localization/src/user-glossary-store.test.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(localization): add editable glossary text file`
+159. [DONE] Git Commit: `feat(localization): add editable glossary text file` (hash: `376287d4`)
 
 ### Stream: Settings Open-In-Editor Flow
-160. [TODO] Add a Settings message flow that ensures the glossary file exists and opens it in the current VS Code editor. Scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): open glossary file in vscode`
+160. [DONE] Add a Settings message flow that ensures the glossary file exists and opens it in the current VS Code editor, and sync the active glossary-file architecture doc with the no-JSON decision. Scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/SolidWorks-WorkFlow/Plans/Localization_Glossary_File_Editor_Architecture.md`, `doc/TODO/todo-plan.md`. Target commit: `feat(settings): open glossary file in vscode`
 161. [TODO] Git Commit: `feat(settings): open glossary file in vscode` (hash: TBD)
 162. [TODO] Replace the inline glossary draft UI with file-editor guidance and an open action in the Settings webview, and sync the glossary copy in the English dictionaries. Scope: `src/client/ui/src/components/settings/localization-glossary-editor.tsx`, `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`. Target commit: `feat(settings-localization): switch glossary editor to file workflow`
 163. [TODO] Git Commit: `feat(settings-localization): switch glossary editor to file workflow` (hash: TBD)
