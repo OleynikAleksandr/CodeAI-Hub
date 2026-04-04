@@ -5,6 +5,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Message_Classification_Fix.md`
   - `doc/SolidWorks-WorkFlow/Plans/Dialog_Autoscroll_And_PM_Help_Color_Patch.md`
+  - `doc/SolidWorks-WorkFlow/Plans/GitHub_Actions_CI_Workspace_Build_Order_Fix.md`
 - Keep each micro-task within `<= 3 files`.
 - Every implementation line must be followed by a separate `Git Commit:` line.
 - Update docs in real time when logic or architecture changes.
@@ -52,4 +53,18 @@
 21. [DONE] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble dialog autoscroll patch release`
 22. [DONE] Git Commit: `build(release): assemble dialog autoscroll patch release` (hash: `1c93ee3f`)
 23. [DONE] Record the session report after packaging; scope: `doc/Sessions/Session036.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record dialog autoscroll patch release`
-24. [TODO] Git Commit: `docs(session): record dialog autoscroll patch release` (hash: TBD)
+24. [DONE] Git Commit: `docs(session): record dialog autoscroll patch release` (hash: `9ee0bc45`)
+
+## Phase 3 — GitHub Actions CI Workspace Build Order Fix (owner: Codex, updated: 2026-04-04)
+
+### Stream: Planning Intake
+25. [DONE] Record the clean-runner CI failure where `@codeai-hub/localization` cannot be resolved before workspace package builds; scope: `doc/SolidWorks-WorkFlow/Plans/GitHub_Actions_CI_Workspace_Build_Order_Fix.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define ci workspace build-order fix`
+26. [TODO] Git Commit: `docs(plan): define ci workspace build-order fix` (hash: TBD)
+
+### Stream: Root Compile Contract
+27. [TODO] Build required workspace packages before browser/root compile so clean GitHub runners resolve localization types correctly; scope: `package.json`, `README.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(ci): build workspace deps before compile`
+28. [TODO] Git Commit: `fix(ci): build workspace deps before compile` (hash: TBD)
+
+### Stream: CI Verification And Session Report
+29. [TODO] Reproduce the clean-runner compile path locally and record the CI-fix session report; scope: `doc/Sessions/Session037.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record ci workspace build-order fix`
+30. [TODO] Git Commit: `docs(session): record ci workspace build-order fix` (hash: TBD)
