@@ -105,10 +105,10 @@
 
 ### Stream: Release Docs And Packaging
 49. [DONE] Sync release notes for the Codex thinking/config patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare codex thinking visibility patch notes`
-50. [TODO] Git Commit: `docs(release): prepare codex thinking visibility patch notes` (hash: TBD)
-51. [TODO] Build and package the release after the Codex streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble codex thinking visibility patch release`
-52. [TODO] Git Commit: `build(release): assemble codex thinking visibility patch release` (hash: TBD)
-53. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session038.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record codex thinking visibility patch`
+50. [DONE] Git Commit: `docs(release): prepare codex thinking visibility patch notes` (hash: `fe2e20bb`)
+51. [DONE] Build and package the release after the Codex streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble codex thinking visibility patch release`
+52. [DONE] Git Commit: `build(release): assemble codex thinking visibility patch release` (hash: `d30bd2db`)
+53. [DONE] Record the session report after packaging; scope: `doc/Sessions/Session038.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record codex thinking visibility patch`
 54. [TODO] Git Commit: `docs(session): record codex thinking visibility patch` (hash: TBD)
 
 ## Phase 5 — Settings Save Notification Overlay Fix (owner: Codex, updated: 2026-04-04)
