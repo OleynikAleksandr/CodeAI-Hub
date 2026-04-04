@@ -191,11 +191,11 @@
 
 ## Phase 12 — Gemini CLI 0.36 Runtime Compatibility Hotfix (owner: Gemini/Release/Docs, updated: 2026-04-04)
 ### Stream: Runtime Bridge Compatibility
-130. [IN_PROGRESS] Restore Gemini provider runtime compatibility with global `@google/gemini-cli@0.36.x` by supporting the bundle-only CLI layout, safe settings loading, and the relocated scheduler contract. Scope: `packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts`, `packages/Gemini_Module/src/runtime/cli-bridge.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Target commit: `fix(gemini): restore cli 0.36 runtime compatibility`
-131. [TODO] Git Commit: `fix(gemini): restore cli 0.36 runtime compatibility` (hash: TBD)
+130. [DONE] Restore Gemini provider runtime compatibility with global `@google/gemini-cli@0.36.x` by supporting the bundle-only CLI layout, safe settings loading, and the relocated scheduler contract. Scope: `packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts`, `packages/Gemini_Module/src/runtime/cli-bridge.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`. Target commit: `fix(gemini): restore cli 0.36 runtime compatibility`
+131. [DONE] Git Commit: `fix(gemini): restore cli 0.36 runtime compatibility` (hash: `5543f798`)
 
 ### Stream: Release Notes And Packaging
-132. [TODO] Prepare release-facing docs for the Gemini CLI runtime-compatibility hotfix before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare gemini cli compatibility release notes`
+132. [DONE] Prepare release-facing docs for the Gemini CLI runtime-compatibility hotfix before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare gemini cli compatibility release notes`
 133. [TODO] Git Commit: `docs(release): prepare gemini cli compatibility release notes` (hash: TBD)
 134. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release restores Gemini provider availability with global `@google/gemini-cli@0.36.x`. Scope: release-generated version files and manifests. Target commit: `build(release): assemble gemini cli compatibility release`
 135. [TODO] Git Commit: `build(release): assemble gemini cli compatibility release` (hash: TBD)

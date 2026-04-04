@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.877] - 2026-04-04
+### Fixed
+- **Gemini CLI `0.36.x` runtime compatibility**: the Gemini provider bridge now supports global bundle-only `@google/gemini-cli` installs plus the relocated scheduler export from `@google/gemini-cli-core`, so provider selection no longer fails on missing legacy `dist/src/config/*` modules.
+- **Safe Gemini settings bootstrap inside Core**: compatibility startup now reads `~/.gemini/settings.json` and workspace `.gemini/settings.json` directly instead of importing Gemini CLI bundle chunks, avoiding telemetry-global side effects that could break provider initialization in the host process.
+- **Bundle-layout regression coverage**: Gemini runtime bridge tests now cover the modern bundle-only CLI layout and the adapted scheduler contract before release packaging.
+
 ## [1.1.876] - 2026-04-03
 ### Fixed
 - **Claude full SDK isolation**: provider-driven Claude sessions now use empty `settingSources`, which puts CodeAI Hub-managed turns into SDK isolation mode and disables filesystem `CLAUDE.md` / settings auto-discovery entirely.
