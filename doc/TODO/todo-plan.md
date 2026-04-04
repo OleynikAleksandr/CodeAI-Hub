@@ -40,10 +40,10 @@
 
 ### Stream: Shared Dialog Bottom Anchor
 15. [DONE] Make shared dialog auto-scroll react to last-bubble growth instead of message-count-only changes; scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-scroll-anchor.ts`, `src/client/ui/src/session/dialog-panel-scroll-anchor.test.ts`; expected commit: `fix(ui): keep dialog pinned on growing thinking messages`
-16. [TODO] Git Commit: `fix(ui): keep dialog pinned on growing thinking messages` (hash: TBD)
+16. [DONE] Git Commit: `fix(ui): keep dialog pinned on growing thinking messages` (hash: `21aeca2e`)
 
 ### Stream: PM Help Color Retune
-17. [TODO] Update PM help/spravka color to `rgba(115, 130, 140, 1)` while preserving the accepted size/weight contract; scope: `packages/ui/project-manager/styles.css`, `doc/TODO/todo-plan.md`; expected commit: `style(pm): retune help text color again`
+17. [DONE] Update PM help/spravka color to `rgba(115, 130, 140, 1)` while preserving the accepted size/weight contract; scope: `packages/ui/project-manager/styles.css`, `doc/TODO/todo-plan.md`; expected commit: `style(pm): retune help text color again`
 18. [TODO] Git Commit: `style(pm): retune help text color again` (hash: TBD)
 
 ### Stream: Release Docs And Packaging
