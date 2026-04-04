@@ -218,14 +218,18 @@
 ## Phase 14 — Claude Thinking Effort Settings Hotfix (owner: Claude/Settings/Release, updated: 2026-04-04)
 ### Stream: Settings Contract And Runtime Identity
 146. [DONE] Replace Claude `thinking.maxTokens` with effort-based settings, migrate legacy snapshots, thread explicit Claude effort through Core applied turn config, and update Claude SDK query options to use `thinking + effort` instead of deprecated `maxThinkingTokens`. Scope: `src/extension-module/settings/*`, `src/client/ui/src/components/settings/*`, `src/client/ui/src/session/model-info-builder.ts`, `packages/core/src/config/*`, `packages/core/src/remote-bridge/*`, `packages/Claude_Module/src/provider/*`, `packages/Claude_Module/src/session/*`, `packages/Claude_Module/src/sdk/*`, targeted tests. Target commit: `fix(claude-thinking): replace max tokens with effort settings`
-147. [TODO] Git Commit: `fix(claude-thinking): replace max tokens with effort settings` (hash: TBD)
+147. [DONE] Git Commit: `fix(claude-thinking): replace max tokens with effort settings` (hash: `f7a0bb2a`)
 
 ### Stream: SSOT And Release Notes
-148. [DONE] Sync the live architecture/docs set so Claude effort-based thinking settings, effective runtime identity, and migration behavior are recorded before the next patch release. Scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Effort_Settings.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(claude): record effort settings architecture`
-149. [TODO] Git Commit: `docs(claude): record effort settings architecture` (hash: TBD)
+148. [DONE] Sync the live architecture/docs set so Claude effort-based thinking settings, effective runtime identity, and migration behavior are recorded before the next patch release. Scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Effort_Settings.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `fix(claude-thinking): replace max tokens with effort settings`
+149. [DONE] Git Commit: `fix(claude-thinking): replace max tokens with effort settings` (hash: `f7a0bb2a`)
+
+### Stream: Release Compile Compatibility
+150. [DONE] Replace `Object.hasOwn(...)` with release-compile-compatible own-property checks so the Claude effort hotfix passes root TypeScript validation and packaging again. Scope: `src/extension-module/settings/settings-storage.ts`, `packages/core/src/workspace-runtime/workspace-runtime-session-sync.ts`, `doc/TODO/todo-plan.md`. Target commit: `fix(release): restore hasown compile compatibility`
+151. [TODO] Git Commit: `fix(release): restore hasown compile compatibility` (hash: TBD)
 
 ### Stream: Packaging And Session Closure
-150. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release shows Claude effort-based thinking settings, preserves localized visible thinking, and keeps Claude runtime model sync aligned with the selected effort. Scope: release-generated version files and manifests. Target commit: `build(release): assemble claude effort settings release`
-151. [TODO] Git Commit: `build(release): assemble claude effort settings release` (hash: TBD)
-152. [TODO] Record the Claude effort-settings hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session030.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude effort settings release`
-153. [TODO] Git Commit: `docs(session): record claude effort settings release` (hash: TBD)
+152. [TODO] Rebuild the affected release artefacts for the current `1.1.880` workspace, rerun `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release shows Claude effort-based thinking settings, preserves localized visible thinking, and keeps Claude runtime model sync aligned with the selected effort. Scope: `~/.codeai-hub/releases/codeai-hub-core-*`, release-generated manifests, packaged VSIX. Target commit: `build(release): validate claude effort settings package`
+153. [TODO] Git Commit: `build(release): validate claude effort settings package` (hash: TBD)
+154. [TODO] Record the Claude effort-settings hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session030.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record claude effort settings release`
+155. [TODO] Git Commit: `docs(session): record claude effort settings release` (hash: TBD)

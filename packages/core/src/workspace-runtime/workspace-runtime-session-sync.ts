@@ -29,7 +29,7 @@ interface WorkspaceRuntimeSessionSyncDeps {
 }
 
 const hasOwn = (value: object, key: PropertyKey): boolean =>
-  Object.hasOwn(value, key);
+  Object.getOwnPropertyDescriptor(value, key) !== undefined;
 
 const assignPatchedField = <Key extends keyof SessionSnapshotPatch>(
   target: SessionSnapshotPatch,

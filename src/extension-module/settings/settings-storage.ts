@@ -69,7 +69,8 @@ const needsClaudeThinkingEffortBackfill = (value: unknown): boolean => {
   }
 
   return (
-    typeof thinking.effort !== "string" || Object.hasOwn(thinking, "maxTokens")
+    typeof thinking.effort !== "string" ||
+    Object.getOwnPropertyDescriptor(thinking, "maxTokens") !== undefined
   );
 };
 
