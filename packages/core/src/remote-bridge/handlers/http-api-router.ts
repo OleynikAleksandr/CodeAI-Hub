@@ -16,6 +16,7 @@ import {
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
+import { handleLocalizationBootstrapRead } from "./localization-bootstrap-http-handler";
 import type { SessionRequestHandler } from "./session-request-handler";
 import type {
   StatusInfo,
@@ -26,6 +27,7 @@ import type { WorkflowEventsService } from "./workflow-events-service";
 import type { WorkflowStateService } from "./workflow-state-service";
 
 const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
+const LOCALIZATION_BOOTSTRAP_ENDPOINT = "/api/v1/localization/bootstrap";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const WORKFLOW_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/workflow-artifact";
@@ -70,6 +72,12 @@ export class HttpApiRouter {
     app.get("/api/v1/status", (req: Request, res: Response) => {
       systemHandler.handleStatus(req, res, this.deps.getStatusInfo());
     });
+    app.get(
+      LOCALIZATION_BOOTSTRAP_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await handleLocalizationBootstrapRead(req, res);
+      }
+    );
     app.post("/api/v1/shutdown", (req: Request, res: Response) => {
       systemHandler.handleShutdown(req, res);
     });
