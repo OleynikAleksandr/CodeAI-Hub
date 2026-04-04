@@ -44,10 +44,10 @@
 
 ### Stream: PM Help Color Retune
 17. [DONE] Update PM help/spravka color to `rgba(115, 130, 140, 1)` while preserving the accepted size/weight contract; scope: `packages/ui/project-manager/styles.css`, `doc/TODO/todo-plan.md`; expected commit: `style(pm): retune help text color again`
-18. [TODO] Git Commit: `style(pm): retune help text color again` (hash: TBD)
+18. [DONE] Git Commit: `style(pm): retune help text color again` (hash: `6e9e5868`)
 
 ### Stream: Release Docs And Packaging
-19. [TODO] Sync release notes for the dialog auto-scroll patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare dialog autoscroll patch notes`
+19. [DONE] Sync release notes for the dialog auto-scroll patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare dialog autoscroll patch notes`
 20. [TODO] Git Commit: `docs(release): prepare dialog autoscroll patch notes` (hash: TBD)
 21. [TODO] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble dialog autoscroll patch release`
 22. [TODO] Git Commit: `build(release): assemble dialog autoscroll patch release` (hash: TBD)

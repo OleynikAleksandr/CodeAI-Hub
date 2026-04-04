@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.885] - 2026-04-04
+### Fixed
+- **Growing last dialog bubbles now auto-scroll correctly**: when the user is already pinned to the bottom, Session and Project Manager dialogs now continue following appended text inside the same logical bubble instead of waiting for a new message count change.
+- **Shared dialog panel now tracks a bottom-anchor fingerprint**: auto-scroll no longer keys only off `displayMessages.length`, which prevents long provider `Thinking` streams from extending below the visible viewport while the user is still at the bottom.
+- **Project Manager help-text color retune**: all PM help/spravka surfaces based on `pm-details` now use `rgba(115, 130, 140, 1)` while keeping the existing `14px`, medium-weight presentation.
+
 ## [1.1.884] - 2026-04-04
 ### Fixed
 - **Claude same-message thinking continuity**: when Claude emits `thinking`, then a short `text` continuation, and then `tool_use` within the same provider-native message id, the intermediate text is now rendered as `Thinking` instead of appearing as a separate assistant reply.
