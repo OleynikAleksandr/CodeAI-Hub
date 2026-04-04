@@ -12,6 +12,13 @@ const PROVIDER_CODEX_HOME = path.join(
   "codex",
   "home"
 );
+const SETTINGS_FILE = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
+const MODEL_LINE_REGEX = /^\s*model\s*=\s*.+?$/mu;
 const LEGACY_REASONING_SUMMARY_LINE_REGEX =
   /^\s*default_reasoning_summary\s*=\s*.+?$/gmu;
 const MODEL_REASONING_SUMMARY_LINE_REGEX =
@@ -23,31 +30,76 @@ const FIRST_SECTION_LINE_REGEX = /^\s*\[.+\]\s*$/mu;
 const toReasoningSummaryLiteral = (enabled: boolean): string =>
   enabled ? '"auto"' : '"none"';
 
-const normalizeConfigToml = (raw: string, enabled: boolean): string => {
-  const reasoningSummaryLine = `model_reasoning_summary = ${toReasoningSummaryLiteral(enabled)}`;
-  const next = raw.replace(LEGACY_REASONING_SUMMARY_LINE_REGEX, "").trimEnd();
+const normalizeOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
 
-  if (MODEL_REASONING_SUMMARY_LINE_REGEX.test(next)) {
-    return `${next.replace(MODEL_REASONING_SUMMARY_LINE_REGEX, reasoningSummaryLine).trimEnd()}\n`;
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const resolveCodexDefaultModel = async (): Promise<string | undefined> => {
+  const envModel = normalizeOptionalString(process.env.CODEX_DEFAULT_MODEL);
+  if (envModel) {
+    return envModel;
   }
 
-  const reasoningEffortMatch = MODEL_REASONING_EFFORT_LINE_REGEX.exec(next);
+  try {
+    const parsed = JSON.parse(await readFile(SETTINGS_FILE, "utf8")) as unknown;
+    if (!(isRecord(parsed) && isRecord(parsed.providers))) {
+      return undefined;
+    }
+    const codex = parsed.providers.codex;
+    return isRecord(codex)
+      ? normalizeOptionalString(codex.defaultModel)
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const normalizeConfigToml = (
+  raw: string,
+  enabled: boolean,
+  model?: string
+): string => {
+  const reasoningSummaryLine = `model_reasoning_summary = ${toReasoningSummaryLiteral(enabled)}`;
+  const next = raw.replace(LEGACY_REASONING_SUMMARY_LINE_REGEX, "").trimEnd();
+  const modelLine =
+    typeof model === "string" && model.trim().length > 0
+      ? `model = "${model.trim()}"`
+      : null;
+  let withModel = next;
+  if (modelLine !== null) {
+    withModel = MODEL_LINE_REGEX.test(next)
+      ? next.replace(MODEL_LINE_REGEX, modelLine)
+      : `${[modelLine, next].filter(Boolean).join("\n")}`;
+  }
+
+  if (MODEL_REASONING_SUMMARY_LINE_REGEX.test(withModel)) {
+    return `${withModel
+      .replace(MODEL_REASONING_SUMMARY_LINE_REGEX, reasoningSummaryLine)
+      .trimEnd()}\n`;
+  }
+
+  const reasoningEffortMatch =
+    MODEL_REASONING_EFFORT_LINE_REGEX.exec(withModel);
   if (reasoningEffortMatch?.index !== undefined) {
     const insertIndex =
       reasoningEffortMatch.index + reasoningEffortMatch[0].length;
-    const prefix = next.slice(0, insertIndex).trimEnd();
-    const suffix = next.slice(insertIndex).trimStart();
+    const prefix = withModel.slice(0, insertIndex).trimEnd();
+    const suffix = withModel.slice(insertIndex).trimStart();
     return `${[prefix, reasoningSummaryLine, suffix].filter(Boolean).join("\n")}\n`;
   }
 
-  const firstSectionMatch = FIRST_SECTION_LINE_REGEX.exec(next);
+  const firstSectionMatch = FIRST_SECTION_LINE_REGEX.exec(withModel);
   if (firstSectionMatch?.index !== undefined) {
-    const prefix = next.slice(0, firstSectionMatch.index).trimEnd();
-    const suffix = next.slice(firstSectionMatch.index).trimStart();
+    const prefix = withModel.slice(0, firstSectionMatch.index).trimEnd();
+    const suffix = withModel.slice(firstSectionMatch.index).trimStart();
     return `${[prefix, reasoningSummaryLine, suffix].filter(Boolean).join("\n")}\n`;
   }
 
-  return `${[next, reasoningSummaryLine].filter(Boolean).join("\n")}\n`;
+  return `${[withModel, reasoningSummaryLine].filter(Boolean).join("\n")}\n`;
 };
 
 const readBaseConfigToml = async (): Promise<string> => {
@@ -95,7 +147,11 @@ export const syncCodexProviderReasoningSummaryConfig = async (
   await mkdir(PROVIDER_CODEX_HOME, { recursive: true });
   const destination = path.join(PROVIDER_CODEX_HOME, CODEX_CONFIG_FILE);
   const { raw, shouldUnlink } = await readProviderConfigToml(destination);
-  const next = normalizeConfigToml(raw, enabled);
+  const next = normalizeConfigToml(
+    raw,
+    enabled,
+    await resolveCodexDefaultModel()
+  );
 
   if (shouldUnlink) {
     await unlink(destination);

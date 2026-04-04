@@ -1,10 +1,19 @@
+import { readFileSync } from "node:fs";
 import { lstat, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
+import { homedir } from "node:os";
 import path from "node:path";
 
 const CODEX_CONFIG_FILE = "config.toml";
+const SETTINGS_FILE = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
 const NEWLINE_SPLIT_REGEX = /\r?\n/u;
 const MIGRATION_LINE_REGEX =
   /^\s*(["']?)gpt-5\.4\1\s*=\s*(["']?)gpt-5\.3-codex\2\s*(#.*)?$/u;
+const MODEL_LINE_REGEX = /^\s*model\s*=\s*(.+?)\s*$/u;
 const LEGACY_REASONING_SUMMARY_LINE_REGEX =
   /^\s*default_reasoning_summary\s*=\s*(.+?)\s*$/u;
 const MODEL_REASONING_SUMMARY_LINE_REGEX =
@@ -15,12 +24,14 @@ const MODEL_REASONING_EFFORT_LINE_REGEX =
 export type CodexReasoningSummaryMode = "auto" | "none";
 
 export interface CodexProviderConfigOverrides {
+  readonly model?: string;
   readonly modelReasoningSummary: CodexReasoningSummaryMode;
 }
 
 interface ConfigTomlState {
   changed: boolean;
   currentSection: string | null;
+  foundModel: boolean;
   foundReasoningSummary: boolean;
   inModelMigrationsSection: boolean;
   insertAfterReasoningEffortIndex: number;
@@ -29,6 +40,7 @@ interface ConfigTomlState {
 }
 
 type RootConfigLineKind =
+  | { readonly kind: "model"; readonly value: string | null }
   | { readonly kind: "legacy_reasoning_summary" }
   | { readonly kind: "model_reasoning_effort" }
   | { readonly kind: "model_reasoning_summary"; readonly value: string | null }
@@ -36,7 +48,46 @@ type RootConfigLineKind =
 
 const toQuotedTomlString = (value: string): string => `"${value}"`;
 
+const normalizeOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const resolveDesiredCodexModel = (): string | undefined => {
+  const envModel = normalizeOptionalString(process.env.CODEX_DEFAULT_MODEL);
+  if (envModel) {
+    return envModel;
+  }
+
+  const settingsPath =
+    normalizeOptionalString(process.env.CLAUDE_SETTINGS_PATH) ?? SETTINGS_FILE;
+
+  try {
+    const parsed = JSON.parse(readFileSync(settingsPath, "utf8")) as unknown;
+    if (!(isRecord(parsed) && isRecord(parsed.providers))) {
+      return undefined;
+    }
+    const codex = parsed.providers.codex;
+    return isRecord(codex)
+      ? normalizeOptionalString(codex.defaultModel)
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const classifyRootConfigLine = (line: string): RootConfigLineKind => {
+  const modelMatch = MODEL_LINE_REGEX.exec(line);
+  if (modelMatch) {
+    return {
+      kind: "model",
+      value: modelMatch[1]?.trim() ?? null,
+    };
+  }
+
   const modelReasoningSummaryMatch =
     MODEL_REASONING_SUMMARY_LINE_REGEX.exec(line);
   if (modelReasoningSummaryMatch) {
@@ -57,9 +108,96 @@ const classifyRootConfigLine = (line: string): RootConfigLineKind => {
   return { kind: "other" };
 };
 
+const handleModelLine = (options: {
+  readonly classification: Extract<
+    RootConfigLineKind,
+    { readonly kind: "model" }
+  >;
+  readonly desiredModelLiteral: string | null;
+  readonly line: string;
+  readonly state: ConfigTomlState;
+}): void => {
+  options.state.foundModel = true;
+  if (!options.desiredModelLiteral) {
+    options.state.nextLines.push(options.line);
+    return;
+  }
+
+  const nextLine = `model = ${options.desiredModelLiteral}`;
+  if (options.classification.value !== options.desiredModelLiteral) {
+    options.state.changed = true;
+    options.state.nextLines.push(nextLine);
+    return;
+  }
+
+  options.state.nextLines.push(options.line);
+};
+
+const handleReasoningSummaryLine = (options: {
+  readonly classification: Extract<
+    RootConfigLineKind,
+    { readonly kind: "model_reasoning_summary" }
+  >;
+  readonly desiredReasoningSummaryLiteral: string;
+  readonly line: string;
+  readonly state: ConfigTomlState;
+}): void => {
+  options.state.foundReasoningSummary = true;
+  const nextLine = `model_reasoning_summary = ${options.desiredReasoningSummaryLiteral}`;
+  if (options.classification.value !== options.desiredReasoningSummaryLiteral) {
+    options.state.changed = true;
+    options.state.nextLines.push(nextLine);
+    return;
+  }
+
+  options.state.nextLines.push(options.line);
+};
+
+const handleRootConfigLine = (options: {
+  readonly classification: RootConfigLineKind;
+  readonly desiredModelLiteral: string | null;
+  readonly desiredReasoningSummaryLiteral: string;
+  readonly line: string;
+  readonly state: ConfigTomlState;
+}): boolean => {
+  if (options.classification.kind === "model") {
+    handleModelLine({
+      classification: options.classification,
+      desiredModelLiteral: options.desiredModelLiteral,
+      line: options.line,
+      state: options.state,
+    });
+    return true;
+  }
+
+  if (options.classification.kind === "legacy_reasoning_summary") {
+    options.state.changed = true;
+    return true;
+  }
+
+  if (options.classification.kind === "model_reasoning_effort") {
+    options.state.insertAfterReasoningEffortIndex =
+      options.state.nextLines.length;
+    return false;
+  }
+
+  if (options.classification.kind === "model_reasoning_summary") {
+    handleReasoningSummaryLine({
+      classification: options.classification,
+      desiredReasoningSummaryLiteral: options.desiredReasoningSummaryLiteral,
+      line: options.line,
+      state: options.state,
+    });
+    return true;
+  }
+
+  return false;
+};
+
 const applyConfigTomlLine = (
   line: string,
   state: ConfigTomlState,
+  desiredModelLiteral: string | null,
   desiredReasoningSummaryLiteral: string
 ): void => {
   const trimmed = line.trim();
@@ -80,27 +218,32 @@ const applyConfigTomlLine = (
 
   if (state.currentSection === null) {
     const classification = classifyRootConfigLine(line);
-    if (classification.kind === "legacy_reasoning_summary") {
-      state.changed = true;
-      return;
-    }
-    if (classification.kind === "model_reasoning_effort") {
-      state.insertAfterReasoningEffortIndex = state.nextLines.length;
-    }
-    if (classification.kind === "model_reasoning_summary") {
-      state.foundReasoningSummary = true;
-      const nextLine = `model_reasoning_summary = ${desiredReasoningSummaryLiteral}`;
-      if (classification.value !== desiredReasoningSummaryLiteral) {
-        state.changed = true;
-        state.nextLines.push(nextLine);
-        return;
-      }
-      state.nextLines.push(line);
+    if (
+      handleRootConfigLine({
+        classification,
+        desiredModelLiteral,
+        desiredReasoningSummaryLiteral,
+        line,
+        state,
+      })
+    ) {
       return;
     }
   }
 
   state.nextLines.push(line);
+};
+
+const insertModelLine = (
+  state: ConfigTomlState,
+  desiredModelLiteral: string
+): void => {
+  const nextLine = `model = ${desiredModelLiteral}`;
+  if (state.insertBeforeFirstSectionIndex >= 0) {
+    state.nextLines.splice(state.insertBeforeFirstSectionIndex, 0, nextLine);
+    return;
+  }
+  state.nextLines.unshift(nextLine);
 };
 
 const insertReasoningSummaryLine = (
@@ -133,18 +276,33 @@ export const materializeCodexProviderConfigToml = (
   const state: ConfigTomlState = {
     changed: false,
     currentSection: null,
+    foundModel: false,
     foundReasoningSummary: false,
     inModelMigrationsSection: false,
     insertAfterReasoningEffortIndex: -1,
     insertBeforeFirstSectionIndex: -1,
     nextLines: [],
   };
+  const desiredModel = normalizeOptionalString(overrides.model);
+  const desiredModelLiteral = desiredModel
+    ? toQuotedTomlString(desiredModel)
+    : null;
   const desiredReasoningSummaryLiteral = toQuotedTomlString(
     overrides.modelReasoningSummary
   );
 
   for (const line of raw.split(NEWLINE_SPLIT_REGEX)) {
-    applyConfigTomlLine(line, state, desiredReasoningSummaryLiteral);
+    applyConfigTomlLine(
+      line,
+      state,
+      desiredModelLiteral,
+      desiredReasoningSummaryLiteral
+    );
+  }
+
+  if (desiredModelLiteral && !state.foundModel) {
+    state.changed = true;
+    insertModelLine(state, desiredModelLiteral);
   }
 
   if (!state.foundReasoningSummary) {
@@ -175,10 +333,13 @@ export class CodexProviderConfigMaterializer {
     const destination = path.join(this.providerCodexHome, CODEX_CONFIG_FILE);
     const source = path.join(this.legacyCodexHome, CODEX_CONFIG_FILE);
     const baseRaw = await this.readBaseConfigToml(source);
-    const { next } = materializeCodexProviderConfigToml(
-      baseRaw,
-      this.overrides
-    );
+    const desiredModel =
+      normalizeOptionalString(this.overrides.model) ??
+      resolveDesiredCodexModel();
+    const { next } = materializeCodexProviderConfigToml(baseRaw, {
+      ...this.overrides,
+      ...(desiredModel ? { model: desiredModel } : {}),
+    });
     const normalizedNext = `${next.trimEnd()}\n`;
 
     let existingRaw: string | null = null;
