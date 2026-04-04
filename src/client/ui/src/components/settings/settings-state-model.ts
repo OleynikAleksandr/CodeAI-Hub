@@ -12,6 +12,11 @@ import {
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
 import {
+  areClaudeThinkingSettingsEqual,
+  type ClaudeThinkingSettingsState,
+  mapClaudeThinkingSettings,
+} from "./claude-thinking-state";
+import {
   areGeminiThinkingLevelByModelEqual,
   type GeminiSettings,
   mapGeminiSettings,
@@ -29,7 +34,6 @@ import type {
   RawGeneralSettings,
   RawLocalizationCategorySettings,
   RawSettingsSnapshot,
-  RawThinkingSettings,
 } from "./settings-state-raw";
 
 export type {
@@ -46,10 +50,7 @@ export type ProviderId = "claude" | "codex" | "gemini";
 export type { ProviderVersions, VersionEntry } from "./provider-versions-model";
 export type { RawSettingsSnapshot } from "./settings-state-raw";
 
-interface ThinkingSettings {
-  readonly enabled: boolean;
-  readonly maxTokens: number;
-}
+type ThinkingSettings = ClaudeThinkingSettingsState;
 interface AutoUpdateSettings {
   readonly enabled: boolean;
 }
@@ -119,7 +120,6 @@ export interface Settings {
   };
 }
 
-const DEFAULT_THINKING_MAX_TOKENS = 4000;
 const DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
 const DEFAULT_AUTO_UPDATE_ENABLED = true;
 const DEFAULT_CORE_RESTART_ENABLED = true;
@@ -188,18 +188,6 @@ const deriveWorkflowTermsPolicy = (
   uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE
     ? "keep_english"
     : "translate";
-
-const mapThinkingSettings = (
-  value: RawThinkingSettings | undefined
-): ThinkingSettings => {
-  const numericValue = Number(value?.maxTokens);
-  return {
-    enabled: Boolean(value?.enabled),
-    maxTokens: Number.isFinite(numericValue)
-      ? numericValue
-      : DEFAULT_THINKING_MAX_TOKENS,
-  };
-};
 
 const mapThinkingDisplaySyncEnabled = (value: unknown): boolean =>
   typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
@@ -312,7 +300,7 @@ const mapContinuity = (value: unknown): ContinuitySettings => {
 const mapClaudeSettings = (
   value: RawClaudeSettings | undefined
 ): ClaudeSettings => ({
-  thinking: mapThinkingSettings(value?.thinking),
+  thinking: mapClaudeThinkingSettings(value?.thinking),
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
   defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
   sessionContinuity: mapContinuity(value?.sessionContinuity),
@@ -399,12 +387,6 @@ const areAutoUpdateSettingsEqual = (
   right: AutoUpdateSettings
 ): boolean => left.enabled === right.enabled;
 
-const areThinkingSettingsEqual = (
-  left: ThinkingSettings,
-  right: ThinkingSettings
-): boolean =>
-  left.enabled === right.enabled && left.maxTokens === right.maxTokens;
-
 const areReasoningByModelEqual = (
   left: CodexReasoningByModel,
   right: CodexReasoningByModel
@@ -450,7 +432,7 @@ const areClaudeSettingsEqual = (
   left: ClaudeSettings,
   right: ClaudeSettings
 ): boolean =>
-  areThinkingSettingsEqual(left.thinking, right.thinking) &&
+  areClaudeThinkingSettingsEqual(left.thinking, right.thinking) &&
   areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) &&
   left.defaultModel === right.defaultModel &&
   left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled &&

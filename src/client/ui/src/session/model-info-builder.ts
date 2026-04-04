@@ -89,7 +89,7 @@ const resolveModelReasoning = (
   }
   if (providerKey === "claude") {
     return settings.providers.claude.thinking.enabled
-      ? "thinking on"
+      ? settings.providers.claude.thinking.effort
       : "thinking off";
   }
   if (providerKey === "codex") {

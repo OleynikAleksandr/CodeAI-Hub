@@ -21,7 +21,9 @@ export interface ClaudeTurnLifecycleState {
 
 export interface ClaudeRuntimeTurnConfig {
   messagesForTheUserLanguage?: string;
+  reasoningEffort?: "low" | "medium" | "high" | "max";
   thinkingDisplaySyncEnabled?: boolean;
+  thinkingEnabled?: boolean;
 }
 
 export interface ClaudeQueuedTurn {

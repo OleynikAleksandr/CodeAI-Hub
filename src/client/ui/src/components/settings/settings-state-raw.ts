@@ -1,4 +1,5 @@
 export interface RawThinkingSettings {
+  readonly effort?: unknown;
   readonly enabled?: unknown;
   readonly maxTokens?: unknown;
 }

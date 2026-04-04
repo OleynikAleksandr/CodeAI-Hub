@@ -1,4 +1,7 @@
-import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
+import type {
+  ClaudeModelAliasId,
+  ClaudeThinkingEffort,
+} from "../../../../../types/claude-model-registry";
 import type {
   GeminiModelId,
   GeminiThinkingLevel,
@@ -14,7 +17,7 @@ import type {
 export const updateThinkingSettings = (
   settings: Settings,
   enabled: boolean,
-  maxTokens: number
+  effort: ClaudeThinkingEffort
 ): Settings => ({
   ...settings,
   providers: {
@@ -23,7 +26,7 @@ export const updateThinkingSettings = (
       ...settings.providers.claude,
       thinking: {
         enabled,
-        maxTokens,
+        effort,
       },
     },
   },

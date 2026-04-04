@@ -363,12 +363,16 @@ test("applyClaudeTurnRuntimeConfig stores messages-for-user language", () => {
       __codeaiAppliedTurnConfig: {
         providerId: "claudeCodeCli",
         messagesForTheUserLanguage: "ru",
+        reasoningEffort: "high",
+        thinkingEnabled: true,
         thinkingDisplaySyncEnabled: true,
       },
     },
   });
 
   assert.equal(session.runtimeTurnConfig.messagesForTheUserLanguage, "ru");
+  assert.equal(session.runtimeTurnConfig.reasoningEffort, "high");
+  assert.equal(session.runtimeTurnConfig.thinkingEnabled, true);
   assert.equal(session.runtimeTurnConfig.thinkingDisplaySyncEnabled, true);
 });
 

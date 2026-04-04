@@ -56,6 +56,23 @@ const needsThinkingDisplayBackfill = (value: unknown): boolean => {
   );
 };
 
+const needsClaudeThinkingEffortBackfill = (value: unknown): boolean => {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  const providers = isRecord(value.providers) ? value.providers : {};
+  const claude = isRecord(providers.claude) ? providers.claude : {};
+  const thinking = isRecord(claude.thinking) ? claude.thinking : null;
+  if (!thinking) {
+    return false;
+  }
+
+  return (
+    typeof thinking.effort !== "string" || Object.hasOwn(thinking, "maxTokens")
+  );
+};
+
 const needsLocalizationBackfill = (value: unknown): boolean => {
   if (!isRecord(value)) {
     return false;
@@ -117,6 +134,7 @@ export const loadSettingsSnapshot = (): SettingsSnapshot => {
       if (
         hadSettingsFile &&
         (needsThinkingDisplayBackfill(parsed) ||
+          needsClaudeThinkingEffortBackfill(parsed) ||
           needsLocalizationBackfill(parsed))
       ) {
         persistSettingsSnapshot(normalized).catch(() => {

@@ -44,7 +44,7 @@ const ThinkingToggle: FC<ThinkingToggleProps> = ({ enabled, onToggle }) => {
   const description = t(
     UI_HELPER_TEXT_CATEGORY,
     "settings.claude_thinking_settings.enable_thinking.description",
-    "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses."
+    "When enabled, Claude will use its adaptive thinking path for complex queries. Pick the effort level below to control how hard it reasons."
   );
   const note = t(
     UI_HELPER_TEXT_CATEGORY,

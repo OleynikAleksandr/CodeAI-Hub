@@ -1,4 +1,7 @@
-import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
+import type {
+  ClaudeModelAliasId,
+  ClaudeThinkingEffort,
+} from "../../../../../types/claude-model-registry";
 import type {
   GeminiModelId,
   GeminiThinkingLevel,
@@ -324,7 +327,7 @@ export interface UseSettingsStateResult {
   readonly handleStrictSchemaTextChange: (value: string) => void;
   readonly handleThinkingSettingsChange: (
     enabled: boolean,
-    maxTokens: number
+    effort: ClaudeThinkingEffort
   ) => void;
   readonly handleUpdateProvider: (
     provider: ProviderId,

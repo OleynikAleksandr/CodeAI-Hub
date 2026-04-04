@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.880] - 2026-04-04
+### Fixed
+- **Claude thinking settings now use explicit effort levels**: the settings UI, persisted snapshot, Core applied turn config, and Claude SDK bridge now use `thinking.enabled + effort` instead of the deprecated `maxThinkingTokens` expectation, so Claude effort changes are again meaningful on modern SDK builds.
+- **Claude runtime model sync now reflects effort switches**: when Claude thinking is enabled, Session UI now receives effective identities such as `sonnet reasoning:high` and `sonnet reasoning:max`, instead of a generic `thinking:on` style state that no longer captured the real Claude SDK behavior.
+- **Claude display-sync settings now load correctly from the shared snapshot**: Core now carries `thinkingDisplaySyncEnabled` from the persisted Claude provider settings, which keeps the visible-thinking presentation toggle aligned with the actual saved settings state.
+
 ## [1.1.879] - 2026-04-04
 ### Fixed
 - **Claude visible thinking now follows `Messages for the User`**: the Claude provider runtime now consumes `messagesForTheUserLanguage` from the Core-applied turn config and translates visible thinking bubbles through the shared translation facade, so Russian user-facing localization no longer leaves Claude thought summaries in English.

@@ -61,7 +61,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       baseModelId && resolved.reasoningByModel
         ? (resolved.reasoningByModel[baseModelId] ??
           resolved.defaultReasoningEffort)
-        : resolved.defaultReasoningEffort;
+        : (resolved.reasoningEffort ?? resolved.defaultReasoningEffort);
     const thinkingLevel =
       baseModelId && resolved.thinkingLevelByModel
         ? resolved.thinkingLevelByModel[baseModelId]
@@ -84,6 +84,9 @@ export class SessionRequestHandlerAppliedTurnConfig {
       modelId: baseModelId,
       reasoningEffort,
       source: targetModelId ? "switch_request" : "settings_snapshot",
+      ...(resolved.thinkingEnabled === undefined
+        ? {}
+        : { thinkingEnabled: resolved.thinkingEnabled }),
       thinkingLevel,
       ...(supportsThinkingDisplaySync &&
       resolved.thinkingDisplaySyncEnabled !== undefined

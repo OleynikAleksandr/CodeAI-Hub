@@ -1,6 +1,7 @@
 import type { ClaudeSettingsSnapshot } from "./provider-settings-snapshot";
 
 export type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
+export type ClaudeThinkingEffort = "low" | "medium" | "high" | "max";
 export type CodexSandboxMode =
   | "read-only"
   | "workspace-write"
@@ -13,6 +14,7 @@ export type CodexApprovalMode =
 
 export const DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
 export const DEFAULT_CODEX_REASONING_EFFORT: CodexReasoningEffort = "medium";
+export const DEFAULT_CLAUDE_THINKING_EFFORT: ClaudeThinkingEffort = "medium";
 
 const CODEX_MODEL_IDS = new Set(["gpt-5.3-codex", "gpt-5.4", "gpt-5.4-mini"]);
 const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
@@ -21,11 +23,26 @@ const CODEX_REASONING_EFFORTS = new Set<CodexReasoningEffort>([
   "high",
   "xhigh",
 ]);
+const CLAUDE_THINKING_EFFORTS = new Set<ClaudeThinkingEffort>([
+  "low",
+  "medium",
+  "high",
+  "max",
+]);
 const CLAUDE_MODEL_ALIAS_SET = new Set(["default", "sonnet", "opus", "haiku"]);
 const DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
 const DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+const LEGACY_CLAUDE_THINKING_TOKEN_ANCHORS: readonly {
+  readonly effort: ClaudeThinkingEffort;
+  readonly maxTokens: number;
+}[] = [
+  { effort: "low", maxTokens: 2000 },
+  { effort: "medium", maxTokens: 4000 },
+  { effort: "high", maxTokens: 10_000 },
+  { effort: "max", maxTokens: 32_000 },
+];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
@@ -36,6 +53,24 @@ const clampNumber = (value: number, min: number, max: number): number =>
 const normalizeOptionalString = (
   value: string | undefined
 ): string | undefined => (value?.trim() ? value.trim() : undefined);
+
+const resolveLegacyClaudeThinkingEffort = (
+  value: unknown
+): ClaudeThinkingEffort => {
+  const numericValue = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numericValue)) {
+    return DEFAULT_CLAUDE_THINKING_EFFORT;
+  }
+
+  return LEGACY_CLAUDE_THINKING_TOKEN_ANCHORS.reduce(
+    (closest, candidate) =>
+      Math.abs(candidate.maxTokens - numericValue) <
+      Math.abs(closest.maxTokens - numericValue)
+        ? candidate
+        : closest,
+    LEGACY_CLAUDE_THINKING_TOKEN_ANCHORS[0]
+  ).effort;
+};
 
 export const resolveClaudeDefaultModel = (
   value: string | undefined
@@ -57,6 +92,12 @@ export const normalizeCodexReasoningEffort = (
   CODEX_REASONING_EFFORTS.has(value as CodexReasoningEffort)
     ? (value as CodexReasoningEffort)
     : undefined;
+
+const normalizeClaudeThinkingEffort = (value: unknown): ClaudeThinkingEffort =>
+  typeof value === "string" &&
+  CLAUDE_THINKING_EFFORTS.has(value as ClaudeThinkingEffort)
+    ? (value as ClaudeThinkingEffort)
+    : resolveLegacyClaudeThinkingEffort(value);
 
 export const normalizeCodexModelFromSettings = (
   value: unknown
@@ -105,6 +146,25 @@ export const resolveGeminiThinkingFromSettings = (
   }
 
   return normalized;
+};
+
+export const resolveClaudeThinkingFromSettings = (
+  value: unknown
+): {
+  readonly enabled: boolean;
+  readonly effort: ClaudeThinkingEffort;
+} => {
+  if (!isRecord(value)) {
+    return {
+      enabled: false,
+      effort: DEFAULT_CLAUDE_THINKING_EFFORT,
+    };
+  }
+
+  return {
+    enabled: value.enabled === true,
+    effort: normalizeClaudeThinkingEffort(value.effort ?? value.maxTokens),
+  };
 };
 
 export const toSandboxMode = (

@@ -5,12 +5,21 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 export interface AppliedClaudeTurnConfig {
   readonly messagesForTheUserLanguage?: string;
+  readonly reasoningEffort?: "low" | "medium" | "high" | "max";
   readonly thinkingDisplaySyncEnabled?: boolean;
+  readonly thinkingEnabled?: boolean;
 }
 
 const readOptionalTrimmedString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
+    : undefined;
+
+const readClaudeReasoningEffort = (
+  value: unknown
+): AppliedClaudeTurnConfig["reasoningEffort"] =>
+  value === "low" || value === "medium" || value === "high" || value === "max"
+    ? value
     : undefined;
 
 const readAppliedClaudeTurnConfig = (
@@ -25,6 +34,11 @@ const readAppliedClaudeTurnConfig = (
     messagesForTheUserLanguage: readOptionalTrimmedString(
       candidate.messagesForTheUserLanguage
     ),
+    reasoningEffort: readClaudeReasoningEffort(candidate.reasoningEffort),
+    thinkingEnabled:
+      typeof candidate.thinkingEnabled === "boolean"
+        ? candidate.thinkingEnabled
+        : undefined,
     thinkingDisplaySyncEnabled:
       typeof candidate.thinkingDisplaySyncEnabled === "boolean"
         ? candidate.thinkingDisplaySyncEnabled
@@ -44,6 +58,12 @@ export const applyClaudeTurnRuntimeConfig = (options: {
   if (appliedConfig.messagesForTheUserLanguage) {
     options.owner.runtimeTurnConfig.messagesForTheUserLanguage =
       appliedConfig.messagesForTheUserLanguage;
+  }
+  options.owner.runtimeTurnConfig.reasoningEffort =
+    appliedConfig.reasoningEffort;
+  if (appliedConfig.thinkingEnabled !== undefined) {
+    options.owner.runtimeTurnConfig.thinkingEnabled =
+      appliedConfig.thinkingEnabled;
   }
   options.owner.runtimeTurnConfig.thinkingDisplaySyncEnabled =
     appliedConfig.thinkingDisplaySyncEnabled;

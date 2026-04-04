@@ -34,8 +34,8 @@ interface ClaudeManagerDependencies {
 }
 
 interface ThinkingSettings {
+  readonly effort: "low" | "medium" | "high" | "max";
   readonly enabled: boolean;
-  readonly maxTokens: number;
 }
 
 interface ClaudeSettingsSnapshot {
@@ -43,6 +43,7 @@ interface ClaudeSettingsSnapshot {
   readonly providers?: {
     readonly claude?: {
       readonly thinking?: {
+        readonly effort?: unknown;
         readonly enabled?: unknown;
         readonly maxTokens?: unknown;
       };
@@ -50,6 +51,7 @@ interface ClaudeSettingsSnapshot {
     };
   };
   readonly thinking?: {
+    readonly effort?: unknown;
     readonly enabled?: unknown;
     readonly maxTokens?: unknown;
   };
@@ -59,9 +61,9 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
   additionalDirectories: string[];
   allowDangerouslySkipPermissions: boolean;
   cwd: string;
+  effort?: "low" | "medium" | "high" | "max";
   env: NodeJS.ProcessEnv;
   includePartialMessages: boolean;
-  maxThinkingTokens?: number;
   model?: string;
   outputFormat?: {
     type: "json_schema";
@@ -72,6 +74,9 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
   projectPath: string;
   resume?: string;
   settingSources: string[];
+  thinking?: {
+    readonly type: "adaptive" | "disabled";
+  };
 }
 
 export class ClaudeSDKManager {
@@ -241,7 +246,10 @@ export class ClaudeSDKManager {
     const settingsSnapshot = this.loadClaudeSettingsSnapshot();
     const resolvedModel =
       readAppliedClaudeModelId(turnOptions) ?? this.deps.workspace.defaultModel;
-    const thinkingOptions = this.resolveThinkingOptions(settingsSnapshot);
+    const thinkingOptions = this.resolveThinkingOptions(
+      settingsSnapshot,
+      turnOptions
+    );
     const resumeSessionId = this.resolveResumeSessionId(session);
     const options: ClaudeQueryOptions = {
       cwd: session.workspacePath,
@@ -259,8 +267,11 @@ export class ClaudeSDKManager {
     if (resolvedModel) {
       options.model = resolvedModel;
     }
-    if (typeof thinkingOptions.maxThinkingTokens === "number") {
-      options.maxThinkingTokens = thinkingOptions.maxThinkingTokens;
+    if (thinkingOptions.thinking) {
+      options.thinking = thinkingOptions.thinking;
+    }
+    if (thinkingOptions.effort) {
+      options.effort = thinkingOptions.effort;
     }
     if (resumeSessionId) {
       options.resume = resumeSessionId;
@@ -284,14 +295,35 @@ export class ClaudeSDKManager {
     return { ...this.deps.authManager.getAuthEnvironment() };
   }
 
-  private resolveThinkingOptions(snapshot: ClaudeSettingsSnapshot | null): {
-    readonly maxThinkingTokens?: number;
+  private resolveThinkingOptions(
+    snapshot: ClaudeSettingsSnapshot | null,
+    turnOptions?: Record<string, unknown>
+  ): {
+    readonly effort?: "low" | "medium" | "high" | "max";
+    readonly thinking?: {
+      readonly type: "adaptive" | "disabled";
+    };
   } {
+    const appliedThinking = readAppliedClaudeThinkingConfig(turnOptions);
+    if (appliedThinking) {
+      return appliedThinking.thinkingEnabled
+        ? {
+            thinking: { type: "adaptive" },
+            effort: appliedThinking.reasoningEffort ?? "medium",
+          }
+        : { thinking: { type: "disabled" } };
+    }
+
     const payload = this.resolveThinkingSettings(snapshot);
     if (!payload?.enabled) {
-      return {};
+      return {
+        thinking: { type: "disabled" },
+      };
     }
-    return { maxThinkingTokens: payload.maxTokens };
+    return {
+      thinking: { type: "adaptive" },
+      effort: payload.effort,
+    };
   }
 
   private resolveThinkingSettings(
@@ -299,16 +331,14 @@ export class ClaudeSDKManager {
   ): ThinkingSettings | null {
     const candidate =
       snapshot?.providers?.claude?.thinking ?? snapshot?.thinking;
-    if (
-      !candidate ||
-      typeof candidate.enabled !== "boolean" ||
-      typeof candidate.maxTokens !== "number"
-    ) {
+    if (!candidate || typeof candidate.enabled !== "boolean") {
       return null;
     }
     return {
       enabled: candidate.enabled,
-      maxTokens: candidate.maxTokens,
+      effort: resolveClaudeThinkingEffort(
+        candidate.effort ?? candidate.maxTokens
+      ),
     };
   }
 
@@ -356,4 +386,68 @@ const readAppliedClaudeModelId = (
     appliedConfig.modelId.trim().length > 0
     ? appliedConfig.modelId.trim()
     : undefined;
+};
+
+const CLAUDE_THINKING_EFFORTS = new Set(["low", "medium", "high", "max"]);
+const LEGACY_THINKING_TOKEN_ANCHORS: readonly {
+  readonly effort: "low" | "medium" | "high" | "max";
+  readonly maxTokens: number;
+}[] = [
+  { effort: "low", maxTokens: 2000 },
+  { effort: "medium", maxTokens: 4000 },
+  { effort: "high", maxTokens: 10_000 },
+  { effort: "max", maxTokens: 32_000 },
+];
+
+const resolveLegacyClaudeThinkingEffort = (
+  value: unknown
+): "low" | "medium" | "high" | "max" => {
+  const numericValue = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numericValue)) {
+    return "medium";
+  }
+
+  return LEGACY_THINKING_TOKEN_ANCHORS.reduce(
+    (closest, candidate) =>
+      Math.abs(candidate.maxTokens - numericValue) <
+      Math.abs(closest.maxTokens - numericValue)
+        ? candidate
+        : closest,
+    LEGACY_THINKING_TOKEN_ANCHORS[0]
+  ).effort;
+};
+
+const resolveClaudeThinkingEffort = (
+  value: unknown
+): "low" | "medium" | "high" | "max" =>
+  typeof value === "string" && CLAUDE_THINKING_EFFORTS.has(value)
+    ? (value as "low" | "medium" | "high" | "max")
+    : resolveLegacyClaudeThinkingEffort(value);
+
+const readAppliedClaudeThinkingConfig = (
+  turnOptions?: Record<string, unknown>
+): {
+  readonly reasoningEffort?: "low" | "medium" | "high" | "max";
+  readonly thinkingEnabled: boolean;
+} | null => {
+  if (!turnOptions) {
+    return null;
+  }
+
+  const appliedConfig = turnOptions.__codeaiAppliedTurnConfig;
+  if (
+    !isRecord(appliedConfig) ||
+    appliedConfig.providerId !== "claudeCodeCli" ||
+    typeof appliedConfig.thinkingEnabled !== "boolean"
+  ) {
+    return null;
+  }
+
+  return {
+    thinkingEnabled: appliedConfig.thinkingEnabled,
+    reasoningEffort:
+      typeof appliedConfig.reasoningEffort === "string"
+        ? resolveClaudeThinkingEffort(appliedConfig.reasoningEffort)
+        : undefined,
+  };
 };

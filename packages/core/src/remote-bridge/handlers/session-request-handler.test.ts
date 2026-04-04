@@ -256,6 +256,7 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
       modelId: "sonnet",
       source: "settings_snapshot",
       reasoningEffort: undefined,
+      thinkingEnabled: false,
       thinkingDisplaySyncEnabled: true,
       thinkingLevel: undefined,
     });
@@ -270,6 +271,92 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
         sessionId: session.id,
         providerId: "claudeCodeCli",
         modelId: "sonnet thinking:off",
+      },
+    });
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("SessionRequestHandler threads Claude reasoning effort and display sync from settings snapshot", async () => {
+  const tempDir = await mkdtemp(
+    path.join(tmpdir(), "codeai-hub-claude-effort-sync-")
+  );
+  const sharedSettingsPath = path.join(tempDir, "settings.json");
+
+  try {
+    await writeFile(
+      sharedSettingsPath,
+      `${JSON.stringify(
+        {
+          providers: {
+            claude: {
+              defaultModel: "sonnet",
+              thinking: {
+                enabled: true,
+                effort: "max",
+              },
+              thinkingDisplaySyncEnabled: false,
+            },
+          },
+        },
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+
+    const harness = createHarness({
+      claudeSettingsPath: path.join(tempDir, "claude.json"),
+      claudeDefaultModel: "opus",
+    });
+    const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+    const session = harness.sessionManager.createSession(
+      "claudeCodeCli",
+      "/tmp/claude-runtime-effort-update"
+    );
+
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        _content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sentTurnOptions.push(turnOptions);
+        return Promise.resolve();
+      },
+    });
+    harness.providerSessions.set(session.id, {
+      providerId: "claudeCodeCli",
+      providerSessionId: "provider-session-claude-effort",
+      unsubscribe: noop,
+    });
+
+    await harness.handler.handleMessage(session.id, "use max effort");
+
+    assert.deepEqual(readAppliedProviderTurnConfig(sentTurnOptions[0]), {
+      baseModelId: "sonnet",
+      effectiveModelId: "sonnet reasoning:max",
+      messagesForTheUserLanguage: "en",
+      providerId: "claudeCodeCli",
+      modelId: "sonnet",
+      source: "settings_snapshot",
+      reasoningEffort: "max",
+      thinkingEnabled: true,
+      thinkingDisplaySyncEnabled: false,
+      thinkingLevel: undefined,
+    });
+
+    const modelUpdate = harness.events.find(
+      (event) => event.type === "session:model:update"
+    );
+    assert.deepEqual(modelUpdate, {
+      type: "session:model:update",
+      payload: {
+        baseModelId: "sonnet",
+        sessionId: session.id,
+        providerId: "claudeCodeCli",
+        modelId: "sonnet reasoning:max",
       },
     });
   } finally {

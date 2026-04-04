@@ -8,6 +8,7 @@ import {
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import type { BridgeEvent } from "../types";
+import { normalizeClaudeThinkingSettings } from "./settings-request-handler-claude-thinking";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -71,7 +72,7 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
     claude: {
       thinking: {
         enabled: false,
-        maxTokens: 4000,
+        effort: "medium",
       },
       thinkingDisplaySyncEnabled: true,
       autoUpdate: { enabled: true },
@@ -283,10 +284,22 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
   const rawClaude = isRecord(rawProviders.claude) ? rawProviders.claude : {};
   const rawCodex = isRecord(rawProviders.codex) ? rawProviders.codex : {};
   const rawGemini = isRecord(rawProviders.gemini) ? rawProviders.gemini : {};
+  const normalizedClaudeThinking = normalizeClaudeThinkingSettings({
+    defaultThinkingSettings: defaults.providers.claude.thinking as {
+      readonly enabled: boolean;
+      readonly effort: string;
+    },
+    value: rawClaude.thinking,
+  });
 
-  const claude = {
+  const claude: Record<string, unknown> & {
+    defaultModel?: unknown;
+    thinking: { readonly enabled: boolean; readonly effort: string };
+    thinkingDisplaySyncEnabled?: unknown;
+  } = {
     ...defaults.providers.claude,
     ...rawClaude,
+    thinking: normalizedClaudeThinking,
   };
   const codex = {
     ...defaults.providers.codex,
@@ -356,6 +369,13 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
 
   if (typeof gemini.thinkingDisplaySyncEnabled !== "boolean") {
     gemini.thinkingDisplaySyncEnabled = true;
+    changed = true;
+  }
+
+  if (
+    JSON.stringify(rawClaude.thinking) !==
+    JSON.stringify(normalizedClaudeThinking)
+  ) {
     changed = true;
   }
 

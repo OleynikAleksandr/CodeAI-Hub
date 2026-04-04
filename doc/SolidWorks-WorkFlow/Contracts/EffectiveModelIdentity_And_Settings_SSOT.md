@@ -109,6 +109,7 @@ Project Manager и shared UI должны отображать applied config, �
 
 - **Codex**: `reasoningByModel` may require per-turn thread refresh, but the refresh still consumes Core-applied identity.
 - **Gemini**: `thinking` входит в effective identity; `gpt-5.3-codex reasoning:xhigh` и `gpt-5.3-codex reasoning:high` are different runtime identities.
+- **Claude**: `thinking` off remains `sonnet thinking:off`, while enabled Claude turns now expose explicit effort through identities such as `sonnet reasoning:high` and `sonnet reasoning:max`; this is how Session UI learns that the next Claude turn will use a different effort level.
 
 ---
 

@@ -1,9 +1,12 @@
 import {
+  type ClaudeThinkingEffort,
   type CodexReasoningEffort,
+  DEFAULT_CLAUDE_THINKING_EFFORT,
   DEFAULT_CODEX_REASONING_EFFORT,
   normalizeCodexModelFromSettings,
   normalizeCodexReasoningEffort,
   resolveClaudeDefaultModel,
+  resolveClaudeThinkingFromSettings,
   resolveCodexReasoningFromSettings,
   resolveGeminiThinkingFromSettings,
   resolvePreferredCodexDefaultModel,
@@ -44,6 +47,7 @@ export interface ResolvedClaudeTurnConfig {
   readonly baseModelId: string;
   readonly defaultModel: string;
   readonly effectiveModelId: string;
+  readonly reasoningEffort?: ClaudeThinkingEffort;
   readonly thinkingDisplaySyncEnabled: boolean;
   readonly thinkingEnabled: boolean;
 }
@@ -55,6 +59,7 @@ export interface ResolvedProviderTurnConfigEntry {
   readonly effectiveModelId?: string;
   readonly providerId: string;
   readonly reasoningByModel?: Record<string, CodexReasoningEffort>;
+  readonly reasoningEffort?: string;
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
   readonly thinkingLevelByModel?: Record<string, string>;
@@ -73,9 +78,6 @@ const normalizeOptionalString = (
   value: string | undefined
 ): string | undefined => (value?.trim() ? value.trim() : undefined);
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
-
 const buildCodexEffectiveModelId = (
   baseModelId: string,
   reasoningEffort: CodexReasoningEffort
@@ -89,18 +91,12 @@ const buildGeminiEffectiveModelId = (
 
 const buildClaudeEffectiveModelId = (
   baseModelId: string,
-  thinkingEnabled: boolean
-): string => `${baseModelId} thinking:${thinkingEnabled ? "on" : "off"}`;
-
-const resolveClaudeThinkingEnabled = (
-  snapshot: ClaudeProviderSettingsSnapshot | null
-): boolean => {
-  if (!isRecord(snapshot?.thinking)) {
-    return false;
-  }
-
-  return snapshot.thinking.enabled === true;
-};
+  thinkingEnabled: boolean,
+  reasoningEffort?: string
+): string =>
+  thinkingEnabled
+    ? `${baseModelId} reasoning:${reasoningEffort ?? DEFAULT_CLAUDE_THINKING_EFFORT}`
+    : `${baseModelId} thinking:off`;
 
 const resolveClaudeThinkingDisplaySyncEnabled = (
   snapshot: ClaudeProviderSettingsSnapshot | null
@@ -109,7 +105,7 @@ const resolveClaudeThinkingDisplaySyncEnabled = (
 export const buildProviderEffectiveModelId = (options: {
   readonly baseModelId?: string;
   readonly providerId: string;
-  readonly reasoningEffort?: CodexReasoningEffort;
+  readonly reasoningEffort?: string;
   readonly thinkingEnabled?: boolean;
   readonly thinkingLevel?: string;
 }): string | undefined => {
@@ -121,7 +117,8 @@ export const buildProviderEffectiveModelId = (options: {
   if (options.providerId === "codexCli") {
     return buildCodexEffectiveModelId(
       baseModelId,
-      options.reasoningEffort ?? DEFAULT_CODEX_REASONING_EFFORT
+      normalizeCodexReasoningEffort(options.reasoningEffort) ??
+        DEFAULT_CODEX_REASONING_EFFORT
     );
   }
 
@@ -132,7 +129,8 @@ export const buildProviderEffectiveModelId = (options: {
   if (options.providerId === "claudeCodeCli") {
     return buildClaudeEffectiveModelId(
       baseModelId,
-      options.thinkingEnabled === true
+      options.thinkingEnabled === true,
+      options.reasoningEffort
     );
   }
 
@@ -215,7 +213,10 @@ const resolveClaudeTurnConfig = (
     settingsDefaultModel ??
     normalizeOptionalString(options.env.CLAUDE_DEFAULT_MODEL) ??
     options.fallbackClaudeModel;
-  const thinkingEnabled = resolveClaudeThinkingEnabled(snapshot);
+  const thinkingSettings = resolveClaudeThinkingFromSettings(
+    snapshot?.thinking
+  );
+  const thinkingEnabled = thinkingSettings.enabled;
   const thinkingDisplaySyncEnabled =
     resolveClaudeThinkingDisplaySyncEnabled(snapshot);
 
@@ -224,8 +225,10 @@ const resolveClaudeTurnConfig = (
     defaultModel,
     effectiveModelId: buildClaudeEffectiveModelId(
       defaultModel,
-      thinkingEnabled
+      thinkingEnabled,
+      thinkingSettings.effort
     ),
+    reasoningEffort: thinkingEnabled ? thinkingSettings.effort : undefined,
     thinkingDisplaySyncEnabled,
     thinkingEnabled,
   };
@@ -241,8 +244,9 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     baseModelId: resolved.claude.baseModelId,
     defaultModel: resolved.claude.defaultModel,
     effectiveModelId: resolved.claude.effectiveModelId,
-    thinkingDisplaySyncEnabled: resolved.claude.thinkingDisplaySyncEnabled,
+    reasoningEffort: resolved.claude.reasoningEffort,
     thinkingEnabled: resolved.claude.thinkingEnabled,
+    thinkingDisplaySyncEnabled: resolved.claude.thinkingDisplaySyncEnabled,
   },
   codexCli: {
     providerId: "codexCli",

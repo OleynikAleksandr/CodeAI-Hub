@@ -1,7 +1,10 @@
 import {
   CLAUDE_MODEL_ALIAS_SET,
+  CLAUDE_THINKING_EFFORT_SET,
   type ClaudeModelAliasId,
+  type ClaudeThinkingEffort,
   DEFAULT_CLAUDE_MODEL_ALIAS,
+  DEFAULT_CLAUDE_THINKING_EFFORT,
 } from "../../types/claude-model-registry";
 import {
   type AutoUpdateSettings,
@@ -11,8 +14,8 @@ import {
 import { isRecord } from "./settings-utils";
 
 export interface ClaudeThinkingSettings {
+  readonly effort: ClaudeThinkingEffort;
   readonly enabled: boolean;
-  readonly maxTokens: number;
 }
 
 export interface ClaudeSessionContinuitySettings {
@@ -27,14 +30,12 @@ export interface ClaudeSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
 
-const MIN_THINKING_TOKENS = 2000;
-const MAX_THINKING_TOKENS = 32_000;
 const MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
 const MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
 
 const DEFAULT_CLAUDE_THINKING_SETTINGS: ClaudeThinkingSettings = {
   enabled: false,
-  maxTokens: 4000,
+  effort: DEFAULT_CLAUDE_THINKING_EFFORT,
 };
 
 const DEFAULT_CLAUDE_SESSION_CONTINUITY_SETTINGS: ClaudeSessionContinuitySettings =
@@ -50,14 +51,43 @@ export const DEFAULT_CLAUDE_SETTINGS: ClaudeSettings = {
   thinkingDisplaySyncEnabled: true,
 };
 
-const clampThinkingTokens = (value: number): number =>
-  Math.min(MAX_THINKING_TOKENS, Math.max(MIN_THINKING_TOKENS, value));
-
 const clampContinuityRemainingPercentThreshold = (value: number): number =>
   Math.min(
     MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
     Math.max(MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD, value)
   );
+
+const LEGACY_THINKING_TOKEN_ANCHORS: readonly {
+  readonly effort: ClaudeThinkingEffort;
+  readonly maxTokens: number;
+}[] = [
+  { effort: "low", maxTokens: 2000 },
+  { effort: "medium", maxTokens: 4000 },
+  { effort: "high", maxTokens: 10_000 },
+  { effort: "max", maxTokens: 32_000 },
+];
+
+const resolveLegacyThinkingEffort = (value: unknown): ClaudeThinkingEffort => {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) {
+    return DEFAULT_CLAUDE_THINKING_EFFORT;
+  }
+
+  return LEGACY_THINKING_TOKEN_ANCHORS.reduce(
+    (closest, candidate) =>
+      Math.abs(candidate.maxTokens - numericValue) <
+      Math.abs(closest.maxTokens - numericValue)
+        ? candidate
+        : closest,
+    LEGACY_THINKING_TOKEN_ANCHORS[0]
+  ).effort;
+};
+
+const normalizeClaudeThinkingEffort = (value: unknown): ClaudeThinkingEffort =>
+  typeof value === "string" &&
+  CLAUDE_THINKING_EFFORT_SET.has(value as ClaudeThinkingEffort)
+    ? (value as ClaudeThinkingEffort)
+    : resolveLegacyThinkingEffort(value);
 
 export const normalizeClaudeThinkingSettings = (
   value: unknown
@@ -70,14 +100,11 @@ export const normalizeClaudeThinkingSettings = (
     typeof value.enabled === "boolean"
       ? value.enabled
       : DEFAULT_CLAUDE_THINKING_SETTINGS.enabled;
-  const numericMaxTokens = Number(value.maxTokens);
-  const maxTokens = Number.isFinite(numericMaxTokens)
-    ? clampThinkingTokens(numericMaxTokens)
-    : DEFAULT_CLAUDE_THINKING_SETTINGS.maxTokens;
+  const effort = normalizeClaudeThinkingEffort(value.effort ?? value.maxTokens);
 
   return {
     enabled,
-    maxTokens,
+    effort,
   };
 };
 

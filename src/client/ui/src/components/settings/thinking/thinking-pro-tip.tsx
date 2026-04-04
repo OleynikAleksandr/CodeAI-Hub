@@ -29,7 +29,7 @@ const ThinkingProTip: FC = () => {
   const description = t(
     UI_HELPER_TEXT_CATEGORY,
     "settings.claude_thinking_settings.pro_tip.description",
-    'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.'
+    'Use "Ultrathink" anywhere in your message to ask Claude for maximum reasoning effort on that specific query, regardless of your current saved setting.'
   );
 
   return (

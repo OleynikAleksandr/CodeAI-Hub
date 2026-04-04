@@ -138,6 +138,7 @@ export const loadClaudeProviderSettingsSnapshot = (
   return {
     defaultModel: claude.defaultModel,
     thinking: claude.thinking,
+    thinkingDisplaySyncEnabled: claude.thinkingDisplaySyncEnabled,
     sessionContinuity: isRecord(claude.sessionContinuity)
       ? {
           remainingPercentThreshold:

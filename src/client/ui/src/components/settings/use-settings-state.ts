@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
+import type {
+  ClaudeModelAliasId,
+  ClaudeThinkingEffort,
+} from "../../../../../types/claude-model-registry";
 import type {
   GeminiModelId,
   GeminiThinkingLevel,
@@ -137,8 +140,8 @@ export const useSettingsState = (): UseSettingsStateResult => {
   }, []);
 
   const handleThinkingSettingsChange = useCallback(
-    (enabled: boolean, maxTokens: number) => {
-      updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
+    (enabled: boolean, effort: ClaudeThinkingEffort) => {
+      updateSettings(updateThinkingSettings(settings, enabled, effort));
     },
     [settings, updateSettings]
   );

@@ -47,6 +47,7 @@ export interface AppliedProviderTurnConfig {
   readonly reasoningEffort?: string;
   readonly source: "settings_snapshot" | "switch_request";
   readonly thinkingDisplaySyncEnabled?: boolean;
+  readonly thinkingEnabled?: boolean;
   readonly thinkingLevel?: string;
 }
 
@@ -105,6 +106,10 @@ export const readAppliedProviderTurnConfig = (
     reasoningEffort:
       typeof candidate.reasoningEffort === "string"
         ? candidate.reasoningEffort
+        : undefined,
+    thinkingEnabled:
+      typeof candidate.thinkingEnabled === "boolean"
+        ? candidate.thinkingEnabled
         : undefined,
     thinkingLevel:
       typeof candidate.thinkingLevel === "string"

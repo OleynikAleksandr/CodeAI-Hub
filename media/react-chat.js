@@ -7276,11 +7276,11 @@
   });
 
   // src/client/ui/src/index.tsx
-  var import_react22 = __toESM(require_react());
+  var import_react23 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_react21 = __toESM(require_react());
+  var import_react22 = __toESM(require_react());
 
   // src/client/ui/src/components/settings/style-tokens.ts
   var settingsColorTokens = {
@@ -8087,7 +8087,7 @@
   var vscode_default = vscode;
 
   // src/client/ui/src/components/settings/settings-state-helpers.ts
-  var updateThinkingSettings = (settings, enabled, maxTokens) => ({
+  var updateThinkingSettings = (settings, enabled, effort) => ({
     ...settings,
     providers: {
       ...settings.providers,
@@ -8095,7 +8095,7 @@
         ...settings.providers.claude,
         thinking: {
           enabled,
-          maxTokens
+          effort
         }
       }
     }
@@ -8293,6 +8293,36 @@
     ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
   ]);
   var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
+  var CLAUDE_THINKING_EFFORTS = [
+    {
+      name: "low",
+      description: "Lighter reasoning for faster Claude turns.",
+      useCase: "Simple prompts and quick follow-ups.",
+      default: false
+    },
+    {
+      name: "medium",
+      description: "Balanced reasoning depth for everyday work.",
+      useCase: "Default choice for most sessions.",
+      default: true
+    },
+    {
+      name: "high",
+      description: "Deeper reasoning for more complex tasks.",
+      useCase: "Architecture work, investigations, and larger plans.",
+      default: false
+    },
+    {
+      name: "max",
+      description: "Maximum reasoning effort currently exposed by Claude.",
+      useCase: "Hardest tasks where latency matters less than depth.",
+      default: false
+    }
+  ];
+  var CLAUDE_THINKING_EFFORT_SET = new Set(
+    CLAUDE_THINKING_EFFORTS.map((effort) => effort.name)
+  );
+  var DEFAULT_CLAUDE_THINKING_EFFORT = "medium";
 
   // src/types/codex-model-registry.ts
   var CODEX_SETTINGS_MODELS = [
@@ -8349,6 +8379,30 @@
     }
   ];
   var DEFAULT_CODEX_REASONING_LEVEL = "medium";
+
+  // src/client/ui/src/components/settings/claude-thinking-state.ts
+  var LEGACY_THINKING_TOKEN_ANCHORS = [
+    { effort: "low", maxTokens: 2e3 },
+    { effort: "medium", maxTokens: 4e3 },
+    { effort: "high", maxTokens: 1e4 },
+    { effort: "max", maxTokens: 32e3 }
+  ];
+  var resolveLegacyThinkingEffort = (value) => {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) {
+      return DEFAULT_CLAUDE_THINKING_EFFORT;
+    }
+    return LEGACY_THINKING_TOKEN_ANCHORS.reduce(
+      (closest, candidate) => Math.abs(candidate.maxTokens - numericValue) < Math.abs(closest.maxTokens - numericValue) ? candidate : closest,
+      LEGACY_THINKING_TOKEN_ANCHORS[0]
+    ).effort;
+  };
+  var mapClaudeThinkingEffort = (value) => typeof value === "string" && CLAUDE_THINKING_EFFORT_SET.has(value) ? value : resolveLegacyThinkingEffort(value);
+  var mapClaudeThinkingSettings = (value) => ({
+    effort: mapClaudeThinkingEffort(value?.effort ?? value?.maxTokens),
+    enabled: Boolean(value?.enabled)
+  });
+  var areClaudeThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.effort === right.effort;
 
   // src/types/gemini-model-registry.ts
   var GEMINI_RECOMMENDED_MODELS = [
@@ -8557,7 +8611,6 @@
   var areGeneralResponsePolicyEqual = (left, right) => left.mode === right.mode && left.strictOutput.schemaText === right.strictOutput.schemaText && left.strictOutput.instructionText === right.strictOutput.instructionText;
 
   // src/client/ui/src/components/settings/settings-state-model.ts
-  var DEFAULT_THINKING_MAX_TOKENS = 4e3;
   var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
   var DEFAULT_CORE_RESTART_ENABLED = true;
@@ -8603,13 +8656,6 @@
     return fallback;
   };
   var deriveWorkflowTermsPolicy = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE ? "keep_english" : "translate";
-  var mapThinkingSettings = (value) => {
-    const numericValue = Number(value?.maxTokens);
-    return {
-      enabled: Boolean(value?.enabled),
-      maxTokens: Number.isFinite(numericValue) ? numericValue : DEFAULT_THINKING_MAX_TOKENS
-    };
-  };
   var mapThinkingDisplaySyncEnabled = (value) => typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
   var mapCodexReasoningSummaryEnabled = (value, legacyValue) => {
     if (typeof value === "boolean") {
@@ -8685,7 +8731,7 @@
     return { remainingPercentThreshold };
   };
   var mapClaudeSettings = (value) => ({
-    thinking: mapThinkingSettings(value?.thinking),
+    thinking: mapClaudeThinkingSettings(value?.thinking),
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
     defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
     sessionContinuity: mapContinuity(value?.sessionContinuity),
@@ -8742,7 +8788,6 @@
   });
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
   var areAutoUpdateSettingsEqual = (left, right) => left.enabled === right.enabled;
-  var areThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.maxTokens === right.maxTokens;
   var areReasoningByModelEqual = (left, right) => {
     const leftEntries = Object.entries(left);
     if (leftEntries.length !== Object.keys(right).length) {
@@ -8755,7 +8800,7 @@
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
   var areLocalizationCategoriesEqual = (left, right) => left.artifactsForTheUser === right.artifactsForTheUser && left.messagesForTheUser === right.messagesForTheUser && left.uiHelperText === right.uiHelperText && left.uiLabels === right.uiLabels;
   var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.glossaryEnabled === right.glossaryEnabled;
-  var areClaudeSettingsEqual = (left, right) => areThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areClaudeSettingsEqual = (left, right) => areClaudeThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.reasoningSummaryEnabled === right.reasoningSummaryEnabled && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
     left.thinkingLevelByModel,
@@ -8976,8 +9021,8 @@
       setHasChanges(!areSettingsEqual(nextSettings, initialSettingsRef.current));
     }, []);
     const handleThinkingSettingsChange = (0, import_react.useCallback)(
-      (enabled, maxTokens) => {
-        updateSettings(updateThinkingSettings(settings, enabled, maxTokens));
+      (enabled, effort) => {
+        updateSettings(updateThinkingSettings(settings, enabled, effort));
       },
       [settings, updateSettings]
     );
@@ -9242,7 +9287,7 @@
   };
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_react18 = __toESM(require_react());
+  var import_react19 = __toESM(require_react());
 
   // src/client/ui/src/app-host/use-localization.ts
   var import_react2 = __toESM(require_react());
@@ -12331,31 +12376,126 @@
   var settings_header_default = SettingsHeader;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
+  var import_react18 = __toESM(require_react());
+
+  // src/client/ui/src/components/settings/thinking/thinking-effort-selector.tsx
   var import_react17 = __toESM(require_react());
-
-  // src/client/ui/src/components/settings/thinking/constants.ts
-  var MIN_THINKING_TOKENS = 2e3;
-  var MAX_THINKING_TOKENS = 32e3;
-  var THINKING_TOKEN_STEP = 1e3;
-  var hideSpinnerStyle = `
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`;
-
-  // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
   var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   var UI_HELPER_TEXT_CATEGORY11 = "user_guidance";
   var containerStyles2 = {
+    paddingLeft: "28px",
+    borderTop: "1px solid #3c3c3c",
+    paddingTop: "15px"
+  };
+  var titleStyles5 = {
+    fontSize: "13px",
+    fontWeight: 500,
+    marginBottom: "8px"
+  };
+  var subtitleStyles2 = {
+    fontSize: "12px",
+    color: "#999999",
+    marginBottom: "12px",
+    lineHeight: "1.4"
+  };
+  var disabledContainerStyles = {
+    opacity: 0.6,
+    pointerEvents: "none"
+  };
+  var ThinkingEffortSelector = ({
+    enabled,
+    onChange,
+    value
+  }) => {
+    const { t } = useLocalization();
+    const [hoveredEffort, setHoveredEffort] = (0, import_react17.useState)(null);
+    const subtitle = t(
+      UI_HELPER_TEXT_CATEGORY11,
+      "settings.claude_thinking_settings.effort.subtitle",
+      "Choose how much reasoning effort Claude should apply for new sessions."
+    );
+    const resolveDescription = (effort) => t(
+      UI_HELPER_TEXT_CATEGORY11,
+      `settings.claude_thinking_settings.effort.${effort}_description`,
+      CLAUDE_THINKING_EFFORTS.find((entry) => entry.name === effort)?.description ?? ""
+    );
+    const resolveUseCase = (effort) => CLAUDE_THINKING_EFFORTS.find((entry) => entry.name === effort)?.useCase ?? "";
+    const handleKeyDown = (event, effort) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onChange(effort);
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+      "div",
+      {
+        style: {
+          ...containerStyles2,
+          ...enabled ? null : disabledContainerStyles
+        },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles5, children: "Reasoning effort" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: subtitleStyles2, children: subtitle }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: listStyles, children: CLAUDE_THINKING_EFFORTS.map((effort) => {
+            const isSelected = value === effort.name;
+            const rowStyle = {
+              ...rowBaseStyles,
+              ...rowButtonResetStyles,
+              ...isSelected ? rowSelectedStyles : {},
+              ...!isSelected && hoveredEffort === effort.name ? rowHoverStyles : {}
+            };
+            return (
+              // biome-ignore lint/a11y/useSemanticElements: custom radio rows match the rest of the provider settings UI
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+                "div",
+                {
+                  "aria-checked": isSelected,
+                  onClick: () => onChange(effort.name),
+                  onKeyDown: (event) => handleKeyDown(event, effort.name),
+                  onMouseEnter: () => setHoveredEffort(effort.name),
+                  onMouseLeave: () => setHoveredEffort(null),
+                  role: "radio",
+                  style: rowStyle,
+                  tabIndex: enabled ? 0 : -1,
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                      "div",
+                      {
+                        style: {
+                          ...radioCircleStyles,
+                          ...isSelected ? radioCircleSelectedStyles : {}
+                        },
+                        children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: radioCircleInnerStyles }) : null
+                      }
+                    ),
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelTitleStyles, children: effort.name }),
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelDescriptionStyles, children: resolveDescription(effort.name) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelDescriptionStyles, children: resolveUseCase(effort.name) })
+                    ] })
+                  ]
+                },
+                effort.name
+              )
+            );
+          }) })
+        ]
+      }
+    );
+  };
+  var thinking_effort_selector_default = ThinkingEffortSelector;
+
+  // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY12 = "user_guidance";
+  var containerStyles3 = {
     marginTop: "20px",
     padding: "12px",
     background: "#1a1a1a",
     borderRadius: "4px",
     border: "1px solid #2d2d30"
   };
-  var titleStyles5 = {
+  var titleStyles6 = {
     fontSize: "12px",
     color: "#7ca9d3",
     fontWeight: 500,
@@ -12369,20 +12509,20 @@
   var ThinkingProTip = () => {
     const { t } = useLocalization();
     const description = t(
-      UI_HELPER_TEXT_CATEGORY11,
+      UI_HELPER_TEXT_CATEGORY12,
       "settings.claude_thinking_settings.pro_tip.description",
-      'Use "Ultrathink" anywhere in your message to enable maximum thinking (32000 tokens) for that specific query, regardless of your current settings.'
+      'Use "Ultrathink" anywhere in your message to ask Claude for maximum reasoning effort on that specific query, regardless of your current saved setting.'
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: containerStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles5, children: "\u{1F4A1} Pro Tip" }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: descriptionStyles3, children: description })
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: containerStyles3, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles6, children: "\u{1F4A1} Pro Tip" }),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: descriptionStyles3, children: description })
     ] });
   };
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
-  var UI_HELPER_TEXT_CATEGORY12 = "user_guidance";
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var UI_HELPER_TEXT_CATEGORY13 = "user_guidance";
   var toggleContainerStyles2 = {
     display: "flex",
     alignItems: "flex-start",
@@ -12396,7 +12536,7 @@
     height: "16px",
     cursor: "pointer"
   };
-  var titleStyles6 = {
+  var titleStyles7 = {
     fontSize: "13px",
     fontWeight: 500,
     marginBottom: "4px"
@@ -12412,17 +12552,17 @@
   var ThinkingToggle = ({ enabled, onToggle }) => {
     const { t } = useLocalization();
     const description = t(
-      UI_HELPER_TEXT_CATEGORY12,
+      UI_HELPER_TEXT_CATEGORY13,
       "settings.claude_thinking_settings.enable_thinking.description",
-      "When enabled, Claude will use deeper reasoning to process complex queries. This provides more thoughtful and comprehensive responses."
+      "When enabled, Claude will use its adaptive thinking path for complex queries. Pick the effort level below to control how hard it reasons."
     );
     const note = t(
-      UI_HELPER_TEXT_CATEGORY12,
+      UI_HELPER_TEXT_CATEGORY13,
       "settings.claude_thinking_settings.enable_thinking.note",
       "Changes take effect when creating a new session."
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("label", { style: toggleContainerStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { style: toggleContainerStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
         "input",
         {
           checked: enabled,
@@ -12431,12 +12571,12 @@
           type: "checkbox"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: { flex: 1 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles6, children: "Enable thinking mode" }),
-        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: descriptionStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: { flex: 1 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: titleStyles7, children: "Enable thinking mode" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: descriptionStyles4, children: [
           description,
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("br", {}),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("strong", { style: noteStyles2, children: "Note:" }),
           " ",
           note
         ] })
@@ -12444,136 +12584,6 @@
     ] });
   };
   var thinking_toggle_default = ThinkingToggle;
-
-  // src/client/ui/src/components/settings/thinking/thinking-token-input.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
-  var UI_HELPER_TEXT_CATEGORY13 = "user_guidance";
-  var containerStyles3 = {
-    paddingLeft: "28px",
-    borderTop: "1px solid #3c3c3c",
-    paddingTop: "15px"
-  };
-  var titleStyles7 = {
-    fontSize: "13px",
-    fontWeight: 500,
-    marginBottom: "8px"
-  };
-  var controlsStyles = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px"
-  };
-  var buttonStyles3 = {
-    width: "28px",
-    height: "28px",
-    background: "#2d2d30",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    cursor: "pointer",
-    fontSize: "16px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  };
-  var inputStyles5 = {
-    width: "100px",
-    padding: "6px 8px",
-    background: "#1e1e1e",
-    border: "1px solid #3c3c3c",
-    borderRadius: "4px",
-    color: "#cccccc",
-    fontSize: "13px",
-    textAlign: "center",
-    MozAppearance: "textfield",
-    appearance: "textfield"
-  };
-  var helperStyles2 = {
-    fontSize: "12px",
-    color: "#999999",
-    marginTop: "8px",
-    lineHeight: "1.4"
-  };
-  var ThinkingTokenInput = ({
-    value,
-    onChange
-  }) => {
-    const { t } = useLocalization();
-    const updateValue = (next) => {
-      const constrained = Math.min(
-        MAX_THINKING_TOKENS,
-        Math.max(MIN_THINKING_TOKENS, next)
-      );
-      onChange(constrained);
-    };
-    const handleInputChange = (event) => {
-      const parsed = Number.parseInt(event.target.value, 10);
-      updateValue(Number.isNaN(parsed) ? MIN_THINKING_TOKENS : parsed);
-    };
-    const normalLevelDescription = t(
-      UI_HELPER_TEXT_CATEGORY13,
-      "settings.claude_thinking_settings.max_tokens.normal_description",
-      "Normal (4000): Standard reasoning depth"
-    );
-    const hardLevelDescription = t(
-      UI_HELPER_TEXT_CATEGORY13,
-      "settings.claude_thinking_settings.max_tokens.hard_description",
-      "Hard (10000): Extended analysis for complex tasks"
-    );
-    const ultraLevelDescription = t(
-      UI_HELPER_TEXT_CATEGORY13,
-      "settings.claude_thinking_settings.max_tokens.ultra_description",
-      "Ultra (32000): Maximum reasoning capacity"
-    );
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: containerStyles3, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { style: { display: "block" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: titleStyles7, children: "Maximum thinking tokens" }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: controlsStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-          "button",
-          {
-            onClick: () => updateValue(value - THINKING_TOKEN_STEP),
-            style: buttonStyles3,
-            title: "Decrease by 1000",
-            type: "button",
-            children: "\u2212"
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-          "input",
-          {
-            max: MAX_THINKING_TOKENS,
-            min: MIN_THINKING_TOKENS,
-            onChange: handleInputChange,
-            step: THINKING_TOKEN_STEP,
-            style: inputStyles5,
-            type: "number",
-            value
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-          "button",
-          {
-            onClick: () => updateValue(value + THINKING_TOKEN_STEP),
-            style: buttonStyles3,
-            title: "Increase by 1000",
-            type: "button",
-            children: "+"
-          }
-        )
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: helperStyles2, children: [
-        "\u2022 ",
-        normalLevelDescription,
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
-        "\u2022 ",
-        hardLevelDescription,
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
-        "\u2022 ",
-        ultraLevelDescription
-      ] })
-    ] }) });
-  };
-  var thinking_token_input_default = ThinkingTokenInput;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
   var import_jsx_runtime23 = __toESM(require_jsx_runtime());
@@ -12605,49 +12615,53 @@
     lineHeight: "1.4"
   };
   var ThinkingSettings = ({
+    effort,
     enabled,
-    maxTokens,
     thinkingDisplaySyncEnabled,
     onThinkingDisplaySyncChange,
     onChange
   }) => {
     const { t } = useLocalization();
     const handleToggle = (nextEnabled) => {
-      onChange(nextEnabled, maxTokens);
+      onChange(nextEnabled, effort);
     };
-    const handleTokenChange = (nextValue) => {
-      onChange(enabled, nextValue);
+    const handleEffortChange = (nextEffort) => {
+      onChange(enabled, nextEffort);
     };
     const thinkingInDialogDescription = t(
       UI_HELPER_TEXT_CATEGORY14,
       "settings.claude_thinking_settings.thinking_in_dialog.description",
       "Show Claude reasoning as a normal assistant bubble with a Thinking label."
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: wrapperStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("style", { children: hideSpinnerStyle }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { style: displaySyncToggleStyles3, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
-            "input",
-            {
-              checked: thinkingDisplaySyncEnabled,
-              onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
-              style: displaySyncCheckboxStyles3,
-              type: "checkbox"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncDescriptionStyles3, children: thinkingInDialogDescription })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_token_input_default, { onChange: handleTokenChange, value: maxTokens }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_pro_tip_default, {})
-      ] })
-    ] });
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: wrapperStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { style: displaySyncToggleStyles3, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+          "input",
+          {
+            checked: thinkingDisplaySyncEnabled,
+            onChange: (event) => onThinkingDisplaySyncChange(event.target.checked),
+            style: displaySyncCheckboxStyles3,
+            type: "checkbox"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { flex: 1 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncDescriptionStyles3, children: thinkingInDialogDescription })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+        thinking_effort_selector_default,
+        {
+          enabled,
+          onChange: handleEffortChange,
+          value: effort
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_pro_tip_default, {})
+    ] }) });
   };
-  var thinking_settings_default = (0, import_react17.memo)(ThinkingSettings);
+  var thinking_settings_default = (0, import_react18.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings-view.tsx
   var import_jsx_runtime24 = __toESM(require_jsx_runtime());
@@ -12695,7 +12709,7 @@
   ];
   var SettingsView = ({ onClose, state }) => {
     const { ready } = useLocalization();
-    const [activeTab, setActiveTab] = (0, import_react18.useState)("claude");
+    const [activeTab, setActiveTab] = (0, import_react19.useState)("claude");
     const {
       coreControl,
       settings,
@@ -12768,8 +12782,8 @@
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
               thinking_settings_default,
               {
+                effort: settings.providers.claude.thinking.effort,
                 enabled: settings.providers.claude.thinking.enabled,
-                maxTokens: settings.providers.claude.thinking.maxTokens,
                 onChange: handleThinkingSettingsChange,
                 onThinkingDisplaySyncChange: handleClaudeThinkingDisplaySyncChange,
                 thinkingDisplaySyncEnabled: settings.providers.claude.thinkingDisplaySyncEnabled
@@ -12884,7 +12898,7 @@
       )
     ] });
   };
-  var settings_view_default = import_react18.default.memo(SettingsView);
+  var settings_view_default = import_react19.default.memo(SettingsView);
 
   // src/client/ui/src/root-dom.ts
   var activateRoot = () => {
@@ -12895,13 +12909,13 @@
   };
 
   // src/client/ui/src/app-host/settings-visibility.ts
-  var import_react19 = __toESM(require_react());
+  var import_react20 = __toESM(require_react());
   var useSettingsVisibility = () => {
-    const [settingsVisible, setSettingsVisible] = (0, import_react19.useState)(false);
-    const openSettings = (0, import_react19.useCallback)(() => {
+    const [settingsVisible, setSettingsVisible] = (0, import_react20.useState)(false);
+    const openSettings = (0, import_react20.useCallback)(() => {
       setSettingsVisible(true);
     }, []);
-    const closeSettings = (0, import_react19.useCallback)(() => {
+    const closeSettings = (0, import_react20.useCallback)(() => {
       setSettingsVisible(false);
       postVsCodeMessage({ type: "settings:closed" });
     }, []);
@@ -12913,7 +12927,7 @@
   };
 
   // src/client/ui/src/app-host/webview-message-handler.ts
-  var import_react20 = __toESM(require_react());
+  var import_react21 = __toESM(require_react());
 
   // src/client/ui/src/app-host/webview-message-types.ts
   var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
@@ -13153,7 +13167,7 @@
     onSessionHistory,
     onUseProjectManager
   }) => {
-    (0, import_react20.useEffect)(() => {
+    (0, import_react21.useEffect)(() => {
       const handleIncomingMessage = (event) => {
         if (isUseProjectManagerMessage(event.data)) {
           onUseProjectManager?.();
@@ -13269,11 +13283,11 @@
       "Use this panel to configure providers and defaults."
     );
     const { settingsVisible, openSettings, closeSettings } = useSettingsVisibility();
-    const handleShowSettings = (0, import_react21.useCallback)(() => {
+    const handleShowSettings = (0, import_react22.useCallback)(() => {
       activateRoot();
       openSettings();
     }, [openSettings]);
-    (0, import_react21.useEffect)(() => {
+    (0, import_react22.useEffect)(() => {
       activateRoot();
     }, []);
     useWebviewMessageHandler({
@@ -13325,7 +13339,7 @@
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(import_react22.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(import_react23.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(app_host_default, {}) })
     );
   };
   mount();

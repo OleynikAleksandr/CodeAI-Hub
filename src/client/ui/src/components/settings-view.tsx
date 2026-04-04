@@ -152,8 +152,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
                   versions={versions}
                 />
                 <ThinkingSettings
+                  effort={settings.providers.claude.thinking.effort}
                   enabled={settings.providers.claude.thinking.enabled}
-                  maxTokens={settings.providers.claude.thinking.maxTokens}
                   onChange={handleThinkingSettingsChange}
                   onThinkingDisplaySyncChange={
                     handleClaudeThinkingDisplaySyncChange
