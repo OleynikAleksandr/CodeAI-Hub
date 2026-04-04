@@ -1,8 +1,8 @@
 # Session 033 — Persistent Localization Bootstrap Refactor
 
-**Date:** 2026-04-04 11:56 (CEST)
+**Date:** 2026-04-04 12:48 (CEST)
 **Branch:** main
-**Version:** 1.1.881
+**Version:** 1.1.882
 
 ---
 
@@ -19,6 +19,9 @@
 - Finished the Project Manager bootstrap path: PM now fetches `/api/v1/localization/bootstrap` before `root.render(...)` and seeds both settings state and Help/UI localization from the persisted startup snapshot.
 - Synced the localization SSOT so the Modules/System docs describe browser bootstrap snapshots, injected Settings hydration, and PM pre-mount startup localization.
 - Refreshed the shipped webview bundle and completed the targeted verification pass required before the next packaged patch release.
+- Prepared release notes for `1.1.882`, ran `./scripts/build-all.sh`, and committed the unified version/manifests surface for the persistent localization bootstrap patch.
+- Built and verified the packaged VSIX with `./scripts/build-release.sh --use-current-version`; the resulting artefact is `codeai-hub-1.1.882.vsix`.
+- Archived the completed persistent-localization-bootstrap planning doc and execution TODO, then restored a clean placeholder `doc/TODO/todo-plan.md` for the next scope.
 
 ## Verification
 - `npm run build --workspace @codeai-hub/localization`
@@ -28,6 +31,8 @@
 - `npm run build:webview`
 - `npm run typecheck:webview`
 - `npm run build:project-manager`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
 
 ## Git commits
 - `d7c921d8 docs(plan): define persistent localization bootstrap scope`
@@ -39,6 +44,9 @@
 - `87021691 fix(localization-bootstrap): hydrate project manager before mount`
 - `783e9f4e docs(architecture): sync persistent localization bootstrap ssot`
 - `ac939b58 build(webview): refresh localization bootstrap bundle`
+- `ad63ff0b docs(session): record persistent localization bootstrap verification`
+- `c04034d3 docs(release): prepare persistent localization bootstrap release notes`
+- `ea018c87 build(release): assemble persistent localization bootstrap release`
 
 ---
 
@@ -48,13 +56,11 @@
 1. `doc/SolidWorks-WorkFlow/README.md`
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-4. `doc/SolidWorks-WorkFlow/Plans/Persistent_Localization_Bootstrap_Architecture.md`
-5. `doc/TODO/todo-plan.md`
-6. `doc/Sessions/Session033.md` (THIS REPORT)
+4. `doc/TODO/todo-plan.md`
+5. `doc/Sessions/Session033.md` (THIS REPORT)
 
-> Далее: после review этого отчета открыть `README.md`, `CHANGELOG.md` и активный `todo-plan.md`, затем завершить релизный cycle для persistent localization bootstrap.
+> Дополнительно: если потребуется вернуться к этому scope, открыть архивные `doc/SolidWorks-WorkFlow/Plans/Archive/Persistent_Localization_Bootstrap_Architecture.md` и `doc/TODO/Archive/todo-plan-up-to-phase4-persistent-localization-bootstrap-release-1.1.882-2026-04-04.md`.
 
 ## Plans for next session
-- Update `README.md` and `CHANGELOG.md` for the next patch release that ships persistent localization bootstrap.
-- Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record the packaged verification outcome and version bump in this session report.
-- Hand the VSIX to the user for final cold-start validation in Project Manager and Settings WebView.
+- Start the next scope from a newly approved planning doc; there are no active execution streams left in `doc/TODO/todo-plan.md`.
+- Use `1.1.882` field feedback as input for any follow-up fixes around startup localization, packaging, or UX polish.
