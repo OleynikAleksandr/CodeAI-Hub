@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.882] - 2026-04-04
+### Fixed
+- **Persistent startup localization bootstrap**: the localization runtime now saves a startup-ready browser snapshot in `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` and reuses it across restarts instead of rebuilding first paint from English component fallbacks.
+- **Settings cold-start no longer flashes English**: the extension host injects the persisted localization bootstrap payload into the generated webview HTML before JS boot, so Settings UI labels and help text render from the selected language on the first paint.
+- **Project Manager startup now preloads localization before mount**: PM fetches `/api/v1/localization/bootstrap` from Core before `root.render(...)` and seeds its runtime state from the returned snapshot, removing the temporary English Help/UI state on cold launch.
+
 ## [1.1.881] - 2026-04-04
 ### Fixed
 - **Project Manager `Add workspace` modal now fully localizes**: the dialog title, field labels, placeholders, buttons, and validation errors now resolve through explicit localization dictionaries instead of staying hardcoded in the modal component.
