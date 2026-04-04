@@ -152,7 +152,7 @@
 104. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged follow-up release includes English internal workflow prompts and no longer forces Russian thinking translation. Scope: release-generated version files and manifests. Target commit: `build(release): assemble internal prompt english release`
 105. [DONE] Git Commit: `build(release): assemble internal prompt english release` (hash: `940fb78a`)
 106. [DONE] Update the active session report with the internal-prompt/t thinking fix chain and the new packaged release output. Scope: `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record internal prompt english release`
-107. [TODO] Git Commit: `docs(session): record internal prompt english release` (hash: TBD)
+107. [DONE] Git Commit: `docs(session): record internal prompt english release` (hash: `6785f44c`)
 
 ## Phase 9 — Claude Provider-Home Memory Isolation Follow-Up (owner: Claude/Release/Docs, updated: 2026-04-03)
 ### Stream: Runtime Isolation Fix
@@ -187,7 +187,7 @@
 126. [DONE] Sync the live architecture SSOT and localization contract so release `1.1.876` documents Claude full SDK isolation mode and the finalized `Artifacts for the User` vs `Internal Agent Instructions` boundary. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`. Target commit: `docs(architecture): sync localization and claude isolation ssot`
 127. [DONE] Git Commit: `docs(architecture): sync localization and claude isolation ssot` (hash: `eea77470`)
 128. [DONE] Refresh docs navigation and session closure records so the next context restore starts from the finalized release `1.1.876` architecture baseline. Scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session026.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record architecture sync and release publish`
-129. [TODO] Git Commit: `docs(session): record architecture sync and release publish` (hash: TBD)
+129. [DONE] Git Commit: `docs(session): record architecture sync and release publish` (hash: `2671a405`)
 
 ## Phase 12 — Gemini CLI 0.36 Runtime Compatibility Hotfix (owner: Gemini/Release/Docs, updated: 2026-04-04)
 ### Stream: Runtime Bridge Compatibility
@@ -196,8 +196,8 @@
 
 ### Stream: Release Notes And Packaging
 132. [DONE] Prepare release-facing docs for the Gemini CLI runtime-compatibility hotfix before the next patch build. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(release): prepare gemini cli compatibility release notes`
-133. [TODO] Git Commit: `docs(release): prepare gemini cli compatibility release notes` (hash: TBD)
-134. [TODO] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release restores Gemini provider availability with global `@google/gemini-cli@0.36.x`. Scope: release-generated version files and manifests. Target commit: `build(release): assemble gemini cli compatibility release`
-135. [TODO] Git Commit: `build(release): assemble gemini cli compatibility release` (hash: TBD)
-136. [TODO] Record the Gemini CLI compatibility hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session027.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record gemini cli compatibility release`
+133. [DONE] Git Commit: `docs(release): prepare gemini cli compatibility release notes` (hash: `a6d6dcc6`)
+134. [DONE] Run `./scripts/build-all.sh`, then run `./scripts/build-release.sh --use-current-version`, and confirm the packaged patch release restores Gemini provider availability with global `@google/gemini-cli@0.36.x`. Scope: release-generated version files and manifests. Target commit: `build(release): assemble gemini cli compatibility release`
+135. [DONE] Git Commit: `build(release): assemble gemini cli compatibility release` (hash: `57eb642e`)
+136. [DONE] Record the Gemini CLI compatibility hotfix chain and packaged validation in a new session report. Scope: `doc/Sessions/Session027.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(session): record gemini cli compatibility release`
 137. [TODO] Git Commit: `docs(session): record gemini cli compatibility release` (hash: TBD)
