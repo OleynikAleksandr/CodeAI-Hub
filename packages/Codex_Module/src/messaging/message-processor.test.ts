@@ -76,6 +76,7 @@ test("applyCodexTurnRuntimeConfig mutates active thread model and strips interna
       modelId: "gpt-5.4",
       reasoningEffort: "high",
       source: "settings_snapshot",
+      thinkingDisplaySyncEnabled: true,
     },
   } as never);
 
@@ -94,6 +95,8 @@ test("applyCodexTurnRuntimeConfig mutates active thread model and strips interna
     "gpt-5.4"
   );
   assert.equal(session.messagesForTheUserLanguage, "ru");
+  assert.equal(session.runtimeTurnConfig?.messagesForTheUserLanguage, "ru");
+  assert.equal(session.runtimeTurnConfig?.thinkingDisplaySyncEnabled, true);
   assert.deepEqual(turnOptions, { outputSchema });
 });
 
@@ -168,6 +171,9 @@ const createSessionWithThread = (threadOptions: {
   logger: null,
   codexThreadId: "codex-thread",
   internalTurn: false,
+  runtimeTurnConfig: {
+    thinkingDisplaySyncEnabled: true,
+  },
   thread: {
     _threadOptions: threadOptions,
   } as never,

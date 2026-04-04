@@ -15,6 +15,11 @@ export interface SessionLogger {
   readonly start: (sessionId: string) => void;
 }
 
+export interface CodexRuntimeTurnConfig {
+  messagesForTheUserLanguage?: string;
+  thinkingDisplaySyncEnabled?: boolean;
+}
+
 export interface ActiveSession {
   codexThreadId: string | null;
   readonly createdAt: number;
@@ -26,6 +31,7 @@ export interface ActiveSession {
   messagesForTheUserLanguage?: string;
   processingLoop?: Promise<void>;
   responsePolicy?: CodexResponsePolicy;
+  runtimeTurnConfig?: CodexRuntimeTurnConfig;
   sessionId: string;
   structuredOutputUuids?: Set<string>;
   thread?: Thread;
