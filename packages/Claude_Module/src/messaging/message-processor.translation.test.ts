@@ -220,6 +220,107 @@ test("SDKMessageProcessor translates Claude pre-tool assistant text to user lang
   );
 });
 
+test("SDKMessageProcessor keeps Claude same-message tool-use text under thinking", async () => {
+  const reasoningCalls: string[] = [];
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-thinking-text-classification",
+    NOOP_LOGGER
+  );
+  session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-thinking-text-classification",
+    thoughtTranslator: {
+      translateReasoning: (text: string, targetLanguage?: string) => {
+        reasoningCalls.push(`${targetLanguage ?? ""}:${text}`);
+        if (text === "Let me inspect the workspace state first.") {
+          return Promise.resolve("Сначала проверю состояние workspace.");
+        }
+        return Promise.resolve("Сначала читаю анкету.");
+      },
+      translateUserFacingText: () =>
+        Promise.resolve("Этого перевода быть не должно"),
+    },
+  });
+  const events = collectMessageEvents(session);
+
+  processor.enqueueTurn(
+    tempId,
+    { content: "description", internal: false, enqueuedAt: Date.now() },
+    {
+      createIterator: () =>
+        createIterator([
+          {
+            type: "assistant",
+            session_id: "real-session-thinking-text-classification",
+            message: {
+              id: "msg-thinking-text",
+              content: [
+                {
+                  type: "thinking",
+                  thinking: "Need to read the questionnaire first.",
+                },
+              ],
+            },
+          },
+          {
+            type: "assistant",
+            session_id: "real-session-thinking-text-classification",
+            message: {
+              id: "msg-thinking-text",
+              content: [
+                {
+                  type: "text",
+                  text: "Let me inspect the workspace state first.",
+                },
+              ],
+            },
+          },
+          {
+            type: "stream_event",
+            session_id: "real-session-thinking-text-classification",
+            event: {
+              type: "message_delta",
+              delta: { stop_reason: "tool_use" },
+            },
+          },
+          {
+            type: "result",
+            session_id: "real-session-thinking-text-classification",
+          },
+        ]),
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  assert.deepEqual(reasoningCalls, [
+    "ru:Need to read the questionnaire first.",
+    "ru:Let me inspect the workspace state first.",
+  ]);
+  assert.equal(
+    events.some(
+      (event) =>
+        event.type === "dialog_message" &&
+        event.role === "assistant" &&
+        event.tag === "thinking" &&
+        event.content === "Сначала проверю состояние workspace."
+    ),
+    true
+  );
+  assert.equal(
+    events.some(
+      (event) =>
+        event.type === "assistant" &&
+        event.content === "Этого перевода быть не должно"
+    ),
+    false
+  );
+});
+
 test("SDKMessageProcessor keeps end_turn Claude assistant text untouched", async () => {
   const translationCalls: string[] = [];
   const sessionManager = new SDKSessionManager();

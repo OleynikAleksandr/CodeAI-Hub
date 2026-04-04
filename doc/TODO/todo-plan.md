@@ -12,9 +12,9 @@
 ## Phase 1 — Claude Thinking Message Classification (owner: Codex, updated: 2026-04-04)
 
 ### Stream: Planning Intake
-1. [TODO] Record the provider-native classification bug where Claude `thinking -> text -> tool_use` is split into `Thinking -> Assistant`; scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Message_Classification_Fix.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define claude thinking classification scope`
-2. [TODO] Git Commit: `docs(plan): define claude thinking classification scope` (hash: TBD)
+1. [DONE] Record the provider-native classification bug where Claude `thinking -> text -> tool_use` is split into `Thinking -> Assistant`; scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Message_Classification_Fix.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define claude thinking classification scope`
+2. [DONE] Git Commit: `docs(plan): define claude thinking classification scope` (hash: `f544ba79`)
 
 ### Stream: Claude Router Classification
-3. [TODO] Reclassify same-message Claude pre-tool text as `thinking` when the provider-native message already emitted `thinking`; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.translation.test.ts`; expected commit: `fix(claude): classify thinking continuations correctly`
+3. [DONE] Reclassify same-message Claude pre-tool text as `thinking` when the provider-native message already emitted `thinking`; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-thinking-dialog-emitter.ts`, `packages/Claude_Module/src/messaging/message-processor.translation.test.ts`; expected commit: `fix(claude): classify thinking continuations correctly`
 4. [TODO] Git Commit: `fix(claude): classify thinking continuations correctly` (hash: TBD)

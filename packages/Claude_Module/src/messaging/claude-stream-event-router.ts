@@ -1,7 +1,11 @@
-import crypto from "node:crypto";
 import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage, ModuleReporter } from "../types";
-import { splitClaudeDialogChunks } from "./claude-readable-text-chunker";
+import {
+  emitClaudeThinkingDialog,
+  isClaudeMessageStopEvent,
+  readClaudeMessageDeltaStopReason,
+  readClaudeMessageId,
+} from "./claude-thinking-dialog-emitter";
 import {
   type ClaudeTextTranslationAdapter,
   ClaudeThoughtTranslationAdapter,
@@ -14,8 +18,6 @@ import {
 } from "./workflow-structured-output";
 
 const QUESTION_SLOT_PATTERN = /^question\d*$/i;
-const THINKING_DIALOG_MAX_CHARS = 900;
-
 type VariantBArtifact =
   ReturnType<typeof extractVariantBArtifacts> extends (infer Item)[] | null
     ? Item
@@ -30,37 +32,13 @@ interface PendingAssistantText {
   readonly content: string;
   readonly message: ClaudeStreamMessage;
   readonly messageId: string | null;
+  readonly semanticRole: "assistant" | "thinking";
 }
 
 type PendingAssistantTextResolution = "regular" | "tool_use_preamble";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
-const readMessageId = (message: ClaudeStreamMessage): string | null => {
-  const messageId = message.message?.id;
-  return typeof messageId === "string" && messageId.trim().length > 0
-    ? messageId
-    : null;
-};
-
-const readMessageDeltaStopReason = (
-  message: ClaudeStreamMessage
-): string | null => {
-  if (message.type !== "stream_event" || !isRecord(message.event)) {
-    return null;
-  }
-  if (message.event.type !== "message_delta") {
-    return null;
-  }
-  const delta = isRecord(message.event.delta) ? message.event.delta : null;
-  return typeof delta?.stop_reason === "string" ? delta.stop_reason : null;
-};
-
-const isMessageStopEvent = (message: ClaudeStreamMessage): boolean =>
-  message.type === "stream_event" &&
-  isRecord(message.event) &&
-  message.event.type === "message_stop";
 
 const partitionVariantBArtifacts = (
   artifacts: VariantBArtifact[] | null
@@ -123,6 +101,7 @@ export class ClaudeStreamEventRouter {
     string,
     PendingAssistantText
   >();
+  private readonly thinkingMessageIdBySession = new Map<string, string>();
   private readonly thoughtTranslator: ClaudeTextTranslationAdapter;
 
   constructor(
@@ -156,7 +135,6 @@ export class ClaudeStreamEventRouter {
     if (!assistantText) {
       return;
     }
-
     await this.queueAssistantText(session, message, assistantText);
   }
 
@@ -172,6 +150,7 @@ export class ClaudeStreamEventRouter {
     message: ClaudeStreamMessage
   ): Promise<void> {
     await this.flushPendingAssistantText(session, "regular");
+    this.clearThinkingMessage(session);
     await this.emitThinkingChunks(session, message);
     const normalizedMessage = this.normalizeStructuredOutputMessage(message);
     const structured =
@@ -194,17 +173,20 @@ export class ClaudeStreamEventRouter {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): Promise<void> {
-    const stopReason = readMessageDeltaStopReason(message);
+    const stopReason = readClaudeMessageDeltaStopReason(message);
     if (stopReason === "tool_use") {
       await this.flushPendingAssistantText(session, "tool_use_preamble");
+      this.clearThinkingMessage(session);
       return;
     }
     if (stopReason) {
       await this.flushPendingAssistantText(session, "regular");
+      this.clearThinkingMessage(session);
       return;
     }
-    if (isMessageStopEvent(message)) {
+    if (isClaudeMessageStopEvent(message)) {
       await this.flushPendingAssistantText(session, "regular");
+      this.clearThinkingMessage(session);
     }
   }
 
@@ -252,7 +234,7 @@ export class ClaudeStreamEventRouter {
     session.eventEmitter.emit("message", {
       type: "assistant",
       content,
-      uuid: message.uuid ?? crypto.randomUUID(),
+      uuid: message.uuid ?? globalThis.crypto.randomUUID(),
       claudeSessionId: message.session_id,
       data: message,
       metadata: {
@@ -270,13 +252,21 @@ export class ClaudeStreamEventRouter {
   ): Promise<void> {
     const sessionKey = session.sessionId;
     const pending = this.pendingAssistantTextBySession.get(sessionKey);
-    const messageId = readMessageId(message);
+    const messageId = readClaudeMessageId(message);
+    const semanticRole =
+      messageId && this.thinkingMessageIdBySession.get(sessionKey) === messageId
+        ? "thinking"
+        : "assistant";
 
     if (pending?.messageId && messageId && pending.messageId === messageId) {
       this.pendingAssistantTextBySession.set(sessionKey, {
         content: `${pending.content}\n\n${content}`,
         message,
         messageId,
+        semanticRole:
+          pending.semanticRole === "thinking" || semanticRole === "thinking"
+            ? "thinking"
+            : "assistant",
       });
       return;
     }
@@ -289,6 +279,7 @@ export class ClaudeStreamEventRouter {
       content,
       message,
       messageId,
+      semanticRole,
     });
   }
 
@@ -305,7 +296,7 @@ export class ClaudeStreamEventRouter {
 
     const content = await this.resolvePendingAssistantText(
       session,
-      pending.content,
+      pending,
       resolution
     );
     if (!content) {
@@ -313,6 +304,15 @@ export class ClaudeStreamEventRouter {
     }
 
     if (resolution === "tool_use_preamble") {
+      if (pending.semanticRole === "thinking") {
+        emitClaudeThinkingDialog(
+          session,
+          pending.message,
+          content,
+          "thinking_text"
+        );
+        return;
+      }
       this.emitAssistantText(session, pending.message, content);
       return;
     }
@@ -335,18 +335,24 @@ export class ClaudeStreamEventRouter {
 
   private async resolvePendingAssistantText(
     session: ActiveSession,
-    content: string,
+    pending: PendingAssistantText,
     resolution: PendingAssistantTextResolution
   ): Promise<string | null> {
     if (resolution !== "tool_use_preamble") {
-      return content;
+      return pending.content;
     }
 
-    const translated = await this.thoughtTranslator.translateUserFacingText(
-      content,
-      session.runtimeTurnConfig.messagesForTheUserLanguage
-    );
-    return translated ?? content;
+    const translated =
+      pending.semanticRole === "thinking"
+        ? await this.thoughtTranslator.translateReasoning(
+            pending.content,
+            session.runtimeTurnConfig.messagesForTheUserLanguage
+          )
+        : await this.thoughtTranslator.translateUserFacingText(
+            pending.content,
+            session.runtimeTurnConfig.messagesForTheUserLanguage
+          );
+    return translated ?? pending.content;
   }
 
   private emitStructuredOutput(
@@ -417,25 +423,21 @@ export class ClaudeStreamEventRouter {
         (block as { readonly type?: string }).type === "thinking" &&
         typeof (block as { readonly thinking?: unknown }).thinking === "string"
       ) {
+        const messageId = readClaudeMessageId(message);
+        if (messageId) {
+          this.thinkingMessageIdBySession.set(session.sessionId, messageId);
+        }
         const thinking = (block as { readonly thinking: string }).thinking;
         const translated = await this.thoughtTranslator.translateReasoning(
           thinking,
           session.runtimeTurnConfig.messagesForTheUserLanguage
         );
-        const displayChunks = splitClaudeDialogChunks(
+        emitClaudeThinkingDialog(
+          session,
+          message,
           translated ?? thinking,
-          THINKING_DIALOG_MAX_CHARS
+          "thinking"
         );
-        for (const [index, chunk] of displayChunks.entries()) {
-          session.eventEmitter.emit("message", {
-            type: "dialog_message",
-            role: "assistant",
-            tag: "thinking",
-            content: chunk,
-            uuid: `${message.uuid ?? crypto.randomUUID()}::thinking::${index}`,
-            timestamp: new Date().toISOString(),
-          });
-        }
       }
     }
   }
@@ -471,5 +473,9 @@ export class ClaudeStreamEventRouter {
     }
 
     return parts.length > 0 ? parts.join("\n\n") : null;
+  }
+
+  private clearThinkingMessage(session: ActiveSession): void {
+    this.thinkingMessageIdBySession.delete(session.sessionId);
   }
 }
