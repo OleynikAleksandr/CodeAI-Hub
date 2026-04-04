@@ -4,6 +4,7 @@
 - Required reading before each fix:
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Message_Classification_Fix.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Dialog_Autoscroll_And_PM_Help_Color_Patch.md`
 - Keep each micro-task within `<= 3 files`.
 - Every implementation line must be followed by a separate `Git Commit:` line.
 - Update docs in real time when logic or architecture changes.
@@ -29,4 +30,26 @@
 9. [DONE] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble pm help color patch release`
 10. [DONE] Git Commit: `build(release): assemble pm help color patch release` (hash: `8fe5a2a9`)
 11. [DONE] Record the session report after packaging; scope: `doc/Sessions/Session035.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record pm help color patch release`
-12. [TODO] Git Commit: `docs(session): record pm help color patch release` (hash: TBD)
+12. [DONE] Git Commit: `docs(session): record pm help color patch release` (hash: `b939b712`)
+
+## Phase 2 — Dialog Autoscroll And PM Help Color Patch (owner: Codex, updated: 2026-04-04)
+
+### Stream: Planning Intake
+13. [DONE] Record the shared dialog auto-scroll regression for growing last bubbles and the PM help-color retune request; scope: `doc/SolidWorks-WorkFlow/Plans/Dialog_Autoscroll_And_PM_Help_Color_Patch.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define dialog autoscroll patch scope`
+14. [TODO] Git Commit: `docs(plan): define dialog autoscroll patch scope` (hash: TBD)
+
+### Stream: Shared Dialog Bottom Anchor
+15. [TODO] Make shared dialog auto-scroll react to last-bubble growth instead of message-count-only changes; scope: `src/client/ui/src/session/dialog-panel.tsx`, `src/client/ui/src/session/dialog-panel-scroll-anchor.ts`, `src/client/ui/src/session/dialog-panel-scroll-anchor.test.ts`; expected commit: `fix(ui): keep dialog pinned on growing thinking messages`
+16. [TODO] Git Commit: `fix(ui): keep dialog pinned on growing thinking messages` (hash: TBD)
+
+### Stream: PM Help Color Retune
+17. [TODO] Update PM help/spravka color to `rgba(115, 130, 140, 1)` while preserving the accepted size/weight contract; scope: `packages/ui/project-manager/styles.css`, `doc/TODO/todo-plan.md`; expected commit: `style(pm): retune help text color again`
+18. [TODO] Git Commit: `style(pm): retune help text color again` (hash: TBD)
+
+### Stream: Release Docs And Packaging
+19. [TODO] Sync release notes for the dialog auto-scroll patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare dialog autoscroll patch notes`
+20. [TODO] Git Commit: `docs(release): prepare dialog autoscroll patch notes` (hash: TBD)
+21. [TODO] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble dialog autoscroll patch release`
+22. [TODO] Git Commit: `build(release): assemble dialog autoscroll patch release` (hash: TBD)
+23. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session036.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record dialog autoscroll patch release`
+24. [TODO] Git Commit: `docs(session): record dialog autoscroll patch release` (hash: TBD)
