@@ -20,11 +20,13 @@
 4. [DONE] Git Commit: `fix(claude): classify thinking continuations correctly` (hash: `69c6e71f`)
 
 ### Stream: PM Help Color Release Tail
-5. [TODO] Update Project Manager help/spravka text color to `rgba(100, 130, 155, 1)` while keeping the current size/weight contract; scope: `packages/ui/project-manager/styles.css`, `doc/TODO/todo-plan.md`; expected commit: `style(pm): retune help text color`
-6. [TODO] Git Commit: `style(pm): retune help text color` (hash: TBD)
+5. [DONE] Update Project Manager help/spravka text color to `rgba(100, 130, 155, 1)` while keeping the current size/weight contract; scope: `packages/ui/project-manager/styles.css`, `doc/TODO/todo-plan.md`; expected commit: `style(pm): retune help text color`
+6. [DONE] Git Commit: `style(pm): retune help text color` (hash: `02dda079`)
 
 ### Stream: Release Docs And Packaging
-7. [TODO] Sync release notes and session report for the PM help-color patch release; scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session035.md`; expected commit: `docs(release): prepare pm help color patch notes`
+7. [TODO] Sync release notes for the PM help-color patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare pm help color patch notes`
 8. [TODO] Git Commit: `docs(release): prepare pm help color patch notes` (hash: TBD)
 9. [TODO] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble pm help color patch release`
 10. [TODO] Git Commit: `build(release): assemble pm help color patch release` (hash: TBD)
+11. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session035.md`; expected commit: `docs(session): record pm help color patch release`
+12. [TODO] Git Commit: `docs(session): record pm help color patch release` (hash: TBD)

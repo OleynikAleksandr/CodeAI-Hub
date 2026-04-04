@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.884] - 2026-04-04
+### Fixed
+- **Claude same-message thinking continuity**: when Claude emits `thinking`, then a short `text` continuation, and then `tool_use` within the same provider-native message id, the intermediate text is now rendered as `Thinking` instead of appearing as a separate assistant reply.
+- **Claude provider-native classification rule**: the thinking/assistant split now follows Claude `message.id` ownership plus `message_delta.delta.stop_reason = "tool_use"` vs `end_turn`, avoiding brittle text-based heuristics for this boundary.
+- **Project Manager help-text color retune**: all PM help/spravka surfaces based on `pm-details` now use `rgba(100, 130, 155, 1)` while keeping the existing `14px`, medium-weight presentation.
+
 ## [1.1.883] - 2026-04-04
 ### Fixed
 - **Claude long-thinking translation overflow**: visible Claude reasoning is now translated in smaller transport-safe chunks before reassembly, so oversized Google GTX GET requests no longer force large thinking blocks to fall back to English.
