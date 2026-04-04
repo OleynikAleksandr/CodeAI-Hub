@@ -48,8 +48,8 @@
 
 ### Stream: Release Docs And Packaging
 19. [DONE] Sync release notes for the dialog auto-scroll patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare dialog autoscroll patch notes`
-20. [TODO] Git Commit: `docs(release): prepare dialog autoscroll patch notes` (hash: TBD)
-21. [TODO] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble dialog autoscroll patch release`
+20. [DONE] Git Commit: `docs(release): prepare dialog autoscroll patch notes` (hash: `321634bb`)
+21. [DONE] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble dialog autoscroll patch release`
 22. [TODO] Git Commit: `build(release): assemble dialog autoscroll patch release` (hash: TBD)
 23. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session036.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record dialog autoscroll patch release`
 24. [TODO] Git Commit: `docs(session): record dialog autoscroll patch release` (hash: TBD)
