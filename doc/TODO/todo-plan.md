@@ -13,22 +13,20 @@
 
 ### Stream: Planning Intake
 1. [DONE] Create approved planning doc for Claude long-thinking translation and display chunking; scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Thinking_Translation_And_Display_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(plan): define claude thinking translation scope`
-2. [TODO] Git Commit: `docs(plan): define claude thinking translation scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): define claude thinking translation scope` (hash: `dc3a2019`)
 
-### Stream: Translation Chunking
-3. [TODO] Implement chunked Claude reasoning translation for long text; scope: `packages/Claude_Module/src/messaging/claude-thought-translation-adapter.ts`, `packages/Claude_Module/src/messaging/claude-thought-translation-adapter.test.ts`; expected commit: `fix(claude): chunk long thinking translation`
-4. [TODO] Git Commit: `fix(claude): chunk long thinking translation` (hash: TBD)
-
-### Stream: Thinking Display Chunking
-5. [TODO] Emit Claude visible thinking in readable dialog chunks; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit: `fix(claude): chunk visible thinking bubbles`
-6. [TODO] Git Commit: `fix(claude): chunk visible thinking bubbles` (hash: TBD)
+### Stream: Claude Thinking Translation And Display
+3. [DONE] Implement chunked Claude reasoning translation, readable dialog chunk emission, and localized pre-tool assistant progress text; scope: `packages/Claude_Module/src/messaging/*`, `packages/Claude_Module/src/types/index.ts`; expected commit: `fix(claude): localize and chunk visible thinking`
+4. [DONE] Git Commit: `fix(claude): localize and chunk visible thinking` (hash: `68db1998`)
 
 ### Stream: PM Help Style Release Tail
-7. [TODO] Land the requested Project Manager help-text visual tweak in the release train; scope: `packages/ui/project-manager/styles.css`; expected commit: `style(pm): refine help text presentation`
-8. [TODO] Git Commit: `style(pm): refine help text presentation` (hash: TBD)
+5. [DONE] Land the requested Project Manager help-text visual tweak in the release train; scope: `packages/ui/project-manager/styles.css`; expected commit: `style(pm): refine help text presentation`
+6. [DONE] Git Commit: `style(pm): refine help text presentation` (hash: `18818f28`)
 
 ### Stream: Release Docs And Packaging
-9. [TODO] Sync architecture/session/release docs for the Claude thinking fix release; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/Sessions/Session034.md`, `README.md`; expected commit: `docs(session): record claude thinking translation release`
+7. [TODO] Sync architecture and active execution docs for the Claude thinking fix release; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): sync claude thinking translation ssot`
+8. [TODO] Git Commit: `docs(architecture): sync claude thinking translation ssot` (hash: TBD)
+9. [TODO] Sync release notes and session report for the Claude thinking fix release; scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session034.md`; expected commit: `docs(session): record claude thinking translation release`
 10. [TODO] Git Commit: `docs(session): record claude thinking translation release` (hash: TBD)
 11. [TODO] Build and package the release after all streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble claude thinking translation fix release`
 12. [TODO] Git Commit: `build(release): assemble claude thinking translation fix release` (hash: TBD)
