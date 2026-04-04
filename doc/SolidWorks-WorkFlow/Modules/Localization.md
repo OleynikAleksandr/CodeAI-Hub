@@ -3,7 +3,7 @@
 **Status:** Implemented on `main`
 **Updated:** 2026-04-04
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (`v1.1.880`)
+**Validated on:** `main` (`v1.1.881`)
 
 ---
 
@@ -20,7 +20,7 @@ Current responsibilities:
 - glossary / protected-terms handling;
 - localized bundle materialization and persistence;
 - metadata/hash tracking for incremental regeneration;
-- browser-runtime payload contracts and resolved bundle snapshots for UI lookup;
+- browser-runtime payload contracts, resolved bundle snapshots, and startup-ready bootstrap snapshots for UI lookup;
 - category ownership between `UI Labels`, `UI Helper Text`, `Messages for the User`, and `Artifacts for the User`, while `Internal Agent Instructions` stay outside user-facing materialization.
 
 This module depends on `@codeai-hub/translation`, but it is a separate boundary.
@@ -36,7 +36,8 @@ This module depends on `@codeai-hub/translation`, but it is a separate boundary.
 - glossary baselines and user override storage;
 - bundle persistence under `~/.codeai-hub/localization/`;
 - bundle reuse / invalidation via metadata hash;
-- resolved runtime payload snapshots keyed by category/language/engine policy.
+- resolved runtime payload snapshots keyed by category/language/engine policy;
+- persisted browser bootstrap snapshots used for first paint on cold start.
 
 `Localization` does not own:
 
@@ -62,9 +63,10 @@ Current high-signal files:
 - `src/user-glossary-store.ts` — user-managed seeded glossary text file for English preserve terms.
 - `src/localization-paths.ts` — canonical `~/.codeai-hub/localization/` layout.
 - `src/localization-bundle-store.ts` — persisted bundle read/write.
+- `src/localization-runtime-bootstrap-store.ts` — persisted startup-ready browser localization snapshot read/write.
 - `src/localization-metadata-store.ts` — source-hash metadata and regeneration reuse contract.
 - `src/localization-materializer.ts` — materialization pipeline over `TranslationFacade`.
-- `src/localization-facade.ts` — public package entrypoint plus runtime payload resolution.
+- `src/localization-facade.ts` — public package entrypoint plus runtime payload/bootstrap resolution and reuse.
 
 Bundled assets:
 
@@ -113,6 +115,7 @@ User-owned mutable data lives under:
 
 - `~/.codeai-hub/localization/metadata.json`
 - `~/.codeai-hub/localization/catalogs/<category>/<language>.json`
+- `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json`
 - `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt`
 
 User settings policy lives separately in:
@@ -158,6 +161,13 @@ Current runtime payload contract stores:
 - resolved bundle entries per category, including source fallback metadata when a persisted bundle is unavailable;
 - bridge aliases so legacy runtime buckets still resolve to the approved four-category selections while the codebase finishes migration.
 
+Current browser bootstrap snapshot contract stores:
+
+- normalized localization settings subset used to derive runtime payloads;
+- persisted `LocalizationRuntimePayload` for first browser paint;
+- cache key/hash for bundle/glossary/settings/source-dictionary reuse;
+- generation timestamp and schema version.
+
 ---
 
 ## 5. Materialization Pipeline
@@ -176,6 +186,7 @@ Current runtime payload contract stores:
 7. Restore protected terms after translation.
 8. Persist bundle JSON and metadata hash.
 9. Reuse an existing bundle when the composite hash still matches.
+10. Assemble and persist `browser-runtime-bootstrap.json` when the requested runtime settings do not match the currently persisted startup snapshot.
 
 Important live behaviors:
 
@@ -183,6 +194,7 @@ Important live behaviors:
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
 - current default engine id is `google-gtx`.
+- matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - workflow-created user-facing artifact shell text and brief user-facing workflow chat updates may follow the configured `Artifacts for the User` language, but internal prompt assets remain outside Localization materialization and stay English-only.
 
 ---
@@ -198,6 +210,8 @@ Current host/bridge hydration surfaces:
 - `src/extension-module/settings/localization-runtime-service.ts`
 - `src/extension-module/message-handlers/settings-message-handler.ts`
 - `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`
+- `src/core/webview-module/webview-html-generator.ts`
+- `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`
 
 Current consumers:
 
@@ -207,11 +221,14 @@ Current consumers:
 Current live browser behavior:
 
 - browser surfaces resolve copy by message id through the shared lookup helper;
-- extension settings load/save and Project Manager settings load now materialize a `LocalizationRuntimePayload` through `LocalizationFacade.resolveRuntimePayload(...)`;
+- extension settings load/save and Project Manager settings load materialize a `LocalizationRuntimePayload` through `LocalizationFacade.resolveRuntimePayload(...)`;
+- the localization package also persists a startup-ready browser bootstrap snapshot under `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json`;
+- Settings WebView reads that snapshot through HTML bootstrap injection (`window.__CODEAI_LOCALIZATION_BOOTSTRAP__`) before JS mounts;
+- Project Manager reads the same persisted snapshot through core HTTP endpoint `/api/v1/localization/bootstrap` before `root.render(...)`;
 - settings webview and Project Manager app root feed that payload into the shared `LocalizationProvider`, so localized surfaces do not resolve bundles independently;
 - the Settings glossary card no longer keeps an inline browser draft; it opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
-- the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from host-resolved payloads, while component-level fallback strings are only a bootstrap safety path when no payload is available yet;
+- the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from persisted/bootstrap or host-resolved payloads, while component-level fallback strings are only a last-resort safety path;
 - the settings card exposes engine catalogs through a constrained selector and language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
 
 ---
@@ -224,9 +241,10 @@ Current live browser behavior:
 4. Glossary protection must be able to preserve branded names, technical terms, env vars, and workflow vocabulary.
 5. Lookup keys must remain stable when the semantics stay the same.
 6. Browser/UI surfaces must consume host-materialized localization runtime payloads instead of reading mutable localization files directly.
-7. Every text created or shown by the product must carry an explicit text category marker; automatic category guessing is not allowed.
-8. `Internal Agent Instructions` must stay outside user-facing localization settings and remain English-only unless a separate technical contract explicitly says otherwise.
-9. `Artifacts for the User` may influence workflow-created artifact shell text and brief user-facing chat updates, but it must not be used to translate internal prompt bodies or hidden provider instructions.
+7. If a valid persisted browser bootstrap snapshot exists, browser startup must reuse it for first paint instead of briefly flashing English source copy and repainting later.
+8. Every text created or shown by the product must carry an explicit text category marker; automatic category guessing is not allowed.
+9. `Internal Agent Instructions` must stay outside user-facing localization settings and remain English-only unless a separate technical contract explicitly says otherwise.
+10. `Artifacts for the User` may influence workflow-created artifact shell text and brief user-facing chat updates, but it must not be used to translate internal prompt bodies or hidden provider instructions.
 
 ---
 
