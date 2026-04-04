@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.886] - 2026-04-04
+### Fixed
+- **Clean-runner workspace compile order**: the root `compile` script now builds `@codeai-hub/translation`, `@codeai-hub/localization`, and `@codeai-hub/core-supervisor` before browser/root type-check, so public GitHub runners no longer fail on missing `@codeai-hub/localization` declarations after a fresh `npm ci`.
+- **Public CI documentation parity**: README now reflects the actual GitHub Actions gates (`check:knip`, not the stale `check:tsprune`) and documents the workspace build-order prerequisite behind the compile gate.
+
 ## [1.1.885] - 2026-04-04
 ### Fixed
 - **Growing last dialog bubbles now auto-scroll correctly**: when the user is already pinned to the bottom, Session and Project Manager dialogs now continue following appended text inside the same logical bubble instead of waiting for a new message count change.

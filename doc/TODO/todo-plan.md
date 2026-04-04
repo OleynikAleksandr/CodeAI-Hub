@@ -63,8 +63,18 @@
 
 ### Stream: Root Compile Contract
 27. [DONE] Build required workspace packages before browser/root compile so clean GitHub runners resolve localization types correctly; scope: `package.json`, `README.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(ci): build workspace deps before compile`
-28. [TODO] Git Commit: `fix(ci): build workspace deps before compile` (hash: TBD)
+28. [DONE] Git Commit: `fix(ci): build workspace deps before compile` (hash: `62abc8a4`)
 
-### Stream: CI Verification And Session Report
-29. [TODO] Reproduce the clean-runner compile path locally and record the CI-fix session report; scope: `doc/Sessions/Session037.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record ci workspace build-order fix`
-30. [TODO] Git Commit: `docs(session): record ci workspace build-order fix` (hash: TBD)
+### Stream: CI Verification
+29. [DONE] Reproduce the clean-runner compile path locally after deleting generated workspace `dist` folders; scope: local verification only; expected commit: `fix(ci): build workspace deps before compile`
+30. [DONE] Git Commit: `fix(ci): build workspace deps before compile` (hash: `62abc8a4`)
+
+### Stream: Release Docs And Packaging
+31. [DONE] Sync release notes for the CI workspace build-order patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare ci workspace build-order patch notes`
+32. [TODO] Git Commit: `docs(release): prepare ci workspace build-order patch notes` (hash: TBD)
+33. [TODO] Build and package the release after release notes are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble ci workspace build-order patch release`
+34. [TODO] Git Commit: `build(release): assemble ci workspace build-order patch release` (hash: TBD)
+
+### Stream: Session Report
+35. [TODO] Record the CI-fix and release session report after packaging; scope: `doc/Sessions/Session037.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record ci workspace build-order fix`
+36. [TODO] Git Commit: `docs(session): record ci workspace build-order fix` (hash: TBD)
