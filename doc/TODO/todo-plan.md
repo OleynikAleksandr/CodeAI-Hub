@@ -26,7 +26,7 @@
 ### Stream: Release Docs And Packaging
 7. [DONE] Sync release notes for the PM help-color patch release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare pm help color patch notes`
 8. [DONE] Git Commit: `docs(release): prepare pm help color patch notes` (hash: `fc36f68c`)
-9. [TODO] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble pm help color patch release`
-10. [TODO] Git Commit: `build(release): assemble pm help color patch release` (hash: TBD)
-11. [TODO] Record the session report after packaging; scope: `doc/Sessions/Session035.md`; expected commit: `docs(session): record pm help color patch release`
+9. [DONE] Build and package the release after all active streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble pm help color patch release`
+10. [DONE] Git Commit: `build(release): assemble pm help color patch release` (hash: `8fe5a2a9`)
+11. [DONE] Record the session report after packaging; scope: `doc/Sessions/Session035.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(session): record pm help color patch release`
 12. [TODO] Git Commit: `docs(session): record pm help color patch release` (hash: TBD)
