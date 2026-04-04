@@ -1,5 +1,6 @@
 import {
   LocalizationFacade,
+  type LocalizationRuntimeBootstrapSnapshot,
   type LocalizationRuntimePayload,
   type LocalizationRuntimeSettingsSnapshot,
 } from "@codeai-hub/localization";
@@ -16,6 +17,14 @@ export class LocalizationRuntimeService {
     settings: SettingsSnapshot
   ): Promise<LocalizationRuntimePayload> {
     return this.localizationFacade.resolveRuntimePayload(
+      this.createRuntimeSnapshot(settings)
+    );
+  }
+
+  loadRuntimeBootstrapSnapshot(
+    settings: SettingsSnapshot
+  ): Promise<LocalizationRuntimeBootstrapSnapshot | null> {
+    return this.localizationFacade.loadRuntimeBootstrapSnapshot(
       this.createRuntimeSnapshot(settings)
     );
   }

@@ -1,3 +1,4 @@
+import type { LocalizationRuntimeBootstrapSnapshot } from "@codeai-hub/localization";
 import { Uri, type Webview } from "vscode";
 
 interface CoreBridgeConfig {
@@ -27,9 +28,14 @@ export class WebviewHtmlGenerator {
     options: {
       readonly showChat?: boolean;
       readonly coreBridgeConfig?: CoreBridgeConfig;
+      readonly localizationBootstrap?: LocalizationRuntimeBootstrapSnapshot | null;
     } = {}
   ): string {
-    const { showChat = false, coreBridgeConfig } = options;
+    const {
+      showChat = false,
+      coreBridgeConfig,
+      localizationBootstrap,
+    } = options;
     const uiRootUri = Uri.file(webviewUIRootPath);
     const mainViewCssUri = webview.asWebviewUri(
       Uri.joinPath(uiRootUri, "main-view.css")
@@ -55,8 +61,12 @@ export class WebviewHtmlGenerator {
     ].join("; ");
 
     const configScript = coreBridgeConfig
-      ? `<script nonce="${nonce}">window.__CODEAI_CORE_CONFIG = ${this.serializeConfig(coreBridgeConfig)};</script>`
+      ? `<script nonce="${nonce}">window.__CODEAI_CORE_CONFIG = ${this.serializeInlineValue(coreBridgeConfig)};</script>`
       : "";
+    const localizationBootstrapScript =
+      localizationBootstrap === undefined
+        ? ""
+        : `<script nonce="${nonce}">window.__CODEAI_LOCALIZATION_BOOTSTRAP__ = ${this.serializeInlineValue(localizationBootstrap)};</script>`;
 
     return `<!DOCTYPE html>
 <html lang="en" style="background-color: rgb(24, 24, 24) !important;">
@@ -139,13 +149,16 @@ export class WebviewHtmlGenerator {
     })();
   </script>
   ${configScript}
+  ${localizationBootstrapScript}
   <script nonce="${nonce}" src="${reactAppJsUri}"></script>
 </body>
 </html>`;
   }
 
-  private serializeConfig(config: CoreBridgeConfig): string {
-    return JSON.stringify(config).replace(/</g, "\\u003c");
+  private serializeInlineValue(
+    value: CoreBridgeConfig | LocalizationRuntimeBootstrapSnapshot | null
+  ): string {
+    return JSON.stringify(value ?? null).replace(/</g, "\\u003c");
   }
 
   private getNonce(): string {
