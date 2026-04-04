@@ -22,6 +22,9 @@
   --pm-text-muted: #a8b0ba;
   --pm-accent: #42c9a2;
   --pm-accent-strong: #5fe3ba;
+  --pm-help-text-color: rgba(87, 147, 225, 1);
+  --pm-help-text-size: 14px;
+  --pm-help-text-weight: 500;
   --pm-shadow-soft: 0 18px 40px rgba(7, 10, 15, 0.45);
   --pm-shadow-inset: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
@@ -669,13 +672,26 @@ body {
   flex-direction: column;
   gap: 12px;
   min-width: 0;
+  font-size: var(--pm-help-text-size);
+  font-weight: var(--pm-help-text-weight);
+  line-height: 1.6;
+  color: var(--pm-help-text-color);
 }
 
 .pm-details strong {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--pm-text-primary);
-  letter-spacing: 0.2px;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  letter-spacing: 0;
+}
+
+.pm-details ul,
+.pm-details ol,
+.pm-details li,
+.pm-details code {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
 }
 
 .pm-details button {
