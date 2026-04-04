@@ -61,6 +61,10 @@ export {
   resolveLocalizationRootDirectory,
 } from "./localization-paths";
 export {
+  type LocalizationRuntimeBootstrapSnapshot,
+  LocalizationRuntimeBootstrapStore,
+} from "./localization-runtime-bootstrap-store";
+export {
   BUNDLED_SOURCE_DICTIONARIES,
   SourceDictionaryRegistry,
 } from "./source-dictionary-registry";

@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+import { GlossaryBundleLoader } from "./glossary-bundle-loader";
 import { DEFAULT_ENGINE_LANGUAGE_CATALOGS } from "./language-catalog";
 import { LanguageCatalogService } from "./language-catalog-service";
 import {
@@ -23,7 +25,12 @@ import {
   type LocalizationMaterializationResult,
   LocalizationMaterializer,
 } from "./localization-materializer";
+import {
+  type LocalizationRuntimeBootstrapSnapshot,
+  LocalizationRuntimeBootstrapStore,
+} from "./localization-runtime-bootstrap-store";
 import { SourceDictionaryRegistry } from "./source-dictionary-registry";
+import { UserGlossaryStore } from "./user-glossary-store";
 
 const cloneLanguageCatalog = (
   catalog: LocalizationEngineLanguageCatalog
@@ -107,13 +114,23 @@ const createSourceFallbackBundle = (
   source: "source_fallback",
 });
 
+const isSourceSelection = (language: string, sourceLanguage: string): boolean =>
+  language === LOCALIZATION_SOURCE_SELECTION ||
+  language.toLowerCase() === sourceLanguage.toLowerCase();
+
+const createRuntimeBootstrapCacheKey = (value: unknown): string =>
+  createHash("sha256").update(JSON.stringify(value)).digest("hex");
+
 export class LocalizationFacade {
   private readonly availableEngines: readonly LocalizationEngineLanguageCatalog[];
   private readonly bundleStore: LocalizationBundleStore;
   private readonly defaultSourceLanguage: string;
+  private readonly glossaryBundleLoader: GlossaryBundleLoader;
   private readonly languageCatalogService: LanguageCatalogService;
   private readonly localizationMaterializer: LocalizationMaterializer;
+  private readonly runtimeBootstrapStore: LocalizationRuntimeBootstrapStore;
   private readonly sourceDictionaryRegistry: SourceDictionaryRegistry;
+  private readonly userGlossaryStore: UserGlossaryStore;
 
   constructor(options: LocalizationFacadeOptions = {}) {
     this.defaultSourceLanguage = normalizeLanguage(
@@ -126,6 +143,7 @@ export class LocalizationFacade {
       options.sourceDictionaries
     );
     this.bundleStore = new LocalizationBundleStore();
+    this.glossaryBundleLoader = new GlossaryBundleLoader();
     this.languageCatalogService = new LanguageCatalogService({
       defaultEngineId: DEFAULT_LOCALIZATION_ENGINE_ID,
       engineCatalogs: this.availableEngines,
@@ -137,6 +155,8 @@ export class LocalizationFacade {
       languageCatalogService: this.languageCatalogService,
       sourceDictionaryRegistry: this.sourceDictionaryRegistry,
     });
+    this.runtimeBootstrapStore = new LocalizationRuntimeBootstrapStore();
+    this.userGlossaryStore = new UserGlossaryStore();
   }
 
   registerSourceDictionary(dictionary: LocalizationSourceDictionary): void {
@@ -176,10 +196,45 @@ export class LocalizationFacade {
     return this.availableEngines.map(cloneLanguageCatalog);
   }
 
+  async loadRuntimeBootstrapSnapshot(
+    settings?: LocalizationRuntimeSettingsSnapshot
+  ): Promise<LocalizationRuntimeBootstrapSnapshot | null> {
+    const persistedSnapshot = await this.runtimeBootstrapStore.load();
+    if (!persistedSnapshot) {
+      return null;
+    }
+
+    if (!settings) {
+      return persistedSnapshot;
+    }
+
+    const normalizedSettings = this.normalizeRuntimeSettings(settings);
+    const cacheKey =
+      await this.createRuntimeBootstrapCacheKey(normalizedSettings);
+    return persistedSnapshot.cacheKey === cacheKey ? persistedSnapshot : null;
+  }
+
   async resolveRuntimePayload(
     settings: LocalizationRuntimeSettingsSnapshot
   ): Promise<LocalizationRuntimePayload> {
+    const runtimeBootstrapSnapshot =
+      await this.resolveRuntimeBootstrapSnapshot(settings);
+
+    return runtimeBootstrapSnapshot.runtimePayload;
+  }
+
+  async resolveRuntimeBootstrapSnapshot(
+    settings: LocalizationRuntimeSettingsSnapshot
+  ): Promise<LocalizationRuntimeBootstrapSnapshot> {
     const normalizedSettings = this.normalizeRuntimeSettings(settings);
+    const cacheKey =
+      await this.createRuntimeBootstrapCacheKey(normalizedSettings);
+    const persistedSnapshot = await this.runtimeBootstrapStore.load();
+
+    if (persistedSnapshot?.cacheKey === cacheKey) {
+      return persistedSnapshot;
+    }
+
     const resolvedBundlesByCategory = Object.fromEntries(
       await Promise.all(
         LOCALIZATION_CATEGORY_IDS.map(async (category) => [
@@ -192,11 +247,22 @@ export class LocalizationFacade {
       )
     ) as Record<LocalizationCategoryId, LocalizationResolvedRuntimeBundle>;
 
-    return {
+    const runtimePayload = {
       activeEngineId: normalizedSettings.engineId,
       availableEngines: this.listAvailableEngines(),
       resolvedBundlesByCategory,
-    };
+    } satisfies LocalizationRuntimePayload;
+    const runtimeBootstrapSnapshot = {
+      cacheKey,
+      generatedAt: new Date().toISOString(),
+      runtimePayload,
+      schemaVersion: 1,
+      settings: normalizedSettings,
+    } satisfies LocalizationRuntimeBootstrapSnapshot;
+
+    await this.runtimeBootstrapStore.save(runtimeBootstrapSnapshot);
+
+    return runtimeBootstrapSnapshot;
   }
 
   loadMaterializedBundle(
@@ -288,5 +354,50 @@ export class LocalizationFacade {
         error instanceof Error ? error.message : String(error)
       );
     }
+  }
+
+  private async createRuntimeBootstrapCacheKey(
+    settings: LocalizationRuntimeSettingsSnapshot
+  ): Promise<string> {
+    const targetLanguages = [
+      ...new Set(
+        Object.values(settings.categories).filter(
+          (language) => !isSourceSelection(language, this.defaultSourceLanguage)
+        )
+      ),
+    ].sort();
+    const sourceDictionaries = this.listSourceDictionaries(
+      this.defaultSourceLanguage
+    )
+      .map((dictionary) => ({
+        category: dictionary.category,
+        entries: dictionary.entries,
+        language: dictionary.language,
+      }))
+      .sort((left, right) => left.category.localeCompare(right.category));
+    const [baseGlossary, userGlossaryOverrides, languageGlossaries] =
+      await Promise.all([
+        this.glossaryBundleLoader.loadBaseBundle(),
+        this.userGlossaryStore.load(),
+        Promise.all(
+          targetLanguages.map(async (language) => [
+            language,
+            await this.glossaryBundleLoader.loadLanguageBundle(language),
+          ])
+        ),
+      ]);
+
+    return createRuntimeBootstrapCacheKey({
+      availableEngines: this.listAvailableEngines(),
+      glossary: {
+        base: baseGlossary.rules,
+        byLanguage: Object.fromEntries(languageGlossaries),
+        userOverrides: userGlossaryOverrides,
+      },
+      schemaVersion: 1,
+      settings,
+      sourceDictionaries,
+      sourceLanguage: this.defaultSourceLanguage,
+    });
   }
 }

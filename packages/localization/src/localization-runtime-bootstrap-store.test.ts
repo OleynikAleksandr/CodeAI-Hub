@@ -3,11 +3,13 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { resolveLocalizationPaths } from "./localization-paths";
 import {
+  LocalizationFacade,
   type LocalizationRuntimeBootstrapSnapshot,
   LocalizationRuntimeBootstrapStore,
-} from "./localization-runtime-bootstrap-store";
+  resolveLocalizationPaths,
+  UserGlossaryStore,
+} from "./index";
 
 const createTempHomeDirectory = async (): Promise<string> =>
   mkdtemp(path.join(tmpdir(), "codeai-hub-localization-bootstrap-"));
@@ -93,6 +95,55 @@ test("bootstrap store ignores invalid persisted snapshot files", async () => {
     const store = new LocalizationRuntimeBootstrapStore({ homeDirectory });
 
     assert.equal(await store.load(), null);
+  } finally {
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
+});
+
+test("facade persists and reuses matching browser bootstrap snapshots", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+
+  try {
+    const facade = new LocalizationFacade();
+    const bootstrapStore = new LocalizationRuntimeBootstrapStore({
+      homeDirectory,
+    });
+    const glossaryDirectory =
+      resolveLocalizationPaths(homeDirectory).glossaryDirectory;
+
+    Object.assign(facade as object, {
+      runtimeBootstrapStore: bootstrapStore,
+      userGlossaryStore: new UserGlossaryStore({ glossaryDirectory }),
+    });
+
+    const settings = {
+      categories: {
+        interactive_templates: "source",
+        system_feedback: "source",
+        ui_interface: "source",
+        user_guidance: "source",
+        workflow_terms: "source",
+      },
+      defaultLanguage: "source",
+      engineId: "google-gtx",
+      workflowTermsPolicy: "keep_english" as const,
+    };
+
+    const firstPayload = await facade.resolveRuntimePayload(settings);
+    const firstSnapshot = await bootstrapStore.load();
+
+    assert.ok(firstSnapshot);
+    assert.deepEqual(firstSnapshot.runtimePayload, firstPayload);
+
+    const secondPayload = await facade.resolveRuntimePayload(settings);
+    const secondSnapshot = await bootstrapStore.load();
+
+    assert.deepEqual(secondPayload, firstPayload);
+    assert.equal(secondSnapshot?.generatedAt, firstSnapshot.generatedAt);
+    assert.deepEqual(
+      await facade.loadRuntimeBootstrapSnapshot(settings),
+      secondSnapshot
+    );
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }
