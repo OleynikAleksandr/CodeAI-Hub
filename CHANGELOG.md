@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.879] - 2026-04-04
+### Fixed
+- **Claude visible thinking now follows `Messages for the User`**: the Claude provider runtime now consumes `messagesForTheUserLanguage` from the Core-applied turn config and translates visible thinking bubbles through the shared translation facade, so Russian user-facing localization no longer leaves Claude thought summaries in English.
+- **Claude reasoning-language sync is now covered in module tests**: Claude messaging tests now verify both the applied-turn runtime language handoff and the translated visible-thinking path, which closes the earlier provider gap left after Codex and Gemini were fixed in `1.1.878`.
+
 ## [1.1.878] - 2026-04-04
 ### Fixed
 - **Selected user-message language now reaches provider thinking bubbles**: Core applied turn config now carries `messagesForTheUserLanguage` from the shared settings snapshot, so Codex and Gemini runtime adapters can localize visible reasoning/thought output to the same language selected under `Messages for the User`.

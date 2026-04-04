@@ -8,10 +8,13 @@
 
 ## Messaging cluster
 - `src/messaging/message-processor.ts` — thin façade для queue/processResponses orchestration.
-- `src/messaging/claude-stream-event-router.ts` — routing assistant/result events, thinking chunks и structured output emission.
+- `src/messaging/claude-stream-event-router.ts` — routing assistant/result events, translated thinking chunks, and structured output emission.
+- `src/messaging/claude-thought-translation-adapter.ts` — Claude-local adapter over the shared translation facade for visible reasoning bubbles.
 - `src/messaging/claude-message-finish-handler.ts` — lifecycle completion façade (`turn_started` / `turn_completed` / `turn_failed`).
 - `src/messaging/claude-usage-sync.ts`, `src/messaging/claude-token-usage-sync.ts` — usage limits + `/context` token usage synchronization.
-- `src/messaging/claude-stream-event-router.ts` emits Claude thinking into session history as tagged thinking messages; `thinkingDisplaySyncEnabled` only decides whether the shared Session UI renders them as visible Thinking bubbles or filters them out. `thinking.enabled/maxTokens` remains the separate upstream-thinking control.
+- `src/messaging/claude-stream-event-router.ts` emits Claude thinking into session history as tagged thinking messages; `thinkingDisplaySyncEnabled` only decides whether the shared Session UI renders them as visible Thinking bubbles or filters them out.
+- Visible Claude thinking now follows Core-threaded `messagesForTheUserLanguage` from `~/.codeai-hub/settings/settings.json`; translation failure is non-blocking and falls back to the upstream provider wording.
+- `thinking.enabled/maxTokens` remains the separate upstream-thinking control. On modern Claude SDK + `claude-opus-4-6`, `maxThinkingTokens` is effectively an on/off switch for adaptive thinking, so visible thought-summary length remains provider-owned unless an explicit `effort` setting is threaded separately.
 
 ## Usage-limits cluster
 - `src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts` — facade for header/runtime usage-limit normalization and stream payload shaping.
@@ -39,6 +42,7 @@
 - Rate-limit и `/context` token usage остаются post-message synchronization concern и не должны смешиваться с assistant/result routing в одном giant file.
 - `sdk-claude-*.jsonl` остаётся диагностическим SDK логом; exact provider-applied model/thinking при аудите нужно подтверждать по provider-home Claude JSONL, а не по отдельным normalized `provider_feedback` записям.
 - Claude thinking display is a presentation-only toggle: when enabled, reasoning is rendered in the dialog as a standard assistant bubble with `Thinking`; when disabled, the stored thinking history remains intact but the Session UI filters it out.
+- Claude visible thinking must follow the selected `Messages for the User` language, but current thought-summary verbosity is still owned by the upstream Claude SDK / model rather than by the Session UI renderer.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

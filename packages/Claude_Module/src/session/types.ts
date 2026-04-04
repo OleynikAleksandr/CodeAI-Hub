@@ -20,6 +20,7 @@ export interface ClaudeTurnLifecycleState {
 }
 
 export interface ClaudeRuntimeTurnConfig {
+  messagesForTheUserLanguage?: string;
   thinkingDisplaySyncEnabled?: boolean;
 }
 

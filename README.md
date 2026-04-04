@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.878
-- **Visible provider thinking now follows the selected `Messages for the User` language**: Core threads the live `messagesForTheUser` setting into Codex and Gemini runtime turn config, so Russian user-facing localization now produces Russian reasoning/thinking bubbles instead of leaving them in English.
-- **English remains a no-translation baseline for reasoning bubbles**: when `Messages for the User` is `en`, Codex and Gemini skip the translation hop and keep the upstream provider wording intact instead of forcing an unnecessary pass through the translation layer.
-- **Gemini CLI `0.36.x` compatibility and earlier isolation fixes remain in force**: bundle-only global Gemini installs still initialize correctly, Claude provider sessions still run in SDK isolation mode, and packaged workflow prompts remain English-only for `Internal Agent Instructions`.
+## Current Release — v1.1.879
+- **Claude now joins Codex and Gemini in visible-thinking language sync**: Core-applied `messagesForTheUserLanguage` now reaches the Claude runtime too, and visible Claude thinking bubbles are translated through the shared runtime translation layer instead of staying English-only under Russian user-facing localization.
+- **English remains a no-translation baseline for provider reasoning bubbles**: when `Messages for the User` is `en`, Codex, Gemini, and Claude keep the upstream provider wording intact instead of forcing an unnecessary translation pass.
+- **Gemini CLI `0.36.x` compatibility and Claude SDK isolation remain in force**: bundle-only global Gemini installs still initialize correctly, Claude provider sessions still run in SDK isolation mode, and packaged workflow prompts remain English-only for `Internal Agent Instructions`.
 
 Previous releases (summary): `1.1.800–1.1.870` — four-category localization release, localization packaging hotfixes, host-hydrated browser localization runtime, searchable localization controls, shared Project Manager localization consumption, persistent localization foundation, thinking display sync, public CI bootstrap, staged core restart UX, Claude auth façade closure, Gemini final-answer deduplication, post-tool terminal-leg fix, adaptive post-tool watchdog, history-visible recoverable failure, architecture gate 500 lines, session-scoped Stop, provider rebind after Stop, provider-neutral applied turn config, PM label sync hardening, provider failure recovery, Gemini SDK 0.35.0 compatibility, detachable diagram window, layout/collision work, and earlier workflow/parser stabilization.
 

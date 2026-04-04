@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import type { ActiveSession } from "../session/types";
-import type { ClaudeStreamMessage } from "../types";
+import type { ClaudeStreamMessage, ModuleReporter } from "../types";
+import { ClaudeThoughtTranslationAdapter } from "./claude-thought-translation-adapter";
 import { extractVariantBArtifacts } from "./structured-output-utils";
 import {
   parseWorkflowStructuredOutputFromResultMessage,
@@ -80,11 +81,28 @@ export const shouldSkipClaudeSDKMessageLog = (
   message.event.type === "content_block_delta";
 
 export class ClaudeStreamEventRouter {
+  private readonly thoughtTranslator: ClaudeThoughtTranslationAdapter;
+
+  constructor(
+    reporter?: ModuleReporter,
+    thoughtTranslator?: ClaudeThoughtTranslationAdapter
+  ) {
+    this.thoughtTranslator =
+      thoughtTranslator ?? new ClaudeThoughtTranslationAdapter(reporter);
+  }
+
   handleAssistantMessage(
     session: ActiveSession,
     message: ClaudeStreamMessage
-  ): void {
-    this.emitThinkingChunks(session, message);
+  ): Promise<void> {
+    return this.handleAssistantMessageInternal(session, message);
+  }
+
+  private async handleAssistantMessageInternal(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): Promise<void> {
+    await this.emitThinkingChunks(session, message);
     const assistantText = this.extractAssistantText(message);
     if (!assistantText) {
       return;
@@ -109,8 +127,15 @@ export class ClaudeStreamEventRouter {
   handleResultMessage(
     session: ActiveSession,
     message: ClaudeStreamMessage
-  ): void {
-    this.emitThinkingChunks(session, message);
+  ): Promise<void> {
+    return this.handleResultMessageInternal(session, message);
+  }
+
+  private async handleResultMessageInternal(
+    session: ActiveSession,
+    message: ClaudeStreamMessage
+  ): Promise<void> {
+    await this.emitThinkingChunks(session, message);
     const normalizedMessage = this.normalizeStructuredOutputMessage(message);
     const structured =
       parseWorkflowStructuredOutputFromResultMessage(normalizedMessage);
@@ -235,10 +260,10 @@ export class ClaudeStreamEventRouter {
     return suggestedResponse;
   }
 
-  private emitThinkingChunks(
+  private async emitThinkingChunks(
     session: ActiveSession,
     message: ClaudeStreamMessage
-  ): void {
+  ): Promise<void> {
     const content = message.message?.content;
     if (!Array.isArray(content)) {
       return;
@@ -251,11 +276,16 @@ export class ClaudeStreamEventRouter {
         (block as { readonly type?: string }).type === "thinking" &&
         typeof (block as { readonly thinking?: unknown }).thinking === "string"
       ) {
+        const thinking = (block as { readonly thinking: string }).thinking;
+        const translated = await this.thoughtTranslator.translateReasoning(
+          thinking,
+          session.runtimeTurnConfig.messagesForTheUserLanguage
+        );
         session.eventEmitter.emit("message", {
           type: "dialog_message",
           role: "assistant",
           tag: "thinking",
-          content: (block as { readonly thinking: string }).thinking,
+          content: translated ?? thinking,
           uuid: `${message.uuid ?? crypto.randomUUID()}::thinking`,
           timestamp: new Date().toISOString(),
         });

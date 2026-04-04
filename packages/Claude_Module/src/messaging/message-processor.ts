@@ -18,6 +18,7 @@ import {
   ClaudeStreamEventRouter,
   shouldSkipClaudeSDKMessageLog,
 } from "./claude-stream-event-router";
+import type { ClaudeThoughtTranslationAdapter } from "./claude-thought-translation-adapter";
 
 interface ProcessResponseOptions {
   readonly iterator: AsyncIterable<ClaudeStreamMessage>;
@@ -28,6 +29,7 @@ interface ProcessResponseOptions {
 interface MessageProcessorOptions {
   readonly projectPath: string;
   readonly reporter?: ModuleReporter;
+  readonly thoughtTranslator?: ClaudeThoughtTranslationAdapter;
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
 }
 
@@ -35,7 +37,7 @@ export class SDKMessageProcessor {
   private readonly finishHandler: ClaudeMessageFinishHandler;
   private readonly reporter?: ModuleReporter;
   private readonly sessionManager: SDKSessionManager;
-  private readonly streamEventRouter = new ClaudeStreamEventRouter();
+  private readonly streamEventRouter: ClaudeStreamEventRouter;
 
   constructor(
     sessionManager: SDKSessionManager,
@@ -47,6 +49,10 @@ export class SDKMessageProcessor {
       reporter: options.reporter,
       usageLimitsFacade: options.usageLimitsFacade,
     });
+    this.streamEventRouter = new ClaudeStreamEventRouter(
+      options.reporter,
+      options.thoughtTranslator
+    );
   }
 
   configureContextUsageReader(config: ContextUsageReaderConfig): void {
@@ -253,7 +259,7 @@ export class SDKMessageProcessor {
 
     switch (message.type) {
       case "assistant": {
-        this.streamEventRouter.handleAssistantMessage(session, message);
+        await this.streamEventRouter.handleAssistantMessage(session, message);
         break;
       }
       case "rate_limit_event": {
@@ -261,7 +267,7 @@ export class SDKMessageProcessor {
         break;
       }
       case "result": {
-        this.streamEventRouter.handleResultMessage(session, message);
+        await this.streamEventRouter.handleResultMessage(session, message);
         await this.finishHandler.completeTurn(session, message.session_id);
         break;
       }

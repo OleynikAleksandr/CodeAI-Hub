@@ -160,6 +160,8 @@
 - Claude SDK send path: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
   - `claude-sdk-manager.ts` derives the active turn model from Core-applied turn config on send path; `handlers/session-request-handler-applied-turn-config.ts` resolves Claude `defaultModel` from the shared persisted settings snapshot before outbound send, so Claude no longer falls back to a stale process-start env alias when Settings change during a live Core session
   - CodeAI Hub-managed Claude turns now keep filesystem `settingSources` empty, which places the provider in full SDK isolation mode and blocks parent-directory `CLAUDE.md` / settings discovery from the active workspace path
+  - visible Claude thinking now flows through `claude-thought-translation-adapter.ts`; Core threads `messagesForTheUserLanguage` into Claude runtime turn config, translation failures are non-blocking, and `en` keeps the upstream provider wording unchanged
+  - current Claude SDK semantics for `claude-opus-4-6` treat `maxThinkingTokens` as adaptive-thinking on/off rather than as a reliable verbosity dial, so short visible thought summaries in provider-home JSONL must be treated as upstream provider behavior unless an explicit `effort` control is added later
 - CEF Launcher native boundary: `packages/cef-launcher/src/launcher_handler.cc`
   - `launcher_handler_bridge_helpers.h` owns URL classification, bridge injection, data-URI creation, and browser payload serialization; `launcher_handler.cc` stays on lifecycle/orchestration, while platform-specific title/show/persist behavior remains in `platform/*/launcher_handler_*`.
 - Project Manager applied-config sync:
