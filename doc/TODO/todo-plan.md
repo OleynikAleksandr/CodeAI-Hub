@@ -11,32 +11,32 @@
 
 ## Phase 0 — Planning Intake (owner: Docs, updated: 2026-04-04)
 ### Stream: Persistent Bootstrap Scope
-1. [IN_PROGRESS] Record the persistent localization bootstrap refactor in a dedicated planning doc and refresh docs navigation so the next execution stream starts from one approved design reference. Scope: `doc/SolidWorks-WorkFlow/Plans/Persistent_Localization_Bootstrap_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define persistent localization bootstrap scope`
-2. [TODO] Git Commit: `docs(plan): define persistent localization bootstrap scope` (hash: TBD)
+1. [DONE] Record the persistent localization bootstrap refactor in a dedicated planning doc and refresh docs navigation so the next execution stream starts from one approved design reference. Scope: `doc/SolidWorks-WorkFlow/Plans/Persistent_Localization_Bootstrap_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`. Target commit: `docs(plan): define persistent localization bootstrap scope`
+2. [DONE] Git Commit: `docs(plan): define persistent localization bootstrap scope` (hash: `d7c921d8`)
 
 ## Phase 1 — Localization Snapshot Persistence (owner: Localization, updated: 2026-04-04)
 ### Stream: User-Space Browser Bootstrap Snapshot
-3. [TODO] Add the canonical browser-bootstrap snapshot contract, user-space path, and persistent store for startup-ready localization payloads. Scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-paths.ts`, `packages/localization/src/localization-runtime-bootstrap-store.ts`. Target commit: `feat(localization): add browser bootstrap snapshot store`
-4. [TODO] Git Commit: `feat(localization): add browser bootstrap snapshot store` (hash: TBD)
-5. [TODO] Extend the localization facade so runtime payload resolution can load, refresh, and persist the assembled browser bootstrap snapshot deterministically. Scope: `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`, `packages/localization/src/localization-runtime-bootstrap-store.test.ts`. Target commit: `feat(localization): persist runtime bootstrap snapshots`
-6. [TODO] Git Commit: `feat(localization): persist runtime bootstrap snapshots` (hash: TBD)
+3. [DONE] Add the canonical browser-bootstrap path, persistent store, and direct test entry for startup-ready localization payloads without relying on browser-memory cache. Scope: `packages/localization/src/localization-paths.ts`, `packages/localization/src/localization-runtime-bootstrap-store.ts`, `packages/localization/src/localization-runtime-bootstrap-store.test.ts`. Target commit: `feat(localization): add browser bootstrap snapshot store`
+4. [DONE] Git Commit: `feat(localization): add browser bootstrap snapshot store` (hash: `7a1acf30`)
+5. [DONE] Extend the localization facade so runtime payload resolution can load, refresh, and persist the assembled browser bootstrap snapshot deterministically. Scope: `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`, `packages/localization/src/localization-runtime-bootstrap-store.test.ts`. Target commit: `feat(localization): persist runtime bootstrap snapshots`
+6. [DONE] Git Commit: `feat(localization): persist runtime bootstrap snapshots` (hash: `b41911fc`)
 
 ## Phase 2 — Host And Core Delivery (owner: Extension/Core, updated: 2026-04-04)
 ### Stream: Settings Webview Bootstrap Injection
-7. [TODO] Inject the persisted localization bootstrap payload into VS Code webview HTML before JS boot so settings surfaces no longer wait for async `settings:load` to localize first paint. Scope: `src/core/webview-module/webview-html-generator.ts`, `src/extension-module/home-view-provider.ts`, `src/extension-module/settings/localization-runtime-service.ts`. Target commit: `feat(localization-bootstrap): inject webview startup payload`
-8. [TODO] Git Commit: `feat(localization-bootstrap): inject webview startup payload` (hash: TBD)
+7. [DONE] Inject the persisted localization bootstrap payload into VS Code webview HTML before JS boot so settings surfaces no longer wait for async `settings:load` to localize first paint. Scope: `src/core/webview-module/webview-html-generator.ts`, `src/extension-module/home-view-provider.ts`, `src/extension-module/settings/localization-runtime-service.ts`. Target commit: `feat(localization-bootstrap): inject webview startup payload`
+8. [DONE] Git Commit: `feat(localization-bootstrap): inject webview startup payload` (hash: `29b42703`)
 
 ### Stream: Project Manager Bootstrap Endpoint
-9. [TODO] Expose one read-only core HTTP endpoint backed by the persisted localization bootstrap snapshot so Project Manager can preload localized startup data before React mount. Scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`, `packages/core/src/remote-bridge/index.ts`. Target commit: `feat(localization-bootstrap): expose pm bootstrap endpoint`
-10. [TODO] Git Commit: `feat(localization-bootstrap): expose pm bootstrap endpoint` (hash: TBD)
+9. [DONE] Expose one read-only core HTTP endpoint backed by the persisted localization bootstrap snapshot so Project Manager can preload localized startup data before React mount. Scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`, `packages/core/src/remote-bridge/index.ts`. Target commit: `feat(localization-bootstrap): expose pm bootstrap endpoint`
+10. [DONE] Git Commit: `feat(localization-bootstrap): expose pm bootstrap endpoint` (hash: `158b6cf4`)
 
 ## Phase 3 — Browser Startup Hydration (owner: UI/PM, updated: 2026-04-04)
 ### Stream: Settings Webview First Paint
-11. [TODO] Seed the settings-only webview from the injected bootstrap payload and treat later `settings:loaded` messages as background revalidation rather than first-paint localization. Scope: `src/client/ui/src/app-host/localization-runtime-contract.ts`, `src/client/ui/src/index.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`. Target commit: `fix(localization-bootstrap): hydrate settings webview from startup payload`
-12. [TODO] Git Commit: `fix(localization-bootstrap): hydrate settings webview from startup payload` (hash: TBD)
+11. [DONE] Seed the settings-only webview from the injected bootstrap payload and treat later `settings:loaded` messages as background revalidation rather than first-paint localization. Scope: `src/client/ui/src/app-host/localization-runtime-contract.ts`, `src/client/ui/src/index.tsx`, `src/client/ui/src/components/settings/use-settings-state.ts`. Target commit: `fix(localization-bootstrap): hydrate settings webview from startup payload`
+12. [DONE] Git Commit: `fix(localization-bootstrap): hydrate settings webview from startup payload` (hash: `a5e9ca06`)
 
 ### Stream: Project Manager First Paint
-13. [TODO] Load the PM localization bootstrap payload before `root.render(...)` and initialize PM settings/runtime state from it so Help/UI no longer flash English on cold start. Scope: `src/client/project-manager/index.tsx`, `src/client/project-manager/services/localization-bootstrap.ts`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`. Target commit: `fix(localization-bootstrap): hydrate project manager before mount`
+13. [IN_PROGRESS] Load the PM localization bootstrap payload before `root.render(...)` and initialize PM settings/runtime state from it so Help/UI no longer flash English on cold start. Scope: `src/client/project-manager/index.tsx`, `src/client/project-manager/services/localization-bootstrap.ts`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`. Target commit: `fix(localization-bootstrap): hydrate project manager before mount`
 14. [TODO] Git Commit: `fix(localization-bootstrap): hydrate project manager before mount` (hash: TBD)
 
 ## Phase 4 — SSOT Sync And Verification (owner: Docs/QA, updated: 2026-04-04)

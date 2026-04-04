@@ -1,6 +1,6 @@
 # Persistent Localization Bootstrap Architecture
 
-**Status:** Proposed for execution (2026-04-04)
+**Status:** Approved for execution (2026-04-04)
 **Created:** 2026-04-04
 **Owner:** Oleksandr + Codex
 **Scope:** Remove the cold-start English flash from Project Manager and settings webview by bootstrapping browser localization from persistent user-space runtime snapshots instead of waiting for the first async settings payload.
