@@ -24,9 +24,11 @@
 6. [DONE] Git Commit: `style(pm): refine help text presentation` (hash: `18818f28`)
 
 ### Stream: Release Docs And Packaging
-7. [TODO] Sync architecture and active execution docs for the Claude thinking fix release; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): sync claude thinking translation ssot`
-8. [TODO] Git Commit: `docs(architecture): sync claude thinking translation ssot` (hash: TBD)
-9. [TODO] Sync release notes and session report for the Claude thinking fix release; scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session034.md`; expected commit: `docs(session): record claude thinking translation release`
-10. [TODO] Git Commit: `docs(session): record claude thinking translation release` (hash: TBD)
+7. [DONE] Sync architecture and active execution docs for the Claude thinking fix release; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): sync claude thinking translation ssot`
+8. [DONE] Git Commit: `docs(architecture): sync claude thinking translation ssot` (hash: `94153007`)
+9. [TODO] Sync release notes for the Claude thinking fix release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare claude thinking translation notes`
+10. [TODO] Git Commit: `docs(release): prepare claude thinking translation notes` (hash: TBD)
 11. [TODO] Build and package the release after all streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble claude thinking translation fix release`
 12. [TODO] Git Commit: `build(release): assemble claude thinking translation fix release` (hash: TBD)
+13. [TODO] Record the session report and archive the completed plan after packaging; scope: `doc/Sessions/Session034.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/*`, `doc/TODO/Archive/*`; expected commit: `docs(session): record claude thinking translation release`
+14. [TODO] Git Commit: `docs(session): record claude thinking translation release` (hash: TBD)

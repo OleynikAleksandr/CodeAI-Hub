@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.883] - 2026-04-04
+### Fixed
+- **Claude long-thinking translation overflow**: visible Claude reasoning is now translated in smaller transport-safe chunks before reassembly, so oversized Google GTX GET requests no longer force large thinking blocks to fall back to English.
+- **Claude pre-tool progress localization**: short assistant progress text is now buffered until Claude reports `message_delta.delta.stop_reason = "tool_use"`, which allows user-facing pre-tool messages to be localized while leaving final `end_turn` assistant replies untouched.
+- **Claude visible-thinking readability**: oversized Claude reasoning is now emitted as multiple smaller `Thinking` dialog bubbles instead of one giant block, which keeps long model reasoning readable in the Session UI.
+- **Project Manager help-text presentation**: all PM help/spravka surfaces based on `pm-details` now use the requested `14px`, medium-weight, `rgba(87, 147, 225, 1)` style.
+
 ## [1.1.882] - 2026-04-04
 ### Fixed
 - **Persistent startup localization bootstrap**: the localization runtime now saves a startup-ready browser snapshot in `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` and reuses it across restarts instead of rebuilding first paint from English component fallbacks.
