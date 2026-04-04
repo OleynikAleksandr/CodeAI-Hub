@@ -26,8 +26,8 @@
 ### Stream: Release Docs And Packaging
 7. [DONE] Sync architecture and active execution docs for the Claude thinking fix release; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(architecture): sync claude thinking translation ssot`
 8. [DONE] Git Commit: `docs(architecture): sync claude thinking translation ssot` (hash: `94153007`)
-9. [TODO] Sync release notes for the Claude thinking fix release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare claude thinking translation notes`
-10. [TODO] Git Commit: `docs(release): prepare claude thinking translation notes` (hash: TBD)
+9. [DONE] Sync release notes for the Claude thinking fix release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare claude thinking translation notes`
+10. [DONE] Git Commit: `docs(release): prepare claude thinking translation notes` (hash: `bf63d951`)
 11. [TODO] Build and package the release after all streams are green; scope: release scripts + versioned artifacts; expected commit: `build(release): assemble claude thinking translation fix release`
 12. [TODO] Git Commit: `build(release): assemble claude thinking translation fix release` (hash: TBD)
 13. [TODO] Record the session report and archive the completed plan after packaging; scope: `doc/Sessions/Session034.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/*`, `doc/TODO/Archive/*`; expected commit: `docs(session): record claude thinking translation release`
