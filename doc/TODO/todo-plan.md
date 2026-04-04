@@ -45,9 +45,9 @@
 16. [DONE] Git Commit: `docs(architecture): sync persistent localization bootstrap ssot` (hash: `783e9f4e`)
 
 ### Stream: Verification And Release Handoff
-17. [TODO] Refresh the shipped Settings webview bundle so the packaged extension includes startup bootstrap hydration on first paint. Scope: `media/react-chat.js`. Target commit: `build(webview): refresh localization bootstrap bundle`
-18. [TODO] Git Commit: `build(webview): refresh localization bootstrap bundle` (hash: TBD)
-19. [TODO] Run targeted verification for localization/core/webview/project-manager and record the validated bootstrap behavior in the active session report before the next packaged release. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/Sessions/Session033.md`. Target commit: `docs(session): record persistent localization bootstrap verification`
+17. [DONE] Refresh the shipped Settings webview bundle so the packaged extension includes startup bootstrap hydration on first paint. Scope: `media/react-chat.js`. Target commit: `build(webview): refresh localization bootstrap bundle`
+18. [DONE] Git Commit: `build(webview): refresh localization bootstrap bundle` (hash: `ac939b58`)
+19. [IN_PROGRESS] Run targeted verification for localization/core/webview/project-manager and record the validated bootstrap behavior in the active session report before the next packaged release. Scope: `@codeai-hub/localization`, `@codeai-hub/core`, webview/project-manager builds, `doc/Sessions/Session033.md`. Target commit: `docs(session): record persistent localization bootstrap verification`
 20. [TODO] Git Commit: `docs(session): record persistent localization bootstrap verification` (hash: TBD)
 21. [TODO] Prepare release docs and assemble the next patch build after targeted verification closes the persistent bootstrap refactor. Scope: `README.md`, `CHANGELOG.md`, release-generated version files/manifests. Target commit: `build(release): assemble persistent localization bootstrap release`
 22. [TODO] Git Commit: `build(release): assemble persistent localization bootstrap release` (hash: TBD)

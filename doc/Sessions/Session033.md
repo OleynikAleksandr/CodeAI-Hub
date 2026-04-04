@@ -16,6 +16,9 @@
 - Threaded the bootstrap snapshot into `LocalizationFacade`, so runtime payload resolution can now persist and reuse startup-ready browser snapshots instead of rebuilding them unconditionally.
 - Injected the persisted localization bootstrap snapshot into VS Code webview HTML before JS boot and exposed the same persisted snapshot through a new core HTTP endpoint for Project Manager bootstrap.
 - Wired the settings-only webview browser runtime to start from the injected bootstrap snapshot, so localized copy can render before the first async `settings:loaded` roundtrip.
+- Finished the Project Manager bootstrap path: PM now fetches `/api/v1/localization/bootstrap` before `root.render(...)` and seeds both settings state and Help/UI localization from the persisted startup snapshot.
+- Synced the localization SSOT so the Modules/System docs describe browser bootstrap snapshots, injected Settings hydration, and PM pre-mount startup localization.
+- Refreshed the shipped webview bundle and completed the targeted verification pass required before the next packaged patch release.
 
 ## Verification
 - `npm run build --workspace @codeai-hub/localization`
@@ -24,6 +27,7 @@
 - `npm run build --workspace @codeai-hub/core`
 - `npm run build:webview`
 - `npm run typecheck:webview`
+- `npm run build:project-manager`
 
 ## Git commits
 - `d7c921d8 docs(plan): define persistent localization bootstrap scope`
@@ -32,6 +36,9 @@
 - `29b42703 feat(localization-bootstrap): inject webview startup payload`
 - `158b6cf4 feat(localization-bootstrap): expose pm bootstrap endpoint`
 - `a5e9ca06 fix(localization-bootstrap): hydrate settings webview from startup payload`
+- `87021691 fix(localization-bootstrap): hydrate project manager before mount`
+- `783e9f4e docs(architecture): sync persistent localization bootstrap ssot`
+- `ac939b58 build(webview): refresh localization bootstrap bundle`
 
 ---
 
@@ -45,9 +52,9 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session033.md` (THIS REPORT)
 
-> Далее: открыть `doc/SolidWorks-WorkFlow/Modules/Localization.md` и `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, затем продолжать с активного Phase 1 stream в `todo-plan.md`.
+> Далее: после review этого отчета открыть `README.md`, `CHANGELOG.md` и активный `todo-plan.md`, затем завершить релизный cycle для persistent localization bootstrap.
 
 ## Plans for next session
-- Finish the remaining Phase 3 work by hydrating Project Manager from the new `/api/v1/localization/bootstrap` endpoint before `root.render(...)`.
-- After PM startup hydration lands, sync SSOT (`Localization.md`, `UI_Bundles.md`, `SystemArchitecture.md`) and validate the no-English-flash behavior in both browser surfaces.
-- After the browser first-paint path is implemented, sync SSOT and validate the no-English-flash behavior before the next packaged release.
+- Update `README.md` and `CHANGELOG.md` for the next patch release that ships persistent localization bootstrap.
+- Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record the packaged verification outcome and version bump in this session report.
+- Hand the VSIX to the user for final cold-start validation in Project Manager and Settings WebView.
