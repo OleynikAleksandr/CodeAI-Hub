@@ -134,4 +134,3 @@ If any answer is unclear, the task is not complete.
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
-- `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`

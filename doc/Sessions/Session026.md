@@ -171,7 +171,7 @@
 ## Required documents to review before work
 1. `README.md`
 2. `CHANGELOG.md`
-3. `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Release_1.1.870_PostRelease_Fixes.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Session025.md`
 6. `doc/Sessions/Session026.md` (THIS REPORT)

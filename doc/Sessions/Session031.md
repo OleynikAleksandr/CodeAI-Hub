@@ -40,7 +40,7 @@
 5. `doc/TODO/todo-plan.md`
 6. `doc/Sessions/Session031.md` (THIS REPORT)
 
-> Next: if the work stays in localization/settings, also open `doc/SolidWorks-WorkFlow/Plans/Localization_Glossary_File_Editor_Architecture.md` and `doc/SolidWorks-WorkFlow/Plans/Localization_Release_1.1.870_PostRelease_Fixes.md`.
+> Next: if the work stays in localization/settings, also open `doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Glossary_File_Editor_Architecture.md` and `doc/SolidWorks-WorkFlow/Plans/Archive/Localization_Release_1.1.870_PostRelease_Fixes.md`.
 
 ## Plans for next session
 - Manually smoke-test the new Settings glossary flow in the running extension: open Settings -> Localization -> `Do-not-translate terms`, confirm the glossary file opens in the current VS Code window, edit/save it, then verify glossary protection still respects the file after reload.
