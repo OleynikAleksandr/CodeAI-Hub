@@ -11,6 +11,7 @@ import { useWorkspaceScopeSync } from "./workspace-scope-sync";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const UI_HELPER_TEXT_CATEGORY = "user_guidance";
+const USER_MESSAGES_CATEGORY = "system_feedback";
 
 const isAbsolutePath = (value: string): boolean => {
   const trimmed = value.trim();
@@ -147,6 +148,16 @@ export const MainLayout: React.FC = () => {
     "pm.workspace_modal.display_name_placeholder",
     "My Workspace"
   );
+  const workspacePathRequiredError = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.workspace_modal.error.path_required",
+    "Path is required."
+  );
+  const workspacePathAbsoluteError = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.workspace_modal.error.path_absolute",
+    "Path must be absolute."
+  );
 
   useEffect(() => {
     if (!activeWorkspace) {
@@ -192,11 +203,11 @@ export const MainLayout: React.FC = () => {
                 const resolvedPath = addWorkspacePath.trim();
                 const resolvedName = addWorkspaceName.trim();
                 if (!resolvedPath) {
-                  setAddWorkspaceError("Path is required.");
+                  setAddWorkspaceError(workspacePathRequiredError);
                   return;
                 }
                 if (!isAbsolutePath(resolvedPath)) {
-                  setAddWorkspaceError("Path must be absolute.");
+                  setAddWorkspaceError(workspacePathAbsoluteError);
                   return;
                 }
                 pendingAddWorkspacePathRef.current = resolvedPath;

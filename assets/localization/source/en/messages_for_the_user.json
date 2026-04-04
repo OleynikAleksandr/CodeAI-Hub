@@ -14,6 +14,8 @@
   "settings.provider_versions.update.warning": "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions.",
   "pm.workspace_tree.empty_label": "Select a workspace to start.",
   "pm.sidebar.workspace.menu_empty_label": "No workspaces yet.",
+  "pm.workspace_modal.error.path_required": "Path is required.",
+  "pm.workspace_modal.error.path_absolute": "Path must be absolute.",
   "pm.description.provider_picker.description": "Description supports Claude, Codex, and Gemini. The provider must be installed and authenticated.",
   "pm.description.provider_picker.status.no_providers": "No providers found. Check that the core is running.",
   "pm.description.provider_picker.status.choose_provider": "Choose a provider to start the Description step.",
