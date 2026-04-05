@@ -23,19 +23,8 @@ import type {
   StructuredOutputStreamController,
 } from "./structured-output-stream-controller";
 
-interface PendingAgentMessage {
-  readonly itemId: string;
-  readonly result: StructuredOutputResult;
-}
-
-interface FallbackAssistantCandidate {
-  readonly content: string;
-  readonly itemId: string;
-}
-
-const SUBSTANTIVE_FALLBACK_MIN_LENGTH = 160;
-const SUBSTANTIVE_FALLBACK_MULTILINE_RE = /\n(?:\d+\.\s+|- |\* )/;
-
+const SUBSTANTIVE_FALLBACK_MIN_LENGTH = 160,
+  SUBSTANTIVE_FALLBACK_MULTILINE_RE = /\n(?:\d+\.\s+|- |\* )/;
 const isSubstantiveFallbackCandidate = (content: string): boolean => {
   const trimmed = content.trim();
   return (
@@ -48,12 +37,12 @@ export class CodexStreamEventRouter {
   private readonly emitter: CodexSessionEventEmitter;
   private readonly fallbackAssistantCandidates = new Map<
     string,
-    FallbackAssistantCandidate
+    { readonly content: string; readonly itemId: string }
   >();
   private readonly finishHandler: CodexMessageFinishHandler;
   private readonly pendingAgentMessages = new Map<
     string,
-    PendingAgentMessage
+    { readonly itemId: string; readonly result: StructuredOutputResult }
   >();
   readonly reasoningStreams: CodexReasoningStreams;
   private readonly reporter?: ModuleReporter;
@@ -155,6 +144,12 @@ export class CodexStreamEventRouter {
     event: ThreadItemEvent
   ): Promise<void> {
     const item = event.item as ThreadItem;
+    if (
+      Boolean(session.rolloutTailState?.snapshot()) &&
+      (item.type === "reasoning" || isAgentMessageItem(item))
+    ) {
+      return;
+    }
     if (item.type === "reasoning") {
       await this.handleReasoningItem(session, event, item);
       return;

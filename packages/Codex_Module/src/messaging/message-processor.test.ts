@@ -3,6 +3,7 @@ import { EventEmitter } from "node:events";
 import test from "node:test";
 import type { ThreadEvent } from "@openai/codex-sdk";
 import { DEFAULT_CODEX_RESPONSE_POLICY } from "../response-policy/response-policy-defaults";
+import { CodexRolloutTailState } from "../rollout/codex-rollout-tail-state";
 import type { ActiveSession } from "../session/types";
 import { applyCodexTurnRuntimeConfig } from "./codex-applied-turn-config";
 import { waitForNextResultWithIdlePulses } from "./codex-async-helpers";
@@ -344,6 +345,53 @@ test("codex intermediate agent_message stays hidden when thinking display sync i
   );
 
   assert.equal(thinkingMessages.length, 0);
+});
+
+test("codex router suppresses SDK reasoning and agent_message once rollout routing is active", async () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.4",
+    modelReasoningEffort: "medium",
+  });
+  const rolloutTailState = new CodexRolloutTailState();
+  rolloutTailState.advance({
+    filePath: "/tmp/rollout.jsonl",
+    nextLine: 4,
+  });
+  session.rolloutTailState = rolloutTailState;
+
+  const events: unknown[] = [];
+  session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+  const { router, structuredOutput } = createRouter();
+  preparePassthroughTurn(session, structuredOutput);
+
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "native-reasoning",
+      type: "reasoning",
+      text: "Native reasoning from SDK should stay suppressed.",
+    },
+  } satisfies ThreadEvent);
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "agent-progress",
+      type: "agent_message",
+      text: "SDK commentary should stay suppressed.",
+    },
+  } satisfies ThreadEvent);
+
+  const dialogMessages = events.filter(
+    (event) => (event as { type?: string }).type === "dialog_message"
+  );
+  const assistantMessages = events.filter(
+    (event) => (event as { type?: string }).type === "assistant"
+  );
+
+  assert.equal(dialogMessages.length, 0);
+  assert.equal(assistantMessages.length, 0);
 });
 
 const createRouter = (): {
