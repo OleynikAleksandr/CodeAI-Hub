@@ -76,7 +76,7 @@
 6. [DONE] Git Commit: `docs(plans): record application foundation envelope planning baseline` (hash: `1604ef73c`)
 7. [DONE] Commit the planning-to-execution transition session report before release packaging; scope: `doc/Sessions/Session041.md`; expected commit message: `docs(session): record application foundation envelope planning scope`
 8. [IN_PROGRESS] Git Commit: `docs(session): record application foundation envelope planning scope` (hash: TBD)
-9. [TODO] Build and package the release after all streams are green and the tree is clean; scope: release scripts + versioned artifacts; expected commit message: `build(release): assemble application foundation envelope stage shell release`
-10. [TODO] Git Commit: `build(release): assemble application foundation envelope stage shell release` (hash: TBD)
-11. [TODO] Record the release session report and close the phase; scope: `doc/Sessions/Session042.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): record application foundation envelope stage shell release`
+9. [DONE] Run `./scripts/build-all.sh` on a clean tree, prepare unified version `1.1.888`, and materialize release tarballs/manifests for the stage-shell wave; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble application foundation envelope stage shell release`
+10. [IN_PROGRESS] Git Commit: `build(release): assemble application foundation envelope stage shell release` (hash: TBD)
+11. [TODO] Run `./scripts/build-release.sh --use-current-version`, verify the final VSIX/package outputs, record the release session report, and close the phase; scope: `doc/Sessions/Session042.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): record application foundation envelope stage shell release`
 12. [TODO] Git Commit: `docs(session): record application foundation envelope stage shell release` (hash: TBD)
