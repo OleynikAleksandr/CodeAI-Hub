@@ -28,8 +28,28 @@ interface PendingAgentMessage {
   readonly result: StructuredOutputResult;
 }
 
+interface FallbackAssistantCandidate {
+  readonly content: string;
+  readonly itemId: string;
+}
+
+const SUBSTANTIVE_FALLBACK_MIN_LENGTH = 160;
+const SUBSTANTIVE_FALLBACK_MULTILINE_RE = /\n(?:\d+\.\s+|- |\* )/;
+
+const isSubstantiveFallbackCandidate = (content: string): boolean => {
+  const trimmed = content.trim();
+  return (
+    trimmed.length >= SUBSTANTIVE_FALLBACK_MIN_LENGTH ||
+    SUBSTANTIVE_FALLBACK_MULTILINE_RE.test(trimmed)
+  );
+};
+
 export class CodexStreamEventRouter {
   private readonly emitter: CodexSessionEventEmitter;
+  private readonly fallbackAssistantCandidates = new Map<
+    string,
+    FallbackAssistantCandidate
+  >();
   private readonly finishHandler: CodexMessageFinishHandler;
   private readonly pendingAgentMessages = new Map<
     string,
@@ -68,14 +88,18 @@ export class CodexStreamEventRouter {
         this.handleThreadStarted(session, event.thread_id);
         return;
       case "turn.started":
+        this.clearFallbackAssistantCandidate(session.sessionId);
         this.finishHandler.handleTurnStarted(session);
         return;
       case "turn.completed":
-        this.flushPendingAgentMessageAsAssistant(session);
+        if (!this.flushPendingAgentMessageAsAssistant(session)) {
+          this.emitFallbackAssistantCandidate(session);
+        }
         await this.finishHandler.handleTurnCompleted(session, event);
         return;
       case "turn.failed":
         await this.flushPendingAgentMessageAsThinking(session);
+        this.clearFallbackAssistantCandidate(session.sessionId);
         this.finishHandler.handleTurnFailed(session, event.error);
         return;
       case "item.started":
@@ -114,6 +138,7 @@ export class CodexStreamEventRouter {
     session: ActiveSession,
     event: ThreadErrorEvent
   ): void {
+    this.clearFallbackAssistantCandidate(session.sessionId);
     this.emitter.emitMessage(session, {
       type: "stream_error",
       provider: PROVIDER,
@@ -329,21 +354,23 @@ export class CodexStreamEventRouter {
       return;
     }
 
+    this.rememberFallbackAssistantCandidate(session.sessionId, pending, item);
     await this.flushPendingAgentMessageAsThinking(session);
   }
 
-  private flushPendingAgentMessageAsAssistant(session: ActiveSession): void {
+  private flushPendingAgentMessageAsAssistant(session: ActiveSession): boolean {
     const pending = this.pendingAgentMessages.get(session.sessionId);
     if (!pending) {
-      return;
+      return false;
     }
 
     this.pendingAgentMessages.delete(session.sessionId);
     this.emitStructuredOutput(session, pending.itemId, pending.result);
     if (!pending.result.assistantText) {
-      return;
+      return false;
     }
 
+    this.clearFallbackAssistantCandidate(session.sessionId);
     this.emitter.emitMessage(session, {
       type: "assistant",
       provider: PROVIDER,
@@ -353,6 +380,7 @@ export class CodexStreamEventRouter {
       uuid: pending.itemId,
       timestamp: new Date().toISOString(),
     });
+    return true;
   }
 
   private async flushPendingAgentMessageAsThinking(
@@ -380,6 +408,45 @@ export class CodexStreamEventRouter {
       translated ?? content,
       pending.itemId
     );
+  }
+
+  private rememberFallbackAssistantCandidate(
+    sessionId: string,
+    pending: PendingAgentMessage,
+    triggerItem: ThreadItem
+  ): void {
+    if (triggerItem.type !== "reasoning") {
+      return;
+    }
+    const content = pending.result.assistantText?.trim();
+    if (!(content && isSubstantiveFallbackCandidate(content))) {
+      return;
+    }
+    this.fallbackAssistantCandidates.set(sessionId, {
+      itemId: pending.itemId,
+      content,
+    });
+  }
+
+  private emitFallbackAssistantCandidate(session: ActiveSession): void {
+    const candidate = this.fallbackAssistantCandidates.get(session.sessionId);
+    if (!candidate) {
+      return;
+    }
+    this.clearFallbackAssistantCandidate(session.sessionId);
+    this.emitter.emitMessage(session, {
+      type: "assistant",
+      provider: PROVIDER,
+      sessionId: session.sessionId,
+      threadId: session.codexThreadId,
+      content: candidate.content,
+      uuid: candidate.itemId,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  private clearFallbackAssistantCandidate(sessionId: string): void {
+    this.fallbackAssistantCandidates.delete(sessionId);
   }
 
   private emitStructuredOutput(

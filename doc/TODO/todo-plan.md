@@ -16,11 +16,11 @@
 ### Stream: Scope And Intake
 1. [DONE] Create the planning intake for the Codex empty-terminal-answer bug and register it in `doc/SolidWorks-WorkFlow/Docs_Index.md` (scope: `doc/SolidWorks-WorkFlow/Plans/Codex_EmptyTerminalAnswer_Recovery_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(plans): add codex empty terminal answer recovery scope`)
 2. [DONE] Git Commit: `docs(plans): add codex empty terminal answer recovery scope` (hash: `e543d2a27`)
-3. [IN_PROGRESS] Replace the placeholder `doc/TODO/todo-plan.md` with the sliced execution plan for this hotfix, including a dedicated release stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): slice codex empty terminal answer hotfix plan`)
-4. [TODO] Git Commit: `docs(todo): slice codex empty terminal answer hotfix plan` (hash: TBD)
+3. [DONE] Replace the placeholder `doc/TODO/todo-plan.md` with the sliced execution plan for this hotfix, including a dedicated release stream (scope: `doc/TODO/todo-plan.md`; expected commit: `docs(todo): slice codex empty terminal answer hotfix plan`)
+4. [DONE] Git Commit: `docs(todo): slice codex empty terminal answer hotfix plan` (hash: `890f9b5e1`)
 
 ### Stream: Codex Turn Recovery
-1. [TODO] Add a narrow Codex router fallback that preserves a substantive assistant candidate when a later reasoning tail is followed by an empty terminal assistant completion (scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`; expected commit: `fix(codex): preserve substantive assistant on empty terminal turn`)
+1. [IN_PROGRESS] Add a narrow Codex router fallback that preserves a substantive assistant candidate when a later reasoning tail is followed by an empty terminal assistant completion (scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`; expected commit: `fix(codex): preserve substantive assistant on empty terminal turn`)
 2. [TODO] Git Commit: `fix(codex): preserve substantive assistant on empty terminal turn` (hash: TBD)
 3. [TODO] Add a regression test for the observed sequence `substantive agent_message -> reasoning tail -> progress check -> empty terminal agent_message` (scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `test(codex): cover empty terminal assistant recovery`)
 4. [TODO] Git Commit: `test(codex): cover empty terminal assistant recovery` (hash: TBD)
