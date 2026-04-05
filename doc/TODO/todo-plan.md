@@ -20,7 +20,7 @@
 4. [TODO] Git Commit: `docs(todo): slice codex raw rollout migration plan` (hash: TBD)
 
 ### Stream: Raw Rollout Reader Foundation
-1. [TODO] Add a Codex rollout reader that resolves the active raw rollout file for a `providerSessionId` and yields appended JSONL entries without rereading older lines; scope: `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `feat(codex-rollout): add rollout reader`
+1. [DONE] Add a Codex rollout reader that resolves the active raw rollout file for a `providerSessionId` and yields appended JSONL entries without rereading older lines; scope: `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `feat(codex-rollout): add rollout reader`
 2. [TODO] Git Commit: `feat(codex-rollout): add rollout reader` (hash: TBD)
 3. [TODO] Add session-local tail cursor state so live turns and replay share one dedupe-safe offset contract; scope: `packages/Codex_Module/src/rollout/codex-rollout-tail-state.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`, `packages/Codex_Module/src/session/types.ts`; expected commit message: `feat(codex-rollout): track rollout tail cursors`
 4. [TODO] Git Commit: `feat(codex-rollout): track rollout tail cursors` (hash: TBD)
