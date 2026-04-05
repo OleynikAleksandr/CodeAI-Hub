@@ -91,7 +91,7 @@ const readWorkflowStatePayload = async (params: {
     params.service.handleWorkflowStateRead(req, res);
   });
 
-test("workflow-state cold start hydrates existing canonical artifacts for downstream gating", async () => {
+test("workflow-state cold start unlocks application foundation envelope after diagram modules aggregate readiness", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-service-hydration-")
   );
@@ -148,10 +148,11 @@ test("workflow-state cold start hydrates existing canonical artifacts for downst
     assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
     assert.equal(payload.state?.stages.diagram_modules?.status, "idle");
     assert.equal(payload.gating.blocked.diagram_modules, false);
+    assert.equal(payload.gating.blocked.application_foundation_envelope, false);
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
     assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
     assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
-    assert.equal(payload.diagramModulesProgress?.aggregateReady, false);
+    assert.equal(payload.diagramModulesProgress?.aggregateReady, true);
     assert.equal(
       payload.state?.stages.virtual_simulation?.artifacts?.some(
         (artifact) =>
@@ -218,6 +219,7 @@ test("workflow-state tracks diagram modules progress when not all product parts 
     const payload = result.payload as WorkflowStatePayload;
 
     assert.equal(payload.gating.blocked.diagram_modules, false);
+    assert.equal(payload.gating.blocked.application_foundation_envelope, true);
     assert.equal(
       payload.diagramModulesProgress?.substep,
       "generate_product_part"

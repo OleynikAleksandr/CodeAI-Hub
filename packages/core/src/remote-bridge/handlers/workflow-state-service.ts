@@ -268,5 +268,7 @@ const resolveWorkflowBlockedStages = (params: {
     description: false,
     virtual_simulation: !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
+    application_foundation_envelope:
+      params.diagramModulesProgress?.aggregateReady !== true,
   };
 };

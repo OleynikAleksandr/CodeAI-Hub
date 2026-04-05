@@ -125,6 +125,6 @@ export const readDiagramModulesProgressSnapshot = async (params: {
     ...(currentPartId ? { currentPartId } : {}),
     plannedCount: plannedPartIds.length,
     generatedCount: generatedPartIds.length,
-    aggregateReady: false,
+    aggregateReady: substep === "awaiting_review",
   };
 };
