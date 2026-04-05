@@ -1,23 +1,10 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { ContinuityStageId } from "./continuity-types";
+import { normalizeContinuityStageId } from "./continuity-types";
 
 const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
 const REPORT_FILE_NAME = "handoff-report.md";
-
-const normalizeStage = (
-  value: string | null | undefined
-): ContinuityStageId => {
-  if (
-    value === "description" ||
-    value === "virtual_simulation" ||
-    value === "diagram_modules"
-  ) {
-    return value;
-  }
-  return "unknown";
-};
 
 export const buildHandoffReportPath = (options: {
   readonly workspaceRoot: string;
@@ -31,7 +18,7 @@ export const buildHandoffReportPath = (options: {
     CONTINUITY_ROOT,
     options.workspaceSlug,
     CONTINUITY_DIR,
-    normalizeStage(options.stageId),
+    normalizeContinuityStageId(options.stageId),
     options.rootSessionId,
     options.timestamp,
     REPORT_FILE_NAME

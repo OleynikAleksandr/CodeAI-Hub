@@ -18,9 +18,9 @@
 
 ### Stream: Canonical Continuity Stage Identity
 1. [DONE] Extend the continuity stage contract and chain-path normalization so `application_foundation_envelope` no longer falls back to `unknown` during chain persistence; scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `fix(core-continuity): store application foundation envelope stage`
-2. [DONE] Git Commit: `fix(core-continuity): store application foundation envelope stage` (hash: TBD)
-3. [TODO] Teach the continuity tracker and handoff report writer to preserve the canonical `application_foundation_envelope` stage path; scope: `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`; expected commit message: `fix(core-continuity): keep application foundation envelope continuity paths`
-4. [TODO] Git Commit: `fix(core-continuity): keep application foundation envelope continuity paths` (hash: TBD)
+2. [DONE] Git Commit: `fix(core-continuity): store application foundation envelope stage` (hash: `d68b0e201`)
+3. [DONE] Teach the continuity tracker and handoff report writer to preserve the canonical `application_foundation_envelope` stage path; scope: `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`; expected commit message: `fix(core-continuity): keep application foundation envelope continuity paths`
+4. [DONE] Git Commit: `fix(core-continuity): keep application foundation envelope continuity paths` (hash: TBD)
 5. [TODO] Preserve `application_foundation_envelope` in handoff prompts and workflow last-active readback so cold-start state cannot drop the stage; scope: `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/workflow/state/workflow-last-active-store.ts`; expected commit message: `fix(core-workflow): preserve application foundation envelope stage identity`
 6. [TODO] Git Commit: `fix(core-workflow): preserve application foundation envelope stage identity` (hash: TBD)
 

@@ -7,19 +7,7 @@ import type {
   ContinuitySegment,
   ContinuityStageId,
 } from "./continuity-types";
-
-const normalizeStageId = (
-  value: string | null | undefined
-): ContinuityStageId => {
-  if (
-    value === "description" ||
-    value === "virtual_simulation" ||
-    value === "diagram_modules"
-  ) {
-    return value;
-  }
-  return "unknown";
-};
+import { normalizeContinuityStageId } from "./continuity-types";
 
 const buildProviderSessionKey = (options: {
   readonly workspaceRoot: string;
@@ -148,7 +136,7 @@ export class ContinuityTracker {
       return null;
     }
 
-    const stage = normalizeStageId(session.stage);
+    const stage = normalizeContinuityStageId(session.stage);
     const providerSessionKey = buildProviderSessionKey({
       workspaceRoot: session.workspacePath,
       workspaceSlug,
