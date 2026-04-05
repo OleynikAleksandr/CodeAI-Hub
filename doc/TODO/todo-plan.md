@@ -55,8 +55,10 @@
 5. [DONE] Keep the previous empty-terminal-answer recovery green after the rollout cutover; scope: `packages/Codex_Module/src/messaging/message-processor.empty-terminal.test.ts`; expected commit message: `test(codex-rollout): preserve empty terminal recovery`
 6. [DONE] Git Commit: `test(codex-rollout): preserve empty terminal recovery` (hash: `5d8d096d8`)
 7. [DONE] Restore the missing pending assistant typing in the SDK fallback router so targeted Codex compilation succeeds before release verification; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`; expected commit message: `fix(codex-rollout): restore router compile typing`
-8. [TODO] Git Commit: `fix(codex-rollout): restore router compile typing` (hash: TBD)
-9. [TODO] Run targeted Codex verification and record the concrete results in this plan; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record codex rollout verification`
+8. [DONE] Git Commit: `fix(codex-rollout): restore router compile typing` (hash: `ccceb41d7`)
+9. [DONE] Run targeted Codex verification and record the concrete results in this plan; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record codex rollout verification`
+   Verification result: `npm exec -- tsx --test packages/Codex_Module/src/messaging/message-processor.commentary-phase.test.ts packages/Codex_Module/src/messaging/message-processor.replay.test.ts packages/Codex_Module/src/messaging/message-processor.empty-terminal.test.ts packages/Codex_Module/src/messaging/message-processor.test.ts packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts packages/Codex_Module/src/rollout/codex-rollout-event-parser.test.ts` -> `21/21` tests passed.
+   Verification result: `npm run build --workspace @codeai-hub/codex-module` -> passed.
 10. [TODO] Git Commit: `docs(todo): record codex rollout verification` (hash: TBD)
 
 ### Stream: Release Build
