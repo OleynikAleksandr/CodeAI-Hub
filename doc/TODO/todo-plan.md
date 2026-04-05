@@ -38,8 +38,8 @@
 6. [TODO] Git Commit: `test(codex-rollout): cover rollout dedupe` (hash: TBD)
 
 ### Stream: Dialog Cutover
-1. [TODO] Add a rollout live-sync coordinator that reads appended raw rollout entries and normalizes them into the existing emitter / structured-output contract; scope: `packages/Codex_Module/src/rollout/codex-rollout-live-sync.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex-rollout): add live rollout sync`
-2. [TODO] Git Commit: `feat(codex-rollout): add live rollout sync` (hash: TBD)
+1. [DONE] Add a rollout live-sync coordinator that reads appended raw rollout entries and normalizes them into the existing emitter / structured-output contract; scope: `packages/Codex_Module/src/rollout/codex-rollout-live-sync.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex-rollout): add live rollout sync`
+2. [DONE] Git Commit: `feat(codex-rollout): add live rollout sync` (hash: `88550b161`)
 3. [TODO] Trigger rollout sync during SDK event consumption and terminal turn drain so final rollout segments are read before turn closure while SDK stays send/control-plane only; scope: `packages/Codex_Module/src/messaging/codex-event-stream-consumer.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/rollout/codex-rollout-live-sync.ts`; expected commit message: `feat(codex-rollout): poll rollout during turn lifecycle`
 4. [TODO] Git Commit: `feat(codex-rollout): poll rollout during turn lifecycle` (hash: TBD)
 5. [TODO] Retire SDK `reasoning` and `agent_message` user-visible routing from the router so commentary/final-answer semantics come only from rollout-backed normalization; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `fix(codex-rollout): prefer rollout dialog routing`
