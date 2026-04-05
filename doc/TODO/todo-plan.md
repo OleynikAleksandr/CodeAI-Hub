@@ -73,9 +73,9 @@
 3. [DONE] Commit the pending planning-governance and plans-index docs so release build can start from a clean tree; scope: `AGENTS.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs(plans): tighten planning closeout governance`
 4. [DONE] Git Commit: `docs(plans): tighten planning closeout governance` (hash: `5922cdf85`)
 5. [DONE] Commit the active planning baseline docs referenced by this release wave; scope: `doc/Sessions/Session040.md`, `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Implementation_Foundation_Architecture.md`; expected commit message: `docs(plans): record application foundation envelope planning baseline`
-6. [IN_PROGRESS] Git Commit: `docs(plans): record application foundation envelope planning baseline` (hash: TBD)
-7. [TODO] Commit the planning-to-execution transition session report before release packaging; scope: `doc/Sessions/Session041.md`; expected commit message: `docs(session): record application foundation envelope planning scope`
-8. [TODO] Git Commit: `docs(session): record application foundation envelope planning scope` (hash: TBD)
+6. [DONE] Git Commit: `docs(plans): record application foundation envelope planning baseline` (hash: `1604ef73c`)
+7. [DONE] Commit the planning-to-execution transition session report before release packaging; scope: `doc/Sessions/Session041.md`; expected commit message: `docs(session): record application foundation envelope planning scope`
+8. [IN_PROGRESS] Git Commit: `docs(session): record application foundation envelope planning scope` (hash: TBD)
 9. [TODO] Build and package the release after all streams are green and the tree is clean; scope: release scripts + versioned artifacts; expected commit message: `build(release): assemble application foundation envelope stage shell release`
 10. [TODO] Git Commit: `build(release): assemble application foundation envelope stage shell release` (hash: TBD)
 11. [TODO] Record the release session report and close the phase; scope: `doc/Sessions/Session042.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(session): record application foundation envelope stage shell release`
