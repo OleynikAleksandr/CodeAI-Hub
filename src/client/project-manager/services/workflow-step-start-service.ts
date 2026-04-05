@@ -14,7 +14,10 @@ type StartWorkflowStepParams = {
   readonly onSessionCreated?: (sessionId: string) => void;
 };
 
-type ContinuityStageId = "virtual_simulation" | "diagram_modules";
+type ContinuityStageId =
+  | "virtual_simulation"
+  | "diagram_modules"
+  | "application_foundation_envelope";
 
 type WorkflowStateGetter = (
   workspaceSlug: string,
@@ -152,4 +155,42 @@ export class WorkflowStepStartService {
     });
   }
 
+  async startApplicationFoundationEnvelope(
+    params: StartWorkflowStepParams
+  ): Promise<string> {
+    const state = await this.getWorkflowState(
+      params.workspaceSlug,
+      params.workspacePath
+    );
+    const existingSessionId = resolveMostRecentContinuitySessionId({
+      state,
+      stage: "application_foundation_envelope",
+    });
+    if (existingSessionId) {
+      params.onSessionCreated?.(existingSessionId);
+      return existingSessionId;
+    }
+
+    const envelopeBlocked =
+      state?.gating?.blocked?.application_foundation_envelope ?? true;
+    if (envelopeBlocked) {
+      throw new Error(
+        "Diagram Modules is not fully ready. Complete Diagram Modules step first."
+      );
+    }
+
+    const artifactLanguage = resolveArtifactsForTheUserLanguage(
+      this.getSettingsPayload()
+    );
+    return this.submitService.submitQuestionnaire({
+      artifactLanguage,
+      workspaceName: params.workspaceName,
+      workspaceSlug: params.workspaceSlug,
+      workspacePath: params.workspacePath,
+      questionnairePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
+      stage: "application_foundation_envelope",
+      providerId: params.providerId,
+      onSessionCreated: params.onSessionCreated,
+    });
+  }
 }
