@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.892] - 2026-04-05
+### Fixed
+- **Codex empty-terminal turns now preserve the last substantive assistant answer**: when Codex emits a real user-facing `agent_message`, then drifts into a late reasoning tail and finally ends the turn with an empty terminal assistant payload, the bridge now restores that earlier substantive answer instead of leaving the dialog with giant `Thinking` output and no completion.
+- **The recovery is intentionally scoped to the observed reasoning-tail failure mode**: only substantive assistant candidates demoted by a later `reasoning` item are remembered as fallback completions, which avoids promoting ordinary short progress commentary into the final assistant reply.
+- **Regression coverage now locks the exact Codex failure sequence**: dedicated messaging tests cover `substantive agent_message -> reasoning tail -> progress check -> empty terminal agent_message`, and the patched `@codeai-hub/codex-module` package builds cleanly before release packaging.
+
 ## [1.1.891] - 2026-04-05
 ### Fixed
 - **`Application Foundation Envelope` continuity chains no longer fall back to `unknown`**: core continuity stage normalization now recognizes `application_foundation_envelope` during chain creation, root promotion, and tracker matching, so the left Project Manager tree can discover the session branch under the canonical continuity folder.

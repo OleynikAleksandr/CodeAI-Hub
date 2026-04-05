@@ -23,10 +23,12 @@
 1. [DONE] Add a narrow Codex router fallback that preserves a substantive assistant candidate when a later reasoning tail is followed by an empty terminal assistant completion (scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`; expected commit: `fix(codex): preserve substantive assistant on empty terminal turn`)
 2. [DONE] Git Commit: `fix(codex): preserve substantive assistant on empty terminal turn` (hash: `c9ee21491`)
 3. [DONE] Add a regression test for the observed sequence `substantive agent_message -> reasoning tail -> progress check -> empty terminal agent_message` (scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `test(codex): cover empty terminal assistant recovery`)
-4. [TODO] Git Commit: `test(codex): cover empty terminal assistant recovery` (hash: TBD)
+4. [DONE] Git Commit: `test(codex): cover empty terminal assistant recovery` (hash: `3d5a4fa2c`)
 
 ### Stream: Verification And Release
-1. [TODO] Run targeted verification for the Codex messaging hotfix and confirm the affected package build is green (scope: `packages/Codex_Module`; expected commit: no code commit, verification only)
-2. [TODO] Update session/release documentation and archive/close this execution plan after the hotfix is packaged (scope: `doc/Sessions/Session047.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`; expected commit: `docs(session): record codex empty terminal answer hotfix release`)
-3. [TODO] Git Commit: `docs(session): record codex empty terminal answer hotfix release` (hash: TBD)
-4. [TODO] Run the release stream: `./scripts/build-all.sh` followed by `./scripts/build-release.sh --use-current-version`, collect the new VSIX and fresh release artifacts for user verification (scope: release artifacts / packaged runtime; expected commit: versioning artifacts included in the release closeout commit)
+1. [DONE] Run targeted verification for the Codex messaging hotfix and confirm the affected package build is green (scope: `packages/Codex_Module`; expected commit: no code commit, verification only)
+2. [IN_PROGRESS] Prepare the `1.1.892` release metadata, changelog notes, and version-bumped manifests so the tree is clean for packaging (scope: `README.md`, `CHANGELOG.md`, release-generated version/manifest files, `doc/TODO/todo-plan.md`; expected commit: `chore(release): prepare 1.1.892 hotfix packaging`)
+3. [TODO] Git Commit: `chore(release): prepare 1.1.892 hotfix packaging` (hash: TBD)
+4. [TODO] Run the release stream: `./scripts/build-release.sh --use-current-version`, collect the new VSIX and fresh release artifacts for user verification (scope: release artifacts / packaged runtime; expected commit: no code commit, packaging only)
+5. [TODO] Update session/release documentation and archive/close this execution plan after the hotfix is packaged (scope: `doc/Sessions/Session047.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`; expected commit: `docs(session): record codex empty terminal answer hotfix release`)
+6. [TODO] Git Commit: `docs(session): record codex empty terminal answer hotfix release` (hash: TBD)
