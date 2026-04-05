@@ -1,7 +1,8 @@
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules";
+  | "diagram_modules"
+  | "application_foundation_envelope";
 
 type WorkflowPromptPackInput = {
   readonly artifactLanguage?: string;
@@ -30,12 +31,14 @@ const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
   diagram_modules: "product-parts.index.md",
+  application_foundation_envelope: "application-foundation-envelope.md",
 };
 
 const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
+  application_foundation_envelope: "Application Foundation Envelope",
 };
 const DEFAULT_ARTIFACT_LANGUAGE = "en";
 const LEGACY_SOURCE_LANGUAGE = "source";
@@ -45,6 +48,8 @@ const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
   virtual_simulation: "Build the artifact from `Final_Description.md`.",
   diagram_modules:
     "Build the staged artifact from `Final_Description.md` and `virtual-simulation.md`.",
+  application_foundation_envelope:
+    "Build the artifact from `Final_Description.md`, `virtual-simulation.md`, and the staged `Diagram Modules` artifacts.",
 };
 
 const DIAGRAM_STAGE_INPUT_LABELS: Partial<Record<WorkflowStageId, string>> = {
@@ -181,6 +186,35 @@ const buildStageInputLines = (params: {
       `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
       `virtual-simulation.md (relative): \`${simulationRelativePath}\``,
       `virtual-simulation.md (absolute): \`${simulationAbsolutePath}\``,
+    ];
+  }
+  if (params.stage === "application_foundation_envelope") {
+    const finalRelativePath = normalizeRelativePath(
+      `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`
+    );
+    const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
+    const simulationRelativePath = normalizeRelativePath(
+      `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`
+    );
+    const simulationAbsolutePath = joinPath(
+      params.workspacePath,
+      simulationRelativePath
+    );
+    const productPartsIndexRelativePath = normalizeRelativePath(
+      `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`
+    );
+    const productPartsIndexAbsolutePath = joinPath(
+      params.workspacePath,
+      productPartsIndexRelativePath
+    );
+    return [
+      `Final_Description.md (relative): \`${finalRelativePath}\``,
+      `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
+      `virtual-simulation.md (relative): \`${simulationRelativePath}\``,
+      `virtual-simulation.md (absolute): \`${simulationAbsolutePath}\``,
+      `product-parts.index.md (relative): \`${productPartsIndexRelativePath}\``,
+      `product-parts.index.md (absolute): \`${productPartsIndexAbsolutePath}\``,
+      `Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
     ];
   }
   const questionnaireRelativePath = normalizeRelativePath(params.questionnairePath);
