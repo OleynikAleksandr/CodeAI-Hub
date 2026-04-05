@@ -385,6 +385,37 @@
 
 Иначе scope станет слишком большим и перестанет быть детерминированным.
 
+### 6.6. Localization boundary for the stage shell
+
+Новый stage shell добавляет user-facing copy сразу в нескольких PM surfaces:
+
+- toolbar step label;
+- workflow tree label и blocked-title;
+- session/branch node label;
+- help panel title/body;
+- artifact-load fallback/error copy.
+
+Эти тексты не могут оставаться просто fallback-строками внутри React-компонентов.
+
+По контракту `UserFacing_Text_Localization_Boundary.md` для них заранее фиксируется ownership:
+
+- `UI Labels`:
+  - stage label;
+  - blocked-title;
+  - session label format with provider placeholder.
+- `Messages for the User`:
+  - help panel body;
+  - runtime help title;
+  - load/error/fallback user-visible messages.
+- `Internal Agent Instructions`:
+  - bundled prompt `application-foundation-envelope-prompt.md` остаётся English-only и не входит в user-facing localization path.
+
+Следовательно, post-release localization hotfix для этого шага должен:
+
+1. backfill stable message ids into the English source dictionaries;
+2. route every new PM surface of this stage through the shared localization runtime;
+3. stop relying on raw English concatenation such as `Application Foundation Envelope ${providerTitle}` for user-visible labels.
+
 ---
 
 ## 7. Рекомендуемая первая implementation wave
@@ -418,6 +449,21 @@
 3. visual layout persistence;
 4. UX вокруг редактирования/перестройки envelope;
 5. bridge к downstream шагам `Product Part / Cluster / Module Specifications`.
+
+### 7.4. Post-release localization acceptance
+
+Даже для первой `stage shell` wave acceptance считается незавершённым, если:
+
+- help language переключён на русский, а новый stage help остаётся на английском;
+- новый stage label / blocked-title / session label не имеют source-dictionary entry;
+- user-facing PM copy нового шага зависит только от inline fallback instead of canonical English dictionaries.
+
+Минимальный corrective scope после первого релиза:
+
+1. sync help copy with the workflow SSOT for `Application Root`, `Shared Zones`, `Integration Seams`, technology intent, and placement/dependency rules;
+2. backfill `Messages for the User` entries for the help/error surfaces;
+3. backfill `UI Labels` entries for stage/shell/session labels;
+4. add regression coverage so a future stage rollout cannot repeat the same omission.
 
 ---
 
