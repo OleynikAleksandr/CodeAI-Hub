@@ -21,6 +21,7 @@
 15. `doc/SolidWorks-WorkFlow/Modules/Localization.md`
 16. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
 17. `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
+18. `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`
 
 ## 1) Компоненты системы (верхний уровень)
 
@@ -80,6 +81,8 @@
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
 18. **Workflow artifact-language boundary**: `Artifacts for the User` may drive questionnaire/staged-artifact shell text and brief user-facing workflow chat updates, but internal workflow/provider prompt bodies remain `Internal Agent Instructions` and stay English-only.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
+19. **New workflow-step rollout must clone a mature reference-step contract end-to-end**: introducing a new stage is not allowed to stop at toolbar visibility, prompt wiring, or artifact creation. A supported new step must ship with synchronized stage identity, artifact paths, PM parity, localization ownership, continuity routing, handoff paths, cold-start persistence, direct regression coverage, and packaged-release validation. Partial stage shells are not acceptable.
+   - Канон: `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 

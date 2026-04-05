@@ -18,6 +18,7 @@
 
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов.
+- `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding a new workflow step by cloning a mature reference-step contract end-to-end, including localization ownership, PM parity, continuity paths, cold-start persistence, tests, and packaged release validation.
 
 ### Clusters
 - `Clusters/Project_Manager.md` — SSOT подсистемы Project Manager.
