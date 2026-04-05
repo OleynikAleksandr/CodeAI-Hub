@@ -1,6 +1,8 @@
 # Codex Empty Terminal Answer Recovery Architecture
 
-**Status:** Active
+> Archived after implementation in release `1.1.892` on `2026-04-05`. This intake remains as historical context for the narrow Codex router fallback that preserves the last substantive assistant candidate when a later reasoning tail ends with an empty terminal answer.
+
+**Status:** Archived
 **Updated:** 2026-04-05
 **Owner:** Oleksandr + Codex
 **Scope:** Hotfix intake for Codex turns that finish with an empty terminal assistant message after already emitting substantive user-facing content and long thinking/reasoning tails.
