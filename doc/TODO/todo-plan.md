@@ -25,11 +25,15 @@
 3. [DONE] Add session-local tail cursor state so live turns and replay share one dedupe-safe offset contract; scope: `packages/Codex_Module/src/rollout/codex-rollout-tail-state.ts`, `packages/Codex_Module/src/session/types.ts`; expected commit message: `feat(codex-rollout): track rollout tail cursors`
 4. [DONE] Git Commit: `feat(codex-rollout): track rollout tail cursors` (hash: `f0128530e`)
 
+### Stream: Execution Reslice Maintenance
+1. [DONE] Re-slice the remaining rollout migration streams so each subsequent micro-task stays within the `<= 3 files` rule, including real-time `todo-plan` updates; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): reslice codex rollout execution streams`
+2. [DONE] Git Commit: `docs(todo): reslice codex rollout execution streams` (hash: `ff083918c`)
+
 ### Stream: Raw Rollout Message Semantics
 1. [DONE] Parse provider-native `event_msg` semantics for `agent_reasoning`, `agent_message.phase`, and `task_complete` so commentary/thinking/final-answer boundaries come from rollout metadata rather than text inference; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-event-parser.test.ts`; expected commit message: `feat(codex-rollout): parse rollout message phases`
 2. [DONE] Git Commit: `feat(codex-rollout): parse rollout message phases` (hash: `137758c54`)
-3. [TODO] Add stable rollout segment ids and a session-local dedupe registry so live rollout sync can suppress repeated provider events without depending on SDK item ids; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-dedupe.ts`; expected commit message: `feat(codex-rollout): add rollout segment ids`
-4. [TODO] Git Commit: `feat(codex-rollout): add rollout segment ids` (hash: TBD)
+3. [DONE] Add stable rollout segment ids and a session-local dedupe registry so live rollout sync can suppress repeated provider events without depending on SDK item ids; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-dedupe.ts`; expected commit message: `feat(codex-rollout): add rollout segment ids`
+4. [DONE] Git Commit: `feat(codex-rollout): add rollout segment ids` (hash: `162ab7ab1`)
 5. [TODO] Cover repeated rollout reads and repeated parsed segments so the dedupe contract stays stable under reconnect-style reprocessing; scope: `packages/Codex_Module/src/rollout/codex-rollout-dedupe.test.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `test(codex-rollout): cover rollout dedupe`
 6. [TODO] Git Commit: `test(codex-rollout): cover rollout dedupe` (hash: TBD)
 
