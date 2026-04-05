@@ -56,6 +56,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Codex_RawRollout_DialogSourceOfTruth_Architecture.md` — migration intake for moving Codex user-visible output parsing and replay from semantically poorer SDK `item.*` mirrors to provider-native raw rollout JSONL with preserved `commentary` / `final_answer` phases.
 - `Plans/Application_Foundation_Envelope_Architecture.md` — design intake для нового лёгкого шага сразу после `Diagram Modules`; формализует `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies per `Product Part` и user-facing visual envelope.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Application Foundation Envelope` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
