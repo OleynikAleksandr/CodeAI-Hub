@@ -9,7 +9,8 @@ export type WorkflowArtifactFileName =
   | "virtual-simulation.md"
   | "product-parts.index.md"
   | "product-part.md"
-  | "module-map.flow.json";
+  | "module-map.flow.json"
+  | "application-foundation-envelope.md";
 
 type WorkflowParseResult<T> =
   | { readonly ok: true; readonly value: T }
@@ -80,6 +81,10 @@ const resolveWorkflowArtifactValidationError = (params: {
       } catch {
         return "Diagram flow sidecar is not valid JSON";
       }
+    case "application-foundation-envelope.md":
+      return params.content.trim().length === 0
+        ? "Application foundation envelope markdown is empty"
+        : null;
     default:
       return "Unsupported artifact file";
   }

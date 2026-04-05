@@ -35,9 +35,9 @@
 1. [DONE] Add prompt source asset, generator manifest entry, and regenerate bundled templates for the new step; scope: `packages/core/src/templates/source/application-foundation-envelope-prompt.md`, `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`; expected commit message: `feat: bundle application foundation envelope prompt`
 2. [DONE] Git Commit: `feat: bundle application foundation envelope prompt` (hash: `1d5a7ef52`)
 3. [DONE] Expose workflow contract builder and HTTP endpoint for the new step; scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.application-foundation-envelope.test.ts`; expected commit message: `feat: expose application foundation envelope contract`
-4. [IN_PROGRESS] Git Commit: `feat: expose application foundation envelope contract` (hash: TBD)
-5. [TODO] Add artifact validation and upsert slot for the canonical envelope markdown; scope: `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; expected commit message: `feat: persist application foundation envelope artifacts`
-6. [TODO] Git Commit: `feat: persist application foundation envelope artifacts` (hash: TBD)
+4. [DONE] Git Commit: `feat: expose application foundation envelope contract` (hash: `516ce640b`)
+5. [DONE] Add artifact validation and upsert slot for the canonical envelope markdown; scope: `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; expected commit message: `feat: persist application foundation envelope artifacts`
+6. [IN_PROGRESS] Git Commit: `feat: persist application foundation envelope artifacts` (hash: TBD)
 
 ### Stream: Project Manager Service Wiring
 1. [TODO] Extend client workflow stage ids/order, workflow contract endpoints, and prompt-pack target file mapping; scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit message: `feat: add application foundation envelope client contracts`

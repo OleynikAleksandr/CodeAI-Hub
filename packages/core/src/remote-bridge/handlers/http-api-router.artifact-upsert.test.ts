@@ -76,6 +76,21 @@ const PRODUCT_PARTS_INDEX_MARKDOWN = [
   "",
 ].join("\n");
 
+const APPLICATION_FOUNDATION_ENVELOPE_MARKDOWN = [
+  "# Application Foundation Envelope",
+  "",
+  "## Application Root",
+  "- The application root is the local desktop workflow shell.",
+  "",
+  "## Product Parts",
+  "- Local Core Runtime",
+  "- Project Manager",
+  "",
+  "## Shared Zones",
+  "- Shared workflow templates and orchestration state.",
+  "",
+].join("\n");
+
 test("artifact upsert saves diagram modules staged index and dynamic product part files", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "http-api-router-product-parts-upsert-")
@@ -178,6 +193,99 @@ test("artifact upsert saves diagram modules staged index and dynamic product par
     assert.equal(
       await readFile(productPartPath, "utf8"),
       PRODUCT_PART_MARKDOWN
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("artifact upsert saves application foundation envelope markdown for the stage session", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "http-api-router-afe-upsert-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    const router = new HttpApiRouter({
+      app: {} as never,
+      fileDropService: {
+        clear() {
+          // Test stub.
+        },
+      } as never,
+      getStatusInfo: () => ({
+        clientCount: 0,
+        sessionData: null,
+        providerData: null,
+      }),
+      logger: new Logger("error"),
+      onWorkspaceSessionCreated: undefined,
+      sessionHandler: {} as never,
+      sessionManager: {
+        getSession(sessionId: string) {
+          if (sessionId !== "session-afe") {
+            return null;
+          }
+          return {
+            id: sessionId,
+            initiativeSlug: workspaceSlug,
+            runSlug: null,
+            stage: "application_foundation_envelope",
+            workspacePath: workspaceRoot,
+          };
+        },
+      } as never,
+      sessionStorage: {} as never,
+      systemHandler: {} as never,
+      workflowEventsService: {} as never,
+      workflowStateService: {} as never,
+    });
+
+    const capture = createResponseCapture();
+    await (
+      router as unknown as {
+        handleArtifactUpsertSave(req: Request, res: Response): Promise<void>;
+      }
+    ).handleArtifactUpsertSave(
+      {
+        body: {
+          sessionId: "session-afe",
+          artifacts: [
+            {
+              slot: "workspace.application_foundation_envelope",
+              markdown: APPLICATION_FOUNDATION_ENVELOPE_MARKDOWN,
+            },
+          ],
+        },
+      } as Request,
+      capture.response
+    );
+
+    const result = capture.read() as {
+      readonly statusCode: number;
+      readonly payload: {
+        readonly saved: readonly {
+          readonly slot: string;
+          readonly path: string;
+          readonly changed: boolean;
+        }[];
+      };
+    };
+
+    assert.equal(result.statusCode, 200);
+    assert.deepEqual(
+      result.payload.saved.map((entry) => entry.slot),
+      ["workspace.application_foundation_envelope"]
+    );
+
+    const artifactPath = path.join(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`
+    );
+
+    assert.equal(
+      await readFile(artifactPath, "utf8"),
+      APPLICATION_FOUNDATION_ENVELOPE_MARKDOWN
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
