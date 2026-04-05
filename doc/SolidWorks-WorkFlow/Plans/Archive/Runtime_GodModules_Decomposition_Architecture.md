@@ -1,6 +1,6 @@
 # Runtime God-Modules Decomposition Architecture
 
-**Status:** Approved for Wave 2026-03-30
+**Status:** Archived after closeout (2026-04-05)
 **Created:** 2026-03-27
 **Owner:** Oleksandr
 

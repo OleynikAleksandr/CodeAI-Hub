@@ -52,7 +52,7 @@
 4. `doc/TODO/todo-plan.md`
 5. `doc/Sessions/Archive/Session167.md` (THIS REPORT)
 6. `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`
-7. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+7. `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 
 > Если до старта следующей сессии будет добавлен audit-файл, его нужно прочитать перед началом реализации и синхронно отразить findings в planning-doc и `todo-plan.md`.
 

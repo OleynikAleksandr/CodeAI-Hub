@@ -23,9 +23,10 @@
 
 <!--
 Language rule:
-- Runtime may require user-facing values in this artifact to follow the configured `Artifacts for the User` language.
-- Keep DSL headers, field names, ids, and staged status tokens exactly as defined by the staged contract.
-- Translate only free-text user-facing values such as titles, purposes, notes, and other descriptive content where the contract allows free prose.
+- Runtime may require descriptive prose in this artifact to follow the configured `Artifacts for the User` language.
+- Keep Product Part names/titles, DSL headers, field names, ids, and staged status tokens exactly as defined by the staged contract.
+- Keep Cluster / Module canonical names in English when they are referenced from this artifact or surrounding staged context.
+- Translate only descriptive prose such as purposes, notes, assumptions / open questions, and other free-text content where the contract allows prose.
 
 Canonical authoring rules:
 - Title line must be exactly `# Product Parts Index`

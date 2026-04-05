@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.894] - 2026-04-05
+### Fixed
+- **`Diagram Modules` now keeps canonical entity naming in English even when `Artifacts for the User` is localized**: `Product Part`, `Cluster`, and `Module` names/titles no longer follow the artifact-language translation path, while explanatory prose such as `Purpose`, `Responsibility`, notes, and assumptions still follows the selected user-facing artifact language.
+- **The runtime prompt contract now separates canonical structural names from localizable prose**: the `diagram_modules` prompt pack and bundled prompt assets explicitly protect English-only entity naming, eliminating the earlier ambiguity that let the agent translate `Product Part` titles into Russian.
+- **Bundled template sync coverage now guards the naming boundary**: prompt-pack and template-sync tests now fail if the shipped `Diagram Modules` assets stop enforcing English-only entity names.
+
 ## [1.1.893] - 2026-04-05
 ### Changed
 - **Codex user-visible output now uses provider-native raw rollout JSONL as the single dialog source of truth**: `thinking`, `commentary`, and `final_answer` segmentation now follows rollout `event_msg` semantics instead of the semantically poorer SDK `item.*` mirror.

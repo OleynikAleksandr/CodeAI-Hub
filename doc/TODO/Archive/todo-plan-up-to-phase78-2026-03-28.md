@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session166.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session166.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/PostAudit_TailCleanup_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 - Этот `TODO Plan` реализует один scope: **post-audit tail cleanup** после успешного и вручную подтверждённого релиза `1.1.819`
 - Текущий baseline считается рабочим: пользователь подтвердил, что релиз `1.1.819` функционирует корректно; значит текущая работа ограничена **behavior-preserving cleanup/refactor**, а не feature-expansion
 - Главная цель плана: подчищать хвосты после аудита, убирать release/package noise и довести handwritten codebase до контракта `1 class / 1 file` и `≤300` строк handwritten source на файл

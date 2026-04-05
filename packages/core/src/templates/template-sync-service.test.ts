@@ -67,7 +67,10 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
   {
     relativePath:
       ".codeai-hub/templates/diagram_modules/diagram-modules-prompt.md",
-    snippets: ["formal subsystem container", "product-parts.index.md"],
+    snippets: [
+      "formal subsystem container",
+      "keep `Product Part`, `Cluster`, and `Module` names/titles in canonical English",
+    ],
   },
   {
     relativePath:
@@ -75,7 +78,7 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     snippets: [
       "# Product Parts Index",
       "- Status: planned",
-      "generation order",
+      "Keep Product Part names/titles",
     ],
   },
   {
@@ -84,7 +87,7 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
     snippets: [
       "# Product Part:",
       "File materializes exactly one Product Part",
-      "provider-session-bridge",
+      "Keep Product Part, Cluster, and Module names/titles in canonical English.",
     ],
   },
   {
@@ -92,7 +95,7 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
       ".codeai-hub/templates/diagram_modules/diagram-modules-field-reference.md",
     snippets: [
       "The staged artifacts for this step consist of:",
-      "`Product Part` is the top level of the product in this DSL",
+      "the canonical English name of the top-level product block",
       "## Simple Relations (inside the product-part file)",
     ],
   },

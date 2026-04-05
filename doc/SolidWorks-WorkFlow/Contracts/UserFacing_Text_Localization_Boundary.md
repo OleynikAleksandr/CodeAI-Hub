@@ -80,6 +80,11 @@ Use for product-authored content that the user edits, reviews, or exports, such 
 - final user-facing generated artifact scaffolding owned by the product;
 - brief user-facing workflow chat updates when the runtime explicitly threads artifact language into agent-facing instructions.
 
+When an artifact mixes stable structural identifiers with descriptive prose, the ownership decision may be split inside the same artifact:
+
+- canonical structural names, ids, and titles that function as stable architecture vocabulary may remain English-only;
+- descriptive prose such as purposes, responsibilities, notes, and assumptions may follow the configured `Artifacts for the User` language.
+
 ### 3.5. `Internal Agent Instructions`
 
 Use for:
@@ -104,6 +109,7 @@ When adding or changing user-facing product copy:
 4. Do not place user-facing copy inside provider/internal prompt assets unless that surface is intentionally an internal English-only boundary.
 5. If one surface contains multiple text kinds, split them by category instead of forcing one category onto the whole file.
 6. If a workflow prompt contains both internal instructions and an explicit language directive for user-facing artifacts/chat updates, only the resulting user-facing output belongs to `Artifacts for the User`; the prompt body itself remains `Internal Agent Instructions`.
+7. For mixed DSL artifacts such as `Diagram Modules`, treat canonical `Product Part` / `Cluster` / `Module` names and titles as structural vocabulary, not as automatically localizable prose.
 
 ---
 

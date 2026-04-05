@@ -10,7 +10,7 @@
 
 ## Work summary
 - Дополнил активную фазу `Claude SDK Auth Manager Decomposition Wave` отдельным финальным stream-ом по release-сборке.
-- Синхронизировал `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`: после verification теперь обязателен release stream с `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, а archival closeout разрешён только после успешной сборки.
+- Синхронизировал `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`: после verification теперь обязателен release stream с `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, а archival closeout разрешён только после успешной сборки.
 - Обновил `doc/TODO/todo-plan.md`: добавлен `Release Build` stream, а `Phase Closeout` сдвинут после него, чтобы порядок фазы оставался консистентным.
 
 ## Git commits
@@ -25,7 +25,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
-5. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+5. `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 6. `doc/TODO/todo-plan.md`
 7. `doc/Sessions/Archive/Session206.md` (THIS REPORT)
 

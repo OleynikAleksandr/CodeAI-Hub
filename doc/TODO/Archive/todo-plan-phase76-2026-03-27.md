@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session165.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+- Перед началом каждого stream открыть: `AGENTS.md`, `doc/Sessions/Archive/Session165.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 - Каждая микро-задача должна затрагивать не более 3 файлов; если scope разрастается, stream нужно дробить заново
 - Каждая микро-задача оформляется парой пунктов: (1) реализация/изменения, (2) отдельный пункт `Git Commit: ...`
 - Статусы: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`
@@ -58,7 +58,7 @@
 30. [DONE] Git Commit: `test(gemini): split session manager suites` (hash: 87a4425a; stream `23-30` зафиксирован одним атомарным commit)
 
 ### Stream: Wave 2 debt inventory after first façade cuts
-31. [DONE] После декомпозиции трёх ключевых файлов переприоритизировать вторую волну oversized debt и обновить explicit allowlist только в сторону уменьшения. Новое состояние после `./scripts/check-architecture.sh`: allowlisted oversized files `30`, warning zone `64`; из allowlist удалены `packages/core/src/provider-registry/index.ts` и `packages/Gemini_Module/src/session/gemini-session-manager.ts`; top wave-2 backlog теперь начинается с `http-api-router.ts`, `remote-bridge/index.ts`, `diagram-modules-parser.ts`, `workspace-runtime-facade.ts`, `config/index.ts`, `remote-bridge/types.ts` и provider message processors. Scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): reprioritize oversized debt wave two`
+31. [DONE] После декомпозиции трёх ключевых файлов переприоритизировать вторую волну oversized debt и обновить explicit allowlist только в сторону уменьшения. Новое состояние после `./scripts/check-architecture.sh`: allowlisted oversized files `30`, warning zone `64`; из allowlist удалены `packages/core/src/provider-registry/index.ts` и `packages/Gemini_Module/src/session/gemini-session-manager.ts`; top wave-2 backlog теперь начинается с `http-api-router.ts`, `remote-bridge/index.ts`, `diagram-modules-parser.ts`, `workspace-runtime-facade.ts`, `config/index.ts`, `remote-bridge/types.ts` и provider message processors. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`, `scripts/check-architecture-rules/max-lines-debt-allowlist.txt`, `doc/TODO/todo-plan.md`. Expected commit: `docs(architecture): reprioritize oversized debt wave two`
 32. [DONE] Git Commit: `docs(architecture): reprioritize oversized debt wave two` (hash: 0072cb12)
 
 ### Stream: Workflow quality-surface cleanup

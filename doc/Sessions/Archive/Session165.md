@@ -50,7 +50,7 @@
 ### Подготовлена новая архитектурная фаза декомпозиции
 
 - Создан planning-док:
-  - `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 - Заархивирован предыдущий `todo-plan.md`:
   - `doc/TODO/Archive/todo-plan-phase75-2026-03-27.md`
 - Создан новый `doc/TODO/todo-plan.md` с:
@@ -85,7 +85,7 @@
 - `scripts/README.md`
 - `package.json`
 - `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md`
-- `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 - `doc/TODO/todo-plan.md`
 - `doc/TODO/Archive/todo-plan-phase75-2026-03-27.md`
 
@@ -97,7 +97,7 @@
 
 1. `AGENTS.md`
 2. `doc/Sessions/Archive/Session165.md` (THIS REPORT)
-3. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 4. `doc/TODO/todo-plan.md`
 5. `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md`
 

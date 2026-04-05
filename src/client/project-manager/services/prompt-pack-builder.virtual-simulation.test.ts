@@ -98,7 +98,13 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("Target language code: `de`."), true);
   assert.equal(
     pack.content.includes(
-      "Keep contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical form."
+      "Keep Product Part / Cluster / Module names and titles, contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical English form."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Localize only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and brief user-facing chat updates."
     ),
     true
   );

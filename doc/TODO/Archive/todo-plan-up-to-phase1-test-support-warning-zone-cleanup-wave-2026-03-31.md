@@ -25,7 +25,7 @@
 ## Required documents to review before work
 1. `doc/Sessions/Archive/Session207.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-3. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+3. `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 4. `doc/SolidWorks-WorkFlow/Plans/Archive/TestSupport_WarningZone_Cleanup_Architecture.md`
 5. `doc/TODO/todo-plan.md` (THIS FILE)
 

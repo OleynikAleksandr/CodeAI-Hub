@@ -15,7 +15,7 @@ General rules:
 
 Fields in `product-parts.index.md`:
 - `Id`: a stable kebab-case identifier. It must match the heading `### Product Part: <part-id>`.
-- `Title`: a user-readable name of the top-level product block.
+- `Title`: the canonical English name of the top-level product block. It is not localized.
 - `Purpose`: one short line explaining why this top-level block exists.
 - `Status`: staged flow status: `planned`, `in_progress`, `generated`, `reviewed`.
 
@@ -37,8 +37,10 @@ Format inside `product-parts/<part-id>.md`:
 
 Rules:
 - `Cluster` is a formal subsystem container, not a loose topic label or folder grouping;
+- the `cluster-id` is the canonical English cluster name source; the visible cluster title is the English humanized form of that id unless a richer DSL later carries an explicit English title;
 - use `Cluster` only where there is a real subsystem made of several modules;
 - do not create decorative clusters that only repeat a label without real modules;
+- keep cluster names/titles in English; localize only descriptive prose such as `Purpose` and notes;
 - do not use loose analytical labels such as `core`, `shared`, `utils`, `services`, `stores`, or `adapters` unless they are justified by the upstream product context.
 
 ## Module (inside the product-part file)
@@ -52,14 +54,16 @@ Modules are described in tables inside Owned Clusters or Standalone Modules sect
 ```
 
 Fields:
-- `module-id`: a stable kebab-case identifier;
+- `module-id`: a stable kebab-case identifier and the canonical English module name source;
 - `kind`: a required DSL classifier; one of `service`, `library`, `adapter`, `gateway`, `store`, `external`. It is a secondary classification, so do not derive the architecture from `kind`;
 - `Responsibility`: one short line describing the main responsibility of the module.
 
 Rules:
 - `Module` is the smallest standalone functional boundary that still makes sense to the user;
+- the visible module title is the English humanized form of `module-id` unless a richer DSL later carries an explicit English title;
 - a standalone module should stay outside clusters until there is a real subsystem reason to group it there;
 - prefer one standalone module over a fake cluster if a real subsystem boundary has not appeared yet;
+- keep module names/titles in English; localize only descriptive prose such as `Responsibility` and notes;
 - if several peer integrations share one contract but still do not form a real subsystem boundary, model them as peer modules rather than as an artificial cluster.
 
 ## Simple Relations (inside the product-part file)

@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules)
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Source of truth для этой фазы: `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+- Source of truth для этой фазы: `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 - Scope этой волны ограничен тремя production hotspot-направлениями: `session-request-handler.ts`, `sdk-auth-manager.ts`, `gemini-installer.ts` + `cli-bridge.ts`
 - Test files и test helpers из warning-zone в эту фазу не входят.
 - Каждая подзадача должна затрагивать не более 3 файлов.
@@ -23,7 +23,7 @@
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 5. `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
-6. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+6. `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 7. `doc/TODO/todo-plan.md` (THIS FILE)
 
 ---
@@ -33,7 +33,7 @@
 Goal: behavior-preserving decomposition of the first three production warning-zone hotspots after the 500-line gate, without touching test-only warning files and without reopening Gemini feature work.
 
 ### Stream: Planning Intake
-1. [DONE] Docs: обновить planning-док `Runtime_GodModules_Decomposition_Architecture.md` под актуальную волну `400-500`, зафиксировать, что в этой фазе идут только `session-request-handler.ts`, `sdk-auth-manager.ts`, `gemini-installer.ts` + `cli-bridge.ts`, и переоткрыть active `todo-plan`. Scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): start 400-500 hotspot decomposition wave`
+1. [DONE] Docs: обновить planning-док `Runtime_GodModules_Decomposition_Architecture.md` под актуальную волну `400-500`, зафиксировать, что в этой фазе идут только `session-request-handler.ts`, `sdk-auth-manager.ts`, `gemini-installer.ts` + `cli-bridge.ts`, и переоткрыть active `todo-plan`. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`, `doc/TODO/todo-plan.md`. Expected commit: `docs(plan): start 400-500 hotspot decomposition wave`
 2. [DONE] Git Commit: `docs(plan): start 400-500 hotspot decomposition wave` (hash: `f890575c`)
 
 ### Stream: Core Remote-Bridge Thin Facade Closure

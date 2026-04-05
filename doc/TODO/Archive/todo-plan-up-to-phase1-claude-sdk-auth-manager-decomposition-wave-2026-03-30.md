@@ -2,7 +2,7 @@
 
 ## Правила выполнения (Execution Rules)
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Source of truth для этой фазы: `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+- Source of truth для этой фазы: `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 - Scope этой волны ограничен одним production hotspot: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`
 - Test files, `claude-usage-limits-facade.ts`, `launcher_handler.cc` и другие warning-zone кандидаты в эту фазу не входят.
 - Каждая подзадача должна затрагивать не более 3 файлов.
@@ -19,7 +19,7 @@
 1. `doc/Sessions/Archive/Session204.md`
 2. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 3. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
-4. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+4. `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 5. `doc/TODO/Archive/todo-plan-up-to-phase1-runtime-400-500-production-hotspots-wave-1-2026-03-30.md`
 6. `doc/TODO/todo-plan.md` (THIS FILE)
 

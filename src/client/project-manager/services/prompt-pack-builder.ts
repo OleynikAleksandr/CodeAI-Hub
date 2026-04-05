@@ -270,7 +270,10 @@ const buildArtifactLanguageBlock = (
     `- Write the final user-facing artifact and brief user-facing chat updates in \`${normalizedArtifactLanguage}\`.`,
     "- Do not rewrite internal instructions to match this language.",
     stage === "diagram_modules"
-      ? "- Keep contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical form."
+      ? "- Keep Product Part / Cluster / Module names and titles, contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical English form."
+      : null,
+    stage === "diagram_modules"
+      ? "- Localize only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and brief user-facing chat updates."
       : null,
   ];
   return lines.filter((entry): entry is string => Boolean(entry)).join("\n");

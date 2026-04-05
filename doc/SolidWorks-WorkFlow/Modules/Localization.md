@@ -196,6 +196,7 @@ Important live behaviors:
 - current default engine id is `google-gtx`.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - workflow-created user-facing artifact shell text and brief user-facing workflow chat updates may follow the configured `Artifacts for the User` language, but internal prompt assets remain outside Localization materialization and stay English-only.
+- mixed DSL artifacts may keep canonical structural names/titles in English even while surrounding descriptive prose follows `Artifacts for the User`; `Diagram Modules` `Product Part` / `Cluster` / `Module` naming is the live reference case.
 
 ---
 
@@ -245,6 +246,7 @@ Current live browser behavior:
 8. Every text created or shown by the product must carry an explicit text category marker; automatic category guessing is not allowed.
 9. `Internal Agent Instructions` must stay outside user-facing localization settings and remain English-only unless a separate technical contract explicitly says otherwise.
 10. `Artifacts for the User` may influence workflow-created artifact shell text and brief user-facing chat updates, but it must not be used to translate internal prompt bodies or hidden provider instructions.
+11. Structural vocabulary inside user-facing workflow DSLs may stay English-only when that vocabulary acts as the canonical semantic identifier set for runtime parsing and rendering.
 
 ---
 

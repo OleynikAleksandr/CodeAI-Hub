@@ -10,7 +10,7 @@
 
 ## Work summary
 - Переоткрыл planning scope для последнего незакрытого production hotspot из исходной warning-zone волны: `packages/Claude_Module/src/auth/sdk-auth-manager.ts`.
-- Обновил `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`, зафиксировав follow-up wave только под `sdk-auth-manager.ts` и явные helper seams: `claude-auth-home-bridge.ts` и `claude-auth-runtime.ts`.
+- Обновил `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`, зафиксировав follow-up wave только под `sdk-auth-manager.ts` и явные helper seams: `claude-auth-home-bridge.ts` и `claude-auth-runtime.ts`.
 - Заменил placeholder в `doc/TODO/todo-plan.md` на новый активный план с одной фазой, четырьмя stream-ами и микро-задачами `<=3` файлов: home-bridge split, runtime split, verification, phase closeout.
 
 ## Git commits
@@ -25,7 +25,7 @@
 2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
 3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 4. `doc/SolidWorks-WorkFlow/Modules/Claude.md`
-5. `doc/SolidWorks-WorkFlow/Plans/Runtime_GodModules_Decomposition_Architecture.md`
+5. `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md`
 6. `doc/TODO/todo-plan.md`
 7. `doc/Sessions/Archive/Session205.md` (THIS REPORT)
 
