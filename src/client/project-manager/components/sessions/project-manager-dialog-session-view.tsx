@@ -32,6 +32,7 @@ const ProjectManagerDialogSessionView = (props: {
         allSessions={[]}
         coreConnectionDetail={connection.detail}
         coreConnectionStatus={connection.status}
+        emptyStateStage={props.intent?.stage ?? null}
         onCloseSession={() => props.onExit()}
         onSelectSession={() => {}}
         onSendMessage={() => {}}
@@ -51,6 +52,7 @@ const ProjectManagerDialogSessionView = (props: {
       allSessions={[session]}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
+      emptyStateStage={props.intent?.stage ?? null}
       onCloseSession={() => props.onExit()}
       onSelectSession={() => {}}
       onSendMessage={(_sessionId, content) => sendMessage(content)}

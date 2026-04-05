@@ -18,11 +18,39 @@ import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId } from "./runtime-session-auto-select";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
+
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
   readonly emptyStatePending?: boolean;
 };
+
+const LAST_DIALOG_INTENT_STORAGE_PREFIX = "codeai.pm.lastDialogIntent.v1:";
+
+const buildLastDialogIntentStorageKey = (workspacePath: string): string =>
+  `${LAST_DIALOG_INTENT_STORAGE_PREFIX}${encodeURIComponent(workspacePath)}`;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const loadLastDialogStage = (workspacePath: string): string | null => {
+  try {
+    const raw = window.localStorage.getItem(
+      buildLastDialogIntentStorageKey(workspacePath)
+    );
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw) as unknown;
+    if (!isRecord(parsed)) {
+      return null;
+    }
+    return typeof parsed.stage === "string" ? parsed.stage : null;
+  } catch {
+    return null;
+  }
+};
+
 const ProjectManagerRuntimeSessionView = ({
   workspacePath,
   preferredSessionId,
@@ -34,6 +62,7 @@ const ProjectManagerRuntimeSessionView = ({
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [emptyStateStage, setEmptyStateStage] = useState<string | null>(null);
   const forcedHiddenSessionIds = useMemo<ReadonlySet<string>>(
     () => new Set(),
     []
@@ -260,6 +289,39 @@ const ProjectManagerRuntimeSessionView = ({
     }
     reload();
   }, [activeSessionId, reload]);
+  useEffect(() => {
+    setEmptyStateStage(workspacePath ? loadLastDialogStage(workspacePath) : null);
+  }, [workspacePath]);
+  useEffect(() => {
+    const handleDialogIntent = (
+      event: Event
+    ) => {
+      const detail = (
+        event as CustomEvent<{
+          readonly workspacePath?: string;
+          readonly stage?: string | null;
+        }>
+      ).detail;
+      if (detail?.workspacePath !== workspacePath) {
+        return;
+      }
+      setEmptyStateStage(typeof detail.stage === "string" ? detail.stage : null);
+    };
+    const handleStageActivated = (
+      event: Event
+    ) => {
+      const stage = (event as CustomEvent<{ readonly stage?: string }>).detail?.stage;
+      if (typeof stage === "string") {
+        setEmptyStateStage(stage);
+      }
+    };
+    window.addEventListener("pm:dialog:open", handleDialogIntent);
+    window.addEventListener("pm:stage:activated", handleStageActivated);
+    return () => {
+      window.removeEventListener("pm:dialog:open", handleDialogIntent);
+      window.removeEventListener("pm:stage:activated", handleStageActivated);
+    };
+  }, [workspacePath]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useRuntimeModelSync(activeSessionId, setSnapshots);
   useSessionResumeIntent({
@@ -288,6 +350,7 @@ const ProjectManagerRuntimeSessionView = ({
       allSessions={sessions}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
+      emptyStateStage={emptyStateStage}
       onCloseSession={hideSession}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}

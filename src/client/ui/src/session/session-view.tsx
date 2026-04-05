@@ -57,6 +57,7 @@ interface SessionViewProps {
   readonly coreConnectionDetail?: string;
   readonly coreConnectionStatus: "connecting" | "ready" | "error";
   readonly emptyStatePending?: boolean;
+  readonly emptyStateStage?: string | null;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onDismissSwitchOffer?: () => void;
   readonly onRetryInPlace?: () => void;
