@@ -14,13 +14,15 @@
 
 ### Stream: Planning And Scope
 1. [DONE] Extend the `Application Foundation Envelope` planning doc with the post-release continuity/persistence acceptance contract and replace the placeholder active TODO with this execution plan; scope: `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(plan): define application foundation envelope continuity hotfix scope`
-2. [DONE] Git Commit: `docs(plan): define application foundation envelope continuity hotfix scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): define application foundation envelope continuity hotfix scope` (hash: `b15e17b87`)
 
 ### Stream: Canonical Continuity Stage Identity
-1. [TODO] Add `application_foundation_envelope` to the continuity stage contract and core chain persistence normalization so the stage no longer falls back to `unknown`; scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/continuity-tracker.ts`; expected commit message: `fix(core-continuity): recognize application foundation envelope stage`
-2. [TODO] Git Commit: `fix(core-continuity): recognize application foundation envelope stage` (hash: TBD)
-3. [TODO] Align handoff/report and last-active persistence with the canonical `application_foundation_envelope` stage id; scope: `packages/core/src/session-continuity/handoff-report-writer.ts`, `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/workflow/state/workflow-last-active-store.ts`; expected commit message: `fix(core-workflow): preserve application foundation envelope stage identity`
-4. [TODO] Git Commit: `fix(core-workflow): preserve application foundation envelope stage identity` (hash: TBD)
+1. [DONE] Extend the continuity stage contract and chain-path normalization so `application_foundation_envelope` no longer falls back to `unknown` during chain persistence; scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `fix(core-continuity): store application foundation envelope stage`
+2. [DONE] Git Commit: `fix(core-continuity): store application foundation envelope stage` (hash: TBD)
+3. [TODO] Teach the continuity tracker and handoff report writer to preserve the canonical `application_foundation_envelope` stage path; scope: `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`; expected commit message: `fix(core-continuity): keep application foundation envelope continuity paths`
+4. [TODO] Git Commit: `fix(core-continuity): keep application foundation envelope continuity paths` (hash: TBD)
+5. [TODO] Preserve `application_foundation_envelope` in handoff prompts and workflow last-active readback so cold-start state cannot drop the stage; scope: `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/workflow/state/workflow-last-active-store.ts`; expected commit message: `fix(core-workflow): preserve application foundation envelope stage identity`
+6. [TODO] Git Commit: `fix(core-workflow): preserve application foundation envelope stage identity` (hash: TBD)
 
 ### Stream: Verification
 1. [TODO] Add regression coverage for continuity chain path, handoff path, and workflow last-active readback for `application_foundation_envelope`; scope: `packages/core/src/session-continuity/continuity-store.test.ts`, `packages/core/src/session-continuity/handoff-report-writer.test.ts`, `packages/core/src/workflow/state/workflow-last-active-store.test.ts`; expected commit message: `test(core-stage): guard application foundation envelope persistence`

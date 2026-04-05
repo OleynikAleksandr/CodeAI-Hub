@@ -1,8 +1,33 @@
-export type ContinuityStageId =
+type KnownContinuityStageId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules"
-  | "unknown";
+  | "application_foundation_envelope";
+
+export type ContinuityStageId = KnownContinuityStageId | "unknown";
+
+const KNOWN_CONTINUITY_STAGE_IDS = new Set<KnownContinuityStageId>([
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "application_foundation_envelope",
+]);
+
+const isKnownContinuityStageId = (
+  value: string | null | undefined
+): value is KnownContinuityStageId =>
+  typeof value === "string" &&
+  KNOWN_CONTINUITY_STAGE_IDS.has(value as KnownContinuityStageId);
+
+export const normalizeContinuityStageId = (
+  value: string | null | undefined
+): ContinuityStageId => {
+  const trimmed = value?.trim();
+  if (!trimmed) {
+    return "unknown";
+  }
+  return isKnownContinuityStageId(trimmed) ? trimmed : "unknown";
+};
 
 export interface TokenUsageSnapshot {
   readonly limit: number;

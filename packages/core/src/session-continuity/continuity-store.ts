@@ -5,30 +5,13 @@ import type {
   ContinuityChain,
   ContinuityChainSummary,
   ContinuitySegment,
-  ContinuityStageId,
 } from "./continuity-types";
+import { normalizeContinuityStageId } from "./continuity-types";
 import { ContinuityIndexRegistry } from "./index-registry";
 
 const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
 const CHAIN_FILE_NAME = "chain.json";
-
-const normalizeStage = (
-  value: string | null | undefined
-): ContinuityStageId => {
-  if (!value || value.trim().length === 0) {
-    return "unknown";
-  }
-  const trimmed = value.trim();
-  if (
-    trimmed === "description" ||
-    trimmed === "virtual_simulation" ||
-    trimmed === "diagram_modules"
-  ) {
-    return trimmed;
-  }
-  return "unknown";
-};
 
 const readJson = async <T>(filePath: string): Promise<T | null> => {
   try {
@@ -55,7 +38,7 @@ const buildContinuityChainPath = (options: {
     CONTINUITY_ROOT,
     options.workspaceSlug,
     CONTINUITY_DIR,
-    normalizeStage(options.stage),
+    normalizeContinuityStageId(options.stage),
     options.rootSessionId,
     CHAIN_FILE_NAME
   );
@@ -119,7 +102,7 @@ const createChain = (options: {
   // rootSessionId (legacy meaning), and let readers fall back when it's missing.
   dialogId: options.rootSessionId,
   workspaceSlug: options.workspaceSlug,
-  stage: normalizeStage(options.stage),
+  stage: normalizeContinuityStageId(options.stage),
   segments: [],
   updatedAt: options.timestamp,
 });
