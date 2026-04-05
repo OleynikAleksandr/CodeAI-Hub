@@ -1,4 +1,8 @@
 import type React from "react";
+import {
+  ApplicationFoundationEnvelopeHelp,
+  ApplicationFoundationEnvelopePanel,
+} from "../application-foundation-envelope/application-foundation-envelope-panel";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
@@ -15,7 +19,10 @@ import {
   type ArtifactHeaderMode,
 } from "./stage-artifact-mode";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
-import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
+import {
+  APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+  VIRTUAL_SIMULATION_TOOL_LABEL,
+} from "./use-workflow-tool-select";
 
 interface SelectedArtifact {
   readonly workspacePath: string;
@@ -128,6 +135,9 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     if (activeTool === "Diagram Modules") {
       return <DiagramModulesHelp />;
     }
+    if (activeTool === APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL) {
+      return <ApplicationFoundationEnvelopeHelp />;
+    }
   }
   if (showSourceViewer && sourceArtifact) {
     if (!sourceArtifactAvailable) {
@@ -194,6 +204,13 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
       activeWorkspacePath,
       activeWorkspaceSlug,
       artifactRefreshKey
+    );
+  }
+  if (activeTool === APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL) {
+    return renderStagePanel(
+      ApplicationFoundationEnvelopePanel,
+      activeWorkspacePath,
+      activeWorkspaceSlug
     );
   }
   if (activeTool === "Description" && hasDescriptionSession && selectedArtifact === null) {
