@@ -20,9 +20,9 @@
 4. [DONE] Git Commit: `docs(todo): slice codex empty terminal answer hotfix plan` (hash: `890f9b5e1`)
 
 ### Stream: Codex Turn Recovery
-1. [IN_PROGRESS] Add a narrow Codex router fallback that preserves a substantive assistant candidate when a later reasoning tail is followed by an empty terminal assistant completion (scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`; expected commit: `fix(codex): preserve substantive assistant on empty terminal turn`)
-2. [TODO] Git Commit: `fix(codex): preserve substantive assistant on empty terminal turn` (hash: TBD)
-3. [TODO] Add a regression test for the observed sequence `substantive agent_message -> reasoning tail -> progress check -> empty terminal agent_message` (scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `test(codex): cover empty terminal assistant recovery`)
+1. [DONE] Add a narrow Codex router fallback that preserves a substantive assistant candidate when a later reasoning tail is followed by an empty terminal assistant completion (scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`; expected commit: `fix(codex): preserve substantive assistant on empty terminal turn`)
+2. [DONE] Git Commit: `fix(codex): preserve substantive assistant on empty terminal turn` (hash: `c9ee21491`)
+3. [DONE] Add a regression test for the observed sequence `substantive agent_message -> reasoning tail -> progress check -> empty terminal agent_message` (scope: `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit: `test(codex): cover empty terminal assistant recovery`)
 4. [TODO] Git Commit: `test(codex): cover empty terminal assistant recovery` (hash: TBD)
 
 ### Stream: Verification And Release
