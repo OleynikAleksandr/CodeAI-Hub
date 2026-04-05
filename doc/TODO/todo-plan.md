@@ -14,11 +14,11 @@
 ## Phase 1 — Application Foundation Envelope Tree And Session Parity Hotfix (owner: Codex, updated: 2026-04-05)
 
 ### Stream: Planning And Scope
-1. [IN_PROGRESS] Extend the `Application Foundation Envelope` planning doc with the post-release tree/session parity contract and replace the placeholder active TODO with this execution plan; scope: `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(plan): define application foundation envelope tree parity hotfix scope`
-2. [TODO] Git Commit: `docs(plan): define application foundation envelope tree parity hotfix scope` (hash: TBD)
+1. [DONE] Extend the `Application Foundation Envelope` planning doc with the post-release tree/session parity contract and replace the placeholder active TODO with this execution plan; scope: `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(plan): define application foundation envelope tree parity hotfix scope`
+2. [DONE] Git Commit: `docs(plan): define application foundation envelope tree parity hotfix scope` (hash: `d7be369f8`)
 
 ### Stream: Workflow Tree Parity
-1. [TODO] Add a canonical artifact availability probe for `application-foundation-envelope.md` and wire it into the workspace tree stage context; scope: `src/client/project-manager/components/layout/use-application-foundation-envelope-artifact-availability.ts`, `src/client/project-manager/components/layout/use-application-foundation-envelope-artifact-availability.test.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm-afe): probe application foundation envelope artifact availability`
+1. [IN_PROGRESS] Add a canonical artifact availability probe for `application-foundation-envelope.md` and wire it into the workspace tree stage context; scope: `src/client/project-manager/components/layout/use-application-foundation-envelope-artifact-availability.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm-afe): probe application foundation envelope artifact availability`
 2. [TODO] Git Commit: `feat(pm-afe): probe application foundation envelope artifact availability` (hash: TBD)
 3. [TODO] Build `Application Foundation Envelope` tree children with the same session + artifact contract used by mature workflow stages; scope: `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm-afe): add application foundation envelope branch nodes`
 4. [TODO] Git Commit: `feat(pm-afe): add application foundation envelope branch nodes` (hash: TBD)

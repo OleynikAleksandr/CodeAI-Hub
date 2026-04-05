@@ -22,6 +22,7 @@ import {
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
+import { useApplicationFoundationEnvelopeArtifactAvailability } from "./use-application-foundation-envelope-artifact-availability";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
@@ -83,6 +84,12 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
 
   const diagramModulesArtifactAvailable =
     useDiagramModulesArtifactAvailability({
+      enabled: Boolean(selectedWorkspaceId),
+      workspacePath,
+      workspaceSlug,
+    });
+  const applicationFoundationEnvelopeArtifactAvailable =
+    useApplicationFoundationEnvelopeArtifactAvailability({
       enabled: Boolean(selectedWorkspaceId),
       workspacePath,
       workspaceSlug,
@@ -205,6 +212,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       descriptionArtifactAvailable,
       virtualSimulationArtifactAvailable,
       diagramModulesArtifactAvailable,
+      applicationFoundationEnvelopeArtifactAvailable,
       selectArtifact,
       dispatchDialogOpenIntent,
       clearArtifactWithTool,
