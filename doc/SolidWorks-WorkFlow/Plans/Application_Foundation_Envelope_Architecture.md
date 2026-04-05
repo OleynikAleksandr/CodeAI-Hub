@@ -416,6 +416,30 @@
 2. route every new PM surface of this stage through the shared localization runtime;
 3. stop relying on raw English concatenation such as `Application Foundation Envelope ${providerTitle}` for user-visible labels.
 
+### 6.7. Workflow tree and session-surface parity
+
+После post-release локализационного hotfix остаётся ещё один обязательный UI parity contract:
+
+- в левом workflow tree stage `Application Foundation Envelope` должен вести себя так же, как уже зрелые continuity stages;
+- раскрываемый stage node обязан materialize-ить две отдельные child-lines:
+  - session line с label формата `{stageLabel} {providerTitle}`;
+  - artifact line с canonical filename `application-foundation-envelope.md`;
+- выбор любой из этих child-lines должен синхронно открывать ту же stage-session и тот же canonical artifact, если они уже существуют;
+- toolbar click, stage click и workspace auto-select не должны терять этот sync contract;
+- если runtime/dialog session временно ещё не восстановлена, empty-state на правой панели обязан ссылаться на текущий workflow stage, а не на Description-specific onboarding.
+
+Практический смысл этого правила:
+
+- пользователь должен видеть, что stage уже materialize-ил свой canonical artifact;
+- пользователь должен понимать, какая именно provider-session относится к этому artifact;
+- UI не должен откатываться к старому description onboarding copy только потому, что session resolution занял лишнюю секунду или dialog binding ещё догружается.
+
+Следовательно, corrective scope после релиза `1.1.889` обязан:
+
+1. добавить canonical artifact availability probe для `application-foundation-envelope.md`;
+2. построить для нового stage такой же tree child contract, как у `Virtual Simulation` / `Diagram Modules`;
+3. протянуть current-stage context в session empty-state и дать ему локализуемый AFE-specific copy.
+
 ---
 
 ## 7. Рекомендуемая первая implementation wave
@@ -464,6 +488,16 @@
 2. backfill `Messages for the User` entries for the help/error surfaces;
 3. backfill `UI Labels` entries for stage/shell/session labels;
 4. add regression coverage so a future stage rollout cannot repeat the same omission.
+
+### 7.5. Post-release tree/session parity acceptance
+
+После corrective wave `Application Foundation Envelope` считается доведённым до parity только если одновременно выполняются все условия:
+
+1. в левом workflow tree у stage есть отдельная session line и отдельная artifact line;
+2. artifact line использует canonical filename `application-foundation-envelope.md`;
+3. session line использует provider-aware label и открывает ту же continuity/dialog session;
+4. toolbar/stage click и workspace auto-select поднимают тот же artifact/session pair;
+5. при отсутствии восстановленной session empty-state на правой панели больше не показывает Description-specific guidance для AFE.
 
 ---
 
