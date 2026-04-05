@@ -72,6 +72,11 @@ const VIRTUAL_SIMULATION_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: "virtual_simulation/virtual-simulation-prompt.md",
 };
 
+const APPLICATION_FOUNDATION_ENVELOPE_TEMPLATE_PATHS: WorkflowContractPaths = {
+  prompt:
+    "application_foundation_envelope/application-foundation-envelope-prompt.md",
+};
+
 const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
   prompt: resolveSyncedDiagramTemplateCandidates(
     "diagram_modules/diagram-modules-prompt.md",
@@ -368,6 +373,10 @@ export const buildDescriptionContract =
 export const buildVirtualSimulationContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(VIRTUAL_SIMULATION_TEMPLATE_PATHS);
+
+export const buildApplicationFoundationEnvelopeContract =
+  async (): Promise<WorkflowContractPayload | null> =>
+    buildWorkflowContract(APPLICATION_FOUNDATION_ENVELOPE_TEMPLATE_PATHS);
 
 export const buildDiagramModulesContract =
   async (): Promise<WorkflowContractPayload | null> =>

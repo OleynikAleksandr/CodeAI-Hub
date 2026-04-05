@@ -11,6 +11,7 @@ import {
   handleWorkflowContract,
 } from "./http-api-system-routes";
 import {
+  buildApplicationFoundationEnvelopeContract,
   buildDescriptionContract,
   buildDiagramModulesContract,
   buildVirtualSimulationContract,
@@ -124,6 +125,17 @@ export class HttpApiRouter {
           res,
           buildDiagramModulesContract,
           "Diagram modules"
+        );
+      }
+    );
+    app.get(
+      "/api/v1/orchestrator/application-foundation-envelope-contract",
+      async (_req: Request, res: Response) => {
+        await handleWorkflowContract(
+          this.deps,
+          res,
+          buildApplicationFoundationEnvelopeContract,
+          "Application foundation envelope"
         );
       }
     );

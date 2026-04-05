@@ -33,9 +33,9 @@
 
 ### Stream: Core Contract Endpoint And Persistence
 1. [DONE] Add prompt source asset, generator manifest entry, and regenerate bundled templates for the new step; scope: `packages/core/src/templates/source/application-foundation-envelope-prompt.md`, `scripts/generate-bundled-templates.js`, `packages/core/src/templates/bundled-templates.ts`; expected commit message: `feat: bundle application foundation envelope prompt`
-2. [IN_PROGRESS] Git Commit: `feat: bundle application foundation envelope prompt` (hash: TBD)
-3. [TODO] Expose workflow contract builder and HTTP endpoint for the new step; scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.application-foundation-envelope.test.ts`; expected commit message: `feat: expose application foundation envelope contract`
-4. [TODO] Git Commit: `feat: expose application foundation envelope contract` (hash: TBD)
+2. [DONE] Git Commit: `feat: bundle application foundation envelope prompt` (hash: `1d5a7ef52`)
+3. [DONE] Expose workflow contract builder and HTTP endpoint for the new step; scope: `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.application-foundation-envelope.test.ts`; expected commit message: `feat: expose application foundation envelope contract`
+4. [IN_PROGRESS] Git Commit: `feat: expose application foundation envelope contract` (hash: TBD)
 5. [TODO] Add artifact validation and upsert slot for the canonical envelope markdown; scope: `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; expected commit message: `feat: persist application foundation envelope artifacts`
 6. [TODO] Git Commit: `feat: persist application foundation envelope artifacts` (hash: TBD)
 
