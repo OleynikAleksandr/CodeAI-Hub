@@ -326,6 +326,7 @@ export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
   readonly workspacePath?: string;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
+  readonly resolveSessionLabel: (providerTitle: string) => string;
 }): readonly TreeNode[] => {
   const workflowState = options.workflowState;
   const workspaceSlug = options.workspaceSlug;
@@ -349,7 +350,7 @@ export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
   return [
     {
       id: `workflow:application_foundation_envelope:session:${chain.rootSessionId}`,
-      label: `Application Foundation Envelope ${providerTitle}`,
+      label: options.resolveSessionLabel(providerTitle),
       status: "active",
       visualDepth: 2,
       onSelect: () => {

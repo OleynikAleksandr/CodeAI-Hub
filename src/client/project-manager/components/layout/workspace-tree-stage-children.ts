@@ -18,6 +18,9 @@ export type StageChildrenContext = {
   readonly selectArtifact: (artifactPath: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
+  readonly resolveApplicationFoundationEnvelopeSessionLabel: (
+    providerTitle: string
+  ) => string;
 };
 
 export const resolveStageChildren = (
@@ -63,6 +66,7 @@ export const resolveStageChildren = (
       workspacePath: ctx.workspacePath,
       dispatchDialogOpenIntent: ctx.dispatchDialogOpenIntent,
       clearArtifactWithTool: ctx.clearArtifactWithTool,
+      resolveSessionLabel: ctx.resolveApplicationFoundationEnvelopeSessionLabel,
     });
   }
   return [];

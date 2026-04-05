@@ -56,6 +56,7 @@
   "pm.workflow.stage.virtual_simulation.blocked_title": "BLOCKED: requires Final_Description.md",
   "pm.workflow.stage.diagram_modules.blocked_title": "BLOCKED: requires virtual-simulation.md (DONE)",
   "pm.workflow.stage.application_foundation_envelope.blocked_title": "BLOCKED: requires Diagram Modules aggregate-ready output (DONE)",
+  "pm.workflow.stage.application_foundation_envelope.session_label": "{stageLabel} {providerTitle}",
   "pm.description.provider_picker.title": "Select provider",
   "pm.description.provider_picker.available_label": "Available",
   "pm.description.provider_picker.unavailable_label": "Unavailable",

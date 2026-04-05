@@ -194,6 +194,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       }));
     }
 
+    const applicationFoundationEnvelopeStageLabel = resolveStageLabel(
+      "application_foundation_envelope",
+      t
+    );
     const stageCtx = {
       workflowState,
       workspaceSlug,
@@ -204,6 +208,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       selectArtifact,
       dispatchDialogOpenIntent,
       clearArtifactWithTool,
+      resolveApplicationFoundationEnvelopeSessionLabel: (providerTitle: string) =>
+        t(
+          UI_LABELS_CATEGORY,
+          "pm.workflow.stage.application_foundation_envelope.session_label",
+          "{stageLabel} {providerTitle}",
+          {
+            providerTitle,
+            stageLabel: applicationFoundationEnvelopeStageLabel,
+          }
+        ),
     };
 
     return WORKFLOW_STAGE_ORDER.map((stage) => {
