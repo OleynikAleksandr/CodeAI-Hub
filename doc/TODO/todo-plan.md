@@ -43,9 +43,9 @@
 1. [DONE] Extend client workflow stage ids/order, workflow contract endpoints, and prompt-pack target file mapping; scope: `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/services/prompt-pack-builder.ts`; expected commit message: `feat: add application foundation envelope client contracts`
 2. [DONE] Git Commit: `feat: add application foundation envelope client contracts` (hash: `fe10e0025`)
 3. [DONE] Add the project-manager start-service entry for `application_foundation_envelope` and cover gating/session selection at service level; scope: `src/client/project-manager/services/workflow-step-start-service.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit message: `feat: start application foundation envelope from project manager`
-4. [IN_PROGRESS] Git Commit: `feat: start application foundation envelope from project manager` (hash: TBD)
-5. [TODO] Align prompt-pack template-hint rules for `application_foundation_envelope` and cover the canonical target artifact in client tests; scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit message: `test: cover application foundation envelope prompt pack`
-6. [TODO] Git Commit: `test: cover application foundation envelope prompt pack` (hash: TBD)
+4. [DONE] Git Commit: `feat: start application foundation envelope from project manager` (hash: `04f044509`)
+5. [DONE] Align prompt-pack template-hint rules for `application_foundation_envelope` and cover the canonical target artifact in client tests; scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit message: `test: cover application foundation envelope prompt pack`
+6. [IN_PROGRESS] Git Commit: `test: cover application foundation envelope prompt pack` (hash: TBD)
 
 ### Stream: Project Manager UI Shell
 1. [TODO] Add the new toolbar button after `Diagram Modules` and wire tool-to-stage routing; scope: `src/client/project-manager/components/layout/use-workflow-tool-select.ts`, `src/client/project-manager/components/layout/main-area-utils.ts`, `src/client/project-manager/components/layout/main-area.tsx`; expected commit message: `feat: add application foundation envelope toolbar step`

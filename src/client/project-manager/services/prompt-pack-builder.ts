@@ -276,6 +276,12 @@ const buildArtifactLanguageBlock = (
   return lines.filter((entry): entry is string => Boolean(entry)).join("\n");
 };
 
+const shouldIncludeTemplateHint = (
+  stage: WorkflowStageId,
+  templatePath: string | undefined
+): templatePath is string =>
+  stage === "description" && Boolean(templatePath);
+
 export const buildWorkflowPromptPack = (
   params: WorkflowPromptPackInput
 ): WorkflowPromptPack => {
@@ -307,9 +313,7 @@ export const buildWorkflowPromptPack = (
     `Target path (relative): \`${relativePath}\``,
     `Target path (absolute): \`${absolutePath}\``,
     ...primaryInputLines,
-    params.stage !== "virtual_simulation" &&
-    params.stage !== "diagram_modules" &&
-    params.templatePath
+    shouldIncludeTemplateHint(params.stage, params.templatePath)
       ? `Template (absolute): \`${params.templatePath}\``
       : null,
     ...buildStagePhaseLines(params.stage, fileName),
