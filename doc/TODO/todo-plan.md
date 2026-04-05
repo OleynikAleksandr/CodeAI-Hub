@@ -57,9 +57,9 @@
 7. [DONE] Add branch-node sync and stage-child wiring for the new stage; scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`; expected commit message: `feat: sync application foundation envelope stage nodes`
 8. [DONE] Git Commit: `feat: sync application foundation envelope stage nodes` (hash: `a4e51c7be`)
 9. [DONE] Create the panel shell with inline help and connect it to the main content entry point for `application-foundation-envelope.md`; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit message: `feat: add application foundation envelope panel shell`
-10. [IN_PROGRESS] Git Commit: `feat: add application foundation envelope panel shell` (hash: TBD)
-11. [TODO] Extend the shared artifact repair flow for `application-foundation-envelope.md`; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-panel.tsx`, `src/client/project-manager/components/shared/stage-artifact-content-view.tsx`, `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit message: `feat: integrate application foundation envelope artifact view`
-12. [TODO] Git Commit: `feat: integrate application foundation envelope artifact view` (hash: TBD)
+10. [DONE] Git Commit: `feat: add application foundation envelope panel shell` (hash: `da7e68977`)
+11. [DONE] Extend the shared artifact repair flow for `application-foundation-envelope.md`; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-panel.tsx`, `src/client/project-manager/components/shared/stage-artifact-content-view.tsx`, `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit message: `feat: integrate application foundation envelope artifact view`
+12. [IN_PROGRESS] Git Commit: `feat: integrate application foundation envelope artifact view` (hash: TBD)
 
 ### Stream: Verification
 1. [TODO] Run targeted tests for touched workflow/core/project-manager files and update this plan with results before closing the phase; scope: `packages/core`, `src/client/project-manager`; expected commit message: `test: verify application foundation envelope stage shell`

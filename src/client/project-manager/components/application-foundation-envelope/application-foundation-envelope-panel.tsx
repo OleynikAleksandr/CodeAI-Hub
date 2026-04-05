@@ -1,10 +1,13 @@
 import type React from "react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import type { ProviderStackId } from "../../../../types/provider";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
-import MarkdownContent from "../../../ui/src/session/markdown-content";
 import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
+import { StageArtifactContentView } from "../shared/stage-artifact-content-view";
+import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 
 const USER_MESSAGES_CATEGORY = "system_feedback";
+const startService = new WorkflowStepStartService();
 
 export const ApplicationFoundationEnvelopeHelp: React.FC = () => {
   const { t } = useLocalization();
@@ -106,15 +109,35 @@ export const ApplicationFoundationEnvelopePanel: React.FC<{
     artifactPath,
     stageLabel: "Application Foundation Envelope",
   });
+  const validationError =
+    content && content.trim().length === 0 ? "Файл пустой." : null;
+
+  const handleFixStart = useCallback(
+    async (params: {
+      readonly workspacePath: string;
+      readonly workspaceSlug: string;
+      readonly providerId: string;
+    }): Promise<void> => {
+      await startService.startApplicationFoundationEnvelope({
+        workspacePath: params.workspacePath,
+        workspaceSlug: params.workspaceSlug,
+        providerId: params.providerId as ProviderStackId,
+      });
+    },
+    []
+  );
 
   if (status === "ready" && content !== null) {
     return (
-      <div className="pm-details">
-        <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-          <strong title={artifactPath}>application-foundation-envelope.md</strong>
-        </div>
-        <MarkdownContent className="pm-artifact-markdown" content={content} />
-      </div>
+      <StageArtifactContentView
+        artifactPath={artifactPath}
+        content={content}
+        displayFileName="application-foundation-envelope.md"
+        onFixStart={handleFixStart}
+        validationError={validationError}
+        workspacePath={props.workspacePath}
+        workspaceSlug={props.workspaceSlug}
+      />
     );
   }
 
