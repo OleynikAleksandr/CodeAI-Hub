@@ -22,16 +22,25 @@ export class CodexEventStreamConsumer {
     session: ActiveSession,
     error: unknown
   ) => void;
+  private readonly syncRollout: (
+    session: ActiveSession,
+    mode: "event" | "terminal"
+  ) => Promise<void>;
 
   constructor(
     dispatchEvent: (
       session: ActiveSession,
       event: ThreadEvent
     ) => Promise<void>,
-    onConsumeError: (session: ActiveSession, error: unknown) => void
+    onConsumeError: (session: ActiveSession, error: unknown) => void,
+    syncRollout?: (
+      session: ActiveSession,
+      mode: "event" | "terminal"
+    ) => Promise<void>
   ) {
     this.dispatchEvent = dispatchEvent;
     this.onConsumeError = onConsumeError;
+    this.syncRollout = syncRollout ?? (async () => undefined);
   }
 
   async acquireStartupLockIfNeeded(
@@ -218,7 +227,13 @@ export class CodexEventStreamConsumer {
         }
 
         this.maybeLogFirstEvent(session, firstEvent, result.value.type);
+        if (this.shouldStopConsumingAfterEvent(result.value.type)) {
+          await this.syncRollout(session, "terminal");
+        }
         await this.dispatchEvent(session, result.value);
+        if (!this.shouldStopConsumingAfterEvent(result.value.type)) {
+          await this.syncRollout(session, "event");
+        }
 
         if (result.value.type === "thread.started") {
           safeRelease();
@@ -259,7 +274,13 @@ export class CodexEventStreamConsumer {
       }
 
       this.maybeLogFirstEvent(session, firstEvent, result.value.type);
+      if (this.shouldStopConsumingAfterEvent(result.value.type)) {
+        await this.syncRollout(session, "terminal");
+      }
       await this.dispatchEvent(session, result.value);
+      if (!this.shouldStopConsumingAfterEvent(result.value.type)) {
+        await this.syncRollout(session, "event");
+      }
       if (this.shouldStopConsumingAfterEvent(result.value.type)) {
         this.returnEventsInBackground({
           session,

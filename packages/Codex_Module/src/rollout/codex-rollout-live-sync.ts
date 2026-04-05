@@ -17,6 +17,18 @@ import {
 import { CodexRolloutReader } from "./codex-rollout-reader";
 import { CodexRolloutTailState } from "./codex-rollout-tail-state";
 
+const TERMINAL_DRAIN_ATTEMPTS = 3;
+const TERMINAL_DRAIN_DELAY_MS = 75;
+
+const sleep = (delayMs: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, delayMs);
+  });
+
+interface CodexRolloutSyncResult {
+  readonly advanced: boolean;
+}
+
 export class CodexRolloutLiveSync {
   private readonly dedupeBySession = new WeakMap<
     ActiveSession,
@@ -42,19 +54,20 @@ export class CodexRolloutLiveSync {
     this.thoughtTranslator = new CodexThoughtTranslationAdapter(reporter);
   }
 
-  async sync(session: ActiveSession): Promise<void> {
+  async sync(session: ActiveSession): Promise<CodexRolloutSyncResult> {
     const providerSessionId = session.codexThreadId;
     if (!providerSessionId) {
-      return;
+      return { advanced: false };
     }
 
     const tailState = this.ensureTailState(session);
+    const previousLine = tailState.snapshot()?.nextLine ?? 0;
     const result = await this.reader.readAppendedEntries({
       providerSessionId,
-      sinceLine: tailState.snapshot()?.nextLine ?? 0,
+      sinceLine: previousLine,
     });
     if (!result) {
-      return;
+      return { advanced: false };
     }
 
     const parsedEvents = parseCodexRolloutEvents(result.entries);
@@ -67,6 +80,22 @@ export class CodexRolloutLiveSync {
       filePath: result.filePath,
       nextLine: result.nextLine,
     });
+    return { advanced: result.nextLine > previousLine };
+  }
+
+  async drain(session: ActiveSession): Promise<void> {
+    let sawAdvance = false;
+    for (let attempt = 0; attempt < TERMINAL_DRAIN_ATTEMPTS; attempt++) {
+      const result = await this.sync(session);
+      if (result.advanced) {
+        sawAdvance = true;
+      } else if (attempt > 0 || sawAdvance) {
+        break;
+      }
+      if (attempt < TERMINAL_DRAIN_ATTEMPTS - 1) {
+        await sleep(TERMINAL_DRAIN_DELAY_MS);
+      }
+    }
   }
 
   private async emitParsedEvent(

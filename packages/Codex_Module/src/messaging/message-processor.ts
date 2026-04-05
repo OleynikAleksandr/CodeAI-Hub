@@ -70,6 +70,13 @@ export class CodexMessageProcessor {
         this.finishHandler.handleExecutionError(session, error);
         this.options?.reporter?.error?.("Codex event stream failed", error);
         session.eventEmitter.emit("error", { type: "event_stream", error });
+      },
+      async (session, mode) => {
+        if (mode === "terminal") {
+          await this.rolloutLiveSync.drain(session);
+          return;
+        }
+        await this.rolloutLiveSync.sync(session);
       }
     );
   }
