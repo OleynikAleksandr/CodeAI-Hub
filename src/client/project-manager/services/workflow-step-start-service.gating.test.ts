@@ -10,14 +10,14 @@ const installWindowStub = (): void => {
   Object.defineProperty(globalThis, "window", {
     configurable: true,
     value: {
-    addEventListener: () => {},
-    clearTimeout,
-    codeaiBridgeConfig: {
-      httpUrl: "http://127.0.0.1:8080",
-      wsUrl: "ws://127.0.0.1:8080",
-    },
-    dispatchEvent: () => true,
-    setTimeout,
+      addEventListener: () => {},
+      clearTimeout,
+      codeaiBridgeConfig: {
+        httpUrl: "http://127.0.0.1:8080",
+        wsUrl: "ws://127.0.0.1:8080",
+      },
+      dispatchEvent: () => true,
+      setTimeout,
     } as unknown as Window & typeof globalThis,
   });
 };
@@ -65,6 +65,7 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
           description: "completed",
           virtual_simulation: "in_progress",
           diagram_modules: "idle",
+          application_foundation_envelope: "idle",
         },
       }),
     getSettingsPayload: () =>
@@ -119,6 +120,7 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
             description: false,
             virtual_simulation: false,
             diagram_modules: true,
+            application_foundation_envelope: true,
           },
         },
       }),

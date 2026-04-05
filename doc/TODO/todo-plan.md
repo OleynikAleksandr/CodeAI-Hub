@@ -59,11 +59,13 @@
 9. [DONE] Create the panel shell with inline help and connect it to the main content entry point for `application-foundation-envelope.md`; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; expected commit message: `feat: add application foundation envelope panel shell`
 10. [DONE] Git Commit: `feat: add application foundation envelope panel shell` (hash: `da7e68977`)
 11. [DONE] Extend the shared artifact repair flow for `application-foundation-envelope.md`; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-panel.tsx`, `src/client/project-manager/components/shared/stage-artifact-content-view.tsx`, `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit message: `feat: integrate application foundation envelope artifact view`
-12. [IN_PROGRESS] Git Commit: `feat: integrate application foundation envelope artifact view` (hash: TBD)
+12. [DONE] Git Commit: `feat: integrate application foundation envelope artifact view` (hash: `d43b49531`)
 
 ### Stream: Verification
-1. [TODO] Run targeted tests for touched workflow/core/project-manager files and update this plan with results before closing the phase; scope: `packages/core`, `src/client/project-manager`; expected commit message: `test: verify application foundation envelope stage shell`
-2. [TODO] Git Commit: `test: verify application foundation envelope stage shell` (hash: TBD)
+1. [DONE] Align the remaining workflow test fixtures with the new `application_foundation_envelope` stage key so `typecheck:webview` can pass again; scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`, `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit message: `test: align application foundation envelope workflow fixtures`
+2. [IN_PROGRESS] Git Commit: `test: align application foundation envelope workflow fixtures` (hash: TBD)
+3. [TODO] Run targeted tests/builds for touched workflow/core/project-manager files, update this plan with the concrete results, and close verification; scope: targeted `tsx` tests, `npm run typecheck:webview`, `npm run build:project-manager`; expected commit message: `test: verify application foundation envelope stage shell`
+4. [TODO] Git Commit: `test: verify application foundation envelope stage shell` (hash: TBD)
 
 ### Stream: Release Build
 1. [TODO] Sync release notes for the `Application Foundation Envelope` stage-shell release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope stage shell notes`
