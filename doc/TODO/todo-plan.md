@@ -71,9 +71,9 @@
 1. [DONE] Sync release notes for the `Application Foundation Envelope` stage-shell release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope stage shell notes`
 2. [DONE] Git Commit: `docs(release): prepare application foundation envelope stage shell notes` (hash: `614d1c897`)
 3. [DONE] Commit the pending planning-governance and plans-index docs so release build can start from a clean tree; scope: `AGENTS.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs(plans): tighten planning closeout governance`
-4. [IN_PROGRESS] Git Commit: `docs(plans): tighten planning closeout governance` (hash: TBD)
-5. [TODO] Commit the active planning baseline docs referenced by this release wave; scope: `doc/Sessions/Session040.md`, `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Implementation_Foundation_Architecture.md`; expected commit message: `docs(plans): record application foundation envelope planning baseline`
-6. [TODO] Git Commit: `docs(plans): record application foundation envelope planning baseline` (hash: TBD)
+4. [DONE] Git Commit: `docs(plans): tighten planning closeout governance` (hash: `5922cdf85`)
+5. [DONE] Commit the active planning baseline docs referenced by this release wave; scope: `doc/Sessions/Session040.md`, `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Implementation_Foundation_Architecture.md`; expected commit message: `docs(plans): record application foundation envelope planning baseline`
+6. [IN_PROGRESS] Git Commit: `docs(plans): record application foundation envelope planning baseline` (hash: TBD)
 7. [TODO] Commit the planning-to-execution transition session report before release packaging; scope: `doc/Sessions/Session041.md`; expected commit message: `docs(session): record application foundation envelope planning scope`
 8. [TODO] Git Commit: `docs(session): record application foundation envelope planning scope` (hash: TBD)
 9. [TODO] Build and package the release after all streams are green and the tree is clean; scope: release scripts + versioned artifacts; expected commit message: `build(release): assemble application foundation envelope stage shell release`
