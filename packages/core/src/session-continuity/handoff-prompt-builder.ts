@@ -1,22 +1,11 @@
-import type { ContinuityStageId } from "./continuity-types";
-
-const renderStage = (stage: string | null | undefined): ContinuityStageId => {
-  if (
-    stage === "description" ||
-    stage === "virtual_simulation" ||
-    stage === "diagram_modules"
-  ) {
-    return stage;
-  }
-  return "unknown";
-};
+import { normalizeContinuityStageId } from "./continuity-types";
 
 export const buildHandoffPrompt = (options: {
   readonly agentId: string;
   readonly stageId: string | null | undefined;
   readonly reportPath: string;
 }): string => {
-  const stage = renderStage(options.stageId);
+  const stage = normalizeContinuityStageId(options.stageId);
   return [
     `You are preparing a handoff report for agent: ${options.agentId}.`,
     `Stage: ${stage}.`,
