@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -31,6 +33,24 @@ export interface CodexRolloutParsedEvent {
   readonly timestamp: string | null;
   readonly turnId: string | null;
 }
+
+const SEGMENT_ID_SEPARATOR = "\u001F";
+
+export const createCodexRolloutSegmentId = (
+  event: CodexRolloutParsedEvent
+): string =>
+  createHash("sha256")
+    .update(
+      [
+        event.kind,
+        event.payloadType,
+        event.phase ?? "",
+        event.timestamp ?? "",
+        event.turnId ?? "",
+        event.content,
+      ].join(SEGMENT_ID_SEPARATOR)
+    )
+    .digest("hex");
 
 const readBaseFields = (
   entry: Record<string, unknown>,

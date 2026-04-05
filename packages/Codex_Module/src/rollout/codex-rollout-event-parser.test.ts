@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { CodexRolloutDedupe } from "./codex-rollout-dedupe";
 import {
+  createCodexRolloutSegmentId,
   parseCodexRolloutEvent,
   parseCodexRolloutEvents,
 } from "./codex-rollout-event-parser";
@@ -123,4 +125,30 @@ test("codex rollout event parser ignores unsupported phases, empty content, and 
     }),
     null
   );
+});
+
+test("codex rollout segment ids stay stable and dedupe suppresses repeated segments", () => {
+  const [event] = parseCodexRolloutEvents([
+    {
+      timestamp: "2026-04-05T12:32:52.823Z",
+      type: "event_msg",
+      payload: {
+        type: "agent_message",
+        message: "Reading the questionnaire before editing.",
+        phase: "commentary",
+        turn_id: "turn-1",
+      },
+    },
+  ]);
+
+  assert.ok(event);
+
+  const firstId = createCodexRolloutSegmentId(event);
+  const secondId = createCodexRolloutSegmentId({ ...event });
+  assert.equal(firstId, secondId);
+
+  const dedupe = new CodexRolloutDedupe();
+  assert.equal(dedupe.remember(event), true);
+  assert.equal(dedupe.remember(event), false);
+  assert.deepEqual(dedupe.filterNew([event]), []);
 });
