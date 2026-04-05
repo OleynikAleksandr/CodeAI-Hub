@@ -1,11 +1,37 @@
 # Development TODO Plan
 
 ## Execution Rules
-- No active implementation scope is approved at the moment.
-- The completed tree/session parity hotfix cycle is archived in `doc/TODO/Archive/todo-plan-up-to-phase1-application-foundation-envelope-tree-parity-release-1.1.890-2026-04-05.md`.
-- Wait for user validation of the packaged release artifact `codeai-hub-1.1.890.vsix` before starting the next execution wave.
-- When a new scope is approved, create or update its planning document first and then replace this placeholder with a sliced execution plan.
+- Required reading before each new fix:
+  - `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`
+  - `doc/Sessions/Session044.md`
+- Scope of this plan: post-release continuity and persistence hotfix for the `Application Foundation Envelope` stage after release `1.1.890`.
+- Each micro-task must stay within `<= 3 files`.
+- Every implementation line must be followed by a separate `Git Commit:` line.
+- Update docs and this plan in real time after every micro-task.
+- Release stream is mandatory because the user validates packaged VSIX builds, not only local source changes.
 
-## Deferred Planning Scope
-- `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`
-- `doc/SolidWorks-WorkFlow/Plans/Implementation_Foundation_Architecture.md`
+## Phase 1 — Application Foundation Envelope Continuity And Persistence Hotfix (owner: Codex, updated: 2026-04-05)
+
+### Stream: Planning And Scope
+1. [DONE] Extend the `Application Foundation Envelope` planning doc with the post-release continuity/persistence acceptance contract and replace the placeholder active TODO with this execution plan; scope: `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(plan): define application foundation envelope continuity hotfix scope`
+2. [DONE] Git Commit: `docs(plan): define application foundation envelope continuity hotfix scope` (hash: TBD)
+
+### Stream: Canonical Continuity Stage Identity
+1. [TODO] Add `application_foundation_envelope` to the continuity stage contract and core chain persistence normalization so the stage no longer falls back to `unknown`; scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/continuity-tracker.ts`; expected commit message: `fix(core-continuity): recognize application foundation envelope stage`
+2. [TODO] Git Commit: `fix(core-continuity): recognize application foundation envelope stage` (hash: TBD)
+3. [TODO] Align handoff/report and last-active persistence with the canonical `application_foundation_envelope` stage id; scope: `packages/core/src/session-continuity/handoff-report-writer.ts`, `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/workflow/state/workflow-last-active-store.ts`; expected commit message: `fix(core-workflow): preserve application foundation envelope stage identity`
+4. [TODO] Git Commit: `fix(core-workflow): preserve application foundation envelope stage identity` (hash: TBD)
+
+### Stream: Verification
+1. [TODO] Add regression coverage for continuity chain path, handoff path, and workflow last-active readback for `application_foundation_envelope`; scope: `packages/core/src/session-continuity/continuity-store.test.ts`, `packages/core/src/session-continuity/handoff-report-writer.test.ts`, `packages/core/src/workflow/state/workflow-last-active-store.test.ts`; expected commit message: `test(core-stage): guard application foundation envelope persistence`
+2. [TODO] Git Commit: `test(core-stage): guard application foundation envelope persistence` (hash: TBD)
+3. [TODO] Run targeted verification for the continuity/persistence hotfix and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build --workspace @codeai-hub/core`; results: TBD; expected commit message: `test(core-stage): verify application foundation envelope persistence`
+4. [TODO] Git Commit: `test(core-stage): verify application foundation envelope persistence` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Update release-facing docs for the continuity/persistence hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope continuity notes`
+2. [TODO] Git Commit: `docs(release): prepare application foundation envelope continuity notes` (hash: TBD)
+3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the continuity/persistence hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; results: TBD; expected commit message: `build(release): assemble application foundation envelope continuity release`
+4. [TODO] Git Commit: `build(release): assemble application foundation envelope continuity release` (hash: TBD)
+5. [TODO] Run `./scripts/build-release.sh --use-current-version`, archive the completed hotfix plan, seed a new empty active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session045.md`; results: TBD; expected commit message: `docs(session): record application foundation envelope continuity release`
+6. [TODO] Git Commit: `docs(session): record application foundation envelope continuity release` (hash: TBD)

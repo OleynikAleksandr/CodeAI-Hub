@@ -499,6 +499,27 @@
 4. toolbar/stage click и workspace auto-select поднимают тот же artifact/session pair;
 5. при отсутствии восстановленной session empty-state на правой панели больше не показывает Description-specific guidance для AFE.
 
+### 7.6. Post-release continuity path and persistence acceptance
+
+После tree/session parity hotfix обнаружился ещё один обязательный corrective contract на уровне core persistence:
+
+1. continuity chain для `Application Foundation Envelope` обязан materialize-иться под canonical stage path `.codeai-hub/<workspaceSlug>/continuity/application_foundation_envelope/...`, а не под `continuity/unknown/...`;
+2. handoff reports и handoff prompts этого шага обязаны сохранять тот же canonical `stageId`, без fallback к `unknown`;
+3. continuity tracker обязан считать `application_foundation_envelope` first-class stage id при root-session resolution и provider-session matching;
+4. workflow last-active persistence не должен отбрасывать `application_foundation_envelope` при cold-start readback.
+
+Практический смысл этого corrective scope:
+
+- левая workflow tree session-line появляется только когда continuity индекс и chain записываются под ожидаемым stage id;
+- handoff artifacts не должны разъезжаться с canonical artifact folder;
+- рестарт продукта не должен терять last-active stage только потому, что новый stage не добавлен в parser allowlist.
+
+Следовательно, отдельная post-release hotfix wave после `1.1.890` обязана:
+
+1. унифицировать canonical stage normalization во всех continuity persistence entrypoints;
+2. backfill regression tests на chain path, handoff report path и last-active readback для `application_foundation_envelope`;
+3. выпустить новый packaged release для пользовательской проверки continuity/session branch materialization.
+
 ---
 
 ## 8. Risks And Mitigations
