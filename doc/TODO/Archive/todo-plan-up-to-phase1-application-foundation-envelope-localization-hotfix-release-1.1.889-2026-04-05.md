@@ -1,0 +1,40 @@
+# Development TODO Plan
+
+## Execution Rules
+- Required reading before each new fix:
+  - `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`
+- Scope of this plan: post-release localization hotfix for the `Application Foundation Envelope` stage shell.
+- Each micro-task must stay within `<= 3 files`.
+- Every implementation line must be followed by a separate `Git Commit:` line.
+- Update docs and this plan in real time after every micro-task.
+- Release stream is mandatory because the user is validating packaged builds, not only local source changes.
+
+## Phase 1 — Application Foundation Envelope Localization Hotfix (owner: Codex, updated: 2026-04-05)
+
+### Stream: Planning And Scope
+1. [DONE] Update the active `Application Foundation Envelope` planning doc with the explicit localization boundary for PM shell copy and replace the placeholder active TODO with this hotfix execution plan; scope: `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(plan): define application foundation envelope localization hotfix scope`
+2. [DONE] Git Commit: `docs(plan): define application foundation envelope localization hotfix scope` (hash: `1900cc697`)
+
+### Stream: PM Help And Shell Localization
+1. [DONE] Re-align the `Application Foundation Envelope` help copy with workflow SSOT and route the panel help/error surfaces through canonical `Messages for the User` source entries; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-panel.tsx`, `assets/localization/source/en/messages_for_the_user.json`; expected commit message: `fix(pm-localization): localize application foundation envelope help copy`
+2. [DONE] Git Commit: `fix(pm-localization): localize application foundation envelope help copy` (hash: `1267f4a7c`)
+3. [DONE] Route the new stage label and blocked-title through canonical `UI Labels` source entries for toolbar/tree rendering; scope: `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `assets/localization/source/en/ui_labels.json`; expected commit message: `fix(pm-localization): localize application foundation envelope workflow labels`
+4. [DONE] Git Commit: `fix(pm-localization): localize application foundation envelope workflow labels` (hash: `892fd1eb3`)
+5. [DONE] Replace the hardcoded session-branch English concatenation with a localized label format that keeps provider title as a translation variable; scope: `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `assets/localization/source/en/ui_labels.json`; expected commit message: `fix(pm-localization): localize application foundation envelope session labels`
+6. [DONE] Git Commit: `fix(pm-localization): localize application foundation envelope session labels` (hash: `804265556`)
+
+### Stream: Verification
+1. [DONE] Add regression coverage for the new step localization dictionary entries and PM label wiring; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts`, `src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit message: `test(pm-localization): guard application foundation envelope localized copy`
+2. [DONE] Git Commit: `test(pm-localization): guard application foundation envelope localized copy` (hash: `644c9a8a5`)
+3. [DONE] Run targeted verification for the localized stage shell and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build:project-manager`; results: PASS (`npx tsx --test src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts`, `npm run build:project-manager`); expected commit message: `test(pm-localization): verify application foundation envelope localization`
+4. [DONE] Git Commit: `test(pm-localization): verify application foundation envelope localization` (hash: `9e113ae45`)
+
+### Stream: Release Build
+1. [DONE] Update release-facing docs for the localization hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope localization hotfix notes`
+2. [DONE] Git Commit: `docs(release): prepare application foundation envelope localization hotfix notes` (hash: `3aebc3004`)
+3. [DONE] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the localization hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; results: PASS (`./scripts/build-all.sh`), unified version `1.1.889`, tarballs present in `doc/tmp/releases/`; expected commit message: `build(release): assemble application foundation envelope localization hotfix release`
+4. [DONE] Git Commit: `build(release): assemble application foundation envelope localization hotfix release` (hash: `5c4dcb9a8`)
+5. [DONE] Run `./scripts/build-release.sh --use-current-version`, archive the completed hotfix plan, seed a new empty active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session043.md`; results: PASS (`./scripts/build-release.sh --use-current-version`), `codeai-hub-1.1.889.vsix` created, release markers confirmed (`Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`), advisory broken links remain in `doc/Sessions/Session040.md` and `doc/Sessions/Session041.md`; expected commit message: `docs(session): record application foundation envelope localization hotfix release`
+6. [DONE] Git Commit: `docs(session): record application foundation envelope localization hotfix release` (hash: `TBD - this commit`)
