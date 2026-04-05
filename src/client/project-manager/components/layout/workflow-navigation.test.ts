@@ -11,16 +11,21 @@ const MAIN_AREA_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/main-area.tsx"
 );
+const TOOLBAR_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/toolbar.tsx"
+);
 const WORKSPACE_TREE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/workspace-tree.tsx"
 );
 
 test("workflow navigation sync keeps stage routing consistent across toolbar and tree", async () => {
-  const [mainAreaUtilsSource, mainAreaSource, workspaceTreeSource] =
+  const [mainAreaUtilsSource, mainAreaSource, toolbarSource, workspaceTreeSource] =
     await Promise.all([
       readFile(MAIN_AREA_UTILS_PATH, "utf8"),
       readFile(MAIN_AREA_PATH, "utf8"),
+      readFile(TOOLBAR_PATH, "utf8"),
       readFile(WORKSPACE_TREE_PATH, "utf8"),
     ]);
 
@@ -53,5 +58,12 @@ test("workflow navigation sync keeps stage routing consistent across toolbar and
     workspaceTreeSource.includes("onSelect: () => dispatchStageActivated(stage),"),
     true,
     "workflow stage nodes must use unified stage dispatch route"
+  );
+  assert.equal(
+    toolbarSource.includes(
+      '"pm.workflow.stage.application_foundation_envelope.label"'
+    ),
+    true,
+    "toolbar must localize the application foundation envelope stage label"
   );
 });

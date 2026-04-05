@@ -23,11 +23,11 @@
 3. [DONE] Route the new stage label and blocked-title through canonical `UI Labels` source entries for toolbar/tree rendering; scope: `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`, `assets/localization/source/en/ui_labels.json`; expected commit message: `fix(pm-localization): localize application foundation envelope workflow labels`
 4. [DONE] Git Commit: `fix(pm-localization): localize application foundation envelope workflow labels` (hash: `892fd1eb3`)
 5. [DONE] Replace the hardcoded session-branch English concatenation with a localized label format that keeps provider title as a translation variable; scope: `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `assets/localization/source/en/ui_labels.json`; expected commit message: `fix(pm-localization): localize application foundation envelope session labels`
-6. [IN_PROGRESS] Git Commit: `fix(pm-localization): localize application foundation envelope session labels` (hash: TBD)
+6. [DONE] Git Commit: `fix(pm-localization): localize application foundation envelope session labels` (hash: `804265556`)
 
 ### Stream: Verification
-1. [TODO] Add regression coverage for the new step localization dictionary entries and PM label wiring; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts`, `src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit message: `test(pm-localization): guard application foundation envelope localized copy`
-2. [TODO] Git Commit: `test(pm-localization): guard application foundation envelope localized copy` (hash: TBD)
+1. [DONE] Add regression coverage for the new step localization dictionary entries and PM label wiring; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts`, `src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit message: `test(pm-localization): guard application foundation envelope localized copy`
+2. [IN_PROGRESS] Git Commit: `test(pm-localization): guard application foundation envelope localized copy` (hash: TBD)
 3. [TODO] Run targeted verification for the localized stage shell and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build:project-manager`; expected commit message: `test(pm-localization): verify application foundation envelope localization`
 4. [TODO] Git Commit: `test(pm-localization): verify application foundation envelope localization` (hash: TBD)
 
