@@ -1,6 +1,7 @@
 import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import {
+  buildApplicationFoundationEnvelopeBranchNodes,
   buildDescriptionBranchNodes,
   buildVirtualSimulationBranchNodes,
   buildDiagramModulesBranchNodes,
@@ -51,6 +52,15 @@ export const resolveStageChildren = (
       workspaceSlug: ctx.workspaceSlug,
       workspacePath: ctx.workspacePath,
       selectArtifact: ctx.selectArtifact,
+      dispatchDialogOpenIntent: ctx.dispatchDialogOpenIntent,
+      clearArtifactWithTool: ctx.clearArtifactWithTool,
+    });
+  }
+  if (stage === "application_foundation_envelope") {
+    return buildApplicationFoundationEnvelopeBranchNodes({
+      workflowState: ctx.workflowState,
+      workspaceSlug: ctx.workspaceSlug,
+      workspacePath: ctx.workspacePath,
       dispatchDialogOpenIntent: ctx.dispatchDialogOpenIntent,
       clearArtifactWithTool: ctx.clearArtifactWithTool,
     });

@@ -1,5 +1,6 @@
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import { APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { TreeNode } from "./workspace-tree-model";
 import { resolveDiagramStageSyncPayload } from "./workspace-tree-diagram-branch-nodes";
@@ -106,7 +107,10 @@ export const buildDescriptionBranchNodes = (options: {
 
 const resolveLatestStageChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
-  stage: "virtual_simulation" | "diagram_modules"
+  stage:
+    | "virtual_simulation"
+    | "diagram_modules"
+    | "application_foundation_envelope"
 ) => {
   let best: (typeof chains)[number] | null = null;
   for (const chain of chains) {
@@ -203,6 +207,30 @@ export const resolveStageSyncPayload = (options: {
     });
   }
 
+  if (stage === "application_foundation_envelope") {
+    const chain = resolveLatestStageChain(
+      workflowState.continuity.chains,
+      "application_foundation_envelope"
+    );
+    const last = chain?.segments.at(-1) ?? null;
+    return {
+      artifact: null,
+      clearTool: APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+      session: last
+        ? {
+            providerId: last.providerId,
+            providerSessionId: last.providerSessionId,
+            workspacePath,
+            workspaceSlug,
+            initiativeSlug: workspaceSlug,
+            stage: "application_foundation_envelope",
+            sessionKind: "collector",
+            runSlug: null,
+          }
+        : null,
+    };
+  }
+
   return { artifact: null, clearTool: null, session: null };
 };
 
@@ -290,4 +318,56 @@ export const buildVirtualSimulationBranchNodes = (options: {
       },
     });
   return nodes;
+};
+
+export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
+  readonly workflowState: WorkflowStateSnapshot | null;
+  readonly workspaceSlug: string | null;
+  readonly workspacePath?: string;
+  readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
+  readonly clearArtifactWithTool: (activeTool: string) => void;
+}): readonly TreeNode[] => {
+  const workflowState = options.workflowState;
+  const workspaceSlug = options.workspaceSlug;
+  const workspacePath = options.workspacePath;
+
+  if (!(workflowState && workspaceSlug && workspacePath)) {
+    return [];
+  }
+
+  const chain = resolveLatestStageChain(
+    workflowState.continuity.chains,
+    "application_foundation_envelope"
+  );
+  const last = chain?.segments.at(-1) ?? null;
+
+  if (!(chain && last)) {
+    return [];
+  }
+
+  const providerTitle = resolveProviderTitle(last.providerId);
+  return [
+    {
+      id: `workflow:application_foundation_envelope:session:${chain.rootSessionId}`,
+      label: `Application Foundation Envelope ${providerTitle}`,
+      status: "active",
+      visualDepth: 2,
+      onSelect: () => {
+        dispatchStageActivated("application_foundation_envelope");
+        options.dispatchDialogOpenIntent({
+          providerId: last.providerId,
+          providerSessionId: last.providerSessionId,
+          workspacePath,
+          workspaceSlug,
+          initiativeSlug: workspaceSlug,
+          stage: "application_foundation_envelope",
+          sessionKind: "collector",
+          runSlug: null,
+        });
+        options.clearArtifactWithTool(
+          APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL
+        );
+      },
+    },
+  ];
 };
