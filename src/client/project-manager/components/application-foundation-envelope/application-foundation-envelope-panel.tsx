@@ -6,6 +6,7 @@ import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
 import { StageArtifactContentView } from "../shared/stage-artifact-content-view";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 
+const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
 const startService = new WorkflowStepStartService();
 
@@ -28,14 +29,14 @@ export const ApplicationFoundationEnvelopeHelp: React.FC = () => {
           {t(
             USER_MESSAGES_CATEGORY,
             "pm.application_foundation_envelope.help.intro",
-            "In this step, the agent turns the upstream workflow artifacts into the canonical text envelope of the whole application. The output must stay readable for the user while becoming explicit enough for downstream branch specifications and contracts."
+            "In the Application Foundation Envelope step, the agent turns the completed Diagram Modules artifacts into the canonical application-wide assembly baseline. The document must make the Application Root, Shared Zones, Integration Seams, technology intent, and placement/dependency rules explicit enough for downstream branch specifications."
           )}
         </div>
         <div>
           {t(
             USER_MESSAGES_CATEGORY,
             "pm.application_foundation_envelope.help.inputs",
-            "The step starts from `Final_Description.md`, `virtual-simulation.md`, `product-parts.index.md`, and the staged `product-parts/<part-id>.md` files from Diagram Modules."
+            "The step starts from `Final_Description.md`, `virtual-simulation.md`, `product-parts.index.md`, and the completed `product-parts/<part-id>.md` artifacts from Diagram Modules."
           )}
         </div>
         <div>
@@ -49,28 +50,28 @@ export const ApplicationFoundationEnvelopeHelp: React.FC = () => {
               {t(
                 USER_MESSAGES_CATEGORY,
                 "pm.application_foundation_envelope.help.dialog_item_1",
-                "which application-wide boundaries are already stable;"
+                "what counts as the `Application Root` and the outer shell of the whole product;"
               )}
             </li>
             <li>
               {t(
                 USER_MESSAGES_CATEGORY,
                 "pm.application_foundation_envelope.help.dialog_item_2",
-                "which Product Parts define the backbone of the system;"
+                "which zones are shared across multiple Product Parts and must not be hidden inside one branch;"
               )}
             </li>
             <li>
               {t(
                 USER_MESSAGES_CATEGORY,
                 "pm.application_foundation_envelope.help.dialog_item_3",
-                "which cross-part responsibilities must stay explicit before branch-level specs begin;"
+                "which `Integration Seams` and cross-part responsibilities must stay explicit before branch-level specs begin;"
               )}
             </li>
             <li>
               {t(
                 USER_MESSAGES_CATEGORY,
                 "pm.application_foundation_envelope.help.dialog_item_4",
-                "which assumptions are still provisional and should remain marked as hypotheses."
+                "which technology decisions, placement rules, and dependency directions are fixed, proposed, or still open."
               )}
             </li>
           </ul>
@@ -79,7 +80,7 @@ export const ApplicationFoundationEnvelopeHelp: React.FC = () => {
           {t(
             USER_MESSAGES_CATEGORY,
             "pm.application_foundation_envelope.help.scope",
-            "`application-foundation-envelope.md` is not a low-level module contract and not a visual layout file. It captures the stable application-wide shell, boundaries, and responsibility frame that downstream docs must inherit."
+            "`application-foundation-envelope.md` is not a low-level module contract, not an implementation scaffold, and not a visual layout file. It captures the stable application-wide assembly baseline that downstream docs must inherit."
           )}
         </div>
         <div>
@@ -98,6 +99,17 @@ export const ApplicationFoundationEnvelopePanel: React.FC<{
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }> = (props) => {
+  const { t } = useLocalization();
+  const stageLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.workflow.stage.application_foundation_envelope.label",
+    "Application Foundation Envelope"
+  );
+  const loadErrorFallback = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.application_foundation_envelope.error.load",
+    "Could not load Application Foundation Envelope."
+  );
   const artifactPath = useMemo(
     () =>
       `.codeai-hub/${props.workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`,
@@ -107,7 +119,7 @@ export const ApplicationFoundationEnvelopePanel: React.FC<{
     workspacePath: props.workspacePath,
     workspaceSlug: props.workspaceSlug,
     artifactPath,
-    stageLabel: "Application Foundation Envelope",
+    stageLabel,
   });
   const validationError =
     content && content.trim().length === 0 ? "Файл пустой." : null;
@@ -142,11 +154,7 @@ export const ApplicationFoundationEnvelopePanel: React.FC<{
   }
 
   if (status === "error") {
-    return (
-      <div className="pm-placeholder">
-        {error ?? "Could not load Application Foundation Envelope."}
-      </div>
-    );
+    return <div className="pm-placeholder">{error ?? loadErrorFallback}</div>;
   }
 
   return <ApplicationFoundationEnvelopeHelp />;

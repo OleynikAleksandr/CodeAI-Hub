@@ -84,5 +84,16 @@
   "pm.diagram_modules.help.glossary.boundary": "`Boundary` is a border between parts of the system.",
   "pm.diagram_modules.help.runtime_templates": "The runtime templates for this step live in `.codeai-hub/templates/diagram_modules/`: the main frame defines the staged contract for the index and part files, `diagram-modules-field-reference.md` explains the field meanings, and the merge and compatibility aggregate rules are described in `diagram-modules-merge-rules.md`.",
   "pm.diagram_modules.help.module_map_note": "`module-map.flow.json` does not describe the architecture. This file stores layout only and may update during progressive graph regeneration or after manual card dragging.",
-  "pm.diagram_modules.help.refinement_guidance": "The agent should ask only the missing questions and stop refining once it considers the inventory a strong enough foundation to continue. The decision to move forward still stays with you."
+  "pm.diagram_modules.help.refinement_guidance": "The agent should ask only the missing questions and stop refining once it considers the inventory a strong enough foundation to continue. The decision to move forward still stays with you.",
+  "pm.application_foundation_envelope.help.title": "Application Foundation Envelope Help",
+  "pm.application_foundation_envelope.help.intro": "In the Application Foundation Envelope step, the agent turns the completed Diagram Modules artifacts into the canonical application-wide assembly baseline. The document must make the Application Root, Shared Zones, Integration Seams, technology intent, and placement/dependency rules explicit enough for downstream branch specifications.",
+  "pm.application_foundation_envelope.help.inputs": "The step starts from `Final_Description.md`, `virtual-simulation.md`, `product-parts.index.md`, and the completed `product-parts/<part-id>.md` artifacts from Diagram Modules.",
+  "pm.application_foundation_envelope.help.dialog_intro": "What is most useful to clarify in the dialog:",
+  "pm.application_foundation_envelope.help.dialog_item_1": "what counts as the `Application Root` and the outer shell of the whole product;",
+  "pm.application_foundation_envelope.help.dialog_item_2": "which zones are shared across multiple Product Parts and must not be hidden inside one branch;",
+  "pm.application_foundation_envelope.help.dialog_item_3": "which `Integration Seams` and cross-part responsibilities must stay explicit before branch-level specs begin;",
+  "pm.application_foundation_envelope.help.dialog_item_4": "which technology decisions, placement rules, and dependency directions are fixed, proposed, or still open.",
+  "pm.application_foundation_envelope.help.scope": "`application-foundation-envelope.md` is not a low-level module contract, not an implementation scaffold, and not a visual layout file. It captures the stable application-wide assembly baseline that downstream docs must inherit.",
+  "pm.application_foundation_envelope.help.output": "Step output: `.codeai-hub/<workspace>/application_foundation_envelope/application-foundation-envelope.md`.",
+  "pm.application_foundation_envelope.error.load": "Could not load Application Foundation Envelope."
 }
