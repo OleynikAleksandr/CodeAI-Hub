@@ -322,8 +322,10 @@ export const buildVirtualSimulationBranchNodes = (options: {
 
 export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
+  readonly applicationFoundationEnvelopeArtifactAvailable: boolean;
   readonly workspaceSlug: string | null;
   readonly workspacePath?: string;
+  readonly selectArtifact: (artifactPath: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
   readonly resolveSessionLabel: (providerTitle: string) => string;
@@ -336,39 +338,75 @@ export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
     return [];
   }
 
+  const nodes: TreeNode[] = [];
+  const artifactPath =
+    `.codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`;
   const chain = resolveLatestStageChain(
     workflowState.continuity.chains,
     "application_foundation_envelope"
   );
   const last = chain?.segments.at(-1) ?? null;
 
-  if (!(chain && last)) {
-    return [];
-  }
-
-  const providerTitle = resolveProviderTitle(last.providerId);
-  return [
-    {
-      id: `workflow:application_foundation_envelope:session:${chain.rootSessionId}`,
-      label: options.resolveSessionLabel(providerTitle),
+  if (options.applicationFoundationEnvelopeArtifactAvailable) {
+    nodes.push({
+      id: "workflow:application_foundation_envelope:artifact",
+      label: "application-foundation-envelope.md",
+      title: artifactPath,
       status: "active",
       visualDepth: 2,
       onSelect: () => {
         dispatchStageActivated("application_foundation_envelope");
-        options.dispatchDialogOpenIntent({
-          providerId: last.providerId,
-          providerSessionId: last.providerSessionId,
-          workspacePath,
-          workspaceSlug,
-          initiativeSlug: workspaceSlug,
-          stage: "application_foundation_envelope",
-          sessionKind: "collector",
-          runSlug: null,
-        });
+        options.selectArtifact(
+          artifactPath,
+          "application-foundation-envelope.md"
+        );
+        if (last) {
+          options.dispatchDialogOpenIntent({
+            providerId: last.providerId,
+            providerSessionId: last.providerSessionId,
+            workspacePath,
+            workspaceSlug,
+            initiativeSlug: workspaceSlug,
+            stage: "application_foundation_envelope",
+            sessionKind: "collector",
+            runSlug: null,
+          });
+        }
+      },
+    });
+  }
+
+  if (!(chain && last)) {
+    return nodes;
+  }
+
+  const providerTitle = resolveProviderTitle(last.providerId);
+  nodes.push({
+    id: `workflow:application_foundation_envelope:session:${chain.rootSessionId}`,
+    label: options.resolveSessionLabel(providerTitle),
+    status: "active",
+    visualDepth: 2,
+    onSelect: () => {
+      dispatchStageActivated("application_foundation_envelope");
+      options.dispatchDialogOpenIntent({
+        providerId: last.providerId,
+        providerSessionId: last.providerSessionId,
+        workspacePath,
+        workspaceSlug,
+        initiativeSlug: workspaceSlug,
+        stage: "application_foundation_envelope",
+        sessionKind: "collector",
+        runSlug: null,
+      });
+      if (options.applicationFoundationEnvelopeArtifactAvailable) {
+        options.selectArtifact(artifactPath, "application-foundation-envelope.md");
+      } else {
         options.clearArtifactWithTool(
           APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL
         );
-      },
+      }
     },
-  ];
+  });
+
+  return nodes;
 };

@@ -15,6 +15,7 @@ export type StageChildrenContext = {
   readonly descriptionArtifactAvailable: boolean;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable: boolean;
+  readonly applicationFoundationEnvelopeArtifactAvailable: boolean;
   readonly selectArtifact: (artifactPath: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
@@ -62,8 +63,11 @@ export const resolveStageChildren = (
   if (stage === "application_foundation_envelope") {
     return buildApplicationFoundationEnvelopeBranchNodes({
       workflowState: ctx.workflowState,
+      applicationFoundationEnvelopeArtifactAvailable:
+        ctx.applicationFoundationEnvelopeArtifactAvailable,
       workspaceSlug: ctx.workspaceSlug,
       workspacePath: ctx.workspacePath,
+      selectArtifact: ctx.selectArtifact,
       dispatchDialogOpenIntent: ctx.dispatchDialogOpenIntent,
       clearArtifactWithTool: ctx.clearArtifactWithTool,
       resolveSessionLabel: ctx.resolveApplicationFoundationEnvelopeSessionLabel,
