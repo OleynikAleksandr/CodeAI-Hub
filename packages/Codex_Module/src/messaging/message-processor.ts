@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import type { Thread } from "@openai/codex-sdk";
 import { DEFAULT_CODEX_RESPONSE_POLICY } from "../response-policy/response-policy-defaults";
+import { CodexRolloutLiveSync } from "../rollout/codex-rollout-live-sync";
 import type { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type { CodexTurnOptions } from "../types";
@@ -25,6 +26,7 @@ export class CodexMessageProcessor {
   private readonly emitter: CodexSessionEventEmitter;
   private readonly finishHandler: CodexMessageFinishHandler;
   private readonly options?: MessageProcessorOptions;
+  readonly rolloutLiveSync: CodexRolloutLiveSync;
   private readonly router: CodexStreamEventRouter;
   private readonly sessionManager: CodexSessionManager;
 
@@ -48,6 +50,11 @@ export class CodexMessageProcessor {
       this.emitter,
       tokenUsageSync,
       usageSync
+    );
+    this.rolloutLiveSync = new CodexRolloutLiveSync(
+      structuredOutput,
+      this.emitter,
+      options?.reporter
     );
     this.router = new CodexStreamEventRouter(
       sessionManager,
