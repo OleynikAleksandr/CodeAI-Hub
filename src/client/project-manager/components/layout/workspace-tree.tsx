@@ -324,6 +324,12 @@ const resolveStageLabel = (
         "pm.workflow.stage.diagram_modules.label",
         WORKFLOW_LABELS.diagram_modules
       );
+    case "application_foundation_envelope":
+      return t(
+        UI_LABELS_CATEGORY,
+        "pm.workflow.stage.application_foundation_envelope.label",
+        WORKFLOW_LABELS.application_foundation_envelope
+      );
   }
 };
 
@@ -363,6 +369,12 @@ const resolveStageTitle = (
         UI_LABELS_CATEGORY,
         "pm.workflow.stage.diagram_modules.blocked_title",
         "BLOCKED: requires virtual-simulation.md (DONE)"
+      );
+    case "application_foundation_envelope":
+      return t(
+        UI_LABELS_CATEGORY,
+        "pm.workflow.stage.application_foundation_envelope.blocked_title",
+        "BLOCKED: requires Diagram Modules aggregate-ready output (DONE)"
       );
   }
 };
