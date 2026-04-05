@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.889] - 2026-04-05
+### Fixed
+- **`Application Foundation Envelope` help now follows the selected user-message language**: the new stage help panel and load fallback now resolve through canonical `Messages for the User` entries instead of falling back to English-only inline copy when the user selects Russian.
+- **New stage shell labels now participate in `UI Labels` lookup**: the toolbar label, workflow-tree label, blocked-title, and session branch label for `Application Foundation Envelope` now have stable source-dictionary ids, including a provider-aware session-label template with translation variables.
+- **The stage guidance is now synchronized with the workflow SSOT**: the help copy now explicitly covers `Application Root`, `Shared Zones`, `Integration Seams`, technology intent, and placement/dependency rules, matching the actual contract of the stage shell.
+- **Regression coverage now protects the localization surface of the new stage**: dedicated Project Manager tests verify the dictionary backfill and stage-label wiring so future trunk-step additions do not repeat the same omission.
+
 ## [1.1.888] - 2026-04-05
 ### Added
 - **`Application Foundation Envelope` workflow stage shell**: the trunk workflow now continues after `Diagram Modules`, exposes the canonical artifact `.codeai-hub/<workspace>/application_foundation_envelope/application-foundation-envelope.md`, and ships the new bundled contract/prompt path end-to-end.

@@ -29,11 +29,11 @@
 1. [DONE] Add regression coverage for the new step localization dictionary entries and PM label wiring; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts`, `src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit message: `test(pm-localization): guard application foundation envelope localized copy`
 2. [DONE] Git Commit: `test(pm-localization): guard application foundation envelope localized copy` (hash: `644c9a8a5`)
 3. [DONE] Run targeted verification for the localized stage shell and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build:project-manager`; results: PASS (`npx tsx --test src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts`, `npm run build:project-manager`); expected commit message: `test(pm-localization): verify application foundation envelope localization`
-4. [IN_PROGRESS] Git Commit: `test(pm-localization): verify application foundation envelope localization` (hash: TBD)
+4. [DONE] Git Commit: `test(pm-localization): verify application foundation envelope localization` (hash: `9e113ae45`)
 
 ### Stream: Release Build
-1. [TODO] Update release-facing docs for the localization hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope localization hotfix notes`
-2. [TODO] Git Commit: `docs(release): prepare application foundation envelope localization hotfix notes` (hash: TBD)
+1. [DONE] Update release-facing docs for the localization hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope localization hotfix notes`
+2. [IN_PROGRESS] Git Commit: `docs(release): prepare application foundation envelope localization hotfix notes` (hash: TBD)
 3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the localization hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble application foundation envelope localization hotfix release`
 4. [TODO] Git Commit: `build(release): assemble application foundation envelope localization hotfix release` (hash: TBD)
 5. [TODO] Run `./scripts/build-release.sh --use-current-version`, archive the completed hotfix plan, seed a new empty active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session043.md`; expected commit message: `docs(session): record application foundation envelope localization hotfix release`
