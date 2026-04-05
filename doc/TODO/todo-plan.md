@@ -20,7 +20,7 @@
 ### Stream: Workflow Tree Parity
 1. [DONE] Add a canonical artifact availability probe for `application-foundation-envelope.md` and wire it into the workspace tree stage context; scope: `src/client/project-manager/components/layout/use-application-foundation-envelope-artifact-availability.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `feat(pm-afe): probe application foundation envelope artifact availability`
 2. [DONE] Git Commit: `feat(pm-afe): probe application foundation envelope artifact availability` (hash: `7ba121752`)
-3. [IN_PROGRESS] Build `Application Foundation Envelope` tree children with the same session + artifact contract used by mature workflow stages; scope: `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit message: `feat(pm-afe): add application foundation envelope branch nodes`
+3. [DONE] Build `Application Foundation Envelope` tree children with the same session + artifact contract used by mature workflow stages; scope: `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; expected commit message: `feat(pm-afe): add application foundation envelope branch nodes`
 4. [DONE] Git Commit: `feat(pm-afe): add application foundation envelope branch nodes` (hash: `e730bb9a5`)
 5. [DONE] Align stage sync and workspace auto-select with the `Application Foundation Envelope` artifact/session pair; scope: `src/client/project-manager/components/layout/use-stage-panel-sync.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, `src/client/project-manager/components/layout/workspace-tree.tsx`; expected commit message: `fix(pm-afe): sync application foundation envelope stage selection`
 6. [DONE] Git Commit: `fix(pm-afe): sync application foundation envelope stage selection` (hash: `3c655783c`)
@@ -32,10 +32,10 @@
 4. [DONE] Git Commit: `fix(pm-session): localize workflow-aware empty state` (hash: `a7ae1be45`)
 
 ### Stream: Verification
-1. [IN_PROGRESS] Add regression coverage for the new `Application Foundation Envelope` tree parity and workflow-aware empty state copy; scope: `src/client/project-manager/components/layout/application-foundation-envelope-tree-parity.test.ts`, `src/client/ui/src/session/empty-state.test.ts`; expected commit message: `test(pm-afe): guard tree and empty-state parity`
-2. [TODO] Git Commit: `test(pm-afe): guard tree and empty-state parity` (hash: TBD)
-3. [TODO] Run targeted verification for the new tree/session parity behavior and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build:project-manager`; expected commit message: `test(pm-afe): verify tree and empty-state parity`
-4. [TODO] Git Commit: `test(pm-afe): verify tree and empty-state parity` (hash: TBD)
+1. [DONE] Add regression coverage for the new `Application Foundation Envelope` tree parity and workflow-aware empty state copy; scope: `src/client/project-manager/components/layout/application-foundation-envelope-tree-parity.test.ts`, `src/client/ui/src/session/empty-state.test.ts`; expected commit message: `test(pm-afe): guard tree and empty-state parity`
+2. [DONE] Git Commit: `test(pm-afe): guard tree and empty-state parity` (hash: `fc5b626e6`)
+3. [DONE] Run targeted verification for the new tree/session parity behavior and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build:project-manager`; results: PASS (`npx tsx --test src/client/project-manager/components/layout/application-foundation-envelope-tree-parity.test.ts src/client/ui/src/session/empty-state.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts`, `npm run build:project-manager`); expected commit message: `test(pm-afe): verify tree and empty-state parity`
+4. [DONE] Git Commit: `test(pm-afe): verify tree and empty-state parity` (hash: `TBD - this commit`)
 
 ### Stream: Release Build
 1. [TODO] Update release-facing docs for the tree/session parity hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope tree parity notes`
