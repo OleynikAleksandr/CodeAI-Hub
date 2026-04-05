@@ -28,9 +28,9 @@
 1. [DONE] Add regression coverage for continuity chain persistence and handoff report paths for `application_foundation_envelope`; scope: `packages/core/src/session-continuity/continuity-store.test.ts`, `packages/core/src/session-continuity/handoff-report-writer.test.ts`; expected commit message: `test(core-continuity): guard application foundation envelope continuity paths`
 2. [DONE] Git Commit: `test(core-continuity): guard application foundation envelope continuity paths` (hash: `583e5e6cb`)
 3. [DONE] Add regression coverage for workflow last-active readback so `application_foundation_envelope` survives cold-start parsing; scope: `packages/core/src/workflow/state/workflow-last-active-store.test.ts`; expected commit message: `test(core-workflow): guard application foundation envelope last-active persistence`
-4. [DONE] Git Commit: `test(core-workflow): guard application foundation envelope last-active persistence` (hash: TBD)
-5. [TODO] Run targeted verification for the continuity/persistence hotfix and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build --workspace @codeai-hub/core`; results: TBD; expected commit message: `test(core-stage): verify application foundation envelope persistence`
-6. [TODO] Git Commit: `test(core-stage): verify application foundation envelope persistence` (hash: TBD)
+4. [DONE] Git Commit: `test(core-workflow): guard application foundation envelope last-active persistence` (hash: `2cdfb0aa2`)
+5. [DONE] Run targeted verification for the continuity/persistence hotfix and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build --workspace @codeai-hub/core`; results: PASS (`npx tsx --test packages/core/src/session-continuity/continuity-store.test.ts packages/core/src/session-continuity/handoff-report-writer.test.ts packages/core/src/workflow/state/workflow-last-active-store.test.ts`, `npm run build --workspace @codeai-hub/core`); expected commit message: `test(core-stage): verify application foundation envelope persistence`
+6. [DONE] Git Commit: `test(core-stage): verify application foundation envelope persistence` (hash: TBD)
 
 ### Stream: Release Build
 1. [TODO] Update release-facing docs for the continuity/persistence hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope continuity notes`
