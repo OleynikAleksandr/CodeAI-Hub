@@ -38,9 +38,9 @@
 4. [DONE] Git Commit: `test(pm-afe): verify tree and empty-state parity` (hash: `TBD - this commit`)
 
 ### Stream: Release Build
-1. [IN_PROGRESS] Update release-facing docs for the tree/session parity hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope tree parity notes`
-2. [TODO] Git Commit: `docs(release): prepare application foundation envelope tree parity notes` (hash: TBD)
-3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the tree/session parity hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble application foundation envelope tree parity release`
-4. [TODO] Git Commit: `build(release): assemble application foundation envelope tree parity release` (hash: TBD)
+1. [DONE] Update release-facing docs for the tree/session parity hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope tree parity notes`
+2. [DONE] Git Commit: `docs(release): prepare application foundation envelope tree parity notes` (hash: `a6dcb3d0e`)
+3. [DONE] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the tree/session parity hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; results: PASS (`./scripts/build-all.sh`), unified version `1.1.890`, tarballs present in `doc/tmp/releases/`; expected commit message: `build(release): assemble application foundation envelope tree parity release`
+4. [DONE] Git Commit: `build(release): assemble application foundation envelope tree parity release` (hash: `TBD - this commit`)
 5. [TODO] Run `./scripts/build-release.sh --use-current-version`, archive the completed hotfix plan, seed a new empty active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session044.md`; expected commit message: `docs(session): record application foundation envelope tree parity release`
 6. [TODO] Git Commit: `docs(session): record application foundation envelope tree parity release` (hash: TBD)
