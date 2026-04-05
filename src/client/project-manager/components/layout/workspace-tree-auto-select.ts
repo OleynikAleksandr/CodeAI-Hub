@@ -19,6 +19,7 @@ type WorkspaceTreeAutoSelectParams = {
   readonly workspaceSlug?: string | null;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable: boolean;
+  readonly applicationFoundationEnvelopeArtifactAvailable: boolean;
   readonly onSelectArtifact: (artifactPath: string, label: string) => void;
   readonly onResumeSession: (payload: SessionResumeIntent) => void;
   readonly onClearArtifactWithTool: (activeTool: string) => void;
@@ -80,9 +81,18 @@ export const useWorkspaceTreeAutoSelect = (
 
       if (envelopeLast) {
         dispatchStageActivated("application_foundation_envelope");
-        params.onClearArtifactWithTool(
-          APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL
-        );
+        const envelopeArtifactPath =
+          `.codeai-hub/${params.workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`;
+        if (params.applicationFoundationEnvelopeArtifactAvailable) {
+          params.onSelectArtifact(
+            envelopeArtifactPath,
+            "application-foundation-envelope.md"
+          );
+        } else {
+          params.onClearArtifactWithTool(
+            APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL
+          );
+        }
         params.onResumeSession({
           providerId: envelopeLast.providerId,
           providerSessionId: envelopeLast.providerSessionId,
@@ -197,6 +207,7 @@ export const useWorkspaceTreeAutoSelect = (
       }
     },
     [
+      params.applicationFoundationEnvelopeArtifactAvailable,
       params.diagramModulesArtifactAvailable,
       params.onClearArtifactWithTool,
       params.onResumeSession,
