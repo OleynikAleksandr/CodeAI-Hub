@@ -63,8 +63,10 @@
 
 ### Stream: Release Build
 1. [DONE] Update release-facing docs for the next Codex raw rollout patch release from a clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare codex raw rollout migration notes`
-2. [TODO] Git Commit: `docs(release): prepare codex raw rollout migration notes` (hash: TBD)
-3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the Codex raw rollout migration; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble codex raw rollout release`
+2. [DONE] Git Commit: `docs(release): prepare codex raw rollout migration notes` (hash: `080e99ade`)
+3. [DONE] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the Codex raw rollout migration; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble codex raw rollout release`
+   Build result: `./scripts/build-all.sh` -> passed, version advanced to `1.1.893`.
+   Build result: release tarballs staged in `doc/tmp/releases/` for `claude-module`, `codex-module`, `gemini-module`, `codeai-hub-core-darwin-arm64`, `CodeAIHubLauncher-macos-arm64`, `vscode-webview`, and `project-manager`.
 4. [TODO] Git Commit: `build(release): assemble codex raw rollout release` (hash: TBD)
 5. [TODO] Run `./scripts/build-release.sh --use-current-version`, archive the completed migration plan, restore a new placeholder active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session048.md`; expected commit message: `docs(session): record codex raw rollout release`
 6. [TODO] Git Commit: `docs(session): record codex raw rollout release` (hash: TBD)
