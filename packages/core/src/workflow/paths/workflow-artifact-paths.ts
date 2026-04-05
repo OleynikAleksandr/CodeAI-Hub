@@ -13,6 +13,7 @@ const WORKFLOW_STAGE_SET = new Set<WorkflowStageId>([
   "description",
   "virtual_simulation",
   "diagram_modules",
+  "application_foundation_envelope",
 ]);
 
 const WORKFLOW_STAGE_FILES = new Map<
@@ -25,6 +26,7 @@ const WORKFLOW_STAGE_FILES = new Map<
     "diagram_modules",
     ["product-parts.index.md", "product-part.md", "module-map.flow.json"],
   ],
+  ["application_foundation_envelope", ["application-foundation-envelope.md"]],
 ]);
 
 const isWorkflowStage = (value: string): value is WorkflowStageId =>
