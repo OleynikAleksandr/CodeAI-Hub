@@ -21,13 +21,13 @@
   - canonical source of truth — текстовый `.md` документ;
   - визуализация — projection из него;
   - но в первой implementation wave визуализация сознательно откладывается.
-- Обновлён planning-док [Foundation_Envelope_Architecture.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md):
+- Обновлён planning-док [Foundation_Envelope_Architecture.md](../SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md):
   - добавлен audit текущей кодовой базы;
   - перечислены реальные точки расширения core/client;
   - зафиксирован правильный upstream gate через `diagramModulesProgress.aggregateReady`;
   - зафиксирован первый реалистичный scope как `stage shell` с одним canonical артефактом `foundation-envelope.md`.
 - Подтверждено, что визуальная диаграмма и `foundation-envelope.flow.json` должны идти отдельной следующей wave после stage shell.
-- Создан новый execution plan в [todo-plan.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md) под первую implementation wave шага `Foundation Envelope`.
+- Создан новый execution plan в [todo-plan.md](../TODO/todo-plan.md) под первую implementation wave шага `Foundation Envelope`.
 - Новый `todo-plan.md` режет работу на четыре execution stream:
   - `Core Stage Contract`
   - `Core Contract Endpoint And Persistence`
@@ -68,7 +68,7 @@
 > Далее: при начале реализации открыть конкретные файлы из `packages/core/src/workflow/`, `packages/core/src/remote-bridge/handlers/`, `src/client/project-manager/services/` и `src/client/project-manager/components/layout/`, перечисленные в planning-доке `Foundation_Envelope_Architecture.md` section `6.2`.
 
 ## Plans for next session
-- Начать **реализацию только по** [todo-plan.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md), не перепрыгивая сразу к произвольным правкам.
+- Начать **реализацию только по** [todo-plan.md](../TODO/todo-plan.md), не перепрыгивая сразу к произвольным правкам.
 - Работать только в рамках первой implementation wave: `Foundation Envelope stage shell`.
 - Не добавлять в первой wave:
   - `foundation-envelope.flow.json`
@@ -83,4 +83,4 @@
   - Project Manager button/tree/panel shell
 - Критичный architectural invariant для реализации:
   - gate нового шага должен опираться на `diagramModulesProgress.aggregateReady === true`, а не только на наличие `product-parts.index.md`.
-- После каждого микрошагa обновлять [todo-plan.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/TODO/todo-plan.md) в реальном времени и делать отдельный commit-pair по правилам плана.
+- После каждого микрошагa обновлять [todo-plan.md](../TODO/todo-plan.md) в реальном времени и делать отдельный commit-pair по правилам плана.

@@ -10,12 +10,12 @@
 
 ## Work summary
 - Проведено архитектурное обсуждение нового промежуточного шага между `Diagram Modules` и будущей реализацией.
-- Сформулирован новый planning-док [Implementation_Foundation_Architecture.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Plans/Implementation_Foundation_Architecture.md) как design intake для workspace-specific implementation substrate.
+- Сформулирован новый planning-док [Implementation_Foundation_Architecture.md](../SolidWorks-WorkFlow/Plans/Implementation_Foundation_Architecture.md) как design intake для workspace-specific implementation substrate.
 - В документе зафиксированы цели шага: `technology profile`, физический skeleton проекта, environments/toolchains, stack-specific quality gates, canonical scripts и local knowledge artifacts.
-- Обновлён [Docs_Index.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/SolidWorks-WorkFlow/Docs_Index.md): новый active planning-док добавлен в раздел `Plans`.
+- Обновлён [Docs_Index.md](../SolidWorks-WorkFlow/Docs_Index.md): новый active planning-док добавлен в раздел `Plans`.
 - Подтверждено, что `todo-plan.md` в этой сессии не менялся: сначала должен быть обсуждён и утверждён сам planning-док.
 - Проверка `npm run check:links` прошла успешно.
-- Дополнительно зафиксировано, что в рабочем дереве остаётся незакоммиченное изменение [AGENTS.md](/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/AGENTS.md) с новым правилом closeout для `Plans/` после завершения каждого `todo-plan`.
+- Дополнительно зафиксировано, что в рабочем дереве остаётся незакоммиченное изменение [AGENTS.md](../../AGENTS.md) с новым правилом closeout для `Plans/` после завершения каждого `todo-plan`.
 
 ## Git commits
 (ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)

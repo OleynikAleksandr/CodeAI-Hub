@@ -15,11 +15,12 @@
 - Regenerated bundled templates and ran targeted verification for client and core Foundation Envelope coverage, then re-ran `npm run typecheck:webview` and `npm run build --workspace=@codeai-hub/core`.
 - Rebuilt release artefacts for `1.1.895`: restored dependencies after an intermediate SDK-pruning side effect, finished the missing provider/core/UI/launcher artefacts manually, synced `doc/tmp/releases/`, and produced `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.1.895.vsix`.
 - User validated `codeai-hub-1.1.895.vsix` locally and reported no visible regressions in the renamed `Foundation Envelope` flow.
-- Final `build-release` passed on `1.1.895`; advisory broken markdown links remain only in `doc/Sessions/Session040.md` and `doc/Sessions/Session041.md`.
+- Final `build-release` passed on `1.1.895`; the user validated the VSIX locally, and the remaining legacy markdown-link debt from `doc/Sessions/Session040.md` and `doc/Sessions/Session041.md` was cleared before the release push.
 
 ## Git commits
 (IMPORTANT: This list is required so the next session can restore context via `git show`)
-- `TBD - this commit build(release): publish foundation envelope rename release`
+- `2121e0551 build(release): publish foundation envelope rename release`
+- `TBD - this commit docs(session): fix legacy links and finalize 1.1.895 release report`
 
 ---
 
@@ -38,4 +39,4 @@
 
 ## Plans for next session
 - Start the next session only from a newly approved scope after the `1.1.895` release closeout.
-- If doc debt is worth a dedicated docs-only pass, fix the advisory broken links in `doc/Sessions/Session040.md` and `doc/Sessions/Session041.md`.
+- Start from a newly approved scope only after reading this report and the canonical workflow docs listed above.
