@@ -30,11 +30,11 @@
 3. [DONE] Add regression coverage for workflow last-active readback so `application_foundation_envelope` survives cold-start parsing; scope: `packages/core/src/workflow/state/workflow-last-active-store.test.ts`; expected commit message: `test(core-workflow): guard application foundation envelope last-active persistence`
 4. [DONE] Git Commit: `test(core-workflow): guard application foundation envelope last-active persistence` (hash: `2cdfb0aa2`)
 5. [DONE] Run targeted verification for the continuity/persistence hotfix and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build --workspace @codeai-hub/core`; results: PASS (`npx tsx --test packages/core/src/session-continuity/continuity-store.test.ts packages/core/src/session-continuity/handoff-report-writer.test.ts packages/core/src/workflow/state/workflow-last-active-store.test.ts`, `npm run build --workspace @codeai-hub/core`); expected commit message: `test(core-stage): verify application foundation envelope persistence`
-6. [DONE] Git Commit: `test(core-stage): verify application foundation envelope persistence` (hash: TBD)
+6. [DONE] Git Commit: `test(core-stage): verify application foundation envelope persistence` (hash: `2a5f60d06`)
 
 ### Stream: Release Build
-1. [TODO] Update release-facing docs for the continuity/persistence hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope continuity notes`
-2. [TODO] Git Commit: `docs(release): prepare application foundation envelope continuity notes` (hash: TBD)
+1. [DONE] Update release-facing docs for the continuity/persistence hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope continuity notes`
+2. [DONE] Git Commit: `docs(release): prepare application foundation envelope continuity notes` (hash: TBD)
 3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the continuity/persistence hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; results: TBD; expected commit message: `build(release): assemble application foundation envelope continuity release`
 4. [TODO] Git Commit: `build(release): assemble application foundation envelope continuity release` (hash: TBD)
 5. [TODO] Run `./scripts/build-release.sh --use-current-version`, archive the completed hotfix plan, seed a new empty active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session045.md`; results: TBD; expected commit message: `docs(session): record application foundation envelope continuity release`

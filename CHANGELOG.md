@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.891] - 2026-04-05
+### Fixed
+- **`Application Foundation Envelope` continuity chains no longer fall back to `unknown`**: core continuity stage normalization now recognizes `application_foundation_envelope` during chain creation, root promotion, and tracker matching, so the left Project Manager tree can discover the session branch under the canonical continuity folder.
+- **AFE handoff artifacts now keep the canonical stage path**: handoff prompt rendering and handoff report path generation now preserve `application_foundation_envelope`, preventing AFE handoff files from drifting into `continuity/unknown/...`.
+- **AFE survives workflow last-active readback on cold start**: the workflow-state parser now accepts `application_foundation_envelope` as a valid persisted last-active stage, so restarts no longer drop the stage identity after the artifact has already been created.
+- **Core regression coverage now protects the persistence hotfix**: dedicated tests verify AFE continuity chain paths, handoff report paths, and last-active readback, and the patched `@codeai-hub/core` package builds cleanly before release packaging.
+
 ## [1.1.890] - 2026-04-05
 ### Fixed
 - **`Application Foundation Envelope` workflow tree parity**: the new stage now materializes the same two-line left-sidebar contract used by mature workflow steps, exposing both the provider session line and the canonical artifact line for `application-foundation-envelope.md`.
