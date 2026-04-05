@@ -15,12 +15,13 @@
 ## Messaging cluster
 - `packages/Codex_Module/src/messaging/message-processor.ts` — thin façade: queue, prompt preparation, `runStreamed()` orchestration.
 - `packages/Codex_Module/src/messaging/codex-event-stream-consumer.ts` — startup lock, idle-pulse waiting, terminal event cancellation of SDK generators.
-- `packages/Codex_Module/src/messaging/codex-stream-event-router.ts` — `thread.started`, reasoning items, assistant chunks, structured-output and stream-error normalization.
+- `packages/Codex_Module/src/messaging/codex-stream-event-router.ts` — SDK lifecycle/router layer; `thread.started`, stream-error normalization, and legacy fallback handling, but not the semantic source of truth for Codex assistant phase classification.
 - `packages/Codex_Module/src/messaging/codex-message-finish-handler.ts` — user-turn lifecycle signals плюс cleanup structured-output/reasoning state.
 - `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts` — Codex-local adapter поверх shared translation facade для reasoning deltas.
 - `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts` — focused façade над structured-output prompt/schema preparation и finalize path.
 - `packages/Codex_Module/src/messaging/structured-output-parser.ts`, `structured-output-state.ts` — JSON/parsing rules, passthrough delta/output hash, extractor/session state storage.
 - `packages/Codex_Module/src/messaging/codex-usage-sync.ts`, `codex-token-usage-sync.ts` — usage-limits/token usage refresh; runtime `token_count` signals мержатся в shared usage-limits stream payload.
+- `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`, `codex-rollout-event-parser.ts`, `codex-rollout-dedupe.ts`, `codex-rollout-tail-state.ts`, `codex-rollout-live-sync.ts` — rollout-backed dialog ingestion cluster; live tailing, replay, segment normalization, stable dedupe, and terminal fallback now live here.
 
 ## Reasoning translation and thinking display
 - `packages/Codex_Module/src/messaging/codex-reasoning-streams.ts` аккумулирует SDK reasoning deltas по `item.id` и остаётся source-of-truth для промежуточного reasoning state.
@@ -38,6 +39,7 @@
 - UI история диалога ведётся отдельно (unified-session JSONL по `dialogId`), не смешивать с provider rollouts.
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Internal turns не должны эмитить user-facing `assistant` / `stream_event` / lifecycle events; suppression централизован в messaging emitter helper.
+- Provider-native raw rollout JSONL в `CODEX_HOME/sessions/**/rollout-*.jsonl` является единственным semantic source of truth для Codex user-visible output: `agent_reasoning` -> `thinking`, `agent_message.phase=commentary` -> assistant progress/commentary, `agent_message.phase=final_answer` -> terminal assistant answer.
 - Commentary-phase `agent_message` для structured output остаётся скрытым, чтобы финальный ответ не дублировался в UI.
 - Structured-output passthrough (`hybrid` / `debug_raw`) обязан переживать `sessionId` promotion без потери accumulated state.
 - User-facing Codex settings в baseline line экспонируют три модели: `gpt-5.3-codex`, `gpt-5.4`, `gpt-5.4-mini`.
@@ -55,9 +57,9 @@
   - `hybrid` — baseline default для workflow;
   - `strict` — включает editable schema/instruction contract;
   - `debug_raw` — убирает baseline default schema pressure с обычных turn-ов ради диагностики новых моделей.
-- Raw provider rollout JSONL остаётся диагностическим SSOT; user-facing dialog/history является уже нормализованным display-слоем.
+- Rollout live sync обязан обслуживать и live-turn ingestion, и replay/cold-start reconstruction; повторные reread одного и того же rollout файла в активной сессии не должны дублировать уже показанные сегменты.
 - SDK diagnostics пишутся в `~/.codeai-hub/logs/codex/sdk-codex-*.jsonl` и больше не должны затираться при `resume` на том же `thread_id`.
-- `sdk-codex-*.jsonl` остаётся диагностическим SDK логом; exact provider-applied model/reasoning при аудите нужно подтверждать по raw provider rollout JSONL (`turn_context`) в `CODEX_HOME`, а не по отдельным normalized `provider_feedback` записям.
+- `sdk-codex-*.jsonl` остаётся только диагностическим SDK логом; semantic dialog routing, replay и точные provider phases подтверждаются по raw provider rollout JSONL (`event_msg`, `task_complete`, `turn_context`) в `CODEX_HOME`, а не по отдельным normalized `provider_feedback` записям.
 
 ## Связанные контракты
 - Effective model identity/settings: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
