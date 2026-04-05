@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.893] - 2026-04-05
+### Changed
+- **Codex user-visible output now uses provider-native raw rollout JSONL as the single dialog source of truth**: `thinking`, `commentary`, and `final_answer` segmentation now follows rollout `event_msg` semantics instead of the semantically poorer SDK `item.*` mirror.
+- **Live Codex turns now tail rollout output directly during the turn lifecycle**: rollout-backed normalization drives live updates, terminal drain, replay, and cold-start reconstruction with stable segment ids and session-local dedupe, so reconnect-style rereads do not duplicate already-emitted dialog segments.
+- **`sdk-codex-*.jsonl` is now diagnostics-only**: SDK feedback logging remains for transport/runtime debugging, but it no longer participates in semantic dialog routing or history reconstruction.
+
+### Fixed
+- **The reported second-turn Description regression no longer mixes commentary into `Thinking`**: rollout `agent_message.phase = commentary` is now emitted as assistant progress text while `agent_reasoning` remains the only source of `Thinking`.
+- **Replay and resume now stay deterministic under the rollout cutover**: the Codex test surface now protects in-session dedupe, saved-rollout replay, and cold-start rebuild from duplicate segment emission.
+- **Empty-terminal recovery remains green after the rollout migration**: if Codex reaches `task_complete` with a substantive `last_agent_message` but no usable `final_answer`, the user still receives the real assistant completion instead of a thinking-only end state.
+
 ## [1.1.892] - 2026-04-05
 ### Fixed
 - **Codex empty-terminal turns now preserve the last substantive assistant answer**: when Codex emits a real user-facing `agent_message`, then drifts into a late reasoning tail and finally ends the turn with an empty terminal assistant payload, the bridge now restores that earlier substantive answer instead of leaving the dialog with giant `Thinking` output and no completion.

@@ -59,10 +59,10 @@
 9. [DONE] Run targeted Codex verification and record the concrete results in this plan; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record codex rollout verification`
    Verification result: `npm exec -- tsx --test packages/Codex_Module/src/messaging/message-processor.commentary-phase.test.ts packages/Codex_Module/src/messaging/message-processor.replay.test.ts packages/Codex_Module/src/messaging/message-processor.empty-terminal.test.ts packages/Codex_Module/src/messaging/message-processor.test.ts packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts packages/Codex_Module/src/rollout/codex-rollout-event-parser.test.ts` -> `21/21` tests passed.
    Verification result: `npm run build --workspace @codeai-hub/codex-module` -> passed.
-10. [TODO] Git Commit: `docs(todo): record codex rollout verification` (hash: TBD)
+10. [DONE] Git Commit: `docs(todo): record codex rollout verification` (hash: `ffea1e00d`)
 
 ### Stream: Release Build
-1. [TODO] Update release-facing docs for the next Codex raw rollout patch release from a clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare codex raw rollout migration notes`
+1. [DONE] Update release-facing docs for the next Codex raw rollout patch release from a clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare codex raw rollout migration notes`
 2. [TODO] Git Commit: `docs(release): prepare codex raw rollout migration notes` (hash: TBD)
 3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the Codex raw rollout migration; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble codex raw rollout release`
 4. [TODO] Git Commit: `build(release): assemble codex raw rollout release` (hash: TBD)
