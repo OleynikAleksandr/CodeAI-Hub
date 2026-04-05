@@ -86,3 +86,48 @@ test("codex rollout reader returns appended entries after the provided line curs
     },
   ]);
 });
+
+test("codex rollout reader can replay the same saved rollout deterministically from the beginning", async () => {
+  const codexHome = await mkdtemp(path.join(os.tmpdir(), "codex-rollout-"));
+  const providerSessionId = "019d5da1-8406-73e1-9a64-e77662dfed73";
+  const rolloutPath = await buildRolloutPath(codexHome, providerSessionId);
+  const reader = new CodexRolloutReader({ codexHome });
+
+  await writeFile(
+    rolloutPath,
+    [
+      JSON.stringify({
+        type: "event_msg",
+        payload: { type: "agent_reasoning", text: "thinking-1" },
+      }),
+      JSON.stringify({
+        type: "event_msg",
+        payload: {
+          type: "agent_message",
+          message: "commentary-1",
+          phase: "commentary",
+        },
+      }),
+      JSON.stringify({
+        type: "event_msg",
+        payload: {
+          type: "agent_message",
+          message: "final-answer-1",
+          phase: "final_answer",
+        },
+      }),
+    ].join("\n"),
+    "utf8"
+  );
+
+  const first = await reader.readAppendedEntries({ providerSessionId });
+  const replay = await reader.readAppendedEntries({ providerSessionId });
+
+  assert.ok(first);
+  assert.ok(replay);
+  assert.equal(first.filePath, rolloutPath);
+  assert.equal(replay.filePath, rolloutPath);
+  assert.equal(first.nextLine, 3);
+  assert.equal(replay.nextLine, 3);
+  assert.deepEqual(replay.entries, first.entries);
+});

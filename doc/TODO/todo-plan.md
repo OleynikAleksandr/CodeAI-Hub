@@ -49,8 +49,8 @@
 
 ### Stream: Regression And Replay
 1. [DONE] Cover the reported Codex second-turn Description trace so commentary, thinking, and final answer remain separated under the rollout-backed parser; scope: `packages/Codex_Module/src/messaging/message-processor.commentary-phase.test.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(codex-rollout): cover commentary phase routing`
-2. [TODO] Git Commit: `test(codex-rollout): cover commentary phase routing` (hash: TBD)
-3. [TODO] Cover replay/resume so rollout-derived segments restore without duplicates under the new live-sync path; scope: `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `test(codex-rollout): guard rollout replay resume`
+2. [DONE] Git Commit: `test(codex-rollout): cover commentary phase routing` (hash: `84151f9c5`)
+3. [DONE] Cover replay/resume so rollout-derived segments restore without duplicates under the new live-sync path; scope: `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `test(codex-rollout): guard rollout replay resume`
 4. [TODO] Git Commit: `test(codex-rollout): guard rollout replay resume` (hash: TBD)
 5. [TODO] Keep the previous empty-terminal-answer recovery green after the rollout cutover; scope: `packages/Codex_Module/src/messaging/message-processor.empty-terminal.test.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(codex-rollout): preserve empty terminal recovery`
 6. [TODO] Git Commit: `test(codex-rollout): preserve empty terminal recovery` (hash: TBD)
