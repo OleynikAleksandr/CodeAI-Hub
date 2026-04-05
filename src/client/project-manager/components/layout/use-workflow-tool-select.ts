@@ -7,14 +7,32 @@ import { resolveWorkspaceSlug } from "./main-area-utils";
 
 export const VIRTUAL_SIMULATION_TOOL_LABEL = "VIRTUAL SIMULATION" as const;
 const DIAGRAM_MODULES_TOOL_LABEL = "Diagram Modules" as const;
+export const APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL =
+  "Application Foundation Envelope" as const;
 
-type DiagramStageToolLabel = typeof DIAGRAM_MODULES_TOOL_LABEL;
+type ContinuityToolLabel =
+  | typeof DIAGRAM_MODULES_TOOL_LABEL
+  | typeof APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL;
 
-const DIAGRAM_STAGE_MAP: Record<
-  DiagramStageToolLabel,
-  { readonly stage: "diagram_modules"; readonly startMethod: "startDiagramModules" }
+const CONTINUITY_STAGE_MAP: Record<
+  ContinuityToolLabel,
+  {
+    readonly stage:
+      | "diagram_modules"
+      | "application_foundation_envelope";
+    readonly startMethod:
+      | "startDiagramModules"
+      | "startApplicationFoundationEnvelope";
+  }
 > = {
-  [DIAGRAM_MODULES_TOOL_LABEL]: { stage: "diagram_modules", startMethod: "startDiagramModules" },
+  [DIAGRAM_MODULES_TOOL_LABEL]: {
+    stage: "diagram_modules",
+    startMethod: "startDiagramModules",
+  },
+  [APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL]: {
+    stage: "application_foundation_envelope",
+    startMethod: "startApplicationFoundationEnvelope",
+  },
 };
 
 type PendingSessionCreate = { readonly providerTitle: string } | null;
@@ -50,10 +68,10 @@ export const useWorkflowToolSelect = (
   } = params;
   const workflowStepStartServiceRef = useRef(new WorkflowStepStartService());
   const virtualSimulationStartInFlightRef = useRef(false);
-  const diagramStartInFlightRef = useRef(false);
+  const continuityStartInFlightRef = useRef(false);
 
-  const isDiagramTool = (tool: string): tool is DiagramStageToolLabel =>
-    tool in DIAGRAM_STAGE_MAP;
+  const isContinuityTool = (tool: string): tool is ContinuityToolLabel =>
+    tool in CONTINUITY_STAGE_MAP;
 
   return useCallback(
     (tool: string) => {
@@ -63,25 +81,25 @@ export const useWorkflowToolSelect = (
       };
 
       // Non-gated tools (Description, etc.): activate immediately
-      if (!isDiagramTool(tool) && tool !== VIRTUAL_SIMULATION_TOOL_LABEL) {
+      if (!isContinuityTool(tool) && tool !== VIRTUAL_SIMULATION_TOOL_LABEL) {
         activateToolAndStage(tool);
         return;
       }
 
-      if (isDiagramTool(tool)) {
+      if (isContinuityTool(tool)) {
         if (!activeWorkspace?.path) return;
         const workspaceSlug = resolveWorkspaceSlug(activeWorkspace);
         if (!workspaceSlug) return;
-        if (diagramStartInFlightRef.current) return;
-        diagramStartInFlightRef.current = true;
+        if (continuityStartInFlightRef.current) return;
+        continuityStartInFlightRef.current = true;
 
         const providers = api.getDescriptionProviders();
         const fallbackProvider = providers.at(0) ?? null;
         if (!fallbackProvider) {
-          diagramStartInFlightRef.current = false;
+          continuityStartInFlightRef.current = false;
           return;
         }
-        const { stage, startMethod } = DIAGRAM_STAGE_MAP[tool];
+        const { stage, startMethod } = CONTINUITY_STAGE_MAP[tool];
 
         void (async () => {
           const workflowState = await api.getWorkflowState(
@@ -130,7 +148,7 @@ export const useWorkflowToolSelect = (
             console.warn(`[PM] Failed to start ${stage} workflow step`, error);
           })
           .finally(() => {
-            diagramStartInFlightRef.current = false;
+            continuityStartInFlightRef.current = false;
             setPendingSessionCreate(null);
           });
         return;

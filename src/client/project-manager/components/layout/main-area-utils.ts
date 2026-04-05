@@ -3,18 +3,25 @@ import {
   toWorkflowWorkspaceSlug,
   type WorkflowStageId,
 } from "../../services/workflow-state-client";
-import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
+import {
+  APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+  VIRTUAL_SIMULATION_TOOL_LABEL,
+} from "./use-workflow-tool-select";
 
 const TOOL_TO_STAGE_MAP: Readonly<Record<string, string>> = {
   Description: "description",
   [VIRTUAL_SIMULATION_TOOL_LABEL]: "virtual_simulation",
   "Diagram Modules": "diagram_modules",
+  [APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL]:
+    "application_foundation_envelope",
 };
 
 const STAGE_TO_TOOL_MAP: Readonly<Record<WorkflowStageId, string>> = {
   description: "Description",
   virtual_simulation: VIRTUAL_SIMULATION_TOOL_LABEL,
   diagram_modules: "Diagram Modules",
+  application_foundation_envelope:
+    APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
 };
 
 const resolveStageByTool = (tool: string): string | null =>

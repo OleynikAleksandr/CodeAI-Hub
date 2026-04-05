@@ -18,7 +18,11 @@ import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
-import { VIRTUAL_SIMULATION_TOOL_LABEL, useWorkflowToolSelect } from "./use-workflow-tool-select";
+import {
+  APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+  VIRTUAL_SIMULATION_TOOL_LABEL,
+  useWorkflowToolSelect,
+} from "./use-workflow-tool-select";
 
 interface MainAreaProps {
   sizes: [number, number];
@@ -32,7 +36,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
   activeWorkspace,
 }) => {
   const tools: readonly string[] = activeWorkspace
-    ? ["Description", VIRTUAL_SIMULATION_TOOL_LABEL, "Diagram Modules"]
+    ? [
+        "Description",
+        VIRTUAL_SIMULATION_TOOL_LABEL,
+        "Diagram Modules",
+        APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+      ]
     : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [preferredSessionId, setPreferredSessionId] = useState<string | null>(null);
