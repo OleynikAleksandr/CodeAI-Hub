@@ -25,6 +25,10 @@ import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-art
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
+const DIAGRAM_MODULES_BLOCKED_FALLBACK =
+  "BLOCKED: requires virtual-simulation.md (DONE)";
+const APPLICATION_FOUNDATION_ENVELOPE_BLOCKED_FALLBACK =
+  "BLOCKED: requires Diagram Modules aggregate-ready output (DONE)";
 
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
@@ -368,13 +372,13 @@ const resolveStageTitle = (
       return t(
         UI_LABELS_CATEGORY,
         "pm.workflow.stage.diagram_modules.blocked_title",
-        "BLOCKED: requires virtual-simulation.md (DONE)"
+        DIAGRAM_MODULES_BLOCKED_FALLBACK
       );
     case "application_foundation_envelope":
       return t(
         UI_LABELS_CATEGORY,
         "pm.workflow.stage.application_foundation_envelope.blocked_title",
-        "BLOCKED: requires Diagram Modules aggregate-ready output (DONE)"
+        APPLICATION_FOUNDATION_ENVELOPE_BLOCKED_FALLBACK
       );
   }
 };
