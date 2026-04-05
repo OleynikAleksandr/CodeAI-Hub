@@ -16,8 +16,8 @@ const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-map\.flow\.json))$/;
-const APPLICATION_FOUNDATION_ENVELOPE_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/application_foundation_envelope\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?application-foundation-envelope\.md$/;
+const FOUNDATION_ENVELOPE_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/foundation_envelope\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?foundation-envelope\.md$/;
 const PRODUCT_PART_SLOT_RE =
   /^diagram\.modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -42,10 +42,10 @@ const WORKFLOW_STAGE_SLOTS = new Map<
     { stage: "diagram_modules", fileName: "module-map.flow.json" },
   ],
   [
-    "workspace.application_foundation_envelope",
+    "workspace.foundation_envelope",
     {
-      stage: "application_foundation_envelope",
-      fileName: "application-foundation-envelope.md",
+      stage: "foundation_envelope",
+      fileName: "foundation-envelope.md",
     },
   ],
 ]);
@@ -53,14 +53,14 @@ const WORKFLOW_STAGE_PATHS = new Map<WorkflowStageId, RegExp>([
   ["description", DESCRIPTION_PATH_RE],
   ["virtual_simulation", VIRTUAL_SIMULATION_PATH_RE],
   ["diagram_modules", DIAGRAM_MODULES_PATH_RE],
-  ["application_foundation_envelope", APPLICATION_FOUNDATION_ENVELOPE_PATH_RE],
+  ["foundation_envelope", FOUNDATION_ENVELOPE_PATH_RE],
 ]);
 
 type WorkflowStageId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules"
-  | "application_foundation_envelope";
+  | "foundation_envelope";
 type WorkflowParseResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly error: string };
@@ -169,7 +169,7 @@ export const resolveWorkflowStageArtifactTarget = (params: {
       stage === "description" ||
       stage === "virtual_simulation" ||
       stage === "diagram_modules" ||
-      stage === "application_foundation_envelope"
+      stage === "foundation_envelope"
     )
   ) {
     return { ok: false, error: `Unsupported stage: ${stage}` };

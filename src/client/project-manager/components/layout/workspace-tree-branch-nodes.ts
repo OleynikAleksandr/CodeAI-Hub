@@ -1,6 +1,6 @@
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
+import { FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { TreeNode } from "./workspace-tree-model";
 import { resolveDiagramStageSyncPayload } from "./workspace-tree-diagram-branch-nodes";
@@ -110,7 +110,7 @@ const resolveLatestStageChain = (
   stage:
     | "virtual_simulation"
     | "diagram_modules"
-    | "application_foundation_envelope"
+    | "foundation_envelope"
 ) => {
   let best: (typeof chains)[number] | null = null;
   for (const chain of chains) {
@@ -207,15 +207,15 @@ export const resolveStageSyncPayload = (options: {
     });
   }
 
-  if (stage === "application_foundation_envelope") {
+  if (stage === "foundation_envelope") {
     const chain = resolveLatestStageChain(
       workflowState.continuity.chains,
-      "application_foundation_envelope"
+      "foundation_envelope"
     );
     const last = chain?.segments.at(-1) ?? null;
     return {
       artifact: null,
-      clearTool: APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+      clearTool: FOUNDATION_ENVELOPE_TOOL_LABEL,
       session: last
         ? {
             providerId: last.providerId,
@@ -223,7 +223,7 @@ export const resolveStageSyncPayload = (options: {
             workspacePath,
             workspaceSlug,
             initiativeSlug: workspaceSlug,
-            stage: "application_foundation_envelope",
+            stage: "foundation_envelope",
             sessionKind: "collector",
             runSlug: null,
           }
@@ -320,9 +320,9 @@ export const buildVirtualSimulationBranchNodes = (options: {
   return nodes;
 };
 
-export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
+export const buildFoundationEnvelopeBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
-  readonly applicationFoundationEnvelopeArtifactAvailable: boolean;
+  readonly foundationEnvelopeArtifactAvailable: boolean;
   readonly workspaceSlug: string | null;
   readonly workspacePath?: string;
   readonly selectArtifact: (artifactPath: string, label: string) => void;
@@ -340,25 +340,25 @@ export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
 
   const nodes: TreeNode[] = [];
   const artifactPath =
-    `.codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`;
+    `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`;
   const chain = resolveLatestStageChain(
     workflowState.continuity.chains,
-    "application_foundation_envelope"
+    "foundation_envelope"
   );
   const last = chain?.segments.at(-1) ?? null;
 
-  if (options.applicationFoundationEnvelopeArtifactAvailable) {
+  if (options.foundationEnvelopeArtifactAvailable) {
     nodes.push({
-      id: "workflow:application_foundation_envelope:artifact",
-      label: "application-foundation-envelope.md",
+      id: "workflow:foundation_envelope:artifact",
+      label: "foundation-envelope.md",
       title: artifactPath,
       status: "active",
       visualDepth: 2,
       onSelect: () => {
-        dispatchStageActivated("application_foundation_envelope");
+        dispatchStageActivated("foundation_envelope");
         options.selectArtifact(
           artifactPath,
-          "application-foundation-envelope.md"
+          "foundation-envelope.md"
         );
         if (last) {
           options.dispatchDialogOpenIntent({
@@ -367,7 +367,7 @@ export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
             workspacePath,
             workspaceSlug,
             initiativeSlug: workspaceSlug,
-            stage: "application_foundation_envelope",
+            stage: "foundation_envelope",
             sessionKind: "collector",
             runSlug: null,
           });
@@ -382,27 +382,27 @@ export const buildApplicationFoundationEnvelopeBranchNodes = (options: {
 
   const providerTitle = resolveProviderTitle(last.providerId);
   nodes.push({
-    id: `workflow:application_foundation_envelope:session:${chain.rootSessionId}`,
+    id: `workflow:foundation_envelope:session:${chain.rootSessionId}`,
     label: options.resolveSessionLabel(providerTitle),
     status: "active",
     visualDepth: 2,
     onSelect: () => {
-      dispatchStageActivated("application_foundation_envelope");
+      dispatchStageActivated("foundation_envelope");
       options.dispatchDialogOpenIntent({
         providerId: last.providerId,
         providerSessionId: last.providerSessionId,
         workspacePath,
         workspaceSlug,
         initiativeSlug: workspaceSlug,
-        stage: "application_foundation_envelope",
+        stage: "foundation_envelope",
         sessionKind: "collector",
         runSlug: null,
       });
-      if (options.applicationFoundationEnvelopeArtifactAvailable) {
-        options.selectArtifact(artifactPath, "application-foundation-envelope.md");
+      if (options.foundationEnvelopeArtifactAvailable) {
+        options.selectArtifact(artifactPath, "foundation-envelope.md");
       } else {
         options.clearArtifactWithTool(
-          APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL
+          FOUNDATION_ENVELOPE_TOOL_LABEL
         );
       }
     },

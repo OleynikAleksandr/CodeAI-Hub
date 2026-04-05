@@ -66,5 +66,5 @@
 - Validate release `1.1.893` from the produced VSIX and collect user feedback on the rollout-backed Codex dialog path.
 - If Codex still exposes any semantic or replay anomaly, open a separate planning scope rather than reopening the archived rollout migration by default.
 - Use the archived Codex rollout migration as the reference pattern if a similar provider-native output migration is later approved for Claude.
-- Keep `Application_Foundation_Envelope_Architecture.md`, `Implementation_Foundation_Architecture.md`, `MultiProvider_Orchestration_Scenarios.md`, and `Runtime_GodModules_Decomposition_Architecture.md` deferred until the next approved execution wave.
+- Keep `Foundation_Envelope_Architecture.md`, `Implementation_Foundation_Architecture.md`, `MultiProvider_Orchestration_Scenarios.md`, and `Runtime_GodModules_Decomposition_Architecture.md` deferred until the next approved execution wave.
 - Open a separate docs-only scope if the broken absolute markdown links in `Session040.md` and `Session041.md` need cleanup.

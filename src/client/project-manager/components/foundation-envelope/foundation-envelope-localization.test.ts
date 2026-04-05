@@ -5,7 +5,7 @@ import test from "node:test";
 
 const PANEL_SOURCE_PATH = path.resolve(
   process.cwd(),
-  "src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-panel.tsx"
+  "src/client/project-manager/components/foundation-envelope/foundation-envelope-panel.tsx"
 );
 const USER_MESSAGES_DICTIONARY_PATH = path.resolve(
   process.cwd(),
@@ -16,7 +16,7 @@ const UI_LABELS_DICTIONARY_PATH = path.resolve(
   "assets/localization/source/en/ui_labels.json"
 );
 
-test("application foundation envelope panel reads localized help and shell copy from canonical dictionaries", async () => {
+test("foundation envelope panel reads localized help and shell copy from canonical dictionaries", async () => {
   const [panelSource, userMessagesRaw, uiLabelsRaw] = await Promise.all([
     readFile(PANEL_SOURCE_PATH, "utf8"),
     readFile(USER_MESSAGES_DICTIONARY_PATH, "utf8"),
@@ -27,49 +27,49 @@ test("application foundation envelope panel reads localized help and shell copy 
   const uiLabels = JSON.parse(uiLabelsRaw) as Record<string, string>;
 
   assert.equal(
-    panelSource.includes('"pm.application_foundation_envelope.help.title"'),
+    panelSource.includes('"pm.foundation_envelope.help.title"'),
     true
   );
   assert.equal(
-    panelSource.includes('"pm.application_foundation_envelope.error.load"'),
+    panelSource.includes('"pm.foundation_envelope.error.load"'),
     true
   );
   assert.equal(
-    panelSource.includes('"pm.workflow.stage.application_foundation_envelope.label"'),
+    panelSource.includes('"pm.workflow.stage.foundation_envelope.label"'),
     true
   );
 
   assert.equal(
-    userMessages["pm.application_foundation_envelope.help.title"],
-    "Application Foundation Envelope Help"
+    userMessages["pm.foundation_envelope.help.title"],
+    "Foundation Envelope Help"
   );
   assert.match(
-    userMessages["pm.application_foundation_envelope.help.intro"] ?? "",
+    userMessages["pm.foundation_envelope.help.intro"] ?? "",
     /Application Root/
   );
   assert.match(
-    userMessages["pm.application_foundation_envelope.help.intro"] ?? "",
+    userMessages["pm.foundation_envelope.help.intro"] ?? "",
     /Shared Zones/
   );
   assert.match(
-    userMessages["pm.application_foundation_envelope.help.scope"] ?? "",
+    userMessages["pm.foundation_envelope.help.scope"] ?? "",
     /application-wide assembly baseline/
   );
   assert.equal(
-    userMessages["pm.application_foundation_envelope.error.load"],
-    "Could not load Application Foundation Envelope."
+    userMessages["pm.foundation_envelope.error.load"],
+    "Could not load Foundation Envelope."
   );
 
   assert.equal(
-    uiLabels["pm.workflow.stage.application_foundation_envelope.label"],
-    "Application Foundation Envelope"
+    uiLabels["pm.workflow.stage.foundation_envelope.label"],
+    "Foundation Envelope"
   );
   assert.equal(
-    uiLabels["pm.workflow.stage.application_foundation_envelope.blocked_title"],
+    uiLabels["pm.workflow.stage.foundation_envelope.blocked_title"],
     "BLOCKED: requires Diagram Modules aggregate-ready output (DONE)"
   );
   assert.equal(
-    uiLabels["pm.workflow.stage.application_foundation_envelope.session_label"],
+    uiLabels["pm.workflow.stage.foundation_envelope.session_label"],
     "{stageLabel} {providerTitle}"
   );
 });

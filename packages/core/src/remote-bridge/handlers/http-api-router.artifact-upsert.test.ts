@@ -76,8 +76,8 @@ const PRODUCT_PARTS_INDEX_MARKDOWN = [
   "",
 ].join("\n");
 
-const APPLICATION_FOUNDATION_ENVELOPE_MARKDOWN = [
-  "# Application Foundation Envelope",
+const FOUNDATION_ENVELOPE_MARKDOWN = [
+  "# Foundation Envelope",
   "",
   "## Application Root",
   "- The application root is the local desktop workflow shell.",
@@ -199,9 +199,9 @@ test("artifact upsert saves diagram modules staged index and dynamic product par
   }
 });
 
-test("artifact upsert saves application foundation envelope markdown for the stage session", async () => {
+test("artifact upsert saves foundation envelope markdown for the stage session", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "http-api-router-afe-upsert-")
+    path.join(os.tmpdir(), "http-api-router-foundation-envelope-upsert-")
   );
   const workspaceSlug = "demo-workspace";
 
@@ -223,14 +223,14 @@ test("artifact upsert saves application foundation envelope markdown for the sta
       sessionHandler: {} as never,
       sessionManager: {
         getSession(sessionId: string) {
-          if (sessionId !== "session-afe") {
+          if (sessionId !== "session-foundation-envelope") {
             return null;
           }
           return {
             id: sessionId,
             initiativeSlug: workspaceSlug,
             runSlug: null,
-            stage: "application_foundation_envelope",
+            stage: "foundation_envelope",
             workspacePath: workspaceRoot,
           };
         },
@@ -249,11 +249,11 @@ test("artifact upsert saves application foundation envelope markdown for the sta
     ).handleArtifactUpsertSave(
       {
         body: {
-          sessionId: "session-afe",
+          sessionId: "session-foundation-envelope",
           artifacts: [
             {
-              slot: "workspace.application_foundation_envelope",
-              markdown: APPLICATION_FOUNDATION_ENVELOPE_MARKDOWN,
+              slot: "workspace.foundation_envelope",
+              markdown: FOUNDATION_ENVELOPE_MARKDOWN,
             },
           ],
         },
@@ -275,17 +275,17 @@ test("artifact upsert saves application foundation envelope markdown for the sta
     assert.equal(result.statusCode, 200);
     assert.deepEqual(
       result.payload.saved.map((entry) => entry.slot),
-      ["workspace.application_foundation_envelope"]
+      ["workspace.foundation_envelope"]
     );
 
     const artifactPath = path.join(
       workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`
+      `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`
     );
 
     assert.equal(
       await readFile(artifactPath, "utf8"),
-      APPLICATION_FOUNDATION_ENVELOPE_MARKDOWN
+      FOUNDATION_ENVELOPE_MARKDOWN
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
+import { FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
 
 export type SessionResumeIntent = {
   readonly providerId: string;
@@ -19,7 +19,7 @@ type WorkspaceTreeAutoSelectParams = {
   readonly workspaceSlug?: string | null;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable: boolean;
-  readonly applicationFoundationEnvelopeArtifactAvailable: boolean;
+  readonly foundationEnvelopeArtifactAvailable: boolean;
   readonly onSelectArtifact: (artifactPath: string, label: string) => void;
   readonly onResumeSession: (payload: SessionResumeIntent) => void;
   readonly onClearArtifactWithTool: (activeTool: string) => void;
@@ -75,22 +75,22 @@ export const useWorkspaceTreeAutoSelect = (
 
       const envelopeChain = resolveLatestContinuityChain(
         state.continuity.chains,
-        "application_foundation_envelope"
+        "foundation_envelope"
       );
       const envelopeLast = envelopeChain?.segments.at(-1) ?? null;
 
       if (envelopeLast) {
-        dispatchStageActivated("application_foundation_envelope");
+        dispatchStageActivated("foundation_envelope");
         const envelopeArtifactPath =
-          `.codeai-hub/${params.workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`;
-        if (params.applicationFoundationEnvelopeArtifactAvailable) {
+          `.codeai-hub/${params.workspaceSlug}/foundation_envelope/foundation-envelope.md`;
+        if (params.foundationEnvelopeArtifactAvailable) {
           params.onSelectArtifact(
             envelopeArtifactPath,
-            "application-foundation-envelope.md"
+            "foundation-envelope.md"
           );
         } else {
           params.onClearArtifactWithTool(
-            APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL
+            FOUNDATION_ENVELOPE_TOOL_LABEL
           );
         }
         params.onResumeSession({
@@ -99,7 +99,7 @@ export const useWorkspaceTreeAutoSelect = (
           workspacePath: params.workspacePath,
           workspaceSlug: params.workspaceSlug,
           initiativeSlug: params.workspaceSlug,
-          stage: "application_foundation_envelope",
+          stage: "foundation_envelope",
           sessionKind: "collector",
           runSlug: null,
         });
@@ -207,7 +207,7 @@ export const useWorkspaceTreeAutoSelect = (
       }
     },
     [
-      params.applicationFoundationEnvelopeArtifactAvailable,
+      params.foundationEnvelopeArtifactAvailable,
       params.diagramModulesArtifactAvailable,
       params.onClearArtifactWithTool,
       params.onResumeSession,

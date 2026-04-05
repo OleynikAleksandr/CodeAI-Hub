@@ -57,12 +57,12 @@ test("resolveWorkflowArtifactPaths rejects diagram modules product part without 
   assert.equal(result.error, "Invalid product part path parameters");
 });
 
-test("resolveWorkflowArtifactPaths resolves application foundation envelope path", () => {
+test("resolveWorkflowArtifactPaths resolves foundation envelope path", () => {
   const result = resolveWorkflowArtifactPaths({
     workspaceRoot: WORKSPACE_ROOT,
     workspaceSlug: "demo-workspace",
-    stage: "application_foundation_envelope",
-    fileName: "application-foundation-envelope.md",
+    stage: "foundation_envelope",
+    fileName: "foundation-envelope.md",
   });
 
   assert.equal(result.ok, true);
@@ -71,6 +71,6 @@ test("resolveWorkflowArtifactPaths resolves application foundation envelope path
   }
   assert.equal(
     result.value.relativePath,
-    ".codeai-hub/demo-workspace/application_foundation_envelope/application-foundation-envelope.md"
+    ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md"
   );
 });

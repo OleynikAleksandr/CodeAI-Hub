@@ -1,7 +1,7 @@
 import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import {
-  buildApplicationFoundationEnvelopeBranchNodes,
+  buildFoundationEnvelopeBranchNodes,
   buildDescriptionBranchNodes,
   buildVirtualSimulationBranchNodes,
   buildDiagramModulesBranchNodes,
@@ -15,11 +15,11 @@ export type StageChildrenContext = {
   readonly descriptionArtifactAvailable: boolean;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable: boolean;
-  readonly applicationFoundationEnvelopeArtifactAvailable: boolean;
+  readonly foundationEnvelopeArtifactAvailable: boolean;
   readonly selectArtifact: (artifactPath: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
-  readonly resolveApplicationFoundationEnvelopeSessionLabel: (
+  readonly resolveFoundationEnvelopeSessionLabel: (
     providerTitle: string
   ) => string;
 };
@@ -60,17 +60,17 @@ export const resolveStageChildren = (
       clearArtifactWithTool: ctx.clearArtifactWithTool,
     });
   }
-  if (stage === "application_foundation_envelope") {
-    return buildApplicationFoundationEnvelopeBranchNodes({
+  if (stage === "foundation_envelope") {
+    return buildFoundationEnvelopeBranchNodes({
       workflowState: ctx.workflowState,
-      applicationFoundationEnvelopeArtifactAvailable:
-        ctx.applicationFoundationEnvelopeArtifactAvailable,
+      foundationEnvelopeArtifactAvailable:
+        ctx.foundationEnvelopeArtifactAvailable,
       workspaceSlug: ctx.workspaceSlug,
       workspacePath: ctx.workspacePath,
       selectArtifact: ctx.selectArtifact,
       dispatchDialogOpenIntent: ctx.dispatchDialogOpenIntent,
       clearArtifactWithTool: ctx.clearArtifactWithTool,
-      resolveSessionLabel: ctx.resolveApplicationFoundationEnvelopeSessionLabel,
+      resolveSessionLabel: ctx.resolveFoundationEnvelopeSessionLabel,
     });
   }
   return [];

@@ -16,15 +16,15 @@
 - **Шаг 1 (Description):** что за продукт, для кого, и какие базовые сценарии должны работать.
 - **Шаг 2 (Virtual Simulation):** как продукт должен вести себя в сценариях использования.
 - **Шаг 3 (Diagram Modules):** из каких Product Part / Cluster / Module состоит система.
-- **Шаг 4 (Application Foundation Envelope):** как эти части собираются в одно приложение: `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies и placement/dependency rules.
+- **Шаг 4 (Foundation Envelope):** как эти части собираются в одно приложение: `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies и placement/dependency rules.
 
 ### Ветки (branches) — `[DESIGNED, NOT IMPLEMENTED]`:
 
-После утверждения `Application Foundation Envelope` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта:
+После утверждения `Foundation Envelope` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта:
 
 ```
 Diagram Modules
- └─ Application Foundation Envelope (trunk end)
+ └─ Foundation Envelope (trunk end)
      └─ Product Part (ветка per part)
          ├─ Cluster (ветка per cluster)
          │   ├─ Cluster Specification (функции, модули, зона ответственности)
@@ -183,7 +183,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 ---
 
-## Шаг 4 — Application Foundation Envelope
+## Шаг 4 — Foundation Envelope
 
 ### Цель
 
@@ -211,7 +211,7 @@ Manual start из PM после завершённой semantic materialization 
 
 ### Артефакт
 
-- `.codeai-hub/<workspaceSlug>/application_foundation_envelope/application-foundation-envelope.md`
+- `.codeai-hub/<workspaceSlug>/foundation_envelope/foundation-envelope.md`
 
 ### Первая implementation wave
 
@@ -222,7 +222,7 @@ Manual start из PM после завершённой semantic materialization 
 - Project Manager button/tree/panel shell.
 
 Из этой wave сознательно исключены:
-- `application-envelope.flow.json`;
+- `foundation-envelope.flow.json`;
 - visual editor / renderer / layout persistence;
 - branch-level specification steps после envelope.
 
@@ -234,7 +234,7 @@ Manual start из PM после завершённой semantic materialization 
 
 - Изменение `Final_Description.md` → `Virtual Simulation = OUTDATED`.
 - Изменение `virtual-simulation.md` → `Diagram Modules = OUTDATED`.
-- Изменение canonical artifacts `Diagram Modules` после готового envelope → `Application Foundation Envelope = OUTDATED`.
+- Изменение canonical artifacts `Diagram Modules` после готового envelope → `Foundation Envelope = OUTDATED`.
 
 ### Resume-by-default для workflow шагов
 

@@ -11,9 +11,9 @@ import {
   handleWorkflowContract,
 } from "./http-api-system-routes";
 import {
-  buildApplicationFoundationEnvelopeContract,
   buildDescriptionContract,
   buildDiagramModulesContract,
+  buildFoundationEnvelopeContract,
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
@@ -129,13 +129,13 @@ export class HttpApiRouter {
       }
     );
     app.get(
-      "/api/v1/orchestrator/application-foundation-envelope-contract",
+      "/api/v1/orchestrator/foundation-envelope-contract",
       async (_req: Request, res: Response) => {
         await handleWorkflowContract(
           this.deps,
           res,
-          buildApplicationFoundationEnvelopeContract,
-          "Application foundation envelope"
+          buildFoundationEnvelopeContract,
+          "Foundation envelope"
         );
       }
     );

@@ -91,7 +91,7 @@ const readWorkflowStatePayload = async (params: {
     params.service.handleWorkflowStateRead(req, res);
   });
 
-test("workflow-state cold start unlocks application foundation envelope after diagram modules aggregate readiness", async () => {
+test("workflow-state cold start unlocks foundation envelope after diagram modules aggregate readiness", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-service-hydration-")
   );
@@ -134,8 +134,8 @@ test("workflow-state cold start unlocks application foundation envelope after di
     );
     await writeWorkspaceFile(
       workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`,
-      "# Application Foundation Envelope\n"
+      `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`,
+      "# Foundation Envelope\n"
     );
 
     const service = new WorkflowStateService({
@@ -153,11 +153,11 @@ test("workflow-state cold start unlocks application foundation envelope after di
     assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
     assert.equal(payload.state?.stages.diagram_modules?.status, "idle");
     assert.equal(
-      payload.state?.stages.application_foundation_envelope?.status,
+      payload.state?.stages.foundation_envelope?.status,
       "completed"
     );
     assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.gating.blocked.application_foundation_envelope, false);
+    assert.equal(payload.gating.blocked.foundation_envelope, false);
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
     assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
     assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
@@ -170,10 +170,9 @@ test("workflow-state cold start unlocks application foundation envelope after di
       true
     );
     assert.equal(
-      payload.state?.stages.application_foundation_envelope?.artifacts?.some(
+      payload.state?.stages.foundation_envelope?.artifacts?.some(
         (artifact) =>
-          artifact.path ===
-          "application_foundation_envelope/application-foundation-envelope.md"
+          artifact.path === "foundation_envelope/foundation-envelope.md"
       ),
       true
     );
@@ -236,7 +235,7 @@ test("workflow-state tracks diagram modules progress when not all product parts 
     const payload = result.payload as WorkflowStatePayload;
 
     assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.gating.blocked.application_foundation_envelope, true);
+    assert.equal(payload.gating.blocked.foundation_envelope, true);
     assert.equal(
       payload.diagramModulesProgress?.substep,
       "generate_product_part"

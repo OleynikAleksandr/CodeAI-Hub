@@ -7,7 +7,7 @@ export type WorkflowArtifactFileName =
   | "product-parts.index.md"
   | "product-part.md"
   | "module-map.flow.json"
-  | "application-foundation-envelope.md";
+  | "foundation-envelope.md";
 
 export interface WorkflowArtifactPath {
   readonly absolutePath: string;

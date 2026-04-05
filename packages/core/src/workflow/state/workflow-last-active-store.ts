@@ -16,7 +16,7 @@ const isWorkflowStageId = (value: unknown): value is WorkflowStageId =>
   value === "description" ||
   value === "virtual_simulation" ||
   value === "diagram_modules" ||
-  value === "application_foundation_envelope";
+  value === "foundation_envelope";
 
 export interface WorkflowLastActiveSnapshot {
   readonly artifactPath?: string;

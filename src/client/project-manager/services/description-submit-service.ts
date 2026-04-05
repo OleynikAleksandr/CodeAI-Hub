@@ -22,8 +22,8 @@ const WORKFLOW_CONTRACT_ENDPOINTS = {
   description: "/api/v1/orchestrator/description-contract",
   virtual_simulation: "/api/v1/orchestrator/virtual-simulation-contract",
   diagram_modules: "/api/v1/orchestrator/diagram-modules-contract",
-  application_foundation_envelope:
-    "/api/v1/orchestrator/application-foundation-envelope-contract",
+  foundation_envelope:
+    "/api/v1/orchestrator/foundation-envelope-contract",
 } as const;
 const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
   "Build the artifact from the questionnaire and template. " +

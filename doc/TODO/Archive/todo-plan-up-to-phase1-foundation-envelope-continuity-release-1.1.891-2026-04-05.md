@@ -1,0 +1,41 @@
+# Development TODO Plan
+
+## Execution Rules
+- Required reading before each new fix:
+  - `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`
+  - `doc/Sessions/Session044.md`
+- Scope of this plan: post-release continuity and persistence hotfix for the `Foundation Envelope` stage after release `1.1.890`.
+- Each micro-task must stay within `<= 3 files`.
+- Every implementation line must be followed by a separate `Git Commit:` line.
+- Update docs and this plan in real time after every micro-task.
+- Release stream is mandatory because the user validates packaged VSIX builds, not only local source changes.
+
+## Phase 1 — Foundation Envelope Continuity And Persistence Hotfix (owner: Codex, updated: 2026-04-05)
+
+### Stream: Planning And Scope
+1. [DONE] Extend the `Foundation Envelope` planning doc with the post-release continuity/persistence acceptance contract and replace the placeholder active TODO with this execution plan; scope: `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(plan): define foundation envelope continuity hotfix scope`
+2. [DONE] Git Commit: `docs(plan): define foundation envelope continuity hotfix scope` (hash: `b15e17b87`)
+
+### Stream: Canonical Continuity Stage Identity
+1. [DONE] Extend the continuity stage contract and chain-path normalization so `foundation_envelope` no longer falls back to `unknown` during chain persistence; scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`; expected commit message: `fix(core-continuity): store foundation envelope stage`
+2. [DONE] Git Commit: `fix(core-continuity): store foundation envelope stage` (hash: `d68b0e201`)
+3. [DONE] Teach the continuity tracker and handoff report writer to preserve the canonical `foundation_envelope` stage path; scope: `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/session-continuity/handoff-report-writer.ts`; expected commit message: `fix(core-continuity): keep foundation envelope continuity paths`
+4. [DONE] Git Commit: `fix(core-continuity): keep foundation envelope continuity paths` (hash: `fae30dff4`)
+5. [DONE] Preserve `foundation_envelope` in handoff prompts and workflow last-active readback so cold-start state cannot drop the stage; scope: `packages/core/src/session-continuity/handoff-prompt-builder.ts`, `packages/core/src/workflow/state/workflow-last-active-store.ts`; expected commit message: `fix(core-workflow): preserve foundation envelope stage identity`
+6. [DONE] Git Commit: `fix(core-workflow): preserve foundation envelope stage identity` (hash: `fb7dfee11`)
+
+### Stream: Verification
+1. [DONE] Add regression coverage for continuity chain persistence and handoff report paths for `foundation_envelope`; scope: `packages/core/src/session-continuity/continuity-store.test.ts`, `packages/core/src/session-continuity/handoff-report-writer.test.ts`; expected commit message: `test(core-continuity): guard foundation envelope continuity paths`
+2. [DONE] Git Commit: `test(core-continuity): guard foundation envelope continuity paths` (hash: `583e5e6cb`)
+3. [DONE] Add regression coverage for workflow last-active readback so `foundation_envelope` survives cold-start parsing; scope: `packages/core/src/workflow/state/workflow-last-active-store.test.ts`; expected commit message: `test(core-workflow): guard foundation envelope last-active persistence`
+4. [DONE] Git Commit: `test(core-workflow): guard foundation envelope last-active persistence` (hash: `2cdfb0aa2`)
+5. [DONE] Run targeted verification for the continuity/persistence hotfix and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build --workspace @codeai-hub/core`; results: PASS (`npx tsx --test packages/core/src/session-continuity/continuity-store.test.ts packages/core/src/session-continuity/handoff-report-writer.test.ts packages/core/src/workflow/state/workflow-last-active-store.test.ts`, `npm run build --workspace @codeai-hub/core`); expected commit message: `test(core-stage): verify foundation envelope persistence`
+6. [DONE] Git Commit: `test(core-stage): verify foundation envelope persistence` (hash: `2a5f60d06`)
+
+### Stream: Release Build
+1. [DONE] Update release-facing docs for the continuity/persistence hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare foundation envelope continuity notes`
+2. [DONE] Git Commit: `docs(release): prepare foundation envelope continuity notes` (hash: `01fa48431`)
+3. [DONE] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the continuity/persistence hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; results: PASS (`./scripts/build-all.sh`), unified version `1.1.891`, fresh tarballs present in `doc/tmp/releases/`; expected commit message: `build(release): assemble foundation envelope continuity release`
+4. [DONE] Git Commit: `build(release): assemble foundation envelope continuity release` (hash: `58fb54b39`)
+5. [DONE] Run `./scripts/build-release.sh --use-current-version`, archive the completed hotfix plan, seed a new empty active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session045.md`; results: PASS (`./scripts/build-release.sh --use-current-version`), `codeai-hub-1.1.891.vsix` created, release markers confirmed (`Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`), advisory broken links remain in `doc/Sessions/Session040.md` and `doc/Sessions/Session041.md`; expected commit message: `docs(session): record foundation envelope continuity release`
+6. [DONE] Git Commit: `docs(session): record foundation envelope continuity release` (hash: TBD)

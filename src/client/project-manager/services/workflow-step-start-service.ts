@@ -17,7 +17,7 @@ type StartWorkflowStepParams = {
 type ContinuityStageId =
   | "virtual_simulation"
   | "diagram_modules"
-  | "application_foundation_envelope";
+  | "foundation_envelope";
 
 type WorkflowStateGetter = (
   workspaceSlug: string,
@@ -155,7 +155,7 @@ export class WorkflowStepStartService {
     });
   }
 
-  async startApplicationFoundationEnvelope(
+  async startFoundationEnvelope(
     params: StartWorkflowStepParams
   ): Promise<string> {
     const state = await this.getWorkflowState(
@@ -164,7 +164,7 @@ export class WorkflowStepStartService {
     );
     const existingSessionId = resolveMostRecentContinuitySessionId({
       state,
-      stage: "application_foundation_envelope",
+      stage: "foundation_envelope",
     });
     if (existingSessionId) {
       params.onSessionCreated?.(existingSessionId);
@@ -172,7 +172,7 @@ export class WorkflowStepStartService {
     }
 
     const envelopeBlocked =
-      state?.gating?.blocked?.application_foundation_envelope ?? true;
+      state?.gating?.blocked?.foundation_envelope ?? true;
     if (envelopeBlocked) {
       throw new Error(
         "Diagram Modules is not fully ready. Complete Diagram Modules step first."
@@ -188,7 +188,7 @@ export class WorkflowStepStartService {
       workspaceSlug: params.workspaceSlug,
       workspacePath: params.workspacePath,
       questionnairePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
-      stage: "application_foundation_envelope",
+      stage: "foundation_envelope",
       providerId: params.providerId,
       onSessionCreated: params.onSessionCreated,
     });

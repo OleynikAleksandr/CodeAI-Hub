@@ -23,7 +23,7 @@
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
 3. `Diagram Modules` → canonical output: `product-parts.index.md` + `product-parts/<part-id>.md` + sidecar `module-map.flow.json`
-4. `Application Foundation Envelope` → canonical output: `application-foundation-envelope.md`
+4. `Foundation Envelope` → canonical output: `foundation-envelope.md`
 
 ---
 
@@ -40,8 +40,8 @@
   - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md` (canonical orchestration SSOT)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md` (canonical semantic artifacts per Product Part)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json` (layout/view sidecar)
-- `Application Foundation Envelope`:
-  - `.codeai-hub/<workspaceSlug>/application_foundation_envelope/application-foundation-envelope.md` (canonical semantic artifact)
+- `Foundation Envelope`:
+  - `.codeai-hub/<workspaceSlug>/foundation_envelope/foundation-envelope.md` (canonical semantic artifact)
 
 Legacy `description.md` допускается только для compat и не участвует в gating новых workflow.
 
@@ -72,7 +72,7 @@ Legacy `description.md` допускается только для compat и н�
 - `Description`: шаг может быть `READY` сразу (upstream не требуется).
 - `Virtual Simulation`: требует `Final_Description.md`.
 - `Diagram Modules`: требует доступные canonical artifacts `Final_Description.md` и `virtual-simulation.md`; пользователь вручную запускает шаг, когда считает upstream artifacts достаточными, если gating не блокирует старт.
-- `Application Foundation Envelope`: требует завершённую semantic materialization `Diagram Modules`, то есть `diagramModulesProgress.aggregateReady === true`.
+- `Foundation Envelope`: требует завершённую semantic materialization `Diagram Modules`, то есть `diagramModulesProgress.aggregateReady === true`.
 
 ---
 
@@ -84,7 +84,7 @@ Watcher обязан отслеживать canonical артефакты и пу
 - `Final_Description.md` created/changed
 - `virtual-simulation.md` created/changed
 - `product-parts.index.md` created/changed
-- `application-foundation-envelope.md` created/changed
+- `foundation-envelope.md` created/changed
 
 Требования:
 - событие содержит `workspaceSlug` + canonical path;
@@ -97,7 +97,7 @@ Watcher обязан отслеживать canonical артефакты и пу
 
 - Изменение `Final_Description.md` после `DONE` шага `Virtual Simulation` → `Virtual Simulation = OUTDATED`.
 - Изменение `Final_Description.md` или `virtual-simulation.md` после `DONE` шага `Diagram Modules` → `Diagram Modules = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
-- Изменение canonical artifacts `Diagram Modules` после `DONE` шага `Application Foundation Envelope` → `Application Foundation Envelope = OUTDATED`.
+- Изменение canonical artifacts `Diagram Modules` после `DONE` шага `Foundation Envelope` → `Foundation Envelope = OUTDATED`.
 
 `*.flow.json` не участвуют в semantic gating: это view-only sidecar, их изменение не должно менять `READY/DONE/OUTDATED`.
 
@@ -119,9 +119,9 @@ Manual start не отменяет watcher:
 
 Для `Diagram Modules` default PM route после открытия шага обязан возвращать пользователя в `Artifacts`, а не в raw Markdown source.
 
-Для `Application Foundation Envelope` первая implementation wave использует text-first contract:
-- canonical output = `application-foundation-envelope.md`;
-- visual projection и `application-envelope.flow.json` сознательно отложены в следующий scope.
+Для `Foundation Envelope` первая implementation wave использует text-first contract:
+- canonical output = `foundation-envelope.md`;
+- visual projection и `foundation-envelope.flow.json` сознательно отложены в следующий scope.
 
 ---
 

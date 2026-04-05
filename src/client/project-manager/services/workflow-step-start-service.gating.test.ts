@@ -31,7 +31,7 @@ const createWorkflowState = (
     description: "completed",
     virtual_simulation: "in_progress",
     diagram_modules: "idle",
-    application_foundation_envelope: "idle",
+    foundation_envelope: "idle",
   },
   continuity: { chains: [] },
   description: null,
@@ -40,7 +40,7 @@ const createWorkflowState = (
       description: false,
       virtual_simulation: false,
       diagram_modules: false,
-      application_foundation_envelope: true,
+      foundation_envelope: true,
     },
   },
   ...overrides,
@@ -65,7 +65,7 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
           description: "completed",
           virtual_simulation: "in_progress",
           diagram_modules: "idle",
-          application_foundation_envelope: "idle",
+          foundation_envelope: "idle",
         },
       }),
     getSettingsPayload: () =>
@@ -120,7 +120,7 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
             description: false,
             virtual_simulation: false,
             diagram_modules: true,
-            application_foundation_envelope: true,
+            foundation_envelope: true,
           },
         },
       }),
@@ -141,7 +141,7 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
   );
 });
 
-test("startApplicationFoundationEnvelope starts from diagram modules artifacts when gating is open", async () => {
+test("startFoundationEnvelope starts from diagram modules artifacts when gating is open", async () => {
   installWindowStub();
   const { WorkflowStepStartService } = await import("./workflow-step-start-service");
 
@@ -160,14 +160,14 @@ test("startApplicationFoundationEnvelope starts from diagram modules artifacts w
           description: "completed",
           virtual_simulation: "completed",
           diagram_modules: "completed",
-          application_foundation_envelope: "idle",
+          foundation_envelope: "idle",
         },
         gating: {
           blocked: {
             description: false,
             virtual_simulation: false,
             diagram_modules: false,
-            application_foundation_envelope: false,
+            foundation_envelope: false,
           },
         },
       }),
@@ -190,28 +190,28 @@ test("startApplicationFoundationEnvelope starts from diagram modules artifacts w
           questionnairePath: params.questionnairePath,
           stage: params.stage,
         };
-        return "afe-session";
+        return "foundation-envelope-session";
       },
     },
   });
 
-  const sessionId = await service.startApplicationFoundationEnvelope({
+  const sessionId = await service.startFoundationEnvelope({
     workspaceName: "Demo Workspace",
     workspacePath: "/tmp/demo",
     workspaceSlug: "demo-workspace",
     providerId: "codexCli",
   });
 
-  assert.equal(sessionId, "afe-session");
+  assert.equal(sessionId, "foundation-envelope-session");
   assert.deepEqual(captured, {
     artifactLanguage: "uk",
     questionnairePath:
       ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
-    stage: "application_foundation_envelope",
+    stage: "foundation_envelope",
   });
 });
 
-test("application foundation envelope start rejects when gating stays blocked", async () => {
+test("foundation envelope start rejects when gating stays blocked", async () => {
   installWindowStub();
   const { WorkflowStepStartService } = await import("./workflow-step-start-service");
 
@@ -224,7 +224,7 @@ test("application foundation envelope start rejects when gating stays blocked", 
 
   await assert.rejects(
     () =>
-      service.startApplicationFoundationEnvelope({
+      service.startFoundationEnvelope({
         workspaceName: "Demo Workspace",
         workspacePath: "/tmp/demo",
         workspaceSlug: "demo-workspace",

@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.895] - 2026-04-05
+### Changed
+- **The workflow step is now canonically named `Foundation Envelope` end-to-end**: the old three-word naming is removed from runtime code, PM UI, templates, contracts, tests, and architectural docs so the trunk step now matches the two-word naming pattern used by the rest of the workflow.
+- **The stage id, artifact path, and prompt/template routes now follow the shorter contract**: the step now uses `foundation_envelope`, `foundation-envelope.md`, `foundation-envelope-prompt.md`, and the matching `foundation-envelope-contract` API path across client/core release surfaces.
+- **Deferred visual sidecar naming is pre-aligned with the new step title**: future-wave docs and prompt assets now reserve `foundation-envelope.flow.json`, preventing the older mixed naming from leaking back into the next implementation wave.
+
 ## [1.1.894] - 2026-04-05
 ### Fixed
 - **`Diagram Modules` now keeps canonical entity naming in English even when `Artifacts for the User` is localized**: `Product Part`, `Cluster`, and `Module` names/titles no longer follow the artifact-language translation path, while explanatory prose such as `Purpose`, `Responsibility`, notes, and assumptions still follows the selected user-facing artifact language.
@@ -29,36 +35,36 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [1.1.891] - 2026-04-05
 ### Fixed
-- **`Application Foundation Envelope` continuity chains no longer fall back to `unknown`**: core continuity stage normalization now recognizes `application_foundation_envelope` during chain creation, root promotion, and tracker matching, so the left Project Manager tree can discover the session branch under the canonical continuity folder.
-- **AFE handoff artifacts now keep the canonical stage path**: handoff prompt rendering and handoff report path generation now preserve `application_foundation_envelope`, preventing AFE handoff files from drifting into `continuity/unknown/...`.
-- **AFE survives workflow last-active readback on cold start**: the workflow-state parser now accepts `application_foundation_envelope` as a valid persisted last-active stage, so restarts no longer drop the stage identity after the artifact has already been created.
-- **Core regression coverage now protects the persistence hotfix**: dedicated tests verify AFE continuity chain paths, handoff report paths, and last-active readback, and the patched `@codeai-hub/core` package builds cleanly before release packaging.
+- **`Foundation Envelope` continuity chains no longer fall back to `unknown`**: core continuity stage normalization now recognizes `foundation_envelope` during chain creation, root promotion, and tracker matching, so the left Project Manager tree can discover the session branch under the canonical continuity folder.
+- **Foundation Envelope handoff artifacts now keep the canonical stage path**: handoff prompt rendering and handoff report path generation now preserve `foundation_envelope`, preventing Foundation Envelope handoff files from drifting into `continuity/unknown/...`.
+- **Foundation Envelope survives workflow last-active readback on cold start**: the workflow-state parser now accepts `foundation_envelope` as a valid persisted last-active stage, so restarts no longer drop the stage identity after the artifact has already been created.
+- **Core regression coverage now protects the persistence hotfix**: dedicated tests verify Foundation Envelope continuity chain paths, handoff report paths, and last-active readback, and the patched `@codeai-hub/core` package builds cleanly before release packaging.
 
 ## [1.1.890] - 2026-04-05
 ### Fixed
-- **`Application Foundation Envelope` workflow tree parity**: the new stage now materializes the same two-line left-sidebar contract used by mature workflow steps, exposing both the provider session line and the canonical artifact line for `application-foundation-envelope.md`.
-- **AFE stage selection consistency across PM entrypoints**: toolbar activation, stage clicks, child-node clicks, and workspace auto-select now reopen the same continuity/dialog session while selecting the canonical artifact whenever it already exists.
-- **Right-panel empty state no longer falls back to Description for AFE**: the shared session empty-state surface now understands the current workflow stage and routes `Application Foundation Envelope` through dedicated localization keys instead of showing Description questionnaire guidance.
-- **Regression coverage now protects the parity hotfix**: new PM tests verify tree artifact/session wiring, stage-aware empty-state routing, and the localized source-dictionary path for the AFE empty-state copy before release packaging.
+- **`Foundation Envelope` workflow tree parity**: the new stage now materializes the same two-line left-sidebar contract used by mature workflow steps, exposing both the provider session line and the canonical artifact line for `foundation-envelope.md`.
+- **Foundation Envelope stage selection consistency across PM entrypoints**: toolbar activation, stage clicks, child-node clicks, and workspace auto-select now reopen the same continuity/dialog session while selecting the canonical artifact whenever it already exists.
+- **Right-panel empty state no longer falls back to Description for Foundation Envelope**: the shared session empty-state surface now understands the current workflow stage and routes `Foundation Envelope` through dedicated localization keys instead of showing Description questionnaire guidance.
+- **Regression coverage now protects the parity hotfix**: new PM tests verify tree artifact/session wiring, stage-aware empty-state routing, and the localized source-dictionary path for the Foundation Envelope empty-state copy before release packaging.
 
 ## [1.1.889] - 2026-04-05
 ### Fixed
-- **`Application Foundation Envelope` help now follows the selected user-message language**: the new stage help panel and load fallback now resolve through canonical `Messages for the User` entries instead of falling back to English-only inline copy when the user selects Russian.
-- **New stage shell labels now participate in `UI Labels` lookup**: the toolbar label, workflow-tree label, blocked-title, and session branch label for `Application Foundation Envelope` now have stable source-dictionary ids, including a provider-aware session-label template with translation variables.
+- **`Foundation Envelope` help now follows the selected user-message language**: the new stage help panel and load fallback now resolve through canonical `Messages for the User` entries instead of falling back to English-only inline copy when the user selects Russian.
+- **New stage shell labels now participate in `UI Labels` lookup**: the toolbar label, workflow-tree label, blocked-title, and session branch label for `Foundation Envelope` now have stable source-dictionary ids, including a provider-aware session-label template with translation variables.
 - **The stage guidance is now synchronized with the workflow SSOT**: the help copy now explicitly covers `Application Root`, `Shared Zones`, `Integration Seams`, technology intent, and placement/dependency rules, matching the actual contract of the stage shell.
 - **Regression coverage now protects the localization surface of the new stage**: dedicated Project Manager tests verify the dictionary backfill and stage-label wiring so future trunk-step additions do not repeat the same omission.
 
 ## [1.1.888] - 2026-04-05
 ### Added
-- **`Application Foundation Envelope` workflow stage shell**: the trunk workflow now continues after `Diagram Modules`, exposes the canonical artifact `.codeai-hub/<workspace>/application_foundation_envelope/application-foundation-envelope.md`, and ships the new bundled contract/prompt path end-to-end.
+- **`Foundation Envelope` workflow stage shell**: the trunk workflow now continues after `Diagram Modules`, exposes the canonical artifact `.codeai-hub/<workspace>/foundation_envelope/foundation-envelope.md`, and ships the new bundled contract/prompt path end-to-end.
 
 ### Changed
-- **Core workflow gating and persistence now include the new stage**: `Application Foundation Envelope` unlocks only after `diagramModulesProgress.aggregateReady === true`, and the stage now participates in workflow-state ordering, cold-start hydration, HTTP contract exposure, and artifact upsert routing.
-- **Project Manager workflow surfaces now understand the new trunk step**: toolbar routing, tree labels, auto-select priority, branch-node sync, stage panel sync, session recovery, and the dedicated panel shell now keep `Application Foundation Envelope` consistent with the rest of the workflow.
+- **Core workflow gating and persistence now include the new stage**: `Foundation Envelope` unlocks only after `diagramModulesProgress.aggregateReady === true`, and the stage now participates in workflow-state ordering, cold-start hydration, HTTP contract exposure, and artifact upsert routing.
+- **Project Manager workflow surfaces now understand the new trunk step**: toolbar routing, tree labels, auto-select priority, branch-node sync, stage panel sync, session recovery, and the dedicated panel shell now keep `Foundation Envelope` consistent with the rest of the workflow.
 
 ### Fixed
-- **Shared artifact repair flow now reaches `application-foundation-envelope.md`**: the shared stage artifact view/fix button path can now reopen the correct workflow stage and request a repair session for the new canonical markdown artifact.
-- **Workflow verification fixtures now match the expanded stage map**: the remaining Project Manager test fixtures now include the `application_foundation_envelope` stage key, restoring a clean `npm run typecheck:webview` verification surface before release packaging.
+- **Shared artifact repair flow now reaches `foundation-envelope.md`**: the shared stage artifact view/fix button path can now reopen the correct workflow stage and request a repair session for the new canonical markdown artifact.
+- **Workflow verification fixtures now match the expanded stage map**: the remaining Project Manager test fixtures now include the `foundation_envelope` stage key, restoring a clean `npm run typecheck:webview` verification surface before release packaging.
 
 ## [1.1.887] - 2026-04-04
 ### Fixed

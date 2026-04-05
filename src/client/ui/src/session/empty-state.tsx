@@ -6,17 +6,17 @@ const resolveIdleCopy = (
   stage: string | null,
   t: ReturnType<typeof useLocalization>["t"]
 ): { readonly title: string; readonly description: string } => {
-  if (stage === "application_foundation_envelope") {
+  if (stage === "foundation_envelope") {
     return {
       title: t(
         USER_MESSAGES_CATEGORY,
-        "session.empty_state.application_foundation_envelope.title",
-        "Open the Application Foundation Envelope session"
+        "session.empty_state.foundation_envelope.title",
+        "Open the Foundation Envelope session"
       ),
       description: t(
         USER_MESSAGES_CATEGORY,
-        "session.empty_state.application_foundation_envelope.description",
-        "In the workflow tree on the left, use the Application Foundation Envelope session line to reopen the provider dialog. The artifact line should open `application-foundation-envelope.md`."
+        "session.empty_state.foundation_envelope.description",
+        "In the workflow tree on the left, use the Foundation Envelope session line to reopen the provider dialog. The artifact line should open `foundation-envelope.md`."
       ),
     };
   }

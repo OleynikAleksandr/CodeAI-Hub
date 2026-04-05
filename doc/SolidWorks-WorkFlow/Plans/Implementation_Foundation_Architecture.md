@@ -4,7 +4,7 @@
 **Created:** 2026-04-04
 **Updated:** 2026-04-05
 **Owner:** Oleksandr + Codex
-**Scope:** Define a late, technology-aware workflow step that runs after `Application Foundation Envelope` and after the selected implementation branch already has approved `Product Part / Cluster / Module` specifications and required contracts. The step must materialize real implementation substrate for the selected wave inside the already-defined application envelope.
+**Scope:** Define a late, technology-aware workflow step that runs after `Foundation Envelope` and after the selected implementation branch already has approved `Product Part / Cluster / Module` specifications and required contracts. The step must materialize real implementation substrate for the selected wave inside the already-defined application envelope.
 
 ---
 
@@ -35,7 +35,7 @@
 
 Следовательно, нужен отдельный шаг, но он должен стоять **позже**:
 
-- после `Application Foundation Envelope`;
+- после `Foundation Envelope`;
 - после спецификаций и контрактов выбранной ветки;
 - до `TODO Plan` и до реальной реализации кода.
 
@@ -48,7 +48,7 @@
 Шаг считается успешным, когда для выбранного scope materialize-ено следующее:
 
 1. Выбранный scope реализации зафиксирован явно.
-2. Technology choices этой wave уточнены и привязаны к уже существующему `Application Foundation Envelope`.
+2. Technology choices этой wave уточнены и привязаны к уже существующему `Foundation Envelope`.
 3. В файловой структуре создан реальный subtree/skeleton для выбранного scope.
 4. Установлены или инициализированы необходимые environments, packages и toolchains для этого scope.
 5. Созданы canonical scripts и wrappers, которыми должны пользоваться downstream implementation-агенты.
@@ -58,7 +58,7 @@
 
 Ключевой принцип этого шага:
 
-- `Implementation Foundation` materialize-ит **реальную technical surface** для выбранной ветки, но не переопределяет global application structure, уже заданную более ранним шагом `Application Foundation Envelope`.
+- `Implementation Foundation` materialize-ит **реальную technical surface** для выбранной ветки, но не переопределяет global application structure, уже заданную более ранним шагом `Foundation Envelope`.
 
 ---
 
@@ -66,7 +66,7 @@
 
 Этот шаг не должен:
 
-- заменять собой `Application Foundation Envelope`;
+- заменять собой `Foundation Envelope`;
 - заново определять `Application Root`, `Shared Zones` или `Integration Seams`;
 - писать бизнес-логику модулей;
 - заменять собой `Product Part / Cluster / Module` specifications;
@@ -78,12 +78,12 @@
 
 ## 4. Core Decisions
 
-### 4.1. Шаг переносится после `Application Foundation Envelope` и после branch specs/contracts
+### 4.1. Шаг переносится после `Foundation Envelope` и после branch specs/contracts
 
 Новая целевая позиция шага:
 
 1. `Diagram Modules`
-2. `Application Foundation Envelope`
+2. `Foundation Envelope`
 3. `Product Part / Cluster / Module Specifications`
 4. Required contracts for the selected wave
 5. `Implementation Foundation`
@@ -248,7 +248,7 @@ Core обязан заранее знать:
 1. `Description`
 2. `Virtual Simulation`
 3. `Diagram Modules`
-4. `Application Foundation Envelope`
+4. `Foundation Envelope`
 5. `Product Part / Cluster / Module Specifications`
 6. `Required contracts for the selected implementation wave`
 7. `Implementation Foundation`
@@ -265,7 +265,7 @@ Core обязан заранее знать:
 - `virtual-simulation.md`
 - `product-parts.index.md`
 - `product-parts/<part-id>.md`
-- `application-foundation-envelope.md`
+- `foundation-envelope.md`
 - выбранные `Product Part / Cluster / Module` specifications для implementation wave
 - релевантные contracts этой wave
 
@@ -393,7 +393,7 @@ Core обязан заранее знать:
 
 Смягчение:
 
-- все waves обязаны подчиняться единому `Application Foundation Envelope`;
+- все waves обязаны подчиняться единому `Foundation Envelope`;
 - wave-level manifests должны ссылаться на envelope-level assumptions.
 
 ### 6.3. Drift between envelope and real implementation substrate
@@ -425,7 +425,7 @@ Core обязан заранее знать:
 Реализация этого scope должна идти в таком порядке:
 
 1. Выбрать implementation wave.
-2. Прочитать `Application Foundation Envelope`.
+2. Прочитать `Foundation Envelope`.
 3. Прочитать approved specs/contracts выбранной wave.
 4. Уточнить branch-level technology profile.
 5. Materialize-ить subtree, configs, scripts и environments.
@@ -459,7 +459,7 @@ Core обязан заранее знать:
 
 Итоговый принцип:
 
-- global assembly structure фиксируется раньше в `Application Foundation Envelope`;
+- global assembly structure фиксируется раньше в `Foundation Envelope`;
 - detailed branch design фиксируется в specs/contracts;
 - `Implementation Foundation` переводит выбранную ветку в `implementation-ready` состояние;
 - только после этого начинается `TODO Plan` и код.

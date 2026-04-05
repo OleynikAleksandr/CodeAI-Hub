@@ -1,8 +1,8 @@
 import type React from "react";
 import {
-  ApplicationFoundationEnvelopeHelp,
-  ApplicationFoundationEnvelopePanel,
-} from "../application-foundation-envelope/application-foundation-envelope-panel";
+  FoundationEnvelopeHelp,
+  FoundationEnvelopePanel,
+} from "../foundation-envelope/foundation-envelope-panel";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
@@ -20,7 +20,7 @@ import {
 } from "./stage-artifact-mode";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import {
-  APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+  FOUNDATION_ENVELOPE_TOOL_LABEL,
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
 
@@ -135,8 +135,8 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     if (activeTool === "Diagram Modules") {
       return <DiagramModulesHelp />;
     }
-    if (activeTool === APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL) {
-      return <ApplicationFoundationEnvelopeHelp />;
+    if (activeTool === FOUNDATION_ENVELOPE_TOOL_LABEL) {
+      return <FoundationEnvelopeHelp />;
     }
   }
   if (showSourceViewer && sourceArtifact) {
@@ -206,9 +206,9 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
       artifactRefreshKey
     );
   }
-  if (activeTool === APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL) {
+  if (activeTool === FOUNDATION_ENVELOPE_TOOL_LABEL) {
     return renderStagePanel(
-      ApplicationFoundationEnvelopePanel,
+      FoundationEnvelopePanel,
       activeWorkspacePath,
       activeWorkspaceSlug
     );

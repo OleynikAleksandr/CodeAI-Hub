@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useArtifactAvailability } from "./use-artifact-availability";
 
-export const useApplicationFoundationEnvelopeArtifactAvailability = (
+export const useFoundationEnvelopeArtifactAvailability = (
   params: {
     readonly enabled: boolean;
     readonly workspacePath?: string;
@@ -11,7 +11,7 @@ export const useApplicationFoundationEnvelopeArtifactAvailability = (
   const artifactPath = useMemo(
     () =>
       params.workspaceSlug
-        ? `.codeai-hub/${params.workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`
+        ? `.codeai-hub/${params.workspaceSlug}/foundation_envelope/foundation-envelope.md`
         : null,
     [params.workspaceSlug]
   );

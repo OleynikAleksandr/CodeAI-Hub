@@ -16,41 +16,41 @@ const STAGE_SYNC_SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/layout/use-stage-panel-sync.ts"
 );
 
-test("application foundation envelope tree parity keeps canonical artifact and session sync wiring", async () => {
+test("foundation envelope tree parity keeps canonical artifact and session sync wiring", async () => {
   const branchNodesSource = await readFile(BRANCH_NODES_SOURCE_PATH, "utf8");
   const autoSelectSource = await readFile(AUTO_SELECT_SOURCE_PATH, "utf8");
   const stageSyncSource = await readFile(STAGE_SYNC_SOURCE_PATH, "utf8");
 
   assert.equal(
     branchNodesSource.includes(
-      'id: "workflow:application_foundation_envelope:artifact"'
+      'id: "workflow:foundation_envelope:artifact"'
     ),
     true
   );
   assert.equal(
-    branchNodesSource.includes("application-foundation-envelope.md"),
+    branchNodesSource.includes("foundation-envelope.md"),
     true
   );
   assert.equal(
-    branchNodesSource.includes("applicationFoundationEnvelopeArtifactAvailable"),
+    branchNodesSource.includes("foundationEnvelopeArtifactAvailable"),
     true
   );
   assert.equal(branchNodesSource.includes("options.selectArtifact("), true);
   assert.equal(
     autoSelectSource.includes(
-      ".codeai-hub/${params.workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md"
+      ".codeai-hub/${params.workspaceSlug}/foundation_envelope/foundation-envelope.md"
     ),
     true
   );
   assert.equal(
     autoSelectSource.includes(
-      'params.onSelectArtifact(\n            envelopeArtifactPath,\n            "application-foundation-envelope.md"'
+      'params.onSelectArtifact(\n            envelopeArtifactPath,\n            "foundation-envelope.md"'
     ),
     true
   );
   assert.equal(
     stageSyncSource.includes(
-      ".codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md"
+      ".codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md"
     ),
     true
   );

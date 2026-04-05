@@ -129,16 +129,16 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
 });
 
-test("application foundation envelope prompt pack targets the canonical markdown artifact", () => {
+test("foundation envelope prompt pack targets the canonical markdown artifact", () => {
   const pack = buildWorkflowPromptPack({
     artifactLanguage: "fr",
-    stage: "application_foundation_envelope",
+    stage: "foundation_envelope",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
     prompt: "",
     questionnairePath:
       ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
-    templatePath: "/tmp/application-foundation-envelope-prompt.md",
+    templatePath: "/tmp/foundation-envelope-prompt.md",
   });
 
   assert.equal(
@@ -149,7 +149,7 @@ test("application foundation envelope prompt pack targets the canonical markdown
   );
   assert.equal(
     pack.content.includes(
-      "Target path (relative): `.codeai-hub/demo-workspace/application_foundation_envelope/application-foundation-envelope.md`"
+      "Target path (relative): `.codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md`"
     ),
     true
   );
@@ -168,7 +168,7 @@ test("application foundation envelope prompt pack targets the canonical markdown
   assert.equal(pack.content.includes("Target language code: `fr`."), true);
   assert.equal(pack.content.includes("Template (absolute)"), false);
   assert.equal(
-    pack.content.includes("Output file name: `application-foundation-envelope.md`"),
+    pack.content.includes("Output file name: `foundation-envelope.md`"),
     true
   );
 });

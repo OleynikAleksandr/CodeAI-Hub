@@ -1,4 +1,4 @@
-# Application Foundation Envelope Architecture
+# Foundation Envelope Architecture
 
 **Status:** Draft for review (2026-04-05)
 **Created:** 2026-04-05
@@ -46,7 +46,7 @@
 
 ## 2. Product Goal
 
-`Application Foundation Envelope` должен переводить workflow из состояния “мы видим составные части системы” в состояние “мы понимаем, как эти части собираются в одно приложение и на какой технологической основе они в целом будут развиваться”.
+`Foundation Envelope` должен переводить workflow из состояния “мы видим составные части системы” в состояние “мы понимаем, как эти части собираются в одно приложение и на какой технологической основе они в целом будут развиваться”.
 
 Шаг считается успешным, когда materialize-ено следующее:
 
@@ -87,12 +87,12 @@
 1. `Description`
 2. `Virtual Simulation`
 3. `Diagram Modules`
-4. `Application Foundation Envelope`
+4. `Foundation Envelope`
 5. `Product Part / Cluster / Module Specifications`
 6. Contracts
 7. `Implementation Foundation`
 
-Это делает `Application Foundation Envelope` bridge step между ownership-diagram и branch-level design.
+Это делает `Foundation Envelope` bridge step между ownership-diagram и branch-level design.
 
 ### 4.2. Нужно формализовать application-level structural entities
 
@@ -182,14 +182,14 @@
 1. `Description`
 2. `Virtual Simulation`
 3. `Diagram Modules`
-4. `Application Foundation Envelope`
+4. `Foundation Envelope`
 5. `Product Part / Cluster / Module Specifications`
 6. Required contracts
 7. `Implementation Foundation`
 8. `TODO Plan`
 9. `Implementation`
 
-`Application Foundation Envelope` — это bridge between product composition and application assembly.
+`Foundation Envelope` — это bridge between product composition and application assembly.
 
 ### 5.2. Input contract of the step
 
@@ -210,23 +210,23 @@
 
 ### 5.3. Output artifact set
 
-Целевой artifact set шага должен жить внутри `.codeai-hub/<workspaceSlug>/application_foundation_envelope/`:
+Целевой artifact set шага должен жить внутри `.codeai-hub/<workspaceSlug>/foundation_envelope/`:
 
-- `application-foundation-envelope.md`
-- `application-envelope.flow.json`
+- `foundation-envelope.md`
+- `foundation-envelope.flow.json`
 
 Где:
 
-- `application-foundation-envelope.md` — canonical semantic artifact;
-- `application-envelope.flow.json` — layout/view state visual projection.
+- `foundation-envelope.md` — canonical semantic artifact;
+- `foundation-envelope.flow.json` — layout/view state visual projection.
 
 Но по результатам аудита текущей кодовой базы нужно сразу зафиксировать реалистичный первый execution slice:
 
-- **Wave 1 must-have**: только `application-foundation-envelope.md`;
-- `application-envelope.flow.json` и реальная visual projection должны идти отдельной следующей wave;
+- **Wave 1 must-have**: только `foundation-envelope.md`;
+- `foundation-envelope.flow.json` и реальная visual projection должны идти отдельной следующей wave;
 - иначе первый implementation scope получится слишком широким и будет смешивать stage shell с отдельной задачей визуального редактора/renderer.
 
-### 5.4. Semantic sections of `application-foundation-envelope.md`
+### 5.4. Semantic sections of `foundation-envelope.md`
 
 В каноническом документе должны быть как минимум такие разделы:
 
@@ -283,7 +283,7 @@
 
 Они должны:
 
-- читать `application-foundation-envelope.md`;
+- читать `foundation-envelope.md`;
 - наследовать его assembly decisions;
 - уточнять, а не переизобретать application-wide structure;
 - передавать свои outputs дальше в `Implementation Foundation`.
@@ -296,7 +296,7 @@
 
 В текущей реализации workflow шаги жёстко зашиты как набор известных `stage id`.
 
-Это означает, что `Application Foundation Envelope` потребует изменений одновременно в нескольких слоях:
+Это означает, что `Foundation Envelope` потребует изменений одновременно в нескольких слоях:
 
 - core workflow state;
 - core HTTP contract routing;
@@ -344,7 +344,7 @@
 
 В текущем `Diagram Modules` runtime индекс может уже существовать, а materialization `product-parts/<part-id>.md` ещё продолжаться.
 
-Следовательно, правильный upstream gate для `Application Foundation Envelope` в текущей реализации должен опираться на:
+Следовательно, правильный upstream gate для `Foundation Envelope` в текущей реализации должен опираться на:
 
 - `diagramModulesProgress.aggregateReady === true`
 
@@ -377,7 +377,7 @@
 
 Из первого implementation cycle разумно исключить:
 
-- `application-envelope.flow.json`;
+- `foundation-envelope.flow.json`;
 - visual renderer/editor для envelope;
 - отдельную progressive orchestration model для визуализации;
 - любые branch-level specification steps после этого шага;
@@ -408,22 +408,22 @@
   - runtime help title;
   - load/error/fallback user-visible messages.
 - `Internal Agent Instructions`:
-  - bundled prompt `application-foundation-envelope-prompt.md` остаётся English-only и не входит в user-facing localization path.
+  - bundled prompt `foundation-envelope-prompt.md` остаётся English-only и не входит в user-facing localization path.
 
 Следовательно, post-release localization hotfix для этого шага должен:
 
 1. backfill stable message ids into the English source dictionaries;
 2. route every new PM surface of this stage through the shared localization runtime;
-3. stop relying on raw English concatenation such as `Application Foundation Envelope ${providerTitle}` for user-visible labels.
+3. stop relying on raw English concatenation such as `Foundation Envelope ${providerTitle}` for user-visible labels.
 
 ### 6.7. Workflow tree and session-surface parity
 
 После post-release локализационного hotfix остаётся ещё один обязательный UI parity contract:
 
-- в левом workflow tree stage `Application Foundation Envelope` должен вести себя так же, как уже зрелые continuity stages;
+- в левом workflow tree stage `Foundation Envelope` должен вести себя так же, как уже зрелые continuity stages;
 - раскрываемый stage node обязан materialize-ить две отдельные child-lines:
   - session line с label формата `{stageLabel} {providerTitle}`;
-  - artifact line с canonical filename `application-foundation-envelope.md`;
+  - artifact line с canonical filename `foundation-envelope.md`;
 - выбор любой из этих child-lines должен синхронно открывать ту же stage-session и тот же canonical artifact, если они уже существуют;
 - toolbar click, stage click и workspace auto-select не должны терять этот sync contract;
 - если runtime/dialog session временно ещё не восстановлена, empty-state на правой панели обязан ссылаться на текущий workflow stage, а не на Description-specific onboarding.
@@ -436,9 +436,9 @@
 
 Следовательно, corrective scope после релиза `1.1.889` обязан:
 
-1. добавить canonical artifact availability probe для `application-foundation-envelope.md`;
+1. добавить canonical artifact availability probe для `foundation-envelope.md`;
 2. построить для нового stage такой же tree child contract, как у `Virtual Simulation` / `Diagram Modules`;
-3. протянуть current-stage context в session empty-state и дать ему локализуемый AFE-specific copy.
+3. протянуть current-stage context в session empty-state и дать ему локализуемый Foundation Envelope-specific copy.
 
 ---
 
@@ -450,7 +450,7 @@
 
 Формулировка результата:
 
-`Application Foundation Envelope` появляется в workflow сразу после `Diagram Modules`, корректно блокируется до завершения upstream stage, умеет стартовать отдельную collector-session и materialize-ит canonical файл `application-foundation-envelope.md`.
+`Foundation Envelope` появляется в workflow сразу после `Diagram Modules`, корректно блокируется до завершения upstream stage, умеет стартовать отдельную collector-session и materialize-ит canonical файл `foundation-envelope.md`.
 
 ### 7.2. Состав wave
 
@@ -469,7 +469,7 @@
 После завершения первой wave отдельным следующим scope нужно будет делать:
 
 1. визуальную projection-диаграмму;
-2. `application-envelope.flow.json`;
+2. `foundation-envelope.flow.json`;
 3. visual layout persistence;
 4. UX вокруг редактирования/перестройки envelope;
 5. bridge к downstream шагам `Product Part / Cluster / Module Specifications`.
@@ -491,22 +491,22 @@
 
 ### 7.5. Post-release tree/session parity acceptance
 
-После corrective wave `Application Foundation Envelope` считается доведённым до parity только если одновременно выполняются все условия:
+После corrective wave `Foundation Envelope` считается доведённым до parity только если одновременно выполняются все условия:
 
 1. в левом workflow tree у stage есть отдельная session line и отдельная artifact line;
-2. artifact line использует canonical filename `application-foundation-envelope.md`;
+2. artifact line использует canonical filename `foundation-envelope.md`;
 3. session line использует provider-aware label и открывает ту же continuity/dialog session;
 4. toolbar/stage click и workspace auto-select поднимают тот же artifact/session pair;
-5. при отсутствии восстановленной session empty-state на правой панели больше не показывает Description-specific guidance для AFE.
+5. при отсутствии восстановленной session empty-state на правой панели больше не показывает Description-specific guidance для Foundation Envelope.
 
 ### 7.6. Post-release continuity path and persistence acceptance
 
 После tree/session parity hotfix обнаружился ещё один обязательный corrective contract на уровне core persistence:
 
-1. continuity chain для `Application Foundation Envelope` обязан materialize-иться под canonical stage path `.codeai-hub/<workspaceSlug>/continuity/application_foundation_envelope/...`, а не под `continuity/unknown/...`;
+1. continuity chain для `Foundation Envelope` обязан materialize-иться под canonical stage path `.codeai-hub/<workspaceSlug>/continuity/foundation_envelope/...`, а не под `continuity/unknown/...`;
 2. handoff reports и handoff prompts этого шага обязаны сохранять тот же canonical `stageId`, без fallback к `unknown`;
-3. continuity tracker обязан считать `application_foundation_envelope` first-class stage id при root-session resolution и provider-session matching;
-4. workflow last-active persistence не должен отбрасывать `application_foundation_envelope` при cold-start readback.
+3. continuity tracker обязан считать `foundation_envelope` first-class stage id при root-session resolution и provider-session matching;
+4. workflow last-active persistence не должен отбрасывать `foundation_envelope` при cold-start readback.
 
 Практический смысл этого corrective scope:
 
@@ -517,7 +517,7 @@
 Следовательно, отдельная post-release hotfix wave после `1.1.890` обязана:
 
 1. унифицировать canonical stage normalization во всех continuity persistence entrypoints;
-2. backfill regression tests на chain path, handoff report path и last-active readback для `application_foundation_envelope`;
+2. backfill regression tests на chain path, handoff report path и last-active readback для `foundation_envelope`;
 3. выпустить новый packaged release для пользовательской проверки continuity/session branch materialization.
 
 ---
@@ -556,7 +556,7 @@
 Смягчение:
 
 - `Diagram Modules` отвечает за composition of parts;
-- `Application Foundation Envelope` отвечает за application assembly, shared zones, seams и technology allocation.
+- `Foundation Envelope` отвечает за application assembly, shared zones, seams и technology allocation.
 
 ### 8.4. Non-programmer overload
 
@@ -590,7 +590,7 @@
 
 Шаг считается спроектированным корректно, если его конечное состояние можно проверить следующими условиями:
 
-1. Существует один canonical semantic artifact `application-foundation-envelope.md`.
+1. Существует один canonical semantic artifact `foundation-envelope.md`.
 2. По нему строится user-facing диаграмма.
 3. В документе явно определены `Application Root`, `Shared Zones` и `Integration Seams`.
 4. Для каждого `Product Part` есть intended technology allocation или explicit open status.
@@ -611,5 +611,5 @@
 Итоговый принцип:
 
 - `Diagram Modules` показывает логическую композицию продукта;
-- `Application Foundation Envelope` показывает композицию приложения как technical system;
+- `Foundation Envelope` показывает композицию приложения как technical system;
 - `Implementation Foundation` позже materialize-ит реальную implementation surface для выбранной ветки.

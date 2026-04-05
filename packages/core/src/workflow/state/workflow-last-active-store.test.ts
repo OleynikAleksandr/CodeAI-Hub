@@ -5,18 +5,18 @@ import path from "node:path";
 import test from "node:test";
 import { WorkflowLastActiveStore } from "./workflow-last-active-store";
 
-test("WorkflowLastActiveStore restores application foundation envelope as the last active stage", async () => {
+test("WorkflowLastActiveStore restores foundation envelope as the last active stage", async () => {
   const workspaceRoot = mkdtempSync(
-    path.join(os.tmpdir(), "application-foundation-envelope-last-active-")
+    path.join(os.tmpdir(), "foundation-envelope-last-active-")
   );
   const store = new WorkflowLastActiveStore({
     clock: () => "2026-04-05T12:55:00.000Z",
   });
 
   await store.upsert(workspaceRoot, "demo-workspace", {
-    stage: "application_foundation_envelope",
+    stage: "foundation_envelope",
     artifactPath:
-      ".codeai-hub/demo-workspace/application_foundation_envelope/application-foundation-envelope.md",
+      ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md",
   });
 
   const restored = await new WorkflowLastActiveStore().read(
@@ -25,10 +25,10 @@ test("WorkflowLastActiveStore restores application foundation envelope as the la
   );
 
   assert.ok(restored);
-  assert.equal(restored.stage, "application_foundation_envelope");
+  assert.equal(restored.stage, "foundation_envelope");
   assert.equal(
     restored.artifactPath,
-    ".codeai-hub/demo-workspace/application_foundation_envelope/application-foundation-envelope.md"
+    ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md"
   );
   assert.equal(restored.updatedAt, "2026-04-05T12:55:00.000Z");
 });

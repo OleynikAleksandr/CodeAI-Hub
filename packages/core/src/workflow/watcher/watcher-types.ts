@@ -4,7 +4,7 @@ export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules"
-  | "application_foundation_envelope";
+  | "foundation_envelope";
 
 export interface WorkflowWatcherEventBase {
   readonly timestamp: string;

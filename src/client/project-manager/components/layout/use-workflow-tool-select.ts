@@ -7,31 +7,31 @@ import { resolveWorkspaceSlug } from "./main-area-utils";
 
 export const VIRTUAL_SIMULATION_TOOL_LABEL = "VIRTUAL SIMULATION" as const;
 const DIAGRAM_MODULES_TOOL_LABEL = "Diagram Modules" as const;
-export const APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL =
-  "Application Foundation Envelope" as const;
+export const FOUNDATION_ENVELOPE_TOOL_LABEL =
+  "Foundation Envelope" as const;
 
 type ContinuityToolLabel =
   | typeof DIAGRAM_MODULES_TOOL_LABEL
-  | typeof APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL;
+  | typeof FOUNDATION_ENVELOPE_TOOL_LABEL;
 
 const CONTINUITY_STAGE_MAP: Record<
   ContinuityToolLabel,
   {
     readonly stage:
       | "diagram_modules"
-      | "application_foundation_envelope";
+      | "foundation_envelope";
     readonly startMethod:
       | "startDiagramModules"
-      | "startApplicationFoundationEnvelope";
+      | "startFoundationEnvelope";
   }
 > = {
   [DIAGRAM_MODULES_TOOL_LABEL]: {
     stage: "diagram_modules",
     startMethod: "startDiagramModules",
   },
-  [APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL]: {
-    stage: "application_foundation_envelope",
-    startMethod: "startApplicationFoundationEnvelope",
+  [FOUNDATION_ENVELOPE_TOOL_LABEL]: {
+    stage: "foundation_envelope",
+    startMethod: "startFoundationEnvelope",
   },
 };
 

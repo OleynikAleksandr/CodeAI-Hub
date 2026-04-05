@@ -14,7 +14,7 @@ export const useStagePanelSync = (params: {
   readonly workspacePath?: string;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable?: boolean;
-  readonly applicationFoundationEnvelopeArtifactAvailable?: boolean;
+  readonly foundationEnvelopeArtifactAvailable?: boolean;
   readonly selectArtifact: (path: string, label: string) => void;
   readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
   readonly clearArtifactWithTool: (activeTool: string) => void;
@@ -25,7 +25,7 @@ export const useStagePanelSync = (params: {
     workspacePath,
     virtualSimulationArtifactAvailable,
     diagramModulesArtifactAvailable,
-    applicationFoundationEnvelopeArtifactAvailable,
+    foundationEnvelopeArtifactAvailable,
     selectArtifact,
     dispatchDialogOpenIntent,
     clearArtifactWithTool,
@@ -44,19 +44,19 @@ export const useStagePanelSync = (params: {
       });
       if (p.artifact) selectArtifact(p.artifact.path, p.artifact.label);
       else if (
-        stage === "application_foundation_envelope" &&
-        applicationFoundationEnvelopeArtifactAvailable
+        stage === "foundation_envelope" &&
+        foundationEnvelopeArtifactAvailable
       ) {
         selectArtifact(
-          `.codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`,
-          "application-foundation-envelope.md"
+          `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`,
+          "foundation-envelope.md"
         );
       }
       else if (p.clearTool) clearArtifactWithTool(p.clearTool);
       if (p.session) dispatchDialogOpenIntent(p.session);
     },
     [
-      applicationFoundationEnvelopeArtifactAvailable,
+      foundationEnvelopeArtifactAvailable,
       clearArtifactWithTool,
       diagramModulesArtifactAvailable,
       dispatchDialogOpenIntent,

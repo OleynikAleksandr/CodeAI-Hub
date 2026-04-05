@@ -2,7 +2,7 @@ export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules"
-  | "application_foundation_envelope";
+  | "foundation_envelope";
 
 type WorkflowPromptPackInput = {
   readonly artifactLanguage?: string;
@@ -31,14 +31,14 @@ const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
   diagram_modules: "product-parts.index.md",
-  application_foundation_envelope: "application-foundation-envelope.md",
+  foundation_envelope: "foundation-envelope.md",
 };
 
 const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
-  application_foundation_envelope: "Application Foundation Envelope",
+  foundation_envelope: "Foundation Envelope",
 };
 const DEFAULT_ARTIFACT_LANGUAGE = "en";
 const LEGACY_SOURCE_LANGUAGE = "source";
@@ -48,7 +48,7 @@ const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
   virtual_simulation: "Build the artifact from `Final_Description.md`.",
   diagram_modules:
     "Build the staged artifact from `Final_Description.md` and `virtual-simulation.md`.",
-  application_foundation_envelope:
+  foundation_envelope:
     "Build the artifact from `Final_Description.md`, `virtual-simulation.md`, and the staged `Diagram Modules` artifacts.",
 };
 
@@ -188,7 +188,7 @@ const buildStageInputLines = (params: {
       `virtual-simulation.md (absolute): \`${simulationAbsolutePath}\``,
     ];
   }
-  if (params.stage === "application_foundation_envelope") {
+  if (params.stage === "foundation_envelope") {
     const finalRelativePath = normalizeRelativePath(
       `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`
     );

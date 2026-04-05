@@ -11,7 +11,7 @@
 
 Этот документ фиксирует обязательный системный подход к добавлению нового шага в workflow CodeAI Hub.
 
-Документ существует потому, что rollout `Application Foundation Envelope` показал повторяемый класс ошибок:
+Документ существует потому, что rollout `Foundation Envelope` показал повторяемый класс ошибок:
 
 - новый шаг был добавлен не как полный system contract, а как частичный stage shell;
 - user-facing тексты не были сразу проведены через правильную localization boundary;
@@ -284,7 +284,7 @@ Fallback к `continuity/unknown/...` допустим только для реа
 
 - artifact folder и continuity folder не могут иметь разные effective `stageId` для одного и того же официального шага.
 
-Если artifact лежит под `application_foundation_envelope`, а continuity под `unknown`, это считается системной поломкой rollout-а.
+Если artifact лежит под `foundation_envelope`, а continuity под `unknown`, это считается системной поломкой rollout-а.
 
 ---
 
@@ -375,4 +375,4 @@ Fallback к `continuity/unknown/...` допустим только для реа
 - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
-- `doc/SolidWorks-WorkFlow/Plans/Application_Foundation_Envelope_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`

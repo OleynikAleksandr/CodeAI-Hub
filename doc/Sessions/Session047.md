@@ -49,6 +49,6 @@
 ## Plans for next session
 - Validate release `1.1.892` from the produced VSIX and collect user feedback on long Codex turns with extended reasoning/thinking output.
 - If any further provider/runtime anomaly remains, open a separate planning scope rather than reopening the archived empty-terminal hotfix by default.
-- Keep `Application_Foundation_Envelope_Architecture.md` and `Implementation_Foundation_Architecture.md` deferred until the next approved implementation wave.
+- Keep `Foundation_Envelope_Architecture.md` and `Implementation_Foundation_Architecture.md` deferred until the next approved implementation wave.
 - Open a separate docs-only scope if the broken absolute markdown links in `Session040.md` and `Session041.md` need cleanup.
 - Do not start a new execution wave until a new planning scope is explicitly approved and sliced into `doc/TODO/todo-plan.md`.

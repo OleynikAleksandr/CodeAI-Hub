@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { BUNDLED_TEMPLATE_SOURCES } from "../../templates/bundled-templates";
-import { buildApplicationFoundationEnvelopeContract } from "./idea-contract-service";
+import { buildFoundationEnvelopeContract } from "./idea-contract-service";
 
 const writeBundledTemplate = async (
   homePath: string,
@@ -26,17 +26,19 @@ const writeBundledTemplate = async (
   return targetPath;
 };
 
-test("application foundation envelope contract uses the bundled prompt asset", async () => {
+test("foundation envelope contract uses the bundled prompt asset", async () => {
   const previousHome = process.env.HOME;
-  const tempHome = await mkdtemp(path.join(tmpdir(), "codeai-afe-contract-"));
+  const tempHome = await mkdtemp(
+    path.join(tmpdir(), "codeai-foundation-envelope-contract-")
+  );
   try {
     process.env.HOME = tempHome;
     const promptPath = await writeBundledTemplate(
       tempHome,
-      "application-foundation-envelope-prompt"
+      "foundation-envelope-prompt"
     );
 
-    const contract = await buildApplicationFoundationEnvelopeContract();
+    const contract = await buildFoundationEnvelopeContract();
 
     assert.notEqual(contract, null);
     assert.equal(contract?.paths.prompt, promptPath);
@@ -46,13 +48,10 @@ test("application foundation envelope contract uses the bundled prompt asset", a
     assert.equal(contract?.questionnaire, undefined);
     assert.equal(contract?.prompt.includes("Application Root"), true);
     assert.equal(
-      contract?.prompt.includes("application-envelope.flow.json"),
+      contract?.prompt.includes("foundation-envelope.flow.json"),
       true
     );
-    assert.equal(
-      contract?.prompt.includes("Application Foundation Envelope"),
-      true
-    );
+    assert.equal(contract?.prompt.includes("Foundation Envelope"), true);
     assert.equal(contract?.template, "");
   } finally {
     if (previousHome === undefined) {
