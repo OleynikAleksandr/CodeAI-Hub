@@ -21,9 +21,9 @@
 
 ### Stream: Core Stage Contract
 1. [DONE] Add the `application_foundation_envelope` stage id to workflow watcher primitives and declare the new step in the workflow CLI contract; scope: `packages/core/src/workflow/watcher/watcher-types.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit message: `feat: declare application foundation envelope workflow stage`
-2. [IN_PROGRESS] Git Commit: `feat: declare application foundation envelope workflow stage` (hash: TBD)
-3. [TODO] Add stage ordering to the workflow state store and document the new step placement in SSOT overview docs; scope: `packages/core/src/workflow/state/workflow-state-store.ts`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `feat: track application foundation envelope workflow order`
-4. [TODO] Git Commit: `feat: track application foundation envelope workflow order` (hash: TBD)
+2. [DONE] Git Commit: `feat: declare application foundation envelope workflow stage` (hash: `ea2ff32e`)
+3. [DONE] Add stage ordering to the workflow state store and document the new step placement in SSOT overview docs; scope: `packages/core/src/workflow/state/workflow-state-store.ts`, `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `feat: track application foundation envelope workflow order`
+4. [IN_PROGRESS] Git Commit: `feat: track application foundation envelope workflow order` (hash: TBD)
 5. [TODO] Add workflow gating and cold-start hydration for the new stage after `Diagram Modules` aggregate readiness; scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; expected commit message: `feat: gate application foundation envelope after diagram modules`
 6. [TODO] Git Commit: `feat: gate application foundation envelope after diagram modules` (hash: TBD)
 7. [TODO] Add canonical artifact path support for `application-foundation-envelope.md`; scope: `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.test.ts`; expected commit message: `feat: allow application foundation envelope artifact paths`

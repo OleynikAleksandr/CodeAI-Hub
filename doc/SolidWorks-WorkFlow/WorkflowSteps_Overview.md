@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-03-24
+**Updated:** 2026-04-05
 **Owner:** Oleksandr
 
 ---
@@ -15,24 +15,26 @@
 ### Ствол (trunk) — реализован:
 - **Шаг 1 (Description):** что за продукт, для кого, и какие базовые сценарии должны работать.
 - **Шаг 2 (Virtual Simulation):** как продукт должен вести себя в сценариях использования.
-- **Шаг 3 (Diagram Modules):** из каких Product Part / Cluster / Module состоит система. **Последний шаг ствола.**
+- **Шаг 3 (Diagram Modules):** из каких Product Part / Cluster / Module состоит система.
+- **Шаг 4 (Application Foundation Envelope):** как эти части собираются в одно приложение: `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies и placement/dependency rules.
 
 ### Ветки (branches) — `[DESIGNED, NOT IMPLEMENTED]`:
 
-После утверждения Module Graph ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта:
+После утверждения `Application Foundation Envelope` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта:
 
 ```
-Diagram Modules (trunk end)
- └─ Product Part (ветка per part)
-     ├─ Cluster (ветка per cluster)
-     │   ├─ Cluster Specification (функции, модули, зона ответственности)
-     │   ├─ Cluster Facade Contract (внешний контракт кластера)
-     │   └─ Module (ветка per module)
-     │       ├─ Module Specification (интерфейсы, методы, зависимости)
-     │       ├─ Module Facade Contract (публичный API модуля)
-     │       ├─ TODO Plan (фазы, стримы, микро-задачи ≤3 файлов)
-     │       └─ Implementation (код + синхронные обновления документации)
-     └─ ... (следующий Cluster)
+Diagram Modules
+ └─ Application Foundation Envelope (trunk end)
+     └─ Product Part (ветка per part)
+         ├─ Cluster (ветка per cluster)
+         │   ├─ Cluster Specification (функции, модули, зона ответственности)
+         │   ├─ Cluster Facade Contract (внешний контракт кластера)
+         │   └─ Module (ветка per module)
+         │       ├─ Module Specification (интерфейсы, методы, зависимости)
+         │       ├─ Module Facade Contract (публичный API модуля)
+         │       ├─ TODO Plan (фазы, стримы, микро-задачи ≤3 файлов)
+         │       └─ Implementation (код + синхронные обновления документации)
+         └─ ... (следующий Cluster)
 ```
 
 Ключевое решение: **фасады не являются отдельным шагом ствола**. Спецификация фасада появляется естественно внутри каждой ветки — на уровне кластера (Cluster Facade Contract) и на уровне модуля (Module Facade Contract). Это позволяет работать с фасадами в контексте конкретного блока системы, а не как с неуправляемым плоским списком.
@@ -181,16 +183,62 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 ---
 
+## Шаг 4 — Application Foundation Envelope
+
+### Цель
+
+Зафиксировать application-level structural envelope после завершённого `Diagram Modules`, но до branch-level specifications.
+
+Этот шаг отвечает на вопросы:
+- что считается `Application Root`;
+- какие есть `Shared Zones`;
+- через какие `Integration Seams` взаимодействуют `Product Part`;
+- какие intended technologies и dependency/placement rules принимаются как application-wide baseline.
+
+### Подход
+
+Manual start из PM после завершённой semantic materialization `Diagram Modules`:
+- gating опирается на `diagramModulesProgress.aggregateReady === true`;
+- шаг materialize-ит один canonical текстовый артефакт;
+- visual projection этого шага является целевой capability, но не обязательной частью первой implementation wave.
+
+### Входы
+
+- `Final_Description.md`
+- `virtual-simulation.md`
+- `product-parts.index.md`
+- `product-parts/<part-id>.md`
+
+### Артефакт
+
+- `.codeai-hub/<workspaceSlug>/application_foundation_envelope/application-foundation-envelope.md`
+
+### Первая implementation wave
+
+Текущая первая wave для этого шага ограничена `stage shell` baseline:
+- новый workflow stage;
+- core/client routing и gating;
+- canonical markdown artifact;
+- Project Manager button/tree/panel shell.
+
+Из этой wave сознательно исключены:
+- `application-envelope.flow.json`;
+- visual editor / renderer / layout persistence;
+- branch-level specification steps после envelope.
+
+---
+
 ## Сквозные механизмы
 
 ### OUTDATED propagation
 
 - Изменение `Final_Description.md` → `Virtual Simulation = OUTDATED`.
 - Изменение `virtual-simulation.md` → `Diagram Modules = OUTDATED`.
+- Изменение canonical artifacts `Diagram Modules` после готового envelope → `Application Foundation Envelope = OUTDATED`.
 
 ### Resume-by-default для workflow шагов
 
-Описание шагов 1–3 предполагает «живые» сессии: пользователь может возвращаться и корректировать результат без переинициализации workflow.
+Описание шагов 1–4 предполагает «живые» сессии: пользователь может возвращаться и корректировать результат без переинициализации workflow.
 
 ### Template model (текущее состояние)
 

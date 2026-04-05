@@ -303,7 +303,7 @@
 - Для `Diagram Modules` semantic runtime contract теперь staged:
   - first artifact: `product-parts.index.md`;
   - primary semantic part artifacts: `product-parts/<part-id>.md`.
-- Trunk workflow ends at `Diagram Modules`. After Module Graph approval, work continues as a Development Tree `[DESIGNED, NOT IMPLEMENTED]`:
+- Trunk workflow now extends through `Application Foundation Envelope`. After envelope approval, work continues as a Development Tree `[DESIGNED, NOT IMPLEMENTED]`:
   - **Product Part branch** (per each part from Module Graph);
     - **Cluster branch** (per each cluster inside part):
       - Cluster Specification (functions, constituent modules, cluster-level responsibility);
@@ -358,8 +358,9 @@
   - top-level `Product Part` containers раскладываются как независимые row/lane sections и не могут overlap друг с другом;
   - internal standalone modules группируются в отдельную предсказуемую band внутри owning product part и не могут хаотично расширять cluster grid;
   - ownership-free external modules/boundaries (например выбранный AI provider) визуализируются вне product-part container, а не как внутренние элементы его ownership layer.
-- Начиная с review-step baseline (`2026-03-23`), `Diagram Modules` фиксируется как последний trunk workflow step и главный user-feedback checkpoint:
+- Начиная с review-step baseline (`2026-03-23`, updated `2026-04-05`), `Diagram Modules` фиксируется как главный user-feedback checkpoint ствола, но не как его последний шаг:
   - пользователь именно здесь впервые видит архитектуру в наглядной форме и должен иметь возможность активно её корректировать;
+  - после `Diagram Modules` workflow проходит через лёгкий шаг `Application Foundation Envelope`, который фиксирует application-wide assembly decisions до branch-level specifications;
   - facade specs are deferred to per-cluster and per-module branches (future work).
 - Начиная с product-part decomposition baseline (`2026-03-23`), `Diagram Modules` больше не должен упираться в giant single-turn generation:
   - сначала runtime materialize-ит `product-parts.index.md`;
