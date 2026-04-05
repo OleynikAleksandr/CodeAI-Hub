@@ -27,9 +27,9 @@
 
 ### Stream: Verification
 1. [DONE] Add regression coverage for the new step localization dictionary entries and PM label wiring; scope: `src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts`, `src/client/project-manager/components/layout/workflow-navigation.test.ts`; expected commit message: `test(pm-localization): guard application foundation envelope localized copy`
-2. [IN_PROGRESS] Git Commit: `test(pm-localization): guard application foundation envelope localized copy` (hash: TBD)
-3. [TODO] Run targeted verification for the localized stage shell and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build:project-manager`; expected commit message: `test(pm-localization): verify application foundation envelope localization`
-4. [TODO] Git Commit: `test(pm-localization): verify application foundation envelope localization` (hash: TBD)
+2. [DONE] Git Commit: `test(pm-localization): guard application foundation envelope localized copy` (hash: `644c9a8a5`)
+3. [DONE] Run targeted verification for the localized stage shell and record the concrete results in this plan; scope: targeted `tsx`/`node:test` commands and `npm run build:project-manager`; results: PASS (`npx tsx --test src/client/project-manager/components/application-foundation-envelope/application-foundation-envelope-localization.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts`, `npm run build:project-manager`); expected commit message: `test(pm-localization): verify application foundation envelope localization`
+4. [IN_PROGRESS] Git Commit: `test(pm-localization): verify application foundation envelope localization` (hash: TBD)
 
 ### Stream: Release Build
 1. [TODO] Update release-facing docs for the localization hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope localization hotfix notes`

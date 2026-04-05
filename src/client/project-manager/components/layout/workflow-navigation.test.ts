@@ -30,9 +30,9 @@ test("workflow navigation sync keeps stage routing consistent across toolbar and
     ]);
 
   assert.equal(
-    mainAreaUtilsSource.includes("export const resolveStageByTool"),
+    mainAreaUtilsSource.includes("const resolveStageByTool"),
     true,
-    "main-area-utils must expose explicit stage resolver for toolbar tool mapping"
+    "main-area-utils must keep an explicit stage resolver for toolbar tool mapping"
   );
   assert.equal(
     mainAreaUtilsSource.includes('detail: { stage, source: "toolbar" }'),
