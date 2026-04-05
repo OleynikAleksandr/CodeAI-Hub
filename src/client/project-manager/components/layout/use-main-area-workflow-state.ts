@@ -3,7 +3,10 @@ import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import { useWorkflowStateSnapshot, workflowStateStore } from "../../services/workflow-state-store";
 import type { WorkspaceProject } from "../../types";
 import { resolveWorkspaceSlug } from "./main-area-utils";
-import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
+import {
+  APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
+  VIRTUAL_SIMULATION_TOOL_LABEL,
+} from "./use-workflow-tool-select";
 import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import type { DescriptionSessionGuard } from "./use-description-session-guard";
 
@@ -35,9 +38,12 @@ const TOOL_BY_STAGE: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: VIRTUAL_SIMULATION_TOOL_LABEL,
   diagram_modules: "Diagram Modules",
+  application_foundation_envelope:
+    APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL,
 };
 
 const STAGE_PRIORITY: readonly WorkflowStageId[] = [
+  "application_foundation_envelope",
   "diagram_modules",
   "virtual_simulation",
   "description",

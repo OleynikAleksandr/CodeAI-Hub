@@ -104,7 +104,7 @@ export const buildDescriptionBranchNodes = (options: {
   return nodes;
 };
 
-export const resolveLatestStageChain = (
+const resolveLatestStageChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
   stage: "virtual_simulation" | "diagram_modules"
 ) => {

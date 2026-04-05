@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { resolveLatestStageChain } from "./workspace-tree-branch-nodes";
+import { APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
 
 export type SessionResumeIntent = {
   readonly providerId: string;
@@ -32,6 +32,24 @@ const dispatchStageActivated = (stage: string): void => {
   );
 };
 
+const resolveLatestContinuityChain = (
+  chains: WorkflowStateSnapshot["continuity"]["chains"],
+  stage: WorkflowStateSnapshot["continuity"]["chains"][number]["stage"]
+) => {
+  let best: (typeof chains)[number] | null = null;
+
+  for (const chain of chains) {
+    if (chain.stage !== stage || chain.segments.length === 0) {
+      continue;
+    }
+    if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
+      best = chain;
+    }
+  }
+
+  return best;
+};
+
 export const useWorkspaceTreeAutoSelect = (
   params: WorkspaceTreeAutoSelectParams
 ) => {
@@ -54,8 +72,36 @@ export const useWorkspaceTreeAutoSelect = (
         return;
       }
 
-      // Resolve the latest DM chain (highest-priority step)
-      const dmChain = resolveLatestStageChain(state.continuity.chains, "diagram_modules");
+      const envelopeChain = resolveLatestContinuityChain(
+        state.continuity.chains,
+        "application_foundation_envelope"
+      );
+      const envelopeLast = envelopeChain?.segments.at(-1) ?? null;
+
+      if (envelopeLast) {
+        dispatchStageActivated("application_foundation_envelope");
+        params.onClearArtifactWithTool(
+          APPLICATION_FOUNDATION_ENVELOPE_TOOL_LABEL
+        );
+        params.onResumeSession({
+          providerId: envelopeLast.providerId,
+          providerSessionId: envelopeLast.providerSessionId,
+          workspacePath: params.workspacePath,
+          workspaceSlug: params.workspaceSlug,
+          initiativeSlug: params.workspaceSlug,
+          stage: "application_foundation_envelope",
+          sessionKind: "collector",
+          runSlug: null,
+        });
+        pendingWorkspaceIdRef.current = null;
+        return;
+      }
+
+      // Resolve the latest DM chain (next-priority step)
+      const dmChain = resolveLatestContinuityChain(
+        state.continuity.chains,
+        "diagram_modules"
+      );
       const dmLast = dmChain?.segments.at(-1) ?? null;
 
       if (dmLast) {
@@ -82,7 +128,10 @@ export const useWorkspaceTreeAutoSelect = (
       }
 
       // Resolve the latest VS chain (next-priority step)
-      const vsChain = resolveLatestStageChain(state.continuity.chains, "virtual_simulation");
+      const vsChain = resolveLatestContinuityChain(
+        state.continuity.chains,
+        "virtual_simulation"
+      );
       const vsLast = vsChain?.segments.at(-1) ?? null;
 
       if (vsLast) {
