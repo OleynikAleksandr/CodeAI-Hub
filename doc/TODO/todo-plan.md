@@ -33,8 +33,8 @@
 
 ### Stream: Release Build
 1. [DONE] Update release-facing docs for the localization hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope localization hotfix notes`
-2. [IN_PROGRESS] Git Commit: `docs(release): prepare application foundation envelope localization hotfix notes` (hash: TBD)
-3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the localization hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble application foundation envelope localization hotfix release`
-4. [TODO] Git Commit: `build(release): assemble application foundation envelope localization hotfix release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare application foundation envelope localization hotfix notes` (hash: `3aebc3004`)
+3. [DONE] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the localization hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; results: PASS (`./scripts/build-all.sh`), unified version `1.1.889`, tarballs present in `doc/tmp/releases/`; expected commit message: `build(release): assemble application foundation envelope localization hotfix release`
+4. [IN_PROGRESS] Git Commit: `build(release): assemble application foundation envelope localization hotfix release` (hash: TBD)
 5. [TODO] Run `./scripts/build-release.sh --use-current-version`, archive the completed hotfix plan, seed a new empty active `todo-plan.md`, and record the release session report; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session043.md`; expected commit message: `docs(session): record application foundation envelope localization hotfix release`
 6. [TODO] Git Commit: `docs(session): record application foundation envelope localization hotfix release` (hash: TBD)
