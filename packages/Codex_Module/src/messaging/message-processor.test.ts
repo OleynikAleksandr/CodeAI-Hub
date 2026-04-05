@@ -214,9 +214,7 @@ test("codex gpt-5.4 native reasoning stays visible while agent_message fallback 
     modelReasoningEffort: "medium",
   });
   const events: unknown[] = [];
-  session.eventEmitter.on("message", (payload) => {
-    events.push(payload);
-  });
+  session.eventEmitter.on("message", (payload) => events.push(payload));
   const { router, structuredOutput } = createRouter();
   preparePassthroughTurn(session, structuredOutput);
 
@@ -268,9 +266,7 @@ test("codex final completed agent_message stays assistant on turn completion", a
     modelReasoningEffort: "medium",
   });
   const events: unknown[] = [];
-  session.eventEmitter.on("message", (payload) => {
-    events.push(payload);
-  });
+  session.eventEmitter.on("message", (payload) => events.push(payload));
   const { router, structuredOutput } = createRouter();
   preparePassthroughTurn(session, structuredOutput);
 
@@ -313,9 +309,7 @@ test("codex intermediate agent_message stays hidden when thinking display sync i
     thinkingDisplaySyncEnabled: false,
   };
   const events: unknown[] = [];
-  session.eventEmitter.on("message", (payload) => {
-    events.push(payload);
-  });
+  session.eventEmitter.on("message", (payload) => events.push(payload));
   const { router, structuredOutput } = createRouter();
   preparePassthroughTurn(session, structuredOutput);
 
@@ -360,9 +354,7 @@ test("codex router suppresses SDK reasoning and agent_message once rollout routi
   session.rolloutTailState = rolloutTailState;
 
   const events: unknown[] = [];
-  session.eventEmitter.on("message", (payload) => {
-    events.push(payload);
-  });
+  session.eventEmitter.on("message", (payload) => events.push(payload));
   const { router, structuredOutput } = createRouter();
   preparePassthroughTurn(session, structuredOutput);
 
@@ -391,6 +383,46 @@ test("codex router suppresses SDK reasoning and agent_message once rollout routi
   );
 
   assert.equal(dialogMessages.length, 0);
+  assert.equal(assistantMessages.length, 0);
+});
+
+test("codex router suppresses SDK terminal assistant completion once rollout routing is active", async () => {
+  const session = createSessionWithThread({
+    model: "gpt-5.4",
+    modelReasoningEffort: "medium",
+  });
+  const rolloutTailState = new CodexRolloutTailState();
+  rolloutTailState.advance({
+    filePath: "/tmp/rollout.jsonl",
+    nextLine: 4,
+  });
+  session.rolloutTailState = rolloutTailState;
+
+  const events: unknown[] = [];
+  session.eventEmitter.on("message", (payload) => events.push(payload));
+  const { router, structuredOutput } = createRouter();
+  preparePassthroughTurn(session, structuredOutput);
+
+  await router.dispatchEvent(session, {
+    type: "item.completed",
+    item: {
+      id: "sdk-final",
+      type: "agent_message",
+      text: "SDK final answer should stay suppressed.",
+    },
+  } satisfies ThreadEvent);
+  await router.dispatchEvent(session, {
+    type: "turn.completed",
+    usage: {
+      input_tokens: 1,
+      cached_input_tokens: 0,
+      output_tokens: 1,
+    },
+  } satisfies ThreadEvent);
+
+  const assistantMessages = events.filter(
+    (event) => (event as { type?: string }).type === "assistant"
+  );
   assert.equal(assistantMessages.length, 0);
 });
 

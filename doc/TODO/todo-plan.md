@@ -45,10 +45,10 @@
 5. [DONE] Retire SDK `reasoning` and `agent_message` user-visible routing from the router so commentary/final-answer semantics come only from rollout-backed normalization; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `fix(codex-rollout): prefer rollout dialog routing`
 6. [DONE] Git Commit: `fix(codex-rollout): prefer rollout dialog routing` (hash: `b407e7ce7`)
 7. [DONE] Fence `sdk-codex-*.jsonl` into diagnostics-only status and drop dialog-source assumptions from Codex runtime logging paths; scope: `packages/Codex_Module/src/logging/session-logger.ts`; expected commit message: `refactor(codex-rollout): keep sdk feedback diagnostics only`
-8. [TODO] Git Commit: `refactor(codex-rollout): keep sdk feedback diagnostics only` (hash: TBD)
+8. [DONE] Git Commit: `refactor(codex-rollout): keep sdk feedback diagnostics only` (hash: `2577914a6`)
 
 ### Stream: Regression And Replay
-1. [TODO] Cover the reported Codex second-turn Description trace so commentary, thinking, and final answer remain separated under the rollout-backed parser; scope: `packages/Codex_Module/src/messaging/message-processor.commentary-phase.test.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(codex-rollout): cover commentary phase routing`
+1. [DONE] Cover the reported Codex second-turn Description trace so commentary, thinking, and final answer remain separated under the rollout-backed parser; scope: `packages/Codex_Module/src/messaging/message-processor.commentary-phase.test.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(codex-rollout): cover commentary phase routing`
 2. [TODO] Git Commit: `test(codex-rollout): cover commentary phase routing` (hash: TBD)
 3. [TODO] Cover replay/resume so rollout-derived segments restore without duplicates under the new live-sync path; scope: `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `test(codex-rollout): guard rollout replay resume`
 4. [TODO] Git Commit: `test(codex-rollout): guard rollout replay resume` (hash: TBD)
