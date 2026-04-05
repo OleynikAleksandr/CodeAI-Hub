@@ -53,9 +53,11 @@
 3. [DONE] Cover replay/resume so rollout-derived segments restore without duplicates under the new live-sync path; scope: `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `test(codex-rollout): guard rollout replay resume`
 4. [DONE] Git Commit: `test(codex-rollout): guard rollout replay resume` (hash: `d456d7524`)
 5. [DONE] Keep the previous empty-terminal-answer recovery green after the rollout cutover; scope: `packages/Codex_Module/src/messaging/message-processor.empty-terminal.test.ts`; expected commit message: `test(codex-rollout): preserve empty terminal recovery`
-6. [TODO] Git Commit: `test(codex-rollout): preserve empty terminal recovery` (hash: TBD)
-7. [TODO] Run targeted Codex verification and record the concrete results in this plan; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record codex rollout verification`
-8. [TODO] Git Commit: `docs(todo): record codex rollout verification` (hash: TBD)
+6. [DONE] Git Commit: `test(codex-rollout): preserve empty terminal recovery` (hash: `5d8d096d8`)
+7. [DONE] Restore the missing pending assistant typing in the SDK fallback router so targeted Codex compilation succeeds before release verification; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`; expected commit message: `fix(codex-rollout): restore router compile typing`
+8. [TODO] Git Commit: `fix(codex-rollout): restore router compile typing` (hash: TBD)
+9. [TODO] Run targeted Codex verification and record the concrete results in this plan; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record codex rollout verification`
+10. [TODO] Git Commit: `docs(todo): record codex rollout verification` (hash: TBD)
 
 ### Stream: Release Build
 1. [TODO] Update release-facing docs for the next Codex raw rollout patch release from a clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare codex raw rollout migration notes`

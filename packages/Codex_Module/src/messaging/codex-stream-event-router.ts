@@ -407,7 +407,10 @@ export class CodexStreamEventRouter {
 
   private rememberFallbackAssistantCandidate(
     sessionId: string,
-    pending: PendingAgentMessage,
+    pending: {
+      readonly itemId: string;
+      readonly result: StructuredOutputResult;
+    },
     triggerItem: ThreadItem
   ): void {
     if (triggerItem.type !== "reasoning") {
