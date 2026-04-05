@@ -132,6 +132,11 @@ test("workflow-state cold start unlocks application foundation envelope after di
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`,
       "# Partial Product Part\n"
     );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/application_foundation_envelope/application-foundation-envelope.md`,
+      "# Application Foundation Envelope\n"
+    );
 
     const service = new WorkflowStateService({
       logger: new Logger("error"),
@@ -147,6 +152,10 @@ test("workflow-state cold start unlocks application foundation envelope after di
 
     assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
     assert.equal(payload.state?.stages.diagram_modules?.status, "idle");
+    assert.equal(
+      payload.state?.stages.application_foundation_envelope?.status,
+      "completed"
+    );
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.application_foundation_envelope, false);
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
@@ -157,6 +166,14 @@ test("workflow-state cold start unlocks application foundation envelope after di
       payload.state?.stages.virtual_simulation?.artifacts?.some(
         (artifact) =>
           artifact.path === "virtual_simulation/virtual-simulation.md"
+      ),
+      true
+    );
+    assert.equal(
+      payload.state?.stages.application_foundation_envelope?.artifacts?.some(
+        (artifact) =>
+          artifact.path ===
+          "application_foundation_envelope/application-foundation-envelope.md"
       ),
       true
     );
