@@ -1,6 +1,7 @@
 import type { EventEmitter } from "node:events";
 import type { Thread } from "@openai/codex-sdk";
 import type { CodexResponsePolicy } from "../response-policy/response-policy-types";
+import type { CodexRolloutTailState } from "../rollout/codex-rollout-tail-state";
 
 export interface MessageController {
   pendingMessages: unknown[];
@@ -31,6 +32,7 @@ export interface ActiveSession {
   messagesForTheUserLanguage?: string;
   processingLoop?: Promise<void>;
   responsePolicy?: CodexResponsePolicy;
+  rolloutTailState?: CodexRolloutTailState;
   runtimeTurnConfig?: CodexRuntimeTurnConfig;
   sessionId: string;
   structuredOutputUuids?: Set<string>;
