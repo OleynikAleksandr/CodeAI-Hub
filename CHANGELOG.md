@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.888] - 2026-04-05
+### Added
+- **`Application Foundation Envelope` workflow stage shell**: the trunk workflow now continues after `Diagram Modules`, exposes the canonical artifact `.codeai-hub/<workspace>/application_foundation_envelope/application-foundation-envelope.md`, and ships the new bundled contract/prompt path end-to-end.
+
+### Changed
+- **Core workflow gating and persistence now include the new stage**: `Application Foundation Envelope` unlocks only after `diagramModulesProgress.aggregateReady === true`, and the stage now participates in workflow-state ordering, cold-start hydration, HTTP contract exposure, and artifact upsert routing.
+- **Project Manager workflow surfaces now understand the new trunk step**: toolbar routing, tree labels, auto-select priority, branch-node sync, stage panel sync, session recovery, and the dedicated panel shell now keep `Application Foundation Envelope` consistent with the rest of the workflow.
+
+### Fixed
+- **Shared artifact repair flow now reaches `application-foundation-envelope.md`**: the shared stage artifact view/fix button path can now reopen the correct workflow stage and request a repair session for the new canonical markdown artifact.
+- **Workflow verification fixtures now match the expanded stage map**: the remaining Project Manager test fixtures now include the `application_foundation_envelope` stage key, restoring a clean `npm run typecheck:webview` verification surface before release packaging.
+
 ## [1.1.887] - 2026-04-04
 ### Fixed
 - **Codex provider-owned config now tracks the selected model**: `~/.codeai-hub/providers/codex/home/config.toml` now rewrites its `model = ...` line from shared settings instead of leaving stale `gpt-5.4` values behind while only updating `model_reasoning_summary`.
