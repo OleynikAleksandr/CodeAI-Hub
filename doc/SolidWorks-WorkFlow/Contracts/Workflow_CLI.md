@@ -1,7 +1,7 @@
 # Workflow Steps & Watcher — Contract (SSOT)
 
 **Status:** Active
-**Updated:** 2026-03-24
+**Updated:** 2026-04-05
 **Owner:** Oleksandr + Codex
 
 ---
@@ -23,6 +23,7 @@
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
 3. `Diagram Modules` → canonical output: `product-parts.index.md` + `product-parts/<part-id>.md` + sidecar `module-map.flow.json`
+4. `Application Foundation Envelope`
 
 ---
 

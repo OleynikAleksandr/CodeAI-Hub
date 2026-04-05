@@ -3,7 +3,8 @@ import type { Logger } from "../../telemetry/logger";
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules";
+  | "diagram_modules"
+  | "application_foundation_envelope";
 
 export interface WorkflowWatcherEventBase {
   readonly timestamp: string;
