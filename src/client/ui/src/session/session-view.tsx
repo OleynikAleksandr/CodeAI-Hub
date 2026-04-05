@@ -287,7 +287,10 @@ const SessionView = (props: SessionViewProps) => {
   if (props.sessions.length === 0 && props.showEmptyState) {
     return (
       <div className="session-app" data-session-style-source="canonical">
-        <EmptyState pending={props.emptyStatePending === true} />
+        <EmptyState
+          pending={props.emptyStatePending === true}
+          stage={props.emptyStateStage ?? null}
+        />
       </div>
     );
   }

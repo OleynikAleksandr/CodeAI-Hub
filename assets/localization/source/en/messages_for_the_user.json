@@ -10,6 +10,8 @@
   "session.empty_state.pending_description": "This can take 5–10 seconds. Please wait.",
   "session.empty_state.idle_title": "Start with the Description questionnaire",
   "session.empty_state.idle_description": "In Artifacts on the right, complete the questionnaire and click \"Submit questionnaire\". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.",
+  "session.empty_state.application_foundation_envelope.title": "Open the Application Foundation Envelope session",
+  "session.empty_state.application_foundation_envelope.description": "In the workflow tree on the left, use the Application Foundation Envelope session line to reopen the provider dialog. The artifact line should open `application-foundation-envelope.md`.",
   "settings.core_controls.idle_status_label": "Core restart status will appear here.",
   "settings.provider_versions.update.warning": "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions.",
   "pm.workspace_tree.empty_label": "Select a workspace to start.",
