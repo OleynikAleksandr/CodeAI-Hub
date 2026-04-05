@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.890] - 2026-04-05
+### Fixed
+- **`Application Foundation Envelope` workflow tree parity**: the new stage now materializes the same two-line left-sidebar contract used by mature workflow steps, exposing both the provider session line and the canonical artifact line for `application-foundation-envelope.md`.
+- **AFE stage selection consistency across PM entrypoints**: toolbar activation, stage clicks, child-node clicks, and workspace auto-select now reopen the same continuity/dialog session while selecting the canonical artifact whenever it already exists.
+- **Right-panel empty state no longer falls back to Description for AFE**: the shared session empty-state surface now understands the current workflow stage and routes `Application Foundation Envelope` through dedicated localization keys instead of showing Description questionnaire guidance.
+- **Regression coverage now protects the parity hotfix**: new PM tests verify tree artifact/session wiring, stage-aware empty-state routing, and the localized source-dictionary path for the AFE empty-state copy before release packaging.
+
 ## [1.1.889] - 2026-04-05
 ### Fixed
 - **`Application Foundation Envelope` help now follows the selected user-message language**: the new stage help panel and load fallback now resolve through canonical `Messages for the User` entries instead of falling back to English-only inline copy when the user selects Russian.

@@ -38,7 +38,7 @@
 4. [DONE] Git Commit: `test(pm-afe): verify tree and empty-state parity` (hash: `TBD - this commit`)
 
 ### Stream: Release Build
-1. [TODO] Update release-facing docs for the tree/session parity hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope tree parity notes`
+1. [IN_PROGRESS] Update release-facing docs for the tree/session parity hotfix patch from the clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare application foundation envelope tree parity notes`
 2. [TODO] Git Commit: `docs(release): prepare application foundation envelope tree parity notes` (hash: TBD)
 3. [TODO] Run `./scripts/build-all.sh` on a clean tree and prepare the next patch release artifacts for the tree/session parity hotfix; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): assemble application foundation envelope tree parity release`
 4. [TODO] Git Commit: `build(release): assemble application foundation envelope tree parity release` (hash: TBD)
