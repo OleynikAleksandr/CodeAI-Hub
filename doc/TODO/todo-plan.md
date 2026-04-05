@@ -17,16 +17,16 @@
 1. [DONE] Create the Codex migration planning intake that formalizes raw rollout provider JSONL as the output source of truth and register it in `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_RawRollout_DialogSourceOfTruth_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs(plans): define codex raw rollout source of truth`
 2. [DONE] Git Commit: `docs(plans): define codex raw rollout source of truth` (hash: `b83f5ee70`)
 3. [DONE] Replace the placeholder active `doc/TODO/todo-plan.md` with the sliced execution plan for the Codex raw rollout migration, including a dedicated release stream; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): slice codex raw rollout migration plan`
-4. [TODO] Git Commit: `docs(todo): slice codex raw rollout migration plan` (hash: TBD)
+4. [DONE] Git Commit: `docs(todo): slice codex raw rollout migration plan` (hash: `97ce5514f`)
 
 ### Stream: Raw Rollout Reader Foundation
 1. [DONE] Add a Codex rollout reader that resolves the active raw rollout file for a `providerSessionId` and yields appended JSONL entries without rereading older lines; scope: `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `feat(codex-rollout): add rollout reader`
 2. [DONE] Git Commit: `feat(codex-rollout): add rollout reader` (hash: `25bb247a2`)
 3. [DONE] Add session-local tail cursor state so live turns and replay share one dedupe-safe offset contract; scope: `packages/Codex_Module/src/rollout/codex-rollout-tail-state.ts`, `packages/Codex_Module/src/session/types.ts`; expected commit message: `feat(codex-rollout): track rollout tail cursors`
-4. [TODO] Git Commit: `feat(codex-rollout): track rollout tail cursors` (hash: TBD)
+4. [DONE] Git Commit: `feat(codex-rollout): track rollout tail cursors` (hash: `f0128530e`)
 
 ### Stream: Raw Rollout Message Semantics
-1. [TODO] Parse provider-native `event_msg` semantics for `agent_reasoning`, `agent_message.phase`, and `task_complete` so commentary/thinking/final-answer boundaries come from rollout metadata rather than text inference; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-event-parser.test.ts`; expected commit message: `feat(codex-rollout): parse rollout message phases`
+1. [DONE] Parse provider-native `event_msg` semantics for `agent_reasoning`, `agent_message.phase`, and `task_complete` so commentary/thinking/final-answer boundaries come from rollout metadata rather than text inference; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-event-parser.test.ts`; expected commit message: `feat(codex-rollout): parse rollout message phases`
 2. [TODO] Git Commit: `feat(codex-rollout): parse rollout message phases` (hash: TBD)
 3. [TODO] Add rollout-derived segment ids and dedupe keys so the same provider event cannot be re-emitted through reconnect or replay; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-dedupe.ts`, `packages/Codex_Module/src/rollout/codex-rollout-dedupe.test.ts`; expected commit message: `feat(codex-rollout): dedupe rollout segments`
 4. [TODO] Git Commit: `feat(codex-rollout): dedupe rollout segments` (hash: TBD)
