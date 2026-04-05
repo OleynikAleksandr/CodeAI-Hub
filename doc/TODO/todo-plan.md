@@ -27,24 +27,31 @@
 
 ### Stream: Raw Rollout Message Semantics
 1. [DONE] Parse provider-native `event_msg` semantics for `agent_reasoning`, `agent_message.phase`, and `task_complete` so commentary/thinking/final-answer boundaries come from rollout metadata rather than text inference; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-event-parser.test.ts`; expected commit message: `feat(codex-rollout): parse rollout message phases`
-2. [TODO] Git Commit: `feat(codex-rollout): parse rollout message phases` (hash: TBD)
-3. [TODO] Add rollout-derived segment ids and dedupe keys so the same provider event cannot be re-emitted through reconnect or replay; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-dedupe.ts`, `packages/Codex_Module/src/rollout/codex-rollout-dedupe.test.ts`; expected commit message: `feat(codex-rollout): dedupe rollout segments`
-4. [TODO] Git Commit: `feat(codex-rollout): dedupe rollout segments` (hash: TBD)
+2. [DONE] Git Commit: `feat(codex-rollout): parse rollout message phases` (hash: `137758c54`)
+3. [TODO] Add stable rollout segment ids and a session-local dedupe registry so live rollout sync can suppress repeated provider events without depending on SDK item ids; scope: `packages/Codex_Module/src/rollout/codex-rollout-event-parser.ts`, `packages/Codex_Module/src/rollout/codex-rollout-dedupe.ts`; expected commit message: `feat(codex-rollout): add rollout segment ids`
+4. [TODO] Git Commit: `feat(codex-rollout): add rollout segment ids` (hash: TBD)
+5. [TODO] Cover repeated rollout reads and repeated parsed segments so the dedupe contract stays stable under reconnect-style reprocessing; scope: `packages/Codex_Module/src/rollout/codex-rollout-dedupe.test.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `test(codex-rollout): cover rollout dedupe`
+6. [TODO] Git Commit: `test(codex-rollout): cover rollout dedupe` (hash: TBD)
 
 ### Stream: Dialog Cutover
-1. [TODO] Start and stop raw rollout tailing from the Codex messaging pipeline so live dialog segments are sourced from rollout while the SDK remains send/control-plane only; scope: `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/messaging/codex-event-stream-consumer.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`; expected commit message: `feat(codex-rollout): stream dialog from rollout`
-2. [TODO] Git Commit: `feat(codex-rollout): stream dialog from rollout` (hash: TBD)
-3. [TODO] Replace SDK `agent_message`-based commentary/thinking handling in the router with rollout-backed normalization so `commentary` can never again surface as `thinking`; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `fix(codex-rollout): preserve commentary and final answer semantics`
-4. [TODO] Git Commit: `fix(codex-rollout): preserve commentary and final answer semantics` (hash: TBD)
-5. [TODO] Retire redundant SDK feedback mirroring for dialog purposes and keep `sdk-codex-*.jsonl` diagnostics-only; scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `refactor(codex-rollout): drop sdk dialog feedback duplication`
-6. [TODO] Git Commit: `refactor(codex-rollout): drop sdk dialog feedback duplication` (hash: TBD)
+1. [TODO] Add a rollout live-sync coordinator that reads appended raw rollout entries and normalizes them into the existing emitter / structured-output contract; scope: `packages/Codex_Module/src/rollout/codex-rollout-live-sync.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`; expected commit message: `feat(codex-rollout): add live rollout sync`
+2. [TODO] Git Commit: `feat(codex-rollout): add live rollout sync` (hash: TBD)
+3. [TODO] Trigger rollout sync during SDK event consumption and terminal turn drain so final rollout segments are read before turn closure while SDK stays send/control-plane only; scope: `packages/Codex_Module/src/messaging/codex-event-stream-consumer.ts`, `packages/Codex_Module/src/messaging/message-processor.ts`, `packages/Codex_Module/src/rollout/codex-rollout-live-sync.ts`; expected commit message: `feat(codex-rollout): poll rollout during turn lifecycle`
+4. [TODO] Git Commit: `feat(codex-rollout): poll rollout during turn lifecycle` (hash: TBD)
+5. [TODO] Retire SDK `reasoning` and `agent_message` user-visible routing from the router so commentary/final-answer semantics come only from rollout-backed normalization; scope: `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `fix(codex-rollout): prefer rollout dialog routing`
+6. [TODO] Git Commit: `fix(codex-rollout): prefer rollout dialog routing` (hash: TBD)
+7. [TODO] Fence `sdk-codex-*.jsonl` into diagnostics-only status and drop dialog-source assumptions from Codex runtime logging paths; scope: `packages/Codex_Module/src/logging/session-logger.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `refactor(codex-rollout): keep sdk feedback diagnostics only`
+8. [TODO] Git Commit: `refactor(codex-rollout): keep sdk feedback diagnostics only` (hash: TBD)
 
 ### Stream: Regression And Replay
 1. [TODO] Cover the reported Codex second-turn Description trace so commentary, thinking, and final answer remain separated under the rollout-backed parser; scope: `packages/Codex_Module/src/messaging/message-processor.commentary-phase.test.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(codex-rollout): cover commentary phase routing`
 2. [TODO] Git Commit: `test(codex-rollout): cover commentary phase routing` (hash: TBD)
-3. [TODO] Cover replay/resume so rollout-derived segments restore without duplicates and the previous empty-terminal-answer regression remains green; scope: `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`, `packages/Codex_Module/src/messaging/message-processor.empty-terminal.test.ts`, `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`; expected commit message: `test(codex-rollout): guard replay and empty terminal recovery`
-4. [TODO] Git Commit: `test(codex-rollout): guard replay and empty terminal recovery` (hash: TBD)
-5. [TODO] Run targeted Codex verification and record the concrete results in this plan; scope: targeted `tsx` / `node:test` commands and `npm run build --workspace @codeai-hub/codex-module`; expected commit message: verification only
+3. [TODO] Cover replay/resume so rollout-derived segments restore without duplicates under the new live-sync path; scope: `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`, `packages/Codex_Module/src/rollout/codex-rollout-reader.test.ts`; expected commit message: `test(codex-rollout): guard rollout replay resume`
+4. [TODO] Git Commit: `test(codex-rollout): guard rollout replay resume` (hash: TBD)
+5. [TODO] Keep the previous empty-terminal-answer recovery green after the rollout cutover; scope: `packages/Codex_Module/src/messaging/message-processor.empty-terminal.test.ts`, `packages/Codex_Module/src/messaging/message-processor.test.ts`; expected commit message: `test(codex-rollout): preserve empty terminal recovery`
+6. [TODO] Git Commit: `test(codex-rollout): preserve empty terminal recovery` (hash: TBD)
+7. [TODO] Run targeted Codex verification and record the concrete results in this plan; scope: `doc/TODO/todo-plan.md`; expected commit message: `docs(todo): record codex rollout verification`
+8. [TODO] Git Commit: `docs(todo): record codex rollout verification` (hash: TBD)
 
 ### Stream: Release Build
 1. [TODO] Update release-facing docs for the next Codex raw rollout patch release from a clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare codex raw rollout migration notes`
