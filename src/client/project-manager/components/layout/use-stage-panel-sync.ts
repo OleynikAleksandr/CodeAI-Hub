@@ -41,17 +41,9 @@ export const useStagePanelSync = (params: {
         workspacePath,
         virtualSimulationArtifactAvailable,
         diagramModulesArtifactAvailable,
+        foundationEnvelopeArtifactAvailable,
       });
       if (p.artifact) selectArtifact(p.artifact.path, p.artifact.label);
-      else if (
-        stage === "foundation_envelope" &&
-        foundationEnvelopeArtifactAvailable
-      ) {
-        selectArtifact(
-          `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`,
-          "foundation-envelope.md"
-        );
-      }
       else if (p.clearTool) clearArtifactWithTool(p.clearTool);
       if (p.session) dispatchDialogOpenIntent(p.session);
     },

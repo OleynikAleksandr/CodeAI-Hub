@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
+import { resolveStageSyncPayload } from "./workspace-tree-branch-nodes";
 
 export type SessionResumeIntent = {
   readonly providerId: string;
@@ -33,24 +33,6 @@ const dispatchStageActivated = (stage: string): void => {
   );
 };
 
-const resolveLatestContinuityChain = (
-  chains: WorkflowStateSnapshot["continuity"]["chains"],
-  stage: WorkflowStateSnapshot["continuity"]["chains"][number]["stage"]
-) => {
-  let best: (typeof chains)[number] | null = null;
-
-  for (const chain of chains) {
-    if (chain.stage !== stage || chain.segments.length === 0) {
-      continue;
-    }
-    if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
-      best = chain;
-    }
-  }
-
-  return best;
-};
-
 export const useWorkspaceTreeAutoSelect = (
   params: WorkspaceTreeAutoSelectParams
 ) => {
@@ -74,138 +56,29 @@ export const useWorkspaceTreeAutoSelect = (
       }
 
       const startupStage = state.lastActive?.stage ?? "description";
+      const payload = resolveStageSyncPayload({
+        stage: startupStage,
+        workflowState: state,
+        workspaceSlug: params.workspaceSlug,
+        workspacePath: params.workspacePath,
+        virtualSimulationArtifactAvailable:
+          params.virtualSimulationArtifactAvailable,
+        diagramModulesArtifactAvailable:
+          params.diagramModulesArtifactAvailable,
+        foundationEnvelopeArtifactAvailable:
+          params.foundationEnvelopeArtifactAvailable,
+      });
 
-      if (startupStage === "foundation_envelope") {
-        const envelopeChain = resolveLatestContinuityChain(
-          state.continuity.chains,
-          "foundation_envelope"
-        );
-        const envelopeLast = envelopeChain?.segments.at(-1) ?? null;
-        dispatchStageActivated("foundation_envelope");
-        const envelopeArtifactPath =
-          `.codeai-hub/${params.workspaceSlug}/foundation_envelope/foundation-envelope.md`;
-        if (params.foundationEnvelopeArtifactAvailable) {
-          params.onSelectArtifact(
-            envelopeArtifactPath,
-            "foundation-envelope.md"
-          );
-        } else {
-          params.onClearArtifactWithTool(
-            FOUNDATION_ENVELOPE_TOOL_LABEL
-          );
-        }
-        if (envelopeLast) {
-          params.onResumeSession({
-            providerId: envelopeLast.providerId,
-            providerSessionId: envelopeLast.providerSessionId,
-            workspacePath: params.workspacePath,
-            workspaceSlug: params.workspaceSlug,
-            initiativeSlug: params.workspaceSlug,
-            stage: "foundation_envelope",
-            sessionKind: "collector",
-            runSlug: null,
-          });
-        }
-        pendingWorkspaceIdRef.current = null;
-        return;
+      dispatchStageActivated(startupStage);
+      if (payload.artifact) {
+        params.onSelectArtifact(payload.artifact.path, payload.artifact.label);
+      } else if (payload.clearTool) {
+        params.onClearArtifactWithTool(payload.clearTool);
       }
-
-      if (startupStage === "diagram_modules") {
-        const dmChain = resolveLatestContinuityChain(
-          state.continuity.chains,
-          "diagram_modules"
-        );
-        const dmLast = dmChain?.segments.at(-1) ?? null;
-        dispatchStageActivated("diagram_modules");
-        const dmArtifactPath =
-          `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
-        if (params.diagramModulesArtifactAvailable) {
-          params.onSelectArtifact(dmArtifactPath, "Module Graph");
-        } else {
-          params.onClearArtifactWithTool("Diagram Modules");
-        }
-        if (dmLast) {
-          params.onResumeSession({
-            providerId: dmLast.providerId,
-            providerSessionId: dmLast.providerSessionId,
-            workspacePath: params.workspacePath,
-            workspaceSlug: params.workspaceSlug,
-            initiativeSlug: params.workspaceSlug,
-            stage: "diagram_modules",
-            sessionKind: "collector",
-            runSlug: null,
-          });
-        }
-        pendingWorkspaceIdRef.current = null;
-        return;
+      if (payload.session) {
+        params.onResumeSession(payload.session);
       }
-
-      if (startupStage === "virtual_simulation") {
-        const vsChain = resolveLatestContinuityChain(
-          state.continuity.chains,
-          "virtual_simulation"
-        );
-        const vsLast = vsChain?.segments.at(-1) ?? null;
-        dispatchStageActivated("virtual_simulation");
-        const vsArtifactPath =
-          `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
-        if (params.virtualSimulationArtifactAvailable) {
-          params.onSelectArtifact(vsArtifactPath, "virtual-simulation.md");
-        } else {
-          params.onClearArtifactWithTool("VIRTUAL SIMULATION");
-        }
-        if (vsLast) {
-          params.onResumeSession({
-            providerId: vsLast.providerId,
-            providerSessionId: vsLast.providerSessionId,
-            workspacePath: params.workspacePath,
-            workspaceSlug: params.workspaceSlug,
-            initiativeSlug: params.workspaceSlug,
-            stage: "virtual_simulation",
-            sessionKind: "collector",
-            runSlug: null,
-          });
-        }
-        pendingWorkspaceIdRef.current = null;
-        return;
-      }
-
-      const branch = state.description;
-      const descriptionSession = branch?.primarySession;
-      const isCanonicalDraft = branch?.draftPath && /\/description\/Final_Description\.md$/.test(branch.draftPath);
-      const validDraft = isCanonicalDraft ? branch?.draftPath : null;
-      const hasDraftOrFinal = Boolean(branch?.finalPath || validDraft);
-      const hasUnsubmittedQuestionnaire = Boolean(
-        branch?.questionnairePath &&
-          !hasDraftOrFinal &&
-          !descriptionSession?.providerSessionId
-      );
-      const artifactPath = branch?.finalPath ?? validDraft ?? null;
-      const artifactLabel = branch?.finalPath
-        ? "Final_Description.md"
-        : validDraft
-          ? "Final_Description.md"
-          : null;
-      dispatchStageActivated("description");
-      if (artifactPath && artifactLabel) {
-        params.onSelectArtifact(artifactPath, artifactLabel);
-      }
-      if (descriptionSession?.providerSessionId) {
-        params.onResumeSession({
-          providerId: descriptionSession.providerId,
-          providerSessionId: descriptionSession.providerSessionId,
-          workspacePath: params.workspacePath,
-          workspaceSlug: params.workspaceSlug,
-          initiativeSlug: params.workspaceSlug,
-          stage: "description",
-          sessionKind: "collector",
-          runSlug: null,
-        });
-      }
-      if (hasUnsubmittedQuestionnaire) return;
-      if (artifactPath || descriptionSession?.providerSessionId) {
-        pendingWorkspaceIdRef.current = null;
-      }
+      pendingWorkspaceIdRef.current = null;
     },
     [
       params.foundationEnvelopeArtifactAvailable,

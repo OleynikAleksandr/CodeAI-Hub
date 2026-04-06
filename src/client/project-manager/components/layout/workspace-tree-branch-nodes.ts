@@ -140,6 +140,7 @@ export const resolveStageSyncPayload = (options: {
   readonly workspacePath: string;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable?: boolean;
+  readonly foundationEnvelopeArtifactAvailable?: boolean;
 }): StageSyncPayload => {
   const { stage, workflowState, workspaceSlug, workspacePath } = options;
 
@@ -213,9 +214,17 @@ export const resolveStageSyncPayload = (options: {
       "foundation_envelope"
     );
     const last = chain?.segments.at(-1) ?? null;
+    const foundationArtifactPath =
+      `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`;
+    const foundationArtifactAvailable =
+      options.foundationEnvelopeArtifactAvailable ?? false;
     return {
-      artifact: null,
-      clearTool: FOUNDATION_ENVELOPE_TOOL_LABEL,
+      artifact: foundationArtifactAvailable
+        ? { path: foundationArtifactPath, label: "foundation-envelope.md" }
+        : null,
+      clearTool: foundationArtifactAvailable
+        ? null
+        : FOUNDATION_ENVELOPE_TOOL_LABEL,
       session: last
         ? {
             providerId: last.providerId,
