@@ -18,11 +18,71 @@ const isWorkflowStageId = (value: unknown): value is WorkflowStageId =>
   value === "diagram_modules" ||
   value === "foundation_envelope";
 
+const WORKFLOW_LAST_ACTIVE_STAGE_ORDER: readonly WorkflowStageId[] = [
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "foundation_envelope",
+] as const;
+
+const STAGE_RANK = WORKFLOW_LAST_ACTIVE_STAGE_ORDER.reduce<
+  Record<WorkflowStageId, number>
+>(
+  (accumulator, stage, index) => {
+    accumulator[stage] = index;
+    return accumulator;
+  },
+  {} as Record<WorkflowStageId, number>
+);
+
 export interface WorkflowLastActiveSnapshot {
   readonly artifactPath?: string;
   readonly stage: WorkflowStageId;
   readonly updatedAt: string;
 }
+
+export const compareWorkflowStageOrder = (
+  left: WorkflowStageId,
+  right: WorkflowStageId
+): number => STAGE_RANK[left] - STAGE_RANK[right];
+
+export const resolvePreferredWorkflowLastActive = (
+  candidates: readonly (WorkflowLastActiveSnapshot | null | undefined)[]
+): WorkflowLastActiveSnapshot | null => {
+  let best: WorkflowLastActiveSnapshot | null = null;
+
+  for (const candidate of candidates) {
+    if (!candidate) {
+      continue;
+    }
+
+    if (!best) {
+      best = candidate;
+      continue;
+    }
+
+    if (candidate.updatedAt > best.updatedAt) {
+      best = candidate;
+      continue;
+    }
+
+    if (candidate.updatedAt < best.updatedAt) {
+      continue;
+    }
+
+    const orderDiff = compareWorkflowStageOrder(candidate.stage, best.stage);
+    if (orderDiff > 0) {
+      best = candidate;
+      continue;
+    }
+
+    if (orderDiff === 0 && candidate.artifactPath && !best.artifactPath) {
+      best = candidate;
+    }
+  }
+
+  return best;
+};
 
 interface WorkflowStateDiskSnapshot {
   readonly lastActive?: WorkflowLastActiveSnapshot;

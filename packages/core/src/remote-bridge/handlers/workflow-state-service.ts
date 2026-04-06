@@ -26,6 +26,7 @@ import {
   readDiagramModulesProgressSnapshot,
 } from "./diagram-modules-progress";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
+import { resolveCanonicalLastActive } from "./workflow-state-last-active-resolver";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
@@ -141,6 +142,13 @@ export class WorkflowStateService {
               })
             )
             .then((validatedState) => {
+              const canonicalLastActive = resolveCanonicalLastActive({
+                chains,
+                description,
+                lastActive,
+                state: validatedState,
+                workspaceSlug: workspaceSlugResult.value,
+              });
               const gating = {
                 blocked: resolveWorkflowBlockedStages({
                   state: validatedState,
@@ -152,7 +160,7 @@ export class WorkflowStateService {
                 state: validatedState,
                 continuity: { chains },
                 description,
-                lastActive,
+                lastActive: canonicalLastActive,
                 gating,
                 diagramModulesProgress,
               });
