@@ -50,10 +50,10 @@
    Verification target: `npm run build --workspace=@codeai-hub/core`
    Verification target: `npm run build:project-manager`
    Verification result: PASS — core tests `5/5`, PM tests `9/9`, continuity baseline test `2/2`, `@codeai-hub/core` build green, `build:project-manager` green.
-6. [TODO] Git Commit: `docs(todo): record trunk symmetry verification` (hash: TBD)
+6. [DONE] Git Commit: `docs(todo): record trunk symmetry verification` (hash: `c8f2f41b7`)
 
 ### Stream: Release Build
-1. [TODO] Update release-facing docs for the trunk-step symmetry retrofit from a clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare trunk symmetry release notes`
+1. [DONE] Update release-facing docs for the trunk-step symmetry retrofit from a clean pre-build tree; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs(release): prepare trunk symmetry release notes`
 2. [TODO] Git Commit: `docs(release): prepare trunk symmetry release notes` (hash: TBD)
 3. [TODO] Run `./scripts/build-all.sh` on a clean tree and assemble the next patch release artifacts for the trunk-step symmetry retrofit; scope: versioned manifests, package versions, `package-lock.json`, release caches; expected commit message: `build(release): publish trunk symmetry retrofit release`
 4. [TODO] Git Commit: `build(release): publish trunk symmetry retrofit release` (hash: TBD)

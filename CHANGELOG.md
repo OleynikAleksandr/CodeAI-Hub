@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.898] - 2026-04-06
+### Fixed
+- **Workflow startup truth is now canonical across the released trunk chain**: Core now repairs `lastActive` from the combined workflow-state, continuity, and semantic artifact evidence, so late trunk steps no longer depend on ad hoc per-stage heuristics after restart.
+- **Stale workspace metadata now self-heals instead of freezing startup on an older step**: workspace activation and semantic artifact writes persist repaired `lastActive` snapshots back into canonical state, which prevents `Description`-era pointers from surviving after the workspace has already advanced to `Diagram Modules` or `Foundation Envelope`.
+- **Project Manager startup routing now uses one stage resolver end-to-end**: workspace-open auto-select, toolbar navigation, tree clicks, artifact selection, and dialog/session restore all route through the same stage-to-artifact/session mapping driven by `workflow-state.lastActive`.
+- **Formal symmetry regression coverage now protects the retrofit**: dedicated core and PM tests now lock canonical `lastActive`, stale-state self-heal, late-step cold-start hydration, shared startup routing, and the existing history-backed continuity baseline before release packaging.
+
 ## [1.1.897] - 2026-04-06
 ### Fixed
 - **Project Manager startup restore now follows workflow-scoped truth instead of browser-local dialog cache**: workspace reopen no longer revives a stale `foundation_envelope` dialog intent from `localStorage`, so Toolbar, workflow tree, artifact panel, and session panel recover from the same `workflow-state` + `continuity` route.
