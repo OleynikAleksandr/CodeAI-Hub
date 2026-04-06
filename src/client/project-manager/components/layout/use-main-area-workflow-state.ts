@@ -42,37 +42,12 @@ const TOOL_BY_STAGE: Record<WorkflowStageId, string> = {
     FOUNDATION_ENVELOPE_TOOL_LABEL,
 };
 
-const STAGE_PRIORITY: readonly WorkflowStageId[] = [
-  "foundation_envelope",
-  "diagram_modules",
-  "virtual_simulation",
-  "description",
-];
-
-const hasContinuitySegmentsForStage = (
-  state: WorkflowStateSnapshot,
-  stage: WorkflowStageId
-): boolean =>
-  state.continuity.chains.some(
-    (chain) => chain.stage === stage && chain.segments.length > 0
-  );
-
 const resolveLastActiveTool = (state: WorkflowStateSnapshot | null): string => {
-  if (!state) {
+  const stage = state?.lastActive?.stage;
+  if (!stage) {
     return TOOL_BY_STAGE.description;
   }
-
-  for (const stage of STAGE_PRIORITY) {
-    if (
-      stage === "description" ||
-      state.stages[stage] !== "idle" ||
-      hasContinuitySegmentsForStage(state, stage)
-    ) {
-      return TOOL_BY_STAGE[stage];
-    }
-  }
-
-  return TOOL_BY_STAGE.description;
+  return TOOL_BY_STAGE[stage];
 };
 
 const isCanonicalDescriptionPath = (path: string): boolean =>

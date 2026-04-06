@@ -36,6 +36,12 @@ export type WorkflowContinuitySnapshot = {
   readonly chains: readonly ContinuityChainSnapshot[];
 };
 
+export type WorkflowLastActiveSnapshot = {
+  readonly artifactPath?: string;
+  readonly stage: WorkflowStageId;
+  readonly updatedAt: string;
+};
+
 export type DescriptionSessionRef = {
   readonly providerId: string;
   readonly providerSessionId: string;
@@ -55,6 +61,7 @@ export type WorkflowStateSnapshot = {
   readonly updatedAt: string;
   readonly stages: Record<WorkflowStageId, WorkflowStageStatus>;
   readonly continuity: WorkflowContinuitySnapshot;
+  readonly lastActive: WorkflowLastActiveSnapshot | null;
   readonly description: DescriptionBranchSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
   readonly diagramModulesProgress?: Record<string, unknown> | null;
@@ -63,6 +70,7 @@ export type WorkflowStateSnapshot = {
 type WorkflowStateResponse = {
   readonly state: unknown;
   readonly continuity?: unknown;
+  readonly lastActive?: unknown;
   readonly description?: unknown;
   readonly gating?: unknown;
   readonly diagramModulesProgress?: unknown;
@@ -169,6 +177,24 @@ const parseContinuitySnapshot = (
   return { chains };
 };
 
+const parseLastActiveSnapshot = (
+  payload: unknown
+): WorkflowLastActiveSnapshot | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const stageValue = readNonEmptyString(payload.stage);
+  const updatedAt = readNonEmptyString(payload.updatedAt);
+  if (!(stageValue && updatedAt && STAGE_ORDER.includes(stageValue as WorkflowStageId))) {
+    return null;
+  }
+  return {
+    artifactPath: readNonEmptyString(payload.artifactPath) ?? undefined,
+    stage: stageValue as WorkflowStageId,
+    updatedAt,
+  };
+};
+
 const parseDescriptionSessionRef = (
   payload: unknown
 ): DescriptionSessionRef | null => {
@@ -224,6 +250,7 @@ const parseWorkflowState = (
   const stagesPayload = state.stages;
   const stages = buildDefaultStages();
   const continuity = parseContinuitySnapshot(response?.continuity);
+  const lastActive = parseLastActiveSnapshot(response?.lastActive);
   const description = parseDescriptionBranch(response?.description);
   const gating = parseWorkflowGating({ payload: response?.gating, stageOrder: STAGE_ORDER });
   const diagramModulesProgress = isRecord(response?.diagramModulesProgress)
@@ -247,6 +274,7 @@ const parseWorkflowState = (
     updatedAt,
     stages,
     continuity,
+    lastActive,
     description,
     gating,
     diagramModulesProgress,

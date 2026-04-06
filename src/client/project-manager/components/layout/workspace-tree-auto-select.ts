@@ -73,13 +73,14 @@ export const useWorkspaceTreeAutoSelect = (
         return;
       }
 
-      const envelopeChain = resolveLatestContinuityChain(
-        state.continuity.chains,
-        "foundation_envelope"
-      );
-      const envelopeLast = envelopeChain?.segments.at(-1) ?? null;
+      const startupStage = state.lastActive?.stage ?? "description";
 
-      if (envelopeLast) {
+      if (startupStage === "foundation_envelope") {
+        const envelopeChain = resolveLatestContinuityChain(
+          state.continuity.chains,
+          "foundation_envelope"
+        );
+        const envelopeLast = envelopeChain?.segments.at(-1) ?? null;
         dispatchStageActivated("foundation_envelope");
         const envelopeArtifactPath =
           `.codeai-hub/${params.workspaceSlug}/foundation_envelope/foundation-envelope.md`;
@@ -93,28 +94,28 @@ export const useWorkspaceTreeAutoSelect = (
             FOUNDATION_ENVELOPE_TOOL_LABEL
           );
         }
-        params.onResumeSession({
-          providerId: envelopeLast.providerId,
-          providerSessionId: envelopeLast.providerSessionId,
-          workspacePath: params.workspacePath,
-          workspaceSlug: params.workspaceSlug,
-          initiativeSlug: params.workspaceSlug,
-          stage: "foundation_envelope",
-          sessionKind: "collector",
-          runSlug: null,
-        });
+        if (envelopeLast) {
+          params.onResumeSession({
+            providerId: envelopeLast.providerId,
+            providerSessionId: envelopeLast.providerSessionId,
+            workspacePath: params.workspacePath,
+            workspaceSlug: params.workspaceSlug,
+            initiativeSlug: params.workspaceSlug,
+            stage: "foundation_envelope",
+            sessionKind: "collector",
+            runSlug: null,
+          });
+        }
         pendingWorkspaceIdRef.current = null;
         return;
       }
 
-      // Resolve the latest DM chain (next-priority step)
-      const dmChain = resolveLatestContinuityChain(
-        state.continuity.chains,
-        "diagram_modules"
-      );
-      const dmLast = dmChain?.segments.at(-1) ?? null;
-
-      if (dmLast) {
+      if (startupStage === "diagram_modules") {
+        const dmChain = resolveLatestContinuityChain(
+          state.continuity.chains,
+          "diagram_modules"
+        );
+        const dmLast = dmChain?.segments.at(-1) ?? null;
         dispatchStageActivated("diagram_modules");
         const dmArtifactPath =
           `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
@@ -123,30 +124,29 @@ export const useWorkspaceTreeAutoSelect = (
         } else {
           params.onClearArtifactWithTool("Diagram Modules");
         }
-        params.onResumeSession({
-          providerId: dmLast.providerId,
-          providerSessionId: dmLast.providerSessionId,
-          workspacePath: params.workspacePath,
-          workspaceSlug: params.workspaceSlug,
-          initiativeSlug: params.workspaceSlug,
-          stage: "diagram_modules",
-          sessionKind: "collector",
-          runSlug: null,
-        });
+        if (dmLast) {
+          params.onResumeSession({
+            providerId: dmLast.providerId,
+            providerSessionId: dmLast.providerSessionId,
+            workspacePath: params.workspacePath,
+            workspaceSlug: params.workspaceSlug,
+            initiativeSlug: params.workspaceSlug,
+            stage: "diagram_modules",
+            sessionKind: "collector",
+            runSlug: null,
+          });
+        }
         pendingWorkspaceIdRef.current = null;
         return;
       }
 
-      // Resolve the latest VS chain (next-priority step)
-      const vsChain = resolveLatestContinuityChain(
-        state.continuity.chains,
-        "virtual_simulation"
-      );
-      const vsLast = vsChain?.segments.at(-1) ?? null;
-
-      if (vsLast) {
+      if (startupStage === "virtual_simulation") {
+        const vsChain = resolveLatestContinuityChain(
+          state.continuity.chains,
+          "virtual_simulation"
+        );
+        const vsLast = vsChain?.segments.at(-1) ?? null;
         dispatchStageActivated("virtual_simulation");
-        // VS session exists → open VS as the latest step
         const vsArtifactPath =
           `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
         if (params.virtualSimulationArtifactAvailable) {
@@ -154,21 +154,22 @@ export const useWorkspaceTreeAutoSelect = (
         } else {
           params.onClearArtifactWithTool("VIRTUAL SIMULATION");
         }
-        params.onResumeSession({
-          providerId: vsLast.providerId,
-          providerSessionId: vsLast.providerSessionId,
-          workspacePath: params.workspacePath,
-          workspaceSlug: params.workspaceSlug,
-          initiativeSlug: params.workspaceSlug,
-          stage: "virtual_simulation",
-          sessionKind: "collector",
-          runSlug: null,
-        });
+        if (vsLast) {
+          params.onResumeSession({
+            providerId: vsLast.providerId,
+            providerSessionId: vsLast.providerSessionId,
+            workspacePath: params.workspacePath,
+            workspaceSlug: params.workspaceSlug,
+            initiativeSlug: params.workspaceSlug,
+            stage: "virtual_simulation",
+            sessionKind: "collector",
+            runSlug: null,
+          });
+        }
         pendingWorkspaceIdRef.current = null;
         return;
       }
 
-      // Fallback: open Description step
       const branch = state.description;
       const descriptionSession = branch?.primarySession;
       const isCanonicalDraft = branch?.draftPath && /\/description\/Final_Description\.md$/.test(branch.draftPath);
