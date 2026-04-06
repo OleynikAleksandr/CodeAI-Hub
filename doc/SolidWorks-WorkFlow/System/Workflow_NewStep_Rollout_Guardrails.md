@@ -3,145 +3,127 @@
 **Status:** Active
 **Updated:** 2026-04-06
 **Owner:** Oleksandr + Codex
-**Scope:** minimum rules for adding a workflow step without partial shells, split sources of truth, or restart regressions.
+**Scope:** minimum rules for adding a new workflow step or retrofitting an already released one without split truth, asymmetry, or restart regressions.
 
 ---
 
 ## 1. Core law
 
-Новый workflow step нельзя внедрять как кнопку, prompt или artifact-path по отдельности. Поддерживаемый шаг существует только как полный contract:
+Workflow step считается поддерживаемым только как полный contract, а не как частично добавленная кнопка, prompt, artifact path или dialog shell.
+
+Один released step обязан одновременно иметь:
 
 - canonical `stageId`;
 - canonical semantic artifact contract;
 - canonical readiness / `READY-DONE-OUTDATED-ERROR` semantics;
+- canonical continuity binding;
+- canonical workspace restore truth;
 - Project Manager parity;
-- continuity + last-active + cold-start restore;
-- localization ownership;
-- tests + packaged release validation.
+- regression tests;
+- packaged release validation.
 
-Если хотя бы один из этих слоёв отсутствует, шаг считается `INCOMPLETE`.
+Если хотя бы один слой отсутствует, шаг считается `INCOMPLETE`.
 
----
+Это правило одинаково действует:
 
-## 2. First move: clone a mature reference step
-
-Сначала выбирается mature reference step с похожим UX/continuity profile, затем на новый шаг переносится весь rollout pattern:
-
-- stage registries and order maps;
-- artifact and validation paths;
-- gating and cold-start hydration;
-- PM toolbar/tree/panel/session behavior;
-- continuity routing;
-- localization surfaces;
-- regression tests.
+- для нового шага;
+- для уже существующего released шага;
+- для любого trunk retrofit перед добавлением следующего шага.
 
 ---
 
-## 3. Questions that must be answered before code
+## 2. Retrofit law for existing steps
 
-До первого кодового изменения должен существовать planning/intake answer на вопросы:
+Нельзя двигаться к следующему trunk step, если уже выпущенные шаги хранятся и восстанавливаются по разным правилам.
 
-1. Какой mature step является reference pattern?
-2. Какой canonical `stageId` у нового шага?
-3. Какие canonical input/output artifacts у шага?
-4. Что делает шаг `READY`, `DONE`, `OUTDATED`, `ERROR`?
-5. Какие exact PM surfaces должны вести себя identically to reference step?
-6. Какие persistence paths используют тот же `stageId` на artifact, continuity и workflow уровне?
-7. Какие cold-start tests и packaged checks доказывают, что шаг переживает restart?
+Обязательный закон:
 
----
+- все released trunk steps обязаны подчиняться одной и той же persistence / restore модели;
+- если у раннего шага есть явный stage passport, поздние шаги не могут жить только на косвенной комбинации artifact file + continuity hints + UI heuristics;
+- найденная асимметрия released steps превращается в отдельный retrofit scope и закрывается до rollout следующего trunk step.
 
-## 4. One step = one canonical contract
-
-### 4.1. Stage identity
-
-Новый `stageId` обязан быть first-class во всех canonical registries.
-
-- нельзя держать локальные hand-written normalizer/allowlist copies, если уже существует shared canonical normalizer;
-- continuity root resolver, tracker, handoff path, dialog list/open/history, workflow-state hydration и PM restore обязаны использовать один shared stage normalization contract;
-- новый шаг не имеет права silently normalizes-иться в `unknown`.
-
-### 4.2. Artifacts
-
-Canonical step artifacts живут только под `/.codeai-hub/<workspaceSlug>/<stageId>/...`.
-
-Нужно заранее разделить:
-
-- semantic artifacts;
-- optional sidecar/view artifacts;
-- validation rule;
-- reopen/repair path.
-
-### 4.3. Readiness
-
-Gate шага обязан опираться на semantic readiness, а не на первый найденный файл.
-
-Если upstream step строится staged/aggregate образом, rollout обязан иметь canonical progress snapshot, из которого cold start восстанавливает:
-
-- `in_progress`;
-- `completed`;
-- downstream unlock state.
-
-### 4.4. Persistence folders
-
-Для одного официального шага должны быть синхронны три зоны:
-
-- artifact folder: `/.codeai-hub/<workspaceSlug>/<stageId>/...`
-- continuity folder: `/.codeai-hub/<workspaceSlug>/continuity/<stageId>/<rootSessionId>/...`
-- workflow folder: `/.codeai-hub/<workspaceSlug>/workflow/...`
-
-Если artifact живёт под canonical `stageId`, а continuity или workflow metadata используют другой effective stage, rollout сломан.
+Итоговый инвариант простой: система должна одинаково уметь ответить на вопрос `что это за шаг`, `какой у него главный artifact`, `какая сессия к нему относится` и `какой шаг сейчас активен в workspace`.
 
 ---
 
-## 5. One source of truth for restore
+## 3. One step = one canonical step passport
 
-При открытии workspace Project Manager не имеет права читать startup truth из разрозненных мест.
+У каждого workflow step обязан существовать один и тот же минимальный canonical passport.
 
-Startup restore строится только из canonical workspace state:
+Минимум:
 
-- `workflow-state`;
-- `continuity`;
-- `last-active` при необходимости.
+1. canonical `stageId`;
+2. canonical semantic artifact path(s);
+3. canonical readiness/status snapshot;
+4. canonical continuity binding (`root/dialog/providerSessionId`);
+5. canonical active-stage pointer для workspace restore.
+
+Этот passport может materialize-иться разными внутренними слоями, но user-visible truth не имеет права зависеть от догадок.
 
 Запрещено:
 
-- поднимать startup `dialogIntent` из browser-local cache;
-- выбирать stage отдельно для Toolbar и отдельно для Session panel;
-- иметь разные startup routers для tree, toolbar, session panel и artifact panel.
-
-Инвариант:
-
-- `activeStage`, session route и selected artifact должны восстанавливаться из одного workspace-scoped источника истины.
+- локально копировать stage normalizer / allowlist / order map, если уже существует shared canonical registry;
+- нормализовать реальный шаг в `unknown`;
+- держать artifact под одним `stageId`, continuity под другим, а workflow restore под третьим.
 
 ---
 
-## 6. Continuity guardrails
+## 4. One startup truth per workspace
 
-Новый шаг обязан корректно переживать reopen/restart.
+При открытии workspace Project Manager не имеет права собирать правду о текущем шаге из нескольких независимых источников.
+
+Startup restore строится только из canonical workspace-scoped truth:
+
+- workflow-state;
+- continuity;
+- last-active pointer, если он входит в canonical workflow-state model.
+
+Запрещено:
+
+- поднимать startup route из browser-local `dialogIntent` или других panel-local caches;
+- выбирать один stage для toolbar/tree и другой для session panel;
+- восстанавливать artifact selection, active stage и dialog route по разным правилам.
+
+Инвариант:
+
+- `activeStage`;
+- opened session;
+- selected artifact
+
+должны восстанавливаться из одного workspace truth chain.
+
+Continuity хранит историю диалога. Workflow-state хранит ответ на вопрос, какой шаг сейчас считается активным. Эти два слоя не имеют права противоречить друг другу.
+
+---
+
+## 5. Continuity guardrails
+
+Новый или retrofit step обязан корректно переживать reopen / restart.
 
 Обязательные правила:
 
 - continuity path обязан использовать canonical `stageId`, не `unknown`;
 - root resolution не имеет права создавать fresh dialog/root, если для того же `workspace + stage + provider + providerSessionId` уже существует chain;
 - dialog list/open path не имеет права предпочесть новый пустой duplicate entry вместо старого history-backed dialog;
-- при наличии stale duplicates runtime restore и PM обязаны предпочесть history-backed dialog.
+- при наличии stale duplicates runtime restore и PM обязаны предпочесть history-backed dialog;
+- stale workspace metadata обязана self-heal-иться, если canonical artifact + continuity уже доказывают, что workspace дошёл до более позднего шага.
 
 ---
 
-## 7. Project Manager parity
+## 6. Project Manager parity
 
-Новый шаг не считается добавленным, пока PM не доведён до parity с reference step.
+Шаг не считается добавленным, пока PM не доведён до parity с mature reference step.
 
 Минимальный PM contract:
 
 - toolbar label and button state;
-- stage row in workflow tree;
-- child artifact/session rows, если reference step их имеет;
+- workflow tree stage row;
+- child artifact/session rows, если они заявлены для данного шага;
 - blocked/help/empty-state surfaces;
 - artifact open/select path;
 - session reopen path;
-- auto-select priority on workspace open.
+- workspace auto-select;
+- startup restore.
 
 Инвариант навигации:
 
@@ -154,48 +136,64 @@ Startup restore строится только из canonical workspace state:
 
 должны приходить к одному и тому же `activeStage + session + artifact`.
 
-Child rows обязаны наследовать реальный stage-level `blocked/outdated/active` state, а не рисовать собственную выдуманную семантику.
+Child rows обязаны наследовать реальный stage-level state. Они не могут рисовать собственную выдуманную семантику.
 
 ---
 
-## 8. Localization rule
+## 7. Tests and release gate
 
-Новый шаг не имеет права приносить user-facing text без явного ownership.
+Формально исправляемый step обязан иметь формально проверяемый regression matrix.
 
-Обязательные surface categories:
+Минимум:
 
-- UI Labels
-- UI Helper Text
-- Messages for the User
-- Artifacts for the User
-- Internal Agent Instructions
+1. artifact creation / change updates canonical step truth;
+2. cold start восстанавливает правильный stage status;
+3. cold start восстанавливает правильный active step;
+4. PM открывает правильный session route;
+5. PM открывает правильный artifact route;
+6. stale legacy metadata self-heal-ится, если workspace уже продвинулся дальше;
+7. duplicate continuity entries не уводят restore в пустой dialog.
 
-Prompt остаётся internal surface. User-facing copy не может жить inline в React helper/component как source of truth.
+Для trunk retrofit тестируется не только новый шаг, а вся текущая trunk chain:
+
+- `Description`
+- `Virtual Simulation`
+- `Diagram Modules`
+- `Foundation Envelope`
+
+Release gate:
+
+- regression tests green;
+- targeted builds green;
+- packaged VSIX smoke green.
+
+Если packaged release не проверен, rollout не закрыт.
 
 ---
 
-## 9. Minimum acceptance checklist
+## 8. Minimum acceptance checklist
 
-Шаг считается готовым только если одновременно выполнены все пункты:
+Шаг или retrofit wave считается готовым только если одновременно выполнены все пункты:
 
-1. Новый `stageId` добавлен во все canonical registries без local drift.
+1. `stageId` добавлен во все canonical registries без local drift.
 2. Artifact contract и validation path работают end-to-end.
-3. Gating основан на semantic readiness, а cold start восстанавливает корректный stage status.
-4. PM parity с mature reference step достигнут.
-5. Startup restore использует только workflow-state/continuity truth текущего workspace.
-6. Continuity restore не уходит в `unknown`, не создаёт лишние roots и выбирает history-backed dialog.
-7. Все user-facing surfaces локализованы через canonical ownership.
-8. Есть regression tests на stage identity, artifact path, gating/hydration, PM startup restore и continuity duplicate handling.
-9. Packaged release или VSIX smoke подтверждает, что шаг работает вне source-tree happy path.
+3. Все released trunk steps в scope используют симметричную step-passport model.
+4. Gating основан на semantic readiness, а не на случайном найденном файле.
+5. Workflow-state и continuity не расходятся по active step truth после restart.
+6. PM parity с mature reference step достигнут.
+7. User-facing copy локализована через canonical ownership.
+8. Есть regression tests на identity, artifact path, gating/hydration, startup restore, stale-state self-heal и duplicate continuity handling.
+9. Packaged release подтверждает, что исправление работает вне source-tree happy path.
 
-Если хотя бы один пункт не выполнен, шаг не выпускается.
+Если хотя бы один пункт не выполнен, rollout не выпускается.
 
 ---
 
-## 10. Related SSOT
+## 9. Related SSOT
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
