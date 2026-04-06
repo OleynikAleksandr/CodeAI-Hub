@@ -31,17 +31,19 @@
 - клик по Toolbar;
 - клик по stage-узлу в дереве;
 - клик по artifact/session узлу в дереве;
-- auto-select latest chain при смене workspace.
+- auto-select canonical startup stage при смене workspace.
 
 Cold-start restore rule:
 - startup restore для Session panel не имеет права читать отдельный browser-local stage/dialog truth;
-- при открытии workspace route обязан восстанавливаться только из workflow-state + continuity для текущего workspace;
+- при открытии workspace `activeStage` обязан восстанавливаться только из canonical `workflow-state.lastActive` для текущего workspace;
+- continuity участвует только как history/session layer для уже выбранного `activeStage`, а не как отдельный startup stage selector;
 - любые browser-local кэши допустимы только как ephemeral UI cache и не могут определять `dialogIntent`, `activeStage` или startup session selection.
 
 Канонический route:
-1. Сначала обновляем `activeStage`.
-2. Затем синхронизируем правую/левую панели.
-3. Затем (если есть) открываем соответствующую dialog-session.
+1. Сначала читаем `activeStage` из canonical workspace truth (`workflow-state.lastActive`).
+2. Затем строим stage-scoped artifact/session payload через один shared router.
+3. Затем синхронизируем правую/левую панели.
+4. Затем (если есть) открываем соответствующую dialog-session.
 
 ## 4) Контракт синхронизации
 
@@ -71,6 +73,7 @@ Cold-start restore rule:
 3. Если route идёт через `pm:dialog:open` для workflow-stage, активный stage должен быть установлен до/в момент route.
 4. Для stage-узла не допускается stage-specific поведение вида `skipSession`, если это ломает консистентность с другими route.
 5. Session panel startup restore обязан брать источник истины из того же workflow-state/continuity route, что и Toolbar/Tree auto-select; отдельный browser-local startup router запрещён.
+6. Startup auto-select и обычный stage click обязаны использовать один и тот же stage-to-artifact/session resolver; нельзя держать отдельную cold-start версию маршрутизации.
 
 ## 6) Особый случай Description pre-submit
 
