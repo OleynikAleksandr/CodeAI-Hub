@@ -3,390 +3,200 @@
 **Status:** Active
 **Updated:** 2026-04-06
 **Owner:** Oleksandr + Codex
-**Scope:** System-level protocol for adding a new workflow step without shipping partial stage shells, localization gaps, broken continuity paths, or mismatched Project Manager behavior.
+**Scope:** minimum rules for adding a workflow step without partial shells, split sources of truth, or restart regressions.
 
 ---
 
-## 1. Purpose
+## 1. Core law
 
-Этот документ фиксирует обязательный системный подход к добавлению нового шага в workflow CodeAI Hub.
+Новый workflow step нельзя внедрять как кнопку, prompt или artifact-path по отдельности. Поддерживаемый шаг существует только как полный contract:
 
-Документ существует потому, что rollout `Foundation Envelope` показал повторяемый класс ошибок:
-
-- новый шаг был добавлен не как полный system contract, а как частичный stage shell;
-- user-facing тексты не были сразу проведены через правильную localization boundary;
-- Project Manager tree/session surfaces были доведены до parity только после релиза;
-- continuity path и handoff path остались на fallback `unknown`, из-за чего stage session не открывалась правильно в левой панели;
-- cold-start persistence не была синхронно обновлена для нового `stageId`.
-
-Следовательно, новый workflow step больше нельзя внедрять как “ещё одну кнопку” или “ещё один prompt”.
-
-Новый шаг обязан внедряться как **полный end-to-end contract**.
-
----
-
-## 2. Core Principle
-
-### 2.1. Не invent new step behavior from scratch
-
-Если в продукте уже есть зрелый шаг с похожей topology, новый шаг обязан сначала **полностью скопировать его системный rollout pattern**:
-
-- stage contract в core;
-- artifact path contract;
-- Project Manager stage shell;
-- session/continuity routing;
+- canonical `stageId`;
+- canonical semantic artifact contract;
+- canonical readiness / `READY-DONE-OUTDATED-ERROR` semantics;
+- Project Manager parity;
+- continuity + last-active + cold-start restore;
 - localization ownership;
-- persistence and cold-start hydration;
-- verification and release acceptance.
+- tests + packaged release validation.
 
-Правильный first move:
-
-1. выбрать reference step с максимально похожим UX/continuity profile;
-2. составить full surface inventory;
-3. перенести этот contract на новый `stageId`;
-4. только потом добавлять step-specific semantics.
-
-### 2.2. Новый шаг считается feature-complete только при parity с mature steps
-
-Если новый шаг:
-
-- появляется в Toolbar,
-- но не открывает ту же session/artifact pair, что и mature steps,
-- или пишет continuity в `unknown`,
-- или не имеет localization ids,
-
-то шаг **не считается внедрённым**, даже если artifact уже materialize-ится.
+Если хотя бы один из этих слоёв отсутствует, шаг считается `INCOMPLETE`.
 
 ---
 
-## 3. Mandatory Rollout Sequence
+## 2. First move: clone a mature reference step
 
-### 3.1. Сначала design intake, потом implementation
+Сначала выбирается mature reference step с похожим UX/continuity profile, затем на новый шаг переносится весь rollout pattern:
 
-До начала кода должен существовать planning/intake документ, который фиксирует:
-
-- product goal шага;
-- место шага в trunk order;
-- canonical input contract;
-- canonical output artifacts;
-- gating rule;
-- non-goals;
-- first implementation wave и deferred waves.
-
-### 3.2. Сначала reference-surface matrix, потом edits
-
-Перед первым кодовым изменением нужно составить matrix всех обязательных поверхностей.
-
-Нельзя начинать rollout с UI или только с prompt/template.
-
-Минимальная matrix обязана покрыть:
-
-1. Workflow stage identity
-2. Artifact paths and validation
-3. Gating and hydration
-4. PM toolbar/tree/panel/session surfaces
-5. Localization ownership and dictionary ids
-6. Continuity and handoff persistence
-7. Last-active / cold-start persistence
-8. Tests
-9. Packaged release acceptance
-
-### 3.3. Сначала localization ownership, потом copy
-
-Новый шаг не имеет права добавлять product-owned text без явной классификации по `UserFacing_Text_Localization_Boundary.md`.
-
-### 3.4. Сначала packaged release validation, потом acceptance
-
-Local dev success недостаточен.
-
-Новый шаг считается подтверждённым только после проверки packaged VSIX/release артефакта, потому что именно там всплывают:
-
-- отсутствующие localization bundles;
-- broken runtime packaging;
-- stale manifests;
-- drift между runtime persistence и PM startup behavior.
+- stage registries and order maps;
+- artifact and validation paths;
+- gating and cold-start hydration;
+- PM toolbar/tree/panel/session behavior;
+- continuity routing;
+- localization surfaces;
+- regression tests.
 
 ---
 
-## 4. Mandatory Surface Inventory
+## 3. Questions that must be answered before code
 
-## 4.1. Stage identity contract
+До первого кодового изменения должен существовать planning/intake answer на вопросы:
 
-Новый шаг обязан быть first-class `stageId` во всех canonical stage lists/order maps.
+1. Какой mature step является reference pattern?
+2. Какой canonical `stageId` у нового шага?
+3. Какие canonical input/output artifacts у шага?
+4. Что делает шаг `READY`, `DONE`, `OUTDATED`, `ERROR`?
+5. Какие exact PM surfaces должны вести себя identically to reference step?
+6. Какие persistence paths используют тот же `stageId` на artifact, continuity и workflow уровне?
+7. Какие cold-start tests и packaged checks доказывают, что шаг переживает restart?
 
-Обязательные вопросы:
+---
 
-1. Где stage ids перечислены в core?
-2. Где тот же order перечислен в client/PM?
-3. Где есть parser/allowlist, который silently drops unknown stage ids?
-4. Где есть fallback `unknown`, который надо заменить на новый canonical `stageId`?
+## 4. One step = one canonical contract
 
-Если хотя бы один stage parser не обновлён, rollout считается незавершённым.
+### 4.1. Stage identity
 
-Критичный guardrail:
+Новый `stageId` обязан быть first-class во всех canonical registries.
 
-- запрещено держать локальные hand-written normalizer/allowlist копии stage ids в отдельных runtime helper-ах, если уже существует canonical shared normalizer;
-- resolver continuity root, continuity tracker, handoff builder, cold-start hydration, dialog list/open/history и PM restore обязаны использовать один и тот же shared stage normalization contract;
-- новый шаг считается не внедрённым, если хотя бы одна из этих точек всё ещё silently normalizes его в `unknown`.
+- нельзя держать локальные hand-written normalizer/allowlist copies, если уже существует shared canonical normalizer;
+- continuity root resolver, tracker, handoff path, dialog list/open/history, workflow-state hydration и PM restore обязаны использовать один shared stage normalization contract;
+- новый шаг не имеет права silently normalizes-иться в `unknown`.
 
-## 4.2. Artifact contract
+### 4.2. Artifacts
 
-Для каждого нового шага заранее фиксируются:
+Canonical step artifacts живут только под `/.codeai-hub/<workspaceSlug>/<stageId>/...`.
 
-- canonical workspace folder;
-- canonical semantic artifact(s);
+Нужно заранее разделить:
+
+- semantic artifacts;
 - optional sidecar/view artifacts;
 - validation rule;
-- repair/fix/reopen path;
-- watcher coverage.
+- reopen/repair path.
 
-Artifact path обязан жить под:
+### 4.3. Readiness
 
-`/.codeai-hub/<workspaceSlug>/<stageId>/...`
+Gate шага обязан опираться на semantic readiness, а не на первый найденный файл.
 
-Итоговый artifact contract должен быть одинаково известен:
+Если upstream step строится staged/aggregate образом, rollout обязан иметь canonical progress snapshot, из которого cold start восстанавливает:
 
-- Core watcher/state;
-- HTTP/artifact services;
-- Project Manager;
-- repair/open flows;
-- tests.
+- `in_progress`;
+- `completed`;
+- downstream unlock state.
 
-## 4.3. Gating and outdated propagation
+### 4.4. Persistence folders
 
-Новый шаг обязан иметь explicit upstream gate, основанный на **реальной semantic readiness**, а не на первом случайно найденном файле.
+Для одного официального шага должны быть синхронны три зоны:
 
-Если upstream step materialize-ит aggregate artifact и дочерние semantic files, gate должен учитывать именно aggregate-ready condition.
+- artifact folder: `/.codeai-hub/<workspaceSlug>/<stageId>/...`
+- continuity folder: `/.codeai-hub/<workspaceSlug>/continuity/<stageId>/<rootSessionId>/...`
+- workflow folder: `/.codeai-hub/<workspaceSlug>/workflow/...`
 
-Также заранее определяется:
+Если artifact живёт под canonical `stageId`, а continuity или workflow metadata используют другой effective stage, rollout сломан.
 
-- что делает step `READY`;
-- что делает его `DONE`;
-- что делает его `ERROR`;
-- какие upstream changes делают его `OUTDATED`.
+---
 
-## 4.4. Project Manager parity
+## 5. One source of truth for restore
 
-Для шага сразу проектируется полный PM contract:
+При открытии workspace Project Manager не имеет права читать startup truth из разрозненных мест.
 
-- toolbar label;
-- stage button state;
-- blocked-title;
-- help surface;
-- stage panel content;
-- artifact open/select path;
-- workspace auto-select priority;
-- stage click sync;
-- tree node contract;
-- right-panel empty state;
-- runtime/dialog session reopen path.
+Startup restore строится только из canonical workspace state:
 
-Если mature reference step имеет:
+- `workflow-state`;
+- `continuity`;
+- `last-active` при необходимости.
 
-- parent stage row,
-- child session line,
-- child artifact line,
+Запрещено:
 
-то новый шаг обязан materialize-ить тот же contract.
+- поднимать startup `dialogIntent` из browser-local cache;
+- выбирать stage отдельно для Toolbar и отдельно для Session panel;
+- иметь разные startup routers для tree, toolbar, session panel и artifact panel.
 
-Partial PM rollout запрещён.
+Инвариант:
 
-## 4.5. Continuity and handoff contract
+- `activeStage`, session route и selected artifact должны восстанавливаться из одного workspace-scoped источника истины.
 
-Для нового шага обязательно проверяются и обновляются:
+---
 
-- continuity chain stage normalization;
-- continuity storage path;
-- handoff report path;
-- handoff prompt stage rendering;
-- continuity tracker stage matching;
-- continuity index entries;
-- root-session resolution;
-- provider-session matching.
+## 6. Continuity guardrails
 
-Canonical continuity path для любого шага:
-
-`/.codeai-hub/<workspaceSlug>/continuity/<stageId>/<rootSessionId>/...`
-
-Fallback к `continuity/unknown/...` допустим только для реально неизвестных legacy cases, но никогда для официально поддерживаемого нового шага.
-
-Дополнительный invariant после инцидента `Foundation Envelope` cold-start restore:
-
-- continuity root resolution не имеет права создавать fresh `dialogId`, если для того же `workspaceSlug + stageId + providerId + providerSessionId` уже существует continuity chain;
-- dialog list/open path не имеет права предпочесть более новую duplicate continuity entry без history file вместо старого живого dialog;
-- если в workspace уже остались stale duplicate roots от прежнего бага, runtime restore и PM dialog list обязаны предпочесть history-backed dialog entry, а не пустой duplicate.
-
-## 4.6. Cold-start and last-active persistence
-
-Новый шаг обязан переживать restart продукта.
-
-Следовательно, rollout считается незавершённым, пока новый `stageId` не участвует в:
-
-- workflow state readback;
-- last-active parsing;
-- startup hydration;
-- PM restore behavior;
-- restored artifact/session selection.
-
-## 4.7. Localization contract
-
-Каждая новая text surface шага обязана быть классифицирована заранее:
-
-- `UI Labels`
-- `UI Helper Text`
-- `Messages for the User`
-- `Artifacts for the User`
-- `Internal Agent Instructions`
-
-Для нового шага особенно легко забыть следующие surfaces:
-
-- stage label;
-- blocked-title;
-- session label format with provider placeholder;
-- help title/body;
-- empty-state guidance;
-- load/error/fallback messages;
-- artifact shell text;
-- provider/session status lines.
+Новый шаг обязан корректно переживать reopen/restart.
 
 Обязательные правила:
 
-1. canonical English source text живёт в source dictionaries;
-2. React component / helper / presenter не является source of truth;
-3. prompt body остаётся `Internal Agent Instructions` и English-only;
-4. user-facing output language thread must be explicit, never implied.
-
-## 4.8. Release and runtime packaging
-
-Если новый шаг зависит от:
-
-- templates,
-- prompts,
-- localization catalogs,
-- runtime assets,
-- provider/runtime packages,
-
-то release acceptance обязана проверить packaged artifact, а не только workspace source tree.
+- continuity path обязан использовать canonical `stageId`, не `unknown`;
+- root resolution не имеет права создавать fresh dialog/root, если для того же `workspace + stage + provider + providerSessionId` уже существует chain;
+- dialog list/open path не имеет права предпочесть новый пустой duplicate entry вместо старого history-backed dialog;
+- при наличии stale duplicates runtime restore и PM обязаны предпочесть history-backed dialog.
 
 ---
 
-## 5. Canonical Folder Structure Rules
+## 7. Project Manager parity
 
-Для каждого нового шага нужно заранее зафиксировать три разные filesystem зоны:
+Новый шаг не считается добавленным, пока PM не доведён до parity с reference step.
 
-### 5.1. Step artifact folder
+Минимальный PM contract:
 
-`/.codeai-hub/<workspaceSlug>/<stageId>/...`
+- toolbar label and button state;
+- stage row in workflow tree;
+- child artifact/session rows, если reference step их имеет;
+- blocked/help/empty-state surfaces;
+- artifact open/select path;
+- session reopen path;
+- auto-select priority on workspace open.
 
-Здесь живут canonical artifacts шага.
+Инвариант навигации:
 
-### 5.2. Continuity folder
+- toolbar click;
+- tree stage click;
+- tree artifact click;
+- tree session click;
+- workspace auto-select;
+- startup restore
 
-`/.codeai-hub/<workspaceSlug>/continuity/<stageId>/<rootSessionId>/...`
+должны приходить к одному и тому же `activeStage + session + artifact`.
 
-Здесь живут chain/handoff continuity artifacts шага.
-
-### 5.3. Workflow state folder
-
-`/.codeai-hub/<workspaceSlug>/workflow/...`
-
-Здесь живут last-active и другие workflow-level persisted snapshots.
-
-Критический запрет:
-
-- artifact folder и continuity folder не могут иметь разные effective `stageId` для одного и того же официального шага.
-
-Если artifact лежит под `foundation_envelope`, а continuity под `unknown`, это считается системной поломкой rollout-а.
-
----
-
-## 6. New Step Acceptance Checklist
-
-Новый шаг не считается готовым, пока одновременно не выполняются все пункты:
-
-1. Новый `stageId` добавлен во все canonical stage registries, order maps и parsers.
-2. Canonical artifact path определён и проходит watcher/state/validation path.
-3. Upstream gate основан на semantic readiness, а не на случайном presence-only signal.
-4. PM toolbar/tree/panel/session surfaces доведены до parity с выбранным mature reference step.
-5. В tree у шага есть правильная child structure, если reference step её имеет.
-6. Stage click, child click, toolbar click и auto-select открывают одну и ту же artifact/session pair.
-7. Все user-facing тексты размечены по localization ownership и имеют dictionary ids.
-8. Help/empty-state/load-error surfaces реагируют на выбранный язык пользователя.
-9. Continuity chain, handoff path и tracker routing используют canonical `stageId`, а не `unknown`.
-10. Last-active persistence и cold-start hydration не теряют новый шаг после restart.
-11. Есть прямые regression tests на artifact path, PM parity и persistence/continuity path, включая duplicate continuity root / history-backed restore scenario.
-12. Packaged release artifact проверен пользователем или release validation pass явно подтверждён.
-
-Если хотя бы один пункт не выполнен, rollout должен считаться `INCOMPLETE`, а не “почти готов”.
+Child rows обязаны наследовать реальный stage-level `blocked/outdated/active` state, а не рисовать собственную выдуманную семантику.
 
 ---
 
-## 7. Minimum Verification Matrix
+## 8. Localization rule
 
-Для нового шага обязательны как минимум такие проверки:
+Новый шаг не имеет права приносить user-facing text без явного ownership.
 
-### 7.1. Core
+Обязательные surface categories:
 
-- stage normalization test;
-- artifact path test;
-- gating/outdated test;
-- continuity path test;
-- continuity root reuse test for existing `providerSessionId`;
-- duplicate continuity entry preference test with history-backed dialog restore;
-- handoff path test;
-- last-active readback test.
+- UI Labels
+- UI Helper Text
+- Messages for the User
+- Artifacts for the User
+- Internal Agent Instructions
 
-### 7.2. Project Manager
-
-- tree child parity test;
-- stage selection sync test;
-- auto-select restore test;
-- empty-state stage-awareness test;
-- help/localization lookup test.
-
-### 7.3. Release
-
-- target package build;
-- packaged runtime validation;
-- VSIX/release smoke for the new step.
+Prompt остаётся internal surface. User-facing copy не может жить inline в React helper/component как source of truth.
 
 ---
 
-## 8. Anti-Patterns
+## 9. Minimum acceptance checklist
 
-Следующие подходы запрещены:
+Шаг считается готовым только если одновременно выполнены все пункты:
 
-1. Добавить только Toolbar button и считать шаг внедрённым.
-2. Добавить artifact path, но не обновить continuity normalization.
-3. Писать user-facing copy inline и переносить localization “на потом”.
-4. Делать отдельную special-case tree logic вместо parity с mature reference step.
-5. Гейтить шаг по первому найденному upstream file вместо semantic completion.
-6. Считать local dev run достаточным доказательством release readiness.
-7. Добавлять новый step через scattered one-off edits без общей surface matrix.
+1. Новый `stageId` добавлен во все canonical registries без local drift.
+2. Artifact contract и validation path работают end-to-end.
+3. Gating основан на semantic readiness, а cold start восстанавливает корректный stage status.
+4. PM parity с mature reference step достигнут.
+5. Startup restore использует только workflow-state/continuity truth текущего workspace.
+6. Continuity restore не уходит в `unknown`, не создаёт лишние roots и выбирает history-backed dialog.
+7. Все user-facing surfaces локализованы через canonical ownership.
+8. Есть regression tests на stage identity, artifact path, gating/hydration, PM startup restore и continuity duplicate handling.
+9. Packaged release или VSIX smoke подтверждает, что шаг работает вне source-tree happy path.
 
----
-
-## 9. Practical Rule For Future Sessions
-
-При начале любого нового workflow-step rollout исполнитель обязан ответить письменно на 5 вопросов до первого кодового коммита:
-
-1. Какой mature step является reference pattern?
-2. Какой canonical `stageId` и какой canonical artifact path у нового шага?
-3. Какие exact PM surfaces должны вести себя identically to reference step?
-4. Какие localization categories владеют всеми новыми text surfaces?
-5. Какие persistence paths обязаны использовать этот же `stageId` на artifact, continuity и cold-start уровнях?
-
-Если эти ответы не сформулированы, implementation не должен стартовать.
+Если хотя бы один пункт не выполнен, шаг не выпускается.
 
 ---
 
 ## 10. Related SSOT
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-- `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
+- `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+- `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
 - `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
-- `doc/SolidWorks-WorkFlow/Modules/Localization.md`
-- `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`
