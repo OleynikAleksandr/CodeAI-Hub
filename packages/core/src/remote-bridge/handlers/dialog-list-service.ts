@@ -1,5 +1,10 @@
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
+import { homedir } from "node:os";
 import path from "node:path";
+import {
+  buildSessionFilePath,
+  sanitizeWorkspaceSlug,
+} from "@codeai-hub/unified-session";
 import { readContinuityChains } from "../../session-continuity/continuity-store";
 import type {
   ContinuityIndex,
@@ -11,6 +16,7 @@ import type { Logger } from "../../telemetry/logger";
 const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
 const INDEX_FILE_NAME = "index.json";
+const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 
 const readJson = async <T>(filePath: string): Promise<T | null> => {
   try {
@@ -89,11 +95,114 @@ const reconcileLatestSessionIds = (
   return changed ? reconciled : entries;
 };
 
+const buildDialogDeduplicationKey = (
+  entry: ContinuityIndexEntry
+): string | null => {
+  if (!(entry.providerId && hasProviderSessionId(entry.providerSessionId))) {
+    return null;
+  }
+  return [entry.stage, entry.providerId, entry.providerSessionId].join("|");
+};
+
 export class DialogListService {
   private readonly logger: Logger;
 
   constructor(options: { readonly logger: Logger }) {
     this.logger = options.logger;
+  }
+
+  private async hasDialogHistoryFile(options: {
+    readonly dialogId: string;
+    readonly providerId: string;
+    readonly workspaceRoot: string;
+  }): Promise<boolean> {
+    const filePath = buildSessionFilePath({
+      rootDirectory: SESSION_ROOT,
+      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
+      provider: options.providerId,
+      sessionId: sanitizeWorkspaceSlug(options.dialogId),
+    });
+
+    try {
+      await stat(filePath);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private async selectPreferredEntry(options: {
+    readonly entries: readonly ContinuityIndexEntry[];
+    readonly workspaceRoot: string;
+  }): Promise<ContinuityIndexEntry> {
+    let preferred = options.entries[0];
+    let preferredHasHistory = preferred?.providerId
+      ? await this.hasDialogHistoryFile({
+          dialogId: preferred.dialogId,
+          providerId: preferred.providerId,
+          workspaceRoot: options.workspaceRoot,
+        })
+      : false;
+
+    for (const entry of options.entries.slice(1)) {
+      const hasHistory =
+        entry.providerId !== null &&
+        (await this.hasDialogHistoryFile({
+          dialogId: entry.dialogId,
+          providerId: entry.providerId,
+          workspaceRoot: options.workspaceRoot,
+        }));
+      if (hasHistory && !preferredHasHistory) {
+        preferred = entry;
+        preferredHasHistory = true;
+        continue;
+      }
+      if (
+        hasHistory === preferredHasHistory &&
+        entry.updatedAt > preferred.updatedAt
+      ) {
+        preferred = entry;
+      }
+    }
+
+    return preferred;
+  }
+
+  private async dedupeDialogEntries(options: {
+    readonly entries: readonly ContinuityIndexEntry[];
+    readonly workspaceRoot: string;
+  }): Promise<readonly ContinuityIndexEntry[]> {
+    const grouped = new Map<string, ContinuityIndexEntry[]>();
+    const passthrough: ContinuityIndexEntry[] = [];
+
+    for (const entry of options.entries) {
+      const key = buildDialogDeduplicationKey(entry);
+      if (!key) {
+        passthrough.push(entry);
+        continue;
+      }
+      const bucket = grouped.get(key);
+      if (bucket) {
+        bucket.push(entry);
+      } else {
+        grouped.set(key, [entry]);
+      }
+    }
+
+    const deduped = [...passthrough];
+    for (const entries of grouped.values()) {
+      deduped.push(
+        await this.selectPreferredEntry({
+          entries,
+          workspaceRoot: options.workspaceRoot,
+        })
+      );
+    }
+
+    deduped.sort((left, right) =>
+      right.updatedAt.localeCompare(left.updatedAt)
+    );
+    return deduped;
   }
 
   async listDialogs(options: {
@@ -139,6 +248,12 @@ export class DialogListService {
       }
     }
 
-    return reconcileLatestSessionIds(entries, options.runtimeSessions ?? []);
+    return await this.dedupeDialogEntries({
+      entries: reconcileLatestSessionIds(
+        entries,
+        options.runtimeSessions ?? []
+      ),
+      workspaceRoot: options.workspaceRoot,
+    });
   }
 }

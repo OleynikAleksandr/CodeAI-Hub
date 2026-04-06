@@ -1,9 +1,17 @@
-import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
+import { stat } from "node:fs/promises";
+import { homedir } from "node:os";
+import {
+  buildSessionFilePath,
+  sanitizeWorkspaceSlug,
+} from "@codeai-hub/unified-session";
 import { promoteContinuityChainRootIfPresent } from "../../session-continuity/continuity-store";
+import { normalizeContinuityStageId } from "../../session-continuity/continuity-types";
 import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
+
+const SESSION_ROOT = `${homedir()}/.codeai-hub/sessions`;
 
 export interface ContinuityRootResolutionOptions {
   readonly context: {
@@ -19,6 +27,7 @@ export interface ContinuityRootResolutionOptions {
 }
 
 interface ExistingContinuityRootResolutionOptions {
+  readonly providerId: string;
   readonly providerSessionId: string;
   readonly stageId: string;
   readonly workspaceRoot: string;
@@ -38,17 +47,7 @@ interface SessionRequestHandlerContinuityRootDependencies {
   readonly sessionStorage: UnifiedSessionStorage;
 }
 
-export const normalizeContinuityStageId = (value: string | null): string => {
-  const trimmed = value?.trim() ?? "";
-  if (
-    trimmed === "description" ||
-    trimmed === "virtual_simulation" ||
-    trimmed === "diagram_modules"
-  ) {
-    return trimmed;
-  }
-  return "unknown";
-};
+export { normalizeContinuityStageId } from "../../session-continuity/continuity-types";
 
 export class SessionRequestHandlerContinuityRoot {
   private readonly deps: SessionRequestHandlerContinuityRootDependencies;
@@ -80,6 +79,7 @@ export class SessionRequestHandlerContinuityRoot {
     if (requestedProviderSessionId) {
       const existingRoot = await this.tryResolveExistingContinuityRootSessionId(
         {
+          providerId: options.providerId,
           workspaceRoot: options.workspaceRoot,
           workspaceSlug,
           stageId,
@@ -160,13 +160,54 @@ export class SessionRequestHandlerContinuityRoot {
       workspaceRoot: options.workspaceRoot,
       workspaceSlug: options.workspaceSlug,
     });
-    const match = chains.find(
+    const matches = chains.filter(
       (chain) =>
         chain.stage === stage &&
         chain.segments.some(
           (segment) => segment.providerSessionId === providerSessionId
         )
     );
-    return match ? (match.dialogId ?? match.rootSessionId ?? null) : null;
+    if (matches.length === 0) {
+      return null;
+    }
+
+    for (const match of matches) {
+      const dialogId = match.dialogId ?? match.rootSessionId ?? null;
+      if (
+        dialogId &&
+        (await this.hasDialogHistoryFile({
+          dialogId,
+          providerId: options.providerId,
+          workspaceRoot: options.workspaceRoot,
+        }))
+      ) {
+        return dialogId;
+      }
+    }
+
+    const fallback = matches[0];
+    return fallback
+      ? (fallback.dialogId ?? fallback.rootSessionId ?? null)
+      : null;
+  }
+
+  private async hasDialogHistoryFile(options: {
+    readonly dialogId: string;
+    readonly providerId: string;
+    readonly workspaceRoot: string;
+  }): Promise<boolean> {
+    const filePath = buildSessionFilePath({
+      rootDirectory: SESSION_ROOT,
+      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
+      provider: options.providerId,
+      sessionId: sanitizeWorkspaceSlug(options.dialogId),
+    });
+
+    try {
+      await stat(filePath);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

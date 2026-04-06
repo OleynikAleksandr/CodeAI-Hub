@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.896] - 2026-04-06
+### Fixed
+- **`Foundation Envelope` dialog history now survives cold-start restore correctly**: continuity root resolution no longer normalizes the official `foundation_envelope` stage to `unknown`, so restart/resume reuses the existing history-backed dialog instead of creating a fresh empty dialog id.
+- **Duplicate continuity entries no longer steal PM dialog restore**: when stale duplicate `Foundation Envelope` roots exist for the same provider session, dialog restore now prefers the entry that actually has persisted JSONL history instead of the newer but empty duplicate.
+- **New-step rollout guardrails now explicitly forbid local stage-normalizer drift**: the workflow SSOT now requires all continuity/root/handoff/cold-start restore paths to share one canonical stage normalization contract and to test duplicate-root recovery explicitly.
+
 ## [1.1.895] - 2026-04-05
 ### Changed
 - **The workflow step is now canonically named `Foundation Envelope` end-to-end**: the old three-word naming is removed from runtime code, PM UI, templates, contracts, tests, and architectural docs so the trunk step now matches the two-word naming pattern used by the rest of the workflow.

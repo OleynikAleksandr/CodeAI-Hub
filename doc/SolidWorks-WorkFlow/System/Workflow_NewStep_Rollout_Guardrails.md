@@ -1,7 +1,7 @@
 # Workflow New Step Rollout Guardrails (SSOT)
 
 **Status:** Active
-**Updated:** 2026-04-05
+**Updated:** 2026-04-06
 **Owner:** Oleksandr + Codex
 **Scope:** System-level protocol for adding a new workflow step without shipping partial stage shells, localization gaps, broken continuity paths, or mismatched Project Manager behavior.
 
@@ -123,6 +123,12 @@ Local dev success недостаточен.
 
 Если хотя бы один stage parser не обновлён, rollout считается незавершённым.
 
+Критичный guardrail:
+
+- запрещено держать локальные hand-written normalizer/allowlist копии stage ids в отдельных runtime helper-ах, если уже существует canonical shared normalizer;
+- resolver continuity root, continuity tracker, handoff builder, cold-start hydration, dialog list/open/history и PM restore обязаны использовать один и тот же shared stage normalization contract;
+- новый шаг считается не внедрённым, если хотя бы одна из этих точек всё ещё silently normalizes его в `unknown`.
+
 ## 4.2. Artifact contract
 
 Для каждого нового шага заранее фиксируются:
@@ -203,6 +209,12 @@ Canonical continuity path для любого шага:
 `/.codeai-hub/<workspaceSlug>/continuity/<stageId>/<rootSessionId>/...`
 
 Fallback к `continuity/unknown/...` допустим только для реально неизвестных legacy cases, но никогда для официально поддерживаемого нового шага.
+
+Дополнительный invariant после инцидента `Foundation Envelope` cold-start restore:
+
+- continuity root resolution не имеет права создавать fresh `dialogId`, если для того же `workspaceSlug + stageId + providerId + providerSessionId` уже существует continuity chain;
+- dialog list/open path не имеет права предпочесть более новую duplicate continuity entry без history file вместо старого живого dialog;
+- если в workspace уже остались stale duplicate roots от прежнего бага, runtime restore и PM dialog list обязаны предпочесть history-backed dialog entry, а не пустой duplicate.
 
 ## 4.6. Cold-start and last-active persistence
 
@@ -302,7 +314,7 @@ Fallback к `continuity/unknown/...` допустим только для реа
 8. Help/empty-state/load-error surfaces реагируют на выбранный язык пользователя.
 9. Continuity chain, handoff path и tracker routing используют canonical `stageId`, а не `unknown`.
 10. Last-active persistence и cold-start hydration не теряют новый шаг после restart.
-11. Есть прямые regression tests на artifact path, PM parity и persistence/continuity path.
+11. Есть прямые regression tests на artifact path, PM parity и persistence/continuity path, включая duplicate continuity root / history-backed restore scenario.
 12. Packaged release artifact проверен пользователем или release validation pass явно подтверждён.
 
 Если хотя бы один пункт не выполнен, rollout должен считаться `INCOMPLETE`, а не “почти готов”.
@@ -319,6 +331,8 @@ Fallback к `continuity/unknown/...` допустим только для реа
 - artifact path test;
 - gating/outdated test;
 - continuity path test;
+- continuity root reuse test for existing `providerSessionId`;
+- duplicate continuity entry preference test with history-backed dialog restore;
 - handoff path test;
 - last-active readback test.
 
