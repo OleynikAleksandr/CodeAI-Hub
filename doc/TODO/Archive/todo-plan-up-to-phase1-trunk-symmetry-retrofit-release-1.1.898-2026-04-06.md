@@ -1,12 +1,17 @@
 # Development TODO Plan
 
-## Execution Rules
-- **Required reading (read before each fix):**
+## Context Pack For This Cycle
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Step_Symmetry_Architecture.md`
+- **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
   - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
   - `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Step_Symmetry_Architecture.md`
+- This archived plan keeps the execution-cycle context pack that was active during the `1.1.898` trunk symmetry retrofit wave.
+
+## Execution Rules
+- **Required reading (read before each fix):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - Scope of this plan: retrofit all released trunk workflow steps so `Description`, `Virtual Simulation`, `Diagram Modules`, and `Foundation Envelope` use one canonical startup truth, one step-passport model, formal restart regression coverage, and a packaged release validation.
 - Each micro-task must stay within `<= 3 files`.
 - Every implementation line must be followed by a separate `Git Commit:` line.
@@ -60,4 +65,4 @@
    Release-tail note: final `build-release.sh` exposed stale PM fixtures that still missed required `lastActive`; corrected in `test(pm): align lastActive workflow fixtures` (`a81fd0341`) before the successful VSIX packaging rerun.
 5. [DONE] Run `./scripts/build-release.sh --use-current-version`, archive the completed execution plan, and record the release closeout; scope: `doc/TODO/Archive/*`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session053.md`; expected commit message: `docs(session): record trunk symmetry retrofit release`
    Release result: PASS — `./scripts/build-release.sh --use-current-version` completed for `1.1.898`, including `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and VSIX runtime package-surface verification.
-6. [TODO] Git Commit: `docs(session): record trunk symmetry retrofit release` (hash: TBD)
+6. [DONE] Git Commit: `docs(session): record trunk symmetry retrofit release` (hash: `69f5285d5`)

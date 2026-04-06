@@ -3,6 +3,7 @@
 **Date:** 2026-04-06 10:16 (CEST)
 **Branch:** main
 **Version:** 1.1.898
+**Execution Scope Status:** COMPLETED
 
 ---
 
@@ -29,7 +30,7 @@
 - Archived the completed planning scope and archived the completed execution plan; created a fresh placeholder `doc/TODO/todo-plan.md` with no active scope.
 
 ## Git commits
-(IMPORTANT: This list is required so the next session can restore context via `git show`)
+(REFERENCE ONLY: this list is preserved for historical traceability and regression investigation; the next session does not need to inspect every commit by default because this execution scope is already completed.)
 - `622432b63 docs(system): codify workflow step symmetry guardrails`
 - `73e022e0f docs(plans): define workflow step symmetry retrofit`
 - `bb8391de9 docs(todo): slice workflow step symmetry retrofit`
@@ -44,23 +45,18 @@
 - `726fc7c74 build(release): publish trunk symmetry retrofit release`
 - `a81fd0341 test(pm): align lastActive workflow fixtures`
 - `5e21885cd docs(plans): archive workflow step symmetry scope`
-- `TBD - this commit docs(session): record trunk symmetry retrofit release`
+- `69f5285d5 docs(session): record trunk symmetry retrofit release`
 
 ---
 
 # 2. Instructions for Next Session
 
-## Required documents to review before work
-1. `README.md`
-2. `CHANGELOG.md`
-3. `doc/SolidWorks-WorkFlow/Docs_Index.md`
-4. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-5. `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`
-6. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
-7. `doc/TODO/todo-plan.md`
-8. `doc/Sessions/Session053.md` (THIS REPORT)
+**Base SSOT:** `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+**Scope Discovery Index:** `doc/SolidWorks-WorkFlow/Docs_Index.md`
 
 ## Plans for next session
-- No active execution scope is open after release `1.1.898`; start only from a newly approved planning document in `doc/SolidWorks-WorkFlow/Plans/`.
-- Preserve the canonical startup-truth law: `workflow-state.lastActive` selects the active workflow stage, continuity only restores history/session state for that chosen stage, and PM entry paths must keep sharing one stage-to-artifact/session resolver.
-- If a future workflow-step rollout reopens asymmetry or restart regressions, treat `Workflow_NewStep_Rollout_Guardrails.md` and `ProjectManager_WorkflowNavigation_SSOT.md` as hard SSOT constraints before implementing new UI or continuity behavior.
+- Active execution scope is closed after release `1.1.898`.
+- The next agent must first read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` as the base SSOT.
+- Then the next agent must align a new scope with the user.
+- After that, the next agent must open `doc/SolidWorks-WorkFlow/Docs_Index.md`, select the documents relevant to the new scope, and only then draft the next planning document.
+- Until a new planning document and a new `doc/TODO/todo-plan.md` exist, use `doc/SolidWorks-WorkFlow/Docs_Index.md` as the navigation entry point.

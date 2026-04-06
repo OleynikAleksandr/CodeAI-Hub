@@ -7,16 +7,19 @@
 
 ### Начало сессии
 1. **Чтение отчета**: Найди последний файл `doc/Sessions/SessionXXX.md`.
-2. **ГЛУБОКИЙ АНАЛИЗ ИСТОРИИ (КРИТИЧНО)**:
-   - Раздел "Git commits" в отчете — это **ключ к контексту**.
-   - Ты ОБЯЗАН просмотреть каждый коммит из списка, используя `git show --stat <hash>` (чтобы видеть файлы) и `git show <hash>` (чтобы видеть изменения).
-   - **ЦЕЛЬ**: Полностью восстановить в памяти, какие файлы менялись, какая логика была добавлена/изменена, чтобы продолжить работу бесшовно, как будто перерыва не было.
-   - Просто прочитать сообщение коммита — **НЕДОСТАТОЧНО**.
-3. **План**: Изучи раздел "Instructions for Next Session" из отчета.
-4. **Контекст**: Прочти архитектурные документы, указанные в отчете.
+2. **Базовый SSOT**: Прочитай `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, чтобы восстановить глобальные инварианты и карту системы.
+3. **Режим чтения коммитов зависит от статуса scope**:
+   - Если в отчете `Execution Scope Status: ACTIVE`, раздел `Git commits` — это обязательный путь восстановления контекста. Ты ОБЯЗАН просмотреть каждый коммит из списка, используя `git show --stat <hash>` и `git show <hash>`.
+   - Если в отчете `Execution Scope Status: COMPLETED`, раздел `Git commits` носит reference-only характер. Не нужно читать все коммиты по умолчанию; сначала обсуди с пользователем новый scope.
+4. **Маршрут продолжения**:
+   - Если в отчете `Execution Scope Status: ACTIVE`, следуй указанному там `Recovery Owner`. Если он указывает на активный `doc/TODO/todo-plan.md`, то именно он является единственным владельцем списка документов для восстановления контекста текущего execution cycle.
+   - Если в отчете `Execution Scope Status: COMPLETED`, то после чтения базового SSOT и обсуждения нового задания с пользователем используй указанный в отчете `Scope Discovery Index`, чтобы выбрать релевантные документы для нового planning scope.
 
 ### Конец сессии
-1. **Отчет**: Создай или обнови отчет `doc/Sessions/SessionXXX.md` по следующему шаблону:
+1. **Отчет**: Создай или обнови отчет `doc/Sessions/SessionXXX.md` в одном из двух типов.
+
+#### Тип A — Completion Report
+Используется, когда весь активный `todo-plan.md` выполнен, заархивирован и активного execution scope больше нет.
 
 ```markdown
 # Session <N> — <Краткое название темы сессии>
@@ -24,6 +27,7 @@
 **Date:** YYYY-MM-DD HH:MM (Timezone)
 **Branch:** <branch_name>
 **Version:** <current_version>
+**Execution Scope Status:** COMPLETED
 
 ---
 
@@ -35,7 +39,7 @@
 - <Результаты сборки/тестов>
 
 ## Git commits
-(ВАЖНО: Этот список нужен для следующей сессии, чтобы восстановить контекст через git show)
+(REFERENCE ONLY: этот список сохраняется для исторической трассировки и расследования регрессий; следующая сессия не обязана читать все коммиты по умолчанию.)
 - `<hash> <commit_message>`
 - `<hash> <commit_message>`
 
@@ -43,18 +47,51 @@
 
 # 2. Instructions for Next Session
 
-## Required documents to review before work
-1. `doc/SolidWorks-WorkFlow/README.md`
-2. `doc/SolidWorks-WorkFlow/Docs_Index.md`
-3. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-4. `doc/TODO/todo-plan.md`
-5. `doc/Sessions/Session<N>.md` (THIS REPORT)
-
-> Далее: в зависимости от задачи открыть нужные документы из `doc/SolidWorks-WorkFlow/Clusters/`, `doc/SolidWorks-WorkFlow/Modules/`, `doc/SolidWorks-WorkFlow/Contracts/`.
+**Base SSOT:** `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+**Scope Discovery Index:** `doc/SolidWorks-WorkFlow/Docs_Index.md`
 
 ## Plans for next session
-- <Что осталось сделать>
-- <Какие модули требуют внимания>
+- Активный execution scope отсутствует.
+- Следующий агент обязан сначала прочитать `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` как базовый SSOT.
+- Затем агент обязан согласовать с пользователем новый scope.
+- После этого агент обязан открыть `doc/SolidWorks-WorkFlow/Docs_Index.md`, выбрать релевантные документы для нового scope и только потом формировать новый planning-doc.
+- До появления нового planning-doc и нового `doc/TODO/todo-plan.md` навигационной опорой служит `doc/SolidWorks-WorkFlow/Docs_Index.md`.
+```
+
+#### Тип B — Continuation Report
+Используется, когда активный `todo-plan.md` выполнен только частично и работу нужно продолжать в следующей сессии.
+
+```markdown
+# Session <N> — <Краткое название темы сессии>
+
+**Date:** YYYY-MM-DD HH:MM (Timezone)
+**Branch:** <branch_name>
+**Version:** <current_version>
+**Execution Scope Status:** ACTIVE
+
+---
+
+# 1. Work Done in This Session
+
+## Work summary
+- <Краткое описание выполненной задачи 1>
+- <Краткое описание выполненной задачи 2>
+- <Результаты сборки/тестов>
+
+## Git commits
+(ВАЖНО: при `Execution Scope Status: ACTIVE` следующая сессия обязана просмотреть каждый коммит через `git show --stat <hash>` и `git show <hash>`.)
+- `<hash> <commit_message>`
+- `<hash> <commit_message>`
+
+---
+
+# 2. Instructions for Next Session
+
+**Recovery Owner:** `doc/TODO/todo-plan.md`
+
+## Plans for next session
+- Продолжать активный execution scope по `doc/TODO/todo-plan.md`.
+- Список документов для восстановления контекста находится только в активном `doc/TODO/todo-plan.md`.
 ```
 
 ## 2. Архитектурные принципы (Подход "Кластерно-Модульный")
@@ -77,6 +114,7 @@
 
 ## 4. Этап Планирования (Execution Planning)
 - **Источник правды**: `doc/TODO/todo-plan.md` содержит Стратегию.
+- **Единственный context pack активного цикла**: только `doc/TODO/todo-plan.md` содержит список документов, которые нужно прочитать для восстановления контекста и выполнения задач текущего execution cycle.
 - **Операционный вид**: Используй свой 'todo' для отслеживания *текущего* активного пункта из `todo-plan.md`.
 `todo-plan.md` - может содержать несколько фаз и в каждой фазе несколько Stream с перечнем микро задач - не более 3-х файлов исправлений или вновь созданных.
 Полностью Реализованный `todo-plan.md` переименовывается с префиксом последней реализованной Фазы (например - todo-plan-phase3.md) и кладется в папку -
@@ -98,6 +136,14 @@ doc/TODO/Archive/
 - **Шаблон todo-plan.md**:
   ```markdown
   # План разработки (Development TODO Plan)
+
+  ## Context Pack For This Cycle
+  - **Planning source:** `<path to approved planning doc>`
+  - **Read this context before implementation:**
+    - `<doc 1>`
+    - `<doc 2>`
+    - `<doc 3>`
+  - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
   ## Правила выполнения (Execution Rules):
   - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`

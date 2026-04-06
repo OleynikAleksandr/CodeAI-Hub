@@ -1,6 +1,13 @@
 # Development TODO Plan
 
-(No active execution scope — workflow step symmetry retrofit completed in Session 053, release `1.1.898`.)
+## Scope Status
+
+No active execution scope — workflow step symmetry retrofit completed in Session 053, release `1.1.898`.
+
+## Recovery Ownership
+
+This placeholder is not the active recovery owner.
+Until a new approved planning document and a new active TODO plan are created, follow the `Instructions for Next Session` recorded in the latest session report.
 
 ## Next action
 - Wait for a new approved planning document in `doc/SolidWorks-WorkFlow/Plans/` before opening the next execution cycle.

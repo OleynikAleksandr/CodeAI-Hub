@@ -2,26 +2,15 @@
 
 **Scope:** каноническое описание системы CodeAI Hub целиком (уровень System).
 
-## 0) Start here (восстановление контекста)
+## 0) Session role
 
-1. `doc/SolidWorks-WorkFlow/Docs_Index.md`
-2. `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
-3. `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
-4. `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
-5. `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-6. `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
-7. `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-8. `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
-9. `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
-10. `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
-11. `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
-12. `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
-13. `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
-14. Provider modules: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
-15. `doc/SolidWorks-WorkFlow/Modules/Localization.md`
-16. `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
-17. `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
-18. `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`
+Этот документ читается в начале сессии как базовый SSOT знакомства с системой:
+
+- он объясняет глобальные инварианты;
+- он показывает карту подсистем;
+- он не является каталогом всех документов, которые нужно читать дальше.
+
+Если после обсуждения новой задачи нужно выбрать дополнительные документы по конкретному scope, агент обязан использовать `doc/SolidWorks-WorkFlow/Docs_Index.md` и читать только релевантные документы, а не весь каталог подряд.
 
 ## 1) Компоненты системы (верхний уровень)
 
