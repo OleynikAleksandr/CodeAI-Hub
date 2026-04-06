@@ -13,7 +13,7 @@ const RUNTIME_SOURCE_PATH = path.resolve(
 );
 
 test("project-manager-session-view keeps cross-workspace session-created focus guard", async () => {
-  const source = await readFile(SOURCE_PATH, "utf8");
+  const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes(
@@ -23,12 +23,14 @@ test("project-manager-session-view keeps cross-workspace session-created focus g
   );
   assert.equal(
     source.includes(
-      "const scopedActiveSessionId =\n    visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;"
+      "const scopedActiveSessionId = isPreferredPending || visibleSessions.some((session) => session.id === activeSessionId) ? activeSessionId : null;"
     ),
     true
   );
   assert.equal(
-    source.includes("const handleSendMessage = useSessionMessageSender(sessionsRef, workspacePath);"),
+    source.includes(
+      "const handleSendMessage = useSessionMessageSender(\n    sessionsRef,\n    workspacePath,\n    reload\n  );"
+    ),
     true
   );
 });
@@ -44,4 +46,21 @@ test("project-manager-runtime-session-view keeps runtime and settings model sync
     source.includes("useRuntimeModelSync(activeSessionId, setSnapshots);"),
     true
   );
+});
+
+test("project-manager-session-view restores dialog mode only from live PM intents", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("window.localStorage"), false);
+  assert.equal(source.includes("loadLastDialogIntent"), false);
+  assert.equal(source.includes("saveLastDialogIntent"), false);
+  assert.equal(source.includes('setViewMode("runtime");'), true);
+});
+
+test("project-manager-runtime-session-view does not seed empty state from browser-local dialog cache", async () => {
+  const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("window.localStorage"), false);
+  assert.equal(source.includes("loadLastDialogStage"), false);
+  assert.equal(source.includes("setEmptyStateStage(null);"), true);
 });

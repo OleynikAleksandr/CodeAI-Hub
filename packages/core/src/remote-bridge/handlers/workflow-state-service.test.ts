@@ -151,7 +151,7 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     const payload = result.payload as WorkflowStatePayload;
 
     assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
-    assert.equal(payload.state?.stages.diagram_modules?.status, "idle");
+    assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
     assert.equal(
       payload.state?.stages.foundation_envelope?.status,
       "completed"
@@ -173,6 +173,12 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
       payload.state?.stages.foundation_envelope?.artifacts?.some(
         (artifact) =>
           artifact.path === "foundation_envelope/foundation-envelope.md"
+      ),
+      true
+    );
+    assert.equal(
+      payload.state?.stages.diagram_modules?.artifacts?.some(
+        (artifact) => artifact.path === "diagram_modules/product-parts.index.md"
       ),
       true
     );
@@ -236,6 +242,7 @@ test("workflow-state tracks diagram modules progress when not all product parts 
 
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.foundation_envelope, true);
+    assert.equal(payload.state?.stages.diagram_modules?.status, "in_progress");
     assert.equal(
       payload.diagramModulesProgress?.substep,
       "generate_product_part"

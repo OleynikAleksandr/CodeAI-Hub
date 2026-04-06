@@ -1,3 +1,4 @@
+import { stat } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
@@ -7,9 +8,14 @@ import {
   buildDescriptionBranchSnapshot,
   DescriptionStepStore,
 } from "../../workflow/description/description-step-store";
+import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
-import type { WorkflowState } from "../../workflow/state/workflow-state-types";
+import type {
+  WorkflowArtifactState,
+  WorkflowStageStatus,
+  WorkflowState,
+} from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
 import type {
   WorkflowStageId,
@@ -23,6 +29,7 @@ import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
+const DIAGRAM_MODULES_INDEX_FILE = "product-parts.index.md";
 
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
@@ -123,6 +130,14 @@ export class WorkflowStateService {
                 state: hydratedState,
                 workspaceRoot,
                 workspaceSlug: workspaceSlugResult.value,
+              })
+            )
+            .then((validatedState) =>
+              hydrateDiagramModulesStateFromProgress({
+                state: validatedState,
+                workspaceRoot,
+                workspaceSlug: workspaceSlugResult.value,
+                diagramModulesProgress,
               })
             )
             .then((validatedState) => {
@@ -249,6 +264,95 @@ const stageHasArtifact = (params: {
   params.state.stages[params.stage].artifacts.some((artifact) =>
     normalizeArtifactPath(artifact.path).endsWith(`/${params.fileName}`)
   );
+
+const upsertStageArtifact = (params: {
+  readonly artifacts: readonly WorkflowArtifactState[];
+  readonly relativePath: string;
+  readonly updatedAt: string;
+}): readonly WorkflowArtifactState[] => {
+  const artifactIndex = params.artifacts.findIndex(
+    (artifact) => artifact.path === params.relativePath
+  );
+  if (artifactIndex < 0) {
+    return [
+      ...params.artifacts,
+      {
+        path: params.relativePath,
+        updatedAt: params.updatedAt,
+      },
+    ];
+  }
+  return params.artifacts.map((artifact, index) =>
+    index === artifactIndex
+      ? { ...artifact, updatedAt: params.updatedAt }
+      : artifact
+  );
+};
+
+const resolveDiagramModulesColdStartStatus = (
+  progress: DiagramModulesProgressSnapshot
+): WorkflowStageStatus =>
+  progress.aggregateReady ? "completed" : "in_progress";
+
+const hydrateDiagramModulesStateFromProgress = async (params: {
+  readonly state: WorkflowState;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+  readonly diagramModulesProgress: DiagramModulesProgressSnapshot | null;
+}): Promise<WorkflowState> => {
+  if (!params.diagramModulesProgress) {
+    return params.state;
+  }
+
+  const currentStage = params.state.stages.diagram_modules;
+  if (currentStage.status !== "idle") {
+    return params.state;
+  }
+
+  const artifactPath = resolveWorkflowArtifactPaths({
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+    stage: "diagram_modules",
+    fileName: DIAGRAM_MODULES_INDEX_FILE,
+  });
+  if (!artifactPath.ok) {
+    return params.state;
+  }
+
+  const artifactStat = await stat(artifactPath.value.absolutePath).catch(
+    () => null
+  );
+  if (!artifactStat?.isFile()) {
+    return params.state;
+  }
+
+  const artifactUpdatedAt = artifactStat.mtime.toISOString();
+  const nextStage = {
+    ...currentStage,
+    status: resolveDiagramModulesColdStartStatus(params.diagramModulesProgress),
+    artifacts: upsertStageArtifact({
+      artifacts: currentStage.artifacts,
+      relativePath: `diagram_modules/${DIAGRAM_MODULES_INDEX_FILE}`,
+      updatedAt: artifactUpdatedAt,
+    }),
+    updatedAt:
+      artifactUpdatedAt.localeCompare(currentStage.updatedAt) > 0
+        ? artifactUpdatedAt
+        : currentStage.updatedAt,
+  };
+
+  return {
+    ...params.state,
+    stages: {
+      ...params.state.stages,
+      diagram_modules: nextStage,
+    },
+    updatedAt:
+      nextStage.updatedAt.localeCompare(params.state.updatedAt) > 0
+        ? nextStage.updatedAt
+        : params.state.updatedAt,
+  };
+};
 
 const resolveWorkflowBlockedStages = (params: {
   readonly state: WorkflowState;

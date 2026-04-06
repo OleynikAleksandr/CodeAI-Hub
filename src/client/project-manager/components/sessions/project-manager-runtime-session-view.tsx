@@ -25,32 +25,6 @@ type ProjectManagerSessionViewProps = {
   readonly emptyStatePending?: boolean;
 };
 
-const LAST_DIALOG_INTENT_STORAGE_PREFIX = "codeai.pm.lastDialogIntent.v1:";
-
-const buildLastDialogIntentStorageKey = (workspacePath: string): string =>
-  `${LAST_DIALOG_INTENT_STORAGE_PREFIX}${encodeURIComponent(workspacePath)}`;
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const loadLastDialogStage = (workspacePath: string): string | null => {
-  try {
-    const raw = window.localStorage.getItem(
-      buildLastDialogIntentStorageKey(workspacePath)
-    );
-    if (!raw) {
-      return null;
-    }
-    const parsed = JSON.parse(raw) as unknown;
-    if (!isRecord(parsed)) {
-      return null;
-    }
-    return typeof parsed.stage === "string" ? parsed.stage : null;
-  } catch {
-    return null;
-  }
-};
-
 const ProjectManagerRuntimeSessionView = ({
   workspacePath,
   preferredSessionId,
@@ -290,7 +264,7 @@ const ProjectManagerRuntimeSessionView = ({
     reload();
   }, [activeSessionId, reload]);
   useEffect(() => {
-    setEmptyStateStage(workspacePath ? loadLastDialogStage(workspacePath) : null);
+    setEmptyStateStage(null);
   }, [workspacePath]);
   useEffect(() => {
     const handleDialogIntent = (

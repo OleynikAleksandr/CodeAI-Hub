@@ -1,7 +1,7 @@
 # Project Manager — Workflow Navigation SSOT
 
 **Status:** Active SSOT  
-**Updated:** 2026-03-24
+**Updated:** 2026-04-06
 **Owner:** Oleksandr + Codex
 
 ---
@@ -23,6 +23,7 @@
 - `description`
 - `virtual_simulation`
 - `diagram_modules`
+- `foundation_envelope`
 
 ## 3) Источники активации stage
 
@@ -31,6 +32,11 @@
 - клик по stage-узлу в дереве;
 - клик по artifact/session узлу в дереве;
 - auto-select latest chain при смене workspace.
+
+Cold-start restore rule:
+- startup restore для Session panel не имеет права читать отдельный browser-local stage/dialog truth;
+- при открытии workspace route обязан восстанавливаться только из workflow-state + continuity для текущего workspace;
+- любые browser-local кэши допустимы только как ephemeral UI cache и не могут определять `dialogIntent`, `activeStage` или startup session selection.
 
 Канонический route:
 1. Сначала обновляем `activeStage`.
@@ -52,6 +58,7 @@
 | `description` | `Description` | `Description` | `Artifacts/Help` | `stage=description` |
 | `virtual_simulation` | `VIRTUAL SIMULATION` | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
 | `diagram_modules` | `Diagram Modules` | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
+| `foundation_envelope` | `Foundation Envelope` | `Foundation Envelope` | `Artifacts/Help` | `stage=foundation_envelope` |
 
 Для `Diagram Modules` правая панель использует `Artifacts/Help` (Source mode был удалён):
 - `Artifacts` открывает визуальный Module Graph, построенный из staged product-part файлов;
@@ -63,6 +70,7 @@
 2. Нельзя рендерить header правой панели по старому stage после маршрутизации на новый.
 3. Если route идёт через `pm:dialog:open` для workflow-stage, активный stage должен быть установлен до/в момент route.
 4. Для stage-узла не допускается stage-specific поведение вида `skipSession`, если это ломает консистентность с другими route.
+5. Session panel startup restore обязан брать источник истины из того же workflow-state/continuity route, что и Toolbar/Tree auto-select; отдельный browser-local startup router запрещён.
 
 ## 6) Особый случай Description pre-submit
 
