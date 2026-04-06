@@ -62,6 +62,11 @@ interface DiagramModulesProgressPayload {
 interface WorkflowStatePayload {
   readonly diagramModulesProgress?: DiagramModulesProgressPayload | null;
   readonly gating: { readonly blocked: Record<string, boolean> };
+  readonly lastActive?: {
+    readonly artifactPath?: string;
+    readonly stage: string;
+    readonly updatedAt: string;
+  } | null;
   readonly state?: { readonly stages: Record<string, WorkflowStageArtifacts> };
 }
 
@@ -158,6 +163,11 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     );
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.foundation_envelope, false);
+    assert.equal(payload.lastActive?.stage, "foundation_envelope");
+    assert.equal(
+      payload.lastActive?.artifactPath,
+      ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md"
+    );
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
     assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
     assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
@@ -243,6 +253,11 @@ test("workflow-state tracks diagram modules progress when not all product parts 
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.foundation_envelope, true);
     assert.equal(payload.state?.stages.diagram_modules?.status, "in_progress");
+    assert.equal(payload.lastActive?.stage, "diagram_modules");
+    assert.equal(
+      payload.lastActive?.artifactPath,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
+    );
     assert.equal(
       payload.diagramModulesProgress?.substep,
       "generate_product_part"
