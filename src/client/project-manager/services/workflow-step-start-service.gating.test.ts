@@ -34,6 +34,7 @@ const createWorkflowState = (
     foundation_envelope: "idle",
   },
   continuity: { chains: [] },
+  lastActive: null,
   description: null,
   gating: {
     blocked: {

@@ -35,6 +35,11 @@ const createWorkflowState = (): WorkflowStateSnapshot => ({
       },
     ],
   },
+  lastActive: {
+    stage: "diagram_modules",
+    updatedAt: "2026-03-16T20:00:00.000Z",
+    artifactPath: ".codeai-hub/demo/diagram_modules/product-parts.index.md",
+  },
   description: null,
   gating: {
     blocked: {
