@@ -5,7 +5,10 @@ import type { SessionRequestHandler } from "../../remote-bridge/handlers/session
 import type { Logger } from "../../telemetry/logger";
 import { DescriptionStepStore } from "../description/description-step-store";
 import { WorkflowLastActiveStore } from "../state/workflow-last-active-store";
-import type { WorkflowWatcherEvent } from "../watcher/watcher-types";
+import type {
+  WorkflowStageId,
+  WorkflowWatcherEvent,
+} from "../watcher/watcher-types";
 import { WorkflowWatcher } from "../watcher/workflow-watcher";
 
 const WORKSPACE_ROOT_DIR = ".codeai-hub";
@@ -27,6 +30,79 @@ const buildWorkflowRelativePath = (
       normalizeRelativePath(filePathWithinWorkspaceSlug)
     )
   );
+
+const buildCanonicalStageArtifactPath = (
+  workspaceSlug: string,
+  stage: "virtual_simulation" | "diagram_modules" | "foundation_envelope"
+): string => {
+  if (stage === "virtual_simulation") {
+    return buildWorkflowRelativePath(
+      workspaceSlug,
+      "virtual_simulation/virtual-simulation.md"
+    );
+  }
+  if (stage === "diagram_modules") {
+    return buildWorkflowRelativePath(
+      workspaceSlug,
+      "diagram_modules/product-parts.index.md"
+    );
+  }
+  return buildWorkflowRelativePath(
+    workspaceSlug,
+    "foundation_envelope/foundation-envelope.md"
+  );
+};
+
+const resolveLastActiveUpdateFromArtifact = (params: {
+  readonly relativePath: string;
+  readonly stage: WorkflowStageId;
+  readonly workspaceSlug: string;
+}): {
+  readonly artifactPath: string;
+  readonly stage: WorkflowStageId;
+} | null => {
+  if (
+    params.stage === "virtual_simulation" &&
+    params.relativePath === "virtual_simulation/virtual-simulation.md"
+  ) {
+    return {
+      stage: "virtual_simulation",
+      artifactPath: buildCanonicalStageArtifactPath(
+        params.workspaceSlug,
+        "virtual_simulation"
+      ),
+    };
+  }
+
+  if (
+    params.stage === "diagram_modules" &&
+    (params.relativePath === "diagram_modules/product-parts.index.md" ||
+      params.relativePath.startsWith("diagram_modules/product-parts/"))
+  ) {
+    return {
+      stage: "diagram_modules",
+      artifactPath: buildCanonicalStageArtifactPath(
+        params.workspaceSlug,
+        "diagram_modules"
+      ),
+    };
+  }
+
+  if (
+    params.stage === "foundation_envelope" &&
+    params.relativePath === "foundation_envelope/foundation-envelope.md"
+  ) {
+    return {
+      stage: "foundation_envelope",
+      artifactPath: buildCanonicalStageArtifactPath(
+        params.workspaceSlug,
+        "foundation_envelope"
+      ),
+    };
+  }
+
+  return null;
+};
 
 export class WorkflowRuntime {
   private readonly logger: Logger;
@@ -109,11 +185,24 @@ export class WorkflowRuntime {
       return true;
     }
 
+    const relativePath = normalizeRelativePath(event.filePath);
     if (event.stage !== "description") {
+      const lastActiveUpdate = resolveLastActiveUpdateFromArtifact({
+        relativePath,
+        stage: event.stage,
+        workspaceSlug: event.workspaceSlug,
+      });
+      if (!lastActiveUpdate) {
+        return true;
+      }
+
+      await this.lastActiveStore.upsert(workspaceRoot, event.workspaceSlug, {
+        stage: lastActiveUpdate.stage,
+        artifactPath: lastActiveUpdate.artifactPath,
+      });
       return true;
     }
 
-    const relativePath = normalizeRelativePath(event.filePath);
     if (
       relativePath === "description/description-step.json" ||
       relativePath.endsWith("/description-step.json")

@@ -104,6 +104,18 @@ const emitDescriptionWrite = async (
   filePath: string,
   workspaceSlug = "demo-workspace"
 ): Promise<boolean> =>
+  await emitArtifactWrite(harness, "description", filePath, workspaceSlug);
+
+const emitArtifactWrite = async (
+  harness: RuntimeHarness,
+  stage:
+    | "description"
+    | "virtual_simulation"
+    | "diagram_modules"
+    | "foundation_envelope",
+  filePath: string,
+  workspaceSlug = "demo-workspace"
+): Promise<boolean> =>
   await (
     harness.runtime as unknown as {
       handleWorkflowEvent: (
@@ -115,7 +127,7 @@ const emitDescriptionWrite = async (
     type: "workflow.artifact.written",
     timestamp: "2026-03-13T12:00:00.000Z",
     workspaceSlug,
-    stage: "description",
+    stage,
     filePath,
   });
 
@@ -229,4 +241,64 @@ test("WorkflowRuntime ignores legacy run-scoped description drafts", async () =>
   assert.equal(shouldRecord, false);
   assert.deepEqual(harness.descriptionUpserts, []);
   assert.deepEqual(harness.lastActiveUpserts, []);
+});
+
+test("WorkflowRuntime records virtual simulation artifact writes as last active stage", async () => {
+  const harness = createHarness();
+
+  const shouldRecord = await emitArtifactWrite(
+    harness,
+    "virtual_simulation",
+    "virtual_simulation/virtual-simulation.md"
+  );
+
+  assert.equal(shouldRecord, true);
+  assert.deepEqual(harness.descriptionUpserts, []);
+  assert.deepEqual(harness.lastActiveUpserts, [
+    {
+      stage: "virtual_simulation",
+      artifactPath:
+        ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md",
+    },
+  ]);
+});
+
+test("WorkflowRuntime records diagram modules semantic writes as last active stage", async () => {
+  const harness = createHarness();
+
+  const shouldRecord = await emitArtifactWrite(
+    harness,
+    "diagram_modules",
+    "diagram_modules/product-parts/local-core-runtime.md"
+  );
+
+  assert.equal(shouldRecord, true);
+  assert.deepEqual(harness.descriptionUpserts, []);
+  assert.deepEqual(harness.lastActiveUpserts, [
+    {
+      stage: "diagram_modules",
+      artifactPath:
+        ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
+    },
+  ]);
+});
+
+test("WorkflowRuntime records foundation envelope writes as last active stage", async () => {
+  const harness = createHarness();
+
+  const shouldRecord = await emitArtifactWrite(
+    harness,
+    "foundation_envelope",
+    "foundation_envelope/foundation-envelope.md"
+  );
+
+  assert.equal(shouldRecord, true);
+  assert.deepEqual(harness.descriptionUpserts, []);
+  assert.deepEqual(harness.lastActiveUpserts, [
+    {
+      stage: "foundation_envelope",
+      artifactPath:
+        ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md",
+    },
+  ]);
 });
