@@ -237,7 +237,7 @@ Legacy slots:
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md`
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - index/cluster docs only where active wording still references removed architecture
 
 ---

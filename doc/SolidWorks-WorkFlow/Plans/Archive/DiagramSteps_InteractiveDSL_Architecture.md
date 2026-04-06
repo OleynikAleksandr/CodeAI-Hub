@@ -3,7 +3,7 @@
 **Status:** DRAFT — awaiting user approval  
 **Date:** 2026-03-16  
 **Scope:** Workflow steps `diagram_modules` and `diagram_facades`  
-**Related:** `DescriptionStep_SingleAgent.md`, `WorkflowSteps_Overview.md`, `Workflow_CLI.md`
+**Related:** `DescriptionStep_SingleAgent.md`, `System/WorkflowSteps_Overview.md`, `Workflow_CLI.md`
 
 ---
 
@@ -505,7 +505,7 @@ User actions: drag node, zoom, pan, expand/collapse
 | `diagram-modules-panel.tsx` | Удалить Mermaid validation; заменить на React Flow рендеринг |
 | `diagram-facades-panel.tsx` | Удалить Mermaid validation; заменить на React Flow рендеринг |
 | `http-api-router.ts` | Обновить artifact serving для новых файлов; добавить baseline write endpoint |
-| `WorkflowSteps_Overview.md` | Обновить описания шагов 3-4: artifact names, format description |
+| `System/WorkflowSteps_Overview.md` | Обновить описания шагов 3-4: artifact names, format description |
 | `Workflow_CLI.md` | Обновить artifact file references |
 
 ---
@@ -1052,7 +1052,7 @@ All of the following must be committed together (or in a tightly sequenced Strea
 6. **Update** `workflow-paths-types.ts` — replace `.mmd` file names with `.md`
 7. **Update** `workflow-artifact-paths.ts` — update `WORKFLOW_STAGE_FILES` map, add baseline path resolver
 8. **Rewrite** `diagram-modules-panel.tsx` and `diagram-facades-panel.tsx` — remove Mermaid regex, add React Flow rendering
-9. **Update** SSOT docs: `WorkflowSteps_Overview.md`, `Workflow_CLI.md` — new artifact names and format description
+9. **Update** SSOT docs: `System/WorkflowSteps_Overview.md`, `Workflow_CLI.md` — new artifact names and format description
 
 ### 14.4 Legacy workspace handling
 
@@ -1184,5 +1184,5 @@ This section outlines scope boundaries for the `todo-plan.md`. Each phase will b
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md` — pattern for agent contracts
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md` — upstream step contract
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md` — gating state machine
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md` — all 6 workflow steps
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` — all 6 workflow steps
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — system-level architecture

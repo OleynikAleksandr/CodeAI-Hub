@@ -25,7 +25,7 @@
 `Description -> Virtual Simulation -> Diagram Modules -> Diagram Facades`
 
 Это зафиксировано в:
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 
 Но в кодовой базе всё ещё смешаны три разных слоя:
@@ -187,7 +187,7 @@ Cleanup считается успешным, когда одновременно
 
 ## Related documents
 
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Docs_Index.md`

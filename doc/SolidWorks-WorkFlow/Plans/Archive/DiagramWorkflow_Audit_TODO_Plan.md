@@ -10,7 +10,7 @@
 - `doc/Sessions/Archive/Session086.md`
 - `doc/Sessions/Archive/Session090.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 
 ---
 

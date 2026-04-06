@@ -143,7 +143,7 @@
 
 ## 8) Related SSOT
 
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionNode_ReviewSession.md` (legacy filename, compat)
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md`

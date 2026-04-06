@@ -214,7 +214,7 @@
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 
 ## 6.1) Diagram DSL Artifact Boundary (Phase 1, 2026-03-16; updated Phase 57, 2026-03-24)
@@ -231,7 +231,7 @@
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 
 ## 6.2) Diagram Visual Shell Boundary (Phase 2, 2026-03-16; updated Phase 57, 2026-03-24)

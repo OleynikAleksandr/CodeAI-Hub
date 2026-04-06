@@ -1102,7 +1102,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 ### Changed
 - Workflow runtime: canonical diagram artifacts are now `module-map.md` / `facade-map.md` plus auxiliary `*.flow.json` and `*.agent-baseline.md`; legacy Mermaid `.mmd` files are no longer part of the active workflow contract.
 - Workflow prompts: runtime now assembles diagram prompt packs from agent-owned assets and injects generated `Change Summary` blocks instead of relying on legacy bundled Mermaid templates.
-- Docs/SSOT: synchronized `WorkflowSteps_Overview.md`, `Workflow_CLI.md`, and `SystemArchitecture.md` so Diagram Modules / Facades explicitly describe the Markdown DSL triplet and the non-semantic role of `*.flow.json`.
+- Docs/SSOT: synchronized `System/WorkflowSteps_Overview.md`, `Workflow_CLI.md`, and `SystemArchitecture.md` so Diagram Modules / Facades explicitly describe the Markdown DSL triplet and the non-semantic role of `*.flow.json`.
 
 ## [1.1.730] - 2026-03-15
 ### Fixed
@@ -1255,9 +1255,9 @@ This project evolves quickly during active FLOW development. We keep the changel
 - Code: simplified `buildDefaults()` in `description-questionnaire-utils.ts` to only set `meta.title`; removed dead `formatDate()` and `resolveAuthorName()`.
 
 ### Added
-- Workflow docs: `WorkflowSteps_Overview.md` — SSOT for all six workflow steps (Description → Virtual Simulation → Diagram Modules → Diagram Facades → Module Specifications → TODO Plan), including philosophy, artifacts, feedback loop, and adaptive templates concept.
+- Workflow docs: `System/WorkflowSteps_Overview.md` — SSOT for all six workflow steps (Description → Virtual Simulation → Diagram Modules → Diagram Facades → Module Specifications → TODO Plan), including philosophy, artifacts, feedback loop, and adaptive templates concept.
 - Workflow docs: `QuestionnaireTemplate_Draft.md` — intermediate draft used during the questionnaire redesign discussion.
-- Docs index: added Workflow Overview section linking to `WorkflowSteps_Overview.md`.
+- Docs index: added Workflow Overview section linking to `System/WorkflowSteps_Overview.md`.
 
 ## [1.1.695] - 2026-02-27
 ### Changed

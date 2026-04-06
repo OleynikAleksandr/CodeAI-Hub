@@ -9,7 +9,7 @@
 - этот индекс является навигационным каталогом, а не инструкцией читать все документы подряд.
 
 1. `System/SystemArchitecture.md`
-2. `WorkflowSteps_Overview.md`
+2. `System/WorkflowSteps_Overview.md`
 3. `Clusters/Project_Manager.md`
 4. `Clusters/CoreOrchestrator.md`
 5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
@@ -20,7 +20,7 @@
 ## 1) Канонические документы (этот каталог)
 
 ### Workflow Overview
-- `WorkflowSteps_Overview.md` — SSOT шагов workflow (1→6), артефактов, OUTDATED propagation.
+- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→6), артефактов, OUTDATED propagation.
 
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов.

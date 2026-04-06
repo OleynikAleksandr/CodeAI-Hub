@@ -102,7 +102,7 @@ Prompt должен жёстко требовать явные пользова�
 - `packages/agents/diagram-facades-agent/assets/facade-map-prompt.md`
 - `packages/core/src/templates/bundled-templates.ts`
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 
 ## Ожидаемый результат

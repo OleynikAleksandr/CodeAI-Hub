@@ -52,5 +52,5 @@ Legacy copy в Session-регионе вводил пользователя в �
 ## 7) Связанные документы
 
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
-- `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`

@@ -3,7 +3,7 @@
 ## 0) Start here (контекст + контракты)
 
 - System: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- Workflow steps: `doc/SolidWorks-WorkFlow/WorkflowSteps_Overview.md`
+- Workflow steps: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - Description step contract: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - Description UI copy contract: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md`
 - Workspace Runtime (wire + lock): `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
