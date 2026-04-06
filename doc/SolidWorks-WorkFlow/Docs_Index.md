@@ -59,7 +59,7 @@
 - `Plans/Foundation_Envelope_Architecture.md` — design intake для нового лёгкого шага сразу после `Diagram Modules`; формализует `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies per `Product Part` и user-facing visual envelope.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Foundation Envelope` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
-- `Plans/Workflow_Step_Symmetry_Architecture.md` — approved retrofit scope for making all released trunk steps (`Description`, `Virtual Simulation`, `Diagram Modules`, `Foundation Envelope`) use one canonical startup truth, one step-passport model, formal regression coverage, and a release validation wave.
+- `Plans/Archive/Workflow_Step_Symmetry_Architecture.md` — completed retrofit scope that aligned all released trunk steps (`Description`, `Virtual Simulation`, `Diagram Modules`, `Foundation Envelope`) on one canonical startup truth, one step-passport model, formal regression coverage, and packaged release validation.
 - `Plans/Archive/Runtime_GodModules_Decomposition_Architecture.md` — завершённая structural decomposition wave для runtime hotspots; сохранена как historical closeout после переноса итогов в SSOT.
 - `Plans/Archive/` — завершённые или снятые planning-доки, сохраняемые только как история.
 
