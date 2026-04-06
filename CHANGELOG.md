@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.897] - 2026-04-06
+### Fixed
+- **Project Manager startup restore now follows workflow-scoped truth instead of browser-local dialog cache**: workspace reopen no longer revives a stale `foundation_envelope` dialog intent from `localStorage`, so Toolbar, workflow tree, artifact panel, and session panel recover from the same `workflow-state` + `continuity` route.
+- **`Diagram Modules` no longer falls back to a false `todo` state after restart**: cold-start workflow-state hydration now derives `diagram_modules` status from the canonical staged progress snapshot, restoring `in_progress` or `completed` when the semantic artifacts already prove readiness.
+- **Workflow new-step guardrails now explicitly ban split startup restore paths**: the system SSOT now requires one startup source of truth, shared stage normalization, canonical cold-start readiness hydration, and history-backed continuity recovery for every new workflow step.
+
 ## [1.1.896] - 2026-04-06
 ### Fixed
 - **`Foundation Envelope` dialog history now survives cold-start restore correctly**: continuity root resolution no longer normalizes the official `foundation_envelope` stage to `unknown`, so restart/resume reuses the existing history-backed dialog instead of creating a fresh empty dialog id.
