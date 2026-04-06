@@ -8,9 +8,12 @@ const SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
 );
 
-test("use-main-area-workflow-state relies on primarySession for description state", async () => {
+test("use-main-area-workflow-state relies on canonical lastActive and primarySession metadata", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
 
+  assert.equal(source.includes("const stage = state?.lastActive?.stage;"), true);
+  assert.equal(source.includes("const STAGE_PRIORITY"), false);
+  assert.equal(source.includes("hasContinuitySegmentsForStage"), false);
   assert.equal(source.includes("branch?.primarySession?.providerSessionId"), true);
   assert.equal(source.includes("branch?.session?.providerSessionId"), false);
   assert.equal(source.includes("branch?.sessionKind"), false);

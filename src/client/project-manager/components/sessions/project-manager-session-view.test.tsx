@@ -64,3 +64,20 @@ test("project-manager-runtime-session-view does not seed empty state from browse
   assert.equal(source.includes("loadLastDialogStage"), false);
   assert.equal(source.includes("setEmptyStateStage(null);"), true);
 });
+
+test("project-manager-runtime-session-view keeps session empty-state sync on live PM events only", async () => {
+  const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes('window.addEventListener("pm:dialog:open", handleDialogIntent);'),
+    true
+  );
+  assert.equal(
+    source.includes('window.addEventListener("pm:stage:activated", handleStageActivated);'),
+    true
+  );
+  assert.equal(
+    source.includes('setEmptyStateStage(typeof detail.stage === "string" ? detail.stage : null);'),
+    true
+  );
+});

@@ -11,6 +11,10 @@ const RUNTIME_VIEW_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
 );
+const WORKSPACE_TREE_AUTO_SELECT_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/workspace-tree-auto-select.ts"
+);
 
 test("runtime auto-select no longer contains reviewer auto-focus resolver", async () => {
   const source = await readFile(AUTO_SELECT_SOURCE_PATH, "utf8");
@@ -41,4 +45,15 @@ test("runtime session view does not import reviewer auto-focus path", async () =
     true,
     "runtime view must keep most-recent fallback when active session is missing"
   );
+});
+
+test("workspace tree auto-select derives startup routing from lastActive and shared stage sync payload", async () => {
+  const source = await readFile(WORKSPACE_TREE_AUTO_SELECT_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes('const startupStage = state.lastActive?.stage ?? "description";'),
+    true
+  );
+  assert.equal(source.includes("resolveStageSyncPayload({"), true);
+  assert.equal(source.includes("resolveLatestContinuityChain"), false);
 });
