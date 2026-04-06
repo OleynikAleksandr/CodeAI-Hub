@@ -2,7 +2,7 @@
 
 ## Scope Status
 
-No active execution scope — workflow step symmetry retrofit completed in Session 053, release `1.1.898`.
+No active execution scope — workflow step symmetry retrofit completed in `doc/Sessions/Archive/Reset_2026-04-06/Session053.md`, release `1.1.898`.
 
 ## Recovery Ownership
 
