@@ -98,7 +98,7 @@
 ### Stream: Dead Fragment Sweep
 39. [TODO] Update `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, and `src/client/project-manager/components/layout/workspace-tree-model.ts`; scope: remove stale FE imports/branches/labels that may survive the main PM removal path and keep dead code in shared layout surfaces; expected commit message: `refactor(pm): sweep foundation envelope dead fragments`
 40. [TODO] Git Commit: `refactor(pm): sweep foundation envelope dead fragments` (hash: TBD)
-41. [TODO] Update `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `packages/core/src/session-continuity/continuity-types.ts`; scope: remove dormant FE references from shared runtime entrypoints and type surfaces after the main feature deletion; expected commit message: `refactor(core): sweep foundation envelope dead references`
+41. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `packages/core/src/templates/source/foundation-envelope-prompt.md`; scope: remove the last active FE contract route, stub contract builder, and source prompt asset from core after PM/runtime entrypoints are gone; expected commit message: `refactor(core): sweep foundation envelope dead references`
 42. [TODO] Git Commit: `refactor(core): sweep foundation envelope dead references` (hash: TBD)
 
 ### Stream: Historical Documentation Cleanup

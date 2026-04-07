@@ -369,9 +369,6 @@ export const buildVirtualSimulationContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(VIRTUAL_SIMULATION_TEMPLATE_PATHS);
 
-export const buildFoundationEnvelopeContract =
-  async (): Promise<WorkflowContractPayload | null> => null;
-
 export const buildDiagramModulesContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(DIAGRAM_MODULES_TEMPLATE_PATHS);

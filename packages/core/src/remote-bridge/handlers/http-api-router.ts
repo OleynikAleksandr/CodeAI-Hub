@@ -13,7 +13,6 @@ import {
 import {
   buildDescriptionContract,
   buildDiagramModulesContract,
-  buildFoundationEnvelopeContract,
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
@@ -125,17 +124,6 @@ export class HttpApiRouter {
           res,
           buildDiagramModulesContract,
           "Diagram modules"
-        );
-      }
-    );
-    app.get(
-      "/api/v1/orchestrator/foundation-envelope-contract",
-      async (_req: Request, res: Response) => {
-        await handleWorkflowContract(
-          this.deps,
-          res,
-          buildFoundationEnvelopeContract,
-          "Foundation envelope"
         );
       }
     );
