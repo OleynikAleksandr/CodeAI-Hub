@@ -27,7 +27,7 @@
 ## Phase 1 — Left Sidebar Active Stage Sync (owner: Codex, updated: 2026-04-07)
 
 ### Stream: Tree Selection Source Of Truth
-1. [TODO] Add left-tree active-stage sync in `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, and `src/client/project-manager/components/layout/use-workspace-tree-active-stage.ts`; scope: selected-stage state only, keeping workflow status separate from UI selection; expected commit message: `fix(pm): sync left sidebar with active stage`
+1. [IN_PROGRESS] Add left-tree active-stage sync in `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, and `src/client/project-manager/components/layout/use-workspace-tree-active-stage.ts`; scope: selected-stage state only, keeping workflow status separate from UI selection; expected commit message: `fix(pm): sync left sidebar with active stage`
 2. [TODO] Git Commit: `fix(pm): sync left sidebar with active stage` (hash: TBD)
 
 ### Stream: Tree Accordion And Highlight

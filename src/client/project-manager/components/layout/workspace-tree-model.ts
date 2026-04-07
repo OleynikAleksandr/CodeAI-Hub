@@ -1,4 +1,7 @@
-import type { WorkflowStageId, WorkflowStageStatus } from "../../services/workflow-state-client";
+import type {
+  WorkflowStageId,
+  WorkflowStageStatus,
+} from "../../services/workflow-state-client";
 
 export type TreeStatus = "active" | "todo" | "blocked" | "draft" | "outdated";
 
@@ -7,7 +10,9 @@ export type TreeNode = {
   readonly label: string;
   readonly status: TreeStatus;
   readonly visualDepth: number;
+  readonly stage?: WorkflowStageId;
   readonly title?: string;
+  readonly isSelected?: boolean;
   readonly onSelect?: () => void;
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];

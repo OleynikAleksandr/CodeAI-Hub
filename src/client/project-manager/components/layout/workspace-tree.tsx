@@ -14,6 +14,7 @@ import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
+import { useWorkspaceTreeActiveStage } from "./use-workspace-tree-active-stage";
 import {
   WORKFLOW_LABELS,
   resolveTreeStatus,
@@ -50,6 +51,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const [expandedNodes, setExpandedNodes] = useState<
     Readonly<Record<string, boolean>>
   >({});
+  const activeStage = useWorkspaceTreeActiveStage(selectedWorkspaceId);
   const storeState = useWorkflowStateSnapshot();
   const workflowState: WorkflowStateSnapshot | null = storeState.snapshot;
   const baseIndent = 12;
@@ -197,8 +199,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     if (!workflowState) {
       return WORKFLOW_STAGE_ORDER.map((stage) => ({
         id: `workflow:${stage}`,
+        isSelected: stage === activeStage,
         label: resolveStageLabel(stage, t),
         status: "todo",
+        stage,
         visualDepth: 1,
       }));
     }
@@ -237,7 +241,9 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return {
         id: `workflow:${stage}`,
         label: resolveStageLabel(stage, t),
+        stage,
         title: resolveStageTitle(stage, status, blocked, t),
+        isSelected: stage === activeStage,
         status: resolveTreeStatus(status, blocked),
         visualDepth: 1,
         isCollapsible: children.length > 0,
@@ -288,7 +294,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <ul className="pm-tree__list">
           {treeNodes.map((node) => (
             <li
-              className={`pm-tree__item pm-tree__item--${node.status}`}
+              aria-current={node.isSelected ? "true" : undefined}
+              className={`pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`}
               onClick={node.onSelect}
               key={node.id}
               role={node.onSelect ? "button" : undefined}
