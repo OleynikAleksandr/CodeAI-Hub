@@ -137,12 +137,6 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`,
       "# Partial Product Part\n"
     );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`,
-      "# Foundation Envelope\n"
-    );
-
     const service = new WorkflowStateService({
       logger: new Logger("error"),
     });
@@ -157,12 +151,7 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
 
     assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
     assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
-    assert.equal(
-      payload.state?.stages.foundation_envelope?.status,
-      "completed"
-    );
     assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.gating.blocked.foundation_envelope, false);
     assert.equal(payload.lastActive?.stage, "description");
     assert.equal(
       payload.lastActive?.artifactPath,
@@ -176,13 +165,6 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
       payload.state?.stages.virtual_simulation?.artifacts?.some(
         (artifact) =>
           artifact.path === "virtual_simulation/virtual-simulation.md"
-      ),
-      true
-    );
-    assert.equal(
-      payload.state?.stages.foundation_envelope?.artifacts?.some(
-        (artifact) =>
-          artifact.path === "foundation_envelope/foundation-envelope.md"
       ),
       true
     );
@@ -251,7 +233,6 @@ test("workflow-state tracks diagram modules progress when not all product parts 
     const payload = result.payload as WorkflowStatePayload;
 
     assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.gating.blocked.foundation_envelope, true);
     assert.equal(payload.state?.stages.diagram_modules?.status, "in_progress");
     assert.equal(payload.lastActive?.stage, "description");
     assert.equal(

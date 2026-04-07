@@ -84,7 +84,7 @@
 ## Phase 4 — Regression Coverage And Historical Closeout (owner: Codex, updated: 2026-04-07)
 
 ### Stream: Core Regression Cleanup
-31. [TODO] Update `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.foundation-envelope.test.ts`, and `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; scope: remove or retarget core tests that keep FE alive as an active workflow/artifact contract; expected commit message: `test(core): remove foundation envelope workflow coverage`
+31. [DONE] Update `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.foundation-envelope.test.ts`, and `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; scope: remove or retarget core tests that keep FE alive as an active workflow/artifact contract; expected commit message: `test(core): remove foundation envelope workflow coverage`
 32. [TODO] Git Commit: `test(core): remove foundation envelope workflow coverage` (hash: TBD)
 33. [TODO] Update `packages/core/src/remote-bridge/handlers/foundation-envelope-continuity-restore.test.ts`, `packages/core/src/session-continuity/continuity-store.test.ts`, and `packages/core/src/session-continuity/handoff-report-writer.test.ts`; scope: remove FE-specific continuity coverage after the stage and its continuity path are deleted; expected commit message: `test(core): remove foundation envelope continuity coverage`
 34. [TODO] Git Commit: `test(core): remove foundation envelope continuity coverage` (hash: TBD)
