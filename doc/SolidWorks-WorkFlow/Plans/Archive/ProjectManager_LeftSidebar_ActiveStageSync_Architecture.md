@@ -1,6 +1,6 @@
 # Project Manager Left Sidebar Active Stage Sync Architecture
 
-**Status:** Approved for implementation (2026-04-07)
+**Status:** Archived after implementation complete (2026-04-07)
 **Created:** 2026-04-07
 **Owner:** Oleksandr + Codex
 **Scope:** Align the Project Manager left sidebar with the canonical `activeStage` so the selected workflow step is visibly highlighted and only the active stage branch stays expanded.
