@@ -39,10 +39,10 @@
 
 ### Stream: Docs Sync
 7. [DONE] Sync the corrected fallback contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, and `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; scope: document that standalone PM uses launcher-host handoff instead of Chromium anchor navigation for dialog file links; expected commit message: `docs(pm): sync standalone file link fallback`
-8. [IN_PROGRESS] Git Commit: `docs(pm): sync standalone file link fallback` (hash: TBD)
+8. [DONE] Git Commit: `docs(pm): sync standalone file link fallback` (hash: `562b9c277`)
 
 ### Stream: Release Build For User Testing
-9. [TODO] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: document the standalone fallback fix before packaging; expected commit message: `docs(release): prep standalone file link hotfix release`
-10. [TODO] Git Commit: `docs(release): prep standalone file link hotfix release` (hash: TBD)
+9. [DONE] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: document the standalone fallback fix before packaging; expected commit message: `docs(release): prep standalone file link hotfix release`
+10. [IN_PROGRESS] Git Commit: `docs(release): prep standalone file link hotfix release` (hash: TBD)
 11. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a hotfix test build; expected commit message: `build(release): cut standalone file link hotfix`
 12. [TODO] Git Commit: `build(release): cut standalone file link hotfix` (hash: TBD)

@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.902] - 2026-04-07
+### Fixed
+- **Standalone PM dialog file links no longer open a second Chromium window with `ERR_UNKNOWN_URL_SCHEME`**: the dialog surface no longer tries to navigate CEF directly to `vscode://file/...` after the user clicks an agent-provided file reference.
+- **Standalone file-link fallback now routes through the launcher host**: PM uses a dedicated `codeai://open-in-vscode?...` bridge in standalone mode, `OnBeforeBrowse` cancels in-window navigation, and the launcher opens the final `vscode://file/...` target through the operating system.
+- **The launcher hotfix is now synchronized across PM/UI/launcher docs and targeted validation**: PM opener coverage, native launcher build verification, and SSOT docs now protect the corrected standalone fallback boundary.
+
 ## [1.1.901] - 2026-04-07
 ### Fixed
 - **Project Manager dialog file links now open in the VS Code editor path instead of a generic text handler**: absolute local file links rendered inside agent dialog markdown are intercepted on the dialog surface and routed to the editor-aware open flow.

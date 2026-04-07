@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.901
-- **Project Manager agent-dialog file links now open in Visual Studio Code instead of a generic text handler**: absolute local file targets inside assistant markdown replies are intercepted on the dialog surface and routed to the VS Code editor contract.
-- **Editor-aware file opens now preserve location metadata**: supported dialog links keep `:line:column` or `#LlineCcolumn` targeting, so PM can reveal the intended location when the user follows a file reference from the agent reply.
-- **Standalone PM now uses a standard `vscode://file/...` fallback without widening the native launcher bridge**: VS Code-hosted PM uses `showTextDocument`, while standalone PM hands the same file target to the installed VS Code app through the standard URI route.
+## Current Release — v1.1.902
+- **Standalone Project Manager file links no longer spawn a broken Chromium window**: dialog file clicks now stop at the launcher host instead of trying to navigate the CEF surface to `vscode://file/...`, which removes the observed `ERR_UNKNOWN_URL_SCHEME` regression.
+- **Launcher-host handoff now opens the final `vscode://file/...` target in external Visual Studio Code**: VS Code-hosted PM still uses `showTextDocument`, while standalone PM routes the same absolute file target through `codeai://open-in-vscode?...` and lets the launcher open VS Code externally.
+- **Editor-aware file opens still preserve location metadata**: supported dialog links keep `:line:column` or `#LlineCcolumn` targeting, so the final VS Code open path can still reveal the intended position.
 
 Previous releases (summary): `1.1.800–1.1.900` — left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, and earlier localization/provider/release stabilization waves.
 
