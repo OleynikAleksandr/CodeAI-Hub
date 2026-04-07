@@ -33,7 +33,7 @@ const buildWorkflowRelativePath = (
 
 const buildCanonicalStageArtifactPath = (
   workspaceSlug: string,
-  stage: "virtual_simulation" | "diagram_modules" | "foundation_envelope"
+  stage: "virtual_simulation" | "diagram_modules"
 ): string => {
   if (stage === "virtual_simulation") {
     return buildWorkflowRelativePath(
@@ -49,7 +49,7 @@ const buildCanonicalStageArtifactPath = (
   }
   return buildWorkflowRelativePath(
     workspaceSlug,
-    "foundation_envelope/foundation-envelope.md"
+    "diagram_modules/product-parts.index.md"
   );
 };
 
@@ -84,19 +84,6 @@ const resolveLastActiveUpdateFromArtifact = (params: {
       artifactPath: buildCanonicalStageArtifactPath(
         params.workspaceSlug,
         "diagram_modules"
-      ),
-    };
-  }
-
-  if (
-    params.stage === "foundation_envelope" &&
-    params.relativePath === "foundation_envelope/foundation-envelope.md"
-  ) {
-    return {
-      stage: "foundation_envelope",
-      artifactPath: buildCanonicalStageArtifactPath(
-        params.workspaceSlug,
-        "foundation_envelope"
       ),
     };
   }

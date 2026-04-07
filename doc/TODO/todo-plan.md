@@ -57,8 +57,8 @@
 17. [DONE] Update `packages/core/src/workflow/watcher/watcher-types.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE from the live watcher stage catalog so runtime watcher events can only carry supported active stages; expected commit message: `refactor(core): drop foundation envelope watcher stages`
 18. [DONE] Git Commit: `refactor(core): drop foundation envelope watcher stages` (hash: `0b68ad5aa`)
 19. [DONE] Update `packages/core/src/workflow/state/workflow-state-store.ts`, `packages/core/src/workflow/state/workflow-last-active-store.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE from workflow state and last-active stage ordering so runtime stores stop treating it as a live stage; expected commit message: `refactor(core): drop foundation envelope state stores`
-20. [TODO] Git Commit: `refactor(core): drop foundation envelope state stores` (hash: TBD)
-21. [TODO] Update `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/runtime/workflow-runtime.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE artifact path resolution and runtime last-active promotion from the active workflow runtime; expected commit message: `refactor(core): drop foundation envelope runtime paths`
+20. [DONE] Git Commit: `refactor(core): drop foundation envelope state stores` (hash: `e5d053551`)
+21. [DONE] Update `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, `packages/core/src/workflow/runtime/workflow-runtime.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE artifact path resolution and runtime last-active promotion from the active workflow runtime; expected commit message: `refactor(core): drop foundation envelope runtime paths`
 22. [TODO] Git Commit: `refactor(core): drop foundation envelope runtime paths` (hash: TBD)
 
 ## Phase 3 — Remove Foundation Envelope From Project Manager UX (owner: Codex, updated: 2026-04-07)
