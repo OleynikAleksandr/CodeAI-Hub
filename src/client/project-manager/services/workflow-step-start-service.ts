@@ -42,7 +42,7 @@ const readDiagramModulesSubstep = (
   return typeof substep === "string" ? substep : null;
 };
 
-const resolveMostRecentContinuitySessionId = (options: {
+const resolveExistingStageSessionIdForExplicitStart = (options: {
   readonly state: Awaited<ReturnType<typeof api.getWorkflowState>> | null;
   readonly stage: ContinuityStageId;
 }): string | null => {
@@ -88,7 +88,7 @@ export class WorkflowStepStartService {
       params.workspaceSlug,
       params.workspacePath
     );
-    const existingSessionId = resolveMostRecentContinuitySessionId({
+    const existingSessionId = resolveExistingStageSessionIdForExplicitStart({
       state,
       stage: "virtual_simulation",
     });
@@ -121,7 +121,7 @@ export class WorkflowStepStartService {
       params.workspaceSlug,
       params.workspacePath
     );
-    const existingSessionId = resolveMostRecentContinuitySessionId({
+    const existingSessionId = resolveExistingStageSessionIdForExplicitStart({
       state,
       stage: "diagram_modules",
     });
@@ -162,7 +162,7 @@ export class WorkflowStepStartService {
       params.workspaceSlug,
       params.workspacePath
     );
-    const existingSessionId = resolveMostRecentContinuitySessionId({
+    const existingSessionId = resolveExistingStageSessionIdForExplicitStart({
       state,
       stage: "foundation_envelope",
     });

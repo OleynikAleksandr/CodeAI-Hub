@@ -38,19 +38,19 @@ test("foundation envelope tree parity keeps canonical artifact and session sync 
   assert.equal(branchNodesSource.includes("options.selectArtifact("), true);
   assert.equal(
     autoSelectSource.includes(
-      ".codeai-hub/${params.workspaceSlug}/foundation_envelope/foundation-envelope.md"
+      "resolveStageSyncPayload({"
     ),
     true
   );
   assert.equal(
     autoSelectSource.includes(
-      'params.onSelectArtifact(\n            envelopeArtifactPath,\n            "foundation-envelope.md"'
+      ".codeai-hub/${params.workspaceSlug}/foundation_envelope/foundation-envelope.md"
     ),
-    true
+    false
   );
   assert.equal(
     stageSyncSource.includes(
-      ".codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md"
+      "const p = resolveStageSyncPayload({"
     ),
     true
   );

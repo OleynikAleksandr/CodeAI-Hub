@@ -11,7 +11,7 @@ type RepairableStageId =
 
 const USER_MESSAGES_CATEGORY = "system_feedback";
 
-const resolveMostRecentContinuitySessionId = (
+const resolveLatestRepairStageSessionId = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
   stage: RepairableStageId
 ): string | null => {
@@ -39,7 +39,7 @@ const sleep = async (milliseconds: number): Promise<void> =>
     window.setTimeout(resolve, milliseconds);
   });
 
-const waitForStageSessionId = async (params: {
+const waitForRepairStageSessionId = async (params: {
   readonly stage: RepairableStageId;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -49,7 +49,7 @@ const waitForStageSessionId = async (params: {
       params.workspaceSlug,
       params.workspacePath
     );
-    const sessionId = resolveMostRecentContinuitySessionId(
+    const sessionId = resolveLatestRepairStageSessionId(
       workflowState,
       params.stage
     );
@@ -170,7 +170,7 @@ export const StageArtifactFixButton: React.FC<{
             });
             const repairPrompt = props.repairPrompt?.trim() ?? "";
             if (repairPrompt.length > 0) {
-              const sessionId = await waitForStageSessionId({
+              const sessionId = await waitForRepairStageSessionId({
                 stage: props.stage,
                 workspacePath: props.workspacePath,
                 workspaceSlug: props.workspaceSlug,

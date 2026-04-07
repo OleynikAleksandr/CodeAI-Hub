@@ -37,11 +37,11 @@
 
 ### Stream: Session Panel Startup Scope
 5. [DONE] Keep automatic startup session restore Description-scoped in `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, and `src/client/project-manager/components/sessions/session-visibility.ts`; include aligned source-test sync in `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx` if the runtime-stage contract changes; scope: startup fallback only; expected commit message: `fix(pm): scope startup sessions to description`
-6. [IN_PROGRESS] Git Commit: `fix(pm): scope startup sessions to description` (hash: TBD)
+6. [DONE] Git Commit: `fix(pm): scope startup sessions to description` (hash: `12606d508`)
 
 ### Stream: False Startup Heuristics Cleanup
-7. [TODO] Remove or narrow obsolete recency-based startup helpers in `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, and `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; scope: delete invalid startup selectors while preserving still-valid local stage actions; expected commit message: `refactor(pm): remove obsolete startup heuristics`
-8. [TODO] Git Commit: `refactor(pm): remove obsolete startup heuristics` (hash: TBD)
+7. [DONE] Remove or narrow obsolete recency-based startup helpers in `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, and `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; include aligned source-test sync in `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts` if old startup assumptions surface; scope: delete invalid startup selectors while preserving still-valid local stage actions; expected commit message: `refactor(pm): remove obsolete startup heuristics`
+8. [IN_PROGRESS] Git Commit: `refactor(pm): remove obsolete startup heuristics` (hash: TBD)
 
 ### Stream: Startup Contract Docs And Coverage
 9. [TODO] Sync the temporary startup contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; scope: docs plus regression coverage for Description-first startup; expected commit message: `docs(pm): document description-first workspace startup`

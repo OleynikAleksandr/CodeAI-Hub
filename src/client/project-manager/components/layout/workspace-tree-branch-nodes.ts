@@ -20,9 +20,6 @@ const dispatchStageActivated = (stage: string): void => {
   );
 };
 
-const isCanonicalDescriptionPath = (path: string): boolean =>
-  /\/description\/Final_Description\.md$/.test(path);
-
 export const buildDescriptionBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly descriptionArtifactAvailable: boolean;
@@ -37,14 +34,10 @@ export const buildDescriptionBranchNodes = (options: {
   }
   const session = branch.primarySession;
   const nodes: TreeNode[] = [];
-  // Only show draftPath as Final_Description.md if it matches canonical contract
-  const validDraftPath = branch.draftPath && isCanonicalDescriptionPath(branch.draftPath) ? branch.draftPath : null;
-  const artifactPath = branch.finalPath ?? validDraftPath ?? branch.questionnairePath;
+  const artifactPath = branch.finalPath ?? branch.questionnairePath;
   const artifactLabel = branch.finalPath
     ? "Final_Description.md"
-    : validDraftPath
-      ? "Final_Description.md"
-      : "questionnaire.md";
+    : "questionnaire.md";
   const artifactStatus = branch.finalPath ? "active" : "draft";
   if (artifactPath) {
     nodes.push({
@@ -147,13 +140,10 @@ export const resolveStageSyncPayload = (options: {
   if (stage === "description") {
     const branch = workflowState.description;
     if (!branch) return { artifact: null, clearTool: null, session: null };
-    const validDraft = branch.draftPath && isCanonicalDescriptionPath(branch.draftPath) ? branch.draftPath : null;
-    const artifactPath = branch.finalPath ?? validDraft ?? branch.questionnairePath;
+    const artifactPath = branch.finalPath ?? branch.questionnairePath;
     const artifactLabel = branch.finalPath
       ? "Final_Description.md"
-      : validDraft
-        ? "Final_Description.md"
-        : "questionnaire.md";
+      : "questionnaire.md";
     const session = branch.primarySession;
     return {
       artifact: artifactPath ? { path: artifactPath, label: artifactLabel } : null,
