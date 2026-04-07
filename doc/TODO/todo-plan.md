@@ -52,26 +52,28 @@
 
 ### Stream: PM Rendering And Persistence
 15. [DONE] Update `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts`, `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, and `doc/TODO/todo-plan.md`; scope: support FE sidecar persistence, stage-specific repair copy, and shared scaffold behavior for `foundation_envelope`; expected commit message: `feat(pm): persist foundation envelope layout`
-16. [TODO] Git Commit: `feat(pm): persist foundation envelope layout` (hash: TBD)
-17. [TODO] Update `src/client/project-manager/components/foundation-envelope/foundation-envelope-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, and `doc/TODO/todo-plan.md`; scope: switch `Foundation Envelope` `Artifacts` from raw markdown view to diagram-first rendering with help fallback when the semantic artifact is missing; expected commit message: `feat(pm): render foundation envelope diagram`
-18. [TODO] Git Commit: `feat(pm): render foundation envelope diagram` (hash: TBD)
+16. [DONE] Git Commit: `feat(pm): persist foundation envelope layout` (hash: `ea13d111f`)
+17. [DONE] Update `src/client/project-manager/components/foundation-envelope/foundation-envelope-react-flow.types.ts`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-to-react-flow.ts`, and `doc/TODO/todo-plan.md`; scope: align `Foundation Envelope` projection payload with the shared diagram renderer contracts so the existing container/module node surface can render the FE graph without a parallel renderer fork; expected commit message: `refactor(pm): align foundation envelope diagram payload`
+18. [TODO] Git Commit: `refactor(pm): align foundation envelope diagram payload` (hash: TBD)
+19. [TODO] Update `src/client/project-manager/components/foundation-envelope/foundation-envelope-panel.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, and `doc/TODO/todo-plan.md`; scope: switch `Foundation Envelope` `Artifacts` from raw markdown view to diagram-first rendering with help fallback when the semantic artifact is missing; expected commit message: `feat(pm): render foundation envelope diagram`
+20. [TODO] Git Commit: `feat(pm): render foundation envelope diagram` (hash: TBD)
 
 ### Stream: Regression Coverage And Verification
-19. [TODO] Update `packages/core/src/workflow/paths/workflow-artifact-paths.test.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`, and `doc/TODO/todo-plan.md`; scope: cover FE flow-sidecar path resolution and workspace artifact upsert behavior; expected commit message: `test(core): cover foundation envelope flow artifact`
-20. [TODO] Git Commit: `test(core): cover foundation envelope flow artifact` (hash: TBD)
-21. [TODO] Update `src/client/project-manager/components/foundation-envelope/foundation-envelope-localization.test.ts`, `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts`, and `doc/TODO/todo-plan.md`; scope: keep FE help/tree wiring aligned while the diagram becomes the default `Artifacts` surface; expected commit message: `test(pm): keep foundation envelope panel parity`
-22. [TODO] Git Commit: `test(pm): keep foundation envelope panel parity` (hash: TBD)
-23. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: targeted verification for FE visual projection across core + PM/webview surfaces before scope closeout; expected commit message: `test(pm): verify foundation envelope visual projection`
-24. [TODO] Git Commit: `test(pm): verify foundation envelope visual projection` (hash: TBD)
+21. [TODO] Update `packages/core/src/workflow/paths/workflow-artifact-paths.test.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`, and `doc/TODO/todo-plan.md`; scope: cover FE flow-sidecar path resolution and workspace artifact upsert behavior; expected commit message: `test(core): cover foundation envelope flow artifact`
+22. [TODO] Git Commit: `test(core): cover foundation envelope flow artifact` (hash: TBD)
+23. [TODO] Update `src/client/project-manager/components/foundation-envelope/foundation-envelope-localization.test.ts`, `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts`, and `doc/TODO/todo-plan.md`; scope: keep FE help/tree wiring aligned while the diagram becomes the default `Artifacts` surface; expected commit message: `test(pm): keep foundation envelope panel parity`
+24. [TODO] Git Commit: `test(pm): keep foundation envelope panel parity` (hash: TBD)
+25. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: targeted verification for FE visual projection across core + PM/webview surfaces before scope closeout; expected commit message: `test(pm): verify foundation envelope visual projection`
+26. [TODO] Git Commit: `test(pm): verify foundation envelope visual projection` (hash: TBD)
 
 ### Stream: Release Build And Scope Closeout
-25. [TODO] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing documents before the final release build for the FE visual projection wave; expected commit message: `docs(release): sync foundation envelope visual projection docs`
-26. [TODO] Git Commit: `docs(release): sync foundation envelope visual projection docs` (hash: TBD)
-27. [TODO] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, and `doc/TODO/todo-plan.md`; scope: synchronize canonical SSOT documents before release packaging so shipped behavior and docs stay aligned; expected commit message: `docs(ssot): sync foundation envelope visual projection release contract`
-28. [TODO] Git Commit: `docs(ssot): sync foundation envelope visual projection release contract` (hash: TBD)
-29. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline, allow version/materialization updates, and record the result before final packaging; expected commit message: `build(release): cut foundation envelope visual projection artifacts`
-30. [TODO] Git Commit: `build(release): cut foundation envelope visual projection artifacts` (hash: TBD)
-31. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX from a clean tree and confirm the release checklist passes for this scope; expected commit message: `build(release): package foundation envelope visual projection`
-32. [TODO] Git Commit: `build(release): package foundation envelope visual projection` (hash: TBD)
-33. [TODO] Archive the completed execution cycle in `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: close the FE visual projection scope only after release artifacts are built, packaged, and validated; expected commit message: `docs(closeout): archive foundation envelope visual projection scope`
-34. [TODO] Git Commit: `docs(closeout): archive foundation envelope visual projection scope` (hash: TBD)
+27. [TODO] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing documents before the final release build for the FE visual projection wave; expected commit message: `docs(release): sync foundation envelope visual projection docs`
+28. [TODO] Git Commit: `docs(release): sync foundation envelope visual projection docs` (hash: TBD)
+29. [TODO] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, and `doc/TODO/todo-plan.md`; scope: synchronize canonical SSOT documents before release packaging so shipped behavior and docs stay aligned; expected commit message: `docs(ssot): sync foundation envelope visual projection release contract`
+30. [TODO] Git Commit: `docs(ssot): sync foundation envelope visual projection release contract` (hash: TBD)
+31. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline, allow version/materialization updates, and record the result before final packaging; expected commit message: `build(release): cut foundation envelope visual projection artifacts`
+32. [TODO] Git Commit: `build(release): cut foundation envelope visual projection artifacts` (hash: TBD)
+33. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX from a clean tree and confirm the release checklist passes for this scope; expected commit message: `build(release): package foundation envelope visual projection`
+34. [TODO] Git Commit: `build(release): package foundation envelope visual projection` (hash: TBD)
+35. [TODO] Archive the completed execution cycle in `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: close the FE visual projection scope only after release artifacts are built, packaged, and validated; expected commit message: `docs(closeout): archive foundation envelope visual projection scope`
+36. [TODO] Git Commit: `docs(closeout): archive foundation envelope visual projection scope` (hash: TBD)

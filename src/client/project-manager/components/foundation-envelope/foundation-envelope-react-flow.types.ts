@@ -2,6 +2,11 @@ import type { ContainerConstraints } from "../diagram-editor/adapters/domain-mod
 import type {
   FoundationEnvelopeDecisionStatus,
 } from "../../../../../packages/core/src/workflow/foundation-envelope/foundation-envelope-model";
+import type {
+  EntityOrigin,
+  EntityStatus,
+  ModuleKind,
+} from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 
 export type FoundationEnvelopeFlowPosition = {
   readonly x: number;
@@ -19,22 +24,25 @@ export type FoundationEnvelopeBadge = {
 
 export type FoundationEnvelopeApplicationRootNodeData = {
   readonly stage: "foundation_envelope";
-  readonly nodeKind: "applicationRoot";
-  readonly rootId: "application-root";
+  readonly nodeKind: "productPart";
+  readonly productPartId: "application-root";
   readonly title: string;
+  readonly purpose: string;
+  readonly clusterIds: readonly string[];
+  readonly standaloneModuleIds: readonly string[];
   readonly summary: string;
   readonly shape: string | null;
-  readonly productPartIds: readonly string[];
-  readonly sharedZoneIds: readonly string[];
   readonly containerConstraints: ContainerConstraints;
 };
 
 export type FoundationEnvelopeSharedZoneNodeData = {
   readonly stage: "foundation_envelope";
-  readonly nodeKind: "sharedZone";
-  readonly zoneId: string;
+  readonly nodeKind: "cluster";
+  readonly clusterId: string;
+  readonly productPartId: "application-root";
   readonly title: string;
   readonly purpose: string;
+  readonly moduleIds: readonly string[];
   readonly primaryOwner: string | null;
   readonly sharedWith: readonly string[];
   readonly containerConstraints?: ContainerConstraints;
@@ -42,10 +50,17 @@ export type FoundationEnvelopeSharedZoneNodeData = {
 
 export type FoundationEnvelopeProductPartNodeData = {
   readonly stage: "foundation_envelope";
-  readonly nodeKind: "productPart";
-  readonly partId: string;
+  readonly nodeKind: "module";
+  readonly moduleId: string;
   readonly title: string;
-  readonly purpose: string;
+  readonly kind: ModuleKind;
+  readonly responsibility: string;
+  readonly status: EntityStatus;
+  readonly origin: EntityOrigin;
+  readonly productPart: string;
+  readonly cluster?: string;
+  readonly inputCount: number;
+  readonly outputCount: number;
   readonly runtimePlatform: string | null;
   readonly technology: string | null;
   readonly decisionStatus: FoundationEnvelopeDecisionStatus | null;
