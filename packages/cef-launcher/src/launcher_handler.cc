@@ -45,6 +45,33 @@ std::string DecodeQueryValue(const std::string& url, const std::string& key) {
   return "";
 }
 
+std::string DecodeFilePathQueryValue(const std::string& url,
+                                     const std::string& key) {
+  CefURLParts parts;
+  if (!CefParseURL(url, parts)) {
+    return "";
+  }
+
+  const std::string query = CefString(&parts.query);
+  const std::string prefix = key + "=";
+  std::stringstream query_stream(query);
+  std::string segment;
+  while (std::getline(query_stream, segment, '&')) {
+    if (segment.compare(0, prefix.size(), prefix) != 0) {
+      continue;
+    }
+    const std::string encoded = segment.substr(prefix.size());
+    return CefURIDecode(
+               encoded, false,
+               static_cast<cef_uri_unescape_rule_t>(
+                   UU_SPACES | UU_PATH_SEPARATORS |
+                   UU_URL_SPECIAL_CHARS_EXCEPT_PATH_SEPARATORS))
+        .ToString();
+  }
+
+  return "";
+}
+
 int DecodePositiveInteger(const std::string& url, const std::string& key) {
   const std::string value = DecodeQueryValue(url, key);
   if (value.empty()) {
@@ -296,7 +323,7 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
 }
 
 bool LauncherHandler::OpenInVsCodeRequest(const std::string& url) {
-  const std::string path = DecodeQueryValue(url, "path");
+  const std::string path = DecodeFilePathQueryValue(url, "path");
   if (path.empty()) {
     return false;
   }

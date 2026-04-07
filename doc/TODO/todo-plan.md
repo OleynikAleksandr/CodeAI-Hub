@@ -26,11 +26,11 @@
 
 ### Stream: Planning And Recovery Reset
 1. [DONE] Finalize the previous completion report and open a new narrow execution cycle in `doc/SolidWorks-WorkFlow/Plans/ProjectManager_DialogFileLinks_LauncherQueryDecode_Hotfix.md`, `doc/TODO/todo-plan.md`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: isolate the remaining `/%2FUsers%2F...` launcher query-decode regression after `1.1.903`; expected commit message: `docs(pm): plan launcher query decode hotfix`
-2. [IN_PROGRESS] Git Commit: `docs(pm): plan launcher query decode hotfix` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): plan launcher query decode hotfix` (hash: `2defa4624`)
 
 ### Stream: Launcher Query Decode Fix
-3. [TODO] Update `packages/cef-launcher/src/launcher_handler.cc` and `doc/TODO/todo-plan.md`; scope: decode the `path` query parameter with filesystem-oriented URI unescape rules so standalone PM no longer hands VS Code a `%2F`-encoded absolute path; expected commit message: `fix(launcher): decode vscode file path query`
-4. [TODO] Git Commit: `fix(launcher): decode vscode file path query` (hash: TBD)
+3. [DONE] Update `packages/cef-launcher/src/launcher_handler.cc` and `doc/TODO/todo-plan.md`; scope: decode the `path` query parameter with filesystem-oriented URI unescape rules so standalone PM no longer hands VS Code a `%2F`-encoded absolute path; expected commit message: `fix(launcher): decode vscode file path query`
+4. [IN_PROGRESS] Git Commit: `fix(launcher): decode vscode file path query` (hash: TBD)
 
 ### Stream: Release Build For User Testing
 5. [TODO] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: announce the launcher query-decode hotfix and the deferred broader documentation pass; expected commit message: `docs(release): prep launcher query decode hotfix release`
