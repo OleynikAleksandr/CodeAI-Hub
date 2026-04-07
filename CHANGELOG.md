@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.901] - 2026-04-07
+### Fixed
+- **Project Manager dialog file links now open in the VS Code editor path instead of a generic text handler**: absolute local file links rendered inside agent dialog markdown are intercepted on the dialog surface and routed to the editor-aware open flow.
+- **Dialog file targets now preserve explicit location metadata**: supported `:line:column` and `#LlineCcolumn` links now resolve correctly for both unix and windows absolute paths, so the editor route can reveal the intended file position.
+- **The open contract is now covered across PM, webview, and docs**: PM opener tests, parser regressions, the VS Code handler contract guard, and the PM/UI/launcher docs now lock the dialog-only interception scope plus the `vscode://file/...` standalone fallback boundary.
+
 ## [1.1.900] - 2026-04-07
 ### Fixed
 - **The left Project Manager tree now highlights the current workflow step explicitly**: stage selection from the toolbar, tree rows, startup route, and nested artifact/session clicks now converges on one visible selected-stage state in the sidebar.

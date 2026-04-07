@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.900
-- **The left workflow tree now visibly follows the active step**: whichever stage is currently selected through the toolbar, tree, startup route, or nested artifact/session click now stays highlighted in the left sidebar instead of leaving the current step visually ambiguous.
-- **The left sidebar is now an `activeStage` accordion**: only the currently active workflow stage stays expanded, so artifacts and session rows no longer remain open across several inactive stages at once.
-- **Docs and regression coverage now lock the cross-surface rule explicitly**: the PM navigation SSOT, cluster notes, and workflow navigation regression test now require the toolbar and left tree to stay aligned on one shared `activeStage`.
+## Current Release — v1.1.901
+- **Project Manager agent-dialog file links now open in Visual Studio Code instead of a generic text handler**: absolute local file targets inside assistant markdown replies are intercepted on the dialog surface and routed to the VS Code editor contract.
+- **Editor-aware file opens now preserve location metadata**: supported dialog links keep `:line:column` or `#LlineCcolumn` targeting, so PM can reveal the intended location when the user follows a file reference from the agent reply.
+- **Standalone PM now uses a standard `vscode://file/...` fallback without widening the native launcher bridge**: VS Code-hosted PM uses `showTextDocument`, while standalone PM hands the same file target to the installed VS Code app through the standard URI route.
 
-Previous releases (summary): `1.1.800–1.1.899` — workflow-state startup SSOT alignment, temporary `Description`-first workspace startup, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, and earlier localization/provider/release stabilization waves.
+Previous releases (summary): `1.1.800–1.1.900` — left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, and earlier localization/provider/release stabilization waves.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
