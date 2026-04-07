@@ -12,7 +12,7 @@
 |-------|------------|---------------|
 | **`SolidWorks-WorkFlow/`** | Каноническая SSOT-документация (system → clusters → modules → contracts) | `Docs_Index.md` |
 | **`Sessions/`** | Отчёты сессий разработки | `Session00X.md` |
-| **`TODO/`** | Планы и todo-списки | `todo-plan.md` |
+| **`TODO/`** | Планы и todo-списки | `Archive/` |
 | **`tmp/`** | Временные файлы, релизные артефакты | — |
 
 ---
@@ -38,4 +38,4 @@
 → [`BugRegistry.md`](BugRegistry.md)
 
 ### Текущий план
-→ [`TODO/todo-plan.md`](TODO/todo-plan.md)
+→ `TODO/todo-plan.md` создаётся только при активном execution scope; если активного плана нет, используйте `TODO/Archive/`.
