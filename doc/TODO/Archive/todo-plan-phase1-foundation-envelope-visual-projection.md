@@ -1,5 +1,7 @@
 # План разработки (Development TODO Plan)
 
+> Historical note (2026-04-07): this archived execution plan remains factual for release `1.1.905`, but `Foundation Envelope` was removed from the active workflow in `Session012`. Do not reuse this file as active execution guidance or workflow navigation.
+
 ## Context Pack For This Cycle
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_VisualProjection_Architecture.md`
 - **Read this context before implementation:**

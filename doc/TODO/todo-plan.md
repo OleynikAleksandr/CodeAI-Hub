@@ -110,7 +110,7 @@
 50. [TODO] Git Commit: `refactor(ui): remove empty state stage contract` (hash: TBD)
 
 ### Stream: Historical Documentation Cleanup
-51. [TODO] Update `doc/Sessions/Session011.md`, `doc/TODO/Archive/todo-plan-phase1-foundation-envelope-visual-projection.md`, and `doc/TODO/todo-plan.md`; scope: keep FE history truthful while removing any misleading next-step/live-navigation assumptions that would route future work through the removed stage; expected commit message: `docs(history): retire foundation envelope live navigation`
+51. [DONE] Update `doc/Sessions/Session011.md`, `doc/TODO/Archive/todo-plan-phase1-foundation-envelope-visual-projection.md`, and `doc/TODO/todo-plan.md`; scope: keep FE history truthful while removing any misleading next-step/live-navigation assumptions that would route future work through the removed stage; expected commit message: `docs(history): retire foundation envelope live navigation`
 52. [TODO] Git Commit: `docs(history): retire foundation envelope live navigation` (hash: TBD)
 53. [TODO] Update `doc/SolidWorks-WorkFlow/Plans/Archive/Foundation_Envelope_VisualProjection_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Step_Symmetry_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: mark archived FE planning docs as historical-only and remove wording that leaves the removed step looking active; expected commit message: `docs(history): mark foundation envelope archives as retired`
 54. [TODO] Git Commit: `docs(history): mark foundation envelope archives as retired` (hash: TBD)
