@@ -159,7 +159,6 @@ Child rows обязаны наследовать реальный stage-level st
 - `Description`
 - `Virtual Simulation`
 - `Diagram Modules`
-- `Foundation Envelope`
 
 Release gate:
 

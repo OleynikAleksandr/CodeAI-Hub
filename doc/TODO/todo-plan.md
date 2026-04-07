@@ -107,13 +107,13 @@
 47. [DONE] Update `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, and `doc/TODO/todo-plan.md`; scope: stop PM session hosts from passing the obsolete stage-aware empty-state prop after FE-specific empty-state copy removal; expected commit message: `refactor(ui): prune empty state stage callers`
 48. [DONE] Git Commit: `refactor(ui): prune empty state stage callers` (hash: `61f442964`)
 49. [DONE] Update `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/session-view.tsx`, and `src/client/ui/src/session/empty-state.test.ts`; scope: remove the obsolete stage field from the empty-state contract and keep the generic idle copy regression aligned with the simplified UI surface; expected commit message: `refactor(ui): remove empty state stage contract`
-50. [TODO] Git Commit: `refactor(ui): remove empty state stage contract` (hash: TBD)
+50. [DONE] Git Commit: `refactor(ui): remove empty state stage contract` (hash: `ddeced0d2`)
 
 ### Stream: Historical Documentation Cleanup
 51. [DONE] Update `doc/Sessions/Session011.md`, `doc/TODO/Archive/todo-plan-phase1-foundation-envelope-visual-projection.md`, and `doc/TODO/todo-plan.md`; scope: keep FE history truthful while removing any misleading next-step/live-navigation assumptions that would route future work through the removed stage; expected commit message: `docs(history): retire foundation envelope live navigation`
-52. [TODO] Git Commit: `docs(history): retire foundation envelope live navigation` (hash: TBD)
+52. [DONE] Git Commit: `docs(history): retire foundation envelope live navigation` (hash: `72de4e465`)
 53. [DONE] Update `doc/SolidWorks-WorkFlow/Plans/Archive/Foundation_Envelope_VisualProjection_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Step_Symmetry_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: mark archived FE planning docs as historical-only and remove wording that leaves the removed step looking active; expected commit message: `docs(history): mark foundation envelope archives as retired`
-54. [TODO] Git Commit: `docs(history): mark foundation envelope archives as retired` (hash: TBD)
+54. [DONE] Git Commit: `docs(history): mark foundation envelope archives as retired` (hash: `7be4328a4`)
 
 ### Stream: Verification
 55. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
@@ -122,7 +122,7 @@
 58. [TODO] Git Commit: `test(repo): verify foundation envelope cleanup` (hash: TBD)
 
 ### Stream: Release Build
-59. [TODO] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing product docs before cutting the cleanup release that removes `Foundation Envelope` from the active workflow; expected commit message: `docs(release): sync foundation envelope removal release docs`
+59. [DONE] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing product docs before cutting the cleanup release that removes `Foundation Envelope` from the active workflow; expected commit message: `docs(release): sync foundation envelope removal release docs`
 60. [TODO] Git Commit: `docs(release): sync foundation envelope removal release docs` (hash: TBD)
 61. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline after FE removal, capture version/materialization changes, and prepare fresh release artifacts; expected commit message: `build(release): cut workflow removal artifacts`
 62. [TODO] Git Commit: `build(release): cut workflow removal artifacts` (hash: TBD)

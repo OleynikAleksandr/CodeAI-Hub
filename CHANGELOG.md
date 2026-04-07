@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.906] - 2026-04-07
+### Removed
+- **`Foundation Envelope` is removed from the active workflow**: the supported trunk now stops at `Diagram Modules`, and branch design starts directly from `Product Part Specification` without a separate FE stage.
+
+### Changed
+- **Core, PM, startup restore, continuity, and prompt routing now follow the reduced trunk end-to-end**: `foundation_envelope` no longer participates in workflow state, gating, artifact routing, diagram loading, localization, repair flows, or regression coverage.
+- **The former FE release wave is preserved as history only**: archived plans, TODOs, and session reports are explicitly marked retired so future scopes do not treat `Foundation Envelope` as active navigation or a dormant supported contract.
+
 ## [1.1.905] - 2026-04-07
 ### Added
 - **`Foundation Envelope` now renders as a React Flow diagram in the Project Manager `Artifacts` surface**: once the canonical `foundation-envelope.md` exists, the user sees the stage as a diagram-first review surface instead of a raw markdown-only panel.
