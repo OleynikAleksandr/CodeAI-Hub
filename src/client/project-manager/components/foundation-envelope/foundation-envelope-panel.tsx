@@ -80,14 +80,21 @@ export const FoundationEnvelopeHelp: React.FC = () => {
           {t(
             USER_MESSAGES_CATEGORY,
             "pm.foundation_envelope.help.scope",
-            "`foundation-envelope.md` is not a low-level module contract, not an implementation scaffold, and not a visual layout file. It captures the stable application-wide assembly baseline that downstream docs must inherit."
+            "`foundation-envelope.md` is not a low-level module contract, not an implementation scaffold, and not a user-owned layout file. It captures the stable application-wide assembly baseline that downstream docs must inherit, and the runtime can project a diagram from it."
+          )}
+        </div>
+        <div>
+          {t(
+            USER_MESSAGES_CATEGORY,
+            "pm.foundation_envelope.help.structure",
+            "Keep the document projection-friendly: make Application Root, Product Parts, Shared Zones, and Integration Seams easy to identify with stable section headings and explicit field lines where needed."
           )}
         </div>
         <div>
           {t(
             USER_MESSAGES_CATEGORY,
             "pm.foundation_envelope.help.output",
-            "Step output: `.codeai-hub/<workspace>/foundation_envelope/foundation-envelope.md`."
+            "Step outputs: `.codeai-hub/<workspace>/foundation_envelope/foundation-envelope.md` as the semantic SSOT, plus optional runtime-owned `.codeai-hub/<workspace>/foundation_envelope/foundation-envelope.flow.json` for layout/view state."
           )}
         </div>
       </div>

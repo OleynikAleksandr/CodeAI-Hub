@@ -32,8 +32,8 @@
 
 ### Stream: Contract Activation
 1. [DONE] Update `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: activate `foundation-envelope.flow.json` and runtime visual projection for `Foundation Envelope` while keeping `foundation-envelope.md` as semantic SSOT; expected commit message: `docs(workflow): activate foundation envelope visual projection`
-2. [TODO] Git Commit: `docs(workflow): activate foundation envelope visual projection` (hash: TBD)
-3. [TODO] Update `packages/core/src/templates/source/foundation-envelope-prompt.md`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-panel.tsx`, and `doc/TODO/todo-plan.md`; scope: require projection-friendly markdown structure, remove markdown-only guidance, and keep `.flow.json` runtime-owned instead of agent-generated; expected commit message: `docs(prompt): require projection-ready foundation envelope`
+2. [DONE] Git Commit: `docs(workflow): activate foundation envelope visual projection` (hash: `6b314b960`)
+3. [DONE] Update `packages/core/src/templates/source/foundation-envelope-prompt.md`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-panel.tsx`, and `doc/TODO/todo-plan.md`; scope: require projection-friendly markdown structure, remove markdown-only guidance, and keep `.flow.json` runtime-owned instead of agent-generated; expected commit message: `docs(prompt): require projection-ready foundation envelope`
 4. [TODO] Git Commit: `docs(prompt): require projection-ready foundation envelope` (hash: TBD)
 
 ### Stream: Artifact Surface And Loader Generalization
