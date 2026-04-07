@@ -1,7 +1,7 @@
 # Workflow Steps & Watcher — Contract (SSOT)
 
 **Status:** Active
-**Updated:** 2026-04-05
+**Updated:** 2026-04-07
 **Owner:** Oleksandr + Codex
 
 ---
@@ -23,7 +23,7 @@
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
 3. `Diagram Modules` → canonical output: `product-parts.index.md` + `product-parts/<part-id>.md` + sidecar `module-map.flow.json`
-4. `Foundation Envelope` → canonical output: `foundation-envelope.md`
+4. `Foundation Envelope` → canonical output: `foundation-envelope.md` + sidecar `foundation-envelope.flow.json`
 
 ---
 
@@ -42,6 +42,7 @@
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json` (layout/view sidecar)
 - `Foundation Envelope`:
   - `.codeai-hub/<workspaceSlug>/foundation_envelope/foundation-envelope.md` (canonical semantic artifact)
+  - `.codeai-hub/<workspaceSlug>/foundation_envelope/foundation-envelope.flow.json` (layout/view sidecar)
 
 Legacy `description.md` допускается только для compat и не участвует в gating новых workflow.
 
@@ -51,6 +52,9 @@ Legacy `description.md` допускается только для compat и н�
 - `*.flow.json` хранит только layout/view state и не участвует в semantic gating.
 - Project Manager для `Diagram Modules` использует user surface `Artifacts/Help` (Source mode был удалён):
   - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
+  - `Help` показывает guidance по шагу.
+- Project Manager для `Foundation Envelope` использует тот же user surface `Artifacts/Help`:
+  - `Artifacts` по умолчанию открывает визуальную Foundation Envelope diagram, построенную из `foundation-envelope.md` и optional sidecar `foundation-envelope.flow.json`;
   - `Help` показывает guidance по шагу.
 - Visible PM surface для diagram step не должна требовать `Auto-layout`, layout profiles, inline semantic editors или bottom-right minimap.
 - Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact.
@@ -119,9 +123,12 @@ Manual start не отменяет watcher:
 
 Для `Diagram Modules` default PM route после открытия шага обязан возвращать пользователя в `Artifacts`, а не в raw Markdown source.
 
-Для `Foundation Envelope` первая implementation wave использует text-first contract:
-- canonical output = `foundation-envelope.md`;
-- visual projection и `foundation-envelope.flow.json` сознательно отложены в следующий scope.
+Для `Foundation Envelope` default PM route после открытия шага обязан возвращать пользователя в `Artifacts`, а не в raw Markdown source.
+
+Для `Foundation Envelope` runtime-контракт diagram-first:
+- canonical semantic output = `foundation-envelope.md`;
+- `foundation-envelope.flow.json` остаётся runtime-owned layout/view sidecar;
+- visual projection строится из canonical markdown artifact и не меняет semantic gating.
 
 ---
 

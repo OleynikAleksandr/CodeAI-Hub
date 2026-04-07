@@ -220,11 +220,11 @@
 - `foundation-envelope.md` — canonical semantic artifact;
 - `foundation-envelope.flow.json` — layout/view state visual projection.
 
-Но по результатам аудита текущей кодовой базы нужно сразу зафиксировать реалистичный первый execution slice:
+Ключевой runtime contract:
 
-- **Wave 1 must-have**: только `foundation-envelope.md`;
-- `foundation-envelope.flow.json` и реальная visual projection должны идти отдельной следующей wave;
-- иначе первый implementation scope получится слишком широким и будет смешивать stage shell с отдельной задачей визуального редактора/renderer.
+- semantics живут только в `foundation-envelope.md`;
+- `foundation-envelope.flow.json` хранит только layout/view state;
+- visual projection строится runtime из canonical markdown artifact и optional sidecar.
 
 ### 5.4. Semantic sections of `foundation-envelope.md`
 
@@ -265,12 +265,7 @@
 
 Это должна быть не файловая схема и не UML, а user-friendly карта того, как приложение собирается в одно целое.
 
-При этом в текущем implementation cycle важно не смешивать две разные задачи:
-
-- включение самого workflow-step в продукт;
-- создание user-facing визуализации этого шага.
-
-Поэтому visual projection является **обязательной целевой capability шага**, но **не обязательной частью первого code slice**.
+Visual projection является обязательной capability шага и должна входить в shipped user-facing baseline `Foundation Envelope`.
 
 ### 5.6. Downstream contract
 
@@ -354,36 +349,18 @@
 
 Это важно, чтобы новый шаг стартовал после завершённой semantic materialization `Diagram Modules`, а не в середине progressive generation.
 
-### 6.4. Реальный минимальный артефакт первого code slice
+### 6.4. Current visual-completion gap
 
-Первый реалистичный implementation slice для нового шага:
+Stage shell уже materialize-ён и доступен в workflow, но visual completion шага ещё не доведён до целевого baseline.
 
-- новый `stage id` в workflow;
-- gating после завершённого `Diagram Modules`;
-- contract endpoint и prompt/template wiring;
-- canonical `.md` artifact;
-- start service;
-- Project Manager button / tree / panel shell;
-- чтение и отображение canonical markdown artifact.
+Текущий remaining gap:
 
-То есть первый slice должен довести продукт до состояния:
+- PM по-прежнему может рендерить шаг как markdown-first surface вместо diagram-first surface;
+- runtime artifact surface пока не везде допускает `foundation-envelope.flow.json`;
+- shared diagram loader/persistence pipeline ещё требует generalization под `foundation_envelope`;
+- bundled prompt всё ещё может оставаться слишком markdown-only и не гарантировать projection-friendly document shape.
 
-- шаг существует как часть workflow;
-- шаг можно запустить из Project Manager;
-- шаг имеет свой canonical текстовый output;
-- этот output виден в UI и может стать опорой для следующего design step.
-
-### 6.5. Что сознательно откладывается из первого slice
-
-Из первого implementation cycle разумно исключить:
-
-- `foundation-envelope.flow.json`;
-- visual renderer/editor для envelope;
-- отдельную progressive orchestration model для визуализации;
-- любые branch-level specification steps после этого шага;
-- интеграцию с поздним `Implementation Foundation`.
-
-Иначе scope станет слишком большим и перестанет быть детерминированным.
+Следовательно, текущая implementation wave для этого planning scope должна закрыть именно visual completion и runtime projection contract.
 
 ### 6.6. Localization boundary for the stage shell
 
@@ -442,37 +419,35 @@
 
 ---
 
-## 7. Рекомендуемая первая implementation wave
+## 7. Рекомендуемая visual-completion wave
 
 ### 7.1. Цель wave
 
-Первая wave должна дать **stage shell**, а не полный feature-complete step.
+Текущая wave должна довести `Foundation Envelope` от уже существующего stage shell до полного user-facing baseline шага.
 
 Формулировка результата:
 
-`Foundation Envelope` появляется в workflow сразу после `Diagram Modules`, корректно блокируется до завершения upstream stage, умеет стартовать отдельную collector-session и materialize-ит canonical файл `foundation-envelope.md`.
+`Foundation Envelope` остаётся canonical markdown-first по semantics, но в Project Manager завершается diagram-first user surface с optional `foundation-envelope.flow.json` как runtime-owned layout sidecar.
 
 ### 7.2. Состав wave
 
-Первая wave должна включать:
+Текущая wave должна включать:
 
-1. shared stage contract в core и client;
-2. gating и cold-start hydration;
-3. artifact allowlist / validation / persistence;
-4. workflow contract endpoint и bundled prompt;
-5. Project Manager service wiring;
-6. toolbar/tree/panel shell;
-7. базовые тесты на новые stage contracts.
+1. visual/runtime contract activation в docs и workflow SSOT;
+2. prompt/instruction update для projection-friendly markdown;
+3. artifact allowlist / validation / routing для `foundation-envelope.flow.json`;
+4. shared diagram loader/persistence generalization под `foundation_envelope`;
+5. FE-specific parser/model/projection adapter;
+6. diagram-first PM rendering;
+7. regression coverage и targeted verification.
 
-### 7.3. Что будет следующей wave
+### 7.3. Что остаётся за пределами этой wave
 
-После завершения первой wave отдельным следующим scope нужно будет делать:
+После завершения текущей wave следующими отдельными scope остаются:
 
-1. визуальную projection-диаграмму;
-2. `foundation-envelope.flow.json`;
-3. visual layout persistence;
-4. UX вокруг редактирования/перестройки envelope;
-5. bridge к downstream шагам `Product Part / Cluster / Module Specifications`.
+1. branch-level design steps `Product Part Specification`, `Cluster Design`, `Module Design`;
+2. late scaffold/env/toolchain materialization в `Implementation Foundation`;
+3. дальнейшие UX-улучшения diagram editor beyond the shipped baseline.
 
 ### 7.4. Post-release localization acceptance
 
