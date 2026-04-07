@@ -9,9 +9,7 @@ export type WorkflowArtifactFileName =
   | "virtual-simulation.md"
   | "product-parts.index.md"
   | "product-part.md"
-  | "module-map.flow.json"
-  | "foundation-envelope.md"
-  | "foundation-envelope.flow.json";
+  | "module-map.flow.json";
 
 type WorkflowParseResult<T> =
   | { readonly ok: true; readonly value: T }
@@ -108,24 +106,6 @@ const WORKFLOW_ARTIFACT_VALIDATORS = new Map<
         emptyError: "Diagram flow sidecar is empty",
         invalidJsonError: "Diagram flow sidecar is not valid JSON",
         invalidObjectError: "Diagram flow sidecar must be a JSON object",
-      }),
-  ],
-  [
-    "foundation-envelope.md",
-    (content) =>
-      content.trim().length === 0
-        ? "Foundation envelope markdown is empty"
-        : null,
-  ],
-  [
-    "foundation-envelope.flow.json",
-    (content) =>
-      validateJsonObjectSidecar({
-        content,
-        emptyError: "Foundation envelope flow sidecar is empty",
-        invalidJsonError: "Foundation envelope flow sidecar is not valid JSON",
-        invalidObjectError:
-          "Foundation envelope flow sidecar must be a JSON object",
       }),
   ],
 ]);

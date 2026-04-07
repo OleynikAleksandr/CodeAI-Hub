@@ -43,10 +43,10 @@
 
 ### Stream: Workflow State And Artifact Contracts
 9. [DONE] Update `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts`, and `doc/TODO/todo-plan.md`; scope: remove `foundation_envelope` from active workflow statuses, gating, and filesystem hydration; expected commit message: `refactor(core): remove foundation envelope workflow state`
-10. [TODO] Git Commit: `refactor(core): remove foundation envelope workflow state` (hash: TBD)
-11. [IN_PROGRESS] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: drop FE artifact validation/routes and stop treating `foundation-envelope.md` or `foundation-envelope.flow.json` as active workflow artifacts; expected commit message: `refactor(core): remove foundation envelope artifact routes`
+10. [DONE] Git Commit: `refactor(core): remove foundation envelope workflow state` (hash: `fbcc4d8e7`)
+11. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: drop FE artifact validation/routes and stop treating `foundation-envelope.md` or `foundation-envelope.flow.json` as active workflow artifacts; expected commit message: `refactor(core): remove foundation envelope artifact routes`
 12. [TODO] Git Commit: `refactor(core): remove foundation envelope artifact routes` (hash: TBD)
-13. [TODO] Update `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE prompt/template registration and contract lookup from the active step catalog; expected commit message: `refactor(core): drop foundation envelope prompt contract`
+13. [IN_PROGRESS] Update `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE prompt/template registration and contract lookup from the active step catalog; expected commit message: `refactor(core): drop foundation envelope prompt contract`
 14. [TODO] Git Commit: `refactor(core): drop foundation envelope prompt contract` (hash: TBD)
 
 ### Stream: Continuity And Runtime Typing Cleanup
