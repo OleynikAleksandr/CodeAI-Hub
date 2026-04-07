@@ -69,8 +69,8 @@
 19. [DONE] Update `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE contract lookup and visible stage metadata from PM service/model surfaces; expected commit message: `refactor(pm): remove foundation envelope stage metadata`
 20. [DONE] Git Commit: `refactor(pm): remove foundation envelope stage metadata` (hash: `0b44571de`)
 21. [DONE] Update `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`, and `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; scope: remove FE labels, buttons, artifact nodes, and session nodes from PM navigation surfaces; expected commit message: `refactor(pm): remove foundation envelope navigation shell`
-22. [TODO] Git Commit: `refactor(pm): remove foundation envelope navigation shell` (hash: TBD)
-23. [TODO] Update `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`, and `doc/TODO/todo-plan.md`; scope: prune FE helper branches from stage-child and tool-selection helpers; expected commit message: `refactor(pm): prune foundation envelope helper branches`
+22. [DONE] Git Commit: `refactor(pm): remove foundation envelope navigation shell` (hash: `29dbbf1ee`)
+23. [DONE] Update `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/use-workflow-tool-select.ts`, and `doc/TODO/todo-plan.md`; scope: prune FE helper branches from stage-child and tool-selection helpers; expected commit message: `refactor(pm): prune foundation envelope helper branches`
 24. [TODO] Git Commit: `refactor(pm): prune foundation envelope helper branches` (hash: TBD)
 
 ### Stream: Panel And Shared UI Cleanup

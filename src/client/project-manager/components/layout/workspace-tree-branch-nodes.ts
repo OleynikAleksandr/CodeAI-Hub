@@ -281,7 +281,3 @@ export const buildVirtualSimulationBranchNodes = (options: {
     });
   return nodes;
 };
-
-export const buildFoundationEnvelopeBranchNodes = (
-  _options: Record<string, unknown>
-): readonly TreeNode[] => [];
