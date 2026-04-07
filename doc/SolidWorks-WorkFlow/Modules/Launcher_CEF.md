@@ -11,9 +11,9 @@
 - Устанавливается в `~/.codeai-hub/cef-launcher/<version>/`.
 
 ## PM File Link Boundary
-- Current launcher bridge remains intentionally narrow: folder picker, file-drop handoff, and core-start orchestration.
-- Opening Project Manager dialog file links in VS Code does **not** add a new native launcher bridge in this scope.
-- Standalone PM falls back to standard external `vscode://file/...` handoff for supported absolute local file links coming from agent dialog markdown.
+- Launcher bridge remains narrow, but it now includes one additional PM-specific command: dialog file-link handoff into Visual Studio Code.
+- Standalone PM must not navigate Chromium directly to `vscode://file/...` because CEF treats that as an in-window URL load and surfaces `ERR_UNKNOWN_URL_SCHEME`.
+- Instead, the PM dialog uses `codeai://open-in-vscode?...`; `OnBeforeBrowse` cancels Chromium navigation and the launcher host opens the generated `vscode://file/...` URI through the operating system.
 
 ## Связанные документы
 - UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`

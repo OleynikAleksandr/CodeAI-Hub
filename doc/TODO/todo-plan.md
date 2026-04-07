@@ -35,11 +35,11 @@
 
 ### Stream: Launcher Host External Handoff
 5. [DONE] Update `packages/cef-launcher/src/launcher_handler_bridge_helpers.h`, `packages/cef-launcher/src/launcher_handler.h`, and `packages/cef-launcher/src/launcher_handler.cc`; scope: add a dedicated launcher command for PM file-link handoff and cancel in-window navigation before delegating the generated VS Code URI to the OS; expected commit message: `fix(launcher): hand off vscode file links externally`
-6. [IN_PROGRESS] Git Commit: `fix(launcher): hand off vscode file links externally` (hash: TBD)
+6. [DONE] Git Commit: `fix(launcher): hand off vscode file links externally` (hash: `decf59ccb`)
 
 ### Stream: Docs Sync
-7. [TODO] Sync the corrected fallback contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, and `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; scope: document that standalone PM uses launcher-host handoff instead of Chromium anchor navigation for dialog file links; expected commit message: `docs(pm): sync standalone file link fallback`
-8. [TODO] Git Commit: `docs(pm): sync standalone file link fallback` (hash: TBD)
+7. [DONE] Sync the corrected fallback contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, and `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; scope: document that standalone PM uses launcher-host handoff instead of Chromium anchor navigation for dialog file links; expected commit message: `docs(pm): sync standalone file link fallback`
+8. [IN_PROGRESS] Git Commit: `docs(pm): sync standalone file link fallback` (hash: TBD)
 
 ### Stream: Release Build For User Testing
 9. [TODO] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: document the standalone fallback fix before packaging; expected commit message: `docs(release): prep standalone file link hotfix release`

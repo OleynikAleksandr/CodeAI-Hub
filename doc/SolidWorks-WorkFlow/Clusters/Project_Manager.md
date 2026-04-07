@@ -53,7 +53,8 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - В PM agent dialog markdown local file links работают как editor-aware route только для dialog surface:
   - абсолютные local file targets (`/abs/path.md`, `...:line:column`, `#LlineCcolumn`) перехватываются только в Session UI dialog bubbles;
   - если PM работает внутри VS Code webview, открытие файла идёт через standard editor API (`workspace.openTextDocument` + `window.showTextDocument`) на стороне extension host;
-  - если PM работает как standalone CEF client без VS Code webview bridge, применяется standard external handoff через `vscode://file/...`;
+  - если PM работает как standalone CEF client без VS Code webview bridge, dialog surface сначала использует launcher-host handoff `codeai://open-in-vscode?...`, а launcher уже открывает итоговый `vscode://file/...` URI во внешнем Visual Studio Code;
+  - raw `vscode://file/...` handoff остаётся только как последний резервный fallback вне launcher/webview bridge-сред;
   - artifact/help markdown не входят в этот контракт, пока не объявлен отдельный scope.
 - Semantic changes для diagram steps ожидаются через agent-run или прямое редактирование canonical Markdown, а не через visible inline UI.
 

@@ -33,7 +33,8 @@ UI бандлы, доставляемые как tarball’ы и устанав�
   - PM dialog supplies a file-link callback and routes supported targets to the editor-aware open path;
   - artifact/help markdown stay on normal anchor behavior until a separate scope changes their contract.
 - When a VS Code webview bridge exists, the UI bundle delegates PM dialog file opens to the extension host message channel; the extension host owns `showTextDocument`.
-- Without a VS Code webview bridge, the UI bundle falls back to `vscode://file/...` URI handoff instead of introducing a bundle-local fake editor implementation.
+- Without a VS Code webview bridge, the UI bundle prefers the launcher bridge handoff for supported PM dialog file links.
+- Raw `vscode://file/...` URI navigation remains only as a last-resort fallback when neither the webview bridge nor the launcher bridge exists.
 
 ## Related Docs
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
