@@ -210,7 +210,8 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     return renderStagePanel(
       FoundationEnvelopePanel,
       activeWorkspacePath,
-      activeWorkspaceSlug
+      activeWorkspaceSlug,
+      artifactRefreshKey
     );
   }
   if (activeTool === "Description" && hasDescriptionSession && selectedArtifact === null) {

@@ -1,10 +1,11 @@
 import type React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
-import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
-import { StageArtifactContentView } from "../shared/stage-artifact-content-view";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { DiagramStagePanelScaffold } from "../diagram-editor/diagram-stage-panel-scaffold";
+import { useDiagramLoader } from "../diagram-editor/use-diagram-loader";
+import { useDiagramPersistence } from "../diagram-editor/use-diagram-persistence";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
@@ -105,31 +106,45 @@ export const FoundationEnvelopeHelp: React.FC = () => {
 export const FoundationEnvelopePanel: React.FC<{
   readonly workspacePath: string;
   readonly workspaceSlug: string;
+  readonly refreshKey?: number;
 }> = (props) => {
+  const [localRefreshKey, setLocalRefreshKey] = useState(0);
+  useEffect(() => {
+    const handler = () => setLocalRefreshKey((current) => current + 1);
+    window.addEventListener("pm:diagram:refresh", handler);
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel("pm:diagram:sidecar-sync");
+      bc.onmessage = handler;
+    } catch {
+      // unsupported
+    }
+    return () => {
+      window.removeEventListener("pm:diagram:refresh", handler);
+      bc?.close();
+    };
+  }, []);
   const { t } = useLocalization();
   const stageLabel = t(
     UI_LABELS_CATEGORY,
     "pm.workflow.stage.foundation_envelope.label",
     "Foundation Envelope"
   );
-  const loadErrorFallback = t(
-    USER_MESSAGES_CATEGORY,
-    "pm.foundation_envelope.error.load",
-    "Could not load Foundation Envelope."
-  );
-  const artifactPath = useMemo(
-    () =>
-      `.codeai-hub/${props.workspaceSlug}/foundation_envelope/foundation-envelope.md`,
-    [props.workspaceSlug]
-  );
-  const { status, content, error } = useStageArtifactLoader({
+  const combinedRefreshKey = (props.refreshKey ?? 0) + localRefreshKey;
+  const { status, content, error, projection, artifactPath, flowSidecarPath } =
+    useDiagramLoader({
+      refreshKey: combinedRefreshKey,
+      stage: "foundation_envelope",
+      workspacePath: props.workspacePath,
+      workspaceSlug: props.workspaceSlug,
+    });
+  const { persistNodes } = useDiagramPersistence({
+    artifactPath,
+    flowSidecarPath,
+    stage: "foundation_envelope",
     workspacePath: props.workspacePath,
     workspaceSlug: props.workspaceSlug,
-    artifactPath,
-    stageLabel,
   });
-  const validationError =
-    content && content.trim().length === 0 ? "Файл пустой." : null;
 
   const handleFixStart = useCallback(
     async (params: {
@@ -145,24 +160,36 @@ export const FoundationEnvelopePanel: React.FC<{
     },
     []
   );
+  const visualProjection = status === "ready" ? projection : null;
 
-  if (status === "ready" && content !== null) {
-    return (
-      <StageArtifactContentView
-        artifactPath={artifactPath}
-        content={content}
-        displayFileName="foundation-envelope.md"
-        onFixStart={handleFixStart}
-        validationError={validationError}
-        workspacePath={props.workspacePath}
-        workspaceSlug={props.workspaceSlug}
-      />
-    );
+  if (status === "missing") {
+    return <FoundationEnvelopeHelp />;
   }
 
-  if (status === "error") {
-    return <div className="pm-placeholder">{error ?? loadErrorFallback}</div>;
-  }
-
-  return <FoundationEnvelopeHelp />;
+  return (
+    <DiagramStagePanelScaffold
+      artifactFileName="foundation-envelope.md"
+      artifactPath={artifactPath}
+      children={null}
+      conflicts={[]}
+      content={content}
+      error={error}
+      initialNodes={projection?.nodes}
+      introText="Artifacts show the Foundation Envelope assembly map derived from `foundation-envelope.md`. The runtime keeps `foundation-envelope.flow.json` as layout state only."
+      onDismissConflicts={() => {}}
+      onNodesChange={async (nodes) => {
+        if (!visualProjection) {
+          return;
+        }
+        await persistNodes({ nodes, revision: visualProjection.revision });
+      }}
+      onStartFix={handleFixStart}
+      pendingContent={<FoundationEnvelopeHelp />}
+      projection={visualProjection}
+      status={status}
+      title={stageLabel}
+      workspacePath={props.workspacePath}
+      workspaceSlug={props.workspaceSlug}
+    />
+  );
 };
